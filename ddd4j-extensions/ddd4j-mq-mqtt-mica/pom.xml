@@ -10,36 +10,39 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ddd4j-data-crypto</artifactId>
-    <description>Ddd4j Crypto Component</description>
+    <artifactId>ddd4j-mq-mqtt-mica</artifactId>
+    <description>Ddd4j MQTT Component (mica-mqtt client + ddd4j MQ SPI)</description>
+
+    <properties>
+        <mq.testcontainers.version>1.20.6</mq.testcontainers.version>
+    </properties>
 
     <dependencies>
-        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-mq</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-jackson</artifactId>
-            <version>${revision}</version>
+            <groupId>org.dromara.mica-mqtt</groupId>
+            <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
         </dependency>
-        <!-- For Spring Webmvc -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+<dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
-        <!-- For Crypto -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-crypto</artifactId>
+<dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${mq.testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>

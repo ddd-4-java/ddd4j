@@ -10,33 +10,35 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ddd4j-web-webflux</artifactId>
-    <description>Ddd4j WebFlux Component</description>
+    <artifactId>ddd4j-mq-ons</artifactId>
+    <description>Ddd4j Aliyun ONS Component</description>
+
+    <properties>
+        <mq.testcontainers.version>1.20.6</mq.testcontainers.version>
+    </properties>
 
     <dependencies>
-        <!-- For Ddd4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-mq</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-jackson</artifactId>
-            <version>${revision}</version>
+            <groupId>com.aliyun.openservices</groupId>
+            <artifactId>ons-client</artifactId>
         </dependency>
-        <!-- For Webjars -->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
+
+<dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${mq.testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
-        <!-- For WebFlux -->
-</dependencies>
+    </dependencies>
 
 </project>

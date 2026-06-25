@@ -503,6 +503,12 @@
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
         <spring-kafka.version>3.3.11</spring-kafka.version>
+        <!-- 第三方 Boot starter 版本（Phase 2 迁出 boot 轨前暂 pin） -->
+        <spring-boot-starter-mybatis.version>3.0.5</spring-boot-starter-mybatis.version>
+        <spring-boot-starter-ip2region.version>3.3.x.20241003.RELEASE</spring-boot-starter-ip2region.version>
+        <spring-boot-starter-redistpl-plus.version>3.3.x.20241003-SNAPSHOT</spring-boot-starter-redistpl-plus.version>
+        <spring-boot-starter-security-biz.version>3.3.x.20250712-SNAPSHOT</spring-boot-starter-security-biz.version>
+        <spring-boot-starter-security-jwt.version>3.3.x.20250712-SNAPSHOT</spring-boot-starter-security-jwt.version>
         <spring-plugin.version>3.0.0</spring-plugin.version>
         <spring-javassist.version>6.1.x.20250712-SNAPSHOT</spring-javassist.version>
         <spring-initializr.version>0.24.0</spring-initializr.version>
@@ -4334,6 +4340,18 @@
                 <artifactId>mybatis-plus-generator</artifactId>
                 <version>${mybatis-plus-generator.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-mybatis.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-spring-boot3-starter -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>mybatis-plus-enhance</artifactId>
@@ -4398,6 +4416,12 @@
             <dependency>
                 <groupId>org.dromara.mica-mqtt</groupId>
                 <artifactId>mica-mqtt-client</artifactId>
+                <version>${mica-mqtt.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.dromara.mica-mqtt/mica-mqtt-client-spring-boot-starter -->
+            <dependency>
+                <groupId>org.dromara.mica-mqtt</groupId>
+                <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
                 <version>${mica-mqtt.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.nacos/nacos-client -->
@@ -5961,6 +5985,42 @@
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>spring-javassist</artifactId>
                 <version>${spring-javassist.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring-kafka.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.integration/spring-integration-mqtt -->
+            <dependency>
+                <groupId>org.springframework.integration</groupId>
+                <artifactId>spring-integration-mqtt</artifactId>
+                <version>${spring-integration.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/ip2region-spring-boot-starter -->
+            <dependency>
+                <groupId>com.github.hiwepy</groupId>
+                <artifactId>ip2region-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-ip2region.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/redistpl-plus-spring-boot-starter -->
+            <dependency>
+                <groupId>com.github.hiwepy</groupId>
+                <artifactId>redistpl-plus-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-redistpl-plus.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/security-biz-spring-boot-starter -->
+            <dependency>
+                <groupId>com.github.hiwepy</groupId>
+                <artifactId>security-biz-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-security-biz.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/security-jwt-spring-boot-starter -->
+            <dependency>
+                <groupId>com.github.hiwepy</groupId>
+                <artifactId>security-jwt-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-security-jwt.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core -->
             <dependency>

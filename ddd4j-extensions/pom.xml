@@ -24,21 +24,20 @@
         <module>ddd4j-data-external</module>
         <module>ddd4j-data-logs</module>
         <module>ddd4j-data-mybatis</module>
-        <module>ddd4j-event-activemq</module>
-        <module>ddd4j-event-disruptor</module>
-        <module>ddd4j-event-kafka</module>
-        <module>ddd4j-event-mqtt</module>
-        <module>ddd4j-event-mqtt-mica</module>
-        <module>ddd4j-event-nats</module>
-        <module>ddd4j-event-ons</module>
-        <module>ddd4j-event-pulsar</module>
-        <module>ddd4j-event-rabbitmq</module>
-        <module>ddd4j-event-redis-stream</module>
-        <module>ddd4j-event-rocketmq</module>
-        <module>ddd4j-event-sqs</module>
-        <module>ddd4j-event-tdmq</module>
+        <module>ddd4j-mq-activemq</module>
+        <module>ddd4j-mq-disruptor</module>
+        <module>ddd4j-mq-kafka</module>
+        <module>ddd4j-mq-mqtt</module>
+        <module>ddd4j-mq-mqtt-mica</module>
+        <module>ddd4j-mq-nats</module>
+        <module>ddd4j-mq-ons</module>
+        <module>ddd4j-mq-pulsar</module>
+        <module>ddd4j-mq-rabbitmq</module>
+        <module>ddd4j-mq-redis-stream</module>
+        <module>ddd4j-mq-rocketmq</module>
+        <module>ddd4j-mq-sqs</module>
+        <module>ddd4j-mq-tdmq</module>
         <module>ddd4j-extension-akka</module>
-        <module>ddd4j-extension-dubbo</module>
         <module>ddd4j-extension-excel</module>
         <module>ddd4j-extension-jackson</module>
         <module>ddd4j-extension-pf4j</module>
@@ -78,6 +77,11 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
+        </dependency>
+        <!-- 扩展模块通用：@Configuration / @Bean（版本由 spring-framework-bom 管理） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
         </dependency>
     </dependencies>
 
@@ -438,7 +442,7 @@
     </build>
 
     <profiles>
-        <!-- MQ Testcontainers 集成测试：mvn verify -Pmq-integration-tests -pl ddd4j-extension-rabbit -am -->
+        <!-- MQ Testcontainers 集成测试：mvn verify -Pmq-integration-tests -pl ddd4j-mq-rabbitmq -am -->
         <profile>
             <id>mq-integration-tests</id>
             <build>
