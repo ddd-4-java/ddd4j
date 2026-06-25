@@ -1,6 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.ddd4j.boot.cmpt.webmvc.DefaultMessageSourceAutoConfiguration,\
-io.ddd4j.boot.cmpt.webmvc.DefaultSequenceConfiguration,\
-io.ddd4j.boot.cmpt.webmvc.DefaultSpringContextConfiguration,\
-io.ddd4j.boot.cmpt.webmvc.DefaultWebMvcConfiguration

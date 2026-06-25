@@ -1,5 +1,5 @@
 /**
- * package io.ddd4j.boot.cmpt.external.region;
+ * package io.ddd4j.data.external.region;
  * <p>
  * import java.util.ArrayList;
  * import java.util.List;

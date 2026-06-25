@@ -1,4 +1,4 @@
-io.ddd4j.boot.cmpt.webmvc.DefaultMessageSourceAutoConfiguration
-io.ddd4j.boot.cmpt.webmvc.DefaultSequenceConfiguration
-io.ddd4j.boot.cmpt.webmvc.DefaultSpringContextConfiguration
-io.ddd4j.boot.cmpt.webmvc.DefaultWebMvcConfiguration
+io.ddd4j.web.webmvc.DefaultMessageSourceAutoConfiguration
+io.ddd4j.web.webmvc.DefaultSequenceConfiguration
+io.ddd4j.web.webmvc.DefaultSpringContextConfiguration
+io.ddd4j.web.webmvc.DefaultWebMvcConfiguration

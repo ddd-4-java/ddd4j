@@ -1,3 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.ddd4j.boot.cmpt.satoken.SaTokenEnhanceAutoConfiguration

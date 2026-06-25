@@ -1,4 +1,0 @@
-# Auto Configure
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.ddd4j.boot.cmpt.security.WebSecurityBizConfiguration,\
-io.ddd4j.boot.cmpt.security.WebSecurityJwtConfiguration
