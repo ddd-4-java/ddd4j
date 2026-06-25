@@ -2,13 +2,12 @@ package io.ddd4j.boot.mq.config;
 
 import io.ddd4j.boot.mq.registry.MQBrokerType;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * ddd4j MQ 主配置（前缀 {@code ddd4j.mq}）。
  */
 @Data
-@ConfigurationProperties(prefix = "ddd4j.mq")
+// @ConfigurationProperties(prefix = "ddd4j.mq")
 public class Ddd4jMQProperties {
 
     /** 是否启用 MQ */

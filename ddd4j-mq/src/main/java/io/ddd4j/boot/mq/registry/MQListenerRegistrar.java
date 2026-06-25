@@ -14,7 +14,7 @@ import io.ddd4j.boot.mq.spi.MQBrokerAdapter;
 import io.ddd4j.boot.mq.spi.MQBrokerAdapters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
@@ -43,7 +43,10 @@ public class MQListenerRegistrar {
      */
     @Order
     @EventListener
-    public void onApplicationReady(ApplicationReadyEvent event) {
+    public void onApplicationReady(ContextRefreshedEvent event) {
+        if (event.getApplicationContext().getParent() != null) {
+            return;
+        }
         List<MQListenerDefinition> definitions = scanner.scan();
         if (definitions.isEmpty()) {
             log.debug("No @MQEventListener definitions to register");

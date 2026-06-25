@@ -11,11 +11,7 @@ import org.fuin.esc.api.EventStore;
 import org.fuin.esc.mem.InMemoryEventStore;
 import org.fuin.cqrs4j.core.CommandExecutor;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -41,9 +37,9 @@ import org.springframework.context.annotation.Bean;
  * @author wandl
  * @since 3.4.x
  */
-@AutoConfiguration
-@ConditionalOnClass(name = "org.fuin.ddd4j.core.AggregateRoot")
-@EnableConfigurationProperties(DddProperties.class)
+@Configuration(proxyBeanMethods = false)
+// @ConditionalOnClass(name = "org.fuin.ddd4j.core.AggregateRoot")
+// @EnableConfigurationProperties(DddProperties.class)
 public class DddAutoConfiguration {
 
     /**
@@ -55,8 +51,7 @@ public class DddAutoConfiguration {
      * <p>返回前自动调用 {@code open()} 激活存储。
      */
     @Bean
-    @ConditionalOnMissingBean(EventStore.class)
-    @ConditionalOnProperty(prefix = "ddd4j.ddd.event-store", name = "type", havingValue = "mem", matchIfMissing = true)
+    // @ConditionalOnMissingBean(EventStore.class)
     public EventStore inMemoryEventStore() {
         InMemoryEventStore store = new InMemoryEventStore(Runnable::run);
         store.open();
@@ -73,7 +68,7 @@ public class DddAutoConfiguration {
      * 默认使用 {@link org.fuin.ddd4j.core.JandexEntityIdFactory}（基于 Jandex 字节码索引自动发现）。
      */
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public Ddd4JacksonModule ddd4JacksonModule(ObjectProvider<EntityIdFactory> entityIdFactoryProvider) {
         EntityIdFactory factory = entityIdFactoryProvider.getIfAvailable();
         if (Objects.isNull(factory)) {
@@ -89,8 +84,8 @@ public class DddAutoConfiguration {
      * 用户提交命令 → {@code bus.execute(ctx, cmd)} → 按 {@code cmd.getEventType()} 路由到对应执行器。
      */
     @Bean
-    @ConditionalOnClass(name = "org.fuin.cqrs4j.core.Command")
-    @ConditionalOnMissingBean(name = "dddCommandBus")
+    // @ConditionalOnClass(name = "org.fuin.cqrs4j.core.Command")
+    // @ConditionalOnMissingBean(name = "dddCommandBus")
     @SuppressWarnings({"rawtypes", "unchecked"})
     public MultiCommandExecutor dddCommandBus(ObjectProvider<List<CommandExecutor>> executorsProvider) {
         List<CommandExecutor> executors = executorsProvider.getIfAvailable(List::of);

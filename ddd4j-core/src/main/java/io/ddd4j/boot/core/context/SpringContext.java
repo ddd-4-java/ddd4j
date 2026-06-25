@@ -4,12 +4,12 @@ import io.ddd4j.boot.core.contract.constant.ContextConstants;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### BASE-CORE : SpringContext ###")
 @Primary
 @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
-public class SpringContext implements ApplicationContextAware, ApplicationRunner {
+public class SpringContext implements ApplicationContextAware {
     // 应用启动完成的信号
     public static final CountDownLatch APP_START_SIGNAL = new CountDownLatch(1);
     // Spring上下文初始化完成的信号
@@ -60,11 +60,14 @@ public class SpringContext implements ApplicationContextAware, ApplicationRunner
         APPLICATION_CONTEXT_START_SIGNAL.countDown();
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        // 通知等待的线程初始化已完成
+    /**
+     * 应用上下文刷新完成后释放启动等待信号。
+     */
+    @EventListener
+    public void onContextRefreshed(ContextRefreshedEvent event) {
         APP_START_SIGNAL.countDown();
     }
+
 
     public static void onAppStarted(Consumer<ApplicationContext> then) {
         EXECUTOR_SERVICE.submit(() -> {

@@ -16,9 +16,6 @@ import feign.Feign;
 import feign.RequestInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -35,7 +32,7 @@ import java.util.List;
 
 @Configuration
 @Slf4j(topic = "### BASE-WEB : BaseWebConfig ###")
-@EnableConfigurationProperties(BaseWebProperties.class)
+// @EnableConfigurationProperties(BaseWebProperties.class)
 @RequiredArgsConstructor
 public class BaseWebConfig implements WebMvcConfigurer {
     final List<BaseWebInterceptor> baseWebInterceptors;
@@ -43,7 +40,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
     final List<BaseWebSocketServer> baseWebSocketServers;
 
     @Bean
-    @ConditionalOnClass(Feign.class)
+    // @ConditionalOnClass(Feign.class)
     public RequestInterceptor feignHeaderInterceptor() {
         log.debug("Loading feignHeaderInterceptor");
         return new FeignHeaderInterceptor();
@@ -56,14 +53,14 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public ObjectMapper mvcObjectMapper() {
         log.debug("Loading mvcObjectMapper");
         return JsonKit.buildObjectMapper(baseCoreProperties.getDatePattern(), baseCoreProperties.getDateTimePattern(), baseCoreProperties.getTimePattern());
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public MappingJackson2HttpMessageConverter jackson2HttpMessageConverter() {
         log.debug("Loading jackson2HttpMessageConverter");
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
@@ -73,27 +70,27 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public SpringContext springContext() {
         return new SpringContext();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public GlobalRestExceptionAdvice globalRestExceptionAdvice() {
         log.debug("Loading globalRestExceptionAdvice");
         return new GlobalRestExceptionAdvice();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public GlobalRequestAdvice globalRequestAdvice() {
         log.debug("Loading globalRequestAdvice");
         return new GlobalRequestAdvice();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public GlobalResponseRAdvice globalResponseRAdvice() {
         log.debug("Loading globalResponseRAdvice");
         return new GlobalResponseRAdvice();

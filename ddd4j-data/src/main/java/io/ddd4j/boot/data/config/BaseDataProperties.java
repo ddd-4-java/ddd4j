@@ -1,7 +1,6 @@
 package io.ddd4j.boot.data.config;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * ddd4j-data 配置属性。
@@ -17,6 +16,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 3.4.x
  */
 @Data
-@ConfigurationProperties(prefix = "base-data")
+// @ConfigurationProperties(prefix = "base-data")
 public class BaseDataProperties {
 }

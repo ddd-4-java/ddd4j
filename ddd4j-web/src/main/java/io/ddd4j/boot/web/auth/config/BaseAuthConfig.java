@@ -2,7 +2,6 @@ package io.ddd4j.boot.web.auth.config;
 
 import io.ddd4j.boot.web.auth.interceptor.BaseAuthWebInterceptor;
 import io.ddd4j.boot.web.interceptor.BaseWebInterceptor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 public class BaseAuthConfig {
 
     @Bean
-    @ConditionalOnMissingBean
+    // @ConditionalOnMissingBean
     public BaseWebInterceptor baseAuthInterceptor() {
         return new BaseAuthWebInterceptor();
     }

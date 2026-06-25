@@ -16,13 +16,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Ddd4j Platform -->
-            <dependency>
-                <groupId>io.ddd4j.platform</groupId>
-                <artifactId>ddd4j-commons-core</artifactId>
-                <version>${ddd4j-platform.version}</version>
-            </dependency>
-            <!-- Ddd4j Boot Core -->
+            <!-- Ddd4j Core -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-core</artifactId>
@@ -31,7 +25,7 @@
             <!-- Ddd4j Boot Components -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-cmpt-akka</artifactId>
+                <artifactId>ddd4j-extension-akka</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -41,17 +35,17 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-cmpt-crypto</artifactId>
+                <artifactId>ddd4j-data-crypto</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-cmpt-datascope</artifactId>
+                <artifactId>ddd4j-auth-datascope</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-cmpt-dubbo</artifactId>
+                <artifactId>ddd4j-extension-dubbo</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -96,7 +90,7 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-cmpt-license</artifactId>
+                <artifactId>ddd4j-auth-license</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

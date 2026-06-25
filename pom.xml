@@ -23,7 +23,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <revision>1.0.x20260625-SNAPSHOT</revision>
+        <revision>2.0.x20260625-SNAPSHOT</revision>
         <java.version>17</java.version>
         <!-- Maven Plugin versions -->
         <maven.version>3.6.3</maven.version>
@@ -51,6 +51,17 @@
         <spring-security.version>6.4.5</spring-security.version>
         <spring-session.version>3.4.3</spring-session.version>
         <spring-ws.version>4.0.13</spring-ws.version>
+        <reactor-bom.version>2025.0.6</reactor-bom.version>
+        <jackson-bom.version>2.22.0</jackson-bom.version>
+        <maven-clean-plugin.version>3.4.1</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <maven-install-plugin.version>3.1.3</maven-install-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     </properties>
 
     <modules>
@@ -71,7 +82,7 @@
         <module>ddd4j-monitor</module>
         <!-- 纯 DDD 轨道：集成 fuinorg ddd-4-java + cqrs-4-java，领域层零 MyBatis Plus 依赖 -->
         <module>ddd4j-ddd</module>
-        <module>ddd4j-components</module>
+        <module>ddd4j-extensions</module>
         <module>ddd4j-parent</module>
     </modules>
 

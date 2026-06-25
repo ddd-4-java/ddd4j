@@ -2,7 +2,6 @@ package io.ddd4j.boot.ddd.config;
 
 import lombok.Data;
 import lombok.Getter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * ddd4j-ddd 配置属性。
@@ -19,7 +18,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 3.4.x
  */
 @Data
-@ConfigurationProperties(prefix = "ddd4j.ddd")
+// @ConfigurationProperties(prefix = "ddd4j.ddd")
 public class DddProperties {
 
     /** 事件存储配置 */

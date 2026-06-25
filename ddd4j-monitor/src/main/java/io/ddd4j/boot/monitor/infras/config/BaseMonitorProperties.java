@@ -2,8 +2,6 @@ package io.ddd4j.boot.monitor.infras.config;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.logging.LogLevel;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
  * @公众号 架构师修行录
  */
 @Data
-@ConfigurationProperties(prefix = "base-monitor")
+// @ConfigurationProperties(prefix = "base-monitor")
 public class BaseMonitorProperties {
     private Log log = new Log();
 
@@ -71,7 +69,7 @@ public class BaseMonitorProperties {
             /**
              * 当前level 等级之上的都打印
              */
-            private LogLevel logLevel = LogLevel.ERROR;
+            private String logLevel = "ERROR";
 
             /**
              * 消息中有关键词才钉钉通知 逗号分割

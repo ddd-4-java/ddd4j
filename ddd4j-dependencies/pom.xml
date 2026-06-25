@@ -401,6 +401,7 @@
         <pdfbox.version>3.0.7</pdfbox.version>
         <perf4j.version>0.9.16</perf4j.version>
         <persistence-api.version>1.0.2</persistence-api.version>
+        <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
         <pf4j.version>3.15.0</pf4j.version>
         <pf4j-update.version>2.3.0</pf4j-update.version>
         <pf4j-spring.version>0.10.0</pf4j-spring.version>
@@ -615,20 +616,6 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- ddd4j-platform BOM（最先 import） -->
-            <dependency>
-                <groupId>io.ddd4j.platform</groupId>
-                <artifactId>ddd4j-platform-dependencies</artifactId>
-                <version>${ddd4j-platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j.platform</groupId>
-                <artifactId>ddd4j-commons-core</artifactId>
-                <version>${ddd4j-platform.version}</version>
-            </dependency>
-
             <!-- JUnit 子模块版本对齐（与 Spring Boot 3.4 / junit-jupiter.version 一致） -->
             <dependency>
                 <groupId>org.junit</groupId>
@@ -636,6 +623,36 @@
                 <version>${junit-jupiter.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+
+            
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+<!-- Core build / API deps (no Spring Boot) -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta.persistence-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.websocket</groupId>
+                <artifactId>jakarta.websocket-api</artifactId>
+                <version>${jakarta-websocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
             </dependency>
 
             <!-- Third Party -->

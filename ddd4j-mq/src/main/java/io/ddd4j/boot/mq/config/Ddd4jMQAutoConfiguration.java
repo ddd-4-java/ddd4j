@@ -12,10 +12,6 @@ import io.ddd4j.boot.mq.serialization.MQMessageSerialization;
 import io.ddd4j.boot.mq.spi.MQBrokerAdapter;
 import io.ddd4j.boot.mq.spi.MQBrokerAdapters;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,15 +21,14 @@ import java.util.List;
  * ddd4j 消息队列自动配置（契约层）：注册属性、发布器与监听器编排。
  */
 @Configuration
-@EnableConfigurationProperties(Ddd4jMQProperties.class)
-@ConditionalOnProperty(prefix = "ddd4j.mq", name = "enabled", havingValue = "true")
+// @EnableConfigurationProperties(Ddd4jMQProperties.class)
 public class Ddd4jMQAutoConfiguration {
 
     /**
      * 默认 JSON 序列化 Bean。
      */
     @Bean
-    @ConditionalOnMissingBean(MQMessageSerialization.class)
+    // @ConditionalOnMissingBean(MQMessageSerialization.class)
     public MQMessageSerialization mqMessageSerialization() {
         return new JsonMQMessageSerialization();
     }
@@ -42,8 +37,8 @@ public class Ddd4jMQAutoConfiguration {
      * 注册领域事件发布 Bean。
      */
     @Bean
-    @ConditionalOnBean(MQBrokerAdapter.class)
-    @ConditionalOnMissingBean(MQEventPublisher.class)
+    // @ConditionalOnBean(MQBrokerAdapter.class)
+    // @ConditionalOnMissingBean(MQEventPublisher.class)
     public MQEventPublisher mqEventPublisher(List<MQBrokerAdapter> adapters, Ddd4jMQProperties props) {
         return MQBrokerAdapters.createPublisher(adapters, props);
     }
@@ -52,7 +47,7 @@ public class Ddd4jMQAutoConfiguration {
      * 监听器定义注册表（由 BeanPostProcessor 填充）。
      */
     @Bean
-    @ConditionalOnBean(MQBrokerAdapter.class)
+    // @ConditionalOnBean(MQBrokerAdapter.class)
     public MQListenerDefinitionRegistry mqListenerDefinitionRegistry() {
         return new MQListenerDefinitionRegistry();
     }
@@ -61,7 +56,7 @@ public class Ddd4jMQAutoConfiguration {
      * 基于 BeanPostProcessor 发现 {@code @MQEventListener} 方法。
      */
     @Bean
-    @ConditionalOnBean(MQBrokerAdapter.class)
+    // @ConditionalOnBean(MQBrokerAdapter.class)
     public MQListenerBeanPostProcessor mqListenerBeanPostProcessor(
             MQListenerDefinitionRegistry registry,
             Ddd4jMQProperties props) {
@@ -72,7 +67,7 @@ public class Ddd4jMQAutoConfiguration {
      * 监听器定义访问门面（读取 Registry）。
      */
     @Bean
-    @ConditionalOnBean(MQBrokerAdapter.class)
+    // @ConditionalOnBean(MQBrokerAdapter.class)
     public MQListenerScanner mqListenerScanner(MQListenerDefinitionRegistry registry) {
         return new MQListenerScanner(registry);
     }
@@ -81,7 +76,7 @@ public class Ddd4jMQAutoConfiguration {
      * 应用就绪后动态注册消费端点到 {@link MQBrokerAdapter}。
      */
     @Bean
-    @ConditionalOnBean(MQBrokerAdapter.class)
+    // @ConditionalOnBean(MQBrokerAdapter.class)
     public MQListenerRegistrar mqListenerRegistrar(
             MQListenerScanner scanner,
             List<MQBrokerAdapter> adapters,

@@ -221,7 +221,7 @@ public class RobotLogbackAppendService {
     private ThresholdFilter buildThresholdFilter() {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
         ThresholdFilter thresholdFilter = new ThresholdFilter();
-        thresholdFilter.setLevel(config.getLogLevel().name());
+        thresholdFilter.setLevel(config.getLogLevel());
         thresholdFilter.start();
         return thresholdFilter;
     }

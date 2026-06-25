@@ -1,13 +1,12 @@
 package io.ddd4j.boot.web.config;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@ConfigurationProperties(prefix = "base-web")
+// @ConfigurationProperties(prefix = "base-web")
 public class BaseWebProperties {
     private Log log = new Log();
     private Mvc mvc = new Mvc();

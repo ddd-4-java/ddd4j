@@ -1,10 +1,5 @@
 package io.ddd4j.boot.data.config;
 
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,16 +22,16 @@ import javax.sql.DataSource;
  *   <li>{@link BlockAttackInnerInterceptor} — 防全表攻击（阻止无 WHERE 的 UPDATE/DELETE）</li>
  * </ul>
  *
- * <p>业务项目可通过 {@code @ConditionalOnMissingBean} 覆盖此配置，
+ * <p>业务项目可通过 {@code // @ConditionalOnMissingBean} 覆盖此配置，
  * 自行注册 {@link MybatisPlusInterceptor}（如需要 TenantLineInnerInterceptor 等额外插件）。
  *
  * @author wandl
  * @since 3.4.x
  */
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(BaseDataProperties.class)
-@ConditionalOnBean(DataSource.class)
-@AutoConfigureAfter({DataSourceAutoConfiguration.class})
+// @EnableConfigurationProperties(BaseDataProperties.class)
+// @ConditionalOnBean(DataSource.class)
+// @AutoConfigureAfter({DataSourceAutoConfiguration.class})
 public class BaseDataConfig {
 
     /**
@@ -46,7 +41,7 @@ public class BaseDataConfig {
      * 业务项目可覆盖此 Bean 添加更多 InnerInterceptor（如 TenantLineInnerInterceptor）。
      */
     @Bean
-    @ConditionalOnMissingBean(MybatisPlusInterceptor.class)
+    // @ConditionalOnMissingBean(MybatisPlusInterceptor.class)
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 分页（默认 MySQL 方言，业务项目可覆盖此 Bean 指定其他 DbType）

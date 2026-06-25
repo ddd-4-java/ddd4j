@@ -8,36 +8,39 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.env.PropertySourceLoader;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 自定义资源文件读取，优先级最低
- *
+ * 自定义资源文件读取，优先级最低（纯 Spring Framework，不依赖 Spring Boot PropertySourceLoader）。
  */
 @Slf4j
 public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor, InitializingBean, Ordered {
 
     private final ResourceLoader resourceLoader;
-    private final List<PropertySourceLoader> propertySourceLoaders;
 
     public BasePropertySourcePostProcessor() {
         this.resourceLoader = new DefaultResourceLoader();
-        this.propertySourceLoaders = SpringFactoriesLoader.loadFactories(PropertySourceLoader.class, getClass().getClassLoader());
     }
 
     @Override
@@ -45,12 +48,10 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
         log.info("BasePropertySourcePostProcessor process @BasePropertySource bean.");
         Map<String, Object> beansWithAnnotation = beanFactory.getBeansWithAnnotation(BasePropertySource.class);
         Set<Map.Entry<String, Object>> beanEntrySet = beansWithAnnotation.entrySet();
-        // 没有 @BasePropertySource 注解，跳出
         if (beanEntrySet.isEmpty()) {
             log.warn("Not found @BasePropertySource on spring bean class.");
             return;
         }
-        // 组装资源
         List<PropertyFile> propertyFileList = new ArrayList<>();
         for (Map.Entry<String, Object> entry : beanEntrySet) {
             Class<?> beanClass = ClassUtils.getUserClass(entry.getValue());
@@ -58,78 +59,67 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
             if (propertySource == null) {
                 continue;
             }
-            int order = propertySource.order();
-            boolean loadActiveProfile = propertySource.loadActiveProfile();
-            String location = propertySource.value();
-            propertyFileList.add(new PropertyFile(order, location, loadActiveProfile));
+            propertyFileList.add(new PropertyFile(propertySource.order(), propertySource.value(), propertySource.loadActiveProfile()));
         }
 
-        // 装载 PropertySourceLoader
-        Map<String, PropertySourceLoader> loaderMap = new HashMap<>(16);
-        for (PropertySourceLoader loader : propertySourceLoaders) {
-            String[] loaderExtensions = loader.getFileExtensions();
-            for (String extension : loaderExtensions) {
-                loaderMap.put(extension, loader);
-            }
-        }
-        // 去重，排序
-        List<PropertyFile> sortedPropertyList = propertyFileList.stream()
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList());
+        List<PropertyFile> sortedPropertyList = propertyFileList.stream().distinct().sorted().collect(Collectors.toList());
         ConfigurableEnvironment environment = beanFactory.getBean(ConfigurableEnvironment.class);
         MutablePropertySources propertySources = environment.getPropertySources();
 
-        // 只支持 activeProfiles，没有必要支持 spring.profiles.include。
         String[] activeProfiles = environment.getActiveProfiles();
         List<PropertySource<?>> propertySourceList = new ArrayList<>();
         for (String profile : activeProfiles) {
             for (PropertyFile propertyFile : sortedPropertyList) {
-                // 不加载 ActiveProfile 的配置文件
                 if (!propertyFile.loadActiveProfile) {
                     continue;
                 }
                 String extension = propertyFile.getExtension();
-                PropertySourceLoader loader = loaderMap.get(extension);
-                if (loader == null) {
-                    throw new IllegalArgumentException("Can't find PropertySourceLoader for PropertySource extension:" + extension);
-                }
                 String location = propertyFile.getLocation();
                 String filePath = StringUtils.stripFilenameExtension(location);
                 String profiledLocation = filePath + "-" + profile + "." + extension;
                 Resource resource = resourceLoader.getResource(profiledLocation);
-                loadPropertySource(profiledLocation, resource, loader, propertySourceList);
+                loadPropertySource(profiledLocation, resource, extension, propertySourceList);
             }
         }
-        // 本身的 Resource
         for (PropertyFile propertyFile : sortedPropertyList) {
             String extension = propertyFile.getExtension();
-            PropertySourceLoader loader = loaderMap.get(extension);
             String location = propertyFile.getLocation();
             Resource resource = resourceLoader.getResource(location);
-            loadPropertySource(location, resource, loader, propertySourceList);
+            loadPropertySource(location, resource, extension, propertySourceList);
         }
-        // 转存
         for (PropertySource<?> propertySource : propertySourceList) {
             propertySources.addLast(propertySource);
         }
     }
 
-    private static void loadPropertySource(String location, Resource resource,
-                                           PropertySourceLoader loader,
+    private static void loadPropertySource(String location, Resource resource, String extension,
                                            List<PropertySource<?>> sourceList) {
-        if (resource.exists()) {
-            String name = "basePropertySource: [" + location + "]";
-            try {
-                sourceList.addAll(loader.load(name, resource));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        if (!resource.exists()) {
+            return;
+        }
+        String name = "basePropertySource: [" + location + "]";
+        try {
+            Properties properties;
+            if ("yml".equals(extension) || "yaml".equals(extension)) {
+                YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+                factory.setResources(resource);
+                properties = factory.getObject();
+                if (properties == null) {
+                    properties = new Properties();
+                }
+            } else if ("properties".equals(extension)) {
+                properties = PropertiesLoaderUtils.loadProperties(resource);
+            } else {
+                throw new IllegalArgumentException("Unsupported property file extension: " + extension);
             }
+            sourceList.add(new PropertiesPropertySource(name, properties));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         log.info("BasePropertySourcePostProcessor init.");
     }
 
