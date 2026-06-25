@@ -1,6 +1,7 @@
 package io.ddd4j.mq.kafka.consumer;
 
 import io.ddd4j.mq.kafka.KafkaEnhanceProperties;
+import io.ddd4j.mq.kafka.config.KafkaConnectionProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -31,10 +32,10 @@ public class KafkaConsumerTemplate implements DisposableBean {
     private final Map<String, KafkaConsumer<String, String>> CONSUMER_MAP = new ConcurrentHashMap<>();
     // 用于保护消费者创建和移除操作的锁
     private final Map<String, Lock> CONSUMER_LOCKS = new ConcurrentHashMap<>();
-    private final KafkaProperties properties;
+    private final KafkaConnectionProperties properties;
     private final KafkaEnhanceProperties enhanceProperties;
 
-    public KafkaConsumerTemplate(KafkaProperties properties, KafkaEnhanceProperties enhanceProperties) {
+    public KafkaConsumerTemplate(KafkaConnectionProperties properties, KafkaEnhanceProperties enhanceProperties) {
         this.properties = properties;
         this.enhanceProperties = enhanceProperties;
     }

@@ -1,5 +1,6 @@
 package io.ddd4j.mq.kafka.consumer;
 
+import io.ddd4j.mq.kafka.config.KafkaConnectionProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.kafka.clients.admin.*;
@@ -11,13 +12,11 @@ import java.util.*;
 @Slf4j
 public class KafkaAdminTemplate {
 
-    private final KafkaProperties properties;
-    private final SslBundles sslBundles;
+    private final KafkaConnectionProperties properties;
     private volatile AdminClient adminClient;
 
-    public KafkaAdminTemplate(KafkaProperties properties, SslBundles sslBundles) {
+    public KafkaAdminTemplate(KafkaConnectionProperties properties) {
         this.properties = properties;
-        this.sslBundles = sslBundles;
     }
 
     /**
@@ -26,7 +25,7 @@ public class KafkaAdminTemplate {
      * @return KafkaProducer 的配置参数
      */
     public Map<String, Object> defaultAdminConfigs() {
-        Map<String, Object> props = new HashMap<>(properties.buildAdminProperties(sslBundles));
+        Map<String, Object> props = new HashMap<>(properties.buildAdminProperties());
         // key 和 value 的序列化方式
         props.putIfAbsent(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.putIfAbsent(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);

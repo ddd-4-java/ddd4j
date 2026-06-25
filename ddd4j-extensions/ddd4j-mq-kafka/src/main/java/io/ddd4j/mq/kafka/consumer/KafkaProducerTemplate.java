@@ -1,5 +1,6 @@
 package io.ddd4j.mq.kafka.consumer;
 
+import io.ddd4j.mq.kafka.config.KafkaConnectionProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -26,9 +27,9 @@ import java.util.function.Supplier;
 @Slf4j
 public class KafkaProducerTemplate implements DisposableBean {
 
-    private final KafkaProperties properties;
+    private final KafkaConnectionProperties properties;
 
-    public KafkaProducerTemplate(KafkaProperties properties) {
+    public KafkaProducerTemplate(KafkaConnectionProperties properties) {
         this.properties = properties;
     }
 
@@ -110,7 +111,7 @@ public class KafkaProducerTemplate implements DisposableBean {
     }
 
     public String getDefaultTopic() {
-        return this.properties.getTemplate().getDefaultTopic();
+        return this.properties.getDefaultTopic();
     }
 
     /**
@@ -141,7 +142,7 @@ public class KafkaProducerTemplate implements DisposableBean {
         DefaultKafkaProducerFactory<String, String> factory = new DefaultKafkaProducerFactory<>(propsMap);
 
         // 设置事务ID前缀
-        String transactionIdPrefix = this.properties.getProducer().getTransactionIdPrefix();
+        String transactionIdPrefix = this.properties.getTransactionIdPrefix();
         if (transactionIdPrefix != null) {
             factory.setTransactionIdPrefix(transactionIdPrefix);
         } else {

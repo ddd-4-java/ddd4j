@@ -418,6 +418,7 @@
         <proxool.version>0.9.1</proxool.version>
         <pulsar.version>4.1.2</pulsar.version>
         <pulsar-reactive.version>0.7.0</pulsar-reactive.version>
+        <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <qcloud-cos-api.version>5.6.259</qcloud-cos-api.version>
         <qcloud-cos-api-bundle.version>5.6.246.3</qcloud-cos-api-bundle.version>
         <qiniu-java-sdk.version>7.19.0</qiniu-java-sdk.version>
@@ -503,6 +504,7 @@
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
         <spring-kafka.version>3.3.11</spring-kafka.version>
+        <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
         <!-- 第三方 Boot starter 版本（Phase 2 迁出 boot 轨前暂 pin） -->
         <spring-boot-starter-mybatis.version>3.0.5</spring-boot-starter-mybatis.version>
         <spring-boot-starter-ip2region.version>3.3.x.20241003.RELEASE</spring-boot-starter-ip2region.version>
@@ -5985,6 +5987,36 @@
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>spring-javassist</artifactId>
                 <version>${spring-javassist.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-api -->
+            <dependency>
+                <groupId>org.apache.pulsar</groupId>
+                <artifactId>pulsar-client-api</artifactId>
+                <version>${pulsar.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.pulsar/spring-pulsar -->
+            <dependency>
+                <groupId>org.springframework.pulsar</groupId>
+                <artifactId>spring-pulsar</artifactId>
+                <version>${spring-pulsar.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-messaging</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/jakarta.jms/jakarta.jms-api -->
+            <dependency>
+                <groupId>jakarta.jms</groupId>
+                <artifactId>jakarta.jms-api</artifactId>
+                <version>${jakarta.jms-api.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework/spring-jms -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jms</artifactId>
+                <version>${spring-framework.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
             <dependency>
