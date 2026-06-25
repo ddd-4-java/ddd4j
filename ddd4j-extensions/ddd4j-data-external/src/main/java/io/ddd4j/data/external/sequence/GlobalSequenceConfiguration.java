@@ -4,7 +4,7 @@ package io.ddd4j.data.external.sequence;
 import cn.hutool.core.util.IdUtil;
 import io.ddd4j.data.external.SequenceProperties;
 import io.ddd4j.core.sequence.Sequence;
-import jakarta.annotation.PreDestroy;
+import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;

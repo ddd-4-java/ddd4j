@@ -3,9 +3,9 @@ package io.ddd4j.mq.activemq.acknowledgment;
 import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
 import io.ddd4j.mq.acknowledgment.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.Session;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;

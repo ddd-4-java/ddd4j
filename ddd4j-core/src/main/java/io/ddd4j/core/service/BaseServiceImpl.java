@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.dozermapper.core.Mapper;
 import io.ddd4j.core.entity.PaginationEntity;
 import io.ddd4j.core.mybatis.mapper.BaseMapper;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;

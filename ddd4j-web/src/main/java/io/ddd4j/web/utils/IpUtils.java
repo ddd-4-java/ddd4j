@@ -2,7 +2,7 @@ package io.ddd4j.web.utils;
 
 import lombok.experimental.UtilityClass;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 @UtilityClass
 public class IpUtils {

@@ -1,7 +1,7 @@
 package io.ddd4j.core.util;
 
 import io.ddd4j.core.XHeaders;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.biz.utils.StringUtils;
 import org.springframework.core.io.buffer.DataBuffer;

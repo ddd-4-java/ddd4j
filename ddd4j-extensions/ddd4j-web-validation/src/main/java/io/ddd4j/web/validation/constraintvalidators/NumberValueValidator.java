@@ -2,8 +2,8 @@ package io.ddd4j.web.validation.constraintvalidators;
 
 
 import io.ddd4j.web.validation.constraints.NumberValue;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

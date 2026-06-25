@@ -1,6 +1,6 @@
 package io.ddd4j.extension.pf4j.point.authc;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import org.pf4j.PluginRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

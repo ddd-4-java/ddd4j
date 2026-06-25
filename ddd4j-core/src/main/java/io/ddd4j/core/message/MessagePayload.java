@@ -1,7 +1,7 @@
 package io.ddd4j.core.message;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import java.awt.TrayIcon.MessageType;
 import java.io.Serializable;

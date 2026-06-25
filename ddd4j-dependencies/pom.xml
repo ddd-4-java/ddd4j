@@ -129,12 +129,12 @@
         <commons-vfs2.version>2.10.0</commons-vfs2.version>
         <checker-framework.version>3.52.0</checker-framework.version>
         <contiperf.version>2.3.4</contiperf.version>
-        <cos.version>6.0.x.20241003.RELEASE</cos.version>
+        <cos.version>2020.4</cos.version>
         <curator.version>5.9.0</curator.version>
         <cronet.version>119.6045.31</cronet.version>
         <cssparser.version>0.9.30</cssparser.version>
         <cxf.version>4.2.2</cxf.version>
-        <cxf-rt-javassist.version>4.0.x.20241003.RELEASE</cxf-rt-javassist.version>
+        <cxf-rt-javassist.version>1.0.3.RELEASE</cxf-rt-javassist.version>
         <db2jcc.version>12.1.4.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
         <derby.version>10.17.1.0</derby.version>
@@ -148,7 +148,7 @@
         <dozer-core.version>6.5.2</dozer-core.version>
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
-        <dozer-extra-converters.version>7.0.x.20241003.RELEASE</dozer-extra-converters.version>
+        <dozer-extra-converters.version>1.0.2.RELEASE</dozer-extra-converters.version>
         <druid.version>1.2.28</druid.version>
         <druid-metrics.version>1.0.2.RELEASE</druid-metrics.version>
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
@@ -229,7 +229,7 @@
         <httpconn.version>1.0.1.RELEASE</httpconn.version>
         <httputils.version>1.0.0.RELEASE</httputils.version>
         <htmlparser.version>2.1</htmlparser.version>
-        <hitool.version>3.0.x.20241003.RELEASE</hitool.version>
+        <hitool.version>1.0.2.RELEASE</hitool.version>
         <hive.version>4.2.0</hive.version>
         <hutool.version>5.8.41</hutool.version>
         <hystrix.version>1.5.18</hystrix.version>
@@ -343,9 +343,9 @@
         <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
         <mybatis-plus.version>3.5.8</mybatis-plus.version> <!-- JDK 1.8 能使用的最高版本（ddd4j-boot 2.7.x 对齐） -->
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
-        <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
+        <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
         <mybatis-plus-enhance.version>2.7.x.20251205-SNAPSHOT</mybatis-plus-enhance.version>
-        <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
+        <mybatis-plus-ext.version>1.7.4-RELEASE</mybatis-plus-ext.version>
         <mybatis-r2dbc.version>3.1.0.RELEASE</mybatis-r2dbc.version>
         <mybatis-spring.version>3.0.5</mybatis-spring.version>
         <mybatis-mate.version>1.3.6-sp2</mybatis-mate.version>
@@ -502,7 +502,7 @@
         <spring-framework.version>6.2.19</spring-framework.version>
         <springdoc.version>2.7.0</springdoc.version>
         <springfox.version>3.0.0</springfox.version>
-        <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
+        <spring-biz.version>1.1.5.RELEASE</spring-biz.version>
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
         <spring-kafka.version>3.3.11</spring-kafka.version>

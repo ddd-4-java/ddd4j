@@ -1,8 +1,8 @@
 package io.ddd4j.mq.activemq.acknowledgment;
 
 import io.ddd4j.mq.contract.MQMessage;
-import jakarta.jms.Message;
-import jakarta.jms.Session;
+import javax.jms.Message;
+import javax.jms.Session;
 import org.springframework.messaging.MessageHeaders;
 
 import java.util.Objects;

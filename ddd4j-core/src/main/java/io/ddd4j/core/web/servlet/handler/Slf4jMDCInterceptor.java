@@ -2,8 +2,8 @@ package io.ddd4j.core.web.servlet.handler;
 
 import io.ddd4j.core.XHeaders;
 import io.ddd4j.core.sequence.Sequence;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
 import org.springframework.biz.utils.WebUtils;
 import org.springframework.web.servlet.HandlerInterceptor;

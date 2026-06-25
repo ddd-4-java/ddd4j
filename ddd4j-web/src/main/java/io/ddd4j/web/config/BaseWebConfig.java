@@ -26,7 +26,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import java.nio.charset.Charset;
 import java.util.List;
 
