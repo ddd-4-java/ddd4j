@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+io.ddd4j.boot.cmpt.akka.AkkaAutoConfiguration

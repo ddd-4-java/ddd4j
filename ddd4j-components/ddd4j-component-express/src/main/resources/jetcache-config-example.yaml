@@ -1,0 +1,71 @@
+# JetCache 多级缓存配置示例
+# 
+# 使用说明：
+# 1. 将以下配置添加到 application.yml 或 application.properties
+# 2. 确保项目中已添加 jetcache-spring-boot-starter 依赖
+# 3. 根据实际情况调整 Redis 连接配置
+
+jetcache:
+  # 统计信息输出间隔（分钟）
+  statIntervalMinutes: 15
+  # 是否在缓存名称中包含区域名称
+  areaInCacheName: false
+  # 隐藏的包名（用于日志输出）
+  hidePackages: io.ddd4j
+  
+  # 本地缓存配置（Caffeine）
+  local:
+    default:
+      # 缓存类型：caffeine
+      type: caffeine
+      # 最大容量
+      limit: 1000
+      # Key转换器：fastjson（需要 fastjson 依赖）或 kryo
+      keyConvertor: fastjson
+      # 序列化器：kryo（需要 kryo 依赖）或 fastjson
+      valueEncoder: kryo
+      valueDecoder: kryo
+  
+  # 远程缓存配置（Redis）
+  remote:
+    default:
+      # 缓存类型：redis
+      type: redis
+      # Redis 服务器地址
+      host: localhost
+      # Redis 服务器端口
+      port: 6379
+      # Redis 密码（如果有）
+      password: 
+      # Redis 数据库索引
+      database: 0
+      # 连接超时时间（毫秒）
+      connectionTimeout: 5000
+      # 读取超时时间（毫秒）
+      soTimeout: 5000
+      # Key转换器
+      keyConvertor: fastjson
+      # 序列化器
+      valueEncoder: kryo
+      valueDecoder: kryo
+      # 连接池配置
+      poolConfig:
+        minIdle: 5
+        maxIdle: 20
+        maxTotal: 50
+
+# 如果使用 Spring Boot 的 Redis 配置，也可以这样配置：
+# spring:
+#   redis:
+#     host: localhost
+#     port: 6379
+#     password: 
+#     database: 0
+# 
+# jetcache:
+#   remote:
+#     default:
+#       type: redis
+#       # 使用 Spring Boot 的 Redis 配置
+#       # host、port、password 等可以从 spring.redis 中读取
+

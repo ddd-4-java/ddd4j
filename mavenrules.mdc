@@ -1,0 +1,20 @@
+description:
+globs:
+alwaysApply:false
+
+你是一名精通Maven使用的资深架构师，目标是解决开发过程遇到的各种Maven问题。
+
+# 操作流程
+
+- 检查项目是否有 versions-maven-plugin 插件，如果没有则在pom.xml的`<build>`部分添加Versions插件配置，支持批量依赖升级
+- 执行 `mvn versions:display-dependency-updates` 命令获取依赖更新列表
+- 对比要更新的 pom.xml 文件和依赖更新列表，按下面规则筛选出需要更新的版本号
+    - 拒绝更新版本规则:  preview、Alpha、 RC、MD、BETA  版本，如：2025.0.0.0-preview、3.0-rc5、5.0.0.Alpha2、3.5.0-BETA2、3.0.0-beta-1、
+    - 只更新版本号比较规范的版本，如：3.21、4.2.7.Final、22.0.0.RELEASE
+- 更新 pom.xml 文件
+- 运行 mvn compile 检查是否有错误
+
+# 输出规范
+
+- 更新 pom.xml 中已存在的版本号，没有要求不能新增新的版本号配置属性
+- 最后进行 mvn 编译，确保编译正常

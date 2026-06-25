@@ -1,0 +1,39 @@
+package io.ddd4j.boot.mq.registry;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+/**
+ * {@link MQEventListener} 监听器定义访问门面。
+ * <p>
+ * 定义由 {@link MQListenerBeanPostProcessor} 在 Bean 初始化阶段写入 {@link MQListenerDefinitionRegistry}，
+ * 本类仅提供只读访问，替代 legacy 全容器遍历扫描。
+ */
+@Slf4j
+@RequiredArgsConstructor
+public class MQListenerScanner {
+
+    private final MQListenerDefinitionRegistry registry;
+
+    /**
+     * 返回 BeanPostProcessor 阶段已登记的监听器定义。
+     *
+     * @return 不可变监听器定义列表
+     */
+    public List<MQListenerDefinition> scan() {
+        List<MQListenerDefinition> definitions = registry.getDefinitions();
+        log.info("Resolved {} @MQEventListener definition(s) from registry", definitions.size());
+        return definitions;
+    }
+
+    /**
+     * 校验监听器定义非空且方法可访问。
+     *
+     * @param definition 监听器定义
+     */
+    public static void prepareMethod(MQListenerDefinition definition) {
+        MQListenerBeanPostProcessor.prepareMethod(definition);
+    }
+}

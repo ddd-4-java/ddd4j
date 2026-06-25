@@ -1,0 +1,19 @@
+package io.ddd4j.boot.cmpt.pf4j.point.authc;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.pf4j.ExtensionPoint;
+import org.pf4j.PluginRuntimeException;
+
+import java.util.Map;
+
+public interface AuthcExtensionPoint extends ExtensionPoint {
+
+    String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
+
+    void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
+
+    void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
+
+    Object handleResult(Object res) throws PluginRuntimeException;
+
+}

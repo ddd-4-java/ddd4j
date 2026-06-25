@@ -1,0 +1,111 @@
+package io.ddd4j.boot.mq.registry;
+
+import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+/**
+ * 绑定命名工具：将 topic + tag 语义映射为 camelCase binding / 函数 Bean 名。
+ * <p>
+ * 示例：{@code order.paid} + {@code notify} → {@code orderPaidNotify}
+ */
+public final class MQBindingNaming {
+
+    private MQBindingNaming() {
+    }
+
+    /**
+     * 由 topic 与 tag 生成 camelCase binding 名。
+     *
+     * @param topic 主题，如 {@code order.paid}
+     * @param tag   标签，如 {@code notify}；通配符 {@code *} 时不追加 tag 段
+     * @return binding 名
+     */
+    public static String bindingName(String topic, String tag) {
+        String base = toCamelCase(normalizeTopic(topic));
+        if (!StringUtils.hasText(tag) || "*".equals(tag.trim())) {
+            return base.isEmpty() ? "default" : base;
+        }
+        String tagPart = toCamelCase(normalizeTag(tag));
+        if (tagPart.isEmpty()) {
+            return base.isEmpty() ? "default" : base;
+        }
+        return base + capitalize(tagPart);
+    }
+
+    /**
+     * 生成 Spring Cloud Stream 入站 binding 名。
+     *
+     * @param bindingName 函数 Bean / binding 基名
+     * @return 如 {@code orderPaidNotify-in-0}
+     */
+    public static String inboundBindingName(String bindingName) {
+        return bindingName + "-in-0";
+    }
+
+    /**
+     * 生成 Spring Cloud Stream 出站 binding 名。
+     *
+     * @param bindingName 函数 Bean / binding 基名
+     * @return 如 {@code orderPaidNotify-out-0}
+     */
+    public static String outboundBindingName(String bindingName) {
+        return bindingName + "-out-0";
+    }
+
+    /**
+     * 规范化 topic：去除首尾空白。
+     */
+    private static String normalizeTopic(String topic) {
+        return topic == null ? "" : topic.trim();
+    }
+
+    /**
+     * 规范化 tag：复合表达式取首段（{@code A || B} → {@code A}）。
+     */
+    private static String normalizeTag(String tag) {
+        if (!StringUtils.hasText(tag)) {
+            return "";
+        }
+        String trimmed = tag.trim();
+        int split = trimmed.indexOf("||");
+        if (split > 0) {
+            return trimmed.substring(0, split).trim();
+        }
+        return trimmed;
+    }
+
+    /**
+     * 将 {@code order.paid}、{@code order-paid}、{@code order_paid} 转为 {@code orderPaid}。
+     */
+    private static String toCamelCase(String raw) {
+        if (!StringUtils.hasText(raw)) {
+            return "";
+        }
+        String[] parts = raw.split("[._\\-]+");
+        if (parts.length == 0) {
+            return "";
+        }
+        String head = parts[0].toLowerCase(Locale.ROOT);
+        if (parts.length == 1) {
+            return head;
+        }
+        return head + Arrays.stream(parts, 1, parts.length)
+                .filter(StringUtils::hasText)
+                .map(MQBindingNaming::capitalize)
+                .collect(Collectors.joining());
+    }
+
+    /**
+     * 首字母大写，其余保持原样（已为小写时符合 camelCase 拼接规则）。
+     */
+    private static String capitalize(String segment) {
+        if (!StringUtils.hasText(segment)) {
+            return "";
+        }
+        String lower = segment.toLowerCase(Locale.ROOT);
+        return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
+    }
+}

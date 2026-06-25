@@ -1,0 +1,2 @@
+io.ddd4j.boot.cmpt.mqtt.mica.autoconfigure.Ddd4jMicaMqttMQAutoConfiguration
+io.ddd4j.boot.cmpt.mqtt.mica.bridge.autoconfigure.Ddd4jMicaMqttSubscribeGuardAutoConfiguration
