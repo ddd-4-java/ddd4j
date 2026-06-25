@@ -341,10 +341,10 @@
         <mssql-jdbc.version>12.10.2.jre11</mssql-jdbc.version>
         <mybatis.version>3.5.19</mybatis.version>
         <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
-        <mybatis-plus.version>3.5.5</mybatis-plus.version> <!-- 这是JDK 1.8兼容的稳定版本 -->
+        <mybatis-plus.version>3.5.8</mybatis-plus.version> <!-- JDK 1.8 能使用的最高版本（ddd4j-boot 2.7.x 对齐） -->
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
-        <mybatis-plus-enhance.version>3.3.x.20250930-SNAPSHOT</mybatis-plus-enhance.version>
+        <mybatis-plus-enhance.version>2.7.x.20251205-SNAPSHOT</mybatis-plus-enhance.version>
         <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
         <mybatis-r2dbc.version>3.1.0.RELEASE</mybatis-r2dbc.version>
         <mybatis-spring.version>3.0.5</mybatis-spring.version>
