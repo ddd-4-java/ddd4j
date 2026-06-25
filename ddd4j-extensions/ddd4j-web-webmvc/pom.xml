@@ -40,8 +40,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- For Spring Web Starter -->
-<!-- For Spring Tx -->
+        <!-- For Spring Web MVC -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <!-- For Spring Tx -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>

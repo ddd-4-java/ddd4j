@@ -46,20 +46,6 @@ public class DefaultWebFluxConfiguration {
         return new GlobalExceptionHandler();
     }
 
-	/*
-	@Bean
-	@Order(-2)
-	public ErrorWebExceptionHandler errorWebExceptionHandler(ErrorAttributes errorAttributes,
-			ResourceProperties resourceProperties, ObjectProvider<ViewResolver> viewResolvers,
-			ServerCodecConfigurer serverCodecConfigurer, ApplicationContext applicationContext) {
-		GlobalErrorWebExceptionHandler exceptionHandler = new GlobalErrorWebExceptionHandler(errorAttributes,
-				resourceProperties,  applicationContext);
-		exceptionHandler.setViewResolvers(viewResolvers.orderedStream().collect(Collectors.toList()));
-		exceptionHandler.setMessageWriters(serverCodecConfigurer.getWriters());
-		exceptionHandler.setMessageReaders(serverCodecConfigurer.getReaders());
-		return exceptionHandler;
-	}*/
-
     @Bean
     public DefaultWebFluxConfigurer defaultWebFluxConfigurer(LocalResourceProperteis localResourceProperteis) {
         return new DefaultWebFluxConfigurer(localResourceProperteis);

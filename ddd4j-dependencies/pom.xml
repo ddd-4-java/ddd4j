@@ -5988,6 +5988,44 @@
                 <artifactId>spring-javassist</artifactId>
                 <version>${spring-javassist.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework/spring-webflux -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webflux</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <!-- Spring Data BOM（Redis Stream 等扩展模块） -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-bom</artifactId>
+                <version>${spring-data-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.amqp/spring-amqp -->
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-amqp</artifactId>
+                <version>${spring-amqp.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit -->
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-rabbit</artifactId>
+                <version>${spring-amqp.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>${rabbit-amqp-client.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-api -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>

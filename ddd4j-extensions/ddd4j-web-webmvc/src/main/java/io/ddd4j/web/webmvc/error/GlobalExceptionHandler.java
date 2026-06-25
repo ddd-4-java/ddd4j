@@ -63,7 +63,6 @@ import java.util.*;
  * 异常增强类型：NullPointerException,RunTimeException,ClassCastException,
  * NoSuchMethodException,IOException,IndexOutOfBoundsException
  */
-@org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean(annotation = org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean.class)
 @ControllerAdvice
 @ResponseBody
 @Slf4j
