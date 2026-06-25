@@ -1,17 +1,24 @@
 package io.ddd4j.mq.mqtt;
 
-import io.ddd4j.mq.mqtt.autoconfigure.Ddd4jMqttMQAutoConfiguration;
 import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.mq.mqtt.autoconfigure.Ddd4jMqttMQAutoConfiguration;
+import io.ddd4j.mq.mqtt.config.Ddd4jMqttProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -21,11 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * MQTT 发布路径 Testcontainers 冒烟集成测试（Eclipse Mosquitto）。
- * <p>
- * 使用 {@link GenericContainer} + {@code eclipse-mosquitto:2}，端口 1883。
+ * MQTT 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
  */
-@SpringBootTest(classes = MqttContainerIT.TestApplication.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {
+        Ddd4jMQPropertiesConfiguration.class,
+        MqttContainerIT.MqttPropertiesConfiguration.class,
+        Ddd4jMqttMQAutoConfiguration.class
+})
 @EnabledIf("io.ddd4j.mq.mqtt.MqttContainerIT#isDockerAvailable")
 class MqttContainerIT {
 
@@ -87,12 +97,23 @@ class MqttContainerIT {
                 MQDestination.of("smoke", "ping", "it")));
     }
 
-    @SpringBootApplication
-    @Import({
-            io.ddd4j.mq.config.Ddd4jMQAutoConfiguration.class,
-            Ddd4jMqttMQAutoConfiguration.class
-    })
-    static class TestApplication {
+    /**
+     * MQTT 模块属性绑定（替代 Boot {@code @EnableConfigurationProperties}）。
+     */
+    @Configuration(proxyBeanMethods = false)
+    static class MqttPropertiesConfiguration {
+
+        /**
+         * 从 Environment 绑定 {@code ddd4j.mq.mqtt.*}。
+         */
+        @Bean
+        Ddd4jMqttProperties ddd4jMqttProperties(Environment environment) {
+            Ddd4jMqttProperties properties = new Ddd4jMqttProperties();
+            properties.setUrl(environment.getProperty("ddd4j.mq.mqtt.url", "tcp://127.0.0.1:1883"));
+            properties.setCleanSession(Boolean.parseBoolean(
+                    environment.getProperty("ddd4j.mq.mqtt.clean-session", "true")));
+            return properties;
+        }
     }
 
     static class DemoPublishEvent extends MQEvent {

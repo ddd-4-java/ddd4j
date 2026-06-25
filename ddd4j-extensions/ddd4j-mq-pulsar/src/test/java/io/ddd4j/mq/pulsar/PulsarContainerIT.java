@@ -1,18 +1,26 @@
 package io.ddd4j.mq.pulsar;
 
-import io.ddd4j.mq.pulsar.autoconfigure.Ddd4jPulsarMQAutoConfiguration;
 import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.pulsar.autoconfigure.Ddd4jPulsarMQAutoConfiguration;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.pulsar.core.DefaultPulsarClientFactory;
+import org.springframework.pulsar.core.DefaultPulsarProducerFactory;
 import org.springframework.pulsar.core.PulsarTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -22,11 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Pulsar 发布路径 Testcontainers 冒烟集成测试（{@code spring-boot-starter-pulsar}）。
- * <p>
- * 无 Testcontainers 1.20.x 官方 Pulsar 模块，使用 {@link GenericContainer} + {@code apachepulsar/pulsar} standalone。
+ * Pulsar 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework + spring-pulsar，无 Boot）。
  */
-@SpringBootTest(classes = PulsarContainerIT.TestApplication.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {
+        Ddd4jMQPropertiesConfiguration.class,
+        PulsarContainerIT.PulsarInfrastructureConfiguration.class,
+        Ddd4jPulsarMQAutoConfiguration.class
+})
 @EnabledIf("io.ddd4j.mq.pulsar.PulsarContainerIT#isDockerAvailable")
 class PulsarContainerIT {
 
@@ -44,9 +55,6 @@ class PulsarContainerIT {
     @Autowired
     private PulsarTemplate<String> pulsarTemplate;
 
-    @Autowired
-    private PulsarClient pulsarClient;
-
     /**
      * 启动 Pulsar standalone 容器。
      */
@@ -61,7 +69,7 @@ class PulsarContainerIT {
         registry.add("ddd4j.mq.enabled", () -> "true");
         registry.add("ddd4j.mq.broker", () -> "pulsar");
         registry.add("ddd4j.mq.namespace", () -> "it");
-        registry.add("spring.pulsar.client.service-url", () -> serviceUrl);
+        registry.add("ddd4j.mq.test.pulsar.service-url", () -> serviceUrl);
     }
 
     /**
@@ -80,7 +88,6 @@ class PulsarContainerIT {
     void publishShouldNotThrow() {
         assertNotNull(mqEventPublisher);
         assertNotNull(pulsarTemplate);
-        assertNotNull(pulsarClient);
 
         DemoPublishEvent event = new DemoPublishEvent();
         event.setTopic("smoke");
@@ -92,13 +99,44 @@ class PulsarContainerIT {
                 MQDestination.of("smoke", "ping", "it")));
     }
 
-    @SpringBootApplication
-    @Import({
-            io.ddd4j.mq.config.Ddd4jMQAutoConfiguration.class,
-            PulsarAutoConfiguration.class,
-            Ddd4jPulsarMQAutoConfiguration.class
-    })
-    static class TestApplication {
+    /**
+     * Pulsar 基础设施（替代 Boot {@code PulsarAutoConfiguration}）。
+     */
+    @Configuration(proxyBeanMethods = false)
+    static class PulsarInfrastructureConfiguration {
+
+        /**
+         * 注册 Pulsar 客户端工厂（service-url 由 Testcontainers 动态注入）。
+         */
+        @Bean
+        DefaultPulsarClientFactory pulsarClientFactory(
+                @Value("${ddd4j.mq.test.pulsar.service-url}") String serviceUrl) {
+            return new DefaultPulsarClientFactory(serviceUrl);
+        }
+
+        /**
+         * 注册 Pulsar 客户端（供 Producer 工厂使用）。
+         */
+        @Bean(destroyMethod = "close")
+        PulsarClient pulsarClient(DefaultPulsarClientFactory pulsarClientFactory) {
+            return pulsarClientFactory.createClient();
+        }
+
+        /**
+         * 注册 Pulsar Producer 工厂。
+         */
+        @Bean
+        DefaultPulsarProducerFactory<String> pulsarProducerFactory(PulsarClient pulsarClient) {
+            return new DefaultPulsarProducerFactory<>(pulsarClient);
+        }
+
+        /**
+         * 注册 Pulsar 发送模板。
+         */
+        @Bean
+        PulsarTemplate<String> pulsarTemplate(DefaultPulsarProducerFactory<String> pulsarProducerFactory) {
+            return new PulsarTemplate<>(pulsarProducerFactory);
+        }
     }
 
     static class DemoPublishEvent extends MQEvent {

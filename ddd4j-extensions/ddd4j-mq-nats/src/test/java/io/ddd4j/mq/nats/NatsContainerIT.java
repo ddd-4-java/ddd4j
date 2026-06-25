@@ -1,17 +1,20 @@
 package io.ddd4j.mq.nats;
 
-import io.ddd4j.mq.nats.autoconfigure.Ddd4jNatsMQAutoConfiguration;
 import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.mq.nats.autoconfigure.Ddd4jNatsMQAutoConfiguration;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.nats.client.Connection;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -21,11 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * NATS 发布路径 Testcontainers 冒烟集成测试（{@code jnats}，无官方 Spring Boot Starter）。
- * <p>
- * 使用 {@link GenericContainer} + {@code nats:2.10-alpine} 并启用 JetStream（{@code -js}）。
+ * NATS 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
  */
-@SpringBootTest(classes = NatsContainerIT.TestApplication.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {
+        Ddd4jMQPropertiesConfiguration.class,
+        Ddd4jNatsMQAutoConfiguration.class
+})
 @EnabledIf("io.ddd4j.mq.nats.NatsContainerIT#isDockerAvailable")
 class NatsContainerIT {
 
@@ -84,14 +89,6 @@ class NatsContainerIT {
         assertDoesNotThrow(() -> mqEventPublisher.publish(
                 event,
                 MQDestination.of("smoke", "ping", "it")));
-    }
-
-    @SpringBootApplication
-    @Import({
-            io.ddd4j.mq.config.Ddd4jMQAutoConfiguration.class,
-            Ddd4jNatsMQAutoConfiguration.class
-    })
-    static class TestApplication {
     }
 
     static class DemoPublishEvent extends MQEvent {

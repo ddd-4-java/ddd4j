@@ -37,7 +37,7 @@ class DDDArchitectureTest {
      */
     @Test
     void ddd_module_should_not_depend_on_mybatis_plus() {
-        noClasses().that().resideInAPackage("..ddd4j.boot.ddd..")
+        noClasses().that().resideInAPackage("..ddd4j.ddd..")
                 .should().dependOnClassesThat().resideInAPackage("com.baomidou..")
                 .because("ddd4j-ddd 是纯净 DDD 轨道，不得依赖 MyBatis Plus（那是 ddd4j-data 的职责）")
                 .check(classes);
@@ -48,7 +48,7 @@ class DDDArchitectureTest {
      */
     @Test
     void ddd_module_should_not_depend_on_mybatis_native() {
-        noClasses().that().resideInAPackage("..ddd4j.boot.ddd..")
+        noClasses().that().resideInAPackage("..ddd4j.ddd..")
                 .should().dependOnClassesThat().resideInAPackage("org.apache.ibatis..")
                 .because("ddd4j-ddd 不得依赖 MyBatis 原生 API")
                 .check(classes);
@@ -59,7 +59,7 @@ class DDDArchitectureTest {
      */
     @Test
     void ddd_module_should_not_depend_on_servlet() {
-        noClasses().that().resideInAPackage("..ddd4j.boot.ddd..")
+        noClasses().that().resideInAPackage("..ddd4j.ddd..")
                 .should().dependOnClassesThat().resideInAPackage("jakarta.servlet..")
                 .because("ddd4j-ddd 领域层不得依赖 Servlet API")
                 .check(classes);
@@ -76,7 +76,7 @@ class DDDArchitectureTest {
      */
     @Test
     void ddd_module_should_not_extend_base_entity() {
-        noClasses().that().resideInAPackage("..ddd4j.boot.ddd..")
+        noClasses().that().resideInAPackage("..ddd4j.ddd..")
                 .should().haveFullyQualifiedName("io.ddd4j.core.entity.BaseEntity")
                 .because("ddd4j-ddd 的聚合根必须继承 DddAggregateRoot，不得使用 BaseEntity（AR 轨道）")
                 .check(classes);
@@ -87,12 +87,12 @@ class DDDArchitectureTest {
      */
     @Test
     void all_classes_should_be_in_ddd_package() {
-        classes().that().resideInAPackage("..ddd4j.boot.ddd..")
-                .should().resideInAnyPackage("..ddd4j.boot.ddd.aggregate..",
-                        "..ddd4j.boot.ddd.event..",
-                        "..ddd4j.boot.ddd.command..",
-                        "..ddd4j.boot.ddd.repository..",
-                        "..ddd4j.boot.ddd.config..")
+        classes().that().resideInAPackage("..ddd4j.ddd..")
+                .should().resideInAnyPackage("..ddd4j.ddd.aggregate..",
+                        "..ddd4j.ddd.event..",
+                        "..ddd4j.ddd.command..",
+                        "..ddd4j.ddd.repository..",
+                        "..ddd4j.ddd.config..")
                 .because("ddd4j-ddd 的类应按职责分包：aggregate/event/command/repository/config")
                 .check(classes);
     }

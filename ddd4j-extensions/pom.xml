@@ -83,6 +83,17 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Framework 集成测试：@ExtendWith(SpringExtension) / @DynamicPropertySource（非 spring-boot-test） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- 扩展模块通用：@Configuration / @Bean（版本由 spring-framework-bom 管理） -->
         <dependency>
             <groupId>org.springframework</groupId>

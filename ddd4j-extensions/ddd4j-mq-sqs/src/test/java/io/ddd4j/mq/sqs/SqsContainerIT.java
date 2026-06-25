@@ -5,18 +5,22 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import io.ddd4j.mq.sqs.autoconfigure.Ddd4jSqsMQAutoConfiguration;
 import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.sqs.autoconfigure.Ddd4jSqsMQAutoConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -26,12 +30,16 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * AWS SQS 发布路径 Testcontainers 冒烟集成测试（{@code aws-java-sdk-sqs}）。
+ * AWS SQS 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
  * <p>
- * 使用 {@link GenericContainer} + {@code softwaremill/elasticmq-native}（SQS 兼容 API，镜像小于 LocalStack）；
- * IT 内 {@code @Primary} 覆盖 {@link AmazonSQS} 指向 ElasticMQ 端点。
+ * 使用 ElasticMQ 兼容端点；IT 内 {@code @Primary} 覆盖 {@link AmazonSQS}。
  */
-@SpringBootTest(classes = SqsContainerIT.TestApplication.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {
+        Ddd4jMQPropertiesConfiguration.class,
+        Ddd4jSqsMQAutoConfiguration.class,
+        SqsContainerIT.ElasticMqSqsConfiguration.class
+})
 @EnabledIf("io.ddd4j.mq.sqs.SqsContainerIT#isDockerAvailable")
 class SqsContainerIT {
 
@@ -109,18 +117,10 @@ class SqsContainerIT {
                 MQDestination.of(queueUrl, "ping", "it")));
     }
 
-    @SpringBootApplication
-    @Import({
-            io.ddd4j.mq.config.Ddd4jMQAutoConfiguration.class,
-            Ddd4jSqsMQAutoConfiguration.class,
-            SqsContainerIT.ElasticMqSqsConfiguration.class
-    })
-    static class TestApplication {
-    }
-
     /**
      * 覆盖默认 AmazonSQS，将客户端指向 ElasticMQ 端点。
      */
+    @Configuration(proxyBeanMethods = false)
     static class ElasticMqSqsConfiguration {
 
         /**

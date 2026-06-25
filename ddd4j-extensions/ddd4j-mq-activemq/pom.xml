@@ -36,7 +36,13 @@
             <artifactId>spring-messaging</artifactId>
         </dependency>
 
-<dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jakarta-client</artifactId>
+            <version>${artemis.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${mq.testcontainers.version}</version>
