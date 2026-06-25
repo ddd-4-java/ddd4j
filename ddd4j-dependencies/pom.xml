@@ -68,7 +68,7 @@
         <byte-buddy.version>1.18.10</byte-buddy.version>
         <binlog4j.version>1.9.1</binlog4j.version>
         <brave.version>6.3.0</brave.version>
-        <caffeine.version>3.2.4</caffeine.version>
+        <caffeine.version>2.9.3</caffeine.version>
         <cassandra-driver.version>4.19.2</cassandra-driver.version>
         <canal.version>1.1.8</canal.version>
         <cas-client.version>4.0.4</cas-client.version>
@@ -145,7 +145,7 @@
         <docker-java.version>3.7.1</docker-java.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer.version>5.5.1</dozer.version>
-        <dozer-core.version>7.0.0</dozer-core.version>
+        <dozer-core.version>6.5.2</dozer-core.version>
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer-extra-converters.version>7.0.x.20241003.RELEASE</dozer-extra-converters.version>
@@ -166,12 +166,13 @@
         <elasticsearch-client.version>9.2.1</elasticsearch-client.version>
         <expressly.version>6.0.0</expressly.version>
         <fastdfs.version>1.27.2</fastdfs.version>
-        <fastjson.version>2.0.62</fastjson.version>
-        <fastjson2.version>2.0.62</fastjson2.version>
-        <feign.version>13.13</feign.version>
+        <fastjson.version>2.0.60</fastjson.version>
+        <fastjson2.version>2.0.60</fastjson2.version>
+        <feign.version>11.10</feign.version>
         <findbugs-annotations.version>3.0.1u2</findbugs-annotations.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
-        <flyway.version>11.19.0</flyway.version>
+        <!-- 降级到兼容 JDK 8 的版本（Flyway 9.x+ 需要 JDK 11+，8.x 是最后一个支持 JDK 8 的版本） -->
+        <flyway.version>8.5.13</flyway.version>
         <flowable.version>7.2.0</flowable.version>
         <formio.version>1.8.1</formio.version>
         <forest.version>1.8.1</forest.version>
@@ -202,7 +203,7 @@
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
         <grpc-bom.version>1.82.1</grpc-bom.version>
         <groovy.version>5.0.3</groovy.version>
-        <guava.version>33.6.0-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
         <guerlab-sms.version>2.5.0</guerlab-sms.version>
         <guice.version>7.0.0</guice.version>
         <grizzly.version>4.1.0-M1</grizzly.version>
@@ -215,7 +216,7 @@
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
         <hibernate.version>6.6.40.Final</hibernate.version>
-        <hibernate-validator.version>8.0.3.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <h2.version>2.4.240</h2.version>
@@ -230,7 +231,7 @@
         <htmlparser.version>2.1</htmlparser.version>
         <hitool.version>3.0.x.20241003.RELEASE</hitool.version>
         <hive.version>4.2.0</hive.version>
-        <hutool.version>5.8.46</hutool.version>
+        <hutool.version>5.8.41</hutool.version>
         <hystrix.version>1.5.18</hystrix.version>
         <ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
         <i4jruntime.version>5.0.6</i4jruntime.version>
@@ -242,16 +243,17 @@
         <influxdb-client-java.version>7.4.0</influxdb-client-java.version>
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <jackson-annotations.version>2.22</jackson-annotations.version>
-        <jackson.version>2.22.0</jackson.version>
+        <jackson-annotations.version>2.13.5</jackson-annotations.version>
+        <jackson.version>2.13.5</jackson.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
-        <jakarta-activation.version>2.1.4</jakarta-activation.version>
-        <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
-        <jakarta.el-api.version>6.0.1</jakarta.el-api.version>
-        <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version>
-        <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
-        <jakarta-validation.version>3.1.1</jakarta-validation.version>
-        <jakarta-websocket.version>2.2.0</jakarta-websocket.version>
+        <!-- Jakarta EE 改为 javax 依赖以支持 JDK 1.8 -->
+        <javax-activation.version>1.1.1</javax-activation.version>
+        <javax-annotation.version>1.3.2</javax-annotation.version>
+        <javax.el-api.version>3.0.0</javax.el-api.version>
+        <javax.jws-api.version>1.1</javax.jws-api.version>
+        <javax-servlet.version>4.0.1</javax-servlet.version>
+        <javax-validation.version>2.0.1.Final</javax-validation.version>
+        <javax-websocket.version>1.1</javax-websocket.version>
         <jandex.version>3.6.0</jandex.version>
         <janino.version>3.1.12</janino.version>
         <jasypt.version>1.9.3</jasypt.version>
@@ -339,7 +341,7 @@
         <mssql-jdbc.version>12.10.2.jre11</mssql-jdbc.version>
         <mybatis.version>3.5.19</mybatis.version>
         <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
-        <mybatis-plus.version>3.5.16</mybatis-plus.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version> <!-- 这是JDK 1.8兼容的稳定版本 -->
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
         <mybatis-plus-enhance.version>3.3.x.20250930-SNAPSHOT</mybatis-plus-enhance.version>
@@ -401,7 +403,7 @@
         <pdfbox.version>3.0.7</pdfbox.version>
         <perf4j.version>0.9.16</perf4j.version>
         <persistence-api.version>1.0.2</persistence-api.version>
-        <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+        <javax.persistence-api.version>2.2</javax.persistence-api.version>
         <pf4j.version>3.15.0</pf4j.version>
         <pf4j-update.version>2.3.0</pf4j-update.version>
         <pf4j-spring.version>0.10.0</pf4j-spring.version>
@@ -447,7 +449,7 @@
         <rxjava.version>1.3.8</rxjava.version>
         <rxjava2.version>2.2.21</rxjava2.version>
         <rxjava3.version>3.1.12</rxjava3.version>
-        <sa-token.version>1.45.0</sa-token.version>
+        <sa-token.version>1.44.0</sa-token.version>
         <seata.version>2.0.0</seata.version>
         <scala3.version>3.3.5</scala3.version>
         <scijava-jep.version>2.4.2</scijava-jep.version>
@@ -504,7 +506,7 @@
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
         <spring-kafka.version>3.3.11</spring-kafka.version>
-        <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
+        <javax.jms-api.version>2.0.1</javax.jms-api.version>
         <!-- 第三方 Boot starter 版本（Phase 2 迁出 boot 轨前暂 pin） -->
         <spring-boot-starter-mybatis.version>3.0.5</spring-boot-starter-mybatis.version>
         <spring-boot-starter-ip2region.version>3.3.x.20241003.RELEASE</spring-boot-starter-ip2region.version>
@@ -648,14 +650,14 @@
                 <version>${lombok.version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.persistence</groupId>
-                <artifactId>jakarta.persistence-api</artifactId>
-                <version>${jakarta.persistence-api.version}</version>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${javax.persistence-api.version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.websocket</groupId>
-                <artifactId>jakarta.websocket-api</artifactId>
-                <version>${jakarta-websocket.version}</version>
+                <groupId>javax.websocket</groupId>
+                <artifactId>javax.websocket-api</artifactId>
+                <version>${javax-websocket.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -3323,17 +3325,17 @@
                 <artifactId>jasypt</artifactId>
                 <version>${jasypt.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/jakarta.el/jakarta.el-api -->
+            <!-- https://mvnrepository.com/artifact/javax.el/javax.el-api -->
             <dependency>
-                <groupId>jakarta.el</groupId>
-                <artifactId>jakarta.el-api</artifactId>
-                <version>${jakarta.el-api.version}</version>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>${javax.el-api.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/jakarta.jws/jakarta.jws-api -->
+            <!-- https://mvnrepository.com/artifact/javax.jws/javax.jws-api -->
             <dependency>
-                <groupId>jakarta.jws</groupId>
-                <artifactId>jakarta.jws-api</artifactId>
-                <version>${jakarta.jws-api.version}</version>
+                <groupId>javax.jws</groupId>
+                <artifactId>javax.jws-api</artifactId>
+                <version>${javax.jws-api.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
             <dependency>
@@ -3458,17 +3460,17 @@
                 <version>${jai-imageio.version}</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+            <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
             <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${jakarta-servlet.version}</version>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax-servlet.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+            <!-- https://mvnrepository.com/artifact/javax.validation/javax.validation-api -->
             <dependency>
-                <groupId>jakarta.validation</groupId>
-                <artifactId>jakarta.validation-api</artifactId>
-                <version>${jakarta-validation.version}</version>
+                <groupId>javax.validation</groupId>
+                <artifactId>javax.validation-api</artifactId>
+                <version>${javax-validation.version}</version>
             </dependency>
 
             <dependency>
@@ -6044,11 +6046,11 @@
                 <artifactId>spring-messaging</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/jakarta.jms/jakarta.jms-api -->
+            <!-- https://mvnrepository.com/artifact/javax.jms/javax.jms-api -->
             <dependency>
-                <groupId>jakarta.jms</groupId>
-                <artifactId>jakarta.jms-api</artifactId>
-                <version>${jakarta.jms-api.version}</version>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>${javax.jms-api.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework/spring-jms -->
             <dependency>
