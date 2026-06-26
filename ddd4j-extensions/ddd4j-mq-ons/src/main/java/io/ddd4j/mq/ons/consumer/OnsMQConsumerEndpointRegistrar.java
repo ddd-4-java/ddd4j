@@ -5,14 +5,14 @@ import com.aliyun.openservices.ons.api.Consumer;
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.ONSFactory;
 import com.aliyun.openservices.ons.api.PropertyKeyConst;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import io.ddd4j.mq.ons.acknowledgment.OnsMessageAcknowledgment;
-import io.ddd4j.mq.ons.acknowledgment.OnsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
+import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgmentFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

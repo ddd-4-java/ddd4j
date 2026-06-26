@@ -1,10 +1,10 @@
 package io.ddd4j.mq.mqtt.spi;
 
-import io.ddd4j.mq.mqtt.acknowledgment.MqttMessageAcknowledgment;
-import io.ddd4j.mq.mqtt.acknowledgment.MqttMessageAcknowledgmentFactory;
+import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgment;
+import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgmentFactory;
 import io.ddd4j.mq.mqtt.consumer.MqttMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.mqtt.publisher.MqttMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

@@ -2,11 +2,11 @@ package io.ddd4j.mq.ons.spi;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.mq.ons.acknowledgment.OnsMessageAcknowledgment;
-import io.ddd4j.mq.ons.acknowledgment.OnsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
+import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgmentFactory;
 import io.ddd4j.mq.ons.consumer.OnsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

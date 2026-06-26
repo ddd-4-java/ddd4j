@@ -1,9 +1,9 @@
 package io.ddd4j.mq.rabbit.consumer;
 
 import com.rabbitmq.client.Channel;
-import io.ddd4j.mq.rabbit.acknowledgment.AmqpMessageAcknowledgmentFactory;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
-import io.ddd4j.mq.acknowledgment.NoOpMessageAcknowledgment;
+import io.ddd4j.mq.rabbit.ack.AmqpMessageAcknowledgmentFactory;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

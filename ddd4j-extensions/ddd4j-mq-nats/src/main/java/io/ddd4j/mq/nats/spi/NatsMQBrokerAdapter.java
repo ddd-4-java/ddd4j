@@ -1,10 +1,10 @@
 package io.ddd4j.mq.nats.spi;
 
-import io.ddd4j.mq.nats.acknowledgment.NatsMessageAcknowledgment;
-import io.ddd4j.mq.nats.acknowledgment.NatsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgment;
+import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgmentFactory;
 import io.ddd4j.mq.nats.consumer.NatsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

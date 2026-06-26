@@ -1,9 +1,9 @@
 package io.ddd4j.mq.tdmq.consumer;
 
-import io.ddd4j.mq.tdmq.acknowledgment.TdmqMessageAcknowledgment;
+import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgment;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import io.ddd4j.mq.tdmq.client.TdmqSubscription;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

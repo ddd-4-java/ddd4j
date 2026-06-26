@@ -1,9 +1,9 @@
 package io.ddd4j.mq.pulsar.consumer;
 
-import io.ddd4j.mq.pulsar.acknowledgment.PulsarMessageAcknowledgment;
-import io.ddd4j.mq.pulsar.acknowledgment.PulsarMessageAcknowledgmentFactory;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
-import io.ddd4j.mq.acknowledgment.NoOpMessageAcknowledgment;
+import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgment;
+import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgmentFactory;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

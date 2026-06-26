@@ -1,11 +1,11 @@
 package io.ddd4j.mq.mqtt.mica.spi;
 
-import io.ddd4j.mq.mqtt.mica.acknowledgment.MicaMqttHeaders;
-import io.ddd4j.mq.mqtt.mica.acknowledgment.MicaMqttMessageAcknowledgment;
-import io.ddd4j.mq.mqtt.mica.acknowledgment.MicaMqttMessageAcknowledgmentFactory;
+import io.ddd4j.mq.mqtt.mica.ack.MicaMqttHeaders;
+import io.ddd4j.mq.mqtt.mica.ack.MicaMqttMessageAcknowledgment;
+import io.ddd4j.mq.mqtt.mica.ack.MicaMqttMessageAcknowledgmentFactory;
 import io.ddd4j.mq.mqtt.mica.consumer.MicaMqttMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.mqtt.mica.publisher.MicaMqttMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
@@ -48,9 +48,9 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter {
         // 逻辑块：优先从 mica 原生消息解析 QoS 确认
         MqttPublishMessage micaMessage = message.nativeMessage(MqttPublishMessage.class);
         if (micaMessage != null) {
-            Object topicHeader = message.headers().get(MicaMqttHeaders.TOPIC);
+            Object topicHeader = message.getHeaders().get(MicaMqttHeaders.TOPIC);
             String topic = topicHeader == null ? null : String.valueOf(topicHeader);
-            return MicaMqttMessageAcknowledgmentFactory.from(topic, micaMessage, message.headers())
+            return MicaMqttMessageAcknowledgmentFactory.from(topic, micaMessage, message.getHeaders())
                     .acknowledgment();
         }
         MicaMqttMessageAcknowledgment micaAck = message.nativeMessage(MicaMqttMessageAcknowledgment.class);

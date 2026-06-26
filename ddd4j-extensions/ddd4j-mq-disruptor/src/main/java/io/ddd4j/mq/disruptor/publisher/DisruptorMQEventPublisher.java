@@ -37,11 +37,11 @@ public class DisruptorMQEventPublisher implements MQEventPublisher {
             event.setMsgId(String.valueOf(System.currentTimeMillis()));
         }
 
-        String namespace = StringUtils.hasText(destination.namespace())
-                ? destination.namespace()
+        String namespace = StringUtils.hasText(destination.getNamespace())
+                ? destination.getNamespace()
                 : event.getNamespace();
-        String topic = StringUtils.hasText(destination.topic()) ? destination.topic() : event.getTopic();
-        String tag = StringUtils.hasText(destination.tag()) ? destination.tag() : event.getTag();
+        String topic = StringUtils.hasText(destination.getTopic()) ? destination.getTopic() : event.getTopic();
+        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
         String payload = JsonKit.toJson(event);
 
         disruptorMQBus.publish(namespace, topic, tag, event.getMsgId(), payload);

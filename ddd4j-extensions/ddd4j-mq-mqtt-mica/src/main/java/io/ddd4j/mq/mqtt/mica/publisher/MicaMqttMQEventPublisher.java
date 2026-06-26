@@ -58,13 +58,13 @@ public class MicaMqttMQEventPublisher implements MQEventPublisher {
      * 根据目的地与 tag 生成 MQTT 主题（namespace.topic[.tag]）。
      */
     private String buildMqttTopic(MQDestination destination, String eventTag) {
-        String namespace = StringUtils.hasText(destination.namespace())
-                ? destination.namespace()
+        String namespace = StringUtils.hasText(destination.getNamespace())
+                ? destination.getNamespace()
                 : mqProperties.getNamespace();
-        String topic = StringUtils.hasText(destination.topic())
-                ? destination.topic()
+        String topic = StringUtils.hasText(destination.getTopic())
+                ? destination.getTopic()
                 : mqProperties.getDefaultTopic();
-        String tag = StringUtils.hasText(destination.tag()) ? destination.tag() : eventTag;
+        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : eventTag;
         String concat = ".";
         String base = StringUtils.hasText(namespace) ? namespace + concat + topic : topic;
         if (!StringUtils.hasText(tag)) {

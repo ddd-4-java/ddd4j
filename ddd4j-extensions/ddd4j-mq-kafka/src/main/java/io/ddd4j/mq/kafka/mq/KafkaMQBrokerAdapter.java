@@ -1,7 +1,7 @@
 package io.ddd4j.mq.kafka.mq;
 
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
-import io.ddd4j.mq.acknowledgment.NoOpMessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
@@ -97,11 +97,11 @@ public class KafkaMQBrokerAdapter implements MQBrokerAdapter, DisposableBean {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (message == null || message.headers() == null) {
+        if (message == null || message.getHeaders() == null) {
             return new NoOpMessageAcknowledgment();
         }
-        Object ackObj = message.headers().get(KafkaMessageAcknowledgment.HEADER_KAFKA_ACK);
-        Object recordObj = message.headers().get(KafkaMessageAcknowledgment.HEADER_KAFKA_RECORD);
+        Object ackObj = message.getHeaders().get(KafkaMessageAcknowledgment.HEADER_KAFKA_ACK);
+        Object recordObj = message.getHeaders().get(KafkaMessageAcknowledgment.HEADER_KAFKA_RECORD);
         if (ackObj instanceof Acknowledgment acknowledgment && recordObj instanceof ConsumerRecord<?, ?> record) {
             return new KafkaMessageAcknowledgment(acknowledgment, record);
         }

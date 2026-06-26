@@ -1,7 +1,7 @@
 package io.ddd4j.mq.kafka.mq;
 
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
-import io.ddd4j.mq.acknowledgment.UnsupportedAckOperationException;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;

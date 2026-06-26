@@ -1,8 +1,8 @@
 package io.ddd4j.mq.nats.consumer;
 
-import io.ddd4j.mq.nats.acknowledgment.NatsMessageAcknowledgmentFactory;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
-import io.ddd4j.mq.acknowledgment.NoOpMessageAcknowledgment;
+import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

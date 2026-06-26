@@ -42,7 +42,7 @@ public class TdmqMQEventPublisher implements MQEventPublisher {
 
         // 逻辑块：序列化并委托 TDMQ 客户端
         String topic = destination.physicalDestination();
-        String tag = StringUtils.hasText(destination.tag()) ? destination.tag() : event.getTag();
+        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
         String payload = JsonKit.toJson(event);
         tdmqClient.publish(topic, tag, payload.getBytes(StandardCharsets.UTF_8));
         log.debug("Published TDMQ event (placeholder), topic={}, tag={}, msgId={}", topic, tag, event.getMsgId());

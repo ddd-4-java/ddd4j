@@ -1,10 +1,10 @@
 package io.ddd4j.mq.redisstream.spi;
 
-import io.ddd4j.mq.redisstream.acknowledgment.RedisStreamMessageAcknowledgment;
-import io.ddd4j.mq.redisstream.acknowledgment.RedisStreamMessageAcknowledgmentFactory;
+import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgment;
+import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgmentFactory;
 import io.ddd4j.mq.redisstream.consumer.RedisStreamConsumerEndpointRegistrar;
 import io.ddd4j.mq.redisstream.publisher.RedisStreamMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

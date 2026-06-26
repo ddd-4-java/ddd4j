@@ -54,13 +54,13 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
      * 根据目的地与 tag 生成 Redis Stream key（namespace:topic[:tag]）。
      */
     private String buildStreamKey(MQDestination destination, String eventTag) {
-        String namespace = StringUtils.hasText(destination.namespace())
-                ? destination.namespace()
+        String namespace = StringUtils.hasText(destination.getNamespace())
+                ? destination.getNamespace()
                 : properties.getNamespace();
-        String topic = StringUtils.hasText(destination.topic())
-                ? destination.topic()
+        String topic = StringUtils.hasText(destination.getTopic())
+                ? destination.getTopic()
                 : properties.getDefaultTopic();
-        String tag = StringUtils.hasText(destination.tag()) ? destination.tag() : eventTag;
+        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : eventTag;
         String base = StringUtils.hasText(namespace) ? namespace + ":" + topic : topic;
         if (!StringUtils.hasText(tag)) {
             return base;

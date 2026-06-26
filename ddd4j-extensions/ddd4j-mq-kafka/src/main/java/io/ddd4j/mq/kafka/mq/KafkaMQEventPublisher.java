@@ -64,12 +64,12 @@ public class KafkaMQEventPublisher implements MQEventPublisher {
      * @return Kafka topic
      */
     private String resolveTopic(MQEvent event, MQDestination destination) {
-        String namespace = StringUtils.defaultIfBlank(destination.namespace(), properties.getNamespace());
+        String namespace = StringUtils.defaultIfBlank(destination.getNamespace(), properties.getNamespace());
         if (StringUtils.isNotBlank(event.getNamespace())) {
             namespace = event.getNamespace();
         }
         String concat = StringUtils.defaultIfBlank(event.getConcat(), "_");
-        String topic = destination.topic();
+        String topic = destination.getTopic();
         if (StringUtils.isBlank(topic)) {
             topic = StringUtils.defaultIfBlank(event.getTopic(), properties.getDefaultTopic());
         }

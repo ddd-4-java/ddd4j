@@ -2,7 +2,7 @@ package io.ddd4j.mq.disruptor.core;
 
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
-import io.ddd4j.mq.disruptor.acknowledgment.DisruptorMessageAcknowledgment;
+import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
@@ -79,7 +79,7 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
                         event.getMessageId(),
                         event.getCorrelationId(),
                         event);
-                registered.handler().handle(message, ack);
+                registered.getHandler().handle(message, ack);
             } catch (Exception ex) {
                 log.error("Disruptor consumer failed: routeKey={}", routeKey, ex);
             }
@@ -107,6 +107,21 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
     /**
      * 已注册 handler 记录。
      */
-    private record RegisteredHandler(MQListenerDefinition definition, MQConsumerHandler handler) {
+    private static final class RegisteredHandler {
+        private final MQListenerDefinition definition;
+        private final MQConsumerHandler handler;
+
+        RegisteredHandler(MQListenerDefinition definition, MQConsumerHandler handler) {
+            this.definition = definition;
+            this.handler = handler;
+        }
+
+        public MQListenerDefinition getDefinition() {
+            return definition;
+        }
+
+        public MQConsumerHandler getHandler() {
+            return handler;
+        }
     }
 }

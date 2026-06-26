@@ -1,9 +1,9 @@
 package io.ddd4j.mq.redisstream.consumer;
 
-import io.ddd4j.mq.redisstream.acknowledgment.RedisStreamMessageAcknowledgment;
-import io.ddd4j.mq.redisstream.acknowledgment.RedisStreamMessageAcknowledgmentFactory;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
-import io.ddd4j.mq.acknowledgment.NoOpMessageAcknowledgment;
+import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgment;
+import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgmentFactory;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

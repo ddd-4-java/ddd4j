@@ -1,9 +1,9 @@
 package io.ddd4j.mq.mqtt.mica.consumer;
 
-import io.ddd4j.mq.mqtt.mica.acknowledgment.MicaMqttHeaders;
-import io.ddd4j.mq.mqtt.mica.acknowledgment.MicaMqttMessageAcknowledgmentFactory;
+import io.ddd4j.mq.mqtt.mica.ack.MicaMqttHeaders;
+import io.ddd4j.mq.mqtt.mica.ack.MicaMqttMessageAcknowledgmentFactory;
 import io.ddd4j.mq.mqtt.mica.config.Ddd4jMicaMqttProperties;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

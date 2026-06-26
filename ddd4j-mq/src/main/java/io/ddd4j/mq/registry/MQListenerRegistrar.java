@@ -1,14 +1,13 @@
 package io.ddd4j.mq.registry;
 
-import io.ddd4j.mq.acknowledgment.AckDisposition;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
-import io.ddd4j.mq.acknowledgment.MQConsumeTemplates;
-import io.ddd4j.mq.acknowledgment.NoOpMessageAcknowledgment;
+import io.ddd4j.mq.ack.AckDisposition;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MQConsumeTemplates;
+import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumeInterceptor;
 import io.ddd4j.mq.consume.MQConsumerContext;
 import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
 import io.ddd4j.mq.spi.MQBrokerAdapters;
@@ -17,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.messaging.Message;
 
 import java.util.Comparator;
 import java.util.List;
@@ -115,7 +115,7 @@ public class MQListenerRegistrar {
      */
     private MessageAcknowledgment resolveAcknowledgment(
             MQBrokerAdapter adapter,
-            MQMessage<?> message,
+            Message<?> message,
             MessageAcknowledgment ack) {
 
         MessageAcknowledgment resolved = adapter.resolveAcknowledgment(message);
@@ -131,7 +131,7 @@ public class MQListenerRegistrar {
     private int runPreCheck(
             List<MQConsumeInterceptor> orderedInterceptors,
             MQConsumerContext context,
-            MQMessage<?> message) {
+            Message<?> message) {
 
         for (MQConsumeInterceptor interceptor : orderedInterceptors) {
             int result = interceptor.preCheck(context, message);
@@ -148,7 +148,7 @@ public class MQListenerRegistrar {
     private void runAfterConsume(
             List<MQConsumeInterceptor> orderedInterceptors,
             MQConsumerContext context,
-            MQMessage<?> message,
+            Message<?> message,
             AckDisposition disposition) {
 
         for (MQConsumeInterceptor interceptor : orderedInterceptors) {

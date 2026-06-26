@@ -1,11 +1,11 @@
 package io.ddd4j.mq.disruptor.spi;
 
-import io.ddd4j.mq.disruptor.acknowledgment.DisruptorMessageAcknowledgment;
-import io.ddd4j.mq.disruptor.acknowledgment.DisruptorMessageAcknowledgmentFactory;
+import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
+import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgmentFactory;
 import io.ddd4j.mq.disruptor.consumer.DisruptorMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.disruptor.publisher.DisruptorMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

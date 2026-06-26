@@ -46,7 +46,7 @@ public class OnsMQEventPublisher implements MQEventPublisher {
 
         // 逻辑块：序列化并发送 ONS 消息
         String topic = buildTopic(destination);
-        String tag = StringUtils.hasText(destination.tag()) ? destination.tag() : event.getTag();
+        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
         String payload = JsonKit.toJson(event);
         Message message = new Message(topic, tag, payload.getBytes(StandardCharsets.UTF_8));
         message.setKey(event.getMsgId());
@@ -59,8 +59,8 @@ public class OnsMQEventPublisher implements MQEventPublisher {
      * 根据目的地生成 ONS Topic（namespace.topic）。
      */
     private String buildTopic(MQDestination destination) {
-        if (StringUtils.hasText(destination.namespace())) {
-            return destination.namespace() + "." + destination.topic();
+        if (StringUtils.hasText(destination.getNamespace())) {
+            return destination.getNamespace() + "." + destination.getTopic();
         }
         if (StringUtils.hasText(properties.getNamespace())) {
             return properties.getNamespace() + "." + destination.physicalDestination();

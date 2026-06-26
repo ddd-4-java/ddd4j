@@ -1,13 +1,12 @@
 package io.ddd4j.mq.consume;
 
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.contract.MQMessages;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.Collections;
-import java.util.Map;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
 
 /**
  * 消费上下文：租户、确认端口、原始 headers 及消息信封。
@@ -22,12 +21,8 @@ public class MQConsumerContext {
     /** 消息确认端口 */
     private MessageAcknowledgment acknowledgment;
 
-    /** 原始消息头（不可变视图） */
-    @Builder.Default
-    private Map<String, Object> headers = Map.of();
-
-    /** 完整消息信封 */
-    private MQMessage<?> message;
+    /** 完整消息信封（{@link Message}） */
+    private Message<?> message;
 
     /** 消费目的地语义 */
     private MQDestination destination;
@@ -48,7 +43,7 @@ public class MQConsumerContext {
      * @return 值或 null
      */
     public Object header(String key) {
-        return headers.get(key);
+        return MQMessages.header(message, key);
     }
 
     /**
@@ -56,7 +51,7 @@ public class MQConsumerContext {
      *
      * @return 消息头
      */
-    public Map<String, Object> getHeaders() {
-        return headers == null ? Map.of() : Collections.unmodifiableMap(headers);
+    public MessageHeaders getHeaders() {
+        return MQMessages.headers(message);
     }
 }

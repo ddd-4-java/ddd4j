@@ -1,10 +1,8 @@
 package io.ddd4j.mq.registry;
 
 import io.ddd4j.core.contract.annotation.MQEventListener;
-import io.ddd4j.mq.acknowledgment.AckDisposition;
+import io.ddd4j.mq.ack.AckDisposition;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.registry.MQListenerBeanPostProcessor;
-import io.ddd4j.mq.registry.MQListenerDefinitionRegistry;
 import io.ddd4j.mq.consume.MQConsumerContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -13,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import java.util.List;
 
 /**
  * {@link MQListenerScanner} 单元测试。
@@ -25,7 +25,7 @@ class MQListenerScannerTest {
             Ddd4jMQProperties props = context.getBean(Ddd4jMQProperties.class);
             MQListenerScanner scanner = new MQListenerScanner(context.getBean(MQListenerDefinitionRegistry.class));
 
-            var definitions = scanner.scan();
+            List<MQListenerDefinition> definitions = scanner.scan();
 
             assertFalse(definitions.isEmpty());
             assertEquals(1, definitions.size());

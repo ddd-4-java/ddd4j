@@ -2,11 +2,11 @@ package io.ddd4j.mq.sqs.spi;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
-import io.ddd4j.mq.sqs.acknowledgment.SqsMessageAcknowledgment;
-import io.ddd4j.mq.sqs.acknowledgment.SqsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgment;
+import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgmentFactory;
 import io.ddd4j.mq.sqs.consumer.SqsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

@@ -1,105 +1,157 @@
 package io.ddd4j.mq.contract;
 
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.MessageBuilder;
+
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
- * 消息信封：承载业务载荷、头信息、追踪元数据与底层 Broker 原生消息。
+ * 消息信封适配器：内部持有 {@link Message}，提供与旧 API 兼容的便捷方法。
+ * <p>
+ * 新代码应直接使用 {@link Message} + {@link MQMessages} 工具类。
+ * 本类用于兼容已有实现模块，可逐步迁移。
  *
- * @param <T> 业务载荷类型
+ * @param <T> 载荷类型
+ * @deprecated 使用 {@link Message} + {@link MQMessages} 替代
  */
-public record MQMessage<T>(
-        T payload,
-        Map<String, Object> headers,
-        String messageId,
-        String correlationId,
-        Object nativeMessage
-) {
+public class MQMessage<T> {
 
-    /**
-     * 构造消息信封，headers 不可变。
-     */
-    public MQMessage {
-        headers = headers == null ? Map.of() : Collections.unmodifiableMap(headers);
+    private final Message<T> delegate;
+
+    public MQMessage(T payload, Map<String, Object> headers, String messageId, String correlationId, Object nativeMessage) {
+        MessageBuilder<T> builder = MessageBuilder.withPayload(payload);
+        if (headers != null && !headers.isEmpty()) {
+            builder.copyHeaders(headers);
+        }
+        if (messageId != null) {
+            try {
+                builder.setHeader(MessageHeaders.ID, UUID.fromString(messageId.contains("-") ? messageId : padUUID(messageId)));
+            } catch (IllegalArgumentException ignored) {
+                builder.setHeader(MessageHeaders.ID, UUID.randomUUID());
+            }
+        }
+        if (correlationId != null) {
+            builder.setHeader(MQMessages.HEADER_CORRELATION_ID, correlationId);
+        }
+        if (nativeMessage != null) {
+            builder.setHeader(MQMessages.HEADER_NATIVE_MESSAGE, nativeMessage);
+        }
+        this.delegate = builder.build();
     }
 
     /**
-     * 基于载荷与 messageId 快速构建消息。
-     *
-     * @param payload   业务载荷
-     * @param messageId 消息 ID
-     * @param <T>       载荷类型
-     * @return 消息信封
+     * 从已有的 {@link Message} 构造适配器。
      */
+    public MQMessage(Message<T> delegate) {
+        this.delegate = Objects.requireNonNull(delegate);
+    }
+
+    public T getPayload() {
+        return delegate.getPayload();
+    }
+
+    public T payload() {
+        return delegate.getPayload();
+    }
+
+    public Map<String, Object> getHeaders() {
+        return delegate.getHeaders();
+    }
+
+    public Map<String, Object> headers() {
+        return delegate.getHeaders();
+    }
+
+    public String getMessageId() {
+        return MQMessages.extractMessageId(delegate);
+    }
+
+    public String getCorrelationId() {
+        return MQMessages.extractCorrelationId(delegate);
+    }
+
+    public Object getNativeMessage() {
+        return delegate.getHeaders().get(MQMessages.HEADER_NATIVE_MESSAGE);
+    }
+
+    public Object header(String key) {
+        return delegate.getHeaders().get(key);
+    }
+
+    public String headerAsString(String key) {
+        return MQMessages.headerAsString(delegate, key);
+    }
+
+    public <N> N nativeMessage(Class<N> type) {
+        return MQMessages.nativeMessage(delegate, type);
+    }
+
+    /**
+     * 获取底层 {@link Message} 实例。
+     */
+    public Message<T> toMessage() {
+        return delegate;
+    }
+
+    // ── 工厂方法 ──
+
     public static <T> MQMessage<T> of(T payload, String messageId) {
-        return new MQMessage<>(payload, Map.of(), messageId, null, null);
+        return new MQMessage<>(payload, Collections.emptyMap(), messageId, null, null);
     }
 
-    /**
-     * 完整构建消息信封。
-     *
-     * @param payload       业务载荷
-     * @param headers       消息头
-     * @param messageId     消息 ID
-     * @param correlationId 关联 ID
-     * @param <T>           载荷类型
-     * @return 消息信封
-     */
     public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId, String correlationId) {
         return new MQMessage<>(payload, headers, messageId, correlationId, null);
     }
 
-    /**
-     * 完整构建消息信封（含原生 Broker 消息）。
-     *
-     * @param payload       业务载荷
-     * @param headers       消息头
-     * @param messageId     消息 ID
-     * @param correlationId 关联 ID
-     * @param nativeMessage 底层 Broker 原生消息
-     * @param <T>           载荷类型
-     * @return 消息信封
-     */
-    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId,
-                                      String correlationId, Object nativeMessage) {
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId, String correlationId, Object nativeMessage) {
         return new MQMessage<>(payload, headers, messageId, correlationId, nativeMessage);
     }
 
     /**
-     * 读取指定 header。
-     *
-     * @param key header 键
-     * @return header 值，不存在时返回 {@code null}
+     * 从 {@link Message} 构造 MQMessage。
      */
-    public Object header(String key) {
-        return headers.get(key);
+    public static <T> MQMessage<T> from(Message<T> message) {
+        return new MQMessage<>(message);
     }
 
-    /**
-     * 读取字符串类型 header。
-     *
-     * @param key header 键
-     * @return 字符串值，不存在或非字符串时返回 {@code null}
-     */
-    public String headerAsString(String key) {
-        Object value = headers.get(key);
-        return value == null ? null : Objects.toString(value, null);
-    }
-
-    /**
-     * 按类型获取底层 Broker 原生消息对象。
-     *
-     * @param type 目标类型
-     * @param <N>  类型参数
-     * @return 匹配实例或 {@code null}
-     */
-    @SuppressWarnings("unchecked")
-    public <N> N nativeMessage(Class<N> type) {
-        Objects.requireNonNull(type, "type");
-        if (nativeMessage != null && type.isInstance(nativeMessage)) {
-            return (N) nativeMessage;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
-        return null;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MQMessage<?> that = (MQMessage<?>) o;
+        return Objects.equals(delegate, that.delegate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(delegate);
+    }
+
+    @Override
+    public String toString() {
+        return "MQMessage{payload=" + delegate.getPayload() + ", headers=" + delegate.getHeaders() + "}";
+    }
+
+    private static String padUUID(String shortId) {
+        if (shortId == null || shortId.length() >= 36) {
+            return shortId;
+        }
+        if (shortId.length() == 32) {
+            return shortId.substring(0, 8) + "-" +
+                    shortId.substring(8, 12) + "-" +
+                    shortId.substring(12, 16) + "-" +
+                    shortId.substring(16, 20) + "-" +
+                    shortId.substring(20);
+        }
+        return "00000000-0000-0000-0000-" + String.format("%012d", Long.parseLong(shortId));
     }
 }

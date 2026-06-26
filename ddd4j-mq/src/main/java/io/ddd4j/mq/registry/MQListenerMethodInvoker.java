@@ -3,19 +3,20 @@ package io.ddd4j.mq.registry;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.core.contract.constant.ContextConstants;
-import io.ddd4j.mq.acknowledgment.AckDisposition;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.AckDisposition;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.consume.MQConsumerContext;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.serialization.MQEventSerialization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.Message;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Objects;
+import java.util.Map;
 
 /**
  * 反射调用 {@link MQListenerDefinition} 目标方法，解析参数与 {@link AckDisposition} 返回值。
@@ -31,16 +32,16 @@ public class MQListenerMethodInvoker {
      *
      * @param definition 监听器定义
      * @param context    消费上下文
-     * @param message    消息信封
+     * @param message    消息信封（{@link Message}）
      * @return 业务处置结果；void 返回时默认 {@link AckDisposition#ACK}
      */
-    public AckDisposition invoke(MQListenerDefinition definition, MQConsumerContext context, MQMessage<?> message)
+    public AckDisposition invoke(MQListenerDefinition definition, MQConsumerContext context, Message<?> message)
             throws Exception {
 
         MQListenerScanner.prepareMethod(definition);
         Method method = definition.getMethod();
         Object payload = resolvePayload(definition, message);
-        if (payload instanceof MQEvent mqEvent && !mqEvent.supports(definition.supports())) {
+        if (payload instanceof MQEvent && !((MQEvent) payload).supports(definition.supports())) {
             return AckDisposition.DISCARD;
         }
 
@@ -52,26 +53,26 @@ public class MQListenerMethodInvoker {
     /**
      * 反序列化消息载荷为监听器方法所需类型。
      */
-    private Object resolvePayload(MQListenerDefinition definition, MQMessage<?> message) {
+    private Object resolvePayload(MQListenerDefinition definition, Message<?> message) {
         Class<?> payloadType = resolvePayloadType(definition.getMethod());
         if (payloadType == null || payloadType == Void.class) {
-            return message.payload();
+            return message.getPayload();
         }
-        Object raw = message.payload();
+        Object raw = message.getPayload();
         if (raw == null) {
             return null;
         }
         if (payloadType.isInstance(raw)) {
             return raw;
         }
-        if (raw instanceof String text) {
-            return serialization.deserialize(text, payloadType);
+        if (raw instanceof String) {
+            return serialization.deserialize((String) raw, payloadType);
         }
         return serialization.deserialize(serialization.serialize(raw), payloadType);
     }
 
     /**
-     * 解析监听器方法的载荷参数类型（跳过上下文/ack/MQMessage 参数）。
+     * 解析监听器方法的载荷参数类型（跳过上下文/ack/Message/Map 参数）。
      */
     private Class<?> resolvePayloadType(Method method) {
         for (Parameter parameter : method.getParameters()) {
@@ -90,7 +91,7 @@ public class MQListenerMethodInvoker {
     private Object[] resolveArguments(
             Method method,
             MQConsumerContext context,
-            MQMessage<?> message,
+            Message<?> message,
             Object payload) {
 
         Parameter[] parameters = method.getParameters();
@@ -101,8 +102,10 @@ public class MQListenerMethodInvoker {
                 args[i] = context;
             } else if (MessageAcknowledgment.class.isAssignableFrom(type)) {
                 args[i] = context.getAcknowledgment();
-            } else if (MQMessage.class.isAssignableFrom(type)) {
+            } else if (Message.class.isAssignableFrom(type)) {
                 args[i] = message;
+            } else if (Map.class.isAssignableFrom(type)) {
+                args[i] = message.getHeaders();
             } else {
                 args[i] = payload;
             }
@@ -117,11 +120,11 @@ public class MQListenerMethodInvoker {
         if (result == null) {
             return AckDisposition.ACK;
         }
-        if (result instanceof AckDisposition disposition) {
-            return disposition;
+        if (result instanceof AckDisposition) {
+            return (AckDisposition) result;
         }
-        if (result instanceof Boolean bool) {
-            return bool ? AckDisposition.ACK : AckDisposition.REQUEUE;
+        if (result instanceof Boolean) {
+            return (Boolean) result ? AckDisposition.ACK : AckDisposition.REQUEUE;
         }
         return AckDisposition.ACK;
     }
@@ -131,7 +134,7 @@ public class MQListenerMethodInvoker {
      */
     public MQConsumerContext buildContext(
             MQListenerDefinition definition,
-            MQMessage<?> message,
+            Message<?> message,
             MessageAcknowledgment acknowledgment) {
 
         String tenantId = resolveTenantId(message);
@@ -147,7 +150,6 @@ public class MQListenerMethodInvoker {
         return MQConsumerContext.builder()
                 .tenantId(tenantId)
                 .acknowledgment(acknowledgment)
-                .headers(message.headers())
                 .message(message)
                 .destination(destination)
                 .build();
@@ -156,14 +158,19 @@ public class MQListenerMethodInvoker {
     /**
      * 从消息头或载荷中提取租户 ID。
      */
-    private String resolveTenantId(MQMessage<?> message) {
-        String headerTenant = message.headerAsString("tenantId");
+    private String resolveTenantId(Message<?> message) {
+        String headerTenant = MQMessages.headerAsString(message, "tenantId");
         if (StringUtils.hasText(headerTenant)) {
             return headerTenant;
         }
-        Object payload = message.payload();
-        if (payload instanceof MQEvent mqEvent && StringUtils.hasText(mqEvent.getTenantId())) {
-            return mqEvent.getTenantId();
+        // 兼容标准 header key
+        String stdTenant = MQMessages.extractTenantId(message);
+        if (StringUtils.hasText(stdTenant)) {
+            return stdTenant;
+        }
+        Object payload = message.getPayload();
+        if (payload instanceof MQEvent && StringUtils.hasText(((MQEvent) payload).getTenantId())) {
+            return ((MQEvent) payload).getTenantId();
         }
         return ThreadContext.get(ContextConstants.TENANT_ID);
     }
@@ -178,6 +185,7 @@ public class MQListenerMethodInvoker {
     private static boolean isInfrastructureParameter(Class<?> type) {
         return MQConsumerContext.class.isAssignableFrom(type)
                 || MessageAcknowledgment.class.isAssignableFrom(type)
-                || MQMessage.class.isAssignableFrom(type);
+                || Message.class.isAssignableFrom(type)
+                || Map.class.isAssignableFrom(type);
     }
 }

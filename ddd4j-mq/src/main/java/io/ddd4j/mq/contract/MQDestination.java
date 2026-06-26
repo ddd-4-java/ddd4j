@@ -2,48 +2,54 @@ package io.ddd4j.mq.contract;
 
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.registry.MQBindingNaming;
+import lombok.Getter;
 import org.springframework.util.StringUtils;
 
-/**
- * MQ 目的地值对象：namespace / topic / tag 语义层抽象。
- */
-public record MQDestination(String topic, String tag, String namespace) {
+import java.util.Objects;
 
-    /**
-     * 从已填充的 {@link MQEvent} 构建目的地。
-     */
+@Getter
+public class MQDestination {
+
+    private final String topic;
+    private final String tag;
+    private final String namespace;
+
+    public MQDestination(String topic, String tag, String namespace) {
+        this.topic = topic;
+        this.tag = tag;
+        this.namespace = namespace;
+    }
+
     public static MQDestination from(MQEvent event) {
         return new MQDestination(event.getTopic(), event.getTag(), event.getNamespace());
     }
 
-    /**
-     * 按 topic、tag 构建目的地（无 namespace）。
-     */
     public static MQDestination of(String topic, String tag) {
         return new MQDestination(topic, tag, null);
     }
 
-    /**
-     * 按 topic、tag、namespace 构建目的地。
-     */
     public static MQDestination of(String topic, String tag, String namespace) {
         return new MQDestination(topic, tag, namespace);
     }
 
-    /**
-     * 物理 destination（namespace.topic），供 Binder / cmpt 使用。
-     */
     public String physicalDestination() {
-        if (!StringUtils.hasText(namespace)) {
-            return topic;
-        }
-        return namespace + "." + topic;
+        return StringUtils.hasText(namespace) ? namespace + "." + topic : topic;
     }
 
-    /**
-     * 生成 Spring Cloud Stream 出站 binding 名（camelCase）。
-     */
     public String bindingOutName() {
         return MQBindingNaming.bindingName(topic, tag);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MQDestination that = (MQDestination) o;
+        return Objects.equals(topic, that.topic) && Objects.equals(tag, that.tag) && Objects.equals(namespace, that.namespace);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(topic, tag, namespace);
     }
 }

@@ -1,10 +1,10 @@
 package io.ddd4j.mq.rabbit.spi;
 
-import io.ddd4j.mq.rabbit.acknowledgment.AmqpMessageAcknowledgment;
-import io.ddd4j.mq.rabbit.acknowledgment.AmqpMessageAcknowledgmentFactory;
+import io.ddd4j.mq.rabbit.ack.AmqpMessageAcknowledgment;
+import io.ddd4j.mq.rabbit.ack.AmqpMessageAcknowledgmentFactory;
 import io.ddd4j.mq.rabbit.consumer.RabbitMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.rabbit.publisher.RabbitMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;

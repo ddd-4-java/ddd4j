@@ -47,8 +47,8 @@ public class SqsMQEventPublisher implements MQEventPublisher {
         String queueUrl = resolveQueueUrl(destination);
         String payload = JsonKit.toJson(event);
         SendMessageRequest request = new SendMessageRequest(queueUrl, payload);
-        if (StringUtils.hasText(destination.tag())) {
-            request.withMessageGroupId(destination.tag());
+        if (StringUtils.hasText(destination.getTag())) {
+            request.withMessageGroupId(destination.getTag());
         }
         amazonSqs.sendMessage(request);
         log.debug("Published SQS event, queueUrl={}, msgId={}", queueUrl, event.getMsgId());
@@ -58,8 +58,8 @@ public class SqsMQEventPublisher implements MQEventPublisher {
      * 解析目标队列 URL（destination.topic 或默认配置）。
      */
     private String resolveQueueUrl(MQDestination destination) {
-        if (StringUtils.hasText(destination.topic()) && destination.topic().startsWith("http")) {
-            return destination.topic();
+        if (StringUtils.hasText(destination.getTopic()) && destination.getTopic().startsWith("http")) {
+            return destination.getTopic();
         }
         if (StringUtils.hasText(defaultQueueUrl)) {
             return defaultQueueUrl;

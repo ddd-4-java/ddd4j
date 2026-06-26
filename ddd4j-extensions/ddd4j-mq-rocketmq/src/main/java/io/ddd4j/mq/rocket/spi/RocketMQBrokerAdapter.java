@@ -1,10 +1,10 @@
 package io.ddd4j.mq.rocket.spi;
 
-import io.ddd4j.mq.rocket.acknowledgment.RocketMessageAcknowledgment;
-import io.ddd4j.mq.rocket.acknowledgment.RocketMessageAcknowledgmentFactory;
+import io.ddd4j.mq.rocket.ack.RocketMessageAcknowledgment;
+import io.ddd4j.mq.rocket.ack.RocketMessageAcknowledgmentFactory;
 import io.ddd4j.mq.rocket.consumer.RocketMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.rocket.publisher.RocketMQEventPublisher;
-import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
