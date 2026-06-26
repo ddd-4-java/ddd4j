@@ -248,10 +248,13 @@
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
         <jakarta.el-api.version>6.0.1</jakarta.el-api.version>
+        <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
         <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version>
         <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
         <jakarta-validation.version>3.1.1</jakarta-validation.version>
         <jakarta-websocket.version>2.2.0</jakarta-websocket.version>
+        <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
+        <jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
         <jandex.version>3.6.0</jandex.version>
         <janino.version>3.1.12</janino.version>
         <jasypt.version>1.9.3</jasypt.version>
@@ -656,6 +659,16 @@
                 <groupId>jakarta.websocket</groupId>
                 <artifactId>jakarta.websocket-api</artifactId>
                 <version>${jakarta-websocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                <version>${jakarta.ws.rs-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
