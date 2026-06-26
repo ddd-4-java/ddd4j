@@ -154,7 +154,7 @@
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
-        <dingtalk-sdk.version>2.2.54</dingtalk-sdk.version>
+        <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <disruptor.version>4.0.0</disruptor.version>
         <disruptor-biz.version>1.0.0.RELEASE</disruptor-biz.version>
         <dubbo.version>3.3.6</dubbo.version>
@@ -255,7 +255,7 @@
         <jandex.version>3.6.0</jandex.version>
         <janino.version>3.1.12</janino.version>
         <jasypt.version>1.9.3</jasypt.version>
-        <javassist.version>3.30.2-GA</javassist.version>
+        <javassist.version>3.32.0-GA</javassist.version>
         <javassist-plus.version>1.0.4.RELEASE</javassist-plus.version>
         <java-uuid-generator.version>5.2.0</java-uuid-generator.version>
         <java-unrar.version>1.7.0-8</java-unrar.version>
@@ -274,16 +274,16 @@
         <jetty.version>12.1.5</jetty.version>
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
         <jedis.version>7.1.0</jedis.version>
-        <jetbrains-annotations.version>26.0.2-1</jetbrains-annotations.version>
+        <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
         <jetcache.version>2.7.8</jetcache.version>
         <jjwt.version>0.13.0</jjwt.version>
         <jgoodies.version>2.7.0</jgoodies.version>
-        <jgroups.version>5.5.5.Final</jgroups.version>
+        <jgroups.version>5.5.6.Final</jgroups.version>
         <jgit.version>7.1.0.202411261347-r</jgit.version>
         <jodd.version>5.3.0</jodd.version>
         <jodd-bean.version>5.1.6</jodd-bean.version>
         <joda-time.version>2.14.2</joda-time.version>
-        <jooq.version>3.20.10</jooq.version>
+        <jooq.version>3.21.6</jooq.version>
         <jooq-plus.version>0.3.2</jooq-plus.version>
         <jpush-client.version>3.7.7</jpush-client.version>
         <jpush-jiguang-common.version>1.2.7</jpush-jiguang-common.version>
@@ -324,7 +324,7 @@
         <lock4j.version>2.2.7</lock4j.version>
         <lombok.version>1.18.46</lombok.version>
         <log4j2.version>2.24.3</log4j2.version>
-        <logback.version>1.5.35</logback.version>
+        <logback.version>1.5.36</logback.version>
         <lz4-java.version>1.8.1</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -587,27 +587,27 @@
         <!-- Maven Plugin versions -->
         <maven-alibaba-plugin.version>1.1.9</maven-alibaba-plugin.version>
         <maven-appassembler-plugin.version>2.1.0</maven-appassembler-plugin.version>
-        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
         <maven-asciidoctor-plugin.version>3.0.0</maven-asciidoctor-plugin.version>
-        <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-clirr-plugin.version>2.8</maven-clirr-plugin.version>
         <maven-codenarc-plugin.version>0.22-1</maven-codenarc-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
         <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
         <maven-dependency-check-plugin.version>12.2.2</maven-dependency-check-plugin.version>
-        <maven-docker-plugin.version>0.48.0</maven-docker-plugin.version>
-        <maven-exec-plugin.version>3.6.2</maven-exec-plugin.version>
+        <maven-docker-plugin.version>0.48.1</maven-docker-plugin.version>
+        <maven-exec-plugin.version>3.6.3</maven-exec-plugin.version>
         <maven-findbugs-plugin.version>3.0.5</maven-findbugs-plugin.version>
         <maven-flatten-plugin.version>1.7.3</maven-flatten-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-git-commit-id-plugin.version>4.9.10</maven-git-commit-id-plugin.version>
         <maven-gwt-plugin.version>2.8.2</maven-gwt-plugin.version>
-        <maven-jarsigner-plugin.version>3.0.0</maven-jarsigner-plugin.version>
+        <maven-jarsigner-plugin.version>3.1.0</maven-jarsigner-plugin.version>
         <maven-mybatis-generator-plugin.version>1.3.7</maven-mybatis-generator-plugin.version>
-        <maven-jacoco-plugin.version>0.8.12</maven-jacoco-plugin.version>
+        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
         <maven-jaxb2-plugin.version>3.3.0</maven-jaxb2-plugin.version>
         <maven-javancss-plugin.version>2.1</maven-javancss-plugin.version>
-        <maven-jdepend-plugin.version>2.0</maven-jdepend-plugin.version>
+        <maven-jdepend-plugin.version>2.2.0</maven-jdepend-plugin.version>
         <maven-jetty-plugin.version>11.0.25</maven-jetty-plugin.version>
         <maven-license-plugin.version>2.5.0</maven-license-plugin.version>
         <maven-nexus-m2settings-plugin.version>1.6.8</maven-nexus-m2settings-plugin.version>
