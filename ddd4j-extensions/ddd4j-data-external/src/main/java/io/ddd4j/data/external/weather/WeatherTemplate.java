@@ -51,7 +51,7 @@ public class WeatherTemplate {
                 @Override
                 public Optional<JSONObject> load(String city_code) throws Exception {
 
-                    ResponseEntity<String> response = restClient.post()
+                    ResponseEntity<String> response = restClient.get()
                             .uri(String.format(SOJSON_WEATHER_URL, city_code))
                             .retrieve()
                             .toEntity(String.class);

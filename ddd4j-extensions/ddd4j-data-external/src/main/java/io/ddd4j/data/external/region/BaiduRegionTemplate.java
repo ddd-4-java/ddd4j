@@ -97,7 +97,7 @@ public class BaiduRegionTemplate {
         // 3、调用三方接口解析IP信息
         try {
             String url = String.format(GET_LOCATION_BY_IP_URL, this.ak, ip);
-            ResponseEntity<String> response = restClient.post()
+            ResponseEntity<String> response = restClient.get()
                     .uri(url)
                     .retrieve()
                     .toEntity(String.class);

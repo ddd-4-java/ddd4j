@@ -66,7 +66,7 @@ public class GeoBaiduTemplate {
         String address = java.net.URLEncoder.encode(addr, StandardCharsets.UTF_8);
         String url = String.format(geocoder, address, this.ak);
         // {"message":"APP Referer校验失败","status":220}
-        ResponseEntity<String> response = restClient.post()
+        ResponseEntity<String> response = restClient.get()
                 .uri(url)
                 .retrieve()
                 .toEntity(String.class);
@@ -121,7 +121,7 @@ public class GeoBaiduTemplate {
         }
         try {
             String url = String.format(geocoder2, this.ak, ip);
-            ResponseEntity<String> response = restClient.post()
+            ResponseEntity<String> response = restClient.get()
                     .uri(url)
                     .retrieve()
                     .toEntity(String.class);
