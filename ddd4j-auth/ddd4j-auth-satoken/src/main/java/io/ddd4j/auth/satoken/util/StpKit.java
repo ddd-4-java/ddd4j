@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.auth.satoken.SaConstants;
 import io.ddd4j.kit.lang.FunctionKit;
+import io.ddd4j.kit.lang.JsonKit;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -63,13 +64,13 @@ public class StpKit {
     }
 
     public static Long getUserIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_USER_ID, Functions.TO_LONG);
+        return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_LONG);
     }
     public static String getUserIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_USER_ID, Functions.TO_STRING);
+        return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_STRING);
     }
     public static Integer getUserIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_USER_ID, Functions.TO_INTEGER);
+        return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_INTEGER);
     }
 
     public static Object getOrgId() {
@@ -77,39 +78,39 @@ public class StpKit {
     }
 
     public static String getOrgIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, Functions.TO_STRING);
+        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, FunctionKit.TO_STRING);
     }
 
     public static Integer getOrgIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, Functions.TO_INTEGER);
+        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, FunctionKit.TO_INTEGER);
     }
 
     public static Long getOrgIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, Functions.TO_LONG);
+        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, FunctionKit.TO_LONG);
     }
 
     public static String getXqOrgIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, Functions.TO_STRING);
+        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, FunctionKit.TO_STRING);
     }
 
     public static Integer getXqOrgIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, Functions.TO_INTEGER);
+        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, FunctionKit.TO_INTEGER);
     }
 
     public static Long getXqOrgIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, Functions.TO_LONG);
+        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, FunctionKit.TO_LONG);
     }
 
     public static Long getInfoIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, Functions.TO_LONG);
+        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, FunctionKit.TO_LONG);
     }
 
     public static String getInfoIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, Functions.TO_STRING);
+        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, FunctionKit.TO_STRING);
     }
 
     public static Integer getInfoIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, Functions.TO_INTEGER);
+        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, FunctionKit.TO_INTEGER);
     }
 
     public static Object getRoleId() {
@@ -117,23 +118,23 @@ public class StpKit {
     }
 
     public static String getRoleIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, Functions.TO_STRING);
+        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, FunctionKit.TO_STRING);
     }
 
     public static Integer getRoleIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, Functions.TO_INTEGER);
+        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, FunctionKit.TO_INTEGER);
     }
 
     public static Long getRoleIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, Functions.TO_LONG);
+        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, FunctionKit.TO_LONG);
     }
 
     public static String getXxdmAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_SCHOOL_CODE, Functions.TO_STRING);
+        return getExtraAs(SaConstants.PAYLOAD_SCHOOL_CODE, FunctionKit.TO_STRING);
     }
 
     public static Integer getIdentityIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_IDENTITY_ID, Functions.TO_INTEGER);
+        return getExtraAs(SaConstants.PAYLOAD_IDENTITY_ID, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -142,7 +143,7 @@ public class StpKit {
      * @return 账号id
      */
     public static String getExtraAsString(String key) {
-        return getExtraAs(key, Functions.TO_STRING);
+        return getExtraAs(key, FunctionKit.TO_STRING);
     }
 
     /**
@@ -151,7 +152,7 @@ public class StpKit {
      * @return 账号id
      */
     public static Integer getExtraAsInteger(String key) {
-        return getExtraAs(key, Functions.TO_INTEGER);
+        return getExtraAs(key, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -160,7 +161,7 @@ public class StpKit {
      * @return 账号id
      */
     public static Long getExtraAsLong(String key) {
-        return getExtraAs(key, Functions.TO_LONG);
+        return getExtraAs(key, FunctionKit.TO_LONG);
     }
 
     /**
@@ -188,7 +189,7 @@ public class StpKit {
      */
     public static <T> T getExtraAs(String key, Class<T> valueType) {
         Object value = StpUtil.getExtra(key);
-        return JacksonKit.toType(value, valueType);
+        return JsonKit.toType(value, valueType);
     }
 
     /**
@@ -197,7 +198,7 @@ public class StpKit {
      * @return 账号id
      */
     public String getExtraAsString(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, Functions.TO_STRING);
+        return getExtraAs(tokenValue, key, FunctionKit.TO_STRING);
     }
 
     /**
@@ -206,7 +207,7 @@ public class StpKit {
      * @return 账号id
      */
     public Integer getExtraAsInteger(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, Functions.TO_INTEGER);
+        return getExtraAs(tokenValue, key, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -215,7 +216,7 @@ public class StpKit {
      * @return 账号id
      */
     public static Long getExtraAsLong(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, Functions.TO_LONG);
+        return getExtraAs(tokenValue, key, FunctionKit.TO_LONG);
     }
 
     /**
@@ -244,7 +245,7 @@ public class StpKit {
      */
     public static <T> T getExtraAs(String tokenValue, String key, Class<T> valueType) {
         Object value = StpUtil.getExtra(tokenValue, key);
-        return JacksonKit.toType(value, valueType);
+        return JsonKit.toType(value, valueType);
     }
 
 }
