@@ -1,4 +1,4 @@
-package io.ddd4j.web.auth.interceptor;
+package io.ddd4j.web.webmvc.auth.interceptor;
 
 import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.core.context.ThreadContext;
@@ -7,7 +7,7 @@ import io.ddd4j.spring.util.BizAssert;
 import io.ddd4j.auth.annotation.BaseAuth;
 import io.ddd4j.auth.annotation.Inside;
 import io.ddd4j.web.config.BaseWebProperties;
-import io.ddd4j.web.interceptor.BaseWebInterceptor;
+import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;

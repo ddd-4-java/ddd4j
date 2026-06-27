@@ -1,4 +1,4 @@
-package io.ddd4j.web.utils;
+package io.ddd4j.web.webmvc.utils;
 
 import org.springframework.format.Formatter;
 

@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-quarkus</artifactId>
-    <description>Ddd4j Quarkus 框架核心适配：3 个核心 SPI 的 CDI 实现（DomainEventPublisher/SubjectProvider/I18nProvider）。与 ddd4j-spring、ddd4j-javalin 平级。</description>
+    <description>Ddd4j Quarkus 框架核心适配：3 个核心 SPI 的 CDI 实现（DomainEventPublisher/SubjectProvider/I18nProvider）。与 ddd4j-spring、ddd4j-guice 平级。</description>
 
     <dependencies>
         <!-- 纯 Java 核心契约 -->
@@ -31,15 +31,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-core</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 

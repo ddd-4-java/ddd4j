@@ -2,9 +2,9 @@
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
  */
-package io.ddd4j.web.webmvc;
+package io.ddd4j.web.webmvc.webmvc;
 
-import io.ddd4j.web.config.LocalResourceProperteis;
+import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import io.ddd4j.core.Constants;
 import io.ddd4j.core.ProfileManager;
 import io.ddd4j.spring.web.Slf4jMDCInterceptor;

@@ -10,7 +10,7 @@
 
 ## 一、重构目标（已完成）
 
-将 ddd4j 从"Spring 强耦合的单一仓库"重构为"**纯 Java 公共底座 + 三框架适配层**"，使 `ddd4j-boot`、`ddd4j-quarkus`、`ddd4j-javalin` 三个独立项目可**自由选择**继承的模块。
+将 ddd4j 从"Spring 强耦合的单一仓库"重构为"**纯 Java 公共底座 + 三框架适配层**"，使 `ddd4j-boot`、`ddd4j-quarkus`、`ddd4j-guice` 三个独立项目可**自由选择**继承的模块。
 
 **关键原则（已落实）**：
 - ✅ 纯 Java 模块（`ddd4j-core`、`ddd4j-core-api` 已合并）pom 中**零** `org.springframework.*` 依赖
@@ -32,7 +32,7 @@ ddd4j/                                                    # 纯 Java 公共底�
 ├── 三框架核心适配（与 ddd4j-core 同级）
 │   ├── ddd4j-spring                                     # Spring 框架核心适配（27 java，3 SPI + 工具类）
 │   ├── ddd4j-quarkus                                    # Quarkus CDI 桥接（4 java，3 SPI）
-│   └── ddd4j-javalin                                    # Javalin Guice 桥接（5 java，3 SPI + Module）
+│   └── ddd4j-guice                                    # Javalin Guice 桥接（5 java，3 SPI + Module）
 │
 ├── 业务模块聚合（pom 模块）
 │   ├── ddd4j-data/                                      # 数据抽象（5 子模块，无空壳）

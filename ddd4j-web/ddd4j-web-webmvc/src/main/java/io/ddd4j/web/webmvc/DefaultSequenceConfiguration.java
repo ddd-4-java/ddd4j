@@ -2,12 +2,12 @@
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
  */
-package io.ddd4j.web.webmvc;
+package io.ddd4j.web.webmvc.webmvc;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import io.ddd4j.kit.lang.IdKit;
-import io.ddd4j.web.config.SequenceProperties;
+import io.ddd4j.web.webmvc.config.SequenceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -2,7 +2,7 @@
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
  */
-package io.ddd4j.web.webmvc;
+package io.ddd4j.web.webmvc.webmvc;
 
 import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import hitool.core.lang3.time.DateFormats;
 import io.ddd4j.extension.jackson.ser.MyBeanSerializerModifier;
-import io.ddd4j.web.config.LocalResourceProperteis;
+import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import io.ddd4j.core.MediaTypes;
 import io.ddd4j.spring.web.Slf4jMDCInterceptor;
 import org.springframework.http.MediaType;

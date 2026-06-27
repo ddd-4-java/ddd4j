@@ -12,7 +12,7 @@
 
     <artifactId>ddd4j-mq</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -spring(Spring Messaging 桥接) + 13 个 broker 实现。Quarkus/Javalin 桥接通过 ddd4j-quarkus/ddd4j-javalin 顶层模块提供。</description>
+    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -spring(Spring Messaging 桥接) + 13 个 broker 实现。Quarkus/Javalin 桥接通过 ddd4j-quarkus/ddd4j-guice 顶层模块提供。</description>
 
     <dependencies>
         <!-- Test -->

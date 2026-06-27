@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.webmvc.core;
 
 import io.ddd4j.core.contract.IR;
 import io.ddd4j.core.contract.Model;

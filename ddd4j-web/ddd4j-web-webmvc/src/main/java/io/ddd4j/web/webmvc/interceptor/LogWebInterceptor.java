@@ -1,4 +1,4 @@
-package io.ddd4j.web.interceptor;
+package io.ddd4j.web.webmvc.interceptor;
 
 import io.ddd4j.web.config.BaseWebProperties;
 import org.slf4j.Logger;

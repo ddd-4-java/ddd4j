@@ -1,16 +1,16 @@
-package io.ddd4j.web.config;
+package io.ddd4j.web.webmvc.config;
 
 import io.ddd4j.core.config.BaseCoreProperties;
 import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.web.core.GlobalRequestAdvice;
-import io.ddd4j.web.core.GlobalResponseRAdvice;
-import io.ddd4j.web.core.GlobalRestExceptionAdvice;
-import io.ddd4j.web.interceptor.BaseWebInterceptor;
-import io.ddd4j.web.interceptor.FeignHeaderInterceptor;
+import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
+import io.ddd4j.web.webmvc.core.GlobalResponseRAdvice;
+import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;
+import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
+import io.ddd4j.web.webmvc.interceptor.FeignHeaderInterceptor;
 import io.ddd4j.web.utils.BaseWebSocketServer;
-import io.ddd4j.web.utils.LocalDateTimeFormatter;
-import io.ddd4j.web.utils.LocalTimeFormatter;
+import io.ddd4j.web.webmvc.utils.LocalDateTimeFormatter;
+import io.ddd4j.web.webmvc.utils.LocalTimeFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Feign;
 import feign.RequestInterceptor;

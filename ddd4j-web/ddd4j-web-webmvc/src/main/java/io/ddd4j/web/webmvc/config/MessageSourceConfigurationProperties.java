@@ -1,4 +1,4 @@
-package io.ddd4j.web.config;
+package io.ddd4j.web.webmvc.config;
 
 import lombok.Data;
 

@@ -25,6 +25,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <revision>2.0.x20260625-SNAPSHOT</revision>
         <java.version>17</java.version>
+        <!-- P0-2: 单元测试开关（默认运行，业务项目可 -DskipTests 跳过） -->
+        <skipTests>false</skipTests>
         <!-- Maven Plugin versions -->
         <maven.version>3.6.3</maven.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -86,9 +88,9 @@
         <!-- 三框架核心适配层（与 ddd4j-core 同级，提供 3 个核心 SPI 的框架实现） -->
         <module>ddd4j-spring</module>
         <module>ddd4j-quarkus</module>
-        <module>ddd4j-javalin</module>
+        <module>ddd4j-guice</module>
 
-        <!-- 业务模块 × 三框架 整合模块（ddd4j-{data,mq,web,auth}-{spring,quarkus,javalin}）已下沉到各自业务聚合层下 -->
+        <!-- 业务模块 × 三框架 整合模块（ddd4j-{data,mq,web,auth}-{spring,quarkus,guice}）已下沉到各自业务聚合层下 -->
         <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress） -->
         <module>ddd4j-extensions</module>
         <module>ddd4j-parent</module>
@@ -386,9 +388,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        <!-- 跳过单元测试 -->
-                        <skip>true</skip>
-                        <skipTests>true</skipTests>
+                        <!-- P0-2: 开启单元测试（CI 阶段执行，业务项目可 -DskipTests 跳过） -->
+                        <skipTests>${skipTests}</skipTests>
                         <argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8</argLine>
                         <additionalClasspathElements>
                             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>

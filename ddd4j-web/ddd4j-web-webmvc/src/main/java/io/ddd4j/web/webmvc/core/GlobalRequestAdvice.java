@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.webmvc.core;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;

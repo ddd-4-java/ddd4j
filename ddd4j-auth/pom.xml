@@ -12,7 +12,7 @@
 
     <artifactId>ddd4j-auth</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j 认证/授权抽象聚合：-core(纯 Java SPI) + datascope/license/satoken/security/shiro 实现。Spring/Quarkus/Javalin 桥接通过 ddd4j-spring/ddd4j-quarkus/ddd4j-javalin 顶层模块提供。</description>
+    <description>ddd4j 认证/授权抽象聚合：-core(纯 Java SPI) + datascope/license/satoken/security/shiro 实现。Spring/Quarkus/Javalin 桥接通过 ddd4j-spring/ddd4j-quarkus/ddd4j-guice 顶层模块提供。</description>
 
     <dependencies>
         <!-- Test -->

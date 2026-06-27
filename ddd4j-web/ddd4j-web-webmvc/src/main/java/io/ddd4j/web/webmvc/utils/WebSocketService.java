@@ -1,11 +1,11 @@
-package io.ddd4j.web.utils;
+package io.ddd4j.web.webmvc.utils;
 
 import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.web.config.BaseWebProperties;
 import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -23,9 +23,9 @@ import java.util.function.Supplier;
 /**
  * WebSocket工具
  */
-@Slf4j(topic = "### BASE-WEB : WebSocketService ###")
-@UtilityClass
 public class WebSocketService {
+
+    private static final Logger log = LoggerFactory.getLogger("### BASE-WEB : WebSocketService ###");
     private static final Map<String, WebSocketSession> SESSIONS = new ConcurrentHashMap<>();
     private static final Map<String, WebSocketConnectionManager> MANAGERS = new ConcurrentHashMap<>();
 

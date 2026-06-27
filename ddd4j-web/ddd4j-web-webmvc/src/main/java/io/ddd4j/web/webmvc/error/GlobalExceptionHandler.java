@@ -1,4 +1,4 @@
-package io.ddd4j.web.error;
+package io.ddd4j.web.webmvc.error;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import hitool.core.format.ByteUnitFormat;
-import io.ddd4j.web.config.ServerI18nProperties;
+import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.exception.BizCheckedException;
