@@ -6,6 +6,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public @interface RedisTopic {
 
     String pattern() default "";

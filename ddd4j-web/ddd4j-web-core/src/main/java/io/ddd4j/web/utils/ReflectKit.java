@@ -8,6 +8,9 @@ import java.lang.reflect.Type;
 
 @Slf4j
 @UtilityClass
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public final class ReflectKit {
 
     public <T> Class<T> getSuperClassGenericType(final Class<?> clazz, final int index) {

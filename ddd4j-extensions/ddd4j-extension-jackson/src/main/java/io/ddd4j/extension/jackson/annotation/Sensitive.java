@@ -13,6 +13,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @JacksonAnnotationsInside
 @JsonSerialize(using = SensitiveJsonSerializer.class)
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public @interface Sensitive {
 
     SensitiveStrategy strategy();

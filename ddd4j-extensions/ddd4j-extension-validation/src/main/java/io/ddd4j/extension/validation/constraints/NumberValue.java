@@ -10,6 +10,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Constraint(validatedBy = {NumberValueValidator.class})
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public @interface NumberValue {
 
     String regex() default "^[0-9\\-]+$";

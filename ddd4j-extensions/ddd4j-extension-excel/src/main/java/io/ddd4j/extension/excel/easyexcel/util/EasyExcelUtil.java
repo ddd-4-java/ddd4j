@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public final class EasyExcelUtil {
 
     public static byte[] writeErrorExcel(String sheetName, Throwable throwable) throws IOException {
