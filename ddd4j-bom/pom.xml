@@ -49,7 +49,7 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-monitor</artifactId>
+                <artifactId>ddd4j-extension-monitor</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
