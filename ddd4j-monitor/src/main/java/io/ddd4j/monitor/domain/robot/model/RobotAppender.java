@@ -7,7 +7,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
-import io.ddd4j.core.context.SpringContext;
+import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.monitor.application.service.Sender;
 import io.ddd4j.monitor.infras.config.BaseMonitorProperties;
 import com.google.common.util.concurrent.RateLimiter;

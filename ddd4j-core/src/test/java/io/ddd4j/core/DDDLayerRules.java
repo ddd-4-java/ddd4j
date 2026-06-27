@@ -4,12 +4,11 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.junit.AnalyzeClasses;
 
-import io.ddd4j.annotation.ApplicationService;
-import io.ddd4j.annotation.DomainEntity;
-import io.ddd4j.annotation.DomainRepository;
-import io.ddd4j.annotation.DomainService;
+import io.ddd4j.annotation.ddd.ApplicationService;
+import io.ddd4j.annotation.ddd.DomainEntity;
+import io.ddd4j.annotation.ddd.DomainRepository;
+import io.ddd4j.annotation.ddd.DomainService;
 
 /**
  * DDD 分层纪律 ArchUnit 规则集。

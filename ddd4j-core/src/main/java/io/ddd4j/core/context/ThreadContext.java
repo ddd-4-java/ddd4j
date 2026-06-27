@@ -17,9 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class ThreadContext {
     // 本地线程变量池
-    private ThreadLocal<Map<String, Object>> THREAD_LOCAL_POOL = new TransmittableThreadLocal();
+    private static final ThreadLocal<Map<String, Object>> THREAD_LOCAL_POOL = new TransmittableThreadLocal();
 
-    public <T> T get(String key) {
+    public static <T> T get(String key) {
         Map<String, Object> map = THREAD_LOCAL_POOL.get();
         return Objects.isNull(map) ? null : (T) map.get(key);
     }
@@ -32,18 +32,18 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.set(values);
     }
 
-    public <T> T get(String key, T defaultValue) {
+    public static <T> T get(String key, T defaultValue) {
         Object o = get(key);
         if (o != null) return (T) o;
         return defaultValue;
     }
 
-    public void set(boolean condition, String key, Object value) {
+    public static void set(boolean condition, String key, Object value) {
         if (!condition) return;
         set(key, value);
     }
 
-    public synchronized void set(String key, Object value) {
+    public static void set(String key, Object value) {
         if (value == null) {
             return;
         }
@@ -64,7 +64,7 @@ public class ThreadContext {
         return objects.containsKey(key);
     }
 
-    public void remove(String key) {
+    public static void remove(String key) {
         Map<String, Object> objects = THREAD_LOCAL_POOL.get();
         if (objects != null) {
             objects.remove(key);
@@ -72,7 +72,7 @@ public class ThreadContext {
         }
     }
 
-    public void clear() {
+    public static void clear() {
         THREAD_LOCAL_POOL.remove();
     }
 }

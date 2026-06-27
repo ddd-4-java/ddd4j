@@ -4,7 +4,7 @@ import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
-import io.ddd4j.core.context.SpringContext;
+import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.monitor.application.service.CodeVersionService;
 import io.ddd4j.monitor.infras.config.BaseMonitorProperties;

@@ -16,7 +16,6 @@
 
     <modules>
         <module>ddd4j-web-core</module>
-        <module>ddd4j-web-spring</module>
         <module>ddd4j-web-validation</module>
         <module>ddd4j-web-webflux</module>
         <module>ddd4j-web-webmvc</module>

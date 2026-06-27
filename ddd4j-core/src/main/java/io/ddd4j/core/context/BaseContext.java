@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @UtilityClass
 public class BaseContext {
-    private Map<Object, Object> GLOBAL = new ConcurrentHashMap<>();
+    private static Map<Object, Object> GLOBAL = new ConcurrentHashMap<>();
 
     /**
      * 显式注入

@@ -20,6 +20,10 @@
             <artifactId>truelicense-core</artifactId>
         </dependency>
         <!-- Compile dependencies -->
-</dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -18,7 +18,7 @@ public final class MappingKit {
         mappings.put(key, value);
     }
 
-    public <K, V> V get(String field, K source) {
+    public static <K, V> V get(String field, K source) {
         Map<Object, Object> mappings = BEAN_MAPPINGS.get(field);
         if (mappings == null) return null;
         return (V) mappings.get(source);

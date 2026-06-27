@@ -25,19 +25,16 @@ public class BeanKit {
 
     /**
      * 将 Map 中的属性写入目标对象。
-     *
      * <p>底层基于 Spring {@link BeanWrapper} 完成属性绑定，可兼容链式 setter。</p>
-     *
      * @param map    属性 Map
      * @param object 目标对象
      */
     public void mapToObject(Map map, Object object) {
-        if (object != null && map != null) {
+        if (Objects.nonNull(object) && Objects.nonNull(map)) {
             BeanWrapper beanWrapper = new BeanWrapperImpl(object);
             PropertyValues propertyValues = new MutablePropertyValues(map);
             beanWrapper.setPropertyValues(propertyValues, true, true);
         }
-
     }
 
     public String changeColumnToFieldName(String columnName) {

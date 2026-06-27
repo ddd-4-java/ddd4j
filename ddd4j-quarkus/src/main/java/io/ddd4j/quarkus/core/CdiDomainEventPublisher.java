@@ -31,7 +31,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
             return;
         }
         log.debug("Publishing domain event: {}, aggregateId: {}",
-                domainEvent.getEventType(), domainEvent.getAggregateId());
+                domainEvent.getClass().getSimpleName(), domainEvent.source());
         event.fire(domainEvent);
     }
 

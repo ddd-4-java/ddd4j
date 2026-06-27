@@ -149,9 +149,9 @@ ddd4j/                                                    # 纯 Java 公共底�
 
 | 旧类（已删除） | 新类 |
 |---|---|
-| `io.ddd4j.web.auth.annotation.BaseAuth` | `io.ddd4j.auth.annotation.BaseAuth` |
-| `io.ddd4j.web.auth.annotation.Inside` | `io.ddd4j.auth.annotation.Inside` |
-| `io.ddd4j.web.auth.annotation.EnableBaseAuth` | `io.ddd4j.auth.annotation.EnableBaseAuth` |
+| `io.ddd4j.annotation.auth.BaseAuth` | `io.ddd4j.auth.annotation.BaseAuth` |
+| `io.ddd4j.annotation.auth.Inside` | `io.ddd4j.auth.annotation.Inside` |
+| `io.ddd4j.annotation.auth.EnableBaseAuth` | `io.ddd4j.auth.annotation.EnableBaseAuth` |
 | `io.ddd4j.web.auth.config.BaseAuthConfig` | `io.ddd4j.auth.BaseAuthConfig`（接口） |
 | `io.ddd4j.web.auth.interceptor.BaseAuthWebInterceptor` | `io.ddd4j.auth.BaseAuthInterceptor`（接口） |
 
