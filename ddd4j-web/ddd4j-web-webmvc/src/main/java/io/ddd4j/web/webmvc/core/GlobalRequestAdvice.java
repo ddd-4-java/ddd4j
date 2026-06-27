@@ -3,7 +3,7 @@ package io.ddd4j.web.core;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import io.ddd4j.spring.util.BeanKit;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;

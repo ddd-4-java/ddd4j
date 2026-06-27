@@ -3,7 +3,7 @@ package io.ddd4j.auth.satoken.util;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.auth.satoken.SaConstants;
-import io.ddd4j.core.util.Functions;
+import io.ddd4j.kit.lang.FunctionKit;
 
 import java.util.Objects;
 import java.util.function.Function;

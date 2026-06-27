@@ -36,7 +36,6 @@ import java.util.Map;
  * @author wandl
  * @since 1.0.x
  */
-@Deprecated(since = "3.4.x", forRemoval = true)
 @Getter
 @Setter
 public class BaseEntity<T extends Model<?>> extends Model<T> implements Serializable {

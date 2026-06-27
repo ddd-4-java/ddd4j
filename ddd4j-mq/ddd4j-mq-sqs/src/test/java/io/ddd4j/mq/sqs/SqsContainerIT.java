@@ -6,7 +6,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.sqs.autoconfigure.Ddd4jSqsMQAutoConfiguration;

@@ -4,6 +4,7 @@ import io.ddd4j.core.contract.annotation.MQEventListener;
 import io.ddd4j.mq.ack.AckDisposition;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerContext;
+import io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;

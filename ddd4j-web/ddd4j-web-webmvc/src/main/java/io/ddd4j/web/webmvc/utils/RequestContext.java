@@ -2,7 +2,7 @@ package io.ddd4j.web.utils;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

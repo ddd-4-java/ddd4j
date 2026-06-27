@@ -2,7 +2,7 @@ package io.ddd4j.data.typehandlers;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.ibatis.type.BaseTypeHandler;

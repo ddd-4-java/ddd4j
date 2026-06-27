@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * {@link MQEventListener} 监听器定义注册表，由 {@link MQListenerBeanPostProcessor} 在 Bean 初始化阶段填充。
+ * {@link MQEventListener} 监听器定义注册表，由 {@code io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor} 在 Bean 初始化阶段填充。
  */
 @Slf4j
 public class MQListenerDefinitionRegistry {

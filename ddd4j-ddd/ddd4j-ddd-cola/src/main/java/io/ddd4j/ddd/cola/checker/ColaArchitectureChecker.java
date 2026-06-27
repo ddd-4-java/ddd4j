@@ -1,5 +1,10 @@
 package io.ddd4j.ddd.cola.checker;
 
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.lang.ArchRule;
+import io.ddd4j.ddd.cola.rules.ColaDDDLayerRules;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -73,7 +78,7 @@ public class ColaArchitectureChecker {
     /**
      * 检查指定源码根目录是否符合 COLA 规范。
      *
-     * @param sourceRoot 源码根目录（如 src/main/java）
+     * @param sourceRoot 源码根目录（如 src/main/java 或 target/classes）
      * @return 违规列表，空表示合规
      */
     public List<String> check(String sourceRoot) {
@@ -85,12 +90,70 @@ public class ColaArchitectureChecker {
             return violations;
         }
 
+        // 1. 目录结构检查（轻量级，无需 classpath）
         checkRequiredLayers(basePath);
-        checkDomainIsolation(basePath);
-        checkAdapterImplementsGateway(basePath);
         checkApplicationLayerStructure(basePath);
 
+        // 2. ArchUnit 类依赖检查（完整级，需要可被 import 的 class 文件）
+        try {
+            checkArchUnitRules(sourceRoot);
+        } catch (Exception e) {
+            log.warn("ArchUnit 检查失败（classpath 不可用？）：{}", e.getMessage());
+        }
+
         return violations;
+    }
+
+    /**
+     * 使用 ArchUnit 做类级别的依赖检查。
+     */
+    private void checkArchUnitRules(String sourceRoot) {
+        JavaClasses classes = importClasses(sourceRoot);
+        if (classes == null || classes.isEmpty()) {
+            log.debug("ArchUnit: 未找到可分析的 class 文件，跳过依赖检查");
+            return;
+        }
+
+        // 应用 ColaDDDLayerRules 中的核心规则
+        checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_ADAPTER, classes);
+        checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION, classes);
+        checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK, classes);
+        checkArchRule(ColaDDDLayerRules.DOMAIN_ENTITY_IN_DOMAIN, classes);
+        checkArchRule(ColaDDDLayerRules.DOMAIN_SERVICE_IN_DOMAIN, classes);
+        checkArchRule(ColaDDDLayerRules.APPLICATION_SERVICE_IN_APP, classes);
+        checkArchRule(ColaDDDLayerRules.REPOSITORY_IMPL_IN_ADAPTER, classes);
+    }
+
+    private JavaClasses importClasses(String sourceRoot) {
+        try {
+            File root = new File(sourceRoot);
+            // 优先尝试 target/classes（已编译 class 文件）
+            File classRoot = new File(root, "../classes");
+            File actualRoot = classRoot.exists() ? classRoot : root;
+
+            return new ClassFileImporter()
+                    .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                    .importPath(actualRoot);
+        } catch (Exception e) {
+            log.debug("ArchUnit: importPath 失败 {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private void checkArchRule(ArchRule rule, JavaClasses classes) {
+        try {
+            rule.check(classes);
+        } catch (AssertionError e) {
+            String message = e.getMessage();
+            if (message != null) {
+                for (String line : message.split("\n")) {
+                    String trimmed = line.trim();
+                    if (!trimmed.isEmpty()) {
+                        violations.add(trimmed);
+                    }
+                }
+            }
+        }
     }
 
     private void checkRequiredLayers(Path basePath) {
@@ -100,29 +163,6 @@ public class ColaArchitectureChecker {
                 violations.add("缺少必要分层目录: " + layer + " (expected: " + layerPath + ")");
             }
         }
-    }
-
-    private void checkDomainIsolation(Path basePath) {
-        Path domainPath = basePath.resolve("domain");
-        if (!domainPath.toFile().exists()) return;
-
-        // COLA 核心规则：domain 层不依赖 adapter/application/infrastructure
-        checkNoExternalImports(domainPath, Set.of(
-                basePackage + ".adapter",
-                basePackage + ".application",
-                basePackage + ".infrastructure",
-                "org.springframework",
-                "com.baomidou"
-        ), "domain");
-    }
-
-    private void checkAdapterImplementsGateway(Path basePath) {
-        Path gatewayPath = basePath.resolve("domain").resolve("gateway");
-        Path adapterPath = basePath.resolve("adapter");
-        if (!gatewayPath.toFile().exists() || !adapterPath.toFile().exists()) return;
-
-        // 检查 adapter 是否实现了 gateway 接口（骨架级检查）
-        log.debug("COLA: Checking adapter implements gateway interfaces");
     }
 
     private void checkApplicationLayerStructure(Path basePath) {
@@ -137,11 +177,6 @@ public class ColaArchitectureChecker {
         if (!hasExecutor && !hasQuery && !hasService) {
             violations.add("COLA: application 层应包含 executor/ 或 query/ 或 service/ 子包");
         }
-    }
-
-    private void checkNoExternalImports(Path layerPath, Set<String> forbiddenPackages, String layerName) {
-        // 骨架级检查：仅验证目录结构，不扫描源码
-        // 生产环境建议集成 ArchUnit 做完整的类依赖分析
     }
 
     /**

@@ -1,7 +1,7 @@
 package io.ddd4j.mq.kafka.mq;
 
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

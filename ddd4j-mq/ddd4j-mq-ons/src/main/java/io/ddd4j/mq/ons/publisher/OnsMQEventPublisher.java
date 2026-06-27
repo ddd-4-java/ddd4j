@@ -4,7 +4,7 @@ import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
 import com.aliyun.openservices.ons.api.SendResult;
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;

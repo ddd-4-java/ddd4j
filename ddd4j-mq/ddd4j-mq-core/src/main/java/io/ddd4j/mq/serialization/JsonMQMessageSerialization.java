@@ -1,6 +1,6 @@
 package io.ddd4j.mq.serialization;
 
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 
 /**
  * 默认 JSON 消息序列化实现。

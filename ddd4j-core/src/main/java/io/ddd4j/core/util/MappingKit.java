@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 用于对象映射，按biz隔离
+ * 用于对象映射，按 biz 隔离
+ *
+ * @since 2.0.x
  */
 @UtilityClass
 public final class MappingKit {

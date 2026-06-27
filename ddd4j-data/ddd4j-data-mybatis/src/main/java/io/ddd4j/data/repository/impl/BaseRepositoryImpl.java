@@ -15,7 +15,7 @@ import io.ddd4j.core.contract.Page;
 import io.ddd4j.core.contract.Query;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import io.ddd4j.spring.util.BeanKit;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.data.annotation.*;
 import io.ddd4j.data.config.BaseDataProperties;

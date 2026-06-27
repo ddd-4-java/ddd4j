@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-mq-spring</artifactId>
-    <description>ddd4j MQ - Spring 桥接：org.springframework.messaging.Message ↔ MQMessage 转换、BeanPostProcessor 监听注册</description>
+    <description>ddd4j MQ - Spring 桥接：org.springframework.messaging.Message ↔ MQMessage 转换、BeanPostProcessor 监听注册。承担 ddd4j-mq-core 与 Spring 容器（@Configuration/BeanPostProcessor/EventListener）的所有桥接职责。</description>
 
     <dependencies>
         <!-- 纯 Java MQ 抽象 -->
@@ -26,15 +26,30 @@
             <artifactId>ddd4j-spring</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring Messaging -->
+        <!-- Spring Messaging 作为统一消息模型 -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
         </dependency>
-        <!-- Spring Context (BeanPostProcessor) -->
+        <!-- Spring Context (BeanPostProcessor / @Configuration / @EventListener) -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+        </dependency>
+        <!-- Spring AOP (AopUtils) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+        </dependency>
+        <!-- Spring Beans (BeansException) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <!-- Lombok (迁出的 4 个类使用) -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 

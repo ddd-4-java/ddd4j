@@ -1,6 +1,6 @@
 package io.ddd4j.data.external.sys;
 
-import io.ddd4j.core.util.Arith;
+import io.ddd4j.kit.lang.ArithKit;
 import lombok.Data;
 
 /**

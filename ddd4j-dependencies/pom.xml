@@ -598,7 +598,7 @@
         <couchbase-client.version>3.7.9</couchbase-client.version>
         <crac.version>1.5.0</crac.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
-        <ehcache3.version>3.10.9</ehcache3.version>
+        <ehcache3.version>3.12.0</ehcache3.version>
         <freemarker.version>2.3.34</freemarker.version>
         <httpclient5.version>5.4.4</httpclient5.version>
         <httpcore5.version>5.3.6</httpcore5.version>
@@ -726,13 +726,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.ehcache/ehcache-bom -->
+            <!-- Source: https://mvnrepository.com/artifact/org.ehcache/ehcache -->
             <dependency>
                 <groupId>org.ehcache</groupId>
-                <artifactId>ehcache-bom</artifactId>
+                <artifactId>ehcache</artifactId>
                 <version>${ehcache3.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.google.auth/google-auth-library-bom -->
             <dependency>
@@ -790,21 +788,37 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5-bom -->
+            <!-- httpcomponents.client5: 直接声明具体 artifact（BOM 不存在于 Maven Central） -->
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
-                <artifactId>httpclient5-bom</artifactId>
+                <artifactId>httpclient5</artifactId>
                 <version>${httpclient5.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5-bom -->
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5-cache</artifactId>
+                <version>${httpclient5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5-fluent</artifactId>
+                <version>${httpclient5.version}</version>
+            </dependency>
+            <!-- httpcomponents.core5: 直接声明具体 artifact（BOM 不存在于 Maven Central） -->
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
-                <artifactId>httpcore5-bom</artifactId>
+                <artifactId>httpcore5</artifactId>
                 <version>${httpcore5.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>${httpcore5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-reactive</artifactId>
+                <version>${httpcore5.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.infinispan/infinispan-bom -->
             <dependency>
@@ -1102,13 +1116,36 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-bom -->
+            <!-- tomcat: 直接声明具体 artifact（BOM 不存在于 Maven Central） -->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-bom</artifactId>
+                <artifactId>tomcat-annotations-api</artifactId>
                 <version>${tomcat.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jdbc</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jsp-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.zipkin.reporter2/zipkin-reporter-bom -->
             <dependency>

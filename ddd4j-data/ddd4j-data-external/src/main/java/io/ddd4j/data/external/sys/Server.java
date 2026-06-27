@@ -1,7 +1,7 @@
 package io.ddd4j.data.external.sys;
 
 import hitool.core.lang3.network.InetAddressUtils;
-import io.ddd4j.core.util.Arith;
+import io.ddd4j.kit.lang.ArithKit;
 import lombok.Data;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;

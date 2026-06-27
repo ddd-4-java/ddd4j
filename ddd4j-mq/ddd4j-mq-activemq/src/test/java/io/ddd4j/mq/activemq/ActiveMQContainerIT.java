@@ -2,7 +2,7 @@ package io.ddd4j.mq.activemq;
 
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.activemq.autoconfigure.Ddd4jActiveMQAutoConfiguration;
-import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import jakarta.jms.ConnectionFactory;

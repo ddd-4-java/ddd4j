@@ -1,6 +1,6 @@
 package io.ddd4j.data.typehandlers;
 
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 
 import java.lang.reflect.Array;
 import java.util.List;

@@ -16,7 +16,6 @@ import java.util.Objects;
  */
 @Data
 @AllArgsConstructor
-@Deprecated(since = "3.4.x", forRemoval = true)
 public class R<T> implements IR {
     // 编码：0/200、请求成功；500、请求成功但服务异常；403、未登录或者token已失效；401、已登录没有权限。
     protected Serializable code;

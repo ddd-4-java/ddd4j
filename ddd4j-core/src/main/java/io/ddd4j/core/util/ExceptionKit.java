@@ -9,6 +9,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * 异常处理工具类
+ *
+ * @author wandl
+ * @since 2.0.x
+ */
 @UtilityClass
 public class ExceptionKit {
 

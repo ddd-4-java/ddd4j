@@ -3,7 +3,7 @@ package io.ddd4j.mq.kafka.mq;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import lombok.extern.slf4j.Slf4j;

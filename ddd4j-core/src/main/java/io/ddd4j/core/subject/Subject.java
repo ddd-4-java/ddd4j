@@ -1,7 +1,7 @@
 package io.ddd4j.core.subject;
 
-import io.ddd4j.core.util.Functions;
-import io.ddd4j.core.util.JacksonKit;
+import io.ddd4j.kit.lang.FunctionKit;
+import io.ddd4j.kit.lang.JsonKit;
 import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
@@ -113,7 +113,7 @@ public interface Subject {
      * @return 账号id
      */
     default String getLoginIdAsString(){
-        return Functions.TO_STRING.apply(getLoginId());
+        return FunctionKit.TO_STRING.apply(getLoginId());
     }
 
     /**
@@ -122,7 +122,7 @@ public interface Subject {
      * @return 账号id
      */
     default Integer getLoginIdAsInteger(){
-        return Functions.TO_INTEGER.apply(getLoginId());
+        return FunctionKit.TO_INTEGER.apply(getLoginId());
     }
 
     /**
@@ -130,7 +130,7 @@ public interface Subject {
      * @return 账号id
      */
     default Long getLoginIdAsLong(){
-        return Functions.TO_LONG.apply(getLoginId());
+        return FunctionKit.TO_LONG.apply(getLoginId());
     }
 
     /**
@@ -146,15 +146,15 @@ public interface Subject {
     }
 
     default String getUserIdAsString() {
-        return Functions.TO_STRING.apply(getLoginId());
+        return FunctionKit.TO_STRING.apply(getLoginId());
     }
 
     default Integer getUserIdAsInteger() {
-        return Functions.TO_INTEGER.apply(getLoginId());
+        return FunctionKit.TO_INTEGER.apply(getLoginId());
     }
     
     default Long getUserIdAsLong() {
-        return Functions.TO_LONG.apply(getLoginId());
+        return FunctionKit.TO_LONG.apply(getLoginId());
     }
 
     /**
@@ -170,15 +170,15 @@ public interface Subject {
     }
 
     default String getOrgIdAsString() {
-        return Functions.TO_STRING.apply(getOrgId());
+        return FunctionKit.TO_STRING.apply(getOrgId());
     }
 
     default Integer getOrgIdAsInteger() {
-        return Functions.TO_INTEGER.apply(getOrgId());
+        return FunctionKit.TO_INTEGER.apply(getOrgId());
     }
 
     default Long getOrgIdAsLong() {
-        return Functions.TO_LONG.apply(getOrgId());
+        return FunctionKit.TO_LONG.apply(getOrgId());
     }
 
     /**
@@ -194,15 +194,15 @@ public interface Subject {
     }
 
     default String getRoleIdAsString() {
-        return Functions.TO_STRING.apply(getRoleId());
+        return FunctionKit.TO_STRING.apply(getRoleId());
     }
 
     default Integer getRoleIdAsInteger() {
-        return Functions.TO_INTEGER.apply(getRoleId());
+        return FunctionKit.TO_INTEGER.apply(getRoleId());
     }
 
     default Long getRoleIdAsLong() {
-        return Functions.TO_LONG.apply(getRoleId());
+        return FunctionKit.TO_LONG.apply(getRoleId());
     }
 
     /**
@@ -224,7 +224,7 @@ public interface Subject {
      * @return 账号id
      */
     default String getExtraAsString(String key) {
-        return getExtraAs(key, Functions.TO_STRING);
+        return getExtraAs(key, FunctionKit.TO_STRING);
     }
 
     /**
@@ -233,7 +233,7 @@ public interface Subject {
      * @return 账号id
      */
     default Integer getExtraAsInteger(String key) {
-        return getExtraAs(key, Functions.TO_INTEGER);
+        return getExtraAs(key, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -242,7 +242,7 @@ public interface Subject {
      * @return 账号id
      */
     default Long getExtraAsLong(String key) {
-        return getExtraAs(key, Functions.TO_LONG);
+        return getExtraAs(key, FunctionKit.TO_LONG);
     }
 
     /**
@@ -270,7 +270,7 @@ public interface Subject {
      */
     default <T> T getExtraAs(String key, Class<T> valueType) {
         Object value = this.getExtra(key);
-        return JacksonKit.toType(value, valueType);
+        return JsonKit.toType(value, valueType);
     }
 
     /**
@@ -295,7 +295,7 @@ public interface Subject {
      * @return 账号id
      */
     default String getExtraAsString(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, Functions.TO_STRING);
+        return getExtraAs(tokenValue, key, FunctionKit.TO_STRING);
     }
 
     /**
@@ -306,7 +306,7 @@ public interface Subject {
      * @return 账号id
      */
     default Integer getExtraAsInteger(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, Functions.TO_INTEGER);
+        return getExtraAs(tokenValue, key, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -317,7 +317,7 @@ public interface Subject {
      * @return 账号id
      */
     default Long getExtraAsLong(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, Functions.TO_LONG);
+        return getExtraAs(tokenValue, key, FunctionKit.TO_LONG);
     }
 
     /**
@@ -347,7 +347,7 @@ public interface Subject {
      */
     default <T> T getExtraAs(String tokenValue, String key, Class<T> valueType) {
         Object value = getExtra(tokenValue, key);
-        return JacksonKit.toType(value, valueType);
+        return JsonKit.toType(value, valueType);
     }
 
 }

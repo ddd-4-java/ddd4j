@@ -1,7 +1,7 @@
 package io.ddd4j.mq.mqtt;
 
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.mqtt.autoconfigure.Ddd4jMqttMQAutoConfiguration;
 import io.ddd4j.mq.mqtt.config.Ddd4jMqttProperties;

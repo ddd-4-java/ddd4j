@@ -1,7 +1,7 @@
 package io.ddd4j.web.utils;
 
 import io.ddd4j.spring.context.SpringContext;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.web.config.BaseWebProperties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;

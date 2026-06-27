@@ -11,22 +11,35 @@
     </parent>
 
     <artifactId>ddd4j-ddd-clean</artifactId>
-    <description>Clean Architecture 规范检查：确保项目符合 Clean Architecture 目录结构约束（Entities/UseCases/InterfaceAdapters/Frameworks）。</description>
+    <description>Clean Architecture 规范检查：基于 ArchUnit 的注解驱动 + 包结构约束（domain/application/adapter/infrastructure 四层）。业务项目继承 CleanArchitectureTest 即可自动应用所有规则。</description>
 
     <dependencies>
+        <!-- 注解 + 核心契约 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- ArchUnit 架构检查（compile scope，让业务项目继承 @AnalyzeClasses 抽象基类时直接可用） -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
         </dependency>
+        <!-- JUnit 5 API（ArchUnit @AnalyzeClasses / @ArchTest 需要） -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <!-- 本模块自检：业务项目跑 test 时需要 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

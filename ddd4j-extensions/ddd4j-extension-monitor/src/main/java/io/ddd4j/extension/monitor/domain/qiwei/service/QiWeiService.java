@@ -1,6 +1,6 @@
 package io.ddd4j.extension.monitor.domain.qiwei.service;
 
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.extension.monitor.domain.common.vo.MarkDownVO;
 import io.ddd4j.extension.monitor.domain.common.vo.MsgVO;
 import lombok.extern.slf4j.Slf4j;

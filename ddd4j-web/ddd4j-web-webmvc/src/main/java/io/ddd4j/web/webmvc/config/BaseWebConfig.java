@@ -2,7 +2,7 @@ package io.ddd4j.web.config;
 
 import io.ddd4j.core.config.BaseCoreProperties;
 import io.ddd4j.spring.context.SpringContext;
-import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.web.core.GlobalRequestAdvice;
 import io.ddd4j.web.core.GlobalResponseRAdvice;
 import io.ddd4j.web.core.GlobalRestExceptionAdvice;

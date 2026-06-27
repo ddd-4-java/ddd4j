@@ -24,7 +24,6 @@ import java.io.Serializable;
  *             本接口将在 5.0.x 版本移除。
  * @author <a href="https://github.com/wandl">wandl</a>
  */
-@Deprecated(since = "3.4.x", forRemoval = true)
 public interface IBaseService<T extends Model<?>> extends IService<T> {
 
     /**

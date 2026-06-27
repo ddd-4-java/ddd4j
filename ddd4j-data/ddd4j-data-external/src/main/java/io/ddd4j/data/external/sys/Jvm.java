@@ -2,8 +2,8 @@ package io.ddd4j.data.external.sys;
 
 import hitool.core.lang3.time.DateFormats;
 import hitool.core.lang3.time.LocalDateTimes;
-import io.ddd4j.core.util.Arith;
-import io.ddd4j.core.util.DateUtils;
+import io.ddd4j.kit.lang.ArithKit;
+import io.ddd4j.kit.lang.DateKit;
 import lombok.Data;
 
 import java.lang.management.ManagementFactory;
