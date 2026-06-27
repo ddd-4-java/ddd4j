@@ -2,7 +2,7 @@
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
  */
-package io.ddd4j.web.webmvc.config;
+package io.ddd4j.web.config;
 
 import lombok.Data;
 

@@ -1,10 +1,10 @@
-package io.ddd4j.web.webmvc.core;
+package io.ddd4j.web.core;
 
 import io.ddd4j.core.contract.R;
 import io.ddd4j.core.contract.enums.ResultCode;
 import io.ddd4j.core.contract.exception.ServiceException;
 import io.ddd4j.core.contract.exception.ValidateException;
-import io.ddd4j.core.utils.ExceptionKit;
+import io.ddd4j.core.util.ExceptionKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

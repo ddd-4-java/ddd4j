@@ -1,9 +1,9 @@
-package io.ddd4j.web.webmvc.core;
+package io.ddd4j.web.core;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import io.ddd4j.spring.util.BeanKit;
-import io.ddd4j.core.utils.JsonKit;
+import io.ddd4j.core.util.JsonKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;

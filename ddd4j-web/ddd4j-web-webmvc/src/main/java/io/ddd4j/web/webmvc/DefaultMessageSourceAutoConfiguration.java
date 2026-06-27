@@ -4,9 +4,9 @@
  */
 package io.ddd4j.web.webmvc;
 
-import io.ddd4j.core.properties.BasePropertySourcePostProcessor;
-import io.ddd4j.web.webmvc.config.MessageSourceConfigurationProperties;
-import io.ddd4j.web.webmvc.error.I18nResourceBasenameHandler;
+import io.ddd4j.spring.properties.BasePropertySourcePostProcessor;
+import io.ddd4j.web.config.MessageSourceConfigurationProperties;
+import io.ddd4j.web.error.I18nResourceBasenameHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.biz.context.NestedMessageSource;

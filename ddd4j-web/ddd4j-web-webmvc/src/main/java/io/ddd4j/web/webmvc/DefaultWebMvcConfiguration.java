@@ -4,11 +4,11 @@
  */
 package io.ddd4j.web.webmvc;
 
-import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
+import io.ddd4j.web.config.LocalResourceProperteis;
 import io.ddd4j.core.Constants;
 import io.ddd4j.core.ProfileManager;
 import io.ddd4j.core.sequence.Sequence;
-import io.ddd4j.core.web.servlet.handler.Slf4jMDCInterceptor;
+import io.ddd4j.spring.web.Slf4jMDCInterceptor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.biz.context.NestedMessageSource;
 import org.springframework.biz.web.servlet.i18n.XHeaderLocaleResolver;
@@ -40,7 +40,7 @@ public class DefaultWebMvcConfiguration {
 
     @Bean
     public ProfileManager profileManager(Environment environment) {
-        return new ProfileManager(environment);
+        return new ProfileManager(environment::getActiveProfiles);
     }
 
     @Bean

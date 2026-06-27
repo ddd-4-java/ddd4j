@@ -16,7 +16,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Hidden;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -129,7 +129,7 @@ public class IdempotentKit {
             if (idempotent.withArgs()) {
                 Annotation[][] paramAnnotations = method.getParameterAnnotations();
                 for (int i = 0; i < joinPoint.getArgs().length; i++) {
-                    if (Stream.of(paramAnnotations[i]).anyMatch(annt -> annt instanceof ApiIgnore)) {
+                    if (Stream.of(paramAnnotations[i]).anyMatch(annt -> annt instanceof Hidden)) {
                         continue;
                     }
                     if (joinPoint.getArgs()[i] == null || joinPoint.getArgs()[i] instanceof ServletRequest || joinPoint.getArgs()[i] instanceof ServletResponse) {

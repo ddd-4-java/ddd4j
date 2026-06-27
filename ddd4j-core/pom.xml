@@ -13,16 +13,16 @@
     <artifactId>ddd4j-core</artifactId>
 
     <dependencies>
-        <!-- For ddd4j-kit -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-kit</artifactId>
-            <version>${revision}</version>
-        </dependency>
         <!-- For ddd4j-annotation -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- For ddd4j-kit -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- For Servlet Api -->
@@ -69,11 +69,6 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
-        <!-- For SLF4J -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
         <!-- For Jackson JSR310（LocalDateTime 序列化） -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -92,11 +87,28 @@
         <dependency>
             <groupId>org.fuin.ddd4j</groupId>
             <artifactId>ddd-4-java-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.fuin.ddd4j</groupId>
+            <artifactId>ddd-4-java-jackson</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.fuin.cqrs4j</groupId>
+            <artifactId>cqrs-4-java-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.fuin.cqrs4j</groupId>
+            <artifactId>cqrs-4-java-jackson</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.fuin.ddd4j/ddd-4-java-esc -->
         <dependency>
             <groupId>org.fuin.ddd4j</groupId>
             <artifactId>ddd-4-java-esc</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- For BouncyCastle -->
         <dependency>
@@ -184,7 +196,6 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>

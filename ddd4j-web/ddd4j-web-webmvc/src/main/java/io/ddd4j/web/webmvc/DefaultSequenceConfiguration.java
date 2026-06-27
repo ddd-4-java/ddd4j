@@ -5,7 +5,7 @@
 package io.ddd4j.web.webmvc;
 
 import cn.hutool.core.util.IdUtil;
-import io.ddd4j.web.webmvc.config.SequenceProperties;
+import io.ddd4j.web.config.SequenceProperties;
 import io.ddd4j.core.sequence.Sequence;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

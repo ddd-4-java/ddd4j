@@ -1,6 +1,6 @@
 package io.ddd4j.core.context;
 
-import io.ddd4j.core.utils.TransmittableThreadLocal;
+import io.ddd4j.core.util.TransmittableThreadLocal;
 import lombok.experimental.UtilityClass;
 
 import java.util.Map;

@@ -1,10 +1,10 @@
-package io.ddd4j.web.webmvc.api;
+package io.ddd4j.web.api;
 
 import io.ddd4j.core.contract.BaseRepository;
 import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.Page;
 import io.ddd4j.core.contract.Query;
-import io.ddd4j.web.webmvc.utils.ReflectKit;
+import io.ddd4j.web.utils.ReflectKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;

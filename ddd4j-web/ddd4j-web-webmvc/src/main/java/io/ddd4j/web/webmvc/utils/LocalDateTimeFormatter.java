@@ -1,4 +1,4 @@
-package io.ddd4j.web.webmvc.utils;
+package io.ddd4j.web.utils;
 
 import org.springframework.format.Formatter;
 
@@ -13,10 +13,12 @@ public class LocalDateTimeFormatter implements Formatter<LocalDateTime> {
         FORMATTER = DateTimeFormatter.ofPattern(pattern, Locale.CHINESE);
     }
 
+    @Override
     public LocalDateTime parse(String text, Locale locale) {
         return LocalDateTime.parse(text, FORMATTER);
     }
 
+    @Override
     public String print(LocalDateTime object, Locale locale) {
         return FORMATTER.format(object);
     }

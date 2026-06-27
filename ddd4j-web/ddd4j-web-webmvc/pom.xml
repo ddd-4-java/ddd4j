@@ -11,77 +11,73 @@
     </parent>
 
     <artifactId>ddd4j-web-webmvc</artifactId>
-    <description>Ddd4j WebMvC Component</description>
+    <description>ddd4j Web - Spring MVC 实现：Controller/Interceptor/Config/WebSocket。从 ddd4j-web-core 迁入的 Spring 相关代码。</description>
 
     <dependencies>
-        <!-- For DDD4j -->
+        <!-- 纯 Java Web 抽象 -->
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-jackson</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-core</artifactId>
-        </dependency>
-        <!-- For Webjars -->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- For Spring Web MVC -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <!-- For Spring Tx -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-        <!-- For Jackson JSR310 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-            <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- Spring 桥接层 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-spring</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- Auth Core（BaseAuthWebInterceptor 需要） -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-auth-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Spring WebMVC -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
+        <!-- Spring Context -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
+        <!-- Spring WebSocket（可选） -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- Feign（可选） -->
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+            <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+            <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-extension-jackson</artifactId>
+            <version>${revision}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>

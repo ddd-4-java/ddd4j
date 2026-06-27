@@ -15,7 +15,7 @@
     <description>Ddd4j 跨领域扩展聚合：akka/excel/jackson/pf4j/qlexpress。基础包（ddd4j-core/ddd4j-kit/ddd4j-monitor）已提升为顶层模块，业务模块（auth/data/mq/web）已重组为独立聚合层。</description>
 
     <modules>
-        <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress） -->
+        <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress/validation） -->
         <module>ddd4j-monitor</module>
         <module>ddd4j-extension-akka</module>
         <module>ddd4j-extension-excel</module>

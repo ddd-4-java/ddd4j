@@ -2,7 +2,7 @@
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
  */
-package io.ddd4j.web.webmvc.error;
+package io.ddd4j.web.error;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.biz.context.support.ResourceBasenameHandler;

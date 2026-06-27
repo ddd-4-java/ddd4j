@@ -1,11 +1,11 @@
-package io.ddd4j.web.webmvc.core;
+package io.ddd4j.web.core;
 
 import io.ddd4j.core.contract.IR;
 import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.R;
 import io.ddd4j.core.contract.exception.ServiceException;
 import io.ddd4j.annotation.api.RawResponse;
-import io.ddd4j.web.webmvc.config.BaseWebProperties;
+import io.ddd4j.web.config.BaseWebProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

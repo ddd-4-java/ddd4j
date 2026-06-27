@@ -1,4 +1,4 @@
-package io.ddd4j.web.webmvc.api;
+package io.ddd4j.web.api;
 
 import io.ddd4j.core.contract.BaseRepository;
 import io.ddd4j.core.contract.Model;

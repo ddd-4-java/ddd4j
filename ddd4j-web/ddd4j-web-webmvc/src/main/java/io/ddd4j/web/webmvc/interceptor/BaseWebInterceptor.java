@@ -1,4 +1,4 @@
-package io.ddd4j.web.webmvc.interceptor;
+package io.ddd4j.web.interceptor;
 
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -1,8 +1,8 @@
-package io.ddd4j.web.webmvc.utils;
+package io.ddd4j.web.utils;
 
 import io.ddd4j.spring.context.SpringContext;
-import io.ddd4j.core.utils.JsonKit;
-import io.ddd4j.web.webmvc.config.BaseWebProperties;
+import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.web.config.BaseWebProperties;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;

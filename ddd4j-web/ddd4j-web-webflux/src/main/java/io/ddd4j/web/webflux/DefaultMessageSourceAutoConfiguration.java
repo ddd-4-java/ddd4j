@@ -4,7 +4,7 @@
  */
 package io.ddd4j.web.webflux;
 
-import io.ddd4j.core.properties.BasePropertySourcePostProcessor;
+import io.ddd4j.spring.properties.SpringPropertySourcePostProcessor;
 import io.ddd4j.web.webflux.config.MessageSourceConfigurationProperties;
 import io.ddd4j.web.webflux.error.I18nResourceBasenameHandler;
 import org.springframework.beans.factory.ObjectProvider;
@@ -30,8 +30,8 @@ public class DefaultMessageSourceAutoConfiguration {
      * 属性源后置处理器。
      */
     @Bean
-    public BasePropertySourcePostProcessor bladePropertySourcePostProcessor() {
-        return new BasePropertySourcePostProcessor();
+    public SpringPropertySourcePostProcessor bladePropertySourcePostProcessor() {
+        return new SpringPropertySourcePostProcessor();
     }
 
     /**

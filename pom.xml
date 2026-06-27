@@ -40,19 +40,20 @@
         <spring-data-bom.version>2024.1.5</spring-data-bom.version>
         <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
         <spring-framework.version>6.2.19</spring-framework.version>
-        <spring-graphql.version>1.3.5</spring-graphql.version>
+        <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
-        <spring-integration.version>6.4.4</spring-integration.version>
+        <spring-integration.version>6.5.10</spring-integration.version>
         <spring-kafka.version>3.3.5</spring-kafka.version>
         <spring-ldap.version>3.2.12</spring-ldap.version>
         <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <spring-restdocs.version>3.0.3</spring-restdocs.version>
         <spring-retry.version>2.0.11</spring-retry.version>
-        <spring-security.version>6.4.5</spring-security.version>
+        <spring-security.version>6.4.6</spring-security.version>
         <spring-session.version>3.4.3</spring-session.version>
         <spring-ws.version>4.0.13</spring-ws.version>
         <reactor-bom.version>2025.0.6</reactor-bom.version>
-        <jackson-bom.version>2.22.0</jackson-bom.version>
+        <jackson.version>2.22.0</jackson.version>
+        <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>

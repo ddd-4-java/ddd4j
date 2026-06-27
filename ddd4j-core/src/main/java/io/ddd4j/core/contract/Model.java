@@ -1,8 +1,8 @@
 package io.ddd4j.core.contract;
 
 import io.ddd4j.core.contract.exception.ServiceException;
-import io.ddd4j.core.utils.JsonKit;
-import io.ddd4j.core.utils.MappingKit;
+import io.ddd4j.core.util.JsonKit;
+import io.ddd4j.core.util.MappingKit;
 
 import java.io.Serializable;
 import java.util.List;

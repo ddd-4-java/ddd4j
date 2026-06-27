@@ -1,8 +1,8 @@
-package io.ddd4j.web.webmvc.utils;
+package io.ddd4j.web.utils;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
-import io.ddd4j.core.utils.JsonKit;
+import io.ddd4j.core.util.JsonKit;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -15,13 +15,17 @@ import java.util.*;
 public class RequestContext {
     public HttpServletRequest get() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes == null) return null;
+        if (attributes == null) {
+            return null;
+        }
         return attributes.getRequest();
     }
 
     public String getUrl() {
         HttpServletRequest request = get();
-        if (request == null) return null;
+        if (request == null) {
+            return null;
+        }
         return request.getRequestURL().toString();
     }
 
@@ -54,7 +58,9 @@ public class RequestContext {
 
     public Map<String, String> getHeaders() {
         HttpServletRequest request = get();
-        if (request == null) return Collections.emptyMap();
+        if (request == null) {
+            return Collections.emptyMap();
+        }
         Map<String, String> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -73,7 +79,9 @@ public class RequestContext {
 
     public String getOrDefault(String header, String defaultValue) {
         String o = getHeader(header);
-        if (o == null) return defaultValue;
+        if (o == null) {
+            return defaultValue;
+        }
         return o;
     }
 

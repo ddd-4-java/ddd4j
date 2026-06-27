@@ -1,6 +1,6 @@
-package io.ddd4j.web.webmvc.interceptor;
+package io.ddd4j.web.interceptor;
 
-import io.ddd4j.web.webmvc.config.BaseWebProperties;
+import io.ddd4j.web.config.BaseWebProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

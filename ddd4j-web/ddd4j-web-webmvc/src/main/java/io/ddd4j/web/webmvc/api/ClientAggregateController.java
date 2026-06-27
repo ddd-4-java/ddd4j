@@ -1,4 +1,4 @@
-package io.ddd4j.web.webmvc.api;
+package io.ddd4j.web.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;

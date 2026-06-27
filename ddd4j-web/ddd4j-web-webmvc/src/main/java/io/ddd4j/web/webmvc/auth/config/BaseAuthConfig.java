@@ -1,7 +1,7 @@
-package io.ddd4j.web.webmvc.auth.config;
+package io.ddd4j.web.auth.config;
 
-import io.ddd4j.web.webmvc.auth.interceptor.BaseAuthWebInterceptor;
-import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
+import io.ddd4j.web.auth.interceptor.BaseAuthWebInterceptor;
+import io.ddd4j.web.interceptor.BaseWebInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

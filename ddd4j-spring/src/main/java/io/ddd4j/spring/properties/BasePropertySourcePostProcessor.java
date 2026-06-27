@@ -1,7 +1,7 @@
 package io.ddd4j.spring.properties;
 
 import lombok.EqualsAndHashCode;
-import io.ddd4j.core.properties.BasePropertySource;
+import io.ddd4j.spring.properties.BasePropertySource;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

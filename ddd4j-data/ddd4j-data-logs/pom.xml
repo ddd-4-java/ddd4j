@@ -21,6 +21,16 @@
             <version>${revision}</version>
         </dependency>
         <!-- For AOP -->
-</dependencies>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+            <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-spring</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
 
 </project>

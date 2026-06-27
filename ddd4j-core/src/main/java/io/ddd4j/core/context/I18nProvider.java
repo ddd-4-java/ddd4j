@@ -1,5 +1,12 @@
 package io.ddd4j.core.context;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 /**
  * 国际化提供者接口（策略模式）。
  * <p>
@@ -16,21 +23,24 @@ package io.ddd4j.core.context;
 public interface I18nProvider {
 
     /**
-     * 默认实现：返回原始 key（不做国际化）
+     * 默认实现：使用 Java ResourceBundle 加载 i18n/messages.properties。
+     * 找不到 key 时返回原始 key（含占位符替换）。
      */
-    I18nProvider DEFAULT = new I18nProvider() {
-        @Override
-        public String getMessage(String key, Object... args) {
-            if (args == null || args.length == 0) {
-                return key;
-            }
-            // 简单占位符替换：{0}, {1}, ...
-            String result = key;
-            for (int i = 0; i < args.length; i++) {
-                result = result.replace("{" + i + "}", String.valueOf(args[i]));
-            }
-            return result;
+    I18nProvider DEFAULT = (key, args) -> {
+        if (StrKit.isBlank(key)) {
+            return null;
         }
+        String pattern = key;
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.getDefault());
+            pattern = bundle.getString(key);
+        } catch (MissingResourceException e) {
+            // 找不到资源文件，使用原始 key
+        }
+        if (args == null || args.length == 0) {
+            return pattern;
+        }
+        return MessageFormat.format(pattern, args);
     };
 
     /**

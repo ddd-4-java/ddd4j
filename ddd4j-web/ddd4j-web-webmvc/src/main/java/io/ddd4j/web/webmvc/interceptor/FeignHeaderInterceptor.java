@@ -1,4 +1,4 @@
-package io.ddd4j.web.webmvc.interceptor;
+package io.ddd4j.web.interceptor;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.annotation.FeignHeader;
