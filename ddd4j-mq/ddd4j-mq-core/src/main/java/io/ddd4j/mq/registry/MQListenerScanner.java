@@ -3,7 +3,9 @@ package io.ddd4j.mq.registry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * {@link MQEventListener} 监听器定义访问门面。
@@ -34,6 +36,11 @@ public class MQListenerScanner {
      * @param definition 监听器定义
      */
     public static void prepareMethod(MQListenerDefinition definition) {
-        MQListenerBeanPostProcessor.prepareMethod(definition);
+        Objects.requireNonNull(definition, "definition");
+        Method method = definition.getMethod();
+        Object bean = definition.getBean();
+        if (bean != null && !method.canAccess(bean)) {
+            method.setAccessible(true);
+        }
     }
 }

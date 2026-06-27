@@ -10,6 +10,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -159,7 +161,7 @@ class RocketMQContainerIT {
 
     @SpringBootApplication
     @Import({
-            io.ddd4j.mq.config.Ddd4jMQAutoConfiguration.class,
+            io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration.class,
             RocketMQAutoConfiguration.class,
             Ddd4jRocketMQAutoConfiguration.class
     })

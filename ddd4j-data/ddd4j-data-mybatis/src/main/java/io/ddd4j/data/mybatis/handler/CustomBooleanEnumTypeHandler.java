@@ -1,6 +1,6 @@
 package io.ddd4j.data.mybatis.handler;
 
-import io.ddd4j.core.enums.BooleanEnum;
+import io.ddd4j.data.enums.BooleanEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;

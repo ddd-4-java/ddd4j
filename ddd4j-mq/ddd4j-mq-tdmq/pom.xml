@@ -29,6 +29,12 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-mq-spring</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
 </dependencies>
 
 </project>

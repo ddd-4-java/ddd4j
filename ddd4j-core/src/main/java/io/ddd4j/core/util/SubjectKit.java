@@ -1,5 +1,9 @@
-package io.ddd4j.core.subject;
+package io.ddd4j.core.util;
 
+
+import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.subject.SubjectProvider;
 
 public class SubjectKit {
 

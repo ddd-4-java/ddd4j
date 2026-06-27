@@ -1,7 +1,8 @@
 package io.ddd4j.data.logs.aspect;
 
+import cn.hutool.core.lang.Snowflake;
 import io.ddd4j.core.XHeaders;
-import io.ddd4j.kit.lang.SequenceKit;
+import io.ddd4j.kit.lang.IdKit;
 import io.ddd4j.spring.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.Objects;
 public class ApiOperationLogAspect {
 
     @Autowired
-    private SequenceKit sequence;
+    private Snowflake snowflake;
     @Autowired
     private ApiOperationLogProvider logProvider;
 
@@ -85,7 +86,7 @@ public class ApiOperationLogAspect {
             }
         }
         if (!StringUtils.hasText(requestId)) {
-            requestId = sequence.nextId().toString();
+            requestId = snowflake.nextIdStr();
         }
         return requestId;
     }

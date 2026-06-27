@@ -40,23 +40,23 @@ public class Jvm {
     private String home;
 
     public double getTotal() {
-        return Arith.div(total, (1024 * 1024), 2);
+        return ArithKit.div(total, (1024 * 1024), 2);
     }
 
     public double getMax() {
-        return Arith.div(max, (1024 * 1024), 2);
+        return ArithKit.div(max, (1024 * 1024), 2);
     }
 
     public double getFree() {
-        return Arith.div(free, (1024 * 1024), 2);
+        return ArithKit.div(free, (1024 * 1024), 2);
     }
 
     public double getUsed() {
-        return Arith.div(total - free, (1024 * 1024), 2);
+        return ArithKit.div(total - free, (1024 * 1024), 2);
     }
 
     public double getUsage() {
-        return Arith.mul(Arith.div(total - free, total, 4), 100);
+        return ArithKit.mul(ArithKit.div(total - free, total, 4), 100);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Jvm {
      */
     public String getStartTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
-        LocalDateTime date = DateUtils.millsToLocalDateTime(time);
+        LocalDateTime date = DateKit.millsToLocalDateTime(time);
         return LocalDateTimes.format(date, DateFormats.YYYYMMDDHHMMSS);
     }
 
@@ -80,8 +80,8 @@ public class Jvm {
      */
     public String getRunTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
-        LocalDateTime startDateTime = DateUtils.millsToLocalDateTime(time);
-        return DateUtils.getDatePoor(LocalDateTime.now(), startDateTime);
+        LocalDateTime startDateTime = DateKit.millsToLocalDateTime(time);
+        return DateKit.getDatePoor(LocalDateTime.now(), startDateTime);
     }
 
     /**

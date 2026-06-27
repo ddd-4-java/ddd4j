@@ -2,18 +2,14 @@ package io.ddd4j.mq.registry;
 
 import io.ddd4j.core.contract.annotation.MQEventListener;
 import io.ddd4j.mq.ack.AckDisposition;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerContext;
-import io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-
-import java.util.List;
 
 /**
  * {@link MQListenerScanner} 单元测试。
@@ -21,50 +17,34 @@ import java.util.List;
 class MQListenerScannerTest {
 
     @Test
-    void scanShouldDiscoverAnnotatedMethods() {
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class)) {
-            Ddd4jMQProperties props = context.getBean(Ddd4jMQProperties.class);
-            MQListenerScanner scanner = new MQListenerScanner(context.getBean(MQListenerDefinitionRegistry.class));
+    void scanShouldDiscoverAnnotatedMethods() throws Exception {
+        MQListenerDefinitionRegistry registry = new MQListenerDefinitionRegistry();
 
-            List<MQListenerDefinition> definitions = scanner.scan();
+        // 手动注册监听器定义（模拟 BeanPostProcessor 行为）
+        DemoListener listener = new DemoListener();
+        Method method = DemoListener.class.getMethod("onDemo", MQConsumerContext.class, DemoEvent.class);
+        MQEventListener annotation = method.getAnnotation(MQEventListener.class);
 
-            assertFalse(definitions.isEmpty());
-            assertEquals(1, definitions.size());
-            MQListenerDefinition definition = definitions.get(0);
-            assertEquals("demoTopic", definition.getTopic());
-            assertEquals("demoGroup", definition.getGroup());
-            assertEquals("test-ns", definition.getNamespace());
-            assertEquals("onDemo", definition.getMethod().getName());
-        }
-    }
+        registry.register(MQListenerDefinition.builder()
+                .bean(listener)
+                .beanName("demoListener")
+                .method(method)
+                .topic(annotation.topic())
+                .tags(annotation.tags())
+                .group(annotation.group())
+                .namespace(annotation.namespace())
+                .build());
 
-    @Configuration
-    static class TestConfig {
+        MQListenerScanner scanner = new MQListenerScanner(registry);
+        List<MQListenerDefinition> definitions = scanner.scan();
 
-        @Bean
-        Ddd4jMQProperties ddd4jMQProperties() {
-            Ddd4jMQProperties props = new Ddd4jMQProperties();
-            props.setEnabled(true);
-            props.setNamespace("default-ns");
-            return props;
-        }
-
-        @Bean
-        MQListenerDefinitionRegistry mqListenerDefinitionRegistry() {
-            return new MQListenerDefinitionRegistry();
-        }
-
-        @Bean
-        MQListenerBeanPostProcessor mqListenerBeanPostProcessor(
-                MQListenerDefinitionRegistry registry,
-                Ddd4jMQProperties props) {
-            return new MQListenerBeanPostProcessor(registry, props);
-        }
-
-        @Bean
-        DemoListener demoListener() {
-            return new DemoListener();
-        }
+        assertFalse(definitions.isEmpty());
+        assertEquals(1, definitions.size());
+        MQListenerDefinition definition = definitions.get(0);
+        assertEquals("demoTopic", definition.getTopic());
+        assertEquals("demoGroup", definition.getGroup());
+        assertEquals("test-ns", definition.getNamespace());
+        assertEquals("onDemo", definition.getMethod().getName());
     }
 
     static class DemoListener {

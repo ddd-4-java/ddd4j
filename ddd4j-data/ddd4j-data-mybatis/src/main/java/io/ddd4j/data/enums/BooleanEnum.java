@@ -1,4 +1,4 @@
-package io.ddd4j.core.enums;
+package io.ddd4j.data.enums;
 
 import com.baomidou.mybatisplus.annotation.IEnum;
 import lombok.AllArgsConstructor;

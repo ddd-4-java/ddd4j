@@ -39,23 +39,23 @@ public class Cpu {
     private double free;
 
     public double getTotal() {
-        return Arith.round(Arith.mul(total, 100), 2);
+        return ArithKit.round(ArithKit.mul(total, 100), 2);
     }
 
     public double getSys() {
-        return Arith.round(Arith.mul(sys / total, 100), 2);
+        return ArithKit.round(ArithKit.mul(sys / total, 100), 2);
     }
 
     public double getUsed() {
-        return Arith.round(Arith.mul(used / total, 100), 2);
+        return ArithKit.round(ArithKit.mul(used / total, 100), 2);
     }
 
     public double getWait() {
-        return Arith.round(Arith.mul(wait / total, 100), 2);
+        return ArithKit.round(ArithKit.mul(wait / total, 100), 2);
     }
 
     public double getFree() {
-        return Arith.round(Arith.mul(free / total, 100), 2);
+        return ArithKit.round(ArithKit.mul(free / total, 100), 2);
     }
 
 }

@@ -145,7 +145,7 @@ public class Server {
             sysFile.setTotal(convertFileSize(total));
             sysFile.setFree(convertFileSize(free));
             sysFile.setUsed(convertFileSize(used));
-            sysFile.setUsage(Arith.mul(Arith.div(used, total, 4), 100));
+            sysFile.setUsage(ArithKit.mul(ArithKit.div(used, total, 4), 100));
             sysFiles.add(sysFile);
         }
     }

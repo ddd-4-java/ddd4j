@@ -24,18 +24,18 @@ public class Mem {
     private double free;
 
     public double getTotal() {
-        return Arith.div(total, (1024 * 1024 * 1024), 2);
+        return ArithKit.div(total, (1024 * 1024 * 1024), 2);
     }
 
     public double getUsed() {
-        return Arith.div(used, (1024 * 1024 * 1024), 2);
+        return ArithKit.div(used, (1024 * 1024 * 1024), 2);
     }
 
     public double getFree() {
-        return Arith.div(free, (1024 * 1024 * 1024), 2);
+        return ArithKit.div(free, (1024 * 1024 * 1024), 2);
     }
 
     public double getUsage() {
-        return Arith.mul(Arith.div(used, total, 4), 100);
+        return ArithKit.mul(ArithKit.div(used, total, 4), 100);
     }
 }

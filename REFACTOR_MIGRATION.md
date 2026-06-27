@@ -78,7 +78,7 @@ ddd4j/                                                    # 纯 Java 公共底�
 | 旧包 | 新包 | 备注 |
 |---|---|---|
 | `io.ddd4j.core.api.*` | `io.ddd4j.core.*` | core-api 合并到 core，`.api.` 二级包删除 |
-| `io.ddd4j.core.util.HttpStatus` | `io.ddd4j.core.constant.HttpStatus` | HTTP 状态码常量（纯常量类） |
+| `io.ddd4j.core.util.HttpStatus` | `io.ddd4j.core.http.HttpStatus` | HTTP 状态码常量（纯常量类） |
 | `io.ddd4j.core.util.JsonKit` | `io.ddd4j.kit.lang.JsonKit` | 工具类收编到 kit |
 | `io.ddd4j.core.util.JacksonKit` | `io.ddd4j.kit.lang.JsonKit` | 工具类收编到 kit（合并 toType） |
 | `io.ddd4j.core.util.{Arith,DateUtils,Functions,RankUtil}` | `io.ddd4j.kit.lang.{ArithKit,DateKit,FunctionKit,RankKit}` | 工具类收编到 kit |
@@ -135,6 +135,7 @@ ddd4j/                                                    # 纯 Java 公共底�
 
 ```java
 // 旧
+
 import io.ddd4j.core.util.JsonKit;
 import io.ddd4j.core.util.Arith;
 
@@ -143,7 +144,7 @@ import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.ArithKit;
 
 // 常量类（保留在 ddd4j-core）
-import io.ddd4j.core.constant.HttpStatus;  // 纯常量
+import io.ddd4j.core.http.HttpStatus;  // 纯常量
 ```
 
 ### 4.2 启用 DDD 架构检查
