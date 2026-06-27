@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * 通用类型转换函数常量
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

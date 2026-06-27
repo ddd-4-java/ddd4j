@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 /**
  * HTTP 状态码常量（纯 Java，零框架依赖）
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

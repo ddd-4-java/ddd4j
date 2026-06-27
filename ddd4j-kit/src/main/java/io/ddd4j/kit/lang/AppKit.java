@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * 随机产生唯一的 app_key 和 app_secret 工具类
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

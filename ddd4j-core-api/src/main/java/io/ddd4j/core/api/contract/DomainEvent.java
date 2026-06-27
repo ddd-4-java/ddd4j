@@ -13,7 +13,7 @@ import java.time.Instant;
  *   <li>Javalin/Guice: 通过 Guava EventBus 发布</li>
  * </ul>
  *
- * @author wandl
+ * @author Loong Wan
  */
 public interface DomainEvent extends Serializable {
 

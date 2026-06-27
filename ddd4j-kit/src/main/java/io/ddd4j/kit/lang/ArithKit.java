@@ -8,7 +8,7 @@ import java.math.RoundingMode;
 /**
  * 精确的浮点数运算工具类
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

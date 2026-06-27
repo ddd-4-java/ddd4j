@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * 同分排序规则枚举类
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 public enum RankSortTypeEnum {

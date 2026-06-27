@@ -10,7 +10,7 @@ import java.util.*;
  *
  * <p>提供基于 Guava Graph 的拓扑排序能力，可用于任务依赖调度、构建顺序等场景。
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

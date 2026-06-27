@@ -3,7 +3,7 @@ package io.ddd4j.core.api;
 /**
  * API 码常量定义（纯 Java，无框架依赖）
  *
- * @author wandl
+ * @author Loong Wan
  */
 public final class ApiCodeValue {
 

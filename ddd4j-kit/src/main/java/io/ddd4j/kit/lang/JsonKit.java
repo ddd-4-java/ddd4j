@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * Json工具类（合并 JsonKit 和 JacksonKit 功能）
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

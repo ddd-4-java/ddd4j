@@ -112,4 +112,21 @@ public class IpKit extends Ipv4Util {
         }
         return null;
     }
+
+    /**
+     * 获取客户端真实 IP（纯 Java 实现，无需 Spring WebUtils）
+     */
+    public static String getRemoteAddr(HttpServletRequest request) {
+        String addr = request.getHeader("X-Forwarded-For");
+        if (addr != null && !addr.isEmpty() && !"unknown".equalsIgnoreCase(addr)) {
+            // 多级代理时取第一个
+            int index = addr.indexOf(',');
+            return index > 0 ? addr.substring(0, index).trim() : addr.trim();
+        }
+        addr = request.getHeader("X-Real-IP");
+        if (addr != null && !addr.isEmpty() && !"unknown".equalsIgnoreCase(addr)) {
+            return addr;
+        }
+        return request.getRemoteAddr();
+    }
 }

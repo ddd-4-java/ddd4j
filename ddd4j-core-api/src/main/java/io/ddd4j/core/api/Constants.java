@@ -7,7 +7,7 @@ package io.ddd4j.core.api;
 /**
  * 全局常量（纯 Java，无框架依赖）
  *
- * @author wandl
+ * @author Loong Wan
  */
 public class Constants {
 

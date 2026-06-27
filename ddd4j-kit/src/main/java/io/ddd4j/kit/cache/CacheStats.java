@@ -5,7 +5,7 @@ package io.ddd4j.kit.cache;
  *
  * <p>与 Caffeine CacheStats 接口兼容，提供缓存命中率、加载次数等统计信息。
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 public interface CacheStats {

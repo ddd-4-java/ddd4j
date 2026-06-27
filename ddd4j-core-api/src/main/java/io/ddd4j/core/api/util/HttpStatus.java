@@ -7,7 +7,7 @@ package io.ddd4j.core.api.util;
 /**
  * 标准Http状态码（纯 Java，无框架依赖）
  *
- * @author wandl
+ * @author Loong Wan
  */
 public interface HttpStatus {
 

@@ -49,7 +49,7 @@ import java.util.function.Function;
  *   CacheKit.build("user", 300);  // 使用 Guava
  * }</pre>
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

@@ -11,7 +11,7 @@ import java.util.function.Function;
  *
  * <p>提供基于排序键的排名计算能力，可用于排行榜、成绩排名、优先级队列等场景。
  *
- * @author wandl
+ * @author Loong Wan
  * @since 2.0.x
  */
 @UtilityClass

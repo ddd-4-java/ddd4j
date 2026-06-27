@@ -11,7 +11,7 @@ package io.ddd4j.core.api.context;
  * </ul>
  * 默认实现返回原始 key。
  *
- * @author wandl
+ * @author Loong Wan
  */
 public interface I18nProvider {
 
