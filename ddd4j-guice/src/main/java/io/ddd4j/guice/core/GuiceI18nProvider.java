@@ -7,7 +7,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Javalin/Guice 实现的 i18n 提供者
+ * Guice 实现的 i18n 提供者
  * <p>
  * 使用 Java 标准 {@link ResourceBundle} 加载 i18n 资源。
  *

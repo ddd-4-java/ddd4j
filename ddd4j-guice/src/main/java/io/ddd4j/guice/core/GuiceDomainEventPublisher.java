@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 /**
- * Javalin/Guice 实现的领域事件发布者
+ * Guice 实现的领域事件发布者
  * <p>
  * 使用 Google Guava {@link EventBus} 发布进程内领域事件。
  *

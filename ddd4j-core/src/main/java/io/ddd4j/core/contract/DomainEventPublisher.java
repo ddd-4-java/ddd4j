@@ -9,7 +9,7 @@ import java.util.Collection;
  * <ul>
  *   <li>Spring: 基于 ApplicationEventPublisher</li>
  *   <li>Quarkus: 基于 CDI Event&lt;DomainEvent&gt;</li>
- *   <li>Javalin/Guice: 基于 Guava EventBus</li>
+ *   <li>Guice: 基于 Guava EventBus</li>
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

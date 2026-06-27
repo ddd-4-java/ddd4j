@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
  * <ul>
  *   <li>Spring: 基于 MessageSource</li>
  *   <li>Quarkus: 基于 CDI + ResourceBundle</li>
- *   <li>Javalin/Guice: 基于 ResourceBundle</li>
+ *   <li>Guice: 基于 ResourceBundle</li>
  * </ul>
  * 默认实现返回原始 key。
  *
