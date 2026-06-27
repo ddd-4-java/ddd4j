@@ -20,6 +20,7 @@ import java.util.Map;
  * 1.当序列化类型为数组集合时，当值为null时，序列化成[]
  * 2.String类型值序列化为""
  * </pre>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MyBeanSerializerModifier extends BeanSerializerModifier {
 

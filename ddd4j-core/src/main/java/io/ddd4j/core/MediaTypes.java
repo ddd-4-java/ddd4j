@@ -3,7 +3,7 @@ package io.ddd4j.core;
 /**
  * 媒体类型常量（纯 Java，零框架依赖）
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 public class MediaTypes {

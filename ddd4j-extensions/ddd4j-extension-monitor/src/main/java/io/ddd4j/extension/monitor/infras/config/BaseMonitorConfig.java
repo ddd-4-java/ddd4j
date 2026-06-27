@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 日志告警配置
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration
 // @EnableConfigurationProperties(BaseMonitorProperties.class)

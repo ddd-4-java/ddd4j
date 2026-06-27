@@ -14,7 +14,8 @@ public class AuthPrincipal implements Serializable {
 
     /**
      * 所属组织ID
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     private Object orgId;
     /**
      * 用户 OpenId

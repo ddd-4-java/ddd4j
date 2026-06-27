@@ -12,7 +12,7 @@ import java.util.Objects;
  * 数据权限校验
  * Data permission verification
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see RequiresDataPermissions
  */
 @Slf4j

@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 
 /**
  * 国际化工具类
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-CORE : I18nKit ###")
 @UtilityClass

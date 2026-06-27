@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * 便捷方法 {@link #publish()} / {@link #publishAt(Date)} / {@link #publishIn(long)}
  * 使用静态注册的 {@link DomainEventPublisher} 实现。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public abstract class DomainEvent<T> implements Serializable {

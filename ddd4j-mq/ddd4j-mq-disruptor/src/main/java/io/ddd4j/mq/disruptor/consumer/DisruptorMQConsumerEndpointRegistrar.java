@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 注册到 Disruptor 事件分发器。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

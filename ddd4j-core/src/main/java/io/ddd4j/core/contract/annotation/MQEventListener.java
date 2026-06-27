@@ -4,6 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * MQ事件监听器，配合MQEvent使用
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Documented
 @Target(ElementType.METHOD)

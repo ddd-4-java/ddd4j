@@ -12,7 +12,7 @@ import java.util.StringJoiner;
 /**
  * 异常处理工具类
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @UtilityClass

@@ -10,6 +10,7 @@ import java.util.Objects;
 
 /**
  * 处理字符串类型的null值
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class NullStringJsonSerializer extends JsonSerializer<Object> {
 

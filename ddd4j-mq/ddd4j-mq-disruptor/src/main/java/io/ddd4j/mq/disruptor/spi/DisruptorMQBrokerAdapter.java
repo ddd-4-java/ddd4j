@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * LMAX Disruptor 本地 MQ Broker 适配器。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class DisruptorMQBrokerAdapter implements MQBrokerAdapter {

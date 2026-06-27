@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
  * 屏蔽 mica 默认 {@link MqttClientSubscribeDetector} 的全局 {@code @MqttClientSubscribe} 扫描。
  * <p>
  * 在未启用 {@code @EnableMicaMqttBridge} 时由守卫自动配置注册，避免与 ddd4j {@code @MQEventListener} 路径混用。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class NoOpMqttClientSubscribeDetector extends MqttClientSubscribeDetector {
 

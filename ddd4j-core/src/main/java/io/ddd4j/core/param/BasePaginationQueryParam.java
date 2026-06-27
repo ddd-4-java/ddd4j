@@ -16,7 +16,8 @@ public abstract class BasePaginationQueryParam extends BaseTimeRangeQueryParam {
 
     /**
      * 当前页码
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     @Schema(example = "1", description = "当前页码")
     @Min(value = 1, message = "最小页码不能小于1")
     private int pageNo = 1;

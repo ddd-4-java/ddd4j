@@ -11,7 +11,8 @@ public class LicenseProperties {
 
     /**
      * 证书subject
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     private String subject;
 
     /**

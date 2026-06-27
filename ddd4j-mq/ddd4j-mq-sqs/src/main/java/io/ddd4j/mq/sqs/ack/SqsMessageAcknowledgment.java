@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 基于 AWS SQS {@link Message} 的消息确认实现（DeleteMessage / ChangeMessageVisibility）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public final class SqsMessageAcknowledgment implements MessageAcknowledgment {

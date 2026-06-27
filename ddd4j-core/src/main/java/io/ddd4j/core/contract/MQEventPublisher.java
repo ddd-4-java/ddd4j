@@ -8,6 +8,7 @@ package io.ddd4j.core.contract;
  * </p>
  *
  * @see io.ddd4j.mq.spi.MQBrokerAdapter
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface MQEventPublisher {
 

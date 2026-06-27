@@ -10,6 +10,7 @@ import java.util.Objects;
 
 /**
  * 处理日期类型的null值
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class NullDateJsonSerializer extends JsonSerializer<Object> {
 

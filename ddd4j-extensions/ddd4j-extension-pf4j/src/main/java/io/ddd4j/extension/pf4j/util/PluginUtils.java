@@ -9,6 +9,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class PluginUtils {
 
     public static <T> T getExtensionPoint(PluginManager pluginManager, Class<T> type, String pluginId,

@@ -25,7 +25,8 @@ public class SaTempToken implements Serializable {
      * - cas，Cas登录：通过标准的JWT登录
      * - jwt，JWT登录：通过标准的JWT登录
      * - pac4j，三方登录：基于Pac4j进行各类三方登录
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     private String authType;
 
     //==============================认证授权信息====================================

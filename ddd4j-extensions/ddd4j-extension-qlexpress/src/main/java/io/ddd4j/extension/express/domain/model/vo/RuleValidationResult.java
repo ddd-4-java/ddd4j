@@ -9,7 +9,7 @@ import java.util.List;
  * <p>领域模型：不可变的值对象，表示规则语法验证的结果。
  * 使用Builder模式构建，确保不可变性。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

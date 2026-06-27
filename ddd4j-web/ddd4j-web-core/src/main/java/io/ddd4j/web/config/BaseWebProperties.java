@@ -8,6 +8,9 @@ import java.util.List;
 
 @Data
 // @ConfigurationProperties(prefix = "base-web")
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class BaseWebProperties {
     private Log log = new Log();
     private Mvc mvc = new Mvc();

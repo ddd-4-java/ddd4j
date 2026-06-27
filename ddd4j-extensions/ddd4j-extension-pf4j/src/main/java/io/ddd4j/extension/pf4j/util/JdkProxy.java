@@ -7,6 +7,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 //JDK动态代理实现InvocationHandler接口
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class JdkProxy implements InvocationHandler {
 
     private Object target;//需要代理的目标对象

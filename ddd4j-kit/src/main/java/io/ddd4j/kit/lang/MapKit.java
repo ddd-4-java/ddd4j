@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Map工具类
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
 public class MapKit extends MapUtil {

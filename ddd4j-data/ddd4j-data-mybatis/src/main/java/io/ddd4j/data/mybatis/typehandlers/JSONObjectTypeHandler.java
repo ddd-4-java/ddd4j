@@ -3,6 +3,9 @@ package io.ddd4j.data.mybatis.typehandlers;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class JSONObjectTypeHandler extends BaseTypeHandler<JSONObject> {
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * This class is used by the Spring extension of Akka to create the actor beans.
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringExt> {
 

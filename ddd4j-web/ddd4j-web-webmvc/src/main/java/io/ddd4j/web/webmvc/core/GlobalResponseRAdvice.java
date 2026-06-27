@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @RestControllerAdvice
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
     @Autowired
     @Qualifier("mvcObjectMapper")

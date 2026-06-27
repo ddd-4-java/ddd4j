@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
  * 绑定命名工具：将 topic + tag 语义映射为 camelCase binding / 函数 Bean 名。
  * <p>
  * 示例：{@code order.paid} + {@code notify} → {@code orderPaidNotify}
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MQBindingNaming {
 

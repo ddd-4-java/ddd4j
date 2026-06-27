@@ -49,7 +49,7 @@ import java.util.function.Function;
  *   CacheKit.build("user", 300);  // 使用 Guava
  * }</pre>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @UtilityClass

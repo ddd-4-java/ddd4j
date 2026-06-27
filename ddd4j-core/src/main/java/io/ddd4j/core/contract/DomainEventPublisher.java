@@ -12,7 +12,7 @@ import java.util.Collection;
  *   <li>Javalin/Guice: 基于 Guava EventBus</li>
  * </ul>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface DomainEventPublisher {
 

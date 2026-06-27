@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public interface ServletResponseExtensionPoint extends ExtensionPoint {
 
     String dewrap(HttpServletResponse response, Map<String, Object> realParams);

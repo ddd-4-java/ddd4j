@@ -13,6 +13,7 @@ import java.util.Optional;
 
 /**
  * 从 mica-mqtt 入站消息构建 {@link MicaMqttMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MicaMqttMessageAcknowledgmentFactory {
 

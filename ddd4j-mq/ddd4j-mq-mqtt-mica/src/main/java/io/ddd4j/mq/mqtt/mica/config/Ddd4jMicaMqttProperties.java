@@ -7,6 +7,7 @@ import lombok.Data;
  * <p>
  * 连接参数与 sample {@code ddd4j-sample-starter-druid-mqtt-client2} 的 {@code mqtt.client.*} 对齐；
  * 本模块发布/订阅 QoS 等 ddd4j 语义在此配置，Broker 地址等仍由 {@code mqtt.client.*} 提供。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class Ddd4jMicaMqttProperties {

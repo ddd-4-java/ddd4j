@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class DefaultLicenseAutoConfiguration {
     @Bean(initMethod = "installLicense", destroyMethod = "unInstallLicense")
     public LicenseVerify licenseVerify(LicenseProperties properties) {

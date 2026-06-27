@@ -6,6 +6,7 @@ import io.ddd4j.mq.registry.MQBrokerType;
 
 /**
  * 发布器工厂 SPI：按 Broker 类型创建 {@link MQEventPublisher}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface MQPublisherFactory {
 

@@ -14,6 +14,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class GlobalSequence {
 
     private final RedisOperationTemplate redisOperation;

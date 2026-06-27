@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 @Deprecated
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class CRUDController<M extends Model, Q extends Query> {
     private static final Logger log = LoggerFactory.getLogger("### BASE-WEB : CRUDController ###");
     protected BaseRepository<M, Q> repository;

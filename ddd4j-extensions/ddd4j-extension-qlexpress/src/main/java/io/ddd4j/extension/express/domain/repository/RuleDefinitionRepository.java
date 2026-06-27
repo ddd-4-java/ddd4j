@@ -18,7 +18,7 @@ import java.util.Optional;
  *   <li>如果使用其他方案：直接实现此接口</li>
  * </ul>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

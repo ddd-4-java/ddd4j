@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  * @param <V>  管理端视图对象（VO）
  * @param <Q>  查询参数
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public abstract class BaseAdminAggregateController<V, Q> {
 

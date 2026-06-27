@@ -18,6 +18,7 @@ import java.util.Properties;
 
 /**
  * 阿里云 ONS 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=ons 时生效。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jOnsMQAutoConfiguration {

@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class GlobalRestExceptionAdvice {
     private static final Logger log = LoggerFactory.getLogger("### BASE-WEB : GlobalRestExceptionAdvice ###");
 

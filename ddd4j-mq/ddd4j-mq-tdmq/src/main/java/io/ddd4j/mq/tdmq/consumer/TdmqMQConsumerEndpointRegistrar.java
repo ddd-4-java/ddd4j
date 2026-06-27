@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 注册为 TDMQ 消费端点（占位客户端使用进程内总线）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

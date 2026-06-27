@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 NATS JetStream Push Consumer。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

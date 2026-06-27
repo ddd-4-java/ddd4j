@@ -8,7 +8,7 @@ import lombok.Data;
 /**
  * 服务异常，可用于控制业务异常流程，抛出后由统一异常增强类捕获，返回友好提示
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class ServiceException extends RuntimeException {

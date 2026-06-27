@@ -12,6 +12,7 @@ import java.util.Objects;
  * <p>
  * 定义由 {@code io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor} 在 Bean 初始化阶段写入 {@link MQListenerDefinitionRegistry}，
  * 本类仅提供只读访问，替代 legacy 全容器遍历扫描。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

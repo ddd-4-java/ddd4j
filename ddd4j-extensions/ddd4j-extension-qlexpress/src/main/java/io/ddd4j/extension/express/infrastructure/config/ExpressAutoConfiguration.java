@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  *   <li>RuleManagementService - 规则管理服务</li>
  * </ul>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

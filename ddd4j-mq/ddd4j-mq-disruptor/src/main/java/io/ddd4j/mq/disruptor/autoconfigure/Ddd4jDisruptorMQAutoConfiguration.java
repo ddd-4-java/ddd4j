@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * LMAX Disruptor 本地 MQ 自动配置。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jDisruptorMQAutoConfiguration {

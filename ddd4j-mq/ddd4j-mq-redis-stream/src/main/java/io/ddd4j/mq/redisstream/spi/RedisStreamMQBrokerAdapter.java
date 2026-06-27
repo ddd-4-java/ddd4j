@@ -18,6 +18,7 @@ import org.springframework.messaging.Message;
 
 /**
  * Redis Stream Broker 适配器，桥接 ddd4j MQ SPI 与 Spring Data Redis Stream。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter {

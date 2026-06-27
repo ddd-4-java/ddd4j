@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * <p>注意：此类是可选的，只有在使用Spring事件机制时才需要。
  * 如果不需要事件机制，可以不使用此类。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 /**
  * jsr303 数据权限校验注解
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 2024.10.09
  */

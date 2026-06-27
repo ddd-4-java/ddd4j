@@ -9,6 +9,7 @@ import java.time.Duration;
 
 /**
  * JWT 签发配置
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration
 @Data

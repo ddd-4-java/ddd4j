@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * 默认排序注解
  * 用于标记PO中的默认排序字段
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0.0
  * @date 2022年2月12日
  */

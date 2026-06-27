@@ -36,7 +36,7 @@ import java.util.UUID;
  * app.after(ctx -> MDC.clear());
  * }</pre>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class JavalinMDCPlugin implements Handler {
 

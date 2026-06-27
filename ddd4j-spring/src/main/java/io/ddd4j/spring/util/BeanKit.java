@@ -17,6 +17,7 @@ import java.util.*;
  *
  * <p>统一封装 Bean、Map、集合之间的转换能力，兼容普通 JavaBean、Lombok
  * {@code @Builder} 以及 {@code @Accessors(chain = true)} 生成的链式访问器。</p>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
 public class BeanKit {

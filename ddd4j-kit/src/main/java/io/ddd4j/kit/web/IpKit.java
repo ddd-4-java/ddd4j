@@ -116,7 +116,8 @@ public class IpKit extends Ipv4Util {
 
     /**
      * 获取客户端真实 IP（纯 Java 实现，无需 Spring WebUtils）
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public static String getRemoteAddr(HttpServletRequest request) {
         String addr = request.getHeader("X-Forwarded-For");
         if (addr != null && !addr.isEmpty() && !"unknown".equalsIgnoreCase(addr)) {

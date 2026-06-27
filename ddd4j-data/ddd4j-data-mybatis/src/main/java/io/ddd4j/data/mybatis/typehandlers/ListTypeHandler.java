@@ -48,7 +48,7 @@ import java.util.List;
  * private List<User> users;
  *
  *
- * @author zhouhengzhe
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @MappedJdbcTypes(JdbcType.VARBINARY)
 @MappedTypes({List.class})

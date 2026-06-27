@@ -19,6 +19,7 @@ import java.util.Objects;
 
 /**
  * GlobalSequence 自动配置类
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 //@Configuration
 public class GlobalSequenceConfiguration {

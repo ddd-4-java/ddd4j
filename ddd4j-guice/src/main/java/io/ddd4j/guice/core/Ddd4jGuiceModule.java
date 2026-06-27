@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * DomainEventPublisher publisher = injector.getInstance(DomainEventPublisher.class);
  * }</pre>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 public class Ddd4jGuiceModule extends AbstractModule {

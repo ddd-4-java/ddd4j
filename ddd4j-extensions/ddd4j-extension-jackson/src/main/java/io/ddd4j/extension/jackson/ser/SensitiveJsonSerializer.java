@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * @author felord.cn
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.8.RELEASE
  * https://mp.weixin.qq.com/s/GmELzTYIwYAIpTVRyCh9mw
  */

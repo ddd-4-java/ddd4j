@@ -2,6 +2,7 @@ package io.ddd4j.mq.tdmq.client;
 
 /**
  * 腾讯云 TDMQ 客户端占位接口（待接入官方 tdmq-client / Pulsar 兼容 SDK）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface TdmqClient {
 

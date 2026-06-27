@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 /**
  * Spring上下文：显式获取SpringBean、注册Bean；SpringEvent事件发布
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-CORE : SpringContext ###")
 @Primary

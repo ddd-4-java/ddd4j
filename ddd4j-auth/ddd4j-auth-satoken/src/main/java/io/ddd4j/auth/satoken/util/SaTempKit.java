@@ -21,7 +21,8 @@ public class SaTempKit {
      * @param value   指定值
      * @param timeout 有效期，单位：秒，-1 代表永久有效
      * @return 生成的token
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public static String createToken(SaTempToken value, long timeout) {
         return SaTempUtil.createToken(value, timeout);
     }

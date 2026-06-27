@@ -11,6 +11,7 @@ import java.util.Optional;
 
 /**
  * 从 Spring Integration MQTT {@link Message} 头信息构建 {@link MqttMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MqttMessageAcknowledgmentFactory {
 

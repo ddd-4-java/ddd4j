@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class KafkaConsumerRunner implements Runnable {
 
     private final AtomicBoolean closed = new AtomicBoolean(false);

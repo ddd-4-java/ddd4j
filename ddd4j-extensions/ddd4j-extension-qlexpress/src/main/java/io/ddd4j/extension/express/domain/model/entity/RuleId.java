@@ -11,7 +11,7 @@ import java.util.Objects;
  * 
  * <p>支持从String和Long类型创建，可以转换为Long类型。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

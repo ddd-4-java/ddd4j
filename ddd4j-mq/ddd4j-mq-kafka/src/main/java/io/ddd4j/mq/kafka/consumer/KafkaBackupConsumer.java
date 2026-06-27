@@ -39,6 +39,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Kafka备份消费者，提供事务消息消费和本地备份功能
  * 确保在消费前先进行备份，消费成功后删除备份
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class KafkaBackupConsumer implements DisposableBean {

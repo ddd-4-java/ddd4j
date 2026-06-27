@@ -38,7 +38,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * class MyAppArchitectureTest extends CleanArchitectureTest {}
  * </pre>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @AnalyzeClasses(

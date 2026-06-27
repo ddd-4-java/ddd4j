@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * <p>应用层：负责领域实体和DTO之间的转换。
  * 遵循DDD规范，接口层不应该直接使用领域实体。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

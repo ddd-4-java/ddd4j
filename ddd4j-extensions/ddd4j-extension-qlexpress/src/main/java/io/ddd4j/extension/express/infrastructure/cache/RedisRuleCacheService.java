@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * 
  * <p>注意：此类通过ExpressAutoConfiguration自动配置，无需手动添加@Service注解
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

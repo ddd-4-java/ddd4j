@@ -15,7 +15,7 @@ import org.springframework.web.client.RestClient;
 import java.util.stream.Collectors;
 
 /**
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties(CryptoProperties.class)

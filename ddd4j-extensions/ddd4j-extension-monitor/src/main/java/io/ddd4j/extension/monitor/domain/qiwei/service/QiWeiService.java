@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * 企微告警util
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-MONITOR : QiWeiService ###")
 public class QiWeiService {

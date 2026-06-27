@@ -21,6 +21,9 @@ import java.util.Objects;
 @Aspect
 @Component
 @Slf4j
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class ApiOperationLogAspect {
 
     @Autowired

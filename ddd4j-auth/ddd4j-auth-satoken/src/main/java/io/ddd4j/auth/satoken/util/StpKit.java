@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 /**
  * StpLogic 门面类，管理项目中所有的 StpLogic 账号体系
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class StpKit {
 

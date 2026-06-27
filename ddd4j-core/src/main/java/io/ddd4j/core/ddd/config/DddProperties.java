@@ -15,7 +15,7 @@ import lombok.Getter;
  *       type: mem  # mem（内存版，开发测试）| kurrent（生产环境，需自行注入 EventStore Bean）
  * </pre>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 @Data

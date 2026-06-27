@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
 
     @Override

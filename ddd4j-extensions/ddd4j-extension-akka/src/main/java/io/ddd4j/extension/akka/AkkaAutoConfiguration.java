@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 /**
  * Akka Auto Configuration
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties(AkkaProperties.class)

@@ -4,6 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 插件注解：用于标记插件的信息
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

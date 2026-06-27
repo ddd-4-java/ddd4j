@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 /**
  * TDMQ 消费回调（占位契约，待官方 SDK 接入后替换）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @FunctionalInterface
 public interface TdmqMessageConsumer {

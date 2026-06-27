@@ -6,6 +6,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class LocalTimeFormatter implements Formatter<LocalTime> {
     public final DateTimeFormatter FORMATTER;
 

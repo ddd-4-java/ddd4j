@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * dingding markdown
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class MarkDownVO {

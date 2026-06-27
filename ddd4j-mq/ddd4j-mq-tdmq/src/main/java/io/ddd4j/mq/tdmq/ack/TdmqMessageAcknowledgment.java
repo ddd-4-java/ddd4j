@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 /**
  * 腾讯云 TDMQ 消息确认实现（占位：委托 ack/nack 回调，待 SDK 接入后替换）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public final class TdmqMessageAcknowledgment implements MessageAcknowledgment {

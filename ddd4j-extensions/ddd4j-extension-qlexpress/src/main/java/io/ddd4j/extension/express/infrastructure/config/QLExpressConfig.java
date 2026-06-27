@@ -30,7 +30,7 @@ import java.util.Objects;
  *   <li>动态加载的函数：通过 DynamicFunctionLoader 从数据库加载</li>
  * </ol>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

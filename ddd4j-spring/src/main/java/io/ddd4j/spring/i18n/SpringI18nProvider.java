@@ -13,7 +13,7 @@ import java.util.Locale;
  * <p>
  * 基于 Spring MessageSource 实现。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @Component

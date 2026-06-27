@@ -12,6 +12,7 @@ import java.util.prefs.Preferences;
 
 /**
  * License生成类 -- 用于license生成
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class LicenseCreator {

@@ -7,6 +7,7 @@ import lombok.Data;
 
 /**
  * ddd4j MQ 主配置（前缀 {@code ddd4j.mq}）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 // @ConfigurationProperties(prefix = "ddd4j.mq")

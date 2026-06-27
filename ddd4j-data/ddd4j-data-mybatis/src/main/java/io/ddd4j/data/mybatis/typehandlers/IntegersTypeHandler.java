@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * 类型转换：varchar <-> Integer[]，使用英文逗号,分割
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @date 2021/9/12 14:52
  * @since jdk1.8
  */

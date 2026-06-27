@@ -25,6 +25,7 @@ import java.util.Objects;
 
 /**
  * 响应内容自动加密
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ControllerAdvice
 public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<ApiRestResponse<?>> {

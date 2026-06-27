@@ -7,7 +7,7 @@ package io.ddd4j.spring.util;
 /**
  * 标准Http状态码
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @See org.springframework.http.HttpStatus
  */
 public interface HttpStatus {

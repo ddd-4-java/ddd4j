@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 使用策略模式，通过 {@link I18nProvider} 接口实现框架无关的国际化。
  * 各框架适配层在启动时注册对应的 I18nProvider 实现。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class I18nKit {
 

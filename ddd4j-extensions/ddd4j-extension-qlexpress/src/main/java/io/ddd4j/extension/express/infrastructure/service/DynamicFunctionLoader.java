@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </ul>
  * 
  * <p>只加载 ruleType 为 FUNCTION 的规则
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Component
 public class DynamicFunctionLoader {

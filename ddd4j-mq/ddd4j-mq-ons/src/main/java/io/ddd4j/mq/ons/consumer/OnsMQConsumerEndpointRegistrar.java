@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为阿里云 ONS {@link Consumer} 端点。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * {@link MQEventListener} 解析后的监听器定义。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Getter
 @Builder

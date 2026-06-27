@@ -9,6 +9,9 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class RequestInfo {
     private String url;
     private Object params;

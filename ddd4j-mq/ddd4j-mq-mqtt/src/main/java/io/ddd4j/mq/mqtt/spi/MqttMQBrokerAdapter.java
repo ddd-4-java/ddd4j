@@ -18,6 +18,7 @@ import org.springframework.messaging.MessageChannel;
 
 /**
  * MQTT Broker 适配器，桥接 ddd4j MQ SPI 与 Spring Integration MQTT（Eclipse Paho）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class MqttMQBrokerAdapter implements MQBrokerAdapter {

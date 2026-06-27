@@ -31,7 +31,7 @@ import java.sql.Connection;
  * 业务模块可注入 {@code SqlSlowLogger} 回调接口，自定义慢 SQL 处理（如上报 Micrometer、告警）。
  * </p>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class SqlExplainInterceptor implements InnerInterceptor {
 

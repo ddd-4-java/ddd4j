@@ -13,7 +13,7 @@ import java.util.Objects;
  * <p>
  * 清理掉 BigDecimal 末尾多余的 0
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @date 2022/03/21 13:42
  */

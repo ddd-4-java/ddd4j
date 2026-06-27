@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
  * <p>
  * 使用 Java 标准 {@link ResourceBundle} 加载 i18n 资源。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 @ApplicationScoped

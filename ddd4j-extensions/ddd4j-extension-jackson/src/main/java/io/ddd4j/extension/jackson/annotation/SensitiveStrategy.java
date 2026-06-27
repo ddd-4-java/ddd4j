@@ -5,7 +5,7 @@ import java.util.function.Function;
 /**
  * 脱敏策略.
  *
- * @author felord.cn
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 11 :25
  */
 public enum SensitiveStrategy {

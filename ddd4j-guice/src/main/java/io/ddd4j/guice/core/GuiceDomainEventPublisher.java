@@ -13,7 +13,7 @@ import java.util.Collection;
  * <p>
  * 使用 Google Guava {@link EventBus} 发布进程内领域事件。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 public class GuiceDomainEventPublisher implements DomainEventPublisher {

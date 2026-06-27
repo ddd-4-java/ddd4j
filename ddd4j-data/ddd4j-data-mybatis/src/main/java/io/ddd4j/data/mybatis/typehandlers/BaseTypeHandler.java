@@ -9,6 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public abstract class BaseTypeHandler<T> extends org.apache.ibatis.type.BaseTypeHandler<T> {
 
     // 获取实际的类型

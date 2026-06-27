@@ -11,8 +11,7 @@ import java.util.Map;
 
 /**
  * 日志操作类型-枚举
- *
- * @author <a href="https://github.com/wandl">wandl</a>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum BusinessType {
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * 数据权限提供者
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface DataScopeProvider {
 

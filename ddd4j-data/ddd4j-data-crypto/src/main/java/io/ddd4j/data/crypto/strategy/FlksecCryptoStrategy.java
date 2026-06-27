@@ -21,6 +21,7 @@ import java.util.Objects;
 
 /**
  * 请求加解密服务实现
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class FlksecCryptoStrategy implements CryptoStrategy {

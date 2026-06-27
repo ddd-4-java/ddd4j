@@ -2,6 +2,7 @@ package io.ddd4j.mq.ack;
 
 /**
  * 业务层消费结果语义，映射到 {@link MessageAcknowledgment} 底层操作。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum AckDisposition {
 

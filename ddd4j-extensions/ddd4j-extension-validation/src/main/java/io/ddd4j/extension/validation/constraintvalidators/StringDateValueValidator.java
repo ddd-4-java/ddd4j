@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 /**
  * 字符串日期格式校验器
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2021-03-08
  */
 public class StringDateValueValidator implements ConstraintValidator<StringDateValue, String> {

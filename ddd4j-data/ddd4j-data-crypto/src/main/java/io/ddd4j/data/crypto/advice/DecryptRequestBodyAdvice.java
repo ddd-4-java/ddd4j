@@ -26,6 +26,7 @@ import java.lang.reflect.Type;
 
 /**
  * requestBody 自动解密
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ControllerAdvice
 public class DecryptRequestBodyAdvice extends RequestBodyAdviceAdapter {

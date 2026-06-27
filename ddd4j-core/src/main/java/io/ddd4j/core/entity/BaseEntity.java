@@ -33,7 +33,7 @@ import java.util.Map;
  *             </ul>
  *             <p>
  *             本类将在 5.0.x 版本移除。迁移期间保留向后兼容。
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.x
  */
 @Getter

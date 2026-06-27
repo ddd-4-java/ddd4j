@@ -24,6 +24,7 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * Kafka消费者模板类，提供同步和异步消费功能
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class KafkaConsumerTemplate implements DisposableBean {

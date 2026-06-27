@@ -14,6 +14,7 @@ import java.util.Objects;
 
 /**
  * @see https://blog.csdn.net/qq_18537055/article/details/98681154
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class WebSocketMappingHandlerMapping extends SimpleUrlHandlerMapping {
 

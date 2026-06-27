@@ -6,6 +6,7 @@ import java.util.Optional;
 
 /**
  * 消息确认端口。以 AMQP {@code Channel} 语义为基准；其他 Broker 由 Adapter 映射。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface MessageAcknowledgment {
 

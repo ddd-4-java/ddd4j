@@ -10,7 +10,7 @@ import java.util.List;
  * 继承该类并加@Component注解，放在entity下的typehandlers目录，PO类无需在@TableField注解上加类型处理器，能自动转换
  *
  * @param <T> 自定义POJO，一般以VO命名，与Model同目录，注意T不能是List集合或Map类型，但可以是数组类型（以实现对对象数组的互转）
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @date 2024/5/6 14:52
  */
 public abstract class JsonStringTypeHandler<T> extends BaseTypeHandler<T> {

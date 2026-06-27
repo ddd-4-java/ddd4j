@@ -44,7 +44,7 @@ import java.util.Set;
  *   <li>infrastructure → 依赖所有层</li>
  * </ul>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 @Slf4j

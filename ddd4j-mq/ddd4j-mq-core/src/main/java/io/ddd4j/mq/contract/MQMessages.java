@@ -13,7 +13,7 @@ import java.util.UUID;
  * <p>
  * 替代原 {@code MQMessage}，统一使用 {@code org.springframework.messaging.Message} 作为消息模型。
  *
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0
  */
 public final class MQMessages {

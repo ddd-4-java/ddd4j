@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 /**
  * 基于 RocketMQ {@link MessageExt} 的消息确认实现。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public final class RocketMessageAcknowledgment implements MessageAcknowledgment {

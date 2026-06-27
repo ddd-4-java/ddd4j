@@ -11,7 +11,7 @@ import java.util.Objects;
  * 统一接口响应，标准的响应数据结构
  *
  * @param <T>
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 @AllArgsConstructor

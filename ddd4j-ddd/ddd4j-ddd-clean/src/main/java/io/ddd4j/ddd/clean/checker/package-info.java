@@ -10,5 +10,6 @@
  * </ul>
  *
  * @since 3.4.x
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.ddd.clean.checker;

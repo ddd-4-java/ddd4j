@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * LMAX Disruptor 本地 MQ 配置（前缀 {@code ddd4j.mq.disruptor}）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class DisruptorMQProperties {

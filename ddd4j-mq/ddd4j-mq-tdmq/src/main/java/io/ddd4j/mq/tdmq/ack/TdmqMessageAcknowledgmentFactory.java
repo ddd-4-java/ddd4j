@@ -7,6 +7,7 @@ import java.util.Optional;
 
 /**
  * 从 MQ 信封构建 {@link TdmqMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class TdmqMessageAcknowledgmentFactory {
 

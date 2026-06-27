@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * RabbitMQ 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {

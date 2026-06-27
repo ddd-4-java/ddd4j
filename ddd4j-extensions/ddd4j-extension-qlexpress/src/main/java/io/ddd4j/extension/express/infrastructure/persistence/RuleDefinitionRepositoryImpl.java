@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
  * <p>注意：此类是可选的，只有在使用Spring Data Repository时才需要。
  * 实际项目中应该根据持久化方案创建具体的实现类。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

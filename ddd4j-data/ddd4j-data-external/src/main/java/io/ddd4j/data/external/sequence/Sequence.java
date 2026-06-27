@@ -92,7 +92,8 @@ public class Sequence {
      * 生成时间戳
      *
      * @return 时间戳
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     // 本地降级 ID 生成方法
     private long generateLocalId() {
         return IdUtil.getSnowflake(workerId, datacenterId).nextId();

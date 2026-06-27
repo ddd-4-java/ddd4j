@@ -27,7 +27,7 @@ import java.util.Enumeration;
  * <p>
  * 提供从 Javalin Context 获取 HttpServletRequest、客户端真实 IP 等能力。
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class JavalinWebUtils {
 

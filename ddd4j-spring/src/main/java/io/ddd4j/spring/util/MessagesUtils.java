@@ -6,6 +6,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * 国际化文件获取内容
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MessagesUtils {
 

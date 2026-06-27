@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
  * 业务模块启用方式：MybatisPlusInterceptor.addInnerInterceptor(new MybatisPaginationInnerInterceptor(DbType.MYSQL))
  * </p>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MybatisPaginationInnerInterceptor extends PaginationInnerInterceptor {
 

@@ -17,6 +17,9 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 @RestControllerAdvice
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class GlobalRequestAdvice implements RequestBodyAdvice {
 
     @Override

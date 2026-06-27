@@ -13,7 +13,7 @@ import java.util.*;
  * <p>
  * 仅在 Spring 环境下使用，Quarkus/Javalin 环境使用纯 Java DomainEvent 接口。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public abstract class SpringDomainEvent<T> extends ApplicationEvent {

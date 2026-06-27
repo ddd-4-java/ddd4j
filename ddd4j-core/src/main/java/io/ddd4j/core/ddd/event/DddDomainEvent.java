@@ -49,7 +49,7 @@ import java.io.Serial;
  * </pre>
  *
  * @param <ID> 事件源实体标识类型
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see AbstractDomainEvent
  * @since 3.4.x
  */

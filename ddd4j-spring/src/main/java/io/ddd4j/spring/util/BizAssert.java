@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 
 /**
  * 业务断言类，断言不通过将抛出ServiceException
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
 public class BizAssert {

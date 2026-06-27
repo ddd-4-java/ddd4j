@@ -33,7 +33,7 @@ package io.ddd4j.extension.express.interfaces.web;
  * <p>注意：这是一个示例类，实际使用时请删除此类并创建真正的Controller。
  * 参考 {@link RuleManagementController} 查看完整实现。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

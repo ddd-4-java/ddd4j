@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * http://www.mca.gov.cn/article/sj/xzqh/1980/201903/201903011447.html
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum ProvinceEnum {
 

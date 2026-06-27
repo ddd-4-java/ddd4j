@@ -26,6 +26,7 @@ import java.util.UUID;
  * MQTT 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=mqtt 时生效。
  * <p>
  * 主路径：Eclipse Paho + Spring Integration（与 sample mqtt-client1 一致）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jMqttMQAutoConfiguration {

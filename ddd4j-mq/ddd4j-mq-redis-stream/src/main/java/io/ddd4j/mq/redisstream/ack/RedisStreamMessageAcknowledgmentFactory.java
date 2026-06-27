@@ -11,6 +11,7 @@ import java.util.Optional;
 
 /**
  * 从 Spring Redis Stream {@link Message} 构建 {@link RedisStreamMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class RedisStreamMessageAcknowledgmentFactory {
 

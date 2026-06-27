@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class CaculateDistanceTest {
 
     private static GeoTemplate geoTemplate = new GeoTemplate();

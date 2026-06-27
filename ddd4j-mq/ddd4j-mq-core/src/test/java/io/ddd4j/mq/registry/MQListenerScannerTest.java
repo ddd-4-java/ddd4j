@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * {@link MQListenerScanner} 单元测试。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class MQListenerScannerTest {
 

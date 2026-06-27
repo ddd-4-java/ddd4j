@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * 常用错误码定义
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Getter
 public enum ResultCode implements IEnum<Integer> {

@@ -6,6 +6,9 @@ import org.pf4j.PluginRuntimeException;
 
 import java.util.Map;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public interface AuthcExtensionPoint extends ExtensionPoint {
 
     String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;

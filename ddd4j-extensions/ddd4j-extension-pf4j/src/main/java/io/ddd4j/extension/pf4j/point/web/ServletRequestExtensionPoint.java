@@ -6,6 +6,9 @@ import org.springframework.http.RequestEntity;
 
 import java.util.Map;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public interface ServletRequestExtensionPoint extends ExtensionPoint {
 
     String wrap(HttpServletRequest request, Map<String, Object> realParams);

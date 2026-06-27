@@ -11,6 +11,7 @@ import org.springframework.messaging.Message;
 
 /**
  * Broker 适配 SPI：各 {@code ddd4j-cmpt-*} 模块实现并注册到 Spring 容器。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface MQBrokerAdapter {
 

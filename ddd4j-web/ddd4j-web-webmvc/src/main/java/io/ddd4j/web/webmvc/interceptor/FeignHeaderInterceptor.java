@@ -16,6 +16,7 @@ import static io.ddd4j.core.contract.constant.ContextConstants.TENANT_ID;
 
 /**
  * Feign请求头拦截器
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
     private static final String[] USE_WEB_HEADERS = new String[]{"tenant-id", "system-id", "third-session", "enterprise-id", "shop-id", "app-id", "switch-tenant-id", "Authorization", "client-type", "own-language"};

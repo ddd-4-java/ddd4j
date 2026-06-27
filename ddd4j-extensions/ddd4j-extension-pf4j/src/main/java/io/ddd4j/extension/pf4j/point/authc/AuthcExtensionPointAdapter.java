@@ -23,7 +23,7 @@ import java.util.Map;
  *   <li>{@link #handleResult}：原样返回结果</li>
  * </ul>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {

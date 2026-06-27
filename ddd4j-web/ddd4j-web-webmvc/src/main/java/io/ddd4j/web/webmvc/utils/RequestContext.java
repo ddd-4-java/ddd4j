@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @UtilityClass
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class RequestContext {
     public HttpServletRequest get() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

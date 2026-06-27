@@ -16,7 +16,7 @@ import com.alibaba.qlexpress4.runtime.function.CustomFunction;
  * startsWith("hello world", "world") -> false
  * </pre>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

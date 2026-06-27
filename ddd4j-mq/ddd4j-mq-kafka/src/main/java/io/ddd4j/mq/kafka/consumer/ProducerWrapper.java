@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 生产者包装类，包含生产者实例和最后使用时间
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class ProducerWrapper {

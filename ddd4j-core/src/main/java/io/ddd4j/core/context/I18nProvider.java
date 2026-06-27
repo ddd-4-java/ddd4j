@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
  * </ul>
  * 默认实现返回原始 key。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface I18nProvider {
 

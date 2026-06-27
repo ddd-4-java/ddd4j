@@ -18,6 +18,7 @@ import java.util.Optional;
  * 地址获取经纬度： http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-geocoding
  * IP获取经纬度：   http://lbsyun.baidu.com/index.php?title=webapi/ip-api
  * https://blog.csdn.net/Li_Chunxiao_/article/details/107082921
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class GeoBaiduTemplate {

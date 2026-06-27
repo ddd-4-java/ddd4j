@@ -3,6 +3,9 @@ package io.ddd4j.auth.security.subject;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class SecuritySubjectProvider implements SubjectProvider {
 
     @Override

@@ -7,6 +7,9 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @Getter
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public enum BooleanEnum implements IEnum<Integer> {
 
     IS_FALSE(false, "否"),

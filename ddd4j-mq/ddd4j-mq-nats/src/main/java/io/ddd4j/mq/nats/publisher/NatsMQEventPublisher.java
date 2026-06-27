@@ -18,6 +18,7 @@ import java.util.Objects;
 
 /**
  * 基于 {@link Connection} / JetStream 的领域事件发布实现（骨架）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

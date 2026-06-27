@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * 通用类型转换函数常量
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @UtilityClass

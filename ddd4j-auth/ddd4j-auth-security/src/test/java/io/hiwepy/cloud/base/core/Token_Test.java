@@ -9,6 +9,9 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class Token_Test {
 
     private static String seed = "xx1WET12^%3^(WE45";

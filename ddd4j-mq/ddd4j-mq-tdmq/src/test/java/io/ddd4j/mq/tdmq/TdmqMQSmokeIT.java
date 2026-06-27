@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * TDMQ 占位客户端冒烟测试（无 Testcontainers：腾讯云 TDMQ 无可靠开源容器，使用 {@link io.ddd4j.mq.tdmq.client.TdmqClientPlaceholder}）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {

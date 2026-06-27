@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class CellWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
     private final Map<Integer, Map<Integer, Integer>> CACHE = new HashMap<>();
 

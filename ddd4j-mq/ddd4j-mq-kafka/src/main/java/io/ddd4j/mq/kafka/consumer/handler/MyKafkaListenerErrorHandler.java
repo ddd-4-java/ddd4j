@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 异常处理
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Component
 public class MyKafkaListenerErrorHandler implements KafkaListenerErrorHandler {

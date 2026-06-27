@@ -624,7 +624,8 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
         /**
          * 驼峰转下划线
-         */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
         protected static String toUnderline(String humpString) {
             if (humpString == null || humpString.isEmpty()) return humpString;
             Matcher matcher = HUMP_PATTERN.matcher(humpString);

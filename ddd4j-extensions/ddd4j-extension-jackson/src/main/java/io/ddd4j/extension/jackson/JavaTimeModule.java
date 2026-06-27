@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * java 8 时间默认序列化
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class JavaTimeModule extends SimpleModule {
 

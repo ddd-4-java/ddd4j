@@ -54,7 +54,7 @@ import java.io.Serializable;
  * @param <M>  聚合根模型
  * @param <Q>  查询参数
  * @param <ID> 主键
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public abstract class BaseAggregateController<M extends Model, Q, ID extends Serializable> {
 

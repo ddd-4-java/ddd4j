@@ -16,6 +16,7 @@ import java.util.Objects;
 
 /**
  * 基于 {@link StringRedisTemplate} Redis Stream 的领域事件发布器。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

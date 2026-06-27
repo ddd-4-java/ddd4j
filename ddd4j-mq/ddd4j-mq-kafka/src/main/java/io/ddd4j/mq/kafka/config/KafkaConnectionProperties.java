@@ -14,6 +14,7 @@ import java.util.Objects;
  * <p>
  * 由应用或 boot 轨 AutoConfiguration 绑定 {@code spring.kafka.*} / 自定义前缀后注入。
  * </p>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class KafkaConnectionProperties {

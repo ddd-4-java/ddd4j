@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
  *   <li>SCRIPT - 脚本函数：通过脚本定义函数（未来扩展）</li>
  * </ul>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

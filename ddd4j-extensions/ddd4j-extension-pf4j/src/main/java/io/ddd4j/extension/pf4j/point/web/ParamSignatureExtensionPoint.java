@@ -6,6 +6,9 @@ import org.pf4j.PluginRuntimeException;
 
 import java.util.Map;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public interface ParamSignatureExtensionPoint extends ExtensionPoint {
 
     void sign(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;

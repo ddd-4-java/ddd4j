@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
  * Spring 版 MQ 属性与通用 Bean 配置（从 ddd4j-mq-core 迁出到 ddd4j-mq-spring）。
  * <p>
  * 供纯 Spring {@code @Configuration} 装配使用。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jMQPropertiesConfiguration {

@@ -17,6 +17,7 @@ import java.util.function.BiConsumer;
  * <p>
  * 供 Cloud {@code FunctionalConsumerRegistrar} 等在 BeanPostProcessor 之前注册 Stream 函数 Bean 时复用，
  * 与运行时 {@link MQListenerBeanPostProcessor} 形成「早期 BFPP + 晚期 BPP」双阶段发现模型。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MQListenerClasspathScanner {
 

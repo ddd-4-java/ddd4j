@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 应用就绪后扫描 {@link io.ddd4j.core.contract.annotation.MQEventListener} 并通过 {@link MQBrokerAdapter} 动态注册消费端点（从 ddd4j-mq-core 迁出）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

@@ -19,6 +19,9 @@ import static io.ddd4j.core.contract.constant.ContextConstants.AUTHORIZATION;
 import static io.ddd4j.core.contract.enums.ResultCode.FORBIDDEN;
 
 @Slf4j(topic = "### BASE-WEB : BaseAuthInterceptor ###")
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class BaseAuthWebInterceptor extends BaseWebInterceptor {
 
     @Override

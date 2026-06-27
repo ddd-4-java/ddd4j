@@ -42,7 +42,7 @@ import java.net.InetAddress;
  *   long id2 = IdKit.nextSnowflakeId();
  * }</pre>
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Slf4j

@@ -9,6 +9,7 @@ import org.springframework.messaging.Message;
  * <p>
  * preCheck 返回值与 {@link io.ddd4j.mq.ack.MQConsumeTemplates} 一致：
  * 0=继续, 1=DISCARD, 2=DEFER。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface MQConsumeInterceptor {
 

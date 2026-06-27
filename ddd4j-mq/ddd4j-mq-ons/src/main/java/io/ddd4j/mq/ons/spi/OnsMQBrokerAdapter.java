@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * 阿里云 ONS Broker 适配器，桥接 ddd4j MQ SPI 与 ons-client（Rocket 兼容）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class OnsMQBrokerAdapter implements MQBrokerAdapter {

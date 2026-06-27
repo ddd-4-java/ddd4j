@@ -25,7 +25,8 @@ public class SignUtils {
      * @param appChannel  渠道
      * @param fixedSecret 固定密钥
      * @return 密钥
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public static String salt(String appId, String appVersion, String appChannel, String fixedSecret) {
         String originStr = appId + appVersion + appChannel + fixedSecret;
         String salt = DigestUtils.md5DigestAsHex(originStr.getBytes()).substring(7, 23);

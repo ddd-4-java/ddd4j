@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.util.StopWatch;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public interface ApiOperationLogProvider {
 
 

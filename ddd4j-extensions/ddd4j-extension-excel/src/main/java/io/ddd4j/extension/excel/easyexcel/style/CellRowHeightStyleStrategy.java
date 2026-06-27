@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 /**
  * 设置表头的自动调整行高策略
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class CellRowHeightStyleStrategy extends AbstractRowHeightStyleStrategy {
 

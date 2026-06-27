@@ -12,6 +12,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 /**
  * ddd4j Kafka MQ 适配层自动配置。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jKafkaMQAutoConfiguration {

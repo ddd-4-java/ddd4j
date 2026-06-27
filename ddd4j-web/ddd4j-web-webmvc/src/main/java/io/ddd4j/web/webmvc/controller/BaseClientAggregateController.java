@@ -38,7 +38,7 @@ import java.io.Serializable;
  * @param <V>  客户端视图对象（VO）
  * @param <Q>  查询参数
  * @param <ID> 主键
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public abstract class BaseClientAggregateController<V, Q, ID extends Serializable> {
 

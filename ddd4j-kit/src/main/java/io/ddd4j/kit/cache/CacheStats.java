@@ -5,7 +5,7 @@ package io.ddd4j.kit.cache;
  *
  * <p>与 Caffeine CacheStats 接口兼容，提供缓存命中率、加载次数等统计信息。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 public interface CacheStats {

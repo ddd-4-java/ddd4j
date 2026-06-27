@@ -31,7 +31,7 @@ import java.util.Locale;
  * 集成 i18n（getMessage）、事件发布（logException）等基础能力。
  * 业务 Handler 应继承此类。
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public abstract class BaseHandler {
 

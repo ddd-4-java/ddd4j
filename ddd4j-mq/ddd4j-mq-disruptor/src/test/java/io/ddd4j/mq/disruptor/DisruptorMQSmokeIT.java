@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Disruptor 本地 MQ 冒烟测试（无 Testcontainers：进程内 RingBuffer，无需外部 Broker）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {

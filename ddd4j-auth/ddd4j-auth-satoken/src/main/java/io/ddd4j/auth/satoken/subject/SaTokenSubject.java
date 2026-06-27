@@ -207,7 +207,8 @@ public class SaTokenSubject implements Subject {
     /**
      * 复写默认实现，提高效率
      * @return 登录账号 Id
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     @Override
     public Object getLoginId() {
         return StpUtil.getLoginId();

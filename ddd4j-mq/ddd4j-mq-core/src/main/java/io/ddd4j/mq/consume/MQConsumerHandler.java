@@ -6,6 +6,7 @@ import org.springframework.messaging.Message;
 
 /**
  * MQ 消费处理函数，由 Broker Adapter 在注册端点时绑定。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @FunctionalInterface
 public interface MQConsumerHandler {

@@ -45,7 +45,8 @@ public class KafkaProducerTemplate implements DisposableBean {
      * KafkaProducer 的配置参数（非事务消息配置）
      *
      * @return KafkaProducer 的配置参数
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public Map<String, Object> defaultProducerConfigs() {
         // 使用 KafkaProperties 的 buildProducerProperties 方法创建 KafkaProducer 的配置参数
         Map<String, Object> props = new HashMap<>(this.properties.buildProducerProperties());

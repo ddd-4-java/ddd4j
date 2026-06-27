@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 基于 Pulsar {@link Consumer} 与 {@link MessageId} 的消息确认实现。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public final class PulsarMessageAcknowledgment implements MessageAcknowledgment {

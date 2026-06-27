@@ -8,6 +8,7 @@ import java.util.Optional;
 
 /**
  * 从 {@link MQMessage} 解析 {@link DisruptorMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class DisruptorMessageAcknowledgmentFactory {
 

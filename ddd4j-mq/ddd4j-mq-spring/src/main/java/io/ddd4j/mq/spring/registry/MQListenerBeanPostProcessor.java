@@ -26,6 +26,7 @@ import java.util.Objects;
  * <p>
  * 在 Bean 完成初始化（含 AOP 代理）后内省目标类方法，写入 {@link MQListenerDefinitionRegistry}。
  * 模式对齐 Spring {@code EventListenerMethodProcessor} 与 Cloud {@code FunctionalConsumerRegistrar}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

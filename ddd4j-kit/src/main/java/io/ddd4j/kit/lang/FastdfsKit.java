@@ -11,7 +11,7 @@ import java.security.MessageDigest;
  *
  * <p>提供 FastDFS 文件 URL 的 Token 生成与校验能力。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.x
  */
 @Deprecated

@@ -9,6 +9,7 @@ import java.util.Objects;
 
 /**
  * 处理boolean类型的null值
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class NullBooleanJsonSerializer extends JsonSerializer<Object> {
 

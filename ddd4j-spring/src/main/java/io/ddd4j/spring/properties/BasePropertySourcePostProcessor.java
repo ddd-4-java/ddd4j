@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 /**
  * 自定义资源文件读取，优先级最低（纯 Spring Framework，不依赖 Spring Boot PropertySourceLoader）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor, InitializingBean, Ordered {

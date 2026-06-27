@@ -31,7 +31,8 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
      *
      * @param name cookie name
      * @return cookie value
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public static String getCookieVal(String name) {
         HttpServletRequest request = getHttpServletRequest();
         Assert.notNull(request, "request from RequestContextHolder is null");

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * <p>领域事件：当规则被创建时发布此事件。
  * 用于通知其他模块规则已创建，可以触发缓存更新、日志记录等操作。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

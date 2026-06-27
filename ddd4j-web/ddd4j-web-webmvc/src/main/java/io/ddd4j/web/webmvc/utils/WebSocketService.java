@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 
 /**
  * WebSocket工具
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class WebSocketService {
 

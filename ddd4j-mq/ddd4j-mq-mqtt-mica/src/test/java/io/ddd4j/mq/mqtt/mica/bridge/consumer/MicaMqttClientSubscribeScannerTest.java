@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * {@link MicaMqttClientSubscribeScanner} 单元测试。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class MicaMqttClientSubscribeScannerTest {
 

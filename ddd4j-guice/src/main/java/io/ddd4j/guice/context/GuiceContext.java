@@ -19,6 +19,7 @@ import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +41,9 @@ import java.util.concurrent.CountDownLatch;
  * <p>
  * 在应用启动时调用 {@link #setInjector(Injector)} 注入。
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class GuiceContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(GuiceContext.class);

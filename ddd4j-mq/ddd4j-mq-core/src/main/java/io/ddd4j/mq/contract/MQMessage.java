@@ -18,6 +18,7 @@ import java.util.UUID;
  *
  * @param <T> 载荷类型
  * @deprecated 使用 {@link Message} + {@link MQMessages} 替代
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MQMessage<T> {
 

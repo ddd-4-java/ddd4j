@@ -6,6 +6,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class AsyncAspect {
 
     // 定义一个切入点，匹配所有标记了 @Async 的方法

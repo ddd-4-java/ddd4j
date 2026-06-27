@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 RocketMQ {@link DefaultMQPushConsumer}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

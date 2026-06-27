@@ -41,7 +41,7 @@ import java.sql.Connection;
  * 业务方可通过 {@code @InterceptorIgnore(dataPermission = "true")} 跳过。
  * </p>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class DataPermissionInnerInterceptor implements InnerInterceptor {
 

@@ -18,6 +18,7 @@ import org.springframework.messaging.Message;
 
 /**
  * RocketMQ Broker 适配器，桥接 ddd4j MQ SPI 与 RocketMQ Spring。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class RocketMQBrokerAdapter implements MQBrokerAdapter {

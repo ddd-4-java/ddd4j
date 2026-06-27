@@ -29,6 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Kafka Broker 适配 SPI 实现。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class KafkaMQBrokerAdapter implements MQBrokerAdapter, DisposableBean {

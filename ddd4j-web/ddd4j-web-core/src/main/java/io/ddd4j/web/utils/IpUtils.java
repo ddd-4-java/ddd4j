@@ -5,6 +5,9 @@ import lombok.experimental.UtilityClass;
 import jakarta.servlet.http.HttpServletRequest;
 
 @UtilityClass
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class IpUtils {
 
     public String getIp(HttpServletRequest request) {

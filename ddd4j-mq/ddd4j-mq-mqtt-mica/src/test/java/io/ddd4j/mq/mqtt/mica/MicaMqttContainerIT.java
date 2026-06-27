@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * mica-mqtt 发布路径 Testcontainers 冒烟集成测试（Eclipse Mosquitto）。
  * <p>
  * 使用 {@link GenericContainer} + {@code eclipse-mosquitto:2}，端口 1883。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @SpringBootTest(classes = MicaMqttContainerIT.TestApplication.class)
 @EnabledIf("io.ddd4j.mq.mqtt.mica.MicaMqttContainerIT#isDockerAvailable")

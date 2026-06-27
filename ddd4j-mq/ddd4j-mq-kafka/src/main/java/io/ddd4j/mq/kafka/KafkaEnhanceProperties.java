@@ -20,7 +20,8 @@ public class KafkaEnhanceProperties {
         private BackOffMode backOffMode;
         /**
          * Whether the offset for a recovered record should be committed.
-         */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
         private boolean commitRecovered;
         // 是否在处理消息后立即提交偏移量
         private boolean ackAfterHandle = true;

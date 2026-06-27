@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * 自动更新注解
  * 用于标记PO中的自动更新字段，如果字段类型是LocalDateTime则设置为LocalDateTime.now()，如果字段类型是LocalDate则设置为LocalDate.now()
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0.0
  * @date 2022年2月12日
  */

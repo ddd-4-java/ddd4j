@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 
 /**
  * 从 Spring RocketMQ {@link Message} 构建 {@link RocketMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class RocketMessageAcknowledgmentFactory {
 

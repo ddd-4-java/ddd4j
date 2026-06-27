@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 使用静态注册表管理仓库实例。框架适配层通过 {@link #register(Class, BaseRepository)} 注入。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface BaseRepository<M extends Model, Q extends Query> {
     Map<Class<?>, Class<?>> REPOSITORY_MAPPINGS = new ConcurrentHashMap<>();

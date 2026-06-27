@@ -12,6 +12,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class DefaultCryptoProvider implements CryptoProvider {
 
     private final EnumMap<CryptoType, CryptoStrategy> enumMap = new EnumMap<>(CryptoType.class);

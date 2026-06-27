@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 无操作消息确认器：用于单测或占位，所有写操作仅记录日志不触达 Broker。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class NoOpMessageAcknowledgment implements MessageAcknowledgment {

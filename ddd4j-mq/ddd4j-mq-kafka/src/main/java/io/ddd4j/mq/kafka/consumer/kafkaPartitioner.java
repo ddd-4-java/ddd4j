@@ -5,6 +5,9 @@ import org.apache.kafka.common.Cluster;
 
 import java.util.Map;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class kafkaPartitioner implements Partitioner {
 
     @Override

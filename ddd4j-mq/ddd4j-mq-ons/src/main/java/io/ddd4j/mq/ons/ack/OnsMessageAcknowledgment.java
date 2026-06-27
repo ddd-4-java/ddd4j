@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 /**
  * 基于阿里云 ONS 消费回调语义的消息确认实现（映射 RocketMQ Action）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public final class OnsMessageAcknowledgment implements MessageAcknowledgment {

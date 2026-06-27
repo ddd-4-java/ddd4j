@@ -22,7 +22,7 @@ import java.io.Serializable;
  *             （框架无关的仓储接口，领域层定义、基础设施层实现）。
  *             <p>
  *             本接口将在 5.0.x 版本移除。
- * @author <a href="https://github.com/wandl">wandl</a>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface IBaseService<T extends Model<?>> extends IService<T> {
 

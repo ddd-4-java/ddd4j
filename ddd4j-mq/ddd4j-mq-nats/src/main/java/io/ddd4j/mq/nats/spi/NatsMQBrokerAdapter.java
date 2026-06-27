@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * NATS Broker 适配器，桥接 ddd4j MQ SPI 与 jnats 客户端。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class NatsMQBrokerAdapter implements MQBrokerAdapter {

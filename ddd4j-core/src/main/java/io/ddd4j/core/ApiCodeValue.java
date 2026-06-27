@@ -1,7 +1,7 @@
 package io.ddd4j.core;
 
 /**
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class ApiCodeValue {
 

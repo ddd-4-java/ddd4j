@@ -25,7 +25,7 @@ import org.fuin.ddd4j.core.AbstractAggregateRoot;
  * </ul>
  *
  * @param <ID> 聚合根标识类型（必须是 {@link AggregateRootId} 子类型）
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see AbstractAggregateRoot
  * @see org.fuin.ddd4j.core.ApplyEvent
  * @since 3.4.x

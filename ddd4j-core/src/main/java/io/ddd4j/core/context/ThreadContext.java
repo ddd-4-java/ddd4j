@@ -12,7 +12,7 @@ import io.ddd4j.core.subject.Subject;
  * 本地线程上下文：一个本地线程容器
  * 应用可以扩展继承此类，实现如租户上下文等功能
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @UtilityClass

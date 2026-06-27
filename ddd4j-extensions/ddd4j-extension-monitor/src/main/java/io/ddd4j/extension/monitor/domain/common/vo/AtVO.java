@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * dingding at
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class AtVO {

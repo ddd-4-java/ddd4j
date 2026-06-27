@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
  * 日志Web拦截器
  *
  * @func 打印请求路径、请求方法
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class LogWebInterceptor extends BaseWebInterceptor {
     @Autowired

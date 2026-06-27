@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * <p>
  * 注册 API 与 mica 内置 {@code MqttClientSubscribeDetector} 一致：
  * {@code clientSession.addSubscriptionList(topicFilters, qos, listener)}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

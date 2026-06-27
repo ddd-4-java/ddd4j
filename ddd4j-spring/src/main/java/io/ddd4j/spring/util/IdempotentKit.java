@@ -26,6 +26,9 @@ import java.util.StringJoiner;
 import java.util.stream.Stream;
 
 @Slf4j
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class IdempotentKit {
 
     protected static final ExpressionParser expressionParser = new SpelExpressionParser();

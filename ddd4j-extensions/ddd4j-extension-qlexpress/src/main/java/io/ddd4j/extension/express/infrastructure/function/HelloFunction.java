@@ -18,7 +18,7 @@ import com.alibaba.qlexpress4.runtime.function.CustomFunction;
  * 
  * <p>注意：此函数从上下文的 attachment 中获取 tenant 参数。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

@@ -16,7 +16,8 @@ import java.sql.SQLException;
  * 存储到数据库, 将JSON对象转换成字符串;
  * 从数据库获取数据, 将字符串转为JSON对象.
  *
- * 
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @MappedTypes({JSONArray.class})
 @MappedJdbcTypes({JdbcType.VARCHAR})

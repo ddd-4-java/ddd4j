@@ -17,7 +17,7 @@ import java.util.List;
  * 通用Dao接口
  *
  * @param <T> 持有的实体对象
- * @author <a href="https://github.com/wandl">wandl</a>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Deprecated(since = "3.4.x", forRemoval = true)
 public interface BaseMapper<T extends Model<?>> extends com.baomidou.mybatisplus.core.mapper.BaseMapper<T> {

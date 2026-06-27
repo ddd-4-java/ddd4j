@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Kafka 手动确认适配，基于 {@link Acknowledgment} 与 {@link ConsumerRecord}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
 

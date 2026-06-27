@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * 数组工具类
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
 public class ArrayKit extends ArrayUtil {

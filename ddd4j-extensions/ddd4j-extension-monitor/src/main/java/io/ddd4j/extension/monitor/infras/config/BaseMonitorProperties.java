@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 日志监控告警配置
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 // @ConfigurationProperties(prefix = "base-monitor")

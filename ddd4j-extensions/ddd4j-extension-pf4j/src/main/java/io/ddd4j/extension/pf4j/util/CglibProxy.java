@@ -8,6 +8,9 @@ import org.springframework.cglib.proxy.MethodProxy;
 import java.lang.reflect.Method;
 
 //Cglib动态代理，实现MethodInterceptor接口
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class CglibProxy implements MethodInterceptor {
 
     private Object target;//需要代理的目标对象

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 双值枚举接口
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface IEnum<T extends Serializable> {
     T getCode();

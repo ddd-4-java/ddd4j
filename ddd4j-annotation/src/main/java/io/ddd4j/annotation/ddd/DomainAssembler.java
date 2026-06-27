@@ -6,6 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 领域模型标记-模型装配器
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @DDDAnnotation
 @Documented

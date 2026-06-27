@@ -6,6 +6,7 @@ import lombok.Data;
  * MQTT 连接与发布订阅配置（前缀 {@code ddd4j.mq.mqtt}）。
  * <p>
  * 连接参数与 sample {@code ddd4j-sample-starter-druid-mqtt-client1} 对齐（Eclipse Paho）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class Ddd4jMqttProperties {

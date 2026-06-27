@@ -14,7 +14,7 @@ import java.util.Optional;
  * <p>
  * 通过 Guice {@link Injector} 查找已绑定的 Subject 实现。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 public class GuiceSubjectProvider implements SubjectProvider {

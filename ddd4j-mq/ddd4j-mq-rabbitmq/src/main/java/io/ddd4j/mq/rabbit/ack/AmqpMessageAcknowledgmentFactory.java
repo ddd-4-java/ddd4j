@@ -11,6 +11,7 @@ import java.util.Optional;
 
 /**
  * 从 Spring AMQP {@link Message} 头信息构建 {@link AmqpMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class AmqpMessageAcknowledgmentFactory {
 

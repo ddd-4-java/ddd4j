@@ -31,7 +31,8 @@ public interface Subject {
      *
      * @param roleIdentifier the application-specific role identifier (usually a role id or role name).
      * @return {@code true} if this Subject has the specified role, {@code false} otherwise.
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     boolean hasRole(String roleIdentifier);
     boolean hasRole(Object loginId, String roleIdentifier);
 

@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Pulsar 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework + spring-pulsar，无 Boot）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {

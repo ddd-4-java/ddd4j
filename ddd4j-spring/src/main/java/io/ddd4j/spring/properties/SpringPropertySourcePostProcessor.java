@@ -20,7 +20,7 @@ import java.util.Properties;
  * <p>
  * 原 ddd4j-core 的 {@code io.ddd4j.core.properties.BasePropertySourcePostProcessor} 已被删除。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 @Slf4j

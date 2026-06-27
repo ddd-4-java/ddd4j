@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * AWS SQS Broker 适配器，桥接 ddd4j MQ SPI 与 aws-java-sdk-sqs。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class SqsMQBrokerAdapter implements MQBrokerAdapter {

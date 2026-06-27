@@ -10,6 +10,7 @@ import org.springframework.messaging.MessageHeaders;
 
 /**
  * 消费上下文：租户、确认端口、原始 headers 及消息信封。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 @Builder

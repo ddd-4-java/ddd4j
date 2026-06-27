@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * DDD注解-应用层服务
- * @author mingjie
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2022/3/20
  * @see <a href="https://github.com/smingjie/bbq-ddd">bbq-ddd</a>
  */

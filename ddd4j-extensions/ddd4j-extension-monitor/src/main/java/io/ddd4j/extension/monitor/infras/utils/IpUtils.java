@@ -11,7 +11,7 @@ import java.util.Enumeration;
 /**
  * 获取本机ip
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-MONITOR : IpUtils ###")
 public class IpUtils {

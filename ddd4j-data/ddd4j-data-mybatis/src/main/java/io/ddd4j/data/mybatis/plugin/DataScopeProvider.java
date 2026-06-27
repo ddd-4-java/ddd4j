@@ -22,7 +22,7 @@ package io.ddd4j.data.mybatis.plugin;
  * {@code "dept_id IN (1,2,3)"} 或 {@code "create_by = 'admin'"}）。
  * </p>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface DataScopeProvider {
 

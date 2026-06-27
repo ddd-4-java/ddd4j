@@ -11,7 +11,7 @@ import jakarta.validation.ConstraintValidatorContext;
 /**
  * 数据校验注解实现类
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2021-03-08
  */
 public class PhoneValueValidator implements ConstraintValidator<PhoneNumber, String> {

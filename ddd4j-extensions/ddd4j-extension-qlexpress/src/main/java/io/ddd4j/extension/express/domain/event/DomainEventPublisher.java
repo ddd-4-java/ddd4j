@@ -11,7 +11,7 @@ package io.ddd4j.extension.express.domain.event;
  *   <li>SpringDomainEventPublisher - 使用Spring的ApplicationEventPublisher</li>
  * </ul>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

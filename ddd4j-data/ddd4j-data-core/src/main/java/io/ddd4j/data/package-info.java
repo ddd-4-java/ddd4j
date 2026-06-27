@@ -5,5 +5,6 @@
  * 各框架/ORM 适配层（如 ddd4j-data-mybatis、ddd4j-quarkus-data、ddd4j-guice-data）提供具体实现。
  *
  * @since 3.4.x
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.data;

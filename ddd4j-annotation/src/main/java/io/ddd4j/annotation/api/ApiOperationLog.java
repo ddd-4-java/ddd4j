@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 /**
  * 操作日志注解
  *
- * @author <a href="https://github.com/wandl">wandl</a>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

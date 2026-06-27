@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * 基础模型，支持增删改的充血模型
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class Model implements Serializable {
 

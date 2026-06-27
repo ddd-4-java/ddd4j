@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * 核心模块配置项（绑定由上层 Boot 或 {@code @Value} 完成）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class BaseCoreProperties {

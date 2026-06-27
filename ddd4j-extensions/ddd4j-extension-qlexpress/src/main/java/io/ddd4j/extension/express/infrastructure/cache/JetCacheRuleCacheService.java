@@ -53,7 +53,7 @@ import org.springframework.stereotype.Component;
  *       keyConvertor: fastjson
  * </pre>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

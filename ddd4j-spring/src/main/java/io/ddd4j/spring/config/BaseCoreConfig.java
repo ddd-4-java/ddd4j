@@ -11,7 +11,7 @@ import io.ddd4j.spring.context.SpringContext;
  *
  * <p>注册 {@link SpringContext} 为 Spring Bean，使其不依赖 web 模块也能激活。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 @Configuration(proxyBeanMethods = false)

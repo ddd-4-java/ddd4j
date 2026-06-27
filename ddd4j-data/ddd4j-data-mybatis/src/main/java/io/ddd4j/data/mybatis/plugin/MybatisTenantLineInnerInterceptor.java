@@ -28,7 +28,7 @@ import net.sf.jsqlparser.expression.StringValue;
  * 业务方可通过 {@code @InterceptorIgnore(tenantLine = "true")} 跳过。
  * </p>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MybatisTenantLineInnerInterceptor extends TenantLineInnerInterceptor {
 

@@ -5,6 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class CodeVersionVO {
     private String branch;
     private String buildTime;

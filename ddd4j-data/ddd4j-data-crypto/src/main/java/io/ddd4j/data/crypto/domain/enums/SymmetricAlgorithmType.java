@@ -2,6 +2,9 @@ package io.ddd4j.data.crypto.domain.enums;
 
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public enum SymmetricAlgorithmType {
 
     AES(SymmetricAlgorithm.AES.name()),

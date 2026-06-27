@@ -7,7 +7,8 @@ public class KafkaBackupProperties {
 
     /**
      * 默认最大批处理大小
-     */
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public static final int DEFAULT_MAX_BATCH_SIZE = 100;
 
     /**

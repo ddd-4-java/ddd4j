@@ -34,6 +34,9 @@ import java.util.List;
 @Slf4j(topic = "### BASE-WEB : BaseWebConfig ###")
 // @EnableConfigurationProperties(BaseWebProperties.class)
 @RequiredArgsConstructor
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class BaseWebConfig implements WebMvcConfigurer {
     final List<BaseWebInterceptor> baseWebInterceptors;
     final BaseCoreProperties baseCoreProperties;

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * 基础认证配置
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration
 public class BaseAuthConfig {

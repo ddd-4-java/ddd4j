@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link MQConsumeTemplates} 消费模板与 Ack 状态机单测。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class MQConsumeTemplatesTest {
 

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * 数据校验注解实现类
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2021-03-08
  */
 public class NumberValueValidator implements ConstraintValidator<NumberValue, String> {

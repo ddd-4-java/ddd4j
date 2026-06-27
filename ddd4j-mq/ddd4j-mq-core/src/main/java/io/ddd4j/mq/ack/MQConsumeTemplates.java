@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 
 /**
  * 消费模板：统一 preCheck 与 {@link AckDisposition} 到 {@link MessageAcknowledgment} 的映射。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MQConsumeTemplates {
 

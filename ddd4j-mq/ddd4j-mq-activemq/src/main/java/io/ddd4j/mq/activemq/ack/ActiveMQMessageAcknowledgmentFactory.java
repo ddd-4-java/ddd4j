@@ -10,6 +10,7 @@ import java.util.Optional;
 
 /**
  * 从 Spring JMS {@link org.springframework.messaging.Message} 构建 {@link ActiveMQMessageAcknowledgment}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class ActiveMQMessageAcknowledgmentFactory {
 

@@ -8,7 +8,7 @@ import java.math.RoundingMode;
 /**
  * 精确的浮点数运算工具类
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @UtilityClass

@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * 聚合控制器，实现该控制器的Controller，自带CRUD方法
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface AggregateController {
 

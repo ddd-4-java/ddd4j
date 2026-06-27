@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * 统一接口响应，标准的响应数据结构
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface IR extends Serializable {
     Serializable getCode();

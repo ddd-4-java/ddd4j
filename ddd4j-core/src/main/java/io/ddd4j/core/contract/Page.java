@@ -15,6 +15,7 @@ import java.util.stream.Stream;
  * 实现集合接口，集合操作的是records对象
  *
  * @param <T>
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 @AllArgsConstructor

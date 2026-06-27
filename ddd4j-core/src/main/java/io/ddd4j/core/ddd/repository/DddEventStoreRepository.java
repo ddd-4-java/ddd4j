@@ -46,7 +46,7 @@ import io.ddd4j.core.ddd.aggregate.DddAggregateRoot;
  *
  * @param <ID> 聚合根标识类型
  * @param <A> 聚合根类型（必须是 {@link DddAggregateRoot} 子类）
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see EventStoreRepository
  * @since 3.4.x
  */

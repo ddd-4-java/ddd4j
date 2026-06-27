@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
  * version 自增，更新失败返回 0 行受影响。
  * </p>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MybatisOptimisticLockerInnerInterceptor extends OptimisticLockerInnerInterceptor {
 }

@@ -14,7 +14,7 @@ import java.util.Map;
  * 
  * <p>实现类：RuleEngineDomainServiceImpl（使用QLExpress实现）
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

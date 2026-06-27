@@ -37,7 +37,7 @@ import java.util.Set;
  * 业务方可通过 {@code @InterceptorIgnore(encrypt = "true")} 跳过。
  * </p>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class EncryptFieldInnerInterceptor implements InnerInterceptor {
 

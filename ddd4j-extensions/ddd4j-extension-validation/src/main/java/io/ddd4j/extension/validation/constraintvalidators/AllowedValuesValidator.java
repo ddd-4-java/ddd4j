@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 验证值是否在指定范围内
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2021-03-08
  */
 public class AllowedValuesValidator implements ConstraintValidator<AllowableValues, String> {

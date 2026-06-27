@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * 腾讯云 TDMQ Broker 适配器（占位 SPI  wiring，待 SDK 接入）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class TdmqMQBrokerAdapter implements MQBrokerAdapter {

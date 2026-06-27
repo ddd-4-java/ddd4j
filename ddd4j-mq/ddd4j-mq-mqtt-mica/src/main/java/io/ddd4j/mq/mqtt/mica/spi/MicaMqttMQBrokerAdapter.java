@@ -19,6 +19,7 @@ import org.dromara.mica.mqtt.spring.client.MqttClientTemplate;
 
 /**
  * mica-mqtt Broker 适配器，桥接 ddd4j MQ SPI 与 {@link MqttClientTemplate}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter {

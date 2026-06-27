@@ -15,7 +15,9 @@
  */
 package io.ddd4j.guice.aspect;
 
+import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
+import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
@@ -34,11 +36,10 @@ import org.slf4j.LoggerFactory;
  *     new AsyncCleanupInterceptor());
  * }</pre>
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class AsyncCleanupInterceptor implements MethodInterceptor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AsyncCleanupInterceptor.class);
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -47,13 +48,13 @@ public class AsyncCleanupInterceptor implements MethodInterceptor {
         } finally {
             try {
                 ThreadContext.clear();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("ThreadContext cleared after async method: {}.{}",
+                if (log.isTraceEnabled()) {
+                    log.trace("ThreadContext cleared after async method: {}.{}",
                             invocation.getMethod().getDeclaringClass().getSimpleName(),
                             invocation.getMethod().getName());
                 }
             } catch (Exception e) {
-                LOG.warn("Failed to clear ThreadContext after async method", e);
+                log.warn("Failed to clear ThreadContext after async method", e);
             }
         }
     }

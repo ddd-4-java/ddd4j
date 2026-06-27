@@ -13,6 +13,9 @@ import java.sql.SQLException;
 
 @MappedTypes(BooleanEnum.class)
 @MappedJdbcTypes(JdbcType.INTEGER)
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class CustomBooleanEnumTypeHandler extends BaseTypeHandler<BooleanEnum> {
 
     @Override

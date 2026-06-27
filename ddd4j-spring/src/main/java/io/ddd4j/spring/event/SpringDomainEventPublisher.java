@@ -13,7 +13,7 @@ import java.util.Collection;
  * <p>
  * 使用 Spring ApplicationEventPublisher 发布领域事件。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @Component

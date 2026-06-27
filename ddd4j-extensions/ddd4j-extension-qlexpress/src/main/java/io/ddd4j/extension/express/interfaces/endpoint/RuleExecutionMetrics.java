@@ -18,7 +18,7 @@ package io.ddd4j.extension.express.interfaces.endpoint;
  * &lt;/dependency&gt;
  * </pre>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

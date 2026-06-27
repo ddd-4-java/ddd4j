@@ -18,6 +18,7 @@ import org.springframework.pulsar.core.PulsarTemplate;
 
 /**
  * Pulsar Broker 适配器，桥接 ddd4j MQ SPI 与 Spring Pulsar。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class PulsarMQBrokerAdapter implements MQBrokerAdapter {

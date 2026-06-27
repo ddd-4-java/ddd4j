@@ -7,7 +7,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * Web 工具类（从 ddd4j-core 迁入至 ddd4j-spring）
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 public final class WebUtils {

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * <p>应用层DTO：用于接口层返回规则信息的响应数据传输对象。
  * 遵循DDD规范，不直接暴露领域实体，只包含需要展示给客户端的字段。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

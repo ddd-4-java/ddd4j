@@ -2,6 +2,7 @@ package io.ddd4j.auth.license;
 
 /**
  * 自定义需要校验的License参数，可以增加一些额外需要校验的参数，比如项目信息，ip地址信息等等，待完善
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class LicenseExtraModel {
 

@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * 解析处理日志
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class RobotLayout extends LayoutBase<ILoggingEvent> {

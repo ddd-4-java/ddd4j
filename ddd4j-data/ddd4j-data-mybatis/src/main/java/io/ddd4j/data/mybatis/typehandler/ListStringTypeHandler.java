@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * 使用该对象需要在xml中指定 typeHandler
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @MappedTypes(List.class)
 @MappedJdbcTypes({JdbcType.VARCHAR})

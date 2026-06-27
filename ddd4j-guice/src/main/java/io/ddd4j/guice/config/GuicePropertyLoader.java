@@ -32,7 +32,7 @@ import java.util.Properties;
  * <p>
  * 业务模块可在自己的 Module 中 install(new GuicePropertyLoader("my-config.properties")) 加载自定义属性。
  *
- * @author hiwepy
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class GuicePropertyLoader extends AbstractModule {
 
@@ -87,4 +87,5 @@ public class GuicePropertyLoader extends AbstractModule {
             return null;
         }
     }
+
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 
 /**
  * 确认上下文：Adapter 解析 {@link MessageAcknowledgment} 时携带的元数据与原生句柄。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 @Builder

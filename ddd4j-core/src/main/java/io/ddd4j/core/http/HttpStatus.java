@@ -3,7 +3,7 @@ package io.ddd4j.core.constant;
 /**
  * HTTP 状态码常量（纯 Java，零框架依赖）
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 public final class HttpStatus {

@@ -10,7 +10,7 @@ import java.util.*;
  *
  * <p>提供基于 Guava Graph 的拓扑排序能力，可用于任务依赖调度、构建顺序等场景。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @UtilityClass

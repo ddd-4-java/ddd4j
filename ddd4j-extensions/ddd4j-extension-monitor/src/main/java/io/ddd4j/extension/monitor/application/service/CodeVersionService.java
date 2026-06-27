@@ -16,6 +16,9 @@ import java.util.Properties;
 
 @Slf4j
 @Service
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class CodeVersionService implements ApplicationListener<ApplicationEvent> {
     public static CodeVersionVO CODE_VERSION = null;
     @Autowired

@@ -59,6 +59,7 @@ import java.util.*;
  * 异常增强，以JSON的形式返回给客服端
  * 异常增强类型：NullPointerException,RunTimeException,ClassCastException,
  * NoSuchMethodException,IOException,IndexOutOfBoundsException
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ControllerAdvice
 @ResponseBody

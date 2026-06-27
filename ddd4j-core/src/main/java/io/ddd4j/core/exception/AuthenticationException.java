@@ -5,7 +5,7 @@ package io.ddd4j.core.exception;
  * <p>
  * 框架无关的认证失败异常基类。
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
 public class AuthenticationException extends RuntimeException {

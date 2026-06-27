@@ -6,6 +6,7 @@ import java.lang.annotation.*;
 /**
  * 自定义资源文件读取，优先级最低
  *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

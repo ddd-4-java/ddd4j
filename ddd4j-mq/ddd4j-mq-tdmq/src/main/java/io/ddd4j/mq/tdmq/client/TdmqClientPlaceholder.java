@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * TDMQ 客户端占位实现：进程内 topic 总线，便于本地联调与契约验证。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class TdmqClientPlaceholder implements TdmqClient {

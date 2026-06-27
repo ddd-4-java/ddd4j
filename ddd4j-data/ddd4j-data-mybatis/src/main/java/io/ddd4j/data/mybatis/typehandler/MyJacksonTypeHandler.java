@@ -18,6 +18,7 @@ import java.util.TimeZone;
 
 /**
  * JacksonTypeHandler
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @MappedTypes({List.class})

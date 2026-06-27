@@ -18,7 +18,7 @@ import java.util.function.Function;
  *
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 public class CaffeineCache<K, V> implements Cache<K, V> {

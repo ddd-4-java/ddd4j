@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
  * 
  * <p>应用层DTO：用于规则验证接口的请求数据传输对象。
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

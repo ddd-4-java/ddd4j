@@ -18,6 +18,7 @@ import org.springframework.messaging.Message;
 
 /**
  * ActiveMQ Artemis Broker 适配器，桥接 ddd4j MQ SPI 与 Spring JMS。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
 public class ActiveMQBrokerAdapter implements MQBrokerAdapter {

@@ -24,7 +24,7 @@ import jakarta.annotation.PostConstruct;
 import static ch.qos.logback.core.AsyncAppenderBase.DEFAULT_MAX_FLUSH_TIME;
 
 /**
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-MONITOR : RobotLogbackAppendService ###")
 public class RobotLogbackAppendService {

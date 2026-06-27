@@ -16,6 +16,7 @@ import java.util.UUID;
  * <p>
  * 在请求处理前设置 MDC 上下文（requestId / requestURL / remoteAddr 等），
  * 请求完成后清理 MDC，便于日志追踪。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class Slf4jMDCInterceptor implements HandlerInterceptor {
 

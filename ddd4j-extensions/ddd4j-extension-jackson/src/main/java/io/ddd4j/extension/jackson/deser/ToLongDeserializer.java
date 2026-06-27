@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 
 /**
  * 将字符串转为Long
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class ToLongDeserializer extends JsonDeserializer<Long> {

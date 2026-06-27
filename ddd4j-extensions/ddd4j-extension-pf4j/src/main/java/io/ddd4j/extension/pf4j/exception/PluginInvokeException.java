@@ -3,6 +3,9 @@ package io.ddd4j.extension.pf4j.exception;
 import org.pf4j.PluginRuntimeException;
 
 @SuppressWarnings("serial")
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class PluginInvokeException extends PluginRuntimeException {
 
     private String pluginId;

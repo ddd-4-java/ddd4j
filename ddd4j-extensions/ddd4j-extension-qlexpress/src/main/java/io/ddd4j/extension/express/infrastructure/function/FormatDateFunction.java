@@ -27,7 +27,7 @@ import java.util.Date;
  *   <li>java.time.LocalDateTime</li>
  * </ul>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

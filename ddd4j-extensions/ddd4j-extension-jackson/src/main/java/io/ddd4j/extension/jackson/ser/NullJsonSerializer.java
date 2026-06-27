@@ -9,6 +9,7 @@ import java.util.Objects;
 
 /**
  *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class NullJsonSerializer extends JsonSerializer<Object> {
 

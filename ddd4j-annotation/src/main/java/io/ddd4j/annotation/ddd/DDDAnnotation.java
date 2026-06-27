@@ -11,7 +11,7 @@ import java.lang.annotation.*;
  * <p>Retention 为 {@link RetentionPolicy#RUNTIME}（自 3.4.x 起，原为 SOURCE），
  * 使得 ArchUnit 校验和 AOP 切面可以在运行时通过反射读取这些注解。
  *
- * @author mingjie
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2022/3/19
  * @see <a href="https://github.com/smingjie/bbq-ddd">bbq-ddd</a>
  */

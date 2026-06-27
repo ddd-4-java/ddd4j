@@ -17,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Disruptor 事件分发器：按 routeKey 将 RingBuffer 事件路由到已注册的 {@link MQConsumerHandler}。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent> {

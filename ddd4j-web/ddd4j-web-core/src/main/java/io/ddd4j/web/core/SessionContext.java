@@ -5,6 +5,9 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class SessionContext implements Serializable {
     // 所属租户
     private String tenantId;

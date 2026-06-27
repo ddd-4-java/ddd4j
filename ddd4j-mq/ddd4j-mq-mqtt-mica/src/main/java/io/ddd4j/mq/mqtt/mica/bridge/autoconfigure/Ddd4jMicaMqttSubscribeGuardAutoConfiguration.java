@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * 在 ddd4j mqtt-mica 路径下屏蔽 mica 默认 {@code @MqttClientSubscribe} 全局扫描。
  * <p>
  * 仅当未启用 {@code @EnableMicaMqttBridge}（无 {@link MicaMqttBridgeMarker}）时生效。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jMicaMqttSubscribeGuardAutoConfiguration {

@@ -6,6 +6,7 @@ import java.util.Locale;
 
 /**
  * 支持的 Broker 类型枚举（与 {@code ddd4j.mq.broker} 对齐）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum MQBrokerType {
 

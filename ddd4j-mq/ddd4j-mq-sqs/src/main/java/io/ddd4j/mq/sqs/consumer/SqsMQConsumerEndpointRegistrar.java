@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 SQS 长轮询消费循环。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 @RequiredArgsConstructor

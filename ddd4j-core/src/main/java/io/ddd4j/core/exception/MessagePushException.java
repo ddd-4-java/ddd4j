@@ -4,6 +4,9 @@ package io.ddd4j.core.exception;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.CustomApiCode;
 
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class MessagePushException extends BizRuntimeException {
 
     public MessagePushException(Integer code, String message) {

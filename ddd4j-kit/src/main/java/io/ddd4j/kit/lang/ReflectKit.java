@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 /**
  * 反射工具类
  *
- * @author Loong Wan
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-KIT : ReflectKit ###")
 @UtilityClass

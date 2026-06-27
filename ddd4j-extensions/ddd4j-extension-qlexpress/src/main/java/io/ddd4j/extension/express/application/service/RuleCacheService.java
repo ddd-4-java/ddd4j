@@ -15,7 +15,7 @@ import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
  *   <li>RedisRuleCacheService - 仅 Redis 缓存（回退方案）</li>
  * </ul>
  * 
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */

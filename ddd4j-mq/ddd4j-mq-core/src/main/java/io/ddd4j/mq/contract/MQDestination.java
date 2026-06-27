@@ -8,6 +8,9 @@ import org.springframework.util.StringUtils;
 import java.util.Objects;
 
 @Getter
+/**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class MQDestination {
 
     private final String topic;

@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * <p>
  * 无官方 Testcontainers RocketMQ 模块，使用 {@link FixedHostPortGenericContainer} + {@code apache/rocketmq} 镜像，
  * NameServer/Broker 固定端口映射以避免 broker 注册地址与客户端不可达问题。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @SpringBootTest(classes = RocketMQContainerIT.TestApplication.class)
 @EnabledIf("io.ddd4j.mq.rocket.RocketMQContainerIT#isDockerAvailable")

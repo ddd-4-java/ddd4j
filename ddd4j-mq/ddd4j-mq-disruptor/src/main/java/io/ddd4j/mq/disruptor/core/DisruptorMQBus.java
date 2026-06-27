@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * LMAX Disruptor RingBuffer 生命周期管理（参考 {@code disruptor-spring-boot-starter}）。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class DisruptorMQBus {
