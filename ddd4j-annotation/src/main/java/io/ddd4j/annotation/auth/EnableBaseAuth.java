@@ -1,4 +1,4 @@
-package io.ddd4j.auth.annotation;
+package io.ddd4j.annotation.auth;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

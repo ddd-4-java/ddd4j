@@ -3,7 +3,8 @@ package io.ddd4j.guice.core;
 import com.google.common.eventbus.EventBus;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -15,8 +16,9 @@ import java.util.Collection;
  * @author Loong Wan
  * @since 3.4.x
  */
-@Slf4j
 public class GuiceDomainEventPublisher implements DomainEventPublisher {
+
+    private static final Logger log = LoggerFactory.getLogger(GuiceDomainEventPublisher.class);
 
     private final EventBus eventBus;
 

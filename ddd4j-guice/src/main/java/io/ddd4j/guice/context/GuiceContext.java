@@ -1,0 +1,185 @@
+/*
+ * Copyright 2017-2026 the original author hiwepy.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.guice.context;
+
+import com.google.inject.Binding;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+
+/**
+ * Guice IoC 容器上下文（等价于 Spring 的 ApplicationContext）。
+ * <p>
+ * 静态持有 {@link Injector}，提供全局访问能力：
+ * <ul>
+ *   <li>{@link #getInstance(Class)} - 按类型获取实例</li>
+ *   <li>{@link #getInstance(String, Class)} - 按名称获取实例</li>
+ *   <li>{@link #getInstances(Class)} - 获取某类型的所有绑定实例</li>
+ *   <li>{@link #getInjector()} - 获取底层 Injector</li>
+ * </ul>
+ * <p>
+ * 在应用启动时调用 {@link #setInjector(Injector)} 注入。
+ *
+ * @author hiwepy
+ */
+public class GuiceContext {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GuiceContext.class);
+    private static volatile Injector injector;
+    private static final CountDownLatch INIT_SIGNAL = new CountDownLatch(1);
+    private static final Map<String, Object> ATTRIBUTES = new ConcurrentHashMap<>();
+
+    private GuiceContext() {
+    }
+
+    /**
+     * 设置 Injector（应用启动时调用一次）
+     */
+    public static void setInjector(Injector inj) {
+        if (injector != null) {
+            LOG.warn("GuiceContext already initialized, overwriting existing Injector");
+        }
+        injector = inj;
+        INIT_SIGNAL.countDown();
+        LOG.info("GuiceContext initialized with Injector: {}", inj);
+    }
+
+    /**
+     * 获取 Injector（阻塞等待初始化完成）
+     */
+    public static Injector getInjector() {
+        if (injector == null) {
+            try {
+                INIT_SIGNAL.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Interrupted while waiting for GuiceContext initialization", e);
+            }
+        }
+        return injector;
+    }
+
+    /**
+     * 按类型获取实例
+     */
+    public static <T> T getInstance(Class<T> clazz) {
+        return getInjector().getInstance(clazz);
+    }
+
+    /**
+     * 按名称获取实例
+     */
+    public static <T> T getInstance(String name, Class<T> clazz) {
+        return getInjector().getInstance(Key.get(clazz, Names.named(name)));
+    }
+
+    /**
+     * 按注解获取实例
+     */
+    public static <T> T getInstance(Class<T> clazz, Class<? extends Annotation> annotationType) {
+        return getInjector().getInstance(Key.get(clazz, annotationType));
+    }
+
+    /**
+     * 获取某类型的所有绑定实例
+     */
+    public static <T> Collection<T> getInstances(Class<T> clazz) {
+        List<T> instances = new ArrayList<>();
+        Map<Key<?>, Binding<?>> bindings = getInjector().getAllBindings();
+        for (Binding<?> binding : bindings.values()) {
+            Class<?> rawType = binding.getKey().getTypeLiteral().getRawType();
+            if (clazz.isAssignableFrom(rawType) && rawType != clazz) {
+                try {
+                    @SuppressWarnings("unchecked")
+                    T instance = (T) getInjector().getInstance(binding.getKey());
+                    instances.add(instance);
+                } catch (Exception e) {
+                    LOG.debug("Cannot instantiate binding: {}", binding.getKey(), e);
+                }
+            }
+        }
+        return instances;
+    }
+
+    /**
+     * 获取环境属性
+     */
+    public static String getProperty(String key) {
+        return getProperty(key, null);
+    }
+
+    /**
+     * 获取环境属性（带默认值）
+     */
+    public static String getProperty(String key, String defaultValue) {
+        // 优先从系统属性获取
+        String value = System.getProperty(key);
+        if (value != null) {
+            return value;
+        }
+        // 再从环境变量获取
+        value = System.getenv(key);
+        if (value != null) {
+            return value;
+        }
+        // 再从自定义属性获取
+        Object attr = ATTRIBUTES.get(key);
+        if (attr != null) {
+            return attr.toString();
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 设置自定义属性
+     */
+    public static void setAttribute(String key, Object value) {
+        ATTRIBUTES.put(key, value);
+    }
+
+    /**
+     * 获取自定义属性
+     */
+    public static Object getAttribute(String key) {
+        return ATTRIBUTES.get(key);
+    }
+
+    /**
+     * 判断 Injector 是否已初始化
+     */
+    public static boolean isInitialized() {
+        return injector != null;
+    }
+
+    /**
+     * 获取注入器中所有绑定的类型
+     */
+    public static Set<Class<?>> getBoundTypes() {
+        Set<Class<?>> types = new HashSet<>();
+        Map<Key<?>, Binding<?>> bindings = getInjector().getAllBindings();
+        for (Binding<?> binding : bindings.values()) {
+            types.add(binding.getKey().getTypeLiteral().getRawType());
+        }
+        return types;
+    }
+}

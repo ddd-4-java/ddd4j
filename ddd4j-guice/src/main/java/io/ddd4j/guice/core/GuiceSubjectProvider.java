@@ -4,7 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -16,8 +17,9 @@ import java.util.Optional;
  * @author Loong Wan
  * @since 3.4.x
  */
-@Slf4j
 public class GuiceSubjectProvider implements SubjectProvider {
+
+    private static final Logger log = LoggerFactory.getLogger(GuiceSubjectProvider.class);
 
     @Inject
     private Injector injector;

@@ -1,4 +1,4 @@
-package io.ddd4j.auth;
+package io.ddd4j.core.exception;
 
 /**
  * 认证异常抽象（纯 Java）
