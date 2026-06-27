@@ -10,6 +10,7 @@ import java.util.function.Function;
  * 通用类型转换函数常量
  *
  * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

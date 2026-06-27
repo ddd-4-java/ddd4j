@@ -11,7 +11,8 @@ import java.lang.annotation.Target;
  * 标注在 Controller 方法上，表示该方法需要基础认证。
  * 各框架适配层通过拦截器/AOP 解析此注解。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
  * 系统ID注解
  * 用于标记PO中的系统ID字段
  *
- * @author Jensen
+ * @author Loong Wan
  * @version 1.0.0
- * @公众号 架构师修行录
+ * @公众号 PartMe.AI
  * @date 2022年2月12日
  */
 

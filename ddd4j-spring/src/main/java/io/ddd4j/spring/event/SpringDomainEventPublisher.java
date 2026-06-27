@@ -13,7 +13,8 @@ import java.util.Collection;
  * <p>
  * 使用 Spring ApplicationEventPublisher 发布领域事件。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Slf4j
 @Component

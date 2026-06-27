@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * HMAC 摘要签名算法工具类
  *
  * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

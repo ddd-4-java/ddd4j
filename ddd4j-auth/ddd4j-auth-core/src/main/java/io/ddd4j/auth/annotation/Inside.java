@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
  * <p>
  * 标注在方法上，表示该方法仅允许内部服务间调用（微服务场景）。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Retention(RetentionPolicy.RUNTIME)

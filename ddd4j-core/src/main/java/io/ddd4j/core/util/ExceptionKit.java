@@ -12,7 +12,8 @@ import java.util.StringJoiner;
 /**
  * 异常处理工具类
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

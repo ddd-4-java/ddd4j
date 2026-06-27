@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
  * <p>
  * 通过 Spring ApplicationContext 注入 Subject 实现。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Slf4j
 @Component

@@ -19,7 +19,8 @@ import java.util.ResourceBundle;
  * </ul>
  * 默认实现返回原始 key。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public interface I18nProvider {
 

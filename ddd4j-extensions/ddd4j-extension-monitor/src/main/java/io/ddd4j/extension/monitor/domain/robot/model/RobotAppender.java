@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 实现异步 日志队列
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Data
 @Slf4j(topic = "### BASE-MONITOR : RobotAppender ###")

@@ -18,7 +18,8 @@ import io.ddd4j.core.subject.SubjectProvider;
  * DomainEventPublisher publisher = injector.getInstance(DomainEventPublisher.class);
  * }</pre>
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public class Ddd4jJavalinModule extends AbstractModule {

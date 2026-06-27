@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * 类型转换：varchar <-> Long[]，使用英文逗号,分割
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @date 2021/9/12 14:52
  * @since jdk1.8
  */

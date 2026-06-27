@@ -1,7 +1,8 @@
 package io.ddd4j.core;
 
 /**
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public final class ApiCodeValue {
 

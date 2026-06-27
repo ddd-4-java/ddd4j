@@ -11,6 +11,7 @@ import java.util.*;
  * <p>提供基于 Guava Graph 的拓扑排序能力，可用于任务依赖调度、构建顺序等场景。
  *
  * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

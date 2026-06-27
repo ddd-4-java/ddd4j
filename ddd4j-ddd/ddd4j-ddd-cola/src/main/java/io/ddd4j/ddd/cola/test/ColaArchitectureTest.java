@@ -31,7 +31,8 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  *   <li>domain 不依赖 adapter（COLA 核心约束，比 Clean 更严格）</li>
  * </ul>
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @AnalyzeClasses(

@@ -16,8 +16,8 @@ import java.util.*;
  * <p>当前已兼容 Lombok 的 {@code @Builder} 与 {@code @Accessors(chain = true)} 场景，
  * Query 子类可按业务需要自由组合上述注解。</p>
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

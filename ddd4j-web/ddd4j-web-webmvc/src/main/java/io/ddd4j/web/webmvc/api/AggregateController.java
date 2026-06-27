@@ -12,8 +12,8 @@ import java.util.Map;
 /**
  * 聚合控制器，实现该控制器的Controller，自带CRUD方法
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public interface AggregateController {
 

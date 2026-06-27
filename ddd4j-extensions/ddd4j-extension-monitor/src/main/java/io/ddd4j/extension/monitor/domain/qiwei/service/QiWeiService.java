@@ -13,8 +13,8 @@ import org.springframework.web.client.RestTemplate;
 /**
  * 企微告警util
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Slf4j(topic = "### BASE-MONITOR : QiWeiService ###")
 public class QiWeiService {

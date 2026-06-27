@@ -49,7 +49,8 @@ import java.io.Serial;
  * </pre>
  *
  * @param <ID> 事件源实体标识类型
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @see AbstractDomainEvent
  * @since 3.4.x
  */

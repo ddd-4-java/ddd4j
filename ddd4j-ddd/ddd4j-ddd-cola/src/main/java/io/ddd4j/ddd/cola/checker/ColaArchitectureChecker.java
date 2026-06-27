@@ -46,7 +46,8 @@ import java.util.Set;
  *   <li>命令-查询分离（CQS）：executor 处理命令，query 处理查询</li>
  * </ul>
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Slf4j

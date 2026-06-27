@@ -20,7 +20,8 @@ import java.util.Map;
 /**
  * 解析处理日志
  *
- * @author Jensen公众号：架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Data
 public class RobotLayout extends LayoutBase<ILoggingEvent> {

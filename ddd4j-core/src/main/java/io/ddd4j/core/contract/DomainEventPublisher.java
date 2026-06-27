@@ -12,7 +12,8 @@ import java.util.Collection;
  *   <li>Javalin/Guice: 基于 Guava EventBus</li>
  * </ul>
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public interface DomainEventPublisher {
 

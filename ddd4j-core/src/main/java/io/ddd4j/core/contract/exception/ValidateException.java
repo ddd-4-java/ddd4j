@@ -8,8 +8,8 @@ import java.util.StringJoiner;
 /**
  * 校验异常，可用于控制业务异常流程，抛出后由统一异常增强类捕获，返回友好提示
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public class ValidateException extends ServiceException {
     private Map<String, String> errorMap;

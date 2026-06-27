@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 对称加密工具类（统一封装 SM4/AES/HMAC）
  *
  * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

@@ -8,8 +8,8 @@ import java.lang.annotation.*;
  * <p>
  * 优先于读取请web请求头 租户、系统id;如果请求头没有；根据配置开启自动从 TenantContextHolder 填充租户ID
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Target(ElementType.METHOD)
 @Documented

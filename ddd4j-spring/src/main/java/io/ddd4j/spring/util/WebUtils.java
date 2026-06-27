@@ -7,7 +7,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 /**
  * Web 工具类（从 ddd4j-core 迁入至 ddd4j-spring）
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public final class WebUtils {

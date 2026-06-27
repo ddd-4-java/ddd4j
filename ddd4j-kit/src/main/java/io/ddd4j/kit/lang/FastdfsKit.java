@@ -2,17 +2,21 @@
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
  */
-package io.ddd4j.core.util;
+package io.ddd4j.kit.lang;
+
+import java.security.MessageDigest;
 
 /**
  * FastDFS 文件存储 Token 工具。
  *
  * <p>提供 FastDFS 文件 URL 的 Token 生成与校验能力。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 1.0.x
  */
-public class FastdfsUtils {
+@Deprecated
+public class FastdfsKit {
 
     public static String g_charset = "ISO8859-1";
 
@@ -44,11 +48,11 @@ public class FastdfsUtils {
      * @return md5 string
      */
     public static String md5(byte[] source) throws java.security.NoSuchAlgorithmException {
-        char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(source);
-        byte tmp[] = md.digest();
-        char str[] = new char[32];
+        byte[] tmp = md.digest();
+        char[] str = new char[32];
         int k = 0;
         for (int i = 0; i < 16; i++) {
             str[k++] = hexDigits[tmp[i] >>> 4 & 0xf];

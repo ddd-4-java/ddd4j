@@ -13,9 +13,9 @@ import java.util.Objects;
  * <p>
  * 清理掉 BigDecimal 末尾多余的 0
  *
- * @author Jensen
+ * @author Loong Wan
  * @version 1.0
- * @公众号 架构师修行录
+ * @公众号 PartMe.AI
  * @date 2022/03/21 13:42
  */
 public class BigDecimalTypeHandler extends org.apache.ibatis.type.BigDecimalTypeHandler {

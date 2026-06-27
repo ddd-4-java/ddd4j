@@ -13,7 +13,8 @@ import java.util.Locale;
  * <p>
  * 基于 Spring MessageSource 实现。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Slf4j
 @Component

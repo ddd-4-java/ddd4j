@@ -15,7 +15,8 @@ import org.springframework.web.client.RestClient;
 import java.util.stream.Collectors;
 
 /**
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties(CryptoProperties.class)

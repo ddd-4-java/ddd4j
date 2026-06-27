@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
  * 默认排序注解
  * 用于标记PO中的默认排序字段
  *
- * @author Jensen
+ * @author Loong Wan
  * @version 1.0.0
- * @公众号 架构师修行录
+ * @公众号 PartMe.AI
  * @date 2022年2月12日
  */
 

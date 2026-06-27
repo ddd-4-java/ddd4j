@@ -13,8 +13,8 @@ import java.lang.reflect.Type;
 /**
  * 反射工具类
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Slf4j(topic = "### BASE-KIT : ReflectKit ###")
 @UtilityClass

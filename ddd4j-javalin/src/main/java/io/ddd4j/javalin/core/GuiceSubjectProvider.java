@@ -13,7 +13,8 @@ import java.util.Optional;
  * <p>
  * 通过 Guice {@link Injector} 查找已绑定的 Subject 实现。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Slf4j

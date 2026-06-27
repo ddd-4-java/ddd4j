@@ -36,7 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>{@code ThreadContext} — 线程隔离，每个线程独立副本，适合存储请求级上下文（如租户ID、用户ID）</li>
  * </ul>
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @see ThreadContext 线程级上下文
  * @see I18nKit 国际化上下文
  * @since 3.4.x

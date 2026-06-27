@@ -22,7 +22,8 @@ import java.util.List;
  * 发布 MQ 时通过静态注册的 {@link MQEventPublisher} 实现。
  * 发布 DomainEvent 时通过 {@link DomainEvent#publish()} 委托。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Slf4j
 @Data

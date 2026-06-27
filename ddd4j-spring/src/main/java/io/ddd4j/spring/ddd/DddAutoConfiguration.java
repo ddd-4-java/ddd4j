@@ -34,7 +34,8 @@ import org.springframework.context.annotation.Bean;
  *
  * <p>生产环境切换到 KurrentDB 时，需自行注入 {@code EventStore} Bean（参考 esc-esgrpc 模块）。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Configuration(proxyBeanMethods = false)

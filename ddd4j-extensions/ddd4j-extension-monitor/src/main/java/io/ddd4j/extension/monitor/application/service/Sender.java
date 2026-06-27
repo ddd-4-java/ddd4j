@@ -1,8 +1,8 @@
 package io.ddd4j.extension.monitor.application.service;
 
 /**
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public interface Sender {
 

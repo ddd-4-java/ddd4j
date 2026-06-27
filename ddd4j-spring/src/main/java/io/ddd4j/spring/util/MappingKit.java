@@ -13,7 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>依赖 Spring BeanKit 进行属性拷贝，属于 Spring 适配层。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

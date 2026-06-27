@@ -44,7 +44,8 @@ import java.util.Set;
  *   <li>infrastructure → 依赖所有层</li>
  * </ul>
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Slf4j

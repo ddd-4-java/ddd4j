@@ -11,8 +11,8 @@ import java.util.Objects;
  * 统一接口响应，标准的响应数据结构
  *
  * @param <T>
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Data
 @AllArgsConstructor

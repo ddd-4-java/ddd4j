@@ -11,7 +11,8 @@ import java.lang.annotation.Target;
  * 标注在配置类上，启用基础认证功能。
  * 各框架适配层扫描此注解并注册拦截器。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Retention(RetentionPolicy.RUNTIME)

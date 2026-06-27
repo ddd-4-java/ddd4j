@@ -13,7 +13,8 @@ import lombok.Data;
  *     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
  * </pre>
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Data

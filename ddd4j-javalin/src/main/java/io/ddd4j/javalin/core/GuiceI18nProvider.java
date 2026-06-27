@@ -11,7 +11,8 @@ import java.util.ResourceBundle;
  * <p>
  * 使用 Java 标准 {@link ResourceBundle} 加载 i18n 资源。
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public class GuiceI18nProvider implements I18nProvider {

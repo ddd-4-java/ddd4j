@@ -5,8 +5,8 @@ import lombok.Data;
 /**
  * dingding msg content
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 @Data
 public class TextVO {

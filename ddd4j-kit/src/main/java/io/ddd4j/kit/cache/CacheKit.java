@@ -50,6 +50,7 @@ import java.util.function.Function;
  * }</pre>
  *
  * @author Loong Wan
+ * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

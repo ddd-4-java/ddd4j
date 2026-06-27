@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 使用静态注册表管理仓库实例。框架适配层通过 {@link #register(Class, BaseRepository)} 注入。
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public interface BaseRepository<M extends Model, Q extends Query> {
     Map<Class<?>, Class<?>> REPOSITORY_MAPPINGS = new ConcurrentHashMap<>();

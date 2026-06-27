@@ -5,7 +5,8 @@ import java.util.Objects;
 /**
  * 数据权限提供者
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  */
 public interface DataScopeProvider {
 

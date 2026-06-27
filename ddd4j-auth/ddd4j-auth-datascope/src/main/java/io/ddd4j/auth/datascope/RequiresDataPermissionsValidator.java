@@ -12,7 +12,8 @@ import java.util.Objects;
  * 数据权限校验
  * Data permission verification
  *
- * @author wandl
+ * @author Loong Wan
+ * @公众号 PartMe.AI
  * @see RequiresDataPermissions
  */
 @Slf4j
