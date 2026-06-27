@@ -71,7 +71,6 @@ public abstract class ColaArchitectureTest {
     public static final ArchRule adapter_persistence_should_implement_gateway = classes()
             .that().resideInAPackage("..adapter.persistence..")
             .and().areNotInterfaces()
-            .and().areNotAbstract()
             .should().dependOnClassesThat().resideInAPackage("..domain.gateway..")
             .because("COLA: 适配器层（持久化）的实现类必须依赖 domain.gateway 接口（依赖倒置）");
 

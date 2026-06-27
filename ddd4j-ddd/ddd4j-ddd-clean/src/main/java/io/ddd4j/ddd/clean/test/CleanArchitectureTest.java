@@ -87,7 +87,6 @@ public abstract class CleanArchitectureTest {
     public static final ArchRule adapter_persistence_should_implement_repository = classes()
             .that().resideInAPackage("..adapter.persistence..")
             .and().areNotInterfaces()
-            .and().areNotAbstract()
             .should().dependOnClassesThat().resideInAPackage("..domain.repository..")
             .because("Clean Architecture: 适配器层（持久化）的实现类必须依赖 domain 层定义的 Repository 接口（依赖倒置）");
 }

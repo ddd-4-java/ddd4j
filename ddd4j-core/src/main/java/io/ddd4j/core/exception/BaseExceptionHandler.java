@@ -5,6 +5,7 @@
 package io.ddd4j.core.exception;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import io.ddd4j.kit.web.IpKit;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Objects;

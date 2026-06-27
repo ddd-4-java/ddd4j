@@ -133,7 +133,7 @@ public class CleanArchitectureChecker {
 
             return new ClassFileImporter()
                     .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                    .importPath(actualRoot);
+                    .importPath(actualRoot.toPath());
         } catch (Exception e) {
             log.debug("ArchUnit: importPath 失败 {}", e.getMessage());
             return null;
