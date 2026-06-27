@@ -4,11 +4,11 @@ package io.ddd4j.core.subject;
 import com.alibaba.ttl.TransmittableThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -24,7 +24,6 @@ import java.util.Map;
  * execution, respectively (i.e. individually explicitly or all via the <tt>clear</tt> method).</p>
  *
  */
-@Deprecated(since = "3.4.x", forRemoval = true)
 public class ThreadContext {
 
     /**
@@ -66,7 +65,7 @@ public class ThreadContext {
      * @since 1.0
      */
     public static void setResources(Map<Object, Object> newResources) {
-        if (CollectionUtils.isEmpty(newResources)) {
+        if (Objects.isNull(newResources)) {
             return;
         }
         ensureResourcesInitialized();
@@ -242,6 +241,7 @@ public class ThreadContext {
         return (Subject) remove(SUBJECT_KEY);
     }
 
+    @SuppressWarnings({"unchecked"})
     private static final class InheritableThreadLocalMap<T extends Map<Object, Object>> extends InheritableThreadLocal<Map<Object, Object>> {
 
         /**
@@ -252,9 +252,9 @@ public class ThreadContext {
          * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
          * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
          */
-        @SuppressWarnings({"unchecked"})
+        @Override
         protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
-            if (parentValue != null) {
+            if (Objects.nonNull(parentValue)) {
                 return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
             } else {
                 return null;

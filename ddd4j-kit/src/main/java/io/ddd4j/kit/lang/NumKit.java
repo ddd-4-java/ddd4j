@@ -2,8 +2,8 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.util.NumberUtil;
 import lombok.experimental.UtilityClass;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
+
+
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,30 +22,30 @@ public class NumKit extends NumberUtil {
     public final BigDecimal ZERO = new BigDecimal("0.00");
 
     // 是否是正数
-    public boolean isPositive(@Nullable BigDecimal value) {
+    public boolean isPositive(BigDecimal value) {
         return Objects.nonNull(value) && value.signum() > 0;
     }
 
 
     // 是否是负数
-    public boolean isNegative(@Nullable BigDecimal value) {
+    public boolean isNegative(BigDecimal value) {
         return Objects.nonNull(value) && value.signum() < 0;
     }
 
 
     // 是否为0
-    public boolean isZero(@Nullable BigDecimal value) {
+    public boolean isZero(BigDecimal value) {
         return Objects.nonNull(value) && value.signum() == 0;
     }
 
 
     // 是否为 0 或 null
-    public boolean isZeroOrNull(@Nullable BigDecimal value) {
+    public boolean isZeroOrNull(BigDecimal value) {
         return Objects.isNull(value) || isZero(value);
     }
 
 
-    public boolean isGreaterThanZero(@NonNull BigDecimal value) {
+    public boolean isGreaterThanZero(BigDecimal value) {
         return isGreaterOne(value, ZERO) > 0;
     }
 
@@ -56,7 +56,7 @@ public class NumKit extends NumberUtil {
      * @param v2 v2
      * @return 大于等于true 否则false
      */
-    public boolean isGreaterOrEquals(@NonNull BigDecimal v1, @NonNull BigDecimal v2) {
+    public boolean isGreaterOrEquals(BigDecimal v1, BigDecimal v2) {
         return isGreaterOne(v1, v2) >= 0;
     }
 
@@ -67,7 +67,7 @@ public class NumKit extends NumberUtil {
      * @param v2 BigDecimal2
      * @return v1 > v2 return 1  v1 = v2 return 0 v1 < v2 return -1
      */
-    public int isGreaterOne(@NonNull BigDecimal v1, @NonNull BigDecimal v2) {
+    public int isGreaterOne(BigDecimal v1, BigDecimal v2) {
         return v1.compareTo(v2);
     }
 
@@ -76,25 +76,25 @@ public class NumKit extends NumberUtil {
      *
      * @return 新值（如果 value 为空返回 BigDecimal.ZERO）
      */
-    public BigDecimal round2(@Nullable BigDecimal value) {
+    public BigDecimal round2(BigDecimal value) {
         return round(value, 2);
     }
 
 
     // 四舍五入（保留两位小数）
-    public String round2Str(@Nullable BigDecimal value) {
+    public String round2Str(BigDecimal value) {
         return round2(value).toString();
     }
 
 
     // 绝对值
-    public BigDecimal abs(@Nullable BigDecimal value) {
+    public BigDecimal abs(BigDecimal value) {
         return Objects.isNull(value) ? BigDecimal.ZERO : value.abs();
     }
 
 
     // 负绝对值
-    public BigDecimal negativeAbs(@Nullable BigDecimal value) {
+    public BigDecimal negativeAbs(BigDecimal value) {
         return Objects.isNull(value) ? BigDecimal.ZERO : value.abs().negate();
     }
 
@@ -112,7 +112,7 @@ public class NumKit extends NumberUtil {
      * @param value 数字
      * @return 当 value 为 null 时默认返回 0
      */
-    public BigDecimal clearZero(@Nullable BigDecimal value) {
+    public BigDecimal clearZero(BigDecimal value) {
         if (Objects.isNull(value)) {
             return BigDecimal.ZERO;
         }
@@ -149,7 +149,7 @@ public class NumKit extends NumberUtil {
      * @param v2 v2
      * @return 大于 true 否则false
      */
-    public boolean isGreaterOther(@NonNull BigDecimal v1, @NonNull BigDecimal v2) {
+    public boolean isGreaterOther(BigDecimal v1, BigDecimal v2) {
         return isGreaterOne(v1, v2) == 1;
     }
 
@@ -160,7 +160,7 @@ public class NumKit extends NumberUtil {
      * @param v2 v2
      * @return 等于 true 否则false
      */
-    public boolean isBothAreEqual(@NonNull BigDecimal v1, @NonNull BigDecimal v2) {
+    public boolean isBothAreEqual(BigDecimal v1, BigDecimal v2) {
         return isGreaterOne(v1, v2) == 0;
     }
 
@@ -171,19 +171,19 @@ public class NumKit extends NumberUtil {
      * @param v2 v2
      * @return 小于 true 否则false
      */
-    public boolean isLessThanOther(@NonNull BigDecimal v1, @NonNull BigDecimal v2) {
+    public boolean isLessThanOther(BigDecimal v1, BigDecimal v2) {
         return isGreaterOne(v1, v2) == -1;
     }
 
     // 求和
-    public BigDecimal add(@Nullable BigDecimal value1, @Nullable BigDecimal value2) {
+    public BigDecimal add(BigDecimal value1, BigDecimal value2) {
         value1 = ObjKit.defaultIfNull(value1, BigDecimal.ZERO);
         value2 = ObjKit.defaultIfNull(value2, BigDecimal.ZERO);
         return value1.add(value2);
     }
 
     // 减法
-    public BigDecimal sub(@Nullable BigDecimal value1, @Nullable BigDecimal value2) {
+    public BigDecimal sub(BigDecimal value1, BigDecimal value2) {
         value1 = ObjKit.defaultIfNull(value1, BigDecimal.ZERO);
         value2 = ObjKit.defaultIfNull(value2, BigDecimal.ZERO);
         return value1.subtract(value2);
@@ -191,13 +191,13 @@ public class NumKit extends NumberUtil {
 
 
     // 加法（保留2位小数）
-    public BigDecimal addRound2(@Nullable BigDecimal bigNum1, @Nullable BigDecimal bigNum2) {
+    public BigDecimal addRound2(BigDecimal bigNum1, BigDecimal bigNum2) {
         return round2(add(bigNum1, bigNum2));
     }
 
 
     // 减法（保留2位小数）
-    public BigDecimal subRound2(@Nullable BigDecimal bigNum1, @Nullable BigDecimal bigNum2) {
+    public BigDecimal subRound2(BigDecimal bigNum1, BigDecimal bigNum2) {
         return round2(sub(bigNum1, bigNum2));
     }
 

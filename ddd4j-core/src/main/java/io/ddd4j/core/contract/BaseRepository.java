@@ -1,23 +1,24 @@
 package io.ddd4j.core.contract;
 
-import io.ddd4j.core.context.SpringContext;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 基础仓库接口，业务仓库需要实现当前接口
+ * 基础仓库接口，业务仓库需要实现当前接口（纯 Java，零 Spring 依赖）
+ * <p>
+ * 使用静态注册表管理仓库实例。框架适配层通过 {@link #register(Class, BaseRepository)} 注入。
  *
  * @author Jensen
  * @公众号 架构师修行录
  */
 public interface BaseRepository<M extends Model, Q extends Query> {
     Map<Class<?>, Class<?>> REPOSITORY_MAPPINGS = new ConcurrentHashMap<>();
+    Map<Class<?>, BaseRepository<?, ?>> REPOSITORY_INSTANCES = new ConcurrentHashMap<>();
 
     /**
-     * 注入仓库类
+     * 注入仓库类（类映射）
      *
      * @param mappingClass    Model类/Query类
      * @param repositoryClass 仓库类
@@ -26,9 +27,20 @@ public interface BaseRepository<M extends Model, Q extends Query> {
         REPOSITORY_MAPPINGS.put(mappingClass, repositoryClass);
     }
 
-    // 获取仓库Bean
+    /**
+     * 注册仓库实例（由框架适配层调用）
+     *
+     * @param mappingClass Model类/Query类
+     * @param repository   仓库实例
+     */
+    static void register(Class<?> mappingClass, BaseRepository<?, ?> repository) {
+        REPOSITORY_INSTANCES.put(mappingClass, repository);
+    }
+
+    // 获取仓库实例
+    @SuppressWarnings("unchecked")
     static <R extends BaseRepository> R of(Class mappingClass) {
-        return SpringContext.getBean((Class<R>) REPOSITORY_MAPPINGS.get(mappingClass));
+        return (R) REPOSITORY_INSTANCES.get(mappingClass);
     }
 
     /**

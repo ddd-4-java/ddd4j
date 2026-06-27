@@ -94,7 +94,7 @@
         <!-- Spring Boot：自动配置支持                                     -->
         <!-- ============================================================ -->
 
-<!-- Jandex：运行时按注解自动发现 EntityId / SerializedDataType（fuinorg 依赖） -->
+        <!-- Jandex：运行时按注解自动发现 EntityId / SerializedDataType（fuinorg 依赖） -->
         <dependency>
             <groupId>io.smallrye</groupId>
             <artifactId>jandex</artifactId>

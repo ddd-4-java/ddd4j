@@ -207,6 +207,9 @@
         <guice.version>7.0.0</guice.version>
         <grizzly.version>4.1.0-M1</grizzly.version>
         <grpc.version>1.82.1</grpc.version>
+        <!-- ddd4j-quarkus / ddd4j-javalin 框架版本 -->
+        <javalin.version>6.3.0</javalin.version>
+        <jdbi.version>3.45.4</jdbi.version>
         <gson.version>2.14.0</gson.version>
         <hazelcast.version>5.6.0</hazelcast.version>
         <hadoop.version>3.5.0</hadoop.version>
@@ -428,6 +431,7 @@
         <qlexpress.version>4.1.2</qlexpress.version>
         <quartz.version>2.5.2</quartz.version>
         <quarkus-bom.version>3.37.0</quarkus-bom.version>
+        <quarkus-smallrye-reactive-messaging.version>3.15.5</quarkus-smallrye-reactive-messaging.version>
         <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
         <r2dbc-spi.version>1.0.0.RELEASE</r2dbc-spi.version>
         <r2dbc-mariadb.version>1.4.1</r2dbc-mariadb.version>
@@ -438,6 +442,7 @@
         <r2dbc-proxy.version>1.1.6.RELEASE</r2dbc-proxy.version>
         <r2dbc-postgresql.version>1.1.2.RELEASE</r2dbc-postgresql.version>
         <reactor-bom.version>2025.0.6</reactor-bom.version>
+        <smallrye-reactive-messaging-bom.version>4.27.0</smallrye-reactive-messaging-bom.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
         <rabbit-amqp-client.version>5.32.0</rabbit-amqp-client.version>
         <rabbit-stream-client.version>0.24.0</rabbit-stream-client.version>
@@ -5129,6 +5134,22 @@
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
                 <version>${reactor-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Quarkus BOM：管理 ddd4j-quarkus-* 模块中所有 io.quarkus.* 依赖版本 -->
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- SmallRye Reactive Messaging BOM：管理 quarkus-smallrye-reactive-messaging 等 SmallRye 依赖 -->
+            <dependency>
+                <groupId>io.smallrye.reactive</groupId>
+                <artifactId>smallrye-reactive-messaging-bom</artifactId>
+                <version>${smallrye-reactive-messaging-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

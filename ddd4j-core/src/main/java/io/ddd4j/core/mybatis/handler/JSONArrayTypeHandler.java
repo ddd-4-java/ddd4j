@@ -7,7 +7,6 @@ package io.ddd4j.core.mybatis.handler;
 import com.alibaba.fastjson2.JSONArray;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.springframework.util.StringUtils;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -26,7 +25,7 @@ public class JSONArrayTypeHandler extends BaseTypeHandler<JSONArray> {
     @Override
     public JSONArray getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String rtString = rs.getString(columnName);
-        if (StringUtils.hasText(rtString)) {
+        if ((rtString != null && !rtString.trim().isEmpty())) {
             return JSONArray.parseArray(rtString);
         }
         return null;
@@ -35,7 +34,7 @@ public class JSONArrayTypeHandler extends BaseTypeHandler<JSONArray> {
     @Override
     public JSONArray getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String rtString = rs.getString(columnIndex);
-        if (StringUtils.hasText(rtString)) {
+        if ((rtString != null && !rtString.trim().isEmpty())) {
             return JSONArray.parseArray(rtString);
         }
         return null;
@@ -44,7 +43,7 @@ public class JSONArrayTypeHandler extends BaseTypeHandler<JSONArray> {
     @Override
     public JSONArray getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String rtString = cs.getString(columnIndex);
-        if (StringUtils.hasText(rtString)) {
+        if ((rtString != null && !rtString.trim().isEmpty())) {
             return JSONArray.parseArray(rtString);
         }
         return null;

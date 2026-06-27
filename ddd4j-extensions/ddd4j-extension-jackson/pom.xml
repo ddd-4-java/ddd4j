@@ -14,6 +14,12 @@
     <description>Ddd4j Jackson Component</description>
 
     <dependencies>
+        <!-- For ddd4j-kit -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- For Commons Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>

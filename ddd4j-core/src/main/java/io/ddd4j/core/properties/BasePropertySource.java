@@ -1,6 +1,5 @@
 package io.ddd4j.core.properties;
 
-import org.springframework.core.Ordered;
 
 import java.lang.annotation.*;
 
@@ -33,6 +32,6 @@ public @interface BasePropertySource {
      *
      * @return order
      */
-    int order() default Ordered.LOWEST_PRECEDENCE;
+    int order() default Integer.MAX_VALUE;
 
 }

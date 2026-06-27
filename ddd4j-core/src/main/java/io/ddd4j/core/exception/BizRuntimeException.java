@@ -7,9 +7,9 @@ package io.ddd4j.core.exception;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.CustomApiCode;
 import lombok.Getter;
-import org.springframework.core.NestedRuntimeException;
 
-public class BizRuntimeException extends NestedRuntimeException {
+
+public class BizRuntimeException extends RuntimeException {
 
     @Getter
     private Integer code;

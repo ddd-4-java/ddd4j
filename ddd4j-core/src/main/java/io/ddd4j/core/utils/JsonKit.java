@@ -18,7 +18,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -34,13 +33,15 @@ import java.util.*;
  * Json工具类
  */
 @Slf4j(topic = "### BASE-CORE : JsonKit ###")
-@UtilityClass
 public class JsonKit {
-    private final String DATE_PATTERN = "yyyy-MM-dd";
-    private final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    public final ObjectMapper DEFAULT_OBJECT_MAPPER = defaultObjectMapper();
 
-    public ObjectMapper defaultObjectMapper() {
+    private JsonKit() {}
+
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    public static final ObjectMapper DEFAULT_OBJECT_MAPPER = defaultObjectMapper();
+
+    public static ObjectMapper defaultObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.setDateFormat(new BaseSimpleDateFormat());
@@ -60,7 +61,7 @@ public class JsonKit {
         return objectMapper;
     }
 
-    public ObjectMapper redisObjectMapper() {
+    public static ObjectMapper redisObjectMapper() {
         ObjectMapper objectMapper = defaultObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, Visibility.ANY);
         objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, DefaultTyping.NON_FINAL, As.WRAPPER_ARRAY);
@@ -70,7 +71,7 @@ public class JsonKit {
         return objectMapper;
     }
 
-    public ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
+    public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
         ObjectMapper objectMapper = new ObjectMapper();
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
@@ -109,7 +110,7 @@ public class JsonKit {
         return objectMapper;
     }
 
-    public String toJson(Object object) {
+    public static String toJson(Object object) {
         if (object == null) return null;
         if (object instanceof String) return (String) object;
         try {
@@ -166,7 +167,7 @@ public class JsonKit {
         return null;
     }
 
-    public String toJsonWithDefaultPrettyPrinter(Object object) {
+    public static String toJsonWithDefaultPrettyPrinter(Object object) {
         try {
             return DEFAULT_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } catch (IOException e) {
@@ -175,7 +176,7 @@ public class JsonKit {
         }
     }
 
-    public <T> T toObject(Object object, Class<T> clazz) {
+    public static <T> T toObject(Object object, Class<T> clazz) {
         if (object == null) return null;
         if (!(object instanceof String)) {
             return (T) object;
@@ -193,7 +194,7 @@ public class JsonKit {
         }
     }
 
-    public <T> T toObject(Object object, JavaType javaType) {
+    public static <T> T toObject(Object object, JavaType javaType) {
         if (object == null) return null;
         if (!(object instanceof String)) {
             return (T) object;
@@ -211,7 +212,7 @@ public class JsonKit {
         }
     }
 
-    public <T> List<T> toList(Object object, Class<T> beanType) {
+    public static <T> List<T> toList(Object object, Class<T> beanType) {
         if (object == null) return new ArrayList<>();
         if (!(object instanceof String)) {
             return (List<T>) object;
@@ -230,7 +231,7 @@ public class JsonKit {
         }
     }
 
-    public <T> T toPojo(Object object, TypeReference<T> typeReference) {
+    public static <T> T toPojo(Object object, TypeReference<T> typeReference) {
         if (object == null) return null;
         if (!(object instanceof String)) {
             return (T) object;
@@ -256,15 +257,15 @@ public class JsonKit {
         return str.startsWith("[") && str.endsWith("]");
     }
 
-    public JavaType buildCollectionType(Class<? extends Collection> collectionClass, Class<?> elementClass) {
+    public static JavaType buildCollectionType(Class<? extends Collection> collectionClass, Class<?> elementClass) {
         return DEFAULT_OBJECT_MAPPER.getTypeFactory().constructCollectionType(collectionClass, elementClass);
     }
 
-    public JavaType buildMapType(Class<? extends Map> mapClass, Class<?> keyClass, Class<?> valueClass) {
+    public static JavaType buildMapType(Class<? extends Map> mapClass, Class<?> keyClass, Class<?> valueClass) {
         return DEFAULT_OBJECT_MAPPER.getTypeFactory().constructMapType(mapClass, keyClass, valueClass);
     }
 
-    public void update(String jsonString, Object object) {
+    public static void update(String jsonString, Object object) {
         try {
             DEFAULT_OBJECT_MAPPER.readerForUpdating(object).readValue(jsonString);
         } catch (IOException var3) {
@@ -279,7 +280,7 @@ public class JsonKit {
                         childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
-    private class BaseSimpleDateFormat extends SimpleDateFormat {
+    private static class BaseSimpleDateFormat extends SimpleDateFormat {
         public BaseSimpleDateFormat() {
             super("yyyy-MM-dd HH:mm:ss.SSS");
         }

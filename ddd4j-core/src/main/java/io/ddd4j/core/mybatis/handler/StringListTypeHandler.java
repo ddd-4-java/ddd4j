@@ -6,7 +6,6 @@ package io.ddd4j.core.mybatis.handler;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.springframework.util.StringUtils;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -35,7 +34,7 @@ public class StringListTypeHandler extends BaseTypeHandler<List<String>> {
     @Override
     public List<String> getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String rtString = rs.getString(columnName);
-        if (StringUtils.hasText(rtString)) {
+        if ((rtString != null && !rtString.trim().isEmpty())) {
             return Arrays.asList(rtString.split(","));
         }
         return null;
@@ -44,7 +43,7 @@ public class StringListTypeHandler extends BaseTypeHandler<List<String>> {
     @Override
     public List<String> getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String rtString = rs.getString(columnIndex);
-        if (StringUtils.hasText(rtString)) {
+        if ((rtString != null && !rtString.trim().isEmpty())) {
             return Arrays.asList(rtString.split(","));
         }
         return null;
@@ -53,7 +52,7 @@ public class StringListTypeHandler extends BaseTypeHandler<List<String>> {
     @Override
     public List<String> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String rtString = cs.getString(columnIndex);
-        if (StringUtils.hasText(rtString)) {
+        if ((rtString != null && !rtString.trim().isEmpty())) {
             return Arrays.asList(rtString.split(","));
         }
         return null;

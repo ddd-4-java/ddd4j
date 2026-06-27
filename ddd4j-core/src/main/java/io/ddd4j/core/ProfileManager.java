@@ -1,18 +1,17 @@
 package io.ddd4j.core;
 
 
-import org.springframework.core.env.Environment;
 
 public class ProfileManager {
 
-    private final Environment environment;
+    private final java.util.function.Supplier<String[]> activeProfilesSupplier;
 
-    public ProfileManager(Environment environment) {
-        this.environment = environment;
+    public ProfileManager(java.util.function.Supplier<String[]> activeProfilesSupplier) {
+        this.activeProfilesSupplier = activeProfilesSupplier;
     }
 
     public String getOneActive() {
-        for (String profileName : environment.getActiveProfiles()) {
+        for (String profileName : activeProfilesSupplier.get()) {
             return profileName;
         }
         return null;

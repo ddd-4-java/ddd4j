@@ -70,18 +70,26 @@
         <!-- 注解层：零框架依赖（仅 spring-context） -->
         <module>ddd4j-annotation</module>
         <module>ddd4j-core</module>
-        <!-- 工具箱：继承式增强 Hutool -->
+        <!-- 工具箱：继承式增强 Hutool（与 ddd4j-core 同级的基础设施） -->
         <module>ddd4j-kit</module>
-        <!-- 数据层：BaseRepositoryImpl 四泛型封装 MyBatis Plus -->
-        <module>ddd4j-data</module>
-        <!-- Web 层：拦截器/Session/Feign/多租户 -->
-        <module>ddd4j-web</module>
-        <!-- 消息队列：5 种 MQ 统一抽象 -->
-        <module>ddd4j-mq</module>
-        <!-- 监控告警：钉钉/企微机器人 + 日志告警 -->
+        <!-- 监控告警：钉钉/企微机器人 + 日志告警（与 ddd4j-core 同级） -->
         <module>ddd4j-monitor</module>
         <!-- 纯 DDD 轨道：集成 fuinorg ddd-4-java + cqrs-4-java，领域层零 MyBatis Plus 依赖 -->
         <module>ddd4j-ddd</module>
+
+        <!-- 业务模块聚合层（xxx-core 纯 Java 抽象 + xxx-spring 桥接 + xxx-* 框架实现） -->
+        <module>ddd4j-data</module>
+        <module>ddd4j-mq</module>
+        <module>ddd4j-web</module>
+        <module>ddd4j-auth</module>
+
+        <!-- 三框架核心适配层（与 ddd4j-core 同级，提供 3 个核心 SPI 的框架实现） -->
+        <module>ddd4j-spring</module>
+        <module>ddd4j-quarkus</module>
+        <module>ddd4j-javalin</module>
+
+        <!-- 业务模块 × 三框架 整合模块（ddd4j-{data,mq,web,auth}-{spring,quarkus,javalin}）已下沉到各自业务聚合层下 -->
+        <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress） -->
         <module>ddd4j-extensions</module>
         <module>ddd4j-parent</module>
     </modules>
@@ -237,6 +245,13 @@
                         <target>${java.version}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <maxmem>512M</maxmem>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->

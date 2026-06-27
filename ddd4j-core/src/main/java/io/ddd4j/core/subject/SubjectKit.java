@@ -1,6 +1,5 @@
 package io.ddd4j.core.subject;
 
-import org.springframework.biz.utils.SpringContextUtils;
 
 public class SubjectKit {
 
@@ -10,7 +9,8 @@ public class SubjectKit {
         if (subjectProvider == null) {
             synchronized (SubjectKit.class) {
                 if (subjectProvider == null) {
-                    subjectProvider = SpringContextUtils.getContext().getInstance(SubjectProvider.class);
+                    // Register via SubjectKit.register() or framework-specific adapter
+                    throw new IllegalStateException("SubjectProvider not registered. Call SubjectKit.register() or use framework adapter.");
                 }
             }
         }

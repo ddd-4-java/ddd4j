@@ -4,12 +4,18 @@
  */
 package io.ddd4j.core.exception;
 
-import org.springframework.context.ApplicationEvent;
-import org.springframework.util.Assert;
 
-@SuppressWarnings("serial")
-public class PayloadExceptionEvent extends ApplicationEvent {
+import lombok.Getter;
 
+import java.io.Serial;
+import java.util.Objects;
+
+@Getter
+public class PayloadExceptionEvent implements java.io.Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private final Object source;
     private final Exception payload;
 
     /**
@@ -19,16 +25,9 @@ public class PayloadExceptionEvent extends ApplicationEvent {
      * @param payload the Exception object (never {@code null})
      */
     public PayloadExceptionEvent(Object source, Exception payload) {
-        super(source);
-        Assert.notNull(payload, "Payload must not be null");
+        this.source = source;
+        Objects.requireNonNull(payload, "Payload must not be null");
         this.payload = payload;
-    }
-
-    /**
-     * Return the payload of the event.
-     */
-    public Exception getPayload() {
-        return this.payload;
     }
 
 }

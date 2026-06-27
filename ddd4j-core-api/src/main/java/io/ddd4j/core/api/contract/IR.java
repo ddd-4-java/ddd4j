@@ -1,0 +1,39 @@
+package io.ddd4j.core.api.contract;
+
+import io.ddd4j.core.api.contract.exception.ServiceException;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+/**
+ * 统一接口响应，标准的响应数据结构
+ *
+ * @author Jensen
+ * @公众号 架构师修行录
+ */
+public interface IR extends Serializable {
+    Serializable getCode();
+
+    String getMsg();
+
+    <T> T getData();
+
+    Boolean isOk();
+
+    default void isOk(String notOkThrows) {
+        if (!isOk()) {
+            throw new ServiceException(notOkThrows + " -> {}", this);
+        }
+    }
+
+    default <T> T getData(String notOkThrows) {
+        if (!isOk()) {
+            throw new ServiceException(notOkThrows + " -> {}", this);
+        }
+        T data = getData();
+        if (Objects.isNull(data)) {
+            throw new ServiceException(notOkThrows + " -> {}", this);
+        }
+        return data;
+    }
+}

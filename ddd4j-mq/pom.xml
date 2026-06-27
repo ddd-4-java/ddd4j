@@ -11,27 +11,25 @@
     </parent>
 
     <artifactId>ddd4j-mq</artifactId>
-    <description>消息队列契约与 SPI</description>
+    <packaging>pom</packaging>
+    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -spring(Spring Messaging 桥接) + 13 个 broker 实现。Quarkus/Javalin 桥接通过 ddd4j-quarkus/ddd4j-javalin 顶层模块提供。</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-messaging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>ddd4j-mq-core</module>
+        <module>ddd4j-mq-spring</module>
+        <module>ddd4j-mq-activemq</module>
+        <module>ddd4j-mq-disruptor</module>
+        <module>ddd4j-mq-kafka</module>
+        <module>ddd4j-mq-mqtt</module>
+        <module>ddd4j-mq-mqtt-mica</module>
+        <module>ddd4j-mq-nats</module>
+        <module>ddd4j-mq-ons</module>
+        <module>ddd4j-mq-pulsar</module>
+        <module>ddd4j-mq-rabbitmq</module>
+        <module>ddd4j-mq-redis-stream</module>
+        <module>ddd4j-mq-rocketmq</module>
+        <module>ddd4j-mq-sqs</module>
+        <module>ddd4j-mq-tdmq</module>
+    </modules>
 
 </project>
