@@ -1,7 +1,7 @@
 package io.ddd4j.data.logs.aspect;
 
 import io.ddd4j.core.XHeaders;
-import io.ddd4j.core.sequence.Sequence;
+import io.ddd4j.kit.lang.SequenceKit;
 import io.ddd4j.spring.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import java.util.Objects;
 public class ApiOperationLogAspect {
 
     @Autowired
-    private Sequence sequence;
+    private SequenceKit sequence;
     @Autowired
     private ApiOperationLogProvider logProvider;
 

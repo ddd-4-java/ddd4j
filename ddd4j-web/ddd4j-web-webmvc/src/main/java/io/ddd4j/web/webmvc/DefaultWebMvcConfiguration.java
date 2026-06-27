@@ -7,7 +7,7 @@ package io.ddd4j.web.webmvc;
 import io.ddd4j.web.config.LocalResourceProperteis;
 import io.ddd4j.core.Constants;
 import io.ddd4j.core.ProfileManager;
-import io.ddd4j.core.sequence.Sequence;
+import io.ddd4j.kit.lang.SequenceKit;
 import io.ddd4j.spring.web.Slf4jMDCInterceptor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.biz.context.NestedMessageSource;
@@ -121,7 +121,7 @@ public class DefaultWebMvcConfiguration {
     }
 
     @Bean
-    public Slf4jMDCInterceptor slf4jMDCInterceptor(Sequence sequence) {
+    public Slf4jMDCInterceptor slf4jMDCInterceptor(SequenceKit sequence) {
         return new Slf4jMDCInterceptor(sequence);
     }
 

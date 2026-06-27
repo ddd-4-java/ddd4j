@@ -3,7 +3,7 @@ package io.ddd4j.data.external.sequence;
 
 import cn.hutool.core.util.IdUtil;
 import io.ddd4j.data.external.SequenceProperties;
-import io.ddd4j.core.sequence.Sequence;
+import io.ddd4j.kit.lang.SequenceKit;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ public class GlobalSequenceConfiguration {
     @Bean
     public GlobalSequence globalSequence(ObjectProvider<RedisOperationTemplate> redisOperationProvider,
                                          SequenceProperties properties) {
-        long workerId = Objects.isNull(properties.getWorkerId()) ? 0x000000FF & Sequence.getLastIPAddress() : properties.getWorkerId();
+        long workerId = Objects.isNull(properties.getWorkerId()) ? 0x000000FF & SequenceKit.getLastIPAddress() : properties.getWorkerId();
         long dataCenterId = Objects.isNull(properties.getDataCenterId()) ? 0L : properties.getDataCenterId();
         long timeOffset = Objects.isNull(properties.getTimeOffset()) ? 5L : properties.getTimeOffset();
         long randomSequenceLimit = Objects.isNull(properties.getRandomSequenceLimit()) ? 0L : properties.getRandomSequenceLimit();
@@ -51,7 +51,7 @@ public class GlobalSequenceConfiguration {
     }
 
     @Bean
-    public Sequence snowflakeIdGenerator() throws IOException {
+    public SequenceKit snowflakeIdGenerator() throws IOException {
 
         // 1. 读取 Lua 脚本内容
         Resource lua = new ClassPathResource("scripts/redis-snowflake-batch.lua");
@@ -65,7 +65,7 @@ public class GlobalSequenceConfiguration {
         System.out.println("datacenterId:" + datacenterId);
         System.out.println("workerId:" + workerId);
         // 4. 返回实例
-        // return new Sequence(redisTemplate, scriptText, datacenterId, workerId, epoch, batchSize);
+        // return new SequenceKit(redisTemplate, scriptText, datacenterId, workerId, epoch, batchSize);
         return null;
     }
 

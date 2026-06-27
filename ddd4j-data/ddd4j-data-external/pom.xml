@@ -34,6 +34,21 @@
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
         </dependency>
+        <!-- For Spring Web (RestClient in GeoBaiduTemplate) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <!-- For Spring Web (RestClient in GeoBaiduTemplate) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <!-- For Spring Web (RestClient in GeoBaiduTemplate) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
         <!-- For Redis -->
         <dependency>
             <groupId>com.github.hiwepy</groupId>

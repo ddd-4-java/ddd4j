@@ -1,6 +1,6 @@
 package io.ddd4j.data.external.sequence;
 
-import io.ddd4j.core.sequence.Sequence;
+import io.ddd4j.kit.lang.SequenceKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisOperationTemplate;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class GlobalSequence extends Sequence {
+public class GlobalSequence extends SequenceKit {
 
     private final RedisOperationTemplate redisOperation;
     private static final String ID_LIST_KEY = "global:sequence:ids";
