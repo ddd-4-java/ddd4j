@@ -7,7 +7,6 @@ import io.ddd4j.extension.monitor.domain.qiwei.service.QiWeiService;
  * 企微机器人
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 public class QiWeiRobotSender implements Sender {
 

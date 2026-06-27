@@ -15,7 +15,6 @@ import java.util.function.Function;
  * @param <K> 缓存键类型
  * @param <V> 缓存值类型
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 public class GuavaCache<K, V> implements Cache<K, V> {

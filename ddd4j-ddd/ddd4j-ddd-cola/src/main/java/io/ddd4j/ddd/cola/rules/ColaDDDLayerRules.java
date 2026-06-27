@@ -33,7 +33,6 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * </ul>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 public final class ColaDDDLayerRules {

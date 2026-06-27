@@ -11,7 +11,6 @@ import java.util.UUID;
  * 随机产生唯一的 app_key 和 app_secret 工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

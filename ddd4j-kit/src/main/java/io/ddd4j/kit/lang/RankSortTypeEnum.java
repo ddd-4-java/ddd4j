@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
  * 同分排序规则枚举类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 public enum RankSortTypeEnum {

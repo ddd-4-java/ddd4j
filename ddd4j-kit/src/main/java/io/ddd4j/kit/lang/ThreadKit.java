@@ -7,7 +7,6 @@ import lombok.experimental.UtilityClass;
  * 线程工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @UtilityClass
 public class ThreadKit extends ThreadUtil {

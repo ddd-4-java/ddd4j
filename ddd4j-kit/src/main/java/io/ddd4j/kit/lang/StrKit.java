@@ -7,7 +7,6 @@ import lombok.experimental.UtilityClass;
  * 字符串工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @UtilityClass
 public class StrKit extends StrUtil {

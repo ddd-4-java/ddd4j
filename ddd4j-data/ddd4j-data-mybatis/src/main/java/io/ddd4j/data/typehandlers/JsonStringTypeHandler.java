@@ -11,7 +11,6 @@ import java.util.List;
  *
  * @param <T> 自定义POJO，一般以VO命名，与Model同目录，注意T不能是List集合或Map类型，但可以是数组类型（以实现对对象数组的互转）
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @date 2024/5/6 14:52
  */
 public abstract class JsonStringTypeHandler<T> extends BaseTypeHandler<T> {

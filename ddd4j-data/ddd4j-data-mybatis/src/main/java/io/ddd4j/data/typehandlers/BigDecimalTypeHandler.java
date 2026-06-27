@@ -15,7 +15,6 @@ import java.util.Objects;
  *
  * @author Loong Wan
  * @version 1.0
- * @公众号 PartMe.AI
  * @date 2022/03/21 13:42
  */
 public class BigDecimalTypeHandler extends org.apache.ibatis.type.BigDecimalTypeHandler {

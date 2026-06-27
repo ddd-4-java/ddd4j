@@ -4,7 +4,6 @@ package io.ddd4j.core.constant;
  * HTTP 状态码常量（纯 Java，零框架依赖）
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 public final class HttpStatus {

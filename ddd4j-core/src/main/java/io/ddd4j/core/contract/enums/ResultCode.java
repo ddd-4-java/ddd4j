@@ -6,7 +6,6 @@ import lombok.Getter;
  * 常用错误码定义
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Getter
 public enum ResultCode implements IEnum<Integer> {

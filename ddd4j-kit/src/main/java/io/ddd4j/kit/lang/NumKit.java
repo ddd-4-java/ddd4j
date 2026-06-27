@@ -14,7 +14,6 @@ import java.util.Objects;
  * 数字工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @UtilityClass
 public class NumKit extends NumberUtil {

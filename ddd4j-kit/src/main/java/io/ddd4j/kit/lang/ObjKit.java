@@ -7,7 +7,6 @@ import lombok.experimental.UtilityClass;
  * 对象工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @UtilityClass
 public class ObjKit extends ObjectUtil {

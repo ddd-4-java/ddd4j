@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
  * 基础模型，支持增删改的充血模型
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 public class Model implements Serializable {
 

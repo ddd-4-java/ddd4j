@@ -16,7 +16,6 @@ import java.util.Base64;
  * 钉钉告警util
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j(topic = "### BASE-MONITOR : DingDingService ###")
 public class DingDingService {

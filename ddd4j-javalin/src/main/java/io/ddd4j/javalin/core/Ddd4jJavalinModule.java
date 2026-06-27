@@ -19,7 +19,6 @@ import io.ddd4j.core.subject.SubjectProvider;
  * }</pre>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public class Ddd4jJavalinModule extends AbstractModule {

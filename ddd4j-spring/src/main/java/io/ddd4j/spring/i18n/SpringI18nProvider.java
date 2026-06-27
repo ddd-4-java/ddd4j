@@ -14,7 +14,6 @@ import java.util.Locale;
  * 基于 Spring MessageSource 实现。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j
 @Component

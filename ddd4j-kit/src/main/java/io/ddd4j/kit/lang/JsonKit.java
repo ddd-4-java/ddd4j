@@ -35,7 +35,6 @@ import java.util.*;
  * Json工具类（合并 JsonKit 和 JacksonKit 功能）
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

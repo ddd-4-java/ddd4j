@@ -9,7 +9,6 @@ import java.math.RoundingMode;
  * 精确的浮点数运算工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

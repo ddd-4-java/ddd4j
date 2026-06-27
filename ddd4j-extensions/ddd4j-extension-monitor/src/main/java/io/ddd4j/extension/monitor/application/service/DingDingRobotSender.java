@@ -6,7 +6,6 @@ import io.ddd4j.extension.monitor.domain.dingding.service.DingDingService;
  * 钉钉机器人
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 public class DingDingRobotSender implements Sender {
 

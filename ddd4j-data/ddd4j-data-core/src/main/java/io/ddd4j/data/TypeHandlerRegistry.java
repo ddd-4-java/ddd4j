@@ -6,7 +6,6 @@ package io.ddd4j.data;
  * 各 ORM 框架适配层将自定义类型转换器注册到该注册表。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public interface TypeHandlerRegistry {

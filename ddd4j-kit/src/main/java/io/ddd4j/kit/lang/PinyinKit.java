@@ -11,7 +11,6 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
  * 拼音工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j(topic = "### BASE-KIT : PinyinKit ###")
 @UtilityClass

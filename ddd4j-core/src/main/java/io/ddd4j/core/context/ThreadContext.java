@@ -12,7 +12,6 @@ import com.alibaba.ttl.TransmittableThreadLocal;
  * 应用可以扩展继承此类，实现如租户上下文等功能
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @UtilityClass
 public class ThreadContext {

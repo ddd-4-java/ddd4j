@@ -14,7 +14,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * 已废弃，请使用本类。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Configuration(proxyBeanMethods = false)

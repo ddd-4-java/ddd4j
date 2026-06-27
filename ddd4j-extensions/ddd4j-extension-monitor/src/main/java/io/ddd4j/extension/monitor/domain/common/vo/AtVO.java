@@ -8,7 +8,6 @@ import java.util.List;
  * dingding at
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Data
 public class AtVO {

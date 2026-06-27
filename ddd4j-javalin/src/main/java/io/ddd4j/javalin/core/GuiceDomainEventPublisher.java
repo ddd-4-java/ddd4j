@@ -13,7 +13,6 @@ import java.util.Collection;
  * 使用 Google Guava {@link EventBus} 发布进程内领域事件。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Slf4j

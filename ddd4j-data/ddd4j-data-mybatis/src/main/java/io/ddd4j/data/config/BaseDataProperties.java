@@ -14,7 +14,6 @@ import lombok.Data;
  * </pre>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Data

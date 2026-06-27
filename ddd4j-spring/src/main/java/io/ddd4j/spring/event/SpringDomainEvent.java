@@ -14,7 +14,6 @@ import java.util.*;
  * 仅在 Spring 环境下使用，Quarkus/Javalin 环境使用纯 Java DomainEvent 接口。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j
 public abstract class SpringDomainEvent<T> extends ApplicationEvent {

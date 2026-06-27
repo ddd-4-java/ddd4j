@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 /**
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties(CryptoProperties.class)

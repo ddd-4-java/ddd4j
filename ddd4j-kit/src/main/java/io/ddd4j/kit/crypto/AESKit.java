@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * AES 对称加密工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

@@ -19,7 +19,6 @@ import java.util.List;
  * 日期工具类（合并 ddd4j-core/util/DateUtils 的全部 9 个方法 + ddd4j-kit 原 DateKit 的 getMonthsBetween）
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

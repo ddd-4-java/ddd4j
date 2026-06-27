@@ -19,7 +19,6 @@ import java.util.Optional;
  * @param <Q> 查询条件类型（Query）
  * @param <P> 主键类型（Primary Key）
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public interface Repository<M, Q, P extends Serializable> {

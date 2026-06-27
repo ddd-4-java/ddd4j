@@ -23,7 +23,6 @@ import java.util.List;
  * 发布 DomainEvent 时通过 {@link DomainEvent#publish()} 委托。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j
 @Data

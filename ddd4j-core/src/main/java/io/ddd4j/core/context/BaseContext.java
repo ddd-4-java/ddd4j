@@ -37,7 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * </ul>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @see ThreadContext 线程级上下文
  * @see I18nKit 国际化上下文
  * @since 3.4.x

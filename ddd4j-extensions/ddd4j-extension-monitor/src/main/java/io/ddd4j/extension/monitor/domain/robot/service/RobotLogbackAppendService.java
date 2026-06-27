@@ -25,7 +25,6 @@ import static ch.qos.logback.core.AsyncAppenderBase.DEFAULT_MAX_FLUSH_TIME;
 
 /**
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j(topic = "### BASE-MONITOR : RobotLogbackAppendService ###")
 public class RobotLogbackAppendService {

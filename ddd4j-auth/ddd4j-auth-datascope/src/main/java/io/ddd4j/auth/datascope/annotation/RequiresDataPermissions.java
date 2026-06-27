@@ -10,7 +10,6 @@ import java.lang.annotation.*;
  * jsr303 数据权限校验注解
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @version 1.0
  * @since 2024.10.09
  */

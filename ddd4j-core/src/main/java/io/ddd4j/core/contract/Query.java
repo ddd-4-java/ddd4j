@@ -17,7 +17,6 @@ import java.util.*;
  * Query 子类可按业务需要自由组合上述注解。</p>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

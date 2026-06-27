@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * 通过 CDI {@code Instance<Subject>} 查找已注册的 Subject Bean。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Slf4j

@@ -47,7 +47,6 @@ import java.util.Set;
  * </ul>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Slf4j

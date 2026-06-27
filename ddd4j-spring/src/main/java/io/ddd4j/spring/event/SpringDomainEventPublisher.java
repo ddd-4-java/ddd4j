@@ -14,7 +14,6 @@ import java.util.Collection;
  * 使用 Spring ApplicationEventPublisher 发布领域事件。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j
 @Component

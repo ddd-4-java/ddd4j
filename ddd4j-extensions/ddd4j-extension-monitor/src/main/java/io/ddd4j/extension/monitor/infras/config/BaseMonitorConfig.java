@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
  * 日志告警配置
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Configuration
 // @EnableConfigurationProperties(BaseMonitorProperties.class)

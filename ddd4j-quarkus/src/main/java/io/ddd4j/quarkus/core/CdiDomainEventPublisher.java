@@ -15,7 +15,6 @@ import java.util.Collection;
  * 使用 CDI {@code Event<DomainEvent>} 发布领域事件。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Slf4j

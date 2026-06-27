@@ -24,7 +24,6 @@ import java.util.Map;
  * </ul>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {

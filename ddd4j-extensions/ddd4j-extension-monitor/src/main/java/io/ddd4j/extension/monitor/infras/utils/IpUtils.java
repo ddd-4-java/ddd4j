@@ -12,7 +12,6 @@ import java.util.Enumeration;
  * 获取本机ip
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j(topic = "### BASE-MONITOR : IpUtils ###")
 public class IpUtils {

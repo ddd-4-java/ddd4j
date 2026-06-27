@@ -12,7 +12,6 @@ import java.util.Objects;
  *
  * @param <T>
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Data
 @AllArgsConstructor

@@ -16,7 +16,6 @@ import java.util.function.Function;
  * <p>提供基于权重的随机选择能力，可用于抽奖、负载均衡、A/B 测试分流等场景。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 2.0.x
  */
 @UtilityClass

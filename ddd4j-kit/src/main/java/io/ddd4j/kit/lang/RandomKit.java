@@ -7,7 +7,6 @@ import lombok.experimental.UtilityClass;
  * 随机工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @UtilityClass
 public class RandomKit extends RandomUtil {

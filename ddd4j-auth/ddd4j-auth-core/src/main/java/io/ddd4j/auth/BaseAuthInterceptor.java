@@ -6,7 +6,6 @@ package io.ddd4j.auth;
  * 各框架适配层（Spring MVC/WebFlux/Quarkus RESTEasy/Javalin）提供具体实现。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public interface BaseAuthInterceptor {

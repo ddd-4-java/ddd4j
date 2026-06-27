@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
  *
  * @author Loong Wan
  * @version 1.0.0
- * @公众号 PartMe.AI
  * @date 2022年2月12日
  */
 

@@ -11,7 +11,6 @@ import java.util.*;
  * Map工具类
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @UtilityClass
 public class MapKit extends MapUtil {

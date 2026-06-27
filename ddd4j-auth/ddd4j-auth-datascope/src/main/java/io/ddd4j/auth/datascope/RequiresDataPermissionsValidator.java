@@ -13,7 +13,6 @@ import java.util.Objects;
  * Data permission verification
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @see RequiresDataPermissions
  */
 @Slf4j

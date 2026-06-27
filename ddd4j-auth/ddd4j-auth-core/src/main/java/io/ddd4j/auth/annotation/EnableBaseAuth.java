@@ -12,7 +12,6 @@ import java.lang.annotation.Target;
  * 各框架适配层扫描此注解并注册拦截器。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 @Retention(RetentionPolicy.RUNTIME)

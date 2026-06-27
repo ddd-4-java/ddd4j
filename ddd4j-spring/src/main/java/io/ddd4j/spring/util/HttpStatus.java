@@ -8,7 +8,6 @@ package io.ddd4j.spring.util;
  * 标准Http状态码
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @See org.springframework.http.HttpStatus
  */
 public interface HttpStatus {

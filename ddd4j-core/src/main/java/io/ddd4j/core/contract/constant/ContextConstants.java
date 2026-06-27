@@ -4,7 +4,6 @@ package io.ddd4j.core.contract.constant;
  * 常用上下文对象常量名，本地线程持有
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 public class ContextConstants {
     public static final String REQUEST_PARAMS = "request-params";

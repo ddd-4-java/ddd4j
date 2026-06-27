@@ -6,7 +6,6 @@ import lombok.Data;
  * dingding markdown
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Data
 public class MarkDownVO {

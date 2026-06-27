@@ -9,7 +9,6 @@ import java.util.Set;
  * 代表当前认证主体。各框架适配层（Sa-Token/Spring Security/Shiro）提供具体实现。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public interface Subject extends Serializable {

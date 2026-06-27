@@ -54,7 +54,6 @@ import java.io.Serial;
  * @param <ROOT_ID> 聚合根标识类型
  * @param <ENTITY_ID> 命令目标的实体标识类型
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @see AbstractAggregateCommand
  * @see AggregateCommand
  * @since 3.4.x

@@ -13,7 +13,6 @@ import java.util.Collection;
  * </ul>
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 public interface DomainEventPublisher {
 

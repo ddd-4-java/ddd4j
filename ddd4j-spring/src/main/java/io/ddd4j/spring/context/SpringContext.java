@@ -28,7 +28,6 @@ import java.util.function.Consumer;
  * Spring上下文：显式获取SpringBean、注册Bean；SpringEvent事件发布
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j(topic = "### BASE-CORE : SpringContext ###")
 @Primary

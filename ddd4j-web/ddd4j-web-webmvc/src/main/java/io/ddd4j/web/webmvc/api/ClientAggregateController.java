@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
  * 客户端聚合API
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Slf4j
 @RestController

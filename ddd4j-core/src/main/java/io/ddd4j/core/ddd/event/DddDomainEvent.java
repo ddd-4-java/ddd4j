@@ -50,7 +50,6 @@ import java.io.Serial;
  *
  * @param <ID> 事件源实体标识类型
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @see AbstractDomainEvent
  * @since 3.4.x
  */

@@ -6,7 +6,6 @@ package io.ddd4j.auth;
  * 框架无关的认证失败异常基类。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public class AuthenticationException extends RuntimeException {

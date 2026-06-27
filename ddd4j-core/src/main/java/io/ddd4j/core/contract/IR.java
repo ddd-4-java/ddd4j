@@ -8,7 +8,6 @@ import java.io.Serializable;
  * 统一接口响应，标准的响应数据结构
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 public interface IR extends Serializable {
     Serializable getCode();

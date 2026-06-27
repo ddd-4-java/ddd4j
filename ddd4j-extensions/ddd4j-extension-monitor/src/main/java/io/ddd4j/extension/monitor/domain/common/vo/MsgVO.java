@@ -6,7 +6,6 @@ import lombok.Data;
  * Dingding msg
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 @Data
 public class MsgVO {

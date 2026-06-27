@@ -17,7 +17,6 @@ import io.ddd4j.core.subject.AuthPrincipal;
  * <p>权限/角色校验直接委托给 Shiro 的 Realm 体系，登录态判断委托给 Shiro 的会话管理。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  * @since 3.4.x
  */
 public class ShiroSubject implements io.ddd4j.core.subject.Subject {

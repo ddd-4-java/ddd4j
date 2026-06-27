@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 各框架适配层在启动时注册对应的 I18nProvider 实现。
  *
  * @author Loong Wan
- * @公众号 PartMe.AI
  */
 public final class I18nKit {
 
