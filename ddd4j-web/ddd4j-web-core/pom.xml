@@ -11,71 +11,37 @@
     </parent>
 
     <artifactId>ddd4j-web-core</artifactId>
-    <description>ddd4j Web - 纯 Java 抽象：ControllerAdvice/Interceptor SPI、RequestInfo/SessionContext 抽象。零 Spring 依赖。</description>
+    <description>ddd4j Web - 纯 Java 抽象：RequestInfo/SessionContext/BaseWebProperties/IpUtils。零 Spring 依赖。</description>
 
     <dependencies>
-        <!-- 纯 Java 核心契约 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- DDD 构造型注解 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-annotation</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Jakarta Servlet API（provided） -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Jakarta WebSocket API（provided） -->
         <dependency>
             <groupId>jakarta.websocket</groupId>
             <artifactId>jakarta.websocket-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-        <!-- Slf4j -->
+            <scope>provided</scope>
+        dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-            <!-- Spring WebMVC（Controller/Interceptor 等类使用） -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-            <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-            <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-            <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-spring</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-websocket</artifactId>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 
