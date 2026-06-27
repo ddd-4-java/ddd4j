@@ -20,8 +20,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -46,7 +44,6 @@ import java.util.concurrent.CountDownLatch;
 @Slf4j
 public class GuiceContext {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GuiceContext.class);
     private static volatile Injector injector;
     private static final CountDownLatch INIT_SIGNAL = new CountDownLatch(1);
     private static final Map<String, Object> ATTRIBUTES = new ConcurrentHashMap<>();
@@ -59,11 +56,11 @@ public class GuiceContext {
      */
     public static void setInjector(Injector inj) {
         if (injector != null) {
-            LOG.warn("GuiceContext already initialized, overwriting existing Injector");
+            log.warn("GuiceContext already initialized, overwriting existing Injector");
         }
         injector = inj;
         INIT_SIGNAL.countDown();
-        LOG.info("GuiceContext initialized with Injector: {}", inj);
+        log.info("GuiceContext initialized with Injector: {}", inj);
     }
 
     /**
@@ -116,7 +113,7 @@ public class GuiceContext {
                     T instance = (T) getInjector().getInstance(binding.getKey());
                     instances.add(instance);
                 } catch (Exception e) {
-                    LOG.debug("Cannot instantiate binding: {}", binding.getKey(), e);
+                    log.debug("Cannot instantiate binding: {}", binding.getKey(), e);
                 }
             }
         }

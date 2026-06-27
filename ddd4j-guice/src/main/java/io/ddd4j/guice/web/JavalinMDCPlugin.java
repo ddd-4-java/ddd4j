@@ -17,6 +17,7 @@ package io.ddd4j.guice.web;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -38,9 +39,8 @@ import java.util.UUID;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class JavalinMDCPlugin implements Handler {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JavalinMDCPlugin.class);
 
     public static final String MDC_REQUEST_ID = "requestId";
     public static final String MDC_REQUEST_URL = "requestURL";

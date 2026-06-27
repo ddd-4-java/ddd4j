@@ -20,8 +20,8 @@ import io.ddd4j.core.contract.DomainEventPublisher;
 import io.ddd4j.core.context.I18nProvider;
 import io.ddd4j.guice.context.GuiceContext;
 import io.javalin.http.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Locale;
 
@@ -33,15 +33,14 @@ import java.util.Locale;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public abstract class BaseHandler {
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * 获取国际化消息
      */
     protected String getMessage(String code, Object... args) {
-        I18nProvider i18n = GuiceContext.getInstance(I18nProvider.class);
+        I18nProvider i18n = ApplicationContext.getInstance(I18nProvider.class);
         return i18n.getMessage(code, args);
     }
 
