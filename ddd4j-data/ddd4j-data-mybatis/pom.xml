@@ -11,22 +11,22 @@
     </parent>
 
     <artifactId>ddd4j-data-mybatis</artifactId>
-    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现。继承 ddd4j-data-core SPI。</description>
+    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。纯 MyBatis 实现（Spring 桥接在 ddd4j-data-spring，auto-config 在 ddd4j-boot-data）。数据 SPI（Repository/TypeHandlerRegistry）已收敛到 ddd4j-core。</description>
 
     <dependencies>
-        <!-- 纯 Java 数据抽象 -->
+        <!-- 核心契约 + 上下文（纯 Java） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-core</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring 桥接层 -->
+        <!-- 工具箱（BeanKit/JsonKit，基于 Hutool，零 Spring 依赖） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-spring</artifactId>
+            <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring TX -->
+        <!-- Spring TX（@Transactional 注解，仅方法级注解，由 ddd4j-data-spring 的 AOP 代理生效） -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
@@ -36,9 +36,24 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
         </dependency>
+        <!-- MyBatis Plus JSqlParser（PaginationInnerInterceptor / TenantLineInnerInterceptor 在此模块） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
+        </dependency>
+        <!-- JSqlParser（DataPermissionInnerInterceptor / MybatisTenantLineInnerInterceptor 需要） -->
+        <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+        </dependency>
+        <!-- FastJSON2（FastJsonTypeHandler / FastJsonArrayTypeHandler 需要） -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
         </dependency>
         <!-- Hutool -->
         <dependency>
@@ -49,6 +64,16 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- Swagger 注解（迁移的 Result/AbstractPaginationDTO 等需要） -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+        </dependency>
+        <!-- Validation（迁移的 AbstractPaginationDTO 等需要） -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <!-- Jackson TypeHandler（MyJacksonTypeHandler 需要） -->
         <dependency>

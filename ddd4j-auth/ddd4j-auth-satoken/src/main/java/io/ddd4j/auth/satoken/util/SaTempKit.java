@@ -4,7 +4,6 @@ import cn.dev33.satoken.error.SaErrorCode;
 import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.temp.SaTempUtil;
 import io.ddd4j.auth.satoken.SaTempToken;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -76,7 +75,7 @@ public class SaTempKit {
     // -------- 检查
 
     public static SaTempToken checkTempToken(String tempToken) {
-        if (!StringUtils.hasText(tempToken)) {
+        if (tempToken == null || tempToken.isBlank()) {
             throw new SaTokenException(SaErrorCode.CODE_11001, "未能读取到有效Token");
         }
         // 获取指定 业务标识、指定 Token 的剩余有效期，单位：秒
@@ -91,7 +90,7 @@ public class SaTempKit {
             throw new SaTokenException(SaErrorCode.CODE_11012, "无效的Token，未通过校验");
         }
         // 检查登录时的账号id值是否为空
-        if (!StringUtils.hasText(saTempToken.getLoginId())) {
+        if (saTempToken.getLoginId() == null || saTempToken.getLoginId().isBlank()) {
             throw new SaTokenException(SaErrorCode.CODE_11002, "登录时的账号id值为空");
         }
         return saTempToken;
@@ -102,7 +101,7 @@ public class SaTempKit {
             throw new SaTokenException(SaErrorCode.CODE_11012, "无效的Token，未通过校验");
         }
         // 检查登录时的账号id值是否为空
-        if (!StringUtils.hasText(saTempToken.getLoginId())) {
+        if (saTempToken.getLoginId() == null || saTempToken.getLoginId().isBlank()) {
             throw new SaTokenException(SaErrorCode.CODE_11002, "登录时的账号id值为空");
         }
         return saTempToken;

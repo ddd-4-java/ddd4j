@@ -13,7 +13,6 @@ import io.ddd4j.auth.satoken.SaConstants;
 import io.ddd4j.auth.satoken.SaTempToken;
 import io.ddd4j.auth.satoken.annotation.SaMixCheckLogin;
 import io.ddd4j.auth.satoken.util.SaTempKit;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.HashMap;
@@ -42,7 +41,7 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
         // 获取前端请求提交的临时验证码
         String tempToken = SaHolder.getRequest().getParam(SaConstants.PARAM_TEMP_TOKEN);
         // 如果存在，则校验
-        if (StringUtils.hasText(tempToken)) {
+        if (tempToken != null && !tempToken.isBlank()) {
             try {
                 // 获取指定 业务标识、指定 Token 的剩余有效期，单位：秒
                 long timeout = SaTempKit.getTimeout(tempToken);
@@ -56,7 +55,7 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
                     throw new SaTokenException(SaErrorCode.CODE_11012, "无效的Token，未通过校验");
                 }
                 // 检查登录时的账号id值是否为空
-                if (!StringUtils.hasText(saTempToken.getLoginId())) {
+                if (saTempToken.getLoginId() == null || saTempToken.getLoginId().isBlank()) {
                     throw new SaTokenException(SaErrorCode.CODE_11002, "登录时的账号id值为空");
                 }
                 // 判断临时Token是否是需要登录的，且不是一次性使用的；则进行登录操作

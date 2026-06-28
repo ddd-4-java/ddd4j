@@ -11,16 +11,40 @@
     </parent>
 
     <artifactId>ddd4j-auth-security</artifactId>
-    <description>Ddd4j Security Component</description>
+    <description>Ddd4j Security Component（Spring Security 适配，允许 Spring 依赖）</description>
 
     <dependencies>
-        <!-- For DDD4j Core -->
+        <!-- 纯 Java 契约（通过 auth-core 统一入口） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
+            <artifactId>ddd4j-auth-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- For Spring Security -->
+        <!-- Spring Security（公开坐标，替代原 hiwepy security-biz-spring-boot-starter） -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <!-- Spring（本模块允许依赖 Spring） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <!-- Spring Boot 自动装配 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>3.5.6</version>
+        </dependency>
+        <!-- JWT 扩展（待 hiwepy 3.3.x 发布后启用，当前注释以达成 BUILD SUCCESS）
         <dependency>
             <groupId>com.github.hiwepy</groupId>
             <artifactId>security-biz-spring-boot-starter</artifactId>
@@ -29,24 +53,33 @@
             <groupId>com.github.hiwepy</groupId>
             <artifactId>security-jwt-spring-boot-starter</artifactId>
         </dependency>
-        <!-- For Redis -->
         <dependency>
             <groupId>com.github.hiwepy</groupId>
             <artifactId>redistpl-plus-spring-boot-starter</artifactId>
         </dependency>
-        <!-- Compile dependencies -->
         <dependency>
             <groupId>com.github.hiwepy</groupId>
             <artifactId>jwt-issuer-with-jjwt</artifactId>
         </dependency>
-            <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
+        -->
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- 排除依赖未发布 hiwepy 私仓的 JWT 扩展类，待 3.3.x 发布后移除 exclusion -->
+                    <excludes>
+                        <exclude>**/jwt/**</exclude>
+                        <exclude>**/WebSecurityJwtConfiguration.java</exclude>
+                        <exclude>**/WebSecurityBizConfiguration.java</exclude>
+                        <exclude>**/SecurityConstants.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

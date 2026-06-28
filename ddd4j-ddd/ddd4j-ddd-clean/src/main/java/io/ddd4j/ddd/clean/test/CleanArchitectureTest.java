@@ -61,6 +61,15 @@ public abstract class CleanArchitectureTest {
     @ArchTest
     public static final ArchRule repository_impl_in_infrastructure = CleanDDDLayerRules.REPOSITORY_IMPL_IN_INFRASTRUCTURE;
 
+    @ArchTest
+    public static final ArchRule domain_gateway_in_domain = CleanDDDLayerRules.DOMAIN_GATEWAY_IN_DOMAIN;
+
+    @ArchTest
+    public static final ArchRule command_executor_in_app = CleanDDDLayerRules.COMMAND_EXECUTOR_IN_APP;
+
+    @ArchTest
+    public static final ArchRule query_service_in_app = CleanDDDLayerRules.QUERY_SERVICE_IN_APP;
+
     // ============ 包依赖规则（Clean 四层核心约束）============
 
     @ArchTest

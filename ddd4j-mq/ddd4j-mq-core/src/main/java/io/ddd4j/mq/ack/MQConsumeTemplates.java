@@ -2,7 +2,6 @@ package io.ddd4j.mq.ack;
 
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQBrokerType;
-import org.springframework.messaging.Message;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -10,7 +9,10 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 /**
- * 消费模板：统一 preCheck 与 {@link AckDisposition} 到 {@link MessageAcknowledgment} 的映射。
+ * 消费模板（纯 Java，零 Spring 依赖）。
+ *
+ * <p>统一 preCheck 与 {@link AckDisposition} 到 {@link MessageAcknowledgment} 的映射。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MQConsumeTemplates {
@@ -30,36 +32,7 @@ public final class MQConsumeTemplates {
     /**
      * 执行消费模板：preCheck → business → ack 映射。
      *
-     * @param message  消息信封（{@link Message}，当前模板不直接使用，保留扩展点）
-     * @param ack      确认端口
-     * @param preCheck 前置检查：0=继续, 1=DISCARD, 2=DEFER
-     * @param business 业务逻辑，返回 {@link AckDisposition}
-     */
-    public static void execute(
-            Message<?> message,
-            MessageAcknowledgment ack,
-            IntSupplier preCheck,
-            Supplier<AckDisposition> business) {
-
-        // 前置检查：幂等跳过或 defer 时短路，不进入业务
-        int pre = preCheck.getAsInt();
-        if (pre == PRE_DISCARD) {
-            ack.ackSingle();
-            return;
-        }
-        if (pre == PRE_DEFER) {
-            ack.requeue();
-            return;
-        }
-
-        // 业务结果 → Broker 确认语义
-        applyDisposition(ack, business.get());
-    }
-
-    /**
-     * 执行消费模板（兼容旧 {@link MQMessage} 参数）。
-     *
-     * @param message  消息信封（{@link MQMessage}，兼容旧 API）
+     * @param message  消息信封（{@link MQMessage}，纯 Java 模型）
      * @param ack      确认端口
      * @param preCheck 前置检查：0=继续, 1=DISCARD, 2=DEFER
      * @param business 业务逻辑，返回 {@link AckDisposition}
@@ -69,14 +42,21 @@ public final class MQConsumeTemplates {
             MessageAcknowledgment ack,
             IntSupplier preCheck,
             Supplier<AckDisposition> business) {
-        execute(message.toMessage(), ack, preCheck, business);
+
+        int pre = preCheck.getAsInt();
+        if (pre == PRE_DISCARD) {
+            ack.ackSingle();
+            return;
+        }
+        if (pre == PRE_DEFER) {
+            ack.requeue();
+            return;
+        }
+        applyDisposition(ack, business.get());
     }
 
     /**
      * 将 {@link AckDisposition} 映射为底层 ack 操作。
-     *
-     * @param ack         确认端口
-     * @param disposition 业务处置结果
      */
     public static void applyDisposition(MessageAcknowledgment ack, AckDisposition disposition) {
         if (disposition == null) {
@@ -164,9 +144,6 @@ public final class MQConsumeTemplates {
             return Optional.empty();
         }
 
-        /**
-         * @return 最后一次确认操作名
-         */
         public String lastOperation() {
             return lastOperation;
         }

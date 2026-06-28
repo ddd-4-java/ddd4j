@@ -1,7 +1,7 @@
 package io.ddd4j.mq.registry;
 
 import io.ddd4j.mq.config.Ddd4jMQProperties;
-import org.springframework.util.StringUtils;
+
 
 /**
  * {@link MQEventListener} 端点物理命名约定（topic / queue / subject 等跨 Broker 复用）。
@@ -16,7 +16,7 @@ public final class MQListenerEndpointNaming {
      * 解析连接符，默认 {@code .}。
      */
     public static String resolveConcat(MQListenerDefinition definition) {
-        if (definition != null && StringUtils.hasText(definition.getConcat())) {
+        if (definition != null && hasText(definition.getConcat())) {
             return definition.getConcat();
         }
         return ".";
@@ -26,7 +26,7 @@ public final class MQListenerEndpointNaming {
      * 解析首个 tag（复合表达式取首段）。
      */
     public static String resolveTag(String tags) {
-        if (!StringUtils.hasText(tags) || "*".equals(tags.trim())) {
+        if (!hasText(tags) || "*".equals(tags.trim())) {
             return null;
         }
         String trimmed = tags.trim();
@@ -39,7 +39,7 @@ public final class MQListenerEndpointNaming {
      */
     public static String physicalTopic(Ddd4jMQProperties properties, MQListenerDefinition definition) {
         String concat = resolveConcat(definition);
-        String namespace = StringUtils.hasText(definition.getNamespace())
+        String namespace = hasText(definition.getNamespace())
                 ? definition.getNamespace()
                 : properties.getNamespace();
         String topic = definition.getTopic();
@@ -67,5 +67,9 @@ public final class MQListenerEndpointNaming {
         return "ddd4j-" + brokerPrefix + "-" + definition.bindingName() + "-"
                 + definition.getMethod().getDeclaringClass().getSimpleName() + "-"
                 + definition.getMethod().getName();
+    }
+
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
     }
 }

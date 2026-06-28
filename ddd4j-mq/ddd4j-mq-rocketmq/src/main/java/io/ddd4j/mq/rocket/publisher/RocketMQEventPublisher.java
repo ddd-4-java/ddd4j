@@ -16,6 +16,10 @@ import java.util.Objects;
 
 /**
  * 基于 {@link RocketMQTemplate} 的领域事件发布实现。
+ *
+ * <p>2.0.x：RocketMQTemplate.send 内部使用 spring-messaging.Message，
+ * 这是 Spring RocketMQ 客户端设计，非本框架可解耦范围。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

@@ -17,7 +17,6 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.autoconfigure.RocketMQProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -107,21 +106,20 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
             String payloadText = new String(messageExt.getBody(), StandardCharsets.UTF_8);
             Consumer<Boolean> ackCallback = success -> {
             };
-            org.springframework.messaging.Message<String> springMessage = MessageBuilder
-                    .withPayload(payloadText)
-                    .setHeader(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE, messageExt)
-                    .setHeader(RocketMessageAcknowledgment.HEADER_ROCKET_ACK_CALLBACK, ackCallback)
-                    .build();
 
-            Map<String, Object> headers = new HashMap<>(springMessage.getHeaders());
+            // 2.0.x：直接构造纯 Java MQMessage，MessageExt 通过 nativeMessage 逃生口传入
+            Map<String, Object> headers = new HashMap<>();
+            headers.put(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE, messageExt);
+            headers.put(RocketMessageAcknowledgment.HEADER_ROCKET_ACK_CALLBACK, ackCallback);
+
             MQMessage<String> mqMessage = MQMessage.of(
                     payloadText,
                     headers,
                     messageExt.getMsgId(),
                     messageExt.getKeys(),
-                    springMessage);
+                    messageExt);
 
-            MessageAcknowledgment ack = RocketMessageAcknowledgmentFactory.fromSpringMessage(springMessage)
+            MessageAcknowledgment ack = RocketMessageAcknowledgmentFactory.from(mqMessage)
                     .map(a -> (MessageAcknowledgment) a)
                     .orElseGet(NoOpMessageAcknowledgment::new);
             handler.handle(mqMessage, ack);

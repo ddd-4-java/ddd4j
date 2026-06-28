@@ -3,6 +3,7 @@ package io.ddd4j.spring.ddd;
 import java.util.List;
 import java.util.Objects;
 
+import io.ddd4j.spring.ddd.scanner.DddClassPathBeanDefinitionScanner;
 import org.fuin.cqrs4j.core.MultiCommandExecutor;
 import org.fuin.ddd4j.core.EntityIdFactory;
 import org.fuin.ddd4j.core.JandexEntityIdFactory;
@@ -11,8 +12,12 @@ import org.fuin.esc.api.EventStore;
 import org.fuin.esc.mem.InMemoryEventStore;
 import org.fuin.cqrs4j.core.CommandExecutor;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.env.Environment;
 
 /**
  * ddd4j-ddd 自动配置。
@@ -40,6 +45,36 @@ import org.springframework.context.annotation.Bean;
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties(DddProperties.class)
 public class DddAutoConfiguration {
+
+    /**
+     * DDD 注解扫描器 Bean：让 Spring 自动识别纯 Java 的 DDD 构造型注解
+     * （{@code @DomainService}、{@code @DomainRepository}、{@code @ApplicationService} 等）。
+     *
+     * <p>业务项目通过 {@code @ComponentScan(basePackages = "com.example.domain")} 触发扫描。
+     * 本 Bean 确保 DDD 注解（无 {@code @Service}/{@code @Repository} 元注解）也能被 Spring 识别。
+     *
+     * <p>如果需要自定义扫描路径，可在 application.yml 中配置：
+     * <pre>
+     * ddd4j:
+     *   ddd:
+     *     scan-base-packages: com.example.domain,com.example.application
+     * </pre>
+     */
+    @Bean
+    public static DddClassPathBeanDefinitionScanner dddAnnotationScanner(
+            BeanDefinitionRegistry registry,
+            Environment environment) {
+        DddClassPathBeanDefinitionScanner scanner = new DddClassPathBeanDefinitionScanner(registry);
+        // 从配置中读取扫描路径，默认为空（由业务项目的 @ComponentScan 控制）
+        String configuredPackages = environment.getProperty("ddd4j.ddd.scan-base-packages", "");
+        if (!configuredPackages.isEmpty()) {
+            String[] packages = configuredPackages.split(",");
+            for (String pkg : packages) {
+                scanner.scan(pkg.trim());
+            }
+        }
+        return scanner;
+    }
 
     /**
      * 默认事件存储：内存版（开发/测试用）。

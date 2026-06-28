@@ -2,9 +2,12 @@ package io.ddd4j.ddd.clean.rules;
 
 import com.tngtech.archunit.lang.ArchRule;
 import io.ddd4j.annotation.ddd.ApplicationService;
+import io.ddd4j.annotation.ddd.CommandExecutor;
 import io.ddd4j.annotation.ddd.DomainEntity;
+import io.ddd4j.annotation.ddd.DomainGateway;
 import io.ddd4j.annotation.ddd.DomainRepository;
 import io.ddd4j.annotation.ddd.DomainService;
+import io.ddd4j.annotation.ddd.QueryService;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -113,4 +116,31 @@ public final class CleanDDDLayerRules {
             .should().dependOnClassesThat().resideInAnyPackage(
                     "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
             .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
+
+    /**
+     * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain..} 包。
+     *
+     * <p>领域网关接口（仓储接口 / ACL 接口）定义在领域层，
+     * 与 {@code @DomainRepository}（实现在 infrastructure 层）形成依赖倒置。
+     */
+    public static final ArchRule DOMAIN_GATEWAY_IN_DOMAIN = classes()
+            .that().areAnnotatedWith(DomainGateway.class)
+            .should().resideInAPackage("..domain..")
+            .because("标了 @DomainGateway 的接口是领域网关，必须在 domain 包");
+
+    /**
+     * 规则9：标了 {@code @CommandExecutor} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
+     */
+    public static final ArchRule COMMAND_EXECUTOR_IN_APP = classes()
+            .that().areAnnotatedWith(CommandExecutor.class)
+            .should().resideInAnyPackage("..app..", "..application..")
+            .because("标了 @CommandExecutor 的类必须在 app/application 包");
+
+    /**
+     * 规则10：标了 {@code @QueryService} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
+     */
+    public static final ArchRule QUERY_SERVICE_IN_APP = classes()
+            .that().areAnnotatedWith(QueryService.class)
+            .should().resideInAnyPackage("..app..", "..application..")
+            .because("标了 @QueryService 的类必须在 app/application 包");
 }

@@ -2,15 +2,18 @@ package io.ddd4j.mq.rocket.ack;
 
 import io.ddd4j.mq.contract.MQMessage;
 import org.apache.rocketmq.common.message.MessageExt;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * 从 Spring RocketMQ {@link Message} 构建 {@link RocketMessageAcknowledgment}。
+ * 从纯 Java {@link MQMessage} 构建 {@link RocketMessageAcknowledgment}。
+ *
+ * <p>2.0.x 重构：彻底移除对 {@code org.springframework.messaging.Message} 的依赖，
+ * 直接基于 ddd4j-mq-core 的纯 Java {@link MQMessage} 工作。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class RocketMessageAcknowledgmentFactory {
@@ -19,44 +22,26 @@ public final class RocketMessageAcknowledgmentFactory {
     }
 
     /**
-     * 根据 Spring Message headers 解析确认对象。
-     *
-     * @param message Spring 消息
-     * @return 确认对象；缺少必要头时返回 empty
-     */
-    public static Optional<RocketMessageAcknowledgment> fromSpringMessage(Message<?> message) {
-        Objects.requireNonNull(message, "message");
-        MessageExt messageExt = resolveMessageExt(message.getHeaders(), message);
-        if (messageExt == null) {
-            return Optional.empty();
-        }
-        Consumer<Boolean> ackCallback = message.getHeaders().get(
-                RocketMessageAcknowledgment.HEADER_ROCKET_ACK_CALLBACK, Consumer.class);
-        return Optional.of(new RocketMessageAcknowledgment(messageExt, ackCallback));
-    }
-
-    /**
      * 从 {@link MQMessage} 头信息解析确认对象。
      *
      * @param message MQ 信封
-     * @return 确认对象
+     * @return 确认对象；缺少必要头时返回 empty
      */
     @SuppressWarnings("unchecked")
     public static Optional<RocketMessageAcknowledgment> from(MQMessage<?> message) {
         Objects.requireNonNull(message, "message");
-        Object messageExtHeader = message.getHeaders().get(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE);
-        MessageExt messageExt;
-        if (messageExtHeader instanceof MessageExt ext) {
-            messageExt = ext;
-        } else {
-            Object nativePayload = message.getPayload();
-            if (nativePayload instanceof MessageExt nativeExt) {
-                messageExt = nativeExt;
-            } else {
-                return Optional.empty();
-            }
+        Map<String, Object> headers = message.getHeaders();
+        if (headers == null || headers.isEmpty()) {
+            return Optional.empty();
         }
-        Object callbackHeader = message.getHeaders().get(RocketMessageAcknowledgment.HEADER_ROCKET_ACK_CALLBACK);
+
+        // 逻辑块：从 header 或 payload 解析 RocketMQ MessageExt
+        MessageExt messageExt = resolveMessageExt(headers, message);
+        if (messageExt == null) {
+            return Optional.empty();
+        }
+
+        Object callbackHeader = headers.get(RocketMessageAcknowledgment.HEADER_ROCKET_ACK_CALLBACK);
         Consumer<Boolean> ackCallback = callbackHeader instanceof Consumer<?> consumer
                 ? (Consumer<Boolean>) consumer
                 : null;
@@ -66,7 +51,7 @@ public final class RocketMessageAcknowledgmentFactory {
     /**
      * 从 headers 或 payload 解析 MessageExt。
      */
-    private static MessageExt resolveMessageExt(MessageHeaders headers, Message<?> message) {
+    private static MessageExt resolveMessageExt(Map<String, Object> headers, MQMessage<?> message) {
         Object ext = headers.get(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE);
         if (ext instanceof MessageExt messageExt) {
             return messageExt;

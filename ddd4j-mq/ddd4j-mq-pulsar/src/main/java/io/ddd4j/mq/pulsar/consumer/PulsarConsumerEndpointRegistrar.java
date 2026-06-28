@@ -18,7 +18,6 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.api.SubscriptionType;
 import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.support.MessageBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -122,21 +121,20 @@ public class PulsarConsumerEndpointRegistrar implements AutoCloseable {
 
         try {
             String payloadText = pulsarMessage.getValue();
-            org.springframework.messaging.Message<String> springMessage = MessageBuilder
-                    .withPayload(payloadText)
-                    .setHeader(PulsarMessageAcknowledgment.HEADER_PULSAR_CONSUMER, consumer)
-                    .setHeader(PulsarMessageAcknowledgment.HEADER_PULSAR_MESSAGE, pulsarMessage)
-                    .build();
 
-            Map<String, Object> headers = new HashMap<>(springMessage.getHeaders());
+            // 2.0.x：直接构造纯 Java MQMessage，Pulsar 原生消息通过 nativeMessage 逃生口传入
+            Map<String, Object> headers = new HashMap<>();
+            headers.put(PulsarMessageAcknowledgment.HEADER_PULSAR_CONSUMER, consumer);
+            headers.put(PulsarMessageAcknowledgment.HEADER_PULSAR_MESSAGE, pulsarMessage);
+
             MQMessage<String> mqMessage = MQMessage.of(
                     payloadText,
                     headers,
                     pulsarMessage.getMessageId().toString(),
                     pulsarMessage.getProperty("correlationId"),
-                    springMessage);
+                    pulsarMessage);
 
-            MessageAcknowledgment ack = PulsarMessageAcknowledgmentFactory.fromSpringMessage(springMessage)
+            MessageAcknowledgment ack = PulsarMessageAcknowledgmentFactory.from(mqMessage)
                     .map(a -> (MessageAcknowledgment) a)
                     .orElseGet(NoOpMessageAcknowledgment::new);
 

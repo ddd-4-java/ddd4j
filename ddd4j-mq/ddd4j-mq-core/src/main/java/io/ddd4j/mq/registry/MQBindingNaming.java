@@ -1,6 +1,6 @@
 package io.ddd4j.mq.registry;
 
-import org.springframework.util.StringUtils;
+
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -26,7 +26,7 @@ public final class MQBindingNaming {
      */
     public static String bindingName(String topic, String tag) {
         String base = toCamelCase(normalizeTopic(topic));
-        if (!StringUtils.hasText(tag) || "*".equals(tag.trim())) {
+        if (!hasText(tag) || "*".equals(tag.trim())) {
             return base.isEmpty() ? "default" : base;
         }
         String tagPart = toCamelCase(normalizeTag(tag));
@@ -67,7 +67,7 @@ public final class MQBindingNaming {
      * 规范化 tag：复合表达式取首段（{@code A || B} → {@code A}）。
      */
     private static String normalizeTag(String tag) {
-        if (!StringUtils.hasText(tag)) {
+        if (!hasText(tag)) {
             return "";
         }
         String trimmed = tag.trim();
@@ -82,7 +82,7 @@ public final class MQBindingNaming {
      * 将 {@code order.paid}、{@code order-paid}、{@code order_paid} 转为 {@code orderPaid}。
      */
     private static String toCamelCase(String raw) {
-        if (!StringUtils.hasText(raw)) {
+        if (!hasText(raw)) {
             return "";
         }
         String[] parts = raw.split("[._\\-]+");
@@ -94,7 +94,7 @@ public final class MQBindingNaming {
             return head;
         }
         return head + Arrays.stream(parts, 1, parts.length)
-                .filter(StringUtils::hasText)
+                .filter(MQBindingNaming::hasText)
                 .map(MQBindingNaming::capitalize)
                 .collect(Collectors.joining());
     }
@@ -103,10 +103,14 @@ public final class MQBindingNaming {
      * 首字母大写，其余保持原样（已为小写时符合 camelCase 拼接规则）。
      */
     private static String capitalize(String segment) {
-        if (!StringUtils.hasText(segment)) {
+        if (!hasText(segment)) {
             return "";
         }
         String lower = segment.toLowerCase(Locale.ROOT);
         return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
+    }
+
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
     }
 }

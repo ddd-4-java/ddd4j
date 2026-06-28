@@ -61,12 +61,7 @@
             <!-- Ddd4j Auth Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-datascope</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-license</artifactId>
+                <artifactId>ddd4j-auth-core</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -104,6 +99,16 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-mybatis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-datascope</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -198,6 +203,11 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-extension-qlexpress</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-license</artifactId>
                 <version>${revision}</version>
             </dependency>
 

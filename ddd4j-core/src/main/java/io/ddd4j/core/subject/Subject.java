@@ -2,7 +2,6 @@ package io.ddd4j.core.subject;
 
 import io.ddd4j.kit.lang.FunctionKit;
 import io.ddd4j.kit.lang.JsonKit;
-import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -214,10 +213,10 @@ public interface Subject {
      */
     default Object getExtra(String key) {
         Map<String, Object> profile = this.getPrincipal().getProfile();
-        if (MapUtils.isEmpty(profile)) {
+        if (profile == null || profile.isEmpty()) {
             return null;
         }
-        return MapUtils.getObject(profile, key);
+        return profile.get(key);
     }
 
     /**
@@ -252,7 +251,7 @@ public interface Subject {
      * @param key    缓存key
      * @param mapper 对象转换函数
      * @param <T>    指定的类型
-     * @return 转换函数转换后的对象
+     * @return 转换函数转换后的值
      */
     default <T> T getExtraAs(String key, Function<Object, T> mapper) {
         Object obj = getExtra(key);
@@ -283,10 +282,10 @@ public interface Subject {
      */
     default Object getExtra(String tokenValue, String key){
         Map<String, Object> profile = this.getPrincipalByToken(tokenValue).getProfile();
-        if (MapUtils.isEmpty(profile)) {
+        if (profile == null || profile.isEmpty()) {
             return null;
         }
-        return MapUtils.getObject(profile, key);
+        return profile.get(key);
     }
 
     /**
@@ -350,5 +349,103 @@ public interface Subject {
         Object value = getExtra(tokenValue, key);
         return JsonKit.toType(value, valueType);
     }
+
+    // ==================== 会话生命周期（对齐 Sa-Token StpLogic 能力边界）====================
+
+    /**
+     * 登录（建立会话）。
+     *
+     * @param request 登录请求（loginId + AuthPrincipal + 扩展信息 + 有效期）
+     * @return 会话凭证（Token / SessionId / null 表示无状态）
+     */
+    String login(AuthRequest request);
+
+    /**
+     * 登出（销毁当前会话）。
+     */
+    void logout();
+
+    /**
+     * 按 loginId 登出（可指定设备）。
+     *
+     * @param loginId 账号 ID
+     */
+    void logout(Object loginId);
+
+    /**
+     * 踢人下线（区别于 logout：被踢方收到踢出事件）。
+     *
+     * @param loginId 账号 ID
+     */
+    void kickout(Object loginId);
+
+    /**
+     * 刷新会话凭证（续期 / 换发 Token）。
+     *
+     * @return 新凭证
+     */
+    String refresh();
+
+    /**
+     * 校验凭证有效性（仅校验，不建立会话）。
+     *
+     * @param token 凭证
+     * @return 凭证对应的认证主体，校验失败返回 null
+     */
+    <T extends AuthPrincipal> T verify(String token);
+
+    // ==================== 会话数据操作（对齐 SaSession.setData/getData）====================
+
+    /**
+     * 设置会话属性。
+     *
+     * @param key   键
+     * @param value 值
+     */
+    default void setAttribute(String key, Object value) {
+        AuthPrincipal principal = getPrincipal();
+        if (principal != null) {
+            principal.getProfile().put(key, value);
+        }
+    }
+
+    /**
+     * 获取会话属性。
+     *
+     * @param key 键
+     * @return 值
+     */
+    default <V> V getAttribute(String key) {
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null) {
+            return null;
+        }
+        return (V) principal.getProfile().get(key);
+    }
+
+    // ==================== 封禁（对齐 StpLogic.disable）====================
+
+    /**
+     * 封禁账号。
+     *
+     * @param loginId 账号 ID
+     * @param timeout 封禁时长（秒），-1 代表永久
+     */
+    void disable(Object loginId, long timeout);
+
+    /**
+     * 判断账号是否被封禁。
+     *
+     * @param loginId 账号 ID
+     * @return 是否封禁
+     */
+    boolean isDisabled(Object loginId);
+
+    /**
+     * 解封账号。
+     *
+     * @param loginId 账号 ID
+     */
+    void untieDisable(Object loginId);
 
 }

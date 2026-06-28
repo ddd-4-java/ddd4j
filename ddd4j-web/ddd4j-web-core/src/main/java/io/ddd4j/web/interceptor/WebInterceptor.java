@@ -18,4 +18,9 @@ public interface WebInterceptor {
 
     /** 请求预处理 */
     boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
+
+    /** 请求完成后清理（默认空实现，子类可重写） */
+    default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        // 空实现
+    }
 }

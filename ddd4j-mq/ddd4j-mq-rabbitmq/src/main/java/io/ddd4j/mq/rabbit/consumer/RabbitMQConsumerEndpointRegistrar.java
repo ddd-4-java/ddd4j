@@ -24,7 +24,6 @@ import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.context.ApplicationContext;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -114,24 +113,24 @@ public class RabbitMQConsumerEndpointRegistrar {
         return (Message amqpMessage, Channel channel) -> {
             try {
                 String payloadText = new String(amqpMessage.getBody(), StandardCharsets.UTF_8);
-                org.springframework.messaging.Message<String> springMessage = MessageBuilder
-                        .withPayload(payloadText)
-                        .copyHeaders(amqpMessage.getMessageProperties().getHeaders())
-                        .setHeader(AmqpHeaders.CHANNEL, channel)
-                        .setHeader(AmqpHeaders.DELIVERY_TAG, amqpMessage.getMessageProperties().getDeliveryTag())
-                        .setHeader(AmqpHeaders.MESSAGE_ID, amqpMessage.getMessageProperties().getMessageId())
-                        .setHeader(AmqpHeaders.CORRELATION_ID, amqpMessage.getMessageProperties().getCorrelationId())
-                        .build();
 
-                Map<String, Object> headers = new HashMap<>(springMessage.getHeaders());
+                // 2.0.x：直接构造纯 Java MQMessage，Channel/deliveryTag 通过 headers 传递（与 AmqpMessageAcknowledgmentFactory.from(MQMessage) 配套）
+                Map<String, Object> headers = new HashMap<>();
+                Map<String, Object> propsHeaders = amqpMessage.getMessageProperties().getHeaders();
+                if (propsHeaders != null) {
+                    headers.putAll(propsHeaders);
+                }
+                headers.put(AmqpHeaders.CHANNEL, channel);
+                headers.put(AmqpHeaders.DELIVERY_TAG, amqpMessage.getMessageProperties().getDeliveryTag());
+
                 MQMessage<String> mqMessage = MQMessage.of(
                         payloadText,
                         headers,
                         amqpMessage.getMessageProperties().getMessageId(),
                         amqpMessage.getMessageProperties().getCorrelationId(),
-                        springMessage);
+                        amqpMessage);
 
-                MessageAcknowledgment ack = AmqpMessageAcknowledgmentFactory.fromSpringMessage(springMessage)
+                MessageAcknowledgment ack = AmqpMessageAcknowledgmentFactory.from(mqMessage)
                         .map(a -> (MessageAcknowledgment) a)
                         .orElseGet(NoOpMessageAcknowledgment::new);
 

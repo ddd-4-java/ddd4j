@@ -1,6 +1,6 @@
 package io.ddd4j.mq.registry;
 
-import org.springframework.util.StringUtils;
+
 
 import java.util.Locale;
 
@@ -32,7 +32,7 @@ public enum MQBrokerType {
      * 解析配置字符串为 Broker 类型（兼容 redisStream 等历史命名）。
      */
     public static MQBrokerType from(String raw) {
-        if (!StringUtils.hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
+        if (!hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
             return NONE;
         }
         String normalized = raw.trim()
@@ -71,5 +71,9 @@ public enum MQBrokerType {
      */
     public String toConfigValue() {
         return name().toLowerCase(Locale.ROOT).replace('_', '-');
+    }
+
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
     }
 }

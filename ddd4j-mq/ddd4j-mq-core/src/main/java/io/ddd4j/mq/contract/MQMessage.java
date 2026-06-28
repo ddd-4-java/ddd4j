@@ -1,9 +1,5 @@
 package io.ddd4j.mq.contract;
 
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.support.MessageBuilder;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,114 +7,138 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * 消息信封适配器：内部持有 {@link Message}，提供与旧 API 兼容的便捷方法。
- * <p>
- * 新代码应直接使用 {@link Message} + {@link MQMessages} 工具类。
- * 本类用于兼容已有实现模块，可逐步迁移。
+ * 消息信封（纯 Java 契约，零 Spring 依赖）。
+ *
+ * <p>作为 ddd4j-mq 全模块统一的消息模型：
+ * <ul>
+ *   <li>各 {@code ddd4j-mq-*} Broker 适配器只需负责把原生消息转换为 {@code MQMessage}；</li>
+ *   <li>{@code ddd4j-mq-spring} 提供 Spring {@code org.springframework.messaging.Message} 的桥接；</li>
+ *   <li>{@code ddd4j-quarkus} / {@code ddd4j-javalin} 也只需构造纯 Java {@code MQMessage}；</li>
+ *   <li>消费侧统一通过 {@link io.ddd4j.mq.registry.MQListenerMethodInvoker} 反射调用方法。</li>
+ * </ul>
+ *
+ * <p>headers 使用 {@code String} / {@code Object} 键值对，与各 Broker 客户端解耦。
  *
  * @param <T> 载荷类型
- * @deprecated 使用 {@link Message} + {@link MQMessages} 替代
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 public class MQMessage<T> {
 
-    private final Message<T> delegate;
+    private final T payload;
+    private final Map<String, Object> headers;
+    private final String messageId;
+    private final String correlationId;
+    private final Object nativeMessage;
 
-    public MQMessage(T payload, Map<String, Object> headers, String messageId, String correlationId, Object nativeMessage) {
-        MessageBuilder<T> builder = MessageBuilder.withPayload(payload);
-        if (headers != null && !headers.isEmpty()) {
-            builder.copyHeaders(headers);
-        }
-        if (messageId != null) {
-            try {
-                builder.setHeader(MessageHeaders.ID, UUID.fromString(messageId.contains("-") ? messageId : padUUID(messageId)));
-            } catch (IllegalArgumentException ignored) {
-                builder.setHeader(MessageHeaders.ID, UUID.randomUUID());
-            }
-        }
-        if (correlationId != null) {
-            builder.setHeader(MQMessages.HEADER_CORRELATION_ID, correlationId);
-        }
-        if (nativeMessage != null) {
-            builder.setHeader(MQMessages.HEADER_NATIVE_MESSAGE, nativeMessage);
-        }
-        this.delegate = builder.build();
+    public MQMessage(T payload, Map<String, Object> headers, String messageId,
+                     String correlationId, Object nativeMessage) {
+        this.payload = payload;
+        this.headers = headers == null
+                ? Collections.emptyMap()
+                : Collections.unmodifiableMap(new HashMap<>(headers));
+        this.messageId = messageId;
+        this.correlationId = correlationId;
+        this.nativeMessage = nativeMessage;
     }
 
-    /**
-     * 从已有的 {@link Message} 构造适配器。
-     */
-    public MQMessage(Message<T> delegate) {
-        this.delegate = Objects.requireNonNull(delegate);
-    }
+    // ── 访问器 ──
 
     public T getPayload() {
-        return delegate.getPayload();
+        return payload;
     }
 
     public T payload() {
-        return delegate.getPayload();
+        return payload;
     }
 
     public Map<String, Object> getHeaders() {
-        return delegate.getHeaders();
+        return headers;
     }
 
     public Map<String, Object> headers() {
-        return delegate.getHeaders();
+        return headers;
     }
 
     public String getMessageId() {
-        return MQMessages.extractMessageId(delegate);
+        return messageId;
+    }
+
+    public String messageId() {
+        return messageId;
     }
 
     public String getCorrelationId() {
-        return MQMessages.extractCorrelationId(delegate);
+        return correlationId;
     }
 
-    public Object getNativeMessage() {
-        return delegate.getHeaders().get(MQMessages.HEADER_NATIVE_MESSAGE);
-    }
-
-    public Object header(String key) {
-        return delegate.getHeaders().get(key);
-    }
-
-    public String headerAsString(String key) {
-        return MQMessages.headerAsString(delegate, key);
-    }
-
-    public <N> N nativeMessage(Class<N> type) {
-        return MQMessages.nativeMessage(delegate, type);
+    public String correlationId() {
+        return correlationId;
     }
 
     /**
-     * 获取底层 {@link Message} 实例。
+     * 逃生口：返回底层 Broker 原生消息（如 Kafka RecordMetadata、RabbitMQ Envelope 等）。
      */
-    public Message<T> toMessage() {
-        return delegate;
+    public Object getNativeMessage() {
+        return nativeMessage;
+    }
+
+    public Object nativeMessage() {
+        return nativeMessage;
+    }
+
+    public Object header(String key) {
+        return headers.get(key);
+    }
+
+    public String headerAsString(String key) {
+        Object v = headers.get(key);
+        return v == null ? null : String.valueOf(v);
+    }
+
+    /**
+     * 类型安全地从 nativeMessage 逃生口获取底层对象。
+     */
+    @SuppressWarnings("unchecked")
+    public <N> N nativeMessage(Class<N> type) {
+        if (nativeMessage != null && type.isInstance(nativeMessage)) {
+            return (N) nativeMessage;
+        }
+        return null;
     }
 
     // ── 工厂方法 ──
+
+    public static <T> MQMessage<T> of(T payload) {
+        return new MQMessage<>(payload, Collections.emptyMap(), null, null, null);
+    }
 
     public static <T> MQMessage<T> of(T payload, String messageId) {
         return new MQMessage<>(payload, Collections.emptyMap(), messageId, null, null);
     }
 
-    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId, String correlationId) {
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId) {
+        return new MQMessage<>(payload, headers, messageId, null, null);
+    }
+
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers,
+                                      String messageId, String correlationId) {
         return new MQMessage<>(payload, headers, messageId, correlationId, null);
     }
 
-    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId, String correlationId, Object nativeMessage) {
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers,
+                                      String messageId, String correlationId, Object nativeMessage) {
         return new MQMessage<>(payload, headers, messageId, correlationId, nativeMessage);
     }
 
     /**
-     * 从 {@link Message} 构造 MQMessage。
+     * 自动生成 UUID 作为 messageId。
      */
-    public static <T> MQMessage<T> from(Message<T> message) {
-        return new MQMessage<>(message);
+    public static <T> MQMessage<T> autoId(T payload, Map<String, Object> headers) {
+        return new MQMessage<>(payload, headers, UUID.randomUUID().toString(), null, null);
     }
+
+    // ── Object ──
 
     @Override
     public boolean equals(Object o) {
@@ -129,30 +149,22 @@ public class MQMessage<T> {
             return false;
         }
         MQMessage<?> that = (MQMessage<?>) o;
-        return Objects.equals(delegate, that.delegate);
+        return Objects.equals(payload, that.payload)
+                && Objects.equals(headers, that.headers)
+                && Objects.equals(messageId, that.messageId)
+                && Objects.equals(correlationId, that.correlationId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(delegate);
+        return Objects.hash(payload, headers, messageId, correlationId);
     }
 
     @Override
     public String toString() {
-        return "MQMessage{payload=" + delegate.getPayload() + ", headers=" + delegate.getHeaders() + "}";
-    }
-
-    private static String padUUID(String shortId) {
-        if (shortId == null || shortId.length() >= 36) {
-            return shortId;
-        }
-        if (shortId.length() == 32) {
-            return shortId.substring(0, 8) + "-" +
-                    shortId.substring(8, 12) + "-" +
-                    shortId.substring(12, 16) + "-" +
-                    shortId.substring(16, 20) + "-" +
-                    shortId.substring(20);
-        }
-        return "00000000-0000-0000-0000-" + String.format("%012d", Long.parseLong(shortId));
+        return "MQMessage{messageId=" + messageId
+                + ", correlationId=" + correlationId
+                + ", payload=" + payload
+                + ", headers=" + headers + "}";
     }
 }

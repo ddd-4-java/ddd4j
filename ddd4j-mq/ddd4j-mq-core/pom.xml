@@ -11,7 +11,11 @@
     </parent>
 
     <artifactId>ddd4j-mq-core</artifactId>
-    <description>ddd4j MQ - 纯 Java 抽象：MQMessage/MQEventListener/MQBrokerAdapter SPI。零 Spring 容器依赖（仅 spring-messaging 作为标准消息模型）。</description>
+    <description>
+        ddd4j MQ - 纯 Java 抽象（零 Spring 依赖）：
+        MQMessage / MQEventListener / MQBrokerAdapter SPI。
+        各框架适配（Spring / Quarkus / Javalin）通过对应桥接模块提供。
+    </description>
 
     <dependencies>
         <!-- 纯 Java 核心契约 -->
@@ -20,26 +24,10 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Hutool -->
+        <!-- Hutool 工具（按需子模块，可被消费方排除） -->
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-        <!-- Spring Messaging 作为统一消息模型（org.springframework.messaging.Message） -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-messaging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Test: spring-context for AnnotationConfigApplicationContext in MQListenerScannerTest -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>test</scope>
+            <artifactId>hutool-core</artifactId>
         </dependency>
     </dependencies>
 

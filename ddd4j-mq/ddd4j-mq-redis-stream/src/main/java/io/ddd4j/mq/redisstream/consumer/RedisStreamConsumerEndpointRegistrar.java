@@ -19,7 +19,6 @@ import org.springframework.data.redis.connection.stream.StreamOffset;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -144,23 +143,22 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
             if (record.getValue().containsKey("data")) {
                 payloadText = record.getValue().get("data");
             }
-            org.springframework.messaging.Message<String> springMessage = MessageBuilder
-                    .withPayload(payloadText)
-                    .setHeader(RedisStreamMessageAcknowledgment.HEADER_STREAM_KEY, streamKey)
-                    .setHeader(RedisStreamMessageAcknowledgment.HEADER_CONSUMER_GROUP, consumerGroup)
-                    .setHeader(RedisStreamMessageAcknowledgment.HEADER_RECORD_ID, record.getId())
-                    .build();
 
-            Map<String, Object> headers = new HashMap<>(springMessage.getHeaders());
+            // 2.0.x：直接构造纯 Java MQMessage，Redis Stream 原生 record 通过 nativeMessage 逃生口传入
+            Map<String, Object> headers = new HashMap<>();
+            headers.put(RedisStreamMessageAcknowledgment.HEADER_STREAM_KEY, streamKey);
+            headers.put(RedisStreamMessageAcknowledgment.HEADER_CONSUMER_GROUP, consumerGroup);
+            headers.put(RedisStreamMessageAcknowledgment.HEADER_RECORD_ID, record.getId());
+
             MQMessage<String> mqMessage = MQMessage.of(
                     payloadText,
                     headers,
                     record.getId().getValue(),
                     null,
-                    springMessage);
+                    record);
 
             MessageAcknowledgment ack = RedisStreamMessageAcknowledgmentFactory
-                    .fromSpringMessage(springMessage, stringRedisTemplate)
+                    .from(mqMessage, stringRedisTemplate)
                     .map(a -> (MessageAcknowledgment) a)
                     .orElseGet(NoOpMessageAcknowledgment::new);
             handler.handle(mqMessage, ack);

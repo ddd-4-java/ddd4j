@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-data-logs</artifactId>
-    <description>Ddd4j Log Component</description>
+    <description>ddd4j 数据层 - API 操作日志：ApiOperationLogAspect 切面 + Provider（纯 AspectJ + ddd4j-spring 桥接）。Spring Boot auto-config 迁移到 ddd4j-boot-data。</description>
 
     <dependencies>
         <!-- For DDD4j -->
@@ -20,13 +20,19 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- For AOP -->
+        <!-- For AOP（ApiOperationLogAspect 使用 @Aspect / @Around） -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+        <!-- For Servlet（日志记录请求信息） -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-            <dependency>
+        <!-- For Spring（ApiOperationLogAspect 使用 @Component） -->
+        <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-spring</artifactId>
             <version>${revision}</version>

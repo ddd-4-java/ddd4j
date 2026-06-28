@@ -19,6 +19,11 @@
             <artifactId>ddd4j-mq-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- Spring 基础（AutoConfiguration 需要） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>

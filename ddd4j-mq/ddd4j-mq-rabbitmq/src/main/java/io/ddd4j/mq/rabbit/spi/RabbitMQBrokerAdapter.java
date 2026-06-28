@@ -14,10 +14,11 @@ import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.messaging.Message;
 
 /**
  * RabbitMQ Broker 适配器，桥接 ddd4j MQ SPI 与 Spring AMQP。
+ * <p>2.0.x 重构：基于纯 Java {@link MQMessage}，不再依赖 {@code org.springframework.messaging.Message}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
@@ -44,15 +45,8 @@ public class RabbitMQBrokerAdapter implements MQBrokerAdapter {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        // 逻辑块：优先从 Spring Message 原生对象解析 AMQP 确认头
-        Message<?> springMessage = message.nativeMessage(Message.class);
-        if (springMessage != null) {
-            return AmqpMessageAcknowledgmentFactory.fromSpringMessage(springMessage)
-                    .map(ack -> (MessageAcknowledgment) ack)
-                    .orElse(null);
-        }
-        AmqpMessageAcknowledgment amqpAck = message.nativeMessage(AmqpMessageAcknowledgment.class);
-        return amqpAck;
+        // 2.0.x：直接基于纯 Java MQMessage 解析（headers 中携带 Channel/deliveryTag）
+        return AmqpMessageAcknowledgmentFactory.from(message).orElse(null);
     }
 
     @Override

@@ -3,43 +3,22 @@ package io.ddd4j.mq.activemq.ack;
 import io.ddd4j.mq.contract.MQMessage;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
-import org.springframework.messaging.MessageHeaders;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 从 Spring JMS {@link org.springframework.messaging.Message} 构建 {@link ActiveMQMessageAcknowledgment}。
+ * 从纯 Java {@link MQMessage} 头信息构建 {@link ActiveMQMessageAcknowledgment}。
+ *
+ * <p>2.0.x 重构：彻底移除对 {@code org.springframework.messaging.Message} 的依赖，
+ * 直接基于 ddd4j-mq-core 的纯 Java {@link MQMessage} 工作。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class ActiveMQMessageAcknowledgmentFactory {
 
     private ActiveMQMessageAcknowledgmentFactory() {
-    }
-
-    /**
-     * 根据 Spring Message headers 解析确认对象。
-     *
-     * @param message Spring 消息
-     * @return 确认对象；缺少必要头时返回 empty
-     */
-    public static Optional<ActiveMQMessageAcknowledgment> fromSpringMessage(
-            org.springframework.messaging.Message<?> message) {
-        Objects.requireNonNull(message, "message");
-        MessageHeaders headers = message.getHeaders();
-
-        Session session = headers.get(ActiveMQMessageAcknowledgment.HEADER_JMS_SESSION, Session.class);
-        Message jmsMessage = headers.get(ActiveMQMessageAcknowledgment.HEADER_JMS_MESSAGE, Message.class);
-        if (jmsMessage == null) {
-            Object payload = message.getPayload();
-            if (payload instanceof Message payloadMessage) {
-                jmsMessage = payloadMessage;
-            }
-        }
-        if (jmsMessage == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new ActiveMQMessageAcknowledgment(jmsMessage, session));
     }
 
     /**
@@ -50,8 +29,13 @@ public final class ActiveMQMessageAcknowledgmentFactory {
      */
     public static Optional<ActiveMQMessageAcknowledgment> from(MQMessage<?> message) {
         Objects.requireNonNull(message, "message");
-        Object messageHeader = message.getHeaders().get(ActiveMQMessageAcknowledgment.HEADER_JMS_MESSAGE);
-        Object sessionHeader = message.getHeaders().get(ActiveMQMessageAcknowledgment.HEADER_JMS_SESSION);
+        Map<String, Object> headers = message.getHeaders();
+        if (headers == null || headers.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Object messageHeader = headers.get(ActiveMQMessageAcknowledgment.HEADER_JMS_MESSAGE);
+        Object sessionHeader = headers.get(ActiveMQMessageAcknowledgment.HEADER_JMS_SESSION);
 
         Message jmsMessage = null;
         if (messageHeader instanceof Message headerMessage) {

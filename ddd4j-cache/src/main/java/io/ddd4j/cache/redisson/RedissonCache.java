@@ -1,0 +1,334 @@
+package io.ddd4j.cache.redisson;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.cache.AtomicCache;
+import io.ddd4j.core.cache.Cache;
+import io.ddd4j.core.cache.CacheConfig;
+import io.ddd4j.core.cache.CacheLock;
+import io.ddd4j.core.cache.CacheStats;
+import io.ddd4j.core.cache.CasCache;
+import org.redisson.api.RBucket;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+
+import java.util.Objects;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.function.Function;
+
+/**
+ * Redisson 原生缓存实现。
+ *
+ * <p>传入 {@link RedissonClient} 实例，直接实现 ddd4j {@link Cache} SPI。
+ * 值通过 Jackson 序列化为 JSON 字符串存储到 Redis。
+ *
+ * <p>相比 Jedis/Lettuce，Redisson 额外提供分布式锁能力：
+ * 通过 {@link #tryLock(String, long)} 获取分布式锁。
+ *
+ * <p>使用示例：
+ * <pre>{@code
+ *   RedissonClient client = Redisson.create();
+ *   CacheConfig config = CacheConfig.builder("user").expireAfterWriteSeconds(300).build();
+ *   Cache<String, User> cache = new RedissonCache<>(client, config, User.class);
+ *   cache.put("123", user);
+ *   User cached = cache.getIfPresent("123");
+ *
+ *   // 分布式锁
+ *   Lock lock = ((RedissonCache<?>) cache).tryLock("resource:1", 30);
+ *   try {
+ *       lock.lock();
+ *       // 业务逻辑
+ *   } finally {
+ *       lock.unlock();
+ *   }
+ * }</pre>
+ *
+ * @param <V> 缓存值类型
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
+public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicCache<String, V> {
+
+    private final RedissonClient redissonClient;
+    private final long expireSeconds;
+    private final Class<V> valueType;
+    private final ObjectMapper objectMapper;
+    private final String keyPrefix;
+
+    /**
+     * 构造 Redisson 缓存。
+     *
+     * @param redissonClient Redisson 客户端
+     * @param config         缓存配置
+     * @param valueType      值类型
+     * @param objectMapper   Jackson ObjectMapper
+     */
+    public RedissonCache(RedissonClient redissonClient, CacheConfig config,
+                         Class<V> valueType, ObjectMapper objectMapper) {
+        this.redissonClient = Objects.requireNonNull(redissonClient);
+        this.expireSeconds = config.getExpireAfterWriteSeconds() > 0 ? config.getExpireAfterWriteSeconds() : 3600;
+        this.valueType = Objects.requireNonNull(valueType);
+        this.keyPrefix = config.getName() + ":";
+        this.objectMapper = objectMapper != null ? objectMapper : new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+    }
+
+    public RedissonCache(RedissonClient redissonClient, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
+        this(redissonClient, config, valueType, objectMapperFactory.apply(valueType.getName()));
+    }
+
+    /**
+     * 构造 Redisson 缓存（默认 ObjectMapper）。
+     */
+    public RedissonCache(RedissonClient redissonClient, CacheConfig config, Class<V> valueType) {
+        this(redissonClient, config, valueType, new ObjectMapper());
+    }
+
+    private String key(String key) {
+        return keyPrefix + key;
+    }
+
+    @Override
+    public V getIfPresent(String key) {
+        try {
+            RBucket<String> bucket = redissonClient.getBucket(key(key));
+            String json = bucket.get();
+            if (json == null) return null;
+            return objectMapper.readValue(json, valueType);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public V get(String key, Function<String, V> mappingFunction) {
+        V value = getIfPresent(key);
+        if (value == null) {
+            value = mappingFunction.apply(key);
+            if (value != null) put(key, value);
+        }
+        return value;
+    }
+
+    @Override
+    public void put(String key, V value) {
+        try {
+            String json = (value instanceof String) ? (String) value : objectMapper.writeValueAsString(value);
+            RBucket<String> bucket = redissonClient.getBucket(key(key));
+            if (expireSeconds > 0) {
+                bucket.set(json, expireSeconds, TimeUnit.SECONDS);
+            } else {
+                bucket.set(json);
+            }
+        } catch (Exception e) {
+            // 写入失败忽略
+        }
+    }
+
+    @Override
+    public void invalidate(String key) {
+        try {
+            redissonClient.getBucket(key(key)).delete();
+        } catch (Exception e) {
+            // 删除失败忽略
+        }
+    }
+
+    @Override
+    public void invalidateAll() {
+        // Redis 不建议 flushAll，需通过 key 前缀逐个删除
+    }
+
+    @Override
+    public long estimatedSize() {
+        return -1;
+    }
+
+    @Override
+    public CacheStats stats() {
+        return null;
+    }
+
+    // ==================== CacheLock 实现（基于 Redisson 分布式锁） ====================
+
+    @Override
+    public boolean tryLock(String key, long waitSeconds, long leaseSeconds) {
+        try {
+            return redissonClient.getLock(keyPrefix + "lock:" + key)
+                    .tryLock(waitSeconds, leaseSeconds, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+    @Override
+    public void unlock(String key) {
+        try {
+            redissonClient.getLock(keyPrefix + "lock:" + key).unlock();
+        } catch (Exception e) {
+            // 锁已过期或未持有
+        }
+    }
+
+    /**
+     * 获取底层 Redisson RLock 实例（用于高级锁操作）。
+     *
+     * @param key 锁键
+     * @return RLock 实例
+     */
+    public RLock getLock(String key) {
+        return redissonClient.getLock(keyPrefix + "lock:" + key);
+    }
+
+    // ==================== CasCache 实现（基于 Redisson RBucket CAS） ====================
+
+    @Override
+    public boolean putIfAbsent(String key, V value) {
+        try {
+            String json = (value instanceof String) ? (String) value : objectMapper.writeValueAsString(value);
+            RBucket<String> bucket = redissonClient.getBucket(key(key));
+            if (expireSeconds > 0) {
+                return bucket.trySet(json, Duration.ofSeconds(expireSeconds).toMillis(), TimeUnit.MILLISECONDS);
+            }
+            return bucket.trySet(json);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean replace(String key, V expected, V newValue) {
+        try {
+            String expectedJson = (expected instanceof String) ? (String) expected : objectMapper.writeValueAsString(expected);
+            String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
+            RBucket<String> bucket = redissonClient.getBucket(key(key));
+            if (expected == null) {
+                return bucket.trySet(newJson);
+            }
+            return bucket.compareAndSet(expectedJson, newJson);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean removeIf(String key, V expected) {
+        try {
+            String expectedJson = (expected instanceof String) ? (String) expected : objectMapper.writeValueAsString(expected);
+            RBucket<String> bucket = redissonClient.getBucket(key(key));
+            return bucket.compareAndSet(expectedJson, null);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // ==================== AtomicCache 实现（基于 Redisson RAtomicLong + Lua 库存脚本） ====================
+
+    /** Lua 库存扣减脚本（-1=售罄, -2=不足, -3=未初始化, -4=非法参数, >=0=剩余） */
+    private static final String STOCK_DECR_SCRIPT =
+            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
+            "  local stock = tonumber(redis.call('GET', KEYS[1])); " +
+            "  local num = tonumber(ARGV[1]); " +
+            "  if (num <= 0) then return -4 end; " +
+            "  if (stock <= 0) then return -1 end; " +
+            "  if (stock >= num) then return redis.call('INCRBY', KEYS[1], 0 - num) end; " +
+            "  return -2; " +
+            "end; " +
+            "return -3;";
+
+    /** Lua 库存回补脚本 */
+    private static final String STOCK_INCR_SCRIPT =
+            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
+            "  local num = tonumber(ARGV[1]); " +
+            "  if (num < 0) then return -4 end; " +
+            "  return redis.call('INCRBY', KEYS[1], num); " +
+            "end; " +
+            "return -3;";
+
+    @Override
+    public long increment(String key, long delta) {
+        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        return redissonClient.getAtomicLong(key(key)).addAndGet(delta);
+    }
+
+    @Override
+    public long increment(String key, long delta, long seconds) {
+        long result = increment(key, delta);
+        // 设置过期（RAtomicLong 的 expire）
+        redissonClient.getAtomicLong(key(key)).expire(Duration.ofSeconds(seconds));
+        return result;
+    }
+
+    @Override
+    public long decrement(String key, long delta) {
+        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        return redissonClient.getAtomicLong(key(key)).addAndGet(-delta);
+    }
+
+    @Override
+    public double incrementFloat(String key, double delta) {
+        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        // Redisson 无原子浮点操作，使用 RBucket + Lua INCRBYFLOAT
+        org.redisson.api.RScript script = redissonClient.getScript();
+        return script.eval(org.redisson.api.RScript.Mode.READ_WRITE,
+                "if (redis.call('EXISTS', KEYS[1]) == 1) then return redis.call('INCRBYFLOAT', KEYS[1], ARGV[1]) else redis.call('SET', KEYS[1], ARGV[1]) return tonumber(ARGV[1]) end",
+                org.redisson.api.RScript.ReturnType.STATUS,
+                java.util.Collections.singletonList(key(key)),
+                String.valueOf(delta));
+    }
+
+    @Override
+    public double decrementFloat(String key, double delta) {
+        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        return incrementFloat(key, -delta);
+    }
+
+    @Override
+    public long stockDecrement(String key, long quantity) {
+        org.redisson.api.RScript script = redissonClient.getScript();
+        return script.eval(org.redisson.api.RScript.Mode.READ_WRITE,
+                STOCK_DECR_SCRIPT, org.redisson.api.RScript.ReturnType.INTEGER,
+                java.util.Collections.singletonList(key(key)), quantity);
+    }
+
+    @Override
+    public long stockIncrement(String key, long quantity) {
+        org.redisson.api.RScript script = redissonClient.getScript();
+        return script.eval(org.redisson.api.RScript.Mode.READ_WRITE,
+                STOCK_INCR_SCRIPT, org.redisson.api.RScript.ReturnType.INTEGER,
+                java.util.Collections.singletonList(key(key)), quantity);
+    }
+
+    // ==================== TTL 管理 ====================
+
+    @Override
+    public boolean expire(String key, long seconds) {
+        return redissonClient.getBucket(key(key)).expire(Duration.ofSeconds(seconds));
+    }
+
+    @Override
+    public long getExpire(String key) {
+        long ttl = redissonClient.getBucket(key(key)).remainTimeToLive();
+        return ttl < 0 ? ttl : ttl / 1000;
+    }
+
+    @Override
+    public boolean persist(String key) {
+        return redissonClient.getBucket(key(key)).clearExpire();
+    }
+
+    /**
+     * 获取底层 Redisson 客户端。
+     *
+     * @return RedissonClient 实例
+     */
+    public RedissonClient unwrap() {
+        return redissonClient;
+    }
+
+}

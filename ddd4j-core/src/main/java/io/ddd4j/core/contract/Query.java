@@ -24,6 +24,26 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class Query extends Page {
+    // 查询条件后缀：以该后缀结尾的参数，可以自动补充查询条件
+    public static final String NOT_QUERY = "Not";           // !=
+    public static final String NOT_IN_QUERY = "NotIn";      // NOT IN（集合或逗号分隔字符串）
+    public static final String IN_QUERY = "In";             // IN（集合或逗号分隔字符串）
+    public static final String LIKE_QUERY = "Like";         // LIKE '%xxx%'
+    public static final String LIKE_LEFT_QUERY = "LikeLeft"; // LIKE 'xxx%'
+    public static final String LIKE_RIGHT_QUERY = "LikeRight"; // LIKE '%xxx'
+    public static final String NOT_LIKE_QUERY = "NotLike";  // NOT LIKE '%xxx%'
+    public static final String MIN_QUERY = "Min";           // >  （数值区间最小值）
+    public static final String MAX_QUERY = "Max";           // <  （数值区间最大值）
+    public static final String MIN_EQUALS_QUERY = "MinEq";  // >= （数值区间最小值含等）
+    public static final String MAX_EQUALS_QUERY = "MaxEq";  // <= （数值区间最大值含等）
+    public static final String START_QUERY = "Start";       // >= （开始时间筛选）
+    public static final String END_QUERY = "End";           // <= （结束时间/到期时间筛选）
+    public static final String NULL_QUERY = "IsNull";       // IS NULL / IS NOT NULL（true=is null）
+    public static final String ORS_QUERY = "Ors";           // OR 条件（a=xx or b=yy）
+    public static final String IN_JSON_QUERY = "InJson";    // JSON 字段 LIKE 查询
+    // 不参与查询的字段
+    public static final List<String> EXCLUDE_FIELDS = Arrays.asList("select", "groupBy", "having", "orderBys", "fields",
+            "keyword", "ignoreTenantId", "fills", "ignoreCount", "split");
     // select字段列表，多个以split分隔
     protected String select;
     // 分组字段列表

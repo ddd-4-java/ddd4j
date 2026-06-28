@@ -3,14 +3,19 @@ package io.ddd4j.mq.mqtt.ack;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.contract.MQMessage;
 import org.springframework.integration.mqtt.support.MqttHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 从 Spring Integration MQTT {@link Message} 头信息构建 {@link MqttMessageAcknowledgment}。
+ * 从纯 Java {@link MQMessage} 头信息构建 {@link MqttMessageAcknowledgment}。
+ *
+ * <p>2.0.x 重构：彻底移除对 {@code org.springframework.messaging.Message} 的依赖，
+ * 直接基于 ddd4j-mq-core 的纯 Java {@link MQMessage} 工作。
+ *
+ * <p>注：{@code MqttHeaders} 来自 spring-integration-mqtt，属于 MQTT 客户端设计约束。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MqttMessageAcknowledgmentFactory {
@@ -19,47 +24,28 @@ public final class MqttMessageAcknowledgmentFactory {
     }
 
     /**
-     * 根据 Spring Message headers 解析确认对象。
-     *
-     * @param message Spring 消息
-     * @return 确认对象；QoS 0 时返回 NoOp 包装
-     */
-    public static MessageAcknowledgmentOrNoOp fromSpringMessage(Message<?> message) {
-        Objects.requireNonNull(message, "message");
-        MessageHeaders headers = message.getHeaders();
-        String topic = headerAsString(headers, MqttHeaders.RECEIVED_TOPIC);
-        if (topic == null) {
-            topic = headerAsString(headers, MqttHeaders.TOPIC);
-        }
-        int qos = resolveQos(headers);
-        String messageId = headerAsString(headers, MqttHeaders.ID);
-
-        if (qos <= 0) {
-            return new MessageAcknowledgmentOrNoOp(
-                    new NoOpMessageAcknowledgment(), false);
-        }
-        return new MessageAcknowledgmentOrNoOp(
-                new MqttMessageAcknowledgment(topic, qos, messageId), true);
-    }
-
-    /**
      * 从 {@link MQMessage} 头信息解析确认对象。
      *
      * @param message MQ 信封
-     * @return 确认对象
+     * @return 确认对象；QoS 0 时返回 empty
      */
     public static Optional<MqttMessageAcknowledgment> from(MQMessage<?> message) {
         Objects.requireNonNull(message, "message");
-        Object topicHeader = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
-        if (topicHeader == null) {
-            topicHeader = message.getHeaders().get(MqttHeaders.TOPIC);
+        Map<String, Object> headers = message.getHeaders();
+        if (headers == null || headers.isEmpty()) {
+            return Optional.empty();
         }
-        Object qosHeader = message.getHeaders().get(MqttHeaders.RECEIVED_QOS);
+
+        Object topicHeader = headers.get(MqttHeaders.RECEIVED_TOPIC);
+        if (topicHeader == null) {
+            topicHeader = headers.get(MqttHeaders.TOPIC);
+        }
+        Object qosHeader = headers.get(MqttHeaders.RECEIVED_QOS);
         if (!(topicHeader instanceof String topic)) {
             return Optional.empty();
         }
         int qos = qosHeader instanceof Number number ? number.intValue() : 0;
-        Object idHeader = message.getHeaders().get(MqttHeaders.ID);
+        Object idHeader = headers.get(MqttHeaders.ID);
         String messageId = idHeader == null ? null : String.valueOf(idHeader);
         if (qos <= 0) {
             return Optional.empty();
@@ -68,22 +54,18 @@ public final class MqttMessageAcknowledgmentFactory {
     }
 
     /**
-     * 解析 QoS header。
+     * 从 {@link MQMessage} 头信息解析确认对象，QoS 0 时返回 NoOp 包装。
+     *
+     * @param message MQ 信封
+     * @return 确认对象与是否为 QoS 确认的包装
      */
-    private static int resolveQos(MessageHeaders headers) {
-        Object qosHeader = headers.get(MqttHeaders.RECEIVED_QOS);
-        if (qosHeader instanceof Number number) {
-            return number.intValue();
+    public static MessageAcknowledgmentOrNoOp resolve(MQMessage<?> message) {
+        Objects.requireNonNull(message, "message");
+        Optional<MqttMessageAcknowledgment> ack = from(message);
+        if (ack.isPresent()) {
+            return new MessageAcknowledgmentOrNoOp(ack.get(), true);
         }
-        return 0;
-    }
-
-    /**
-     * 读取字符串类型的 header。
-     */
-    private static String headerAsString(MessageHeaders headers, String key) {
-        Object value = headers.get(key);
-        return value == null ? null : String.valueOf(value);
+        return new MessageAcknowledgmentOrNoOp(new NoOpMessageAcknowledgment(), false);
     }
 
     /**

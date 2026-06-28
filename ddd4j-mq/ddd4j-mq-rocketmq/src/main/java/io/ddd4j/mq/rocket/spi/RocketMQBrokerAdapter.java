@@ -14,10 +14,11 @@ import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
 import lombok.RequiredArgsConstructor;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
-import org.springframework.messaging.Message;
 
 /**
  * RocketMQ Broker 适配器，桥接 ddd4j MQ SPI 与 RocketMQ Spring。
+ * <p>2.0.x 重构：基于纯 Java {@link MQMessage}，不再依赖 {@code org.springframework.messaging.Message}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
@@ -44,13 +45,7 @@ public class RocketMQBrokerAdapter implements MQBrokerAdapter {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        // 逻辑块：优先从 Spring Message 原生对象解析 RocketMQ 确认
-        Message<?> springMessage = message.nativeMessage(Message.class);
-        if (springMessage != null) {
-            return RocketMessageAcknowledgmentFactory.fromSpringMessage(springMessage)
-                    .map(ack -> (MessageAcknowledgment) ack)
-                    .orElse(null);
-        }
+        // 2.0.x：直接基于纯 Java MQMessage 解析（MessageExt 已通过 nativeMessage 逃生口传入）
         RocketMessageAcknowledgment rocketAck = message.nativeMessage(RocketMessageAcknowledgment.class);
         if (rocketAck != null) {
             return rocketAck;

@@ -2255,6 +2255,12 @@
                 <artifactId>cqrs-4-java-jsonb</artifactId>
                 <version>${fuin-cqrs4j.version}</version>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.fuin.cqrs4j/cqrs-4-java-esc -->
+            <dependency>
+                <groupId>org.fuin.cqrs4j</groupId>
+                <artifactId>cqrs-4-java-esc</artifactId>
+                <version>${fuin-cqrs4j.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.crac/crac — CRaC Coordinated Restore at Checkpoint -->
             <dependency>
                 <groupId>org.crac</groupId>
@@ -3935,6 +3941,18 @@
                 <artifactId>hutool-system</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-http -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-http</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-json -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-json</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.netflix.hystrix/hystrix-core -->
             <dependency>
                 <groupId>com.netflix.hystrix</groupId>
@@ -4577,6 +4595,30 @@
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-starter-redisson</artifactId>
+                <version>${jetcache.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-anno-api -->
+            <dependency>
+                <groupId>com.alicp.jetcache</groupId>
+                <artifactId>jetcache-anno-api</artifactId>
+                <version>${jetcache.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-autoconfigure -->
+            <dependency>
+                <groupId>com.alicp.jetcache</groupId>
+                <artifactId>jetcache-autoconfigure</artifactId>
+                <version>${jetcache.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-redis-lettuce -->
+            <dependency>
+                <groupId>com.alicp.jetcache</groupId>
+                <artifactId>jetcache-redis-lettuce</artifactId>
+                <version>${jetcache.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-redisson -->
+            <dependency>
+                <groupId>com.alicp.jetcache</groupId>
+                <artifactId>jetcache-redisson</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-reactive-httpclient — Jetty Reactive HttpClient -->

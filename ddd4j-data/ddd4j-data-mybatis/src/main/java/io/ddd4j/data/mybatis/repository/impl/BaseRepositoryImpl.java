@@ -14,17 +14,15 @@ import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.Page;
 import io.ddd4j.core.contract.Query;
 import io.ddd4j.core.contract.constant.ContextConstants;
-import io.ddd4j.spring.util.BeanKit;
+import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.data.mybatis.annotation.*;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
 import lombok.Data;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,13 +43,31 @@ import static io.ddd4j.core.contract.Query.*;
 
 @Slf4j(topic = "### BASE-DATA : BaseRepository ###")
 public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Model, P, Q extends Query> implements BaseRepository<M, Q>, Serializable {
-    @Autowired
-    @Getter
     private MP mapper;
     private final TableScheme tableScheme;
-    @Autowired
-    BaseDataProperties baseDataProperties;
+    private BaseDataProperties baseDataProperties;
     private static final String[] LOG_IGNORE_FIELDS = new String[]{"limit", "page", "orderBy"};
+
+    /**
+     * 获取 mapper（子类/桥接层通过 {@link #setMapper} 注入）。
+     */
+    public MP getMapper() {
+        return mapper;
+    }
+
+    /**
+     * Spring 桥接层（ddd4j-data-spring 的 RepositoryBeanPostProcessor）通过此方法注入 mapper。
+     */
+    public void setMapper(MP mapper) {
+        this.mapper = mapper;
+    }
+
+    /**
+     * Spring 桥接层通过此方法注入配置属性。
+     */
+    public void setBaseDataProperties(BaseDataProperties baseDataProperties) {
+        this.baseDataProperties = baseDataProperties;
+    }
 
     public BaseRepositoryImpl() {
         final Class<M> modelClass = (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseRepositoryImpl.class, 1);
@@ -469,7 +485,139 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
                 }));
             }
         }
+        // 字段后缀自动条件构建：遍历 Query 所有字段，按后缀（Not/In/Like/Min/Max/Start/End/IsNull/InJson 等）自动生成查询条件
+        Map<String, Object> mapParams = BeanKit.toMapClean(query);
+        if (mapParams != null) {
+            mapParams.forEach((k, v) -> this.setCondition(query, baseWrapper, k, v));
+        }
         return this;
+    }
+
+    /**
+     * 根据字段名后缀自动构建查询条件。
+     *
+     * <p>约定驱动：Query 字段名后缀决定 SQL 操作符：
+     * <ul>
+     *   <li>{@code xxxMin} → {@code xxx > value}</li>
+     *   <li>{@code xxxMax} → {@code xxx < value}</li>
+     *   <li>{@code xxxMinEq} → {@code xxx >= value}</li>
+     *   <li>{@code xxxMaxEq} → {@code xxx <= value}</li>
+     *   <li>{@code xxxStart} → {@code xxx >= value}（时间范围）</li>
+     *   <li>{@code xxxEnd} → {@code xxx <= value}（时间范围）</li>
+     *   <li>{@code xxxLike} → {@code xxx LIKE '%value%'}</li>
+     *   <li>{@code xxxLikeLeft} → {@code xxx LIKE 'value%'}</li>
+     *   <li>{@code xxxLikeRight} → {@code xxx LIKE '%value'}</li>
+     *   <li>{@code xxxNotLike} → {@code xxx NOT LIKE '%value%'}</li>
+     *   <li>{@code xxxNot} → {@code xxx != value}</li>
+     *   <li>{@code xxxIn} → {@code xxx IN (values)}（集合或逗号分隔字符串）</li>
+     *   <li>{@code xxxNotIn} → {@code xxx NOT IN (values)}</li>
+     *   <li>{@code xxxIsNull} → {@code xxx IS NULL / IS NOT NULL}（true/false）</li>
+     *   <li>{@code xxxInJson Yyy} → {@code JSON_CONTAINS(yyy, value, 'xxx')}</li>
+     *   <li>其他 → {@code xxx = value}（精确匹配）</li>
+     * </ul>
+     */
+    private QueryWrapper<P> setCondition(Query query, QueryWrapper<P> wrapper, String key, Object value) {
+        if (value == null || EXCLUDE_FIELDS.contains(key)) {
+            return wrapper;
+        }
+        // 处理 or 查询
+        if (Objects.equals(key, ORS_QUERY) && value instanceof Map) {
+            Map<String, Object> ors = (Map<String, Object>) value;
+            if (!ors.isEmpty() && ors.values().stream().anyMatch(this::isStringNotBlank)) {
+                wrapper.and(w -> ors.forEach((k, v) -> {
+                    if (isStringNotBlank(v)) {
+                        setSimpleCondition(query, w, k, v);
+                    }
+                    w.or();
+                }));
+            }
+            return wrapper;
+        }
+        return setSimpleCondition(query, wrapper, key, value);
+    }
+
+    /**
+     * 单字段条件构建（不含 or 逻辑）。
+     */
+    @SuppressWarnings("unchecked")
+    private QueryWrapper<P> setSimpleCondition(Query query, QueryWrapper<P> wrapper, String key, Object value) {
+        if (value == null) {
+            return wrapper;
+        }
+        if (key.endsWith(START_QUERY) && this.isDateType(value)) {
+            this.getColumnByField(this.getFieldName(key, START_QUERY), (p) -> wrapper.ge(p, value));
+        } else if (key.endsWith(END_QUERY) && this.isDateType(value)) {
+            this.getColumnByField(this.getFieldName(key, END_QUERY), (p) -> wrapper.le(p, value));
+        } else if (key.endsWith(MIN_EQUALS_QUERY)) {
+            this.getColumnByField(this.getFieldName(key, MIN_EQUALS_QUERY), (p) -> wrapper.ge(p, value));
+        } else if (key.endsWith(MAX_EQUALS_QUERY)) {
+            this.getColumnByField(this.getFieldName(key, MAX_EQUALS_QUERY), (p) -> wrapper.le(p, value));
+        } else if (key.endsWith(MIN_QUERY)) {
+            this.getColumnByField(this.getFieldName(key, MIN_QUERY), (p) -> wrapper.gt(p, value));
+        } else if (key.endsWith(MAX_QUERY)) {
+            this.getColumnByField(this.getFieldName(key, MAX_QUERY), (p) -> wrapper.lt(p, value));
+        } else if (key.endsWith(NOT_IN_QUERY) && this.isCollectionType(value) && !((Collection<?>) value).isEmpty()) {
+            List<?> list = ((Collection<?>) value).stream().distinct().collect(Collectors.toList());
+            this.getColumnByField(this.getFieldName(key, NOT_IN_QUERY), (p) -> wrapper.notIn(p, list));
+        } else if (key.endsWith(NOT_IN_QUERY) && value instanceof String && !((String) value).isEmpty()) {
+            List<String> list = Arrays.stream(((String) value).split(query.getSplit())).distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+            this.getColumnByField(this.getFieldName(key, NOT_IN_QUERY), (p) -> wrapper.notIn(p, list));
+        } else if (key.endsWith(IN_QUERY) && this.isCollectionType(value) && !((Collection<?>) value).isEmpty()) {
+            List<?> list = ((Collection<?>) value).stream().distinct().collect(Collectors.toList());
+            this.getColumnByField(this.getFieldName(key, IN_QUERY), (p) -> wrapper.in(p, list));
+        } else if (key.endsWith(IN_QUERY) && value instanceof String && !((String) value).isEmpty()) {
+            List<String> list = Arrays.stream(((String) value).split(query.getSplit())).distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+            this.getColumnByField(this.getFieldName(key, IN_QUERY), (p) -> wrapper.in(p, list));
+        } else if (key.endsWith(LIKE_QUERY) && value instanceof CharSequence && this.isStringNotBlank(value)) {
+            this.getColumnByField(this.getFieldName(key, LIKE_QUERY), (p) -> wrapper.like(p, value));
+        } else if (key.endsWith(LIKE_LEFT_QUERY) && value instanceof CharSequence && this.isStringNotBlank(value)) {
+            this.getColumnByField(this.getFieldName(key, LIKE_LEFT_QUERY), (p) -> wrapper.likeLeft(p, value));
+        } else if (key.endsWith(LIKE_RIGHT_QUERY) && value instanceof CharSequence && this.isStringNotBlank(value)) {
+            this.getColumnByField(this.getFieldName(key, LIKE_RIGHT_QUERY), (p) -> wrapper.likeRight(p, value));
+        } else if (key.endsWith(NOT_LIKE_QUERY) && value instanceof CharSequence && this.isStringNotBlank(value)) {
+            this.getColumnByField(this.getFieldName(key, NOT_LIKE_QUERY), (p) -> wrapper.notLike(p, value));
+        } else if (key.endsWith(NOT_QUERY)) {
+            this.getColumnByField(this.getFieldName(key, NOT_QUERY), (p) -> wrapper.ne(p, value));
+        } else if (key.contains(IN_JSON_QUERY)) {
+            // JSON 字段查询：如 extrasInJsonName=value → JSON_CONTAINS(extras, '"value"', 'name')
+            String[] parts = key.split(IN_JSON_QUERY);
+            if (parts.length == 2) {
+                String jsonField = parts[0];
+                String jsonColumn = parts[1].toLowerCase();
+                String formattedValue = formatJsonValue(value);
+                if (formattedValue != null) {
+                    this.getColumnByField(jsonField, (col) -> wrapper.apply("JSON_CONTAINS({0}, '{1}', '${2}')", col, formattedValue, jsonColumn));
+                }
+            }
+        } else if (key.endsWith(NULL_QUERY)) {
+            if (Objects.equals(Boolean.TRUE, value)) {
+                this.getColumnByField(this.getFieldName(key, NULL_QUERY), wrapper::isNull);
+            } else if (Objects.equals(Boolean.FALSE, value)) {
+                this.getColumnByField(this.getFieldName(key, NULL_QUERY), wrapper::isNotNull);
+            }
+        } else {
+            // 默认精确匹配
+            this.getColumnByField(key, (p) -> wrapper.eq(p, value));
+        }
+        return wrapper;
+    }
+
+    /**
+     * 将查询值格式化为 JSON 字符串（用于 JSON_CONTAINS）。
+     */
+    private String formatJsonValue(Object value) {
+        if (value instanceof String) {
+            return "\"" + value + "\"";
+        } else if (value instanceof Number || value instanceof Boolean) {
+            return value.toString();
+        } else if (value instanceof LocalDateTime) {
+            return "\"" + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format((LocalDateTime) value) + "\"";
+        } else if (value instanceof LocalDate) {
+            return "\"" + DateTimeFormatter.ISO_LOCAL_DATE.format((LocalDate) value) + "\"";
+        } else if (value instanceof LocalTime) {
+            return "\"" + DateTimeFormatter.ISO_LOCAL_TIME.format((LocalTime) value) + "\"";
+        }
+        return null;
     }
 
     private BaseRepositoryImpl<MP, M, P, Q> groupBy(Q query, QueryWrapper<P> wrapper) {

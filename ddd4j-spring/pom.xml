@@ -85,6 +85,16 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <!-- For FastJSON2（IdempotentKit 等工具类需要） -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+        </dependency>
+        <!-- For Dozer（BaseMapperController 的对象映射需要） -->
+        <dependency>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-core</artifactId>
+        </dependency>
         <!-- fuinorg DDD + CQRS（DddAutoConfiguration 需要） -->
         <dependency>
             <groupId>org.fuin.ddd4j</groupId>

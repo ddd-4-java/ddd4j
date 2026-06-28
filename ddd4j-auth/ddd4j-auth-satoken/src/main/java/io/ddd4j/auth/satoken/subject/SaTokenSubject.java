@@ -1,183 +1,353 @@
 package io.ddd4j.auth.satoken.subject;
 
+import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.stp.parameter.SaLoginParameter;
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.strategy.SaStrategy;
 import io.ddd4j.auth.satoken.util.StpKit;
 import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.subject.AuthRequest;
 import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.core.util.SubjectKit;
 
 import java.util.List;
 
+/**
+ * 基于 Sa-Token 的 {@link Subject} 实现（纯 Java，零 Spring 依赖）。
+ *
+ * <p>将 ddd4j 的 {@link Subject} 契约委托给 Sa-Token 的 {@link StpUtil}。
+ * 会话生命周期（login/logout/kickout/refresh）直接委托 Sa-Token。
+ * 权限/角色校验统一委托 {@link SubjectKit#getDataProvider()} 数据源 SPI，
+ * 保证三鉴权实现行为一致。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.4.x
+ */
 public class SaTokenSubject implements Subject {
+
+    /** 登录时存入 SaSession 的 principal 键 */
+    public static final String PRINCIPAL_KEY = "principal";
+
+    /**
+     * 根据账号体系返回对应的 StpLogic（对齐多账号体系）。
+     *
+     * @param realm 账号体系标识，null/空返回默认
+     * @return StpLogic
+     */
+    protected StpLogic stpLogic(String realm) {
+        if (realm == null || realm.isEmpty()) {
+            return StpUtil.stpLogic;
+        }
+        return cn.dev33.satoken.SaManager.getStpLogic(realm, true);
+    }
+
+    // ==================== 身份与会话读取 ====================
 
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
-        return null;
+        if (!StpUtil.isLogin()) {
+            return null;
+        }
+        SaSession session = StpUtil.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        return (T) session.get(PRINCIPAL_KEY);
     }
 
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
-        return null;
+        SaSession session = StpUtil.getSessionByLoginId(loginId, false);
+        if (session == null) {
+            return null;
+        }
+        return (T) session.get(PRINCIPAL_KEY);
     }
 
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
-        return null;
+        Object loginId = StpUtil.getLoginIdByToken(tokenValue);
+        if (loginId == null) {
+            return null;
+        }
+        return getPrincipalByLoginId(loginId);
+    }
+
+    // ==================== 会话生命周期（委托 StpUtil）====================
+
+    @Override
+    public String login(AuthRequest request) {
+        StpLogic logic = stpLogic(request.getRealm());
+        // 构建 SaLoginParameter
+        SaLoginParameter param = new SaLoginParameter();
+        param.setTimeout(request.getTimeout());
+        if (request.getDeviceType() != null) {
+            param.setDeviceType(request.getDeviceType());
+        }
+        if (request.getExtra() != null && !request.getExtra().isEmpty()) {
+            param.setExtraData(request.getExtra());
+        }
+        // 调用 Sa-Token 登录，建立会话
+        logic.login(request.getLoginId(), param);
+        // 登录后将 principal 存入 SaSession
+        if (request.getPrincipal() != null) {
+            SaSession session = logic.getSessionByLoginId(request.getLoginId(), true);
+            session.set(PRINCIPAL_KEY, request.getPrincipal());
+        }
+        return logic.getTokenValue();
     }
 
     @Override
+    public void logout() {
+        StpUtil.stpLogic.logout();
+    }
+
+    @Override
+    public void logout(Object loginId) {
+        StpUtil.stpLogic.logout(loginId);
+    }
+
+    @Override
+    public void kickout(Object loginId) {
+        StpUtil.stpLogic.kickout(loginId);
+    }
+
+    @Override
+    public String refresh() {
+        StpUtil.stpLogic.renewTimeout(StpUtil.stpLogic.getConfigOrGlobal().getTimeout());
+        return StpUtil.stpLogic.getTokenValue();
+    }
+
+    @Override
+    public <T extends AuthPrincipal> T verify(String token) {
+        Object loginId = StpUtil.getLoginIdByToken(token);
+        if (loginId == null) {
+            return null;
+        }
+        return getPrincipalByLoginId(loginId);
+    }
+
+    // ==================== 权限与角色（委托 SubjectDataProvider 数据源 SPI）====================
+
+    @Override
     public boolean isPermitted(String permission) {
-        return StpUtil.hasPermission(permission);
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null) {
+            return false;
+        }
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
+        return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
     @Override
     public boolean isPermitted(Object loginId, String permission) {
-        return StpUtil.hasPermission(loginId, permission);
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null) {
+            return false;
+        }
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
+        return SubjectKit.getStrategy().hasElement.apply(perms, permission);
     }
 
     @Override
     public boolean[] isPermitted(String... permissions) {
-        if (permissions == null || permissions.length == 0) {
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null || permissions == null || permissions.length == 0) {
             return new boolean[0];
         }
-        boolean[] hasPermissions = new boolean[permissions.length];
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
+        boolean[] result = new boolean[permissions.length];
         for (int i = 0; i < permissions.length; i++) {
-            hasPermissions[i] = StpUtil.hasPermission(permissions[i]);
+            result[i] = SubjectKit.getStrategy().hasElement.apply(perms, permissions[i]);
         }
-        return hasPermissions;
+        return result;
     }
 
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
-        if (permissions == null || permissions.length == 0) {
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null || permissions == null || permissions.length == 0) {
             return new boolean[0];
         }
-        boolean[] hasPermissions = new boolean[permissions.length];
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
+        boolean[] result = new boolean[permissions.length];
         for (int i = 0; i < permissions.length; i++) {
-            hasPermissions[i] = StpUtil.hasPermission(loginId, permissions[i]);
+            result[i] = SubjectKit.getStrategy().hasElement.apply(perms, permissions[i]);
         }
-        return hasPermissions;
+        return result;
     }
 
     @Override
     public boolean isPermittedAny(String... permissions) {
-        return StpUtil.hasPermissionOr(permissions);
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null || permissions == null || permissions.length == 0) {
+            return false;
+        }
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
+        for (String permission : permissions) {
+            if (SubjectKit.getStrategy().hasElement.apply(perms, permission)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
-        // 如果没有指定权限，那么直接跳过
-        if(permissions == null || permissions.length == 0) {
-            return Boolean.FALSE;
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null || permissions == null || permissions.length == 0) {
+            return false;
         }
-        // 开始校验
-        List<String> permissionList = StpUtil.getPermissionList(loginId);
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
         for (String permission : permissions) {
-            if(SaStrategy.instance.hasElement.apply(permissionList, permission)) {
-                return Boolean.TRUE;
+            if (SubjectKit.getStrategy().hasElement.apply(perms, permission)) {
+                return true;
             }
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     @Override
     public boolean isPermittedAll(String... permissions) {
-        return StpUtil.hasPermissionAnd(permissions);
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null || permissions == null || permissions.length == 0) {
+            return false;
+        }
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
+        for (String permission : permissions) {
+            if (!SubjectKit.getStrategy().hasElement.apply(perms, permission)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
-        // 如果没有指定权限，那么直接跳过
-        if(permissions == null || permissions.length == 0) {
-            return Boolean.FALSE;
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null || permissions == null || permissions.length == 0) {
+            return false;
         }
-        // 开始校验
-        List<String> permissionList = StpUtil.getPermissionList(loginId);
+        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
         for (String permission : permissions) {
-            if(!SaStrategy.instance.hasElement.apply(permissionList, permission)) {
-                return Boolean.FALSE;
+            if (!SubjectKit.getStrategy().hasElement.apply(perms, permission)) {
+                return false;
             }
         }
-        return Boolean.TRUE;
+        return true;
     }
 
     @Override
     public boolean hasRole(String roleIdentifier) {
-        return StpUtil.hasRole(roleIdentifier);
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null) {
+            return false;
+        }
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
+        return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
-        return StpUtil.hasRole(loginId, roleIdentifier);
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null) {
+            return false;
+        }
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
+        return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
     }
 
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
-        if (roleIdentifiers == null || roleIdentifiers.length == 0) {
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
-        boolean[] hasRoles = new boolean[roleIdentifiers.length];
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
+        boolean[] result = new boolean[roleIdentifiers.length];
         for (int i = 0; i < roleIdentifiers.length; i++) {
-            hasRoles[i] = StpUtil.hasRole(roleIdentifiers[i]);
+            result[i] = SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifiers[i]);
         }
-        return hasRoles;
+        return result;
     }
 
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
-        if (roleIdentifiers == null || roleIdentifiers.length == 0) {
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
-        boolean[] hasRoles = new boolean[roleIdentifiers.length];
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
+        boolean[] result = new boolean[roleIdentifiers.length];
         for (int i = 0; i < roleIdentifiers.length; i++) {
-            hasRoles[i] = StpUtil.hasRole(loginId, roleIdentifiers[i]);
+            result[i] = SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifiers[i]);
         }
-        return hasRoles;
+        return result;
     }
 
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
-        return StpUtil.hasRoleOr(roleIdentifiers);
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+            return false;
+        }
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
+        for (String role : roleIdentifiers) {
+            if (SubjectKit.getStrategy().hasElement.apply(roles, role)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
-        // 如果没有指定权限，那么直接跳过
-        if(roleIdentifiers == null || roleIdentifiers.length == 0) {
-            return Boolean.FALSE;
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+            return false;
         }
-        // 开始校验
-        List<String> roleList = StpUtil.getRoleList(loginId);
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
         for (String role : roleIdentifiers) {
-            if(SaStrategy.instance.hasElement.apply(roleList, role)) {
-                // 有的话提前退出
-                return Boolean.TRUE;
+            if (SubjectKit.getStrategy().hasElement.apply(roles, role)) {
+                return true;
             }
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
-        return StpUtil.hasRoleAnd(roleIdentifiers);
+        AuthPrincipal principal = getPrincipal();
+        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+            return false;
+        }
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
+        for (String role : roleIdentifiers) {
+            if (!SubjectKit.getStrategy().hasElement.apply(roles, role)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
-        // 如果没有指定权限，那么直接跳过
-        if(roleIdentifiers == null || roleIdentifiers.length == 0) {
-            return Boolean.FALSE;
+        AuthPrincipal principal = getPrincipalByLoginId(loginId);
+        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+            return false;
         }
-        // 开始校验
-        List<String> roleList = StpUtil.getRoleList(loginId);
+        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
         for (String role : roleIdentifiers) {
-            if(!SaStrategy.instance.hasElement.apply(roleList, role)) {
-                // 任意一个没有的话提前退出
-                return Boolean.FALSE;
+            if (!SubjectKit.getStrategy().hasElement.apply(roles, role)) {
+                return false;
             }
         }
-        return Boolean.TRUE;
+        return true;
     }
+
+    // ==================== 状态判断 ====================
 
     @Override
     public boolean isAuthenticated() {
@@ -191,7 +361,7 @@ public class SaTokenSubject implements Subject {
 
     @Override
     public boolean isRemembered() {
-        return Boolean.FALSE;
+        return false;
     }
 
     @Override
@@ -204,52 +374,46 @@ public class SaTokenSubject implements Subject {
         return StpUtil.isTrustDeviceId(userId, deviceId);
     }
 
-    /**
-     * 复写默认实现，提高效率
-     * @return 登录账号 Id
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
     @Override
     public Object getLoginId() {
         return StpUtil.getLoginId();
     }
 
-    /**
-     * 复写默认实现，提高效率
-     * @return 登录用户 Id
-     */
     @Override
     public Object getUserId() {
         return StpKit.getUserId();
     }
 
-    /**
-     * 复写默认实现，提高效率
-     * @return 所属组织 Id
-     */
     @Override
     public Object getOrgId() {
         return StpKit.getOrgId();
     }
 
-    /**
-     * 复写默认实现，提高效率
-     * @return 角色 Id
-     */
     @Override
     public Object getRoleId() {
         return StpKit.getRoleId();
     }
 
-    /**
-     * 复写默认实现，提高效率
-     * @param tokenValue 指定的 Token 值
-     * @param key        键值
-     * @return 对应的扩展数据
-     */
     @Override
     public Object getExtra(String tokenValue, String key) {
         return StpUtil.getExtra(tokenValue, key);
+    }
+
+    // ==================== 封禁（委托 Sa-Token）====================
+
+    @Override
+    public void disable(Object loginId, long timeout) {
+        StpUtil.stpLogic.disable(loginId, timeout);
+    }
+
+    @Override
+    public boolean isDisabled(Object loginId) {
+        return StpUtil.stpLogic.isDisable(loginId);
+    }
+
+    @Override
+    public void untieDisable(Object loginId) {
+        StpUtil.stpLogic.untieDisable(loginId);
     }
 
 }

@@ -24,6 +24,17 @@
             <artifactId>ddd4j-annotation</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- ddd4j-kit（IpKit 用于 BaseExceptionHandler） -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- TransmittableThreadLocal（BaseExceptionHandler 需要） -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+        </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>

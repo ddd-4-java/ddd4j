@@ -8,6 +8,7 @@ import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumeInterceptor;
 import io.ddd4j.mq.consume.MQConsumerContext;
 import io.ddd4j.mq.consume.MQConsumerHandler;
+import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerMethodInvoker;
 import io.ddd4j.mq.registry.MQListenerScanner;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
-import org.springframework.messaging.Message;
 
 import java.util.Comparator;
 import java.util.List;
@@ -27,7 +27,20 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 应用就绪后扫描 {@link io.ddd4j.core.contract.annotation.MQEventListener} 并通过 {@link MQBrokerAdapter} 动态注册消费端点（从 ddd4j-mq-core 迁出）。
+ * 应用就绪后扫描 {@link io.ddd4j.core.contract.annotation.MQEventListener} 并通过 {@link MQBrokerAdapter} 动态注册消费端点。
+ *
+ * <p>消息处理流程：
+ * <pre>
+ *   Spring/Broker 原生消息
+ *     ↓ SpringMessageAdapter.fromSpring(...)   ← 各 Broker 适配器内部完成
+ *   纯 Java MQMessage
+ *     ↓ MQListenerMethodInvoker.invoke()        ← 反射调用 @MQEventListener 方法
+ *   业务方法
+ * </pre>
+ *
+ * <p>已彻底迁移至纯 Java {@link MQMessage} 模型：不再直接持有
+ * {@code org.springframework.messaging.Message} 引用。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -42,8 +55,6 @@ public class MQListenerRegistrar {
 
     /**
      * 应用就绪时扫描监听器并注册到当前 Broker Adapter。
-     *
-     * @param event 应用就绪事件
      */
     @Order
     @EventListener
@@ -119,7 +130,7 @@ public class MQListenerRegistrar {
      */
     private MessageAcknowledgment resolveAcknowledgment(
             MQBrokerAdapter adapter,
-            Message<?> message,
+            MQMessage<?> message,
             MessageAcknowledgment ack) {
 
         MessageAcknowledgment resolved = adapter.resolveAcknowledgment(message);
@@ -135,7 +146,7 @@ public class MQListenerRegistrar {
     private int runPreCheck(
             List<MQConsumeInterceptor> orderedInterceptors,
             MQConsumerContext context,
-            Message<?> message) {
+            MQMessage<?> message) {
 
         for (MQConsumeInterceptor interceptor : orderedInterceptors) {
             int result = interceptor.preCheck(context, message);
@@ -152,7 +163,7 @@ public class MQListenerRegistrar {
     private void runAfterConsume(
             List<MQConsumeInterceptor> orderedInterceptors,
             MQConsumerContext context,
-            Message<?> message,
+            MQMessage<?> message,
             AckDisposition disposition) {
 
         for (MQConsumeInterceptor interceptor : orderedInterceptors) {

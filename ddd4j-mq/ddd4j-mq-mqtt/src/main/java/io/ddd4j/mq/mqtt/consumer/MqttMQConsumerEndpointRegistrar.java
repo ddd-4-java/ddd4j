@@ -118,6 +118,7 @@ public class MqttMQConsumerEndpointRegistrar implements AutoCloseable {
                 topic = headerAsString(headers, MqttHeaders.TOPIC);
             }
 
+            // 2.0.x：构造纯 Java MQMessage，Spring Message 通过 nativeMessage 逃生口传入（Spring Integration 回调签名约束）
             MQMessage<String> mqMessage = MQMessage.of(
                     payloadText,
                     headers,
@@ -126,7 +127,7 @@ public class MqttMQConsumerEndpointRegistrar implements AutoCloseable {
                     springMessage);
 
             MqttMessageAcknowledgmentFactory.MessageAcknowledgmentOrNoOp ackWrapper =
-                    MqttMessageAcknowledgmentFactory.fromSpringMessage(springMessage);
+                    MqttMessageAcknowledgmentFactory.resolve(mqMessage);
             MessageAcknowledgment ack = ackWrapper.acknowledgment();
 
             handler.handle(mqMessage, ack);

@@ -276,10 +276,10 @@
                 <!-- Left Label -->
                 <rect x="0" y="0" width="120" height="90" rx="16" fill="url(#bg-orange)" filter="url(#dropShadow)"/>
                 <text x="60" y="45" font-size="16" fill="white" font-weight="bold" text-anchor="middle" dominant-baseline="middle">工程管理</text>
-                
+
                 <!-- Right Content Container -->
                 <rect x="140" y="0" width="980" height="90" rx="16" fill="#FFF8E1" stroke="#FFE0B2" stroke-width="1"/>
-                
+
                 <!-- 3 Big Boxes -->
                 <g transform="translate(150, 15)">
                      <!-- BOM -->
@@ -287,7 +287,7 @@
                         <rect x="0" y="0" width="310" height="60" rx="10" fill="white" stroke="#FFCC80" stroke-width="0.5" filter="url(#dropShadow)"/>
                         <text x="155" y="30" font-size="14" fill="#E65100" font-weight="bold" text-anchor="middle" dominant-baseline="middle">ddd4j-bom (BOM依赖管理)</text>
                      </g>
-                     
+
                      <!-- Parent -->
                      <g transform="translate(325, 0)">
                         <rect x="0" y="0" width="310" height="60" rx="10" fill="white" stroke="#FFCC80" stroke-width="0.5" filter="url(#dropShadow)"/>
@@ -301,8 +301,214 @@
                      </g>
                 </g>
             </g>
-            
+
+            <!-- ==============================
+                 Layer 5: 最终架构定位 (Final Architecture Positioning)
+                 Y: 700, Height: 120
+            =============================== -->
+            <g transform="translate(0, 700)">
+                <!-- Left Label -->
+                <rect x="0" y="0" width="120" height="120" rx="16" fill="url(#bg-purple)" filter="url(#dropShadow)"/>
+                <text x="60" y="60" font-size="16" fill="white" font-weight="bold" text-anchor="middle" dominant-baseline="middle">最终定位</text>
+
+                <!-- Right Content Container -->
+                <rect x="140" y="0" width="980" height="120" rx="16" fill="#F3E5F5" stroke="#E1BEE7" stroke-width="1"/>
+
+                <g transform="translate(150, 12)">
+                    <text x="0" y="0" font-size="13" fill="#6A1B9A" font-weight="bold">ddd4j = 框架无关 DDD/CQRS/ES 通用基础层</text>
+                    <text x="0" y="20" font-size="11" fill="#555">• 业务应用：ddd4j-boot（Spring）· ddd4j-quarkus · ddd4j-javalin 三框架并列</text>
+                    <text x="0" y="38" font-size="11" fill="#555">• 适配层：ddd4j-spring / ddd4j-quarkus / ddd4j-guice 各自实现 DomainEventPublisher / MQEventPublisher / Repository</text>
+                    <text x="0" y="56" font-size="11" fill="#555">• 通用层：core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（12 种 MQ）· web/auth/monitor</text>
+                    <text x="0" y="74" font-size="11" fill="#555">• 下方依赖：fuinorg ddd-4-java（DDD 基类）· cqrs-4-java（CQRS 框架）· esc-api（EventStore）</text>
+                    <text x="0" y="92" font-size="11" fill="#555">• 核心 SPI：DomainEventPublisher（3 框架）· MQBrokerAdapter（12 种 MQ）· Repository（多 ORM）· ArchUnit 编译期架构守护</text>
+                </g>
+            </g>
+
         </svg>
+    </div>
+
+    <!-- ============================================================
+         最终架构定位信息卡（HTML 文字版）
+         配套 SVG 架构图（上方）
+    ============================================================ -->
+    <div style="margin-top: 32px; padding: 32px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <h1 style="margin:0 0 16px; font-size: 24px; color: #1D1D1F;">Ddd4j 最终架构定位</h1>
+        <p style="color:#555; line-height:1.6; margin:0 0 20px;">
+            <strong>ddd4j 是一个框架无关的 DDD/CQRS/ES 通用基础层</strong>，目标是为 Spring Boot、Quarkus、Javalin 三种容器框架提供
+            <em>同一套纯净领域模型契约</em>，站在 fuinorg 系列（ddd-4-java + cqrs-4-java + esc-api）之上。
+        </p>
+
+        <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">整体架构分层</h2>
+        <pre style="background:#F2F2F7; padding:16px; border-radius:10px; font-size:12px; line-height:1.5; overflow:auto;">
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  业务应用层（用户项目）                                  │
+│  ddd4j-boot / ddd4j-quarkus / ddd4j-javalin                          │
+└──────────────────────────────┬────────────────────────────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        ▼                      ▼                      ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  ddd4j-spring    │  │  ddd4j-quarkus   │  │  ddd4j-javalin   │
+└────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘
+         └─────────────────────┼─────────────────────┘
+                               ▼
+┌────────────────────────────────────────────────────────────────────┐
+│                  ddd4j 通用基础层（本次主题）                       │
+│  core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（12 种 MQ）  │
+│  web · auth · monitor · kit · ddd-clean/cola（ArchUnit）         │
+└──────────────────────────────┬─────────────────────────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        ▼                      ▼                      ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  ddd-4-java      │  │  cqrs-4-java     │  │  esc-api         │
+│  (fuinorg)       │  │  (fuinorg)       │  │  (fuinorg)       │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+        </pre>
+
+        <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">ddd4j 三大核心 SPI</h2>
+        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <tr style="background:#F2F2F7;">
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">SPI</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">职责</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">实现数量</th>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;"><code>DomainEventPublisher</code></td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">进程内领域事件发布</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">3（Spring / CDI / Guice）</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;"><code>MQBrokerAdapter</code></td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">跨进程消息发布/订阅</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">12（Kafka / RabbitMQ / RocketMQ / ActiveMQ / RedisStream / MQTT / MicaMQTT / Pulsar / NATS / Disruptor / ONS ...）</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;"><code>Repository</code></td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">数据访问抽象</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">多 ORM（MyBatis-Plus / Hibernate Panache / JDBI）</td>
+            </tr>
+        </table>
+
+        <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">与 fuinorg 基础库的关系</h2>
+        <ul style="color:#555; line-height:1.8;">
+            <li><strong>继承</strong> ddd-4-java 的 <code>AbstractAggregateRoot</code> → ddd4j <code>DddAggregateRoot</code>（增加 createTime/updateTime 审计字段）</li>
+            <li><strong>复用</strong> ddd-4-java 的 <code>AbstractDomainEvent</code> → ddd4j <code>DddDomainEvent</code></li>
+            <li><strong>封装</strong> cqrs-4-java 的 <code>EventStoreRepository</code> → ddd4j <code>DddEventStoreRepository</code>（乐观锁冲突重试 3 次）</li>
+            <li><strong>扩展</strong> cqrs-4-java 的 Command/View 抽象到 ddd4j 三框架适配层</li>
+            <li><strong>依赖</strong> esc-api 作为 EventStore 抽象接口（EventStoreDB / KurrentDB）</li>
+        </ul>
+
+        <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">ddd4j 应补充的 CQRS/ES 能力（P0/P1 分级）</h2>
+        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <tr style="background:#F2F2F7;">
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA; width:80px;">优先级</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">能力</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">实施建议</th>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Command / AggregateCommand 接口</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">抽取到 ddd4j-core 作为契约</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">CommandExecutor SPI</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">三框架各自实现</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">CommandHandler 注解 + 自动注册</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">兼容 Spring @Component / CDI Bean</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">MultiCommandExecutor / Result&lt;T&gt;</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">复用 fuinorg 实现</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">View / JpaView 接口</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">抽取到 ddd4j-core</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ViewManager 抽象</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-spring / ddd4j-quarkus 各自实现</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ProjectionPosition 投影位置持久化</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">抽取为公共 SPI</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@CreateEvent / @UpdateEvent / @DeleteEvent 注解</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">复用 fuinorg</td>
+            </tr>
+        </table>
+
+        <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">ddd4j 核心竞争力</h2>
+        <ul style="color:#555; line-height:1.8;">
+            <li><strong>框架无关纯净契约</strong>：core 模块 contract/context/ddd 包零框架 import</li>
+            <li><strong>12 种 MQ 统一抽象</strong>：MQBrokerAdapter SPI 切换消息中间件零业务代码改动</li>
+            <li><strong>ArchUnit 编译期守护</strong>：CleanDDDLayerRules / ColaDDDLayerRules 注解驱动</li>
+            <li><strong>双轨 DDD 模型</strong>：BaseEntity（快速）/ DddAggregateRoot（纯净 ES）</li>
+            <li><strong>站在巨人肩膀上</strong>：直接复用 fuinorg ddd-4-java + cqrs-4-java + esc-api</li>
+        </ul>
+
+        <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">三框架适配对照</h2>
+        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <tr style="background:#F2F2F7;">
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">维度</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-spring</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-quarkus</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-javalin</th>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">DI 容器</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ApplicationContext</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Arc (CDI)</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Guice Injector</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">事件发布</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">publishEvent()</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Event&lt;T&gt;.fire()</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">EventBus.post()</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">配置属性</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@ConfigurationProperties</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@ConfigProperty</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Provides</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Web 框架</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Spring MVC / WebFlux</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Quarkus RESTEasy (JAX-RS)</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Javalin</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">事务</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Transactional</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Transactional (JTA)</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">手动控制</td>
+            </tr>
+            <tr>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">调度</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">SchedulingConfigurer</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Scheduled</td>
+                <td style="padding:10px; border-bottom:1px solid #E5E5EA;">自定义线程池</td>
+            </tr>
+        </table>
+
+        <p style="margin-top:24px; color:#888; font-size:12px;">
+            配套 Markdown 文档：<a href="architecture.md" style="color:#1565C0;">architecture.md</a> ·
+            基础库剖析：<a href="ddd-4-java-architecture.md" style="color:#1565C0;">ddd-4-java</a> ·
+            <a href="cqrs-4-java-architecture.md" style="color:#1565C0;">cqrs-4-java</a> ·
+            <a href="ddd-cqrs-4-java-example-architecture.md" style="color:#1565C0;">ddd-cqrs-4-java-example</a>
+        </p>
     </div>
 </body>
 </html>

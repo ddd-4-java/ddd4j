@@ -23,6 +23,7 @@
         <module>ddd4j-extension-qlexpress</module>
         <module>ddd4j-extension-validation</module>
         <module>ddd4j-extension-monitor</module>
+        <module>ddd4j-extension-license</module>
     </modules>
 
     <dependencies>

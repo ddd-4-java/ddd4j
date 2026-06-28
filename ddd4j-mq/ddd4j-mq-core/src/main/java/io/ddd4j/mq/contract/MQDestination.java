@@ -3,7 +3,7 @@ package io.ddd4j.mq.contract;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.registry.MQBindingNaming;
 import lombok.Getter;
-import org.springframework.util.StringUtils;
+
 
 import java.util.Objects;
 
@@ -36,7 +36,7 @@ public class MQDestination {
     }
 
     public String physicalDestination() {
-        return StringUtils.hasText(namespace) ? namespace + "." + topic : topic;
+        return hasText(namespace) ? namespace + "." + topic : topic;
     }
 
     public String bindingOutName() {
@@ -54,5 +54,9 @@ public class MQDestination {
     @Override
     public int hashCode() {
         return Objects.hash(topic, tag, namespace);
+    }
+
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
     }
 }

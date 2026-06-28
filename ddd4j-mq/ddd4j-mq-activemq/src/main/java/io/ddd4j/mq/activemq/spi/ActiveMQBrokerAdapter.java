@@ -14,7 +14,6 @@ import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.messaging.Message;
 
 /**
  * ActiveMQ Artemis Broker 适配器，桥接 ddd4j MQ SPI 与 Spring JMS。
@@ -44,13 +43,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        // 逻辑块：优先从 Spring Message 原生对象解析 JMS 确认
-        Message<?> springMessage = message.nativeMessage(Message.class);
-        if (springMessage != null) {
-            return ActiveMQMessageAcknowledgmentFactory.fromSpringMessage(springMessage)
-                    .map(ack -> (MessageAcknowledgment) ack)
-                    .orElse(null);
-        }
+        // 2.0.x：直接基于纯 Java MQMessage 解析（jakarta.jms.Message 通过 nativeMessage 逃生口传入）
         ActiveMQMessageAcknowledgment activeMqAck = message.nativeMessage(ActiveMQMessageAcknowledgment.class);
         if (activeMqAck != null) {
             return activeMqAck;

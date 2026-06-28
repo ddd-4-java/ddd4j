@@ -5,12 +5,13 @@
  */
 package io.ddd4j.core.exception;
 
-import hitool.core.lang3.exception.NestedIOException;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.CustomApiCode;
 import lombok.Getter;
 
-public class BizIOException extends NestedIOException {
+import java.io.IOException;
+
+public class BizIOException extends IOException {
 
     @Getter
     private Integer code;

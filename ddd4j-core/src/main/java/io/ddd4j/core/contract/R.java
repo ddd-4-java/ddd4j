@@ -85,4 +85,65 @@ public class R<T> implements IR {
         target.setMsg(source.getMsg());
         return target;
     }
+
+    /**
+     * 转换为 fuinorg {@code Result<T>} 适配对象。
+     * <p>需要 classpath 中有 {@code cqrs-4-java-core}（可选依赖）。
+     *
+     * @return fuinorg Result 适配实例
+     * @see org.fuin.cqrs4j.core.Result
+     */
+    public org.fuin.cqrs4j.core.Result<T> toResult() {
+        return new DddResultAdapter<>(this);
+    }
+
+    /**
+     * 从 fuinorg {@code Result<T>} 转换为 {@code R<T>}。
+     *
+     * @param result fuinorg Result
+     * @param <T>    数据类型
+     * @return ddd4j R 实例
+     */
+    public static <T> R<T> fromResult(org.fuin.cqrs4j.core.Result<T> result) {
+        if (result == null) {
+            return fail();
+        }
+        Serializable code = result.getCode() != null ? result.getCode() : ResultCode.FAIL.getCode();
+        String msg = result.getMessage() != null ? result.getMessage() : ResultCode.FAIL.getDesc();
+        if (result.getType() == org.fuin.cqrs4j.core.ResultType.OK) {
+            return ok(msg, result.getData());
+        }
+        return new R<>(code, msg, result.getData());
+    }
+
+    /**
+     * fuinorg Result 适配器（内部类）。
+     */
+    private static class DddResultAdapter<T> implements org.fuin.cqrs4j.core.Result<T> {
+        private final R<T> r;
+
+        DddResultAdapter(R<T> r) {
+            this.r = r;
+        }
+
+        @Override
+        public org.fuin.cqrs4j.core.ResultType getType() {
+            return r.isOk() ? org.fuin.cqrs4j.core.ResultType.OK : org.fuin.cqrs4j.core.ResultType.ERROR;
+        }
+
+        @Override
+        public String getCode() {
+            return r.getCode() != null ? r.getCode().toString() : null;
+        }
+
+        @Override
+        public String getMessage() {
+            return r.getMsg();
+        }
+
+        @Override
+        public T getData() {
+            return r.getData();
+        }
+    }
 }

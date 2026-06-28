@@ -54,6 +54,15 @@ public abstract class ColaArchitectureTest {
     @ArchTest
     public static final ArchRule repository_impl_in_adapter = ColaDDDLayerRules.REPOSITORY_IMPL_IN_ADAPTER;
 
+    @ArchTest
+    public static final ArchRule domain_gateway_in_domain = ColaDDDLayerRules.DOMAIN_GATEWAY_IN_DOMAIN;
+
+    @ArchTest
+    public static final ArchRule command_executor_in_app = ColaDDDLayerRules.COMMAND_EXECUTOR_IN_APP;
+
+    @ArchTest
+    public static final ArchRule query_service_in_app = ColaDDDLayerRules.QUERY_SERVICE_IN_APP;
+
     // ============ 包依赖规则（COLA 核心约束）============
 
     @ArchTest

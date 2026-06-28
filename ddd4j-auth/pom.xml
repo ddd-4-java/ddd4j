@@ -30,11 +30,10 @@
 
     <modules>
         <module>ddd4j-auth-core</module>
-        <module>ddd4j-auth-datascope</module>
-        <module>ddd4j-auth-license</module>
         <module>ddd4j-auth-satoken</module>
         <module>ddd4j-auth-security</module>
         <module>ddd4j-auth-shiro</module>
+        <module>ddd4j-auth-spring</module>
     </modules>
 
 </project>

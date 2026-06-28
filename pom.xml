@@ -84,6 +84,7 @@
         <module>ddd4j-mq</module>
         <module>ddd4j-web</module>
         <module>ddd4j-auth</module>
+        <module>ddd4j-cache</module>
 
         <!-- 三框架核心适配层（与 ddd4j-core 同级，提供 3 个核心 SPI 的框架实现） -->
         <module>ddd4j-spring</module>
@@ -94,6 +95,7 @@
         <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress） -->
         <module>ddd4j-extensions</module>
         <module>ddd4j-parent</module>
+        <module>ddd4j-samples</module>
     </modules>
 
     <!--开源协议采用Apache 2.0协议-->

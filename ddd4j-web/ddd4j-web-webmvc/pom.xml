@@ -26,12 +26,6 @@
             <artifactId>ddd4j-spring</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Auth Core（BaseAuthWebInterceptor 需要） -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
         <!-- Spring WebMVC -->
         <dependency>
             <groupId>org.springframework</groupId>

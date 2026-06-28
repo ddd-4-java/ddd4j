@@ -25,7 +25,6 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.MessageListener;
 import org.springframework.jms.listener.SessionAwareMessageListener;
-import org.springframework.messaging.support.MessageBuilder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -137,21 +136,20 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
         public void onMessage(Message jmsMessage, Session session) throws JMSException {
             try {
                 String payloadText = extractPayload(jmsMessage);
-                org.springframework.messaging.Message<String> springMessage = MessageBuilder
-                        .withPayload(payloadText)
-                        .setHeader(ActiveMQMessageAcknowledgment.HEADER_JMS_MESSAGE, jmsMessage)
-                        .setHeader(ActiveMQMessageAcknowledgment.HEADER_JMS_SESSION, session)
-                        .build();
 
-                Map<String, Object> headers = new HashMap<>(springMessage.getHeaders());
+                // 2.0.x：直接构造纯 Java MQMessage，jakarta.jms.Message 通过 nativeMessage 逃生口传入
+                Map<String, Object> headers = new HashMap<>();
+                headers.put(ActiveMQMessageAcknowledgment.HEADER_JMS_MESSAGE, jmsMessage);
+                headers.put(ActiveMQMessageAcknowledgment.HEADER_JMS_SESSION, session);
+
                 MQMessage<String> mqMessage = MQMessage.of(
                         payloadText,
                         headers,
                         safeMessageId(jmsMessage),
                         safeCorrelationId(jmsMessage),
-                        springMessage);
+                        jmsMessage);
 
-                MessageAcknowledgment ack = ActiveMQMessageAcknowledgmentFactory.fromSpringMessage(springMessage)
+                MessageAcknowledgment ack = ActiveMQMessageAcknowledgmentFactory.from(mqMessage)
                         .map(a -> (MessageAcknowledgment) a)
                         .orElseGet(NoOpMessageAcknowledgment::new);
 
