@@ -3,7 +3,6 @@ package io.ddd4j.auth.license;
 import io.ddd4j.auth.license.creator.LicenseCreator;
 import io.ddd4j.auth.license.creator.LicenseCreatorParam;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;
 
@@ -14,7 +13,6 @@ public class License_Test {
 
     private LicenseVerify licenseVerify;
 
-    @Autowired
     public void setLicenseVerify(LicenseVerify licenseVerify) {
         this.licenseVerify = licenseVerify;
     }
