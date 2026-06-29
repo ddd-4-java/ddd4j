@@ -78,6 +78,11 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
+        <!-- Jakarta Annotation（@Nonnull 等） -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
         <!-- Jackson TypeHandler（MyJacksonTypeHandler 需要） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
