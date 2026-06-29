@@ -25,7 +25,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <revision>2.0.x20260625-SNAPSHOT</revision>
+        <revision>2.0.x.20260625-SNAPSHOT</revision>
         <java.version>17</java.version>
         <!-- P0-2: 单元测试开关（默认运行，业务项目可 -DskipTests 跳过） -->
         <skipTests>false</skipTests>
