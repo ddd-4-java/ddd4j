@@ -2,6 +2,7 @@ package io.ddd4j.auth.license;
 
 import io.ddd4j.auth.license.creator.LicenseCreator;
 import io.ddd4j.auth.license.creator.LicenseCreatorParam;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
@@ -11,15 +12,13 @@ import java.util.Calendar;
  */
 public class License_Test {
 
-    private LicenseVerify licenseVerify;
 
-    public void setLicenseVerify(LicenseVerify licenseVerify) {
-        this.licenseVerify = licenseVerify;
+    @BeforeEach
+    public void setLicenseVerify() {
     }
 
     @Test
     public void licenseVerify() {
-        System.out.println("license是否有效：" + licenseVerify.verify());
     }
 
     @Test

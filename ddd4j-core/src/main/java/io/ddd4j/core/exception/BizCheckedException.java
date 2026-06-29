@@ -11,10 +11,9 @@ import io.ddd4j.core.CustomApiCode;
 import lombok.Getter;
 
 /**
- * @deprecated 自 3.4.x 起，推荐使用 {@link io.ddd4j.core.contract.exception.ServiceException}。
+ * 推荐使用 {@link io.ddd4j.core.contract.exception.ServiceException}。
  *             本类将在 5.0.x 版本移除。
  */
-@Deprecated(since = "3.4.x", forRemoval = true)
 public class BizCheckedException extends Exception {
 
     @Getter
