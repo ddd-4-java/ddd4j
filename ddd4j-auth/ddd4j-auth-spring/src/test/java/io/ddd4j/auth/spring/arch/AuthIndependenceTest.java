@@ -15,7 +15,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  *
  * <h3>规则清单</h3>
  * <ul>
- *   <li>{@link #AUTH_CORE_NO_FRAMEWORK} - auth-core 不得依赖任何鉴权框架</li>
+ *   <li>{@link #CORE_SUBJECT_NO_FRAMEWORK} - ddd4j-core 的 subject 契约不得依赖任何鉴权框架</li>
  *   <li>{@link #AUTH_SATOKEN_NO_SPRING} - auth-satoken 不得依赖 Spring</li>
  *   <li>{@link #AUTH_SHIRO_NO_SPRING} - auth-shiro 不得依赖 Spring</li>
  * </ul>
@@ -30,11 +30,12 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 public class AuthIndependenceTest {
 
     /**
-     * auth-core 不得依赖任何框架（Spring / Sa-Token / Shiro / Servlet）。
+     * ddd4j-core 的 subject 契约包不得依赖任何框架（Spring / Sa-Token / Shiro / Servlet）。
+     * Subject/SubjectKit/SubjectProvider/AuthRequest/SubjectDataProvider/SubjectStrategy 必须保持纯 Java。
      */
     @ArchTest
-    static final ArchRule AUTH_CORE_NO_FRAMEWORK =
-            noClasses().that().resideInAPackage("io.ddd4j.auth.core..")
+    static final ArchRule CORE_SUBJECT_NO_FRAMEWORK =
+            noClasses().that().resideInAPackage("io.ddd4j.core.subject..")
                     .should().dependOnClassesThat().resideInAnyPackage(
                             "org.springframework..",
                             "cn.dev33..",
