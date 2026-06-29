@@ -57,7 +57,7 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
      */
     public static <K, V> CaffeineCache<K, V> createLoading(CacheConfig config, Function<K, V> loader) {
         Caffeine<Object, Object> builder = buildCaffeine(config);
-        LoadingCache<K, V> loadingCache = builder.build(key -> loader.apply(key));
+        LoadingCache<K, V> loadingCache = builder.build(loader::apply);
         return new CaffeineCache<>(loadingCache);
     }
 
@@ -89,14 +89,22 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     }
 
     private static long toLong(Object val) {
-        if (val == null) return 0L;
-        if (val instanceof Number) return ((Number) val).longValue();
+        if (val == null) {
+            return 0L;
+        }
+        if (val instanceof Number) {
+            return ((Number) val).longValue();
+        }
         return Long.parseLong(val.toString());
     }
 
     private static double toDouble(Object val) {
-        if (val == null) return 0.0;
-        if (val instanceof Number) return ((Number) val).doubleValue();
+        if (val == null) {
+            return 0.0;
+        }
+        if (val instanceof Number) {
+            return ((Number) val).doubleValue();
+        }
         return Double.parseDouble(val.toString());
     }
 
@@ -224,7 +232,9 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public long increment(K key, long delta) {
-        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("增量必须 >= 0");
+        }
         Object newVal = cache.asMap().merge(key, (V) Long.valueOf(delta),
                 (oldVal, inc) -> (V) Long.valueOf(toLong(oldVal) + delta));
         return toLong(newVal);
@@ -233,7 +243,9 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public long decrement(K key, long delta) {
-        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("减量必须 >= 0");
+        }
         Object newVal = cache.asMap().merge(key, (V) Long.valueOf(-delta),
                 (oldVal, dec) -> (V) Long.valueOf(toLong(oldVal) - delta));
         return toLong(newVal);
@@ -242,7 +254,9 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public double incrementFloat(K key, double delta) {
-        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("增量必须 >= 0");
+        }
         Object newVal = cache.asMap().merge(key, (V) Double.valueOf(delta),
                 (oldVal, inc) -> (V) Double.valueOf(toDouble(oldVal) + delta));
         return toDouble(newVal);
@@ -251,7 +265,9 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public double decrementFloat(K key, double delta) {
-        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("减量必须 >= 0");
+        }
         Object newVal = cache.asMap().merge(key, (V) Double.valueOf(-delta),
                 (oldVal, dec) -> (V) Double.valueOf(toDouble(oldVal) - delta));
         return toDouble(newVal);
@@ -261,7 +277,9 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     @Override
     public long stockDecrement(K key, long quantity) {
-        if (quantity <= 0) return AtomicCache.STOCK_ILLEGAL_ARG;
+        if (quantity <= 0) {
+            return AtomicCache.STOCK_ILLEGAL_ARG;
+        }
         // 原子检查并扣减：使用 compute 保证一致性
         Object[] holder = new Object[1];
         cache.asMap().compute(key, (k, val) -> {
@@ -289,7 +307,9 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     @Override
     @SuppressWarnings("unchecked")
     public long stockIncrement(K key, long quantity) {
-        if (quantity <= 0) return AtomicCache.STOCK_ILLEGAL_ARG;
+        if (quantity <= 0) {
+            return AtomicCache.STOCK_ILLEGAL_ARG;
+        }
         Object val = cache.asMap().merge(key, (V) Long.valueOf(quantity),
                 (oldVal, inc) -> (V) Long.valueOf(toLong(oldVal) + quantity));
         return toLong(val);

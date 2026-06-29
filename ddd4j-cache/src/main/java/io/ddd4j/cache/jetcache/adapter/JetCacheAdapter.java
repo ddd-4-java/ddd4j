@@ -68,7 +68,7 @@ public class JetCacheAdapter<K, V> implements Cache<K, V> {
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         // 使用 JetCache 的 computeIfAbsent，内置防穿透保护
-        return jetCache.computeIfAbsent(key, mappingFunction::apply);
+        return jetCache.computeIfAbsent(key, mappingFunction);
     }
 
     @Override

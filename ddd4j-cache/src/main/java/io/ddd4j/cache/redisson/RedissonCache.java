@@ -114,7 +114,9 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         try {
             RBucket<String> bucket = redissonClient.getBucket(key(key));
             String json = bucket.get();
-            if (json == null) return null;
+            if (json == null) {
+                return null;
+            }
             return objectMapper.readValue(json, valueType);
         } catch (Exception e) {
             return null;
@@ -126,7 +128,9 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         V value = getIfPresent(key);
         if (value == null) {
             value = mappingFunction.apply(key);
-            if (value != null) put(key, value);
+            if (value != null) {
+                put(key, value);
+            }
         }
         return value;
     }
@@ -137,7 +141,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             String json = (value instanceof String) ? (String) value : objectMapper.writeValueAsString(value);
             RBucket<String> bucket = redissonClient.getBucket(key(key));
             if (expireSeconds > 0) {
-                bucket.set(json, expireSeconds, TimeUnit.SECONDS);
+                bucket.set(json, Duration.ofSeconds(expireSeconds));
             } else {
                 bucket.set(json);
             }
@@ -210,9 +214,9 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             String json = (value instanceof String) ? (String) value : objectMapper.writeValueAsString(value);
             RBucket<String> bucket = redissonClient.getBucket(key(key));
             if (expireSeconds > 0) {
-                return bucket.trySet(json, Duration.ofSeconds(expireSeconds).toMillis(), TimeUnit.MILLISECONDS);
+                return bucket.setIfAbsent(json, Duration.ofSeconds(expireSeconds));
             }
-            return bucket.trySet(json);
+            return bucket.setIfAbsent(json);
         } catch (Exception e) {
             return false;
         }
@@ -227,7 +231,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
             RBucket<String> bucket = redissonClient.getBucket(key(key));
             if (expected == null) {
-                return bucket.trySet(newJson);
+                return bucket.setIfAbsent(newJson);
             }
             return bucket.compareAndSet(expectedJson, newJson);
         } catch (Exception e) {
@@ -248,7 +252,9 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     @Override
     public long increment(String key, long delta) {
-        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("增量必须 >= 0");
+        }
         return redissonClient.getAtomicLong(key(key)).addAndGet(delta);
     }
 
@@ -262,13 +268,17 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     @Override
     public long decrement(String key, long delta) {
-        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("减量必须 >= 0");
+        }
         return redissonClient.getAtomicLong(key(key)).addAndGet(-delta);
     }
 
     @Override
     public double incrementFloat(String key, double delta) {
-        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("增量必须 >= 0");
+        }
         // Redisson 无原子浮点操作，使用 RBucket + Lua INCRBYFLOAT
         org.redisson.api.RScript script = redissonClient.getScript();
         return script.eval(org.redisson.api.RScript.Mode.READ_WRITE,
@@ -280,7 +290,9 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     @Override
     public double decrementFloat(String key, double delta) {
-        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("减量必须 >= 0");
+        }
         return incrementFloat(key, -delta);
     }
 

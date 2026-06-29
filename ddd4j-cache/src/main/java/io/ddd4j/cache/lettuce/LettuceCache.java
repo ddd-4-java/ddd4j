@@ -79,8 +79,12 @@ public class LettuceCache<V> implements Cache<String, V> {
     public V getIfPresent(String key) {
         try {
             String json = commands.get(key(key));
-            if (json == null) return null;
-            if (valueType == String.class) return (V) json;
+            if (json == null) {
+                return null;
+            }
+            if (valueType == String.class) {
+                return (V) json;
+            }
             return objectMapper.readValue(json, valueType);
         } catch (Exception e) {
             return null;
@@ -92,7 +96,9 @@ public class LettuceCache<V> implements Cache<String, V> {
         V value = getIfPresent(key);
         if (value == null) {
             value = mappingFunction.apply(key);
-            if (value != null) put(key, value);
+            if (value != null) {
+                put(key, value);
+            }
         }
         return value;
     }
