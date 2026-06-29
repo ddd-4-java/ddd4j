@@ -1,6 +1,6 @@
 # ddd4j 2.0.x 重构迁移完成报告 (REFACTOR_MIGRATION)
 
-> **基线版本：2.0.x20260625-SNAPSHOT**（feature/2.0.x 分支）
+> **基线版本：2.0.x.20260625-SNAPSHOT**（feature/2.0.x 分支）
 > 重构时间：2026-06-27
 > 性质：**破坏性变更（Breaking Change）**——已全部完成
 

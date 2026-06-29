@@ -20,29 +20,38 @@ import java.util.Optional;
  * @since 2.0.x
  */
 @Repository
-public interface SpringJpaProjectionPositionRepository
-        extends JpaRepository<SpringJpaProjectionPosition, String>, ProjectionPositionRepository {
+public class SpringJpaProjectionPositionRepository
+        implements ProjectionPositionRepository {
 
-    @Override
-    Optional<ProjectionPosition> findByStreamId(String streamId);
+    private final JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
 
-    @Override
-    default List<ProjectionPosition> findAll() {
-        return findAll().stream().map(p -> (ProjectionPosition) p).toList();
+    public SpringJpaProjectionPositionRepository(JpaRepository<SpringJpaProjectionPosition, String> jpaRepository) {
+        this.jpaRepository = jpaRepository;
     }
 
     @Override
-    default ProjectionPosition save(ProjectionPosition position) {
-        return save((SpringJpaProjectionPosition) position);
+    public Optional<ProjectionPosition> findByStreamId(String streamId) {
+        return jpaRepository.findById(streamId).map(p -> (ProjectionPosition) p);
     }
 
     @Override
-    @Modifying
-    @Query("DELETE FROM SpringJpaProjectionPosition p WHERE p.streamId = :streamId")
-    void deleteByStreamId(@Param("streamId") String streamId);
+    public List<ProjectionPosition> findAll() {
+        return jpaRepository.findAll().stream().map(p -> (ProjectionPosition) p).toList();
+    }
+
+    @Override
+    public ProjectionPosition save(ProjectionPosition position) {
+        return jpaRepository.save((SpringJpaProjectionPosition) position);
+    }
+
+    @Override
+    public void deleteByStreamId(String streamId) {
+        jpaRepository.deleteById(streamId);
+    }
 
     @Override
     @Modifying
     @Query("UPDATE SpringJpaProjectionPosition p SET p.nextEventNumber = 0 WHERE p.streamId = :streamId")
-    void resetToZero(@Param("streamId") String streamId);
+    public void resetToZero(@Param("streamId") String streamId) {
+    }
 }

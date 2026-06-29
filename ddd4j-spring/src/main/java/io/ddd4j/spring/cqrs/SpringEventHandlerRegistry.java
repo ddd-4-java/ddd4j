@@ -39,11 +39,9 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
 
     @Override
     public void afterSingletonsInstantiated() {
-        Map<String, Object> viewBeans = applicationContext.getBeansWithAnnotation(org.fuin.ddd4j.core.View.class);
-        // 也支持 ddd4j 自定义标记
-        viewBeans.putAll(applicationContext.getBeansOfType(Object.class));
+        Map<String, org.fuin.cqrs4j.core.View> viewBeans = applicationContext.getBeansOfType(org.fuin.cqrs4j.core.View.class);
 
-        for (Object view : viewBeans.values()) {
+        for (org.fuin.cqrs4j.core.View view : viewBeans.values()) {
             registerHandlers(view.getClass());
         }
         log.info("CQRS event handler registry initialized: {} event types registered", handlerTable.size());

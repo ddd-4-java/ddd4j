@@ -169,7 +169,7 @@ $ mvn dependency:list -pl ddd4j-mq/ddd4j-mq-core
 
 ## 七、版本兼容
 
-- **本次重构**：`2.0.x20260625-SNAPSHOT`
+- **本次重构**：`2.0.x.20260625-SNAPSHOT`
 - **破坏性变更**：`MQMessage` 不再持有 `org.springframework.messaging.Message` 引用
 - **业务代码影响**：✅ 零影响（业务侧只与 `MQEventPublisher` / `@MQEventListener` 交互）
 - **Broker 适配器影响**：🔄 需桥接迁移（已在 ddd4j-mq-spring 提供工具类）

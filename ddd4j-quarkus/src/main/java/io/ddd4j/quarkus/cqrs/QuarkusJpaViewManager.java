@@ -1,7 +1,6 @@
 package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.projection.ViewManager;
-import io.quarkus.arc.properties.Unique;
 import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -24,7 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Slf4j(topic = "### DDD4J-QUARKUS : ViewManager ###")
 @ApplicationScoped
-@Unique
 public class QuarkusJpaViewManager implements ViewManager {
 
     private final AtomicBoolean running = new AtomicBoolean(false);

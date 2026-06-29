@@ -8,7 +8,6 @@
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-web-core.BaseController}
  */
-@Deprecated
 package io.ddd4j.spring.web;
 
 import io.ddd4j.core.ApiRestResponse;
@@ -39,6 +38,7 @@ import org.springframework.util.StringValueResolver;
         @ApiResponse(responseCode = "503", description = "服务不可用", content = @Content(schema = @Schema(implementation = ApiRestResponse.class))),
         @ApiResponse(responseCode = "504", description = "网关访问超时", content = @Content(schema = @Schema(implementation = ApiRestResponse.class)))
 })
+@Deprecated
 public class BaseController implements ApplicationEventPublisherAware, ApplicationContextAware, EmbeddedValueResolverAware {
 
     @Getter

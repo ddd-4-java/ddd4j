@@ -34,6 +34,16 @@
             <artifactId>quarkus-core</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- Hibernate ORM Panache + JPA (for QuarkusJpaProjectionPosition) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

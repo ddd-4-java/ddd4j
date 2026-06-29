@@ -8,13 +8,13 @@
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-web-core.BaseMapperController}
  */
-@Deprecated
 package io.ddd4j.spring.web;
 
 import com.github.dozermapper.core.Mapper;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Deprecated
 public abstract class BaseMapperController extends BaseController {
 
     @Autowired(required = false)

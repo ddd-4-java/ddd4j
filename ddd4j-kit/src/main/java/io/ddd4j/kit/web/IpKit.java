@@ -152,4 +152,31 @@ public class IpKit extends Ipv4Util {
         }
         return remoteAddr;
     }
+
+    /**
+     * 从 Servlet 请求中解析客户端真实 IP（兼容代理头）。
+     *
+     * <p>依赖 {@code jakarta.servlet.http.HttpServletRequest}。
+     * 若框架适配层（Spring/Quarkus/Javalin）无法提供 Servlet API，
+     * 请直接调用 {@link #parseRemoteAddr(String, String, String)}。
+     *
+     * @param request Servlet 请求对象（不能为 null）
+     * @return 客户端真实 IP
+     */
+    public static String getRemoteAddr(Object request) {
+        if (request == null) {
+            return "unknown";
+        }
+        try {
+            java.lang.reflect.Method getHeader = request.getClass().getMethod("getHeader", String.class);
+            java.lang.reflect.Method getRemoteAddr = request.getClass().getMethod("getRemoteAddr");
+            String xForwardedFor = (String) getHeader.invoke(request, "X-Forwarded-For");
+            String xRealIp = (String) getHeader.invoke(request, "X-Real-IP");
+            String remoteAddr = (String) getRemoteAddr.invoke(request);
+            return parseRemoteAddr(xForwardedFor, xRealIp, remoteAddr);
+        } catch (Exception e) {
+            log.warn("getRemoteAddr error", e);
+            return "unknown";
+        }
+    }
 }

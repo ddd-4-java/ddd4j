@@ -65,6 +65,22 @@
             <groupId>com.github.hiwepy</groupId>
             <artifactId>spring-biz</artifactId>
         </dependency>
+        <!-- Spring Data JPA（SpringJpaProjectionPositionRepository 需要） -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+        <!-- Hibernate EntityManager（SpringJpaProjectionPositionRepository 需要） -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <!-- Lombok（@Slf4j 等注解需要） -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- For AspectJ（从 ddd4j-core 迁入的 AsyncAspect 需要） -->
         <dependency>
             <groupId>org.aspectj</groupId>

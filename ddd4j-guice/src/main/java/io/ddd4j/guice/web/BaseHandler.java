@@ -21,7 +21,6 @@ import io.ddd4j.core.contract.DomainEventPublisher;
 import io.ddd4j.guice.context.GuiceContext;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Locale;
 
@@ -40,7 +39,7 @@ public abstract class BaseHandler {
      * 获取国际化消息
      */
     protected String getMessage(String code, Object... args) {
-        I18nProvider i18n = ApplicationContext.getInstance(I18nProvider.class);
+        I18nProvider i18n = GuiceContext.getInstance(I18nProvider.class);
         return i18n.getMessage(code, args);
     }
 
