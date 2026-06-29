@@ -394,7 +394,7 @@
                     <configuration>
                         <!-- P0-2: 开启单元测试（CI 阶段执行，业务项目可 -DskipTests 跳过） -->
                         <skipTests>${skipTests}</skipTests>
-                        <argLine>-Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=256m -Dfile.encoding=UTF-8</argLine>
+                        <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
                         <additionalClasspathElements>
                             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
                         </additionalClasspathElements>

@@ -114,7 +114,7 @@ public class IpKit extends Ipv4Util {
             if (returnStr != null) {
                 JSONObject rs = JSONUtil.parseObj(returnStr);
                 Map<String, String> map = new HashMap<>();
-                map.put("pro", rs.getStr("pro");
+                map.put("pro", rs.getStr("pro"));
                 map.put("city", rs.getStr("city"));
                 map.put("region", rs.getStr("region"));
                 return map;
