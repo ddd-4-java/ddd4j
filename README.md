@@ -1,170 +1,167 @@
-## Ddd4j Boot 3.x 简介
+# Ddd4j — 框架无关的 DDD/CQRS/ES 通用基础层
 
-**Ddd4j Boot** 是一个基于 **领域驱动设计（DDD）** 思想的 Java 微服务开发脚手架。采用 Spring Boot 3.5.x
-构建，使用轻量级 [ddd-4-java](https://github.com/fuinorg/ddd-4-java)
-和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event
-Sourcing）。
+**Ddd4j** 是一个**不与任何具体容器框架强绑定**的 DDD 项目脚手架，为 [ddd4j-boot](https://github.com/hiwepy/ddd4j-boot)（Spring Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/hiwepy/ddd4j-javalin) 三种容器框架提供**同一套纯净的、可复用的领域层基础**。
 
-本项目遵循 **Eric Evans** 和 **Vaughn Vernon** 的 DDD 经典理论，不依赖特殊框架，仅使用标准的 JEE/Spring
-规范，帮助开发者构建可维护、可扩展的复杂业务系统。
+基于轻量级 [ddd-4-java](https://github.com/fuinorg/ddd-4-java) 和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing），遵循 **Eric Evans** 和 **Vaughn Vernon** 的 DDD 经典理论。
 
-### 🎯 核心设计理念
+### 🎯 核心定位
 
-#### **领域驱动设计（DDD）**
+| 维度 | 定位 |
+|------|------|
+| **本质** | 框架无关的 DDD/CQRS/ES 通用基础层（非 Spring Boot 项目） |
+| **运行时** | Java 17，不依赖任何容器框架 |
+| **消费方** | ddd4j-boot（Spring Boot）/ ddd4j-quarkus / ddd4j-javalin |
+| **底层依赖** | fuinorg ddd-4-java + cqrs-4-java + esc-api |
+| **铁律** | 零 `@AutoConfiguration` · 零 `spring.factories` · 零 starter |
 
-- **战略设计**：通过限界上下文（Bounded Context）划分业务边界，建立统一语言（Ubiquitous Language），识别核心域、支撑域和通用域
-- **战术设计**：采用实体（Entity）、值对象（Value Object）、聚合（Aggregate）、聚合根（Aggregate Root）、领域服务（Domain
-  Service）、仓储（Repository）、领域事件（Domain Event）等模式组织领域模型
-- **充血模型**：业务逻辑封装在领域对象内部，而非贫血的服务层，确保领域模型的完整性和业务规则的内聚性
+### 🏗️ 三层架构分离
 
-#### **命令查询职责分离（CQRS）**
-
-- **读写分离**：命令侧（写模型）专注于业务规则和状态变更，查询侧（读模型）优化数据检索和视图构建
-- **独立优化**：命令和查询可以独立扩展、优化，适应不同的性能需求
-- **事件驱动**：通过领域事件实现跨聚合、跨上下文的解耦通信
-
-#### **事件溯源（Event Sourcing）**
-
-- **事件存储**：将状态变更记录为事件序列，支持完整的历史追溯和状态重建
-- **时间旅行**：可以回放事件重建任意时间点的系统状态
-- **审计能力**：天然支持完整的业务操作审计
-
-#### **架构模式**
-
-- **菱形架构（COLA）**：采用 Adapter → Application → Domain ← Infrastructure 四层架构，清晰的分层边界和依赖方向
-- **六边形架构思想**：通过端口（Port）和适配器（Adapter）隔离领域核心与外部技术实现
-- **依赖倒置**：领域层不依赖基础设施层，通过接口抽象实现技术无关性
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 第一层：业务应用层（用户项目）                                        │
+│ 用户的 Spring Boot / Quarkus / Javalin 项目                         │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │ 引入对应框架的脚手架
+                           ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 第二层：具体框架脚手架（自动装配 / 胶水代码）                          │
+│ ddd4j-boot / ddd4j-quarkus / ddd4j-javalin                        │
+│ 含：@AutoConfiguration / starter / Bean 注册 / 拦截器 / 异常处理     │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │ 依赖（零自动装配、零 starter）
+                           ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ 第三层：ddd4j 通用基础层（本项目）                                    │
+│ 纯 Java 契约 / SPI 接口 / 抽象基类 / DDD 构建块 / ArchUnit 规则     │
+└──────────────────────────┬──────────────────────────────────────────┘
+           ┌───────────────┼───────────────┐
+           ▼               ▼               ▼
+    ddd-4-java       cqrs-4-java       esc-api
+    (fuinorg)        (fuinorg)         (fuinorg)
+```
 
 ### ✨ 主要特性
 
-- **1. 完整的 DDD 分层架构**：提供标准的领域层、应用层、接口层和基础设施层结构，支持 COLA V5 架构模式
-
-- **2. 轻量级 DDD 实现**：基于 [ddd-4-java](https://github.com/fuinorg/ddd-4-java)
-  和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库，无需引入重量级框架，保持代码简洁
-
-- **3. 技术栈集成**：基于 Spring Boot
-  3.5.x（详见 [Spring Boot 官方文档](https://docs.spring.io/spring-boot/docs/3.5.x/reference/html/features.html#features.spring-application)
-  ），集成 [MyBatis Plus](https://baomidou.com/introduce/)、Jackson、Guava、Swagger、SaToken 等常用组件，统一版本管理
-
-- **4. 双栈支持**：同时支持 WebMVC（传统 Servlet）和 WebFlux（响应式）两种编程模型
-
-- **5. 领域模型基础能力**：提供 BaseEntity、BaseRepository、BaseService 等基础抽象，支持分页、排序、统计等通用能力
-
-- **6. 领域事件支持**：内置领域事件发布机制，支持事件驱动的业务编排
-
-- **7. 防腐层（ACL）**：提供外部服务集成的防腐层抽象，隔离外部系统变化对领域模型的影响
-
-- **8. 统一异常处理**：全局异常处理机制，支持业务异常和系统异常的标准化响应
+- **框架无关**：核心契约层零 Spring/MyBatis/Servlet import，可同时被 Spring Boot / Quarkus / Javalin 复用
+- **DDD 战术模式**：基于 fuinorg ddd-4-java，提供 `DddAggregateRoot`、`DddDomainEvent`、`DddEventStoreRepository` 等构建块
+- **CQRS 命令查询分离**：基于 fuinorg cqrs-4-java，提供 Command/View/ProjectionPosition 等 SPI
+- **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
+- **双轨 DDD 模型**：ActiveRecord 轨道（快速 CRUD）+ 纯净 DDD 轨道（零 ORM 依赖，支持 ES）
+- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `BaseRepository`（数据仓库）
+- **12 种 MQ 统一抽象**：Kafka / RabbitMQ / RocketMQ / ActiveMQ / Pulsar / NATS / MQTT / Redis Stream / SQS / ONS / TDMQ / Disruptor
+- **三框架适配**：`ddd4j-spring` / `ddd4j-quarkus` / `ddd4j-guice` 提供 SPI 的框架实现
+- **ArchUnit 编译期守护**：9 条架构边界规则，CI 阶段强制执行分层纪律
+- **COLA / Clean Architecture 支持**：注解驱动的架构规范检查
 
 ### 📚 DDD/CQRS 学习资源
 
-如果您是 DDD/CQRS 领域的新手，建议先了解以下核心概念：
-
-- **[DDD 思维导图](./docs/DDD%20思维导图.md)**：涵盖战略设计（限界上下文、子域划分、统一语言）和战术设计（实体、值对象、聚合、领域服务、仓储、领域事件）的完整知识体系
-- **[CQRS 思维导图](./docs/CQRS%20思维导图.md)**：深入理解命令查询职责分离、事件处理、一致性模型等核心概念
+- **[DDD 思维导图](./docs/ddd/DDD%20思维导图.md)**：战略设计 + 战术设计完整知识体系
+- **[CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)**：命令查询职责分离核心概念
 - **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
-
-**CQRS 架构概览图**：
-
-![](./docs/cqrs-overview.png)
-
-该图展示了基于 CQRS 的微服务架构，包括命令侧（写模型）和查询侧（读模型）的分离，以及事件驱动的系统集成方式。
-
-### 📦 项目定位
-
-**Ddd4j Boot** 是一个面向复杂业务领域的微服务开发脚手架，旨在帮助团队：
-
-- **建立领域模型**：通过 DDD 战术设计模式，将业务知识显式地表达在代码中
-- **划分业务边界**：通过限界上下文识别和划分业务领域，降低系统复杂度
-- **提升代码质量**：通过分层架构和依赖倒置，实现高内聚、低耦合的代码结构
-- **支持业务演进**：领域模型与技术实现分离，业务变化不影响技术架构
-
-本项目提供通用的 Maven 配置、第三方依赖管理、打包规则以及 DDD 分层架构的基础设施支持。
+- **[架构边界规范](./docs/architecture/architecture-boundary.md)**：ddd4j 与各框架项目的职责铁律
+- **[架构全景](./docs/architecture/architecture.md)**：模块全景、SPI 设计、双框架适配对照
 
 ### 🏗️ 项目架构
 
-**Ddd4j Boot 整体架构图**：
-
-![](./docs/architecture/ddd4j.png)
-
-该图展示了 Ddd4j Boot 的整体模块架构，包括 BOM 管理、核心模块、组件模块和示例模块的组织关系，以及各模块之间的依赖关系。
-
 **Maven 模块架构**：
 
-| 模块                 | 说明                                                                                                                     |
-|--------------------|------------------------------------------------------------------------------------------------------------------------|
-| ddd4j-bom          | BOM 依赖管理模块，统一管理所有子模块版本，外部项目通过 BOM 引用实现版本对齐                                                                             |
-| ddd4j-dependencies | 公共依赖声明模块，集中管理第三方组件版本，确保依赖版本一致性                                                                                         |
-| ddd4j-core         | **核心领域模块**，封装 DDD 基础抽象（BaseEntity、BaseRepository、领域事件等）、应用层基类（BaseService、Command/Query）、接口层基类（BaseController）以及领域异常定义 |
-| ddd4j-cmpt         | 组件模块父模块，提供各类技术组件的自动配置（WebMVC/WebFlux、消息队列、缓存、认证等），作为基础设施层实现                                                            |
-| ddd4j-parent       | Maven 父 POM，定义统一的编译、打包、发布规则，所有业务服务模块继承此父 POM                                                                           |
-| ddd4j-samples      | 示例服务模块集合，展示基于 DDD 架构的业务服务实现，涵盖不同技术栈组合（数据源、消息队列等）                                                                       |
-
-**使用建议**：
-
-- **1. 项目结构规划**：新建业务服务时，建议按限界上下文（Bounded Context）划分模块。每个限界上下文对应一个独立的服务或模块，保持业务边界的清晰
-
-- **2. 领域模型设计**：优先识别聚合（Aggregate）和聚合根，将业务规则封装在领域对象内部，避免贫血模型。应用层仅负责用例编排和事务管理
-
-- **3. 模块拆分策略**：对于复杂的业务域，应考虑按子域（核心域、支撑域、通用域）拆分服务。创建模块时预留拆分空间，便于后续微服务化演进
-
-- **4. 依赖管理**：外部项目引用 ddd4j 模块时，强烈建议使用 `ddd4j-bom` 进行版本管理，确保依赖版本一致性
-
-- **5. 技术选型**：根据业务复杂度选择合适的架构模式。简单 CRUD 场景可使用轻量级 DDD，复杂业务域建议采用完整的 DDD + CQRS 模式
+| 模块 | 角色 | 关键产物 |
+|------|------|---------|
+| `ddd4j-bom` | BOM 版本管理 | 外部项目引用统一版本 |
+| `ddd4j-dependencies` | 第三方依赖集中管理 | Spring 6.x / Jackson 2.22 / Reactor 等 |
+| `ddd4j-annotation` | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository` |
+| `ddd4j-core` | **纯 Java 契约层** | `Model` `Query` `Page` `R` `BaseRepository` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
+| `ddd4j-kit` | 工具箱 | 继承式增强 Hutool，Cache/Lang/Web 工具 |
+| `ddd4j-ddd` | DDD 架构规范检查 | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit） |
+| `ddd4j-data` | 数据层抽象 | Repository SPI + MyBatis-Plus 实现 + 加密/数据权限/日志 |
+| `ddd4j-mq` | 消息队列抽象 | `MQBrokerAdapter` SPI + 12 种 MQ 实现 |
+| `ddd4j-web` | Web 层抽象 | `RequestInfo` `SessionContext` + WebMVC/WebFlux 实现 |
+| `ddd4j-auth` | 认证授权抽象 | `Subject` SPI + Sa-Token/Security/Shiro 实现 |
+| `ddd4j-cache` | 缓存抽象 | 缓存 SPI 及实现 |
+| `ddd4j-spring` | Spring 适配层 | `SpringDomainEventPublisher` `SpringContext` `SpringI18nProvider` |
+| `ddd4j-quarkus` | Quarkus 适配层 | `CdiDomainEventPublisher` + CDI 实现 |
+| `ddd4j-guice` | Guice 适配层 | `GuiceDomainEventPublisher` + Guava EventBus |
+| `ddd4j-extensions` | 跨领域扩展 | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation |
+| `ddd4j-parent` | Maven 父 POM | 编译/打包/发布规则 |
+| `ddd4j-samples` | 示例工程 | Sa-Token / Spring Security / Shiro 集成示例 |
 
 **模块结构树**：
 
 ```
-|--ddd4j
-|----ddd4j-bom                       #BOM依赖管理，用于外部项目引用 ddd4j 模块版本管理
-|----ddd4j-dependencies              #公共依赖，便于依赖组件版本控制
-|----ddd4j-core                      #核心模块，基础API、公共对象（BaseController、BaseService、BaseMapper等）、异常对象
-|----ddd4j-cmpt                      #组件模块父模块
-|------ddd4j-cmpt-akka               #Akka组件
-|------ddd4j-cmpt-crypto             #加解密组件
-|------ddd4j-cmpt-datascope          #数据权限组件
-|------ddd4j-cmpt-license            #License组件
-|------ddd4j-cmpt-logs               #日志组件
-|------ddd4j-cmpt-pf4j               #PF4J插件组件
-|------ddd4j-cmpt-cola               #COLA组件
-|------ddd4j-cmpt-satoken            #SaToken组件
-|------ddd4j-cmpt-jackson            #Jackson组件
-|------ddd4j-cmpt-webmvc             #WebMVC组件
-|------ddd4j-cmpt-webflux            #WebFlux组件
-|------ddd4j-cmpt-kafka              #Kafka组件
-|------ddd4j-cmpt-external           #外部API集成组件
-|------ddd4j-cmpt-validation         #验证组件
-|----ddd4j-parent                    #子模块的父级工程，定义Maven配置
-|----ddd4j-samples                   #具体业务服务
-|--------ddd4j-sample-druid          #集成Druid数据源示例
-|--------ddd4j-sample-druid-activemq #集成Druid数据源 + ActiveMQ 示例
-|--------ddd4j-sample-druid-amqp     #集成Druid数据源 + RabbitMQ 示例
-|--------ddd4j-sample-druid-kafka    #集成Druid数据源 + Kafka 示例
-|--------ddd4j-sample-druid-mqtt-client1 #集成Druid数据源 + MQTT Client1 示例
-|--------ddd4j-sample-druid-mqtt-client2 #集成Druid数据源 + MQTT Client2 示例
-|--------ddd4j-sample-druid-mqtt-server  #集成Druid数据源 + MQTT Server 示例
-|--------ddd4j-sample-druid-rocketmq #集成Druid数据源 + RocketMQ 示例
-|--------ddd4j-sample-druid-war     #集成Druid数据源打War包示例
-|--------ddd4j-sample-hikaricp      #集成 Hikaricp数据源示例
-|--------ddd4j-sample-hikaricp-activemq #集成 Hikaricp数据源 + ActiveMQ 示例
-|--------ddd4j-sample-hikaricp-amqp #集成 Hikaricp数据源 + RabbitMQ 示例
-|--------ddd4j-sample-hikaricp-kafka #集成 Hikaricp数据源 + Kafka 示例
-|--------ddd4j-sample-hikaricp-rocketmq #集成 Hikaricp数据源 + RocketMQ 示例
-|--------ddd4j-sample-hikaricp-war  #集成 Hikaricp数据源打War包示例
-|--------ddd4j-sample-r2dbc-webflux #集成 R2dbc + WebFlux 示例
+|--ddd4j                                #通用基础层（零 starter，零自动装配）
+|----ddd4j-bom                          #BOM依赖管理，用于外部项目引用 ddd4j 模块版本管理
+|----ddd4j-dependencies                 #公共依赖，便于依赖组件版本控制
+|----ddd4j-annotation                   #注解层，DDD构造型注解+API注解，零框架依赖
+|----ddd4j-core                         #核心契约层，纯Java DDD基础抽象（Model/Query/BaseRepository/DomainEvent/DddAggregateRoot等）
+|----ddd4j-kit                          #工具箱，继承式增强Hutool，提供Cache/Lang/Web工具
+|----ddd4j-ddd                          #DDD架构规范检查（基于ArchUnit）
+|------ddd4j-ddd-clean                  #Clean Architecture分层纪律规则
+|------ddd4j-ddd-cola                   #COLA菱形架构分层纪律规则
+|----ddd4j-data                         #数据抽象聚合
+|------ddd4j-data-core                  #纯Java Repository SPI，零ORM依赖
+|------ddd4j-data-mybatis               #MyBatis-Plus实现：BaseRepositoryImpl、TypeHandler、拦截器
+|------ddd4j-data-spring                #Spring桥接：RepositoryBean注册、静态注册表初始化
+|------ddd4j-data-crypto                #加解密策略：CryptoStrategy/Provider/注解
+|------ddd4j-data-datascope             #数据权限组件
+|------ddd4j-data-external              #外部服务集成：地理位置/天气/行政区划/序列号
+|------ddd4j-data-logs                  #API操作日志：ApiOperationLogAspect+Provider
+|----ddd4j-mq                           #消息队列抽象聚合
+|------ddd4j-mq-core                    #纯Java MQ SPI：MQEventPublisher/MQBrokerAdapter/MQListener
+|------ddd4j-mq-spring                  #Spring Messaging桥接：Message↔MQMessage转换
+|------ddd4j-mq-kafka                   #Apache Kafka实现
+|------ddd4j-mq-rabbitmq                #RabbitMQ实现
+|------ddd4j-mq-rocketmq                #Apache RocketMQ实现
+|------ddd4j-mq-activemq                #Apache ActiveMQ Artemis实现
+|------ddd4j-mq-pulsar                  #Apache Pulsar实现
+|------ddd4j-mq-nats                    #NATS JetStream实现
+|------ddd4j-mq-mqtt                    #Eclipse Paho MQTT实现
+|------ddd4j-mq-mqtt-mica               #Mica MQTT Client实现
+|------ddd4j-mq-redis-stream            #Redis Stream实现
+|------ddd4j-mq-sqs                     #AWS SQS实现
+|------ddd4j-mq-ons                     #阿里云ONS实现
+|------ddd4j-mq-tdmq                    #腾讯云TDMQ实现
+|------ddd4j-mq-disruptor               #LMAX Disruptor本地MQ实现
+|----ddd4j-web                          #Web抽象聚合
+|------ddd4j-web-core                   #纯Java SPI：RequestInfo/SessionContext/IpUtils
+|------ddd4j-web-webmvc                 #Spring MVC实现：Controller/拦截器/全局异常处理
+|------ddd4j-web-webflux                #Spring WebFlux实现：响应式Controller/ErrorAttributes
+|----ddd4j-auth                         #认证/授权抽象聚合
+|------ddd4j-auth-core                  #纯Java SPI：Subject/AuthPrincipal/SubjectProvider
+|------ddd4j-auth-spring                #Spring桥接：SubjectRegistrar
+|------ddd4j-auth-satoken               #Sa-Token实现
+|------ddd4j-auth-security              #Spring Security实现
+|------ddd4j-auth-shiro                 #Apache Shiro实现
+|----ddd4j-cache                        #缓存抽象及实现
+|----ddd4j-spring                       #Spring适配层：DomainEventPublisher/I18nProvider/SubjectProvider
+|----ddd4j-quarkus                      #Quarkus适配层：CDI实现
+|----ddd4j-guice                        #Guice适配层：Guava EventBus实现
+|----ddd4j-extensions                   #跨领域扩展
+|------ddd4j-extension-akka             #Akka Actor系统组件
+|------ddd4j-extension-excel            #Excel导入导出组件
+|------ddd4j-extension-jackson          #Jackson序列化增强组件
+|------ddd4j-extension-license          #软件授权TrueLicense组件
+|------ddd4j-extension-monitor          #监控告警：钉钉/企微机器人+日志告警
+|------ddd4j-extension-pf4j             #PF4J插件化组件
+|------ddd4j-extension-qlexpress        #QLExpress规则引擎组件
+|------ddd4j-extension-validation       #参数校验增强组件
+|----ddd4j-parent                       #业务工程父POM，定义编译/打包/发布规则
+|----ddd4j-samples                      #示例工程
+|--------ddd4j-sample-auth-satoken      #Sa-Token集成示例，演示SubjectKit统一鉴权入口
+|--------ddd4j-sample-auth-security     #Spring Security集成示例
+|--------ddd4j-sample-auth-shiro        #Apache Shiro集成示例
 ```
 
 ### 📖 使用说明
 
-#### 1. 外部项目引用（推荐使用 BOM）
+#### 1. 通过 BOM 引入（推荐）
 
-在外部项目的 `pom.xml` 中引入 BOM：
+在业务项目的 `pom.xml` 中引入 BOM：
 
 ```xml
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-bom</artifactId>
             <version>${ddd4j.version}</version>
             <type>pom</type>
@@ -174,297 +171,107 @@ Sourcing）。
 </dependencyManagement>
 ```
 
-然后直接引入需要的模块，无需指定版本：
+然后按需引入模块：
 
 ```xml
 <dependencies>
+    <!-- 核心契约（必选） -->
     <dependency>
-        <groupId>com.github.hiwepy</groupId>
+        <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-core</artifactId>
     </dependency>
+    <!-- 数据层（按需） -->
     <dependency>
-        <groupId>com.github.hiwepy</groupId>
-        <artifactId>ddd4j-cmpt-webmvc</artifactId>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data-mybatis</artifactId>
+    </dependency>
+    <!-- Web 层（按需） -->
+    <dependency>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-web-webmvc</artifactId>
+    </dependency>
+    <!-- 框架适配（按需） -->
+    <dependency>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-spring</artifactId>
     </dependency>
 </dependencies>
 ```
 
-#### 2. 内部项目使用
+#### 2. 三框架适配方式
 
-内部项目继承 `ddd4j-parent`：
+| 框架 | 适配层 | DI 容器 | 事件发布 | Web 框架 |
+|------|--------|---------|---------|---------|
+| Spring Boot | `ddd4j-spring` | `ApplicationContext` | `AppCtx.publishEvent()` | Spring MVC / WebFlux |
+| Quarkus | `ddd4j-quarkus` | Arc (CDI) | `Event<T>.fire()` | RESTEasy (JAX-RS) |
+| Javalin | `ddd4j-guice` | Guice Injector | `EventBus.post()` | Javalin |
+
+#### 3. 业务项目继承父 POM
 
 ```xml
 <parent>
-    <groupId>com.github.hiwepy</groupId>
+    <groupId>io.ddd4j</groupId>
     <artifactId>ddd4j-parent</artifactId>
     <version>${revision}</version>
     <relativePath>../ddd4j-parent/pom.xml</relativePath>
 </parent>
 ```
 
-#### 3. 组件模块说明
+### 🛡️ ArchUnit 架构边界守护
 
-| 组件模块                  | 说明                                |
-|-----------------------|-----------------------------------|
-| ddd4j-cmpt-akka       | Akka 组件，支持 Akka 3 Actor 系统        |
-| ddd4j-cmpt-crypto     | 加解密组件，支持 AES、SM3、SM4 等加密算法        |
-| ddd4j-cmpt-datascope  | 数据权限组件，支持数据范围权限控制                 |
-| ddd4j-cmpt-license    | License 组件，支持 TrueLicense 许可证管理   |
-| ddd4j-cmpt-logs       | 日志组件，支持 API 操作日志记录                |
-| ddd4j-cmpt-pf4j       | PF4J 插件组件，支持插件化开发                 |
-| ddd4j-cmpt-cola       | COLA 组件，支持 COLA 架构模式              |
-| ddd4j-cmpt-satoken    | SaToken 组件，支持 SaToken 权限认证        |
-| ddd4j-cmpt-jackson    | Jackson 组件，支持 Jackson 序列化配置       |
-| ddd4j-cmpt-webmvc     | WebMVC 组件，支持 Spring MVC 自动配置      |
-| ddd4j-cmpt-webflux    | WebFlux 组件，支持 Spring WebFlux 自动配置 | 
-| ddd4j-cmpt-kafka      | Kafka 组件，支持 Kafka 消息队列集成          |
-| ddd4j-cmpt-external   | 外部 API 集成组件，支持外部服务调用              |
-| ddd4j-cmpt-validation | 验证组件，支持自定义验证规则                    |
+ddd4j 内置 9 条 ArchUnit 规则，在 CI 阶段强制执行架构纪律：
 
-### 📁 DDD 分层目录结构
+| 规则 | 说明 |
+|------|------|
+| `no_autoconfiguration_in_ddd4j` | ddd4j 全模块不得包含 `@AutoConfiguration` |
+| `no_spring_in_core_modules` | core / kit / annotation 不得依赖 `org.springframework.*` |
+| `no_spring_messaging_in_mq_core` | mq-core 不得依赖 `org.springframework.messaging.*` |
+| `no_spring_factories_in_core` | core 不得引用 `AutoConfiguration.imports` |
+| `no_hutool_all_in_core` | core 不得依赖 hutool 全量包 |
+| `core_no_mybatis` | core 不得依赖 `com.baomidou.*` |
+| `core_no_servlet` | core 不得依赖 `jakarta.servlet.*` |
+| `core_no_validator` | core 不得依赖 `org.hibernate.validator.*` |
+| `core_no_aspectj` | core 不得依赖 `org.aspectj.*` |
 
-##### 核心模块（ddd4j-core）
+### 📁 DDD 分层目录结构（业务项目参考）
 
-遵循 DDD 经典四层架构，体现清晰的职责分离和依赖方向：
+业务项目建议采用 **COLA V5 架构**（菱形架构），依赖方向：`adapter` → `app` → `domain` ← `infrastructure`
 
 ```
-ddd4j-core/
-├── src/main/java/io/ddd4j/boot/core
-│   │
-│   ├── domain/                # 领域层（核心，无外部依赖）
-│   │   ├── model/             # 领域模型
-│   │   │   ├── entity/        # 实体（Entity）- 有唯一标识的业务对象
-│   │   │   ├── vo/            # 值对象（Value Object）- 不可变的描述性对象
-│   │   │   └── aggregate/     # 聚合根（Aggregate Root）- 一致性边界
-│   │   ├── event/             # 领域事件（Domain Event）- 业务事实的表达
-│   │   ├── repository/        # 仓储接口（Repository）- 持久化抽象
-│   │   └── service/           # 领域服务（Domain Service）- 跨聚合的业务逻辑
-│   │
-│   ├── application/           # 应用层（用例编排层）
-│   │   ├── command/           # 命令对象（Command）- CQRS 写操作输入
-│   │   ├── query/             # 查询对象（Query）- CQRS 读操作输入
-│   │   ├── dto/               # 数据传输对象（DTO）- 跨层数据传输
-│   │   ├── service/           # 应用服务（Application Service）- 用例编排、事务边界
-│   │   └── mapper/            # 对象映射器 - DTO 与领域对象转换
-│   │
-│   ├── interfaces/            # 接口层（用户接口层/适配器层）
-│   │   ├── web/               # Web 接口适配器（REST API、GraphQL 等）
-│   │   └── facade/            # 外部服务接口（RPC、消息监听等）
-│   │
-│   └── infrastructure/        # 基础设施层（技术实现层）
-│       ├── persistence/       # 持久化实现（MyBatis、JPA 等）
-│       ├── messaging/         # 消息中间件实现（Kafka、RabbitMQ 等）
-│       ├── acl/               # 防腐层实现（Anti-Corruption Layer）- 外部系统适配
-│       └── config/            # 技术配置类
-│
-└── src/main/resources/
+order-service/
+├─ src/main/java/com/example/order/
+│   ├─ adapter/                     # 适配层（Web/MQ/RPC 入口）
+│   │   ├─ web/OrderController.java
+│   │   └─ mq/OrderEventListener.java
+│   ├─ client/                      # 接口层（对外 API + DTO）
+│   │   ├─ api/OrderServiceI.java
+│   │   └─ dto/command/CreateOrderCmd.java
+│   ├─ app/                         # 应用层（用例编排 + 事务边界）
+│   │   ├─ executor/CreateOrderCmdExe.java
+│   │   └─ service/OrderServiceImpl.java
+│   ├─ domain/                      # 领域层（核心，零外部依赖）
+│   │   ├─ model/entity/Order.java
+│   │   ├─ service/OrderDomainService.java
+│   │   ├─ gateway/OrderGateway.java
+│   │   └─ event/OrderCreatedEvent.java
+│   └─ infrastructure/              # 基础设施层（技术实现）
+│       ├─ persistence/mapper/OrderMapper.java
+│       ├─ gatewayimpl/OrderGatewayImpl.java
+│       └─ mq/RocketMQProducer.java
+└─ pom.xml
 ```
 
-**依赖方向**：`interfaces` → `application` → `domain` ← `infrastructure`
+### 📄 相关文档
 
-- **领域层**：完全独立，不依赖任何其他层，包含纯业务逻辑
-- **应用层**：依赖领域层，负责用例编排和事务管理
-- **接口层**：依赖应用层，负责协议转换和数据验证
-- **基础设施层**：依赖领域层（通过接口），实现技术细节
-
-##### 组件模块
-
-```
-ddd4j-cmpt-{模块}/
-├── src/main/java/io/ddd4j/boot/{模块}
-│   ├── application/           # 应用层
-│   │   ├── command/           # 命令对象
-│   │   ├── dto/               # 数据传输对象
-│   │   ├── service/           # 应用服务
-│   │   └── mapper/            # DTO与领域对象映射
-│   ├── domain/                # 领域层
-│   │   ├── model/             # 领域模型
-│   │   │   ├── entity/        # 实体
-│   │   │   ├── vo/            # 值对象
-│   │   │   └── aggregate/     # 聚合根
-│   │   ├── event/             # 领域事件
-│   │   ├── repository/        # 仓储接口
-│   │   └── service/           # 领域服务
-│   ├── infrastructure/        # 基础设施层
-│   │   ├── persistence/       # 持久化实现
-│   │   ├── messaging/         # 消息组件
-│   │   └── acl/               # 防腐层
-│   │   └── config/            # 配置类
-│   └── interfaces/            # 用户接口层
-│       ├── web/               # REST接口
-│       └── facade/            # 外部服务接口
-└── src/main/resources/
-```
-
-##### 业务服务示例模块
-
-> 示例模块采用 **COLA V5 架构**（菱形架构），完整展示 DDD 在业务服务中的实践。适用于大多数复杂业务场景（如订单中心、支付系统等）。
-
-**架构特点**：
-
-- **领域层独立**：domain 包完全独立，不依赖任何技术框架
-- **依赖倒置**：通过接口抽象实现领域层与技术实现的解耦
-- **清晰边界**：每层职责明确，便于测试和维护
-
-下面是两种不同场景下详细的COLA目录结构：
-
-##### **场景一：电商订单服务的详细目录（包分层结构）**
-
-这是一种典型包分层结构，适用于大多数业务应用（如订单中心）。结构紧凑，适合快速开发：
-
-```
-order-service/  (Maven项目根目录)
-├─ src/
-│   └─ main/
-│       ├─ java/
-│       │   └─ com/
-│       │       └─ example/
-│       │           └─ order/
-│       │               ├─ adapter/                     # 适配层
-│       │               │   ├─ web/
-│       │               │   │   ├─ OrderController.java  # REST API控制器
-│       │               │   │   └─ OrderDetailController.java
-│       │               │   └─ mq/                      # 消息监听器
-│       │               │       └─ OrderEventListener.java
-│       │               │
-│       │               ├─ client/                      # 接口层（对外API）
-│       │               │   ├─ api/                     # 服务接口定义
-│       │               │   │   ├─ OrderServiceI.java    # 接口声明
-│       │               │   │   └─ OrderQueryServiceI.java
-│       │               │   └─ dto/                     # 数据传输对象
-│       │               │       ├─ command/
-│       │               │       │   ├─ CreateOrderCmd.java
-│       │               │       │   └─ CancelOrderCmd.java
-│       │               │       ├─ query/
-│       │               │       │   └─ OrderQry.java
-│       │               │       └─ data/
-│       │               │           ├─ OrderDTO.java     # 返回给前端的数据
-│       │               │           └─ OrderDetailDTO.java
-│       │               │
-│       │               ├─ app/                         # 应用层（用例编排）
-│       │               │   ├─ executor/                # 用例执行器（事务边界）
-│       │               │   │   ├─ CreateOrderCmdExe.java
-│       │               │   │   ├─ CancelOrderCmdExe.java
-│       │               │   │   └─ OrderQryExe.java
-│       │               │   └─ service/                 # 服务实现（非必须）
-│       │               │       └─ OrderServiceImpl.java # 实现Client层的接口
-│       │               │
-│       │               ├─ domain/                      # 领域层（核心业务）
-│       │               │   ├─ model/                   # 领域模型（充血模型）
-│       │               │   │   ├─ entity/
-│       │               │   │   │   ├─ Order.java       # 订单实体（含业务逻辑）
-│       │               │   │   │   ├─ OrderItem.java   # 订单项值对象
-│       │               │   │   │   └─ OrderStatus.java # 枚举
-│       │               │   │   └─ aggregate/           # 聚合根（若复杂领域）
-│       │               │   │       └─ OrderAggregate.java
-│       │               │   ├─ service/                 # 领域服务
-│       │               │   │   └─ OrderDomainService.java # 跨实体的业务逻辑
-│       │               │   ├─ gateway/                 # 领域网关接口
-│       │               │   │   ├─ OrderGateway.java    # 仓储接口
-│       │               │   │   └─ InventoryGateway.java # 防腐层接口
-│       │               │   └─ event/                   # 领域事件定义
-│       │               │       └─ OrderCreatedEvent.java
-│       │               │
-│       │               └─ infrastructure/              # 基础设施层
-│       │                   ├─ config/                  # 配置类
-│       │                   │   ├─ WebConfig.java
-│       │                   │   └─ MybatisConfig.java
-│       │                   ├─ persistence/             # 持久化实现
-│       │                   │   ├─ mapper/              # MyBatis Mapper
-│       │                   │   │   └─ OrderMapper.java
-│       │                   │   ├─ dataobject/          # 数据库实体DO
-│       │                   │   │   └─ OrderDO.java
-│       │                   │   └─ converter/           # 转换器
-│       │                   │       └─ OrderConverter.java # DO<->Entity转换
-│       │                   ├─ gatewayimpl/             # 网关实现
-│       │                   │   ├─ OrderGatewayImpl.java
-│       │                   │   └─ InventoryGatewayImpl.java
-│       │                   ├─ mq/                      # 消息中间件实现
-│       │                   │   └─ RocketMQProducer.java
-│       │                   └─ external/                # 外部服务调用
-│       │                       └─ InventoryClient.java # 调用库存服务
-│       │
-│       └─ resources/
-│           ├─ mapper/                                  # MyBatis XML
-│           │   └─ OrderMapper.xml
-│           ├─ application.yml
-│           └─ logback-spring.xml
-│
-├─ pom.xml
-├─ README.md
-└─ .gitignore
-
-```
-
-**DDD 实践要点：**
-
-- **依赖倒置原则**：从 adapter → app → domain ← infrastructure，严格遵循依赖方向，领域层不依赖任何外部技术
-- **领域模型独立**：domain 包完全独立，包含纯业务逻辑，可独立进行单元测试
-- **技术隔离**：所有技术细节（数据库、消息队列、外部服务调用）封装在 infrastructure 层，通过接口与领域层交互
-- **聚合边界清晰**：Order 作为聚合根，维护 OrderItem 的一致性，所有业务操作通过聚合根进行
-- **领域事件驱动**：通过领域事件实现跨聚合、跨上下文的解耦通信
-
-##### **场景二：超大型复杂系统的详细目录（多模块结构）**
-
-适用于超大型复杂系统（如银行核心系统），需要严格的物理隔离和独立部署能力：
-
-```
-cola-platform/  (Maven父工程)
-├─ start/                          # 启动模块（Spring Boot入口）
-│   ├─ src/main/java/
-│   │   └─ com/example/platform/
-│   │       └─ PlatformApplication.java  # 主启动类
-│   ├─ src/main/resources/
-│   │   └─ application.yml         # 主配置文件
-│   └─ pom.xml                     # 依赖其他所有模块
-│
-├─ adapter/                        # 适配层模块
-│   ├─ src/main/java/
-│   │   └─ com/example/platform/adapter/
-│   │       ├─ web/                # Web适配器
-│   │       ├─ mq/                 # 消息适配器
-│   │       └─ rpc/                # RPC适配器
-│   └─ pom.xml                     # 依赖client、app模块
-│
-├─ client/                         # 接口层模块（独立JAR）
-│   ├─ src/main/java/
-│   │   └─ com/example/platform/client/
-│   │       ├─ api/                # 服务接口
-│   │       └─ dto/                # 数据传输对象
-│   └─ pom.xml                     # 纯接口，无外部依赖
-│
-├─ app/                            # 应用层模块
-│   ├─ src/main/java/
-│   │   └─ com/example/platform/app/
-│   │       ├─ executor/           # 用例执行器
-│   │       └─ service/            # 服务实现
-│   └─ pom.xml                     # 依赖domain模块
-│
-├─ domain/                         # 领域层模块（核心）
-│   ├─ src/main/java/
-│   │   └─ com/example/platform/domain/
-│   │       ├─ model/              # 领域模型
-│   │       ├─ service/            # 领域服务
-│   │       └─ gateway/            # 网关接口
-│   └─ pom.xml                     # 纯业务，无外部依赖
-│
-├─ infrastructure/                 # 基础设施层模块
-│   ├─ src/main/java/
-│   │   └─ com/example/platform/infrastructure/
-│   │       ├─ persistence/        # 持久化
-│   │       ├─ gatewayimpl/        # 网关实现
-│   │       ├─ external/           # 外部调用
-│   │       └─ config/             # 配置
-│   └─ pom.xml                     # 依赖domain，可依赖外部SDK
-│
-├─ common/                         # 通用工具模块（可选）
-│   ├─ src/main/java/
-│   │   └─ com/example/platform/common/
-│   │       ├─ util/               # 工具类
-│   │       ├─ constant/           # 常量
-│   │       └─ exception/          # 异常定义
-│   └─ pom.xml
-│
-└─ pom.xml                         # 父POM，管理所有子模块
-```
-
+| 文档 | 说明 |
+|------|------|
+| [架构全景](./docs/architecture/architecture.md) | 模块全景、SPI 设计、双框架适配对照 |
+| [架构边界规范](./docs/architecture/architecture-boundary.md) | ddd4j 与各框架项目的职责铁律 |
+| [DDD 思维导图](./docs/ddd/DDD%20思维导图.md) | DDD 战略+战术设计知识体系 |
+| [CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md) | CQRS 核心概念 |
+| [DDD 经典分层架构](./docs/ddd/1、DDD%20经典分层架构目录结构.md) | 分层架构目录参考 |
+| [六边形架构](./docs/ddd/2、六边形架构详细目录结构参考.md) | 六边形架构目录参考 |
+| [整洁架构](./docs/ddd/3、整洁架构详细目录结构参考.md) | 整洁架构目录参考 |
+| [COLA V5 架构](./docs/ddd/4、COLA%20V5%20架构详细目录结构参考.md) | COLA 菱形架构目录参考 |
+| [数据层优化计划](./docs/migration/ddd4j-data-optimization-plan.md) | ddd4j-data 模块优化方案 |
+| [迁移指南](./docs/migration/optional-migrations.md) | 从旧版迁移到 2.0.x 的指南 |
