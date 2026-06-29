@@ -125,8 +125,7 @@
 |------ddd4j-web-core                   #纯Java SPI：RequestInfo/SessionContext/IpUtils
 |------ddd4j-web-webmvc                 #Spring MVC实现：Controller/拦截器/全局异常处理
 |------ddd4j-web-webflux                #Spring WebFlux实现：响应式Controller/ErrorAttributes
-|----ddd4j-auth                         #认证/授权抽象聚合
-|------ddd4j-auth-core                  #纯Java SPI：Subject/AuthPrincipal/SubjectProvider
+|----ddd4j-auth                         #认证/授权抽象聚合（Subject 契约定义在 ddd4j-core）
 |------ddd4j-auth-spring                #Spring桥接：SubjectRegistrar
 |------ddd4j-auth-satoken               #Sa-Token实现
 |------ddd4j-auth-security              #Spring Security实现

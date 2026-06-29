@@ -14,10 +14,10 @@
     <description>Ddd4j Security Component（Spring Security 适配，允许 Spring 依赖）</description>
 
     <dependencies>
-        <!-- 纯 Java 契约（通过 auth-core 统一入口） -->
+        <!-- 纯 Java 契约（Subject 体系定义在 ddd4j-core） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-core</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Spring Security（公开坐标，替代原 hiwepy security-biz-spring-boot-starter） -->

@@ -21,7 +21,7 @@
 ### 1.2 迁移四阶段路径
 
 ```
-阶段1：接入 ddd4j-auth-core（低风险，可回滚）
+阶段1：接入 ddd4j-core（低风险，可回滚）
    ↓
 阶段2：双写运行（Shiro/Security 与 SubjectKit 并存）
    ↓
@@ -34,7 +34,7 @@
 
 ## 二、Shiro → sa-token 迁移
 
-### 2.1 阶段 1：接入 ddd4j-auth-core（不改现有 Shiro 代码）
+### 2.1 阶段 1：接入 ddd4j-core（不改现有 Shiro 代码）
 
 **目标**：引入 ddd4j-auth 体系，业务代码改为调 `SubjectKit`，但底层仍是 Shiro。
 
@@ -47,10 +47,10 @@
     <artifactId>shiro-spring-boot-starter</artifactId>
 </dependency>
 
-<!-- 新增 ddd4j-auth-core（纯 Java，零 Spring） -->
+<!-- 新增 ddd4j-core（纯 Java，零 Spring） -->
 <dependency>
     <groupId>io.ddd4j</groupId>
-    <artifactId>ddd4j-auth-core</artifactId>
+    <artifactId>ddd4j-core</artifactId>
     <version>${ddd4j.version}</version>
 </dependency>
 
@@ -178,7 +178,7 @@ SubjectKit.hasRole("admin");
 
 ## 三、Spring Security → sa-token 迁移
 
-### 3.1 阶段 1：接入 ddd4j-auth-core
+### 3.1 阶段 1：接入 ddd4j-core
 
 #### 步骤 1：添加依赖
 
@@ -192,7 +192,7 @@ SubjectKit.hasRole("admin");
 <!-- 新增 ddd4j-auth（与 Shiro 迁移相同的三个依赖） -->
 <dependency>
     <groupId>io.ddd4j</groupId>
-    <artifactId>ddd4j-auth-core</artifactId>
+    <artifactId>ddd4j-core</artifactId>
     <version>${ddd4j.version}</version>
 </dependency>
 <dependency>
@@ -360,7 +360,7 @@ void testPermissionAcrossFrameworks() {
 
 ### 阶段 1 接入
 
-- [ ] 添加 `ddd4j-auth-core` + 对应鉴权适配依赖
+- [ ] 添加 `ddd4j-core` + 对应鉴权适配依赖
 - [ ] 实现 `SubjectDataProvider` 权限数据源
 - [ ] 业务代码改为调 `SubjectKit.xxx()`
 - [ ] 验证 `SubjectKit.getSubject()` 不抛异常

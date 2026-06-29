@@ -61,11 +61,6 @@
             <!-- Ddd4j Auth Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-auth-satoken</artifactId>
                 <version>${revision}</version>
             </dependency>

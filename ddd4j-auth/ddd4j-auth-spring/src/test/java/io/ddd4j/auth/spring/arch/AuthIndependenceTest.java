@@ -1,4 +1,4 @@
-package io.ddd4j.auth.core.arch;
+package io.ddd4j.auth.spring.arch;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
