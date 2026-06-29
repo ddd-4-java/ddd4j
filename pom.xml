@@ -14,10 +14,8 @@
     <description>Ddd4j For Java Projects</description>
 
     <scm>
-        <connection>scm:git:https:codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git
-        </connection>
-        <developerConnection>scm:git:https:codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git
-        </developerConnection>
+        <connection>scm:git:https:codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:https:codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git</developerConnection>
         <url>https://codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}</url>
         <tag>${project.artifactId}</tag>
     </scm>
