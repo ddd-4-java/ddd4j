@@ -4,6 +4,7 @@ import io.ddd4j.kit.lang.JsonKit;
 
 /**
  * 默认 JSON 消息序列化实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class JsonMQMessageSerialization implements MQMessageSerialization, MQEventSerialization {

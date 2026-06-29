@@ -23,8 +23,8 @@ public final class CacheConfigConverter {
     /**
      * 将 ddd4j CacheConfig 转换为 JetCache QuickConfig。
      *
-     * @param config     ddd4j 缓存配置
-     * @param cacheArea  JetCache 区域名称（用于区分不同的远程缓存实例，如 "default"）
+     * @param config    ddd4j 缓存配置
+     * @param cacheArea JetCache 区域名称（用于区分不同的远程缓存实例，如 "default"）
      * @return JetCache QuickConfig
      */
     public static QuickConfig toQuickConfig(CacheConfig config, String cacheArea) {

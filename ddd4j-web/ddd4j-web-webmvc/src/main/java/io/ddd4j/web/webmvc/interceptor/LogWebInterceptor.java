@@ -1,6 +1,8 @@
 package io.ddd4j.web.webmvc.interceptor;
 
 import io.ddd4j.web.config.BaseWebProperties;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,21 +10,19 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
  * 日志Web拦截器
  *
- * @func 打印请求路径、请求方法
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @func 打印请求路径、请求方法
  */
 public class LogWebInterceptor extends BaseWebInterceptor {
+    final ThreadLocal<LocalDateTime> beginTime = new ThreadLocal<>();
     @Autowired
     BaseWebProperties baseWebProperties;
-    final ThreadLocal<LocalDateTime> beginTime = new ThreadLocal<>();
 
     @Override
     public String[] pathPatterns() {

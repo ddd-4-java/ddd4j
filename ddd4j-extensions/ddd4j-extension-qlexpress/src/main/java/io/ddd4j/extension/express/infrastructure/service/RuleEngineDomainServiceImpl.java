@@ -15,12 +15,12 @@ import java.util.Map;
 
 /**
  * 规则引擎领域服务实现
- * 
+ *
  * <p>基础设施层：使用QLExpress实现规则执行。
  * 负责规则表达式的执行和语法验证。
- * 
+ *
  * <p>注意：此类通过ExpressAutoConfiguration自动配置，无需手动添加@Service注解
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
@@ -37,8 +37,8 @@ public class RuleEngineDomainServiceImpl implements RuleEngineDomainService {
 
     /**
      * 执行规则表达式
-     * 
-     * @param rule 规则定义，不能为null
+     *
+     * @param rule    规则定义，不能为null
      * @param context 执行上下文，包含规则表达式中使用的变量
      * @return 规则执行结果，包含执行状态、结果值、错误信息等
      */
@@ -71,7 +71,7 @@ public class RuleEngineDomainServiceImpl implements RuleEngineDomainService {
 
     /**
      * 验证规则表达式语法
-     * 
+     *
      * @param expression 规则表达式，QLExpress语法
      * @return 验证结果，包含是否有效和错误信息
      */
@@ -93,7 +93,7 @@ public class RuleEngineDomainServiceImpl implements RuleEngineDomainService {
 
     /**
      * 检查规则是否可用
-     * 
+     *
      * @param rule 规则定义
      * @return true表示规则可用，false表示规则不可用
      */

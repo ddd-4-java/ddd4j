@@ -3,10 +3,10 @@ package io.ddd4j.mq.kafka.consumer;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.google.common.collect.Lists;
+import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.mq.kafka.KafkaBackupProperties;
 import io.ddd4j.mq.kafka.consumer.backup.BackupRecord;
 import io.ddd4j.mq.kafka.consumer.backup.BackupStatus;
-import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -39,6 +39,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Kafka备份消费者，提供事务消息消费和本地备份功能
  * 确保在消费前先进行备份，消费成功后删除备份
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

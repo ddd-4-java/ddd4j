@@ -31,6 +31,17 @@ public class MQListenerMethodInvoker {
 
     private final MQEventSerialization serialization;
 
+    private static boolean isInfrastructureParameter(Class<?> type) {
+        return MQConsumerContext.class.isAssignableFrom(type)
+                || MessageAcknowledgment.class.isAssignableFrom(type)
+                || MQMessage.class.isAssignableFrom(type)
+                || Map.class.isAssignableFrom(type);
+    }
+
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
+    }
+
     /**
      * 调用监听器方法并返回业务处置结果。
      */
@@ -178,16 +189,5 @@ public class MQListenerMethodInvoker {
      */
     public void clearContext() {
         ThreadContext.clear();
-    }
-
-    private static boolean isInfrastructureParameter(Class<?> type) {
-        return MQConsumerContext.class.isAssignableFrom(type)
-                || MessageAcknowledgment.class.isAssignableFrom(type)
-                || MQMessage.class.isAssignableFrom(type)
-                || Map.class.isAssignableFrom(type);
-    }
-
-    private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
     }
 }

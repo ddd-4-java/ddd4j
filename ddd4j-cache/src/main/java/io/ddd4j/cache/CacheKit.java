@@ -3,14 +3,7 @@ package io.ddd4j.cache;
 import io.ddd4j.cache.local.CaffeineCache;
 import io.ddd4j.cache.local.GuavaCache;
 import io.ddd4j.cache.local.HutoolCache;
-import io.ddd4j.core.cache.AtomicCache;
-import io.ddd4j.core.cache.Cache;
-import io.ddd4j.core.cache.CacheConfig;
-import io.ddd4j.core.cache.CacheLock;
-import io.ddd4j.core.cache.CacheStats;
-import io.ddd4j.core.cache.CacheType;
-import io.ddd4j.core.cache.CasCache;
-import io.ddd4j.core.cache.CacheType;
+import io.ddd4j.core.cache.*;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -66,27 +59,19 @@ import java.util.function.Function;
 @Slf4j
 public class CacheKit {
 
-    /** 本地缓存实现类型（仅 build() 方式使用） */
-    public enum LocalCacheType {
-        /** Caffeine（默认，性能最优） */
-        CAFFEINE,
-        /** Guava */
-        GUAVA,
-        /** Hutool（轻量级） */
-        HUTOOL
-    }
-
-    /** 默认本地缓存类型 */
+    /**
+     * 所有缓存实例（biz → Cache），含本地和远程
+     */
+    private final Map<String, Cache<String, Object>> caches = new ConcurrentHashMap<>();
+    /**
+     * 自动加载缓存实例（biz → Cache），与 caches 独立管理
+     */
+    private final Map<String, Cache<String, Object>> loadingCaches = new ConcurrentHashMap<>();
+    /**
+     * 默认本地缓存类型
+     */
     @Getter
     private LocalCacheType defaultType = LocalCacheType.CAFFEINE;
-
-    /** 所有缓存实例（biz → Cache），含本地和远程 */
-    private final Map<String, Cache<String, Object>> caches = new ConcurrentHashMap<>();
-
-    /** 自动加载缓存实例（biz → Cache），与 caches 独立管理 */
-    private final Map<String, Cache<String, Object>> loadingCaches = new ConcurrentHashMap<>();
-
-    // ==================== 全局配置 ====================
 
     /**
      * 设置默认本地缓存类型（仅影响 {@link #build} 方法）。
@@ -98,7 +83,7 @@ public class CacheKit {
         log.info("默认本地缓存类型已设置为: {}", type);
     }
 
-    // ==================== 注册外部缓存实例 ====================
+    // ==================== 全局配置 ====================
 
     /**
      * 注册外部创建的缓存实例（Jedis/Lettuce/Redisson/Memcached/JetCache 等）。
@@ -128,6 +113,8 @@ public class CacheKit {
         log.info("已注册缓存: biz={}, type={}", biz, cache.getClass().getSimpleName());
     }
 
+    // ==================== 注册外部缓存实例 ====================
+
     /**
      * 注册自动加载缓存实例。
      *
@@ -153,8 +140,6 @@ public class CacheKit {
         log.info("已注销缓存: biz={}", biz);
     }
 
-    // ==================== 构建本地缓存 ====================
-
     /**
      * 构建本地缓存（默认类型，写后过期）。
      *
@@ -164,6 +149,8 @@ public class CacheKit {
     public void build(String biz, long expiredSeconds) {
         build(biz, builder -> builder.expireAfterWriteSeconds(expiredSeconds), defaultType);
     }
+
+    // ==================== 构建本地缓存 ====================
 
     /**
      * 构建本地缓存（Builder 模式配置，默认类型）。
@@ -206,8 +193,6 @@ public class CacheKit {
         log.info("已构建自动加载缓存: biz={}", biz);
     }
 
-    // ==================== 缓存操作（统一入口） ====================
-
     /**
      * 获取缓存值。
      *
@@ -234,6 +219,8 @@ public class CacheKit {
         }
         return null;
     }
+
+    // ==================== 缓存操作（统一入口） ====================
 
     /**
      * 获取缓存值（如果不存在则通过 mappingFunction 加载）。
@@ -334,8 +321,6 @@ public class CacheKit {
         return getEffectiveCache(biz);
     }
 
-    // ==================== 自动加载缓存操作 ====================
-
     /**
      * 刷新自动加载缓存。
      *
@@ -352,7 +337,7 @@ public class CacheKit {
         }
     }
 
-    // ==================== CAS 操作（Compare-And-Swap） ====================
+    // ==================== 自动加载缓存操作 ====================
 
     /**
      * 仅当 key 不存在时写入（原子操作）。
@@ -371,6 +356,8 @@ public class CacheKit {
         }
         throw new UnsupportedOperationException("缓存 " + biz + " (" + cache.getClass().getSimpleName() + ") 不支持 CAS putIfAbsent");
     }
+
+    // ==================== CAS 操作（Compare-And-Swap） ====================
 
     /**
      * 仅当 key 当前值等于 expected 时，才替换为 newValue（原子操作）。
@@ -405,8 +392,6 @@ public class CacheKit {
         throw new UnsupportedOperationException("缓存 " + biz + " 不支持 CAS removeIf");
     }
 
-    // ==================== 原子计数操作 ====================
-
     /**
      * 原子递增。
      *
@@ -424,6 +409,8 @@ public class CacheKit {
         }
         throw new UnsupportedOperationException("缓存 " + biz + " 不支持原子计数");
     }
+
+    // ==================== 原子计数操作 ====================
 
     /**
      * 原子递减。
@@ -475,8 +462,6 @@ public class CacheKit {
         throw new UnsupportedOperationException("缓存 " + biz + " 不支持库存操作");
     }
 
-    // ==================== TTL 管理 ====================
-
     /**
      * 设置 key 的过期时间。
      *
@@ -492,6 +477,8 @@ public class CacheKit {
         }
         return false;
     }
+
+    // ==================== TTL 管理 ====================
 
     /**
      * 获取 key 的剩余过期时间。
@@ -520,8 +507,6 @@ public class CacheKit {
         return false;
     }
 
-    // ==================== 分布式锁操作 ====================
-
     /**
      * 尝试获取分布式锁。
      *
@@ -540,6 +525,8 @@ public class CacheKit {
         }
         throw new UnsupportedOperationException("缓存 " + biz + " (" + (cache == null ? "null" : cache.getClass().getSimpleName()) + ") 不支持分布式锁");
     }
+
+    // ==================== 分布式锁操作 ====================
 
     /**
      * 释放锁。
@@ -573,8 +560,6 @@ public class CacheKit {
         throw new UnsupportedOperationException("缓存 " + biz + " 不支持分布式锁");
     }
 
-    // ==================== 内部方法 ====================
-
     /**
      * 获取生效的缓存实例（优先普通缓存，其次自动加载缓存）。
      */
@@ -582,6 +567,8 @@ public class CacheKit {
         Cache<String, Object> cache = caches.get(biz);
         return cache != null ? cache : loadingCaches.get(biz);
     }
+
+    // ==================== 内部方法 ====================
 
     /**
      * 创建本地缓存实例。
@@ -598,6 +585,24 @@ public class CacheKit {
             default:
                 throw new IllegalArgumentException("不支持的本地缓存类型: " + type);
         }
+    }
+
+    /**
+     * 本地缓存实现类型（仅 build() 方式使用）
+     */
+    public enum LocalCacheType {
+        /**
+         * Caffeine（默认，性能最优）
+         */
+        CAFFEINE,
+        /**
+         * Guava
+         */
+        GUAVA,
+        /**
+         * Hutool（轻量级）
+         */
+        HUTOOL
     }
 
 }

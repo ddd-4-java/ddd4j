@@ -8,15 +8,10 @@ package io.ddd4j.core.constant;
  */
 public final class HttpStatus {
 
-    private HttpStatus() {
-        // 工具类，禁止实例化
-    }
-
     // 1xx Informational
     public static final int SC_CONTINUE = 100;
     public static final int SC_SWITCHING_PROTOCOLS = 101;
     public static final int SC_PROCESSING = 102;
-
     // 2xx Success
     public static final int SC_OK = 200;
     public static final int SC_CREATED = 201;
@@ -26,7 +21,6 @@ public final class HttpStatus {
     public static final int SC_RESET_CONTENT = 205;
     public static final int SC_PARTIAL_CONTENT = 206;
     public static final int SC_MULTI_STATUS = 207;
-
     // 3xx Redirection
     public static final int SC_MULTIPLE_CHOICES = 300;
     public static final int SC_MOVED_PERMANENTLY = 301;
@@ -35,7 +29,6 @@ public final class HttpStatus {
     public static final int SC_NOT_MODIFIED = 304;
     public static final int SC_USE_PROXY = 305;
     public static final int SC_TEMPORARY_REDIRECT = 307;
-
     // 4xx Client Error
     public static final int SC_BAD_REQUEST = 400;
     public static final int SC_UNAUTHORIZED = 401;
@@ -63,7 +56,6 @@ public final class HttpStatus {
     public static final int SC_TOO_MANY_REQUESTS = 429;
     public static final int SC_REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
     public static final int SC_UNAVAILABLE_FOR_LEGAL_REASONS = 451;
-
     // 5xx Server Error
     public static final int SC_INTERNAL_SERVER_ERROR = 500;
     public static final int SC_NOT_IMPLEMENTED = 501;
@@ -77,4 +69,7 @@ public final class HttpStatus {
     public static final int SC_BANDWIDTH_LIMIT_EXCEEDED = 509;
     public static final int SC_NOT_EXTENDED = 510;
     public static final int SC_NETWORK_AUTHENTICATION_REQUIRED = 511;
+    private HttpStatus() {
+        // 工具类，禁止实例化
+    }
 }

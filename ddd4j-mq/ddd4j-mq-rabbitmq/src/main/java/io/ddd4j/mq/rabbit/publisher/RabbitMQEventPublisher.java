@@ -18,6 +18,7 @@ import java.util.Objects;
 
 /**
  * 基于 {@link RabbitTemplate} 的领域事件发布实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

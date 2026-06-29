@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * Kafka 消息备份记录
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data

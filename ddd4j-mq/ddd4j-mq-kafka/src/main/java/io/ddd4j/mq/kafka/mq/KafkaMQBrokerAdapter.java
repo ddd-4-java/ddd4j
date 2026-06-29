@@ -5,10 +5,10 @@ import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
+import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -29,6 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Kafka Broker 适配 SPI 实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

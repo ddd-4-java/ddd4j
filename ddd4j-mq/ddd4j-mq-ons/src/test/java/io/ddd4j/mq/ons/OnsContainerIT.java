@@ -2,10 +2,10 @@ package io.ddd4j.mq.ons;
 
 import com.aliyun.openservices.ons.api.Producer;
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.ons.autoconfigure.Ddd4jOnsMQAutoConfiguration;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * <p>
  * <strong>当前 {@link Disabled}：</strong>{@code ons-client 2.0.x} 内嵌 RocketMQ 5 gRPC 客户端，开源 Testcontainers
  * 仅 NameServer+Broker（无 Proxy）无法满足 ALPN 握手。待 RocketMQ Proxy 容器方案稳定后启用。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Disabled("Blocker: ons-client 2.0.x requires RocketMQ 5 gRPC Proxy; NameServer+Broker Testcontainers insufficient")

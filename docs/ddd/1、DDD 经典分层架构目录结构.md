@@ -473,6 +473,7 @@ project-root/
 ## 🏗 **DDD 经典四层架构**
 
 ### **依赖方向：**
+
 ```
 接口层（Interfaces） → 应用层（Application） → 领域层（Domain） ← 基础设施层（Infrastructure）
 ```
@@ -480,23 +481,27 @@ project-root/
 ### **各层职责详解：**
 
 #### **1. 领域层（Domain Layer）**
+
 - **核心业务逻辑**
 - 包含：实体、值对象、聚合、领域服务、领域事件
 - **无任何外部依赖**，纯业务逻辑
 
 #### **2. 应用层（Application Layer）**
+
 - **用例协调**
 - 业务流程编排
 - 事务管理
 - 安全性检查
 
 #### **3. 接口层（Interfaces Layer）**
+
 - **用户界面**
 - API端点
 - 数据转换（DTO转换）
 - 输入验证
 
 #### **4. 基础设施层（Infrastructure Layer）**
+
 - **技术实现**
 - 持久化、消息、缓存等
 - 外部服务集成
@@ -562,6 +567,7 @@ project-root/
 ## 🎯 **DDD核心模式在目录中的体现**
 
 ### **1. 聚合模式**
+
 ```java
 // 聚合根示例
 public class Order extends AggregateRoot {
@@ -580,6 +586,7 @@ public class Order extends AggregateRoot {
 ```
 
 ### **2. 仓储模式**
+
 ```java
 // 仓储接口（领域层）
 public interface OrderRepository {
@@ -603,6 +610,7 @@ public class JpaOrderRepository implements OrderRepository {
 ```
 
 ### **3. 领域事件模式**
+
 ```java
 // 领域事件
 public class OrderPlacedEvent extends DomainEvent {
@@ -617,6 +625,7 @@ public class OrderPlacedEvent extends DomainEvent {
 ## 📚 **权威依据**
 
 ### **DDD经典书籍参考：**
+
 1. **《领域驱动设计：软件核心复杂性应对之道》** - Eric Evans
     - 核心概念：实体、值对象、聚合、仓储、工厂
 
@@ -629,6 +638,7 @@ public class OrderPlacedEvent extends DomainEvent {
     - 限界上下文映射
 
 ### **官方模式定义：**
+
 - **四层架构**：Eric Evans 原始定义
 - **六边形架构**：Alistair Cockburn（与DDD结合）
 - **整洁架构**：Robert C. Martin（DDD实现方式）
@@ -636,6 +646,7 @@ public class OrderPlacedEvent extends DomainEvent {
 ## 🛠 **项目模板和生成器**
 
 ### **Spring Boot DDD Starter**
+
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -649,6 +660,7 @@ public class OrderPlacedEvent extends DomainEvent {
 ```
 
 ### **DDD项目生成器**
+
 ```bash
 # 使用Maven Archetype
 mvn archetype:generate \

@@ -14,15 +14,14 @@ import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.Page;
 import io.ddd4j.core.contract.Query;
 import io.ddd4j.core.contract.constant.ContextConstants;
-import io.ddd4j.kit.lang.BeanKit;
-import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.data.mybatis.annotation.*;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
+import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.kit.lang.JsonKit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.ibatis.binding.MapperMethod.ParamMap;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
@@ -42,10 +41,56 @@ import static io.ddd4j.core.contract.Query.*;
 
 @Slf4j(topic = "### BASE-DATA : BaseRepository ###")
 public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Model, P, Q extends Query> implements BaseRepository<M, Q>, Serializable {
-    private MP mapper;
-    private final TableScheme tableScheme;
-    private BaseDataProperties baseDataProperties;
     private static final String[] LOG_IGNORE_FIELDS = new String[]{"limit", "page", "orderBy"};
+    private final TableScheme tableScheme;
+    private MP mapper;
+    private BaseDataProperties baseDataProperties;
+
+    public BaseRepositoryImpl() {
+        final Class<M> modelClass = (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseRepositoryImpl.class, 1);
+        final Class<P> poClass = (Class<P>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseRepositoryImpl.class, 2);
+        final Class<Q> queryClass = (Class<Q>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseRepositoryImpl.class, 3);
+        this.tableScheme = TableScheme.build(poClass);
+        BaseRepository.inject(modelClass, this.getClass());
+        BaseRepository.inject(queryClass, this.getClass());
+        MappingKit.map("MODEL_PO", modelClass, poClass);
+        MappingKit.map("MODEL_PO", poClass, modelClass);
+        MappingKit.map("MODEL_QUERY", modelClass, queryClass);
+        MappingKit.map("MODEL_QUERY", queryClass, modelClass);
+        // 首字母设为小写
+        String modelClassName = modelClass.getSimpleName().toLowerCase().substring(0, 1) + modelClass.getSimpleName().substring(1);
+        MappingKit.map("MODEL_NAME", modelClassName, modelClass);
+    }
+
+    private static String replaceLast(String raw, String match, String replace) {
+        if (raw == null || raw.isEmpty() || null == replace) {
+            //参数不合法，原样返回
+            return raw;
+        }
+        StringBuilder sBuilder = new StringBuilder(raw);
+        int lastIndexOf = sBuilder.lastIndexOf(match);
+        if (-1 == lastIndexOf) {
+            return raw;
+        }
+
+        return sBuilder.replace(lastIndexOf, lastIndexOf + match.length(), replace).toString();
+    }
+
+    public static <T, S> T convert(S source) {
+        if (source == null) {
+            return null;
+        }
+        Class<T> targetClass = MappingKit.get("MODEL_PO", source.getClass());
+        return BeanKit.copy(source, targetClass);
+    }
+
+    public static <T, S> List<T> convert(List<S> source) {
+        if (source == null || source.isEmpty() || source.get(0) == null) {
+            return new ArrayList<>();
+        }
+        Class<T> targetClass = MappingKit.get("MODEL_PO", source.get(0).getClass());
+        return BeanKit.copy(source, targetClass);
+    }
 
     /**
      * 获取 mapper（子类/桥接层通过 {@link #setMapper} 注入）。
@@ -66,22 +111,6 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
      */
     public void setBaseDataProperties(BaseDataProperties baseDataProperties) {
         this.baseDataProperties = baseDataProperties;
-    }
-
-    public BaseRepositoryImpl() {
-        final Class<M> modelClass = (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseRepositoryImpl.class, 1);
-        final Class<P> poClass = (Class<P>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseRepositoryImpl.class, 2);
-        final Class<Q> queryClass = (Class<Q>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseRepositoryImpl.class, 3);
-        this.tableScheme = TableScheme.build(poClass);
-        BaseRepository.inject(modelClass, this.getClass());
-        BaseRepository.inject(queryClass, this.getClass());
-        MappingKit.map("MODEL_PO", modelClass, poClass);
-        MappingKit.map("MODEL_PO", poClass, modelClass);
-        MappingKit.map("MODEL_QUERY", modelClass, queryClass);
-        MappingKit.map("MODEL_QUERY", queryClass, modelClass);
-        // 首字母设为小写
-        String modelClassName = modelClass.getSimpleName().toLowerCase().substring(0, 1) + modelClass.getSimpleName().substring(1);
-        MappingKit.map("MODEL_NAME", modelClassName, modelClass);
     }
 
     @Override
@@ -721,38 +750,9 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         }
     }
 
-    private static String replaceLast(String raw, String match, String replace) {
-        if (raw == null || raw.isEmpty() || null == replace) {
-            //参数不合法，原样返回
-            return raw;
-        }
-        StringBuilder sBuilder = new StringBuilder(raw);
-        int lastIndexOf = sBuilder.lastIndexOf(match);
-        if (-1 == lastIndexOf) {
-            return raw;
-        }
-
-        return sBuilder.replace(lastIndexOf, lastIndexOf + match.length(), replace).toString();
-    }
-
-    public static <T, S> T convert(S source) {
-        if (source == null) {
-            return null;
-        }
-        Class<T> targetClass = MappingKit.get("MODEL_PO", source.getClass());
-        return BeanKit.copy(source, targetClass);
-    }
-
-    public static <T, S> List<T> convert(List<S> source) {
-        if (source == null || source.isEmpty() || source.get(0) == null) {
-            return new ArrayList<>();
-        }
-        Class<T> targetClass = MappingKit.get("MODEL_PO", source.get(0).getClass());
-        return BeanKit.copy(source, targetClass);
-    }
-
     @Data
     public static class TableScheme {
+        private static final Pattern HUMP_PATTERN = Pattern.compile("[A-Z]");
         private String tableName;
         private Field bizKeyField;
         private Map<String, String> field2Column;
@@ -764,12 +764,11 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         private List<Field> onUpdateFields = new ArrayList<>();
         private String[] defaultOrderBy;
 
-        private static final Pattern HUMP_PATTERN = Pattern.compile("[A-Z]");
-
         /**
          * 驼峰转下划线
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+         *
+         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+         */
         protected static String toUnderline(String humpString) {
             if (humpString == null || humpString.isEmpty()) return humpString;
             Matcher matcher = HUMP_PATTERN.matcher(humpString);
@@ -779,18 +778,6 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
             }
             matcher.appendTail(sb);
             return sb.toString();
-        }
-
-        protected boolean containsField(String field) {
-            return field2Column != null && field2Column.containsKey(field.toLowerCase());
-        }
-
-        protected String getField(String field) {
-            return field2Column.get(field.toLowerCase());
-        }
-
-        protected boolean containsColumn(String column) {
-            return field2Column != null && field2Column.containsValue(column.toLowerCase());
         }
 
         protected static <T> T findFieldValue(Object object, Field field) {
@@ -857,6 +844,18 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
                     return tableScheme;
                 }
             }
+        }
+
+        protected boolean containsField(String field) {
+            return field2Column != null && field2Column.containsKey(field.toLowerCase());
+        }
+
+        protected String getField(String field) {
+            return field2Column.get(field.toLowerCase());
+        }
+
+        protected boolean containsColumn(String column) {
+            return field2Column != null && field2Column.containsValue(column.toLowerCase());
         }
 
     }

@@ -3,12 +3,11 @@ package io.ddd4j.mq.sqs.autoconfigure;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.sqs.consumer.SqsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
 import io.ddd4j.mq.sqs.spi.SqsMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * AWS SQS 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=sqs 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

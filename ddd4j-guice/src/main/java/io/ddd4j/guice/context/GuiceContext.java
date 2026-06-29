@@ -44,23 +44,11 @@ import java.util.concurrent.CountDownLatch;
 @Slf4j
 public class GuiceContext {
 
-    private static volatile Injector injector;
     private static final CountDownLatch INIT_SIGNAL = new CountDownLatch(1);
     private static final Map<String, Object> ATTRIBUTES = new ConcurrentHashMap<>();
+    private static volatile Injector injector;
 
     private GuiceContext() {
-    }
-
-    /**
-     * 设置 Injector（应用启动时调用一次）
-     */
-    public static void setInjector(Injector inj) {
-        if (injector != null) {
-            log.warn("GuiceContext already initialized, overwriting existing Injector");
-        }
-        injector = inj;
-        INIT_SIGNAL.countDown();
-        log.info("GuiceContext initialized with Injector: {}", inj);
     }
 
     /**
@@ -76,6 +64,18 @@ public class GuiceContext {
             }
         }
         return injector;
+    }
+
+    /**
+     * 设置 Injector（应用启动时调用一次）
+     */
+    public static void setInjector(Injector inj) {
+        if (injector != null) {
+            log.warn("GuiceContext already initialized, overwriting existing Injector");
+        }
+        injector = inj;
+        INIT_SIGNAL.countDown();
+        log.info("GuiceContext initialized with Injector: {}", inj);
     }
 
     /**

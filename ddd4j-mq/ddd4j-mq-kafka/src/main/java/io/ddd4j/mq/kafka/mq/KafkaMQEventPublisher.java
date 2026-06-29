@@ -1,17 +1,18 @@
 package io.ddd4j.mq.kafka.mq;
 
 import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.serialization.MQEventSerialization;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.kafka.core.KafkaTemplate;
 
 /**
  * 基于 {@link KafkaTemplate} 的领域事件发布实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

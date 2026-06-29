@@ -183,7 +183,7 @@ public class IdKit extends IdUtil {
      * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock, long timeOffset, long randomSequenceLimit) {
-       return Singleton.get(Snowflake.class, workerId, dataCenterId, isUseSystemClock, timeOffset, randomSequenceLimit);
+        return Singleton.get(Snowflake.class, workerId, dataCenterId, isUseSystemClock, timeOffset, randomSequenceLimit);
     }
 
     /**
@@ -191,7 +191,7 @@ public class IdKit extends IdUtil {
      *
      * <p>使用 Hutool 的单例模式，避免创建多个 Snowflake 实例导致 ID 冲突。
      *
-     * @param workerId     终端 ID（数据范围为 0~31）
+     * @param workerId 终端 ID（数据范围为 0~31）
      * @return 分布式 ID
      */
     public static long nextSnowflakeId(long workerId) {
@@ -201,7 +201,7 @@ public class IdKit extends IdUtil {
     /**
      * 获取 Snowflake 分布式 ID（字符串形式）
      *
-     * @param workerId     终端 ID
+     * @param workerId 终端 ID
      * @return 分布式 ID（字符串）
      */
     public static String nextSnowflakeIdStr(long workerId) {

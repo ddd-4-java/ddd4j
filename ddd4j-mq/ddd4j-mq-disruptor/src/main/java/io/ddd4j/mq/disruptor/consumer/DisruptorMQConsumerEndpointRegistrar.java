@@ -1,7 +1,7 @@
 package io.ddd4j.mq.disruptor.consumer;
 
-import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.consume.MQConsumerHandler;
+import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 注册到 Disruptor 事件分发器。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

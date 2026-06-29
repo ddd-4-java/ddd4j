@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-auth-spring</artifactId>
-    <description>Ddd4j Auth Spring 桥接：SubjectRegistrar（把 SubjectProvider Bean 写回 SubjectKit）+ 三鉴权 Spring 自动装配。</description>
+    <description>Ddd4j Auth Spring 桥接：SubjectRegistrar（把 SubjectProvider Bean 写回 SubjectKit）+ 三鉴权 Spring
+        自动装配。
+    </description>
 
     <dependencies>
         <!-- 纯 Java 契约（通过 auth-core 统一入口） -->
@@ -64,7 +66,7 @@
         </dependency>
         <!-- security 实现（可选，按 classpath 自动装配） -->
         <!-- 暂时注释：hiwepy security starter 未发布到私仓，待发布后取消注释
-        <dependency>
+                <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-auth-security</artifactId>
             <version>${revision}</version>

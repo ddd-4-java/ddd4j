@@ -1,13 +1,7 @@
 package io.ddd4j.ddd.cola.rules;
 
 import com.tngtech.archunit.lang.ArchRule;
-import io.ddd4j.annotation.ddd.ApplicationService;
-import io.ddd4j.annotation.ddd.CommandExecutor;
-import io.ddd4j.annotation.ddd.DomainEntity;
-import io.ddd4j.annotation.ddd.DomainGateway;
-import io.ddd4j.annotation.ddd.DomainRepository;
-import io.ddd4j.annotation.ddd.DomainService;
-import io.ddd4j.annotation.ddd.QueryService;
+import io.ddd4j.annotation.ddd.*;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -40,9 +34,6 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  */
 public final class ColaDDDLayerRules {
 
-    private ColaDDDLayerRules() {
-    }
-
     /**
      * 规则1：标了 {@code @DomainEntity} 的类必须在 {@code ..domain..} 包（COLA 中通常在 domain.model）。
      */
@@ -50,7 +41,6 @@ public final class ColaDDDLayerRules {
             .that().areAnnotatedWith(DomainEntity.class)
             .should().resideInAPackage("..domain..")
             .because("标了 @DomainEntity 的类是领域实体，必须在 domain 包（COLA 推荐 domain.model）");
-
     /**
      * 规则2：标了 {@code @DomainService} 的类必须在 {@code ..domain..} 包。
      */
@@ -58,7 +48,6 @@ public final class ColaDDDLayerRules {
             .that().areAnnotatedWith(DomainService.class)
             .should().resideInAPackage("..domain..")
             .because("标了 @DomainService 的类是领域服务，必须在 domain 包（COLA 推荐 domain.ability）");
-
     /**
      * 规则3：标了 {@code @ApplicationService} 的类必须在 application.executor / application.query 包。
      *
@@ -69,7 +58,6 @@ public final class ColaDDDLayerRules {
             .should().resideInAnyPackage(
                     "..application.executor..", "..application.query..", "..app..", "..application..")
             .because("标了 @ApplicationService 的类必须在 application.executor / application.query（COLA CQS 分离）");
-
     /**
      * 规则4：标了 {@code @DomainRepository} 的类必须在 {@code ..adapter.persistence..} 包。
      *
@@ -79,7 +67,6 @@ public final class ColaDDDLayerRules {
             .that().areAnnotatedWith(DomainRepository.class)
             .should().resideInAPackage("..adapter.persistence..")
             .because("COLA: 仓储实现必须在 adapter.persistence（Clean 在 infrastructure）");
-
     /**
      * 规则5：domain 包不得依赖 adapter 包（COLA 核心约束）。
      */
@@ -87,7 +74,6 @@ public final class ColaDDDLayerRules {
             .that().resideInAPackage("..domain..")
             .should().dependOnClassesThat().resideInAPackage("..adapter..")
             .because("COLA 核心约束：domain 不得依赖 adapter（依赖方向应反转）");
-
     /**
      * 规则6：domain 包不得依赖 application / infrastructure 包。
      */
@@ -96,7 +82,6 @@ public final class ColaDDDLayerRules {
             .should().dependOnClassesThat().resideInAnyPackage(
                     "..application..", "..infrastructure..")
             .because("COLA: domain 不得依赖 application / infrastructure");
-
     /**
      * 规则7：domain 包不得依赖 Spring/MyBatis 框架。
      */
@@ -105,7 +90,6 @@ public final class ColaDDDLayerRules {
             .should().dependOnClassesThat().resideInAnyPackage(
                     "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
             .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
-
     /**
      * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain.gateway..} 包。
      *
@@ -116,7 +100,6 @@ public final class ColaDDDLayerRules {
             .that().areAnnotatedWith(DomainGateway.class)
             .should().resideInAPackage("..domain..")
             .because("标了 @DomainGateway 的接口是领域网关，必须在 domain.gateway 包");
-
     /**
      * 规则9：标了 {@code @CommandExecutor} 的类必须在 {@code ..application.executor..} 包。
      *
@@ -126,7 +109,6 @@ public final class ColaDDDLayerRules {
             .that().areAnnotatedWith(CommandExecutor.class)
             .should().resideInAnyPackage("..application.executor..", "..application..")
             .because("标了 @CommandExecutor 的类必须在 application.executor（COLA CQS 写侧）");
-
     /**
      * 规则10：标了 {@code @QueryService} 的类必须在 {@code ..application.query..} 包。
      *
@@ -136,4 +118,7 @@ public final class ColaDDDLayerRules {
             .that().areAnnotatedWith(QueryService.class)
             .should().resideInAnyPackage("..application.query..", "..application..")
             .because("标了 @QueryService 的类必须在 application.query（COLA CQS 读侧）");
+
+    private ColaDDDLayerRules() {
+    }
 }

@@ -10,19 +10,25 @@ import java.util.function.Function;
 public interface Subject {
 
     <T extends AuthPrincipal> T getPrincipal();
+
     <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId);
+
     <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue);
 
     boolean isPermitted(String permission);
+
     boolean isPermitted(Object loginId, String permission);
 
     boolean[] isPermitted(String... permissions);
+
     boolean[] isPermitted(Object loginId, String... permissions);
 
     boolean isPermittedAny(String... permissions);
+
     boolean isPermittedAny(Object loginId, String... permissions);
 
     boolean isPermittedAll(String... permissions);
+
     boolean isPermittedAll(Object loginId, String... permissions);
 
     /**
@@ -30,9 +36,10 @@ public interface Subject {
      *
      * @param roleIdentifier the application-specific role identifier (usually a role id or role name).
      * @return {@code true} if this Subject has the specified role, {@code false} otherwise.
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     boolean hasRole(String roleIdentifier);
+
     boolean hasRole(Object loginId, String roleIdentifier);
 
     /**
@@ -48,6 +55,7 @@ public interface Subject {
      * role at that index.  False indicates this Subject does not have the role at that index.
      */
     boolean[] hasRoles(String... roleIdentifiers);
+
     boolean[] hasRoles(Object loginId, String... roleIdentifiers);
 
     /**
@@ -57,6 +65,7 @@ public interface Subject {
      * @return true if this Subject has any the roles, false otherwise.
      */
     boolean hasAnyRole(String... roleIdentifiers);
+
     boolean hasAnyRole(Object loginId, String... roleIdentifiers);
 
     /**
@@ -66,6 +75,7 @@ public interface Subject {
      * @return true if this Subject has all the roles, false otherwise.
      */
     boolean hasAllRole(String... roleIdentifiers);
+
     boolean hasAllRole(Object loginId, String... roleIdentifiers);
 
     /**
@@ -81,14 +91,16 @@ public interface Subject {
      * @since 0.9
      */
     boolean isAuthenticated();
+
     boolean isAuthenticated(Object loginId);
 
     boolean isRemembered();
 
     boolean isTrustDeviceId(String deviceId);
+
     boolean isTrustDeviceId(Object userId, String deviceId);
 
-    default String getUserType(){
+    default String getUserType() {
         AuthPrincipal principal = this.getPrincipal();
         if (Objects.isNull(principal)) {
             return null;
@@ -98,9 +110,10 @@ public interface Subject {
 
     /**
      * 获取当前会话账号id，默认从 principal 中获取，建议复写该方法，提供更高效
+     *
      * @return 账号id
      */
-    default Object getLoginId(){
+    default Object getLoginId() {
         AuthPrincipal principal = this.getPrincipal();
         if (Objects.isNull(principal)) {
             return null;
@@ -110,9 +123,10 @@ public interface Subject {
 
     /**
      * 获取当前会话账号id, 并转换为 String 类型
+     *
      * @return 账号id
      */
-    default String getLoginIdAsString(){
+    default String getLoginIdAsString() {
         return FunctionKit.TO_STRING.apply(getLoginId());
     }
 
@@ -121,23 +135,25 @@ public interface Subject {
      *
      * @return 账号id
      */
-    default Integer getLoginIdAsInteger(){
+    default Integer getLoginIdAsInteger() {
         return FunctionKit.TO_INTEGER.apply(getLoginId());
     }
 
     /**
      * 获取当前会话账号id, 并转换为 Long 类型
+     *
      * @return 账号id
      */
-    default Long getLoginIdAsLong(){
+    default Long getLoginIdAsLong() {
         return FunctionKit.TO_LONG.apply(getLoginId());
     }
 
     /**
      * 获取当前会话用户id，默认从 principal 中获取，建议复写该方法，提供更高效
+     *
      * @return 用户id
      */
-    default Object getUserId(){
+    default Object getUserId() {
         AuthPrincipal principal = this.getPrincipal();
         if (Objects.isNull(principal)) {
             return null;
@@ -152,13 +168,14 @@ public interface Subject {
     default Integer getUserIdAsInteger() {
         return FunctionKit.TO_INTEGER.apply(getLoginId());
     }
-    
+
     default Long getUserIdAsLong() {
         return FunctionKit.TO_LONG.apply(getLoginId());
     }
 
     /**
      * 获取当前会话用户所属机构id，默认从 principal 中获取，建议复写该方法，提供更高效
+     *
      * @return 用户所属机构id
      */
     default Object getOrgId() {
@@ -183,6 +200,7 @@ public interface Subject {
 
     /**
      * 获取当前会话角色id，默认从 principal 中获取，建议复写该方法，提供更高效
+     *
      * @return 角色id
      */
     default Object getRoleId() {
@@ -221,6 +239,7 @@ public interface Subject {
 
     /**
      * 获取当前 Token 的扩展信息, 并转换为 String 类型
+     *
      * @return 账号id
      */
     default String getExtraAsString(String key) {
@@ -280,7 +299,7 @@ public interface Subject {
      * @param key        键值
      * @return 对应的扩展数据
      */
-    default Object getExtra(String tokenValue, String key){
+    default Object getExtra(String tokenValue, String key) {
         Map<String, Object> profile = this.getPrincipalByToken(tokenValue).getProfile();
         if (profile == null || profile.isEmpty()) {
             return null;
@@ -290,6 +309,7 @@ public interface Subject {
 
     /**
      * 获取当前 Token 的扩展信息, 并转换为 String 类型
+     *
      * @param tokenValue 指定的 Token 值
      * @param key        键值
      * @return 账号id
@@ -325,11 +345,11 @@ public interface Subject {
      *
      * @param tokenValue 指定的 Token 值
      * @param key        键值
-     * @param mapper 对象转换函数
-     * @param <T>    指定的类型
+     * @param mapper     对象转换函数
+     * @param <T>        指定的类型
      * @return 转换函数转换后的对象
      */
-    default <T> T getExtraAs(String tokenValue, String key, Function<Object, T> mapper){
+    default <T> T getExtraAs(String tokenValue, String key, Function<Object, T> mapper) {
         Object obj = getExtra(tokenValue, key);
         if (Objects.nonNull(obj)) {
             return mapper.apply(obj);

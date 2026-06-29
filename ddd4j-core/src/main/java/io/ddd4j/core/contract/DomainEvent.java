@@ -29,13 +29,19 @@ public abstract class DomainEvent<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 默认主题（可通过系统属性 ddd4j.mq.default-topic 覆盖） */
+    /**
+     * 默认主题（可通过系统属性 ddd4j.mq.default-topic 覆盖）
+     */
     private static volatile String defaultTopic = System.getProperty("ddd4j.mq.default-topic", "DEFAULT");
 
-    /** 静态事件发布者注册（由框架适配层注入） */
+    /**
+     * 静态事件发布者注册（由框架适配层注入）
+     */
     private static volatile DomainEventPublisher eventPublisher;
 
-    /** 延迟发布调度器（懒初始化） */
+    /**
+     * 延迟发布调度器（懒初始化）
+     */
     private static volatile ScheduledExecutorService scheduler;
 
     // 事件源
@@ -45,31 +51,6 @@ public abstract class DomainEvent<T> implements Serializable {
     // 结果
     @Setter
     private Object result;
-
-    /**
-     * 注册事件发布者（由框架适配层调用）
-     */
-    public static void registerPublisher(DomainEventPublisher publisher) {
-        eventPublisher = publisher;
-    }
-
-    /**
-     * 获取当前注册的事件发布者
-     */
-    public static DomainEventPublisher getPublisher() {
-        return eventPublisher;
-    }
-
-    /**
-     * 设置默认主题
-     */
-    public static void setDefaultTopic(String topic) {
-        defaultTopic = topic;
-    }
-
-    public static String getDefaultTopic() {
-        return defaultTopic;
-    }
 
     /**
      * 领域事件构造器
@@ -102,6 +83,46 @@ public abstract class DomainEvent<T> implements Serializable {
     public DomainEvent(Object source, Object support) {
         this.source = (T) source;
         this.supports = Collections.singleton(support);
+    }
+
+    /**
+     * 注册事件发布者（由框架适配层调用）
+     */
+    public static void registerPublisher(DomainEventPublisher publisher) {
+        eventPublisher = publisher;
+    }
+
+    /**
+     * 获取当前注册的事件发布者
+     */
+    public static DomainEventPublisher getPublisher() {
+        return eventPublisher;
+    }
+
+    public static String getDefaultTopic() {
+        return defaultTopic;
+    }
+
+    /**
+     * 设置默认主题
+     */
+    public static void setDefaultTopic(String topic) {
+        defaultTopic = topic;
+    }
+
+    private static ScheduledExecutorService getScheduler() {
+        if (scheduler == null) {
+            synchronized (DomainEvent.class) {
+                if (scheduler == null) {
+                    scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+                        Thread t = new Thread(r, "ddd4j-domain-event-scheduler");
+                        t.setDaemon(true);
+                        return t;
+                    });
+                }
+            }
+        }
+        return scheduler;
     }
 
     /**
@@ -197,20 +218,5 @@ public abstract class DomainEvent<T> implements Serializable {
         } else {
             getScheduler().schedule((Runnable) this::publish, delayMillis, TimeUnit.MILLISECONDS);
         }
-    }
-
-    private static ScheduledExecutorService getScheduler() {
-        if (scheduler == null) {
-            synchronized (DomainEvent.class) {
-                if (scheduler == null) {
-                    scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-                        Thread t = new Thread(r, "ddd4j-domain-event-scheduler");
-                        t.setDaemon(true);
-                        return t;
-                    });
-                }
-            }
-        }
-        return scheduler;
     }
 }

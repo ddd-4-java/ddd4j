@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * {@link MQBindingNaming} 绑定命名单测。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class MQBindingNamingTest {

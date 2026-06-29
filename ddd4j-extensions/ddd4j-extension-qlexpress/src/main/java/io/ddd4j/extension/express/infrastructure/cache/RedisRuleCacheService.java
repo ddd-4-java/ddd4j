@@ -9,12 +9,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Redis规则缓存服务实现
- * 
+ *
  * <p>基础设施层：使用Redis实现缓存。
  * 当 Caffeine 不可用时，作为回退方案使用。
- * 
+ *
  * <p>注意：此类通过ExpressAutoConfiguration自动配置，无需手动添加@Service注解
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
@@ -32,7 +32,7 @@ public class RedisRuleCacheService implements RuleCacheService {
 
     /**
      * 获取规则
-     * 
+     *
      * @param ruleCode 规则编码，不能为null
      * @return 规则定义，如果不存在返回null
      */
@@ -47,9 +47,9 @@ public class RedisRuleCacheService implements RuleCacheService {
 
     /**
      * 缓存规则
-     * 
+     *
      * @param ruleCode 规则编码，不能为null
-     * @param rule 规则定义，不能为null
+     * @param rule     规则定义，不能为null
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
@@ -62,7 +62,7 @@ public class RedisRuleCacheService implements RuleCacheService {
 
     /**
      * 清除指定规则缓存
-     * 
+     *
      * @param ruleCode 规则编码，不能为null
      */
     @Override

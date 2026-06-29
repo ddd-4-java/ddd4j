@@ -8,6 +8,7 @@ import java.util.Optional;
 
 /**
  * 从 NATS {@link Message} 构建 {@link NatsMessageAcknowledgment}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class NatsMessageAcknowledgmentFactory {

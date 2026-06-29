@@ -1,14 +1,15 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.web.webmvc.webmvc;
 
-import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import io.ddd4j.core.Constants;
 import io.ddd4j.core.ProfileManager;
 import io.ddd4j.spring.web.Slf4jMDCInterceptor;
+import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.biz.context.NestedMessageSource;
 import org.springframework.biz.web.servlet.i18n.XHeaderLocaleResolver;

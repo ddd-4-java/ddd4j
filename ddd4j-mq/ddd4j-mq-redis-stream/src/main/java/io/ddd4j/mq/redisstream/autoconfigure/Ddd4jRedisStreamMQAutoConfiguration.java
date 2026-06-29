@@ -1,11 +1,10 @@
 package io.ddd4j.mq.redisstream.autoconfigure;
 
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.redisstream.consumer.RedisStreamConsumerEndpointRegistrar;
 import io.ddd4j.mq.redisstream.publisher.RedisStreamMQEventPublisher;
 import io.ddd4j.mq.redisstream.spi.RedisStreamMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * Redis Stream 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=redis-stream/redis 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

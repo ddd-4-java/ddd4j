@@ -1,8 +1,8 @@
 package io.ddd4j.extension.monitor.domain.qiwei.service;
 
-import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.extension.monitor.domain.common.vo.MarkDownVO;
 import io.ddd4j.extension.monitor.domain.common.vo.MsgVO;
+import io.ddd4j.kit.lang.JsonKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,11 +18,9 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j(topic = "### BASE-MONITOR : QiWeiService ###")
 public class QiWeiService {
 
-    private static final RestTemplate restTemplate = new RestTemplate();
-
-    private static final RestClient restClient = RestClient.builder().build();
-
     public static final String BASE_URL = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=";
+    private static final RestTemplate restTemplate = new RestTemplate();
+    private static final RestClient restClient = RestClient.builder().build();
 
     /**
      * 处理发送的钉钉消息

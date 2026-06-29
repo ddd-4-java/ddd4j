@@ -24,8 +24,8 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * @since 3.4.x
  */
 @AnalyzeClasses(
-    packages = {"io.ddd4j.auth", "io.ddd4j.core"},
-    importOptions = ImportOption.DoNotIncludeTests.class
+        packages = {"io.ddd4j.auth", "io.ddd4j.core"},
+        importOptions = ImportOption.DoNotIncludeTests.class
 )
 public class AuthIndependenceTest {
 
@@ -34,27 +34,27 @@ public class AuthIndependenceTest {
      */
     @ArchTest
     static final ArchRule AUTH_CORE_NO_FRAMEWORK =
-        noClasses().that().resideInAPackage("io.ddd4j.auth.core..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                "org.springframework..",
-                "cn.dev33..",
-                "org.apache.shiro..",
-                "jakarta.servlet..");
+            noClasses().that().resideInAPackage("io.ddd4j.auth.core..")
+                    .should().dependOnClassesThat().resideInAnyPackage(
+                            "org.springframework..",
+                            "cn.dev33..",
+                            "org.apache.shiro..",
+                            "jakarta.servlet..");
 
     /**
      * auth-satoken 不得依赖 Spring（保持纯 Java，可被 Quarkus/Javalin 复用）。
      */
     @ArchTest
     static final ArchRule AUTH_SATOKEN_NO_SPRING =
-        noClasses().that().resideInAPackage("io.ddd4j.auth.satoken..")
-            .should().dependOnClassesThat().resideInAPackage("org.springframework..");
+            noClasses().that().resideInAPackage("io.ddd4j.auth.satoken..")
+                    .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
     /**
      * auth-shiro 不得依赖 Spring（保持纯 Java，可被 Quarkus/Javalin 复用）。
      */
     @ArchTest
     static final ArchRule AUTH_SHIRO_NO_SPRING =
-        noClasses().that().resideInAPackage("io.ddd4j.auth.shiro..")
-            .should().dependOnClassesThat().resideInAPackage("org.springframework..");
+            noClasses().that().resideInAPackage("io.ddd4j.auth.shiro..")
+                    .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
 }

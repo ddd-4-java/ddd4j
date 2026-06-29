@@ -44,15 +44,17 @@ import java.util.function.Function;
  */
 public class JetCacheCacheManager implements CacheManager {
 
-    private static final Logger log = LoggerFactory.getLogger(JetCacheCacheManager.class);
-
-    /** 默认 JetCache 区域名称 */
+    /**
+     * 默认 JetCache 区域名称
+     */
     public static final String DEFAULT_AREA = "default";
-
+    private static final Logger log = LoggerFactory.getLogger(JetCacheCacheManager.class);
     private final com.alicp.jetcache.CacheManager jetCacheManager;
     private final String cacheArea;
 
-    /** 已创建的缓存实例（name → ddd4j Cache 适配器） */
+    /**
+     * 已创建的缓存实例（name → ddd4j Cache 适配器）
+     */
     private final Map<String, Cache<?, ?>> caches = new ConcurrentHashMap<>();
 
     /**

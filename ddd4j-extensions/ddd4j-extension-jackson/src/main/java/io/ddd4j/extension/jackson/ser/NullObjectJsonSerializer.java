@@ -11,6 +11,7 @@ import java.util.Objects;
 
 /**
  * 处理实体对象类型的null值
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class NullObjectJsonSerializer extends JsonSerializer<Object> {

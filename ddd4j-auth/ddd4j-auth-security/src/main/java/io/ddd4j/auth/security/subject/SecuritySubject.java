@@ -4,17 +4,11 @@ import io.ddd4j.core.subject.AuthPrincipal;
 import io.ddd4j.core.subject.AuthRequest;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 基于 Spring Security 的 {@link Subject} 实现。
@@ -30,7 +24,9 @@ import java.util.stream.Collectors;
  */
 public class SecuritySubject implements Subject {
 
-    /** 登录时存入 Authentication details 的 principal 键 */
+    /**
+     * 登录时存入 Authentication details 的 principal 键
+     */
     public static final String PRINCIPAL_KEY = "principal";
 
     /**
@@ -80,8 +76,8 @@ public class SecuritySubject implements Subject {
         // 构建 Spring Security Authentication
         Object credentials = request.getPrincipal() != null ? request.getPrincipal() : "";
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-            request.getPrincipal() != null ? request.getPrincipal() : request.getLoginId(),
-            credentials
+                request.getPrincipal() != null ? request.getPrincipal() : request.getLoginId(),
+                credentials
         );
         auth.setDetails(request.getExtra());
         SecurityContextHolder.getContext().setAuthentication(auth);

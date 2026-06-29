@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.auth.security.jwt;
@@ -13,7 +14,7 @@ import org.springframework.data.redis.core.RedisOperationTemplate;
 import java.security.Key;
 import java.util.Base64;
 
-public class JwtHs256PayloadRepository  extends AbstractJwtPayloadRepository implements InitializingBean {
+public class JwtHs256PayloadRepository extends AbstractJwtPayloadRepository implements InitializingBean {
 
     private Key secretKey;
 

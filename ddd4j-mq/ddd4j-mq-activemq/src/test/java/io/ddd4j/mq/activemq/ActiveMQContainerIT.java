@@ -2,9 +2,9 @@ package io.ddd4j.mq.activemq;
 
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.activemq.autoconfigure.Ddd4jActiveMQAutoConfiguration;
-import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * ActiveMQ Artemis 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)

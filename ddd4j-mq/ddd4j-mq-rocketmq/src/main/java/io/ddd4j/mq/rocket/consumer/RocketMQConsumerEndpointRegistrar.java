@@ -1,13 +1,13 @@
 package io.ddd4j.mq.rocket.consumer;
 
-import io.ddd4j.mq.rocket.ack.RocketMessageAcknowledgment;
-import io.ddd4j.mq.rocket.ack.RocketMessageAcknowledgmentFactory;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
+import io.ddd4j.mq.rocket.ack.RocketMessageAcknowledgment;
+import io.ddd4j.mq.rocket.ack.RocketMessageAcknowledgmentFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -29,6 +29,7 @@ import java.util.function.Consumer;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 RocketMQ {@link DefaultMQPushConsumer}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

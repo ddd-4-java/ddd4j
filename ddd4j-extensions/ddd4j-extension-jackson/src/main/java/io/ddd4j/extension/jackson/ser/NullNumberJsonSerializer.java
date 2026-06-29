@@ -9,6 +9,7 @@ import java.util.Objects;
 
 /**
  * 处理数值类型的null值
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class NullNumberJsonSerializer extends JsonSerializer<Object> {

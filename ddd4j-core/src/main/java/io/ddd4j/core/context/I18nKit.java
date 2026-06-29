@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class I18nKit {
 
-    private static volatile I18nProvider provider = I18nProvider.DEFAULT;
     private static final Map<String, I18nProvider> LOCALE_PROVIDERS = new ConcurrentHashMap<>();
+    private static volatile I18nProvider provider = I18nProvider.DEFAULT;
 
     private I18nKit() {
     }

@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 /**
  * StpLogic 门面类，管理项目中所有的 StpLogic 账号体系
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class StpKit {
@@ -43,6 +44,7 @@ public class StpKit {
     public static Long getLoginIdAsLong() {
         return StpUtil.getLoginIdAsLong();
     }
+
     /**
      * 获取当前会话账号id, 并转换为 String 类型
      *
@@ -51,6 +53,7 @@ public class StpKit {
     public static String getLoginIdAsString() {
         return StpUtil.getLoginIdAsString();
     }
+
     /**
      * 获取当前会话账号id, 并转换为 int 类型
      *
@@ -67,9 +70,11 @@ public class StpKit {
     public static Long getUserIdAsLong() {
         return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_LONG);
     }
+
     public static String getUserIdAsString() {
         return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_STRING);
     }
+
     public static Integer getUserIdAsInteger() {
         return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_INTEGER);
     }
@@ -194,24 +199,6 @@ public class StpKit {
     }
 
     /**
-     * 获取当前 Token 的扩展信息, 并转换为 String 类型（此函数只在jwt模式下生效）
-     *
-     * @return 账号id
-     */
-    public String getExtraAsString(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, FunctionKit.TO_STRING);
-    }
-
-    /**
-     * 获取当前 Token 的扩展信息,并转换为 int 类型（此函数只在jwt模式下生效）
-     *
-     * @return 账号id
-     */
-    public Integer getExtraAsInteger(String tokenValue, String key) {
-        return getExtraAs(tokenValue, key, FunctionKit.TO_INTEGER);
-    }
-
-    /**
      * 获取当前 Token 的扩展信息, 并转换为 long 类型（此函数只在jwt模式下生效）
      *
      * @return 账号id
@@ -247,6 +234,24 @@ public class StpKit {
     public static <T> T getExtraAs(String tokenValue, String key, Class<T> valueType) {
         Object value = StpUtil.getExtra(tokenValue, key);
         return JsonKit.toType(value, valueType);
+    }
+
+    /**
+     * 获取当前 Token 的扩展信息, 并转换为 String 类型（此函数只在jwt模式下生效）
+     *
+     * @return 账号id
+     */
+    public String getExtraAsString(String tokenValue, String key) {
+        return getExtraAs(tokenValue, key, FunctionKit.TO_STRING);
+    }
+
+    /**
+     * 获取当前 Token 的扩展信息,并转换为 int 类型（此函数只在jwt模式下生效）
+     *
+     * @return 账号id
+     */
+    public Integer getExtraAsInteger(String tokenValue, String key) {
+        return getExtraAs(tokenValue, key, FunctionKit.TO_INTEGER);
     }
 
 }

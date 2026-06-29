@@ -1,8 +1,6 @@
-
 package io.ddd4j.core.ddd.config;
 
 import lombok.Data;
-import lombok.Getter;
 
 /**
  * ddd4j-ddd 配置属性。
@@ -22,7 +20,9 @@ import lombok.Getter;
 // @ConfigurationProperties(prefix = "ddd4j.ddd")
 public class DddProperties {
 
-    /** 事件存储配置 */
+    /**
+     * 事件存储配置
+     */
     private EventStoreConfig eventStore = new EventStoreConfig();
 
     /**

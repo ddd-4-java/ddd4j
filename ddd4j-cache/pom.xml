@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,12 +18,12 @@
         缓存 SPI（Cache/CacheStats/CacheManager/CacheConfig/CacheType）位于 ddd4j-core/cache（纯 Java）。
 
         本模块按包名分层，包含所有缓存后端实现：
-        - core/       本地缓存门面（CacheKit）+ Caffeine/Guava/Hutool 直接实现
-        - jedis/      Jedis 原生实现（传入 UnifiedJedis，Jedis 5+/7+）
-        - lettuce/    Lettuce 原生实现（传入 RedisCommands）
-        - redisson/   Redisson 原生实现（传入 RedissonClient）+ 分布式锁
-        - memcached/  Memcached 原生实现（传入 MemcachedClient）
-        - jetcache/   JetCache 完整适配层（JetCacheAdapter/Manager/Converter）
+        - core/ 本地缓存门面（CacheKit）+ Caffeine/Guava/Hutool 直接实现
+        - jedis/ Jedis 原生实现（传入 UnifiedJedis，Jedis 5+/7+）
+        - lettuce/ Lettuce 原生实现（传入 RedisCommands）
+        - redisson/ Redisson 原生实现（传入 RedissonClient）+ 分布式锁
+        - memcached/ Memcached 原生实现（传入 MemcachedClient）
+        - jetcache/ JetCache 完整适配层（JetCacheAdapter/Manager/Converter）
 
         所有外部缓存客户端依赖标记 optional，消费方按需引入：
         - 用 Caffeine：默认引入（compile）

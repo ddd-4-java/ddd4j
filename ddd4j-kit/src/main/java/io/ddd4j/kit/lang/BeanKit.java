@@ -2,21 +2,13 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import cn.hutool.core.bean.copier.ValueProvider;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ReflectUtil;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Bean 处理工具类（纯 Java，基于 Hutool，零 Spring 依赖）。
@@ -154,9 +146,9 @@ public class BeanKit {
     /**
      * 将对象转换为 Map。
      *
-     * @param obj           源对象
-     * @param withNull      是否包含 null 值属性
-     * @param ignoreFields  忽略的属性名
+     * @param obj          源对象
+     * @param withNull     是否包含 null 值属性
+     * @param ignoreFields 忽略的属性名
      * @return 属性 Map；源对象为 null 时返回 null
      */
     public Map<String, Object> toMap(Object obj, boolean withNull, String... ignoreFields) {
@@ -295,9 +287,9 @@ public class BeanKit {
     /**
      * 将源对象属性拷贝到目标对象。
      *
-     * @param source        源对象
-     * @param target        目标对象
-     * @param ignoreNull    是否忽略源对象中为 null 的属性
+     * @param source         源对象
+     * @param target         目标对象
+     * @param ignoreNull     是否忽略源对象中为 null 的属性
      * @param withCreateInfo 是否包含创建审计字段（creator/creatorCode/createTime）
      * @param withUpdateInfo 是否包含更新审计字段（updater/updaterCode/updateTime）
      */
@@ -416,8 +408,8 @@ public class BeanKit {
     /**
      * 批量将 Map 集合转换到目标集合（目标元素需预先实例化）。
      *
-     * @param mapList    Map 集合
-     * @param targetList 目标集合
+     * @param mapList     Map 集合
+     * @param targetList  目标集合
      * @param targetClass 目标类型
      */
     public void mapsToObjects(List<Map<String, Object>> mapList, List targetList, Class targetClass) {

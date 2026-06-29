@@ -26,6 +26,7 @@ import java.util.Objects;
  * <p>
  * 在 Bean 完成初始化（含 AOP 代理）后内省目标类方法，写入 {@link MQListenerDefinitionRegistry}。
  * 模式对齐 Spring {@code EventListenerMethodProcessor} 与 Cloud {@code FunctionalConsumerRegistrar}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -36,6 +37,20 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
     private final Ddd4jMQProperties properties;
 
     private String defaultGroupPrefix = "application";
+
+    /**
+     * 校验监听器定义非空且方法可访问。
+     *
+     * @param definition 监听器定义
+     */
+    public static void prepareMethod(MQListenerDefinition definition) {
+        Objects.requireNonNull(definition, "definition");
+        Method method = definition.getMethod();
+        Object bean = definition.getBean();
+        if (bean != null && !method.canAccess(bean)) {
+            method.setAccessible(true);
+        }
+    }
 
     @Override
     public void setEnvironment(Environment environment) {
@@ -104,19 +119,5 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
                 .supports(List.of(annotation.supports()))
                 .concat(annotation.concat())
                 .build();
-    }
-
-    /**
-     * 校验监听器定义非空且方法可访问。
-     *
-     * @param definition 监听器定义
-     */
-    public static void prepareMethod(MQListenerDefinition definition) {
-        Objects.requireNonNull(definition, "definition");
-        Method method = definition.getMethod();
-        Object bean = definition.getBean();
-        if (bean != null && !method.canAccess(bean)) {
-            method.setAccessible(true);
-        }
     }
 }

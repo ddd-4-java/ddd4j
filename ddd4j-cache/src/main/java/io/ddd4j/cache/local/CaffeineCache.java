@@ -3,7 +3,6 @@ package io.ddd4j.cache.local;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.ddd4j.core.cache.AtomicCache;
-import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
 import io.ddd4j.core.cache.CasCache;
@@ -89,6 +88,18 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return builder;
     }
 
+    private static long toLong(Object val) {
+        if (val == null) return 0L;
+        if (val instanceof Number) return ((Number) val).longValue();
+        return Long.parseLong(val.toString());
+    }
+
+    private static double toDouble(Object val) {
+        if (val == null) return 0.0;
+        if (val instanceof Number) return ((Number) val).doubleValue();
+        return Double.parseDouble(val.toString());
+    }
+
     @Override
     public V getIfPresent(K key) {
         return cache.getIfPresent(key);
@@ -147,6 +158,8 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return cache.estimatedSize();
     }
 
+    // ==================== CasCache 实现（基于 ConcurrentMap 原子操作） ====================
+
     @Override
     public CacheStats stats() {
         com.github.benmanes.caffeine.cache.stats.CacheStats caffeineStats = cache.stats();
@@ -187,12 +200,12 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return cache;
     }
 
-    // ==================== CasCache 实现（基于 ConcurrentMap 原子操作） ====================
-
     @Override
     public boolean putIfAbsent(K key, V value) {
         return cache.asMap().putIfAbsent(key, value) == null;
     }
+
+    // ==================== AtomicCache 实现（基于 ConcurrentMap.merge 原子操作） ====================
 
     @Override
     public boolean replace(K key, V expected, V newValue) {
@@ -207,8 +220,6 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     public boolean removeIf(K key, V expected) {
         return cache.asMap().remove(key, expected);
     }
-
-    // ==================== AtomicCache 实现（基于 ConcurrentMap.merge 原子操作） ====================
 
     @Override
     @SuppressWarnings("unchecked")
@@ -246,6 +257,8 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return toDouble(newVal);
     }
 
+    // ==================== TTL 管理 ====================
+
     @Override
     public long stockDecrement(K key, long quantity) {
         if (quantity <= 0) return AtomicCache.STOCK_ILLEGAL_ARG;
@@ -282,14 +295,14 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         return toLong(val);
     }
 
-    // ==================== TTL 管理 ====================
-
     @Override
     public boolean expire(K key, long seconds) {
         // Caffeine 不支持单 key 动态设置过期时间，需通过 expireAfter 策略在构建时配置
         // 此处通过先删再写的方式近似实现（会丢失原值，不推荐）
         return false;
     }
+
+    // ==================== 内部工具 ====================
 
     @Override
     public long getExpire(K key) {
@@ -301,20 +314,6 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     public boolean persist(K key) {
         // Caffeine 不支持移除单 key 的过期策略
         return false;
-    }
-
-    // ==================== 内部工具 ====================
-
-    private static long toLong(Object val) {
-        if (val == null) return 0L;
-        if (val instanceof Number) return ((Number) val).longValue();
-        return Long.parseLong(val.toString());
-    }
-
-    private static double toDouble(Object val) {
-        if (val == null) return 0.0;
-        if (val instanceof Number) return ((Number) val).doubleValue();
-        return Double.parseDouble(val.toString());
     }
 
 }

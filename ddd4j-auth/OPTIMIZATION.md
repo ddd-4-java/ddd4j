@@ -11,13 +11,13 @@
 
 ### 1.1 模块清单与归属问题
 
-| 子模块 | 当前内容 | 问题 |
-|--------|---------|------|
-| `ddd4j-auth-datascope` | `DataScopeProvider` + `@RequiresDataPermissions` | ⚠️ 与鉴权无关，是数据权限，应归 data 层 |
-| `ddd4j-auth-license` | TrueLicense 证书管理 | ⚠️ 与鉴权无关，是 License 授权，应独立 |
-| `ddd4j-auth-satoken` | `SaTokenSubject` + `SaTokenEnhanceAutoConfiguration` | ❌ `SaTokenSubject.getPrincipal()` 全返回 null（**未实现**） |
-| `ddd4j-auth-security` | `SecuritySubject` + JWT 配置 | ❌ `SecuritySubject` 所有方法返回 false/null（**空壳**） |
-| `ddd4j-auth-shiro` | `ShiroSubject` + `WebShiroBizConfiguration` | ✅ 唯一完整实现，但耦合 Spring |
+| 子模块                    | 当前内容                                                 | 问题                                                  |
+|------------------------|------------------------------------------------------|-----------------------------------------------------|
+| `ddd4j-auth-datascope` | `DataScopeProvider` + `@RequiresDataPermissions`     | ⚠️ 与鉴权无关，是数据权限，应归 data 层                            |
+| `ddd4j-auth-license`   | TrueLicense 证书管理                                     | ⚠️ 与鉴权无关，是 License 授权，应独立                           |
+| `ddd4j-auth-satoken`   | `SaTokenSubject` + `SaTokenEnhanceAutoConfiguration` | ❌ `SaTokenSubject.getPrincipal()` 全返回 null（**未实现**） |
+| `ddd4j-auth-security`  | `SecuritySubject` + JWT 配置                           | ❌ `SecuritySubject` 所有方法返回 false/null（**空壳**）       |
+| `ddd4j-auth-shiro`     | `ShiroSubject` + `WebShiroBizConfiguration`          | ✅ 唯一完整实现，但耦合 Spring                                 |
 
 ### 1.2 核心契约位置问题（最严重）
 
@@ -51,7 +51,8 @@ public static Subject getSubject() {
 }
 ```
 
-**问题**：三个适配模块都 `@Bean public SubjectProvider subjectProvider()`，但**没有任何代码把 Bean 写回 `SubjectKit.subjectProvider` 静态字段**。也就是说：
+**问题**：三个适配模块都 `@Bean public SubjectProvider subjectProvider()`，但**没有任何代码把 Bean
+写回 `SubjectKit.subjectProvider` 静态字段**。也就是说：
 
 - Spring 容器里有一个 `SubjectProvider` Bean ✅
 - 但 `SubjectKit.getSubject()` 永远抛 `IllegalStateException` ❌
@@ -61,21 +62,21 @@ public static Subject getSubject() {
 
 ### 1.4 三实现完整度天差地别
 
-| 实现 | getPrincipal | getPrincipalByLoginId | getPrincipalByToken | 完整度 |
-|------|-------------|----------------------|--------------------|--------|
-| `ShiroSubject` | ✅ 委托 Shiro | ⚠️ 退化为 getPrincipal | ⚠️ 退化为 getPrincipal | 70% |
-| `SaTokenSubject` | ❌ `return null` | ❌ `return null` | ❌ `return null` | 30%（仅权限/角色） |
-| `SecuritySubject` | ❌ `return null` | ❌ 全 `return false` | ❌ 全 `return false` | **0%（空壳）** |
+| 实现                | getPrincipal    | getPrincipalByLoginId | getPrincipalByToken | 完整度         |
+|-------------------|-----------------|-----------------------|---------------------|-------------|
+| `ShiroSubject`    | ✅ 委托 Shiro      | ⚠️ 退化为 getPrincipal   | ⚠️ 退化为 getPrincipal | 70%         |
+| `SaTokenSubject`  | ❌ `return null` | ❌ `return null`       | ❌ `return null`     | 30%（仅权限/角色） |
+| `SecuritySubject` | ❌ `return null` | ❌ 全 `return false`    | ❌ 全 `return false`  | **0%（空壳）**  |
 
 ### 1.5 自动配置机制不统一
 
-| 模块 | 自动配置注册方式 | 状态 |
-|------|----------------|------|
-| `ddd4j-auth-datascope` | `spring/...AutoConfiguration.imports`（新机制） | ✅ |
-| `ddd4j-auth-satoken` | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
-| `ddd4j-auth-security` | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
-| `ddd4j-auth-shiro` | 无任何注册 | ❌ **完全缺失** |
-| `ddd4j-auth-license` | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
+| 模块                     | 自动配置注册方式                                         | 状态                 |
+|------------------------|--------------------------------------------------|--------------------|
+| `ddd4j-auth-datascope` | `spring/...AutoConfiguration.imports`（新机制）       | ✅                  |
+| `ddd4j-auth-satoken`   | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
+| `ddd4j-auth-security`  | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
+| `ddd4j-auth-shiro`     | 无任何注册                                            | ❌ **完全缺失**         |
+| `ddd4j-auth-license`   | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
 
 **结果**：除了 datascope，其余 4 个模块的 `@Configuration` 类**根本不会被 Spring Boot 自动装配**。
 
@@ -145,11 +146,13 @@ ddd4j-auth/（重构后）
 
 ### 2.2 核心契约设计（以 Subject 为唯一中心）
 
-> **设计原则**：不引入 `Authentication`/`TokenResolver` 等并行抽象。所有鉴权能力（读取、校验、会话操作）统一收敛到 `Subject` 接口；`SubjectKit` 作为静态门面提供业务调用入口；`SubjectProvider` 作为 SPI 由三框架适配层实现。
+> **设计原则**：不引入 `Authentication`/`TokenResolver` 等并行抽象。所有鉴权能力（读取、校验、会话操作）统一收敛到 `Subject`
+> 接口；`SubjectKit` 作为静态门面提供业务调用入口；`SubjectProvider` 作为 SPI 由三框架适配层实现。
 
 #### 2.2.1 `Subject` 接口扩展（在现有契约基础上补全会话操作）
 
 现有契约（保留不动）：
+
 - 读取：`getPrincipal` / `getPrincipalByLoginId` / `getPrincipalByToken`
 - 校验：`isPermitted` / `hasRole` / `isAuthenticated` / `isRemembered`
 - 身份：`getLoginId` / `getUserId` / `getOrgId` / `getRoleId` / `getExtra`
@@ -323,15 +326,15 @@ SubjectKit.register(new SaTokenSubjectProvider());
 
 ### 2.3 三鉴权实现如何落地 Subject 契约
 
-| Subject 方法 | sa-token 实现 | Spring Security 实现 | Shiro 实现 |
-|-------------|--------------|---------------------|-----------|
-| `login(AuthRequest)` | `StpUtil.login(loginId, extra, timeout)` | `SecurityContextHolder.setContext(...)` | `Subject.login(token)` |
-| `logout()` | `StpUtil.logout()` | `SecurityContextHolder.clearContext()` | `Subject.logout()` |
-| `logout(loginId)` | `StpUtil.kickout(loginId)` | 注销其 Session | `SessionDAO.delete(session)` |
-| `refresh()` | `StpUtil.getTokenValue()`（续期） | 重签 JWT | 刷新 Session |
-| `verify(token)` | `StpUtil.getLoginIdByToken(token)` | `JwtParser.parseClaimsJws(token)` | `SecurityUtils.getSubjectByToken` |
-| `getPrincipal()` | `StpUtil.getSession().get("principal")` | `SecurityContextHolder.getContext().getAuthentication().getPrincipal()` | `SecurityUtils.getSubject().getPrincipal()` |
-| `isPermitted(p)` | `StpUtil.hasPermission(p)` | `Authentication.getAuthorities()` 比对 | `SecurityUtils.getSubject().isPermitted(p)` |
+| Subject 方法           | sa-token 实现                              | Spring Security 实现                                                      | Shiro 实现                                    |
+|----------------------|------------------------------------------|-------------------------------------------------------------------------|---------------------------------------------|
+| `login(AuthRequest)` | `StpUtil.login(loginId, extra, timeout)` | `SecurityContextHolder.setContext(...)`                                 | `Subject.login(token)`                      |
+| `logout()`           | `StpUtil.logout()`                       | `SecurityContextHolder.clearContext()`                                  | `Subject.logout()`                          |
+| `logout(loginId)`    | `StpUtil.kickout(loginId)`               | 注销其 Session                                                             | `SessionDAO.delete(session)`                |
+| `refresh()`          | `StpUtil.getTokenValue()`（续期）            | 重签 JWT                                                                  | 刷新 Session                                  |
+| `verify(token)`      | `StpUtil.getLoginIdByToken(token)`       | `JwtParser.parseClaimsJws(token)`                                       | `SecurityUtils.getSubjectByToken`           |
+| `getPrincipal()`     | `StpUtil.getSession().get("principal")`  | `SecurityContextHolder.getContext().getAuthentication().getPrincipal()` | `SecurityUtils.getSubject().getPrincipal()` |
+| `isPermitted(p)`     | `StpUtil.hasPermission(p)`               | `Authentication.getAuthorities()` 比对                                    | `SecurityUtils.getSubject().isPermitted(p)` |
 
 ---
 
@@ -422,12 +425,12 @@ public <T extends AuthPrincipal> T getPrincipal() {
 
 ### 3.4 旧项目迁移路径（4 阶段）
 
-| 阶段 | 动作 | 风险 | 可回滚 |
-|------|------|------|--------|
-| **阶段 1：接入 ddd4j-core** | 引入 `ddd4j-auth-core` + 对应 `auth-shiro/security`，业务代码改用 `SubjectKit.getSubject()` | 低 | ✅ 仅改调用方式 |
-| **阶段 2：双写运行** | 同时启用 Shiro SubjectProvider，旧 `SecurityUtils.getSubject()` 仍可用 | 中 | ✅ 删除依赖即回滚 |
-| **阶段 3：灰度切换** | 试点服务引入 `ddd4j-auth-satoken`，新接口用 sa-token，旧接口保留 Shiro | 中 | ✅ 注解区分 |
-| **阶段 4：全量切换** | 移除 Shiro 依赖，统一 sa-token | 高 | ⚠️ 需重新发 Token |
+| 阶段                     | 动作                                                                               | 风险 | 可回滚           |
+|------------------------|----------------------------------------------------------------------------------|----|---------------|
+| **阶段 1：接入 ddd4j-core** | 引入 `ddd4j-auth-core` + 对应 `auth-shiro/security`，业务代码改用 `SubjectKit.getSubject()` | 低  | ✅ 仅改调用方式      |
+| **阶段 2：双写运行**          | 同时启用 Shiro SubjectProvider，旧 `SecurityUtils.getSubject()` 仍可用                    | 中  | ✅ 删除依赖即回滚     |
+| **阶段 3：灰度切换**          | 试点服务引入 `ddd4j-auth-satoken`，新接口用 sa-token，旧接口保留 Shiro                            | 中  | ✅ 注解区分        |
+| **阶段 4：全量切换**          | 移除 Shiro 依赖，统一 sa-token                                                          | 高  | ⚠️ 需重新发 Token |
 
 ---
 
@@ -435,40 +438,40 @@ public <T extends AuthPrincipal> T getPrincipal() {
 
 ### P0：必须完成（否则 auth 模块不可用）
 
-| # | 任务 | 文件 | 说明 |
-|---|------|------|------|
-| 1 | **修复 SubjectKit 注册断链** | 新增 `ddd4j-auth-spring/SubjectRegistrar` | 把 `SubjectProvider` Bean 写回 `SubjectKit.subjectProvider` |
-| 2 | **实现 SaTokenSubject.getPrincipal()** | `SaTokenSubject.java` | 从 `StpUtil.getSession().get("principal")` 取 |
-| 3 | **重写 SecuritySubject** | `SecuritySubject.java` | 委托 `SecurityContextHolder`，当前全是空壳 |
-| 4 | **补全 ShiroSubject 的 ByLoginId/ByToken** | `ShiroSubject.java` | 通过 SessionDAO 反查 |
-| 5 | **统一自动配置注册** | 4 个 `*.imports` 文件 | satoken/security/shiro/license 都补 `AutoConfiguration.imports` |
+| # | 任务                                      | 文件                                      | 说明                                                            |
+|---|-----------------------------------------|-----------------------------------------|---------------------------------------------------------------|
+| 1 | **修复 SubjectKit 注册断链**                  | 新增 `ddd4j-auth-spring/SubjectRegistrar` | 把 `SubjectProvider` Bean 写回 `SubjectKit.subjectProvider`      |
+| 2 | **实现 SaTokenSubject.getPrincipal()**    | `SaTokenSubject.java`                   | 从 `StpUtil.getSession().get("principal")` 取                   |
+| 3 | **重写 SecuritySubject**                  | `SecuritySubject.java`                  | 委托 `SecurityContextHolder`，当前全是空壳                             |
+| 4 | **补全 ShiroSubject 的 ByLoginId/ByToken** | `ShiroSubject.java`                     | 通过 SessionDAO 反查                                              |
+| 5 | **统一自动配置注册**                            | 4 个 `*.imports` 文件                      | satoken/security/shiro/license 都补 `AutoConfiguration.imports` |
 
 ### P1：模块重组（对齐 mq 范式）
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 6 | 新增 `ddd4j-auth-core` 纯 Java SPI 模块 | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider 体系（含会话能力） |
-| 7 | 新增 `ddd4j-auth-spring` Spring 桥接模块 | `SubjectRegistrar` + 自动装配 |
-| 8 | `ddd4j-auth-datascope` 迁移到 `ddd4j-data` | 数据权限不属于鉴权 |
-| 9 | `ddd4j-auth-license` 迁移到 `ddd4j-extensions` | 软件授权不属于鉴权 |
+| # | 任务                                          | 说明                                                           |
+|---|---------------------------------------------|--------------------------------------------------------------|
+| 6 | 新增 `ddd4j-auth-core` 纯 Java SPI 模块          | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider 体系（含会话能力） |
+| 7 | 新增 `ddd4j-auth-spring` Spring 桥接模块          | `SubjectRegistrar` + 自动装配                                    |
+| 8 | `ddd4j-auth-datascope` 迁移到 `ddd4j-data`     | 数据权限不属于鉴权                                                    |
+| 9 | `ddd4j-auth-license` 迁移到 `ddd4j-extensions` | 软件授权不属于鉴权                                                    |
 
 ### P2：能力增强（借鉴 Sa-Token）
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 10 | 扩展 `Subject` 接口会话能力 | 新增 `login/logout/kickout/refresh/verify/disable/setAttribute`（对齐 StpLogic 能力边界） |
-| 11 | 新增 `AuthRequest` 登录请求载体 | 纯 Java 值对象，承载 loginId/principal/timeout/device/realm/extra |
-| 12 | **新增 `SubjectDataProvider` 权限数据源 SPI** | 对齐 Sa-Token `StpInterface`；框架不持有权限数据，业务提供 getPermissionList/getRoleList |
-| 13 | **新增 `SubjectStrategy` 函数式策略集** | 对齐 Sa-Token `SaStrategy`；createToken/hasElement/isExpired/createSubject 可热替换 |
-| 14 | `SubjectKit` 扩展为全局注册中心 | 对齐 `SaManager`；register SubjectProvider + setDataProvider + getStrategy + 默认兜底 |
-| 15 | `SubjectProvider` 支持多账号体系 | 新增 `getSubject(realm)` 默认方法，对齐 `SaManager.getStpLogic(loginType)` |
-| 16 | 统一异常映射 | sa-token/SpringSecurity/Shiro 异常 → ddd4j `ServiceException` |
+| #  | 任务                                     | 说明                                                                              |
+|----|----------------------------------------|---------------------------------------------------------------------------------|
+| 10 | 扩展 `Subject` 接口会话能力                    | 新增 `login/logout/kickout/refresh/verify/disable/setAttribute`（对齐 StpLogic 能力边界） |
+| 11 | 新增 `AuthRequest` 登录请求载体                | 纯 Java 值对象，承载 loginId/principal/timeout/device/realm/extra                      |
+| 12 | **新增 `SubjectDataProvider` 权限数据源 SPI** | 对齐 Sa-Token `StpInterface`；框架不持有权限数据，业务提供 getPermissionList/getRoleList         |
+| 13 | **新增 `SubjectStrategy` 函数式策略集**        | 对齐 Sa-Token `SaStrategy`；createToken/hasElement/isExpired/createSubject 可热替换    |
+| 14 | `SubjectKit` 扩展为全局注册中心                 | 对齐 `SaManager`；register SubjectProvider + setDataProvider + getStrategy + 默认兜底  |
+| 15 | `SubjectProvider` 支持多账号体系              | 新增 `getSubject(realm)` 默认方法，对齐 `SaManager.getStpLogic(loginType)`               |
+| 16 | 统一异常映射                                 | sa-token/SpringSecurity/Shiro 异常 → ddd4j `ServiceException`                     |
 
 ### P3：文档与示例
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 14 | 编写迁移指南 | Shiro → sa-token / SpringSecurity → sa-token |
+| #  | 任务        | 说明                                            |
+|----|-----------|-----------------------------------------------|
+| 14 | 编写迁移指南    | Shiro → sa-token / SpringSecurity → sa-token  |
 | 15 | 提供三鉴权示例工程 | `ddd4j-samples/auth-{shiro,security,satoken}` |
 
 ---
@@ -519,12 +522,12 @@ cd ddd4j-auth && mvn clean compile -pl ddd4j-auth-core,ddd4j-auth-satoken,ddd4j-
 
 ### 6.2 运行期（最小可用验证）
 
-| 验证项 | 方法 |
-|--------|------|
-| `SubjectKit.register()` 可用 | 单元测试调用后 `getSubject()` 不抛异常 |
-| sa-token 登录后 `SubjectKit.getPrincipal()` 返回非 null | 集成测试 |
-| Shiro 适配不破坏旧代码 | 旧项目引入 `ddd4j-auth-shiro` 后 `SecurityUtils.getSubject()` 仍可用 |
-| 三实现互斥可切换 | 通过 `@ConditionalOnClass` 自动选择，不冲突 |
+| 验证项                                               | 方法                                                          |
+|---------------------------------------------------|-------------------------------------------------------------|
+| `SubjectKit.register()` 可用                        | 单元测试调用后 `getSubject()` 不抛异常                                 |
+| sa-token 登录后 `SubjectKit.getPrincipal()` 返回非 null | 集成测试                                                        |
+| Shiro 适配不破坏旧代码                                    | 旧项目引入 `ddd4j-auth-shiro` 后 `SecurityUtils.getSubject()` 仍可用 |
+| 三实现互斥可切换                                          | 通过 `@ConditionalOnClass` 自动选择，不冲突                           |
 
 ### 6.3 ArchUnit 守护
 
@@ -544,21 +547,25 @@ static final ArchRule auth_core_no_sa_token =
 
 ## 七、总结
 
-**当前 `ddd4j-auth` 模块不可用的根本原因**：`SubjectKit.subjectProvider` 静态字段从未被任何代码写入，导致 `SubjectKit.getSubject()` 永远抛异常。其次是 `SaTokenSubject` / `SecuritySubject` 是空壳实现。
+**当前 `ddd4j-auth` 模块不可用的根本原因**：`SubjectKit.subjectProvider` 静态字段从未被任何代码写入，导致
+`SubjectKit.getSubject()` 永远抛异常。其次是 `SaTokenSubject` / `SecuritySubject` 是空壳实现。
 
 **最小修复路径（1 天可完成）**：
+
 1. 修复 SubjectKit 注册断链（新增 `SubjectRegistrar`）
 2. 实现 `SaTokenSubject.getPrincipal()`
 3. 重写 `SecuritySubject`
 4. 补全 4 个自动配置 imports
 
 **完整达标路径（1 周可完成）**：
+
 1. 拆分 `ddd4j-auth-core`（纯 Java SPI）+ `ddd4j-auth-spring`（桥接）
 2. 迁出 `datascope` / `license`
 3. 扩展 `Subject` 接口会话能力（login/logout/refresh/verify）+ 新增 `AuthRequest`
 4. 三鉴权实现完整化 + 互斥自动装配
 
-**旧项目兼容策略**：通过 `SubjectKit` 统一入口，过渡期 Shiro/Security 与 sa-token 并存，业务代码改为调 `SubjectKit.getSubject()`，后续切换实现零代码改动。
+**旧项目兼容策略**：通过 `SubjectKit` 统一入口，过渡期 Shiro/Security 与 sa-token 并存，业务代码改为调
+`SubjectKit.getSubject()`，后续切换实现零代码改动。
 
 ---
 
@@ -569,7 +576,8 @@ static final ArchRule auth_core_no_sa_token =
 用户明确要求：
 
 > - `ddd4j-auth-security` **可以依赖 Spring**（因为 Spring Security 本身就是 Spring 生态）
-> - `ddd4j-auth-shiro` 和 `ddd4j-auth-satoken` **必须保持框架无关**（纯 Java），以便在 `ddd4j-boot`、`ddd4j-javalin`、`ddd4j-quarkus` 三个下游项目都能使用
+> - `ddd4j-auth-shiro` 和 `ddd4j-auth-satoken` **必须保持框架无关**（纯 Java），以便在 `ddd4j-boot`、`ddd4j-javalin`、
+    `ddd4j-quarkus` 三个下游项目都能使用
 > - 与三下游项目的**深度整合写在各自的整合模块里**（如 `ddd4j-boot/.../ddd4j-boot-auth-satoken`），而非写在通用脚手架里
 
 这与 `ddd4j-mq` 的拆分范式完全一致：
@@ -584,11 +592,11 @@ ddd4j-mq（已达标范式）：
 
 ### 8.2 当前 Spring 污染点扫描结果
 
-| 模块 | Spring 污染点 | 处理方式 |
-|------|--------------|---------|
-| `ddd4j-auth-satoken` | `SaTokenEnhanceAutoConfiguration`（@Configuration/@Bean）<br>`SaTokenExceptionHandler`（@ControllerAdvice/@ExceptionHandler，依赖 spring-web）<br>`SaMixCheckLoginHandler`、`SaTempKit`（依赖 `org.springframework.util.StringUtils`） | **全部迁出**到下游 Spring 整合模块 |
-| `ddd4j-auth-shiro` | `WebShiroBizConfiguration`（@Configuration/@Bean） | **迁出**到下游 Spring 整合模块 |
-| `ddd4j-auth-security` | 大量 Spring Security/JWT/Redis 依赖 | **保留**（Spring Security 本就是 Spring 组件） |
+| 模块                    | Spring 污染点                                                                                                                                                                                                                 | 处理方式                                  |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------|
+| `ddd4j-auth-satoken`  | `SaTokenEnhanceAutoConfiguration`（@Configuration/@Bean）<br>`SaTokenExceptionHandler`（@ControllerAdvice/@ExceptionHandler，依赖 spring-web）<br>`SaMixCheckLoginHandler`、`SaTempKit`（依赖 `org.springframework.util.StringUtils`） | **全部迁出**到下游 Spring 整合模块               |
+| `ddd4j-auth-shiro`    | `WebShiroBizConfiguration`（@Configuration/@Bean）                                                                                                                                                                           | **迁出**到下游 Spring 整合模块                 |
+| `ddd4j-auth-security` | 大量 Spring Security/JWT/Redis 依赖                                                                                                                                                                                            | **保留**（Spring Security 本就是 Spring 组件） |
 
 ### 8.3 修订后的模块拓扑
 
@@ -646,13 +654,14 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 ### 8.4 三种实现 × 三种容器的整合矩阵
 
-|  | ddd4j-boot (Spring) | ddd4j-quarkus (CDI) | ddd4j-javalin (Guice) |
-|--|---------------------|--------------------|-----------------------|
-| **sa-token** | `ddd4j-boot-auth-satoken`<br>（含 SaTokenExceptionHandler + AutoConfig） | `ddd4j-quarkus-auth-satoken`<br>（CDI Bean + Quarkus ExceptionMapper） | `ddd4j-javalin-auth-satoken`<br>（Guice Provider + Javalin ExceptionHandler） |
-| **Spring Security** | `ddd4j-boot-auth-security`<br>（Spring 原生，仅 Spring 可用） | ❌ 不适用 | ❌ 不适用 |
-| **Shiro** | `ddd4j-boot-auth-shiro`<br>（WebShiroBizConfiguration） | `ddd4j-quarkus-auth-shiro`<br>（CDI + Shiro Quarkus 扩展） | `ddd4j-javalin-auth-shiro`<br>（Guice + Shiro Javalin 集成） |
+|                     | ddd4j-boot (Spring)                                                   | ddd4j-quarkus (CDI)                                                  | ddd4j-javalin (Guice)                                                       |
+|---------------------|-----------------------------------------------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| **sa-token**        | `ddd4j-boot-auth-satoken`<br>（含 SaTokenExceptionHandler + AutoConfig） | `ddd4j-quarkus-auth-satoken`<br>（CDI Bean + Quarkus ExceptionMapper） | `ddd4j-javalin-auth-satoken`<br>（Guice Provider + Javalin ExceptionHandler） |
+| **Spring Security** | `ddd4j-boot-auth-security`<br>（Spring 原生，仅 Spring 可用）                 | ❌ 不适用                                                                | ❌ 不适用                                                                       |
+| **Shiro**           | `ddd4j-boot-auth-shiro`<br>（WebShiroBizConfiguration）                 | `ddd4j-quarkus-auth-shiro`<br>（CDI + Shiro Quarkus 扩展）               | `ddd4j-javalin-auth-shiro`<br>（Guice + Shiro Javalin 集成）                    |
 
 **底层共享**（三容器通用，纯 Java）：
+
 - `ddd4j-auth-core`（Subject / SubjectKit / SubjectProvider / AuthRequest / AuthPrincipal）
 - `ddd4j-auth-satoken`（SaTokenSubject 完整契约 + StpKit）
 - `ddd4j-auth-shiro`（ShiroSubject 完整契约）
@@ -661,11 +670,11 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 #### 需要从 `ddd4j-auth-satoken` 迁出的文件
 
-| 文件 | 迁入目标 | 原因 |
-|------|---------|------|
-| `SaTokenEnhanceAutoConfiguration.java` | `ddd4j-spring-auth` 或 `ddd4j-boot-auth-satoken` | 依赖 `@Configuration`/`@Bean`/`InitializingBean` |
-| `SaTokenExceptionHandler.java` | `ddd4j-boot-auth-satoken` | 依赖 `@ControllerAdvice`/`@ExceptionHandler`/`spring-web` |
-| `SaMixCheckLoginHandler` 中的 `StringUtils.hasText` | 替换为纯 Java `!str.isBlank()` | `org.springframework.util.StringUtils` |
+| 文件                                                | 迁入目标                                            | 原因                                                      |
+|---------------------------------------------------|-------------------------------------------------|---------------------------------------------------------|
+| `SaTokenEnhanceAutoConfiguration.java`            | `ddd4j-spring-auth` 或 `ddd4j-boot-auth-satoken` | 依赖 `@Configuration`/`@Bean`/`InitializingBean`          |
+| `SaTokenExceptionHandler.java`                    | `ddd4j-boot-auth-satoken`                       | 依赖 `@ControllerAdvice`/`@ExceptionHandler`/`spring-web` |
+| `SaMixCheckLoginHandler` 中的 `StringUtils.hasText` | 替换为纯 Java `!str.isBlank()`                      | `org.springframework.util.StringUtils`                  |
 
 #### `ddd4j-auth-satoken` 重构后 pom.xml
 
@@ -769,35 +778,35 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 #### P0：核心修复（让 auth 可用）
 
-| # | 任务 | 文件 | 说明 |
-|---|------|------|------|
-| 1 | **新增 `SubjectKit.register()` 方法** | `ddd4j-auth-core/SubjectKit.java` | 暴露静态注册入口 |
-| 2 | **实现 `SaTokenSubject.getPrincipal()`** | `ddd4j-auth-satoken/SaTokenSubject.java` | 从 `StpUtil.getSession().get("principal")` 取 |
-| 3 | **重写 `SecuritySubject`** | `ddd4j-auth-security/SecuritySubject.java` | 委托 `SecurityContextHolder` |
-| 4 | **补全 `ShiroSubject`** | `ddd4j-auth-shiro/ShiroSubject.java` | 通过 SessionDAO 反查 ByLoginId |
+| # | 任务                                     | 文件                                         | 说明                                          |
+|---|----------------------------------------|--------------------------------------------|---------------------------------------------|
+| 1 | **新增 `SubjectKit.register()` 方法**      | `ddd4j-auth-core/SubjectKit.java`          | 暴露静态注册入口                                    |
+| 2 | **实现 `SaTokenSubject.getPrincipal()`** | `ddd4j-auth-satoken/SaTokenSubject.java`   | 从 `StpUtil.getSession().get("principal")` 取 |
+| 3 | **重写 `SecuritySubject`**               | `ddd4j-auth-security/SecuritySubject.java` | 委托 `SecurityContextHolder`                  |
+| 4 | **补全 `ShiroSubject`**                  | `ddd4j-auth-shiro/ShiroSubject.java`       | 通过 SessionDAO 反查 ByLoginId                  |
 
 #### P1：框架解耦（satoken/shiro 去 Spring 化）
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 5 | **`ddd4j-auth-satoken` 去 Spring 化** | 移除 `spring-web` 依赖；迁出 `SaTokenEnhanceAutoConfiguration`/`SaTokenExceptionHandler`；`StringUtils.hasText` → `!str.isBlank()` |
-| 6 | **`ddd4j-auth-shiro` 去 Spring 化** | 迁出 `WebShiroBizConfiguration` |
-| 7 | **新增 `ddd4j-auth-core` 纯 Java SPI** | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider；扩展 Subject 会话能力（login/logout/refresh/verify）；新增 AuthRequest |
-| 8 | **新增 `ddd4j-spring-auth` Spring 桥接** | `SubjectRegistrar`（BeanPostProcessor）+ 从 satoken/shiro 迁入的 AutoConfiguration |
+| # | 任务                                   | 说明                                                                                                                         |
+|---|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| 5 | **`ddd4j-auth-satoken` 去 Spring 化**  | 移除 `spring-web` 依赖；迁出 `SaTokenEnhanceAutoConfiguration`/`SaTokenExceptionHandler`；`StringUtils.hasText` → `!str.isBlank()` |
+| 6 | **`ddd4j-auth-shiro` 去 Spring 化**    | 迁出 `WebShiroBizConfiguration`                                                                                              |
+| 7 | **新增 `ddd4j-auth-core` 纯 Java SPI**  | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider；扩展 Subject 会话能力（login/logout/refresh/verify）；新增 AuthRequest             |
+| 8 | **新增 `ddd4j-spring-auth` Spring 桥接** | `SubjectRegistrar`（BeanPostProcessor）+ 从 satoken/shiro 迁入的 AutoConfiguration                                               |
 
 #### P2：下游整合（三容器各自实现）
 
-| # | 任务 | 说明 | 状态 |
-|---|------|------|------|
-| 9 | **`ddd4j-boot-auth-satoken`** | Spring Boot + sa-token 深度整合（SaTokenEnhanceAutoConfiguration + SaTokenExceptionHandler） | ✅ 已交付 |
-| 10 | **`ddd4j-boot-auth-security`** | Spring Boot + Spring Security 整合（SecurityEnhanceAutoConfiguration + PasswordEncoder） | ✅ 已交付 |
-| 11 | **`ddd4j-boot-auth-shiro`** | Spring Boot + Shiro 整合（ShiroEnhanceAutoConfiguration，含迁出的 WebShiroBizConfiguration） | ✅ 已交付 |
-| 12 | **`ddd4j-quarkus-auth-satoken`** | Quarkus + sa-token 整合（CDI Bean + ExceptionMapper） | ✅ 已交付 |
-| 13 | **`ddd4j-quarkus-auth-shiro`** | Quarkus + Shiro 整合（CDI Bean + Shiro ExceptionMapper） | ✅ 已交付 |
-| 14 | **`ddd4j-quarkus-auth-security`** | Quarkus + Spring Security 整合（CDI Bean，兼容选项） | ✅ 已交付 |
-| 15 | **`ddd4j-javalin-auth-satoken`** | Javalin + sa-token 整合（Guice Module + Javalin ExceptionHandler） | ✅ 已交付 |
-| 16 | **`ddd4j-javalin-auth-shiro`** | Javalin + Shiro 整合（Guice Module + Javalin ExceptionHandler） | ✅ 已交付 |
-| 17 | **`ddd4j-javalin-auth-security`** | Javalin + Spring Security 整合（Guice Module，兼容选项） | ✅ 已交付 |
+| #  | 任务                                | 说明                                                                                     | 状态    |
+|----|-----------------------------------|----------------------------------------------------------------------------------------|-------|
+| 9  | **`ddd4j-boot-auth-satoken`**     | Spring Boot + sa-token 深度整合（SaTokenEnhanceAutoConfiguration + SaTokenExceptionHandler） | ✅ 已交付 |
+| 10 | **`ddd4j-boot-auth-security`**    | Spring Boot + Spring Security 整合（SecurityEnhanceAutoConfiguration + PasswordEncoder）   | ✅ 已交付 |
+| 11 | **`ddd4j-boot-auth-shiro`**       | Spring Boot + Shiro 整合（ShiroEnhanceAutoConfiguration，含迁出的 WebShiroBizConfiguration）    | ✅ 已交付 |
+| 12 | **`ddd4j-quarkus-auth-satoken`**  | Quarkus + sa-token 整合（CDI Bean + ExceptionMapper）                                      | ✅ 已交付 |
+| 13 | **`ddd4j-quarkus-auth-shiro`**    | Quarkus + Shiro 整合（CDI Bean + Shiro ExceptionMapper）                                   | ✅ 已交付 |
+| 14 | **`ddd4j-quarkus-auth-security`** | Quarkus + Spring Security 整合（CDI Bean，兼容选项）                                            | ✅ 已交付 |
+| 15 | **`ddd4j-javalin-auth-satoken`**  | Javalin + sa-token 整合（Guice Module + Javalin ExceptionHandler）                         | ✅ 已交付 |
+| 16 | **`ddd4j-javalin-auth-shiro`**    | Javalin + Shiro 整合（Guice Module + Javalin ExceptionHandler）                            | ✅ 已交付 |
+| 17 | **`ddd4j-javalin-auth-security`** | Javalin + Spring Security 整合（Guice Module，兼容选项）                                        | ✅ 已交付 |
 
 > **交付完整性**：三容器 × 三鉴权 = **9 个整合模块全部交付**。
 > - **ddd4j-boot**（Spring Boot）：`ddd4j-boot-auth/` 下 3 个子模块，Spring @AutoConfiguration 风格
@@ -806,9 +815,9 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 #### P3：模块归属调整
 
-| # | 任务 | 说明 |
-|---|------|------|
-| 16 | **`ddd4j-auth-datascope` → `ddd4j-data`** | 数据权限不属于鉴权 |
+| #  | 任务                                            | 说明        |
+|----|-----------------------------------------------|-----------|
+| 16 | **`ddd4j-auth-datascope` → `ddd4j-data`**     | 数据权限不属于鉴权 |
 | 17 | **`ddd4j-auth-license` → `ddd4j-extensions`** | 软件授权不属于鉴权 |
 
 ### 8.8 修订后的验收标准
@@ -851,7 +860,9 @@ cd ddd4j-quarkus && mvn dependency:tree | grep ddd4j-auth-satoken
 
 ## 九、借鉴 Sa-Token 反哺 Subject 三件套设计（核心）
 
-> **背景**：Sa-Token（18,045 符号 / 48,517 边）被公认为最轻巧灵活的鉴权框架。`ddd4j-auth` 的存在价值就是屏蔽 sa-token / shiro / security 三者差异。本节提炼 Sa-Token 的核心设计精髓，反哺 ddd4j-auth 的 `Subject` / `SubjectKit` / `SubjectProvider` 三件套，使其在抽象层级上达到同等成熟度。
+> **背景**：Sa-Token（18,045 符号 / 48,517 边）被公认为最轻巧灵活的鉴权框架。`ddd4j-auth` 的存在价值就是屏蔽 sa-token /
+> shiro / security 三者差异。本节提炼 Sa-Token 的核心设计精髓，反哺 ddd4j-auth 的 `Subject` / `SubjectKit` /
+`SubjectProvider` 三件套，使其在抽象层级上达到同等成熟度。
 
 ### 9.1 Sa-Token 五大设计精髓（codegraph 提炼）
 
@@ -892,7 +903,8 @@ public class StpUtil {
 }
 ```
 
-**精髓**：**静态门面 + 可替换默认实例**。业务代码调 `StpUtil.xxx()` 最简，需要多账号体系时调 `StpUtil.stpLogic.login(...)` 或 `new StpLogic("admin")`。
+**精髓**：**静态门面 + 可替换默认实例**。业务代码调 `StpUtil.xxx()` 最简，需要多账号体系时调 `StpUtil.stpLogic.login(...)`
+或 `new StpLogic("admin")`。
 
 #### 精髓 3：`SaManager` — 全局静态注册中心（SPI 装配点）
 
@@ -921,7 +933,8 @@ public class SaManager {
 }
 ```
 
-**精髓**：**每个 SPI 都有 `set/get` 静态对 + 默认实现兜底 + 全局事件通知**。框架无关，Spring/Quarkus/Javalin 各自在启动时 `SaManager.setXxx()` 注入实现。
+**精髓**：**每个 SPI 都有 `set/get` 静态对 + 默认实现兜底 + 全局事件通知**。框架无关，Spring/Quarkus/Javalin 各自在启动时
+`SaManager.setXxx()` 注入实现。
 
 #### 精髓 4：`StpInterface` — 权限数据源 SPI（解耦业务）
 
@@ -933,7 +946,8 @@ public interface StpInterface {
 }
 ```
 
-**精髓**：**框架不持有权限数据，业务实现 `StpInterface` 提供数据源**。Sa-Token 只负责"校验"，不负责"存储权限"。这是 ddd4j-auth 应该学的关键解耦点。
+**精髓**：**框架不持有权限数据，业务实现 `StpInterface` 提供数据源**。Sa-Token 只负责"校验"，不负责"存储权限"。这是
+ddd4j-auth 应该学的关键解耦点。
 
 #### 精髓 5：`SaStrategy` — 函数式策略可替换
 
@@ -950,19 +964,20 @@ public class SaStrategy {
 }
 ```
 
-**精髓**：**核心行为全部做成 `Function` 字段，业务可热替换**。例如 `SaStrategy.instance.hasElement = (list, element) -> list.contains(element)`。
+**精髓**：**核心行为全部做成 `Function` 字段，业务可热替换**。例如
+`SaStrategy.instance.hasElement = (list, element) -> list.contains(element)`。
 
 ### 9.2 ddd4j-auth 三件套的对照映射
 
-| Sa-Token 设计 | ddd4j-auth 对应设计 | 借鉴要点 |
-|--------------|-------------------|---------|
-| `StpLogic`（2800 行单一职责） | `Subject` 接口 | 把 sa-token 的 login/logout/kickout/session/permission **全部收敛到 Subject**，而非另立 Authentication |
-| `StpUtil`（静态门面 + 默认实例） | `SubjectKit` | 静态门面 + `register(SubjectProvider)` 注入实现；业务调 `SubjectKit.login(req)` 最简 |
-| `SaManager`（全局注册中心 + 默认兜底） | `SubjectKit` 内部静态字段 | volatile + 双重检查锁 + 默认兜底；`SubjectKit.subjectProvider` 由适配层 `register()` |
-| `StpInterface`（权限数据源 SPI） | **【新增】`SubjectDataProvider`** | ddd4j 不持有权限数据，业务实现此 SPI 提供权限/角色源 |
-| `SaStrategy`（函数式策略） | **【新增】`SubjectStrategy`** | Token 生成/匹配/会话创建等核心行为做成可替换 Function |
-| `SaSession`（会话数据容器） | `AuthPrincipal`（已有） | 登录后存入 Session/Token Claim，通过 `Subject.getPrincipal()` 取回 |
-| `loginType`（多账号体系） | `AuthRequest.realm` | 多账号体系标识，sa-token→StpLogic("admin")，shiro→多 Realm，security→多 SecurityContext |
+| Sa-Token 设计                | ddd4j-auth 对应设计               | 借鉴要点                                                                                       |
+|----------------------------|-------------------------------|--------------------------------------------------------------------------------------------|
+| `StpLogic`（2800 行单一职责）     | `Subject` 接口                  | 把 sa-token 的 login/logout/kickout/session/permission **全部收敛到 Subject**，而非另立 Authentication |
+| `StpUtil`（静态门面 + 默认实例）     | `SubjectKit`                  | 静态门面 + `register(SubjectProvider)` 注入实现；业务调 `SubjectKit.login(req)` 最简                     |
+| `SaManager`（全局注册中心 + 默认兜底） | `SubjectKit` 内部静态字段           | volatile + 双重检查锁 + 默认兜底；`SubjectKit.subjectProvider` 由适配层 `register()`                     |
+| `StpInterface`（权限数据源 SPI）  | **【新增】`SubjectDataProvider`** | ddd4j 不持有权限数据，业务实现此 SPI 提供权限/角色源                                                           |
+| `SaStrategy`（函数式策略）        | **【新增】`SubjectStrategy`**     | Token 生成/匹配/会话创建等核心行为做成可替换 Function                                                        |
+| `SaSession`（会话数据容器）        | `AuthPrincipal`（已有）           | 登录后存入 Session/Token Claim，通过 `Subject.getPrincipal()` 取回                                   |
+| `loginType`（多账号体系）         | `AuthRequest.realm`           | 多账号体系标识，sa-token→StpLogic("admin")，shiro→多 Realm，security→多 SecurityContext                |
 
 ### 9.3 反哺后的完整契约设计（修订 2.2 节）
 
@@ -1166,16 +1181,17 @@ public interface SubjectProvider {
 
 ### 9.4 三鉴权实现如何落地新契约
 
-| Subject 能力 | sa-token 实现 | Shiro 实现 | Spring Security 实现 |
-|-------------|--------------|-----------|---------------------|
-| `login(req)` | `StpUtil.login(loginId, SaLoginParameter)` | `SecurityUtils.getSubject().login(token)` | `SecurityContextHolder.setContext(...)` |
-| `logout()` | `StpUtil.logout()` | `Subject.logout()` | `SecurityContextHolder.clearContext()` |
-| `kickout(loginId)` | `StpUtil.kickout(loginId)` | `sessionDAO.delete(session)` | 注销其 Session |
-| `isPermitted(p)` | 委托 `SubjectKit.getDataProvider().getPermissionList()` 比对 | 同（统一数据源） | 同（统一数据源） |
-| `getPrincipal()` | `StpUtil.getSession().get("principal")` | `SecurityUtils.getSubject().getPrincipal()` | `SecurityContextHolder.getContext().getAuthentication().getPrincipal()` |
-| `disable(loginId)` | `StpUtil.disable(loginId, timeout)` | `cacheManager` 标记 | 业务实现 |
+| Subject 能力         | sa-token 实现                                              | Shiro 实现                                    | Spring Security 实现                                                      |
+|--------------------|----------------------------------------------------------|---------------------------------------------|-------------------------------------------------------------------------|
+| `login(req)`       | `StpUtil.login(loginId, SaLoginParameter)`               | `SecurityUtils.getSubject().login(token)`   | `SecurityContextHolder.setContext(...)`                                 |
+| `logout()`         | `StpUtil.logout()`                                       | `Subject.logout()`                          | `SecurityContextHolder.clearContext()`                                  |
+| `kickout(loginId)` | `StpUtil.kickout(loginId)`                               | `sessionDAO.delete(session)`                | 注销其 Session                                                             |
+| `isPermitted(p)`   | 委托 `SubjectKit.getDataProvider().getPermissionList()` 比对 | 同（统一数据源）                                    | 同（统一数据源）                                                                |
+| `getPrincipal()`   | `StpUtil.getSession().get("principal")`                  | `SecurityUtils.getSubject().getPrincipal()` | `SecurityContextHolder.getContext().getAuthentication().getPrincipal()` |
+| `disable(loginId)` | `StpUtil.disable(loginId, timeout)`                      | `cacheManager` 标记                           | 业务实现                                                                    |
 
-**关键改进**：`isPermitted` / `hasRole` 不再各自从框架取权限，**统一委托 `SubjectKit.getDataProvider()`**，这样三鉴权在权限校验上行为完全一致。
+**关键改进**：`isPermitted` / `hasRole` 不再各自从框架取权限，**统一委托 `SubjectKit.getDataProvider()`**
+，这样三鉴权在权限校验上行为完全一致。
 
 ### 9.5 业务使用示例（对齐 Sa-Token 极简风格）
 
@@ -1226,4 +1242,5 @@ ddd4j-auth 的设计哲学（反哺后）：
   → 同样极简调用、可热替换，且屏蔽 sa-token/shiro/security 三框架差异
 ```
 
-**核心差异**：Sa-Token 是一个具体框架，`StpLogic` 是实现类；ddd4j-auth 是**屏蔽层**，`Subject` 是接口，底层可以是 sa-token、shiro 或 security 的任意实现。但抽象层级的设计理念完全对齐——这就是 ddd4j-auth 存在的意义。
+**核心差异**：Sa-Token 是一个具体框架，`StpLogic` 是实现类；ddd4j-auth 是**屏蔽层**，`Subject` 是接口，底层可以是
+sa-token、shiro 或 security 的任意实现。但抽象层级的设计理念完全对齐——这就是 ddd4j-auth 存在的意义。

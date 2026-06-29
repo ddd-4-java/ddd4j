@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-quarkus</artifactId>
-    <description>Ddd4j Quarkus 框架核心适配：3 个核心 SPI 的 CDI 实现（DomainEventPublisher/SubjectProvider/I18nProvider）。与 ddd4j-spring、ddd4j-guice 平级。</description>
+    <description>Ddd4j Quarkus 框架核心适配：3 个核心 SPI 的 CDI 实现（DomainEventPublisher/SubjectProvider/I18nProvider）。与
+        ddd4j-spring、ddd4j-guice 平级。
+    </description>
 
     <dependencies>
         <!-- 纯 Java 核心契约 -->

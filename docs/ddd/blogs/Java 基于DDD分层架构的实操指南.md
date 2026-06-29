@@ -2,7 +2,8 @@
 
 原文：https://cloud.tencent.com/developer/article/2554516
 
-> 随着微服务架构的普及，领域驱动设计(DDD)在复杂业务系统中的应用越来越广泛。本文将结合最新技术栈（Spring Boot 3.x、Spring Data JPA 3.x、Lombok等），通过一个电商订单系统的实例，详细讲解DDD分层架构的具体实现。
+> 随着微服务架构的普及，领域驱动设计(DDD)在复杂业务系统中的应用越来越广泛。本文将结合最新技术栈（Spring Boot 3.x、Spring
+> Data JPA 3.x、Lombok等），通过一个电商订单系统的实例，详细讲解DDD分层架构的具体实现。
 
 ### 一、技术栈选择
 

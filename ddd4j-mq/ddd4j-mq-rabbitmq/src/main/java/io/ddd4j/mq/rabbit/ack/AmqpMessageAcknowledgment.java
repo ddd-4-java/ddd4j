@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 基于 RabbitMQ {@link Channel} 的消息确认实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -27,10 +28,10 @@ public final class AmqpMessageAcknowledgment implements MessageAcknowledgment {
     /**
      * 构造 AMQP 确认对象。
      *
-     * @param channel         Rabbit 通道
-     * @param deliveryTag     投递标签
-     * @param messageId       消息 ID
-     * @param correlationId   关联 ID
+     * @param channel       Rabbit 通道
+     * @param deliveryTag   投递标签
+     * @param messageId     消息 ID
+     * @param correlationId 关联 ID
      */
     public AmqpMessageAcknowledgment(Channel channel, long deliveryTag, String messageId, String correlationId) {
         this.channel = Objects.requireNonNull(channel, "channel");

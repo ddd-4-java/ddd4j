@@ -27,30 +27,54 @@ import java.util.function.Consumer;
  */
 public final class CacheConfig {
 
-    /** 默认最大容量 */
+    /**
+     * 默认最大容量
+     */
     public static final long DEFAULT_MAXIMUM_SIZE = 1000L;
 
-    /** 缓存名称（业务标识） */
+    /**
+     * 缓存名称（业务标识）
+     */
     private final String name;
-    /** 最大容量 */
+    /**
+     * 最大容量
+     */
     private final long maximumSize;
-    /** 写后过期时间（秒），0 表示不过期 */
+    /**
+     * 写后过期时间（秒），0 表示不过期
+     */
     private final long expireAfterWriteSeconds;
-    /** 访问后过期时间（秒），0 表示不过期 */
+    /**
+     * 访问后过期时间（秒），0 表示不过期
+     */
     private final long expireAfterAccessSeconds;
-    /** 写后刷新时间（秒），0 表示不自动刷新 */
+    /**
+     * 写后刷新时间（秒），0 表示不自动刷新
+     */
     private final long refreshAfterWriteSeconds;
-    /** 初始容量 */
+    /**
+     * 初始容量
+     */
     private final int initialCapacity;
-    /** 是否记录统计信息 */
+    /**
+     * 是否记录统计信息
+     */
     private final boolean recordStats;
-    /** 缓存类型 */
+    /**
+     * 缓存类型
+     */
     private final CacheType cacheType;
-    /** 本地缓存限制（多级缓存时本地缓存的最大条目数） */
+    /**
+     * 本地缓存限制（多级缓存时本地缓存的最大条目数）
+     */
     private final int localLimit;
-    /** 是否同步本地缓存（多级缓存时远程变更后是否广播同步本地） */
+    /**
+     * 是否同步本地缓存（多级缓存时远程变更后是否广播同步本地）
+     */
     private final boolean syncLocal;
-    /** 移除监听器（键级回调） */
+    /**
+     * 移除监听器（键级回调）
+     */
     private final transient Consumer<String> removalListener;
 
     private CacheConfig(Builder builder) {
@@ -183,61 +207,81 @@ public final class CacheConfig {
             this.removalListener = source.removalListener;
         }
 
-        /** 设置最大容量。 */
+        /**
+         * 设置最大容量。
+         */
         public Builder maximumSize(long maximumSize) {
             this.maximumSize = maximumSize;
             return this;
         }
 
-        /** 设置写后过期时间（秒）。 */
+        /**
+         * 设置写后过期时间（秒）。
+         */
         public Builder expireAfterWriteSeconds(long seconds) {
             this.expireAfterWriteSeconds = seconds;
             return this;
         }
 
-        /** 设置访问后过期时间（秒）。 */
+        /**
+         * 设置访问后过期时间（秒）。
+         */
         public Builder expireAfterAccessSeconds(long seconds) {
             this.expireAfterAccessSeconds = seconds;
             return this;
         }
 
-        /** 设置写后刷新时间（秒）。 */
+        /**
+         * 设置写后刷新时间（秒）。
+         */
         public Builder refreshAfterWriteSeconds(long seconds) {
             this.refreshAfterWriteSeconds = seconds;
             return this;
         }
 
-        /** 设置初始容量。 */
+        /**
+         * 设置初始容量。
+         */
         public Builder initialCapacity(int initialCapacity) {
             this.initialCapacity = initialCapacity;
             return this;
         }
 
-        /** 设置是否记录统计信息。 */
+        /**
+         * 设置是否记录统计信息。
+         */
         public Builder recordStats(boolean recordStats) {
             this.recordStats = recordStats;
             return this;
         }
 
-        /** 设置缓存类型。 */
+        /**
+         * 设置缓存类型。
+         */
         public Builder cacheType(CacheType cacheType) {
             this.cacheType = cacheType;
             return this;
         }
 
-        /** 设置本地缓存限制（多级缓存时本地缓存最大条目数）。 */
+        /**
+         * 设置本地缓存限制（多级缓存时本地缓存最大条目数）。
+         */
         public Builder localLimit(int localLimit) {
             this.localLimit = localLimit;
             return this;
         }
 
-        /** 设置是否同步本地缓存（多级缓存时远程变更是否广播同步本地）。 */
+        /**
+         * 设置是否同步本地缓存（多级缓存时远程变更是否广播同步本地）。
+         */
         public Builder syncLocal(boolean syncLocal) {
             this.syncLocal = syncLocal;
             return this;
         }
 
-        /** 设置移除监听器。 */
+        /**
+         * 设置移除监听器。
+         */
         public Builder removalListener(Consumer<String> removalListener) {
             this.removalListener = removalListener;
             return this;

@@ -5,6 +5,7 @@ import io.ddd4j.mq.config.Ddd4jMQProperties;
 
 /**
  * {@link MQEventListener} 端点物理命名约定（topic / queue / subject 等跨 Broker 复用）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MQListenerEndpointNaming {

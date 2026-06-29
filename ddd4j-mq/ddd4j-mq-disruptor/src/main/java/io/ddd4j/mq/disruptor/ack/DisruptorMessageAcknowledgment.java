@@ -1,9 +1,9 @@
 package io.ddd4j.mq.disruptor.ack;
 
 import com.lmax.disruptor.RingBuffer;
-import io.ddd4j.mq.disruptor.core.DisruptorMQEvent;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
+import io.ddd4j.mq.disruptor.core.DisruptorMQEvent;
 import io.ddd4j.mq.registry.MQBrokerType;
 
 import java.util.Optional;
@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Disruptor 本地消息确认实现：ack 为消费完成；requeue 重新发布到 RingBuffer。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {

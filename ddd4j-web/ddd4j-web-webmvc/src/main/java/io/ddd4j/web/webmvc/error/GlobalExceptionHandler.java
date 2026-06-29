@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import hitool.core.format.ByteUnitFormat;
-import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.exception.BizCheckedException;
@@ -14,6 +13,7 @@ import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.spring.util.WebUtils;
+import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;
 import lombok.Getter;
@@ -62,6 +62,7 @@ import java.util.*;
  * 异常增强，以JSON的形式返回给客服端
  * 异常增强类型：NullPointerException,RunTimeException,ClassCastException,
  * NoSuchMethodException,IOException,IndexOutOfBoundsException
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ControllerAdvice

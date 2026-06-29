@@ -2,6 +2,7 @@ package io.ddd4j.data.crypto.provider;
 
 /**
  * 加解密提供者
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface CryptoProvider {

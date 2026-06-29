@@ -1,32 +1,25 @@
 package io.ddd4j.mq.ons.consumer;
 
-import com.aliyun.openservices.ons.api.Action;
-import com.aliyun.openservices.ons.api.Consumer;
-import com.aliyun.openservices.ons.api.Message;
-import com.aliyun.openservices.ons.api.ONSFactory;
-import com.aliyun.openservices.ons.api.PropertyKeyConst;
+import com.aliyun.openservices.ons.api.*;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
 import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.registry.MQListenerDefinition;
+import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为阿里云 ONS {@link Consumer} 端点。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

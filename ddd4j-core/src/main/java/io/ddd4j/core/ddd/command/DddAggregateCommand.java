@@ -1,11 +1,9 @@
 package io.ddd4j.core.ddd.command;
 
-import org.fuin.ddd4j.core.AggregateRootId;
-import org.fuin.ddd4j.core.EntityId;
 import org.fuin.cqrs4j.core.AggregateCommand;
 import org.fuin.cqrs4j.jackson.AbstractAggregateCommand;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.fuin.ddd4j.core.AggregateRootId;
+import org.fuin.ddd4j.core.EntityId;
 
 import java.io.Serial;
 
@@ -51,7 +49,7 @@ import java.io.Serial;
  * }
  * </pre>
  *
- * @param <ROOT_ID> 聚合根标识类型
+ * @param <ROOT_ID>   聚合根标识类型
  * @param <ENTITY_ID> 命令目标的实体标识类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see AbstractAggregateCommand

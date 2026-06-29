@@ -23,8 +23,8 @@ public class KafkaAdminTemplate {
      * AdminClient 的配置参数
      *
      * @return KafkaProducer 的配置参数
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public Map<String, Object> defaultAdminConfigs() {
         Map<String, Object> props = new HashMap<>(properties.buildAdminProperties());
         // key 和 value 的序列化方式

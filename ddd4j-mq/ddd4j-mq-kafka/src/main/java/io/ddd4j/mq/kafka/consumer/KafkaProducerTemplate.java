@@ -27,26 +27,24 @@ import java.util.function.Supplier;
 @Slf4j
 public class KafkaProducerTemplate implements DisposableBean {
 
+    public final static String TRANSACTION_ID_PREFIX = "tx-";
     private final KafkaConnectionProperties properties;
-
-    public KafkaProducerTemplate(KafkaConnectionProperties properties) {
-        this.properties = properties;
-    }
-
     // 使用统一的 Map 存储所有生产者实例，key 格式为 "type:id"，例如 "transaction:exchange-order"
     private final Map<String, ProducerWrapper> PRODUCER_MAP = new ConcurrentHashMap<>();
 
     // 用于保护生产者创建和移除操作的锁
     private final Map<String, Lock> PRODUCER_LOCKS = new ConcurrentHashMap<>();
 
-    public final static String TRANSACTION_ID_PREFIX = "tx-";
+    public KafkaProducerTemplate(KafkaConnectionProperties properties) {
+        this.properties = properties;
+    }
 
     /**
      * KafkaProducer 的配置参数（非事务消息配置）
      *
      * @return KafkaProducer 的配置参数
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public Map<String, Object> defaultProducerConfigs() {
         // 使用 KafkaProperties 的 buildProducerProperties 方法创建 KafkaProducer 的配置参数
         Map<String, Object> props = new HashMap<>(this.properties.buildProducerProperties());

@@ -138,8 +138,8 @@ public class IpKit extends Ipv4Util {
      * }</pre>
      *
      * @param xForwardedFor X-Forwarded-For 头（多级代理时第一个为真实 IP）
-     * @param xRealIp        X-Real-IP 头
-     * @param remoteAddr     request.getRemoteAddr() 兜底
+     * @param xRealIp       X-Real-IP 头
+     * @param remoteAddr    request.getRemoteAddr() 兜底
      * @return 客户端真实 IP
      */
     public static String parseRemoteAddr(String xForwardedFor, String xRealIp, String remoteAddr) {

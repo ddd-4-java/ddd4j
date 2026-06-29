@@ -12,6 +12,7 @@ import java.util.Objects;
  * <p>
  * 定义由 {@code io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor} 在 Bean 初始化阶段写入 {@link MQListenerDefinitionRegistry}，
  * 本类仅提供只读访问，替代 legacy 全容器遍历扫描。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -19,17 +20,6 @@ import java.util.Objects;
 public class MQListenerScanner {
 
     private final MQListenerDefinitionRegistry registry;
-
-    /**
-     * 返回 BeanPostProcessor 阶段已登记的监听器定义。
-     *
-     * @return 不可变监听器定义列表
-     */
-    public List<MQListenerDefinition> scan() {
-        List<MQListenerDefinition> definitions = registry.getDefinitions();
-        log.info("Resolved {} @MQEventListener definition(s) from registry", definitions.size());
-        return definitions;
-    }
 
     /**
      * 校验监听器定义非空且方法可访问。
@@ -43,5 +33,16 @@ public class MQListenerScanner {
         if (bean != null && !method.canAccess(bean)) {
             method.setAccessible(true);
         }
+    }
+
+    /**
+     * 返回 BeanPostProcessor 阶段已登记的监听器定义。
+     *
+     * @return 不可变监听器定义列表
+     */
+    public List<MQListenerDefinition> scan() {
+        List<MQListenerDefinition> definitions = registry.getDefinitions();
+        log.info("Resolved {} @MQEventListener definition(s) from registry", definitions.size());
+        return definitions;
     }
 }

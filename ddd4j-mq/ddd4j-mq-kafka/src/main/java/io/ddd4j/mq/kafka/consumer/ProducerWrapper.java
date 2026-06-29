@@ -13,17 +13,22 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 生产者包装类，包含生产者实例和最后使用时间
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class ProducerWrapper {
 
     private final KafkaProducer<String, String> producer;
-
+    private final ReentrantLock lock = new ReentrantLock();
     @Getter
     private volatile long lastUsedTime;
-    private final ReentrantLock lock = new ReentrantLock();
     private volatile TransactionState transactionState = TransactionState.READY;
+
+    public ProducerWrapper(KafkaProducer<String, String> producer) {
+        this.producer = producer;
+        this.lastUsedTime = System.currentTimeMillis();
+    }
 
     public Future<RecordMetadata> send(ProducerRecord<String, String> record, Callback callback) {
         lock.lock();
@@ -54,49 +59,6 @@ public class ProducerWrapper {
         } finally {
             lock.unlock();
         }
-    }
-
-    // 事务状态枚举
-    public enum TransactionState {
-        UNINITIALIZED,
-        INITIALIZING,
-        READY,
-        IN_TRANSACTION,
-        COMMITTING_TRANSACTION,
-        ABORTING_TRANSACTION,
-        ABORTABLE_ERROR,
-        FATAL_ERROR;
-
-        private boolean isTransitionValid(TransactionState source, TransactionState target) {
-            switch (target) {
-                case UNINITIALIZED:
-                    return source == READY || source == ABORTABLE_ERROR;
-                case INITIALIZING:
-                    return source == UNINITIALIZED || source == ABORTING_TRANSACTION;
-                case READY:
-                    return source == INITIALIZING || source == COMMITTING_TRANSACTION || source == ABORTING_TRANSACTION;
-                case IN_TRANSACTION:
-                    return source == READY;
-                case COMMITTING_TRANSACTION:
-                    return source == IN_TRANSACTION;
-                case ABORTING_TRANSACTION:
-                    return source == IN_TRANSACTION || source == ABORTABLE_ERROR;
-                case ABORTABLE_ERROR:
-                    return source == IN_TRANSACTION || source == COMMITTING_TRANSACTION || source == ABORTABLE_ERROR
-                            || source == INITIALIZING;
-                case FATAL_ERROR:
-                default:
-                    // We can transition to FATAL_ERROR unconditionally.
-                    // FATAL_ERROR is never a valid starting state for any transition. So the only option is to close the
-                    // producer or do purely non transactional requests.
-                    return true;
-            }
-        }
-    }
-
-    public ProducerWrapper(KafkaProducer<String, String> producer) {
-        this.producer = producer;
-        this.lastUsedTime = System.currentTimeMillis();
     }
 
     public KafkaProducer<String, String> getProducer() {
@@ -239,6 +201,44 @@ public class ProducerWrapper {
             }
         } finally {
             lock.unlock();
+        }
+    }
+
+    // 事务状态枚举
+    public enum TransactionState {
+        UNINITIALIZED,
+        INITIALIZING,
+        READY,
+        IN_TRANSACTION,
+        COMMITTING_TRANSACTION,
+        ABORTING_TRANSACTION,
+        ABORTABLE_ERROR,
+        FATAL_ERROR;
+
+        private boolean isTransitionValid(TransactionState source, TransactionState target) {
+            switch (target) {
+                case UNINITIALIZED:
+                    return source == READY || source == ABORTABLE_ERROR;
+                case INITIALIZING:
+                    return source == UNINITIALIZED || source == ABORTING_TRANSACTION;
+                case READY:
+                    return source == INITIALIZING || source == COMMITTING_TRANSACTION || source == ABORTING_TRANSACTION;
+                case IN_TRANSACTION:
+                    return source == READY;
+                case COMMITTING_TRANSACTION:
+                    return source == IN_TRANSACTION;
+                case ABORTING_TRANSACTION:
+                    return source == IN_TRANSACTION || source == ABORTABLE_ERROR;
+                case ABORTABLE_ERROR:
+                    return source == IN_TRANSACTION || source == COMMITTING_TRANSACTION || source == ABORTABLE_ERROR
+                            || source == INITIALIZING;
+                case FATAL_ERROR:
+                default:
+                    // We can transition to FATAL_ERROR unconditionally.
+                    // FATAL_ERROR is never a valid starting state for any transition. So the only option is to close the
+                    // producer or do purely non transactional requests.
+                    return true;
+            }
         }
     }
 }

@@ -1,19 +1,14 @@
 package io.ddd4j.mq.nats.consumer;
 
-import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgmentFactory;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgmentFactory;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import io.nats.client.Connection;
-import io.nats.client.Dispatcher;
-import io.nats.client.JetStream;
-import io.nats.client.JetStreamSubscription;
-import io.nats.client.Message;
-import io.nats.client.PushSubscribeOptions;
+import io.nats.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 NATS JetStream Push Consumer。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

@@ -18,6 +18,7 @@ import java.util.Properties;
 
 /**
  * 服务器相关信息
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data

@@ -1,14 +1,14 @@
 package io.ddd4j.mq.tdmq.consumer;
 
-import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgment;
-import io.ddd4j.mq.tdmq.client.TdmqClient;
-import io.ddd4j.mq.tdmq.client.TdmqSubscription;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
+import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgment;
+import io.ddd4j.mq.tdmq.client.TdmqClient;
+import io.ddd4j.mq.tdmq.client.TdmqSubscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 注册为 TDMQ 消费端点（占位客户端使用进程内总线）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

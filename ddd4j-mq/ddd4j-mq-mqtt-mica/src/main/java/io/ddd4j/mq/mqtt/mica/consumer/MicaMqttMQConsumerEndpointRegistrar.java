@@ -1,12 +1,12 @@
 package io.ddd4j.mq.mqtt.mica.consumer;
 
-import io.ddd4j.mq.mqtt.mica.ack.MicaMqttHeaders;
-import io.ddd4j.mq.mqtt.mica.ack.MicaMqttMessageAcknowledgmentFactory;
-import io.ddd4j.mq.mqtt.mica.config.Ddd4jMicaMqttProperties;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.mqtt.mica.ack.MicaMqttHeaders;
+import io.ddd4j.mq.mqtt.mica.ack.MicaMqttMessageAcknowledgmentFactory;
+import io.ddd4j.mq.mqtt.mica.config.Ddd4jMicaMqttProperties;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 mica-mqtt 编程式订阅（镜像 {@code @MqttClientSubscribe}）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

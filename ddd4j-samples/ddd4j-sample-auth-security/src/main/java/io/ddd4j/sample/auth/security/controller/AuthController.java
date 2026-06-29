@@ -30,9 +30,9 @@ public class AuthController {
     @PostMapping("/login")
     public Map<String, Object> login(String userId) {
         AuthPrincipal principal = new AuthPrincipal()
-            .setLoginId(userId)
-            .setUserId(userId)
-            .setRoleCode("user");
+                .setLoginId(userId)
+                .setUserId(userId)
+                .setRoleCode("user");
 
         AuthRequest request = AuthRequest.of(userId).setTimeout(7200);
         request.setPrincipal(principal);

@@ -5,6 +5,7 @@ import io.ddd4j.core.contract.enums.ResultCode;
 import io.ddd4j.core.contract.exception.ServiceException;
 import io.ddd4j.core.contract.exception.ValidateException;
 import io.ddd4j.core.util.ExceptionKit;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 

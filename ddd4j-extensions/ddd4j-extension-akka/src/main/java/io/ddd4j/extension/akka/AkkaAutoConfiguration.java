@@ -3,12 +3,13 @@ package io.ddd4j.extension.akka;
 import akka.actor.ActorSystem;
 import io.ddd4j.extension.akka.actor.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * Akka Auto Configuration
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
@@ -18,14 +19,14 @@ public class AkkaAutoConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    public AkkaAutoConfiguration() {
+    }
+
     @Bean
     public ActorSystem actorSystem(AkkaProperties properties) {
         ActorSystem system = ActorSystem.create(properties.getName());
         ((SpringExtension.SpringExt) SpringExtension.SPRING_EXTENSION_PROVIDER.get(system)).initialize(this.applicationContext);
         return system;
-    }
-
-    public AkkaAutoConfiguration() {
     }
 
     public ApplicationContext getApplicationContext() {

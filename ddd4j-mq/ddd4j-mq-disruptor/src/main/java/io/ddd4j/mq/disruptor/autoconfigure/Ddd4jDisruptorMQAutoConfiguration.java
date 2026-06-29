@@ -1,19 +1,19 @@
 package io.ddd4j.mq.disruptor.autoconfigure;
 
+import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;
 import io.ddd4j.mq.disruptor.consumer.DisruptorMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.disruptor.core.DisruptorMQEventDispatcher;
 import io.ddd4j.mq.disruptor.publisher.DisruptorMQEventPublisher;
 import io.ddd4j.mq.disruptor.spi.DisruptorMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * LMAX Disruptor 本地 MQ 自动配置。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

@@ -17,6 +17,7 @@ import java.util.Objects;
 
 /**
  * 基于 ONS {@link Producer} 的领域事件发布实现（Rocket 兼容语义）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

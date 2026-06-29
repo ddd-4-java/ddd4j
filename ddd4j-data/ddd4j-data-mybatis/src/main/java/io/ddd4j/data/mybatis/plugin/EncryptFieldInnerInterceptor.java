@@ -85,9 +85,13 @@ public class EncryptFieldInnerInterceptor implements InnerInterceptor {
         metaObject.setValue("sql", sql);
     }
 
-    /** 字段加密器 SPI */
+    /**
+     * 字段加密器 SPI
+     */
     public interface FieldEncryptor {
-        /** 返回当前 MappedStatement 需要加密的字段名集合 */
+        /**
+         * 返回当前 MappedStatement 需要加密的字段名集合
+         */
         Set<String> encryptedFields(String mappedStatementId);
     }
 }

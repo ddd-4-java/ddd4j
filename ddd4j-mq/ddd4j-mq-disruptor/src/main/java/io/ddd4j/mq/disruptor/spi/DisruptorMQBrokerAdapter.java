@@ -1,14 +1,14 @@
 package io.ddd4j.mq.disruptor.spi;
 
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.consume.MQConsumerHandler;
+import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
 import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgmentFactory;
 import io.ddd4j.mq.disruptor.consumer.DisruptorMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.disruptor.publisher.DisruptorMQEventPublisher;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * LMAX Disruptor 本地 MQ Broker 适配器。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor

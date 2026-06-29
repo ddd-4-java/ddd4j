@@ -19,7 +19,9 @@ import java.util.function.Function;
  */
 public class SubjectStrategy {
 
-    /** 全局单例（对齐 SaStrategy.instance） */
+    /**
+     * 全局单例（对齐 SaStrategy.instance）
+     */
     public static final SubjectStrategy instance = new SubjectStrategy();
 
     /**

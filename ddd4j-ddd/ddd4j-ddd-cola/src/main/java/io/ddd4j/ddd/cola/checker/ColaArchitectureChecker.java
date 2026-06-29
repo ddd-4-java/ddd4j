@@ -26,8 +26,8 @@ import java.util.Set;
  * │   └── gateway/             ← 领域网关（Repository / 外部服务接口）
  * ├── adapter/                 ← 适配器层
  * │   ├── persistence/         ← 持久化适配器
- │   ├── web/                 ← Web 适配器
- │   └── messaging/           ← 消息适配器
+ * │   ├── web/                 ← Web 适配器
+ * │   └── messaging/           ← 消息适配器
  * ├── application/             ← 应用层
  * │   ├── executor/            ← 命令执行器（Command Executor）
  * │   ├── query/               ← 查询服务（Query Service）
@@ -67,9 +67,8 @@ public class ColaArchitectureChecker {
     private static final Set<String> ADAPTER_SUB_PACKAGES = Set.of(
             "persistence", "web", "messaging", "rpc"
     );
-
-    private final String basePackage;
     final List<String> violations = new ArrayList<>();
+    private final String basePackage;
 
     public ColaArchitectureChecker(String basePackage) {
         this.basePackage = basePackage;

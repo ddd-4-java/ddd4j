@@ -1,12 +1,10 @@
 package io.ddd4j.cache.jetcache.adapter;
 
-import com.alicp.jetcache.CacheResult;
 import com.alicp.jetcache.CacheGetResult;
+import com.alicp.jetcache.CacheResult;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheStats;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;

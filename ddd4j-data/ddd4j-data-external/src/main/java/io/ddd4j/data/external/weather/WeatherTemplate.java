@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.data.external.weather;
@@ -30,11 +31,6 @@ public class WeatherTemplate {
     private final static String SOJSON_WEATHER_URL = "http://t.weather.sojson.com/api/weather/city/%s";
 
     private final RestClient restClient;
-
-    public WeatherTemplate(RestClient restClient) {
-        this.restClient = restClient;
-    }
-
     private final LoadingCache<String, Optional<JSONObject>> WEATHER_DATA_CACHES = Caffeine.newBuilder()
             // 设置写缓存后1个小时过期
             .expireAfterWrite(1, TimeUnit.HOURS)
@@ -68,6 +64,10 @@ public class WeatherTemplate {
                     return Optional.empty();
                 }
             });
+
+    public WeatherTemplate(RestClient restClient) {
+        this.restClient = restClient;
+    }
 
     public JSONObject getWeather(String city_code) throws ExecutionException {
         Optional<JSONObject> opt = WEATHER_DATA_CACHES.get(city_code);

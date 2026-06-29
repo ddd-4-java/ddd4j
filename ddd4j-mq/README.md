@@ -59,11 +59,11 @@
 
 ### 3.1 依赖规则
 
-| 模块 | 允许依赖 | 禁止依赖 |
-|------|---------|---------|
-| `ddd4j-mq` | `ddd4j-core`、`spring-messaging` | 一切 Broker SDK、`spring-cloud-stream` |
-| `ddd4j-mq-{broker}` | `ddd4j-mq` + 对应 Broker 客户端 | `ddd4j-cloud-*` |
-| `ddd4j-cloud-mq-stream-*` | `ddd4j-mq` + `spring-cloud-stream` + binder | — |
+| 模块                        | 允许依赖                                        | 禁止依赖                                |
+|---------------------------|---------------------------------------------|-------------------------------------|
+| `ddd4j-mq`                | `ddd4j-core`、`spring-messaging`             | 一切 Broker SDK、`spring-cloud-stream` |
+| `ddd4j-mq-{broker}`       | `ddd4j-mq` + 对应 Broker 客户端                  | `ddd4j-cloud-*`                     |
+| `ddd4j-cloud-mq-stream-*` | `ddd4j-mq` + `spring-cloud-stream` + binder | —                                   |
 
 ### 3.2 应用如何选择依赖
 
@@ -99,15 +99,15 @@
 
 ### 4.2 类型映射
 
-| 概念 | Message / MessageHeaders |
-|---|---|
-| 消息载体 | `org.springframework.messaging.Message<T>` |
-| 载荷 | `Message.getPayload()` |
-| 消息头 | `Message.getHeaders()` (MessageHeaders) |
-| 消息 ID | `MessageHeaders.getId()` |
-| 关联 ID | `MessageHeaders.get("ddd4j.correlation.id")` |
-| 原生消息 | `MessageHeaders.get("ddd4j.native.message")` |
-| Header 读取 | `MQMessages.headerAsString(message, key)` |
+| 概念        | Message / MessageHeaders                     |
+|-----------|----------------------------------------------|
+| 消息载体      | `org.springframework.messaging.Message<T>`   |
+| 载荷        | `Message.getPayload()`                       |
+| 消息头       | `Message.getHeaders()` (MessageHeaders)      |
+| 消息 ID     | `MessageHeaders.getId()`                     |
+| 关联 ID     | `MessageHeaders.get("ddd4j.correlation.id")` |
+| 原生消息      | `MessageHeaders.get("ddd4j.native.message")` |
+| Header 读取 | `MQMessages.headerAsString(message, key)`    |
 
 ### 4.3 依赖策略
 
@@ -125,31 +125,31 @@
 
 ### 5.1 标准 Header Key（ddd4j 定义）
 
-| Key | 类型 | 说明 |
-|---|---|---|
-| `ddd4j.native.message` | Object | Broker 原生消息逃生口 |
-| `ddd4j.correlation.id` | String | 关联 ID |
-| `ddd4j.tenant.id` | String | 租户 ID |
-| `ddd4j.broker.type` | MQBrokerType | Broker 类型枚举 |
-| `ddd4j.destination.topic` | String | 目标 topic |
-| `ddd4j.destination.tag` | String | 目标 tag |
-| `ddd4j.destination.namespace` | String | 目标 namespace |
+| Key                           | 类型           | 说明             |
+|-------------------------------|--------------|----------------|
+| `ddd4j.native.message`        | Object       | Broker 原生消息逃生口 |
+| `ddd4j.correlation.id`        | String       | 关联 ID          |
+| `ddd4j.tenant.id`             | String       | 租户 ID          |
+| `ddd4j.broker.type`           | MQBrokerType | Broker 类型枚举    |
+| `ddd4j.destination.topic`     | String       | 目标 topic       |
+| `ddd4j.destination.tag`       | String       | 目标 tag         |
+| `ddd4j.destination.namespace` | String       | 目标 namespace   |
 
 ### 5.2 Broker 原生 Header Key（各实现模块定义）
 
-| 模块 | Key | 说明 |
-|---|---|---|
-| rabbitmq | `amqp.channel` | RabbitMQ Channel |
-| rabbitmq | `amqp.deliveryTag` | 投递标签 |
-| activemq | `jms.session` | JMS Session |
-| activemq | `jms.message` | JMS Message |
-| kafka | `kafka.acknowledgment` | Spring Kafka Acknowledgment |
-| kafka | `kafka.topic` / `kafka.partition` / `kafka.offset` | Kafka 元数据 |
-| mqtt | `mqtt.receivedTopic` / `mqtt.qos` | MQTT 元数据 |
-| mica-mqtt | `mica.mqtt.topic` / `mica.mqtt.qos` | Mica MQTT 元数据 |
-| nats | `nats.subject` | NATS 主题 |
-| redis-stream | `redis.stream.key` / `redis.stream.group` / `redis.stream.recordId` | Redis Stream 元数据 |
-| pulsar | `pulsar.consumer` / `pulsar.message` | Pulsar 元数据 |
+| 模块           | Key                                                                 | 说明                          |
+|--------------|---------------------------------------------------------------------|-----------------------------|
+| rabbitmq     | `amqp.channel`                                                      | RabbitMQ Channel            |
+| rabbitmq     | `amqp.deliveryTag`                                                  | 投递标签                        |
+| activemq     | `jms.session`                                                       | JMS Session                 |
+| activemq     | `jms.message`                                                       | JMS Message                 |
+| kafka        | `kafka.acknowledgment`                                              | Spring Kafka Acknowledgment |
+| kafka        | `kafka.topic` / `kafka.partition` / `kafka.offset`                  | Kafka 元数据                   |
+| mqtt         | `mqtt.receivedTopic` / `mqtt.qos`                                   | MQTT 元数据                    |
+| mica-mqtt    | `mica.mqtt.topic` / `mica.mqtt.qos`                                 | Mica MQTT 元数据               |
+| nats         | `nats.subject`                                                      | NATS 主题                     |
+| redis-stream | `redis.stream.key` / `redis.stream.group` / `redis.stream.recordId` | Redis Stream 元数据            |
+| pulsar       | `pulsar.consumer` / `pulsar.message`                                | Pulsar 元数据                  |
 
 ---
 
@@ -186,10 +186,10 @@ public final class MQMessages {
 
 ## 7. 两种消息语义
 
-| 类型 | 用途 | 可靠性 | 典型能力 |
-|------|------|--------|---------|
-| **Domain Event** | 跨模块/跨服务通知 | at-least-once，幂等可接受重复 | 普通队列 + 业务幂等 |
-| **Job Message** | 一个工作单元一条消息 | 必须 ack/nack/retry/DLQ | 手动确认、重试退避、死信 |
+| 类型               | 用途         | 可靠性                   | 典型能力         |
+|------------------|------------|-----------------------|--------------|
+| **Domain Event** | 跨模块/跨服务通知  | at-least-once，幂等可接受重复 | 普通队列 + 业务幂等  |
+| **Job Message**  | 一个工作单元一条消息 | 必须 ack/nack/retry/DLQ | 手动确认、重试退避、死信 |
 
 ---
 
@@ -235,26 +235,27 @@ ddd4j-mq-{broker}/
 ```
 
 **命名约定**：
+
 - 类名：`{Xxx}MQBrokerAdapter`、`{Xxx}MQEventPublisher`、`{Xxx}MQConsumerEndpointRegistrar`
 - 包名：`io.ddd4j.mq.{broker}.spi`、`io.ddd4j.mq.{broker}.publisher`、`io.ddd4j.mq.{broker}.consumer`
 - 例外：Kafka 模块使用 `io.ddd4j.mq.kafka.mq` 作为统一包
 
 ### 8.3 Broker 模块映射
 
-| # | 中间件 | ddd4j 模块 | 客户端依赖 |
-|---|--------|-----------|-----------|
-| 1 | RabbitMQ | `ddd4j-mq-rabbitmq` | `spring-rabbit` |
-| 2 | Apache Kafka | `ddd4j-mq-kafka` | `spring-kafka` |
-| 4 | Apache Pulsar | `ddd4j-mq-pulsar` | `spring-pulsar` |
-| 5 | Redis Stream | `ddd4j-mq-redis-stream` | `spring-data-redis` |
-| 6 | ActiveMQ Artemis | `ddd4j-mq-activemq` | `spring-jms` |
-| 7 | NATS JetStream | `ddd4j-mq-nats` | `jnats` |
-| — | Eclipse MQTT | `ddd4j-mq-mqtt` | `spring-integration-mqtt` + Paho |
-| — | mica-mqtt | `ddd4j-mq-mqtt-mica` | `mica-mqtt-client` |
-| 8 | 阿里云 ONS | `ddd4j-mq-ons` | `ons-client` |
-| 9 | 腾讯云 TDMQ | `ddd4j-mq-tdmq` | `tdmq-client` |
-| 10 | AWS SQS | `ddd4j-mq-sqs` | `aws-java-sdk-sqs` |
-| — | Disruptor | `ddd4j-mq-disruptor` | `com.lmax:disruptor` |
+| #  | 中间件              | ddd4j 模块                | 客户端依赖                            |
+|----|------------------|-------------------------|----------------------------------|
+| 1  | RabbitMQ         | `ddd4j-mq-rabbitmq`     | `spring-rabbit`                  |
+| 2  | Apache Kafka     | `ddd4j-mq-kafka`        | `spring-kafka`                   |
+| 4  | Apache Pulsar    | `ddd4j-mq-pulsar`       | `spring-pulsar`                  |
+| 5  | Redis Stream     | `ddd4j-mq-redis-stream` | `spring-data-redis`              |
+| 6  | ActiveMQ Artemis | `ddd4j-mq-activemq`     | `spring-jms`                     |
+| 7  | NATS JetStream   | `ddd4j-mq-nats`         | `jnats`                          |
+| —  | Eclipse MQTT     | `ddd4j-mq-mqtt`         | `spring-integration-mqtt` + Paho |
+| —  | mica-mqtt        | `ddd4j-mq-mqtt-mica`    | `mica-mqtt-client`               |
+| 8  | 阿里云 ONS          | `ddd4j-mq-ons`          | `ons-client`                     |
+| 9  | 腾讯云 TDMQ         | `ddd4j-mq-tdmq`         | `tdmq-client`                    |
+| 10 | AWS SQS          | `ddd4j-mq-sqs`          | `aws-java-sdk-sqs`               |
+| —  | Disruptor        | `ddd4j-mq-disruptor`    | `com.lmax:disruptor`             |
 
 ---
 
@@ -274,20 +275,20 @@ public interface MQBrokerAdapter {
 
 ### 实现模块一览
 
-| 模块 | BrokerAdapter 类名 | 包路径 |
-|------|-------------------|--------|
-| activemq | `ActiveMQBrokerAdapter` | `io.ddd4j.mq.activemq.spi` |
-| disruptor | `DisruptorMQBrokerAdapter` | `io.ddd4j.mq.disruptor.spi` |
-| kafka | `KafkaMQBrokerAdapter` | `io.ddd4j.mq.kafka.mq` |
-| mqtt | `MqttMQBrokerAdapter` | `io.ddd4j.mq.mqtt.spi` |
-| mqtt-mica | `MicaMqttMQBrokerAdapter` | `io.ddd4j.mq.mqtt.mica.spi` |
-| nats | `NatsMQBrokerAdapter` | `io.ddd4j.mq.nats.spi` |
-| ons | `OnsMQBrokerAdapter` | `io.ddd4j.mq.ons.spi` |
-| pulsar | `PulsarMQBrokerAdapter` | `io.ddd4j.mq.pulsar.spi` |
-| rabbitmq | `RabbitMQBrokerAdapter` | `io.ddd4j.mq.rabbit.spi` |
+| 模块           | BrokerAdapter 类名             | 包路径                           |
+|--------------|------------------------------|-------------------------------|
+| activemq     | `ActiveMQBrokerAdapter`      | `io.ddd4j.mq.activemq.spi`    |
+| disruptor    | `DisruptorMQBrokerAdapter`   | `io.ddd4j.mq.disruptor.spi`   |
+| kafka        | `KafkaMQBrokerAdapter`       | `io.ddd4j.mq.kafka.mq`        |
+| mqtt         | `MqttMQBrokerAdapter`        | `io.ddd4j.mq.mqtt.spi`        |
+| mqtt-mica    | `MicaMqttMQBrokerAdapter`    | `io.ddd4j.mq.mqtt.mica.spi`   |
+| nats         | `NatsMQBrokerAdapter`        | `io.ddd4j.mq.nats.spi`        |
+| ons          | `OnsMQBrokerAdapter`         | `io.ddd4j.mq.ons.spi`         |
+| pulsar       | `PulsarMQBrokerAdapter`      | `io.ddd4j.mq.pulsar.spi`      |
+| rabbitmq     | `RabbitMQBrokerAdapter`      | `io.ddd4j.mq.rabbit.spi`      |
 | redis-stream | `RedisStreamMQBrokerAdapter` | `io.ddd4j.mq.redisstream.spi` |
-| sqs | `SqsMQBrokerAdapter` | `io.ddd4j.mq.sqs.spi` |
-| tdmq | `TdmqMQBrokerAdapter` | `io.ddd4j.mq.tdmq.spi` |
+| sqs          | `SqsMQBrokerAdapter`         | `io.ddd4j.mq.sqs.spi`         |
+| tdmq         | `TdmqMQBrokerAdapter`        | `io.ddd4j.mq.tdmq.spi`        |
 
 ---
 
@@ -316,6 +317,7 @@ public record MQDestination(String topic, String tag, String namespace) {
 #### 设计动机
 
 ddd4j-mq 的核心用途是推送 DDD 领域事件。在 Spring Boot 项目中，除了发布到远程 MQ Broker，还需要支持：
+
 - **本地事件**：通过 `ApplicationEventPublisher` 发布到 Spring 事件系统，实现进程内解耦
 - **混合模式**：同时发布到 MQ 和 Spring Event，支持本地监听 + 远程通知
 
@@ -508,11 +510,11 @@ ddd4j:
     publish-mode: BOTH  # MQ | SPRING_EVENT | BOTH
 ```
 
-| 模式 | 行为 | 适用场景 |
-|------|------|---------|
-| `MQ` | 只发布到 MQ Broker（默认） | 纯 MQ 项目，保持向后兼容 |
-| `SPRING_EVENT` | 只发布到 Spring Event | 纯本地项目，无需 MQ |
-| `BOTH` | 同时发布到 MQ 和 Spring Event | 本地监听 + 远程通知 |
+| 模式             | 行为                      | 适用场景           |
+|----------------|-------------------------|----------------|
+| `MQ`           | 只发布到 MQ Broker（默认）      | 纯 MQ 项目，保持向后兼容 |
+| `SPRING_EVENT` | 只发布到 Spring Event       | 纯本地项目，无需 MQ    |
+| `BOTH`         | 同时发布到 MQ 和 Spring Event | 本地监听 + 远程通知    |
 
 #### 完整使用示例
 
@@ -546,13 +548,13 @@ public void onOrderCreated(OrderCreatedEvent event) {
 
 #### 架构优势
 
-| 优势 | 说明 |
-|------|------|
+| 优势       | 说明                             |
+|----------|--------------------------------|
 | **向后兼容** | 旧代码无需修改，自动回退到 MQEventPublisher |
-| **灵活切换** | 通过配置切换发布模式，无需改代码 |
-| **本地解耦** | 支持 Spring Event 实现进程内解耦 |
-| **混合部署** | 支持同时发布到 MQ 和 Spring Event |
-| **统一接口** | EventPublisher 作为统一抽象，易于扩展 |
+| **灵活切换** | 通过配置切换发布模式，无需改代码               |
+| **本地解耦** | 支持 Spring Event 实现进程内解耦        |
+| **混合部署** | 支持同时发布到 MQ 和 Spring Event      |
+| **统一接口** | EventPublisher 作为统一抽象，易于扩展     |
 
 ---
 
@@ -594,11 +596,11 @@ public void onOrder(OrderEvent event, MQConsumerContext context) {
 
 ### 11.2 返回值规范
 
-| 返回值 | 行为 |
-|---|---|
-| `void` | 自动 ack（auto 模式）或由 ack-mode 控制 |
+| 返回值              | 行为                                                      |
+|------------------|---------------------------------------------------------|
+| `void`           | 自动 ack（auto 模式）或由 ack-mode 控制                           |
 | `AckDisposition` | 显式控制确认（ACK / DISCARD / REQUEUE / REJECT_TO_DLQ / DEFER） |
-| `Boolean` | `true` → ACK，`false` → REQUEUE |
+| `Boolean`        | `true` → ACK，`false` → REQUEUE                          |
 
 ### 11.3 绑定命名约定
 
@@ -679,13 +681,13 @@ public final class MQConsumeTemplates {
 
 ### 12.5 多 Broker 映射矩阵
 
-| MessageAcknowledgment | Rabbit | Kafka | Pulsar | Redis Stream |
-|----------------------|--------|-------|--------|--------------|
-| `ack(false)` | basicAck | offset commit | acknowledge | XACK |
-| `ack(true)` | basicAck multiple | commit 至当前 | cumulative ack | 批量 XACK |
-| `nack(false, true)` | basicNack requeue | 不 commit + 重平衡 | negativeAcknowledge | 不 XACK |
-| `nack(false, false)` | basicNack no requeue | commit + DLT | ack + DLQ | XACK + dead stream |
-| `recover(requeue)` | basicRecover | 不支持 | 不支持 | XPENDING reclaim |
+| MessageAcknowledgment | Rabbit               | Kafka          | Pulsar              | Redis Stream       |
+|-----------------------|----------------------|----------------|---------------------|--------------------|
+| `ack(false)`          | basicAck             | offset commit  | acknowledge         | XACK               |
+| `ack(true)`           | basicAck multiple    | commit 至当前     | cumulative ack      | 批量 XACK            |
+| `nack(false, true)`   | basicNack requeue    | 不 commit + 重平衡 | negativeAcknowledge | 不 XACK             |
+| `nack(false, false)`  | basicNack no requeue | commit + DLT   | ack + DLQ           | XACK + dead stream |
+| `recover(requeue)`    | basicRecover         | 不支持            | 不支持                 | XPENDING reclaim   |
 
 ---
 
@@ -693,20 +695,20 @@ public final class MQConsumeTemplates {
 
 ### 13.1 配置前缀
 
-| 前缀 | 说明 |
-|------|------|
+| 前缀           | 说明                             |
+|--------------|--------------------------------|
 | `ddd4j.mq.*` | **唯一主前缀**（`Ddd4jMQProperties`） |
 
 ### 13.2 主要配置项
 
-| 属性 | 类型 | 默认 | 说明 |
-|------|------|------|------|
-| `enabled` | boolean | false | 是否启用 MQ |
-| `broker` | string | none | 当前 Broker 类型 |
-| `namespace` | string | "" | 环境/租户级前缀 |
-| `default-topic` | string | DEFAULT | `MQEvent.publish()` 默认 topic |
-| `consumer.ack-mode` | string | manual | manual / auto |
-| `serialization` | string | json | 序列化器 |
+| 属性                  | 类型      | 默认      | 说明                           |
+|---------------------|---------|---------|------------------------------|
+| `enabled`           | boolean | false   | 是否启用 MQ                      |
+| `broker`            | string  | none    | 当前 Broker 类型                 |
+| `namespace`         | string  | ""      | 环境/租户级前缀                     |
+| `default-topic`     | string  | DEFAULT | `MQEvent.publish()` 默认 topic |
+| `consumer.ack-mode` | string  | manual  | manual / auto                |
+| `serialization`     | string  | json    | 序列化器                         |
 
 ### 13.3 配置示例
 

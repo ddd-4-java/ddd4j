@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.auth.security.jwt;
@@ -36,13 +37,13 @@ public class JwtRs256PayloadRepository extends AbstractJwtPayloadRepository impl
         // 2、从配置文件中获取公钥
         byte[] publicKeyBytes = Base64.getDecoder().decode(getJwtIssueProperteis().getRsaPubKey());
         this.publicKey = SecretKeyUtils.genPublicKey(SecretKeyUtils.KEY_RSA, publicKeyBytes);
-        log.debug("RSA公钥 - Base64: {}" , this.publicKey);
+        log.debug("RSA公钥 - Base64: {}", this.publicKey);
         // 3、从配置文件中获取私钥
         byte[] privateKeyBytes = Base64.getDecoder().decode(getJwtIssueProperteis().getRsaPriKey());
         String pri_key = Base64.getEncoder().encodeToString(aesBytesEncryptor.decrypt(privateKeyBytes));
         // 3、从RSA私钥原文生成私钥对象
         this.privateKey = SecretKeyUtils.genPrivateKey(SecretKeyUtils.KEY_RSA, aesBytesEncryptor.decrypt(privateKeyBytes));
-        log.debug("RSA私钥 - Base64: {}" , this.privateKey );
+        log.debug("RSA私钥 - Base64: {}", this.privateKey);
     }
 
     @Override

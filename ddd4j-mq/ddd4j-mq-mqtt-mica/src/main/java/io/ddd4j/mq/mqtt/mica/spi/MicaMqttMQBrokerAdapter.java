@@ -1,14 +1,14 @@
 package io.ddd4j.mq.mqtt.mica.spi;
 
+import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.consume.MQConsumerHandler;
+import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.mqtt.mica.ack.MicaMqttHeaders;
 import io.ddd4j.mq.mqtt.mica.ack.MicaMqttMessageAcknowledgment;
 import io.ddd4j.mq.mqtt.mica.ack.MicaMqttMessageAcknowledgmentFactory;
 import io.ddd4j.mq.mqtt.mica.consumer.MicaMqttMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.mqtt.mica.publisher.MicaMqttMQEventPublisher;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
@@ -19,6 +19,7 @@ import org.dromara.mica.mqtt.spring.client.MqttClientTemplate;
 
 /**
  * mica-mqtt Broker 适配器，桥接 ddd4j MQ SPI 与 {@link MqttClientTemplate}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor

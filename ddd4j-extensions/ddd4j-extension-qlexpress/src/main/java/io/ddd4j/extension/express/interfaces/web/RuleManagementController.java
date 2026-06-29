@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 
 /**
  * 规则管理Controller
- * 
+ *
  * <p>接口层：提供规则管理的REST API。
  * 提供规则的增删改查、启用禁用、测试执行、语法验证等功能。
- * 
+ *
  * <p>API路径：/api/rules
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
@@ -36,13 +36,13 @@ public class RuleManagementController {
 
     @Autowired
     private RuleManagementService ruleManagementService;
-    
+
     @Autowired
     private RuleMapper ruleMapper;
 
     /**
      * 查询规则列表
-     * 
+     *
      * @param ruleType 规则类型（可选），如果提供则按类型过滤
      * @return 规则列表
      */
@@ -64,7 +64,7 @@ public class RuleManagementController {
 
     /**
      * 获取规则详情
-     * 
+     *
      * @param id 规则ID
      * @return 规则详情
      */
@@ -78,7 +78,7 @@ public class RuleManagementController {
 
     /**
      * 根据规则编码获取规则详情（带缓存）
-     * 
+     *
      * @param ruleCode 规则编码
      * @return 规则详情
      */
@@ -92,9 +92,9 @@ public class RuleManagementController {
 
     /**
      * 创建规则
-     * 
+     *
      * <p>自动验证规则语法，保存到数据库，并同步更新缓存。
-     * 
+     *
      * @param request 创建规则请求DTO
      * @return 创建后的规则信息
      */
@@ -107,10 +107,10 @@ public class RuleManagementController {
 
     /**
      * 更新规则
-     * 
+     *
      * <p>自动验证规则语法，更新数据库，并同步更新缓存。
-     * 
-     * @param id 规则ID
+     *
+     * @param id      规则ID
      * @param request 更新规则请求DTO
      * @return 更新后的规则信息
      */
@@ -143,9 +143,9 @@ public class RuleManagementController {
 
     /**
      * 启用规则
-     * 
+     *
      * <p>同步更新缓存。
-     * 
+     *
      * @param id 规则ID
      * @return 启用后的规则信息
      */
@@ -161,9 +161,9 @@ public class RuleManagementController {
 
     /**
      * 禁用规则
-     * 
+     *
      * <p>同步清除缓存。
-     * 
+     *
      * @param id 规则ID
      * @return 禁用后的规则信息
      */
@@ -183,7 +183,7 @@ public class RuleManagementController {
     @PostMapping("/test")
     public ResponseEntity<RuleExecutionResult> testRule(@RequestBody TestRuleRequest request) {
         RuleExecutionResult result = ruleEngineApplicationService.executeRule(
-            request.getRuleCode(), request.getContext());
+                request.getRuleCode(), request.getContext());
         return ResponseEntity.ok(result);
     }
 

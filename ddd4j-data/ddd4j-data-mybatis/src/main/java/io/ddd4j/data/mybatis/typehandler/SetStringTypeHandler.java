@@ -15,6 +15,7 @@ import java.util.Set;
 
 /**
  * 使用该对象需要在xml中指定 typeHandler
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @MappedTypes(Set.class)

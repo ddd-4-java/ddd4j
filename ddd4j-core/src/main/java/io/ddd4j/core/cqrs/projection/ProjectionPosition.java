@@ -19,9 +19,9 @@ import java.io.Serializable;
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
  * @see ViewManager
  * @see ProjectionPositionRepository
+ * @since 2.0.x
  */
 public interface ProjectionPosition extends Serializable {
 

@@ -1,11 +1,7 @@
 package io.ddd4j.cache.jedis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.core.cache.AtomicCache;
-import io.ddd4j.core.cache.Cache;
-import io.ddd4j.core.cache.CacheConfig;
-import io.ddd4j.core.cache.CacheStats;
-import io.ddd4j.core.cache.CasCache;
+import io.ddd4j.core.cache.*;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
 
@@ -38,6 +34,39 @@ import java.util.function.Function;
  */
 public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V> {
 
+    /**
+     * Lua 脚本：CAS 替换（仅当值匹配时才更新）
+     */
+    private static final String CAS_REPLACE_SCRIPT =
+            "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('set', KEYS[1], ARGV[2]) else return 0 end";
+    /**
+     * Lua 脚本：CAS 删除（仅当值匹配时才删除）
+     */
+    private static final String CAS_DELETE_SCRIPT =
+            "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+    /**
+     * Lua 库存扣减脚本
+     */
+    private static final String STOCK_DECR_SCRIPT =
+            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
+                    "  local stock = tonumber(redis.call('GET', KEYS[1])); " +
+                    "  local num = tonumber(ARGV[1]); " +
+                    "  if (num <= 0) then return -4 end; " +
+                    "  if (stock <= 0) then return -1 end; " +
+                    "  if (stock >= num) then return redis.call('INCRBY', KEYS[1], 0 - num) end; " +
+                    "  return -2; " +
+                    "end; " +
+                    "return -3;";
+    /**
+     * Lua 库存回补脚本
+     */
+    private static final String STOCK_INCR_SCRIPT =
+            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
+                    "  local num = tonumber(ARGV[1]); " +
+                    "  if (num < 0) then return -4 end; " +
+                    "  return redis.call('INCRBY', KEYS[1], num); " +
+                    "end; " +
+                    "return -3;";
     private final UnifiedJedis jedis;
     private final SetParams setParams;
     private final long expireSeconds;
@@ -120,6 +149,8 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         }
     }
 
+    // ==================== CasCache 实现（基于 Redis SETNX + Lua） ====================
+
     @Override
     public void invalidateAll() {
         // Redis 不建议 flushAll，需通过 key 前缀逐个删除
@@ -144,15 +175,6 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return jedis;
     }
 
-    // ==================== CasCache 实现（基于 Redis SETNX + Lua） ====================
-
-    /** Lua 脚本：CAS 替换（仅当值匹配时才更新） */
-    private static final String CAS_REPLACE_SCRIPT =
-            "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('set', KEYS[1], ARGV[2]) else return 0 end";
-    /** Lua 脚本：CAS 删除（仅当值匹配时才删除） */
-    private static final String CAS_DELETE_SCRIPT =
-            "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-
     @Override
     public boolean putIfAbsent(String key, V value) {
         try {
@@ -166,6 +188,8 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
             return false;
         }
     }
+
+    // ==================== AtomicCache 实现（基于 Jedis incr/decr + Lua 库存脚本） ====================
 
     @Override
     public boolean replace(String key, V expected, V newValue) {
@@ -192,29 +216,6 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
             return false;
         }
     }
-
-    // ==================== AtomicCache 实现（基于 Jedis incr/decr + Lua 库存脚本） ====================
-
-    /** Lua 库存扣减脚本 */
-    private static final String STOCK_DECR_SCRIPT =
-            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
-            "  local stock = tonumber(redis.call('GET', KEYS[1])); " +
-            "  local num = tonumber(ARGV[1]); " +
-            "  if (num <= 0) then return -4 end; " +
-            "  if (stock <= 0) then return -1 end; " +
-            "  if (stock >= num) then return redis.call('INCRBY', KEYS[1], 0 - num) end; " +
-            "  return -2; " +
-            "end; " +
-            "return -3;";
-
-    /** Lua 库存回补脚本 */
-    private static final String STOCK_INCR_SCRIPT =
-            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
-            "  local num = tonumber(ARGV[1]); " +
-            "  if (num < 0) then return -4 end; " +
-            "  return redis.call('INCRBY', KEYS[1], num); " +
-            "end; " +
-            "return -3;";
 
     @Override
     public long increment(String key, long delta) {

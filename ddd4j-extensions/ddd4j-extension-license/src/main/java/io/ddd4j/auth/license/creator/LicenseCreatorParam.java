@@ -8,6 +8,7 @@ import java.util.Date;
 
 /**
  * License生成类需要的参数
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data

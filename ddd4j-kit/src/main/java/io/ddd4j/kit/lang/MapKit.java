@@ -3,7 +3,6 @@ package io.ddd4j.kit.lang;
 import cn.hutool.core.map.MapUtil;
 import lombok.experimental.UtilityClass;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 

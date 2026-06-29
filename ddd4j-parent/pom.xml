@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.module>${project.artifactId}</project.module>
-        <jacocoArgLine> </jacocoArgLine>
+        <jacocoArgLine></jacocoArgLine>
 
         <project.addClasspath>false</project.addClasspath>
         <project.addDefaultImplementationEntries>true</project.addDefaultImplementationEntries>
@@ -130,7 +130,7 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
-<dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
@@ -242,8 +242,10 @@
                         <archive>
                             <manifest>
                                 <addClasspath>${project.addClasspath}</addClasspath>
-                                <addDefaultImplementationEntries>${project.addDefaultImplementationEntries}</addDefaultImplementationEntries>
-                                <addDefaultSpecificationEntries>${project.addDefaultSpecificationEntries}</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>${project.addDefaultImplementationEntries}
+                                </addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>${project.addDefaultSpecificationEntries}
+                                </addDefaultSpecificationEntries>
                                 <addExtensions>${project.addExtensions}</addExtensions>
                                 <classpathPrefix>${project.classpathPrefix}</classpathPrefix>
                             </manifest>
@@ -257,9 +259,12 @@
                                 <Implementation-URL>${project.url}</Implementation-URL>
                                 <Implementation-Build-Date>${maven.build.timestamp}</Implementation-Build-Date>
                                 <Implementation-Build-Os>${os.name} ${os.version} ${os.arch}</Implementation-Build-Os>
-                                <Implementation-Build-Java>${java.version} ${java.vendor} ${java.vm.name} ${java.vm.version} ${java.vm.vendor}</Implementation-Build-Java>
+                                <Implementation-Build-Java>${java.version} ${java.vendor} ${java.vm.name}
+                                    ${java.vm.version} ${java.vm.vendor}
+                                </Implementation-Build-Java>
                                 <Implementation-Build-TimeZone>${user.timezone}</Implementation-Build-TimeZone>
-                                <Implementation-Build-Java-Encoding>${project.build.sourceEncoding}</Implementation-Build-Java-Encoding>
+                                <Implementation-Build-Java-Encoding>${project.build.sourceEncoding}
+                                </Implementation-Build-Java-Encoding>
                             </manifestEntries>
                         </archive>
                     </configuration>
@@ -761,7 +766,9 @@
                         <!-- 命令模式 : http://www.mojohaus.org/appassembler/appassembler-maven-plugin/assemble-mojo.html -->
 
                         <!-- 生成的执行脚本存放目录；默认${project.build.directory}/appassembler.（必填参数） -->
-                        <assembleDirectory>${project.build.directory}/generated-resources/appassembler/${project.artifactId}</assembleDirectory>
+                        <assembleDirectory>
+                            ${project.build.directory}/generated-resources/appassembler/${project.artifactId}
+                        </assembleDirectory>
                         <!-- 用于bin文件的文件扩展名。文件扩展名存储在使用平台名称作为键的地图中。要将Unix bin文件的文件扩展名更改为“.sh”，请使用此配置： -->
                         <binFileExtensions>
                             <unix>.sh</unix>
@@ -1106,10 +1113,12 @@
                                     <!-- 处理脚本模式依赖资源 -->
 
                                     <!-- 步骤1、拷贝应用程序文件 -->
-                                    <copy file="${project.build.directory}/${project.build.finalName}.${project.packaging}" todir="${scripts-dir}/${project.artifactId}/lib"/>
+                                    <copy file="${project.build.directory}/${project.build.finalName}.${project.packaging}"
+                                          todir="${scripts-dir}/${project.artifactId}/lib"/>
                                     <!-- 步骤2、创建生产环境配置文件夹：拷贝配置文件以便覆盖默认配置 -->
                                     <mkdir dir="${scripts-dir}/${project.artifactId}/conf"/>
-                                    <copy file="${project.build.directory}/classes/application.yaml" todir="${scripts-dir}/${project.artifactId}/conf"/>
+                                    <copy file="${project.build.directory}/classes/application.yaml"
+                                          todir="${scripts-dir}/${project.artifactId}/conf"/>
                                     <!-- 步骤3、拷贝Java环境变量设置文件
                                     <copy file="${basedir}/.env/setenv" todir="${scripts-dir}/${project.artifactId}/bin" />
                                     <copy file="${basedir}/.env/setenv.bat" todir="${scripts-dir}/${project.artifactId}/bin" />
@@ -1118,35 +1127,56 @@
                                     <copy file="${basedir}/.env/jre-8u60-linux-x64.tar.gz" todir="${scripts-dir}/${project.artifactId}" /> -->
                                     <!-- 步骤5、构建应用安装脚本 -->
                                     <delete file="${scripts-dir}/${project.artifactId}/install.sh"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="#!/bin/sh${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="#解压独立jre运行包【如果希望工程使用独有的jdk、jre请将压缩包放置在项目根目录并修改下面的配置】${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="#rm -rf jre${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="#tar -zxvf jre-8u60-linux-x64.tar.gz${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="#File Authorized${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="chmod 755 jre/bin/*${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="chmod 755 bin/*${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="chmod 755 ${scripts-bin-fileName}${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="chmod 755 uninstall.sh${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="#启停脚本服务化软连接${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="rm -rf /etc/init.d/${project.artifactId}${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="cp ./${scripts-bin-fileName} /etc/init.d/${project.artifactId}${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="chkconfig --add ${project.artifactId}${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true" message="chkconfig --level 345 ${project.artifactId} on${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="#!/bin/sh${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="#解压独立jre运行包【如果希望工程使用独有的jdk、jre请将压缩包放置在项目根目录并修改下面的配置】${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="#rm -rf jre${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="#tar -zxvf jre-8u60-linux-x64.tar.gz${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="#File Authorized${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="chmod 755 jre/bin/*${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="chmod 755 bin/*${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="chmod 755 ${scripts-bin-fileName}${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="chmod 755 uninstall.sh${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="#启停脚本服务化软连接${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="rm -rf /etc/init.d/${project.artifactId}${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="cp ./${scripts-bin-fileName} /etc/init.d/${project.artifactId}${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="chkconfig --add ${project.artifactId}${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/install.sh" append="true"
+                                          message="chkconfig --level 345 ${project.artifactId} on${line.separator}"/>
                                     <!-- 步骤6、构建应用卸载脚本 -->
                                     <delete file="${scripts-dir}/${project.artifactId}/uninstall.sh"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true" message="#!/bin/sh${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true" message="chkconfig ${scripts-bin-fileName} off${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true" message="chkconfig --del ${scripts-bin-fileName}${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true" message="rm -rf /etc/init.d/${project.artifactId}${line.separator}"/>
-                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true" message="#rm -rf jre${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true"
+                                          message="#!/bin/sh${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true"
+                                          message="chkconfig ${scripts-bin-fileName} off${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true"
+                                          message="chkconfig --del ${scripts-bin-fileName}${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true"
+                                          message="rm -rf /etc/init.d/${project.artifactId}${line.separator}"/>
+                                    <echo file="${scripts-dir}/${project.artifactId}/uninstall.sh" append="true"
+                                          message="#rm -rf jre${line.separator}"/>
 
                                     <!-- 处理服务模式依赖资源 -->
 
                                     <!-- 步骤1、拷贝应用程序文件 -->
-                                    <copy file="${project.build.directory}/${project.build.finalName}.${project.packaging}" todir="${scripts-jsw-dir}/${project.artifactId}/lib"/>
+                                    <copy file="${project.build.directory}/${project.build.finalName}.${project.packaging}"
+                                          todir="${scripts-jsw-dir}/${project.artifactId}/lib"/>
                                     <!-- 步骤2、创建生产环境配置文件夹：拷贝配置文件以便覆盖默认配置 -->
                                     <mkdir dir="${scripts-jsw-dir}/${project.artifactId}/conf"/>
-                                    <copy file="${project.build.directory}/classes/application.yaml" todir="${scripts-jsw-dir}/${project.artifactId}/conf"/>
+                                    <copy file="${project.build.directory}/classes/application.yaml"
+                                          todir="${scripts-jsw-dir}/${project.artifactId}/conf"/>
                                     <!-- 步骤3、拷贝Java环境变量设置文件
                                     <copy file="${basedir}/.env/setenv" todir="${scripts-jsw-dir}/${project.artifactId}/bin" />
                                     <copy file="${basedir}/.env/setenv.bat" todir="${scripts-jsw-dir}/${project.artifactId}/bin" />
@@ -1165,9 +1195,11 @@
                                 <target>
                                     <echo message="build zip package"/>
                                     <delete file="${scripts-jsw-dir}/${project.artifactId}-${project.version}-jsw.zip"/>
-                                    <zip basedir="${scripts-jsw-dir}/${project.artifactId}" destfile="${scripts-jsw-dir}/${project.artifactId}-${project.version}-jsw.zip"/>
+                                    <zip basedir="${scripts-jsw-dir}/${project.artifactId}"
+                                         destfile="${scripts-jsw-dir}/${project.artifactId}-${project.version}-jsw.zip"/>
                                     <delete file="${scripts-dir}/${project.artifactId}-${project.version}.zip"/>
-                                    <zip basedir="${scripts-dir}/${project.artifactId}" destfile="${scripts-dir}/${project.artifactId}-${project.version}.zip"/>
+                                    <zip basedir="${scripts-dir}/${project.artifactId}"
+                                         destfile="${scripts-dir}/${project.artifactId}-${project.version}.zip"/>
                                 </target>
                             </configuration>
                         </execution>
@@ -1294,7 +1326,9 @@
                                 <executable>sh</executable>
                                 <arguments>
                                     <argument>-c</argument>
-                                    <argument>echo '${docker.registry.password}' | docker login -u ${docker.registry.username} --password-stdin https://${docker.registry.host}</argument>
+                                    <argument>echo '${docker.registry.password}' | docker login -u
+                                        ${docker.registry.username} --password-stdin https://${docker.registry.host}
+                                    </argument>
                                 </arguments>
                             </configuration>
                         </execution>
@@ -1348,22 +1382,28 @@
                                         BUILDKIT_IMAGE="${docker.buildx.buildkit.image}"; \
                                         if docker buildx inspect "$BUILDER_NAME" &gt;/dev/null 2&gt;&amp;1; then \
                                         echo "Builder $BUILDER_NAME exists, checking status..."; \
-                                        if docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1; then \
+                                        if docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1;
+                                        then \
                                         echo "Builder $BUILDER_NAME is healthy"; \
                                         docker buildx use "$BUILDER_NAME"; \
                                         else \
                                         echo "Builder $BUILDER_NAME is unhealthy, removing and recreating..."; \
                                         docker buildx rm "$BUILDER_NAME" 2&gt;/dev/null || true; \
-                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container --driver-opt image="$BUILDKIT_IMAGE"; \
+                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container
+                                        --driver-opt image="$BUILDKIT_IMAGE"; \
                                         docker buildx use "$BUILDER_NAME"; \
-                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 || true; \
+                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 ||
+                                        true; \
                                         fi; \
                                         else \
                                         echo "Builder $BUILDER_NAME does not exist, creating..."; \
-                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container --driver-opt image="$BUILDKIT_IMAGE"; \
+                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container
+                                        --driver-opt image="$BUILDKIT_IMAGE"; \
                                         docker buildx use "$BUILDER_NAME"; \
-                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 || true; \
-                                        fi</argument>
+                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 ||
+                                        true; \
+                                        fi
+                                    </argument>
                                 </arguments>
                             </configuration>
                         </execution>
@@ -1386,7 +1426,8 @@
                                         echo "Preparing buildx builder $BUILDER_NAME before build..."; \
                                         if docker buildx inspect "$BUILDER_NAME" &gt;/dev/null 2&gt;&amp;1; then \
                                         echo "Builder exists, restarting BuildKit container to ensure clean state..."; \
-                                        BUILDER_CONTAINER=$(docker ps -a --filter "name=buildx_buildkit_${BUILDER_NAME}" --format "{{.Names}}" | head -1); \
+                                        BUILDER_CONTAINER=$(docker ps -a --filter "name=buildx_buildkit_${BUILDER_NAME}"
+                                        --format "{{.Names}}" | head -1); \
                                         if [ -n "$BUILDER_CONTAINER" ]; then \
                                         echo "Stopping and removing BuildKit container: $BUILDER_CONTAINER"; \
                                         docker stop "$BUILDER_CONTAINER" 2&gt;/dev/null || true; \
@@ -1394,20 +1435,25 @@
                                         fi; \
                                         echo "Recreating builder with fresh BuildKit container..."; \
                                         docker buildx rm "$BUILDER_NAME" 2&gt;/dev/null || true; \
-                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container --driver-opt image="$BUILDKIT_IMAGE"; \
+                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container
+                                        --driver-opt image="$BUILDKIT_IMAGE"; \
                                         docker buildx use "$BUILDER_NAME"; \
                                         echo "Booting BuildKit container..."; \
-                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 || echo "WARNING: Builder bootstrap failed, but continuing..."; \
+                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 ||
+                                        echo "WARNING: Builder bootstrap failed, but continuing..."; \
                                         echo "Waiting for BuildKit to be ready..."; \
                                         sleep 2; \
                                         else \
                                         echo "Builder does not exist, creating new builder..."; \
-                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container --driver-opt image="$BUILDKIT_IMAGE"; \
+                                        docker buildx create --use --name "$BUILDER_NAME" --driver docker-container
+                                        --driver-opt image="$BUILDKIT_IMAGE"; \
                                         docker buildx use "$BUILDER_NAME"; \
-                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 || true; \
+                                        docker buildx inspect "$BUILDER_NAME" --bootstrap &gt;/dev/null 2&gt;&amp;1 ||
+                                        true; \
                                         sleep 2; \
                                         fi; \
-                                        echo "Builder $BUILDER_NAME is ready"</argument>
+                                        echo "Builder $BUILDER_NAME is ready"
+                                    </argument>
                                 </arguments>
                             </configuration>
                         </execution>

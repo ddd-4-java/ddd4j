@@ -4,10 +4,10 @@
 
 ## 示例清单
 
-| 示例 | 端口 | 说明 |
-|------|------|------|
-| `ddd4j-sample-auth-satoken` | 8080 | ✅ **sa-token 集成示例**（主推方案） |
-| `ddd4j-sample-auth-shiro` | 8081 | ✅ **Apache Shiro 集成示例**（旧项目迁移参考） |
+| 示例                           | 端口   | 说明                                  |
+|------------------------------|------|-------------------------------------|
+| `ddd4j-sample-auth-satoken`  | 8080 | ✅ **sa-token 集成示例**（主推方案）           |
+| `ddd4j-sample-auth-shiro`    | 8081 | ✅ **Apache Shiro 集成示例**（旧项目迁移参考）    |
 | `ddd4j-sample-auth-security` | 8082 | ✅ **Spring Security 集成示例**（旧项目迁移参考） |
 
 ## 核心演示：三框架业务代码零差异

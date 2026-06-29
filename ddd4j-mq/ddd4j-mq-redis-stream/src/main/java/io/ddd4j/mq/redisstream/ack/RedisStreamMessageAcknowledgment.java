@@ -13,18 +13,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 基于 Redis Stream XACK 的消息确认实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public final class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
 
-    /** MQMessage headers 中存放 stream key 的键 */
+    /**
+     * MQMessage headers 中存放 stream key 的键
+     */
     public static final String HEADER_STREAM_KEY = "redis.stream.key";
 
-    /** MQMessage headers 中存放 consumer group 的键 */
+    /**
+     * MQMessage headers 中存放 consumer group 的键
+     */
     public static final String HEADER_CONSUMER_GROUP = "redis.stream.group";
 
-    /** MQMessage headers 中存放 RecordId 的键 */
+    /**
+     * MQMessage headers 中存放 RecordId 的键
+     */
     public static final String HEADER_RECORD_ID = "redis.stream.recordId";
 
     private final StringRedisTemplate stringRedisTemplate;

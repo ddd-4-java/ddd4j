@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.data.external.region;
@@ -46,6 +47,14 @@ public class BaiduRegionTemplate {
         this.ak = ak;
         this.restClient = restClient;
         this.redisOperation = redisOperation;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", RestClient.create());
+
+        Optional<JSONObject> mapLL2 = template.getLocationByIp("183.128.136.82"); // lng：116.86380647644208  lat：38.297615350325717
+        log.debug(mapLL2.get().toJSONString());
     }
 
     /**
@@ -235,15 +244,6 @@ public class BaiduRegionTemplate {
          */
         private final Double latitude;
 
-    }
-
-
-    public static void main(String[] args) throws IOException {
-
-        BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", RestClient.create());
-
-        Optional<JSONObject> mapLL2 = template.getLocationByIp("183.128.136.82"); // lng：116.86380647644208  lat：38.297615350325717
-        log.debug(mapLL2.get().toJSONString());
     }
 
 

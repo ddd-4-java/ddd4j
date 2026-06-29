@@ -1,10 +1,10 @@
 package io.ddd4j.mq.rabbit;
 
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.rabbit.autoconfigure.Ddd4jRabbitMQAutoConfiguration;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * RabbitMQ 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)

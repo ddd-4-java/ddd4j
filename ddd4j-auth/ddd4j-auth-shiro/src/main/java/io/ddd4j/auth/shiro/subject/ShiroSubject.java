@@ -1,17 +1,14 @@
 package io.ddd4j.auth.shiro.subject;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.subject.AuthRequest;
+import io.ddd4j.core.util.SubjectKit;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
-import io.ddd4j.core.subject.AuthPrincipal;
-import io.ddd4j.core.subject.AuthRequest;
-import io.ddd4j.core.subject.SubjectDataProvider;
-import io.ddd4j.core.util.SubjectKit;
+import java.util.List;
 
 /**
  * 基于 Apache Shiro 的 {@link Subject} 实现。
@@ -263,8 +260,8 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         Subject subject = SecurityUtils.getSubject();
         // Shiro 登录需要 AuthenticationToken，业务侧需提供 Realm 解析 loginId
         AuthenticationToken token = new UsernamePasswordToken(
-            String.valueOf(request.getLoginId()),
-            request.getPrincipal() != null ? String.valueOf(request.getPrincipal()) : ""
+                String.valueOf(request.getLoginId()),
+                request.getPrincipal() != null ? String.valueOf(request.getPrincipal()) : ""
         );
         subject.login(token);
         // 登录后将 principal 存入 Shiro Session

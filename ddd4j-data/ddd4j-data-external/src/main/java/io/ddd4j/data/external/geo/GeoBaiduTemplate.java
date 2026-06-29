@@ -18,6 +18,7 @@ import java.util.Optional;
  * 地址获取经纬度： http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-geocoding
  * IP获取经纬度：   http://lbsyun.baidu.com/index.php?title=webapi/ip-api
  * https://blog.csdn.net/Li_Chunxiao_/article/details/107082921
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -34,6 +35,19 @@ public class GeoBaiduTemplate {
         super();
         this.restClient = restClient;
         this.ak = ak;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        GeoBaiduTemplate template = new GeoBaiduTemplate(RestClient.create(), "");
+
+        Map<String, BigDecimal> mapLL = template.getLatAndLngByAddress("浙江省杭州市西湖区"); // lng：116.86380647644208  lat：38.297615350325717
+        mapLL.get("lat");
+        mapLL.get("lng");
+        log.debug("lng：" + mapLL.get("lng") + "  lat：" + mapLL.get("lat"));
+
+        Optional<JSONObject> mapLL2 = template.getLocationByIp("115.204.225.154"); // lng：116.86380647644208  lat：38.297615350325717
+        log.debug(mapLL2.get().toJSONString());
     }
 
     /**
@@ -141,19 +155,6 @@ public class GeoBaiduTemplate {
             log.error("IP : {} >> Location Query Error. {}", ip, e.getMessage());
         }
         return Optional.empty();
-    }
-
-    public static void main(String[] args) throws IOException {
-
-        GeoBaiduTemplate template = new GeoBaiduTemplate(RestClient.create(), "");
-
-        Map<String, BigDecimal> mapLL = template.getLatAndLngByAddress("浙江省杭州市西湖区"); // lng：116.86380647644208  lat：38.297615350325717
-        mapLL.get("lat");
-        mapLL.get("lng");
-        log.debug("lng：" + mapLL.get("lng") + "  lat：" + mapLL.get("lat"));
-
-        Optional<JSONObject> mapLL2 = template.getLocationByIp("115.204.225.154"); // lng：116.86380647644208  lat：38.297615350325717
-        log.debug(mapLL2.get().toJSONString());
     }
 
 

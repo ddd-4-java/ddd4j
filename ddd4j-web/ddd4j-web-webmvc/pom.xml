@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-web-webmvc</artifactId>
-    <description>ddd4j Web - Spring MVC 实现：Controller/Interceptor/Config/WebSocket。从 ddd4j-web-core 迁入的 Spring 相关代码。</description>
+    <description>ddd4j Web - Spring MVC 实现：Controller/Interceptor/Config/WebSocket。从 ddd4j-web-core 迁入的 Spring
+        相关代码。
+    </description>
 
     <dependencies>
         <!-- 纯 Java Web 抽象 -->
@@ -63,12 +65,12 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-            <dependency>
+        <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-            <dependency>
+        <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-extension-jackson</artifactId>
             <version>${revision}</version>

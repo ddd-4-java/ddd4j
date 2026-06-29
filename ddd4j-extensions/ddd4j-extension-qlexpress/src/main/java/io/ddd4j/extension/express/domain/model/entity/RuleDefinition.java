@@ -5,16 +5,16 @@ import java.time.LocalDateTime;
 
 /**
  * 规则定义实体
- * 
+ *
  * <p>领域模型：规则的核心实体，包含规则的业务属性。
  * 规则定义包含规则编码、表达式、类型、状态等核心信息。
- * 
+ *
  * <p>规则可以是两种形式：
  * <ul>
  *   <li>表达式规则：使用 ruleExpression 字段存储 QLExpress 表达式</li>
  *   <li>函数规则：使用 functionClass/functionMethod 字段存储函数类信息，用于动态加载自定义函数</li>
  * </ul>
- * 
+ *
  * <p>规则类型说明：
  * <ul>
  *   <li>DECISION - 决策规则：用于业务决策判断</li>
@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
  *   <li>CALCULATION - 计算规则：用于数值计算</li>
  *   <li>FUNCTION - 函数规则：用于定义可复用的自定义函数</li>
  * </ul>
- * 
+ *
  * <p>函数类型说明（当 ruleType 为 FUNCTION 时）：
  * <ul>
  *   <li>CLASS - 类方法：通过反射加载类方法</li>
  *   <li>SCRIPT - 脚本函数：通过脚本定义函数（未来扩展）</li>
  * </ul>
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
@@ -37,57 +37,91 @@ public class RuleDefinition implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 主键ID */
+    /**
+     * 主键ID
+     */
     private Long id;
-    
-    /** 规则ID值对象 */
+
+    /**
+     * 规则ID值对象
+     */
     private RuleId ruleId;
-    
-    /** 规则编码（唯一标识），用于规则查找和执行 */
+
+    /**
+     * 规则编码（唯一标识），用于规则查找和执行
+     */
     private String ruleCode;
-    
-    /** 规则名称，用于展示和描述 */
+
+    /**
+     * 规则名称，用于展示和描述
+     */
     private String ruleName;
-    
-    /** 规则表达式，QLExpress语法 */
+
+    /**
+     * 规则表达式，QLExpress语法
+     */
     private String ruleExpression;
-    
-    /** 规则描述，说明规则的用途和使用场景 */
+
+    /**
+     * 规则描述，说明规则的用途和使用场景
+     */
     private String ruleDescription;
-    
-    /** 规则类型（DECISION-决策规则，VALIDATION-校验规则，CALCULATION-计算规则等） */
+
+    /**
+     * 规则类型（DECISION-决策规则，VALIDATION-校验规则，CALCULATION-计算规则等）
+     */
     private String ruleType;
-    
-    /** 是否启用，true表示规则可用，false表示规则已禁用 */
+
+    /**
+     * 是否启用，true表示规则可用，false表示规则已禁用
+     */
     private Boolean enabled;
-    
-    /** 优先级，数值越大优先级越高，用于规则冲突时的选择 */
+
+    /**
+     * 优先级，数值越大优先级越高，用于规则冲突时的选择
+     */
     private Integer priority;
-    
-    /** 创建时间 */
+
+    /**
+     * 创建时间
+     */
     private LocalDateTime createdAt;
-    
-    /** 更新时间 */
+
+    /**
+     * 更新时间
+     */
     private LocalDateTime updatedAt;
-    
+
     // ========== 函数相关字段（当规则类型为 FUNCTION 时使用） ==========
-    
-    /** 函数类名（全限定名），用于动态加载自定义函数 */
+
+    /**
+     * 函数类名（全限定名），用于动态加载自定义函数
+     */
     private String functionClass;
-    
-    /** 函数方法名（如果是静态方法），用于反射调用 */
+
+    /**
+     * 函数方法名（如果是静态方法），用于反射调用
+     */
     private String functionMethod;
-    
-    /** 函数脚本（如果是脚本函数），用于脚本函数定义 */
+
+    /**
+     * 函数脚本（如果是脚本函数），用于脚本函数定义
+     */
     private String functionScript;
-    
-    /** 函数类型（CLASS-类方法，SCRIPT-脚本函数），仅在 ruleType 为 FUNCTION 时有效 */
+
+    /**
+     * 函数类型（CLASS-类方法，SCRIPT-脚本函数），仅在 ruleType 为 FUNCTION 时有效
+     */
     private String functionType;
-    
-    /** 返回类型，用于函数签名定义 */
+
+    /**
+     * 返回类型，用于函数签名定义
+     */
     private String returnType;
-    
-    /** 参数类型（逗号分隔），用于函数签名定义 */
+
+    /**
+     * 参数类型（逗号分隔），用于函数签名定义
+     */
     private String parameterTypes;
 
     public RuleDefinition() {
@@ -95,17 +129,17 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 使用RuleId的构造函数
-     * 
-     * @param ruleId 规则ID值对象
-     * @param ruleCode 规则编码，不能为null
-     * @param ruleName 规则名称
-     * @param ruleExpression 规则表达式，QLExpress语法
+     *
+     * @param ruleId          规则ID值对象
+     * @param ruleCode        规则编码，不能为null
+     * @param ruleName        规则名称
+     * @param ruleExpression  规则表达式，QLExpress语法
      * @param ruleDescription 规则描述
-     * @param ruleType 规则类型
-     * @param enabled 是否启用
-     * @param priority 优先级，数值越大优先级越高
+     * @param ruleType        规则类型
+     * @param enabled         是否启用
+     * @param priority        优先级，数值越大优先级越高
      */
-    public RuleDefinition(RuleId ruleId, String ruleCode, String ruleName, String ruleExpression, 
+    public RuleDefinition(RuleId ruleId, String ruleCode, String ruleName, String ruleExpression,
                           String ruleDescription, String ruleType, Boolean enabled, Integer priority) {
         this.ruleId = ruleId;
         this.id = ruleId != null ? ruleId.toLong() : null;
@@ -122,25 +156,25 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 便捷构造函数（兼容旧代码，使用Long id）
-     * 
-     * @param id 主键ID
-     * @param ruleCode 规则编码，不能为null
-     * @param ruleName 规则名称
-     * @param ruleExpression 规则表达式，QLExpress语法
+     *
+     * @param id              主键ID
+     * @param ruleCode        规则编码，不能为null
+     * @param ruleName        规则名称
+     * @param ruleExpression  规则表达式，QLExpress语法
      * @param ruleDescription 规则描述
-     * @param ruleType 规则类型
-     * @param enabled 是否启用
-     * @param priority 优先级，数值越大优先级越高
+     * @param ruleType        规则类型
+     * @param enabled         是否启用
+     * @param priority        优先级，数值越大优先级越高
      */
-    public RuleDefinition(Long id, String ruleCode, String ruleName, String ruleExpression, 
+    public RuleDefinition(Long id, String ruleCode, String ruleName, String ruleExpression,
                           String ruleDescription, String ruleType, Boolean enabled, Integer priority) {
-        this(id != null ? RuleId.valueOf(id) : null, ruleCode, ruleName, ruleExpression, 
-             ruleDescription, ruleType, enabled, priority);
+        this(id != null ? RuleId.valueOf(id) : null, ruleCode, ruleName, ruleExpression,
+                ruleDescription, ruleType, enabled, priority);
     }
 
     /**
      * 启用规则
-     * 
+     *
      * <p>将规则状态设置为启用，并更新更新时间。
      */
     public void enable() {
@@ -150,7 +184,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 禁用规则
-     * 
+     *
      * <p>将规则状态设置为禁用，并更新更新时间。
      * 禁用的规则不会被执行。
      */
@@ -161,7 +195,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 更新规则表达式
-     * 
+     *
      * @param expression 新的规则表达式，QLExpress语法，不能为null
      */
     public void updateExpression(String expression) {
@@ -171,9 +205,9 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 检查规则是否可用
-     * 
+     *
      * <p>规则可用的条件：enabled字段不为null且为true。
-     * 
+     *
      * @return true表示规则可用，false表示规则不可用
      */
     public boolean isAvailable() {
@@ -276,10 +310,10 @@ public class RuleDefinition implements Serializable {
     }
 
     // ========== 函数相关字段的 Getters and Setters ==========
-    
+
     /**
      * 获取函数类名
-     * 
+     *
      * @return 函数类名（全限定名）
      */
     public String getFunctionClass() {
@@ -288,7 +322,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 设置函数类名
-     * 
+     *
      * @param functionClass 函数类名（全限定名）
      */
     public void setFunctionClass(String functionClass) {
@@ -297,7 +331,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 获取函数方法名
-     * 
+     *
      * @return 函数方法名
      */
     public String getFunctionMethod() {
@@ -306,7 +340,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 设置函数方法名
-     * 
+     *
      * @param functionMethod 函数方法名
      */
     public void setFunctionMethod(String functionMethod) {
@@ -315,7 +349,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 获取函数脚本
-     * 
+     *
      * @return 函数脚本
      */
     public String getFunctionScript() {
@@ -324,7 +358,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 设置函数脚本
-     * 
+     *
      * @param functionScript 函数脚本
      */
     public void setFunctionScript(String functionScript) {
@@ -333,7 +367,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 获取函数类型
-     * 
+     *
      * @return 函数类型（CLASS-类方法，SCRIPT-脚本函数）
      */
     public String getFunctionType() {
@@ -342,7 +376,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 设置函数类型
-     * 
+     *
      * @param functionType 函数类型（CLASS-类方法，SCRIPT-脚本函数）
      */
     public void setFunctionType(String functionType) {
@@ -351,7 +385,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 获取返回类型
-     * 
+     *
      * @return 返回类型
      */
     public String getReturnType() {
@@ -360,7 +394,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 设置返回类型
-     * 
+     *
      * @param returnType 返回类型
      */
     public void setReturnType(String returnType) {
@@ -369,7 +403,7 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 获取参数类型
-     * 
+     *
      * @return 参数类型（逗号分隔）
      */
     public String getParameterTypes() {
@@ -378,25 +412,25 @@ public class RuleDefinition implements Serializable {
 
     /**
      * 设置参数类型
-     * 
+     *
      * @param parameterTypes 参数类型（逗号分隔）
      */
     public void setParameterTypes(String parameterTypes) {
         this.parameterTypes = parameterTypes;
     }
-    
+
     /**
      * 判断是否为函数规则
-     * 
+     *
      * @return true表示是函数规则，false表示是表达式规则
      */
     public boolean isFunctionRule() {
         return "FUNCTION".equals(ruleType) && functionClass != null && !functionClass.trim().isEmpty();
     }
-    
+
     /**
      * 判断是否为表达式规则
-     * 
+     *
      * @return true表示是表达式规则，false表示是函数规则
      */
     public boolean isExpressionRule() {

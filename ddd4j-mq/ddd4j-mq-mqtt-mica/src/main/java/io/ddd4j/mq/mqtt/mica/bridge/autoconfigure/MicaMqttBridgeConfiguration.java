@@ -5,13 +5,13 @@ import io.ddd4j.mq.mqtt.mica.bridge.consumer.MicaMqttClientSubscribeRegistrar;
 import io.ddd4j.mq.mqtt.mica.bridge.consumer.MicaMqttClientSubscribeScanner;
 import io.ddd4j.mq.mqtt.mica.bridge.registry.MicaMqttClientSubscribeDefinitionRegistry;
 import org.dromara.mica.mqtt.spring.client.MqttClientSubscribeDetector;
-import org.dromara.mica.mqtt.spring.client.MqttClientTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * {@code @EnableMicaMqttBridge} 导入的配置：注册原生 {@code @MqttClientSubscribe} 扫描与 mica 会话订阅。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

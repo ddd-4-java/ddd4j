@@ -2,14 +2,14 @@ package io.ddd4j.mq.ons.spi;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
-import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgmentFactory;
-import io.ddd4j.mq.ons.consumer.OnsMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
+import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.ons.consumer.OnsMQConsumerEndpointRegistrar;
+import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * 阿里云 ONS Broker 适配器，桥接 ddd4j MQ SPI 与 ons-client（Rocket 兼容）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor

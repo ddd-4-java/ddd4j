@@ -1,6 +1,5 @@
 package io.ddd4j.core.cache;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /**

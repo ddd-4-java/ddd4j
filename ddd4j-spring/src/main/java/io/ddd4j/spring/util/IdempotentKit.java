@@ -2,6 +2,7 @@ package io.ddd4j.spring.util;
 
 import com.alibaba.fastjson2.JSONObject;
 import io.ddd4j.annotation.api.ApiIdempotent;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.Hidden;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

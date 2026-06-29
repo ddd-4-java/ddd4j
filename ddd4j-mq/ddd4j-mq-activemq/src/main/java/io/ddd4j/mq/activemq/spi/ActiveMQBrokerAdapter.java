@@ -1,10 +1,10 @@
 package io.ddd4j.mq.activemq.spi;
 
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.activemq.ack.ActiveMQMessageAcknowledgment;
 import io.ddd4j.mq.activemq.ack.ActiveMQMessageAcknowledgmentFactory;
 import io.ddd4j.mq.activemq.consumer.ActiveMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.activemq.publisher.ActiveMQEventPublisher;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
@@ -17,6 +17,7 @@ import org.springframework.jms.core.JmsTemplate;
 
 /**
  * ActiveMQ Artemis Broker 适配器，桥接 ddd4j MQ SPI 与 Spring JMS。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor

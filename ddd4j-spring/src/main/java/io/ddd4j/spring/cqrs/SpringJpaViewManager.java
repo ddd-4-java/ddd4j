@@ -5,8 +5,6 @@ import io.ddd4j.core.cqrs.projection.ViewScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.scheduling.support.ScheduledMethodRunnable;
 import org.springframework.scheduling.TaskScheduler;
 
 import java.util.concurrent.ConcurrentHashMap;

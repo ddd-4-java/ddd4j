@@ -2,7 +2,6 @@ package io.ddd4j.data.logs.aspect;
 
 import cn.hutool.core.lang.Snowflake;
 import io.ddd4j.core.XHeaders;
-import io.ddd4j.kit.lang.IdKit;
 import io.ddd4j.spring.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +25,7 @@ import java.util.Objects;
  */
 public class ApiOperationLogAspect {
 
+    public static final String REQUEST_ID_KEY = "requestId";
     @Autowired
     private Snowflake snowflake;
     @Autowired
@@ -71,8 +71,6 @@ public class ApiOperationLogAspect {
             MDC.clear();
         }
     }
-
-    public static final String REQUEST_ID_KEY = "requestId";
 
     public String getRequestId() {
         HttpServletRequest request = WebUtils.getHttpServletRequest();

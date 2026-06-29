@@ -1,22 +1,17 @@
 package io.ddd4j.mq.pulsar.consumer;
 
-import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgment;
-import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgmentFactory;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgment;
+import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgmentFactory;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pulsar.client.api.Consumer;
-import org.apache.pulsar.client.api.Message;
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.client.api.SubscriptionType;
+import org.apache.pulsar.client.api.*;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
@@ -27,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 Pulsar 消费端点。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

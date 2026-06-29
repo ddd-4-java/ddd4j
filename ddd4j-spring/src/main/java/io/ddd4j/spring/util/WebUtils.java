@@ -12,7 +12,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 public final class WebUtils {
 
-    private WebUtils() {}
+    private WebUtils() {
+    }
 
     /**
      * 获取当前 HttpServletRequest

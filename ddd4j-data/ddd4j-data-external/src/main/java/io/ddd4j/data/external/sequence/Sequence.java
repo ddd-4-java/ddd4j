@@ -20,6 +20,7 @@ public class Sequence {
     private final Long epoch;
     private final Long batchSize;
     private final Long workerId;
+    private final Object refillLock = new Object();
     private boolean useLocalMode;
 
     public Sequence(RedisTemplate<String, String> redis, String scriptText, Long datacenterId, Long workerId, Long epoch, Long batchSize) {
@@ -40,8 +41,6 @@ public class Sequence {
         }
 
     }
-
-    private final Object refillLock = new Object();
 
     public synchronized long nextId() {
         Long id = idPool.poll();
@@ -92,8 +91,8 @@ public class Sequence {
      * 生成时间戳
      *
      * @return 时间戳
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     // 本地降级 ID 生成方法
     private long generateLocalId() {
         return IdUtil.getSnowflake(workerId, datacenterId).nextId();

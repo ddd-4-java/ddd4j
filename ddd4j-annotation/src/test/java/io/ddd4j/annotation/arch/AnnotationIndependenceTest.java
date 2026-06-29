@@ -26,29 +26,29 @@ class AnnotationIndependenceTest {
 
     @ArchTest
     static final ArchRule no_spring =
-        noClasses().that().resideInAPackage("io.ddd4j.annotation..")
-            .should().dependOnClassesThat().resideInAPackage("org.springframework..");
+            noClasses().that().resideInAPackage("io.ddd4j.annotation..")
+                    .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
     @ArchTest
     static final ArchRule no_mybatis =
-        noClasses().that().resideInAPackage("io.ddd4j.annotation..")
-            .should().dependOnClassesThat().resideInAPackage("com.baomidou..");
+            noClasses().that().resideInAPackage("io.ddd4j.annotation..")
+                    .should().dependOnClassesThat().resideInAPackage("com.baomidou..");
 
     @ArchTest
     static final ArchRule no_servlet =
-        noClasses().that().resideInAPackage("io.ddd4j.annotation..")
-            .should().dependOnClassesThat().resideInAPackage("jakarta.servlet..");
+            noClasses().that().resideInAPackage("io.ddd4j.annotation..")
+                    .should().dependOnClassesThat().resideInAPackage("jakarta.servlet..");
 
     @ArchTest
     static final ArchRule no_cdi =
-        noClasses().that().resideInAPackage("io.ddd4j.annotation..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                "javax.enterprise..",
-                "jakarta.enterprise.."
-            );
+            noClasses().that().resideInAPackage("io.ddd4j.annotation..")
+                    .should().dependOnClassesThat().resideInAnyPackage(
+                            "javax.enterprise..",
+                            "jakarta.enterprise.."
+                    );
 
     @ArchTest
     static final ArchRule no_guice =
-        noClasses().that().resideInAPackage("io.ddd4j.annotation..")
-            .should().dependOnClassesThat().resideInAPackage("com.google.inject..");
+            noClasses().that().resideInAPackage("io.ddd4j.annotation..")
+                    .should().dependOnClassesThat().resideInAPackage("com.google.inject..");
 }

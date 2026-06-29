@@ -1,6 +1,5 @@
 package io.ddd4j.data.spring;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.ddd4j.core.contract.BaseRepository;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;

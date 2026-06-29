@@ -10,14 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
-import java.util.Objects;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
  * JacksonTypeHandler
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

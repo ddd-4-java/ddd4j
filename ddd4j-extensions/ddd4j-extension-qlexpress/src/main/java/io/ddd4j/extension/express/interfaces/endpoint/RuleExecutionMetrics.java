@@ -3,13 +3,13 @@ package io.ddd4j.extension.express.interfaces.endpoint;
 
 /**
  * 规则执行指标收集器
- * 
+ *
  * <p>接口层：使用 Micrometer 收集规则执行的指标数据。
  * 提供规则执行次数、失败次数、执行耗时等指标。
- * 
+ *
  * <p>注意：此类是可选的，只有在项目中包含 Micrometer 依赖时才会启用。
  * 如果不需要监控功能，可以不使用此类。
- * 
+ *
  * <p>使用前需要添加依赖：
  * <pre>
  * &lt;dependency&gt;
@@ -17,13 +17,13 @@ package io.ddd4j.extension.express.interfaces.endpoint;
  *     &lt;artifactId&gt;micrometer-core&lt;/artifactId&gt;
  * &lt;/dependency&gt;
  * </pre>
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */
 public class RuleExecutionMetrics {
-    
+
     // 注意：此类的完整实现需要 Micrometer 依赖
     // 如果项目中没有 Micrometer，此类将被自动禁用
     // 如果需要使用监控功能，请取消下面的注释并添加 Micrometer 依赖

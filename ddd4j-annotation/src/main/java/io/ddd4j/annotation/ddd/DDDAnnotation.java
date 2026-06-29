@@ -12,12 +12,12 @@ import java.lang.annotation.*;
  * 使得 ArchUnit 校验和 AOP 切面可以在运行时通过反射读取这些注解。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2022/3/19
  * @see <a href="https://github.com/smingjie/bbq-ddd">bbq-ddd</a>
+ * @since 2022/3/19
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target(value = {ElementType.TYPE,ElementType.METHOD,ElementType.FIELD})
+@Target(value = {ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 public @interface DDDAnnotation {
 
 }

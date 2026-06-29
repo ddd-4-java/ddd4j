@@ -1,4 +1,3 @@
-
 package io.ddd4j.data.mybatis.config;
 
 import lombok.Data;

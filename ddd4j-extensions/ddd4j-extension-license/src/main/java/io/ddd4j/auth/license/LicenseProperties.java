@@ -1,4 +1,3 @@
-
 package io.ddd4j.auth.license;
 
 import lombok.Data;
@@ -11,8 +10,9 @@ public class LicenseProperties {
 
     /**
      * 证书subject
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private String subject;
 
     /**

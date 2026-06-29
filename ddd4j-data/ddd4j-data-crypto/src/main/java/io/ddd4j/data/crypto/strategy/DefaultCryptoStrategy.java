@@ -5,11 +5,11 @@ import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.ApiCode;
+import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.data.crypto.domain.enums.CryptoType;
 import io.ddd4j.data.crypto.domain.enums.SymmetricAlgorithmType;
 import io.ddd4j.kit.crypto.SymmetricCryptoKit;
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +20,7 @@ import java.util.Objects;
  * 请求加解密内部服务实现
  * 传输机密性：SM4（国密对称加密算法）
  * 传输完整性：SM3（国密摘要签名算法）
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

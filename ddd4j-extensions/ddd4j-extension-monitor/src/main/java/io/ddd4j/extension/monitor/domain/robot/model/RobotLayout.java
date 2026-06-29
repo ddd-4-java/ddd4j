@@ -4,12 +4,12 @@ import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
-import io.ddd4j.spring.context.SpringContext;
-import io.ddd4j.kit.lang.StrKit;
+import com.google.common.collect.Lists;
 import io.ddd4j.extension.monitor.application.service.CodeVersionService;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
 import io.ddd4j.extension.monitor.infras.utils.IpUtils;
-import com.google.common.collect.Lists;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.spring.context.SpringContext;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
@@ -24,6 +24,7 @@ import java.util.Map;
  */
 @Data
 public class RobotLayout extends LayoutBase<ILoggingEvent> {
+    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
     // 应用名称
     private String app;
     // ip 地址
@@ -31,7 +32,6 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
     private String project = "";
     // 需要打印的mdc的信息
     private List<String> mdcList = Lists.newArrayList();
-    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
     private ThrowableProxyConverter throwableProxyConverter = new ThrowableProxyConverter();
 
     @Override

@@ -1,10 +1,6 @@
 package io.ddd4j.mq.contract;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 消息工具类（纯 Java，零 Spring 依赖）。
@@ -19,31 +15,49 @@ public final class MQMessages {
 
     // ── 标准 Header Keys ──
 
-    /** Broker 原生消息逃生口（值：底层 Broker 客户端的原生消息对象） */
+    /**
+     * Broker 原生消息逃生口（值：底层 Broker 客户端的原生消息对象）
+     */
     public static final String HEADER_NATIVE_MESSAGE = "ddd4j.native.message";
 
-    /** 消息 ID（标准 UUID 字符串） */
+    /**
+     * 消息 ID（标准 UUID 字符串）
+     */
     public static final String HEADER_MESSAGE_ID = "ddd4j.message.id";
 
-    /** 关联 ID（用于链路追踪） */
+    /**
+     * 关联 ID（用于链路追踪）
+     */
     public static final String HEADER_CORRELATION_ID = "ddd4j.correlation.id";
 
-    /** 因果 ID（上一个事件的 messageId） */
+    /**
+     * 因果 ID（上一个事件的 messageId）
+     */
     public static final String HEADER_CAUSATION_ID = "ddd4j.causation.id";
 
-    /** 租户 ID */
+    /**
+     * 租户 ID
+     */
     public static final String HEADER_TENANT_ID = "ddd4j.tenant.id";
 
-    /** Broker 类型 */
+    /**
+     * Broker 类型
+     */
     public static final String HEADER_BROKER_TYPE = "ddd4j.broker.type";
 
-    /** 目标 topic */
+    /**
+     * 目标 topic
+     */
     public static final String HEADER_DESTINATION_TOPIC = "ddd4j.destination.topic";
 
-    /** 目标 tag */
+    /**
+     * 目标 tag
+     */
     public static final String HEADER_DESTINATION_TAG = "ddd4j.destination.tag";
 
-    /** 目标 namespace */
+    /**
+     * 目标 namespace
+     */
     public static final String HEADER_DESTINATION_NAMESPACE = "ddd4j.destination.namespace";
 
     private MQMessages() {

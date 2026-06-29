@@ -32,10 +32,9 @@ import java.util.concurrent.ConcurrentMap;
 @ApplicationScoped
 public class QuarkusEventHandlerRegistry {
 
+    private final ConcurrentMap<Class<?>, Method> handlerTable = new ConcurrentHashMap<>();
     @Inject
     BeanManager beanManager;
-
-    private final ConcurrentMap<Class<?>, Method> handlerTable = new ConcurrentHashMap<>();
 
     void onStart(@Observes StartupEvent event) {
         Set<Bean<?>> beans = beanManager.getBeans(Object.class);

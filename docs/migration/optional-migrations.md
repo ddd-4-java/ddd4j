@@ -9,7 +9,8 @@
 
 **功能**：将 Spring Cloud Feign 调用异常统一转换为 `ServiceException`，避免业务代码到处捕获 Feign 原生异常。
 
-**未迁移原因**：依赖 `spring-cloud-starter-openfeign`（`FeignErrorDecoderFactory`），属于 Spring Cloud 生态组件，非通用 Web 基础设施。强行引入会污染 `ddd4j-web-webmvc` / `ddd4j-spring` 的依赖树。
+**未迁移原因**：依赖 `spring-cloud-starter-openfeign`（`FeignErrorDecoderFactory`），属于 Spring Cloud 生态组件，非通用 Web
+基础设施。强行引入会污染 `ddd4j-web-webmvc` / `ddd4j-spring` 的依赖树。
 
 **业务项目自行引入方式**：
 
@@ -68,6 +69,8 @@ public class GlobalFeignErrorAdvice implements FeignErrorDecoderFactory {
 
 **未迁移原因**：旧版使用 ThreadLocal 管理裸 `Jedis` 连接（无连接池、易泄漏），且硬编码 `SpringContext.getEnv()` 读取配置，设计已过时。
 
-**替代方案**：新 ddd4j 提供 `ddd4j-kit/cache/Cache` SPI 抽象（`CaffeineCache` / `GuavaCache` / `HutoolCache` 实现）。Redis 场景建议：
+**替代方案**：新 ddd4j 提供 `ddd4j-kit/cache/Cache` SPI 抽象（`CaffeineCache` / `GuavaCache` / `HutoolCache` 实现）。Redis
+场景建议：
+
 - Spring 项目：直接使用 Spring Data Redis 的 `RedisTemplate`；
 - 自定义实现：实现 `io.ddd4j.kit.cache.Cache` 接口提供 `RedisCache`。

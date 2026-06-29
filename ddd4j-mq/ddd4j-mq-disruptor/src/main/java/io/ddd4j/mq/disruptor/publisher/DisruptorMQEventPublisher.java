@@ -1,10 +1,10 @@
 package io.ddd4j.mq.disruptor.publisher;
 
-import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import java.util.Objects;
 
 /**
  * 基于 LMAX Disruptor RingBuffer 的本地事件发布实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

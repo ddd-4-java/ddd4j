@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 
 /**
  * 规则更新事件
- * 
+ *
  * <p>领域事件：当规则被更新时发布此事件。
  * 用于通知其他模块规则已更新，可以触发缓存更新、日志记录等操作。
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
@@ -30,10 +30,10 @@ public class RuleUpdatedEvent implements Serializable {
 
     /**
      * 构造函数
-     * 
-     * @param rule 规则定义，不能为null
+     *
+     * @param rule              规则定义，不能为null
      * @param expressionChanged 表达式是否改变
-     * @param enabledChanged 启用状态是否改变
+     * @param enabledChanged    启用状态是否改变
      */
     public RuleUpdatedEvent(RuleDefinition rule, boolean expressionChanged, boolean enabledChanged) {
         this.ruleId = rule.getRuleId();
@@ -47,13 +47,13 @@ public class RuleUpdatedEvent implements Serializable {
 
     /**
      * 构造函数
-     * 
-     * @param ruleId 规则ID，不能为null
-     * @param ruleCode 规则编码，不能为null
-     * @param ruleName 规则名称
-     * @param ruleType 规则类型
+     *
+     * @param ruleId            规则ID，不能为null
+     * @param ruleCode          规则编码，不能为null
+     * @param ruleName          规则名称
+     * @param ruleType          规则类型
      * @param expressionChanged 表达式是否改变
-     * @param enabledChanged 启用状态是否改变
+     * @param enabledChanged    启用状态是否改变
      */
     public RuleUpdatedEvent(RuleId ruleId, String ruleCode, String ruleName, String ruleType,
                             boolean expressionChanged, boolean enabledChanged) {

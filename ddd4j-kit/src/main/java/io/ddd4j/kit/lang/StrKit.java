@@ -11,17 +11,17 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class StrKit extends StrUtil {
 
-	/**
-	 * 判断字符串是否非空（与 isNotBlank 语义一致，兼容历史调用）
-	 */
-	public static boolean setIsNotBlank(CharSequence str) {
-		return isNotBlank(str);
-	}
+    /**
+     * 判断字符串是否非空（与 isNotBlank 语义一致，兼容历史调用）
+     */
+    public static boolean setIsNotBlank(CharSequence str) {
+        return isNotBlank(str);
+    }
 
-	/**
-	 * 判断字符串是否为空（与 isBlank 语义一致，兼容历史调用）
-	 */
-	public static boolean setIsBlank(CharSequence str) {
-		return isBlank(str);
-	}
+    /**
+     * 判断字符串是否为空（与 isBlank 语义一致，兼容历史调用）
+     */
+    public static boolean setIsBlank(CharSequence str) {
+        return isBlank(str);
+    }
 }

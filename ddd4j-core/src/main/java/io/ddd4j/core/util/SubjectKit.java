@@ -1,12 +1,7 @@
 package io.ddd4j.core.util;
 
 
-import io.ddd4j.core.subject.AuthPrincipal;
-import io.ddd4j.core.subject.AuthRequest;
-import io.ddd4j.core.subject.Subject;
-import io.ddd4j.core.subject.SubjectDataProvider;
-import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.core.subject.SubjectStrategy;
+import io.ddd4j.core.subject.*;
 
 /**
  * 鉴权静态门面 + 全局注册中心（对齐 Sa-Token 的 {@code StpUtil} + {@code SaManager}）。
@@ -25,17 +20,21 @@ import io.ddd4j.core.subject.SubjectStrategy;
  */
 public final class SubjectKit {
 
+    /**
+     * Subject 工厂（volatile + 双重检查锁，对齐 SaManager）
+     */
+    public static volatile SubjectProvider subjectProvider;
+    /**
+     * 权限数据源（对齐 SaManager.stpInterface）
+     */
+    public static volatile SubjectDataProvider dataProvider;
+    /**
+     * 核心行为策略集（对齐 SaStrategy）
+     */
+    public static volatile SubjectStrategy strategy;
+
     private SubjectKit() {
     }
-
-    /** Subject 工厂（volatile + 双重检查锁，对齐 SaManager） */
-    public static volatile SubjectProvider subjectProvider;
-
-    /** 权限数据源（对齐 SaManager.stpInterface） */
-    public static volatile SubjectDataProvider dataProvider;
-
-    /** 核心行为策略集（对齐 SaStrategy） */
-    public static volatile SubjectStrategy strategy;
 
     /**
      * 注册 Subject 工厂（由框架适配层调用，如 Spring 桥接的 SubjectRegistrar）。
@@ -44,24 +43,6 @@ public final class SubjectKit {
      */
     public static void register(SubjectProvider provider) {
         subjectProvider = provider;
-    }
-
-    /**
-     * 注册权限数据源（业务调用，对齐 Sa-Token {@code SaManager.setStpInterface}）。
-     *
-     * @param provider 权限/角色数据源实现
-     */
-    public static void setDataProvider(SubjectDataProvider provider) {
-        dataProvider = provider;
-    }
-
-    /**
-     * 注册策略集。
-     *
-     * @param strategy 策略实现
-     */
-    public static void setStrategy(SubjectStrategy strategy) {
-        SubjectKit.strategy = strategy;
     }
 
     /**
@@ -75,7 +56,7 @@ public final class SubjectKit {
             synchronized (SubjectKit.class) {
                 if (subjectProvider == null) {
                     throw new IllegalStateException(
-                        "SubjectProvider not registered. Call SubjectKit.register() or use framework adapter.");
+                            "SubjectProvider not registered. Call SubjectKit.register() or use framework adapter.");
                 }
             }
         }
@@ -110,6 +91,15 @@ public final class SubjectKit {
     }
 
     /**
+     * 注册权限数据源（业务调用，对齐 Sa-Token {@code SaManager.setStpInterface}）。
+     *
+     * @param provider 权限/角色数据源实现
+     */
+    public static void setDataProvider(SubjectDataProvider provider) {
+        dataProvider = provider;
+    }
+
+    /**
      * 获取策略集（默认单例兜底）。
      */
     public static SubjectStrategy getStrategy() {
@@ -121,6 +111,15 @@ public final class SubjectKit {
             }
         }
         return strategy;
+    }
+
+    /**
+     * 注册策略集。
+     *
+     * @param strategy 策略实现
+     */
+    public static void setStrategy(SubjectStrategy strategy) {
+        SubjectKit.strategy = strategy;
     }
 
     // ==================== 身份与会话读取（便捷门面）====================

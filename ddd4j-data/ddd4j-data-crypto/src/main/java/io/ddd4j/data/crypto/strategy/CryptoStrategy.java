@@ -6,6 +6,7 @@ import io.ddd4j.data.crypto.domain.enums.SymmetricAlgorithmType;
 
 /**
  * 请求内容的传输机密性和完整性所需的加解密策略
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface CryptoStrategy {

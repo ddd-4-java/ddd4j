@@ -1,10 +1,5 @@
 package io.ddd4j.mq.tdmq.spi;
 
-import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgment;
-import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgmentFactory;
-import io.ddd4j.mq.tdmq.client.TdmqClient;
-import io.ddd4j.mq.tdmq.consumer.TdmqMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.tdmq.publisher.TdmqMQEventPublisher;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
@@ -13,10 +8,16 @@ import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgment;
+import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgmentFactory;
+import io.ddd4j.mq.tdmq.client.TdmqClient;
+import io.ddd4j.mq.tdmq.consumer.TdmqMQConsumerEndpointRegistrar;
+import io.ddd4j.mq.tdmq.publisher.TdmqMQEventPublisher;
 import lombok.RequiredArgsConstructor;
 
 /**
  * 腾讯云 TDMQ Broker 适配器（占位 SPI  wiring，待 SDK 接入）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor

@@ -1,21 +1,22 @@
 # ddd4j 2.0.x 全栈架构审查报告（架构师视角）
 
-> **审查对象**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`（v2.0.x，17+ 子模块，737 文件 / 12,356 符号 / 23,473 边 codegraph 索引）
+> **审查对象**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`（v2.0.x，17+ 子模块，737 文件 / 12,356
+> 符号 / 23,473 边 codegraph 索引）
 > **对标项目**：
 > - `workspace-bmgw/codeup/ddd4j`（v1.x，com.dddframework，Spring 强绑定，Java 8）
 > - `workspace-bmgw/codeup/cloud-agents`（基于 v1.x 的智能体服务集群）
-> **审查目标**：确认 v2.x 能否完全替代 v1.x，并指导 v1.x → v2.x 的迁移适配
+    > **审查目标**：确认 v2.x 能否完全替代 v1.x，并指导 v1.x → v2.x 的迁移适配
 
 ---
 
 ## 0. 摘要：四象限定位
 
-| 象限 | 模块 | 状态 | 优先级 |
-|------|------|------|-------|
-| **🟢 扩展模块** | auth / cache / data / mq / kit / dependencies | 已达人类架构师水准 | 保持 |
-| **🟡 核心模块** | annotation / core / web / bom / parent | **架构问题集中在这一层** | 重点 |
-| **🟠 集成模块** | ddd / extensions / guice / quarkus / spring | 三框架覆盖完整但深度不足 | 完善 |
-| **🔴 框架模块** | ddd4j-boot / ddd4j-javalin / ddd4j-quarkus / ddd4j-cloud | 集成功能欠缺 | **P0 重点** |
+| 象限          | 模块                                                       | 状态             | 优先级       |
+|-------------|----------------------------------------------------------|----------------|-----------|
+| **🟢 扩展模块** | auth / cache / data / mq / kit / dependencies            | 已达人类架构师水准      | 保持        |
+| **🟡 核心模块** | annotation / core / web / bom / parent                   | **架构问题集中在这一层** | 重点        |
+| **🟠 集成模块** | ddd / extensions / guice / quarkus / spring              | 三框架覆盖完整但深度不足   | 完善        |
+| **🔴 框架模块** | ddd4j-boot / ddd4j-javalin / ddd4j-quarkus / ddd4j-cloud | 集成功能欠缺         | **P0 重点** |
 
 ---
 
@@ -23,63 +24,64 @@
 
 ### 1.1 整体能力对照
 
-| 维度 | v1.x（`com.dddframework`） | v2.x（`io.ddd4j`） | 替代可行性 |
-|------|------------------------|---------------------|----------|
-| **Java 版本** | Java 8 | Java 17 + Records + Sealed | ✅ 完全替代 |
-| **Spring 绑定** | Spring 2.7.18 强绑定 | 框架无关 + 三框架 SPI | ✅ 优于 v1.x |
-| **聚合根模型** | `Model`（充血模型，耦合 Repository） | `Model` + `DddAggregateRoot`（双轨，纯净 DDD 来自 fuinorg） | ✅ 完全替代 |
-| **仓储 SPI** | `BaseRepository`（带 MyBatis 注入） | `BaseRepository` + `Repository`（纯 Java SPI） | ✅ 完全替代 |
-| **MQ 抽象** | 4 种（Kafka/RabbitMQ/RocketMQ/Redis） | 12 种（增加 ActiveMQ/MQTT/Pulsar/NATS/Disruptor/ONS/TDMQ/SQS/MicaMQTT） | ✅ 优于 v1.x |
-| **Web 控制器** | `AggregateController` 动态路由 | `BaseAggregateController` + `BaseClientAggregateController` 模板方法 + `AggregateController` 动态路由（双模式） | ✅ 完全替代 |
-| **认证** | 仅 BaseAuth 拦截器 | Sa-Token + Spring Security + Shiro + OAuth2 Resource Server | ✅ 优于 v1.x |
-| **数据权限** | 无 | `ddl4j-data-datascope`（基于 MyBatis 拦截器） | ✅ 优于 v1.x |
-| **加密** | 无 | `ddd4j-data-crypto` | ✅ 优于 v1.x |
-| **DDD 架构守护** | 无 | `CleanDDDLayerRules` + `ColaDDDLayerRules`（ArchUnit 注解驱动） | ✅ 优于 v1.x |
-| **CQRS 读侧** | 无 | `DddCommandExecutor` + `JpaView` + `ViewManager`（Spring/Quarkus 实现） | ✅ 优于 v1.x |
-| **事件溯源** | 无 | `DddAggregateRoot` + `DddEventStoreRepository`（基于 fuinorg esc-api） | ✅ 优于 v1.x |
-| **多容器支持** | 仅 Spring | Spring + Quarkus + Guice + Javalin | ✅ 优于 v1.x |
-| **缓存** | RedisKit | `ddd4j-cache`（Caffeine + Redis 多级） | ✅ 优于 v1.x |
-| **扩展点** | 单一 Hutool | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation | ✅ 优于 v1.x |
-| **示例工程** | `ddd-demo` | `ddd4j-samples` × 3（auth-satoken/auth-security/auth-shiro） | ⚠️ 数量少 |
-| **Quarkus 集成** | 无 | 完整模块结构 + 适配器 | ✅ 优于 v1.x |
-| **Javalin 集成** | 无 | 完整模块结构 + 适配器 | ✅ 优于 v1.x |
-| **Cloud 生态** | 无 | 待定（仅有 ddd4j-boot 一站式） | ❌ 缺口 |
+| 维度             | v1.x（`com.dddframework`）           | v2.x（`io.ddd4j`）                                                                                   | 替代可行性     |
+|----------------|------------------------------------|----------------------------------------------------------------------------------------------------|-----------|
+| **Java 版本**    | Java 8                             | Java 17 + Records + Sealed                                                                         | ✅ 完全替代    |
+| **Spring 绑定**  | Spring 2.7.18 强绑定                  | 框架无关 + 三框架 SPI                                                                                     | ✅ 优于 v1.x |
+| **聚合根模型**      | `Model`（充血模型，耦合 Repository）        | `Model` + `DddAggregateRoot`（双轨，纯净 DDD 来自 fuinorg）                                                 | ✅ 完全替代    |
+| **仓储 SPI**     | `BaseRepository`（带 MyBatis 注入）     | `BaseRepository` + `Repository`（纯 Java SPI）                                                        | ✅ 完全替代    |
+| **MQ 抽象**      | 4 种（Kafka/RabbitMQ/RocketMQ/Redis） | 12 种（增加 ActiveMQ/MQTT/Pulsar/NATS/Disruptor/ONS/TDMQ/SQS/MicaMQTT）                                 | ✅ 优于 v1.x |
+| **Web 控制器**    | `AggregateController` 动态路由         | `BaseAggregateController` + `BaseClientAggregateController` 模板方法 + `AggregateController` 动态路由（双模式） | ✅ 完全替代    |
+| **认证**         | 仅 BaseAuth 拦截器                     | Sa-Token + Spring Security + Shiro + OAuth2 Resource Server                                        | ✅ 优于 v1.x |
+| **数据权限**       | 无                                  | `ddl4j-data-datascope`（基于 MyBatis 拦截器）                                                             | ✅ 优于 v1.x |
+| **加密**         | 无                                  | `ddd4j-data-crypto`                                                                                | ✅ 优于 v1.x |
+| **DDD 架构守护**   | 无                                  | `CleanDDDLayerRules` + `ColaDDDLayerRules`（ArchUnit 注解驱动）                                          | ✅ 优于 v1.x |
+| **CQRS 读侧**    | 无                                  | `DddCommandExecutor` + `JpaView` + `ViewManager`（Spring/Quarkus 实现）                                | ✅ 优于 v1.x |
+| **事件溯源**       | 无                                  | `DddAggregateRoot` + `DddEventStoreRepository`（基于 fuinorg esc-api）                                 | ✅ 优于 v1.x |
+| **多容器支持**      | 仅 Spring                           | Spring + Quarkus + Guice + Javalin                                                                 | ✅ 优于 v1.x |
+| **缓存**         | RedisKit                           | `ddd4j-cache`（Caffeine + Redis 多级）                                                                 | ✅ 优于 v1.x |
+| **扩展点**        | 单一 Hutool                          | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                         | ✅ 优于 v1.x |
+| **示例工程**       | `ddd-demo`                         | `ddd4j-samples` × 3（auth-satoken/auth-security/auth-shiro）                                         | ⚠️ 数量少    |
+| **Quarkus 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
+| **Javalin 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
+| **Cloud 生态**   | 无                                  | 待定（仅有 ddd4j-boot 一站式）                                                                              | ❌ 缺口      |
 
 ### 1.2 关键 API 兼容性
 
-| v1.x 类 | v2.x 对应类 | 兼容性 |
-|---------|------------|-------|
-| `com.dddframework.core.contract.Model` | `io.ddd4j.core.contract.Model` | 🟡 需修改包名 |
-| `com.dddframework.core.contract.Query` | `io.ddd4j.core.contract.Query` | 🟡 需修改包名 |
-| `com.dddframework.core.contract.BaseRepository` | `io.ddd4j.core.contract.BaseRepository` | 🟡 需修改包名 |
-| `com.dddframework.core.contract.R` | `io.ddd4j.core.contract.R` | 🟡 需修改包名 |
-| `com.dddframework.core.contract.MQEvent` | `io.ddd4j.core.contract.MQEvent` | 🟡 需修改包名 |
-| `com.dddframework.core.contract.DomainEvent` | `io.ddd4j.core.contract.DomainEvent` | 🟡 需修改包名 |
-| `com.dddframework.core.context.ThreadContext` | `io.ddd4j.core.context.ThreadContext` | 🟡 需修改包名 |
-| `com.dddframework.core.context.SpringContext` | `io.ddd4j.spring.context.SpringContext` | 🟡 路径变化 |
-| `com.dddframework.web.core.GlobalRestExceptionAdvice` | `io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice` | 🟡 路径变化 |
-| `com.dddframework.web.api.AggregateController` | `io.ddd4j.web.webmvc.api.AggregateController` | 🟡 路径变化 |
-| `com.dddframework.web.controller.BaseAggregateController` | `io.ddd4j.web.webmvc.controller.BaseAggregateController` | 🟡 路径变化 |
-| `com.dddframework.web.auth.annotation.BaseAuth` | `io.ddd4j.annotation.auth.BaseAuth` | 🟡 路径变化 |
-| `com.dddframework.web.auth.interceptor.BaseAuthWebInterceptor` | `io.ddd4j.web.webmvc.auth.interceptor.BaseAuthWebInterceptor` | 🟡 路径变化 |
+| v1.x 类                                                         | v2.x 对应类                                                      | 兼容性      |
+|----------------------------------------------------------------|---------------------------------------------------------------|----------|
+| `com.dddframework.core.contract.Model`                         | `io.ddd4j.core.contract.Model`                                | 🟡 需修改包名 |
+| `com.dddframework.core.contract.Query`                         | `io.ddd4j.core.contract.Query`                                | 🟡 需修改包名 |
+| `com.dddframework.core.contract.BaseRepository`                | `io.ddd4j.core.contract.BaseRepository`                       | 🟡 需修改包名 |
+| `com.dddframework.core.contract.R`                             | `io.ddd4j.core.contract.R`                                    | 🟡 需修改包名 |
+| `com.dddframework.core.contract.MQEvent`                       | `io.ddd4j.core.contract.MQEvent`                              | 🟡 需修改包名 |
+| `com.dddframework.core.contract.DomainEvent`                   | `io.ddd4j.core.contract.DomainEvent`                          | 🟡 需修改包名 |
+| `com.dddframework.core.context.ThreadContext`                  | `io.ddd4j.core.context.ThreadContext`                         | 🟡 需修改包名 |
+| `com.dddframework.core.context.SpringContext`                  | `io.ddd4j.spring.context.SpringContext`                       | 🟡 路径变化  |
+| `com.dddframework.web.core.GlobalRestExceptionAdvice`          | `io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice`          | 🟡 路径变化  |
+| `com.dddframework.web.api.AggregateController`                 | `io.ddd4j.web.webmvc.api.AggregateController`                 | 🟡 路径变化  |
+| `com.dddframework.web.controller.BaseAggregateController`      | `io.ddd4j.web.webmvc.controller.BaseAggregateController`      | 🟡 路径变化  |
+| `com.dddframework.web.auth.annotation.BaseAuth`                | `io.ddd4j.annotation.auth.BaseAuth`                           | 🟡 路径变化  |
+| `com.dddframework.web.auth.interceptor.BaseAuthWebInterceptor` | `io.ddd4j.web.webmvc.auth.interceptor.BaseAuthWebInterceptor` | 🟡 路径变化  |
 
-**结论**：v2.x 在**功能上**完全替代 v1.x，但**包名**和**路径**全部变化（`com.dddframework` → `io.ddd4j`），需要批量改名 + 重新 import。
+**结论**：v2.x 在**功能上**完全替代 v1.x，但**包名**和**路径**全部变化（`com.dddframework` → `io.ddd4j`），需要批量改名 + 重新
+import。
 
 ### 1.3 替代路径建议
 
 **不要**暴力替换 v1.x 的 classpath，建议采用**渐进式迁移**：
 
 1. **阶段一：接口对齐**（1-2 周）
-   - 在 v2.x 中新增 `io.ddd4j.legacy.v1` 兼容包，类直接继承 v1.x 类并加 `@Deprecated`
-   - 或者用 `git mv + sed` 批量改 `com.dddframework` → `io.ddd4j`
+    - 在 v2.x 中新增 `io.ddd4j.legacy.v1` 兼容包，类直接继承 v1.x 类并加 `@Deprecated`
+    - 或者用 `git mv + sed` 批量改 `com.dddframework` → `io.ddd4j`
 
 2. **阶段二：双轨运行**（2-4 周）
-   - v1.x 与 v2.x 共存于 classpath
-   - 新模块用 v2.x，老模块按业务边界逐步切换
+    - v1.x 与 v2.x 共存于 classpath
+    - 新模块用 v2.x，老模块按业务边界逐步切换
 
 3. **阶段三：清除 v1.x**（4-6 周）
-   - 所有业务模块切换完成，删除 v1.x 依赖
-   - 启用 v2.x 的新特性（DDD 架构守护、CQRS 读侧、12 种 MQ 切换）
+    - 所有业务模块切换完成，删除 v1.x 依赖
+    - 启用 v2.x 的新特性（DDD 架构守护、CQRS 读侧、12 种 MQ 切换）
 
 ---
 
@@ -87,14 +89,14 @@
 
 ### 2.1 评估结论
 
-| 模块 | 子模块数 | 状态 | 评估 |
-|------|---------|------|------|
-| `ddd4j-auth` | 5（core/satoken/security/shiro/spring） | 🟢 优秀 | 多种认证方案并存，按需选型，SPI 抽象清晰 |
-| `ddd4j-cache` | 1 | 🟢 优秀 | Caffeine + Redis 多级缓存策略完整 |
-| `ddd4j-data` | 6（crypto/datascope/external/logs/mybatis/spring） | 🟢 优秀 | 数据层完整抽象，MyBatis 插件化可扩展 |
-| `ddd4j-mq` | 13（core + 12 种 MQ） | 🟢 优秀 | **核心亮点**，MQBrokerAdapter SPI 让 MQ 切换零业务代码改动 |
-| `ddd4j-kit` | 1 | 🟢 优秀 | Hutool 继承式增强，不重复造轮子 |
-| `ddd4j-dependencies` | 1 | 🟢 优秀 | 第三方版本集中管理，已锁定 Spring 6.x |
+| 模块                   | 子模块数                                             | 状态    | 评估                                          |
+|----------------------|--------------------------------------------------|-------|---------------------------------------------|
+| `ddd4j-auth`         | 5（core/satoken/security/shiro/spring）            | 🟢 优秀 | 多种认证方案并存，按需选型，SPI 抽象清晰                      |
+| `ddd4j-cache`        | 1                                                | 🟢 优秀 | Caffeine + Redis 多级缓存策略完整                   |
+| `ddd4j-data`         | 6（crypto/datascope/external/logs/mybatis/spring） | 🟢 优秀 | 数据层完整抽象，MyBatis 插件化可扩展                      |
+| `ddd4j-mq`           | 13（core + 12 种 MQ）                               | 🟢 优秀 | **核心亮点**，MQBrokerAdapter SPI 让 MQ 切换零业务代码改动 |
+| `ddd4j-kit`          | 1                                                | 🟢 优秀 | Hutool 继承式增强，不重复造轮子                         |
+| `ddd4j-dependencies` | 1                                                | 🟢 优秀 | 第三方版本集中管理，已锁定 Spring 6.x                    |
 
 ### 2.2 人工调优点提炼
 
@@ -118,6 +120,7 @@ MQBrokerAdapter SPI（ddd4j-mq-core）
 ```
 
 **`ddd4j-auth` 的多方案 SPI**：
+
 - 业务侧只需切换 starter，无需修改业务代码
 - `sa-token` 国产首选 + `spring-security` 国际标准 + `shiro` 老项目兼容 + `oauth2` 微服务
 
@@ -133,13 +136,13 @@ MQBrokerAdapter SPI（ddd4j-mq-core）
 
 ### 3.1 整体评估
 
-| 模块 | 当前状态 | 主要问题 |
-|------|---------|---------|
+| 模块                 | 当前状态  | 主要问题                                                                 |
+|--------------------|-------|----------------------------------------------------------------------|
 | `ddd4j-annotation` | 🟠 中等 | 5 个 DDD 注解仍 `extends @Service/@Repository/@Component`，**强耦合 Spring** |
-| `ddd4j-core` | 🟠 中等 | MyBatis-Plus 污染 7 个文件；Servlet 污染 1 个；依赖过重 |
-| `ddd4j-web` | 🟢 良好 | 双栈支持完整（WebMVC + WebFlux），但缺 Quarkus/Javalin 实现 |
-| `ddd4j-bom` | 🟢 优秀 | 版本集中管理清晰 |
-| `ddd4j-parent` | 🟢 优秀 | Maven 父 POM 配置完整 |
+| `ddd4j-core`       | 🟠 中等 | MyBatis-Plus 污染 7 个文件；Servlet 污染 1 个；依赖过重                            |
+| `ddd4j-web`        | 🟢 良好 | 双栈支持完整（WebMVC + WebFlux），但缺 Quarkus/Javalin 实现                       |
+| `ddd4j-bom`        | 🟢 优秀 | 版本集中管理清晰                                                             |
+| `ddd4j-parent`     | 🟢 优秀 | Maven 父 POM 配置完整                                                     |
 
 ### 3.2 关键问题：框架耦合泄漏
 
@@ -167,30 +170,30 @@ public @interface ApplicationService { }
 
 **问题 2：`ddd4j-core` 内部 MyBatis-Plus 污染**
 
-| 文件 | 耦合内容 |
-|------|---------|
-| `entity/BaseEntity.java` | `@TableField`, `@TableLogic`, `Model<T>` |
-| `entity/PaginationEntity.java` | `@TableField`, `OrderItem`, `Model<T>` |
-| `service/IBaseService.java` | `IService<T>`, `Page`, `Model<T>` |
-| `web/Result.java` | `Page` (MyBatis-Plus) |
-| `dto/AbstractOrderedPaginationDTO.java` | `OrderItem` |
-| `param/BasePaginationQueryParam.java` | `OrderItem` |
-| `exception/BaseExceptionHandler.java` | `jakarta.servlet` |
+| 文件                                      | 耦合内容                                     |
+|-----------------------------------------|------------------------------------------|
+| `entity/BaseEntity.java`                | `@TableField`, `@TableLogic`, `Model<T>` |
+| `entity/PaginationEntity.java`          | `@TableField`, `OrderItem`, `Model<T>`   |
+| `service/IBaseService.java`             | `IService<T>`, `Page`, `Model<T>`        |
+| `web/Result.java`                       | `Page` (MyBatis-Plus)                    |
+| `dto/AbstractOrderedPaginationDTO.java` | `OrderItem`                              |
+| `param/BasePaginationQueryParam.java`   | `OrderItem`                              |
+| `exception/BaseExceptionHandler.java`   | `jakarta.servlet`                        |
 
 **问题 3：`ddd4j-core/pom.xml` 依赖过重**
 
-| 依赖 | 必要性 | 处理 |
-|------|--------|------|
-| `mybatis-plus` | ❌ 污染源 | 移到 `ddd4j-data-mybatis` |
-| `jakarta.servlet-api` | ❌ 污染源 | 移到 `ddd4j-web-core` |
-| `hibernate-validator` | ❌ 非核心 | 移除 |
-| `hutool-all` | ⚠️ 过重 | 用 hutool-core 替换 |
-| `bouncycastle` | ❌ 加密无关 | 移除 |
-| `fastjson2` | ❌ Jackson 已在 | 移除 |
-| `dozer` | ❌ 对象映射 | 移除 |
-| `swagger-annotations` | ❌ API 文档 | 移除 |
-| `aspectj` | ❌ AOP | 移除 |
-| `caffeine` | ❌ 缓存 | 移除（已在 ddd4j-cache） |
+| 依赖                    | 必要性          | 处理                      |
+|-----------------------|--------------|-------------------------|
+| `mybatis-plus`        | ❌ 污染源        | 移到 `ddd4j-data-mybatis` |
+| `jakarta.servlet-api` | ❌ 污染源        | 移到 `ddd4j-web-core`     |
+| `hibernate-validator` | ❌ 非核心        | 移除                      |
+| `hutool-all`          | ⚠️ 过重        | 用 hutool-core 替换        |
+| `bouncycastle`        | ❌ 加密无关       | 移除                      |
+| `fastjson2`           | ❌ Jackson 已在 | 移除                      |
+| `dozer`               | ❌ 对象映射       | 移除                      |
+| `swagger-annotations` | ❌ API 文档     | 移除                      |
+| `aspectj`             | ❌ AOP        | 移除                      |
+| `caffeine`            | ❌ 缓存         | 移除（已在 ddd4j-cache）      |
 
 ### 3.3 重构建议
 
@@ -225,13 +228,13 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 3.4 优先级
 
-| 优先级 | 任务 | 影响面 |
-|--------|------|-------|
-| **P0** | `ddd4j-annotation` 解耦 Spring | 阻塞 Javalin/Quarkus 落地 |
-| **P0** | 7 个 MyBatis-Plus 文件迁出 core | 阻塞跨框架 |
-| **P1** | `ddd4j-core/pom.xml` 瘦身 | 减少传递依赖 |
-| **P1** | 拆分 `ddd4j-core-api` 纯 Java 模块 | 明确架构边界 |
-| **P2** | 新增 ArchUnit 自检规则 | 防止再次污染 |
+| 优先级    | 任务                            | 影响面                   |
+|--------|-------------------------------|-----------------------|
+| **P0** | `ddd4j-annotation` 解耦 Spring  | 阻塞 Javalin/Quarkus 落地 |
+| **P0** | 7 个 MyBatis-Plus 文件迁出 core    | 阻塞跨框架                 |
+| **P1** | `ddd4j-core/pom.xml` 瘦身       | 减少传递依赖                |
+| **P1** | 拆分 `ddd4j-core-api` 纯 Java 模块 | 明确架构边界                |
+| **P2** | 新增 ArchUnit 自检规则              | 防止再次污染                |
 
 ---
 
@@ -239,17 +242,18 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 4.1 整体评估
 
-| 模块 | 子模块 | 状态 | 评估 |
-|------|--------|------|------|
-| `ddd4j-ddd` | clean / cola | 🟢 良好 | ArchUnit 注解驱动规则，业务项目可继承 |
-| `ddd4j-extensions` | akka/excel/jackson/license/monitor/pf4j/qlexpress/validation | 🟢 优秀 | 8 个扩展点，可按需引入 |
-| `ddd4j-guice` | 1 | 🟠 中等 | Guice Module + EventBus 实现，但缺 Web 层 |
-| `ddd4j-quarkus` | 1（仅核心） | 🟠 中等 | QuarkusJpaViewManager 实现完整，但缺 Web/MQ/Auth/Extension |
-| `ddd4j-spring` | 1 | 🟡 中等 | Spring 适配器实现最完整，但与 ddd4j-web-webmvc 有部分重叠 |
+| 模块                 | 子模块                                                          | 状态    | 评估                                                  |
+|--------------------|--------------------------------------------------------------|-------|-----------------------------------------------------|
+| `ddd4j-ddd`        | clean / cola                                                 | 🟢 良好 | ArchUnit 注解驱动规则，业务项目可继承                             |
+| `ddd4j-extensions` | akka/excel/jackson/license/monitor/pf4j/qlexpress/validation | 🟢 优秀 | 8 个扩展点，可按需引入                                        |
+| `ddd4j-guice`      | 1                                                            | 🟠 中等 | Guice Module + EventBus 实现，但缺 Web 层                 |
+| `ddd4j-quarkus`    | 1（仅核心）                                                       | 🟠 中等 | QuarkusJpaViewManager 实现完整，但缺 Web/MQ/Auth/Extension |
+| `ddd4j-spring`     | 1                                                            | 🟡 中等 | Spring 适配器实现最完整，但与 ddd4j-web-webmvc 有部分重叠           |
 
 ### 4.2 问题：集成模块"广而不深"
 
 **ddd4j-quarkus 仅有 1 个子模块**（核心），对比 ddd4j-boot 应该有：
+
 - ddd4j-quarkus-core ✓
 - ddd4j-quarkus-web ✗（缺失）
 - ddd4j-quarkus-mq ✗（缺失）
@@ -261,7 +265,8 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 **ddd4j-javalin 缺独立的注解/核心模块**（直接复用 ddd4j-annotation + ddd4j-core，但 Javalin DI 是 Guice，需要 ddd4j-guice）。
 
-**ddd4j-guice 仅有 5 个核心类**（Ddd4jGuiceModule、GuiceContext、GuiceDomainEventPublisher、BaseHandler、SubjectProvider），不足以支撑 Javalin 微服务。
+**ddd4j-guice 仅有 5 个核心类**
+（Ddd4jGuiceModule、GuiceContext、GuiceDomainEventPublisher、BaseHandler、SubjectProvider），不足以支撑 Javalin 微服务。
 
 ### 4.3 改进建议
 
@@ -275,16 +280,17 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 5.1 当前矩阵
 
-| 集成项目 | 模块数 | 成熟度 | 主要差距 |
-|---------|--------|--------|---------|
-| `ddd4j-boot` (Spring Boot 3.5.x) | ~20+ | 🟢 85% | 模块齐全，缺 Cloud 生态（Gateway/Config/Stream） |
-| `ddd4j-quarkus` | 13 | 🟡 60% | 缺独立 web/mq/auth 子模块（仅 ddd4j-quarkus-core 成熟） |
-| `ddd4j-javalin` | 5 | 🔴 30% | **最薄弱**，缺核心的 web/mq 适配 |
-| `ddd4j-cloud` | 0 | ❌ 0% | **完全缺失** |
+| 集成项目                             | 模块数  | 成熟度    | 主要差距                                         |
+|----------------------------------|------|--------|----------------------------------------------|
+| `ddd4j-boot` (Spring Boot 3.5.x) | ~20+ | 🟢 85% | 模块齐全，缺 Cloud 生态（Gateway/Config/Stream）       |
+| `ddd4j-quarkus`                  | 13   | 🟡 60% | 缺独立 web/mq/auth 子模块（仅 ddd4j-quarkus-core 成熟） |
+| `ddd4j-javalin`                  | 5    | 🔴 30% | **最薄弱**，缺核心的 web/mq 适配                       |
+| `ddd4j-cloud`                    | 0    | ❌ 0%   | **完全缺失**                                     |
 
 ### 5.2 ddd4j-boot（最成熟）
 
 **已实现**：
+
 - ddd4j-boot-bom / dependencies / parent / core / data / cache / auth
 - ddd4j-boot-data-{crypto,datascope,external,logs,mybatis,spring}
 - ddd4j-boot-auth-{satoken,security,shiro}
@@ -292,6 +298,7 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 - ddd4j-boot-samples × 16
 
 **待补齐**：
+
 - ❌ `ddd4j-boot-cloud-gateway`（Spring Cloud Gateway 封装）
 - ❌ `ddd4j-boot-cloud-config`（Nacos/Apollo 配置中心集成）
 - ❌ `ddd4j-boot-cloud-stream`（消息流）
@@ -302,20 +309,24 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 ### 5.3 ddd4j-quarkus
 
 **已有模块**：
+
 - ddd4j-quarkus-bom / dependencies / parent / core
 - ddd4j-quarkus-annotation
 - ddd4j-quarkus-auth / cache / data / ddd / monitor / mq / web
 - ddd4j-quarkus-samples
 
-**评估**：**模块结构已存在但代码实现薄弱**。`ddd4j-quarkus-web` 缺少 RESTEasy 适配细节，`ddd4j-quarkus-mq` 缺少 KurrentDB/EventStore 集成。
+**评估**：**模块结构已存在但代码实现薄弱**。`ddd4j-quarkus-web` 缺少 RESTEasy 适配细节，`ddd4j-quarkus-mq` 缺少
+KurrentDB/EventStore 集成。
 
 ### 5.4 ddd4j-javalin
 
 **已有模块**：
+
 - ddd4j-javalin-bom / dependencies / parent
 - ddd4j-javalin-samples
 
-**评估**：**严重欠缺**。缺 `ddd4j-javalin-core` / `ddd4j-javalin-web` / `ddd4j-javalin-mq` / `ddd4j-javalin-auth`。当前仅做了 POM 架构，核心适配代码几乎空白。
+**评估**：**严重欠缺**。缺 `ddd4j-javalin-core` / `ddd4j-javalin-web` / `ddd4j-javalin-mq` / `ddd4j-javalin-auth`。当前仅做了
+POM 架构，核心适配代码几乎空白。
 
 ### 5.5 ddd4j-cloud
 
@@ -323,13 +334,13 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 5.6 优先级
 
-| 优先级 | 任务 | 业务影响 |
-|--------|------|----------|
-| **P0** | 补齐 `ddd4j-cloud` 微服务治理模块 | 阻塞 v1.x 大型项目替代 |
-| **P0** | 补齐 `ddd4j-javalin` 核心模块 | 阻塞 Javalin 用户 |
-| **P1** | 补齐 `ddd4j-quarkus-web/mq/auth` | 提升 Quarkus 集成度 |
+| 优先级    | 任务                                   | 业务影响               |
+|--------|--------------------------------------|--------------------|
+| **P0** | 补齐 `ddd4j-cloud` 微服务治理模块             | 阻塞 v1.x 大型项目替代     |
+| **P0** | 补齐 `ddd4j-javalin` 核心模块              | 阻塞 Javalin 用户      |
+| **P1** | 补齐 `ddd4j-quarkus-web/mq/auth`       | 提升 Quarkus 集成度     |
 | **P1** | `ddd4j-boot-cloud-*` Spring Cloud 集成 | 完善 Spring Cloud 生态 |
-| **P2** | ddd4j-boot-xxljob / ddd4j-boot-redis | 业务侧常用组件 |
+| **P2** | ddd4j-boot-xxljob / ddd4j-boot-redis | 业务侧常用组件            |
 
 ---
 
@@ -352,24 +363,25 @@ com.qushiyun（业务集团）
 ```
 
 **多模块结构特征**：
+
 - 业务模块 5 层（common / pay / aigc / agent / admin / server）
 - AIGC 模块细分 app-core / domain / adapter / app（COLA 风格）
 - server 下多个微服务（hermes / openclaw / opencode / aigc）
 
 ### 6.2 对 v1.x ddd4j 的实际使用点（10 个核心文件）
 
-| cloud-agents 文件 | 使用的 v1.x 能力 | v2.x 替代方案 |
-|-----------------|----------------|---------------|
-| `HermesInvokeMqEventConsumer.java` | `MQEventListener` 注解 + `MQEvent` | ✅ 直接替代（包名变化） |
-| `OpenClawInvokeMqEventConsumer.java` | 同上 | ✅ 直接替代 |
-| `AigcTextCallbackPersistCoordinator.java` | `ApplicationContext` + `DomainEvent` | ✅ 替代为 `SpringContext` |
-| `AigcCallbackMqProducer.java` | `MQEvent.publish()` | ✅ 直接替代 |
-| `AigcSubtask.java` | 充血模型（继承 `Model`） | ✅ 替代为 v2.x `Model` |
-| `AigcTask.java` | 同上 | ✅ 直接替代 |
-| `AgentInvokeMqEvent.java` | `MQEvent` | ✅ 直接替代 |
-| `AgentMqDefaults.java` | MQ 主题配置 | ✅ 替代为 `Ddd4jMQProperties` |
-| `AigcTaskProgressMqEvent.java` | `MQEvent` | ✅ 直接替代 |
-| `AigcSseApiController.java` | Spring MVC Controller | ✅ 替代为 `@RestController` + `BaseAggregateController` |
+| cloud-agents 文件                           | 使用的 v1.x 能力                          | v2.x 替代方案                                           |
+|-------------------------------------------|--------------------------------------|-----------------------------------------------------|
+| `HermesInvokeMqEventConsumer.java`        | `MQEventListener` 注解 + `MQEvent`     | ✅ 直接替代（包名变化）                                        |
+| `OpenClawInvokeMqEventConsumer.java`      | 同上                                   | ✅ 直接替代                                              |
+| `AigcTextCallbackPersistCoordinator.java` | `ApplicationContext` + `DomainEvent` | ✅ 替代为 `SpringContext`                               |
+| `AigcCallbackMqProducer.java`             | `MQEvent.publish()`                  | ✅ 直接替代                                              |
+| `AigcSubtask.java`                        | 充血模型（继承 `Model`）                     | ✅ 替代为 v2.x `Model`                                  |
+| `AigcTask.java`                           | 同上                                   | ✅ 直接替代                                              |
+| `AgentInvokeMqEvent.java`                 | `MQEvent`                            | ✅ 直接替代                                              |
+| `AgentMqDefaults.java`                    | MQ 主题配置                              | ✅ 替代为 `Ddd4jMQProperties`                           |
+| `AigcTaskProgressMqEvent.java`            | `MQEvent`                            | ✅ 直接替代                                              |
+| `AigcSseApiController.java`               | Spring MVC Controller                | ✅ 替代为 `@RestController` + `BaseAggregateController` |
 
 ### 6.3 迁移障碍点识别
 
@@ -377,9 +389,11 @@ com.qushiyun（业务集团）
 
 **问题**：cloud-agents 10 个核心文件全部引用 `com.dddframework`，v2.x 包名为 `io.ddd4j`。
 
-**影响面**：每个使用 ddd4j 的业务类都需要改 import + 完全限定名（`com.dddframework.core.contract.Model` → `io.ddd4j.core.contract.Model`）。
+**影响面**：每个使用 ddd4j 的业务类都需要改 import + 完全限定名（`com.dddframework.core.contract.Model` →
+`io.ddd4j.core.contract.Model`）。
 
 **v2.x 改进建议**：
+
 - 在 v2.x 中提供 `io.ddd4j.legacy.v1` 兼容包，**类直接继承 v1.x 类**
 - 或者用 `git mv` + `sed -i 's/com\.ddddframework/io.ddd4j/g'` 批量改
 
@@ -394,6 +408,7 @@ com.qushiyun（业务集团）
 **问题**：`AigcSubtask` 和 `AigcTask` 是充血模型（继承 v1.x `Model`），v2.x 的 `Model` 已经重构为充血模型但耦合度降低。
 
 **v2.x 改进建议**：
+
 - v2.x `Model` 已经实现充血模型（`save()` / `update()` / `saveOrUpdate()`）
 - 但 cloud-agents 的充血模型可能用到了一些 v1.x `Model` 的私有方法，需要审计
 
@@ -402,6 +417,7 @@ com.qushiyun（业务集团）
 **问题**：`@MQEventListener` 注解使用方式是否变化？
 
 **v2.x 现状**：
+
 - `ddd4j-mq-core` 定义 `@MQEventListener`（与 v1.x 兼容）
 - `ddd4j-mq-spring` 的 `MQListenerRegistrar` 自动扫描并注册消费者
 - 业务侧只需注解 + 监听方法，零业务代码改动
@@ -411,6 +427,7 @@ com.qushiyun（业务集团）
 #### 障碍 5：Spring Cloud 生态缺失
 
 **问题**：cloud-agents-server-* 是 Spring Cloud 微服务，依赖：
+
 - Spring Cloud Gateway
 - Spring Cloud OpenFeign
 - Spring Cloud Alibaba Nacos
@@ -431,15 +448,15 @@ com.qushiyun（业务集团）
 
 ### 6.4 迁移优先级建议
 
-| 优先级 | 任务 | 工作量 | 业务影响 |
-|--------|------|--------|----------|
-| **P0** | 创建 `io.ddd4j.legacy.v1` 兼容包 | 1 周 | 兼容老代码，渐进式迁移 |
-| **P0** | 创建 `ddd4j-cloud-*` 5 个模块 | 4-6 周 | 阻塞大型项目替代 |
-| **P0** | 补齐 `ddd4j-javalin` 核心 5 个模块 | 3-4 周 | 阻塞 Javalin 用户 |
-| **P1** | 创建 `ddd4j-boot-xxljob` | 1 周 | 业务侧常用 |
-| **P1** | 创建 `ddd4j-boot-redis` | 1 周 | 业务侧常用 |
-| **P1** | 提供 `v1-to-v2` 迁移脚本 | 1 周 | 自动化批量替换 |
-| **P2** | 补齐 `ddd4j-quarkus` 子模块实现 | 2-3 周 | 提升 Quarkus 集成度 |
+| 优先级    | 任务                          | 工作量   | 业务影响           |
+|--------|-----------------------------|-------|----------------|
+| **P0** | 创建 `io.ddd4j.legacy.v1` 兼容包 | 1 周   | 兼容老代码，渐进式迁移    |
+| **P0** | 创建 `ddd4j-cloud-*` 5 个模块    | 4-6 周 | 阻塞大型项目替代       |
+| **P0** | 补齐 `ddd4j-javalin` 核心 5 个模块 | 3-4 周 | 阻塞 Javalin 用户  |
+| **P1** | 创建 `ddd4j-boot-xxljob`      | 1 周   | 业务侧常用          |
+| **P1** | 创建 `ddd4j-boot-redis`       | 1 周   | 业务侧常用          |
+| **P1** | 提供 `v1-to-v2` 迁移脚本          | 1 周   | 自动化批量替换        |
+| **P2** | 补齐 `ddd4j-quarkus` 子模块实现    | 2-3 周 | 提升 Quarkus 集成度 |
 
 ---
 
@@ -493,12 +510,12 @@ ddd4j-cloud/                                  ← 顶层聚合
 
 ### 7.2 优先级路线图
 
-| 季度 | 任务 |
-|------|------|
+| 季度     | 任务                                                                      |
+|--------|-------------------------------------------------------------------------|
 | **Q1** | ddd4j-cloud-core（SPI 定义）+ ddd4j-cloud-nacos（首选实现） + ddd4j-cloud-gateway |
-| **Q2** | ddd4j-cloud-sentinel + ddd4j-cloud-seata + ddd4j-cloud-stream |
-| **Q3** | ddd4j-cloud-sleuth + ddd4j-cloud-xxljob + ddd4j-cloud-redis |
-| **Q4** | ddd4j-cloud-samples × 10 + 文档 + 培训 |
+| **Q2** | ddd4j-cloud-sentinel + ddd4j-cloud-seata + ddd4j-cloud-stream           |
+| **Q3** | ddd4j-cloud-sleuth + ddd4j-cloud-xxljob + ddd4j-cloud-redis             |
+| **Q4** | ddd4j-cloud-samples × 10 + 文档 + 培训                                      |
 
 ---
 
@@ -564,6 +581,7 @@ ddd4j-cloud/                                  ← 顶层聚合
 6. **🟠 P1-2**：提供 `io.ddd4j.legacy.v1` 兼容包 + v1→v2 迁移脚本
 
 **完成以上 6 项后，v2.x 可以完全替代 v1.x**：
+
 - 功能上：✅ 已覆盖
 - 性能上：✅ 优于 v1.x（Java 17 vs Java 8）
 - 可维护性上：✅ 优于 v1.x（DDD 架构守护 + CQRS 读侧 + 12 种 MQ）

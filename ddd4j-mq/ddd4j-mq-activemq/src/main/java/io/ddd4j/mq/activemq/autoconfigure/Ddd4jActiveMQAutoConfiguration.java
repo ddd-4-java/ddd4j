@@ -5,7 +5,6 @@ import io.ddd4j.mq.activemq.publisher.ActiveMQEventPublisher;
 import io.ddd4j.mq.activemq.spi.ActiveMQBrokerAdapter;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,7 @@ import org.springframework.jms.core.JmsTemplate;
 
 /**
  * ActiveMQ Artemis 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=activemq 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

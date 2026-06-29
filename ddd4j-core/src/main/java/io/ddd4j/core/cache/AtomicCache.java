@@ -29,13 +29,21 @@ package io.ddd4j.core.cache;
  */
 public interface AtomicCache<K, V> extends Cache<K, V> {
 
-    /** 库存返回值：库存为零（已售罄） */
+    /**
+     * 库存返回值：库存为零（已售罄）
+     */
     long STOCK_ZERO = -1L;
-    /** 库存返回值：库存不足 */
+    /**
+     * 库存返回值：库存不足
+     */
     long STOCK_NOT_ENOUGH = -2L;
-    /** 库存返回值：库存未初始化（key 不存在） */
+    /**
+     * 库存返回值：库存未初始化（key 不存在）
+     */
     long STOCK_NOT_INITIALIZED = -3L;
-    /** 库存返回值：参数非法 */
+    /**
+     * 库存返回值：参数非法
+     */
     long STOCK_ILLEGAL_ARG = -4L;
 
     /**

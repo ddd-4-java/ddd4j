@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-data-logs</artifactId>
-    <description>ddd4j 数据层 - API 操作日志：ApiOperationLogAspect 切面 + Provider（纯 AspectJ + ddd4j-spring 桥接）。Spring Boot auto-config 迁移到 ddd4j-boot-data。</description>
+    <description>ddd4j 数据层 - API 操作日志：ApiOperationLogAspect 切面 + Provider（纯 AspectJ + ddd4j-spring 桥接）。Spring
+        Boot auto-config 迁移到 ddd4j-boot-data。
+    </description>
 
     <dependencies>
         <!-- For DDD4j -->

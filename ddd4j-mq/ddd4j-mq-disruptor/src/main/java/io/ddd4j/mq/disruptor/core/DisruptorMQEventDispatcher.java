@@ -2,9 +2,9 @@ package io.ddd4j.mq.disruptor.core;
 
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
-import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Disruptor 事件分发器：按 routeKey 将 RingBuffer 事件路由到已注册的 {@link MQConsumerHandler}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

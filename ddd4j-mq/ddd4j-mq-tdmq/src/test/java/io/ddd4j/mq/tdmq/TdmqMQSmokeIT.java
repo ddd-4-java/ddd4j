@@ -1,9 +1,9 @@
 package io.ddd4j.mq.tdmq;
 
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.tdmq.autoconfigure.Ddd4jTdmqMQAutoConfiguration;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import org.junit.jupiter.api.Test;
@@ -14,12 +14,11 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * TDMQ 占位客户端冒烟测试（无 Testcontainers：腾讯云 TDMQ 无可靠开源容器，使用 {@link io.ddd4j.mq.tdmq.client.TdmqClientPlaceholder}）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)

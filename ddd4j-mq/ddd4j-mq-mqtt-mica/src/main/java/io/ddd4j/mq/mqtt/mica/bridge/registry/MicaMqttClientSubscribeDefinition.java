@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 
 /**
  * {@link MqttClientSubscribe} 解析后的原生订阅定义。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Getter

@@ -1,13 +1,14 @@
 package io.ddd4j.mq.disruptor.ack;
 
-import io.ddd4j.mq.disruptor.core.DisruptorMQEvent;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.disruptor.core.DisruptorMQEvent;
 
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * 从 {@link MQMessage} 解析 {@link DisruptorMessageAcknowledgment}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class DisruptorMessageAcknowledgmentFactory {

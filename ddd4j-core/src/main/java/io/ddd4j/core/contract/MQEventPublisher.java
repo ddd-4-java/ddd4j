@@ -7,8 +7,8 @@ package io.ddd4j.core.contract;
  * {@link MQEvent#publish()} 委托本接口发布。
  * </p>
  *
- * @see io.ddd4j.mq.spi.MQBrokerAdapter
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @see io.ddd4j.mq.spi.MQBrokerAdapter
  */
 public interface MQEventPublisher {
 

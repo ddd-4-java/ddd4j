@@ -20,16 +20,24 @@ import java.util.Map;
 @Builder
 public class MQConsumerContext {
 
-    /** 租户 ID（来自 ThreadContext 或消息头） */
+    /**
+     * 租户 ID（来自 ThreadContext 或消息头）
+     */
     private String tenantId;
 
-    /** 消息确认端口 */
+    /**
+     * 消息确认端口
+     */
     private MessageAcknowledgment acknowledgment;
 
-    /** 完整消息信封（纯 Java {@link MQMessage}） */
+    /**
+     * 完整消息信封（纯 Java {@link MQMessage}）
+     */
     private MQMessage<?> message;
 
-    /** 消费目的地语义 */
+    /**
+     * 消费目的地语义
+     */
     private MQDestination destination;
 
     /**

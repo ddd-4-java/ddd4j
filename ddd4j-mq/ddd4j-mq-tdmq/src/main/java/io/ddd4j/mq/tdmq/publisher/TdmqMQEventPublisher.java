@@ -1,11 +1,11 @@
 package io.ddd4j.mq.tdmq.publisher;
 
-import io.ddd4j.mq.tdmq.client.TdmqClient;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.tdmq.client.TdmqClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -15,6 +15,7 @@ import java.util.Objects;
 
 /**
  * 基于 {@link TdmqClient} 的领域事件发布实现（占位骨架）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

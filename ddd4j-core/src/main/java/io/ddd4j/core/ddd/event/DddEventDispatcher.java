@@ -3,11 +3,9 @@ package io.ddd4j.core.ddd.event;
 import jakarta.persistence.EntityManager;
 import org.fuin.cqrs4j.esc.JpaEventDispatcher;
 import org.fuin.ddd4j.core.Event;
-import org.fuin.ddd4j.core.EventType;
 import org.fuin.esc.api.CommonEvent;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * ddd4j 事件分发器基类（纯净 DDD 轨道）。

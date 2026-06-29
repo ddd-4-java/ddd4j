@@ -29,9 +29,9 @@ public class AuthController {
     public Map<String, Object> login(String userId) {
         // 构造认证主体
         AuthPrincipal principal = new AuthPrincipal()
-            .setLoginId(userId)
-            .setUserId(userId)
-            .setRoleCode("user");
+                .setLoginId(userId)
+                .setUserId(userId)
+                .setRoleCode("user");
 
         // 统一登录入口
         AuthRequest request = AuthRequest.of(userId).setTimeout(7200);

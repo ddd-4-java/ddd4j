@@ -111,6 +111,14 @@ public class RankKit {
          */
         private T data;
 
+        public RankModel() {
+        }
+
+        public RankModel(Integer rank, T data) {
+            this.rank = rank;
+            this.data = data;
+        }
+
         public Integer getRank() {
             return rank;
         }
@@ -124,14 +132,6 @@ public class RankKit {
         }
 
         public void setData(T data) {
-            this.data = data;
-        }
-
-        public RankModel() {
-        }
-
-        public RankModel(Integer rank, T data) {
-            this.rank = rank;
             this.data = data;
         }
     }

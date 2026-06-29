@@ -18,9 +18,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface BaseAuth {
 
-    /** 需要的角色（任一即可） */
+    /**
+     * 需要的角色（任一即可）
+     */
     String[] roles() default {};
 
-    /** 需要的权限（任一即可） */
+    /**
+     * 需要的权限（任一即可）
+     */
     String[] permissions() default {};
 }

@@ -1,8 +1,8 @@
 package io.ddd4j.mq.sqs.ack;
 
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
+import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 基于 AWS SQS {@link Message} 的消息确认实现（DeleteMessage / ChangeMessageVisibility）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

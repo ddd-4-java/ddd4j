@@ -10,6 +10,10 @@ import java.util.Map;
  */
 public class kafkaPartitioner implements Partitioner {
 
+    private static int random() {
+        return (int) (Math.random() * 9) + 1;
+    }
+
     @Override
     public void configure(Map<String, ?> configs) {
 
@@ -28,9 +32,5 @@ public class kafkaPartitioner implements Partitioner {
     @Override
     public void close() {
 
-    }
-
-    private static int random() {
-        return (int) (Math.random() * 9) + 1;
     }
 }

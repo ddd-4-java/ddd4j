@@ -6,9 +6,9 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.sqs.autoconfigure.Ddd4jSqsMQAutoConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * AWS SQS 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
  * <p>
  * 使用 ElasticMQ 兼容端点；IT 内 {@code @Primary} 覆盖 {@link AmazonSQS}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ExtendWith(SpringExtension.class)

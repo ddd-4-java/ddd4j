@@ -1,11 +1,10 @@
 package io.ddd4j.mq.pulsar.autoconfigure;
 
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.pulsar.consumer.PulsarConsumerEndpointRegistrar;
 import io.ddd4j.mq.pulsar.publisher.PulsarMQEventPublisher;
 import io.ddd4j.mq.pulsar.spi.PulsarMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +13,7 @@ import org.springframework.pulsar.core.PulsarTemplate;
 
 /**
  * Pulsar 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=pulsar 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

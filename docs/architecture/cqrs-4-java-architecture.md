@@ -2,14 +2,15 @@
 
 ## 一、项目定位
 
-`cqrs-4-java`（fuinorg 出品）是 `ddd-4-java` 的姐妹项目，专门为**命令查询职责分离（CQRS）**提供 Java 实现。它在 `ddd-4-java` 的事件溯源基础上，加入命令路由、命令执行器、读侧投影、视图管理器等 CQRS 必备组件。
+`cqrs-4-java`（fuinorg 出品）是 `ddd-4-java` 的姐妹项目，专门为**命令查询职责分离（CQRS）**提供 Java 实现。它在 `ddd-4-java`
+的事件溯源基础上，加入命令路由、命令执行器、读侧投影、视图管理器等 CQRS 必备组件。
 
-| 维度 | 数据 |
-|------|------|
-| **核心价值** | 命令总线 + 读侧投影 + 视图管理 + 双框架适配（Quarkus/Spring Boot） |
-| **依赖 ddd-4-java** | 强依赖，复用其聚合根/事件/异常 |
-| **依赖 esc-api** | 强依赖，事件存储访问 |
-| **框架适配** | quarkus/ + springboot/ 双实现 |
+| 维度                | 数据                                              |
+|-------------------|-------------------------------------------------|
+| **核心价值**          | 命令总线 + 读侧投影 + 视图管理 + 双框架适配（Quarkus/Spring Boot） |
+| **依赖 ddd-4-java** | 强依赖，复用其聚合根/事件/异常                                |
+| **依赖 esc-api**    | 强依赖，事件存储访问                                      |
+| **框架适配**          | quarkus/ + springboot/ 双实现                      |
 
 ---
 
@@ -156,6 +157,7 @@ EventStore.append(streamId, events)     ← 持久化到事件存储
 ### 3.5 投影位置持久化（QryProjectionPosition）
 
 ```java
+
 @Entity
 @Table(name = "QUARKUS_QRY_PROJECTION_POS")
 public class QryProjectionPosition {
@@ -178,19 +180,23 @@ public class QryProjectionPosition {
 
 ```java
 // Command 是纯标记接口
-public interface Command { }
+public interface Command {
+}
 
 // AggregateCommand 携带聚合根上下文
 public interface AggregateCommand<ROOT_ID extends AggregateRootId, ENTITY_ID extends EntityId>
         extends Command {
     EntityIdPath getEntityIdPath();
+
     AggregateVersion getAggregateVersion();
+
     EntityType getAggregateType();
 }
 
 // CommandExecutor 负责执行命令
 public interface CommandExecutor<CONTEXT, RESULT, CMD extends Command> {
     Set<EventType> getCommandTypes();  // 声明我能处理哪些命令
+
     RESULT execute(CONTEXT ctx, CMD cmd) throws ...;
 }
 
@@ -201,9 +207,9 @@ public class MultiCommandExecutor<CONTEXT, RESULT, CMD extends Command>
 
     public RESULT execute(CONTEXT ctx, CMD cmd) {
         return executors.stream()
-            .filter(e -> e.getCommandTypes().contains(eventTypeOf(cmd)))
-            .findFirst()
-            .orElseThrow(...)
+                .filter(e -> e.getCommandTypes().contains(eventTypeOf(cmd)))
+                .findFirst()
+                .orElseThrow(...)
             .execute(ctx, cmd);
     }
 }
@@ -213,16 +219,23 @@ public class MultiCommandExecutor<CONTEXT, RESULT, CMD extends Command>
 
 ```java
 // View 是纯标记接口
-public interface View { }
+public interface View {
+}
 
 // JpaView 是 JPA 实现的读模型
 public interface JpaView extends View {
     EntityId getEntityId();
+
     EntityType getEntityType();
+
     String getCron();          // 定时拉取表达式
+
     Lock getLock();            // 并发锁
+
     void create(StreamId streamId);
+
     void update(StreamId streamId, CommonEvent event);
+
     void delete(StreamId streamId);
 }
 ```
@@ -246,17 +259,17 @@ public enum ResultType {
 
 ## 五、双框架适配对照
 
-| 维度 | Quarkus 适配 | Spring Boot 适配 |
-|------|-------------|-----------------|
-| 入口 | `PersonResource`（JAX-RS） | `PersonController`（@RestController） |
-| Bean | `@ApplicationScoped` | `@Service` / `@RestController` |
-| 异常映射 | `ExceptionMapper`（JAX-RS） | `@RestControllerAdvice` |
-| 事务 | `QuarkusTransaction` | `PlatformTransactionManager` |
-| 视图管理器 | `QuarkusJpaViewManager` | `SpringJpaViewManager` |
-| 配置 | MicroProfile `@ConfigProperty` | `application.yml` |
-| EventStore 配置 | `EventstoreConfig` (CDI) | `EventstoreConfig` (@ConfigurationProperties) |
-| 投影调度 | `@Scheduled` (Quarkus) | `ScheduledTaskRegistrar` (Spring) |
-| 异常 | `AggregateNotFoundException` | 同（继承自 ddd-4-java） |
+| 维度            | Quarkus 适配                     | Spring Boot 适配                                |
+|---------------|--------------------------------|-----------------------------------------------|
+| 入口            | `PersonResource`（JAX-RS）       | `PersonController`（@RestController）           |
+| Bean          | `@ApplicationScoped`           | `@Service` / `@RestController`                |
+| 异常映射          | `ExceptionMapper`（JAX-RS）      | `@RestControllerAdvice`                       |
+| 事务            | `QuarkusTransaction`           | `PlatformTransactionManager`                  |
+| 视图管理器         | `QuarkusJpaViewManager`        | `SpringJpaViewManager`                        |
+| 配置            | MicroProfile `@ConfigProperty` | `application.yml`                             |
+| EventStore 配置 | `EventstoreConfig` (CDI)       | `EventstoreConfig` (@ConfigurationProperties) |
+| 投影调度          | `@Scheduled` (Quarkus)         | `ScheduledTaskRegistrar` (Spring)             |
+| 异常            | `AggregateNotFoundException`   | 同（继承自 ddd-4-java）                             |
 
 ### Spring Boot 视图管理器示例
 
@@ -273,8 +286,8 @@ public class SpringJpaViewManager implements SchedulingConfigurer, ApplicationLi
         // 创建定时任务
         for (ViewExt view : views) {
             view.setCronTask(new CronTask(
-                () -> updateView(view),
-                view.getCron()
+                    () -> updateView(view),
+                    view.getCron()
             ));
             taskRegistrar.addCronTask(view.getCronTask());
         }
@@ -301,21 +314,21 @@ public class SpringJpaViewManager implements SchedulingConfigurer, ApplicationLi
 
 ### 6.1 cqrs-4-java 提供了什么（ddd4j 应补充）
 
-| 价值 | 具体实现 | ddd4j 当前状态 |
-|------|---------|---------------|
-| **Command 接口** | `Command` / `AggregateCommand` | ❌ ddd4j 缺 |
-| **CommandExecutor SPI** | `CommandExecutor<CONTEXT, RESULT, CMD>` | ❌ ddd4j 缺 |
-| **MultiCommandExecutor** | 组合多个执行器 | ❌ ddd4j 缺 |
-| **AbstractCommand** | Builder + Jackson 兼容 | ❌ ddd4j 缺 |
-| **View 标记接口** | `View` | ❌ ddd4j 缺 |
-| **JpaView 接口** | 读侧投影标准 | ❌ ddd4j 缺 |
-| **ViewManager 抽象** | `QuarkusJpaViewManager` / `SpringJpaViewManager` | ❌ ddd4j 缺 |
-| **ProjectionPosition** | 投影位置持久化 | ❌ ddd4j 缺 |
-| **事件处理器注解** | `@CreateEvent` / `@UpdateEvent` / `@DeleteEvent` | ❌ ddd4j 缺 |
-| **Result / ResultType** | 命令执行结果 | ❌ ddd4j 缺 |
-| **多序列化器** | Jackson / JAXB / JSON-B | ⚠️ ddd4j 仅有 Jackson |
-| **Quarkus 适配** | CDI 集成 | ❌ ddd4j 缺 |
-| **Spring Boot 适配** | Spring Scheduling | ⚠️ ddd4j 仅有部分 |
+| 价值                       | 具体实现                                             | ddd4j 当前状态          |
+|--------------------------|--------------------------------------------------|---------------------|
+| **Command 接口**           | `Command` / `AggregateCommand`                   | ❌ ddd4j 缺           |
+| **CommandExecutor SPI**  | `CommandExecutor<CONTEXT, RESULT, CMD>`          | ❌ ddd4j 缺           |
+| **MultiCommandExecutor** | 组合多个执行器                                          | ❌ ddd4j 缺           |
+| **AbstractCommand**      | Builder + Jackson 兼容                             | ❌ ddd4j 缺           |
+| **View 标记接口**            | `View`                                           | ❌ ddd4j 缺           |
+| **JpaView 接口**           | 读侧投影标准                                           | ❌ ddd4j 缺           |
+| **ViewManager 抽象**       | `QuarkusJpaViewManager` / `SpringJpaViewManager` | ❌ ddd4j 缺           |
+| **ProjectionPosition**   | 投影位置持久化                                          | ❌ ddd4j 缺           |
+| **事件处理器注解**              | `@CreateEvent` / `@UpdateEvent` / `@DeleteEvent` | ❌ ddd4j 缺           |
+| **Result / ResultType**  | 命令执行结果                                           | ❌ ddd4j 缺           |
+| **多序列化器**                | Jackson / JAXB / JSON-B                          | ⚠️ ddd4j 仅有 Jackson |
+| **Quarkus 适配**           | CDI 集成                                           | ❌ ddd4j 缺           |
+| **Spring Boot 适配**       | Spring Scheduling                                | ⚠️ ddd4j 仅有部分       |
 
 ### 6.2 ddd4j 应补充的 CQRS 能力清单
 
@@ -380,7 +393,7 @@ P2 可选：
 ```java
 // ddd4j-core/src/main/java/io/ddd4j/core/ddd/
 public abstract class DddAggregateRoot<ID extends AggregateRootId>
-    extends AbstractAggregateRoot<ID> {  // 直接继承 fuinorg
+        extends AbstractAggregateRoot<ID> {  // 直接继承 fuinorg
 
     protected LocalDateTime createTime;
     protected LocalDateTime updateTime;
@@ -393,16 +406,19 @@ public abstract class DddAggregateRoot<ID extends AggregateRootId>
 
 ```java
 // ddd4j-core/src/main/java/io/ddd4j/core/cqrs/
-public interface Command { }
+public interface Command {
+}
 
 public interface AggregateCommand<ROOT_ID extends AggregateRootId, ENTITY_ID extends EntityId>
         extends Command {
     EntityIdPath getEntityIdPath();
+
     AggregateVersion getAggregateVersion();
 }
 
 public interface CommandExecutor<CONTEXT, RESULT, CMD extends Command> {
     Set<EventType> getCommandTypes();
+
     RESULT execute(CONTEXT ctx, CMD cmd);
 }
 ```
@@ -412,23 +428,27 @@ public interface CommandExecutor<CONTEXT, RESULT, CMD extends Command> {
 ```java
 // ddd4j-quarkus/src/main/java/io/ddd4j/quarkus/view/
 @ApplicationScoped
-public class QuarkusJpaViewManager { ... }
+public class QuarkusJpaViewManager { ...
+}
 
 // ddd4j-spring/src/main/java/io/ddd4j/spring/view/
-public class SpringJpaViewManager implements SchedulingConfigurer { ... }
+public class SpringJpaViewManager implements SchedulingConfigurer { ...
+}
 ```
 
 ---
 
 ## 八、总结
 
-`cqrs-4-java` 是 ddd4j 实现完整 CQRS 读侧投影的**最佳参考**。它以极简的接口设计（`Command` / `View` 纯标记接口 + `CommandExecutor` / `JpaView` 单一职责 SPI）提供了：
+`cqrs-4-java` 是 ddd4j 实现完整 CQRS 读侧投影的**最佳参考**。它以极简的接口设计（`Command` / `View` 纯标记接口 +
+`CommandExecutor` / `JpaView` 单一职责 SPI）提供了：
 
 - **写侧**：命令路由 + 多执行器组合 + 异常隧道
 - **读侧**：JPA 投影 + 定时拉取 + 位置持久化
 - **框架适配**：Quarkus CDI + Spring Boot 双实现
 
 ddd4j 应在此基础上：
+
 1. **继承** ddd-4-java 的 `AbstractAggregateRoot`
 2. **补充** `Command` / `CommandExecutor` / `View` / `JpaView` 抽象
 3. **实现** `ddd4j-spring` / `ddd4j-quarkus` 各自的视图管理器

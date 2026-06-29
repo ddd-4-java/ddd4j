@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 /**
  * 基于阿里云 ONS 消费回调语义的消息确认实现（映射 RocketMQ Action）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -28,11 +29,11 @@ public final class OnsMessageAcknowledgment implements MessageAcknowledgment {
     /**
      * 构造 ONS 确认对象。
      *
-     * @param messageId        消息 ID
-     * @param correlationId    关联 ID
-     * @param deliveryTag      投递序号（通常为 reconsumeTimes）
-     * @param commitAction     提交成功回调
-     * @param reconsumeAction  重新消费回调
+     * @param messageId       消息 ID
+     * @param correlationId   关联 ID
+     * @param deliveryTag     投递序号（通常为 reconsumeTimes）
+     * @param commitAction    提交成功回调
+     * @param reconsumeAction 重新消费回调
      */
     public OnsMessageAcknowledgment(String messageId,
                                     String correlationId,

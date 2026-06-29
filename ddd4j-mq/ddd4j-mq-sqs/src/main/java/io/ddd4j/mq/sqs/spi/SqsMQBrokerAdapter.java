@@ -2,10 +2,6 @@ package io.ddd4j.mq.sqs.spi;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
-import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgment;
-import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgmentFactory;
-import io.ddd4j.mq.sqs.consumer.SqsMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
@@ -14,10 +10,15 @@ import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgment;
+import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.sqs.consumer.SqsMQConsumerEndpointRegistrar;
+import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
 import lombok.RequiredArgsConstructor;
 
 /**
  * AWS SQS Broker 适配器，桥接 ddd4j MQ SPI 与 aws-java-sdk-sqs。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor

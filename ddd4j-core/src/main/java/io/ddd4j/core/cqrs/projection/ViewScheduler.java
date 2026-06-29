@@ -21,8 +21,8 @@ public interface ViewScheduler {
      * 注册一个定时任务。
      *
      * @param viewName 视图名称（用于日志 / 调试）
-     * @param cron      CRON 表达式
-     * @param task      要执行的任务
+     * @param cron     CRON 表达式
+     * @param task     要执行的任务
      * @return 任务句柄，可用于取消
      */
     ViewScheduleHandle schedule(String viewName, String cron, Runnable task);

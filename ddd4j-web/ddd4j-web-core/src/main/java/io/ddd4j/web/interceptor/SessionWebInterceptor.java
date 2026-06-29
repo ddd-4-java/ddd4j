@@ -17,7 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SessionWebInterceptor implements WebInterceptor {
     @Override
-    public int getOrder() { return 0; }
+    public int getOrder() {
+        return 0;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         return true;

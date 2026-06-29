@@ -5,23 +5,29 @@ import java.util.List;
 
 /**
  * 规则验证结果值对象
- * 
+ *
  * <p>领域模型：不可变的值对象，表示规则语法验证的结果。
  * 使用Builder模式构建，确保不可变性。
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */
 public class RuleValidationResult {
 
-    /** 验证是否通过 */
+    /**
+     * 验证是否通过
+     */
     private final boolean valid;
-    
-    /** 验证消息 */
+
+    /**
+     * 验证消息
+     */
     private final String message;
-    
-    /** 错误列表，验证失败时的详细错误信息 */
+
+    /**
+     * 错误列表，验证失败时的详细错误信息
+     */
     private final List<String> errors;
 
     private RuleValidationResult(Builder builder) {
@@ -32,7 +38,7 @@ public class RuleValidationResult {
 
     /**
      * 创建Builder实例
-     * 
+     *
      * @return Builder实例
      */
     public static Builder builder() {

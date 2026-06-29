@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * http://www.mca.gov.cn/article/sj/xzqh/1980/201903/201903011447.html
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum ProvinceEnum {
@@ -48,25 +49,15 @@ public enum ProvinceEnum {
 
     ;
 
+    private static Logger log = LoggerFactory.getLogger(ProvinceEnum.class);
     // 行政区划代码
     private String code;
-
     // 单位名称
     private String cname;
-
-    private static Logger log = LoggerFactory.getLogger(ProvinceEnum.class);
 
     private ProvinceEnum(String code, String cname) {
         this.code = code;
         this.cname = cname;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getCname() {
-        return cname;
     }
 
     public static ProvinceEnum getByCode(String code) {
@@ -87,6 +78,14 @@ public enum ProvinceEnum {
         }
         log.error("Cannot found ProvinceEnum with cn_name '" + cn_name + "'.");
         return ProvinceEnum.UK;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getCname() {
+        return cname;
     }
 
 }

@@ -10,8 +10,9 @@ public class FlkSecDecryptResponseVO {
 
     /**
      * 200:成功
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     @JsonProperty("code")
     private int code;
     /**

@@ -14,15 +14,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 基于 JMS {@link Message} 与 {@link Session} 的消息确认实现。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public final class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
 
-    /** MQMessage headers 中存放 JMS Message 的键 */
+    /**
+     * MQMessage headers 中存放 JMS Message 的键
+     */
     public static final String HEADER_JMS_MESSAGE = "jms.message";
 
-    /** MQMessage headers 中存放 JMS Session 的键 */
+    /**
+     * MQMessage headers 中存放 JMS Session 的键
+     */
     public static final String HEADER_JMS_SESSION = "jms.session";
 
     private final Message jmsMessage;

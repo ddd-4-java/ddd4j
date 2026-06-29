@@ -10,8 +10,9 @@ public abstract class BaseTimeRangeQueryParam {
 
     /**
      * 开始时间
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     @Schema(description = "开始时间")
     private LocalDateTime beginTime;
 

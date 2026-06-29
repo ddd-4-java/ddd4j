@@ -65,9 +65,8 @@ public class CleanArchitectureChecker {
     private static final Set<String> ADAPTER_SUB_PACKAGES = Set.of(
             "persistence", "web", "messaging", "gateway"
     );
-
-    private final String basePackage;
     final List<String> violations = new ArrayList<>();
+    private final String basePackage;
 
     public CleanArchitectureChecker(String basePackage) {
         this.basePackage = basePackage;

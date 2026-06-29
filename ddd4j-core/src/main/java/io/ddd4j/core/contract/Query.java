@@ -1,9 +1,9 @@
 package io.ddd4j.core.contract;
 
-import io.ddd4j.core.contract.exception.ServiceException;
-import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.core.util.MappingKit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.ddd4j.core.contract.exception.ServiceException;
+import io.ddd4j.core.util.MappingKit;
+import io.ddd4j.kit.lang.JsonKit;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,16 +58,31 @@ public abstract class Query extends Page {
     protected String fields;
     // 关键字查询(like '%s%')，配合fields使用
     protected Object keyword;
-    // 忽略租户ID查询，默认不忽略
-    @ToString.Exclude
-    @JsonIgnore
-    private boolean ignoreTenantId = false;
     // 聚合参数集，多个以split分隔
     protected String fills;
     // 查询分隔符：select/keyword/orderBys/fields/fills，默认英文逗号,
     @ToString.Exclude
     @JsonIgnore
     protected String split = ",";
+    // 忽略租户ID查询，默认不忽略
+    @ToString.Exclude
+    @JsonIgnore
+    private boolean ignoreTenantId = false;
+
+    // 通过模型类找到查询类，并把Map参数转换为查询参数
+    @SneakyThrows
+    public static Query convert(String model, Map<String, Object> queryMap) {
+        Class<Query> queryClass = MappingKit.get("MODEL_QUERY", Model.ofName(model));
+        if (queryClass == null) {
+            throw new ServiceException("Query not found");
+        }
+        // 转两次，为了兼容日期类型的转换，否则String转成Date类型会出错
+        Query query = JsonKit.toObject(JsonKit.toJson(queryMap), queryClass);
+        if (query == null) {
+            query = queryClass.newInstance();
+        }
+        return query;
+    }
 
     public <Q extends Query> Q select(String... columns) {
         if (columns != null) {
@@ -298,21 +313,6 @@ public abstract class Query extends Page {
             throw new ServiceException(ifEmpty, params);
         }
         return list;
-    }
-
-    // 通过模型类找到查询类，并把Map参数转换为查询参数
-    @SneakyThrows
-    public static Query convert(String model, Map<String, Object> queryMap) {
-        Class<Query> queryClass = MappingKit.get("MODEL_QUERY", Model.ofName(model));
-        if (queryClass == null) {
-            throw new ServiceException("Query not found");
-        }
-        // 转两次，为了兼容日期类型的转换，否则String转成Date类型会出错
-        Query query = JsonKit.toObject(JsonKit.toJson(queryMap), queryClass);
-        if (query == null) {
-            query = queryClass.newInstance();
-        }
-        return query;
     }
 
 }

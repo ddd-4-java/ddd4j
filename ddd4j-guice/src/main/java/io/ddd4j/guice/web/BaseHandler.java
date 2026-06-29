@@ -15,9 +15,9 @@
  */
 package io.ddd4j.guice.web;
 
+import io.ddd4j.core.context.I18nProvider;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
-import io.ddd4j.core.context.I18nProvider;
 import io.ddd4j.guice.context.GuiceContext;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;

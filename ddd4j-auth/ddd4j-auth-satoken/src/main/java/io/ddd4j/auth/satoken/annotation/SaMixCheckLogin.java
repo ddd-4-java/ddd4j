@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 账号校验：在标注一个方法上时，要求前端必须提交相应的账号密码参数才能访问方法。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Retention(RetentionPolicy.RUNTIME)

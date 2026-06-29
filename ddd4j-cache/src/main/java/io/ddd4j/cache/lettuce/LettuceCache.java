@@ -3,10 +3,10 @@ package io.ddd4j.cache.lettuce;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.lettuce.core.api.sync.RedisCommands;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
+import io.lettuce.core.api.sync.RedisCommands;
 
 import java.time.Duration;
 import java.util.Objects;

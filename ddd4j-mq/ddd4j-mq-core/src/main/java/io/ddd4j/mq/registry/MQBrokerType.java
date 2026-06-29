@@ -1,17 +1,19 @@
 package io.ddd4j.mq.registry;
 
 
-
 import java.util.Locale;
 
 /**
  * 支持的 Broker 类型枚举（与 {@code ddd4j.mq.broker} 对齐）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum MQBrokerType {
 
     NONE,
-    /** 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。 */
+    /**
+     * 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。
+     */
     DISRUPTOR,
     RABBIT,
     KAFKA,
@@ -20,9 +22,13 @@ public enum MQBrokerType {
     REDIS_STREAM,
     ACTIVEMQ,
     NATS,
-    /** Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。 */
+    /**
+     * Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。
+     */
     MQTT,
-    /** mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。 */
+    /**
+     * mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。
+     */
     MQTT_MICA,
     ONS,
     TDMQ,
@@ -66,14 +72,14 @@ public enum MQBrokerType {
         return from(raw);
     }
 
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
+    }
+
     /**
      * 转为 kebab-case 配置值（如 {@code redis-stream}）。
      */
     public String toConfigValue() {
         return name().toLowerCase(Locale.ROOT).replace('_', '-');
-    }
-
-    private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
     }
 }

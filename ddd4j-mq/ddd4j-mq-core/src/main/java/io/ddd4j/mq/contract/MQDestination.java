@@ -35,6 +35,10 @@ public class MQDestination {
         return new MQDestination(topic, tag, namespace);
     }
 
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
+    }
+
     public String physicalDestination() {
         return hasText(namespace) ? namespace + "." + topic : topic;
     }
@@ -54,9 +58,5 @@ public class MQDestination {
     @Override
     public int hashCode() {
         return Objects.hash(topic, tag, namespace);
-    }
-
-    private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
     }
 }

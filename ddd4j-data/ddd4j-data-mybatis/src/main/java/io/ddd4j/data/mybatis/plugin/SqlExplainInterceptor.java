@@ -37,7 +37,9 @@ public class SqlExplainInterceptor implements InnerInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlExplainInterceptor.class);
 
-    /** 长 SQL 阈值（字符数），默认 2000 */
+    /**
+     * 长 SQL 阈值（字符数），默认 2000
+     */
     private int longSqlThreshold = 2000;
 
     private SqlSlowLogger slowLogger;
@@ -68,7 +70,9 @@ public class SqlExplainInterceptor implements InnerInterceptor {
         }
     }
 
-    /** 慢 SQL 记录回调 */
+    /**
+     * 慢 SQL 记录回调
+     */
     @FunctionalInterface
     public interface SqlSlowLogger {
         void onSlow(String mappedStatementId, String sql, long elapsedMs);

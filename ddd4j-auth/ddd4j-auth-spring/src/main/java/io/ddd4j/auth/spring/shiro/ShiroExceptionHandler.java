@@ -32,7 +32,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class ShiroExceptionHandler {
 
-    /** 401：未认证（未登录 / Token 失效） */
+    /**
+     * 401：未认证（未登录 / Token 失效）
+     */
     @ExceptionHandler({UnknownAccountException.class, IncorrectCredentialsException.class,
             AuthenticationException.class})
     public ResponseEntity<ApiRestResponse<String>> authenticationException(Exception ex) {
@@ -40,14 +42,18 @@ public class ShiroExceptionHandler {
         return new ResponseEntity<>(ApiRestResponse.of(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
     }
 
-    /** 403：账号锁定 */
+    /**
+     * 403：账号锁定
+     */
     @ExceptionHandler({LockedAccountException.class})
     public ResponseEntity<ApiRestResponse<String>> lockedAccountException(LockedAccountException ex) {
         log.warn("Shiro 账号锁定：{}", ex.getMessage());
         return new ResponseEntity<>(ApiRestResponse.of(403, "账号已被锁定"), HttpStatus.FORBIDDEN);
     }
 
-    /** 403：无权限 / 无角色 */
+    /**
+     * 403：无权限 / 无角色
+     */
     @ExceptionHandler({UnauthorizedException.class, AuthorizationException.class})
     public ResponseEntity<ApiRestResponse<String>> authorizationException(Exception ex) {
         log.warn("Shiro 授权异常：{}", ex.getMessage());

@@ -1,11 +1,10 @@
 package io.ddd4j.mq.nats.autoconfigure;
 
+import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.nats.consumer.NatsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
 import io.ddd4j.mq.nats.spi.NatsMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
@@ -17,6 +16,7 @@ import java.io.IOException;
 
 /**
  * NATS 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=nats 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

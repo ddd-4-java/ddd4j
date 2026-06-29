@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.data.external.region;
@@ -58,6 +59,14 @@ public class PconlineRegionTemplate {
     public PconlineRegionTemplate(RestClient restClient, RedisOperationTemplate redisOperation) {
         this.restClient = restClient;
         this.redisOperation = redisOperation;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        PconlineRegionTemplate template = new PconlineRegionTemplate(RestClient.create());
+
+        Optional<JSONObject> mapLL2 = template.getLocationByIp("13.228.204.118"); // lng：116.86380647644208  lat：38.297615350325717
+        System.out.println(mapLL2.get().toJSONString());
     }
 
     /**
@@ -216,15 +225,6 @@ public class PconlineRegionTemplate {
             log.error("IP : {} >> Country/Region Parser Error：{}", ip, e.getMessage());
         }
         return true;
-    }
-
-
-    public static void main(String[] args) throws IOException {
-
-        PconlineRegionTemplate template = new PconlineRegionTemplate(RestClient.create());
-
-        Optional<JSONObject> mapLL2 = template.getLocationByIp("13.228.204.118"); // lng：116.86380647644208  lat：38.297615350325717
-        System.out.println(mapLL2.get().toJSONString());
     }
 
 }

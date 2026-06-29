@@ -1,12 +1,15 @@
 package io.ddd4j.core.context;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import io.ddd4j.core.subject.Subject;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import io.ddd4j.core.subject.Subject;
 
 /**
  * 本地线程上下文：一个本地线程容器

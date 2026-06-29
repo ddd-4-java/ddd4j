@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 用于对象映射，按 biz 隔离
  *
- * @since 2.0.x
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @UtilityClass
 public final class MappingKit {

@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.data.mybatis.dto;
@@ -29,8 +30,19 @@ public abstract class AbstractPaginationDTO {
     @Schema(description = "结束时间")
     private String endTime;
 
-    public int getLimit() { return limit; }
-    public void setLimit(int limit) { this.limit = limit; }
-    public int getPageNo() { return pageNo; }
-    public void setPageNo(int pageNo) { this.pageNo = pageNo; }
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getPageNo() {
+        return pageNo;
+    }
+
+    public void setPageNo(int pageNo) {
+        this.pageNo = pageNo;
+    }
 }

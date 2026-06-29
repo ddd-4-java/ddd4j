@@ -6,8 +6,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 /**
  * 基础拦截器
  *
- * @func 实现该接口，需要加载到Spring容器
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @func 实现该接口，需要加载到Spring容器
  */
 public abstract class BaseWebInterceptor implements HandlerInterceptor, Ordered {
     // @return 拦截的请求路径

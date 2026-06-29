@@ -1,18 +1,18 @@
 package io.ddd4j.mq.tdmq.autoconfigure;
 
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import io.ddd4j.mq.tdmq.client.TdmqClientPlaceholder;
 import io.ddd4j.mq.tdmq.consumer.TdmqMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.tdmq.publisher.TdmqMQEventPublisher;
 import io.ddd4j.mq.tdmq.spi.TdmqMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * 腾讯云 TDMQ 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=tdmq 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

@@ -23,8 +23,11 @@ import java.util.List;
  */
 public interface SubjectDataProvider {
 
-    /** 默认空实现兜底（对齐 Sa-Token StpInterfaceDefaultImpl） */
-    SubjectDataProvider DEFAULT = new SubjectDataProvider() {};
+    /**
+     * 默认空实现兜底（对齐 Sa-Token StpInterfaceDefaultImpl）
+     */
+    SubjectDataProvider DEFAULT = new SubjectDataProvider() {
+    };
 
     /**
      * 返回指定账号拥有的权限码集合。

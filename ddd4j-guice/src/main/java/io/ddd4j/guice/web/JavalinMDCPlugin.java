@@ -18,8 +18,6 @@ package io.ddd4j.guice.web;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.util.UUID;
@@ -47,6 +45,13 @@ public class JavalinMDCPlugin implements Handler {
     public static final String MDC_REMOTE_ADDR = "remoteAddr";
     public static final String MDC_METHOD = "method";
 
+    /**
+     * 创建 MDC 清理 Handler（用于 app.after()）
+     */
+    public static Handler afterHandler() {
+        return ctx -> MDC.clear();
+    }
+
     @Override
     public void handle(Context ctx) {
         String requestId = ctx.header("X-Request-Id");
@@ -59,12 +64,5 @@ public class JavalinMDCPlugin implements Handler {
         MDC.put(MDC_METHOD, ctx.method().name());
         // 设置响应头
         ctx.header("X-Request-Id", requestId);
-    }
-
-    /**
-     * 创建 MDC 清理 Handler（用于 app.after()）
-     */
-    public static Handler afterHandler() {
-        return ctx -> MDC.clear();
     }
 }

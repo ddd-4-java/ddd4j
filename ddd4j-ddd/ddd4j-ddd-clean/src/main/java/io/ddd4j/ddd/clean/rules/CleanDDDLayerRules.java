@@ -1,13 +1,7 @@
 package io.ddd4j.ddd.clean.rules;
 
 import com.tngtech.archunit.lang.ArchRule;
-import io.ddd4j.annotation.ddd.ApplicationService;
-import io.ddd4j.annotation.ddd.CommandExecutor;
-import io.ddd4j.annotation.ddd.DomainEntity;
-import io.ddd4j.annotation.ddd.DomainGateway;
-import io.ddd4j.annotation.ddd.DomainRepository;
-import io.ddd4j.annotation.ddd.DomainService;
-import io.ddd4j.annotation.ddd.QueryService;
+import io.ddd4j.annotation.ddd.*;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -39,9 +33,6 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  */
 public final class CleanDDDLayerRules {
 
-    private CleanDDDLayerRules() {
-    }
-
     /**
      * 规则1：标了 {@code @DomainEntity} 的类必须在 {@code ..domain..} 包。
      *
@@ -51,7 +42,6 @@ public final class CleanDDDLayerRules {
             .that().areAnnotatedWith(DomainEntity.class)
             .should().resideInAPackage("..domain..")
             .because("标了 @DomainEntity 的类是领域实体，必须在 domain 包");
-
     /**
      * 规则2：标了 {@code @DomainService} 的类必须在 {@code ..domain..} 包。
      *
@@ -61,7 +51,6 @@ public final class CleanDDDLayerRules {
             .that().areAnnotatedWith(DomainService.class)
             .should().resideInAPackage("..domain..")
             .because("标了 @DomainService 的类是领域服务，必须在 domain 包");
-
     /**
      * 规则3：标了 {@code @ApplicationService} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
      *
@@ -71,7 +60,6 @@ public final class CleanDDDLayerRules {
             .that().areAnnotatedWith(ApplicationService.class)
             .should().resideInAnyPackage("..app..", "..application..")
             .because("标了 @ApplicationService 的类是应用服务，必须在 app/application 包");
-
     /**
      * 规则4：标了 {@code @DomainRepository} 的类必须在 {@code ..infrastructure..} 或 {@code ..infras..} 包。
      *
@@ -83,7 +71,6 @@ public final class CleanDDDLayerRules {
             .that().areAnnotatedWith(DomainRepository.class)
             .should().resideInAnyPackage("..infrastructure..", "..infras..")
             .because("标了 @DomainRepository 的类是仓储实现，必须在 infrastructure/infras 包");
-
     /**
      * 规则5：domain 包不得依赖 web/controller/adapter 包。
      *
@@ -94,7 +81,6 @@ public final class CleanDDDLayerRules {
             .should().dependOnClassesThat().resideInAnyPackage(
                     "..controller..", "..adapter..", "..web..")
             .because("领域层不得依赖 Web/Controller/Adapter 层");
-
     /**
      * 规则6：domain 包不得依赖 infrastructure 包。
      *
@@ -105,7 +91,6 @@ public final class CleanDDDLayerRules {
             .should().dependOnClassesThat().resideInAnyPackage(
                     "..infrastructure..", "..infras..")
             .because("领域层不得依赖基础设施层（依赖方向应反转）");
-
     /**
      * 规则7：domain 包不得依赖 Spring 框架。
      *
@@ -116,7 +101,6 @@ public final class CleanDDDLayerRules {
             .should().dependOnClassesThat().resideInAnyPackage(
                     "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
             .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
-
     /**
      * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain..} 包。
      *
@@ -127,7 +111,6 @@ public final class CleanDDDLayerRules {
             .that().areAnnotatedWith(DomainGateway.class)
             .should().resideInAPackage("..domain..")
             .because("标了 @DomainGateway 的接口是领域网关，必须在 domain 包");
-
     /**
      * 规则9：标了 {@code @CommandExecutor} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
      */
@@ -135,7 +118,6 @@ public final class CleanDDDLayerRules {
             .that().areAnnotatedWith(CommandExecutor.class)
             .should().resideInAnyPackage("..app..", "..application..")
             .because("标了 @CommandExecutor 的类必须在 app/application 包");
-
     /**
      * 规则10：标了 {@code @QueryService} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
      */
@@ -143,4 +125,7 @@ public final class CleanDDDLayerRules {
             .that().areAnnotatedWith(QueryService.class)
             .should().resideInAnyPackage("..app..", "..application..")
             .because("标了 @QueryService 的类必须在 app/application 包");
+
+    private CleanDDDLayerRules() {
+    }
 }

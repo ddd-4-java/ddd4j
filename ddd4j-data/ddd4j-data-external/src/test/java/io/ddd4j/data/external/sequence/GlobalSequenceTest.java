@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verify;
 
 /**
  * GlobalSequence 测试类
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class GlobalSequenceTest {

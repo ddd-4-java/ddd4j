@@ -1,12 +1,11 @@
 package io.ddd4j.mq.mqtt.autoconfigure;
 
+import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.mqtt.config.Ddd4jMqttProperties;
 import io.ddd4j.mq.mqtt.consumer.MqttMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.mqtt.publisher.MqttMQEventPublisher;
 import io.ddd4j.mq.mqtt.spi.MqttMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +25,7 @@ import java.util.UUID;
  * MQTT 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=mqtt 时生效。
  * <p>
  * 主路径：Eclipse Paho + Spring Integration（与 sample mqtt-client1 一致）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

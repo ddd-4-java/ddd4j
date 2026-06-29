@@ -1,10 +1,6 @@
 package io.ddd4j.mq.contract;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 消息信封（纯 Java 契约，零 Spring 依赖）。
@@ -44,6 +40,35 @@ public class MQMessage<T> {
 
     // ── 访问器 ──
 
+    public static <T> MQMessage<T> of(T payload) {
+        return new MQMessage<>(payload, Collections.emptyMap(), null, null, null);
+    }
+
+    public static <T> MQMessage<T> of(T payload, String messageId) {
+        return new MQMessage<>(payload, Collections.emptyMap(), messageId, null, null);
+    }
+
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId) {
+        return new MQMessage<>(payload, headers, messageId, null, null);
+    }
+
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers,
+                                      String messageId, String correlationId) {
+        return new MQMessage<>(payload, headers, messageId, correlationId, null);
+    }
+
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers,
+                                      String messageId, String correlationId, Object nativeMessage) {
+        return new MQMessage<>(payload, headers, messageId, correlationId, nativeMessage);
+    }
+
+    /**
+     * 自动生成 UUID 作为 messageId。
+     */
+    public static <T> MQMessage<T> autoId(T payload, Map<String, Object> headers) {
+        return new MQMessage<>(payload, headers, UUID.randomUUID().toString(), null, null);
+    }
+
     public T getPayload() {
         return payload;
     }
@@ -71,6 +96,8 @@ public class MQMessage<T> {
     public String getCorrelationId() {
         return correlationId;
     }
+
+    // ── 工厂方法 ──
 
     public String correlationId() {
         return correlationId;
@@ -105,37 +132,6 @@ public class MQMessage<T> {
             return (N) nativeMessage;
         }
         return null;
-    }
-
-    // ── 工厂方法 ──
-
-    public static <T> MQMessage<T> of(T payload) {
-        return new MQMessage<>(payload, Collections.emptyMap(), null, null, null);
-    }
-
-    public static <T> MQMessage<T> of(T payload, String messageId) {
-        return new MQMessage<>(payload, Collections.emptyMap(), messageId, null, null);
-    }
-
-    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId) {
-        return new MQMessage<>(payload, headers, messageId, null, null);
-    }
-
-    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers,
-                                      String messageId, String correlationId) {
-        return new MQMessage<>(payload, headers, messageId, correlationId, null);
-    }
-
-    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers,
-                                      String messageId, String correlationId, Object nativeMessage) {
-        return new MQMessage<>(payload, headers, messageId, correlationId, nativeMessage);
-    }
-
-    /**
-     * 自动生成 UUID 作为 messageId。
-     */
-    public static <T> MQMessage<T> autoId(T payload, Map<String, Object> headers) {
-        return new MQMessage<>(payload, headers, UUID.randomUUID().toString(), null, null);
     }
 
     // ── Object ──

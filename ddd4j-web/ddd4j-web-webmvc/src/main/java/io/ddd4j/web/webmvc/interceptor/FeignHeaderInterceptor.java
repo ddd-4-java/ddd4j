@@ -1,14 +1,14 @@
 package io.ddd4j.web.webmvc.interceptor;
 
-import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.annotation.FeignHeader;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.core.contract.annotation.FeignHeader;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 import static io.ddd4j.core.contract.constant.ContextConstants.SYSTEM_ID;
@@ -16,13 +16,14 @@ import static io.ddd4j.core.contract.constant.ContextConstants.TENANT_ID;
 
 /**
  * Feign请求头拦截器
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
-    private static final String[] USE_WEB_HEADERS = new String[]{"tenant-id", "system-id", "third-session", "enterprise-id", "shop-id", "app-id", "switch-tenant-id", "Authorization", "client-type", "own-language"};
-    private static final String[] REMOVE_AUTHORIZATION_HEADER_TARGETS = new String[]{"cloud-mall-api", "cloud-pay-api", "subscribe-service"};
     public static final String[] HEADER_TENANT_IDS = new String[]{"tenant_id", "tenant-id", "tenantId"};
     public static final String[] HEADER_SYSTEM_IDS = new String[]{"system_id", "system-id", "systemId"};
+    private static final String[] USE_WEB_HEADERS = new String[]{"tenant-id", "system-id", "third-session", "enterprise-id", "shop-id", "app-id", "switch-tenant-id", "Authorization", "client-type", "own-language"};
+    private static final String[] REMOVE_AUTHORIZATION_HEADER_TARGETS = new String[]{"cloud-mall-api", "cloud-pay-api", "subscribe-service"};
 
     public void apply(RequestTemplate template) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

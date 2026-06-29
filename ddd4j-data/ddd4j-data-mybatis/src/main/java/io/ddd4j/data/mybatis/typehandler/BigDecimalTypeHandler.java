@@ -16,21 +16,6 @@ import java.util.Objects;
  */
 public class BigDecimalTypeHandler extends org.apache.ibatis.type.BigDecimalTypeHandler {
 
-    @Override
-    public BigDecimal getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return clearZero(super.getNullableResult(rs, columnIndex));
-    }
-
-    @Override
-    public BigDecimal getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return clearZero(super.getNullableResult(rs, columnName));
-    }
-
-    @Override
-    public BigDecimal getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return clearZero(super.getNullableResult(cs, columnIndex));
-    }
-
     /**
      * 清除末尾多余的 0（如: {@code 1.010 -> 1.01}）。
      *
@@ -45,6 +30,21 @@ public class BigDecimalTypeHandler extends org.apache.ibatis.type.BigDecimalType
             return value;
         }
         return new BigDecimal(value.stripTrailingZeros().toPlainString());
+    }
+
+    @Override
+    public BigDecimal getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        return clearZero(super.getNullableResult(rs, columnIndex));
+    }
+
+    @Override
+    public BigDecimal getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        return clearZero(super.getNullableResult(rs, columnName));
+    }
+
+    @Override
+    public BigDecimal getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        return clearZero(super.getNullableResult(cs, columnIndex));
     }
 
 }

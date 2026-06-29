@@ -1,10 +1,10 @@
 package io.ddd4j.core.ddd.aggregate;
 
-import java.time.LocalDateTime;
-
 import lombok.Getter;
-import org.fuin.ddd4j.core.AggregateRootId;
 import org.fuin.ddd4j.core.AbstractAggregateRoot;
+import org.fuin.ddd4j.core.AggregateRootId;
+
+import java.time.LocalDateTime;
 
 /**
  * ddd4j 聚合根基类（纯净 DDD 轨道）。
@@ -33,10 +33,14 @@ import org.fuin.ddd4j.core.AbstractAggregateRoot;
 @Getter
 public abstract class DddAggregateRoot<ID extends AggregateRootId> extends AbstractAggregateRoot<ID> {
 
-    /** 创建时间（审计字段，无 ORM 注解） */
+    /**
+     * 创建时间（审计字段，无 ORM 注解）
+     */
     protected LocalDateTime createTime;
 
-    /** 更新时间（审计字段，无 ORM 注解） */
+    /**
+     * 更新时间（审计字段，无 ORM 注解）
+     */
     protected LocalDateTime updateTime;
 
     /**

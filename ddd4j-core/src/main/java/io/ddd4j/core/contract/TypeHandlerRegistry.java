@@ -25,6 +25,7 @@ public interface TypeHandlerRegistry {
      */
     interface TypeHandler<J, S> {
         S serialize(J value);
+
         J deserialize(S stored);
     }
 }

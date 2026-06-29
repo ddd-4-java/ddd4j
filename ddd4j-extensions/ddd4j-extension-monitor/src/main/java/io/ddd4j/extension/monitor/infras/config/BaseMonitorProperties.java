@@ -1,4 +1,3 @@
-
 package io.ddd4j.extension.monitor.infras.config;
 
 import com.google.common.collect.Lists;

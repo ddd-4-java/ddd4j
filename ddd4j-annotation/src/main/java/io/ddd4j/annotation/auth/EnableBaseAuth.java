@@ -18,9 +18,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface EnableBaseAuth {
 
-    /** 拦截路径模式 */
+    /**
+     * 拦截路径模式
+     */
     String[] pathPatterns() default {"/**"};
 
-    /** 排除路径模式 */
+    /**
+     * 排除路径模式
+     */
     String[] excludePatterns() default {};
 }

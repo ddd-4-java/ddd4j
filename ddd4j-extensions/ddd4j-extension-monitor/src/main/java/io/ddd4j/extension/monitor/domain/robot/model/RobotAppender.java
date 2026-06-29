@@ -7,10 +7,10 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.encoder.Encoder;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
-import io.ddd4j.spring.context.SpringContext;
+import com.google.common.util.concurrent.RateLimiter;
 import io.ddd4j.extension.monitor.application.service.Sender;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
-import com.google.common.util.concurrent.RateLimiter;
+import io.ddd4j.spring.context.SpringContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
@@ -54,37 +54,6 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         super.setName("dRobot");
     }
 
-    @Override
-    protected void append(ILoggingEvent eventObject) {
-        if (encoder == null) {
-            addWarn("encoder is null");
-            return;
-        }
-        byte[] encodeBytes = encoder.encode(eventObject);
-        try {
-            acquire();
-            String msg = new String(encodeBytes, StandardCharsets.UTF_8);
-            if (!Objects.equals(LATEST_MSG, msg)) {
-                LATEST_MSG = msg;
-                LATEST_MSG_COUNT.set(1);
-            }
-            if (LATEST_MSG_COUNT.incrementAndGet() < 3) {
-                // 连续发送同一条消息小于3次
-                SpringContext.getBean(Sender.class).send(msg);
-            }
-        } catch (Exception e) {
-            log.error("send robot error", e);
-        }
-    }
-
-    // 设置 layout
-    public void setLayout(Layout<ILoggingEvent> layout) {
-        LayoutWrappingEncoder<ILoggingEvent> customLayoutEncoder = new LayoutWrappingEncoder<>();
-        customLayoutEncoder.setLayout(layout);
-        customLayoutEncoder.setContext(context);
-        this.encoder = customLayoutEncoder;
-    }
-
     public static RobotAppender build(LoggerContext loggerContext) {
         RobotAppender robotAppender = new RobotAppender();
         robotAppender.setRateLimiterPermitsPerSecond(SpringContext.getBean(BaseMonitorProperties.class).getLog().getRateLimiterPermitsPerSecond());
@@ -123,5 +92,36 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
             rateLimiter = RateLimiter.create(properties.getLog().getRateLimiterPermitsPerSecond());
         }
         rateLimiter.acquire();
+    }
+
+    @Override
+    protected void append(ILoggingEvent eventObject) {
+        if (encoder == null) {
+            addWarn("encoder is null");
+            return;
+        }
+        byte[] encodeBytes = encoder.encode(eventObject);
+        try {
+            acquire();
+            String msg = new String(encodeBytes, StandardCharsets.UTF_8);
+            if (!Objects.equals(LATEST_MSG, msg)) {
+                LATEST_MSG = msg;
+                LATEST_MSG_COUNT.set(1);
+            }
+            if (LATEST_MSG_COUNT.incrementAndGet() < 3) {
+                // 连续发送同一条消息小于3次
+                SpringContext.getBean(Sender.class).send(msg);
+            }
+        } catch (Exception e) {
+            log.error("send robot error", e);
+        }
+    }
+
+    // 设置 layout
+    public void setLayout(Layout<ILoggingEvent> layout) {
+        LayoutWrappingEncoder<ILoggingEvent> customLayoutEncoder = new LayoutWrappingEncoder<>();
+        customLayoutEncoder.setLayout(layout);
+        customLayoutEncoder.setContext(context);
+        this.encoder = customLayoutEncoder;
     }
 }

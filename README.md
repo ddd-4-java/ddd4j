@@ -1,27 +1,36 @@
 ## Ddd4j Boot 3.x 简介
 
-**Ddd4j Boot** 是一个基于 **领域驱动设计（DDD）** 思想的 Java 微服务开发脚手架。采用 Spring Boot 3.5.x 构建，使用轻量级 [ddd-4-java](https://github.com/fuinorg/ddd-4-java) 和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing）。
+**Ddd4j Boot** 是一个基于 **领域驱动设计（DDD）** 思想的 Java 微服务开发脚手架。采用 Spring Boot 3.5.x
+构建，使用轻量级 [ddd-4-java](https://github.com/fuinorg/ddd-4-java)
+和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event
+Sourcing）。
 
-本项目遵循 **Eric Evans** 和 **Vaughn Vernon** 的 DDD 经典理论，不依赖特殊框架，仅使用标准的 JEE/Spring 规范，帮助开发者构建可维护、可扩展的复杂业务系统。
+本项目遵循 **Eric Evans** 和 **Vaughn Vernon** 的 DDD 经典理论，不依赖特殊框架，仅使用标准的 JEE/Spring
+规范，帮助开发者构建可维护、可扩展的复杂业务系统。
 
 ### 🎯 核心设计理念
 
 #### **领域驱动设计（DDD）**
+
 - **战略设计**：通过限界上下文（Bounded Context）划分业务边界，建立统一语言（Ubiquitous Language），识别核心域、支撑域和通用域
-- **战术设计**：采用实体（Entity）、值对象（Value Object）、聚合（Aggregate）、聚合根（Aggregate Root）、领域服务（Domain Service）、仓储（Repository）、领域事件（Domain Event）等模式组织领域模型
+- **战术设计**：采用实体（Entity）、值对象（Value Object）、聚合（Aggregate）、聚合根（Aggregate Root）、领域服务（Domain
+  Service）、仓储（Repository）、领域事件（Domain Event）等模式组织领域模型
 - **充血模型**：业务逻辑封装在领域对象内部，而非贫血的服务层，确保领域模型的完整性和业务规则的内聚性
 
 #### **命令查询职责分离（CQRS）**
+
 - **读写分离**：命令侧（写模型）专注于业务规则和状态变更，查询侧（读模型）优化数据检索和视图构建
 - **独立优化**：命令和查询可以独立扩展、优化，适应不同的性能需求
 - **事件驱动**：通过领域事件实现跨聚合、跨上下文的解耦通信
 
 #### **事件溯源（Event Sourcing）**
+
 - **事件存储**：将状态变更记录为事件序列，支持完整的历史追溯和状态重建
 - **时间旅行**：可以回放事件重建任意时间点的系统状态
 - **审计能力**：天然支持完整的业务操作审计
 
 #### **架构模式**
+
 - **菱形架构（COLA）**：采用 Adapter → Application → Domain ← Infrastructure 四层架构，清晰的分层边界和依赖方向
 - **六边形架构思想**：通过端口（Port）和适配器（Adapter）隔离领域核心与外部技术实现
 - **依赖倒置**：领域层不依赖基础设施层，通过接口抽象实现技术无关性
@@ -30,9 +39,12 @@
 
 - **1. 完整的 DDD 分层架构**：提供标准的领域层、应用层、接口层和基础设施层结构，支持 COLA V5 架构模式
 
-- **2. 轻量级 DDD 实现**：基于 [ddd-4-java](https://github.com/fuinorg/ddd-4-java) 和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库，无需引入重量级框架，保持代码简洁
+- **2. 轻量级 DDD 实现**：基于 [ddd-4-java](https://github.com/fuinorg/ddd-4-java)
+  和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库，无需引入重量级框架，保持代码简洁
 
-- **3. 技术栈集成**：基于 Spring Boot 3.5.x（详见 [Spring Boot 官方文档](https://docs.spring.io/spring-boot/docs/3.5.x/reference/html/features.html#features.spring-application)），集成 [MyBatis Plus](https://baomidou.com/introduce/)、Jackson、Guava、Swagger、SaToken 等常用组件，统一版本管理
+- **3. 技术栈集成**：基于 Spring Boot
+  3.5.x（详见 [Spring Boot 官方文档](https://docs.spring.io/spring-boot/docs/3.5.x/reference/html/features.html#features.spring-application)
+  ），集成 [MyBatis Plus](https://baomidou.com/introduce/)、Jackson、Guava、Swagger、SaToken 等常用组件，统一版本管理
 
 - **4. 双栈支持**：同时支持 WebMVC（传统 Servlet）和 WebFlux（响应式）两种编程模型
 
@@ -43,7 +55,6 @@
 - **7. 防腐层（ACL）**：提供外部服务集成的防腐层抽象，隔离外部系统变化对领域模型的影响
 
 - **8. 统一异常处理**：全局异常处理机制，支持业务异常和系统异常的标准化响应
-
 
 ### 📚 DDD/CQRS 学习资源
 
@@ -80,14 +91,14 @@
 
 **Maven 模块架构**：
 
-| 模块                      | 说明                                                                          |
-|-------------------------|-----------------------------------------------------------------------------|
-| ddd4j-bom          | BOM 依赖管理模块，统一管理所有子模块版本，外部项目通过 BOM 引用实现版本对齐                                  |
-| ddd4j-dependencies | 公共依赖声明模块，集中管理第三方组件版本，确保依赖版本一致性                                               |
+| 模块                 | 说明                                                                                                                     |
+|--------------------|------------------------------------------------------------------------------------------------------------------------|
+| ddd4j-bom          | BOM 依赖管理模块，统一管理所有子模块版本，外部项目通过 BOM 引用实现版本对齐                                                                             |
+| ddd4j-dependencies | 公共依赖声明模块，集中管理第三方组件版本，确保依赖版本一致性                                                                                         |
 | ddd4j-core         | **核心领域模块**，封装 DDD 基础抽象（BaseEntity、BaseRepository、领域事件等）、应用层基类（BaseService、Command/Query）、接口层基类（BaseController）以及领域异常定义 |
-| ddd4j-cmpt         | 组件模块父模块，提供各类技术组件的自动配置（WebMVC/WebFlux、消息队列、缓存、认证等），作为基础设施层实现                                                     |
-| ddd4j-parent       | Maven 父 POM，定义统一的编译、打包、发布规则，所有业务服务模块继承此父 POM                                                |
-| ddd4j-samples      | 示例服务模块集合，展示基于 DDD 架构的业务服务实现，涵盖不同技术栈组合（数据源、消息队列等）                                  |
+| ddd4j-cmpt         | 组件模块父模块，提供各类技术组件的自动配置（WebMVC/WebFlux、消息队列、缓存、认证等），作为基础设施层实现                                                            |
+| ddd4j-parent       | Maven 父 POM，定义统一的编译、打包、发布规则，所有业务服务模块继承此父 POM                                                                           |
+| ddd4j-samples      | 示例服务模块集合，展示基于 DDD 架构的业务服务实现，涵盖不同技术栈组合（数据源、消息队列等）                                                                       |
 
 **使用建议**：
 
@@ -193,9 +204,9 @@
 
 #### 3. 组件模块说明
 
-| 组件模块                       | 说明                                |
-|----------------------------|-----------------------------------|
-| ddd4j-cmpt-akka       | Akka 组件，支持 Akka 3 Actor 系统          |
+| 组件模块                  | 说明                                |
+|-----------------------|-----------------------------------|
+| ddd4j-cmpt-akka       | Akka 组件，支持 Akka 3 Actor 系统        |
 | ddd4j-cmpt-crypto     | 加解密组件，支持 AES、SM3、SM4 等加密算法        |
 | ddd4j-cmpt-datascope  | 数据权限组件，支持数据范围权限控制                 |
 | ddd4j-cmpt-license    | License 组件，支持 TrueLicense 许可证管理   |
@@ -290,6 +301,7 @@ ddd4j-cmpt-{模块}/
 > 示例模块采用 **COLA V5 架构**（菱形架构），完整展示 DDD 在业务服务中的实践。适用于大多数复杂业务场景（如订单中心、支付系统等）。
 
 **架构特点**：
+
 - **领域层独立**：domain 包完全独立，不依赖任何技术框架
 - **依赖倒置**：通过接口抽象实现领域层与技术实现的解耦
 - **清晰边界**：每层职责明确，便于测试和维护

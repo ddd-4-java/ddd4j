@@ -1,23 +1,21 @@
 package io.ddd4j.spring.ddd;
 
-import java.util.List;
-import java.util.Objects;
-
 import io.ddd4j.spring.ddd.scanner.DddClassPathBeanDefinitionScanner;
+import org.fuin.cqrs4j.core.CommandExecutor;
 import org.fuin.cqrs4j.core.MultiCommandExecutor;
 import org.fuin.ddd4j.core.EntityIdFactory;
 import org.fuin.ddd4j.core.JandexEntityIdFactory;
 import org.fuin.ddd4j.jackson.Ddd4JacksonModule;
 import org.fuin.esc.api.EventStore;
 import org.fuin.esc.mem.InMemoryEventStore;
-import org.fuin.cqrs4j.core.CommandExecutor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * ddd4j-ddd 自动配置。
@@ -47,7 +45,7 @@ import org.springframework.core.env.Environment;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-ddd.config.DddAutoConfiguration}，
- *             使用 {@code @EnableDdd4j} 注解启用
+ * 使用 {@code @EnableDdd4j} 注解启用
  */
 @Deprecated
 @Configuration(proxyBeanMethods = false)

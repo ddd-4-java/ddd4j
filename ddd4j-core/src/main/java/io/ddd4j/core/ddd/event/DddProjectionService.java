@@ -1,7 +1,6 @@
 package io.ddd4j.core.ddd.event;
 
 import org.fuin.cqrs4j.esc.ProjectionService;
-import org.fuin.esc.api.StreamId;
 
 /**
  * ddd4j 投影服务基类（纯净 DDD 轨道）。

@@ -4,35 +4,49 @@ import java.time.LocalDateTime;
 
 /**
  * 规则执行结果值对象
- * 
+ *
  * <p>领域模型：不可变的值对象，表示规则执行的结果。
  * 使用Builder模式构建，确保不可变性。
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
  */
 public class RuleExecutionResult {
 
-    /** 执行是否成功 */
+    /**
+     * 执行是否成功
+     */
     private final boolean success;
-    
-    /** 错误代码，执行失败时使用 */
+
+    /**
+     * 错误代码，执行失败时使用
+     */
     private final String errorCode;
-    
-    /** 错误消息，执行失败时使用 */
+
+    /**
+     * 错误消息，执行失败时使用
+     */
     private final String errorMessage;
-    
-    /** 执行结果值，执行成功时返回 */
+
+    /**
+     * 执行结果值，执行成功时返回
+     */
     private final Object result;
-    
-    /** 规则编码 */
+
+    /**
+     * 规则编码
+     */
     private final String ruleCode;
-    
-    /** 执行时间 */
+
+    /**
+     * 执行时间
+     */
     private final LocalDateTime executedAt;
-    
-    /** 执行耗时（毫秒） */
+
+    /**
+     * 执行耗时（毫秒）
+     */
     private final long executionTime;
 
     private RuleExecutionResult(Builder builder) {
@@ -47,7 +61,7 @@ public class RuleExecutionResult {
 
     /**
      * 创建Builder实例
-     * 
+     *
      * @return Builder实例
      */
     public static Builder builder() {

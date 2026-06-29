@@ -5,6 +5,7 @@ import lombok.Data;
 
 /**
  * CPU相关信息
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data

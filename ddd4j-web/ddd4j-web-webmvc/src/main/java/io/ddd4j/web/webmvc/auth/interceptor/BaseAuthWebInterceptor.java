@@ -1,18 +1,18 @@
 package io.ddd4j.web.webmvc.auth.interceptor;
 
-import io.ddd4j.spring.context.SpringContext;
-import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.exception.ServiceException;
 import io.ddd4j.annotation.auth.BaseAuth;
 import io.ddd4j.annotation.auth.Inside;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.core.contract.exception.ServiceException;
+import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.web.config.BaseWebProperties;
 import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 import static io.ddd4j.core.contract.constant.ContextConstants.AUTHORIZATION;

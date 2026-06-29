@@ -72,9 +72,9 @@ public class BaseContext {
      * 返回值通过泛型强制转型，调用方需确保类型安全。
      * 如果 key 不存在，返回 {@code null}。
      *
-     * @param key  键
-     * @param <K>  键类型
-     * @param <V>  期望的值类型
+     * @param key 键
+     * @param <K> 键类型
+     * @param <V> 期望的值类型
      * @return 对应的值，不存在时返回 {@code null}
      */
     @SuppressWarnings("unchecked")

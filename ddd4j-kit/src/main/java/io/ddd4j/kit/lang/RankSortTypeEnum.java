@@ -40,29 +40,9 @@ public enum RankSortTypeEnum {
 
     private final Integer value;
 
-    public String getName() {
-        return name;
-    }
-
-    public Integer getValue() {
-        return value;
-    }
-
     RankSortTypeEnum(String name, Integer value) {
         this.name = name;
         this.value = value;
-    }
-
-    public boolean equals(RankSortTypeEnum sortType) {
-        if (Objects.isNull(sortType)) {
-            return Boolean.FALSE;
-        }
-        return this.compareTo(sortType) == 0;
-    }
-
-    @Override
-    public String toString() {
-        return name + " -> " + value;
     }
 
     public static Integer getValueByName(String name) {
@@ -82,6 +62,26 @@ public enum RankSortTypeEnum {
             }
         }
         return DEFAULT_SORT_TYPE;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getValue() {
+        return value;
+    }
+
+    public boolean equals(RankSortTypeEnum sortType) {
+        if (Objects.isNull(sortType)) {
+            return Boolean.FALSE;
+        }
+        return this.compareTo(sortType) == 0;
+    }
+
+    @Override
+    public String toString() {
+        return name + " -> " + value;
     }
 
 }

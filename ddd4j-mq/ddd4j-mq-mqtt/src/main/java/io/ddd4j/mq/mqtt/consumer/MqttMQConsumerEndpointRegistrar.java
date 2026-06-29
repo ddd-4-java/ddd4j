@@ -1,11 +1,11 @@
 package io.ddd4j.mq.mqtt.consumer;
 
-import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgmentFactory;
-import io.ddd4j.mq.mqtt.config.Ddd4jMqttProperties;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgmentFactory;
+import io.ddd4j.mq.mqtt.config.Ddd4jMqttProperties;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +16,14 @@ import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannel
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.integration.mqtt.support.MqttHeaders;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 MQTT 入站适配器（Eclipse Paho）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

@@ -1,8 +1,11 @@
 # Ddd4j QL-Express Component
 
-基于 [Alibaba QLExpress](https://github.com/alibaba/QLExpress)、[JetCache](https://github.com/alibaba/jetcache) 的动态规则引擎组件，采用DDD（领域驱动设计）架构。
+基于 [Alibaba QLExpress](https://github.com/alibaba/QLExpress)、[JetCache](https://github.com/alibaba/jetcache)
+的动态规则引擎组件，采用DDD（领域驱动设计）架构。
 
-> 说明：本文中部分逻辑来自 [基于SpringBoot + QLExpress打造动态规则引擎：让业务规则不再束缚代码！](https://mp.weixin.qq.com/s/h2XXYiq7Ty5-xqulFfxwug) 一文。
+>
+说明：本文中部分逻辑来自 [基于SpringBoot + QLExpress打造动态规则引擎：让业务规则不再束缚代码！](https://mp.weixin.qq.com/s/h2XXYiq7Ty5-xqulFfxwug)
+一文。
 
 ## 架构说明
 
@@ -18,6 +21,7 @@
 ### 1. 添加依赖
 
 确保项目中已添加以下依赖：
+
 - `qlexpress4` - QLExpress表达式引擎
 - `jetcache` - JetCache 多级缓存
 - `spring-boot-starter-data-redis` - Redis缓存（可选）
@@ -38,6 +42,7 @@
 ### 4. 持久化实现
 
 `RuleDefinitionRepositoryImpl` 是一个接口示例，实际使用时需要：
+
 - 如果使用JPA：创建JPA实体并实现Repository接口
 - 如果使用MyBatis：创建Mapper接口和XML
 - 如果使用其他持久化方案：实现 `RuleDefinitionRepository` 接口
@@ -74,6 +79,7 @@ RuleValidationResult validation = ruleEngineApplicationService.validateRule("if 
 ## Spring管理
 
 所有服务类通过 `ExpressAutoConfiguration` 自动配置类进行管理：
+
 - `RuleEngineApplicationService` - 应用服务
 - `RuleEngineDomainServiceImpl` - 领域服务实现
 - `RedisRuleCacheService` - 缓存服务实现
@@ -81,6 +87,7 @@ RuleValidationResult validation = ruleEngineApplicationService.validateRule("if 
 ## DDD设计原则
 
 本项目遵循DDD设计原则，但不依赖外部DDD框架：
+
 - `RuleDefinition` - 领域实体，包含业务逻辑
 - `RuleId` - 值对象，不可变，通过值相等性判断
 - 领域对象保持独立，不依赖技术框架
@@ -94,6 +101,7 @@ RuleValidationResult validation = ruleEngineApplicationService.validateRule("if 
 - **RuleDeletedEvent** - 规则删除事件：当规则被删除时发布
 
 所有事件都包含：
+
 - 规则ID和编码
 - 规则名称和类型
 - 事件发生时间

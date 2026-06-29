@@ -33,7 +33,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityExceptionHandler {
 
-    /** 401：未认证（凭证错误 / 账号过期） */
+    /**
+     * 401：未认证（凭证错误 / 账号过期）
+     */
     @ExceptionHandler({BadCredentialsException.class, AuthenticationException.class,
             AccountExpiredException.class})
     public ResponseEntity<ApiRestResponse<String>> authenticationException(Exception ex) {
@@ -41,14 +43,18 @@ public class SecurityExceptionHandler {
         return new ResponseEntity<>(ApiRestResponse.of(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
     }
 
-    /** 403：账号锁定 / 禁用 */
+    /**
+     * 403：账号锁定 / 禁用
+     */
     @ExceptionHandler({LockedException.class, DisabledException.class})
     public ResponseEntity<ApiRestResponse<String>> lockedException(Exception ex) {
         log.warn("Spring Security 账号状态异常：{}", ex.getMessage());
         return new ResponseEntity<>(ApiRestResponse.of(403, "账号已被锁定或禁用"), HttpStatus.FORBIDDEN);
     }
 
-    /** 403：无权限访问 */
+    /**
+     * 403：无权限访问
+     */
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ApiRestResponse<String>> accessDeniedException(AccessDeniedException ex) {
         log.warn("Spring Security 授权异常：{}", ex.getMessage());

@@ -1,7 +1,7 @@
 package io.ddd4j.web.webmvc.utils;
 
-import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.web.config.BaseWebProperties;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 
 /**
  * WebSocket工具
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class WebSocketService {
@@ -33,8 +34,8 @@ public class WebSocketService {
     @SneakyThrows
     public void connect(String clientId, String url, Consumer<String> onMessage, Consumer<String> onConnected, Supplier<Boolean> sendHeartbeat) {
         TextWebSocketHandler handler = new TextWebSocketHandler() {
-            private LocalDateTime livingTime = LocalDateTime.now().plusSeconds(70);
             private final Integer reconnectTime = SpringContext.getBean(BaseWebProperties.class).getWs().getReconnectTime();
+            private LocalDateTime livingTime = LocalDateTime.now().plusSeconds(70);
             private boolean autoReconnect = false;
 
             // 处理连接后保存session

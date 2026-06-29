@@ -4,8 +4,9 @@ public class XHeaders {
 
     /**
      * 客户端唯一请求ID
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public static final String X_REQUEST_ID = "X-Request-Id";
 
     /**

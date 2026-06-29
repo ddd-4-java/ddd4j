@@ -5,11 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.springframework.beans.*;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -17,6 +13,7 @@ import java.util.*;
  *
  * <p>统一封装 Bean、Map、集合之间的转换能力，兼容普通 JavaBean、Lombok
  * {@code @Builder} 以及 {@code @Accessors(chain = true)} 生成的链式访问器。</p>
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
@@ -27,6 +24,7 @@ public class BeanKit {
     /**
      * 将 Map 中的属性写入目标对象。
      * <p>底层基于 Spring {@link BeanWrapper} 完成属性绑定，可兼容链式 setter。</p>
+     *
      * @param map    属性 Map
      * @param object 目标对象
      */

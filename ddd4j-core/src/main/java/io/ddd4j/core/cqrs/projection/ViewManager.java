@@ -18,9 +18,9 @@ package io.ddd4j.core.cqrs.projection;
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
  * @see ProjectionPosition
  * @see ProjectionPositionRepository
+ * @since 2.0.x
  */
 public interface ViewManager {
 

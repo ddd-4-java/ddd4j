@@ -17,6 +17,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Inside {
 
-    /** 允许的内部服务名（空表示不限制） */
+    /**
+     * 允许的内部服务名（空表示不限制）
+     */
     String[] services() default {};
 }

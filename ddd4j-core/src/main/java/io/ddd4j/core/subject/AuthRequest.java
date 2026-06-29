@@ -15,22 +15,34 @@ import java.util.Objects;
  */
 public class AuthRequest {
 
-    /** 账号 ID（必填） */
+    /**
+     * 账号 ID（必填）
+     */
     private Object loginId;
 
-    /** 认证主体（可选，登录后通过 {@link Subject#getPrincipal()} 取回） */
+    /**
+     * 认证主体（可选，登录后通过 {@link Subject#getPrincipal()} 取回）
+     */
     private AuthPrincipal principal;
 
-    /** 会话有效期（秒），-1 表示永久 */
+    /**
+     * 会话有效期（秒），-1 表示永久
+     */
     private long timeout = -1;
 
-    /** 设备类型（多端登录隔离用） */
+    /**
+     * 设备类型（多端登录隔离用）
+     */
     private String deviceType;
 
-    /** 多账号体系标识（如 sa-token 的 "admin"/"user"） */
+    /**
+     * 多账号体系标识（如 sa-token 的 "admin"/"user"）
+     */
     private String realm;
 
-    /** 扩展信息（写入 Token Claim 或 Session） */
+    /**
+     * 扩展信息（写入 Token Claim 或 Session）
+     */
     private Map<String, Object> extra = new HashMap<>();
 
     public AuthRequest() {
@@ -54,12 +66,12 @@ public class AuthRequest {
         return loginId;
     }
 
-    public String getLoginIdAsString() {
-        return loginId == null ? null : String.valueOf(loginId);
-    }
-
     public void setLoginId(Object loginId) {
         this.loginId = loginId;
+    }
+
+    public String getLoginIdAsString() {
+        return loginId == null ? null : String.valueOf(loginId);
     }
 
     public AuthPrincipal getPrincipal() {

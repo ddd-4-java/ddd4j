@@ -36,52 +36,52 @@ class CoreIndependenceTest {
      */
     @ArchTest
     static final ArchRule no_spring_in_core =
-        noClasses().that().resideInAPackage("io.ddd4j.core..")
-            .should().dependOnClassesThat().resideInAPackage("org.springframework..");
+            noClasses().that().resideInAPackage("io.ddd4j.core..")
+                    .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
     /**
      * 核心模块不得直接依赖 MyBatis-Plus。
      */
     @ArchTest
     static final ArchRule no_mybatis_in_core =
-        noClasses().that().resideInAPackage("io.ddd4j.core..")
-            .should().dependOnClassesThat().resideInAPackage("com.baomidou..");
+            noClasses().that().resideInAPackage("io.ddd4j.core..")
+                    .should().dependOnClassesThat().resideInAPackage("com.baomidou..");
 
     /**
      * 核心模块不得直接依赖 Jakarta Servlet。
      */
     @ArchTest
     static final ArchRule no_servlet_in_core =
-        noClasses().that().resideInAPackage("io.ddd4j.core..")
-            .should().dependOnClassesThat().resideInAPackage("jakarta.servlet..");
+            noClasses().that().resideInAPackage("io.ddd4j.core..")
+                    .should().dependOnClassesThat().resideInAPackage("jakarta.servlet..");
 
     /**
      * 核心模块不得直接依赖 Hibernate Validator。
      */
     @ArchTest
     static final ArchRule no_validator_in_core =
-        noClasses().that().resideInAPackage("io.ddd4j.core..")
-            .should().dependOnClassesThat().resideInAPackage("org.hibernate.validator..");
+            noClasses().that().resideInAPackage("io.ddd4j.core..")
+                    .should().dependOnClassesThat().resideInAPackage("org.hibernate.validator..");
 
     /**
      * 核心模块不得直接依赖 AspectJ。
      */
     @ArchTest
     static final ArchRule no_aspectj_in_core =
-        noClasses().that().resideInAPackage("io.ddd4j.core..")
-            .should().dependOnClassesThat().resideInAPackage("org.aspectj..");
+            noClasses().that().resideInAPackage("io.ddd4j.core..")
+                    .should().dependOnClassesThat().resideInAPackage("org.aspectj..");
 
     /**
      * 核心 contract 包不得依赖任何外部框架（纯 Java + Jackson + Lombok）。
      */
     @ArchTest
     static final ArchRule contract_package_is_pure_java =
-        noClasses().that().resideInAPackage("io.ddd4j.core.contract..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                "org.springframework..",
-                "com.baomidou..",
-                "jakarta.servlet..",
-                "org.hibernate..",
-                "org.aspectj.."
-            );
+            noClasses().that().resideInAPackage("io.ddd4j.core.contract..")
+                    .should().dependOnClassesThat().resideInAnyPackage(
+                            "org.springframework..",
+                            "com.baomidou..",
+                            "jakarta.servlet..",
+                            "org.hibernate..",
+                            "org.aspectj.."
+                    );
 }

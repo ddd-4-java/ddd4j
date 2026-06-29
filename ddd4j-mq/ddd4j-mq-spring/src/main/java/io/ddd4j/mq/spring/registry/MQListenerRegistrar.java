@@ -1,8 +1,8 @@
 package io.ddd4j.mq.spring.registry;
 
 import io.ddd4j.mq.ack.AckDisposition;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.MQConsumeTemplates;
+import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumeInterceptor;

@@ -4,6 +4,7 @@ import io.ddd4j.mq.registry.MQBrokerType;
 
 /**
  * 当前 Broker 不支持所请求的确认操作时抛出。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class UnsupportedAckOperationException extends UnsupportedOperationException {

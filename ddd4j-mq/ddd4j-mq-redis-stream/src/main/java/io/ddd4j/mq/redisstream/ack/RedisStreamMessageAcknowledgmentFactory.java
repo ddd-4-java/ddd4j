@@ -24,7 +24,7 @@ public final class RedisStreamMessageAcknowledgmentFactory {
     /**
      * 从 {@link MQMessage} 头信息解析确认对象。
      *
-     * @param message           MQ 信封
+     * @param message             MQ 信封
      * @param stringRedisTemplate Redis 模板
      * @return 确认对象；缺少必要头时返回 empty
      */

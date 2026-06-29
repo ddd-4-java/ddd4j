@@ -47,6 +47,7 @@ public class ArrayKit extends ArrayUtil {
         }
         array = CollKit.convert(CollKit.convert(array).stream().sorted().collect(Collectors.toList()));
     }
+
     public <T> boolean isNotEmpty(T[] array) {
         return null != array && array.length != 0;
     }

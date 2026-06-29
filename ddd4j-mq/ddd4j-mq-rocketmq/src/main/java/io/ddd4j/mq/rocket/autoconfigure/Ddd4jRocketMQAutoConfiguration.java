@@ -1,12 +1,10 @@
 package io.ddd4j.mq.rocket.autoconfigure;
 
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.rocket.consumer.RocketMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.rocket.publisher.RocketMQEventPublisher;
 import io.ddd4j.mq.rocket.spi.RocketMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
-import org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * RocketMQ 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=rocket 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

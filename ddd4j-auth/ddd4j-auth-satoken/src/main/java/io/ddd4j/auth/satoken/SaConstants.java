@@ -6,8 +6,9 @@ public final class SaConstants {
 
     /**
      * jwt签发者
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public static final String PAYLOAD_ISSUER = "iss";
     /**
      * jwt所面向的用户

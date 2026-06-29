@@ -14,14 +14,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Kafka 手动确认适配，基于 {@link Acknowledgment} 与 {@link ConsumerRecord}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
 
-    /** MQMessage headers 中存放 Spring Kafka Acknowledgment 的键 */
+    /**
+     * MQMessage headers 中存放 Spring Kafka Acknowledgment 的键
+     */
     public static final String HEADER_KAFKA_ACK = "kafka.acknowledgment";
 
-    /** MQMessage headers 中存放 ConsumerRecord 的键 */
+    /**
+     * MQMessage headers 中存放 ConsumerRecord 的键
+     */
     public static final String HEADER_KAFKA_RECORD = "kafka.consumerRecord";
 
     private final Acknowledgment kafkaAck;
@@ -107,8 +112,8 @@ public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
     /**
      * nack 映射：requeue 时不 ack；不 requeue 时 commit offset。
      *
-     * @param multiple  是否批量（Kafka 忽略）
-     * @param requeue   是否重新入队
+     * @param multiple 是否批量（Kafka 忽略）
+     * @param requeue  是否重新入队
      */
     @Override
     public void nack(boolean multiple, boolean requeue) {

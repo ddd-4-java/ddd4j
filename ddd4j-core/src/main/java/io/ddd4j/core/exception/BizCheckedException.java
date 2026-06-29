@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.core.exception;
@@ -48,7 +49,7 @@ public class BizCheckedException extends Exception {
     public BizCheckedException(String message, Throwable cause) {
         super(message, cause);
     }
- 
+
     public BizCheckedException(ApiCode code, String i18nCode) {
         super(code.getReason());
         this.code = code.getCode();

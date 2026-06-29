@@ -1,13 +1,13 @@
 package io.ddd4j.mq.nats.spi;
 
-import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgment;
-import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgmentFactory;
-import io.ddd4j.mq.nats.consumer.NatsMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgment;
+import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.nats.consumer.NatsMQConsumerEndpointRegistrar;
+import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * NATS Broker 适配器，桥接 ddd4j MQ SPI 与 jnats 客户端。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor

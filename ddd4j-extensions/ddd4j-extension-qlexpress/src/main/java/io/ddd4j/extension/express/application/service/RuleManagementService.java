@@ -13,10 +13,10 @@ import java.util.Optional;
 
 /**
  * 规则管理服务
- * 
+ *
  * <p>应用层服务：负责规则的增删改查，同步清理和更新缓存。
  * 所有规则操作都会自动处理缓存同步，确保数据一致性。
- * 
+ *
  * <p>主要功能：
  * <ul>
  *   <li>规则的创建、更新、删除</li>
@@ -26,16 +26,16 @@ import java.util.Optional;
  *   <li>三级查询（本地环境 -> Redis缓存 -> 数据库）</li>
  *   <li>缓存管理</li>
  * </ul>
- * 
+ *
  * <p>三级查询机制：
  * <ol>
  *   <li>本地环境（内存中的硬编码函数规则，优先级最高）</li>
  *   <li>Redis缓存（二级缓存，提高查询性能）</li>
  *   <li>数据库（持久化存储，最终数据源）</li>
  * </ol>
- * 
+ *
  * <p>注意：此类通过ExpressAutoConfiguration自动配置，无需手动添加@Service注解
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
@@ -47,7 +47,7 @@ public class RuleManagementService {
     private final RuleDefinitionRepository ruleRepository;
     private final RuleCacheService ruleCacheService;
     private final RuleEngineDomainService ruleEngineDomainService;
-    
+
     // 本地环境规则注册表（硬编码函数规则）
     private final java.util.Map<String, RuleDefinition> localRuleRegistry = new java.util.HashMap<>();
 
@@ -60,7 +60,7 @@ public class RuleManagementService {
         // 初始化本地环境规则（硬编码函数规则）
         initLocalRules();
     }
-    
+
     /**
      * 初始化本地环境规则（硬编码函数规则）
      * 这些规则逻辑固定，不需要从数据库加载
@@ -68,14 +68,14 @@ public class RuleManagementService {
     private void initLocalRules() {
         // 注册硬编码函数规则
         registerLocalRule("contains", "字符串包含判断", "FUNCTION",
-            "io.ddd4j.extension.express.infrastructure.function.ContainsFunction", "CLASS");
+                "io.ddd4j.extension.express.infrastructure.function.ContainsFunction", "CLASS");
         registerLocalRule("startsWith", "字符串开头判断", "FUNCTION",
-            "io.ddd4j.extension.express.infrastructure.function.StartsWithFunction", "CLASS");
+                "io.ddd4j.extension.express.infrastructure.function.StartsWithFunction", "CLASS");
         registerLocalRule("endsWith", "字符串结尾判断", "FUNCTION",
-            "io.ddd4j.extension.express.infrastructure.function.EndsWithFunction", "CLASS");
+                "io.ddd4j.extension.express.infrastructure.function.EndsWithFunction", "CLASS");
         registerLocalRule("formatDate", "日期格式化", "FUNCTION",
-            "io.ddd4j.extension.express.infrastructure.function.FormatDateFunction", "CLASS");
-        
+                "io.ddd4j.extension.express.infrastructure.function.FormatDateFunction", "CLASS");
+
         log.info("本地环境规则初始化完成，共{}个规则", localRuleRegistry.size());
     }
 
@@ -92,20 +92,20 @@ public class RuleManagementService {
         rule.setFunctionType(functionType);
         rule.setEnabled(true);
         rule.setPriority(1000); // 本地规则优先级最高
-        
+
         localRuleRegistry.put(ruleCode, rule);
     }
 
     /**
      * 创建规则
-     * 
+     *
      * <p>创建新规则，执行以下步骤：
      * <ol>
      *   <li>验证规则语法</li>
      *   <li>保存到数据库</li>
      *   <li>同步更新缓存（如果规则启用）</li>
      * </ol>
-     * 
+     *
      * @param rule 规则定义，不能为null，ruleCode不能为空
      * @return 保存后的规则定义
      * @throws IllegalArgumentException 如果规则语法错误或ruleCode已存在
@@ -135,15 +135,15 @@ public class RuleManagementService {
 
     /**
      * 更新规则
-     * 
+     *
      * <p>更新现有规则，执行以下步骤：
      * <ol>
      *   <li>验证规则语法</li>
      *   <li>更新数据库</li>
      *   <li>同步更新或清除缓存（根据规则状态）</li>
      * </ol>
-     * 
-     * @param id 规则ID，不能为null
+     *
+     * @param id   规则ID，不能为null
      * @param rule 新的规则定义，不能为null
      * @return 更新后的规则定义
      * @throws IllegalArgumentException 如果规则不存在或规则语法错误
@@ -189,13 +189,13 @@ public class RuleManagementService {
 
     /**
      * 删除规则
-     * 
+     *
      * <p>删除规则，执行以下步骤：
      * <ol>
      *   <li>删除数据库记录</li>
      *   <li>同步清除缓存</li>
      * </ol>
-     * 
+     *
      * @param id 规则ID，不能为null
      * @throws IllegalArgumentException 如果规则不存在
      */
@@ -214,7 +214,7 @@ public class RuleManagementService {
 
     /**
      * 根据ID查询规则
-     * 
+     *
      * @param id 规则ID，不能为null
      * @return 规则定义，如果不存在返回Optional.empty()
      */
@@ -224,14 +224,14 @@ public class RuleManagementService {
 
     /**
      * 根据规则编码查询规则（三级查询：本地环境 -> Redis缓存 -> 数据库）
-     * 
+     *
      * <p>查询顺序：
      * <ol>
      *   <li>本地环境（内存中的硬编码规则，优先级最高）</li>
      *   <li>Redis缓存（二级缓存，提高查询性能）</li>
      *   <li>数据库（持久化存储，最终数据源）</li>
      * </ol>
-     * 
+     *
      * @param ruleCode 规则编码，不能为null
      * @return 规则定义，如果不存在返回Optional.empty()
      */
@@ -263,32 +263,32 @@ public class RuleManagementService {
         }
         return rule;
     }
-    
+
     /**
      * 获取所有启用的规则（包括本地和数据库）
-     * 
+     *
      * <p>合并本地硬编码规则和数据库中的规则，按优先级降序排列。
      * 如果存在同名规则，本地规则优先级更高（不会被覆盖）。
-     * 
+     *
      * @return 所有启用的规则列表，按优先级从高到低排序
      */
     public List<RuleDefinition> getAllEnabledRules() {
         // 获取数据库中的启用规则
         List<RuleDefinition> dbRules = ruleRepository.findEnabledRulesOrderByPriorityDesc();
-        
+
         // 合并本地规则（本地规则优先级更高）
         java.util.Map<String, RuleDefinition> allRules = new java.util.HashMap<>(localRuleRegistry);
         dbRules.forEach(rule -> {
             // 如果本地已存在同名规则，不覆盖（本地规则优先级更高）
             allRules.putIfAbsent(rule.getRuleCode(), rule);
         });
-        
+
         return allRules.values().stream()
                 .filter(RuleDefinition::isAvailable)
                 .sorted((r1, r2) -> {
                     int priorityCompare = Integer.compare(
-                        r2.getPriority() != null ? r2.getPriority() : 0,
-                        r1.getPriority() != null ? r1.getPriority() : 0
+                            r2.getPriority() != null ? r2.getPriority() : 0,
+                            r1.getPriority() != null ? r1.getPriority() : 0
                     );
                     if (priorityCompare != 0) {
                         return priorityCompare;
@@ -297,10 +297,10 @@ public class RuleManagementService {
                 })
                 .toList();
     }
-    
+
     /**
      * 获取所有函数规则（ruleType 为 FUNCTION）
-     * 
+     *
      * @return 所有函数规则列表，按优先级从高到低排序
      */
     public List<RuleDefinition> getAllFunctionRules() {
@@ -311,7 +311,7 @@ public class RuleManagementService {
 
     /**
      * 查询所有规则
-     * 
+     *
      * @return 所有规则列表，包括启用和禁用的规则
      */
     public List<RuleDefinition> getAllRules() {
@@ -320,7 +320,7 @@ public class RuleManagementService {
 
     /**
      * 查询所有启用的规则，按优先级降序排列
-     * 
+     *
      * @return 启用的规则列表，按优先级从高到低排序
      */
     public List<RuleDefinition> getEnabledRules() {
@@ -329,7 +329,7 @@ public class RuleManagementService {
 
     /**
      * 根据规则类型查询启用的规则
-     * 
+     *
      * @param ruleType 规则类型，如DECISION、VALIDATION、CALCULATION等
      * @return 指定类型的启用规则列表
      */
@@ -339,9 +339,9 @@ public class RuleManagementService {
 
     /**
      * 启用规则
-     * 
+     *
      * <p>将规则状态设置为启用，并同步更新缓存。
-     * 
+     *
      * @param id 规则ID，不能为null
      * @return 更新后的规则定义
      * @throws IllegalArgumentException 如果规则不存在
@@ -365,10 +365,10 @@ public class RuleManagementService {
 
     /**
      * 禁用规则
-     * 
+     *
      * <p>将规则状态设置为禁用，并同步清除缓存。
      * 禁用的规则不会被执行。
-     * 
+     *
      * @param id 规则ID，不能为null
      * @return 更新后的规则定义
      * @throws IllegalArgumentException 如果规则不存在
@@ -392,7 +392,7 @@ public class RuleManagementService {
 
     /**
      * 清除规则缓存
-     * 
+     *
      * @param ruleCode 规则编码，不能为null
      */
     public void clearRuleCache(String ruleCode) {
@@ -402,7 +402,7 @@ public class RuleManagementService {
 
     /**
      * 清除所有规则缓存
-     * 
+     *
      * <p>清除Redis中所有规则相关的缓存数据，谨慎使用。
      * 建议在规则批量更新后使用。
      */

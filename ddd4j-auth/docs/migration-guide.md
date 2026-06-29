@@ -10,13 +10,13 @@
 
 ### 1.1 为什么迁移到 sa-token
 
-| 维度 | Shiro | Spring Security | sa-token（推荐） |
-|------|-------|-----------------|-----------------|
-| **学习成本** | 高（INI/Realm 体系复杂） | 极高（FilterChain 配置繁琐） | 低（`StpUtil.login()` 一行搞定） |
-| **多账号体系** | 多 Realm 配置复杂 | 多 SecurityContext | `StpLogic("admin")` 天然支持 |
-| **Token 管理** | 需自行实现 | 需 OAuth2/JWT 扩展 | 内置 JWT/UUID/临时Token |
-| **Sa-Token 生态** | ❌ | ❌ | OAuth2 / SSO / API Key / 踢人 / 封禁 |
-| **ddd4j 适配** | ✅ 兼容旧项目 | ✅ 兼容旧项目 | ✅ **主推方案** |
+| 维度              | Shiro             | Spring Security      | sa-token（推荐）                     |
+|-----------------|-------------------|----------------------|----------------------------------|
+| **学习成本**        | 高（INI/Realm 体系复杂） | 极高（FilterChain 配置繁琐） | 低（`StpUtil.login()` 一行搞定）        |
+| **多账号体系**       | 多 Realm 配置复杂      | 多 SecurityContext    | `StpLogic("admin")` 天然支持         |
+| **Token 管理**    | 需自行实现             | 需 OAuth2/JWT 扩展      | 内置 JWT/UUID/临时Token              |
+| **Sa-Token 生态** | ❌                 | ❌                    | OAuth2 / SSO / API Key / 踢人 / 封禁 |
+| **ddd4j 适配**    | ✅ 兼容旧项目           | ✅ 兼容旧项目              | ✅ **主推方案**                       |
 
 ### 1.2 迁移四阶段路径
 
@@ -163,16 +163,16 @@ SubjectKit.hasRole("admin");
 
 ### 2.5 Shiro → sa-token API 对照表
 
-| Shiro API | SubjectKit API（统一） | sa-token 底层 |
-|-----------|----------------------|--------------|
-| `SecurityUtils.getSubject().login(token)` | `SubjectKit.login(AuthRequest)` | `StpUtil.login(id)` |
-| `SecurityUtils.getSubject().logout()` | `SubjectKit.logout()` | `StpUtil.logout()` |
-| `SecurityUtils.getSubject().getPrincipal()` | `SubjectKit.getPrincipal()` | `StpUtil.getSession().get("principal")` |
-| `SecurityUtils.getSubject().hasRole(r)` | `SubjectKit.hasRole(r)` | `StpUtil.hasRole(r)` |
-| `SecurityUtils.getSubject().isPermitted(p)` | `SubjectKit.hasPermission(p)` | `StpUtil.hasPermission(p)` |
-| `SecurityUtils.getSubject().isAuthenticated()` | `SubjectKit.isLogin()` | `StpUtil.isLogin()` |
-| `sessionDAO.delete(session)` | `SubjectKit.kickout(loginId)` | `StpUtil.kickout(loginId)` |
-| — | `SubjectKit.refresh()` | `StpUtil.renewTimeout()` |
+| Shiro API                                      | SubjectKit API（统一）              | sa-token 底层                             |
+|------------------------------------------------|---------------------------------|-----------------------------------------|
+| `SecurityUtils.getSubject().login(token)`      | `SubjectKit.login(AuthRequest)` | `StpUtil.login(id)`                     |
+| `SecurityUtils.getSubject().logout()`          | `SubjectKit.logout()`           | `StpUtil.logout()`                      |
+| `SecurityUtils.getSubject().getPrincipal()`    | `SubjectKit.getPrincipal()`     | `StpUtil.getSession().get("principal")` |
+| `SecurityUtils.getSubject().hasRole(r)`        | `SubjectKit.hasRole(r)`         | `StpUtil.hasRole(r)`                    |
+| `SecurityUtils.getSubject().isPermitted(p)`    | `SubjectKit.hasPermission(p)`   | `StpUtil.hasPermission(p)`              |
+| `SecurityUtils.getSubject().isAuthenticated()` | `SubjectKit.isLogin()`          | `StpUtil.isLogin()`                     |
+| `sessionDAO.delete(session)`                   | `SubjectKit.kickout(loginId)`   | `StpUtil.kickout(loginId)`              |
+| —                                              | `SubjectKit.refresh()`          | `StpUtil.renewTimeout()`                |
 
 ---
 
@@ -241,16 +241,16 @@ boolean isAdmin = SubjectKit.hasRole("admin");
 
 ### 3.3 Spring Security → sa-token API 对照表
 
-| Spring Security API | SubjectKit API（统一） | sa-token 底层 |
-|--------------------|----------------------|--------------|
-| `SecurityContextHolder.getContext().setAuthentication(auth)` | `SubjectKit.login(AuthRequest)` | `StpUtil.login(id)` |
-| `SecurityContextHolder.clearContext()` | `SubjectKit.logout()` | `StpUtil.logout()` |
-| `SecurityContextHolder.getContext().getAuthentication().getPrincipal()` | `SubjectKit.getPrincipal()` | `StpUtil.getSession().get("principal")` |
-| `auth.getAuthorities()` 比对 | `SubjectKit.hasRole(r)` | `StpUtil.hasRole(r)` |
-| `@PreAuthorize("hasRole('ADMIN')")` | `@SaCheckRole("admin")` 或 `SubjectKit.hasRole("admin")` | sa-token 注解 |
-| `@PreAuthorize("hasAuthority('user:add')")` | `@SaCheckPermission("user:add")` | sa-token 注解 |
-| `Authentication.isAuthenticated()` | `SubjectKit.isLogin()` | `StpUtil.isLogin()` |
-| `RememberMeAuthenticationToken` | `SubjectKit.getSubject().isRemembered()` | sa-token 记住我 |
+| Spring Security API                                                     | SubjectKit API（统一）                                      | sa-token 底层                             |
+|-------------------------------------------------------------------------|---------------------------------------------------------|-----------------------------------------|
+| `SecurityContextHolder.getContext().setAuthentication(auth)`            | `SubjectKit.login(AuthRequest)`                         | `StpUtil.login(id)`                     |
+| `SecurityContextHolder.clearContext()`                                  | `SubjectKit.logout()`                                   | `StpUtil.logout()`                      |
+| `SecurityContextHolder.getContext().getAuthentication().getPrincipal()` | `SubjectKit.getPrincipal()`                             | `StpUtil.getSession().get("principal")` |
+| `auth.getAuthorities()` 比对                                              | `SubjectKit.hasRole(r)`                                 | `StpUtil.hasRole(r)`                    |
+| `@PreAuthorize("hasRole('ADMIN')")`                                     | `@SaCheckRole("admin")` 或 `SubjectKit.hasRole("admin")` | sa-token 注解                             |
+| `@PreAuthorize("hasAuthority('user:add')")`                             | `@SaCheckPermission("user:add")`                        | sa-token 注解                             |
+| `Authentication.isAuthenticated()`                                      | `SubjectKit.isLogin()`                                  | `StpUtil.isLogin()`                     |
+| `RememberMeAuthenticationToken`                                         | `SubjectKit.getSubject().isRemembered()`                | sa-token 记住我                            |
 
 ---
 
@@ -330,12 +330,12 @@ SubjectKit.login(AuthRequest.of(userId)
 
 ### Q3：Spring Security 的方法级注解如何迁移？
 
-| Spring Security | sa-token |
-|----------------|----------|
-| `@PreAuthorize("hasRole('ADMIN')")` | `@SaCheckRole("admin")` |
+| Spring Security                             | sa-token                         |
+|---------------------------------------------|----------------------------------|
+| `@PreAuthorize("hasRole('ADMIN')")`         | `@SaCheckRole("admin")`          |
 | `@PreAuthorize("hasAuthority('user:add')")` | `@SaCheckPermission("user:add")` |
-| `@PreAuthorize("isAuthenticated()")` | `@SaCheckLogin` |
-| `@Secured("ROLE_ADMIN")` | `@SaCheckRole("admin")` |
+| `@PreAuthorize("isAuthenticated()")`        | `@SaCheckLogin`                  |
+| `@Secured("ROLE_ADMIN")`                    | `@SaCheckRole("admin")`          |
 
 ### Q4：如何验证迁移后的权限校验行为一致？
 

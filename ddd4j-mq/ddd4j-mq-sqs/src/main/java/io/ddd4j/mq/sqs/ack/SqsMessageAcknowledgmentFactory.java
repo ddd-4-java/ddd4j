@@ -9,6 +9,7 @@ import java.util.Optional;
 
 /**
  * 从 SQS {@link Message} 构建 {@link SqsMessageAcknowledgment}。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class SqsMessageAcknowledgmentFactory {

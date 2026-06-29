@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.data.mybatis.dto;
@@ -20,6 +21,11 @@ public abstract class AbstractOrderedPaginationDTO extends AbstractPaginationDTO
     @Schema(description = "排序信息")
     private List<OrderItem> orders;
 
-    public List<OrderItem> getOrders() { return orders; }
-    public void setOrders(List<OrderItem> orders) { this.orders = orders; }
+    public List<OrderItem> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<OrderItem> orders) {
+        this.orders = orders;
+    }
 }

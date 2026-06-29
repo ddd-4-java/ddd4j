@@ -2,6 +2,7 @@ package io.ddd4j.data.crypto.domain.enums;
 
 /**
  * 加密解密方式
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum CryptoType {

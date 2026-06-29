@@ -7,6 +7,7 @@ import lombok.Data;
  * <p>
  * 连接参数与 sample {@code ddd4j-sample-starter-druid-mqtt-client2} 的 {@code mqtt.client.*} 对齐；
  * 本模块发布/订阅 QoS 等 ddd4j 语义在此配置，Broker 地址等仍由 {@code mqtt.client.*} 提供。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
@@ -18,18 +19,28 @@ public class Ddd4jMicaMqttProperties {
      */
     private String url = "tcp://127.0.0.1:1883";
 
-    /** 默认 QoS：0=至多一次，1=至少一次，2=恰好一次 */
+    /**
+     * 默认 QoS：0=至多一次，1=至少一次，2=恰好一次
+     */
     private int qos = 1;
 
-    /** 是否清除 session（对应 mica {@code mqtt.client.clean-start}） */
+    /**
+     * 是否清除 session（对应 mica {@code mqtt.client.clean-start}）
+     */
     private boolean cleanStart = true;
 
-    /** 认证用户名（可选，映射 {@code mqtt.client.username}） */
+    /**
+     * 认证用户名（可选，映射 {@code mqtt.client.username}）
+     */
     private String username;
 
-    /** 认证密码（可选，映射 {@code mqtt.client.password}） */
+    /**
+     * 认证密码（可选，映射 {@code mqtt.client.password}）
+     */
     private String password;
 
-    /** 客户端 ID 前缀提示（实际 ID 由 {@code mqtt.client.client-id} 配置） */
+    /**
+     * 客户端 ID 前缀提示（实际 ID 由 {@code mqtt.client.client-id} 配置）
+     */
     private String clientIdPrefix = "ddd4j-mica-mqtt";
 }

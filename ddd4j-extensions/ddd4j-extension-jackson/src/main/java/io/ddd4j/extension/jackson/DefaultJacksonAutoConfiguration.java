@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Jackson ObjectMapper 默认配置（纯 Spring Framework）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

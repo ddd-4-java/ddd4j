@@ -9,6 +9,7 @@ import java.util.Objects;
 
 /**
  * {@link MQBrokerAdapter} 解析工具。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class MQBrokerAdapters {

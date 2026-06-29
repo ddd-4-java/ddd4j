@@ -5,6 +5,7 @@
 ### 文章目录
 
 执行摘要（Executive Summary）
+
 1. DDD 基础（战略 + 战术）
    1.1 战略设计（做正确的事）
    1.2 战术设计（把事做正确）
@@ -41,12 +42,16 @@
 
 ### 执行摘要（Executive Summary）
 
-- **DDD（领域驱动设计）强调用“领域模型”承载业务知识，通过限界上下文划分边界；战术上用实体、值对象、聚合、领域服务、仓储、工厂、领域事件组织代码。**
-- **六边形架构（Ports & Adapters）把系统核心与外界交互隔离，所有 IO 通过端口（Port）与适配器（Adapter）**进出，核心可独立于框架、UI、DB 运行与测试。
+- **DDD（领域驱动设计）强调用“领域模型”承载业务知识，通过限界上下文划分边界；战术上用实体、值对象、聚合、领域服务、仓储、工厂、领域事件组织代码。
+  **
+- **六边形架构（Ports & Adapters）把系统核心与外界交互隔离，所有 IO 通过端口（Port）与适配器（Adapter）**进出，核心可独立于框架、UI、DB
+  运行与测试。
 - **整洁架构（Clean Architecture）强调依赖方向只指向内圈（实体→用例→接口适配器→框架与驱动）**，与“洋葱/六边形”同宗同源，关注可演进、可测试。
-- **菱形架构（COLA）是国内工程化落地的 DDD 分层风格（形似菱形）**，用Adapter / Application / Domain / Infrastructure 四层 + Command/DTO/Assembler/SPI 扩展点等工程实践，兼顾协作与落地效率。
+- **菱形架构（COLA）是国内工程化落地的 DDD 分层风格（形似菱形）**，用Adapter / Application / Domain / Infrastructure 四层 +
+  Command/DTO/Assembler/SPI 扩展点等工程实践，兼顾协作与落地效率。
 
 > ##### 如何选型：
+
 - **纯 CRUD/报表/管理后台**：传统分层或轻量 DDD 即可。
 - **核心域/复杂规则/多集成**：六边形或整洁优先；若团队熟悉阿里系/工程化落地，**COLA（菱形）**更好落地。
 - **强变化的外设（UI/DB/队列/三方）**：六边形最“抗变化”。
@@ -55,7 +60,8 @@
 
 #### 1.1 战略设计（做正确的事）
 
-- **限界上下文（Bounded Context）**：业务语言与模型的边界，一个上下文内统一语言，跨上下文用**上下文映射（Context Map）**明确关系（ACL/Conformist/Anti-Corruption 等）。
+- **限界上下文（Bounded Context）**：业务语言与模型的边界，一个上下文内统一语言，跨上下文用**上下文映射（Context Map）**
+  明确关系（ACL/Conformist/Anti-Corruption 等）。
 - **子域**：核心域 / 支撑域 / 通用域，不同优先级、不同投入。
 - **统一语言**：与业务共创词典，模型与词语一一对应。
 
@@ -165,7 +171,8 @@ class MyBatisOrderRepository implements OrderRepository { /* mapper 调用 */ }
 
 ### 4. 菱形架构（COLA）
 
-> COLA（Clean Object-Oriented and Layered Architecture） 是国内常用的 DDD 工程化落地模型，图形呈“菱形”，强调四层 + 契约：Adapter / Application / Domain / Infrastructure，并推广 Command/Result/DTO/Assembler/SPI 扩展点 等实践。
+> COLA（Clean Object-Oriented and Layered Architecture） 是国内常用的 DDD 工程化落地模型，图形呈“菱形”，强调四层 +
+> 契约：Adapter / Application / Domain / Infrastructure，并推广 Command/Result/DTO/Assembler/SPI 扩展点 等实践。
 
 #### 4.1 结构
 
@@ -206,14 +213,14 @@ com.xxx.pay
 
 ### 5. 三种架构对比
 
-| 维度 | 六边形（Ports & Adapters） | 整洁架构（Clean） | 菱形（COLA） |
-|------|--------------------------|------------------|-------------|
-| 关注点 | IO 隔离，适配器可插拔 | 依赖向内，圈层清晰 | 工程化与团队协作、规约化 |
-| 对 DDD 适配 | ★★★★☆ | ★★★★☆ | ★★★★☆ |
-| 学习/落地成本 | 中 | 中 | 低-中（有模板） |
-| 抗变能力 | UI/DB/MQ 强 | 框架/基础设施强 | 强（取决于执行） |
-| 测试友好 | 非常强 | 强 | 强 |
-| 易犯错误 | 端口粒度失控 | 用例贫血 | 规约过度、装配泛滥 |
+| 维度       | 六边形（Ports & Adapters） | 整洁架构（Clean） | 菱形（COLA）     |
+|----------|-----------------------|-------------|--------------|
+| 关注点      | IO 隔离，适配器可插拔          | 依赖向内，圈层清晰   | 工程化与团队协作、规约化 |
+| 对 DDD 适配 | ★★★★☆                 | ★★★★☆       | ★★★★☆        |
+| 学习/落地成本  | 中                     | 中           | 低-中（有模板）     |
+| 抗变能力     | UI/DB/MQ 强            | 框架/基础设施强    | 强（取决于执行）     |
+| 测试友好     | 非常强                   | 强           | 强            |
+| 易犯错误     | 端口粒度失控                | 用例贫血        | 规约过度、装配泛滥    |
 
 ### 6. 关键设计议题（与 DDD 的融合）
 

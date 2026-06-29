@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-data-spring</artifactId>
-    <description>ddd4j Data - Spring 桥接：Repository Bean 注册、静态注册表初始化、mapper 注入。承担 ddd4j-data-mybatis 与 Spring 容器的桥接职责（非 Spring Boot auto-config，auto-config 在 ddd4j-boot-data）。</description>
+    <description>ddd4j Data - Spring 桥接：Repository Bean 注册、静态注册表初始化、mapper 注入。承担 ddd4j-data-mybatis 与
+        Spring 容器的桥接职责（非 Spring Boot auto-config，auto-config 在 ddd4j-boot-data）。
+    </description>
 
     <dependencies>
         <!-- 纯 MyBatis 实现 -->

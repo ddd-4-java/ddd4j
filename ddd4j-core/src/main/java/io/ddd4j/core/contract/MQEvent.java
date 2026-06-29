@@ -30,13 +30,13 @@ public class MQEvent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 静态 MQEventPublisher 注册（由框架适配层注入） */
+    /**
+     * 静态 MQEventPublisher 注册（由框架适配层注入）
+     */
     private static volatile MQEventPublisher mqEventPublisher;
 
     // 消息ID，默认当前时间戳
     protected String msgId;
-    // 命名空间
-    private String namespace;
     // 主题，配置 ddd4j.mq.default-topic 后无须每次指定
     protected String topic;
     // 标签，只支持单个标签，多标签需要分开发送
@@ -46,7 +46,8 @@ public class MQEvent implements Serializable {
     // 租户ID，默认从线程上下文获取（外部系统 JSON 常用 tenant_id）
     @JsonAlias("tenant_id")
     protected String tenantId;
-
+    // 命名空间
+    private String namespace;
     // 发布模式：MQ | DOMAIN_EVENT | BOTH
     private PublishMode publishMode = PublishMode.MQ;
 
@@ -62,18 +63,6 @@ public class MQEvent implements Serializable {
      */
     public static MQEventPublisher getPublisher() {
         return mqEventPublisher;
-    }
-
-    /**
-     * 发布模式枚举。
-     */
-    public enum PublishMode {
-        /** 只发布到 MQ Broker（默认，保持向后兼容） */
-        MQ,
-        /** 只发布到 DomainEvent（本地事件，通过 DomainEventPublisher） */
-        DOMAIN_EVENT,
-        /** 同时发布到 MQ 和 Domain Event（混合模式） */
-        BOTH
     }
 
     // 策略匹配，supports参数来源于@MQEventListener.supports
@@ -184,6 +173,24 @@ public class MQEvent implements Serializable {
     public <T extends MQEvent> T publishMode(PublishMode publishMode) {
         this.publishMode = publishMode;
         return (T) this;
+    }
+
+    /**
+     * 发布模式枚举。
+     */
+    public enum PublishMode {
+        /**
+         * 只发布到 MQ Broker（默认，保持向后兼容）
+         */
+        MQ,
+        /**
+         * 只发布到 DomainEvent（本地事件，通过 DomainEventPublisher）
+         */
+        DOMAIN_EVENT,
+        /**
+         * 同时发布到 MQ 和 Domain Event（混合模式）
+         */
+        BOTH
     }
 
     /**

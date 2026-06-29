@@ -15,8 +15,9 @@ public class CryptoProperties {
 
     /**
      * 加密解密方式，default:默认的行为，internal:内部加密，flksec:弗兰科信息
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private CryptoType type = CryptoType.INTERNAL;
 
     /**

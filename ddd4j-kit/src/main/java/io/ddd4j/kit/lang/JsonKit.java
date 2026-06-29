@@ -41,27 +41,28 @@ import java.util.*;
 @Slf4j(topic = "### DDD4J-KIT : JsonKit ###")
 public class JsonKit {
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
-    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
-
-    /**
-     * 默认 ObjectMapper（用于普通 JSON 序列化）
-     */
-    public static final ObjectMapper DEFAULT_OBJECT_MAPPER = defaultObjectMapper();
-
     /**
      * Redis ObjectMapper（带 DefaultTyping，用于 Redis 序列化）
      */
     public static final ObjectMapper REDIS_OBJECT_MAPPER = redisObjectMapper();
-
     /**
      * TypeReference 常量
      */
-    public static final TypeReference<String> STRING_TYPE = new TypeReference<String>() {};
-    public static final TypeReference<Integer> INTEGER_TYPE = new TypeReference<Integer>() {};
-    public static final TypeReference<Long> LONG_TYPE = new TypeReference<Long>() {};
-    public static final TypeReference<Double> DOUBLE_TYPE = new TypeReference<Double>() {};
+    public static final TypeReference<String> STRING_TYPE = new TypeReference<String>() {
+    };
+    public static final TypeReference<Integer> INTEGER_TYPE = new TypeReference<Integer>() {
+    };
+    public static final TypeReference<Long> LONG_TYPE = new TypeReference<Long>() {
+    };
+    public static final TypeReference<Double> DOUBLE_TYPE = new TypeReference<Double>() {
+    };
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    /**
+     * 默认 ObjectMapper（用于普通 JSON 序列化）
+     */
+    public static final ObjectMapper DEFAULT_OBJECT_MAPPER = defaultObjectMapper();
 
     /**
      * 创建默认 ObjectMapper
@@ -367,8 +368,8 @@ public class JsonKit {
 
     private static Object getNodeValue(JsonNode childNode) {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
-                childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
-                        childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
+                                                                     childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
+                                                                                                                    childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
     private static class BaseSimpleDateFormat extends SimpleDateFormat {

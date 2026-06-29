@@ -1,13 +1,14 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.web.webflux;
 
+import io.ddd4j.core.ProfileManager;
 import io.ddd4j.web.webflux.config.LocalResourceProperteis;
 import io.ddd4j.web.webflux.error.GlobalExceptionHandler;
-import io.ddd4j.core.ProfileManager;
 import org.springframework.biz.web.server.ReactiveRequestContextFilter;
 import org.springframework.biz.web.server.i18n.XHeaderLocaleContextResolver;
 import org.springframework.context.annotation.Bean;

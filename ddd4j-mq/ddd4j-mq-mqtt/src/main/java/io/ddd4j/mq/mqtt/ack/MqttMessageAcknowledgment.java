@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  * QoS 0 无 Broker 级确认；QoS 1/2 在 Paho 回调正常返回时由客户端自动发送 PUBACK，
  * 本实现将 {@link #ack()} 映射为业务处理完成标记。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

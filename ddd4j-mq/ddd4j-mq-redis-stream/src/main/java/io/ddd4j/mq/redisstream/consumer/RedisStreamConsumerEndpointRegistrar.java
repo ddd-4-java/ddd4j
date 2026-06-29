@@ -1,12 +1,12 @@
 package io.ddd4j.mq.redisstream.consumer;
 
-import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgment;
-import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgmentFactory;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgment;
+import io.ddd4j.mq.redisstream.ack.RedisStreamMessageAcknowledgmentFactory;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,6 @@ import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
 import org.springframework.util.StringUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 Redis Stream {@link StreamMessageListenerContainer} 消费端点。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

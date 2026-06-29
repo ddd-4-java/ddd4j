@@ -10,6 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * {@link MQEventListener} 监听器定义注册表，由 {@code io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor} 在 Bean 初始化阶段填充。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j

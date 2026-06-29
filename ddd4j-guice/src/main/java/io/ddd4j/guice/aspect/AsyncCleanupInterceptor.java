@@ -15,13 +15,10 @@
  */
 package io.ddd4j.guice.aspect;
 
-import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 异步方法 ThreadContext 清理拦截器（等价于 Spring 的 AsyncAspect）。

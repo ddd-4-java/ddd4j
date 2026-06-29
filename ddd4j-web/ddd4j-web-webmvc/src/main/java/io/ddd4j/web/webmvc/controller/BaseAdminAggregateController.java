@@ -35,8 +35,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * <p>建议在子类上使用 {@code @PreAuthorize("hasRole('ADMIN')")} 限定权限。
  * </p>
  *
- * @param <V>  管理端视图对象（VO）
- * @param <Q>  查询参数
+ * @param <V> 管理端视图对象（VO）
+ * @param <Q> 查询参数
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public abstract class BaseAdminAggregateController<V, Q> {

@@ -12,13 +12,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link MicaMqttClientSubscribeScanner} 单元测试。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class MicaMqttClientSubscribeScannerTest {

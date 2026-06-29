@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.web.webmvc.webmvc;
@@ -20,10 +21,10 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import hitool.core.lang3.time.DateFormats;
-import io.ddd4j.extension.jackson.ser.MyBeanSerializerModifier;
-import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import io.ddd4j.core.MediaTypes;
+import io.ddd4j.extension.jackson.ser.MyBeanSerializerModifier;
 import io.ddd4j.spring.web.Slf4jMDCInterceptor;
+import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;

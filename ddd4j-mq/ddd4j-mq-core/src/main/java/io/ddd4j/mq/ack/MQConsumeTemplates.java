@@ -17,13 +17,19 @@ import java.util.function.Supplier;
  */
 public final class MQConsumeTemplates {
 
-    /** preCheck 返回值：继续执行业务 */
+    /**
+     * preCheck 返回值：继续执行业务
+     */
     public static final int PRE_CONTINUE = 0;
 
-    /** preCheck 返回值：幂等跳过，直接 DISCARD ack */
+    /**
+     * preCheck 返回值：幂等跳过，直接 DISCARD ack
+     */
     public static final int PRE_DISCARD = 1;
 
-    /** preCheck 返回值：处理中/锁占用，直接 requeue */
+    /**
+     * preCheck 返回值：处理中/锁占用，直接 requeue
+     */
     public static final int PRE_DEFER = 2;
 
     private MQConsumeTemplates() {

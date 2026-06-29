@@ -1,10 +1,9 @@
 package io.ddd4j.core.ddd.repository;
 
+import io.ddd4j.core.ddd.aggregate.DddAggregateRoot;
 import org.fuin.ddd4j.core.AggregateRootId;
 import org.fuin.ddd4j.esc.EventStoreRepository;
 import org.fuin.esc.api.EventStore;
-
-import io.ddd4j.core.ddd.aggregate.DddAggregateRoot;
 
 /**
  * ddd4j 事件溯源仓储基类（纯净 DDD 轨道）。
@@ -45,7 +44,7 @@ import io.ddd4j.core.ddd.aggregate.DddAggregateRoot;
  * </pre>
  *
  * @param <ID> 聚合根标识类型
- * @param <A> 聚合根类型（必须是 {@link DddAggregateRoot} 子类）
+ * @param <A>  聚合根类型（必须是 {@link DddAggregateRoot} 子类）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see EventStoreRepository
  * @since 3.4.x

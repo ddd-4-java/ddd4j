@@ -8,6 +8,7 @@ import io.ddd4j.mq.contract.MQDestination;
  * <p>
  * 各 {@code ddd4j-cmpt-*} 模块通过 {@link io.ddd4j.mq.spi.MQBrokerAdapter} 提供实现。
  * </p>
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface MQEventPublisher extends io.ddd4j.core.contract.MQEventPublisher {

@@ -1,19 +1,15 @@
 package io.ddd4j.mq.activemq.consumer;
 
-import io.ddd4j.mq.activemq.ack.ActiveMQMessageAcknowledgment;
-import io.ddd4j.mq.activemq.ack.ActiveMQMessageAcknowledgmentFactory;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
+import io.ddd4j.mq.activemq.ack.ActiveMQMessageAcknowledgment;
+import io.ddd4j.mq.activemq.ack.ActiveMQMessageAcknowledgmentFactory;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import jakarta.jms.BytesMessage;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.Session;
-import jakarta.jms.TextMessage;
+import jakarta.jms.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -22,9 +18,8 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.config.SimpleJmsListenerEndpoint;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import jakarta.jms.ConnectionFactory;
-import jakarta.jms.MessageListener;
 import org.springframework.jms.listener.SessionAwareMessageListener;
+
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 将 {@code @MQEventListener} 动态注册为 ActiveMQ Artemis JMS 消费端点。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -45,6 +41,43 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
     private final Ddd4jMQProperties properties;
     private final List<MQListenerDefinition> registeredDefinitions = new CopyOnWriteArrayList<>();
     private final List<String> endpointIds = new CopyOnWriteArrayList<>();
+
+    /**
+     * 从 JMS 消息提取文本载荷。
+     */
+    private static String extractPayload(Message jmsMessage) throws JMSException {
+        if (jmsMessage instanceof TextMessage textMessage) {
+            return textMessage.getText();
+        }
+        if (jmsMessage instanceof BytesMessage bytesMessage) {
+            byte[] bytes = new byte[(int) bytesMessage.getBodyLength()];
+            bytesMessage.readBytes(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
+        return jmsMessage.toString();
+    }
+
+    /**
+     * 安全读取 JMSMessageID。
+     */
+    private static String safeMessageId(Message jmsMessage) {
+        try {
+            return jmsMessage.getJMSMessageID();
+        } catch (JMSException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * 安全读取 JMSCorrelationID。
+     */
+    private static String safeCorrelationId(Message jmsMessage) {
+        try {
+            return jmsMessage.getJMSCorrelationID();
+        } catch (JMSException ex) {
+            return null;
+        }
+    }
 
     /**
      * 注册单个监听器定义。
@@ -113,6 +146,21 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
     }
 
     /**
+     * 解析 JmsListenerContainerFactory，并按 ack-mode 配置 Session 确认模式。
+     */
+    @SuppressWarnings("rawtypes")
+    private JmsListenerContainerFactory resolveContainerFactory() {
+        ConnectionFactory connectionFactory = applicationContext.getBean(ConnectionFactory.class);
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setSessionAcknowledgeMode(
+                properties.getConsumer().isManualAck()
+                        ? Session.CLIENT_ACKNOWLEDGE
+                        : Session.AUTO_ACKNOWLEDGE);
+        return factory;
+    }
+
+    /**
      * 同时实现 {@link MessageListener} 与 {@link SessionAwareMessageListener}，
      * 以便 {@link SimpleJmsListenerEndpoint} 注册后容器仍能注入 JMS Session。
      */
@@ -163,58 +211,6 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
                     session.recover();
                 }
             }
-        }
-    }
-
-    /**
-     * 解析 JmsListenerContainerFactory，并按 ack-mode 配置 Session 确认模式。
-     */
-    @SuppressWarnings("rawtypes")
-    private JmsListenerContainerFactory resolveContainerFactory() {
-        ConnectionFactory connectionFactory = applicationContext.getBean(ConnectionFactory.class);
-        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setSessionAcknowledgeMode(
-                properties.getConsumer().isManualAck()
-                        ? Session.CLIENT_ACKNOWLEDGE
-                        : Session.AUTO_ACKNOWLEDGE);
-        return factory;
-    }
-
-    /**
-     * 从 JMS 消息提取文本载荷。
-     */
-    private static String extractPayload(Message jmsMessage) throws JMSException {
-        if (jmsMessage instanceof TextMessage textMessage) {
-            return textMessage.getText();
-        }
-        if (jmsMessage instanceof BytesMessage bytesMessage) {
-            byte[] bytes = new byte[(int) bytesMessage.getBodyLength()];
-            bytesMessage.readBytes(bytes);
-            return new String(bytes, StandardCharsets.UTF_8);
-        }
-        return jmsMessage.toString();
-    }
-
-    /**
-     * 安全读取 JMSMessageID。
-     */
-    private static String safeMessageId(Message jmsMessage) {
-        try {
-            return jmsMessage.getJMSMessageID();
-        } catch (JMSException ex) {
-            return null;
-        }
-    }
-
-    /**
-     * 安全读取 JMSCorrelationID。
-     */
-    private static String safeCorrelationId(Message jmsMessage) {
-        try {
-            return jmsMessage.getJMSCorrelationID();
-        } catch (JMSException ex) {
-            return null;
         }
     }
 }

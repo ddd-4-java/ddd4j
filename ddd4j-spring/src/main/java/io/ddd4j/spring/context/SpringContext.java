@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.PriorityOrdered;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
@@ -37,8 +37,8 @@ public class SpringContext implements ApplicationContextAware {
     public static final CountDownLatch APP_START_SIGNAL = new CountDownLatch(1);
     // Spring上下文初始化完成的信号
     public static final CountDownLatch APPLICATION_CONTEXT_START_SIGNAL = new CountDownLatch(1);
-    private static ApplicationContext APPLICATION_CONTEXT;
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+    private static ApplicationContext APPLICATION_CONTEXT;
 
     public SpringContext() {
         log.debug("Loading SpringContext");
@@ -56,21 +56,6 @@ public class SpringContext implements ApplicationContextAware {
             }
         }
     }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        SpringContext.APPLICATION_CONTEXT = applicationContext;
-        APPLICATION_CONTEXT_START_SIGNAL.countDown();
-    }
-
-    /**
-     * 应用上下文刷新完成后释放启动等待信号。
-     */
-    @EventListener
-    public void onContextRefreshed(ContextRefreshedEvent event) {
-        APP_START_SIGNAL.countDown();
-    }
-
 
     public static void onAppStarted(Consumer<ApplicationContext> then) {
         EXECUTOR_SERVICE.submit(() -> {
@@ -94,6 +79,12 @@ public class SpringContext implements ApplicationContextAware {
             APPLICATION_CONTEXT_START_SIGNAL.await();
         }
         return APPLICATION_CONTEXT;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        SpringContext.APPLICATION_CONTEXT = applicationContext;
+        APPLICATION_CONTEXT_START_SIGNAL.countDown();
     }
 
     public static <T> T getBean(@NonNull String name) {
@@ -136,6 +127,14 @@ public class SpringContext implements ApplicationContextAware {
 
     public static Environment getEnv() {
         return getApplicationContext().getEnvironment();
+    }
+
+    /**
+     * 应用上下文刷新完成后释放启动等待信号。
+     */
+    @EventListener
+    public void onContextRefreshed(ContextRefreshedEvent event) {
+        APP_START_SIGNAL.countDown();
     }
 
 }

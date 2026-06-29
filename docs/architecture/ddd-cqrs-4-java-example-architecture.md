@@ -16,14 +16,14 @@
 
 是 ddd4j 实现 `ddd4j-quarkus` 和 `ddd4j-spring` 适配层的**最佳参考实现**。
 
-| 维度 | 数据 |
-|------|------|
-| **核心价值** | 完整微服务架构的两种实现范式 |
-| **领域模型** | Person 聚合根（创建/删除/查询） |
+| 维度       | 数据                                   |
+|----------|--------------------------------------|
+| **核心价值** | 完整微服务架构的两种实现范式                       |
+| **领域模型** | Person 聚合根（创建/删除/查询）                 |
 | **事件存储** | EventStoreDB / KurrentDB（通过 esc-api） |
-| **写侧技术** | 命令路由 → 聚合根 → EventStore |
-| **读侧技术** | 定时投影 → JPA 视图 → REST 查询 |
-| **框架对比** | Quarkus（CGI） vs Spring Boot（MVC） |
+| **写侧技术** | 命令路由 → 聚合根 → EventStore              |
+| **读侧技术** | 定时投影 → JPA 视图 → REST 查询              |
+| **框架对比** | Quarkus（CGI） vs Spring Boot（MVC）     |
 
 ---
 
@@ -232,6 +232,7 @@ public class QryProjectionPosition {
 `shared/` 模块放 ID/Event/Command，被 `command/` 和 `query/` 同时依赖。这是**微服务间契约共享**的标准做法。
 
 **ddd4j 应借鉴**：
+
 ```
 ddd4j-core-api           ← 全局共享契约
   ├── io.ddd4j.core.identity.PersonId
@@ -270,6 +271,7 @@ ddd4j-service-order/     ← 业务服务模块
 ```
 
 **ddd4j 应提供**：
+
 - `ddd4j-service-parent` 模板（聚合父 POM）
 - `ddd4j-service-shared` 模板（契约模块）
 - `ddd4j-service-command` 模板（写侧服务）
@@ -280,6 +282,7 @@ ddd4j-service-order/     ← 业务服务模块
 通过同一领域模型在 Quarkus 和 Spring Boot 下平行实现，验证了 ddd-4-java + cqrs-4-java 的**框架无关性**。
 
 **ddd4j 应做**：
+
 - `ddd4j-spring` 与 `ddd4j-quarkus`（及 `ddd4j-javalin`）下用同一套共享契约
 - 提供 Person/Vendor 等参考聚合根的可运行示例
 
@@ -433,15 +436,15 @@ spring-boot/shared/src/main/java/.../shared/
 
 ## 七、双框架命令端点对照
 
-| 维度 | Quarkus | Spring Boot |
-|------|---------|-------------|
-| 端点注解 | `@Path("/persons")` | `@RequestMapping("/persons")` |
-| HTTP 方法 | `@POST` / `@GET` | `@PostMapping` / `@GetMapping` |
-| 依赖注入 | `@Inject` | `@Autowired` |
-| 启动类 | `CmdApp.java` (Quarkus) | `CmdApplication.java` (Spring Boot) |
-| 异常处理 | `ExceptionMapper` (JAX-RS) | `@RestControllerAdvice` |
-| 仓储 | `PersonRepositoryFactory` | `PersonRepository` Bean |
-| 包结构 | `api/ + domain/ + app/` | `controller/ + domain/ + app/` |
+| 维度      | Quarkus                    | Spring Boot                         |
+|---------|----------------------------|-------------------------------------|
+| 端点注解    | `@Path("/persons")`        | `@RequestMapping("/persons")`       |
+| HTTP 方法 | `@POST` / `@GET`           | `@PostMapping` / `@GetMapping`      |
+| 依赖注入    | `@Inject`                  | `@Autowired`                        |
+| 启动类     | `CmdApp.java` (Quarkus)    | `CmdApplication.java` (Spring Boot) |
+| 异常处理    | `ExceptionMapper` (JAX-RS) | `@RestControllerAdvice`             |
+| 仓储      | `PersonRepositoryFactory`  | `PersonRepository` Bean             |
+| 包结构     | `api/ + domain/ + app/`    | `controller/ + domain/ + app/`      |
 
 ### Quarkus 端点示例
 
@@ -537,6 +540,7 @@ my-service/
 - **工程化**：docker-compose + KurrentDB 集成测试
 
 ddd4j 应：
+
 1. **复制其工程结构**到 `ddd4j-samples/`
 2. **抽取核心模式**（投影位置、视图管理器、事件分块）到 ddd4j 各层
 3. **复用其共享契约设计**作为业务项目模板

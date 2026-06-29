@@ -15,7 +15,6 @@ import java.util.List;
 /**
  * 逗号风格返回list
  *
- *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class ListStringSplitCommaTypeHandler extends BaseTypeHandler<List<String>> {

@@ -3,12 +3,11 @@ package io.ddd4j.mq.ons.autoconfigure;
 import com.aliyun.openservices.ons.api.ONSFactory;
 import com.aliyun.openservices.ons.api.Producer;
 import com.aliyun.openservices.ons.api.PropertyKeyConst;
+import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.ons.consumer.OnsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
 import io.ddd4j.mq.ons.spi.OnsMQBrokerAdapter;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +17,7 @@ import java.util.Properties;
 
 /**
  * 阿里云 ONS 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=ons 时生效。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)

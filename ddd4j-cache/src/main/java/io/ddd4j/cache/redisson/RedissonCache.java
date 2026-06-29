@@ -3,20 +3,14 @@ package io.ddd4j.cache.redisson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.core.cache.AtomicCache;
-import io.ddd4j.core.cache.Cache;
-import io.ddd4j.core.cache.CacheConfig;
-import io.ddd4j.core.cache.CacheLock;
-import io.ddd4j.core.cache.CacheStats;
-import io.ddd4j.core.cache.CasCache;
+import io.ddd4j.core.cache.*;
 import org.redisson.api.RBucket;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
-import java.util.Objects;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
 
 /**
@@ -52,6 +46,29 @@ import java.util.function.Function;
  */
 public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicCache<String, V> {
 
+    /**
+     * Lua 库存扣减脚本（-1=售罄, -2=不足, -3=未初始化, -4=非法参数, >=0=剩余）
+     */
+    private static final String STOCK_DECR_SCRIPT =
+            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
+                    "  local stock = tonumber(redis.call('GET', KEYS[1])); " +
+                    "  local num = tonumber(ARGV[1]); " +
+                    "  if (num <= 0) then return -4 end; " +
+                    "  if (stock <= 0) then return -1 end; " +
+                    "  if (stock >= num) then return redis.call('INCRBY', KEYS[1], 0 - num) end; " +
+                    "  return -2; " +
+                    "end; " +
+                    "return -3;";
+    /**
+     * Lua 库存回补脚本
+     */
+    private static final String STOCK_INCR_SCRIPT =
+            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
+                    "  local num = tonumber(ARGV[1]); " +
+                    "  if (num < 0) then return -4 end; " +
+                    "  return redis.call('INCRBY', KEYS[1], num); " +
+                    "end; " +
+                    "return -3;";
     private final RedissonClient redissonClient;
     private final long expireSeconds;
     private final Class<V> valueType;
@@ -143,6 +160,8 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         // Redis 不建议 flushAll，需通过 key 前缀逐个删除
     }
 
+    // ==================== CacheLock 实现（基于 Redisson 分布式锁） ====================
+
     @Override
     public long estimatedSize() {
         return -1;
@@ -152,8 +171,6 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
     public CacheStats stats() {
         return null;
     }
-
-    // ==================== CacheLock 实现（基于 Redisson 分布式锁） ====================
 
     @Override
     public boolean tryLock(String key, long waitSeconds, long leaseSeconds) {
@@ -165,6 +182,8 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             return false;
         }
     }
+
+    // ==================== CasCache 实现（基于 Redisson RBucket CAS） ====================
 
     @Override
     public void unlock(String key) {
@@ -185,8 +204,6 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient.getLock(keyPrefix + "lock:" + key);
     }
 
-    // ==================== CasCache 实现（基于 Redisson RBucket CAS） ====================
-
     @Override
     public boolean putIfAbsent(String key, V value) {
         try {
@@ -200,6 +217,8 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             return false;
         }
     }
+
+    // ==================== AtomicCache 实现（基于 Redisson RAtomicLong + Lua 库存脚本） ====================
 
     @Override
     public boolean replace(String key, V expected, V newValue) {
@@ -226,29 +245,6 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             return false;
         }
     }
-
-    // ==================== AtomicCache 实现（基于 Redisson RAtomicLong + Lua 库存脚本） ====================
-
-    /** Lua 库存扣减脚本（-1=售罄, -2=不足, -3=未初始化, -4=非法参数, >=0=剩余） */
-    private static final String STOCK_DECR_SCRIPT =
-            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
-            "  local stock = tonumber(redis.call('GET', KEYS[1])); " +
-            "  local num = tonumber(ARGV[1]); " +
-            "  if (num <= 0) then return -4 end; " +
-            "  if (stock <= 0) then return -1 end; " +
-            "  if (stock >= num) then return redis.call('INCRBY', KEYS[1], 0 - num) end; " +
-            "  return -2; " +
-            "end; " +
-            "return -3;";
-
-    /** Lua 库存回补脚本 */
-    private static final String STOCK_INCR_SCRIPT =
-            "if (redis.call('EXISTS', KEYS[1]) == 1) then " +
-            "  local num = tonumber(ARGV[1]); " +
-            "  if (num < 0) then return -4 end; " +
-            "  return redis.call('INCRBY', KEYS[1], num); " +
-            "end; " +
-            "return -3;";
 
     @Override
     public long increment(String key, long delta) {

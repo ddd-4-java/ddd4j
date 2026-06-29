@@ -5,6 +5,7 @@ import lombok.Setter;
 
 /**
  * 备份文件状态类
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Getter

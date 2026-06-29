@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,10 @@
     </parent>
 
     <artifactId>ddd4j-data-mybatis</artifactId>
-    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。纯 MyBatis 实现（Spring 桥接在 ddd4j-data-spring，auto-config 在 ddd4j-boot-data）。数据 SPI（Repository/TypeHandlerRegistry）已收敛到 ddd4j-core。</description>
+    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。纯 MyBatis
+        实现（Spring 桥接在 ddd4j-data-spring，auto-config 在 ddd4j-boot-data）。数据
+        SPI（Repository/TypeHandlerRegistry）已收敛到 ddd4j-core。
+    </description>
 
     <dependencies>
         <!-- 核心契约 + 上下文（纯 Java） -->

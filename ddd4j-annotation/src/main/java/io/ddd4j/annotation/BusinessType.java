@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * 日志操作类型-枚举
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public enum BusinessType {
@@ -64,6 +65,14 @@ public enum BusinessType {
         this.desc = desc;
     }
 
+    public static List<Map<String, String>> toList() {
+        List<Map<String, String>> typeList = new LinkedList<Map<String, String>>();
+        for (BusinessType typeEnum : BusinessType.values()) {
+            typeList.add(typeEnum.toMap());
+        }
+        return typeList;
+    }
+
     public String getKey() {
         return key;
     }
@@ -82,14 +91,6 @@ public enum BusinessType {
 
     public boolean equals(BusinessType relation) {
         return this.compareTo(relation) == 0;
-    }
-
-    public static List<Map<String, String>> toList() {
-        List<Map<String, String>> typeList = new LinkedList<Map<String, String>>();
-        for (BusinessType typeEnum : BusinessType.values()) {
-            typeList.add(typeEnum.toMap());
-        }
-        return typeList;
     }
 
     public Map<String, String> toMap() {

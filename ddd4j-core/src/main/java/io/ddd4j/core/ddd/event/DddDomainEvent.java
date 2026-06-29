@@ -77,7 +77,7 @@ public abstract class DddDomainEvent<ID extends EntityId> extends AbstractDomain
     /**
      * 构造领域事件（带因果关联）。
      *
-     * @param entityIdPath 从聚合根到事件源的路径
+     * @param entityIdPath   从聚合根到事件源的路径
      * @param causationEvent 导致本事件的前置事件（用于因果关系链路追踪，可为 {@code null}）
      */
     protected DddDomainEvent(EntityIdPath entityIdPath, org.fuin.ddd4j.core.Event causationEvent) {

@@ -9,37 +9,6 @@ public class KafkaEnhanceProperties {
 
     private final EnhanceListener listener = new EnhanceListener();
 
-    @Data
-    public static class EnhanceListener {
-
-        // 错误处理模式
-        private ErrorHandlerMode errorHandlerMode;
-        // 批量错误处理模式 
-        private BatchErrorHandlerMode batchErrorHandlerMode;
-        // 重试模式
-        private BackOffMode backOffMode;
-        /**
-         * Whether the offset for a recovered record should be committed.
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
-        private boolean commitRecovered;
-        // 是否在处理消息后立即提交偏移量
-        private boolean ackAfterHandle = true;
-        // 重试初始间隔
-        private long backOffInitialInterval = ExponentialBackOff.DEFAULT_INITIAL_INTERVAL;
-        // 重试乘数
-        private double backOffMultiplier = ExponentialBackOff.DEFAULT_MULTIPLIER;
-        // 重试最大间隔
-        private long backOffMaxInterval = ExponentialBackOff.DEFAULT_MAX_INTERVAL;
-        // 重试最大时间
-        private long backOffMaxElapsedTime = ExponentialBackOff.DEFAULT_MAX_ELAPSED_TIME;
-        // 固定重试间隔
-        private long backOffInterval = FixedBackOff.DEFAULT_INTERVAL;
-        // 重试最大次数
-        private long backOffMaxAttempts = 3;
-
-    }
-
     public enum BackOffMode {
 
         /**
@@ -82,7 +51,6 @@ public class KafkaEnhanceProperties {
 
     }
 
-
     /**
      * The Error Handler behavior enumeration.
      */
@@ -108,6 +76,38 @@ public class KafkaEnhanceProperties {
          * 3、死信队列（DLQ）支持：如果消息经过多次重试后仍然失败，可以将消息发送到死信队列（Dead Letter Queue, DLQ）。
          */
         SEEK_TO_CURRENT_WITH_DEAD_LETTER_QUEUE,
+
+    }
+
+    @Data
+    public static class EnhanceListener {
+
+        // 错误处理模式
+        private ErrorHandlerMode errorHandlerMode;
+        // 批量错误处理模式
+        private BatchErrorHandlerMode batchErrorHandlerMode;
+        // 重试模式
+        private BackOffMode backOffMode;
+        /**
+         * Whether the offset for a recovered record should be committed.
+         *
+         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+         */
+        private boolean commitRecovered;
+        // 是否在处理消息后立即提交偏移量
+        private boolean ackAfterHandle = true;
+        // 重试初始间隔
+        private long backOffInitialInterval = ExponentialBackOff.DEFAULT_INITIAL_INTERVAL;
+        // 重试乘数
+        private double backOffMultiplier = ExponentialBackOff.DEFAULT_MULTIPLIER;
+        // 重试最大间隔
+        private long backOffMaxInterval = ExponentialBackOff.DEFAULT_MAX_INTERVAL;
+        // 重试最大时间
+        private long backOffMaxElapsedTime = ExponentialBackOff.DEFAULT_MAX_ELAPSED_TIME;
+        // 固定重试间隔
+        private long backOffInterval = FixedBackOff.DEFAULT_INTERVAL;
+        // 重试最大次数
+        private long backOffMaxAttempts = 3;
 
     }
 

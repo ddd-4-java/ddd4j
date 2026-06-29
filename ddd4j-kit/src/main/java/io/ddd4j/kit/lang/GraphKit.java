@@ -3,7 +3,10 @@ package io.ddd4j.kit.lang;
 import com.google.common.graph.Graph;
 import lombok.experimental.UtilityClass;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 图拓扑排序工具类（通用算法）。

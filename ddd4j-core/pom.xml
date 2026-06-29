@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,7 +11,10 @@
     </parent>
 
     <artifactId>ddd4j-core</artifactId>
-    <description>ddd4j 核心契约层：纯 Java DDD 契约（Model/Query/Page/R/BaseRepository/DomainEvent/DomainEventPublisher）、上下文（ThreadContext/BaseContext）、DDD 构建块（DddAggregateRoot）。零框架依赖。</description>
+    <description>ddd4j 核心契约层：纯 Java DDD
+        契约（Model/Query/Page/R/BaseRepository/DomainEvent/DomainEventPublisher）、上下文（ThreadContext/BaseContext）、DDD
+        构建块（DddAggregateRoot）。零框架依赖。
+    </description>
 
     <dependencies>
         <!-- ======== 内部模块 ======== -->

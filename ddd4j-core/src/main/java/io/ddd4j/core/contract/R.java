@@ -23,14 +23,6 @@ public class R<T> implements IR {
     // 响应数据
     protected T data;
 
-    public Boolean isOk() {
-        return Objects.equals(this.getCode(), ResultCode.OK.getCode()) || Objects.equals(this.getCode(), ResultCode.SUCCESS.getCode());
-    }
-
-    public Boolean isEmpty() {
-        return !isOk() || data == null;
-    }
-
     public R() {
         this(ResultCode.OK.getCode(), ResultCode.OK.getDesc());
     }
@@ -87,17 +79,6 @@ public class R<T> implements IR {
     }
 
     /**
-     * 转换为 fuinorg {@code Result<T>} 适配对象。
-     * <p>需要 classpath 中有 {@code cqrs-4-java-core}（可选依赖）。
-     *
-     * @return fuinorg Result 适配实例
-     * @see org.fuin.cqrs4j.core.Result
-     */
-    public org.fuin.cqrs4j.core.Result<T> toResult() {
-        return new DddResultAdapter<>(this);
-    }
-
-    /**
      * 从 fuinorg {@code Result<T>} 转换为 {@code R<T>}。
      *
      * @param result fuinorg Result
@@ -114,6 +95,25 @@ public class R<T> implements IR {
             return ok(msg, result.getData());
         }
         return new R<>(code, msg, result.getData());
+    }
+
+    public Boolean isOk() {
+        return Objects.equals(this.getCode(), ResultCode.OK.getCode()) || Objects.equals(this.getCode(), ResultCode.SUCCESS.getCode());
+    }
+
+    public Boolean isEmpty() {
+        return !isOk() || data == null;
+    }
+
+    /**
+     * 转换为 fuinorg {@code Result<T>} 适配对象。
+     * <p>需要 classpath 中有 {@code cqrs-4-java-core}（可选依赖）。
+     *
+     * @return fuinorg Result 适配实例
+     * @see org.fuin.cqrs4j.core.Result
+     */
+    public org.fuin.cqrs4j.core.Result<T> toResult() {
+        return new DddResultAdapter<>(this);
     }
 
     /**

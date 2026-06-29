@@ -1,8 +1,8 @@
 package io.ddd4j.mq.tdmq.ack;
 
+import io.ddd4j.mq.ack.AcknowledgmentContext;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
-import io.ddd4j.mq.ack.AcknowledgmentContext;
 import io.ddd4j.mq.registry.MQBrokerType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 /**
  * 腾讯云 TDMQ 消息确认实现（占位：委托 ack/nack 回调，待 SDK 接入后替换）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
@@ -40,6 +41,15 @@ public final class TdmqMessageAcknowledgment implements MessageAcknowledgment {
         this.correlationId = correlationId;
         this.deliveryTag = deliveryTag;
         this.ackCallback = Objects.requireNonNull(ackCallback, "ackCallback");
+    }
+
+    /**
+     * 创建占位 NoOp 确认（客户端未就绪时使用）。
+     */
+    public static MessageAcknowledgment noOp() {
+        return new NoOpMessageAcknowledgment(AcknowledgmentContext.builder()
+                .brokerType(MQBrokerType.TDMQ)
+                .build());
     }
 
     @Override
@@ -115,15 +125,6 @@ public final class TdmqMessageAcknowledgment implements MessageAcknowledgment {
             return Optional.of(nativeType.cast(this));
         }
         return Optional.empty();
-    }
-
-    /**
-     * 创建占位 NoOp 确认（客户端未就绪时使用）。
-     */
-    public static MessageAcknowledgment noOp() {
-        return new NoOpMessageAcknowledgment(AcknowledgmentContext.builder()
-                .brokerType(MQBrokerType.TDMQ)
-                .build());
     }
 
     /**

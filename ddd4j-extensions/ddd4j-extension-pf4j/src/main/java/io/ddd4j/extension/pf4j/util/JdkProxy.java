@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 //JDK动态代理实现InvocationHandler接口
+
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -17,15 +18,6 @@ public class JdkProxy implements InvocationHandler {
     public JdkProxy(Object target) {
         this.target = target;
     }
-
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("JDK动态代理，监听开始！");
-        Object result = method.invoke(target, args);
-        System.out.println("JDK动态代理，监听结束！");
-        return result;
-    }
-
 
     //定义获取代理对象方法
     public static Object getJDKProxy(Object targetObject) {
@@ -38,6 +30,14 @@ public class JdkProxy implements InvocationHandler {
         JdkProxy target = new JdkProxy(BeanUtils.instantiateClass(className));
         //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出
         return (T) Proxy.newProxyInstance(className.getClassLoader(), className.getInterfaces(), target);
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("JDK动态代理，监听开始！");
+        Object result = method.invoke(target, args);
+        System.out.println("JDK动态代理，监听结束！");
+        return result;
     }
 
 }

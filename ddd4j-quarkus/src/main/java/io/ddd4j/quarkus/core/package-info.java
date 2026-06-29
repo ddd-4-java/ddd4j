@@ -4,7 +4,7 @@
  * 本模块提供 3 个核心 SPI 的 Quarkus 实现：DomainEventPublisher（CDI Event）、
  * SubjectProvider（CDI Instance）、I18nProvider（ResourceBundle）。
  *
- * @since 3.4.x
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.4.x
  */
 package io.ddd4j.quarkus.core;

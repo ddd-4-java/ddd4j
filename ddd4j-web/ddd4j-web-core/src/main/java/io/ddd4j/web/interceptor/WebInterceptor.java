@@ -13,13 +13,19 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public interface WebInterceptor {
 
-    /** 拦截器顺序（数字越小越先执行） */
+    /**
+     * 拦截器顺序（数字越小越先执行）
+     */
     int getOrder();
 
-    /** 请求预处理 */
+    /**
+     * 请求预处理
+     */
     boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 
-    /** 请求完成后清理（默认空实现，子类可重写） */
+    /**
+     * 请求完成后清理（默认空实现，子类可重写）
+     */
     default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         // 空实现
     }

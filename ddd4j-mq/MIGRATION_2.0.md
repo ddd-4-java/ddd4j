@@ -7,12 +7,12 @@
 
 ## 一、重构目标
 
-| 维度 | 重构前 | 重构后 |
-|------|-------|-------|
-| **`ddd4j-mq-core` 依赖** | spring-messaging（provided） | **零 Spring 依赖** |
-| **核心消息模型** | `org.springframework.messaging.Message` 包装 | **纯 Java `MQMessage<T>`** |
-| **Quarkus / Javalin 集成** | 需自带 spring-messaging | **直接使用纯 Java 契约** |
-| **12 种 Broker 适配器** | 全部依赖 Spring Messaging | **保留 Spring 桥接（在 ddd4j-mq-spring）** |
+| 维度                       | 重构前                                        | 重构后                                 |
+|--------------------------|--------------------------------------------|-------------------------------------|
+| **`ddd4j-mq-core` 依赖**   | spring-messaging（provided）                 | **零 Spring 依赖**                     |
+| **核心消息模型**               | `org.springframework.messaging.Message` 包装 | **纯 Java `MQMessage<T>`**           |
+| **Quarkus / Javalin 集成** | 需自带 spring-messaging                       | **直接使用纯 Java 契约**                   |
+| **12 种 Broker 适配器**      | 全部依赖 Spring Messaging                      | **保留 Spring 桥接（在 ddd4j-mq-spring）** |
 
 ---
 
@@ -21,6 +21,7 @@
 ### 1. `MQMessage` — 从 Spring wrapper 变纯 Java 模型
 
 **重构前**（包装 Spring Message）：
+
 ```java
 public class MQMessage<T> {
     private final Message<T> delegate;  // ← 强绑 Spring
@@ -28,6 +29,7 @@ public class MQMessage<T> {
 ```
 
 **重构后**（纯 Java 消息模型）：
+
 ```java
 public class MQMessage<T> implements Serializable {
     private final T payload;
@@ -54,25 +56,27 @@ public static String headerAsString(MQMessage<?> message, String key);
 ### 3. `MQBrokerAdapter.resolveAcknowledgment` — 接收纯 Java
 
 **重构前**：
+
 ```java
 default MessageAcknowledgment resolveAcknowledgment(Message<?> message);
 MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message);  // 兼容方法
 ```
 
 **重构后**：
+
 ```java
 MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message);  // 唯一方法
 ```
 
 ### 4. 消费侧 API
 
-| 类 | 变化 |
-|---|---|
-| `MQConsumerContext` | `Message<?> message` → `MQMessage<?> message` |
-| `MQConsumerHandler` | 同上 |
-| `MQConsumeInterceptor` | 同上 |
-| `MQListenerMethodInvoker` | 同上 |
-| `MQConsumeTemplates` | 同上 |
+| 类                         | 变化                                            |
+|---------------------------|-----------------------------------------------|
+| `MQConsumerContext`       | `Message<?> message` → `MQMessage<?> message` |
+| `MQConsumerHandler`       | 同上                                            |
+| `MQConsumeInterceptor`    | 同上                                            |
+| `MQListenerMethodInvoker` | 同上                                            |
+| `MQConsumeTemplates`      | 同上                                            |
 
 ---
 
@@ -90,7 +94,8 @@ MQMessage<T> mqMessage = SpringMessageAdapter.fromSpring(springMessage);
 Message<T> springMessage = SpringMessageAdapter.toSpring(mqMessage);
 ```
 
-**所有 12 个 Broker 适配器**（Kafka / RabbitMQ / RocketMQ / ActiveMQ / Pulsar / NATS / MQTT / MicaMQTT / Disruptor / RedisStream / ONS / SQS / TDMQ）均在 `ddd4j-mq-spring` 桥接层内统一使用 `SpringMessageAdapter`。
+**所有 12 个 Broker 适配器**（Kafka / RabbitMQ / RocketMQ / ActiveMQ / Pulsar / NATS / MQTT / MicaMQTT / Disruptor /
+RedisStream / ONS / SQS / TDMQ）均在 `ddd4j-mq-spring` 桥接层内统一使用 `SpringMessageAdapter`。
 
 ---
 
@@ -103,7 +108,8 @@ Message<T> springMessage = SpringMessageAdapter.toSpring(mqMessage);
 
 ### 12 个 Broker 适配器（dq 后续任务）
 
-- [ ] 将各 Broker 适配器（Kafka / RabbitMQ / ...）的 `Message<?>` 引用替换为 `MQMessage<?>`，通过 `SpringMessageAdapter.fromSpring(...)` 桥接
+- [ ] 将各 Broker 适配器（Kafka / RabbitMQ / ...）的 `Message<?>` 引用替换为 `MQMessage<?>`，通过
+  `SpringMessageAdapter.fromSpring(...)` 桥接
 - [ ] 各 Broker 适配器已不直接依赖 spring-messaging，但仍保留 `spring-messaging` 依赖（用于 Spring 客户端集成）
 - [ ] ddd4j-quarkus / ddd4j-javalin 用户**直接复用 ddd4j-mq-core**（不需任何 Spring 桥接）
 
@@ -152,12 +158,12 @@ $ mvn dependency:list -pl ddd4j-mq/ddd4j-mq-core
 
 ## 六、影响范围
 
-| 模块 | 状态 |
-|------|------|
-| `ddd4j-mq-core` | ✅ **已解耦**（27 个源文件，零 spring-messaging） |
-| `ddd4j-mq-spring` | ✅ **桥接层就位**（`SpringMessageAdapter` 唯一耦合点） |
-| `ddd4j-mq-{kafka,rabbitmq,...}` | 🔄 **后续工作**（12 个 Broker 适配器需要桥接迁移） |
-| `ddd4j-mq-disruptor` | ✅ 纯 LMAX Disruptor（已无 Spring 依赖） |
+| 模块                              | 状态                                        |
+|---------------------------------|-------------------------------------------|
+| `ddd4j-mq-core`                 | ✅ **已解耦**（27 个源文件，零 spring-messaging）     |
+| `ddd4j-mq-spring`               | ✅ **桥接层就位**（`SpringMessageAdapter` 唯一耦合点） |
+| `ddd4j-mq-{kafka,rabbitmq,...}` | 🔄 **后续工作**（12 个 Broker 适配器需要桥接迁移）        |
+| `ddd4j-mq-disruptor`            | ✅ 纯 LMAX Disruptor（已无 Spring 依赖）          |
 
 ---
 

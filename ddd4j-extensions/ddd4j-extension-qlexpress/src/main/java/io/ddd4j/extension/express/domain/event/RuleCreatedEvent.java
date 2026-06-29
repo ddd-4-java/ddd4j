@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 
 /**
  * 规则创建事件
- * 
+ *
  * <p>领域事件：当规则被创建时发布此事件。
  * 用于通知其他模块规则已创建，可以触发缓存更新、日志记录等操作。
- * 
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
  * @since 1.0
@@ -28,7 +28,7 @@ public class RuleCreatedEvent implements Serializable {
 
     /**
      * 构造函数
-     * 
+     *
      * @param rule 规则定义，不能为null
      */
     public RuleCreatedEvent(RuleDefinition rule) {
@@ -41,8 +41,8 @@ public class RuleCreatedEvent implements Serializable {
 
     /**
      * 构造函数
-     * 
-     * @param ruleId 规则ID，不能为null
+     *
+     * @param ruleId   规则ID，不能为null
      * @param ruleCode 规则编码，不能为null
      * @param ruleName 规则名称
      * @param ruleType 规则类型

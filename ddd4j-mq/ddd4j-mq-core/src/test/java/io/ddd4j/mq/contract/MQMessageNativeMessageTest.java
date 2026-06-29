@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * {@link MQMessage#nativeMessage(Class)} 单元测试。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class MQMessageNativeMessageTest {

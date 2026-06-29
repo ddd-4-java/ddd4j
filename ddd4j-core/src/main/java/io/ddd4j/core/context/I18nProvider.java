@@ -1,7 +1,6 @@
 package io.ddd4j.core.context;
 
 import io.ddd4j.kit.lang.StrKit;
-import lombok.extern.slf4j.Slf4j;
 
 import java.text.MessageFormat;
 import java.util.Locale;

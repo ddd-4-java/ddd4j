@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -193,7 +193,8 @@
         <geoip2.version>5.1.0</geoip2.version>
         <google-libraries-bom.version>26.84.0</google-libraries-bom.version>
         <google-api-client.version>2.9.0</google-api-client.version>
-        <google-api-services-androidpublisher.version>v3-rev20260528-2.0.0</google-api-services-androidpublisher.version>
+        <google-api-services-androidpublisher.version>v3-rev20260528-2.0.0
+        </google-api-services-androidpublisher.version>
         <google-auth-library.version>1.48.0</google-auth-library.version>
         <google-code-aviator.version>5.4.3</google-code-aviator.version>
         <google-cloud-translate.version>2.93.0</google-cloud-translate.version>
@@ -467,7 +468,8 @@
         <schemacrawler-mysql.version>${schemacrawler.version}</schemacrawler-mysql.version>
         <schemacrawler-hana.version>${schemacrawler.version}</schemacrawler-hana.version>
         <schemacrawler-hsqldb.version>${schemacrawler.version}</schemacrawler-hsqldb.version>
-        <schemacrawler-oracle.version>${schemacrawler.version}</schemacrawler-oracle.version>  <!-- Note: 14.17.05 For Oracle 10g/11g -->
+        <schemacrawler-oracle.version>${schemacrawler.version}
+        </schemacrawler-oracle.version>  <!-- Note: 14.17.05 For Oracle 10g/11g -->
         <schemacrawler-postgresql.version>${schemacrawler.version}</schemacrawler-postgresql.version>
         <schemacrawler-sqlserver.version>${schemacrawler.version}</schemacrawler-sqlserver.version>
         <schemacrawler-sqlite.version>${schemacrawler.version}</schemacrawler-sqlite.version>

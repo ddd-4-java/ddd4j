@@ -4,11 +4,7 @@ import org.fuin.cqrs4j.core.Command;
 import org.fuin.cqrs4j.core.CommandExecutionFailedException;
 import org.fuin.cqrs4j.core.CommandExecutor;
 import org.fuin.cqrs4j.core.Result;
-import org.fuin.ddd4j.core.AggregateAlreadyExistsException;
-import org.fuin.ddd4j.core.AggregateDeletedException;
-import org.fuin.ddd4j.core.AggregateNotFoundException;
-import org.fuin.ddd4j.core.AggregateVersionConflictException;
-import org.fuin.ddd4j.core.AggregateVersionNotFoundException;
+import org.fuin.ddd4j.core.*;
 
 /**
  * ddd4j 命令执行器基类（纯净 DDD 轨道）。

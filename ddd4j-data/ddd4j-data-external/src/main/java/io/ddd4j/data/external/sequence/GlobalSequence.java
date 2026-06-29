@@ -19,11 +19,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class GlobalSequence {
 
-    private final RedisOperationTemplate redisOperation;
-    private final Snowflake snowflake;
     private static final String ID_LIST_KEY = "global:sequence:ids";
     private static final int BATCH_SIZE = 100;
     private static final int MIN_THRESHOLD = 20;
+    private final RedisOperationTemplate redisOperation;
+    private final Snowflake snowflake;
     private final Queue<Long> idPool = new ConcurrentLinkedQueue<>();
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);

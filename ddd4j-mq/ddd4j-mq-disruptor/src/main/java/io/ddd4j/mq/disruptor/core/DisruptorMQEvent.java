@@ -5,6 +5,7 @@ import lombok.Setter;
 
 /**
  * Disruptor RingBuffer 事件槽：承载本地 MQ 消息载荷与路由元数据。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Getter

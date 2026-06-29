@@ -3,12 +3,12 @@ package io.ddd4j.web.webmvc.utils;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import io.ddd4j.kit.lang.JsonKit;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @UtilityClass

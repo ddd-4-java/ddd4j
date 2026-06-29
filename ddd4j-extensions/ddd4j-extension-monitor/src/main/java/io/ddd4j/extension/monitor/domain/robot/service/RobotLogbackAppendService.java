@@ -7,10 +7,11 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.filter.EvaluatorFilter;
 import ch.qos.logback.core.spi.FilterReply;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.extension.monitor.domain.robot.model.RobotAppender;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
 import io.ddd4j.extension.monitor.infras.utils.IpUtils;
+import io.ddd4j.kit.lang.StrKit;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
@@ -18,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import jakarta.annotation.PostConstruct;
 
 import static ch.qos.logback.core.AsyncAppenderBase.DEFAULT_MAX_FLUSH_TIME;
 
