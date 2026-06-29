@@ -10,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Locale;
 
 /**
- * 上下文 Web 拦截器。
+ * 上下文 Web 拦截器（Servlet 实现）。
+ *
+ * <p><b>迁移说明</b>：自 2.0.x 起，本类将从 {@code ddd4j-web/ddd4j-web-core} 下移到
+ * {@code ddd4j-boot-web-webmvc}（Spring Boot starter）。新业务请直接依赖该 starter。
  *
  * <p>从请求头提取上下文信息，存入 {@link ThreadContext} 以便下游使用：
  * <ul>

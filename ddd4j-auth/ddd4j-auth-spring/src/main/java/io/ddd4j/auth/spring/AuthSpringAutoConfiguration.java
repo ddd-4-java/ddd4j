@@ -13,17 +13,21 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Auth Spring 桥接自动装配。
  *
+ * <p><b>迁移说明</b>：自 2.0.x 起，本类将从 {@code ddd4j-auth-spring} 下移到
+ * {@code ddd4j-boot-auth-spring-autoconfigure}（Spring Boot starter）。
+ * 业务方应直接依赖 starter 配合 {@code @EnableDdd4j} 注解使用。
+ *
  * <p>提供两个核心 Bean：
  * <ul>
  *   <li>{@link SubjectRegistrar}：监听 SubjectProvider Bean，写回 SubjectKit（修复注册断链）</li>
  *   <li>{@link SubjectProvider}：按 classpath 自动选择三鉴权实现（sa-token 优先）</li>
  * </ul>
  *
- * <p>三鉴权实现的 {@code @ConditionalOnClass} 互斥，保证同一时刻只有一个 SubjectProvider 生效。
- *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
+ * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-auth-spring-autoconfigure.AuthSpringAutoConfiguration}
  */
+@Deprecated
 @Configuration(proxyBeanMethods = false)
 public class AuthSpringAutoConfiguration {
 

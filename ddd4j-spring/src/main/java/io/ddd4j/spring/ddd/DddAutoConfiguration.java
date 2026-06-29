@@ -22,6 +22,11 @@ import org.springframework.core.env.Environment;
 /**
  * ddd4j-ddd 自动配置。
  *
+ * <p><b>迁移说明</b>：自 2.0.x 起，本类将从 {@code ddd4j-spring} 下移到
+ * {@code ddd4j-boot-ddd}（Spring Boot starter），届时将加上 {@code @AutoConfiguration} 注解
+ * 并通过 {@code META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports} 注册。
+ * 新业务请直接依赖 {@code ddd4j-boot-ddd} 配合 {@code @EnableDdd4j} 注解使用。
+ *
  * <p>当 classpath 存在 {@link org.fuin.ddd4j.core.AggregateRoot} 时自动激活，提供：
  * <ul>
  *   <li>{@link EventStore} — 默认使用 {@link InMemoryEventStore}（esc-mem，开发/测试用，无需部署 EventStoreDB）</li>
@@ -41,7 +46,10 @@ import org.springframework.core.env.Environment;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
+ * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-ddd.config.DddAutoConfiguration}，
+ *             使用 {@code @EnableDdd4j} 注解启用
  */
+@Deprecated
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties(DddProperties.class)
 public class DddAutoConfiguration {

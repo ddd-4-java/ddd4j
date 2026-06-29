@@ -23,9 +23,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
-import org.springframework.lang.NonNull;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -97,7 +96,6 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     @Override
-    @Transactional(rollbackFor = {Exception.class})
     public boolean save(List<? extends Model> models) {
         if (models == null || models.size() == 0) {
             return false;
@@ -141,7 +139,6 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     @Override
-    @Transactional(rollbackFor = {Exception.class})
     public boolean update(List<? extends Model> models) {
         if (models == null || models.isEmpty()) {
             return false;
@@ -242,7 +239,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     @Override
-    public M get(@NonNull Serializable id) {
+    public M get(@Nonnull Serializable id) {
         return convert(this.mapper.selectById(id));
     }
 
@@ -286,7 +283,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     @Override
-    public boolean deleteByKey(@NonNull Serializable key) {
+    public boolean deleteByKey(@Nonnull Serializable key) {
         return SqlHelper.retBool(this.mapper.delete(this.getKeyWrapper(key)));
     }
 
@@ -308,7 +305,6 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     @Override
-    @Transactional(rollbackFor = {Exception.class})
     public boolean updateByKey(List<? extends Model> models) {
         if (models == null || models.isEmpty()) {
             log.warn("batch function query is empty or null");

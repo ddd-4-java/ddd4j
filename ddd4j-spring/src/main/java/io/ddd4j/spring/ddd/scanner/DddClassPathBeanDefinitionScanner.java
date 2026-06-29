@@ -12,6 +12,9 @@ import java.util.Set;
 /**
  * DDD 注解扫描器：让 Spring 自动识别纯 Java 的 DDD 构造型注解。
  *
+ * <p><b>迁移说明</b>：自 2.0.x 起，本类将从 {@code ddd4j-spring} 下移到
+ * {@code ddd4j-boot-ddd}（Spring Boot starter），由 {@code @EnableDdd4j} 自动触发。
+ *
  * <p>扫描 {@link DomainService}、{@link DomainRepository}、{@link ApplicationService}、
  * {@link DomainAssembler}、{@link DomainConverter} 注解标记的类，并注册为 Spring Bean。
  *
@@ -23,7 +26,9 @@ import java.util.Set;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
+ * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-ddd.scanner.DddClassPathBeanDefinitionScanner}
  */
+@Deprecated
 public class DddClassPathBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
 
     public DddClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {

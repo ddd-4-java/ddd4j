@@ -14,13 +14,16 @@ import java.util.Objects;
 /**
  * 统一异常处理基类。
  *
- * <p>从 {@code ddd4j-core} 迁入（3.4.x 起），消除核心模块对 jakarta.servlet 的耦合。
+ * <p><b>迁移说明</b>：自 2.0.x 起，本类将从 {@code ddd4j-web/ddd4j-web-core} 下移到
+ * {@code ddd4j-boot-web-core}（Spring Boot starter）。新业务请直接依赖 {@code ddd4j-boot-web-core}。
  *
  * <p>使用静态 ThreadLocal 持有当前请求，由框架适配层（如 Spring Filter / Quarkus RequestScope）注入。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
+ * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-web-core.BaseExceptionHandler}
  */
+@Deprecated
 @Slf4j
 public abstract class BaseExceptionHandler {
 

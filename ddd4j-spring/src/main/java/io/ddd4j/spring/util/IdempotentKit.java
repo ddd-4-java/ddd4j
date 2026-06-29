@@ -29,6 +29,16 @@ import java.util.stream.Stream;
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+/**
+ * 接口幂等性工具（Spring AOP 切面）。
+ *
+ * <p><b>迁移说明</b>：自 2.0.x 起，本类将从 {@code ddd4j-spring} 下移到
+ * {@code ddd4j-boot-web-idempotent}（Spring Boot starter）。新业务请直接依赖该 starter。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-web-idempotent.IdempotentKit}
+ */
+@Deprecated
 public class IdempotentKit {
 
     protected static final ExpressionParser expressionParser = new SpelExpressionParser();
