@@ -4,6 +4,7 @@
  */
 package io.ddd4j.annotation;
 
+import java.lang.annotation.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
