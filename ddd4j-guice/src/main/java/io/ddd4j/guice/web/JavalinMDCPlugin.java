@@ -15,6 +15,7 @@
  */
 package io.ddd4j.guice.web;
 
+import io.ddd4j.guice.util.WebKit;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +61,7 @@ public class JavalinMDCPlugin implements Handler {
         }
         MDC.put(MDC_REQUEST_ID, requestId);
         MDC.put(MDC_REQUEST_URL, ctx.url());
-        MDC.put(MDC_REMOTE_ADDR, JavalinWebUtils.getClientIp(ctx));
+        MDC.put(MDC_REMOTE_ADDR, WebKit.getClientIp(ctx));
         MDC.put(MDC_METHOD, ctx.method().name());
         // 设置响应头
         ctx.header("X-Request-Id", requestId);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.guice.web;
+package io.ddd4j.guice.util;
 
 import io.javalin.http.Context;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +29,7 @@ import java.util.Enumeration;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class JavalinWebUtils {
+public class WebKit {
 
     private static final String[] IP_HEADER_CANDIDATES = {
             "X-Forwarded-For",
@@ -45,7 +45,7 @@ public class JavalinWebUtils {
             "REMOTE_ADDR"
     };
 
-    private JavalinWebUtils() {
+    private WebKit() {
     }
 
     /**

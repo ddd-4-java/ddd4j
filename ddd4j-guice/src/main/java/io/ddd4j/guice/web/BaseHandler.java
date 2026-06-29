@@ -19,6 +19,7 @@ import io.ddd4j.core.context.I18nProvider;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
 import io.ddd4j.guice.context.GuiceContext;
+import io.ddd4j.guice.util.WebKit;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,14 +73,14 @@ public abstract class BaseHandler {
      * 获取客户端 IP
      */
     protected String getClientIp(Context ctx) {
-        return JavalinWebUtils.getClientIp(ctx);
+        return WebKit.getClientIp(ctx);
     }
 
     /**
      * 判断是否为 AJAX 请求
      */
     protected boolean isAjax(Context ctx) {
-        return JavalinWebUtils.isAjax(ctx);
+        return WebKit.isAjax(ctx);
     }
 
     /**
