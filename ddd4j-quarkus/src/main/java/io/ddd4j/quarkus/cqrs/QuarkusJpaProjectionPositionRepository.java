@@ -17,8 +17,7 @@ import java.util.Optional;
  * @since 2.0.x
  */
 @ApplicationScoped
-public class QuarkusJpaProjectionPositionRepository
-        implements ProjectionPositionRepository {
+public class QuarkusJpaProjectionPositionRepository implements ProjectionPositionRepository {
 
     @Inject
     PanacheRepositoryBase<QuarkusJpaProjectionPosition, String> panacheRepo;
