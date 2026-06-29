@@ -67,9 +67,37 @@ public class CleanArchitectureChecker {
     );
     final List<String> violations = new ArrayList<>();
     private final String basePackage;
+    private final Class<? extends java.lang.annotation.Annotation> domainEntityAnnotation;
+    private final Class<? extends java.lang.annotation.Annotation> domainServiceAnnotation;
+    private final Class<? extends java.lang.annotation.Annotation> applicationServiceAnnotation;
+    private final Class<? extends java.lang.annotation.Annotation> domainRepositoryAnnotation;
 
+    /**
+     * 构造器（向后兼容）：仅做目录结构检查，不应用注解驱动规则。
+     */
     public CleanArchitectureChecker(String basePackage) {
+        this(basePackage, null, null, null, null);
+    }
+
+    /**
+     * 构造器（带注解驱动规则）。
+     *
+     * @param basePackage               业务根包名（如 com.example.myapp）
+     * @param domainEntityAnnotation    业务项目使用的 @DomainEntity 注解类（可选）
+     * @param domainServiceAnnotation   业务项目使用的 @DomainService 注解类（可选）
+     * @param applicationServiceAnnotation 业务项目使用的 @ApplicationService 注解类（可选）
+     * @param domainRepositoryAnnotation   业务项目使用的 @DomainRepository 注解类（可选）
+     */
+    public CleanArchitectureChecker(String basePackage,
+                                    Class<? extends java.lang.annotation.Annotation> domainEntityAnnotation,
+                                    Class<? extends java.lang.annotation.Annotation> domainServiceAnnotation,
+                                    Class<? extends java.lang.annotation.Annotation> applicationServiceAnnotation,
+                                    Class<? extends java.lang.annotation.Annotation> domainRepositoryAnnotation) {
         this.basePackage = basePackage;
+        this.domainEntityAnnotation = domainEntityAnnotation;
+        this.domainServiceAnnotation = domainServiceAnnotation;
+        this.applicationServiceAnnotation = applicationServiceAnnotation;
+        this.domainRepositoryAnnotation = domainRepositoryAnnotation;
     }
 
     /**
@@ -117,10 +145,18 @@ public class CleanArchitectureChecker {
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_WEB, classes);
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE, classes);
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK, classes);
-        checkArchRule(CleanDDDLayerRules.DOMAIN_ENTITY_IN_DOMAIN, classes);
-        checkArchRule(CleanDDDLayerRules.DOMAIN_SERVICE_IN_DOMAIN, classes);
-        checkArchRule(CleanDDDLayerRules.APPLICATION_SERVICE_IN_APP, classes);
-        checkArchRule(CleanDDDLayerRules.REPOSITORY_IMPL_IN_INFRASTRUCTURE, classes);
+        if (domainEntityAnnotation != null) {
+            checkArchRule(CleanDDDLayerRules.domainEntityInDomain(domainEntityAnnotation), classes);
+        }
+        if (domainServiceAnnotation != null) {
+            checkArchRule(CleanDDDLayerRules.domainServiceInDomain(domainServiceAnnotation), classes);
+        }
+        if (applicationServiceAnnotation != null) {
+            checkArchRule(CleanDDDLayerRules.applicationServiceInApp(applicationServiceAnnotation), classes);
+        }
+        if (domainRepositoryAnnotation != null) {
+            checkArchRule(CleanDDDLayerRules.repositoryImplInInfrastructure(domainRepositoryAnnotation), classes);
+        }
     }
 
     private JavaClasses importClasses(String sourceRoot) {

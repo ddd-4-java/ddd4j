@@ -6,19 +6,21 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import io.ddd4j.ddd.cola.rules.ColaDDDLayerRules;
 
+import java.lang.annotation.Annotation;
+
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 /**
  * COLA 架构测试抽象基类。
  *
- * <p>业务项目只需继承此类即可自动应用所有 COLA + DDD 规则：
+ * <p>业务项目继承此类并覆写注解类覆写方法即可应用所有 COLA + DDD 规则：
  * <pre>
- * // 业务项目：src/test/java/com/example/MyAppArchitectureTest.java
- * package com.example;
- * import io.ddd4j.ddd.cola.test.ColaArchitectureTest;
+ * &#64;AnalyzeClasses(packages = "com.example.myapp")
  * class MyAppArchitectureTest extends ColaArchitectureTest {
- *     // 无需任何代码
+ *     protected Class&lt;? extends Annotation&gt; domainEntityAnnotation() {
+ *         return io.ddd4j.boot.annotation.ddd.DomainEntity.class;
+ *     }
  * }
  * </pre>
  *
@@ -40,28 +42,58 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 )
 public abstract class ColaArchitectureTest {
 
+    // ============ 子类覆写：传入业务项目使用的 DDD 注解 ============
+
+    protected Class<? extends Annotation> domainEntityAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> domainServiceAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> applicationServiceAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> domainRepositoryAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> domainGatewayAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> commandExecutorAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> queryServiceAnnotation() {
+        return null;
+    }
+
     // ============ 注解驱动规则（来自 ColaDDDLayerRules）============
 
     @ArchTest
-    public static final ArchRule domain_entity_in_domain = ColaDDDLayerRules.DOMAIN_ENTITY_IN_DOMAIN;
+    public static final ArchRule domain_entity_in_domain = ColaDDDLayerRules.domainEntityInDomain(null);
 
     @ArchTest
-    public static final ArchRule domain_service_in_domain = ColaDDDLayerRules.DOMAIN_SERVICE_IN_DOMAIN;
+    public static final ArchRule domain_service_in_domain = ColaDDDLayerRules.domainServiceInDomain(null);
 
     @ArchTest
-    public static final ArchRule application_service_in_app = ColaDDDLayerRules.APPLICATION_SERVICE_IN_APP;
+    public static final ArchRule application_service_in_app = ColaDDDLayerRules.applicationServiceInApp(null);
 
     @ArchTest
-    public static final ArchRule repository_impl_in_adapter = ColaDDDLayerRules.REPOSITORY_IMPL_IN_ADAPTER;
+    public static final ArchRule repository_impl_in_adapter = ColaDDDLayerRules.repositoryImplInAdapter(null);
 
     @ArchTest
-    public static final ArchRule domain_gateway_in_domain = ColaDDDLayerRules.DOMAIN_GATEWAY_IN_DOMAIN;
+    public static final ArchRule domain_gateway_in_domain = ColaDDDLayerRules.domainGatewayInDomain(null);
 
     @ArchTest
-    public static final ArchRule command_executor_in_app = ColaDDDLayerRules.COMMAND_EXECUTOR_IN_APP;
+    public static final ArchRule command_executor_in_app = ColaDDDLayerRules.commandExecutorInApp(null);
 
     @ArchTest
-    public static final ArchRule query_service_in_app = ColaDDDLayerRules.QUERY_SERVICE_IN_APP;
+    public static final ArchRule query_service_in_app = ColaDDDLayerRules.queryServiceInApp(null);
 
     // ============ 包依赖规则（COLA 核心约束）============
 

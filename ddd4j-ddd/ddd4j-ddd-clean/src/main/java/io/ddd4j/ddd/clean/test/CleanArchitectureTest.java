@@ -6,19 +6,22 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import io.ddd4j.ddd.clean.rules.CleanDDDLayerRules;
 
+import java.lang.annotation.Annotation;
+
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 /**
  * Clean Architecture 架构测试抽象基类。
  *
- * <p>业务项目只需继承此类即可自动应用所有 Clean Architecture + DDD 规则：
+ * <p>业务项目继承此类，并覆写 {@code domainEntityAnnotation()} 等方法传入项目使用的 DDD 注解类即可：
  * <pre>
- * // 业务项目：src/test/java/com/example/MyAppArchitectureTest.java
- * package com.example;
- * import io.ddd4j.ddd.clean.test.CleanArchitectureTest;
+ * &#64;AnalyzeClasses(packages = "com.example.myapp")
  * class MyAppArchitectureTest extends CleanArchitectureTest {
- *     // 无需任何代码
+ *     // Spring Boot 项目
+ *     protected Class&lt;? extends Annotation&gt; domainEntityAnnotation() {
+ *         return io.ddd4j.boot.annotation.ddd.DomainEntity.class;
+ *     }
  * }
  * </pre>
  *
@@ -47,28 +50,58 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 )
 public abstract class CleanArchitectureTest {
 
+    // ============ 子类覆写：传入业务项目使用的 DDD 注解 ============
+
+    protected Class<? extends Annotation> domainEntityAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> domainServiceAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> applicationServiceAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> domainRepositoryAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> domainGatewayAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> commandExecutorAnnotation() {
+        return null;
+    }
+
+    protected Class<? extends Annotation> queryServiceAnnotation() {
+        return null;
+    }
+
     // ============ 注解驱动规则（来自 CleanDDDLayerRules）============
 
     @ArchTest
-    public static final ArchRule domain_entity_in_domain = CleanDDDLayerRules.DOMAIN_ENTITY_IN_DOMAIN;
+    public static final ArchRule domain_entity_in_domain = CleanDDDLayerRules.domainEntityInDomain(null);
 
     @ArchTest
-    public static final ArchRule domain_service_in_domain = CleanDDDLayerRules.DOMAIN_SERVICE_IN_DOMAIN;
+    public static final ArchRule domain_service_in_domain = CleanDDDLayerRules.domainServiceInDomain(null);
 
     @ArchTest
-    public static final ArchRule application_service_in_app = CleanDDDLayerRules.APPLICATION_SERVICE_IN_APP;
+    public static final ArchRule application_service_in_app = CleanDDDLayerRules.applicationServiceInApp(null);
 
     @ArchTest
-    public static final ArchRule repository_impl_in_infrastructure = CleanDDDLayerRules.REPOSITORY_IMPL_IN_INFRASTRUCTURE;
+    public static final ArchRule repository_impl_in_infrastructure = CleanDDDLayerRules.repositoryImplInInfrastructure(null);
 
     @ArchTest
-    public static final ArchRule domain_gateway_in_domain = CleanDDDLayerRules.DOMAIN_GATEWAY_IN_DOMAIN;
+    public static final ArchRule domain_gateway_in_domain = CleanDDDLayerRules.domainGatewayInDomain(null);
 
     @ArchTest
-    public static final ArchRule command_executor_in_app = CleanDDDLayerRules.COMMAND_EXECUTOR_IN_APP;
+    public static final ArchRule command_executor_in_app = CleanDDDLayerRules.commandExecutorInApp(null);
 
     @ArchTest
-    public static final ArchRule query_service_in_app = CleanDDDLayerRules.QUERY_SERVICE_IN_APP;
+    public static final ArchRule query_service_in_app = CleanDDDLayerRules.queryServiceInApp(null);
 
     // ============ 包依赖规则（Clean 四层核心约束）============
 

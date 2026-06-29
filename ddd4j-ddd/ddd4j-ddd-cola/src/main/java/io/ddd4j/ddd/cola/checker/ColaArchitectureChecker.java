@@ -69,9 +69,31 @@ public class ColaArchitectureChecker {
     );
     final List<String> violations = new ArrayList<>();
     private final String basePackage;
+    private final Class<? extends java.lang.annotation.Annotation> domainEntityAnnotation;
+    private final Class<? extends java.lang.annotation.Annotation> domainServiceAnnotation;
+    private final Class<? extends java.lang.annotation.Annotation> applicationServiceAnnotation;
+    private final Class<? extends java.lang.annotation.Annotation> domainRepositoryAnnotation;
 
+    /**
+     * 构造器（向后兼容）：仅做目录结构检查，不应用注解驱动规则。
+     */
     public ColaArchitectureChecker(String basePackage) {
+        this(basePackage, null, null, null, null);
+    }
+
+    /**
+     * 构造器（带注解驱动规则）。
+     */
+    public ColaArchitectureChecker(String basePackage,
+                                   Class<? extends java.lang.annotation.Annotation> domainEntityAnnotation,
+                                   Class<? extends java.lang.annotation.Annotation> domainServiceAnnotation,
+                                   Class<? extends java.lang.annotation.Annotation> applicationServiceAnnotation,
+                                   Class<? extends java.lang.annotation.Annotation> domainRepositoryAnnotation) {
         this.basePackage = basePackage;
+        this.domainEntityAnnotation = domainEntityAnnotation;
+        this.domainServiceAnnotation = domainServiceAnnotation;
+        this.applicationServiceAnnotation = applicationServiceAnnotation;
+        this.domainRepositoryAnnotation = domainRepositoryAnnotation;
     }
 
     /**
@@ -117,10 +139,18 @@ public class ColaArchitectureChecker {
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_ADAPTER, classes);
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION, classes);
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK, classes);
-        checkArchRule(ColaDDDLayerRules.DOMAIN_ENTITY_IN_DOMAIN, classes);
-        checkArchRule(ColaDDDLayerRules.DOMAIN_SERVICE_IN_DOMAIN, classes);
-        checkArchRule(ColaDDDLayerRules.APPLICATION_SERVICE_IN_APP, classes);
-        checkArchRule(ColaDDDLayerRules.REPOSITORY_IMPL_IN_ADAPTER, classes);
+        if (domainEntityAnnotation != null) {
+            checkArchRule(ColaDDDLayerRules.domainEntityInDomain(domainEntityAnnotation), classes);
+        }
+        if (domainServiceAnnotation != null) {
+            checkArchRule(ColaDDDLayerRules.domainServiceInDomain(domainServiceAnnotation), classes);
+        }
+        if (applicationServiceAnnotation != null) {
+            checkArchRule(ColaDDDLayerRules.applicationServiceInApp(applicationServiceAnnotation), classes);
+        }
+        if (domainRepositoryAnnotation != null) {
+            checkArchRule(ColaDDDLayerRules.repositoryImplInAdapter(domainRepositoryAnnotation), classes);
+        }
     }
 
     private JavaClasses importClasses(String sourceRoot) {

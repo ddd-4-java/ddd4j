@@ -14,7 +14,6 @@ import java.lang.annotation.*;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Contract
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented
