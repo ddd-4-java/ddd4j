@@ -4,8 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.ddd4j.extension.express.application.service.RuleCacheService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Set;
@@ -29,9 +28,8 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @since 1.0
  */
+@Slf4j
 public class CaffeineRedisRuleCacheService implements RuleCacheService {
-
-    private static final Logger log = LoggerFactory.getLogger(CaffeineRedisRuleCacheService.class);
 
     private static final String RULE_CACHE_PREFIX = "rule_engine:rule:";
     private static final long REDIS_CACHE_TTL = 300; // Redis缓存5分钟
@@ -162,4 +160,3 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
         return localCache.stats().toString();
     }
 }
-

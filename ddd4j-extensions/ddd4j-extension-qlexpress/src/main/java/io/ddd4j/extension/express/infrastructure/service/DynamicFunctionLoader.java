@@ -7,8 +7,7 @@ import com.alibaba.qlexpress4.runtime.function.CustomFunction;
 import io.ddd4j.extension.express.application.service.RuleManagementService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import jakarta.annotation.PostConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -31,9 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Component
+@Slf4j
 public class DynamicFunctionLoader {
-
-    private static final Logger log = LoggerFactory.getLogger(DynamicFunctionLoader.class);
 
     private final Express4Runner expressRunner;
     private final RuleManagementService ruleManagementService;
@@ -210,4 +208,3 @@ public class DynamicFunctionLoader {
         log.info("卸载函数: {}", ruleCode);
     }
 }
-

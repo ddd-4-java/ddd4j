@@ -4,6 +4,7 @@ import io.ddd4j.core.util.I18nKit;
 import io.ddd4j.core.contract.enums.IEnum;
 import io.ddd4j.core.contract.enums.ResultCode;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 服务异常，可用于控制业务异常流程，抛出后由统一异常增强类捕获，返回友好提示
@@ -11,6 +12,7 @@ import lombok.Data;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ServiceException extends RuntimeException {
     protected Integer code;
 

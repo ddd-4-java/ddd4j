@@ -5,7 +5,6 @@
  * import java.util.List;
  * <p>
  * import org.slf4j.Logger;
- * import org.slf4j.LoggerFactory;
  * <p>
  * <p>
  * // http://www.mca.gov.cn/article/sj/xzqh/1980/201903/201903011447.html
@@ -3305,7 +3304,6 @@
  * // 单位名称
  * private String cname;
  * <p>
- * private static Logger log = LoggerFactory.getLogger(CityAreaEnum.class);
  * <p>
  * private CityAreaEnum( String proCode, String code, String cname) {
  * this.proCode = proCode;

@@ -6,9 +6,12 @@
  */
 package io.ddd4j.web.webmvc.config;
 
+import lombok.Data;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Data
 public class LocalResourceProperteis {
 
     // 本地存储路径
@@ -19,29 +22,5 @@ public class LocalResourceProperteis {
 
     // 本地静态资源映射
     private Map<String, String> localLocations = new HashMap<>();
-
-    public String getLocalStorage() {
-        return localStorage;
-    }
-
-    public void setLocalStorage(String localStorage) {
-        this.localStorage = localStorage;
-    }
-
-    public boolean isLocalRelative() {
-        return localRelative;
-    }
-
-    public void setLocalRelative(boolean localRelative) {
-        this.localRelative = localRelative;
-    }
-
-    public Map<String, String> getLocalLocations() {
-        return localLocations;
-    }
-
-    public void setLocalLocations(Map<String, String> localLocations) {
-        this.localLocations = localLocations;
-    }
 
 }

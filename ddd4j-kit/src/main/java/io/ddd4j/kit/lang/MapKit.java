@@ -17,13 +17,17 @@ import java.util.*;
 public class MapKit extends MapUtil {
 
     public <T> T get(Map map, String key) {
-        if (map == null) return null;
+        if (map == null) {
+            return null;
+        }
         return (T) map.get(key);
     }
 
     public <T> T get(Map map, String key, T defaultValue) {
         T result = get(map, key);
-        if (result == null) return defaultValue;
+        if (result == null) {
+            return defaultValue;
+        }
         return result;
     }
 
@@ -35,7 +39,9 @@ public class MapKit extends MapUtil {
      * @return
      */
     public <T> T search(Map map, String path) {
-        if (map == null) return null;
+        if (map == null) {
+            return null;
+        }
         String[] keyArray = path.split("\\.");
         if (keyArray.length == 1) {
             return get(map, keyArray[0]);
@@ -48,7 +54,9 @@ public class MapKit extends MapUtil {
                     value = (Map) value.get(keyArray[i]);
                 }
             }
-            if (value == null) return null;
+            if (value == null) {
+                return null;
+            }
             return (T) value.get(keyArray[keyArray.length - 1]);
         }
     }
@@ -62,7 +70,9 @@ public class MapKit extends MapUtil {
      */
     public <T> T search(Map map, String keyword, T defaultValue) {
         T result = search(map, keyword);
-        if (result == null) return defaultValue;
+        if (result == null) {
+            return defaultValue;
+        }
         return result;
     }
 

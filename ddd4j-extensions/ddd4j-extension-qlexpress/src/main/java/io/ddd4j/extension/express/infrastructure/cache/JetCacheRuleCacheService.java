@@ -5,8 +5,7 @@ import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.CreateCache;
 import io.ddd4j.extension.express.application.service.RuleCacheService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 
@@ -58,9 +57,8 @@ import org.springframework.stereotype.Component;
  * @since 1.0
  */
 @Component
+@Slf4j
 public class JetCacheRuleCacheService implements RuleCacheService {
-
-    private static final Logger log = LoggerFactory.getLogger(JetCacheRuleCacheService.class);
 
     private static final String CACHE_AREA = "rule_engine";
     private static final String CACHE_NAME = "rule_cache";
@@ -196,4 +194,3 @@ public class JetCacheRuleCacheService implements RuleCacheService {
         }
     }
 }
-

@@ -12,6 +12,7 @@ import io.ddd4j.extension.monitor.application.service.Sender;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
 import io.ddd4j.spring.context.SpringContext;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Slf4j(topic = "### BASE-MONITOR : RobotAppender ###")
 public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     private static Map<String, Integer> msgCount = new ConcurrentHashMap<>(3);

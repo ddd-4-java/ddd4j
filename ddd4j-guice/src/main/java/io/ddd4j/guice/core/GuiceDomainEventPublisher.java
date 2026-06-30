@@ -3,8 +3,7 @@ package io.ddd4j.guice.core;
 import com.google.common.eventbus.EventBus;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 
@@ -16,9 +15,8 @@ import java.util.Collection;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
+@Slf4j
 public class GuiceDomainEventPublisher implements DomainEventPublisher {
-
-    private static final Logger log = LoggerFactory.getLogger(GuiceDomainEventPublisher.class);
 
     private final EventBus eventBus;
 

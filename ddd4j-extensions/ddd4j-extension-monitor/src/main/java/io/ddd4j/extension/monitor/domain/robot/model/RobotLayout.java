@@ -10,6 +10,7 @@ import io.ddd4j.extension.monitor.infras.utils.IpUtils;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.spring.context.SpringContext;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class RobotLayout extends LayoutBase<ILoggingEvent> {
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
     // 应用名称

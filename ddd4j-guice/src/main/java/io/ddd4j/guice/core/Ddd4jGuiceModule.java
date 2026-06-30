@@ -25,8 +25,7 @@ import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Ddd4j Google Guice 核心模块。
@@ -47,9 +46,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
+@Slf4j
 public class Ddd4jGuiceModule extends AbstractModule {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Ddd4jGuiceModule.class);
 
     @Override
     protected void configure() {
@@ -68,7 +66,7 @@ public class Ddd4jGuiceModule extends AbstractModule {
     @Singleton
     public EventBus eventBus() {
         EventBus bus = new EventBus();
-        LOG.info("Guava EventBus created");
+        log.info("Guava EventBus created");
         return bus;
     }
 
@@ -82,7 +80,7 @@ public class Ddd4jGuiceModule extends AbstractModule {
             // 注册 DomainEventPublisher 到 DomainEvent 静态字段
             DomainEventPublisher publisher = injector.getInstance(DomainEventPublisher.class);
             DomainEvent.registerPublisher(publisher);
-            LOG.info("GuiceContext and DomainEventPublisher initialized");
+            log.info("GuiceContext and DomainEventPublisher initialized");
         }
     }
 }

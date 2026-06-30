@@ -8,8 +8,7 @@ import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import io.ddd4j.extension.express.domain.model.vo.RuleExecutionResult;
 import io.ddd4j.extension.express.domain.model.vo.RuleValidationResult;
 import io.ddd4j.extension.express.domain.service.RuleEngineDomainService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
@@ -25,9 +24,8 @@ import java.util.Map;
  * @version 1.0
  * @since 1.0
  */
+@Slf4j
 public class RuleEngineDomainServiceImpl implements RuleEngineDomainService {
-
-    private static final Logger log = LoggerFactory.getLogger(RuleEngineDomainServiceImpl.class);
 
     private final Express4Runner expressRunner;
 
@@ -102,4 +100,3 @@ public class RuleEngineDomainServiceImpl implements RuleEngineDomainService {
         return rule != null && rule.isAvailable();
     }
 }
-

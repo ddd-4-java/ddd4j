@@ -4,8 +4,7 @@ import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import io.ddd4j.extension.express.domain.model.vo.RuleValidationResult;
 import io.ddd4j.extension.express.domain.repository.RuleDefinitionRepository;
 import io.ddd4j.extension.express.domain.service.RuleEngineDomainService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,9 +39,8 @@ import java.util.Optional;
  * @version 1.0
  * @since 1.0
  */
+@Slf4j
 public class RuleManagementService {
-
-    private static final Logger log = LoggerFactory.getLogger(RuleManagementService.class);
 
     private final RuleDefinitionRepository ruleRepository;
     private final RuleCacheService ruleCacheService;
@@ -411,4 +409,3 @@ public class RuleManagementService {
         log.info("清除所有规则缓存");
     }
 }
-
