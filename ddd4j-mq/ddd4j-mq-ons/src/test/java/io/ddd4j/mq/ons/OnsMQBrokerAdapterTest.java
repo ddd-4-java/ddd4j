@@ -31,7 +31,6 @@ class OnsMQBrokerAdapterTest {
     @Test
     void ackShouldExposeListenerReturnAction() {
         Message message = new Message("order", "paid", "key-1", new byte[0]);
-        message.setMsgID("msg-1");
         OnsMessageAcknowledgment ack = new OnsMessageAcknowledgment(new ConsumeContext(), message);
 
         ack.nack(true);

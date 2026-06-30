@@ -5,9 +5,9 @@ import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -45,10 +45,10 @@ public class GuavaCache<K, V> implements Cache<K, V> {
             builder.maximumSize(config.getMaximumSize());
         }
         if (config.getExpireAfterWriteSeconds() > 0) {
-            builder.expireAfterWrite(config.getExpireAfterWriteSeconds(), TimeUnit.SECONDS);
+            builder.expireAfterWrite(Duration.ofSeconds(config.getExpireAfterWriteSeconds()));
         }
         if (config.getExpireAfterAccessSeconds() > 0) {
-            builder.expireAfterAccess(config.getExpireAfterAccessSeconds(), TimeUnit.SECONDS);
+            builder.expireAfterAccess(Duration.ofSeconds(config.getExpireAfterAccessSeconds()));
         }
         return new GuavaCache<>(builder.build());
     }

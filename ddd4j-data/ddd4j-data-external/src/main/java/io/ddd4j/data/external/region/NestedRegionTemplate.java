@@ -59,7 +59,7 @@ public class NestedRegionTemplate {
     public RegionEnum getRegionByIp(String ipAddress) {
         try {
             // 1、去除参数两头空白
-            ipAddress = StringUtils.trimWhitespace(ipAddress);
+            ipAddress = trimWhitespace(ipAddress);
             if (InetAddressUtils.internalIp(ipAddress)) {
                 return RegionEnum.UK;
             }
@@ -95,7 +95,7 @@ public class NestedRegionTemplate {
     public String getLocationByIp(String ipAddress) {
         try {
             // 1、去除参数两头空白
-            ipAddress = StringUtils.trimWhitespace(ipAddress);
+            ipAddress = trimWhitespace(ipAddress);
             if (InetAddressUtils.internalIp(ipAddress)) {
                 return XdbSearcher.NOT_MATCH;
             }
@@ -119,7 +119,7 @@ public class NestedRegionTemplate {
     public RegionAddress getRegionAddress(String ipAddress) {
         try {
             // 1、去除参数两头空白
-            ipAddress = StringUtils.trimWhitespace(ipAddress);
+            ipAddress = trimWhitespace(ipAddress);
             if (InetAddressUtils.internalIp(ipAddress)) {
                 return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
             }
@@ -155,7 +155,7 @@ public class NestedRegionTemplate {
 
     public boolean isMainlandIp(String ipAddress) {
         // 1、去除参数两头空白
-        ipAddress = StringUtils.trimWhitespace(ipAddress);
+        ipAddress = trimWhitespace(ipAddress);
         if (InetAddressUtils.internalIp(ipAddress)) {
             return true;
         }
@@ -178,6 +178,10 @@ public class NestedRegionTemplate {
 
     public PconlineRegionTemplate getPconlineRegionTemplate() {
         return pconlineRegionTemplate;
+    }
+
+    private static String trimWhitespace(String value) {
+        return value == null ? null : value.strip();
     }
 
 }

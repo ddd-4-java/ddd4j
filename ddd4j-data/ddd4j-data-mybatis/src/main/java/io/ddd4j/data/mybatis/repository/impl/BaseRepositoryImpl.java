@@ -213,7 +213,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         if (ids.size() >= 100) {
             throw new IllegalArgumentException("当前批量删除的ID不能大于100");
         }
-        return SqlHelper.retBool(this.mapper.deleteBatchIds(ids));
+        return SqlHelper.retBool(this.mapper.deleteByIds(ids));
     }
 
     @Override
@@ -231,7 +231,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         if (ids.size() >= 100) {
             throw new IllegalArgumentException("当前批量查询的ID不能大于100");
         }
-        return convert(this.mapper.selectBatchIds(ids));
+        return convert(this.mapper.selectByIds(ids));
     }
 
     @Override
@@ -781,7 +781,14 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         }
 
         protected static <T> T findFieldValue(Object object, Field field) {
-            return (T) ReflectionKit.getFieldValue(object, field.getName());
+            try {
+                if (!field.canAccess(object)) {
+                    field.setAccessible(true);
+                }
+                return (T) field.get(object);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Unable to read field: " + field.getName(), e);
+            }
         }
 
         protected static String getColumn(Field field) {

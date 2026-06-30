@@ -196,7 +196,7 @@ public class BeanKit {
         if (target == null || CollUtil.isEmpty(map)) {
             return;
         }
-        BeanUtil.fillBeanWithMap(map, target, false, false);
+        BeanUtil.fillBeanWithMap(map, target, CopyOptions.create().setIgnoreError(false));
     }
 
     /**
@@ -211,7 +211,7 @@ public class BeanKit {
         if (CollUtil.isEmpty(map)) {
             return null;
         }
-        return BeanUtil.mapToBean(map, targetClass, false);
+        return BeanUtil.toBean(map, targetClass, CopyOptions.create());
     }
 
     /**

@@ -79,7 +79,7 @@ public abstract class Query extends Page {
         // 转两次，为了兼容日期类型的转换，否则String转成Date类型会出错
         Query query = JsonKit.toObject(JsonKit.toJson(queryMap), queryClass);
         if (query == null) {
-            query = queryClass.newInstance();
+            query = queryClass.getDeclaredConstructor().newInstance();
         }
         return query;
     }

@@ -12,7 +12,6 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Flux;
 
-import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -80,9 +79,10 @@ public class WebFluxKit {
         Flux<DataBuffer> body = serverHttpRequest.getBody();
         AtomicReference<String> bodyRef = new AtomicReference<>();
         body.subscribe(buffer -> {
-            CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer.toByteBuffer());
+            byte[] bytes = new byte[buffer.readableByteCount()];
+            buffer.read(bytes);
             DataBufferUtils.release(buffer);
-            bodyRef.set(charBuffer.toString());
+            bodyRef.set(new String(bytes, StandardCharsets.UTF_8));
         });
         // 获取request body
         return bodyRef.get();

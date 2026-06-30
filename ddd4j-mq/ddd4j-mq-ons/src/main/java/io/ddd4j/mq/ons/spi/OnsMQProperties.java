@@ -55,7 +55,7 @@ public class OnsMQProperties {
         p.setProperty(PropertyKeyConst.NAMESRV_ADDR, nameSrvAddr);
         p.setProperty(PropertyKeyConst.GROUP_ID, groupName == null ? "DEFAULT_GROUP" : groupName);
         if (namespace != null && !namespace.isBlank()) {
-            p.setProperty(PropertyKeyConst.InstanceName, namespace);
+            p.setProperty(PropertyKeyConst.INSTANCE_ID, namespace);
         }
         return p;
     }

@@ -1,6 +1,7 @@
 package io.ddd4j.kit.lang;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -68,18 +69,19 @@ public class JsonKit {
      * 创建默认 ObjectMapper
      */
     public static ObjectMapper defaultObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        objectMapper.setDateFormat(new BaseSimpleDateFormat());
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
         javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
         javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
-        objectMapper.registerModule(javaTimeModule);
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .defaultDateFormat(new BaseSimpleDateFormat())
+                .addModule(javaTimeModule)
+                .defaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_NULL, Include.NON_NULL))
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .build();
         objectMapper.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        objectMapper.setSerializationInclusion(Include.NON_NULL);
-        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         return objectMapper;
     }
 
@@ -91,11 +93,10 @@ public class JsonKit {
                 .activateDefaultTyping(LaissezFaireSubTypeValidator.instance, DefaultTyping.NON_FINAL, As.WRAPPER_ARRAY)
                 .defaultDateFormat(new SimpleDateFormat(YYYYMMDDHHMMSS))
                 .visibility(PropertyAccessor.ALL, Visibility.ANY)
-                .serializationInclusion(Include.NON_NULL)
+                .defaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_EMPTY, Include.NON_EMPTY))
+                .configure(MapperFeature.USE_GETTERS_AS_SETTERS, false)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(MapperFeature.USE_GETTERS_AS_SETTERS, false);
-        objectMapper.setSerializationInclusion(Include.NON_EMPTY);
         return objectMapper;
     }
 

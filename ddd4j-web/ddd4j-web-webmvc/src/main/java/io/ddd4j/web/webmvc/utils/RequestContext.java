@@ -51,7 +51,7 @@ public class RequestContext {
         } else {
             try {
                 // 使用ContentCachingRequestWrapper包装原始请求
-                ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
+                ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request, 1024 * 1024);
                 return new String(requestWrapper.getContentAsByteArray());
             } catch (Exception ignored) {
             }

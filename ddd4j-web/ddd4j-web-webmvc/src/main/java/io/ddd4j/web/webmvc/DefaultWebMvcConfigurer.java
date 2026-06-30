@@ -23,7 +23,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import hitool.core.lang3.time.DateFormats;
 import io.ddd4j.core.MediaTypes;
 import io.ddd4j.extension.jackson.ser.MyBeanSerializerModifier;
-import io.ddd4j.spring.web.Slf4jMDCInterceptor;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
@@ -38,8 +37,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.resource.WebJarsResourceResolver;
-import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
+import org.springframework.web.servlet.resource.LiteWebJarsResourceResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,19 +57,17 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
-    private ThemeChangeInterceptor themeChangeInterceptor;
     private LocaleChangeInterceptor localeChangeInterceptor;
-    private Slf4jMDCInterceptor slf4jMDCInterceptor;
+    private MdcInterceptor mdcInterceptor;
     private LocalResourceProperteis localResourceProperteis;
 
     public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
-                                   ThemeChangeInterceptor themeChangeInterceptor, LocaleChangeInterceptor localeChangeInterceptor,
-                                   Slf4jMDCInterceptor slf4jMDCInterceptor) {
+                                   LocaleChangeInterceptor localeChangeInterceptor,
+                                   MdcInterceptor mdcInterceptor) {
         super();
         this.localResourceProperteis = localResourceProperteis;
-        this.themeChangeInterceptor = themeChangeInterceptor;
         this.localeChangeInterceptor = localeChangeInterceptor;
-        this.slf4jMDCInterceptor = slf4jMDCInterceptor;
+        this.mdcInterceptor = mdcInterceptor;
     }
 
     @Override
@@ -161,9 +157,8 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(slf4jMDCInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE);
-        registry.addInterceptor(themeChangeInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE + 1);
-        registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE + 2);
+        registry.addInterceptor(mdcInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE);
+        registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE + 1);
     }
 
     @Override
@@ -188,7 +183,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/images/");
         if (!registry.hasMappingForPattern("/webjars/**")) {
             registry.addResourceHandler("/webjars/**").addResourceLocations(META_INF_WEBJAR_RESOURCES)
-                    .resourceChain(false).addResolver(new WebJarsResourceResolver());
+                    .resourceChain(false).addResolver(new LiteWebJarsResourceResolver());
         }
 
     }

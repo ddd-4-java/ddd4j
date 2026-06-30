@@ -145,8 +145,8 @@ public class BeanKit {
         Object target = null;
 
         try {
-            target = Class.forName(className).newInstance();
-        } catch (IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+            target = Class.forName(className).getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
             throw new ServiceException("{} {}", REFLECT_ERROR, e.getLocalizedMessage());
         }
 
@@ -242,7 +242,7 @@ public class BeanKit {
         if (Objects.isNull(q)) {
             return null;
         } else {
-            T t = BeanUtils.instantiate(targetClass);
+            T t = BeanUtils.instantiateClass(targetClass);
             objectToObject(q, t, true, true, true);
             return t;
         }
@@ -258,7 +258,7 @@ public class BeanKit {
      */
     public <T> T ofMap(Map<String, Object> map, Class<T> targetClass) {
         if (!Objects.isNull(map) && !map.isEmpty()) {
-            T t = BeanUtils.instantiate(targetClass);
+            T t = BeanUtils.instantiateClass(targetClass);
             mapToObject(map, t);
             return t;
         } else {
@@ -333,7 +333,7 @@ public class BeanKit {
             Object targetObject = null;
 
             try {
-                targetObject = target.newInstance();
+                targetObject = target.getDeclaredConstructor().newInstance();
                 BeanUtils.copyProperties(source, targetObject, targetSuper);
             } catch (Exception e) {
                 throw new ServiceException("Convert Error {} {} {} {}", source, target, targetSuper, e.getLocalizedMessage());
@@ -354,7 +354,7 @@ public class BeanKit {
 
                 while (var3.hasNext()) {
                     Object source = var3.next();
-                    T targetObject = target.newInstance();
+                    T targetObject = target.getDeclaredConstructor().newInstance();
                     BeanUtils.copyProperties(source, targetObject);
                     targetList.add(targetObject);
                 }
@@ -373,7 +373,7 @@ public class BeanKit {
             Object targetObject = null;
 
             try {
-                targetObject = target.newInstance();
+                targetObject = target.getDeclaredConstructor().newInstance();
                 BeanUtils.copyProperties(source, targetObject, ignoreProperties);
             } catch (Exception e) {
                 throw new ServiceException("Convert Error {} {} {}", source, target, e.getLocalizedMessage());
@@ -392,7 +392,7 @@ public class BeanKit {
             try {
 
                 for (Object source : sourceList) {
-                    T targetObject = target.newInstance();
+                    T targetObject = target.getDeclaredConstructor().newInstance();
                     BeanUtils.copyProperties(source, targetObject, ignoreProperties);
                     targetList.add(targetObject);
                 }

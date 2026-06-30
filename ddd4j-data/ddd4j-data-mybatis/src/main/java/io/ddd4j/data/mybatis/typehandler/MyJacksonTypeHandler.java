@@ -30,7 +30,7 @@ public class MyJacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
 
     static {
         OBJECT_MAPPER = new ObjectMapper();
-        OBJECT_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        OBJECT_MAPPER.setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
         OBJECT_MAPPER.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
         OBJECT_MAPPER.setDateFormat(DateUtil.newSimpleFormat("yyyy-MM-dd HH:mm:ss"));
         JavaTimeModule javaTimeModule = new JavaTimeModule();

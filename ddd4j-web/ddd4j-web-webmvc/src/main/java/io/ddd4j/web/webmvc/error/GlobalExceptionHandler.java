@@ -12,6 +12,7 @@ import io.ddd4j.core.exception.BizCheckedException;
 import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
+import io.ddd4j.kit.web.IpKit;
 import io.ddd4j.spring.util.WebUtils;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,7 +69,7 @@ import java.util.*;
 @ControllerAdvice
 @ResponseBody
 @Slf4j
-public class GlobalExceptionHandler extends io.ddd4j.web.exception.BaseExceptionHandler {
+public class GlobalExceptionHandler {
 
     @Getter
     @Autowired
@@ -935,6 +936,14 @@ public class GlobalExceptionHandler extends io.ddd4j.web.exception.BaseException
             return getMessageSource().getMessage(i18nCode, args, message, locale);
         }
         return message;
+    }
+
+    protected void logException(Exception ex) {
+        HttpServletRequest request = WebUtils.getHttpServletRequest();
+        if (request != null) {
+            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), IpKit.getRemoteAddr(request));
+        }
+        log.error(ex.getMessage(), ex);
     }
 
 }

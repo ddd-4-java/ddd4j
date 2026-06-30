@@ -95,7 +95,7 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
      */
     public void publishAt(Date sendTime) {
         ThreadPoolTaskScheduler taskScheduler = SpringContext.getBean("taskScheduler", ThreadPoolTaskScheduler.class);
-        taskScheduler.schedule(this::publish, sendTime);
+        taskScheduler.schedule(this::publish, sendTime.toInstant());
     }
 
     /**

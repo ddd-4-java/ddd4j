@@ -137,7 +137,7 @@ public class PconlineRegionTemplate {
 
                 String province = regionData.getString("pro");
                 String city = regionData.getString("city");
-                String addr = StringUtils.trimWhitespace(regionData.getString("addr"));
+                String addr = trimWhitespace(regionData.getString("addr"));
                 String country = addr;
 
                 if (Stream.of(SPECIAL_REGION).anyMatch(region -> addr.contains(region))) {
@@ -177,7 +177,7 @@ public class PconlineRegionTemplate {
                 JSONObject regionData = optional.get();
                 log.debug(" IP : {} >> Region : {} ", ip, regionData.toJSONString());
 
-                String addr = StringUtils.trimWhitespace(regionData.getString("addr"));
+                String addr = trimWhitespace(regionData.getString("addr"));
                 String country = addr;
 
                 Optional<String> regionOptional = Stream.of(SPECIAL_REGION).filter(region -> addr.contains(region)).findFirst();
@@ -225,6 +225,10 @@ public class PconlineRegionTemplate {
             log.error("IP : {} >> Country/Region Parser Error：{}", ip, e.getMessage());
         }
         return true;
+    }
+
+    private static String trimWhitespace(String value) {
+        return value == null ? null : value.strip();
     }
 
 }

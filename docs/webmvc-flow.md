@@ -6,8 +6,7 @@
 - 线程上下文与本地化：`RequestContextFilter` 与 `LocaleResolver`（X-Header 支持）
 - 拦截器：
     - 语言切换：`LocaleChangeInterceptor`（参数名：`lang`）
-    - 主题切换：`ThemeChangeInterceptor`（参数名：`theme`）
-    - MDC 链路：`Slf4jMDCInterceptor`（对接 `Sequence` 生成请求标识）
+    - MDC 链路：`MdcInterceptor`（使用 `X-Request-Id` 或自动生成请求标识）
 - 控制器基类：统一事件发布、国际化消息与响应封装
 
 ## 关键配置
@@ -43,4 +42,3 @@
 - 控制器继承 `BaseController`，使用 `success`/`fail`/`error` 统一返回
 - 对外 API 需要幂等的，标注 `@ApiIdempotent` 并合理设置过期与重试策略
 - 通过国际化键值输出用户可读消息，统一体验
-

@@ -3,6 +3,7 @@ package io.ddd4j.mq.redisstream;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
 import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
+import redis.clients.jedis.RedisClient;
 import redis.clients.jedis.UnifiedJedis;
 
 /**
@@ -21,7 +22,7 @@ public class RedisStreamMQProperties {
     private RedisStreamClientType clientType = RedisStreamClientType.JEDIS;
 
     public UnifiedJedis newJedis() {
-        return new UnifiedJedis(url);
+        return RedisClient.create(url);
     }
 
     public RedisStreamOperations newOperations() {
