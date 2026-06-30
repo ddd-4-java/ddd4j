@@ -1,7 +1,5 @@
 package io.ddd4j.extension.pf4j.util;
 
-import org.springframework.beans.BeanUtils;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -27,9 +25,21 @@ public class JdkProxy implements InvocationHandler {
 
     // 定义获取代理对象方法
     public static <T> T getJDKProxy(Class<T> className) {
-        JdkProxy target = new JdkProxy(BeanUtils.instantiateClass(className));
+        JdkProxy target = new JdkProxy(instantiate(className));
         //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出
         return (T) Proxy.newProxyInstance(className.getClassLoader(), className.getInterfaces(), target);
+    }
+
+    /**
+     * 无参构造实例化（替代 Spring BeanUtils.instantiateClass）。
+     */
+    private static <T> T instantiate(Class<T> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(
+                    "Cannot instantiate class: " + clazz.getName() + " (requires public no-arg constructor)", e);
+        }
     }
 
     @Override

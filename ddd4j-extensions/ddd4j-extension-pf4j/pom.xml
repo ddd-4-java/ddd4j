@@ -14,20 +14,22 @@
     <description>Ddd4j Pf4j Component</description>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.pf4j/pf4j -->
+        <!-- Source: https://mvnrepository.com/artifact/org.pf4j/pf4j -->
         <dependency>
             <groupId>org.pf4j</groupId>
             <artifactId>pf4j</artifactId>
         </dependency>
-        <!-- For Spring Core -->
+        <!-- Source: https://mvnrepository.com/artifact/org.pf4j/pf4j-update -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
+            <groupId>org.pf4j</groupId>
+            <artifactId>pf4j-update</artifactId>
         </dependency>
+        <!-- 独立 cglib（net.sf.cglib），CglibProxy 动态代理需要。
+             替代 spring-core 内嵌的 org.springframework.cglib，
+             保持本模块零 Spring 依赖。 -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <scope>provided</scope>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
         </dependency>
     </dependencies>
 

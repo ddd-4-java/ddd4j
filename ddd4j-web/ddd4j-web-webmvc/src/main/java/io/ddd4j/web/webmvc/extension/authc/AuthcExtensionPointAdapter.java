@@ -1,4 +1,4 @@
-package io.ddd4j.extension.pf4j.point.authc;
+package io.ddd4j.web.webmvc.extension.authc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.pf4j.PluginRuntimeException;
@@ -9,12 +9,10 @@ import java.util.Enumeration;
 import java.util.Map;
 
 /**
- * 认证扩展点默认适配器。
+ * 认证扩展点默认适配器（Spring Web 适配）。
  *
- * <p>提供 PF4J 插件体系下的认证扩展默认实现。插件可通过实现 {@link AuthcExtensionPoint}
- * 覆盖这些行为，实现自定义认证逻辑（如自定义 Token 提取、请求预处理等）。
- *
- * <p>本适配器的默认行为：
+ * <p>从 ddd4j-extension-pf4j 迁入至 ddd4j-web-webmvc 模块。
+ * 提供 PF4J 插件体系下的认证扩展默认实现，可由插件覆盖：
  * <ul>
  *   <li>{@link #getToken}：从 Authorization Header 提取 Bearer Token</li>
  *   <li>{@link #handleHeader}：空实现（插件可覆盖做 Header 预处理）</li>
@@ -23,17 +21,10 @@ import java.util.Map;
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
  */
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
-    /**
-     * Authorization Header 名称
-     */
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    /**
-     * Bearer Token 前缀
-     */
     public static final String BEARER_PREFIX = "Bearer ";
     private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
 
@@ -46,7 +37,6 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
             return authHeader.substring(BEARER_PREFIX.length()).trim();
         }
-        // 兜底：尝试从 query parameter 提取
         String tokenParam = request.getParameter("token");
         if (tokenParam != null && !tokenParam.isBlank()) {
             return tokenParam.trim();
@@ -59,7 +49,6 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         if (request == null || params == null) {
             return;
         }
-        // 默认实现：将所有自定义 Header（X- 前缀）拷贝到 params
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames != null && headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
@@ -74,7 +63,6 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         if (request == null || params == null) {
             return;
         }
-        // 默认实现：将请求参数拷贝到 params
         Map<String, String[]> paramMap = request.getParameterMap();
         if (paramMap != null) {
             for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
@@ -88,7 +76,6 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     @Override
     public Object handleResult(Object res) throws PluginRuntimeException {
-        // 默认实现：原样返回结果
         return res;
     }
 

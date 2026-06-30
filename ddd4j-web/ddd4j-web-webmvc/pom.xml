@@ -81,6 +81,13 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+        <!-- PF4J Spring HTTP 扩展点（从 ddd4j-extension-pf4j 迁入的 ServletRequestExtensionPoint /
+             ServletResponseExtensionPoint 强依赖 spring-web，置于本模块） -->
+        <dependency>
+            <groupId>org.pf4j</groupId>
+            <artifactId>pf4j</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

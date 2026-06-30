@@ -11,7 +11,7 @@ import lombok.Getter;
 public enum ResultCode implements IEnum<Integer> {
     OK(0, "请求/操作成功"),
     SUCCESS(200, "请求/操作成功"),
-    FAIL(500, "请求成功但是服务异常"),
+    FAIL(1, "请求成功但是服务异常"),
     BAD_REQUEST(400, "请求异常"),
     UNAUTHORIZED(401, "未登录或token已经失效"),
     FORBIDDEN(403, "没有权限"),

@@ -67,6 +67,50 @@ public class R<T> implements IR {
         return fail(ResultCode.FAIL.getCode(), msg);
     }
 
+    // === cloud 兼容别名（failed = fail，isOk 语义对齐 cloud SUCCESS=0） ===
+
+    /**
+     * 失败响应（cloud 兼容别名，等价于 {@link #fail()}）。
+     */
+    public static <T> R<T> failed() {
+        return fail();
+    }
+
+    /**
+     * 失败响应（cloud 兼容别名，等价于 {@link #fail(String)}）。
+     */
+    public static <T> R<T> failed(String msg) {
+        return fail(msg);
+    }
+
+    /**
+     * 失败响应（cloud 兼容别名，等价于 {@link #fail(T)}）。
+     */
+    public static <T> R<T> failed(T data) {
+        return fail(data != null ? ResultCode.FAIL.getCode() : ResultCode.FAIL.getCode(), ResultCode.FAIL.getDesc());
+    }
+
+    /**
+     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String)}）。
+     */
+    public static <T> R<T> failed(Serializable code, String msg) {
+        return fail(code, msg);
+    }
+
+    /**
+     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String, T)}）。
+     */
+    public static <T> R<T> failed(T data, String msg) {
+        return fail(ResultCode.FAIL.getCode(), msg, data);
+    }
+
+    /**
+     * 失败响应（cloud 兼容别名，带 data + code + msg）。
+     */
+    public static <T> R<T> failed(T data, Serializable code, String msg) {
+        return fail(code, msg, data);
+    }
+
     public static boolean empty(R<?> r) {
         return Objects.isNull(r) || !Objects.equals(r.getCode(), ResultCode.OK.getCode()) || Objects.isNull(r.getData());
     }

@@ -27,11 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
+@SuppressWarnings("unchecked")
 public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
 
     private final Map<Class<?>, TypeHandler<?, ?>> handlers = new ConcurrentHashMap<>();
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public MybatisTypeHandlerRegistry() {
         // 注册内置 JSON 类型转换器（Java 类型 → JSON 字符串）
         handlers.put(List.class, new ListJsonTypeHandler());
@@ -41,13 +41,11 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> void register(Class<T> javaType, TypeHandler<T, ?> handler) {
         handlers.put(javaType, handler);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> TypeHandler<T, ?> lookup(Class<T> javaType) {
         return (TypeHandler<T, ?>) handlers.get(javaType);
     }
