@@ -66,7 +66,7 @@ public abstract class BaseAggregateController<M extends Model, Q, ID extends Ser
      * 详情
      */
     @GetMapping("/{id}")
-    public R<M> getById(@PathVariable("id") ID id) {
+    public R<M> getById(@PathVariable ID id) {
         return R.ok(detail(id));
     }
 

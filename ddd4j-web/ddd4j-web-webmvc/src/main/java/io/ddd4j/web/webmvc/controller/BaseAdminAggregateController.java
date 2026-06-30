@@ -43,9 +43,7 @@ public abstract class BaseAdminAggregateController<V, Q> {
 
     @GetMapping
     @ResponseBody
-    public R<Page<V>> page(@RequestParam(defaultValue = "1") int pageNum,
-                           @RequestParam(defaultValue = "20") int pageSize,
-                           Q query) {
+    public R<Page<V>> page(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "20") int pageSize, Q query) {
         return R.ok(adminListPage(pageNum, pageSize, query));
     }
 

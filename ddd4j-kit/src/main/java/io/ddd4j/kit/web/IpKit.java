@@ -22,7 +22,7 @@ import java.util.Map;
  * <p>Servlet 适配由具体框架项目提供，例如：
  * <ul>
  *   <li>Spring WebMVC: {@code ddd4j-boot-web-webmvc.ServletIpKit.getRemoteAddr(HttpServletRequest)}</li>
- *   <li>Quarkus RESTEasy: {@code ddd4j-quarkus-web.ServletIpKit.getRemoteAddr(HttpServerRequest)}</li>
+ *   <li>Quarkus REST: {@code ddd4j-web-quarkus} 适配层中的请求工具</li>
  *   <li>Javalin: {@code ddd4j-javalin-api.ServletIpKit.getRemoteAddr(Context)}</li>
  * </ul>
  *

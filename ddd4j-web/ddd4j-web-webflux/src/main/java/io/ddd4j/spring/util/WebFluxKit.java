@@ -1,7 +1,6 @@
 package io.ddd4j.spring.util;
 
 import io.ddd4j.core.XHeaders;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -66,16 +65,12 @@ public class WebFluxKit {
     }
 
     /**
-     * 2、从Flux<DataBuffer>中获取字符串的方法
-     *
-     * @return 请求体
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * 从 Flux<DataBuffer> 中获取请求体字符串。
      */
     public static String resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
         if (serverHttpRequest.getHeaders().getContentLength() == 0) {
             return org.apache.commons.lang3.StringUtils.EMPTY;
         }
-        // 获取请求体
         Flux<DataBuffer> body = serverHttpRequest.getBody();
         AtomicReference<String> bodyRef = new AtomicReference<>();
         body.subscribe(buffer -> {
@@ -84,26 +79,18 @@ public class WebFluxKit {
             DataBufferUtils.release(buffer);
             bodyRef.set(new String(bytes, StandardCharsets.UTF_8));
         });
-        // 获取request body
         return bodyRef.get();
     }
 
-
     /**
-     * 获取请求客户端IP地址，支持代理服务器
-     *
-     * @param request {@link HttpServletRequest} 对象
-     * @return IP地址
+     * 获取请求客户端 IP 地址，支持代理服务器。
      */
     public static String getRemoteAddr(ServerHttpRequest request) {
-
-        // 1、获取客户端IP地址，支持代理服务器
         String remoteAddr = UNKNOWN;
         for (String xheader : xheaders) {
             remoteAddr = request.getHeaders().getFirst(xheader);
             log.debug(" {} : {} ", xheader, remoteAddr);
             if (StringUtils.hasText(remoteAddr) && !UNKNOWN.equalsIgnoreCase(remoteAddr)) {
-                // 多次反向代理后会有多个ip值，第一个ip才是真实ip
                 if (remoteAddr.contains(",")) {
                     remoteAddr = remoteAddr.split(",")[0];
                 }
@@ -112,21 +99,17 @@ public class WebFluxKit {
         }
         if (!StringUtils.hasText(remoteAddr) || UNKNOWN.equalsIgnoreCase(remoteAddr)) {
             for (String header : headers) {
-
                 remoteAddr = request.getHeaders().getFirst(header);
                 log.debug(" {} : {} ", header, remoteAddr);
-
                 if (StringUtils.hasText(remoteAddr) && !UNKNOWN.equalsIgnoreCase(remoteAddr)) {
                     break;
                 }
             }
         }
 
-        // 2、没有取得特定标记的值
         if (!StringUtils.hasText(remoteAddr) || UNKNOWN.equalsIgnoreCase(remoteAddr)) {
             remoteAddr = Objects.requireNonNull(request.getRemoteAddress()).getAddress().getHostAddress();
         }
-        // 3、判断是否localhost访问
         if (LOCAL_HOST.equals(remoteAddr) || LOCAL_IP6.equals(remoteAddr)) {
             remoteAddr = LOCAL_IP;
         }
@@ -153,7 +136,6 @@ public class WebFluxKit {
 
     public static byte[] getIpV4Bytes(String ipOrMask) {
         try {
-
             String[] addrs = ipOrMask.split("\\.");
             int length = addrs.length;
             byte[] addr = new byte[length];
@@ -168,7 +150,6 @@ public class WebFluxKit {
 
     public static String getDeviceId(ServerHttpRequest request) {
         HttpHeaders headers = request.getHeaders();
-        // 1、判断是否 Apple 设备
         String deviceId = headers.getFirst(XHeaders.X_DEVICE_IDFA);
         if (!StringUtils.hasText(deviceId)) {
             deviceId = headers.getFirst(XHeaders.X_DEVICE_OAID);
@@ -176,7 +157,6 @@ public class WebFluxKit {
         if (!StringUtils.hasText(deviceId)) {
             deviceId = headers.getFirst(XHeaders.X_DEVICE_OPENUDID);
         }
-        // 2、判断是否 Android 设备
         if (!StringUtils.hasText(deviceId)) {
             deviceId = headers.getFirst(XHeaders.X_DEVICE_IMEI);
         }

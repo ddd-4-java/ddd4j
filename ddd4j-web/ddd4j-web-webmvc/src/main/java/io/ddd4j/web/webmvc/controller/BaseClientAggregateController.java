@@ -49,7 +49,7 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
     }
 
     @GetMapping("/{id}")
-    public R<V> getById(@PathVariable("id") ID id) {
+    public R<V> getById(@PathVariable ID id) {
         return R.ok(clientDetail(id));
     }
 

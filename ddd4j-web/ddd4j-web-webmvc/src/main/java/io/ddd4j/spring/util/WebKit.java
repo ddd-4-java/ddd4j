@@ -15,7 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.Objects;
 
 @Slf4j
 public class WebKit extends org.springframework.biz.utils.WebUtils {
@@ -48,7 +48,7 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
      */
     public static String getCookieVal(HttpServletRequest request, String name) {
         Cookie cookie = getCookie(request, name);
-        return java.util.Objects.nonNull(cookie) ? cookie.getValue() : null;
+        return Objects.nonNull(cookie) ? cookie.getValue() : null;
     }
 
     /**
@@ -105,7 +105,6 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
     }
 
     public static String getDeviceId(HttpServletRequest request) {
-        // 1、判断是否 Apple 设备
         String deviceId = request.getHeader(XHeaders.X_DEVICE_IDFA);
         if (!StringUtils.hasText(deviceId)) {
             deviceId = request.getHeader(XHeaders.X_DEVICE_OAID);
@@ -113,7 +112,6 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
         if (!StringUtils.hasText(deviceId)) {
             deviceId = request.getHeader(XHeaders.X_DEVICE_OPENUDID);
         }
-        // 2、判断是否 Android 设备
         if (!StringUtils.hasText(deviceId)) {
             deviceId = request.getHeader(XHeaders.X_DEVICE_IMEI);
         }
@@ -129,7 +127,7 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
     public static HttpServletRequest getHttpServletRequest() {
         try {
             RequestAttributes requestAttributes = getRequestAttributesSafely();
-            if (java.util.Objects.nonNull(requestAttributes)) {
+            if (Objects.nonNull(requestAttributes)) {
                 return ((ServletRequestAttributes) requestAttributes).getRequest();
             }
         } catch (Exception e) {
@@ -143,7 +141,6 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
         try {
             requestAttributes = RequestContextHolder.currentRequestAttributes();
         } catch (IllegalStateException e) {
-
         }
         return requestAttributes;
     }
