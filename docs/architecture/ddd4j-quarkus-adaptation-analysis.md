@@ -241,16 +241,19 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 **新增文件**：
 
 1.
+
 `ddd4j-quarkus-data/ddd4j-quarkus-data-eventstore/src/main/java/io/ddd4j/quarkus/data/eventstore/EventStoreConfig.java`
-    - Quarkus 配置类：EventStore 连接参数
+- Quarkus 配置类：EventStore 连接参数
 
 2.
+
 `ddd4j-quarkus-data/ddd4j-quarkus-data-eventstore/src/main/java/io/ddd4j/quarkus/data/eventstore/EventStoreProducer.java`
-    - CDI Producer：创建 EventStore 实例
+- CDI Producer：创建 EventStore 实例
 
 3.
+
 `ddd4j-quarkus-data/ddd4j-quarkus-data-eventstore/src/main/java/io/ddd4j/quarkus/data/eventstore/EventStoreHealthCheck.java`
-    - Quarkus 健康检查
+- Quarkus 健康检查
 
 ### Phase 4：命令总线路由（1-2 天）
 

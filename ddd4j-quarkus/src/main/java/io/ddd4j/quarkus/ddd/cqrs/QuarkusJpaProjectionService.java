@@ -2,13 +2,12 @@ package io.ddd4j.quarkus.ddd.cqrs;
 
 import io.ddd4j.core.cqrs.projection.ProjectionPosition;
 import io.ddd4j.core.cqrs.projection.ProjectionPositionRepository;
-import lombok.extern.slf4j.Slf4j;
-
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Quarkus CQRS 投影拉取服务。

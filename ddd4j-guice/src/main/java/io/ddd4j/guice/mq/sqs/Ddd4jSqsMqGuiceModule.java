@@ -6,10 +6,10 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQBrokerAdapter;
 import io.ddd4j.mq.sqs.consumer.SqsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
 import io.ddd4j.mq.sqs.spi.SqsMQBrokerAdapter;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,17 +53,17 @@ public class Ddd4jSqsMqGuiceModule extends AbstractModule {
     private final Ddd4jMQProperties mqProperties;
 
     /**
-     * @param amazonSqs        AWS SQS 客户端（业务方创建）
-     * @param defaultQueueUrl  默认队列 URL（如 {@code https://sqs.us-east-1.amazonaws.com/123/my-queue}）
+     * @param amazonSqs       AWS SQS 客户端（业务方创建）
+     * @param defaultQueueUrl 默认队列 URL（如 {@code https://sqs.us-east-1.amazonaws.com/123/my-queue}）
      */
     public Ddd4jSqsMqGuiceModule(AmazonSQS amazonSqs, String defaultQueueUrl) {
         this(amazonSqs, defaultQueueUrl, new Ddd4jMQProperties());
     }
 
     /**
-     * @param amazonSqs        AWS SQS 客户端
-     * @param defaultQueueUrl  默认队列 URL
-     * @param mqProperties     ddd4j MQ 通用配置
+     * @param amazonSqs       AWS SQS 客户端
+     * @param defaultQueueUrl 默认队列 URL
+     * @param mqProperties    ddd4j MQ 通用配置
      */
     public Ddd4jSqsMqGuiceModule(AmazonSQS amazonSqs, String defaultQueueUrl,
                                  Ddd4jMQProperties mqProperties) {

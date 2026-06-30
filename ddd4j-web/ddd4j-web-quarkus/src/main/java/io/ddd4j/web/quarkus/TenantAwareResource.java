@@ -128,49 +128,67 @@ public class TenantAwareResource {
 
     // ========== Response 构建快捷方法 ==========
 
-    /** HTTP 200 + R.ok(data) */
+    /**
+     * HTTP 200 + R.ok(data)
+     */
     protected Response ok(Object data) {
         return Response.ok(R.ok(data)).build();
     }
 
-    /** HTTP 200 + R.ok() */
+    /**
+     * HTTP 200 + R.ok()
+     */
     protected Response ok() {
         return Response.ok(R.ok()).build();
     }
 
-    /** HTTP 200 + R.fail(code, message) */
+    /**
+     * HTTP 200 + R.fail(code, message)
+     */
     protected Response fail(int code, String message) {
         return Response.ok(R.fail(code, message)).build();
     }
 
-    /** HTTP 200 + R.fail(message) */
+    /**
+     * HTTP 200 + R.fail(message)
+     */
     protected Response fail(String message) {
         return Response.ok(R.fail(message)).build();
     }
 
-    /** HTTP 200 + 404 语义 */
+    /**
+     * HTTP 200 + 404 语义
+     */
     protected Response notFound(String message) {
         return Response.ok(R.fail(404, message)).build();
     }
 
-    /** HTTP 200 + 401 语义 */
+    /**
+     * HTTP 200 + 401 语义
+     */
     protected Response unauthorized(String message) {
         return Response.ok(R.fail(401, message)).build();
     }
 
-    /** HTTP 200 + 400 语义 */
+    /**
+     * HTTP 200 + 400 语义
+     */
     protected Response badRequest(String message) {
         return Response.ok(R.fail(400, message)).build();
     }
 
-    /** HTTP 200 + 500 语义 */
+    /**
+     * HTTP 200 + 500 语义
+     */
     protected Response serverError(String message) {
         return Response.ok(R.fail(500, message)).build();
     }
 
     // ========== 分页便捷方法 ==========
 
-    /** 将分页记录映射转换 */
+    /**
+     * 将分页记录映射转换
+     */
     protected <T, R> Page<R> transfer(Page<T> page, Function<T, R> func) {
         List<R> results = page.getRecords().stream().map(func).toList();
         Page<R> p = new Page<>();

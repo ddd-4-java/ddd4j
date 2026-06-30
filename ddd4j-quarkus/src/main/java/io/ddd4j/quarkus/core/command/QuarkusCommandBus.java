@@ -1,18 +1,17 @@
 package io.ddd4j.quarkus.core.command;
 
 import io.ddd4j.core.ddd.command.DddCommandExecutor;
+import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.fuin.cqrs4j.core.Command;
 import org.fuin.cqrs4j.core.CommandExecutionFailedException;
 import org.fuin.cqrs4j.core.CommandExecutor;
 import org.fuin.cqrs4j.core.Result;
 import org.fuin.ddd4j.core.EventType;
-
-import io.quarkus.runtime.StartupEvent;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
 
 import java.util.Map;
 import java.util.Objects;
@@ -55,7 +54,7 @@ public class QuarkusCommandBus {
         CommandExecutor<Void, Result<?>, ?> executor = findExecutor(command);
         if (Objects.isNull(executor)) {
             throw new CommandExecutionFailedException(
-                new IllegalStateException("No executor found for command: " + command.getClass().getName()));
+                    new IllegalStateException("No executor found for command: " + command.getClass().getName()));
         }
 
         try {

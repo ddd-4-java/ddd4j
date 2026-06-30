@@ -71,7 +71,7 @@ public class UserDomainServiceImpl implements UserDomainService {
 | 模块                         | 职责                                                             | 注解技术来源                                                           |
 |----------------------------|----------------------------------------------------------------|------------------------------------------------------------------|
 | `ddd4j-annotation`         | **通用基础注解**（纯 Java 标记 + 业务模块抽象）                                 | 零框架依赖                                                            |
-| `ddd4j-spring`    | **Spring 深度整合**：DDD 注解同名复制 + `@Service`/`@Repository` 元注解      | 用 Spring 原生注解作为**元注解**                                           |
+| `ddd4j-spring`             | **Spring 深度整合**：DDD 注解同名复制 + `@Service`/`@Repository` 元注解      | 用 Spring 原生注解作为**元注解**                                           |
 | `ddd4j-javalin-annotation` | **Javalin 深度整合**：DDD 注解同名复制 + Guice `@Singleton` 元注解 + 路由参数解析  | Javalin 没有注解，用 Guice `@Singleton` 作为**元注解** + 新增 Javalin 框架缺失的能力 |
 | `ddd4j-quarkus`            | **Quarkus 深度整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
 
@@ -369,11 +369,12 @@ package io.ddd4j.spring.annotation;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Repository;
 import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
  * Spring 领域仓储 Bean
- * 
+ *
  * <p><b>核心目标</b>：业务代码只写一个 @DomainRepository，同时获得：
  * <ul>
  *   <li>DDD 语义（被 ArchUnit 规则识别）</li>
@@ -437,11 +438,12 @@ package io.ddd4j.spring.annotation;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Component;
 import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
  * Spring 领域网关（防腐层）
- * 
+ *
  * <p>用于标注外部服务调用的网关接口（ACL）。
  */
 @DDDAnnotation
@@ -463,11 +465,12 @@ package io.ddd4j.spring.annotation;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Service;
 import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
  * Spring 应用层服务
- * 
+ *
  * <p>应用层服务编排领域服务、事务管理、事件发布。
  */
 @DDDAnnotation
@@ -489,6 +492,7 @@ package io.ddd4j.spring.annotation;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Service;
 import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
@@ -513,6 +517,7 @@ package io.ddd4j.spring.annotation;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Component;
 import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 /**
@@ -1192,8 +1197,8 @@ public class UserController {
 | 规则     | 说明                                                                   |
 |--------|----------------------------------------------------------------------|
 | **R1** | `ddd4j-annotation` **绝不依赖**任何框架                                      |
-| **R2** | 框架注解模块**强依赖** `ddd4j-annotation`（用 `DDDAnnotation` marker）          |
-| **R3** | 框架注解模块**互不依赖**                                                      |
+| **R2** | 框架注解模块**强依赖** `ddd4j-annotation`（用 `DDDAnnotation` marker）           |
+| **R3** | 框架注解模块**互不依赖**                                                       |
 | **R4** | 业务项目**按需**引入 1 个框架注解模块，**禁止**同时引入多个                                  |
 | **R5** | 业务代码**只写同名 DDD 注解**（如 `@DomainService`）+ 业务模块具体注解（如 `@SaCheckLogin`） |
 | **R6** | 业务代码**不通过 ddd4j-annotation 抽象**业务模块的具体能力（auth/websocket/cache）       |
@@ -1205,15 +1210,16 @@ public class UserController {
 `CleanDDDLayerRules` / `ColaDDDLayerRules` 中的规则**需要更新**——检测**同名 DDD 注解**（来自 3 套框架注解模块的任意一套）：
 
 ```java
+
 @ArchTest
 static final ArchRule domain_service_in_domain =
-    classes().that().areAnnotatedWith(
-        // 检测框架注解模块中的同名 DDD 注解
-        io.ddd4j.spring.annotation.DomainService.class
-        .or(io.ddd4j.quarkus.annotation.ddd.DomainService.class)
-        .or(io.ddd4j.guice.annotation.ddd.DomainService.class)
-    )
-    .should().resideInAPackage("..domain..");
+        classes().that().areAnnotatedWith(
+                        // 检测框架注解模块中的同名 DDD 注解
+                        io.ddd4j.spring.annotation.DomainService.class
+                                .or(io.ddd4j.quarkus.annotation.ddd.DomainService.class)
+                                .or(io.ddd4j.guice.annotation.ddd.DomainService.class)
+                )
+                .should().resideInAPackage("..domain..");
 ```
 
 **业务项目无论使用哪套框架注解模块，ArchUnit 都能正确识别 DDD 分层结构**。
@@ -1237,7 +1243,7 @@ static final ArchRule domain_service_in_domain =
 | 阶段         | 任务                                                                                             | 工作量   |
 |------------|------------------------------------------------------------------------------------------------|-------|
 | **Step 1** | 删除 5 个无价值注解（`@BaseAuth`/`@EnableBaseAuth`/`@Inside`/`@WebSocketMapping`/`@RedisTopic`）         | 1 天   |
-| **Step 2** | 创建 `ddd4j-spring` 模块（顶层），同名复制 12 个 DDD 注解 + 用 Spring 元注解融合                            | 1 周   |
+| **Step 2** | 创建 `ddd4j-spring` 模块（顶层），同名复制 12 个 DDD 注解 + 用 Spring 元注解融合                                     | 1 周   |
 | **Step 3** | 重构 `ddd4j-javalin-extensions/ddd4j-javalin-api` → 顶层 `ddd4j-javalin-annotation`（同名复制 + 路由参数解析） | 1 周   |
 | **Step 4** | 补全 `ddd4j-quarkus` 中的 Quarkus 注解实现（同名复制 DDD 注解 + 用 Jakarta 元注解融合）                              | 1 周   |
 | **Step 5** | 更新 ArchUnit 规则支持 3 套同名注解                                                                       | 1 周   |

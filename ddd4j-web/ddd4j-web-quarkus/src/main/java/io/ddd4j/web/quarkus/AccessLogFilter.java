@@ -1,11 +1,11 @@
 package io.ddd4j.web.quarkus;
 
-import lombok.extern.slf4j.Slf4j;
 import io.vertx.core.http.HttpServerRequest;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.ext.Provider;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 

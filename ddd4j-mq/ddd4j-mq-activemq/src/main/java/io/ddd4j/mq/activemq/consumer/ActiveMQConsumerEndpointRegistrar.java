@@ -9,6 +9,7 @@ import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQTagMatcher;
 import jakarta.jms.*;
 
+import java.lang.IllegalStateException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;

@@ -19,11 +19,11 @@ public interface RegionCache {
         }
     };
 
-    String getString(String key);
-
-    void set(String key, String value, Duration ttl);
-
     static RegionCache none() {
         return NONE;
     }
+
+    String getString(String key);
+
+    void set(String key, String value, Duration ttl);
 }

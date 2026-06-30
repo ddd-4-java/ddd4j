@@ -2,11 +2,7 @@ package io.ddd4j.data.external.region;
 
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Country/region descriptor backed by ISO country codes.
@@ -16,16 +12,15 @@ import java.util.Objects;
  */
 public final class RegionEnum implements Comparable<RegionEnum> {
 
-    private static final Map<String, RegionEnum> BY_NAME = new LinkedHashMap<>();
-    private static final Map<String, RegionEnum> BY_CODE2 = new LinkedHashMap<>();
-    private static final Map<String, RegionEnum> BY_CODE3 = new LinkedHashMap<>();
-    private static final Map<String, RegionEnum> BY_CNAME = new LinkedHashMap<>();
-
     public static final RegionEnum CN;
     public static final RegionEnum HK;
     public static final RegionEnum MO;
     public static final RegionEnum TW;
     public static final RegionEnum UK;
+    private static final Map<String, RegionEnum> BY_NAME = new LinkedHashMap<>();
+    private static final Map<String, RegionEnum> BY_CODE2 = new LinkedHashMap<>();
+    private static final Map<String, RegionEnum> BY_CODE3 = new LinkedHashMap<>();
+    private static final Map<String, RegionEnum> BY_CNAME = new LinkedHashMap<>();
 
     static {
         for (String code2 : Locale.getISOCountries()) {

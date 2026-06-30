@@ -2,13 +2,12 @@ package io.ddd4j.web.quarkus;
 
 import io.ddd4j.core.contract.R;
 import io.ddd4j.core.contract.exception.ServiceException;
-import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * Quarkus 全局异常映射：将未捕获异常转为统一 JSON 错误响应。

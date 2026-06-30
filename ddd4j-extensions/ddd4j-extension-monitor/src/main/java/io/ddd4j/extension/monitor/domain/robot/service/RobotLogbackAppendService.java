@@ -121,7 +121,7 @@ public class RobotLogbackAppendService {
         }
     }
 
-        // 初始化 Logback 日志上下文。
+    // 初始化 Logback 日志上下文。
     private void initLoggerContext() {
         ILoggerFactory factory = LoggerFactory.getILoggerFactory();
         if (!(factory instanceof LoggerContext)) {

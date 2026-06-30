@@ -57,7 +57,7 @@ public class Ddd4jOnsMqGuiceModule extends AbstractModule {
     private final Ddd4jMQProperties mqProperties;
 
     /**
-     * @param producer               ONS 生产者（业务方创建并 start）
+     * @param producer                ONS 生产者（业务方创建并 start）
      * @param onsConnectionProperties ONS 连接属性（accessKey/secretKey/namesrv，Producer/Consumer 共用）
      */
     public Ddd4jOnsMqGuiceModule(Producer producer, Properties onsConnectionProperties) {
@@ -65,9 +65,9 @@ public class Ddd4jOnsMqGuiceModule extends AbstractModule {
     }
 
     /**
-     * @param producer               ONS 生产者
+     * @param producer                ONS 生产者
      * @param onsConnectionProperties ONS 连接属性
-     * @param mqProperties           ddd4j MQ 通用配置
+     * @param mqProperties            ddd4j MQ 通用配置
      */
     public Ddd4jOnsMqGuiceModule(Producer producer, Properties onsConnectionProperties,
                                  Ddd4jMQProperties mqProperties) {

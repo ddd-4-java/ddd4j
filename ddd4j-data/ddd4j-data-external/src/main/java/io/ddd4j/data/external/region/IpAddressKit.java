@@ -1,9 +1,9 @@
 package io.ddd4j.data.external.region;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * IP address helpers independent of Boot starters.

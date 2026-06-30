@@ -22,14 +22,14 @@ public final class I18nHelper {
     private I18nHelper() {
     }
 
+    public static String getDefaultLang() {
+        return defaultLang;
+    }
+
     public static void setDefaultLang(String lang) {
         if (StrKit.isNotEmpty(lang)) {
             defaultLang = lang;
         }
-    }
-
-    public static String getDefaultLang() {
-        return defaultLang;
     }
 
     public static String i18n(String lang, String key, Object... parameters) {

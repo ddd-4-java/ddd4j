@@ -1,22 +1,12 @@
 package io.ddd4j.quarkus.core.extension;
 
-import io.ddd4j.quarkus.annotation.ddd.ApplicationService;
-import io.ddd4j.quarkus.annotation.ddd.CommandExecutor;
-import io.ddd4j.quarkus.annotation.ddd.DomainAssembler;
-import io.ddd4j.quarkus.annotation.ddd.DomainConverter;
-import io.ddd4j.quarkus.annotation.ddd.DomainEntity;
-import io.ddd4j.quarkus.annotation.ddd.DomainGateway;
-import io.ddd4j.quarkus.annotation.ddd.DomainRepository;
-import io.ddd4j.quarkus.annotation.ddd.DomainService;
-import io.ddd4j.quarkus.annotation.ddd.DomainValueObject;
-import io.ddd4j.quarkus.annotation.ddd.QueryService;
-import lombok.extern.slf4j.Slf4j;
-
+import io.ddd4j.quarkus.annotation.ddd.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
@@ -73,7 +63,7 @@ public class DddCdiExtension implements Extension {
     }
 
     private static class ApplicationScopedLiteral extends jakarta.enterprise.util.AnnotationLiteral<ApplicationScoped>
-        implements ApplicationScoped {
+            implements ApplicationScoped {
 
         private static final long serialVersionUID = 1L;
     }

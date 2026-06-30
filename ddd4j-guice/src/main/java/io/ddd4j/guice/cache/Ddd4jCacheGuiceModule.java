@@ -16,14 +16,11 @@ import java.util.function.Function;
 @Slf4j
 public class Ddd4jCacheGuiceModule extends AbstractModule {
 
-    private CacheKit.LocalCacheType defaultType = CacheKit.LocalCacheType.CAFFEINE;
-
     private final Map<String, Long> localCaches = new LinkedHashMap<>();
-
     private final Map<String, Function<CacheConfig.Builder, CacheConfig.Builder>> localCacheBuilders =
             new LinkedHashMap<>();
-
     private final Map<String, Cache<? super String, ?>> externalCaches = new LinkedHashMap<>();
+    private CacheKit.LocalCacheType defaultType = CacheKit.LocalCacheType.CAFFEINE;
 
     public Ddd4jCacheGuiceModule setDefaultType(CacheKit.LocalCacheType defaultType) {
         this.defaultType = defaultType;

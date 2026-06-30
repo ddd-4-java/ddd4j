@@ -56,8 +56,8 @@ public class Ddd4jNatsMqGuiceModule extends AbstractModule {
     }
 
     /**
-     * @param connection    NATS 连接
-     * @param mqProperties  ddd4j MQ 通用配置
+     * @param connection   NATS 连接
+     * @param mqProperties ddd4j MQ 通用配置
      */
     public Ddd4jNatsMqGuiceModule(Connection connection, Ddd4jMQProperties mqProperties) {
         this.connection = connection;

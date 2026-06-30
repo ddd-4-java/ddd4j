@@ -296,6 +296,7 @@ public class Slf4jMDCInterceptor implements HandlerInterceptor {
 ### 5.3 `AsyncAspect` — 异步清理
 
 ```java
+
 @Aspect
 public class AsyncAspect {
     @After("@annotation(org.springframework.scheduling.annotation.Async)")
@@ -308,6 +309,7 @@ public class AsyncAspect {
 ### 5.4 `AsyncAspect` — 异步清理
 
 ```java
+
 @Aspect
 public class AsyncAspect {
     @After("@annotation(org.springframework.scheduling.annotation.Async)")
@@ -324,14 +326,18 @@ public class AsyncAspect {
 ### 6.1 `SpringContext` — 静态获取 Bean
 
 ```java
+
 @Primary
 @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
 public class SpringContext implements ApplicationContextAware {
     public static final CountDownLatch APP_START_SIGNAL = new CountDownLatch(1);
-    
+
     public static ApplicationContext getApplicationContext();
+
     public static <T> T getBean(Class<T> clazz);
+
     public static <T> T getBeanAwait(Class<T> clazz);  // 阻塞等待启动完成
+
     public static Environment getEnv();
 }
 ```

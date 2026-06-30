@@ -64,7 +64,7 @@ public class PconlineRegionTemplate {
     }
 
     private static String trimWhitespace(String value) {
-        return java.util.Objects.isNull(value) ? null : value.strip();
+        return Objects.isNull(value) ? null : value.strip();
     }
 
     /**

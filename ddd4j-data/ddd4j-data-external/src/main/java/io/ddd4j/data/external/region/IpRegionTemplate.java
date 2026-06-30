@@ -23,13 +23,13 @@ public interface IpRegionTemplate {
         }
     };
 
+    static IpRegionTemplate none() {
+        return NONE;
+    }
+
     String getRegion(String ip);
 
     RegionAddress getRegionAddress(String ip);
 
     RegionEnum getRegionByIp(String ip);
-
-    static IpRegionTemplate none() {
-        return NONE;
-    }
 }
