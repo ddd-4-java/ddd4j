@@ -2,8 +2,6 @@ package io.ddd4j.auth.security.handler;
 
 import io.ddd4j.core.ApiRestResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -29,8 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 @ResponseBody
 @Slf4j(topic = "### DDD4J-AUTH : SecurityExceptionHandler ###")
-@ConditionalOnClass(name = "org.springframework.security.core.AuthenticationException")
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityExceptionHandler {
 
     /**

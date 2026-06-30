@@ -47,8 +47,8 @@
 | `spring-boot-starter` 命名模块                                                         | Spring Boot 启动器        | 不应有此模块                                                             |
 | `BaseController` / `BaseMapperController` 子类                                       | 业务 Controller 基类属于框架胶水 | `ddd4j-spring` / `ddd4j-web-webmvc`                                |
 | 全局 `@ControllerAdvice` / `ExceptionMapper`                                         | 异常处理属于框架胶水             | `ddd4j-web-core` / `ddd4j-quarkus-web`                             |
-| `Slf4jMDCInterceptor` / `AsyncAspect` / `IdempotentKit`                            | AOP 切面属于框架胶水           | `ddd4j-boot-spring-aspect` / `ddd4j-boot-web-idempotent`           |
-| `javax.servlet` / `jakarta.servlet` import                                         | Servlet 容器属于具体框架       | `ddd4j-boot-web-webmvc` / `ddd4j-javalin-api`                      |
+| `Slf4jMDCInterceptor` / `AsyncAspect` / `IdempotentKit`                            | AOP 切面属于框架胶水           | `ddd4j-spring` / `ddd4j-web-webmvc` / `ddd4j-web-webflux`          |
+| `javax.servlet` / `jakarta.servlet` import                                         | Servlet 容器属于具体框架       | `ddd4j-web-webmvc` / `ddd4j-javalin-api`                      |
 | `com.baomidou.mybatisplus.*` import                                                | MyBatis-Plus 属于具体 ORM  | `ddd4j-data-mybatis`                                               |
 | `org.springframework.transaction.annotation.Transactional`                         | Spring 事务属于具体框架        | 改用 ddd4j 自有 `@DddTransactional`                                    |
 | `org.springframework.lang.NonNull`                                                 | Spring 工具注解            | 改用 `javax.annotation.Nonnull`                                      |
@@ -139,13 +139,8 @@ ddd4j/                                       ← 通用基础层（无 starter�
 ═══════════════════════════════════════════════════════════════
 
 ddd4j-boot/                                  ← Spring Boot 框架胶水（groupId: io.ddd4j.boot）
-├── ddd4j-boot-core/
-├── ddd4j-boot-ddd/                          ← 待新建：@EnableDdd4j + DddAutoConfiguration（迁移自 ddd4j-spring）
-├── ddd4j-web/                               ← 已收敛：Web 抽象 + Spring MVC/WebFlux 适配
-│   ├── ddd4j-web-core/                      ← BaseExceptionHandler 等通用 Web 基类
-│   ├── ddd4j-web-webmvc/                    ← Spring MVC 适配
-│   └── ddd4j-web-webflux/                   ← Spring WebFlux 适配
-├── ddd4j-boot-web-idempotent/               ← 待新建：IdempotentKit
+├── ddd4j-boot-ddd/                          ← @EnableDdd4j + DddAutoConfiguration
+├── ddd4j-boot-data/                         ← Spring Boot 数据自动配置
 ├── ddd4j-boot-spring-aspect/                ← 待新建：@DddTransactional AOP 切面 + AsyncAspect
 ├── ddd4j-boot-data-mybatis/                 ← 待新建：BaseRepositoryImpl + Spring 事务切面
 ├── ddd4j-boot-auth-satoken/                 ← 待新建：@EnableDdd4jAuth + SaTokenEnhanceAutoConfiguration
@@ -224,7 +219,7 @@ public class Application { }
 |------------------------------------------------------------|-------------------------------------------------------------|
 | `io.ddd4j:ddd4j-spring` 中的 `DddAutoConfiguration`          | `io.ddd4j.boot:ddd4j-boot-ddd:DddAutoConfiguration`         |
 | `io.ddd4j.core.web.BaseController` / `io.ddd4j.core.web.BaseMapperController` | `io.ddd4j.spring.web.BaseController` / `io.ddd4j.spring.web.BaseMapperController` |
-| `io.ddd4j:ddd4j-spring` 中的 `Slf4jMDCInterceptor`           | `io.ddd4j.boot:ddd4j-boot-web-webmvc:Slf4jMDCInterceptor`   |
+| `io.ddd4j:ddd4j-spring` 中的 `Slf4jMDCInterceptor`           | `io.ddd4j:ddd4j-web-webmvc:Slf4jMDCInterceptor`        |
 | `org.springframework.transaction.annotation.Transactional` | `io.ddd4j.data.mybatis.annotation.DddTransactional`         |
 | `org.springframework.lang.NonNull`                         | `javax.annotation.Nonnull`                                  |
 | `IpKit.getRemoteAddr(HttpServletRequest)`                  | `IpKit.parseRemoteAddr(xForwardedFor, xRealIp, remoteAddr)` |

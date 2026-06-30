@@ -3,8 +3,6 @@ package io.ddd4j.auth.spring.satoken;
 import cn.dev33.satoken.exception.SaTokenException;
 import io.ddd4j.core.ApiRestResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,8 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 @ResponseBody
 @Slf4j(topic = "### DDD4J-AUTH : SaTokenExceptionHandler ###")
-@ConditionalOnClass(name = "cn.dev33.satoken.exception.SaTokenException")
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SaTokenExceptionHandler {
 
     /**

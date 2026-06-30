@@ -32,13 +32,6 @@
             <artifactId>spring-web</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- Spring Boot 自动装配（@ConditionalOnClass / @AutoConfiguration） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>3.5.6</version>
-            <optional>true</optional>
-        </dependency>
         <!-- sa-token 实现（可选，按 classpath 自动装配） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -64,7 +57,7 @@
             <artifactId>shiro-core</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- security 实现（可选，按 classpath 自动装配） -->
+        <!-- security 实现（可选，按 classpath 装配） -->
         <!-- 暂时注释：hiwepy security starter 未发布到私仓，待发布后取消注释
                 <dependency>
             <groupId>io.ddd4j</groupId>

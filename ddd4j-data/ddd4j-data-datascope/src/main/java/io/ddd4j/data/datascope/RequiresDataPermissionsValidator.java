@@ -29,6 +29,6 @@ public class RequiresDataPermissionsValidator implements ConstraintValidator<Req
 
     @Override
     public boolean isValid(Object data, ConstraintValidatorContext context) {
-        return java.util.Objects.nonNull(data) && provider.hasPermissions(dataType, data);
+        return Objects.nonNull(data) && provider.hasPermissions(dataType, data);
     }
 }

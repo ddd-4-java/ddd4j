@@ -97,7 +97,7 @@ ddd4j-boot/ddd4j-boot-data/
         └── io.ddd4j.data.config.BaseDataConfig   ← 仅注册了 1 个
 ```
 
-**pom 依赖**：`ddd4j-data` + `ddd4j-boot-core` + `spring-boot-autoconfigure` + `mybatis-plus`（结构正确，等待迁入更多
+**pom 依赖**：`ddd4j-data` + `ddd4j-data-mybatis` + `spring-boot-autoconfigure` + `mybatis-plus`（结构正确，等待迁入更多
 auto-config）。
 
 ---

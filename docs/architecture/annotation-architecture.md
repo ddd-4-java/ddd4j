@@ -71,7 +71,7 @@ public class UserDomainServiceImpl implements UserDomainService {
 | 模块                         | 职责                                                             | 注解技术来源                                                           |
 |----------------------------|----------------------------------------------------------------|------------------------------------------------------------------|
 | `ddd4j-annotation`         | **通用基础注解**（纯 Java 标记 + 业务模块抽象）                                 | 零框架依赖                                                            |
-| `ddd4j-boot-annotation`    | **Spring 深度整合**：DDD 注解同名复制 + `@Service`/`@Repository` 元注解      | 用 Spring 原生注解作为**元注解**                                           |
+| `ddd4j-spring`    | **Spring 深度整合**：DDD 注解同名复制 + `@Service`/`@Repository` 元注解      | 用 Spring 原生注解作为**元注解**                                           |
 | `ddd4j-javalin-annotation` | **Javalin 深度整合**：DDD 注解同名复制 + Guice `@Singleton` 元注解 + 路由参数解析  | Javalin 没有注解，用 Guice `@Singleton` 作为**元注解** + 新增 Javalin 框架缺失的能力 |
 | `ddd4j-quarkus`            | **Quarkus 深度整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
 
@@ -264,11 +264,11 @@ ddd4j-auth、ddd4j-websocket、ddd4j-cache）提供具体实现。
 
 ---
 
-## 五、Spring 深度整合层 `ddd4j-boot-annotation`
+## 五、Spring 深度整合层 `ddd4j-spring`
 
 ### 5.1 模块定位
 
-- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-boot/ddd4j-boot-annotation/`
+- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-spring/`
 - **职责**：**同名复制 12 个 DDD 注解** + 用 Spring 原生注解作为**元注解**——实现 `@DomainService` 兼顾 `@Service`
 - **依赖**：`spring-context`（提供元注解）
 - **使用方**：基于 ddd4j-boot 的 Spring Boot 业务项目
@@ -299,13 +299,12 @@ ddd4j-auth、ddd4j-websocket、ddd4j-cache）提供具体实现。
 ### 5.3 推荐的包结构（极简）
 
 ```
-ddd4j-boot-annotation/
-├── src/main/java/io/ddd4j/boot/annotation/
-│   └── ddd/                        ← 只有 DDD 注解同名复制（11 个核心）
-│       ├── DomainEntity.java       // 兼顾 @Component
-│       ├── DomainValueObject.java  // 兼顾 @Component
-│       ├── DomainService.java      // 兼顾 @Service  ★
-│       ├── DomainRepository.java   // 兼顾 @Repository  ★
+ddd4j-spring/
+├── src/main/java/io/ddd4j/spring/annotation/
+│   ├── DomainEntity.java       // 兼顾 @Component
+│   ├── DomainValueObject.java  // 兼顾 @Component
+│   ├── DomainService.java      // 兼顾 @Service  ★
+│   ├── DomainRepository.java   // 兼顾 @Repository  ★
 │       ├── DomainGateway.java      // 兼顾 @Component
 │       ├── DomainAssembler.java    // 兼顾 @Component
 │       ├── DomainConverter.java    // 兼顾 @Component
@@ -601,7 +600,8 @@ public class UserController {
         <version>${revision}</version>
     </parent>
 
-    <artifactId>ddd4j-boot-annotation</artifactId>
+    <groupId>io.ddd4j</groupId>
+    <artifactId>ddd4j-spring</artifactId>
     <description>ddd4j-boot 注解模块：12 个 DDD 注解同名复制（用 Spring 元注解融合）</description>
 
     <dependencies>
@@ -1237,7 +1237,7 @@ static final ArchRule domain_service_in_domain =
 | 阶段         | 任务                                                                                             | 工作量   |
 |------------|------------------------------------------------------------------------------------------------|-------|
 | **Step 1** | 删除 5 个无价值注解（`@BaseAuth`/`@EnableBaseAuth`/`@Inside`/`@WebSocketMapping`/`@RedisTopic`）         | 1 天   |
-| **Step 2** | 创建 `ddd4j-boot-annotation` 模块（顶层），同名复制 12 个 DDD 注解 + 用 Spring 元注解融合                            | 1 周   |
+| **Step 2** | 创建 `ddd4j-spring` 模块（顶层），同名复制 12 个 DDD 注解 + 用 Spring 元注解融合                            | 1 周   |
 | **Step 3** | 重构 `ddd4j-javalin-extensions/ddd4j-javalin-api` → 顶层 `ddd4j-javalin-annotation`（同名复制 + 路由参数解析） | 1 周   |
 | **Step 4** | 补全 `ddd4j-quarkus` 中的 Quarkus 注解实现（同名复制 DDD 注解 + 用 Jakarta 元注解融合）                              | 1 周   |
 | **Step 5** | 更新 ArchUnit 规则支持 3 套同名注解                                                                       | 1 周   |

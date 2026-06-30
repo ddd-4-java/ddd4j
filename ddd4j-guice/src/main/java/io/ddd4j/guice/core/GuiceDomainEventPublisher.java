@@ -1,6 +1,7 @@
 package io.ddd4j.guice.core;
 
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
 
     private final EventBus eventBus;
 
+    @Inject
     public GuiceDomainEventPublisher(EventBus eventBus) {
         this.eventBus = eventBus;
     }
