@@ -9,6 +9,7 @@ import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.serialization.MQEventSerialization;
 import jakarta.jms.*;
 
+import java.lang.IllegalStateException;
 import java.util.Objects;
 
 /**
@@ -17,19 +18,15 @@ import java.util.Objects;
 public class ActiveMQEventPublisher implements MQEventPublisher {
 
     private final ActiveMQProperties properties;
-    private final Ddd4jMQProperties mqProperties;
     private final MQEventSerialization serialization;
-    private final Connection connection;
     private final Session session;
 
     public ActiveMQEventPublisher(Connection connection, Session session,
                                   ActiveMQProperties properties,
                                   Ddd4jMQProperties mqProperties,
                                   MQEventSerialization serialization) {
-        this.connection = Objects.requireNonNull(connection, "connection");
         this.session = Objects.requireNonNull(session, "session");
         this.properties = Objects.requireNonNull(properties, "properties");
-        this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
