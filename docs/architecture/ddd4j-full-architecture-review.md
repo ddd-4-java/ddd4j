@@ -207,7 +207,7 @@ ddd4j-annotation（向后兼容，仍 @Service 等元注解，但注释中说明
   ↓
   ┌──── 业务项目按需选择 ────┐
   ddd4j-spring-annotation  提供 @SpringDomainService
-  ddd4j-quarkus-annotation 提供 @QuarkusDomainService
+  ddd4j-quarkus 提供 Quarkus DDD 构造型注解与适配实现
 ```
 
 **`ddd4j-core` 拆分**：
@@ -311,7 +311,7 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 **已有模块**：
 
 - ddd4j-quarkus-bom / dependencies / parent / core
-- ddd4j-quarkus-annotation
+- ddd4j-quarkus
 - ddd4j-quarkus-auth / cache / data / ddd / monitor / mq / web
 - ddd4j-quarkus-samples
 

@@ -21,7 +21,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * <p><b>框架无关性说明</b>：本模块不依赖任何具体注解实现类。注解类作为 {@link Class} 参数
  * 由调用方传入，通常为业务项目使用的某个框架适配注解包中的具体注解：
  * <ul>
- *   <li>Spring Boot 业务：{@code io.ddd4j.boot.annotation.ddd.DomainService}</li>
+ *   <li>Spring Boot 业务：{@code io.ddd4j.spring.annotation.ddd.DomainService}</li>
  *   <li>Quarkus 业务：{@code io.ddd4j.quarkus.annotation.ddd.DomainService}</li>
  *   <li>Javalin 业务：{@code io.ddd4j.javalin.annotation.DomainService}</li>
  * </ul>

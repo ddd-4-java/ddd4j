@@ -69,7 +69,7 @@ SubjectProvider (ddd4j-core)
 
 ```
 ddd4j-quarkus/
-├── ddd4j-quarkus-annotation    ← DDD 注解 + CDI 元注解
+├── ddd4j-quarkus               ← DDD 注解 + CDI 元注解 + 核心 Quarkus 适配
 ├── ddd4j-quarkus-core          ← 核心适配（CDI 扩展）
 ├── ddd4j-quarkus-ddd           ← DDD 规则
 ├── ddd4j-quarkus-data          ← 数据层（含 Panache）

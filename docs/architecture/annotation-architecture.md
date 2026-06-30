@@ -73,7 +73,7 @@ public class UserDomainServiceImpl implements UserDomainService {
 | `ddd4j-annotation`         | **通用基础注解**（纯 Java 标记 + 业务模块抽象）                                 | 零框架依赖                                                            |
 | `ddd4j-boot-annotation`    | **Spring 深度整合**：DDD 注解同名复制 + `@Service`/`@Repository` 元注解      | 用 Spring 原生注解作为**元注解**                                           |
 | `ddd4j-javalin-annotation` | **Javalin 深度整合**：DDD 注解同名复制 + Guice `@Singleton` 元注解 + 路由参数解析  | Javalin 没有注解，用 Guice `@Singleton` 作为**元注解** + 新增 Javalin 框架缺失的能力 |
-| `ddd4j-quarkus-annotation` | **Quarkus 深度整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
+| `ddd4j-quarkus` | **Quarkus 深度整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
 
 ---
 
@@ -622,11 +622,11 @@ public class UserController {
 
 ---
 
-## 六、Quarkus 深度整合层 `ddd4j-quarkus-annotation`
+## 六、Quarkus 深度整合层 `ddd4j-quarkus`
 
 ### 6.1 模块定位
 
-- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-quarkus/ddd4j-quarkus-annotation/`
+- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-quarkus/`
 - **职责**：**同名复制 12 个 DDD 注解** + 用 Jakarta CDI 原生注解作为**元注解**——实现 `@DomainService` 兼顾
   `@ApplicationScoped`
 - **依赖**：`jakarta.enterprise.cdi-api`
@@ -656,7 +656,7 @@ public class UserController {
 ### 6.3 推荐的包结构（极简）
 
 ```
-ddd4j-quarkus-annotation/
+ddd4j-quarkus/
 ├── src/main/java/io/ddd4j/quarkus/annotation/
 │   └── ddd/                        ← 只有 DDD 注解同名复制（11 个）
 │       ├── DomainEntity.java
@@ -790,8 +790,8 @@ public class UserController {
         <version>${revision}</version>
     </parent>
 
-    <artifactId>ddd4j-quarkus-annotation</artifactId>
-    <description>ddd4j-quarkus 注解模块：12 个 DDD 注解同名复制（用 Jakarta CDI 元注解融合）</description>
+    <artifactId>ddd4j-quarkus</artifactId>
+    <description>ddd4j-quarkus 模块：Quarkus DDD 注解与 CDI 适配实现</description>
 
     <dependencies>
         <!-- 依赖 ddd4j-annotation（提供 DDDAnnotation marker） -->
@@ -1239,7 +1239,7 @@ static final ArchRule domain_service_in_domain =
 | **Step 1** | 删除 5 个无价值注解（`@BaseAuth`/`@EnableBaseAuth`/`@Inside`/`@WebSocketMapping`/`@RedisTopic`）         | 1 天   |
 | **Step 2** | 创建 `ddd4j-boot-annotation` 模块（顶层），同名复制 12 个 DDD 注解 + 用 Spring 元注解融合                            | 1 周   |
 | **Step 3** | 重构 `ddd4j-javalin-extensions/ddd4j-javalin-api` → 顶层 `ddd4j-javalin-annotation`（同名复制 + 路由参数解析） | 1 周   |
-| **Step 4** | 补全 `ddd4j-quarkus-annotation` 注解实现（同名复制 DDD 注解 + 用 Jakarta 元注解融合）                              | 1 周   |
+| **Step 4** | 补全 `ddd4j-quarkus` 中的 Quarkus 注解实现（同名复制 DDD 注解 + 用 Jakarta 元注解融合）                              | 1 周   |
 | **Step 5** | 更新 ArchUnit 规则支持 3 套同名注解                                                                       | 1 周   |
 | **Step 6** | 改造 3 个 samples 业务代码使用新注解（**只写一个 DDD 注解**）                                                      | 1-2 周 |
 | **Step 7** | 编写统一使用文档 + 迁移指南                                                                                | 1 周   |
