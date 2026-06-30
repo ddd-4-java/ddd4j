@@ -109,11 +109,11 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         simpleModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
             @Override
             public Date deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-                if (p == null) {
+                if (java.util.Objects.isNull(p)) {
                     return null;
                 }
                 JsonNode node = p.getCodec().readTree(p);
-                if (node == null || node.asText() == null) {
+                if (java.util.Objects.isNull(node) || java.util.Objects.isNull(node.asText())) {
                     return null;
                 }
                 return DateUtil.parse(node.asText());

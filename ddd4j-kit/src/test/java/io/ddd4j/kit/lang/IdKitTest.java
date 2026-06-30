@@ -43,7 +43,7 @@ class IdKitTest {
     void nextSnowflakeIdStr_shouldBeNonEmpty() {
         String idStr = IdKit.nextSnowflakeIdStr(WORKER_ID);
         assertNotNull(idStr);
-        assertFalse(idStr.isEmpty());
+        assertFalse(io.ddd4j.kit.lang.StrKit.isEmpty(idStr));
         // 字符串应能解析为正数
         long parsed = Long.parseLong(idStr);
         assertTrue(parsed > 0);

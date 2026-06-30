@@ -38,11 +38,11 @@ public class MqttMQEventPublisher implements MQEventPublisher {
             // MQTT topic 层级用 / 替代 .（MQTT 协议约定）；namespace 作前缀
             String ns = destination.getNamespace();
             String tag = destination.getTag();
-            String physical = (ns == null || ns.isBlank() ? "" : ns + "/") + topic
-                    + (tag == null || tag.isBlank() ? "" : "/" + tag);
+            String physical = (java.util.Objects.isNull(ns) || io.ddd4j.kit.lang.StrKit.isBlank(ns) ? "" : ns + "/") + topic
+                    + (java.util.Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) ? "" : "/" + tag);
             MqttMessage msg = new MqttMessage(serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8));
             msg.setQos(properties.getQos());
-            if (event.getMsgId() != null) {
+            if (java.util.Objects.nonNull(event.getMsgId())) {
                 msg.setId(Integer.parseInt(event.getMsgId().hashCode() + ""));
             }
             client.publish(physical, msg);
@@ -52,9 +52,13 @@ public class MqttMQEventPublisher implements MQEventPublisher {
     }
 
     private static String firstText(String... values) {
-        if (values == null) return null;
+        if (java.util.Objects.isNull(values)) {
+            return null;
+        }
         for (String v : values) {
-            if (v != null && !v.isBlank()) return v;
+            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+                return v;
+            }
         }
         return null;
     }

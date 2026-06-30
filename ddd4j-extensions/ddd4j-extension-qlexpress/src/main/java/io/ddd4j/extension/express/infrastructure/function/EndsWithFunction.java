@@ -32,17 +32,17 @@ public class EndsWithFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (parameters == null || parameters.size() < 2) {
+        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("endsWith函数需要2个参数：source和suffix");
         }
 
         Object sourceObj = getParameterValue(parameters, 0, qContext);
         Object suffixObj = getParameterValue(parameters, 1, qContext);
 
-        String source = sourceObj != null ? sourceObj.toString() : null;
-        String suffix = suffixObj != null ? suffixObj.toString() : null;
+        String source = java.util.Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
+        String suffix = java.util.Objects.nonNull(suffixObj) ? suffixObj.toString() : null;
 
-        boolean result = source != null && source.endsWith(suffix);
+        boolean result = java.util.Objects.nonNull(source) && source.endsWith(suffix);
         return result;
     }
 
@@ -51,7 +51,7 @@ public class EndsWithFunction implements CustomFunction {
      */
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
-            if (parameters.get(index) != null) {
+            if (java.util.Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);

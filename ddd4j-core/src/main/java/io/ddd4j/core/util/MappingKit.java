@@ -23,7 +23,9 @@ public final class MappingKit {
 
     public static <K, V> V get(String field, K source) {
         Map<Object, Object> mappings = BEAN_MAPPINGS.get(field);
-        if (mappings == null) return null;
+        if (java.util.Objects.isNull(mappings)) {
+            return null;
+        }
         return (V) mappings.get(source);
     }
 

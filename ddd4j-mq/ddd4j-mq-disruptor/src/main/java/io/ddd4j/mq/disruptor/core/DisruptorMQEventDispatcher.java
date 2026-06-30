@@ -58,12 +58,12 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
      */
     @Override
     public void onEvent(DisruptorMQEvent event, long sequence, boolean endOfBatch) {
-        if (event == null || event.getTopic() == null) {
+        if (java.util.Objects.isNull(event) || java.util.Objects.isNull(event.getTopic())) {
             return;
         }
         String routeKey = event.routeKey();
         List<RegisteredHandler> handlers = handlersByRoute.get(routeKey);
-        if (handlers == null || handlers.isEmpty()) {
+        if (java.util.Objects.isNull(handlers) || handlers.isEmpty()) {
             log.trace("No Disruptor handler for routeKey={}", routeKey);
             event.clear();
             return;

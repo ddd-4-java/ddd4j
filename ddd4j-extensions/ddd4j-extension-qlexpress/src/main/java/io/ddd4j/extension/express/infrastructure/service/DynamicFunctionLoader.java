@@ -65,7 +65,7 @@ public class DynamicFunctionLoader {
         List<RuleDefinition> functionRules = ruleManagementService.getAllFunctionRules();
         for (RuleDefinition rule : functionRules) {
             // 跳过本地环境函数规则（已经在QLExpressConfig中注册）
-            if (rule.getPriority() != null && rule.getPriority() >= 1000) {
+            if (java.util.Objects.nonNull(rule.getPriority()) && rule.getPriority() >= 1000) {
                 continue;
             }
             loadFunction(rule);
@@ -99,7 +99,8 @@ public class DynamicFunctionLoader {
      */
     private void loadClassFunction(RuleDefinition rule) throws Exception {
         String functionClass = rule.getFunctionClass();
-        if (functionClass == null || functionClass.trim().isEmpty()) {
+        if (java.util.Objects.isNull(functionClass)
+                || !org.springframework.util.StringUtils.hasText(functionClass)) {
             log.warn("函数类名为空: {}", rule.getRuleCode());
             return;
         }
@@ -116,7 +117,8 @@ public class DynamicFunctionLoader {
             } else {
                 // 如果是静态方法，通过反射调用
                 String methodName = rule.getFunctionMethod();
-                if (methodName != null && !methodName.trim().isEmpty()) {
+                if (java.util.Objects.nonNull(methodName)
+                        && org.springframework.util.StringUtils.hasText(methodName)) {
                     Method method = clazz.getMethod(methodName, Object[].class);
                     // 创建包装函数
                     CustomFunction wrapper = createMethodWrapper(clazz, method);
@@ -166,7 +168,7 @@ public class DynamicFunctionLoader {
      */
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
-            if (parameters.get(index) != null) {
+            if (java.util.Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);

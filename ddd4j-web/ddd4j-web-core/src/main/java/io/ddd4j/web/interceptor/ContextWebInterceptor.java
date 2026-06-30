@@ -49,7 +49,7 @@ public class ContextWebInterceptor implements WebInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 提取租户 ID（兼容三种 header 命名）
         String tenantId = extractHeader(request, "tenant_id", "tenant-id", "tenantId");
-        if (tenantId != null && !tenantId.isEmpty()) {
+        if (java.util.Objects.nonNull(tenantId) && !!org.springframework.util.StringUtils.hasLength(tenantId)) {
             ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
         }
 
@@ -63,7 +63,7 @@ public class ContextWebInterceptor implements WebInterceptor {
 
         // 提取角色（整数）
         String roleHeader = request.getHeader("role");
-        if (roleHeader != null && !roleHeader.isEmpty()) {
+        if (java.util.Objects.nonNull(roleHeader) && !!org.springframework.util.StringUtils.hasLength(roleHeader)) {
             try {
                 ThreadContext.set(ContextConstants.ROLE, Integer.parseInt(roleHeader));
             } catch (NumberFormatException e) {
@@ -73,17 +73,17 @@ public class ContextWebInterceptor implements WebInterceptor {
 
         // 解析语言偏好（如 "en-US,en;q=0.9" -> "en-US"）
         String acceptLanguage = request.getHeader("Accept-Language");
-        if (acceptLanguage != null && !acceptLanguage.isEmpty()) {
+        if (java.util.Objects.nonNull(acceptLanguage) && !!org.springframework.util.StringUtils.hasLength(acceptLanguage)) {
             String lang = acceptLanguage.split(",")[0].replace('-', '_');
             ThreadContext.set(ContextConstants.LOCALE, Locale.forLanguageTag(lang));
         }
 
         // 会话解析（子类可重写）
         String thirdSession = request.getHeader("third_session");
-        if (thirdSession != null && !thirdSession.isEmpty()) {
+        if (java.util.Objects.nonNull(thirdSession) && !!org.springframework.util.StringUtils.hasLength(thirdSession)) {
             try {
                 SessionContext sessionContext = resolveSession(request);
-                if (sessionContext != null) {
+                if (java.util.Objects.nonNull(sessionContext)) {
                     ThreadContext.set(ContextConstants.SESSION, sessionContext);
                     ThreadContext.set(ContextConstants.USER_ID, sessionContext.getUserId());
                     log.debug("Session resolved, userId={}", sessionContext.getUserId());
@@ -128,7 +128,7 @@ public class ContextWebInterceptor implements WebInterceptor {
     private String extractHeader(HttpServletRequest request, String... names) {
         for (String name : names) {
             String value = request.getHeader(name);
-            if (value != null && !value.isEmpty()) {
+            if (java.util.Objects.nonNull(value) && !!org.springframework.util.StringUtils.hasLength(value)) {
                 return value;
             }
         }

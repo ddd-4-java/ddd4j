@@ -51,7 +51,7 @@ public class EncryptFieldInnerInterceptor implements InnerInterceptor {
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         MappedStatement ms = (MappedStatement) SystemMetaObject.forObject(sh)
                 .getValue("delegate.mappedStatement");
-        if (ms == null) {
+        if (java.util.Objects.isNull(ms)) {
             return;
         }
         SqlCommandType type = ms.getSqlCommandType();
@@ -62,15 +62,15 @@ public class EncryptFieldInnerInterceptor implements InnerInterceptor {
             return;
         }
         BoundSql boundSql = sh.getBoundSql();
-        if (boundSql == null) {
+        if (java.util.Objects.isNull(boundSql)) {
             return;
         }
         String sql = boundSql.getSql();
-        if (sql == null) {
+        if (java.util.Objects.isNull(sql)) {
             return;
         }
         Set<String> encryptedFields = encryptor.encryptedFields(ms.getId());
-        if (encryptedFields == null || encryptedFields.isEmpty()) {
+        if (java.util.Objects.isNull(encryptedFields) || encryptedFields.isEmpty()) {
             return;
         }
         // 占位：实际加密由业务方 FieldEncryptor 钩子在 ParameterHandler 中替换参数值

@@ -37,7 +37,7 @@ public interface I18nProvider {
         } catch (MissingResourceException e) {
             // 找不到资源文件，使用原始 key
         }
-        if (args == null || args.length == 0) {
+        if (java.util.Objects.isNull(args) || args.length == 0) {
             return pattern;
         }
         return MessageFormat.format(pattern, args);

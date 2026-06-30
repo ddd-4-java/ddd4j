@@ -77,7 +77,7 @@ public class RabbitMQConsumerEndpointRegistrar {
             Envelope envelope,
             AMQP.BasicProperties properties) {
         Map<String, Object> headers = new HashMap<>();
-        if (properties.getHeaders() != null) {
+        if (java.util.Objects.nonNull(properties.getHeaders())) {
             headers.putAll(properties.getHeaders());
         }
         headers.put(RabbitMessageAcknowledgment.HEADER_RABBIT_CHANNEL, channel);
@@ -109,10 +109,10 @@ public class RabbitMQConsumerEndpointRegistrar {
     }
 
     private String resolveTag(AMQP.BasicProperties properties, Envelope envelope, MQListenerDefinition definition) {
-        Object headerTag = properties.getHeaders() == null
+        Object headerTag = java.util.Objects.isNull(properties.getHeaders())
                 ? null
                 : properties.getHeaders().get(MQMessages.HEADER_DESTINATION_TAG);
-        if (headerTag != null) {
+        if (java.util.Objects.nonNull(headerTag)) {
             return String.valueOf(headerTag);
         }
         String concat = MQListenerEndpointNaming.resolveConcat(definition);
@@ -120,12 +120,12 @@ public class RabbitMQConsumerEndpointRegistrar {
                 ? definition.getNamespace() + concat + definition.getTopic() + concat
                 : definition.getTopic() + concat;
         String routingKey = envelope.getRoutingKey();
-        return routingKey != null && routingKey.startsWith(prefix)
+        return java.util.Objects.nonNull(routingKey) && routingKey.startsWith(prefix)
                 ? routingKey.substring(prefix.length())
                 : null;
     }
 
     private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

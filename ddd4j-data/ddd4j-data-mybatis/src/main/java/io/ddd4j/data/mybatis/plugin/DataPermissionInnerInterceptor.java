@@ -55,20 +55,20 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         MappedStatement ms = (MappedStatement) SystemMetaObject.forObject(sh)
                 .getValue("delegate.mappedStatement");
-        if (ms == null || SqlCommandType.SELECT != ms.getSqlCommandType()) {
+        if (java.util.Objects.isNull(ms) || SqlCommandType.SELECT != ms.getSqlCommandType()) {
             return;
         }
         if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) {
             return;
         }
         BoundSql boundSql = sh.getBoundSql();
-        if (boundSql == null) {
+        if (java.util.Objects.isNull(boundSql)) {
             return;
         }
         String originalSql = boundSql.getSql();
         try {
             String scopeCondition = provider.dataScopeCondition(ms.getId());
-            if (scopeCondition == null || scopeCondition.isEmpty()) {
+            if (java.util.Objects.isNull(scopeCondition) || !org.springframework.util.StringUtils.hasLength(scopeCondition)) {
                 return;
             }
             Select select = (Select) CCJSqlParserUtil.parse(originalSql);
@@ -77,7 +77,7 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
             }
             Expression where = ps.getWhere();
             Expression scope = CCJSqlParserUtil.parseCondExpression(scopeCondition);
-            if (where == null) {
+            if (java.util.Objects.isNull(where)) {
                 ps.setWhere(scope);
             } else {
                 ps.setWhere(new AndExpression(where, scope));

@@ -36,11 +36,11 @@ public class MQEventPersistInterceptor implements MQConsumeInterceptor {
 
     @Override
     public int preCheck(MQConsumerContext context, MQMessage<?> message) {
-        if (properties == null || !properties.isPersist() || storer == null) {
+        if (java.util.Objects.isNull(properties) || !properties.isPersist() || java.util.Objects.isNull(storer)) {
             return MQConsumeTemplates.PRE_CONTINUE;
         }
-        Object payload = context == null ? null : context.getPayload();
-        if (!(payload instanceof MQEvent) && message != null) {
+        Object payload = java.util.Objects.isNull(context) ? null : context.getPayload();
+        if (!(payload instanceof MQEvent) && java.util.Objects.nonNull(message)) {
             payload = message.getPayload();
         }
         if (payload instanceof MQEvent event) {

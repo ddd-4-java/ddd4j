@@ -112,7 +112,7 @@ public class NoOpMessageAcknowledgment implements MessageAcknowledgment {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<T> unwrap(Class<T> nativeType) {
-        if (nativeHandle != null && nativeType.isInstance(nativeHandle)) {
+        if (java.util.Objects.nonNull(nativeHandle) && nativeType.isInstance(nativeHandle)) {
             return Optional.of((T) nativeHandle);
         }
         return Optional.empty();

@@ -97,6 +97,6 @@ public class RuleEngineDomainServiceImpl implements RuleEngineDomainService {
      */
     @Override
     public boolean isRuleAvailable(RuleDefinition rule) {
-        return rule != null && rule.isAvailable();
+        return java.util.Objects.nonNull(rule) && rule.isAvailable();
     }
 }

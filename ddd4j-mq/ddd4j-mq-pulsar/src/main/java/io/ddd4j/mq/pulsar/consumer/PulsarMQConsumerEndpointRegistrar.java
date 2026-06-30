@@ -69,7 +69,9 @@ public class PulsarMQConsumerEndpointRegistrar {
     private MQMessage<String> toMessage(Consumer<byte[]> consumer, Message<byte[]> msg) {
         Map<String, Object> headers = new HashMap<>();
         msg.getProperties().forEach((k, v) -> {
-            if (v != null) headers.put(k, v);
+            if (java.util.Objects.nonNull(v)) {
+                headers.put(k, v);
+            }
         });
         headers.put(PulsarMessageAcknowledgment.HEADER_PULSAR_CONSUMER, consumer);
         headers.put(PulsarMessageAcknowledgment.HEADER_PULSAR_MESSAGE, msg);
@@ -83,6 +85,6 @@ public class PulsarMQConsumerEndpointRegistrar {
     }
 
     private static String messageIdString(MessageId id) {
-        return id == null ? null : id.toString();
+        return java.util.Objects.isNull(id) ? null : id.toString();
     }
 }

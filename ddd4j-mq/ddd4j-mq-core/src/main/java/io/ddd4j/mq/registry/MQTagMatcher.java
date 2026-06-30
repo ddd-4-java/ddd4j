@@ -49,16 +49,16 @@ public final class MQTagMatcher {
             }
         }
 
-        if (candidate != null && excludes.contains(candidate)) {
+        if (java.util.Objects.nonNull(candidate) && excludes.contains(candidate)) {
             return false;
         }
         if (wildcard) {
             return true;
         }
         if (includes.isEmpty()) {
-            return candidate == null || !excludes.contains(candidate);
+            return java.util.Objects.isNull(candidate) || !excludes.contains(candidate);
         }
-        return candidate != null && includes.contains(candidate);
+        return java.util.Objects.nonNull(candidate) && includes.contains(candidate);
     }
 
     /**
@@ -79,18 +79,18 @@ public final class MQTagMatcher {
     }
 
     private static List<String> tokens(String expression) {
-        if (expression == null || expression.isBlank() || Objects.equals(WILDCARD, expression.trim())) {
+        if (java.util.Objects.isNull(expression) || io.ddd4j.kit.lang.StrKit.isBlank(expression) || Objects.equals(WILDCARD, expression.trim())) {
             return List.of();
         }
         return List.of(expression.replace(OR, " ").trim().split("\\s+")).stream()
                 .map(String::trim)
-                .filter(token -> !token.isEmpty())
+                .filter(token -> !io.ddd4j.kit.lang.StrKit.isEmpty(token))
                 .filter(token -> !OR.equals(token))
                 .toList();
     }
 
     private static String trimToNull(String s) {
-        if (s == null || s.isBlank()) {
+        if (java.util.Objects.isNull(s) || io.ddd4j.kit.lang.StrKit.isBlank(s)) {
             return null;
         }
         return s.trim();

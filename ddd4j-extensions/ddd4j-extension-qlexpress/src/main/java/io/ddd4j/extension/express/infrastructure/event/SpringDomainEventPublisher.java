@@ -42,7 +42,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
     @Override
     public void publishRuleCreated(RuleCreatedEvent event) {
         // Spring的ApplicationEventPublisher可以发布任何对象，不一定是ApplicationEvent的子类
-        if (event != null) {
+        if (java.util.Objects.nonNull(event)) {
             eventPublisher.publishEvent(event);
         }
     }
@@ -54,7 +54,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
      */
     @Override
     public void publishRuleUpdated(RuleUpdatedEvent event) {
-        if (event != null) {
+        if (java.util.Objects.nonNull(event)) {
             eventPublisher.publishEvent(event);
         }
     }
@@ -66,7 +66,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
      */
     @Override
     public void publishRuleDeleted(RuleDeletedEvent event) {
-        if (event != null) {
+        if (java.util.Objects.nonNull(event)) {
             eventPublisher.publishEvent(event);
         }
     }

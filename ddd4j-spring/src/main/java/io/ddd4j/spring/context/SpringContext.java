@@ -75,7 +75,7 @@ public class SpringContext implements ApplicationContextAware {
     @SneakyThrows
     public static ApplicationContext getApplicationContext() {
         // 阻塞等待初始化完成
-        if (APPLICATION_CONTEXT == null) {
+        if (java.util.Objects.isNull(APPLICATION_CONTEXT)) {
             APPLICATION_CONTEXT_START_SIGNAL.await();
         }
         return APPLICATION_CONTEXT;

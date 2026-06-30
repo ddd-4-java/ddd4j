@@ -29,7 +29,7 @@ public interface IR extends Serializable {
             throw new ServiceException(notOkThrows + " -> {}", this);
         }
         T data = getData();
-        if (data == null) {
+        if (java.util.Objects.isNull(data)) {
             throw new ServiceException(notOkThrows + " -> {}", this);
         }
         return data;

@@ -54,7 +54,7 @@ class NatsContainerIT {
 
     @AfterAll
     static void stopNats() throws Exception {
-        if (natsConnection != null) {
+        if (java.util.Objects.nonNull(natsConnection)) {
             natsConnection.close();
         }
         NATS.stop();

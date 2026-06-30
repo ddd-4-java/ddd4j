@@ -20,21 +20,23 @@ public final class WebUtils {
      */
     public static HttpServletRequest getHttpServletRequest() {
         ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        return attrs != null ? attrs.getRequest() : null;
+        return java.util.Objects.nonNull(attrs) ? attrs.getRequest() : null;
     }
 
     /**
      * 获取客户端真实 IP
      */
     public static String getRemoteAddr(HttpServletRequest request) {
-        if (request == null) return null;
+        if (java.util.Objects.isNull(request)) {
+            return null;
+        }
         String addr = request.getHeader("X-Forwarded-For");
-        if (addr != null && !addr.isEmpty() && !"unknown".equalsIgnoreCase(addr)) {
+        if (java.util.Objects.nonNull(addr) && !!org.springframework.util.StringUtils.hasLength(addr) && !"unknown".equalsIgnoreCase(addr)) {
             int index = addr.indexOf(',');
             return index > 0 ? addr.substring(0, index).trim() : addr.trim();
         }
         addr = request.getHeader("X-Real-IP");
-        if (addr != null && !addr.isEmpty() && !"unknown".equalsIgnoreCase(addr)) {
+        if (java.util.Objects.nonNull(addr) && !!org.springframework.util.StringUtils.hasLength(addr) && !"unknown".equalsIgnoreCase(addr)) {
             return addr;
         }
         return request.getRemoteAddr();

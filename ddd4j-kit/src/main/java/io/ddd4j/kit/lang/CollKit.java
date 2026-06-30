@@ -18,7 +18,7 @@ import java.util.List;
 public class CollKit extends CollUtil {
 
     public <T> T[] convert(Collection<T> coll) {
-        if (coll == null || coll.isEmpty()) {
+        if (java.util.Objects.isNull(coll) || coll.isEmpty()) {
             return null;
         }
         Class tClass = null;
@@ -30,18 +30,18 @@ public class CollKit extends CollUtil {
     }
 
     public <T> List<T> convert(T[] array) {
-        if (null == array || array.length == 0) {
+        if (java.util.Objects.isNull(array) || array.length == 0) {
             return new ArrayList<>();
         }
         return new ArrayList<>(Arrays.asList(array));
     }
 
     public <T> boolean isNotEmpty(T[] array) {
-        return null != array && array.length != 0;
+        return java.util.Objects.nonNull(array) && array.length != 0;
     }
 
     public <T> boolean isEmpty(T[] array) {
-        return null == array || array.length == 0;
+        return java.util.Objects.isNull(array) || array.length == 0;
     }
 
 }

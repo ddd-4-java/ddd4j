@@ -57,7 +57,7 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
             Object nativeClient) {
         this.commands = Objects.requireNonNull(commands, "commands");
         this.closeTarget = closeTarget;
-        this.nativeClient = nativeClient == null ? commands : nativeClient;
+        this.nativeClient = java.util.Objects.isNull(nativeClient) ? commands : nativeClient;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
                     group,
                     new XGroupCreateArgs().mkstream(true));
         } catch (RedisCommandExecutionException ex) {
-            if (ex.getMessage() == null || !ex.getMessage().contains("BUSYGROUP")) {
+            if (java.util.Objects.isNull(ex.getMessage()) || !ex.getMessage().contains("BUSYGROUP")) {
                 throw ex;
             }
         }
@@ -93,7 +93,7 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
                 .toArray(StreamOffset[]::new);
         List<StreamMessage<String, String>> records = commands.xreadgroup(Consumer.from(group, consumer), args, offsets);
         Map<String, List<RedisStreamRecord>> result = new HashMap<>();
-        if (records == null || records.isEmpty()) {
+        if (java.util.Objects.isNull(records) || records.isEmpty()) {
             return result;
         }
         for (StreamMessage<String, String> record : records) {
@@ -115,7 +115,7 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
 
     @Override
     public void close() {
-        if (closeTarget == null) {
+        if (java.util.Objects.isNull(closeTarget)) {
             return;
         }
         try {

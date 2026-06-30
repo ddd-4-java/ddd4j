@@ -61,7 +61,7 @@ public class GuicePropertyLoader extends AbstractModule {
         Properties merged = new Properties();
         for (String configFile : configFiles) {
             Properties props = loadProperties(configFile);
-            if (props != null) {
+            if (java.util.Objects.nonNull(props)) {
                 merged.putAll(props);
                 log.info("Loaded {} properties from {}", props.size(), configFile);
             }
@@ -74,7 +74,7 @@ public class GuicePropertyLoader extends AbstractModule {
 
     private Properties loadProperties(String resourcePath) {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
-            if (is == null) {
+            if (java.util.Objects.isNull(is)) {
                 log.debug("Config file not found: {}", resourcePath);
                 return null;
             }

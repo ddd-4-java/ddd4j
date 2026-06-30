@@ -73,7 +73,7 @@ public enum MQBrokerType {
     }
 
     private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     /**

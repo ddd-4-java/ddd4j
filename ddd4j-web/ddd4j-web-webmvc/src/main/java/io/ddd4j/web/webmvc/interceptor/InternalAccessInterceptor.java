@@ -23,7 +23,7 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
     private final Set<String> bearerTokens;
 
     public InternalAccessInterceptor(InternalAccessProperties properties) {
-        this.bearerTokens = new HashSet<>(properties == null ? Set.of() : properties.getBearerTokens());
+        this.bearerTokens = new HashSet<>(java.util.Objects.isNull(properties) ? Set.of() : properties.getBearerTokens());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
         }
         String authorization = request.getHeader("Authorization");
         String token = resolveBearerToken(authorization);
-        if (token != null && bearerTokens.contains(token)) {
+        if (java.util.Objects.nonNull(token) && bearerTokens.contains(token)) {
             return true;
         }
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized internal access");
@@ -54,10 +54,10 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
     }
 
     private static String resolveBearerToken(String authorization) {
-        if (authorization == null || !authorization.startsWith(BEARER_PREFIX)) {
+        if (java.util.Objects.isNull(authorization) || !authorization.startsWith(BEARER_PREFIX)) {
             return null;
         }
         String token = authorization.substring(BEARER_PREFIX.length()).trim();
-        return token.isEmpty() ? null : token;
+        return !org.springframework.util.StringUtils.hasLength(token) ? null : token;
     }
 }

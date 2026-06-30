@@ -39,10 +39,10 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
         this.requeueOnNack = requeueOnNack;
     }
 
-    @Override public long deliveryTag() { return receiptHandle == null ? 0L : (long) receiptHandle.hashCode(); }
+    @Override public long deliveryTag() { return java.util.Objects.isNull(receiptHandle) ? 0L : (long) receiptHandle.hashCode(); }
     @Override public String messageId() { return messageId; }
     @Override public String correlationId() { return null; }
-    @Override public boolean isOpen() { return client != null; }
+    @Override public boolean isOpen() { return java.util.Objects.nonNull(client); }
     @Override public boolean isAcknowledged() { return acknowledged.get(); }
     @Override public MQBrokerType brokerType() { return MQBrokerType.SQS; }
 
@@ -74,10 +74,18 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (type == null) return Optional.empty();
-        if (type.isInstance(client)) return Optional.of(type.cast(client));
-        if (type.isInstance(message)) return Optional.of(type.cast(message));
-        if (type.isInstance(this)) return Optional.of(type.cast(this));
+        if (java.util.Objects.isNull(type)) {
+            return Optional.empty();
+        }
+        if (type.isInstance(client)) {
+            return Optional.of(type.cast(client));
+        }
+        if (type.isInstance(message)) {
+            return Optional.of(type.cast(message));
+        }
+        if (type.isInstance(this)) {
+            return Optional.of(type.cast(this));
+        }
         return Optional.empty();
     }
 

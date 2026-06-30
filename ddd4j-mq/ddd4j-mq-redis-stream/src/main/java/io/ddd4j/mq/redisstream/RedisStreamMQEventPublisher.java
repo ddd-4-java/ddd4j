@@ -46,8 +46,8 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
         String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
         String tag = firstText(destination.getTag(), event.getTag());
         String concat = firstText(event.getConcat(), ".");
-        String base = namespace == null ? topic : namespace + concat + topic;
-        return tag == null ? base : base + concat + tag;
+        String base = java.util.Objects.isNull(namespace) ? topic : namespace + concat + topic;
+        return java.util.Objects.isNull(tag) ? base : base + concat + tag;
     }
 
     private Map<String, String> fields(MQEvent event, MQDestination destination) {
@@ -61,17 +61,17 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
     }
 
     private static void put(Map<String, String> fields, String key, String value) {
-        if (value != null) {
+        if (java.util.Objects.nonNull(value)) {
             fields.put(key, value);
         }
     }
 
     private static String firstText(String... values) {
-        if (values == null) {
+        if (java.util.Objects.isNull(values)) {
             return null;
         }
         for (String value : values) {
-            if (value != null && !value.isBlank()) {
+            if (java.util.Objects.nonNull(value) && !io.ddd4j.kit.lang.StrKit.isBlank(value)) {
                 return value;
             }
         }

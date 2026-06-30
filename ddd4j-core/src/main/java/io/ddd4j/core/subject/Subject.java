@@ -231,7 +231,7 @@ public interface Subject {
      */
     default Object getExtra(String key) {
         Map<String, Object> profile = this.getPrincipal().getProfile();
-        if (profile == null || profile.isEmpty()) {
+        if (java.util.Objects.isNull(profile) || profile.isEmpty()) {
             return null;
         }
         return profile.get(key);
@@ -301,7 +301,7 @@ public interface Subject {
      */
     default Object getExtra(String tokenValue, String key) {
         Map<String, Object> profile = this.getPrincipalByToken(tokenValue).getProfile();
-        if (profile == null || profile.isEmpty()) {
+        if (java.util.Objects.isNull(profile) || profile.isEmpty()) {
             return null;
         }
         return profile.get(key);
@@ -424,7 +424,7 @@ public interface Subject {
      */
     default void setAttribute(String key, Object value) {
         AuthPrincipal principal = getPrincipal();
-        if (principal != null) {
+        if (java.util.Objects.nonNull(principal)) {
             principal.getProfile().put(key, value);
         }
     }
@@ -437,7 +437,7 @@ public interface Subject {
      */
     default <V> V getAttribute(String key) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return null;
         }
         return (V) principal.getProfile().get(key);

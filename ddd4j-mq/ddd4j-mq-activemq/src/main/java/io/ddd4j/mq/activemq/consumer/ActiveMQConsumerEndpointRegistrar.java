@@ -73,10 +73,10 @@ public class ActiveMQConsumerEndpointRegistrar {
     }
 
     private Destination resolveDestination(Session session, MQListenerDefinition def) throws JMSException {
-        String topic = def.getTopic() == null ? "ddd4j.default.topic" : def.getTopic();
+        String topic = java.util.Objects.isNull(def.getTopic()) ? "ddd4j.default.topic" : def.getTopic();
         String tag = MQTagMatcher.findIncludes(def.getTags()).stream().findFirst().orElse(null);
-        String physical = tag == null ? topic : topic + "." + tag;
-        if (def.getNamespace() != null && !def.getNamespace().isBlank()) {
+        String physical = java.util.Objects.isNull(tag) ? topic : topic + "." + tag;
+        if (java.util.Objects.nonNull(def.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(def.getNamespace())) {
             physical = def.getNamespace() + "." + physical;
         }
         return session.createTopic(physical);
@@ -85,20 +85,22 @@ public class ActiveMQConsumerEndpointRegistrar {
     private static String extractTag(Message message, MQListenerDefinition def) {
         try {
             String tag = message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG);
-            if (tag != null) return tag;
+            if (java.util.Objects.nonNull(tag)) {
+                return tag;
+            }
         } catch (JMSException ignore) {}
         return null;
     }
 
     private MQMessage<String> toMessage(Message message, Session session) throws JMSException {
         Map<String, Object> headers = new HashMap<>();
-        if (message.getStringProperty(MQMessages.HEADER_DESTINATION_TOPIC) != null) {
+        if (java.util.Objects.nonNull(message.getStringProperty(MQMessages.HEADER_DESTINATION_TOPIC))) {
             headers.put(MQMessages.HEADER_DESTINATION_TOPIC, message.getStringProperty(MQMessages.HEADER_DESTINATION_TOPIC));
         }
-        if (message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG) != null) {
+        if (java.util.Objects.nonNull(message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG))) {
             headers.put(MQMessages.HEADER_DESTINATION_TAG, message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG));
         }
-        if (message.getStringProperty(MQMessages.HEADER_TENANT_ID) != null) {
+        if (java.util.Objects.nonNull(message.getStringProperty(MQMessages.HEADER_TENANT_ID))) {
             headers.put(MQMessages.HEADER_TENANT_ID, message.getStringProperty(MQMessages.HEADER_TENANT_ID));
         }
         headers.put(ActiveMQMessageAcknowledgment.HEADER_AMQ_SESSION, session);
@@ -126,7 +128,7 @@ public class ActiveMQConsumerEndpointRegistrar {
     private static long messageIdHash(Message message) {
         try {
             String id = message.getJMSMessageID();
-            return id == null ? 0L : (long) id.hashCode();
+            return java.util.Objects.isNull(id) ? 0L : (long) id.hashCode();
         } catch (JMSException e) { return 0L; }
     }
 }

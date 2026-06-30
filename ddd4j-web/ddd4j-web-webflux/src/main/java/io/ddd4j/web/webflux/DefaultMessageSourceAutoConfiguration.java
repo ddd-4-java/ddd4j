@@ -66,12 +66,12 @@ public class DefaultMessageSourceAutoConfiguration {
         if (!CollectionUtils.isEmpty(properties.getBasename())) {
             messageSource.setBasenames(properties.getBasename().toArray(new String[0]));
         }
-        if (properties.getEncoding() != null) {
+        if (java.util.Objects.nonNull(properties.getEncoding())) {
             messageSource.setDefaultEncoding(properties.getEncoding().name());
         }
         messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
         Duration cacheDuration = properties.getCacheDuration();
-        if (cacheDuration != null) {
+        if (java.util.Objects.nonNull(cacheDuration)) {
             messageSource.setCacheMillis(cacheDuration.toMillis());
         }
         messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());

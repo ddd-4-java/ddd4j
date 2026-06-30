@@ -32,17 +32,17 @@ public class StartsWithFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (parameters == null || parameters.size() < 2) {
+        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("startsWith函数需要2个参数：source和prefix");
         }
 
         Object sourceObj = getParameterValue(parameters, 0, qContext);
         Object prefixObj = getParameterValue(parameters, 1, qContext);
 
-        String source = sourceObj != null ? sourceObj.toString() : null;
-        String prefix = prefixObj != null ? prefixObj.toString() : null;
+        String source = java.util.Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
+        String prefix = java.util.Objects.nonNull(prefixObj) ? prefixObj.toString() : null;
 
-        boolean result = source != null && source.startsWith(prefix);
+        boolean result = java.util.Objects.nonNull(source) && source.startsWith(prefix);
         return result;
     }
 
@@ -51,7 +51,7 @@ public class StartsWithFunction implements CustomFunction {
      */
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
-            if (parameters.get(index) != null) {
+            if (java.util.Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);

@@ -23,7 +23,7 @@ public final class NatsMessageAcknowledgmentFactory {
      * @return 确认对象
      */
     public static Optional<NatsMessageAcknowledgment> fromNatsMessage(Message message) {
-        if (message == null) {
+        if (java.util.Objects.isNull(message)) {
             return Optional.empty();
         }
         return Optional.of(new NatsMessageAcknowledgment(message));
@@ -38,7 +38,7 @@ public final class NatsMessageAcknowledgmentFactory {
     public static Optional<NatsMessageAcknowledgment> from(MQMessage<?> message) {
         Objects.requireNonNull(message, "message");
         Message natsMessage = message.nativeMessage(Message.class);
-        if (natsMessage != null) {
+        if (java.util.Objects.nonNull(natsMessage)) {
             return fromNatsMessage(natsMessage);
         }
         Object payload = message.getPayload();

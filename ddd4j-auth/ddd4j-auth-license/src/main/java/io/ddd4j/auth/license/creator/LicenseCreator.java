@@ -79,7 +79,7 @@ public class LicenseCreator {
         licenseContent.setInfo(param.getDescription());
 
         //扩展校验，这里可以自定义一些额外的校验信息(也可以用json字符串保存)
-        if (param.getLicenseExtraModel() != null) {
+        if (java.util.Objects.nonNull(param.getLicenseExtraModel())) {
             licenseContent.setExtra(param.getLicenseExtraModel());
         }
 

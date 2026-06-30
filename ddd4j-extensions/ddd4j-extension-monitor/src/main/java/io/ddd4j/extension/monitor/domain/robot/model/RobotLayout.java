@@ -56,12 +56,12 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
         this.markdownTextAppend(sb, "App", app);
         this.markdownTextAppend(sb, "Project", project);
         this.markdownTextAppend(sb, "IP", ip);
-        if (CodeVersionService.CODE_VERSION != null) {
+        if (java.util.Objects.nonNull(CodeVersionService.CODE_VERSION)) {
             this.markdownTextAppend(sb, "Commit", StrKit.format("{} @{}", CodeVersionService.CODE_VERSION.getCommitId().substring(CodeVersionService.CODE_VERSION.getCommitId().length() - 8), CodeVersionService.CODE_VERSION.getCommitUser()));
         }
         this.markdownTextAppend(sb, "Message", event.getFormattedMessage());
         this.mdcAppend(sb, event);
-        if (event.getThrowableProxy() != null) {
+        if (java.util.Objects.nonNull(event.getThrowableProxy())) {
             String stackTrace = throwableProxyConverter.convert(event);
             BaseMonitorProperties baseMonitorProperties = SpringContext.getBean(BaseMonitorProperties.class);
             stackTrace = stackTrace.length() > baseMonitorProperties.getLog().getConfig().getMaxLength() ? stackTrace.substring(0, baseMonitorProperties.getLog().getConfig().getMaxLength() - 1) + "..." : stackTrace;

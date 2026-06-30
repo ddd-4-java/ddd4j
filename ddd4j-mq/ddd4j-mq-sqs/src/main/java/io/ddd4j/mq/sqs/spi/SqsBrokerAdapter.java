@@ -56,7 +56,7 @@ public class SqsBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new SqsMQEventPublisher(client(), properties, props == null ? mqProperties : props, serialization);
+        return new SqsMQEventPublisher(client(), properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -66,7 +66,9 @@ public class SqsBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (message == null) return null;
+        if (java.util.Objects.isNull(message)) {
+            return null;
+        }
         Object client = message.header(SqsMessageAcknowledgment.HEADER_SQS_CLIENT);
         Object msg = message.header(SqsMessageAcknowledgment.HEADER_SQS_MESSAGE);
         Object queueUrl = message.header(SqsMessageAcknowledgment.HEADER_SQS_QUEUE_URL);
@@ -81,7 +83,7 @@ public class SqsBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() {
         SqsClient c = clientRef.get();
-        if (c != null) {
+        if (java.util.Objects.nonNull(c)) {
             try { c.close(); } finally { clientRef.set(null); }
         }
     }

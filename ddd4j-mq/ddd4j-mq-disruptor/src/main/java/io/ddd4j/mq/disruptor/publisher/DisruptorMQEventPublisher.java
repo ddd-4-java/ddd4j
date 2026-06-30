@@ -35,7 +35,7 @@ public class DisruptorMQEventPublisher implements MQEventPublisher {
         if (!StringUtils.hasText(event.getNamespace())) {
             event.setNamespace(properties.getNamespace());
         }
-        if (event.getMsgId() == null) {
+        if (java.util.Objects.isNull(event.getMsgId())) {
             event.setMsgId(String.valueOf(System.currentTimeMillis()));
         }
 

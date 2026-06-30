@@ -52,7 +52,7 @@ public class MultiLoginAuthController {
         String loginId = command.provider() + ":" + command.openId();
         AuthPrincipal principal = new AuthPrincipal()
                 .setLoginId(loginId)
-                .setUserId(command.unionId() == null || command.unionId().isBlank() ? loginId : command.unionId())
+                .setUserId(java.util.Objects.isNull(command.unionId()) || !org.springframework.util.StringUtils.hasText(command.unionId()) ? loginId : command.unionId())
                 .setOpenid(command.openId())
                 .setUnionId(command.unionId())
                 .setUserType("third-party");
@@ -71,7 +71,7 @@ public class MultiLoginAuthController {
     @GetMapping("/me")
     public Map<String, Object> me() {
         AuthPrincipal principal = SubjectKit.getPrincipal();
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return Map.of("authenticated", false);
         }
         Map<String, Object> result = new LinkedHashMap<>();

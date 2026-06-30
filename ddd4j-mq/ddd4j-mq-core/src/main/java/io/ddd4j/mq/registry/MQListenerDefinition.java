@@ -69,10 +69,10 @@ public class MQListenerDefinition {
             String defaultGroup,
             String defaultNamespace) {
 
-        String group = ann.group() != null && !ann.group().isBlank()
+        String group = java.util.Objects.nonNull(ann.group()) && !io.ddd4j.kit.lang.StrKit.isBlank(ann.group())
                 ? ann.group()
                 : defaultGroup + "_" + method.getName();
-        String namespace = ann.namespace() != null && !ann.namespace().isBlank()
+        String namespace = java.util.Objects.nonNull(ann.namespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(ann.namespace())
                 ? ann.namespace()
                 : defaultNamespace;
 
@@ -92,7 +92,7 @@ public class MQListenerDefinition {
      * 返回策略匹配支持列表（不可变）。
      */
     public List<String> supports() {
-        return supports == null ? Collections.emptyList() : Collections.unmodifiableList(supports);
+        return java.util.Objects.isNull(supports) ? Collections.emptyList() : Collections.unmodifiableList(supports);
     }
 
     /**
@@ -113,7 +113,7 @@ public class MQListenerDefinition {
      * 物理 destination（namespace.topic）。
      */
     public String physicalDestination() {
-        if (namespace != null && !namespace.isBlank()) {
+        if (java.util.Objects.nonNull(namespace) && !io.ddd4j.kit.lang.StrKit.isBlank(namespace)) {
             return namespace + "." + topic;
         }
         return topic;

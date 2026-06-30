@@ -52,7 +52,7 @@ public class ReflectKit extends ReflectUtil {
                 }
                 field.setAccessible(true); // 确保可以访问私有字段
                 Object value = field.get(obj);
-                if (value != null) {
+                if (java.util.Objects.nonNull(value)) {
                     return false; // 如果某个字段不为 null，则直接返回 false
                 }
             }

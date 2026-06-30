@@ -58,14 +58,14 @@ public final class AnnotationFusionVerifier {
                               Class<? extends Annotation> annotationType,
                               Class<? extends Annotation> springAnnotationType) {
         DDDAnnotation dddAnnotation = annotationType.getAnnotation(DDDAnnotation.class);
-        if (dddAnnotation == null) {
+        if (java.util.Objects.isNull(dddAnnotation)) {
             System.out.println("FAIL " + name + ": 缺少 @DDDAnnotation 元注解");
             return 0;
         }
         System.out.println("PASS " + name + ": 已标注 @DDDAnnotation");
 
         Annotation springAnnotation = annotationType.getAnnotation(springAnnotationType);
-        if (springAnnotation == null) {
+        if (java.util.Objects.isNull(springAnnotation)) {
             System.out.println("FAIL " + name + ": 缺少 " + springAnnotationType.getSimpleName() + " 元注解");
             return 0;
         }

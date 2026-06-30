@@ -54,7 +54,7 @@ public class LettuceCache<V> implements Cache<String, V> {
         this.expireDuration = config.getExpireAfterWriteSeconds() > 0 ? Duration.ofSeconds(config.getExpireAfterWriteSeconds()) : Duration.ZERO;
         this.valueType = Objects.requireNonNull(valueType);
         this.keyPrefix = config.getName() + ":";
-        this.objectMapper = objectMapper != null ? objectMapper : new ObjectMapper()
+        this.objectMapper = java.util.Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
     }
@@ -79,7 +79,7 @@ public class LettuceCache<V> implements Cache<String, V> {
     public V getIfPresent(String key) {
         try {
             String json = commands.get(key(key));
-            if (json == null) {
+            if (java.util.Objects.isNull(json)) {
                 return null;
             }
             if (valueType == String.class) {
@@ -94,9 +94,9 @@ public class LettuceCache<V> implements Cache<String, V> {
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
-        if (value == null) {
+        if (java.util.Objects.isNull(value)) {
             value = mappingFunction.apply(key);
-            if (value != null) {
+            if (java.util.Objects.nonNull(value)) {
                 put(key, value);
             }
         }

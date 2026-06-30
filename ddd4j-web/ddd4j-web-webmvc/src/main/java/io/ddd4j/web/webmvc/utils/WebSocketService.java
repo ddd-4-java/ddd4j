@@ -97,7 +97,7 @@ public class WebSocketService {
 
     public void disconnect(String clientId) {
         WebSocketConnectionManager manager = MANAGERS.get(clientId);
-        if (manager == null) {
+        if (java.util.Objects.isNull(manager)) {
             return;
         }
         manager.stop();
@@ -105,7 +105,7 @@ public class WebSocketService {
 
     public void sendMessage(String clientId, Object message) {
         WebSocketSession webSocketSession = SESSIONS.get(clientId);
-        if (webSocketSession != null && webSocketSession.isOpen()) {
+        if (java.util.Objects.nonNull(webSocketSession) && webSocketSession.isOpen()) {
             String payload = JsonKit.toJson(message);
             log.info("[{}] <= {}", clientId, payload);
             try {

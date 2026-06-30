@@ -78,7 +78,7 @@ public class DisruptorMQBus {
      */
     @PreDestroy
     public void shutdown() {
-        if (disruptor != null) {
+        if (java.util.Objects.nonNull(disruptor)) {
             disruptor.shutdown();
             log.info("DisruptorMQBus shutdown");
         }

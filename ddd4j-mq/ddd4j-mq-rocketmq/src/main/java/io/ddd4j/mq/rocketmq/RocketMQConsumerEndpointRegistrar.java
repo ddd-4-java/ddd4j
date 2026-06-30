@@ -112,13 +112,13 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
     }
 
     private static String subscriptionExpression(String tags) {
-        if (tags == null || tags.isBlank() || tags.contains("-")) {
+        if (java.util.Objects.isNull(tags) || io.ddd4j.kit.lang.StrKit.isBlank(tags) || tags.contains("-")) {
             return "*";
         }
         return tags;
     }
 
     private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

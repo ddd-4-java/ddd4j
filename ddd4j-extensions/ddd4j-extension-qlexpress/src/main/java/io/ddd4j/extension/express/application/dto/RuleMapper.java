@@ -23,7 +23,7 @@ public class RuleMapper {
      * @return 规则响应DTO
      */
     public RuleResponse toResponse(RuleDefinition rule) {
-        if (rule == null) {
+        if (java.util.Objects.isNull(rule)) {
             return null;
         }
 
@@ -54,7 +54,7 @@ public class RuleMapper {
      * @return 规则定义实体
      */
     public RuleDefinition toEntity(CreateRuleRequest request) {
-        if (request == null) {
+        if (java.util.Objects.isNull(request)) {
             return null;
         }
 
@@ -64,8 +64,8 @@ public class RuleMapper {
         rule.setRuleExpression(request.getRuleExpression());
         rule.setRuleDescription(request.getRuleDescription());
         rule.setRuleType(request.getRuleType());
-        rule.setEnabled(request.getEnabled() != null ? request.getEnabled() : true);
-        rule.setPriority(request.getPriority() != null ? request.getPriority() : 0);
+        rule.setEnabled(java.util.Objects.nonNull(request.getEnabled()) ? request.getEnabled() : true);
+        rule.setPriority(java.util.Objects.nonNull(request.getPriority()) ? request.getPriority() : 0);
 
         // 函数相关字段
         rule.setFunctionClass(request.getFunctionClass());
@@ -85,7 +85,7 @@ public class RuleMapper {
      * @param request 更新规则请求DTO
      */
     public void updateEntity(RuleDefinition rule, UpdateRuleRequest request) {
-        if (rule == null || request == null) {
+        if (java.util.Objects.isNull(rule) || java.util.Objects.isNull(request)) {
             return;
         }
 
@@ -94,10 +94,10 @@ public class RuleMapper {
         rule.setRuleDescription(request.getRuleDescription());
         rule.setRuleType(request.getRuleType());
 
-        if (request.getEnabled() != null) {
+        if (java.util.Objects.nonNull(request.getEnabled())) {
             rule.setEnabled(request.getEnabled());
         }
-        if (request.getPriority() != null) {
+        if (java.util.Objects.nonNull(request.getPriority())) {
             rule.setPriority(request.getPriority());
         }
 

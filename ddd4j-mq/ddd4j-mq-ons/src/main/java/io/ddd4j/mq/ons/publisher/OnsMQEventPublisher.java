@@ -37,10 +37,10 @@ public class OnsMQEventPublisher implements MQEventPublisher {
         try {
             String topic = firstText(destination.getTopic(), event.getTopic(), properties.getTopic(), "ddd4j.default.topic");
             String tag = firstText(destination.getTag(), event.getTag());
-            Message msg = new Message(topic, tag, event.getMsgId() == null ? event.getMsgId() : event.getMsgId(),
+            Message msg = new Message(topic, tag, java.util.Objects.isNull(event.getMsgId()) ? event.getMsgId() : event.getMsgId(),
                     serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8));
             msg.setKey(event.getMsgId());
-            if (event.getTenantId() != null) {
+            if (java.util.Objects.nonNull(event.getTenantId())) {
                 msg.putUserProperties("tenantId", event.getTenantId());
             }
             producer.send(msg);
@@ -50,9 +50,13 @@ public class OnsMQEventPublisher implements MQEventPublisher {
     }
 
     private static String firstText(String... values) {
-        if (values == null) return null;
+        if (java.util.Objects.isNull(values)) {
+            return null;
+        }
         for (String v : values) {
-            if (v != null && !v.isBlank()) return v;
+            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+                return v;
+            }
         }
         return null;
     }

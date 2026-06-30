@@ -36,7 +36,7 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
     @Override public long deliveryTag() { return messageId; }
     @Override public String messageId() { return Integer.toString(messageId); }
     @Override public String correlationId() { return null; }
-    @Override public boolean isOpen() { return message != null; }
+    @Override public boolean isOpen() { return java.util.Objects.nonNull(message); }
     @Override public boolean isAcknowledged() { return acknowledged.get(); }
     @Override public MQBrokerType brokerType() { return MQBrokerType.MQTT; }
 
@@ -52,9 +52,15 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (type == null) return Optional.empty();
-        if (type.isInstance(message)) return Optional.of(type.cast(message));
-        if (type.isInstance(this)) return Optional.of(type.cast(this));
+        if (java.util.Objects.isNull(type)) {
+            return Optional.empty();
+        }
+        if (type.isInstance(message)) {
+            return Optional.of(type.cast(message));
+        }
+        if (type.isInstance(this)) {
+            return Optional.of(type.cast(this));
+        }
         return Optional.empty();
     }
 

@@ -46,7 +46,7 @@ public class SetStringTypeHandler implements TypeHandler<Set<String>> {
     }
 
     private Set<String> toList(String value) {
-        if (value == null) {
+        if (java.util.Objects.isNull(value)) {
             return null;
         }
         return new HashSet<>(JSONUtil.parseArray(value).toList(String.class));

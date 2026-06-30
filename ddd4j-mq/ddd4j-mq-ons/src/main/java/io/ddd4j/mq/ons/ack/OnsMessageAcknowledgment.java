@@ -38,7 +38,7 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
     @Override public long deliveryTag() { return offset; }
     @Override public String messageId() { return messageId; }
     @Override public String correlationId() { return key; }
-    @Override public boolean isOpen() { return context != null; }
+    @Override public boolean isOpen() { return java.util.Objects.nonNull(context); }
     @Override public boolean isAcknowledged() { return acknowledged.get(); }
     @Override public MQBrokerType brokerType() { return MQBrokerType.ONS; }
 
@@ -60,10 +60,18 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (type == null) return Optional.empty();
-        if (type.isInstance(context)) return Optional.of(type.cast(context));
-        if (type.isInstance(message)) return Optional.of(type.cast(message));
-        if (type.isInstance(this)) return Optional.of(type.cast(this));
+        if (java.util.Objects.isNull(type)) {
+            return Optional.empty();
+        }
+        if (type.isInstance(context)) {
+            return Optional.of(type.cast(context));
+        }
+        if (type.isInstance(message)) {
+            return Optional.of(type.cast(message));
+        }
+        if (type.isInstance(this)) {
+            return Optional.of(type.cast(this));
+        }
         return Optional.empty();
     }
 

@@ -40,7 +40,7 @@ public class QuarkusEventHandlerRegistry {
         Set<Bean<?>> beans = beanManager.getBeans(Object.class);
         for (Bean<?> bean : beans) {
             Class<?> beanClass = bean.getBeanClass();
-            if (beanClass == null || beanClass.isSynthetic()) {
+            if (java.util.Objects.isNull(beanClass) || beanClass.isSynthetic()) {
                 continue;
             }
             registerHandlers(beanClass);
@@ -60,7 +60,7 @@ public class QuarkusEventHandlerRegistry {
         if (method.isAnnotationPresent(annotationType)) {
             Annotation annotation = method.getAnnotation(annotationType);
             Class<?> eventType = extractEventType(annotation);
-            if (eventType != null) {
+            if (java.util.Objects.nonNull(eventType)) {
                 handlerTable.put(eventType, method);
                 log.debug("Registered {} handler: {} -> {}#{}",
                         annotationType.getSimpleName(), eventType.getSimpleName(),

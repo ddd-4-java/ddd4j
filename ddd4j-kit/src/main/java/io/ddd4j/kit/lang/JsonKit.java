@@ -141,8 +141,12 @@ public class JsonKit {
      * 对象转 JSON 字符串
      */
     public static String toJson(Object object) {
-        if (object == null) return null;
-        if (object instanceof String) return (String) object;
+        if (java.util.Objects.isNull(object)) {
+            return null;
+        }
+        if (object instanceof String) {
+            return (String) object;
+        }
         try {
             return DEFAULT_OBJECT_MAPPER.writeValueAsString(object);
         } catch (IOException var2) {
@@ -219,12 +223,14 @@ public class JsonKit {
      * JSON 字符串转对象
      */
     public static <T> T toObject(Object object, Class<T> clazz) {
-        if (object == null) return null;
+        if (java.util.Objects.isNull(object)) {
+            return null;
+        }
         if (!(object instanceof String)) {
             return (T) object;
         }
         String json = (String) object;
-        if (json.isEmpty()) {
+        if (io.ddd4j.kit.lang.StrKit.isEmpty(json)) {
             return null;
         } else {
             try {
@@ -240,12 +246,14 @@ public class JsonKit {
      * JSON 字符串转对象（带 JavaType）
      */
     public static <T> T toObject(Object object, JavaType javaType) {
-        if (object == null) return null;
+        if (java.util.Objects.isNull(object)) {
+            return null;
+        }
         if (!(object instanceof String)) {
             return (T) object;
         }
         String json = (String) object;
-        if (json.isEmpty()) {
+        if (io.ddd4j.kit.lang.StrKit.isEmpty(json)) {
             return null;
         } else {
             try {
@@ -261,12 +269,14 @@ public class JsonKit {
      * JSON 字符串转列表
      */
     public static <T> List<T> toList(Object object, Class<T> beanType) {
-        if (object == null) return new ArrayList<>();
+        if (java.util.Objects.isNull(object)) {
+            return new ArrayList<>();
+        }
         if (!(object instanceof String)) {
             return (List<T>) object;
         }
         String jsonArray = (String) object;
-        if (jsonArray.isEmpty()) {
+        if (io.ddd4j.kit.lang.StrKit.isEmpty(jsonArray)) {
             return null;
         }
         JavaType javaType = DEFAULT_OBJECT_MAPPER.getTypeFactory().constructParametricType(List.class, new Class[]{beanType});
@@ -283,12 +293,14 @@ public class JsonKit {
      * JSON 字符串转对象（带 TypeReference）
      */
     public static <T> T toPojo(Object object, TypeReference<T> typeReference) {
-        if (object == null) return null;
+        if (java.util.Objects.isNull(object)) {
+            return null;
+        }
         if (!(object instanceof String)) {
             return (T) object;
         }
         String json = (String) object;
-        if (json.isEmpty()) {
+        if (io.ddd4j.kit.lang.StrKit.isEmpty(json)) {
             return null;
         } else {
             try {

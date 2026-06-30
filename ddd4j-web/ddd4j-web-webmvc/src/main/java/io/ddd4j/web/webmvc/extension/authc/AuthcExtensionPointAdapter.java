@@ -29,15 +29,15 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
-        if (request == null) {
+        if (java.util.Objects.isNull(request)) {
             return null;
         }
         String authHeader = request.getHeader(AUTHORIZATION_HEADER);
-        if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
+        if (java.util.Objects.nonNull(authHeader) && authHeader.startsWith(BEARER_PREFIX)) {
             return authHeader.substring(BEARER_PREFIX.length()).trim();
         }
         String tokenParam = request.getParameter("token");
-        if (tokenParam != null && !tokenParam.isBlank()) {
+        if (java.util.Objects.nonNull(tokenParam) && !!org.springframework.util.StringUtils.hasText(tokenParam)) {
             return tokenParam.trim();
         }
         return null;
@@ -45,13 +45,13 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     @Override
     public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
-        if (request == null || params == null) {
+        if (java.util.Objects.isNull(request) || java.util.Objects.isNull(params)) {
             return;
         }
         Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames != null && headerNames.hasMoreElements()) {
+        while (java.util.Objects.nonNull(headerNames) && headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
-            if (name != null && name.toLowerCase().startsWith("x-")) {
+            if (java.util.Objects.nonNull(name) && name.toLowerCase().startsWith("x-")) {
                 params.putIfAbsent(name, request.getHeader(name));
             }
         }
@@ -59,14 +59,14 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     @Override
     public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
-        if (request == null || params == null) {
+        if (java.util.Objects.isNull(request) || java.util.Objects.isNull(params)) {
             return;
         }
         Map<String, String[]> paramMap = request.getParameterMap();
-        if (paramMap != null) {
+        if (java.util.Objects.nonNull(paramMap)) {
             for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
                 String[] values = entry.getValue();
-                if (values != null && values.length > 0) {
+                if (java.util.Objects.nonNull(values) && values.length > 0) {
                     params.putIfAbsent(entry.getKey(), values.length == 1 ? values[0] : values);
                 }
             }

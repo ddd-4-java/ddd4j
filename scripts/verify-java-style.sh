@@ -2,13 +2,14 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CHECKSTYLE_VERSION="${CHECKSTYLE_VERSION:-10.21.4}"
-CHECKSTYLE_JAR="${HOME}/.m2/repository/com/puppycrawl/tools/checkstyle/${CHECKSTYLE_VERSION}/checkstyle-${CHECKSTYLE_VERSION}-all.jar"
 CHECKSTYLE_CONFIG="${ROOT_DIR}/tools/checkstyle/need-braces-checkstyle.xml"
 
 cd "${ROOT_DIR}"
 
-mapfile -t JAVA_FILES < <(find . \
+JAVA_FILES=()
+while IFS= read -r file; do
+  JAVA_FILES+=("${file}")
+done < <(find . \
   \( -path '*/src/main/java/*' -o -path '*/src/test/java/*' \) \
   -type f -name '*.java' \
   ! -path '*/target/*' \
@@ -20,14 +21,12 @@ if [[ "${#JAVA_FILES[@]}" -eq 0 ]]; then
   exit 0
 fi
 
-if [[ ! -f "${CHECKSTYLE_JAR}" ]]; then
-  mvn -q -N org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get \
-    -Dartifact="com.puppycrawl.tools:checkstyle:${CHECKSTYLE_VERSION}:jar:all" >/dev/null
-fi
-
 TMP_MATCHES="$(mktemp)"
+TMP_DIR="$(mktemp -d)"
+TMP_POM="${TMP_DIR}/pom.xml"
 cleanup() {
   rm -f "${TMP_MATCHES}"
+  rm -rf "${TMP_DIR}"
 }
 trap cleanup EXIT
 
@@ -45,7 +44,7 @@ run_guard() {
   echo "[PASS] ${description}"
 }
 
-run_guard "forbid object null comparisons" '(?<![\w.])(?:this\.)?[\w$<>\[\].()]+?\s*(?:==|!=)\s*null'
+run_guard "forbid object null comparisons" '^(?!\s*(?:\*|//)).*(?<![\w.])(?:this\.)?[\w$<>\[\].()]+?\s*(?:==|!=)\s*null'
 run_guard "forbid String.isBlank()" '\.isBlank\(\)'
 run_guard "forbid trim().isEmpty()" 'trim\(\)\.isEmpty\(\)'
 run_guard "forbid manual string null-or-empty checks" '(==\s*null\s*\|\|\s*[^;]*\.isEmpty\(\))|(!=\s*null\s*&&\s*[^;]*!\s*[^;]*\.isEmpty\(\))'
@@ -55,6 +54,22 @@ run_guard "forbid direct logger factory usage in application code" 'LoggerFactor
   --glob '!**/src/test/**' \
   --glob '!**/src/main/java/**/RobotLogbackAppendService.java'
 
-java -jar "${CHECKSTYLE_JAR}" -c "${CHECKSTYLE_CONFIG}" "${JAVA_FILES[@]}"
+cat > "${TMP_POM}" <<EOF
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.ddd4j.tools</groupId>
+  <artifactId>java-style-check</artifactId>
+  <version>1.0.0</version>
+</project>
+EOF
+
+mvn -q -f "${TMP_POM}" org.apache.maven.plugins:maven-checkstyle-plugin:3.6.0:check \
+  -Dcheckstyle.config.location="${CHECKSTYLE_CONFIG}" \
+  -Dcheckstyle.includes='**/src/main/java/**/*.java,**/src/test/java/**/*.java' \
+  -Dcheckstyle.excludes='**/target/**,**/.idea/**' \
+  -Dcheckstyle.sourceDirectories="${ROOT_DIR}" \
+  -Dcheckstyle.failOnViolation=true
 
 echo "Java style verification passed."

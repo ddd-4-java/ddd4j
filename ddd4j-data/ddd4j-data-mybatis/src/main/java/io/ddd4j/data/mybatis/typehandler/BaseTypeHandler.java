@@ -60,26 +60,28 @@ public abstract class BaseTypeHandler<T> extends org.apache.ibatis.type.BaseType
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
-        if (parameter == null) return;
+        if (java.util.Objects.isNull(parameter)) {
+            return;
+        }
         ps.setString(i, this.convert(parameter));
     }
 
     @Override
     public T getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String str = rs.getString(columnName);
-        return str == null || str.isEmpty() ? null : this.parse(str);
+        return java.util.Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str) ? null : this.parse(str);
     }
 
     @Override
     public T getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String str = rs.getString(columnIndex);
-        return str == null || str.isEmpty() ? null : this.parse(str);
+        return java.util.Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str) ? null : this.parse(str);
     }
 
     @Override
     public T getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String str = cs.getString(columnIndex);
-        return str == null || str.isEmpty() ? null : this.parse(str);
+        return java.util.Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str) ? null : this.parse(str);
     }
 
 }

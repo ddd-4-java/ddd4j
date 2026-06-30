@@ -36,7 +36,7 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object data, MethodParameter returnType, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        if (data == null || returnType.getParameterType().isAssignableFrom(void.class)) {
+        if (java.util.Objects.isNull(data) || returnType.getParameterType().isAssignableFrom(void.class)) {
             return R.ok();
         }
         if (Model.class.isAssignableFrom(returnType.getParameterType())) {

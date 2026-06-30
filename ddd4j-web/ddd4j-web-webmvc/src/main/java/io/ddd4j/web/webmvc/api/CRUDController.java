@@ -22,11 +22,11 @@ public class CRUDController<M extends Model, Q extends Query> {
     protected BaseRepository<M, Q> repository;
 
     private BaseRepository<M, Q> getRepository() {
-        if (this.repository == null) {
+        if (java.util.Objects.isNull(this.repository)) {
             Class<M> modelClass = ReflectKit.getSuperClassGenericType(this.getClass(), 0);
             this.repository = BaseRepository.of(modelClass);
         }
-        if (this.repository == null) {
+        if (java.util.Objects.isNull(this.repository)) {
             log.error("未找到实体仓库");
         }
         return repository;

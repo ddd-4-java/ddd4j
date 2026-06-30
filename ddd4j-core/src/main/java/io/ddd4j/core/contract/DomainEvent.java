@@ -111,9 +111,9 @@ public abstract class DomainEvent<T> implements Serializable {
     }
 
     private static ScheduledExecutorService getScheduler() {
-        if (scheduler == null) {
+        if (java.util.Objects.isNull(scheduler)) {
             synchronized (DomainEvent.class) {
-                if (scheduler == null) {
+                if (java.util.Objects.isNull(scheduler)) {
                     scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
                         Thread t = new Thread(r, "ddd4j-domain-event-scheduler");
                         t.setDaemon(true);
@@ -156,7 +156,9 @@ public abstract class DomainEvent<T> implements Serializable {
      * @return 该租户能否监听
      */
     public boolean tenantIn(String... tenantIds) {
-        if (tenantIds == null) return false;
+        if (java.util.Objects.isNull(tenantIds)) {
+            return false;
+        }
         return Arrays.asList(tenantIds).contains(ThreadContext.get(ContextConstants.TENANT_ID));
     }
 
@@ -168,7 +170,9 @@ public abstract class DomainEvent<T> implements Serializable {
      * @return 该条件下能否监听
      */
     public <S> boolean supports(S... supports) {
-        if (this.supports == null || supports == null) return false;
+        if (java.util.Objects.isNull(this.supports) || java.util.Objects.isNull(supports)) {
+            return false;
+        }
         List<S> supportList = Arrays.asList(supports);
         for (Object support : this.supports) {
             if (supportList.contains(support)) {
@@ -185,7 +189,7 @@ public abstract class DomainEvent<T> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public <R> R publish() {
-        if (eventPublisher == null) {
+        if (java.util.Objects.isNull(eventPublisher)) {
             throw new IllegalStateException(
                     "DomainEventPublisher not registered. Call DomainEvent.registerPublisher() or use framework adapter.");
         }

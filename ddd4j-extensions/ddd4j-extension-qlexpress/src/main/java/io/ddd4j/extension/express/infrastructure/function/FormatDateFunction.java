@@ -43,15 +43,15 @@ public class FormatDateFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (parameters == null || parameters.size() < 2) {
+        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("formatDate函数需要2个参数：date和pattern");
         }
 
         Object dateObj = getParameterValue(parameters, 0, qContext);
         Object patternObj = getParameterValue(parameters, 1, qContext);
-        String pattern = patternObj != null ? patternObj.toString() : null;
+        String pattern = java.util.Objects.nonNull(patternObj) ? patternObj.toString() : null;
 
-        if (dateObj == null) {
+        if (java.util.Objects.isNull(dateObj)) {
             return null;
         }
 
@@ -71,7 +71,7 @@ public class FormatDateFunction implements CustomFunction {
      */
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
-            if (parameters.get(index) != null) {
+            if (java.util.Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);

@@ -38,7 +38,7 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return null;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -53,7 +53,9 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (ruleCode == null || ruleCode.trim().isEmpty() || rule == null) {
+        if (java.util.Objects.isNull(ruleCode)
+                || !org.springframework.util.StringUtils.hasText(ruleCode)
+                || java.util.Objects.isNull(rule)) {
             return;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -67,7 +69,7 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -80,9 +82,8 @@ public class RedisRuleCacheService implements RuleCacheService {
     @Override
     public void evictAll() {
         Set<String> keys = redisTemplate.keys(RULE_CACHE_PREFIX + "*");
-        if (keys != null && !keys.isEmpty()) {
+        if (java.util.Objects.nonNull(keys) && !keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }
 }
-

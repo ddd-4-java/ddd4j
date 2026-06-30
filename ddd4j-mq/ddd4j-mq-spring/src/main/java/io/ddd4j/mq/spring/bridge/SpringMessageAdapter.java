@@ -37,7 +37,7 @@ public final class SpringMessageAdapter {
      * @return 纯 Java 消息信封
      */
     public static <T> MQMessage<T> fromSpring(Message<T> springMessage) {
-        if (springMessage == null) {
+        if (java.util.Objects.isNull(springMessage)) {
             return null;
         }
         MessageHeaders headers = springMessage.getHeaders();
@@ -55,23 +55,23 @@ public final class SpringMessageAdapter {
      * @return Spring 消息
      */
     public static <T> Message<T> toSpring(MQMessage<T> mqMessage) {
-        if (mqMessage == null) {
+        if (java.util.Objects.isNull(mqMessage)) {
             return null;
         }
         MessageBuilder<T> builder = MessageBuilder.withPayload(mqMessage.getPayload());
         Map<String, Object> headers = mqMessage.getHeaders();
-        if (headers != null && !headers.isEmpty()) {
+        if (java.util.Objects.nonNull(headers) && !headers.isEmpty()) {
             builder.copyHeaders(headers);
         }
         String messageId = mqMessage.getMessageId();
-        if (messageId != null) {
+        if (java.util.Objects.nonNull(messageId)) {
             try {
                 builder.setHeader(MessageHeaders.ID, UUID.fromString(messageId));
             } catch (IllegalArgumentException ignored) {
                 builder.setHeader(MessageHeaders.ID, UUID.randomUUID());
             }
         }
-        if (mqMessage.getCorrelationId() != null) {
+        if (java.util.Objects.nonNull(mqMessage.getCorrelationId())) {
             builder.setHeader("ddd4j.correlation.id", mqMessage.getCorrelationId());
         }
         return builder.build();
@@ -80,28 +80,28 @@ public final class SpringMessageAdapter {
     // ── 私有工具 ──
 
     private static Map<String, Object> headersToMap(MessageHeaders headers) {
-        if (headers == null) {
+        if (java.util.Objects.isNull(headers)) {
             return new HashMap<>();
         }
         return new HashMap<>(headers);
     }
 
     private static String extractMessageId(MessageHeaders headers) {
-        if (headers == null) {
+        if (java.util.Objects.isNull(headers)) {
             return null;
         }
         Object id = headers.get(MessageHeaders.ID);
-        if (id == null) {
+        if (java.util.Objects.isNull(id)) {
             id = headers.get("ddd4j.message.id");
         }
-        return id == null ? null : String.valueOf(id);
+        return java.util.Objects.isNull(id) ? null : String.valueOf(id);
     }
 
     private static String extractCorrelationId(MessageHeaders headers) {
-        if (headers == null) {
+        if (java.util.Objects.isNull(headers)) {
             return null;
         }
         Object id = headers.get("ddd4j.correlation.id");
-        return id == null ? null : String.valueOf(id);
+        return java.util.Objects.isNull(id) ? null : String.valueOf(id);
     }
 }

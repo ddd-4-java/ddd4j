@@ -32,7 +32,7 @@ public class NatsMQEventPublisher implements MQEventPublisher {
     public <T extends MQEvent> void publish(T event, MQDestination destination) {
         Objects.requireNonNull(event, "event");
         Objects.requireNonNull(destination, "destination");
-        if (connection == null) {
+        if (java.util.Objects.isNull(connection)) {
             throw new IllegalStateException("NATS Connection is not available; configure ddd4j.mq.nats.servers");
         }
 
@@ -43,7 +43,7 @@ public class NatsMQEventPublisher implements MQEventPublisher {
         if (!StrKit.isNotBlank(event.getNamespace())) {
             event.setNamespace(properties.getNamespace());
         }
-        if (event.getMsgId() == null) {
+        if (java.util.Objects.isNull(event.getMsgId())) {
             event.setMsgId(String.valueOf(System.currentTimeMillis()));
         }
 

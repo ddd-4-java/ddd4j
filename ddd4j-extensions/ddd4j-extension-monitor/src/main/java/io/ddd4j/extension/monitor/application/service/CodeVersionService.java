@@ -28,7 +28,7 @@ public class CodeVersionService implements ApplicationListener<ApplicationEvent>
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (!(event instanceof ContextRefreshedEvent refreshed) || refreshed.getApplicationContext().getParent() != null) {
+        if (!(event instanceof ContextRefreshedEvent refreshed) || java.util.Objects.nonNull(refreshed.getApplicationContext().getParent())) {
             return;
         }
         try {
@@ -44,7 +44,7 @@ public class CodeVersionService implements ApplicationListener<ApplicationEvent>
             this.markdownTextAppend(sb, "提交用户", CODE_VERSION.getCommitUser());
             this.markdownTextAppend(sb, "提交信息", CODE_VERSION.getCommitMessage());
             this.markdownTextAppend(sb, "提交时间", CODE_VERSION.getCommitTime());
-            if (projectStackTrace != null) {
+            if (java.util.Objects.nonNull(projectStackTrace)) {
                 this.markdownTextAppend(sb, "StackTraces", projectStackTrace);
             }
             sender.send(sb.toString());

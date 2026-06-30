@@ -92,7 +92,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     public void addInterceptors(InterceptorRegistry registry) {
-        if (baseWebInterceptors != null && !baseWebInterceptors.isEmpty()) {
+        if (java.util.Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {
             baseWebInterceptors.forEach(baseInterceptor -> {
                 log.debug("Loading {}", baseInterceptor.getClass().getSimpleName());
                 registry.addInterceptor(baseInterceptor).addPathPatterns(baseInterceptor.pathPatterns()).excludePathPatterns(baseInterceptor.excludePathPatterns());

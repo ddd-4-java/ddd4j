@@ -136,7 +136,7 @@ public class CleanArchitectureChecker {
     private void checkArchUnitRules(String sourceRoot) {
         // 尝试 importPath：优先用已编译的 class，否则用源文件目录
         JavaClasses classes = importClasses(sourceRoot);
-        if (classes == null || classes.isEmpty()) {
+        if (java.util.Objects.isNull(classes) || classes.isEmpty()) {
             log.debug("ArchUnit: 未找到可分析的 class 文件，跳过依赖检查");
             return;
         }
@@ -145,16 +145,16 @@ public class CleanArchitectureChecker {
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_WEB, classes);
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE, classes);
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK, classes);
-        if (domainEntityAnnotation != null) {
+        if (java.util.Objects.nonNull(domainEntityAnnotation)) {
             checkArchRule(CleanDDDLayerRules.domainEntityInDomain(domainEntityAnnotation), classes);
         }
-        if (domainServiceAnnotation != null) {
+        if (java.util.Objects.nonNull(domainServiceAnnotation)) {
             checkArchRule(CleanDDDLayerRules.domainServiceInDomain(domainServiceAnnotation), classes);
         }
-        if (applicationServiceAnnotation != null) {
+        if (java.util.Objects.nonNull(applicationServiceAnnotation)) {
             checkArchRule(CleanDDDLayerRules.applicationServiceInApp(applicationServiceAnnotation), classes);
         }
-        if (domainRepositoryAnnotation != null) {
+        if (java.util.Objects.nonNull(domainRepositoryAnnotation)) {
             checkArchRule(CleanDDDLayerRules.repositoryImplInInfrastructure(domainRepositoryAnnotation), classes);
         }
     }
@@ -181,10 +181,10 @@ public class CleanArchitectureChecker {
         } catch (AssertionError e) {
             // 把 ArchUnit 的失败信息拆分为单行违规
             String message = e.getMessage();
-            if (message != null) {
+            if (java.util.Objects.nonNull(message)) {
                 for (String line : message.split("\n")) {
                     String trimmed = line.trim();
-                    if (!trimmed.isEmpty() && !trimmed.startsWith("Architecture Violation")) {
+                    if (!io.ddd4j.kit.lang.StrKit.isEmpty(trimmed) && !trimmed.startsWith("Architecture Violation")) {
                         violations.add(trimmed);
                     } else if (trimmed.startsWith("Architecture Violation")) {
                         violations.add(trimmed);

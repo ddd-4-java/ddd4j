@@ -24,15 +24,17 @@ public class I18nKit {
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
     public String get(String source) {
-        if (source == null || source.isEmpty()) return source;
+        if (java.util.Objects.isNull(source) || !org.springframework.util.StringUtils.hasLength(source)) {
+            return source;
+        }
         Locale locale = ThreadContext.get(ContextConstants.LOCALE);
-        if (locale == null) {
+        if (java.util.Objects.isNull(locale)) {
 //            log.debug("处理国际化失败，返回原内容");
             return source;
         }
         try {
             ResourceBundle resourceBundle = ResourceBundle.getBundle(I18N_FILE_PREFIX, locale);
-            if (resourceBundle != null && resourceBundle.containsKey(source)) {
+            if (java.util.Objects.nonNull(resourceBundle) && resourceBundle.containsKey(source)) {
                 return resourceBundle.getString(source);
             }
         } catch (Exception e) {
@@ -50,7 +52,7 @@ public class I18nKit {
     }
 
     private String format(String template, Object... args) {
-        if (template == null || template.isEmpty() || args == null || args.length == 0) {
+        if (java.util.Objects.isNull(template) || !org.springframework.util.StringUtils.hasLength(template) || java.util.Objects.isNull(args) || args.length == 0) {
             return template;
         }
         String placeHolder = "{}";
@@ -109,7 +111,7 @@ public class I18nKit {
      * @return 字符串
      */
     private String utf8Str(Object obj) {
-        if (null == obj) {
+        if (java.util.Objects.isNull(obj)) {
             return null;
         }
 
@@ -136,11 +138,11 @@ public class I18nKit {
      * @return 解码后的字符串
      */
     private String str(byte[] data, Charset charset) {
-        if (data == null) {
+        if (java.util.Objects.isNull(data)) {
             return null;
         }
 
-        if (null == charset) {
+        if (java.util.Objects.isNull(charset)) {
             return new String(data);
         }
         return new String(data, charset);
@@ -154,7 +156,7 @@ public class I18nKit {
      * @return 字符串
      */
     private String str(ByteBuffer data, Charset charset) {
-        if (null == charset) {
+        if (java.util.Objects.isNull(charset)) {
             charset = Charset.defaultCharset();
         }
         return charset.decode(data).toString();
@@ -168,7 +170,7 @@ public class I18nKit {
      * @return 解码后的字符串
      */
     private String str(Byte[] data, Charset charset) {
-        if (data == null) {
+        if (java.util.Objects.isNull(data)) {
             return null;
         }
 
@@ -176,7 +178,7 @@ public class I18nKit {
         Byte dataByte;
         for (int i = 0; i < data.length; i++) {
             dataByte = data[i];
-            bytes[i] = (null == dataByte) ? -1 : dataByte;
+            bytes[i] = (java.util.Objects.isNull(dataByte)) ? -1 : dataByte;
         }
 
         return str(bytes, charset);
@@ -189,7 +191,7 @@ public class I18nKit {
      * @return 数组字符串，与集合转字符串格式相同
      */
     private String toString(Object obj) {
-        if (null == obj) {
+        if (java.util.Objects.isNull(obj)) {
             return null;
         }
 

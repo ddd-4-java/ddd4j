@@ -142,7 +142,7 @@ public class RuleDefinition implements Serializable {
     public RuleDefinition(RuleId ruleId, String ruleCode, String ruleName, String ruleExpression,
                           String ruleDescription, String ruleType, Boolean enabled, Integer priority) {
         this.ruleId = ruleId;
-        this.id = ruleId != null ? ruleId.toLong() : null;
+        this.id = java.util.Objects.nonNull(ruleId) ? ruleId.toLong() : null;
         this.ruleCode = ruleCode;
         this.ruleName = ruleName;
         this.ruleExpression = ruleExpression;
@@ -168,7 +168,7 @@ public class RuleDefinition implements Serializable {
      */
     public RuleDefinition(Long id, String ruleCode, String ruleName, String ruleExpression,
                           String ruleDescription, String ruleType, Boolean enabled, Integer priority) {
-        this(id != null ? RuleId.valueOf(id) : null, ruleCode, ruleName, ruleExpression,
+        this(java.util.Objects.nonNull(id) ? RuleId.valueOf(id) : null, ruleCode, ruleName, ruleExpression,
                 ruleDescription, ruleType, enabled, priority);
     }
 
@@ -211,7 +211,7 @@ public class RuleDefinition implements Serializable {
      * @return true表示规则可用，false表示规则不可用
      */
     public boolean isAvailable() {
-        return enabled != null && enabled;
+        return java.util.Objects.nonNull(enabled) && enabled;
     }
 
     // Getters and Setters
@@ -221,7 +221,7 @@ public class RuleDefinition implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-        if (id != null) {
+        if (java.util.Objects.nonNull(id)) {
             this.ruleId = RuleId.valueOf(id);
         }
     }
@@ -232,7 +232,7 @@ public class RuleDefinition implements Serializable {
 
     public void setRuleId(RuleId ruleId) {
         this.ruleId = ruleId;
-        if (ruleId != null) {
+        if (java.util.Objects.nonNull(ruleId)) {
             this.id = ruleId.toLong();
         }
     }
@@ -425,7 +425,9 @@ public class RuleDefinition implements Serializable {
      * @return true表示是函数规则，false表示是表达式规则
      */
     public boolean isFunctionRule() {
-        return "FUNCTION".equals(ruleType) && functionClass != null && !functionClass.trim().isEmpty();
+        return "FUNCTION".equals(ruleType)
+                && java.util.Objects.nonNull(functionClass)
+                && org.springframework.util.StringUtils.hasText(functionClass);
     }
 
     /**
@@ -434,6 +436,7 @@ public class RuleDefinition implements Serializable {
      * @return true表示是表达式规则，false表示是函数规则
      */
     public boolean isExpressionRule() {
-        return ruleExpression != null && !ruleExpression.trim().isEmpty();
+        return java.util.Objects.nonNull(ruleExpression)
+                && org.springframework.util.StringUtils.hasText(ruleExpression);
     }
 }

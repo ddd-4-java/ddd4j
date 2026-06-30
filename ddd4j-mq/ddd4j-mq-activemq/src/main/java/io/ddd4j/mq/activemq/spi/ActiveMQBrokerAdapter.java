@@ -54,7 +54,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
         try {
             Session session = connection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-            return new ActiveMQEventPublisher(connection(), session, properties, props == null ? mqProperties : props, serialization);
+            return new ActiveMQEventPublisher(connection(), session, properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
         } catch (JMSException ex) {
             throw new IllegalStateException("Create ActiveMQ publisher failed", ex);
         }
@@ -67,7 +67,9 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (message == null) return null;
+        if (java.util.Objects.isNull(message)) {
+            return null;
+        }
         Object session = message.header(ActiveMQMessageAcknowledgment.HEADER_AMQ_SESSION);
         Object msg = message.header(ActiveMQMessageAcknowledgment.HEADER_AMQ_MESSAGE);
         if (session instanceof Session s && msg instanceof Message m) {
@@ -87,7 +89,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() throws Exception {
         Connection c = connectionRef.get();
-        if (c != null) {
+        if (java.util.Objects.nonNull(c)) {
             try { c.close(); } finally { connectionRef.set(null); }
         }
     }
@@ -95,7 +97,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     private synchronized Connection connection() {
         Connection c = connectionRef.get();
         try {
-            if (c == null) {
+            if (java.util.Objects.isNull(c)) {
                 Connection nc = properties.connectionFactory().createConnection();
                 nc.start();
                 connectionRef.set(nc);

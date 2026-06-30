@@ -6,7 +6,7 @@ final class RedisStreamIds {
     }
 
     static long deliveryTag(String id) {
-        if (id == null || id.isBlank()) {
+        if (java.util.Objects.isNull(id) || io.ddd4j.kit.lang.StrKit.isBlank(id)) {
             return 0L;
         }
         int dash = id.indexOf('-');

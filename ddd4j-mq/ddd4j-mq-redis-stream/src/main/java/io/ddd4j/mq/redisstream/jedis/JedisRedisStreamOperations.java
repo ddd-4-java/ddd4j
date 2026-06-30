@@ -37,7 +37,7 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         try {
             jedis.xgroupCreate(stream, group, StreamEntryID.XGROUP_LAST_ENTRY, true);
         } catch (JedisDataException ex) {
-            if (ex.getMessage() == null || !ex.getMessage().contains("BUSYGROUP")) {
+            if (java.util.Objects.isNull(ex.getMessage()) || !ex.getMessage().contains("BUSYGROUP")) {
                 throw ex;
             }
         }
@@ -57,7 +57,7 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         streams.forEach(stream -> offsets.put(stream, StreamEntryID.XREADGROUP_UNDELIVERED_ENTRY));
         Map<String, List<StreamEntry>> records = jedis.xreadGroupAsMap(group, consumer, params, offsets);
         Map<String, List<RedisStreamRecord>> result = new HashMap<>();
-        if (records == null || records.isEmpty()) {
+        if (java.util.Objects.isNull(records) || records.isEmpty()) {
             return result;
         }
         records.forEach((stream, entries) -> {

@@ -36,7 +36,7 @@ public class RobotLogbackAppendService {
     public void init() {
         this.initLoggerContext();
         loggerContext.putProperty("ip", IpUtils.getLocalAddress());
-        if (baseMonitorProperties.getLog().getApp() != null && StrKit.isNotBlank(baseMonitorProperties.getLog().getApp().getProject())) {
+        if (java.util.Objects.nonNull(baseMonitorProperties.getLog().getApp()) && StrKit.isNotBlank(baseMonitorProperties.getLog().getApp().getProject())) {
             loggerContext.putProperty("project", baseMonitorProperties.getLog().getApp().getProject());
         }
         AsyncAppender asyncAppender = this.asyncAppender();
@@ -89,19 +89,19 @@ public class RobotLogbackAppendService {
         ThresholdFilter thresholdFilter = this.buildThresholdFilter();
         asyncAppender.addFilter(thresholdFilter);
         EvaluatorFilter<ILoggingEvent> ignoresFilter = this.ignores();
-        if (ignoresFilter != null) {
+        if (java.util.Objects.nonNull(ignoresFilter)) {
             asyncAppender.addFilter(ignoresFilter);
         }
         EvaluatorFilter<ILoggingEvent> ignoreLogNamesFilter = this.ignoreLogNames();
-        if (ignoreLogNamesFilter != null) {
+        if (java.util.Objects.nonNull(ignoreLogNamesFilter)) {
             asyncAppender.addFilter(ignoreLogNamesFilter);
         }
         EvaluatorFilter<ILoggingEvent> includesFilter = this.includes();
-        if (includesFilter != null) {
+        if (java.util.Objects.nonNull(includesFilter)) {
             asyncAppender.addFilter(includesFilter);
         }
         EvaluatorFilter<ILoggingEvent> keywordExpressionFilter = this.keywordExpression();
-        if (keywordExpressionFilter != null) {
+        if (java.util.Objects.nonNull(keywordExpressionFilter)) {
             asyncAppender.addFilter(keywordExpressionFilter);
         }
         this.addLoggerNameRobotAppender(asyncAppender);
@@ -113,7 +113,7 @@ public class RobotLogbackAppendService {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
         for (String loggerName : config.getAppendLoggerNames()) {
             Logger logger = loggerContext.getLogger(loggerName);
-            if (logger == null) {
+            if (java.util.Objects.isNull(logger)) {
                 log.warn("alarm logger name ={} not found", loggerName);
                 continue;
             }

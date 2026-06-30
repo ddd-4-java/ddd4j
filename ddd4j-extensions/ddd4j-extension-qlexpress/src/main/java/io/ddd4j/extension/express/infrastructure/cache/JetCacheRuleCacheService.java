@@ -103,13 +103,13 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return null;
         }
 
         try {
             RuleDefinition rule = cache.get(ruleCode);
-            if (rule != null) {
+            if (java.util.Objects.nonNull(rule)) {
                 log.debug("从JetCache多级缓存获取规则: {}", ruleCode);
             } else {
                 log.debug("JetCache缓存未命中: {}", ruleCode);
@@ -131,7 +131,9 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (ruleCode == null || ruleCode.trim().isEmpty() || rule == null) {
+        if (java.util.Objects.isNull(ruleCode)
+                || !org.springframework.util.StringUtils.hasText(ruleCode)
+                || java.util.Objects.isNull(rule)) {
             return;
         }
 
@@ -152,7 +154,7 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return;
         }
 

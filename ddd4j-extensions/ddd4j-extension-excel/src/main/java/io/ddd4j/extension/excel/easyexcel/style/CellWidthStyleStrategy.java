@@ -32,7 +32,7 @@ public class CellWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
             if (relativeRowIndex == 1) {
                 int length = cell.getStringCellValue().getBytes().length;
                 Integer maxColumnWidth = maxColumnWidthMap.get(cell.getColumnIndex());
-                if (maxColumnWidth == null || length > maxColumnWidth) {
+                if (java.util.Objects.isNull(maxColumnWidth) || length > maxColumnWidth) {
                     maxColumnWidthMap.put(cell.getColumnIndex(), length);
                     writeSheetHolder.getSheet().setColumnWidth(cell.getColumnIndex(), length * 300);
                 }
@@ -44,7 +44,7 @@ public class CellWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
                     columnWidth = 255;
                 }
                 Integer maxColumnWidth = maxColumnWidthMap.get(cell.getColumnIndex());
-                if (maxColumnWidth == null || columnWidth > maxColumnWidth) {
+                if (java.util.Objects.isNull(maxColumnWidth) || columnWidth > maxColumnWidth) {
                     maxColumnWidthMap.put(cell.getColumnIndex(), columnWidth);
                     writeSheetHolder.getSheet().setColumnWidth(cell.getColumnIndex(), columnWidth * 256);
                 }
@@ -58,7 +58,7 @@ public class CellWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
         } else {
             CellData<?> cellData = cellDataList.get(0);
             CellDataTypeEnum type = cellData.getType();
-            if (type == null) {
+            if (java.util.Objects.isNull(type)) {
                 return -1;
             } else {
                 switch (type) {

@@ -86,6 +86,6 @@ public class RedisStreamMQProperties {
     }
 
     public void setClientType(RedisStreamClientType clientType) {
-        this.clientType = clientType == null ? RedisStreamClientType.JEDIS : clientType;
+        this.clientType = java.util.Objects.isNull(clientType) ? RedisStreamClientType.JEDIS : clientType;
     }
 }

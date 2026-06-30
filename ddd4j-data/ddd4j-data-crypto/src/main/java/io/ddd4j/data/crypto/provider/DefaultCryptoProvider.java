@@ -30,7 +30,7 @@ public class DefaultCryptoProvider implements CryptoProvider {
         CryptoType provider = Optional.ofNullable(cryptoProperties.getType()).orElse(CryptoType.NOOP);
         CryptoStrategy cryptoStrategy = enumMap.get(provider);
         log.debug("CryptoType：{}, Encrypt Strategy : {}", provider, cryptoStrategy);
-        if (cryptoStrategy == null) {
+        if (java.util.Objects.isNull(cryptoStrategy)) {
             throw new IllegalArgumentException("CryptoStrategy not found");
         }
         return cryptoStrategy.encrypt(value, cryptoProperties.getSymmetricAlgorithm(),
@@ -43,7 +43,7 @@ public class DefaultCryptoProvider implements CryptoProvider {
         CryptoType provider = Optional.ofNullable(cryptoProperties.getType()).orElse(CryptoType.NOOP);
         CryptoStrategy cryptoStrategy = enumMap.get(provider);
         log.debug("CryptoType：{}, Decrypt Strategy : {}", provider, cryptoStrategy);
-        if (cryptoStrategy == null) {
+        if (java.util.Objects.isNull(cryptoStrategy)) {
             throw new IllegalArgumentException("CryptoStrategy not found");
         }
         return cryptoStrategy.decrypt(value, cryptoProperties.getSymmetricAlgorithm(),
@@ -56,7 +56,7 @@ public class DefaultCryptoProvider implements CryptoProvider {
         CryptoType provider = Optional.ofNullable(cryptoProperties.getType()).orElse(CryptoType.NOOP);
         CryptoStrategy cryptoStrategy = enumMap.get(provider);
         log.debug("CryptoType：{}, Hmac Strategy : {}", provider, cryptoStrategy);
-        if (cryptoStrategy == null) {
+        if (java.util.Objects.isNull(cryptoStrategy)) {
             throw new IllegalArgumentException("CryptoStrategy not found");
         }
         return cryptoStrategy.hmac(value, cryptoProperties.getHmacAlgorithm(), cryptoProperties.getKey(), cryptoProperties.getIv(),

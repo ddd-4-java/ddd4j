@@ -49,8 +49,12 @@ public class MicaMqttMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (type == null) return Optional.empty();
-        if (type.isInstance(this)) return Optional.of(type.cast(this));
+        if (java.util.Objects.isNull(type)) {
+            return Optional.empty();
+        }
+        if (type.isInstance(this)) {
+            return Optional.of(type.cast(this));
+        }
         return Optional.empty();
     }
 

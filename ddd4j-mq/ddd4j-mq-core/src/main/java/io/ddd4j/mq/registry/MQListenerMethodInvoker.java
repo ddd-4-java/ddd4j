@@ -39,7 +39,7 @@ public class MQListenerMethodInvoker {
     }
 
     private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     /**
@@ -75,11 +75,11 @@ public class MQListenerMethodInvoker {
      */
     public Object resolvePayload(MQListenerDefinition definition, MQMessage<?> message) {
         Class<?> payloadType = resolvePayloadType(definition.getMethod());
-        if (payloadType == null || payloadType == Void.class) {
+        if (java.util.Objects.isNull(payloadType) || payloadType == Void.class) {
             return message.getPayload();
         }
         Object raw = message.getPayload();
-        if (raw == null) {
+        if (java.util.Objects.isNull(raw)) {
             return null;
         }
         if (payloadType.isInstance(raw)) {
@@ -137,7 +137,7 @@ public class MQListenerMethodInvoker {
      * 将方法返回值映射为 {@link AckDisposition}。
      */
     private AckDisposition resolveDisposition(Object result) {
-        if (result == null) {
+        if (java.util.Objects.isNull(result)) {
             return AckDisposition.ACK;
         }
         if (result instanceof AckDisposition) {

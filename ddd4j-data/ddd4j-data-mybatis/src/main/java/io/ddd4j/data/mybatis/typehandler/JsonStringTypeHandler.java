@@ -43,10 +43,12 @@ public abstract class JsonStringTypeHandler<T> extends BaseTypeHandler<T> {
 
     @Override
     protected T parse(String json) {
-        if (this.componentType != null) {
+        if (java.util.Objects.nonNull(this.componentType)) {
             // Json 解析为对象数组
             List<?> list = JsonKit.toList(json, this.componentType);
-            if (list == null) return null;
+            if (java.util.Objects.isNull(list)) {
+                return null;
+            }
             return (T) list.toArray(this.componentArray);
         }
         // Json 解析为对象

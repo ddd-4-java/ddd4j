@@ -73,19 +73,19 @@ public abstract class Query extends Page {
     @SneakyThrows
     public static Query convert(String model, Map<String, Object> queryMap) {
         Class<Query> queryClass = MappingKit.get("MODEL_QUERY", Model.ofName(model));
-        if (queryClass == null) {
+        if (java.util.Objects.isNull(queryClass)) {
             throw new ServiceException("Query not found");
         }
         // 转两次，为了兼容日期类型的转换，否则String转成Date类型会出错
         Query query = JsonKit.toObject(JsonKit.toJson(queryMap), queryClass);
-        if (query == null) {
+        if (java.util.Objects.isNull(query)) {
             query = queryClass.getDeclaredConstructor().newInstance();
         }
         return query;
     }
 
     public <Q extends Query> Q select(String... columns) {
-        if (columns != null) {
+        if (java.util.Objects.nonNull(columns)) {
             this.setSelect(String.join(split, columns));
         }
         return (Q) this;
@@ -112,7 +112,7 @@ public abstract class Query extends Page {
     }
 
     public <Q extends Query> Q orderBy(String... orderBys) {
-        if (orderBys != null) {
+        if (java.util.Objects.nonNull(orderBys)) {
             this.orderBys = String.join(split, orderBys);
         }
         return (Q) this;
@@ -120,7 +120,7 @@ public abstract class Query extends Page {
 
     // or查询
     public <Q extends Query> Q ors(Object... ors) {
-        if (ors != null) {
+        if (java.util.Objects.nonNull(ors)) {
             if (ors.length % 2 != 0) {
                 throw new IllegalArgumentException("ors.length must not be singular");
             }
@@ -157,8 +157,8 @@ public abstract class Query extends Page {
 
     // 聚合哪些数据
     public <Q extends Query> Q fills(String... fills) {
-        if (fills != null) {
-            if (this.fills != null) {
+        if (java.util.Objects.nonNull(fills)) {
+            if (java.util.Objects.nonNull(this.fills)) {
                 this.setFills(this.fills + split + String.join(split, fills));
             } else {
                 this.setFills(String.join(split, fills));
@@ -169,7 +169,7 @@ public abstract class Query extends Page {
 
     // 是否聚合
     public Boolean fill(String fill) {
-        if (this.fills == null || this.fills.isEmpty()) {
+        if (java.util.Objects.isNull(this.fills) || this.fills.isEmpty()) {
             return false;
         }
         List<String> fills = Arrays.asList(this.fills.split(split));
@@ -178,7 +178,7 @@ public abstract class Query extends Page {
 
     // 执行自定义SQL后再聚合。如果通过当前Query找不到仓库则忽略
     public void doFills(List<Model> models) {
-        if (models != null && !models.isEmpty()) {
+        if (java.util.Objects.nonNull(models) && !models.isEmpty()) {
             try {
                 repository().fill(this, models);
             } catch (IllegalArgumentException ignore) {
@@ -227,7 +227,9 @@ public abstract class Query extends Page {
 
     public Map<String, Object> map() {
         List<Map<String, Object>> result = maps();
-        if (result == null || result.isEmpty()) return Collections.emptyMap();
+        if (java.util.Objects.isNull(result) || result.isEmpty()) {
+            return Collections.emptyMap();
+        }
         return result.get(0);
     }
 
@@ -238,7 +240,7 @@ public abstract class Query extends Page {
 
     public <M extends Model> M one(String ifNull, Object... params) {
         M one = one();
-        if (one == null) {
+        if (java.util.Objects.isNull(one)) {
             log.warn("{}: {}", ifNull, JsonKit.toJson(this));
             throw new ServiceException(ifNull, params);
         }
@@ -252,7 +254,7 @@ public abstract class Query extends Page {
 
     public <M extends Model> M first(String ifNull, Object... params) {
         M first = first();
-        if (first == null) {
+        if (java.util.Objects.isNull(first)) {
             log.warn("{}: {}", ifNull, JsonKit.toJson(this));
             throw new ServiceException(ifNull, params);
         }
@@ -294,7 +296,7 @@ public abstract class Query extends Page {
 
     public <M extends Model> Page<M> page(String ifEmpty, Object... params) {
         Page<M> page = page();
-        if (page == null || page.isEmpty()) {
+        if (java.util.Objects.isNull(page) || page.isEmpty()) {
             log.warn("{}: {}", ifEmpty, JsonKit.toJson(this));
             throw new ServiceException(ifEmpty, params);
         }
@@ -308,7 +310,7 @@ public abstract class Query extends Page {
 
     public <M extends Model> List<M> list(String ifEmpty, Object... params) {
         List<M> list = list();
-        if (list == null || list.isEmpty()) {
+        if (java.util.Objects.isNull(list) || list.isEmpty()) {
             log.warn("{}: {}", ifEmpty, JsonKit.toJson(this));
             throw new ServiceException(ifEmpty, params);
         }

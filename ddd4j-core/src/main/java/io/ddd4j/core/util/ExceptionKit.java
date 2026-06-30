@@ -22,23 +22,27 @@ public class ExceptionKit {
         List<StackTraceElement> stackTraceElements = new ArrayList<>(e.getStackTrace().length);
         Collections.addAll(stackTraceElements, e.getStackTrace());
         String projectStackTraces = getProjectStackTraces(stackTraceElements);
-        if (projectStackTraces != null) {
+        if (java.util.Objects.nonNull(projectStackTraces)) {
             return projectStackTraces;
         }
         return e.getLocalizedMessage();
     }
 
     public String getProjectStackTraces(List<StackTraceElement> stackTraceElements) {
-        if (stackTraceElements == null) return null;
+        if (java.util.Objects.isNull(stackTraceElements)) {
+            return null;
+        }
         String projectPackage = BaseContext.get(ContextConstants.PROJECT_PACKAGE);
-        if (projectPackage != null) {
+        if (java.util.Objects.nonNull(projectPackage)) {
             StringJoiner stringJoiner = new StringJoiner("; ", "", "");
             for (int i = 0; i < stackTraceElements.size(); i++) {
                 StackTraceElement s = stackTraceElements.get(i);
                 String fileName = s.getFileName();
                 int lineNumber = s.getLineNumber();
                 // 忽略条件
-                if (fileName == null || lineNumber == -1) continue;
+                if (java.util.Objects.isNull(fileName) || lineNumber == -1) {
+                    continue;
+                }
                 if (i == 0) {
                     if (s.getClassName().startsWith(projectPackage)) {
                         stringJoiner.add(fileName + "(" + lineNumber + ")");

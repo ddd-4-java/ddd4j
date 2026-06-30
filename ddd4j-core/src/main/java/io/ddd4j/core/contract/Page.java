@@ -49,64 +49,64 @@ public class Page<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return this.records != null && !this.records.isEmpty() ? this.records.iterator() : null;
+        return java.util.Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : null;
     }
 
     @Override
     public Spliterator<T> spliterator() {
-        return this.records != null ? this.records.spliterator() : null;
+        return java.util.Objects.nonNull(this.records) ? this.records.spliterator() : null;
     }
 
     @Override
     public void forEach(Consumer<? super T> action) {
-        if (this.records != null) {
+        if (java.util.Objects.nonNull(this.records)) {
             this.records.forEach(action);
         }
     }
 
     @JsonIgnore
     public boolean isEmpty() {
-        return this.records == null || this.records.isEmpty();
+        return java.util.Objects.isNull(this.records) || this.records.isEmpty();
     }
 
     public boolean contains(Object o) {
-        return o != null && this.records != null && this.records.contains(o);
+        return java.util.Objects.nonNull(o) && java.util.Objects.nonNull(this.records) && this.records.contains(o);
     }
 
     public boolean add(T t) {
-        return this.records != null && this.records.add(t);
+        return java.util.Objects.nonNull(this.records) && this.records.add(t);
     }
 
     public boolean remove(Object o) {
-        return this.records != null && this.records.remove(o);
+        return java.util.Objects.nonNull(this.records) && this.records.remove(o);
     }
 
     public boolean containsAll(Collection<?> c) {
-        return this.records != null && this.records.containsAll(c);
+        return java.util.Objects.nonNull(this.records) && this.records.containsAll(c);
     }
 
     public boolean addAll(Collection<? extends T> c) {
-        return this.records != null && this.records.addAll(c);
+        return java.util.Objects.nonNull(this.records) && this.records.addAll(c);
     }
 
     public boolean removeAll(Collection<?> c) {
-        return this.records != null && this.records.removeAll(c);
+        return java.util.Objects.nonNull(this.records) && this.records.removeAll(c);
     }
 
     public boolean removeIf(Predicate<? super T> filter) {
-        return this.records != null && this.records.removeIf(filter);
+        return java.util.Objects.nonNull(this.records) && this.records.removeIf(filter);
     }
 
     public boolean retainAll(Collection<?> c) {
-        return this.records != null && this.records.retainAll(c);
+        return java.util.Objects.nonNull(this.records) && this.records.retainAll(c);
     }
 
     public Stream<T> stream() {
-        return this.records != null ? this.records.stream() : new ArrayList<T>().stream();
+        return java.util.Objects.nonNull(this.records) ? this.records.stream() : new ArrayList<T>().stream();
     }
 
     public Page<T> peek(Consumer<? super T> action) {
-        if (this.records != null) {
+        if (java.util.Objects.nonNull(this.records)) {
             this.records.forEach(action);
         }
         return this;
@@ -133,7 +133,7 @@ public class Page<T> implements Iterable<T> {
     }
 
     public Map<String, Object> extras() {
-        if (extras == null) {
+        if (java.util.Objects.isNull(extras)) {
             extras = new HashMap<>();
         }
         return extras;

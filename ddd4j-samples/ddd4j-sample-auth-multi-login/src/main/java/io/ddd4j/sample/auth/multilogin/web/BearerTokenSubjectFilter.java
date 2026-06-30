@@ -25,7 +25,7 @@ public class BearerTokenSubjectFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
-        if (authorization != null && authorization.startsWith(BEARER_PREFIX)) {
+        if (java.util.Objects.nonNull(authorization) && authorization.startsWith(BEARER_PREFIX)) {
             subject.bind(authorization.substring(BEARER_PREFIX.length()));
         }
         try {

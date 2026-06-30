@@ -40,7 +40,7 @@ public class SqsConsumerEndpointRegistrar {
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
         String queueUrl = definition.getTopic();
-        if (queueUrl == null || !queueUrl.startsWith("http")) {
+        if (java.util.Objects.isNull(queueUrl) || !queueUrl.startsWith("http")) {
             throw new IllegalArgumentException("SQS MQDestination.topic must be a queueUrl (https://...). Got: " + queueUrl);
         }
         AtomicBoolean running = new AtomicBoolean(true);
@@ -50,7 +50,9 @@ public class SqsConsumerEndpointRegistrar {
             return t;
         });
         exec.scheduleWithFixedDelay(() -> {
-            if (!running.get()) return;
+            if (!running.get()) {
+                return;
+            }
             try {
                 List<Message> messages = client.receiveMessage(ReceiveMessageRequest.builder()
                                 .queueUrl(queueUrl)
@@ -91,16 +93,20 @@ public class SqsConsumerEndpointRegistrar {
     }
 
     private static String attr(Message message, String key) {
-        if (message.messageAttributes() == null) return null;
+        if (java.util.Objects.isNull(message.messageAttributes())) {
+            return null;
+        }
         var v = message.messageAttributes().get(key);
-        return v == null ? null : v.stringValue();
+        return java.util.Objects.isNull(v) ? null : v.stringValue();
     }
 
     private MQMessage<String> toMessage(Message message, SqsClient client, String queueUrl) {
         Map<String, Object> headers = new HashMap<>();
-        if (message.messageAttributes() != null) {
+        if (java.util.Objects.nonNull(message.messageAttributes())) {
             message.messageAttributes().forEach((k, v) -> {
-                if (v.stringValue() != null) headers.put(k, v.stringValue());
+                if (java.util.Objects.nonNull(v.stringValue())) {
+                    headers.put(k, v.stringValue());
+                }
             });
         }
         headers.put(SqsMessageAcknowledgment.HEADER_SQS_CLIENT, client);

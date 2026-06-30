@@ -101,12 +101,12 @@ public class MQEvent implements Serializable {
      */
     public void publish(String topic, String tag, String tenantId) {
         setTopic(topic);
-        if (getTopic() == null) {
+        if (java.util.Objects.isNull(getTopic())) {
             setTopic(DomainEvent.getDefaultTopic());
         }
         setTag(tag);
-        setTenantId(tenantId != null ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
-        setMsgId(getMsgId() == null ? String.valueOf(System.currentTimeMillis()) : getMsgId());
+        setTenantId(java.util.Objects.nonNull(tenantId) ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
+        setMsgId(java.util.Objects.isNull(getMsgId()) ? String.valueOf(System.currentTimeMillis()) : getMsgId());
 
         // 根据发布模式自动决定推送方式
         switch (publishMode) {
@@ -138,7 +138,7 @@ public class MQEvent implements Serializable {
      */
     private void publishViaDomainEvent() {
         DomainEventPublisher publisher = DomainEvent.getPublisher();
-        if (publisher != null) {
+        if (java.util.Objects.nonNull(publisher)) {
             publisher.publish(new MQEventAsDomainEvent(this));
         }
     }
@@ -149,7 +149,7 @@ public class MQEvent implements Serializable {
      * @return 是否已成功发布
      */
     private boolean publishViaMQEventPublisher() {
-        if (mqEventPublisher == null) {
+        if (java.util.Objects.isNull(mqEventPublisher)) {
             return false;
         }
         try {

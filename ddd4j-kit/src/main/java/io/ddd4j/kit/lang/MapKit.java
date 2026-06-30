@@ -17,7 +17,7 @@ import java.util.*;
 public class MapKit extends MapUtil {
 
     public <T> T get(Map map, String key) {
-        if (map == null) {
+        if (java.util.Objects.isNull(map)) {
             return null;
         }
         return (T) map.get(key);
@@ -25,7 +25,7 @@ public class MapKit extends MapUtil {
 
     public <T> T get(Map map, String key, T defaultValue) {
         T result = get(map, key);
-        if (result == null) {
+        if (java.util.Objects.isNull(result)) {
             return defaultValue;
         }
         return result;
@@ -39,7 +39,7 @@ public class MapKit extends MapUtil {
      * @return
      */
     public <T> T search(Map map, String path) {
-        if (map == null) {
+        if (java.util.Objects.isNull(map)) {
             return null;
         }
         String[] keyArray = path.split("\\.");
@@ -48,13 +48,13 @@ public class MapKit extends MapUtil {
         } else {
             Map value = null;
             for (int i = 0; i < keyArray.length - 1; i++) {
-                if (value == null) {
+                if (java.util.Objects.isNull(value)) {
                     value = get(map, keyArray[i]);
                 } else if (value.containsKey(keyArray[i])) {
                     value = (Map) value.get(keyArray[i]);
                 }
             }
-            if (value == null) {
+            if (java.util.Objects.isNull(value)) {
                 return null;
             }
             return (T) value.get(keyArray[keyArray.length - 1]);
@@ -70,14 +70,14 @@ public class MapKit extends MapUtil {
      */
     public <T> T search(Map map, String keyword, T defaultValue) {
         T result = search(map, keyword);
-        if (result == null) {
+        if (java.util.Objects.isNull(result)) {
             return defaultValue;
         }
         return result;
     }
 
     public boolean has(Map map, String keyword) {
-        return search(map, keyword) != null;
+        return java.util.Objects.nonNull(search(map, keyword));
     }
 
     public <T> T of(Object obj) {

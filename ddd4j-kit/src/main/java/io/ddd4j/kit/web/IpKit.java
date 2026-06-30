@@ -90,7 +90,7 @@ public class IpKit extends Ipv4Util {
             paramMap.put("ip", ip);
             // 带参GET请求
             String returnStr = HttpUtil.get(url, paramMap);
-            if (returnStr != null) {
+            if (java.util.Objects.nonNull(returnStr)) {
                 JSONObject rs = JSONUtil.parseObj(returnStr);
                 String region = rs.getStr("addr");
                 return region;
@@ -111,7 +111,7 @@ public class IpKit extends Ipv4Util {
             paramMap.put("ip", ip);
             // 带参GET请求
             String returnStr = HttpUtil.get(url, paramMap);
-            if (returnStr != null) {
+            if (java.util.Objects.nonNull(returnStr)) {
                 JSONObject rs = JSONUtil.parseObj(returnStr);
                 Map<String, String> map = new HashMap<>();
                 map.put("pro", rs.getStr("pro"));
@@ -164,7 +164,7 @@ public class IpKit extends Ipv4Util {
      * @return 客户端真实 IP
      */
     public static String getRemoteAddr(Object request) {
-        if (request == null) {
+        if (java.util.Objects.isNull(request)) {
             return "unknown";
         }
         try {

@@ -20,13 +20,13 @@ public class CdiI18nProvider implements I18nProvider {
 
     @Override
     public String getMessage(String key, Object... args) {
-        if (key == null) {
+        if (java.util.Objects.isNull(key)) {
             return null;
         }
         try {
             ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.getDefault());
             String pattern = bundle.getString(key);
-            if (args == null || args.length == 0) {
+            if (java.util.Objects.isNull(args) || args.length == 0) {
                 return pattern;
             }
             return String.format(pattern, args);

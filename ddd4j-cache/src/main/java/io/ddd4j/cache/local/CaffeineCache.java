@@ -82,14 +82,14 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
             builder.recordStats();
         }
         Consumer<String> removalListener = config.getRemovalListener();
-        if (removalListener != null) {
+        if (java.util.Objects.nonNull(removalListener)) {
             builder.removalListener((key, value, cause) -> removalListener.accept(String.valueOf(key)));
         }
         return builder;
     }
 
     private static long toLong(Object val) {
-        if (val == null) {
+        if (java.util.Objects.isNull(val)) {
             return 0L;
         }
         if (val instanceof Number) {
@@ -99,7 +99,7 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
     }
 
     private static double toDouble(Object val) {
-        if (val == null) {
+        if (java.util.Objects.isNull(val)) {
             return 0.0;
         }
         if (val instanceof Number) {
@@ -210,16 +210,16 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     @Override
     public boolean putIfAbsent(K key, V value) {
-        return cache.asMap().putIfAbsent(key, value) == null;
+        return java.util.Objects.isNull(cache.asMap().putIfAbsent(key, value));
     }
 
     // ==================== AtomicCache 实现（基于 ConcurrentMap.merge 原子操作） ====================
 
     @Override
     public boolean replace(K key, V expected, V newValue) {
-        if (expected == null) {
+        if (java.util.Objects.isNull(expected)) {
             // 期望 key 不存在时才写入
-            return cache.asMap().putIfAbsent(key, newValue) == null;
+            return java.util.Objects.isNull(cache.asMap().putIfAbsent(key, newValue));
         }
         return cache.asMap().replace(key, expected, newValue);
     }
@@ -283,7 +283,7 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         // 原子检查并扣减：使用 compute 保证一致性
         Object[] holder = new Object[1];
         cache.asMap().compute(key, (k, val) -> {
-            if (val == null) {
+            if (java.util.Objects.isNull(val)) {
                 holder[0] = AtomicCache.STOCK_NOT_INITIALIZED;
                 return null; // 不创建
             }

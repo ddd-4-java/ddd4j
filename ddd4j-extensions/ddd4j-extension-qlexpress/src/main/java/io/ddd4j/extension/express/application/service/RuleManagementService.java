@@ -234,20 +234,20 @@ public class RuleManagementService {
      * @return 规则定义，如果不存在返回Optional.empty()
      */
     public Optional<RuleDefinition> getRuleByCode(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return Optional.empty();
         }
 
         // 第一级：本地环境查询（硬编码规则）
         RuleDefinition localRule = localRuleRegistry.get(ruleCode);
-        if (localRule != null) {
+        if (java.util.Objects.nonNull(localRule)) {
             log.debug("从本地环境获取规则: {}", ruleCode);
             return Optional.of(localRule);
         }
 
         // 第二级：Redis缓存查询
         RuleDefinition cachedRule = ruleCacheService.get(ruleCode);
-        if (cachedRule != null) {
+        if (java.util.Objects.nonNull(cachedRule)) {
             log.debug("从Redis缓存获取规则: {}", ruleCode);
             return Optional.of(cachedRule);
         }
@@ -285,8 +285,8 @@ public class RuleManagementService {
                 .filter(RuleDefinition::isAvailable)
                 .sorted((r1, r2) -> {
                     int priorityCompare = Integer.compare(
-                            r2.getPriority() != null ? r2.getPriority() : 0,
-                            r1.getPriority() != null ? r1.getPriority() : 0
+                            java.util.Objects.nonNull(r2.getPriority()) ? r2.getPriority() : 0,
+                            java.util.Objects.nonNull(r1.getPriority()) ? r1.getPriority() : 0
                     );
                     if (priorityCompare != 0) {
                         return priorityCompare;

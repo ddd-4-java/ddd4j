@@ -228,7 +228,7 @@ public class PconlineRegionTemplate {
     }
 
     private static String trimWhitespace(String value) {
-        return value == null ? null : value.strip();
+        return java.util.Objects.isNull(value) ? null : value.strip();
     }
 
 }

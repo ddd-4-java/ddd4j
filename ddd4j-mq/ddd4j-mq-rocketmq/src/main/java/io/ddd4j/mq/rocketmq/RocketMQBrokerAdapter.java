@@ -50,13 +50,13 @@ public class RocketMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
         try {
-            if (producer == null) {
+            if (java.util.Objects.isNull(producer)) {
                 producer = rocketProperties.newProducer();
                 if (rocketProperties.isAutoStartProducer()) {
                     producer.start();
                 }
             }
-            return new RocketMQEventPublisher(producer, props == null ? mqProperties : props, serialization);
+            return new RocketMQEventPublisher(producer, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
         } catch (Exception ex) {
             throw new IllegalStateException("Create RocketMQ publisher failed", ex);
         }
@@ -69,15 +69,15 @@ public class RocketMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (message == null) {
+        if (java.util.Objects.isNull(message)) {
             return null;
         }
         MessageExt nativeMessage = message.nativeMessage(MessageExt.class);
-        if (nativeMessage == null) {
+        if (java.util.Objects.isNull(nativeMessage)) {
             Object headerMessage = message.header(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE);
             nativeMessage = headerMessage instanceof MessageExt ext ? ext : null;
         }
-        return nativeMessage == null ? null : new RocketMessageAcknowledgment(nativeMessage);
+        return java.util.Objects.isNull(nativeMessage) ? null : new RocketMessageAcknowledgment(nativeMessage);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class RocketMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() {
         consumerRegistrar.close();
-        if (producer != null) {
+        if (java.util.Objects.nonNull(producer)) {
             producer.shutdown();
         }
     }

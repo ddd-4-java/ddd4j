@@ -26,7 +26,7 @@ public class DisruptorMQEvent {
      */
     public String routeKey() {
         String base = namespace + "." + topic;
-        if (tag == null || tag.isBlank() || "*".equals(tag)) {
+        if (java.util.Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) || "*".equals(tag)) {
             return base;
         }
         return base + "." + tag;

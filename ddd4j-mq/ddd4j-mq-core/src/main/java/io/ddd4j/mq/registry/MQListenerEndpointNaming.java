@@ -17,7 +17,7 @@ public final class MQListenerEndpointNaming {
      * 解析连接符，默认 {@code .}。
      */
     public static String resolveConcat(MQListenerDefinition definition) {
-        if (definition != null && hasText(definition.getConcat())) {
+        if (java.util.Objects.nonNull(definition) && hasText(definition.getConcat())) {
             return definition.getConcat();
         }
         return ".";
@@ -41,7 +41,7 @@ public final class MQListenerEndpointNaming {
         String topic = definition.getTopic();
         String tag = resolveTag(definition.getTags());
         String base = namespace + concat + topic;
-        return tag == null ? base : base + concat + tag;
+        return java.util.Objects.isNull(tag) ? base : base + concat + tag;
     }
 
     /**
@@ -66,6 +66,6 @@ public final class MQListenerEndpointNaming {
     }
 
     private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

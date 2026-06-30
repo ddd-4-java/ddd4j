@@ -46,7 +46,7 @@ public class MicaMqttProperties {
     public void setMaxInflight(int maxInflight) { this.maxInflight = maxInflight; }
 
     public String newClientId() {
-        return (clientIdPrefix == null ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
+        return (java.util.Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
     }
 
     public MqttClient client() {

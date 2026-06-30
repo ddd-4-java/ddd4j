@@ -67,13 +67,13 @@ public final class AnnotationFusionVerifier {
         System.out.println();
         System.out.println("=== 业务代码使用模式验证 ===");
         java.lang.annotation.Annotation domainServiceOnBiz = BusinessDomainService.class.getAnnotation(DomainService.class);
-        if (domainServiceOnBiz == null) {
+        if (java.util.Objects.isNull(domainServiceOnBiz)) {
             System.out.println("FAIL: 业务类未标注 @DomainService");
             failed++;
         } else {
             DDDAnnotation ddd = DomainService.class.getAnnotation(DDDAnnotation.class);
             Singleton singleton = DomainService.class.getAnnotation(Singleton.class);
-            if (ddd != null && singleton != null) {
+            if (java.util.Objects.nonNull(ddd) && java.util.Objects.nonNull(singleton)) {
                 System.out.println("PASS: 业务代码 @DomainService -> 元注解链路完整（@DDDAnnotation + @Singleton 可被框架识别）");
                 passed++;
             } else {
@@ -101,12 +101,12 @@ public final class AnnotationFusionVerifier {
             Class<? extends java.lang.annotation.Annotation> dddAnnotation) {
 
         DDDAnnotation ddd = dddAnnotation.getAnnotation(DDDAnnotation.class);
-        if (ddd == null) {
+        if (java.util.Objects.isNull(ddd)) {
             System.out.println("FAIL " + name + ": 缺少 @DDDAnnotation");
             return 0;
         }
         Singleton singleton = dddAnnotation.getAnnotation(Singleton.class);
-        if (singleton == null) {
+        if (java.util.Objects.isNull(singleton)) {
             System.out.println("FAIL " + name + ": 缺少 @Singleton");
             return 0;
         }
@@ -118,13 +118,13 @@ public final class AnnotationFusionVerifier {
             String name,
             Class<? extends java.lang.annotation.Annotation> annotation) {
         Target target = annotation.getAnnotation(Target.class);
-        if (target == null || target.value().length == 0
+        if (java.util.Objects.isNull(target) || target.value().length == 0
                 || target.value()[0] != ElementType.PARAMETER) {
             System.out.println("FAIL " + name + ": @Target 必须为 PARAMETER");
             return 0;
         }
         Retention retention = annotation.getAnnotation(Retention.class);
-        if (retention == null || retention.value() != RetentionPolicy.RUNTIME) {
+        if (java.util.Objects.isNull(retention) || retention.value() != RetentionPolicy.RUNTIME) {
             System.out.println("FAIL " + name + ": @Retention 必须为 RUNTIME");
             return 0;
         }

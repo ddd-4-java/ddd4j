@@ -17,7 +17,7 @@ public class Pf4jKit {
             List<T> extensions = pluginManager.getExtensions(type, pluginId);
             for (T extension : extensions) {
                 ExtensionMapping em = extension.getClass().getAnnotation(ExtensionMapping.class);
-                if (em != null && hasText(em.id()) && em.id().equals(extensionId)) {
+                if (java.util.Objects.nonNull(em) && hasText(em.id()) && em.id().equals(extensionId)) {
                     return extension;
                 }
             }
@@ -29,7 +29,7 @@ public class Pf4jKit {
      * JDK 字符串判空（替代 Spring StringUtils.hasText）。
      */
     private static boolean hasText(String str) {
-        if (str == null || str.isEmpty()) {
+        if (java.util.Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str)) {
             return false;
         }
         for (int i = 0; i < str.length(); i++) {

@@ -37,10 +37,10 @@ public class ActiveMQProperties {
 
     public ActiveMQConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);
-        if (username != null && !username.isBlank()) {
+        if (java.util.Objects.nonNull(username) && !io.ddd4j.kit.lang.StrKit.isBlank(username)) {
             factory.setUser(username);
         }
-        if (password != null && !password.isBlank()) {
+        if (java.util.Objects.nonNull(password) && !io.ddd4j.kit.lang.StrKit.isBlank(password)) {
             factory.setPassword(password);
         }
         factory.setClientID(Objects.requireNonNullElse(clientIdPrefix, "ddd4j-mq-"));

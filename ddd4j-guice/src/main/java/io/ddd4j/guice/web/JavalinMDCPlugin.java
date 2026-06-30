@@ -56,7 +56,7 @@ public class JavalinMDCPlugin implements Handler {
     @Override
     public void handle(Context ctx) {
         String requestId = ctx.header("X-Request-Id");
-        if (requestId == null || requestId.isEmpty()) {
+        if (java.util.Objects.isNull(requestId) || io.ddd4j.kit.lang.StrKit.isEmpty(requestId)) {
             requestId = UUID.randomUUID().toString().replace("-", "");
         }
         MDC.put(MDC_REQUEST_ID, requestId);

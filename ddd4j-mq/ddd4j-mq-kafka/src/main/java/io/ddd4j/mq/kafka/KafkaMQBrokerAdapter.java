@@ -48,7 +48,7 @@ public class KafkaMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new KafkaMQEventPublisher(kafkaProperties, props == null ? mqProperties : props, serialization);
+        return new KafkaMQEventPublisher(kafkaProperties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -58,15 +58,15 @@ public class KafkaMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        Consumer<?, ?> consumer = message == null ? null : message.nativeMessage(Consumer.class);
-        ConsumerRecord<?, ?> record = message == null ? null : message.nativeMessage(ConsumerRecord.class);
-        if (consumer == null && message != null) {
+        Consumer<?, ?> consumer = java.util.Objects.isNull(message) ? null : message.nativeMessage(Consumer.class);
+        ConsumerRecord<?, ?> record = java.util.Objects.isNull(message) ? null : message.nativeMessage(ConsumerRecord.class);
+        if (java.util.Objects.isNull(consumer) && java.util.Objects.nonNull(message)) {
             consumer = (Consumer<?, ?>) message.header(KafkaMessageAcknowledgment.HEADER_KAFKA_CONSUMER);
         }
-        if (record == null && message != null) {
+        if (java.util.Objects.isNull(record) && java.util.Objects.nonNull(message)) {
             record = (ConsumerRecord<?, ?>) message.header(KafkaMessageAcknowledgment.HEADER_KAFKA_RECORD);
         }
-        return consumer == null || record == null ? null : new KafkaMessageAcknowledgment(consumer, record);
+        return java.util.Objects.isNull(consumer) || java.util.Objects.isNull(record) ? null : new KafkaMessageAcknowledgment(consumer, record);
     }
 
     @Override

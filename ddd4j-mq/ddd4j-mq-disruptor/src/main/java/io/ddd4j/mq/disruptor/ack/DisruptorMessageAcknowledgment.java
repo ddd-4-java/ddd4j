@@ -52,7 +52,7 @@ public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public boolean isOpen() {
-        return ringBuffer != null;
+        return java.util.Objects.nonNull(ringBuffer);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public void nack(boolean requeue) {
-        if (requeue && ringBuffer != null && !acknowledged.get()) {
+        if (requeue && java.util.Objects.nonNull(ringBuffer) && !acknowledged.get()) {
             republish();
         }
         acknowledged.set(true);

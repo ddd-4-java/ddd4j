@@ -46,7 +46,7 @@ public class RocketMQEventPublisher implements MQEventPublisher {
         String topic = resolveTopic(event, destination, properties);
         String tag = firstText(destination.getTag(), event.getTag());
         byte[] body = serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8);
-        Message message = tag == null
+        Message message = java.util.Objects.isNull(tag)
                 ? new Message(topic, body)
                 : new Message(topic, tag, body);
         message.setKeys(firstText(event.getMsgId(), event.getTenantId()));
@@ -60,21 +60,21 @@ public class RocketMQEventPublisher implements MQEventPublisher {
         String namespace = firstText(destination.getNamespace(), event.getNamespace(), properties.getNamespace());
         String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
         String concat = firstText(event.getConcat(), ".");
-        return namespace == null ? topic : namespace + concat + topic;
+        return java.util.Objects.isNull(namespace) ? topic : namespace + concat + topic;
     }
 
     private static void put(Message message, String key, String value) {
-        if (value != null) {
+        if (java.util.Objects.nonNull(value)) {
             message.putUserProperty(key, value);
         }
     }
 
     private static String firstText(String... values) {
-        if (values == null) {
+        if (java.util.Objects.isNull(values)) {
             return null;
         }
         for (String value : values) {
-            if (value != null && !value.isBlank()) {
+            if (java.util.Objects.nonNull(value) && !io.ddd4j.kit.lang.StrKit.isBlank(value)) {
                 return value;
             }
         }

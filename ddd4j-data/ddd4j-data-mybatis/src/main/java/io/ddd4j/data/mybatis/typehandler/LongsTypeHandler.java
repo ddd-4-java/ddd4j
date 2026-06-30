@@ -11,7 +11,9 @@ import java.util.List;
 public class LongsTypeHandler extends BaseTypeHandler<Long[]> {
     @Override
     protected String convert(Long[] obj) {
-        if (obj.length == 0) return null;
+        if (obj.length == 0) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder();
         for (Long l : obj) {
             sb.append(l).append(",");

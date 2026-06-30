@@ -12,7 +12,9 @@ public class IntegersTypeHandler extends BaseTypeHandler<Integer[]> {
 
     @Override
     protected String convert(Integer[] obj) {
-        if (obj.length == 0) return null;
+        if (obj.length == 0) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder();
         for (Integer l : obj) {
             sb.append(l).append(",");

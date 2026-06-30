@@ -41,11 +41,11 @@ public final class MQListenerClasspathScanner {
 
         for (String beanName : beanNames) {
             BeanDefinition beanDefinition = beanDefinitionLookup.apply(beanName);
-            if (beanDefinition == null) {
+            if (java.util.Objects.isNull(beanDefinition)) {
                 continue;
             }
             Class<?> beanClass = resolveBeanClass(beanDefinition, classLoader);
-            if (beanClass == null || isInfrastructureClass(beanClass)) {
+            if (java.util.Objects.isNull(beanClass) || isInfrastructureClass(beanClass)) {
                 continue;
             }
             scanClass(beanName, beanClass, consumer);
@@ -59,11 +59,11 @@ public final class MQListenerClasspathScanner {
         List<Method> found = new ArrayList<>();
         for (Method method : beanClass.getDeclaredMethods()) {
             MQEventListener annotation = AnnotationUtils.findAnnotation(method, MQEventListener.class);
-            if (annotation == null) {
+            if (java.util.Objects.isNull(annotation)) {
                 continue;
             }
             found.add(method);
-            if (consumer != null) {
+            if (java.util.Objects.nonNull(consumer)) {
                 consumer.accept(beanName, method);
             }
         }
@@ -75,9 +75,9 @@ public final class MQListenerClasspathScanner {
      */
     public static Class<?> resolveBeanClass(BeanDefinition beanDefinition, ClassLoader classLoader) {
         String className = beanDefinition.getBeanClassName();
-        if (!StringUtils.hasText(className) && beanDefinition.getResolvableType() != null) {
+        if (!StringUtils.hasText(className) && java.util.Objects.nonNull(beanDefinition.getResolvableType())) {
             Class<?> resolved = beanDefinition.getResolvableType().resolve();
-            if (resolved != null) {
+            if (java.util.Objects.nonNull(resolved)) {
                 return resolved;
             }
         }

@@ -145,7 +145,7 @@ public class IdempotentKit {
                     if (Stream.of(paramAnnotations[i]).anyMatch(annt -> annt instanceof Hidden)) {
                         continue;
                     }
-                    if (joinPoint.getArgs()[i] == null || joinPoint.getArgs()[i] instanceof ServletRequest || joinPoint.getArgs()[i] instanceof ServletResponse) {
+                    if (java.util.Objects.isNull(joinPoint.getArgs()[i]) || joinPoint.getArgs()[i] instanceof ServletRequest || joinPoint.getArgs()[i] instanceof ServletResponse) {
                         continue;
                     }
                     joiner.add(JSONObject.toJSONString(joinPoint.getArgs()[i]));

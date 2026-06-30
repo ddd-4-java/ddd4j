@@ -95,7 +95,7 @@ public class RabbitMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
-        if (nativeType == null) {
+        if (java.util.Objects.isNull(nativeType)) {
             return Optional.empty();
         }
         if (nativeType.isInstance(channel)) {

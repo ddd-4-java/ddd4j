@@ -65,13 +65,13 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return null;
         }
 
         // 第一级：从本地缓存获取
         RuleDefinition localRule = localCache.getIfPresent(ruleCode);
-        if (localRule != null) {
+        if (java.util.Objects.nonNull(localRule)) {
             log.debug("从本地缓存获取规则: {}", ruleCode);
             return localRule;
         }
@@ -79,7 +79,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
         // 第二级：从Redis缓存获取
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
         RuleDefinition redisRule = (RuleDefinition) redisTemplate.opsForValue().get(cacheKey);
-        if (redisRule != null) {
+        if (java.util.Objects.nonNull(redisRule)) {
             // 回填到本地缓存
             localCache.put(ruleCode, redisRule);
             log.debug("从Redis缓存获取规则并回填本地缓存: {}", ruleCode);
@@ -98,7 +98,9 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (ruleCode == null || ruleCode.trim().isEmpty() || rule == null) {
+        if (java.util.Objects.isNull(ruleCode)
+                || !org.springframework.util.StringUtils.hasText(ruleCode)
+                || java.util.Objects.isNull(rule)) {
             return;
         }
 
@@ -118,7 +120,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return;
         }
 
@@ -144,7 +146,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
 
         // 清除所有Redis缓存
         Set<String> keys = redisTemplate.keys(RULE_CACHE_PREFIX + "*");
-        if (keys != null && !keys.isEmpty()) {
+        if (java.util.Objects.nonNull(keys) && !keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
 

@@ -28,7 +28,7 @@ public final class I18nKit {
      * @param provider I18nProvider 实现
      */
     public static void register(I18nProvider provider) {
-        if (provider != null) {
+        if (java.util.Objects.nonNull(provider)) {
             I18nKit.provider = provider;
         }
     }
@@ -40,7 +40,7 @@ public final class I18nKit {
      * @param provider I18nProvider 实现
      */
     public static void register(Locale locale, I18nProvider provider) {
-        if (locale != null && provider != null) {
+        if (java.util.Objects.nonNull(locale) && java.util.Objects.nonNull(provider)) {
             LOCALE_PROVIDERS.put(locale.toString(), provider);
         }
     }
@@ -65,9 +65,9 @@ public final class I18nKit {
      * @return 国际化后的消息
      */
     public static String get(Locale locale, String key, Object... args) {
-        if (locale != null) {
+        if (java.util.Objects.nonNull(locale)) {
             I18nProvider localeProvider = LOCALE_PROVIDERS.get(locale.toString());
-            if (localeProvider != null) {
+            if (java.util.Objects.nonNull(localeProvider)) {
                 return localeProvider.getMessage(key, args);
             }
         }

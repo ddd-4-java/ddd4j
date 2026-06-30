@@ -32,7 +32,7 @@ public final class NatsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public long deliveryTag() {
-        return message.metaData() == null ? 0L : message.metaData().consumerSequence();
+        return java.util.Objects.isNull(message.metaData()) ? 0L : message.metaData().consumerSequence();
     }
 
     @Override

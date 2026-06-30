@@ -45,7 +45,7 @@ public class DisruptorMQBrokerAdapter implements MQBrokerAdapter {
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
         DisruptorMessageAcknowledgment ack = message.nativeMessage(DisruptorMessageAcknowledgment.class);
-        if (ack != null) {
+        if (java.util.Objects.nonNull(ack)) {
             return ack;
         }
         return DisruptorMessageAcknowledgmentFactory.from(message).orElse(null);

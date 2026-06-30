@@ -36,13 +36,13 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
         this.message = message;
         this.messageId = messageId;
         this.correlationId = correlationId;
-        this.deliveryId = messageId == null ? 0L : Math.abs((long) messageId.hashCode());
+        this.deliveryId = java.util.Objects.isNull(messageId) ? 0L : Math.abs((long) messageId.hashCode());
     }
 
     @Override public long deliveryTag() { return deliveryId; }
     @Override public String messageId() { return messageId; }
     @Override public String correlationId() { return correlationId; }
-    @Override public boolean isOpen() { return consumer != null && consumer.isConnected(); }
+    @Override public boolean isOpen() { return java.util.Objects.nonNull(consumer) && consumer.isConnected(); }
     @Override public boolean isAcknowledged() { return acknowledged.get(); }
     @Override public MQBrokerType brokerType() { return MQBrokerType.PULSAR; }
 
@@ -84,11 +84,21 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (type == null) return Optional.empty();
-        if (type.isInstance(consumer)) return Optional.of(type.cast(consumer));
-        if (type.isInstance(message)) return Optional.of(type.cast(message));
-        if (type.isInstance(messageId())) return Optional.of(type.cast(messageId()));
-        if (type.isInstance(this)) return Optional.of(type.cast(this));
+        if (java.util.Objects.isNull(type)) {
+            return Optional.empty();
+        }
+        if (type.isInstance(consumer)) {
+            return Optional.of(type.cast(consumer));
+        }
+        if (type.isInstance(message)) {
+            return Optional.of(type.cast(message));
+        }
+        if (type.isInstance(messageId())) {
+            return Optional.of(type.cast(messageId()));
+        }
+        if (type.isInstance(this)) {
+            return Optional.of(type.cast(this));
+        }
         return Optional.empty();
     }
 

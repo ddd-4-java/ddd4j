@@ -62,7 +62,7 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
         if (method.isAnnotationPresent(annotationType)) {
             java.lang.annotation.Annotation annotation = method.getAnnotation(annotationType);
             Class<?> eventType = extractEventType(annotation);
-            if (eventType != null) {
+            if (java.util.Objects.nonNull(eventType)) {
                 handlerTable.put(eventType, method);
                 log.debug("Registered {} handler: {} -> {}#{}",
                         annotationType.getSimpleName(), eventType.getSimpleName(),

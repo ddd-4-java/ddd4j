@@ -52,14 +52,14 @@ public final class AnnotationFusionVerifier {
 
     private static int verify(String name, Class<? extends java.lang.annotation.Annotation> annotationType) {
         DDDAnnotation dddAnnotation = annotationType.getAnnotation(DDDAnnotation.class);
-        if (dddAnnotation == null) {
+        if (java.util.Objects.isNull(dddAnnotation)) {
             System.out.println("FAIL " + name + ": 缺少 @DDDAnnotation 元注解");
             return 0;
         }
         System.out.println("PASS " + name + ": 已标注 @DDDAnnotation");
 
         ApplicationScoped applicationScoped = annotationType.getAnnotation(ApplicationScoped.class);
-        if (applicationScoped == null) {
+        if (java.util.Objects.isNull(applicationScoped)) {
             System.out.println("FAIL " + name + ": 缺少 @ApplicationScoped 元注解");
             return 0;
         }

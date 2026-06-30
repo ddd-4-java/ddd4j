@@ -29,7 +29,7 @@ public final class MappingKit {
     }
 
     public <T, S> T convert(S source) {
-        if (source == null) {
+        if (java.util.Objects.isNull(source)) {
             return null;
         }
         Class<T> targetClass = get(source.getClass());

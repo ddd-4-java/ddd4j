@@ -55,7 +55,7 @@ public class PulsarMQProperties {
                 .operationTimeout(Math.toIntExact(operationTimeoutMs), java.util.concurrent.TimeUnit.MILLISECONDS)
                 .ioThreads(ioThreads)
                 .listenerThreads(listenerThreads);
-        if (authToken != null && !authToken.isBlank()) {
+        if (java.util.Objects.nonNull(authToken) && !io.ddd4j.kit.lang.StrKit.isBlank(authToken)) {
             b.authentication(org.apache.pulsar.client.api.AuthenticationFactory.token(authToken));
         }
         return b.build();
@@ -64,6 +64,6 @@ public class PulsarMQProperties {
     /** Physical topic: {@code tenant/namespace/topic[:tag]} */
     public String physicalTopic(String topic, String tag) {
         Objects.requireNonNull(topic, "topic");
-        return tenant + "/" + namespace + "/" + (tag == null || tag.isBlank() ? topic : topic + ":" + tag);
+        return tenant + "/" + namespace + "/" + (java.util.Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) ? topic : topic + ":" + tag);
     }
 }

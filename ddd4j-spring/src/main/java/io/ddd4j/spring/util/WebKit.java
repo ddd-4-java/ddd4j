@@ -48,7 +48,7 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
      */
     public static String getCookieVal(HttpServletRequest request, String name) {
         Cookie cookie = getCookie(request, name);
-        return cookie != null ? cookie.getValue() : null;
+        return java.util.Objects.nonNull(cookie) ? cookie.getValue() : null;
     }
 
     /**
@@ -129,7 +129,7 @@ public class WebKit extends org.springframework.biz.utils.WebUtils {
     public static HttpServletRequest getHttpServletRequest() {
         try {
             RequestAttributes requestAttributes = getRequestAttributesSafely();
-            if (requestAttributes != null) {
+            if (java.util.Objects.nonNull(requestAttributes)) {
                 return ((ServletRequestAttributes) requestAttributes).getRequest();
             }
         } catch (Exception e) {

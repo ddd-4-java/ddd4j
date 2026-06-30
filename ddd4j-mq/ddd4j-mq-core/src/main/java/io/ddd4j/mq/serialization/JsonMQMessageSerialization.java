@@ -11,11 +11,11 @@ public class JsonMQMessageSerialization implements MQMessageSerialization, MQEve
 
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {
-        if (src == null) {
+        if (java.util.Objects.isNull(src)) {
             return null;
         }
         String text = src instanceof String s ? s : String.valueOf(src);
-        if (text.isEmpty()) {
+        if (io.ddd4j.kit.lang.StrKit.isEmpty(text)) {
             return null;
         }
         return JsonKit.toObject(text, dist);

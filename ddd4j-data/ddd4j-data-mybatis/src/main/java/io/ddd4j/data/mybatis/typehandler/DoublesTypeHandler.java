@@ -11,7 +11,9 @@ import java.util.List;
 public class DoublesTypeHandler extends BaseTypeHandler<Double[]> {
     @Override
     protected String convert(Double[] obj) {
-        if (obj.length == 0) return null;
+        if (obj.length == 0) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder();
         for (Double d : obj) {
             sb.append(d).append(",");

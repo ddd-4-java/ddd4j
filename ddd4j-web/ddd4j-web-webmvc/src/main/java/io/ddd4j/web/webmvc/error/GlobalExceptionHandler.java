@@ -938,7 +938,7 @@ public class GlobalExceptionHandler {
 
     protected void logException(Exception ex) {
         HttpServletRequest request = WebUtils.getHttpServletRequest();
-        if (request != null) {
+        if (java.util.Objects.nonNull(request)) {
             log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), IpKit.getRemoteAddr(request));
         }
         log.error(ex.getMessage(), ex);

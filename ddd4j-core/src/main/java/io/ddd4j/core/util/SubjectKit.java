@@ -52,9 +52,9 @@ public final class SubjectKit {
      * @throws IllegalStateException 未注册 SubjectProvider 时抛出
      */
     public static Subject getSubject() {
-        if (subjectProvider == null) {
+        if (java.util.Objects.isNull(subjectProvider)) {
             synchronized (SubjectKit.class) {
-                if (subjectProvider == null) {
+                if (java.util.Objects.isNull(subjectProvider)) {
                     throw new IllegalStateException(
                             "SubjectProvider not registered. Call SubjectKit.register() or use framework adapter.");
                 }
@@ -70,7 +70,7 @@ public final class SubjectKit {
      * @return 对应 realm 的 Subject
      */
     public static Subject getSubject(String realm) {
-        if (subjectProvider == null) {
+        if (java.util.Objects.isNull(subjectProvider)) {
             throw new IllegalStateException("SubjectProvider not registered.");
         }
         return subjectProvider.getSubject(realm);
@@ -80,9 +80,9 @@ public final class SubjectKit {
      * 获取权限数据源（默认空实现兜底）。
      */
     public static SubjectDataProvider getDataProvider() {
-        if (dataProvider == null) {
+        if (java.util.Objects.isNull(dataProvider)) {
             synchronized (SubjectKit.class) {
-                if (dataProvider == null) {
+                if (java.util.Objects.isNull(dataProvider)) {
                     dataProvider = SubjectDataProvider.DEFAULT;
                 }
             }
@@ -103,9 +103,9 @@ public final class SubjectKit {
      * 获取策略集（默认单例兜底）。
      */
     public static SubjectStrategy getStrategy() {
-        if (strategy == null) {
+        if (java.util.Objects.isNull(strategy)) {
             synchronized (SubjectKit.class) {
-                if (strategy == null) {
+                if (java.util.Objects.isNull(strategy)) {
                     strategy = SubjectStrategy.instance;
                 }
             }
@@ -130,7 +130,7 @@ public final class SubjectKit {
 
     public static <T extends AuthPrincipal> T getPrincipal(Class<T> clazz) {
         T principal = getSubject().getPrincipal();
-        if (principal != null && clazz.isAssignableFrom(principal.getClass())) {
+        if (java.util.Objects.nonNull(principal) && clazz.isAssignableFrom(principal.getClass())) {
             return principal;
         }
         return null;
@@ -142,7 +142,7 @@ public final class SubjectKit {
 
     public static <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId, Class<T> clazz) {
         T principal = getSubject().getPrincipalByLoginId(loginId);
-        if (principal != null && clazz.isAssignableFrom(principal.getClass())) {
+        if (java.util.Objects.nonNull(principal) && clazz.isAssignableFrom(principal.getClass())) {
             return principal;
         }
         return null;
@@ -154,7 +154,7 @@ public final class SubjectKit {
 
     public static <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue, Class<T> clazz) {
         T principal = getSubject().getPrincipalByToken(tokenValue);
-        if (principal != null && clazz.isAssignableFrom(principal.getClass())) {
+        if (java.util.Objects.nonNull(principal) && clazz.isAssignableFrom(principal.getClass())) {
             return principal;
         }
         return null;

@@ -26,7 +26,7 @@ public class SpringSubjectProvider implements SubjectProvider {
 
     @Override
     public Subject getSubject() {
-        if (subject == null) {
+        if (java.util.Objects.isNull(subject)) {
             log.debug("No Subject implementation found in Spring container");
             return null;
         }

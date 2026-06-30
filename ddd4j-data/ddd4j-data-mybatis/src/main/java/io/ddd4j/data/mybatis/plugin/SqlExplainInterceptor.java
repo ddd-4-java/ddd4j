@@ -54,15 +54,15 @@ public class SqlExplainInterceptor implements InnerInterceptor {
         MappedStatement ms = (MappedStatement) org.apache.ibatis.reflection.SystemMetaObject
                 .forObject(sh)
                 .getValue("delegate.mappedStatement");
-        if (ms == null) {
+        if (java.util.Objects.isNull(ms)) {
             return;
         }
         if (InterceptorIgnoreHelper.willIgnoreOthersByKey(ms.getId(), "slowSql")) {
             return;
         }
         BoundSql boundSql = sh.getBoundSql();
-        String sql = boundSql != null ? boundSql.getSql() : null;
-        if (sql != null && sql.length() > longSqlThreshold) {
+        String sql = java.util.Objects.nonNull(boundSql) ? boundSql.getSql() : null;
+        if (java.util.Objects.nonNull(sql) && sql.length() > longSqlThreshold) {
             log.warn("Long SQL detected [length={}, mapper={}]: {}", sql.length(),
                     ms.getId(), sql.substring(0, 200) + "...");
         }

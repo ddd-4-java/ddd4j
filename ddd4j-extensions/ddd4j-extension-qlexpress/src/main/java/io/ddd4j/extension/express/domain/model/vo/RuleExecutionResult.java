@@ -55,7 +55,7 @@ public class RuleExecutionResult {
         this.errorMessage = builder.errorMessage;
         this.result = builder.result;
         this.ruleCode = builder.ruleCode;
-        this.executedAt = builder.executedAt != null ? builder.executedAt : LocalDateTime.now();
+        this.executedAt = java.util.Objects.nonNull(builder.executedAt) ? builder.executedAt : LocalDateTime.now();
         this.executionTime = builder.executionTime;
     }
 

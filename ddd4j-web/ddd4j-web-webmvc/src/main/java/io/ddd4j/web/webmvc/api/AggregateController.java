@@ -68,7 +68,9 @@ public interface AggregateController {
     @PostMapping("/{model}/create")
     default Model create(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
         Model m = Model.convert(model, body);
-        if (m == null) return null;
+        if (java.util.Objects.isNull(m)) {
+            return null;
+        }
         m.save();
         return m;
     }
@@ -83,7 +85,7 @@ public interface AggregateController {
     @PostMapping({"/{model}/update", "/{model}/modify"})
     default void update(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
         Model m = Model.convert(model, body);
-        if (m != null) {
+        if (java.util.Objects.nonNull(m)) {
             m.update();
         }
     }
@@ -101,7 +103,9 @@ public interface AggregateController {
     @PostMapping("/{model}/save")
     default Model save(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
         Model m = Model.convert(model, body);
-        if (m == null) return null;
+        if (java.util.Objects.isNull(m)) {
+            return null;
+        }
         m.saveOrUpdate();
         return m;
     }

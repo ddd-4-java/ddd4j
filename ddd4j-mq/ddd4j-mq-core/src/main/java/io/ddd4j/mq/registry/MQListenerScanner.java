@@ -30,7 +30,7 @@ public class MQListenerScanner {
         Objects.requireNonNull(definition, "definition");
         Method method = definition.getMethod();
         Object bean = definition.getBean();
-        if (bean != null && !method.canAccess(bean)) {
+        if (java.util.Objects.nonNull(bean) && !method.canAccess(bean)) {
             method.setAccessible(true);
         }
     }

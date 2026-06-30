@@ -32,7 +32,7 @@ public class ContainsFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (parameters == null || parameters.size() < 2) {
+        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("contains函数需要2个参数：source和target");
         }
 
@@ -41,10 +41,10 @@ public class ContainsFunction implements CustomFunction {
         Object sourceObj = getParameterValue(parameters, 0, qContext);
         Object targetObj = getParameterValue(parameters, 1, qContext);
 
-        String source = sourceObj != null ? sourceObj.toString() : null;
-        String target = targetObj != null ? targetObj.toString() : null;
+        String source = java.util.Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
+        String target = java.util.Objects.nonNull(targetObj) ? targetObj.toString() : null;
 
-        boolean result = source != null && source.contains(target);
+        boolean result = java.util.Objects.nonNull(source) && source.contains(target);
         return result;
     }
 
@@ -54,7 +54,7 @@ public class ContainsFunction implements CustomFunction {
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
             // 尝试方式1：parameters.get(index).getObject(qContext)
-            if (parameters.get(index) != null) {
+            if (java.util.Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 // 如果参数对象有 getObject 方法
                 try {
@@ -73,7 +73,7 @@ public class ContainsFunction implements CustomFunction {
         try {
             java.lang.reflect.Method getMethod = parameters.getClass().getMethod("get", int.class);
             Object param = getMethod.invoke(parameters, index);
-            if (param != null) {
+            if (java.util.Objects.nonNull(param)) {
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);
                     return getObjectMethod.invoke(param, qContext);

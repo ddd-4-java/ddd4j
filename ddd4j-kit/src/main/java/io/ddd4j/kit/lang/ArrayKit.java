@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ArrayKit extends ArrayUtil {
 
     public <T> T[] convert(Collection<T> coll) {
-        if (coll == null || coll.size() == 0) {
+        if (java.util.Objects.isNull(coll) || coll.size() == 0) {
             return null;
         }
         Class tClass = null;
@@ -49,11 +49,11 @@ public class ArrayKit extends ArrayUtil {
     }
 
     public <T> boolean isNotEmpty(T[] array) {
-        return null != array && array.length != 0;
+        return java.util.Objects.nonNull(array) && array.length != 0;
     }
 
     public <T> boolean isEmpty(T[] array) {
-        return null == array || array.length == 0;
+        return java.util.Objects.isNull(array) || array.length == 0;
     }
 
 }

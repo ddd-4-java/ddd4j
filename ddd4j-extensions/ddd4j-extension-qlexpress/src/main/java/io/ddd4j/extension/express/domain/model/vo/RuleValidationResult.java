@@ -33,7 +33,7 @@ public class RuleValidationResult {
     private RuleValidationResult(Builder builder) {
         this.valid = builder.valid;
         this.message = builder.message;
-        this.errors = builder.errors != null ? new ArrayList<>(builder.errors) : new ArrayList<>();
+        this.errors = java.util.Objects.nonNull(builder.errors) ? new ArrayList<>(builder.errors) : new ArrayList<>();
     }
 
     /**
@@ -78,7 +78,7 @@ public class RuleValidationResult {
         }
 
         public Builder addError(String error) {
-            if (this.errors == null) {
+            if (java.util.Objects.isNull(this.errors)) {
                 this.errors = new ArrayList<>();
             }
             this.errors.add(error);

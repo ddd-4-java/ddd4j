@@ -41,7 +41,7 @@ public class RabbitMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         this.rabbitProperties = Objects.requireNonNull(rabbitProperties, "rabbitProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
-        this.channelProvider = channelProvider == null ? this::newChannel : channelProvider;
+        this.channelProvider = java.util.Objects.isNull(channelProvider) ? this::newChannel : channelProvider;
         this.consumerRegistrar = new RabbitMQConsumerEndpointRegistrar(this.channelProvider, rabbitProperties);
     }
 
@@ -52,7 +52,7 @@ public class RabbitMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new RabbitMQEventPublisher(channelProvider, rabbitProperties, props == null ? mqProperties : props, serialization);
+        return new RabbitMQEventPublisher(channelProvider, rabbitProperties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class RabbitMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (message == null) {
+        if (java.util.Objects.isNull(message)) {
             return null;
         }
         Object channel = message.header(RabbitMessageAcknowledgment.HEADER_RABBIT_CHANNEL);
@@ -84,13 +84,13 @@ public class RabbitMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        if (connection != null && connection.isOpen()) {
+        if (java.util.Objects.nonNull(connection) && connection.isOpen()) {
             connection.close();
         }
     }
 
     private synchronized Channel newChannel() throws Exception {
-        if (connection == null || !connection.isOpen()) {
+        if (java.util.Objects.isNull(connection) || !connection.isOpen()) {
             connection = rabbitProperties.connectionFactory().newConnection();
         }
         return connection.createChannel();

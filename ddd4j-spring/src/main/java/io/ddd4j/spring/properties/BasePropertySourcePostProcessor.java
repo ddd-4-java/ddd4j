@@ -24,7 +24,7 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
                     .addLast(new PropertySource<>("ddd4j-app-props", System.getProperties()) {
                         @Override
                         public Object getProperty(String name) {
-                            if (name != null && name.startsWith("ddd4j.")) {
+                            if (java.util.Objects.nonNull(name) && name.startsWith("ddd4j.")) {
                                 return System.getProperty(name);
                             }
                             return null;

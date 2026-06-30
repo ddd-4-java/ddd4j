@@ -53,14 +53,14 @@ public class OnsMQProperties {
         p.setProperty(PropertyKeyConst.AccessKey, accessKey);
         p.setProperty(PropertyKeyConst.SecretKey, secretKey);
         p.setProperty(PropertyKeyConst.NAMESRV_ADDR, nameSrvAddr);
-        p.setProperty(PropertyKeyConst.GROUP_ID, groupName == null ? "DEFAULT_GROUP" : groupName);
-        if (namespace != null && !namespace.isBlank()) {
+        p.setProperty(PropertyKeyConst.GROUP_ID, java.util.Objects.isNull(groupName) ? "DEFAULT_GROUP" : groupName);
+        if (java.util.Objects.nonNull(namespace) && !io.ddd4j.kit.lang.StrKit.isBlank(namespace)) {
             p.setProperty(PropertyKeyConst.INSTANCE_ID, namespace);
         }
         return p;
     }
 
     public String subscriptionExpression(String tag) {
-        return (tag == null || tag.isBlank()) ? defaultTag : tag;
+        return (java.util.Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag)) ? defaultTag : tag;
     }
 }

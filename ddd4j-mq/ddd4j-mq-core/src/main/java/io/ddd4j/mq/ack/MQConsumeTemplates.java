@@ -65,7 +65,7 @@ public final class MQConsumeTemplates {
      * 将 {@link AckDisposition} 映射为底层 ack 操作。
      */
     public static void applyDisposition(MessageAcknowledgment ack, AckDisposition disposition) {
-        if (disposition == null) {
+        if (java.util.Objects.isNull(disposition)) {
             ack.requeue();
             return;
         }

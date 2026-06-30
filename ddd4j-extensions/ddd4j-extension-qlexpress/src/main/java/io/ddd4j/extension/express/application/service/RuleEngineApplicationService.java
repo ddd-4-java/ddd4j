@@ -57,7 +57,7 @@ public class RuleEngineApplicationService {
         // 1. 获取规则定义（带缓存）
         RuleDefinition rule = getRuleDefinition(ruleCode);
 
-        if (rule == null) {
+        if (java.util.Objects.isNull(rule)) {
             return RuleExecutionResult.builder()
                     .success(false)
                     .errorCode("RULE_NOT_FOUND")
@@ -130,7 +130,7 @@ public class RuleEngineApplicationService {
     private RuleDefinition getRuleDefinition(String ruleCode) {
         // 先从缓存获取
         RuleDefinition cachedRule = ruleCacheService.get(ruleCode);
-        if (cachedRule != null) {
+        if (java.util.Objects.nonNull(cachedRule)) {
             return cachedRule;
         }
 

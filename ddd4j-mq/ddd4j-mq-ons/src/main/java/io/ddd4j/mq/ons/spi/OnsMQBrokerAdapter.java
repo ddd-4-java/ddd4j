@@ -51,7 +51,7 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     private static Producer createAndStartProducer(OnsMQProperties properties) {
         Objects.requireNonNull(properties, "properties");
-        if (properties.getProducerId() == null || properties.getProducerId().isBlank()) {
+        if (java.util.Objects.isNull(properties.getProducerId()) || io.ddd4j.kit.lang.StrKit.isBlank(properties.getProducerId())) {
             throw new IllegalStateException("OnsMQProperties.producerId is required");
         }
         Producer p = ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId()));
@@ -63,7 +63,7 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new OnsMQEventPublisher(producer(), properties, props == null ? mqProperties : props, serialization);
+        return new OnsMQEventPublisher(producer(), properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -73,7 +73,9 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (message == null) return null;
+        if (java.util.Objects.isNull(message)) {
+            return null;
+        }
         Object m = message.header(OnsMessageAcknowledgment.HEADER_ONS_MESSAGE);
         Object ctx = message.header(OnsMessageAcknowledgment.HEADER_ONS_CONTEXT);
         if (m instanceof Message msg && ctx instanceof com.aliyun.openservices.ons.api.ConsumeContext c) {
@@ -87,7 +89,7 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() {
         Producer p = producerRef.get();
-        if (p != null) {
+        if (java.util.Objects.nonNull(p)) {
             try { p.shutdown(); } finally { producerRef.set(null); }
         }
     }

@@ -67,7 +67,7 @@ public class ClassKit extends org.springframework.util.ClassUtils {
         specificMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
         // 先找方法，再找方法上的类
         A annotation = AnnotatedElementUtils.findMergedAnnotation(specificMethod, annotationType);
-        if (null != annotation) {
+        if (java.util.Objects.nonNull(annotation)) {
             return annotation;
         }
         // 获取类上面的Annotation，可能包含组合注解，故采用spring的工具类
@@ -85,7 +85,7 @@ public class ClassKit extends org.springframework.util.ClassUtils {
     public <A extends Annotation> A getAnnotation(HandlerMethod handlerMethod, Class<A> annotationType) {
         // 先找方法，再找方法上的类
         A annotation = handlerMethod.getMethodAnnotation(annotationType);
-        if (null != annotation) {
+        if (java.util.Objects.nonNull(annotation)) {
             return annotation;
         }
         // 获取类上面的Annotation，可能包含组合注解，故采用spring的工具类

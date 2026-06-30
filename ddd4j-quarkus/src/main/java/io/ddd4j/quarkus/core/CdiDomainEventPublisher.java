@@ -26,7 +26,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
     @Override
     public void publish(DomainEvent domainEvent) {
-        if (domainEvent == null) {
+        if (java.util.Objects.isNull(domainEvent)) {
             log.warn("Attempted to publish null domain event");
             return;
         }
@@ -37,7 +37,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
     @Override
     public void publishAll(Collection<DomainEvent> events) {
-        if (events == null || events.isEmpty()) {
+        if (java.util.Objects.isNull(events) || events.isEmpty()) {
             return;
         }
         log.debug("Publishing {} domain events", events.size());

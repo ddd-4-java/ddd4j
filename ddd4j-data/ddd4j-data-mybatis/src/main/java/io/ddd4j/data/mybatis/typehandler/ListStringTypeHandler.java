@@ -45,7 +45,7 @@ public class ListStringTypeHandler implements TypeHandler<List<String>> {
     }
 
     private List<String> toList(String value) {
-        if (value == null) {
+        if (java.util.Objects.isNull(value)) {
             return null;
         }
         return JSONUtil.parseArray(value).toList(String.class);

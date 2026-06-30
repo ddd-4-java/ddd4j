@@ -59,7 +59,7 @@ public class KafkaMQEventPublisher implements MQEventPublisher {
         String namespace = firstText(destination.getNamespace(), event.getNamespace(), properties.getNamespace());
         String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
         String concat = firstText(event.getConcat(), "_");
-        return namespace == null ? topic : namespace + concat + topic;
+        return java.util.Objects.isNull(namespace) ? topic : namespace + concat + topic;
     }
 
     private String resolveTopic(MQEvent event, MQDestination destination) {
@@ -67,17 +67,17 @@ public class KafkaMQEventPublisher implements MQEventPublisher {
     }
 
     private static void addHeader(ProducerRecord<String, String> record, String key, String value) {
-        if (value != null) {
+        if (java.util.Objects.nonNull(value)) {
             record.headers().add(new RecordHeader(key, value.getBytes(StandardCharsets.UTF_8)));
         }
     }
 
     private static String firstText(String... values) {
-        if (values == null) {
+        if (java.util.Objects.isNull(values)) {
             return null;
         }
         for (String value : values) {
-            if (value != null && !value.isBlank()) {
+            if (java.util.Objects.nonNull(value) && !io.ddd4j.kit.lang.StrKit.isBlank(value)) {
                 return value;
             }
         }

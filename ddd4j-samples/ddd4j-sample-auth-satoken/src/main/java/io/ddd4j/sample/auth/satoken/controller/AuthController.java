@@ -59,7 +59,7 @@ public class AuthController {
     @GetMapping("/me")
     public Map<String, Object> me() {
         AuthPrincipal principal = SubjectKit.getPrincipal();
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return Map.of("authenticated", false);
         }
         Map<String, Object> result = new HashMap<>();

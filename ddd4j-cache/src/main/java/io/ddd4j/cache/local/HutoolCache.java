@@ -56,9 +56,9 @@ public class HutoolCache<K, V> implements Cache<K, V> {
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         V value = cache.get(key);
-        if (value == null) {
+        if (java.util.Objects.isNull(value)) {
             value = mappingFunction.apply(key);
-            if (value != null) {
+            if (java.util.Objects.nonNull(value)) {
                 cache.put(key, value);
             }
         }

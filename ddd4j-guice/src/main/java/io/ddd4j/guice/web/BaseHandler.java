@@ -59,7 +59,7 @@ public abstract class BaseHandler {
         log.error("Exception in request [{} {}]: {}", ctx.method(), ctx.url(), ex.getMessage(), ex);
         try {
             DomainEventPublisher publisher = GuiceContext.getInstance(DomainEventPublisher.class);
-            if (publisher != null) {
+            if (java.util.Objects.nonNull(publisher)) {
                 // 创建异常事件并发布
                 DomainEvent<Exception> event = new ExceptionEvent(ex, ctx.url());
                 publisher.publish(event);

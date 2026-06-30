@@ -49,13 +49,13 @@ public class SqlMonitorPlugin implements Interceptor {
             MapperMethod.ParamMap parameterObject = (MapperMethod.ParamMap) statementHandler.getParameterHandler().getParameterObject();
             if (parameterObject.containsKey("param1") && parameterObject.get("param1") instanceof QueryWrapper) {
                 Map<String, Object> params = ((QueryWrapper) parameterObject.get("param1")).getParamNameValuePairs();
-                if (params != null && params.size() > 0) {
+                if (java.util.Objects.nonNull(params) && params.size() > 0) {
                     List<String> keys = new ArrayList<>(params.keySet());
                     Collections.sort(keys);
                     List<String> sortedSqlParams = new ArrayList<>();
                     for (String key : keys) {
                         Object o = params.get(key);
-                        if (o != null) {
+                        if (java.util.Objects.nonNull(o)) {
                             sortedSqlParams.add(String.valueOf(o));
                         }
                     }

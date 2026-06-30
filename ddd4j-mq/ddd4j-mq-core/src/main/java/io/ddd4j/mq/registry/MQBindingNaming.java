@@ -27,11 +27,11 @@ public final class MQBindingNaming {
     public static String bindingName(String topic, String tag) {
         String base = toCamelCase(normalizeTopic(topic));
         if (!hasText(tag) || "*".equals(tag.trim())) {
-            return base.isEmpty() ? "default" : base;
+            return io.ddd4j.kit.lang.StrKit.isEmpty(base) ? "default" : base;
         }
         String tagPart = toCamelCase(normalizeTag(tag));
-        if (tagPart.isEmpty()) {
-            return base.isEmpty() ? "default" : base;
+        if (io.ddd4j.kit.lang.StrKit.isEmpty(tagPart)) {
+            return io.ddd4j.kit.lang.StrKit.isEmpty(base) ? "default" : base;
         }
         return base + capitalize(tagPart);
     }
@@ -60,7 +60,7 @@ public final class MQBindingNaming {
      * 规范化 topic：去除首尾空白。
      */
     private static String normalizeTopic(String topic) {
-        return topic == null ? "" : topic.trim();
+        return java.util.Objects.isNull(topic) ? "" : topic.trim();
     }
 
     /**
@@ -103,6 +103,6 @@ public final class MQBindingNaming {
     }
 
     private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

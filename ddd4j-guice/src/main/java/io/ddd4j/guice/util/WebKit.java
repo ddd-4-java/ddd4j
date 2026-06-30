@@ -70,15 +70,15 @@ public class WebKit {
         String ip = null;
         for (String header : IP_HEADER_CANDIDATES) {
             ip = request.getHeader(header);
-            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+            if (java.util.Objects.nonNull(ip) && !io.ddd4j.kit.lang.StrKit.isEmpty(ip) && !"unknown".equalsIgnoreCase(ip)) {
                 break;
             }
         }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+        if (java.util.Objects.isNull(ip) || io.ddd4j.kit.lang.StrKit.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
         // 多个代理时取第一个
-        if (ip != null && ip.contains(",")) {
+        if (java.util.Objects.nonNull(ip) && ip.contains(",")) {
             ip = ip.split(",")[0].trim();
         }
         // 本地回环地址处理

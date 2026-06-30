@@ -56,7 +56,7 @@ public class MqttMQProperties {
     public void setWillRetained(boolean willRetained) { this.willRetained = willRetained; }
 
     public String newClientId() {
-        return (clientIdPrefix == null ? "ddd4j-mq-" : clientIdPrefix) + UUID.randomUUID();
+        return (java.util.Objects.isNull(clientIdPrefix) ? "ddd4j-mq-" : clientIdPrefix) + UUID.randomUUID();
     }
 
     public MqttConnectOptions connectOptions() {
@@ -66,10 +66,14 @@ public class MqttMQProperties {
         o.setConnectionTimeout(connectionTimeoutSeconds);
         o.setAutomaticReconnect(automaticReconnect);
         o.setMaxInflight(maxInflight);
-        if (username != null && !username.isBlank()) o.setUserName(username);
-        if (password != null && !password.isBlank()) o.setPassword(password.toCharArray());
-        if (willTopic != null && !willTopic.isBlank()) {
-            o.setWill(willTopic, willPayload == null ? new byte[0] : willPayload.getBytes(), willQos, willRetained);
+        if (java.util.Objects.nonNull(username) && !io.ddd4j.kit.lang.StrKit.isBlank(username)) {
+            o.setUserName(username);
+        }
+        if (java.util.Objects.nonNull(password) && !io.ddd4j.kit.lang.StrKit.isBlank(password)) {
+            o.setPassword(password.toCharArray());
+        }
+        if (java.util.Objects.nonNull(willTopic) && !io.ddd4j.kit.lang.StrKit.isBlank(willTopic)) {
+            o.setWill(willTopic, java.util.Objects.isNull(willPayload) ? new byte[0] : willPayload.getBytes(), willQos, willRetained);
         }
         return o;
     }

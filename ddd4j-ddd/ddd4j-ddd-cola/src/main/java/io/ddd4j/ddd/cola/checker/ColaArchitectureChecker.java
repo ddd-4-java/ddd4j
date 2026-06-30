@@ -130,7 +130,7 @@ public class ColaArchitectureChecker {
      */
     private void checkArchUnitRules(String sourceRoot) {
         JavaClasses classes = importClasses(sourceRoot);
-        if (classes == null || classes.isEmpty()) {
+        if (java.util.Objects.isNull(classes) || classes.isEmpty()) {
             log.debug("ArchUnit: 未找到可分析的 class 文件，跳过依赖检查");
             return;
         }
@@ -139,16 +139,16 @@ public class ColaArchitectureChecker {
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_ADAPTER, classes);
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION, classes);
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK, classes);
-        if (domainEntityAnnotation != null) {
+        if (java.util.Objects.nonNull(domainEntityAnnotation)) {
             checkArchRule(ColaDDDLayerRules.domainEntityInDomain(domainEntityAnnotation), classes);
         }
-        if (domainServiceAnnotation != null) {
+        if (java.util.Objects.nonNull(domainServiceAnnotation)) {
             checkArchRule(ColaDDDLayerRules.domainServiceInDomain(domainServiceAnnotation), classes);
         }
-        if (applicationServiceAnnotation != null) {
+        if (java.util.Objects.nonNull(applicationServiceAnnotation)) {
             checkArchRule(ColaDDDLayerRules.applicationServiceInApp(applicationServiceAnnotation), classes);
         }
-        if (domainRepositoryAnnotation != null) {
+        if (java.util.Objects.nonNull(domainRepositoryAnnotation)) {
             checkArchRule(ColaDDDLayerRules.repositoryImplInAdapter(domainRepositoryAnnotation), classes);
         }
     }
@@ -174,10 +174,10 @@ public class ColaArchitectureChecker {
             rule.check(classes);
         } catch (AssertionError e) {
             String message = e.getMessage();
-            if (message != null) {
+            if (java.util.Objects.nonNull(message)) {
                 for (String line : message.split("\n")) {
                     String trimmed = line.trim();
-                    if (!trimmed.isEmpty()) {
+                    if (!io.ddd4j.kit.lang.StrKit.isEmpty(trimmed)) {
                         violations.add(trimmed);
                     }
                 }
@@ -196,7 +196,9 @@ public class ColaArchitectureChecker {
 
     private void checkApplicationLayerStructure(Path basePath) {
         Path appPath = basePath.resolve("application");
-        if (!appPath.toFile().exists()) return;
+        if (!appPath.toFile().exists()) {
+            return;
+        }
 
         // COLA 特有：application 层应包含 executor 或 query 子包
         boolean hasExecutor = appPath.resolve("executor").toFile().isDirectory();

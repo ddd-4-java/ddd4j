@@ -47,7 +47,7 @@ public class InMemorySubject implements Subject {
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         String token = currentToken.get();
-        if (token == null) {
+        if (java.util.Objects.isNull(token)) {
             return null;
         }
         return (T) principalsByToken.get(token);
@@ -84,11 +84,11 @@ public class InMemorySubject implements Subject {
     @Override
     public void logout() {
         String token = currentToken.get();
-        if (token == null) {
+        if (java.util.Objects.isNull(token)) {
             return;
         }
         AuthPrincipal principal = principalsByToken.remove(token);
-        if (principal != null) {
+        if (java.util.Objects.nonNull(principal)) {
             principalsByLoginId.remove(principal.getLoginId());
             tokenByLoginId.remove(principal.getLoginId());
         }
@@ -98,7 +98,7 @@ public class InMemorySubject implements Subject {
     @Override
     public void logout(Object loginId) {
         String token = tokenByLoginId.remove(loginId);
-        if (token != null) {
+        if (java.util.Objects.nonNull(token)) {
             principalsByToken.remove(token);
         }
         principalsByLoginId.remove(loginId);
@@ -115,7 +115,7 @@ public class InMemorySubject implements Subject {
     @Override
     public String refresh() {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return null;
         }
         String oldToken = currentToken.get();
@@ -234,7 +234,7 @@ public class InMemorySubject implements Subject {
 
     @Override
     public boolean isAuthenticated() {
-        return getPrincipal() != null;
+        return java.util.Objects.nonNull(getPrincipal());
     }
 
     @Override
@@ -250,13 +250,13 @@ public class InMemorySubject implements Subject {
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         AuthPrincipal principal = getPrincipal();
-        return principal != null && Objects.equals(principal.getDeviceId(), deviceId);
+        return java.util.Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         AuthPrincipal principal = getPrincipalByLoginId(userId);
-        return principal != null && Objects.equals(principal.getDeviceId(), deviceId);
+        return java.util.Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
     @Override
@@ -268,7 +268,7 @@ public class InMemorySubject implements Subject {
     @Override
     public boolean isDisabled(Object loginId) {
         Long disabledUntil = disabledUntilEpochSecond.get(loginId);
-        if (disabledUntil == null) {
+        if (java.util.Objects.isNull(disabledUntil)) {
             return false;
         }
         if (disabledUntil == PERMANENT_DISABLE) {
@@ -287,7 +287,7 @@ public class InMemorySubject implements Subject {
     }
 
     private void validate(AuthRequest request) {
-        if (request == null || request.getLoginId() == null) {
+        if (java.util.Objects.isNull(request) || java.util.Objects.isNull(request.getLoginId())) {
             throw new IllegalArgumentException("loginId must not be null");
         }
         if (isDisabled(request.getLoginId())) {
@@ -304,16 +304,16 @@ public class InMemorySubject implements Subject {
 
     private AuthPrincipal normalizePrincipal(AuthRequest request) {
         AuthPrincipal principal = request.getPrincipal();
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             principal = new AuthPrincipal().setLoginId(request.getLoginId()).setUserId(request.getLoginId());
         }
-        if (principal.getLoginId() == null) {
+        if (java.util.Objects.isNull(principal.getLoginId())) {
             principal.setLoginId(request.getLoginId());
         }
-        if (principal.getUserId() == null) {
+        if (java.util.Objects.isNull(principal.getUserId())) {
             principal.setUserId(request.getLoginId());
         }
-        if (principal.getDeviceType() == null) {
+        if (java.util.Objects.isNull(principal.getDeviceType())) {
             principal.setDeviceType(request.getDeviceType());
         }
         principal.getProfile().putAll(request.getExtra());
@@ -322,12 +322,12 @@ public class InMemorySubject implements Subject {
     }
 
     private String createToken(AuthRequest request) {
-        String realm = request.getRealm() == null || request.getRealm().isBlank() ? "default" : request.getRealm();
+        String realm = java.util.Objects.isNull(request.getRealm()) || !org.springframework.util.StringUtils.hasText(request.getRealm()) ? "default" : request.getRealm();
         return realm + ":" + UUID.randomUUID();
     }
 
     private boolean hasPermission(AuthPrincipal principal, String permission) {
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return false;
         }
         Set<String> permissions = new HashSet<>(principal.getPerms());
@@ -336,7 +336,7 @@ public class InMemorySubject implements Subject {
     }
 
     private boolean[] permissionChecks(AuthPrincipal principal, String... permissions) {
-        if (permissions == null || permissions.length == 0) {
+        if (java.util.Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
         }
         boolean[] result = new boolean[permissions.length];
@@ -347,14 +347,14 @@ public class InMemorySubject implements Subject {
     }
 
     private boolean hasRole(AuthPrincipal principal, String roleIdentifier) {
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return false;
         }
         return SubjectKit.getStrategy().hasElement.apply(roleIdentifiers(principal), roleIdentifier);
     }
 
     private boolean[] roleChecks(AuthPrincipal principal, String... roleIdentifiers) {
-        if (roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
         boolean[] result = new boolean[roleIdentifiers.length];
@@ -365,22 +365,22 @@ public class InMemorySubject implements Subject {
     }
 
     private List<String> roleIdentifiers(AuthPrincipal principal) {
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return Collections.emptyList();
         }
         List<String> roles = new ArrayList<>(SubjectKit.getDataProvider().getRoleList(principal));
-        if (principal.getRoleCode() != null) {
+        if (java.util.Objects.nonNull(principal.getRoleCode())) {
             roles.add(principal.getRoleCode());
         }
-        if (principal.getRoleId() != null) {
+        if (java.util.Objects.nonNull(principal.getRoleId())) {
             roles.add(String.valueOf(principal.getRoleId()));
         }
-        if (principal.getRoles() != null) {
+        if (java.util.Objects.nonNull(principal.getRoles())) {
             for (AuthPrincipal.RolePair role : principal.getRoles()) {
-                if (role.getRoleCode() != null) {
+                if (java.util.Objects.nonNull(role.getRoleCode())) {
                     roles.add(role.getRoleCode());
                 }
-                if (role.getRoleId() != null) {
+                if (java.util.Objects.nonNull(role.getRoleId())) {
                     roles.add(role.getRoleId());
                 }
             }
@@ -401,6 +401,6 @@ public class InMemorySubject implements Subject {
     }
 
     private boolean isBlank(Object value) {
-        return value == null || String.valueOf(value).isBlank();
+        return java.util.Objects.isNull(value) || !org.springframework.util.StringUtils.hasText(String.valueOf(value));
     }
 }

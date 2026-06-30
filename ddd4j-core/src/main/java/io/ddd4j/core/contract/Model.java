@@ -18,21 +18,21 @@ import java.util.stream.Collectors;
 public class Model implements Serializable {
 
     public static <M extends Model> boolean save(List<M> models) {
-        if (models == null || models.isEmpty()) {
+        if (java.util.Objects.isNull(models) || models.isEmpty()) {
             return false;
         }
         return BaseRepository.of(models.get(0).getClass()).save(models);
     }
 
     public static <M extends Model> boolean update(List<M> models) {
-        if (models == null || models.isEmpty()) {
+        if (java.util.Objects.isNull(models) || models.isEmpty()) {
             return false;
         }
         return BaseRepository.of(models.get(0).getClass()).update(models);
     }
 
     public static <M extends Model> boolean updateByKey(List<M> models) {
-        if (models == null || models.isEmpty()) {
+        if (java.util.Objects.isNull(models) || models.isEmpty()) {
             return false;
         }
         return BaseRepository.of(models.get(0).getClass()).updateByKey(models);
@@ -45,7 +45,7 @@ public class Model implements Serializable {
     // 通过模型名匹配模型类
     public static Class<Model> ofName(String name) {
         Class<Model> modelClass = MappingKit.get("MODEL_NAME", name);
-        if (modelClass == null) {
+        if (java.util.Objects.isNull(modelClass)) {
             throw new ServiceException("Model: {} not found", name);
         }
         return modelClass;
@@ -54,13 +54,15 @@ public class Model implements Serializable {
     // 通过Map参数转换为模型
     public static Model convert(String name, Map<String, Object> modelMap) {
         String json = JsonKit.toJson(modelMap);
-        if (json == null || json.isEmpty()) return null;
+        if (java.util.Objects.isNull(json) || io.ddd4j.kit.lang.StrKit.isEmpty(json)) {
+            return null;
+        }
         return JsonKit.toObject(json, Model.ofName(name));
     }
 
     // 批量通过Map参数转换为模型
     public static List<Model> convert(String name, List<Map<String, Object>> modelMaps) {
-        if (modelMaps != null && !modelMaps.isEmpty()) {
+        if (java.util.Objects.nonNull(modelMaps) && !modelMaps.isEmpty()) {
             return modelMaps.stream().map(modelMap -> convert(name, modelMap)).filter(Objects::nonNull).collect(Collectors.toList());
         }
         return null;

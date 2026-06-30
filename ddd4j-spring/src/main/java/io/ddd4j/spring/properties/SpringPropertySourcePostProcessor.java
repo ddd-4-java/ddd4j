@@ -25,7 +25,7 @@ public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcess
                         @Override
                         public Object getProperty(String name) {
                             // 仅处理 ddd4j.* 前缀属性
-                            if (name != null && name.startsWith("ddd4j.")) {
+                            if (java.util.Objects.nonNull(name) && name.startsWith("ddd4j.")) {
                                 return System.getProperty(name);
                             }
                             return null;

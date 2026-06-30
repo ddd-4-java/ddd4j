@@ -29,7 +29,7 @@ public interface DomainEventPublisher {
      * @param events 领域事件集合
      */
     default void publishAll(Collection<DomainEvent> events) {
-        if (events != null) {
+        if (java.util.Objects.nonNull(events)) {
             events.forEach(this::publish);
         }
     }

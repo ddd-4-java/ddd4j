@@ -52,7 +52,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         this.memcachedClient = Objects.requireNonNull(memcachedClient);
         this.expireSeconds = (int) (config.getExpireAfterWriteSeconds() > 0 ? config.getExpireAfterWriteSeconds() : 3600);
         this.valueType = Objects.requireNonNull(valueType);
-        this.objectMapper = objectMapper != null ? objectMapper : new ObjectMapper()
+        this.objectMapper = java.util.Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
     }
@@ -93,9 +93,9 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
     @Override
     public V get(K key, Function<K, V> mappingFunction) {
         V value = getIfPresent(key);
-        if (value == null) {
+        if (java.util.Objects.isNull(value)) {
             value = mappingFunction.apply(key);
-            if (value != null) {
+            if (java.util.Objects.nonNull(value)) {
                 put(key, value);
             }
         }

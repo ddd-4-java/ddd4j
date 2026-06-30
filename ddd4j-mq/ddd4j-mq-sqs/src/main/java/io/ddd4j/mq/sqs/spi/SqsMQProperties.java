@@ -54,7 +54,7 @@ public class SqsMQProperties {
     public void setPollIntervalMs(long pollIntervalMs) { this.pollIntervalMs = pollIntervalMs; }
 
     public AwsCredentialsProvider credentialsProvider() {
-        if (accessKey != null && !accessKey.isBlank() && secretKey != null && !secretKey.isBlank()) {
+        if (java.util.Objects.nonNull(accessKey) && !io.ddd4j.kit.lang.StrKit.isBlank(accessKey) && java.util.Objects.nonNull(secretKey) && !io.ddd4j.kit.lang.StrKit.isBlank(secretKey)) {
             return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
         }
         return DefaultCredentialsProvider.create();
@@ -64,7 +64,7 @@ public class SqsMQProperties {
         SqsClientBuilder b = SqsClient.builder()
                 .region(Region.of(region))
                 .credentialsProvider(credentialsProvider());
-        if (endpointOverride != null && !endpointOverride.isBlank()) {
+        if (java.util.Objects.nonNull(endpointOverride) && !io.ddd4j.kit.lang.StrKit.isBlank(endpointOverride)) {
             b.endpointOverride(URI.create(endpointOverride));
         }
         return b.build();

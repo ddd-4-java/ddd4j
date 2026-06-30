@@ -56,7 +56,7 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public boolean isOpen() {
-        return session != null && !acknowledged.get();
+        return java.util.Objects.nonNull(session) && !acknowledged.get();
     }
 
     @Override
@@ -107,10 +107,18 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
-        if (nativeType == null) return Optional.empty();
-        if (nativeType.isInstance(session)) return Optional.of(nativeType.cast(session));
-        if (nativeType.isInstance(message)) return Optional.of(nativeType.cast(message));
-        if (nativeType.isInstance(this)) return Optional.of(nativeType.cast(this));
+        if (java.util.Objects.isNull(nativeType)) {
+            return Optional.empty();
+        }
+        if (nativeType.isInstance(session)) {
+            return Optional.of(nativeType.cast(session));
+        }
+        if (nativeType.isInstance(message)) {
+            return Optional.of(nativeType.cast(message));
+        }
+        if (nativeType.isInstance(this)) {
+            return Optional.of(nativeType.cast(this));
+        }
         return Optional.empty();
     }
 

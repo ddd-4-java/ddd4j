@@ -32,7 +32,7 @@ public class BeanKit {
      * @param target 目标对象
      */
     public void copy(Object source, Object target) {
-        if (source == null || target == null) {
+        if (java.util.Objects.isNull(source) || java.util.Objects.isNull(target)) {
             return;
         }
         // 集合拷贝：逐元素拷贝
@@ -58,7 +58,7 @@ public class BeanKit {
      * @return 目标对象；源对象为 null 时返回 null
      */
     public <T> T copy(Object source, Class<T> targetClass) {
-        if (source == null) {
+        if (java.util.Objects.isNull(source)) {
             return null;
         }
         T target = ReflectUtil.newInstance(targetClass);
@@ -76,7 +76,7 @@ public class BeanKit {
      * @return 目标对象；源对象为 null 时返回 null
      */
     public <T> T copy(Object source, Class<T> targetClass, String... ignoreProperties) {
-        if (source == null) {
+        if (java.util.Objects.isNull(source)) {
             return null;
         }
         T target = ReflectUtil.newInstance(targetClass);
@@ -93,7 +93,7 @@ public class BeanKit {
      * @return 目标列表；源集合为 null 时返回 null
      */
     public <T> List<T> copy(Collection<?> sourceList, Class<T> targetClass) {
-        if (sourceList == null) {
+        if (java.util.Objects.isNull(sourceList)) {
             return null;
         }
         List<T> targetList = new ArrayList<>(sourceList.size());
@@ -113,7 +113,7 @@ public class BeanKit {
      * @return 目标列表；源集合为 null 时返回 null
      */
     public <T> List<T> copy(Collection<?> sourceList, Class<T> targetClass, String... ignoreProperties) {
-        if (sourceList == null) {
+        if (java.util.Objects.isNull(sourceList)) {
             return null;
         }
         List<T> targetList = new ArrayList<>(sourceList.size());
@@ -152,17 +152,17 @@ public class BeanKit {
      * @return 属性 Map；源对象为 null 时返回 null
      */
     public Map<String, Object> toMap(Object obj, boolean withNull, String... ignoreFields) {
-        if (obj == null) {
+        if (java.util.Objects.isNull(obj)) {
             return null;
         }
         if (obj instanceof Map) {
             return new LinkedHashMap<>((Map<String, Object>) obj);
         }
-        Set<String> ignores = ignoreFields == null ? Set.of() : Set.of(ignoreFields);
+        Set<String> ignores = java.util.Objects.isNull(ignoreFields) ? Set.of() : Set.of(ignoreFields);
         Map<String, Object> map = new LinkedHashMap<>();
         // 遍历继承链上的所有非静态字段
         Class<?> clazz = obj.getClass();
-        while (clazz != null && clazz != Object.class) {
+        while (java.util.Objects.nonNull(clazz) && clazz != Object.class) {
             for (Field field : clazz.getDeclaredFields()) {
                 if (Modifier.isStatic(field.getModifiers())) {
                     continue;
@@ -174,7 +174,7 @@ public class BeanKit {
                 field.setAccessible(true);
                 try {
                     Object value = field.get(obj);
-                    if (value != null || withNull) {
+                    if (java.util.Objects.nonNull(value) || withNull) {
                         map.putIfAbsent(fieldName, value);
                     }
                 } catch (IllegalAccessException ignore) {
@@ -193,7 +193,7 @@ public class BeanKit {
      * @param target 目标对象
      */
     public void mapToObject(Map<String, Object> map, Object target) {
-        if (target == null || CollUtil.isEmpty(map)) {
+        if (java.util.Objects.isNull(target) || CollUtil.isEmpty(map)) {
             return;
         }
         BeanUtil.fillBeanWithMap(map, target, CopyOptions.create().setIgnoreError(false));
@@ -221,7 +221,7 @@ public class BeanKit {
      * @return true 表示为空
      */
     public boolean isEmpty(Object obj) {
-        if (obj == null) {
+        if (java.util.Objects.isNull(obj)) {
             return true;
         }
         if (obj instanceof CharSequence) {
@@ -247,7 +247,7 @@ public class BeanKit {
      * @return 字段名
      */
     public String changeColumnToFieldName(String columnName) {
-        if (columnName == null || columnName.isEmpty()) {
+        if (java.util.Objects.isNull(columnName) || io.ddd4j.kit.lang.StrKit.isEmpty(columnName)) {
             return columnName;
         }
         String[] array = columnName.split("_");
@@ -294,7 +294,7 @@ public class BeanKit {
      * @param withUpdateInfo 是否包含更新审计字段（updater/updaterCode/updateTime）
      */
     public void objectToObject(Object source, Object target, boolean ignoreNull, boolean withCreateInfo, boolean withUpdateInfo) {
-        if (source == null || target == null) {
+        if (java.util.Objects.isNull(source) || java.util.Objects.isNull(target)) {
             return;
         }
         List<String> ignorePropertiesList = new ArrayList<>();
@@ -395,7 +395,7 @@ public class BeanKit {
      * @param targetClass 目标类型
      */
     public void objectsToObjects(List sourceList, List targetList, Class targetClass) {
-        if (CollUtil.isEmpty(sourceList) || targetList == null) {
+        if (CollUtil.isEmpty(sourceList) || java.util.Objects.isNull(targetList)) {
             return;
         }
         for (Object source : sourceList) {
@@ -413,7 +413,7 @@ public class BeanKit {
      * @param targetClass 目标类型
      */
     public void mapsToObjects(List<Map<String, Object>> mapList, List targetList, Class targetClass) {
-        if (CollUtil.isEmpty(mapList) || targetList == null) {
+        if (CollUtil.isEmpty(mapList) || java.util.Objects.isNull(targetList)) {
             return;
         }
         for (Map<String, Object> map : mapList) {
@@ -462,7 +462,7 @@ public class BeanKit {
             if (i++ > 0) {
                 builder.append(separator);
             }
-            if (surround != null) {
+            if (java.util.Objects.nonNull(surround)) {
                 builder.append(surround).append(str).append(surround);
             } else {
                 builder.append(str);

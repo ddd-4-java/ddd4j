@@ -37,7 +37,7 @@ public class SaTokenSubject implements Subject {
      * @return StpLogic
      */
     protected StpLogic stpLogic(String realm) {
-        if (realm == null || realm.isEmpty()) {
+        if (java.util.Objects.isNull(realm) || !org.springframework.util.StringUtils.hasLength(realm)) {
             return StpUtil.stpLogic;
         }
         return cn.dev33.satoken.SaManager.getStpLogic(realm, true);
@@ -51,7 +51,7 @@ public class SaTokenSubject implements Subject {
             return null;
         }
         SaSession session = StpUtil.getSession(false);
-        if (session == null) {
+        if (java.util.Objects.isNull(session)) {
             return null;
         }
         return (T) session.get(PRINCIPAL_KEY);
@@ -60,7 +60,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
         SaSession session = StpUtil.getSessionByLoginId(loginId, false);
-        if (session == null) {
+        if (java.util.Objects.isNull(session)) {
             return null;
         }
         return (T) session.get(PRINCIPAL_KEY);
@@ -69,7 +69,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
         Object loginId = StpUtil.getLoginIdByToken(tokenValue);
-        if (loginId == null) {
+        if (java.util.Objects.isNull(loginId)) {
             return null;
         }
         return getPrincipalByLoginId(loginId);
@@ -83,16 +83,16 @@ public class SaTokenSubject implements Subject {
         // 构建 SaLoginParameter
         SaLoginParameter param = new SaLoginParameter();
         param.setTimeout(request.getTimeout());
-        if (request.getDeviceType() != null) {
+        if (java.util.Objects.nonNull(request.getDeviceType())) {
             param.setDeviceType(request.getDeviceType());
         }
-        if (request.getExtra() != null && !request.getExtra().isEmpty()) {
+        if (java.util.Objects.nonNull(request.getExtra()) && !request.getExtra().isEmpty()) {
             param.setExtraData(request.getExtra());
         }
         // 调用 Sa-Token 登录，建立会话
         logic.login(request.getLoginId(), param);
         // 登录后将 principal 存入 SaSession
-        if (request.getPrincipal() != null) {
+        if (java.util.Objects.nonNull(request.getPrincipal())) {
             SaSession session = logic.getSessionByLoginId(request.getLoginId(), true);
             session.set(PRINCIPAL_KEY, request.getPrincipal());
         }
@@ -123,7 +123,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
         Object loginId = StpUtil.getLoginIdByToken(token);
-        if (loginId == null) {
+        if (java.util.Objects.isNull(loginId)) {
             return null;
         }
         return getPrincipalByLoginId(loginId);
@@ -134,7 +134,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermitted(String permission) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -144,7 +144,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -154,7 +154,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean[] isPermitted(String... permissions) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null || permissions == null || permissions.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -168,7 +168,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null || permissions == null || permissions.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -182,7 +182,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermittedAny(String... permissions) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null || permissions == null || permissions.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -197,7 +197,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null || permissions == null || permissions.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -212,7 +212,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermittedAll(String... permissions) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null || permissions == null || permissions.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -227,7 +227,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null || permissions == null || permissions.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -242,7 +242,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasRole(String roleIdentifier) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -252,7 +252,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null) {
+        if (java.util.Objects.isNull(principal)) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -262,7 +262,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -276,7 +276,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -290,7 +290,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -305,7 +305,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -320,7 +320,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
-        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -335,7 +335,7 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (principal == null || roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);

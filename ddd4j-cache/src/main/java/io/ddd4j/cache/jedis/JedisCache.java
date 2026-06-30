@@ -85,7 +85,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     public JedisCache(UnifiedJedis jedis, CacheConfig config, Class<V> valueType, ObjectMapper objectMapper) {
         this.jedis = Objects.requireNonNull(jedis);
         this.valueType = Objects.requireNonNull(valueType);
-        this.objectMapper = objectMapper != null ? objectMapper : new ObjectMapper();
+        this.objectMapper = java.util.Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper();
         this.keyPrefix = config.getName() + ":";
         long expSec = config.getExpireAfterWriteSeconds();
         this.expireSeconds = expSec;
@@ -108,8 +108,12 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     public V getIfPresent(String key) {
         try {
             String json = jedis.get(key(key));
-            if (json == null) return null;
-            if (valueType == String.class) return (V) json;
+            if (java.util.Objects.isNull(json)) {
+                return null;
+            }
+            if (valueType == String.class) {
+                return (V) json;
+            }
             return objectMapper.readValue(json, valueType);
         } catch (Exception e) {
             return null;
@@ -119,9 +123,11 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
-        if (value == null) {
+        if (java.util.Objects.isNull(value)) {
             value = mappingFunction.apply(key);
-            if (value != null) put(key, value);
+            if (java.util.Objects.nonNull(value)) {
+                put(key, value);
+            }
         }
         return value;
     }
@@ -130,7 +136,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     public void put(String key, V value) {
         try {
             String json = (value instanceof String) ? (String) value : objectMapper.writeValueAsString(value);
-            if (setParams != null) {
+            if (java.util.Objects.nonNull(setParams)) {
                 jedis.set(key(key), json, setParams);
             } else {
                 jedis.set(key(key), json);
@@ -194,13 +200,13 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     @Override
     public boolean replace(String key, V expected, V newValue) {
         try {
-            if (expected == null) {
+            if (java.util.Objects.isNull(expected)) {
                 return putIfAbsent(key, newValue);
             }
             String expectedJson = (expected instanceof String) ? (String) expected : objectMapper.writeValueAsString(expected);
             String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
             Object result = jedis.eval(CAS_REPLACE_SCRIPT, 1, key(key), expectedJson, newJson);
-            return result != null && !Long.valueOf(0).equals(result);
+            return java.util.Objects.nonNull(result) && !Long.valueOf(0).equals(result);
         } catch (Exception e) {
             return false;
         }
@@ -211,7 +217,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         try {
             String expectedJson = (expected instanceof String) ? (String) expected : objectMapper.writeValueAsString(expected);
             Object result = jedis.eval(CAS_DELETE_SCRIPT, 1, key(key), expectedJson);
-            return result != null && !Long.valueOf(0).equals(result);
+            return java.util.Objects.nonNull(result) && !Long.valueOf(0).equals(result);
         } catch (Exception e) {
             return false;
         }
@@ -219,7 +225,9 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
 
     @Override
     public long increment(String key, long delta) {
-        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("增量必须 >= 0");
+        }
         return jedis.incrBy(key(key), delta);
     }
 
@@ -234,19 +242,25 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
 
     @Override
     public long decrement(String key, long delta) {
-        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("减量必须 >= 0");
+        }
         return jedis.incrBy(key(key), -delta);
     }
 
     @Override
     public double incrementFloat(String key, double delta) {
-        if (delta < 0) throw new IllegalArgumentException("增量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("增量必须 >= 0");
+        }
         return jedis.incrByFloat(key(key), delta);
     }
 
     @Override
     public double decrementFloat(String key, double delta) {
-        if (delta < 0) throw new IllegalArgumentException("减量必须 >= 0");
+        if (delta < 0) {
+            throw new IllegalArgumentException("减量必须 >= 0");
+        }
         return jedis.incrByFloat(key(key), -delta);
     }
 

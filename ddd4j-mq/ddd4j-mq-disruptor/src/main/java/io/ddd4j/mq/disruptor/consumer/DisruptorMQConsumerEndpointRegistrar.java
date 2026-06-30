@@ -36,7 +36,7 @@ public class DisruptorMQConsumerEndpointRegistrar {
      * 批量注册监听器。
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (definitions == null || definitions.isEmpty()) {
+        if (java.util.Objects.isNull(definitions) || definitions.isEmpty()) {
             return;
         }
         for (MQListenerDefinition definition : definitions) {
