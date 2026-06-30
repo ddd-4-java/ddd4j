@@ -4,8 +4,10 @@ import hitool.core.lang3.time.DateUtils;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
+import java.util.Locale;
 
 /**
  * JWT 签发配置
@@ -44,8 +46,7 @@ public class JwtIssueProperteis {
      * "?h" //小时
      * "?d" //天
      */
-    @Value("#{T(org.springframework.boot.convert.DurationStyle).detectAndParse('${jwt.expire:7d}')}")
-    private Duration expire;
+    private Duration expire = Duration.ofDays(7);
     /**
      * JWT 加密算法
      */
@@ -61,5 +62,37 @@ public class JwtIssueProperteis {
     @Value("${jwt.rsa-pub-key:}")
     private String rsaPubKey;
 
-}
+    @Value("${jwt.expire:7d}")
+    public void setExpire(String expire) {
+        this.expire = parseDuration(expire);
+    }
 
+    private Duration parseDuration(String value) {
+        if (!StringUtils.hasText(value)) {
+            return Duration.ofMillis(EXPIRE_TIME);
+        }
+        String normalized = value.trim().toLowerCase(Locale.ROOT);
+        if (normalized.endsWith("ns")) {
+            return Duration.ofNanos(Long.parseLong(normalized.substring(0, normalized.length() - 2)));
+        }
+        if (normalized.endsWith("us")) {
+            return Duration.ofNanos(Long.parseLong(normalized.substring(0, normalized.length() - 2)) * 1_000L);
+        }
+        if (normalized.endsWith("ms")) {
+            return Duration.ofMillis(Long.parseLong(normalized.substring(0, normalized.length() - 2)));
+        }
+        if (normalized.endsWith("s")) {
+            return Duration.ofSeconds(Long.parseLong(normalized.substring(0, normalized.length() - 1)));
+        }
+        if (normalized.endsWith("m")) {
+            return Duration.ofMinutes(Long.parseLong(normalized.substring(0, normalized.length() - 1)));
+        }
+        if (normalized.endsWith("h")) {
+            return Duration.ofHours(Long.parseLong(normalized.substring(0, normalized.length() - 1)));
+        }
+        if (normalized.endsWith("d")) {
+            return Duration.ofDays(Long.parseLong(normalized.substring(0, normalized.length() - 1)));
+        }
+        return Duration.parse(value);
+    }
+}

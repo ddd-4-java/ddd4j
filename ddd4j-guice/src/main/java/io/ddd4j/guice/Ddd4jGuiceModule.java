@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.guice.core;
+package io.ddd4j.guice;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;

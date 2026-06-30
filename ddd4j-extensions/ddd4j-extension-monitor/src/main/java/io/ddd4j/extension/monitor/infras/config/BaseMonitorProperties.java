@@ -1,7 +1,6 @@
 package io.ddd4j.extension.monitor.infras.config;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.List;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
-@ConfigurationProperties(prefix = "base-monitor")
 public class BaseMonitorProperties {
     private Log log = new Log();
 

@@ -13,10 +13,6 @@
     <artifactId>ddd4j-extension-monitor</artifactId>
     <description>ddd4j 监控告警：钉钉/企微机器人 + 日志告警 + 健康检查</description>
 
-    <properties>
-        <spring-boot.version>3.5.6</spring-boot.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -42,11 +38,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
 
         <!-- Logback + Janino（日志过滤） -->
         <dependency>
@@ -71,12 +62,6 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
-            <version>${spring-boot.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>

@@ -20,7 +20,7 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring Security（公开坐标，替代原 hiwepy security-biz-spring-boot-starter） -->
+        <!-- Spring Security（公开坐标，替代原 hiwepy 安全启动器） -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
@@ -38,24 +38,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
-        <!-- JWT 扩展（待 hiwepy 3.3.x 发布后启用，当前注释以达成 BUILD SUCCESS）
-                <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>security-biz-spring-boot-starter</artifactId>
-        </dependency>
-                <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>security-jwt-spring-boot-starter</artifactId>
-        </dependency>
-                <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>redistpl-plus-spring-boot-starter</artifactId>
-        </dependency>
-                <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>jwt-issuer-with-jjwt</artifactId>
-        </dependency>
-        -->
+        <!-- JWT 扩展依赖待 hiwepy 3.3.x 发布后启用。 -->
     </dependencies>
 
     <build>

@@ -1,4 +1,4 @@
-package io.ddd4j.guice.core;
+package io.ddd4j.guice;
 
 import io.ddd4j.core.context.I18nProvider;
 

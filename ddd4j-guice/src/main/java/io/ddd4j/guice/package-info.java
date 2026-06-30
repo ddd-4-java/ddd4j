@@ -8,4 +8,4 @@
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.4.x
  */
-package io.ddd4j.guice.core;
+package io.ddd4j.guice;

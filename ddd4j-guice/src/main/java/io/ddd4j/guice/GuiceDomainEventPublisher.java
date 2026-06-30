@@ -1,4 +1,4 @@
-package io.ddd4j.guice.core;
+package io.ddd4j.guice;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
