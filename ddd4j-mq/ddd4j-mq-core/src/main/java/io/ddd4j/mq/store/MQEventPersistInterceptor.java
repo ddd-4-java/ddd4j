@@ -6,8 +6,7 @@ import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumeInterceptor;
 import io.ddd4j.mq.consume.MQConsumerContext;
 import io.ddd4j.mq.contract.MQMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * MQ 事件持久化拦截器。
@@ -17,9 +16,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class MQEventPersistInterceptor implements MQConsumeInterceptor {
-
-    private static final Logger log = LoggerFactory.getLogger(MQEventPersistInterceptor.class);
 
     private final Ddd4jMQProperties properties;
     @SuppressWarnings("rawtypes")

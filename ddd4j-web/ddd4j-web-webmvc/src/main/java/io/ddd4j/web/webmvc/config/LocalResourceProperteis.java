@@ -6,8 +6,7 @@
  */
 package io.ddd4j.web.webmvc.config;
 
-import com.google.common.collect.Maps;
-
+import java.util.HashMap;
 import java.util.Map;
 
 public class LocalResourceProperteis {
@@ -19,7 +18,7 @@ public class LocalResourceProperteis {
     private boolean localRelative;
 
     // 本地静态资源映射
-    private Map<String, String> localLocations = Maps.newHashMap();
+    private Map<String, String> localLocations = new HashMap<>();
 
     public String getLocalStorage() {
         return localStorage;

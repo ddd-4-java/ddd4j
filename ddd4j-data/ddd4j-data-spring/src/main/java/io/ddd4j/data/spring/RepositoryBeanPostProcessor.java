@@ -3,8 +3,7 @@ package io.ddd4j.data.spring;
 import io.ddd4j.core.contract.BaseRepository;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -19,9 +18,8 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class RepositoryBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
-
-    private static final Logger log = LoggerFactory.getLogger(RepositoryBeanPostProcessor.class);
 
     private ApplicationContext applicationContext;
 

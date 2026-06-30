@@ -3,6 +3,7 @@ package io.ddd4j.data.external.sys;
 import hitool.core.lang3.network.InetAddressUtils;
 import io.ddd4j.kit.lang.ArithKit;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.GlobalMemory;
@@ -22,6 +23,7 @@ import java.util.Properties;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
+@Slf4j
 public class Server {
 
     private static final int OSHI_WAIT_SECOND = 1000;
@@ -54,7 +56,7 @@ public class Server {
     public static void main(String[] args) {
         Server server = new Server();
         server.setValueTo();
-        System.out.println(server);
+        log.info("{}", server);
     }
 
     public void setValueTo() {
@@ -175,4 +177,3 @@ public class Server {
         }
     }
 }
-

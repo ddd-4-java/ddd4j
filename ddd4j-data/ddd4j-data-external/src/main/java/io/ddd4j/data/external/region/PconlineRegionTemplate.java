@@ -66,7 +66,7 @@ public class PconlineRegionTemplate {
         PconlineRegionTemplate template = new PconlineRegionTemplate(RestClient.create());
 
         Optional<JSONObject> mapLL2 = template.getLocationByIp("13.228.204.118"); // lng：116.86380647644208  lat：38.297615350325717
-        System.out.println(mapLL2.get().toJSONString());
+        mapLL2.ifPresent(location -> log.info("Location: {}", location.toJSONString()));
     }
 
     /**

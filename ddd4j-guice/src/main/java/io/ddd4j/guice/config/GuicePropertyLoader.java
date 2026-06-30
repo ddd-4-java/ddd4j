@@ -17,8 +17,7 @@ package io.ddd4j.guice.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +33,9 @@ import java.util.Properties;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class GuicePropertyLoader extends AbstractModule {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GuicePropertyLoader.class);
     private static final String DEFAULT_CONFIG = "ddd4j-default.properties";
 
     private final String[] configFiles;
@@ -64,26 +63,26 @@ public class GuicePropertyLoader extends AbstractModule {
             Properties props = loadProperties(configFile);
             if (props != null) {
                 merged.putAll(props);
-                LOG.info("Loaded {} properties from {}", props.size(), configFile);
+                log.info("Loaded {} properties from {}", props.size(), configFile);
             }
         }
         if (!merged.isEmpty()) {
             Names.bindProperties(binder(), merged);
-            LOG.info("Total {} properties bound to Guice Injector", merged.size());
+            log.info("Total {} properties bound to Guice Injector", merged.size());
         }
     }
 
     private Properties loadProperties(String resourcePath) {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
             if (is == null) {
-                LOG.debug("Config file not found: {}", resourcePath);
+                log.debug("Config file not found: {}", resourcePath);
                 return null;
             }
             Properties props = new Properties();
             props.load(is);
             return props;
         } catch (IOException e) {
-            LOG.warn("Failed to load config file: {}", resourcePath, e);
+            log.warn("Failed to load config file: {}", resourcePath, e);
             return null;
         }
     }

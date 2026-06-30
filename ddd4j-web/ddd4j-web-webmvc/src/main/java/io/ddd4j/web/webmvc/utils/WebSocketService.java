@@ -4,8 +4,7 @@ import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.web.config.BaseWebProperties;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -25,9 +24,9 @@ import java.util.function.Supplier;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j(topic = "### BASE-WEB : WebSocketService ###")
 public class WebSocketService {
 
-    private static final Logger log = LoggerFactory.getLogger("### BASE-WEB : WebSocketService ###");
     private static final Map<String, WebSocketSession> SESSIONS = new ConcurrentHashMap<>();
     private static final Map<String, WebSocketConnectionManager> MANAGERS = new ConcurrentHashMap<>();
 
@@ -98,7 +97,9 @@ public class WebSocketService {
 
     public void disconnect(String clientId) {
         WebSocketConnectionManager manager = MANAGERS.get(clientId);
-        if (manager == null) return;
+        if (manager == null) {
+            return;
+        }
         manager.stop();
     }
 

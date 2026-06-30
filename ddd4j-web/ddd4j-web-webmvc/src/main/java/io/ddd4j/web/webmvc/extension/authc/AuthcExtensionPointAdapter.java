@@ -1,9 +1,8 @@
 package io.ddd4j.web.webmvc.extension.authc;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.pf4j.PluginRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Enumeration;
 import java.util.Map;
@@ -22,11 +21,11 @@ import java.util.Map;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
-    private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
 
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {

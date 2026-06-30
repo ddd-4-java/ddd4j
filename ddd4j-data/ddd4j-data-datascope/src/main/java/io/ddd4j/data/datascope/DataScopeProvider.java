@@ -3,21 +3,24 @@ package io.ddd4j.data.datascope;
 import java.util.Objects;
 
 /**
- * 数据权限提供者
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * Provides business-specific data permission decisions.
  */
+@FunctionalInterface
 public interface DataScopeProvider {
 
     /**
-     * 获取数据权限
+     * Returns whether the annotated data is permitted for the given data type.
      *
-     * @param dataType 数据类型
-     * @param data     数据，被注解标注的数据
-     * @return 是否有数据权限
+     * @param dataType data domain or resource type declared by the annotation
+     * @param data annotated value
+     * @return true when the current context can access the data
      */
-    default boolean hasPermissions(String dataType, Object data) {
-        return Objects.nonNull(data);
-    }
+    boolean hasPermissions(String dataType, Object data);
 
+    /**
+     * Default provider: preserves legacy behavior by accepting non-null values.
+     */
+    static DataScopeProvider nonNullAllowed() {
+        return (dataType, data) -> Objects.nonNull(data);
+    }
 }

@@ -6,8 +6,7 @@ import io.ddd4j.core.contract.exception.ServiceException;
 import io.ddd4j.core.contract.exception.ValidateException;
 import io.ddd4j.core.util.ExceptionKit;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -26,8 +25,8 @@ import java.util.stream.Collectors;
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j(topic = "### BASE-WEB : GlobalRestExceptionAdvice ###")
 public class GlobalRestExceptionAdvice {
-    private static final Logger log = LoggerFactory.getLogger("### BASE-WEB : GlobalRestExceptionAdvice ###");
 
     @ExceptionHandler({BindException.class})
     public R<String> bindException(HttpServletRequest request, Model model, BindException e) {
@@ -49,7 +48,6 @@ public class GlobalRestExceptionAdvice {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("请求参数校验失败：{}\n**StackTraces:** {}", fieldError.getDefaultMessage(), projectStackTrace);
-        e.printStackTrace();
         return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), fieldError.getDefaultMessage());
     }
 
@@ -70,7 +68,6 @@ public class GlobalRestExceptionAdvice {
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("空指针异常\n**StackTraces:** {}", projectStackTrace);
-        e.printStackTrace();
         return R.fail(ResultCode.FAIL.getCode(), e.getMessage());
     }
 
@@ -78,7 +75,6 @@ public class GlobalRestExceptionAdvice {
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("运行时异常\n**StackTraces:** {}", projectStackTrace);
-        e.printStackTrace();
         return R.fail(ResultCode.FAIL.getCode(), e.getMessage());
     }
 

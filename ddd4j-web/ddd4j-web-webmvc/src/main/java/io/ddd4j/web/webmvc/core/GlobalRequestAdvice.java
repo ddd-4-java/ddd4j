@@ -4,8 +4,7 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.spring.util.BeanKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -20,6 +19,7 @@ import java.util.Map;
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j(topic = "==> RequestBody")
 public class GlobalRequestAdvice implements RequestBodyAdvice {
 
     @Override
@@ -37,8 +37,7 @@ public class GlobalRequestAdvice implements RequestBodyAdvice {
         Map<String, Object> objectMap = BeanKit.toMapClean(o);
         String body = JsonKit.toJson(objectMap);
         ThreadContext.set(ContextConstants.REQUEST_BODY, body);
-        Logger logger = LoggerFactory.getLogger("==> RequestBody");
-        logger.info("{}", body);
+        log.info("{}", body);
         return o;
     }
 

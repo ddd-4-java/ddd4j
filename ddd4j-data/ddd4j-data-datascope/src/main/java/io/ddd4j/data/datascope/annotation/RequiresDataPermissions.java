@@ -4,47 +4,36 @@ import io.ddd4j.data.datascope.RequiresDataPermissionsValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * jsr303 数据权限校验注解
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @version 1.0
- * @since 2024.10.09
+ * Validates that a value is visible under the current data permission scope.
  */
 @Documented
-@Constraint(validatedBy = {RequiresDataPermissionsValidator.class})
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
+@Constraint(validatedBy = RequiresDataPermissionsValidator.class)
+@Target({
+        ElementType.METHOD,
+        ElementType.FIELD,
+        ElementType.ANNOTATION_TYPE,
+        ElementType.CONSTRUCTOR,
+        ElementType.PARAMETER,
+        ElementType.TYPE_USE
+})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresDataPermissions {
 
     /**
-     * 数据类型
-     *
-     * @return the data type
+     * Business data type, such as dept, tenant, region, or project.
      */
     String dataType();
 
-    /**
-     * Message string.
-     *
-     * @return the string
-     */
     String message() default "数据未授权";
 
-    /**
-     * 校验组
-     *
-     * @return the class [ ]
-     */
     Class<?>[] groups() default {};
 
-    /**
-     * Payload class [ ].
-     *
-     * @return the class [ ]
-     */
     Class<? extends Payload>[] payload() default {};
-
 }

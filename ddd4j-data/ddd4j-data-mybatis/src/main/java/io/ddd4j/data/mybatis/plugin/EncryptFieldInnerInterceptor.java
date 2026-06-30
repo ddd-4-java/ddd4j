@@ -23,8 +23,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.util.Set;
@@ -39,9 +38,8 @@ import java.util.Set;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class EncryptFieldInnerInterceptor implements InnerInterceptor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EncryptFieldInnerInterceptor.class);
 
     private final FieldEncryptor encryptor;
 
@@ -76,9 +74,9 @@ public class EncryptFieldInnerInterceptor implements InnerInterceptor {
             return;
         }
         // 占位：实际加密由业务方 FieldEncryptor 钩子在 ParameterHandler 中替换参数值
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             for (String field : encryptedFields) {
-                LOG.debug("Encrypt field registered: [{}] in [{}]", field, ms.getId());
+                log.debug("Encrypt field registered: [{}] in [{}]", field, ms.getId());
             }
         }
         MetaObject metaObject = SystemMetaObject.forObject(boundSql);

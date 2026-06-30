@@ -1,5 +1,6 @@
 package io.ddd4j.extension.pf4j.util;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class CglibProxy implements MethodInterceptor {
 
     private Object target;//需要代理的目标对象
@@ -62,9 +64,9 @@ public class CglibProxy implements MethodInterceptor {
     //重写拦截方法
     @Override
     public Object intercept(Object obj, Method method, Object[] arr, MethodProxy proxy) throws Throwable {
-        System.out.println("Cglib动态代理，监听开始！");
+        log.debug("Cglib动态代理，监听开始");
         Object invoke = method.invoke(target, arr);//方法执行，参数：target 目标对象 arr参数数组
-        System.out.println("Cglib动态代理，监听结束！");
+        log.debug("Cglib动态代理，监听结束");
         return invoke;
     }
 

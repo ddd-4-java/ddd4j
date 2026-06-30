@@ -1,9 +1,9 @@
 package io.ddd4j.extension.monitor.infras.config;
 
-import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -96,12 +96,12 @@ public class BaseMonitorProperties {
             /**
              * 添加到哪些 logger name
              */
-            private List<String> appendLoggerNames = Lists.newArrayList("root");
+            private List<String> appendLoggerNames = new ArrayList<>(List.of("root"));
 
             /**
              * mdc 里面哪些需要打印
              */
-            private List<String> mdcList = Lists.newArrayList();
+            private List<String> mdcList = new ArrayList<>();
 
             /**
              * blockingQueue长度决定了队列能放多少信息，在默认的配置下，如果blockingQueue放满了，后续想要输出日志的线程会被阻塞，

@@ -4,7 +4,6 @@ import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
-import com.google.common.collect.Lists;
 import io.ddd4j.extension.monitor.application.service.CodeVersionService;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
 import io.ddd4j.extension.monitor.infras.utils.IpUtils;
@@ -14,6 +13,7 @@ import lombok.Data;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +31,12 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
     private String ip = "";
     private String project = "";
     // 需要打印的mdc的信息
-    private List<String> mdcList = Lists.newArrayList();
+    private List<String> mdcList = new ArrayList<>();
     private ThrowableProxyConverter throwableProxyConverter = new ThrowableProxyConverter();
 
     @Override
     public void start() {
-        throwableProxyConverter.setOptionList(Lists.newArrayList("3"));
+        throwableProxyConverter.setOptionList(List.of("3"));
         throwableProxyConverter.start();
         ip = IpUtils.getLocalAddress();
         super.start();

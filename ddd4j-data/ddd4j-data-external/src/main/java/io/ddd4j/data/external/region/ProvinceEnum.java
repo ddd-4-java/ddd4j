@@ -1,13 +1,13 @@
 package io.ddd4j.data.external.region;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * http://www.mca.gov.cn/article/sj/xzqh/1980/201903/201903011447.html
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public enum ProvinceEnum {
 
     P110000("110000", "北京市"),
@@ -49,7 +49,6 @@ public enum ProvinceEnum {
 
     ;
 
-    private static Logger log = LoggerFactory.getLogger(ProvinceEnum.class);
     // 行政区划代码
     private String code;
     // 单位名称
@@ -66,7 +65,7 @@ public enum ProvinceEnum {
                 return region;
             }
         }
-        log.error("Cannot found ProvinceEnum with code '" + code + "'.");
+        log.error("Cannot found ProvinceEnum with code '{}'.", code);
         return ProvinceEnum.UK;
     }
 
@@ -76,7 +75,7 @@ public enum ProvinceEnum {
                 return region;
             }
         }
-        log.error("Cannot found ProvinceEnum with cn_name '" + cn_name + "'.");
+        log.error("Cannot found ProvinceEnum with cn_name '{}'.", cn_name);
         return ProvinceEnum.UK;
     }
 

@@ -4,8 +4,7 @@ import com.alicp.jetcache.template.QuickConfig;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.Objects;
@@ -42,13 +41,13 @@ import java.util.function.Function;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public class JetCacheCacheManager implements CacheManager {
 
     /**
      * 默认 JetCache 区域名称
      */
     public static final String DEFAULT_AREA = "default";
-    private static final Logger log = LoggerFactory.getLogger(JetCacheCacheManager.class);
     private final com.alicp.jetcache.CacheManager jetCacheManager;
     private final String cacheArea;
 

@@ -6,11 +6,10 @@ import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import io.ddd4j.mq.registry.MQTagMatcher;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -26,9 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
-
-    private static final Logger log = LoggerFactory.getLogger(KafkaMQConsumerEndpointRegistrar.class);
 
     private final KafkaMQProperties kafkaProperties;
     private final List<RegisteredConsumer> registeredConsumers = new CopyOnWriteArrayList<>();

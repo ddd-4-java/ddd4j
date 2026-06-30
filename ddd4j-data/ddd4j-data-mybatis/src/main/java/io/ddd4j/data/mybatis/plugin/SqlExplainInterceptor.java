@@ -20,8 +20,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 
@@ -33,9 +32,8 @@ import java.sql.Connection;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class SqlExplainInterceptor implements InnerInterceptor {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SqlExplainInterceptor.class);
 
     /**
      * 长 SQL 阈值（字符数），默认 2000
@@ -65,7 +63,7 @@ public class SqlExplainInterceptor implements InnerInterceptor {
         BoundSql boundSql = sh.getBoundSql();
         String sql = boundSql != null ? boundSql.getSql() : null;
         if (sql != null && sql.length() > longSqlThreshold) {
-            LOG.warn("Long SQL detected [length={}, mapper={}]: {}", sql.length(),
+            log.warn("Long SQL detected [length={}, mapper={}]: {}", sql.length(),
                     ms.getId(), sql.substring(0, 200) + "...");
         }
     }

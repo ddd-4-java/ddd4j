@@ -90,7 +90,6 @@ public class AppKit {
             }
             return hexstr.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

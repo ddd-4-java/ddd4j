@@ -7,8 +7,10 @@
 package io.ddd4j.auth.security.jwt;
 
 import com.github.hiwepy.jwt.time.JwtTimeProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisOperationTemplate;
 
+@Slf4j
 public class JwtTimeRedisProvider implements JwtTimeProvider {
 
     private RedisOperationTemplate redisOperation;
@@ -24,7 +26,7 @@ public class JwtTimeRedisProvider implements JwtTimeProvider {
             return redisOperation.timeNow();
             //return DateUtils.parseDate(nowString, "yyyy-MM-dd HH:mm:ss").getTime();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Failed to read Redis time, fallback to local system time", e);
         }
         return System.currentTimeMillis();
     }

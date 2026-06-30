@@ -1,6 +1,7 @@
 package io.ddd4j.kit.lang;
 
 import cn.hutool.core.map.MapUtil;
+import lombok.extern.slf4j.Slf4j;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Field;
@@ -12,6 +13,7 @@ import java.util.*;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
+@Slf4j
 public class MapKit extends MapUtil {
 
     public <T> T get(Map map, String key) {
@@ -86,7 +88,7 @@ public class MapKit extends MapUtil {
                         Object fieldValue = field.get(o);
                         map.put(fieldName, fieldValue);
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        log.warn("Read field failed: {}", field.getName(), e);
                     }
                 }
                 list.add(map);
@@ -106,7 +108,7 @@ public class MapKit extends MapUtil {
                     Object fieldValue = field.get(obj);
                     map.put(fieldName, fieldValue);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    log.warn("Read field failed: {}", field.getName(), e);
                 }
             }
             return (T) map;

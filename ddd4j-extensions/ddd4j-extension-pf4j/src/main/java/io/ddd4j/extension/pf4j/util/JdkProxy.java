@@ -1,5 +1,7 @@
 package io.ddd4j.extension.pf4j.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -9,6 +11,7 @@ import java.lang.reflect.Proxy;
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class JdkProxy implements InvocationHandler {
 
     private Object target;//需要代理的目标对象
@@ -44,9 +47,9 @@ public class JdkProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("JDK动态代理，监听开始！");
+        log.debug("JDK动态代理，监听开始");
         Object result = method.invoke(target, args);
-        System.out.println("JDK动态代理，监听结束！");
+        log.debug("JDK动态代理，监听结束");
         return result;
     }
 

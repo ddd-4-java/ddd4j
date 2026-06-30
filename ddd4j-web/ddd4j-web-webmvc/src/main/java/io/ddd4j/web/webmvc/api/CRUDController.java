@@ -5,8 +5,7 @@ import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.Page;
 import io.ddd4j.core.contract.Query;
 import io.ddd4j.web.utils.ReflectKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +17,8 @@ import java.util.List;
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j(topic = "### BASE-WEB : CRUDController ###")
 public class CRUDController<M extends Model, Q extends Query> {
-    private static final Logger log = LoggerFactory.getLogger("### BASE-WEB : CRUDController ###");
     protected BaseRepository<M, Q> repository;
 
     private BaseRepository<M, Q> getRepository() {

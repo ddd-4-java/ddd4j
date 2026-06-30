@@ -3,8 +3,7 @@ package io.ddd4j.extension.validation.constraintvalidators;
 import io.ddd4j.extension.validation.constraints.StringDateValue;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
@@ -16,9 +15,8 @@ import java.text.SimpleDateFormat;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2021-03-08
  */
+@Slf4j
 public class StringDateValueValidator implements ConstraintValidator<StringDateValue, String> {
-
-    private static Logger logger = LoggerFactory.getLogger(StringDateValueValidator.class);
 
     private StringDateValue dateValue;
 
@@ -43,10 +41,10 @@ public class StringDateValueValidator implements ConstraintValidator<StringDateV
             simpleDateFormat.parse(value);
             res = true;
         } catch (ParseException e) {
-            logger.error("字符串日期解析出错");
+            log.error("字符串日期解析出错", e);
             msg = dateValue.message() + "字符串日期格式出错";
         }
-        if (res == false) { // res为false表明有错误提示输出
+        if (!res) { // res为false表明有错误提示输出
             constraintValidatorContext.disableDefaultConstraintViolation();
             constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
         }

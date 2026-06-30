@@ -3,8 +3,6 @@ package io.ddd4j.web.webflux.error;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import hitool.core.format.ByteUnitFormat;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
@@ -328,9 +326,9 @@ public class GlobalExceptionHandler extends BaseExceptionHandler {
 
     protected ApiRestResponse<?> bindException(ServerWebExchange exchange, Exception ex, BindingResult result) {
         if (result.getErrorCount() > 0) {
-            List<Map<String, String>> errorList = Lists.newArrayList();
+            List<Map<String, String>> errorList = new ArrayList<>();
             for (FieldError error : result.getFieldErrors()) {
-                Map<String, String> errorMap = Maps.newHashMap();
+                Map<String, String> errorMap = new HashMap<>();
                 errorMap.put("field", error.getField());
                 errorMap.put("msg", error.getDefaultMessage());
                 errorList.add(errorMap);

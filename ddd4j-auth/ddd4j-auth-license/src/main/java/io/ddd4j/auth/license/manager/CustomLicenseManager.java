@@ -116,7 +116,7 @@ public class CustomLicenseManager extends LicenseManager {
             decoder = new XMLDecoder(new BufferedInputStream(inputStream, XMLConstants.DEFAULT_BUFSIZE), null, null);
             return decoder.readObject();
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("XMLDecoder解析XML编码失败", e);
         } finally {
             try {
                 if (decoder != null) {

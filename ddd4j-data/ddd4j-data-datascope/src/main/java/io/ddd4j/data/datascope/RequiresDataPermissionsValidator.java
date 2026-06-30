@@ -3,43 +3,32 @@ package io.ddd4j.data.datascope;
 import io.ddd4j.data.datascope.annotation.RequiresDataPermissions;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.biz.utils.SpringContextUtils;
 
 import java.util.Objects;
 
 /**
- * 数据权限校验
- * Data permission verification
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @see RequiresDataPermissions
+ * Bean Validation validator for {@link RequiresDataPermissions}.
  */
-@Slf4j
 public class RequiresDataPermissionsValidator implements ConstraintValidator<RequiresDataPermissions, Object> {
 
+    private final DataScopeProvider provider;
     private String dataType;
-    private DataScopeProvider provider;
+
+    public RequiresDataPermissionsValidator() {
+        this(DataScopeProvider.nonNullAllowed());
+    }
+
+    public RequiresDataPermissionsValidator(DataScopeProvider provider) {
+        this.provider = Objects.requireNonNull(provider, "provider must not be null");
+    }
 
     @Override
     public void initialize(RequiresDataPermissions annotation) {
         this.dataType = annotation.dataType();
-        this.provider = SpringContextUtils.getContext().getApplicationContext().getBean(DataScopeProvider.class);
     }
 
     @Override
-    public boolean isValid(Object data, ConstraintValidatorContext constraintValidatorContext) {
-        // Check if the data has value
-        if (Objects.isNull(data)) {
-            return Boolean.FALSE;
-        }
-        // Get the data permission provider
-        if (Objects.isNull(provider)) {
-            log.warn("DataScopeProvider is not found.");
-            return Boolean.FALSE;
-        }
-        // Check if the data has permissions
-        return provider.hasPermissions(dataType, data);
+    public boolean isValid(Object data, ConstraintValidatorContext context) {
+        return data != null && provider.hasPermissions(dataType, data);
     }
-
 }

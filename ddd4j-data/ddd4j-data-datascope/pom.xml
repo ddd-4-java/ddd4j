@@ -13,19 +13,35 @@
     <artifactId>ddd4j-data-datascope</artifactId>
     <description>Ddd4j DataScope Component（数据权限，从 ddd4j-auth 迁入）</description>
 
+    <properties>
+        <spring-boot.version>3.5.6</spring-boot.version>
+    </properties>
+
     <dependencies>
-        <!-- For Validation -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>spring-biz</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -191,7 +191,7 @@ public class SignUtils {
         String appId = "1", appVersion = "20000", appChannel = "ASO000", fixedSecret = "z2023";
 
         String salt = SignUtils.salt(appId, appVersion, appChannel, fixedSecret);
-        System.out.println(salt);
+        log.info("salt={}", salt);
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         String token = "";
@@ -199,11 +199,11 @@ public class SignUtils {
 
         String sign = SignUtils.sign(token, formData, body, salt);
 
-        System.out.println(sign);
+        log.info("sign={}", sign);
 
         String clientSign = "2136d6ec5e2c17b3ac787bf6f86fffe7ab7b0c389efa970a";
 
-        System.out.println(SignUtils.verify(token, appId, appVersion, appChannel, fixedSecret, clientSign, formData, body));
+        log.info("verified={}", SignUtils.verify(token, appId, appVersion, appChannel, fixedSecret, clientSign, formData, body));
 
     }
 
