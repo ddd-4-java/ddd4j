@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.RequestInterceptor;
 import io.ddd4j.core.config.BaseCoreProperties;
 import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.web.utils.BaseWebSocketServer;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
 import io.ddd4j.web.webmvc.core.GlobalResponseRAdvice;
@@ -66,11 +65,6 @@ public class BaseWebConfig implements WebMvcConfigurer {
         converter.setDefaultCharset(Charset.defaultCharset());
         converter.setObjectMapper(mvcObjectMapper());
         return converter;
-    }
-
-    @Bean
-    public SpringContext springContext() {
-        return new SpringContext();
     }
 
     @Bean

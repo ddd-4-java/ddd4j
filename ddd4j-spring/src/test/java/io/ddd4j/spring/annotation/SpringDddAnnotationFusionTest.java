@@ -1,4 +1,4 @@
-package io.ddd4j.spring.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.junit.jupiter.api.DisplayName;
@@ -86,6 +86,6 @@ class SpringDddAnnotationFusionTest {
         );
 
         assertEquals(10, annotations.size());
-        assertNull(loadOptional("io.ddd4j.spring.annotation.ddd.DomainEvent"));
+        assertNull(loadOptional("io.ddd4j.spring.annotation.DomainEvent"));
     }
 }

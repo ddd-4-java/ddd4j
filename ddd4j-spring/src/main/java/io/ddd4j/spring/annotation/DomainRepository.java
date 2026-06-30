@@ -1,4 +1,4 @@
-package io.ddd4j.spring.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.core.annotation.AliasFor;

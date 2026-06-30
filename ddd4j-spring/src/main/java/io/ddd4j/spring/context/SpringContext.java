@@ -33,6 +33,7 @@ import java.util.function.Consumer;
 @Primary
 @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
 public class SpringContext implements ApplicationContextAware {
+
     // 应用启动完成的信号
     public static final CountDownLatch APP_START_SIGNAL = new CountDownLatch(1);
     // Spring上下文初始化完成的信号
@@ -44,7 +45,7 @@ public class SpringContext implements ApplicationContextAware {
         log.debug("Loading SpringContext");
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         for (StackTraceElement element : stackTraceElements) {
-            if (element.getMethodName().equals("main")) {
+            if ("main".equals(element.getMethodName())) {
                 try {
                     String projectPackage = Class.forName(element.getClassName()).getPackage().getName();
                     BaseContext.inject(ContextConstants.PROJECT_PACKAGE, projectPackage);

@@ -1,4 +1,4 @@
-package io.ddd4j.spring.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public final class AnnotationFusionVerifier {
         System.out.println();
         System.out.println("--- @DomainEvent 不下沉验证 ---");
         try {
-            Class.forName("io.ddd4j.spring.annotation.ddd.DomainEvent");
+            Class.forName("io.ddd4j.spring.annotation.DomainEvent");
             System.out.println("FAIL: @DomainEvent 不应在 ddd4j-spring 中");
             failed++;
         } catch (ClassNotFoundException ex) {

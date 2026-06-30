@@ -1,8 +1,8 @@
-package io.ddd4j.spring.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
 
@@ -10,10 +10,10 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Service
+@Component
 @Inherited
-public @interface QueryService {
+public @interface DomainConverter {
 
-    @AliasFor(annotation = Service.class, attribute = "value")
+    @AliasFor(annotation = Component.class, attribute = "value")
     String value() default "";
 }
