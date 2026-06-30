@@ -2,7 +2,7 @@
 # 
 # 使用说明：
 # 1. 将以下配置添加到 application.yml 或 application.properties
-# 2. 确保项目中已添加 jetcache-spring-boot-starter 依赖
+# 2. 确保项目中已添加 JetCache Redis 适配依赖
 # 3. 根据实际情况调整 Redis 连接配置
 
 jetcache:
@@ -68,4 +68,3 @@ jetcache:
 #       type: redis
 #       # 使用 Spring Boot 的 Redis 配置
 #       # host、port、password 等可以从 spring.redis 中读取
-

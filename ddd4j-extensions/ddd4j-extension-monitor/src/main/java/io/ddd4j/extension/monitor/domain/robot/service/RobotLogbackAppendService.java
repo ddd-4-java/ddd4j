@@ -121,7 +121,7 @@ public class RobotLogbackAppendService {
         }
     }
 
-    // 初始化日志上下文 @see org.springframework.boot.logging.logback.LogbackLoggingSystemLogbackLoggingSystem#getLoggerContext()
+        // 初始化 Logback 日志上下文。
     private void initLoggerContext() {
         ILoggerFactory factory = LoggerFactory.getILoggerFactory();
         if (!(factory instanceof LoggerContext)) {

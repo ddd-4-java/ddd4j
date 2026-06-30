@@ -318,7 +318,7 @@ ddd4j-spring/
 ### 5.4 实现示例
 
 ```java
-package io.ddd4j.boot.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Service;
@@ -364,7 +364,7 @@ public @interface DomainService {
 ```
 
 ```java
-package io.ddd4j.boot.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Repository;
@@ -395,7 +395,7 @@ public @interface DomainRepository {
 ```
 
 ```java
-package io.ddd4j.boot.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Component;
@@ -432,7 +432,7 @@ public @interface DomainEntity {
 ```
 
 ```java
-package io.ddd4j.boot.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Component;
@@ -458,7 +458,7 @@ public @interface DomainGateway {
 ```
 
 ```java
-package io.ddd4j.boot.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Service;
@@ -484,7 +484,7 @@ public @interface ApplicationService {
 ```
 
 ```java
-package io.ddd4j.boot.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Service;
@@ -508,7 +508,7 @@ public @interface QueryService {
 ```
 
 ```java
-package io.ddd4j.boot.annotation.ddd;
+package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import org.springframework.stereotype.Component;
@@ -534,9 +534,9 @@ public @interface CommandExecutor {
 ### 5.5 业务代码使用方式（最简——只写一个 DDD 注解）
 
 ```java
-import io.ddd4j.boot.annotation.ddd.DomainService;     // ← 只需要 ddd4j 注解
-import io.ddd4j.boot.annotation.ddd.DomainRepository;
-import io.ddd4j.boot.annotation.ddd.ApplicationService;
+import io.ddd4j.spring.annotation.DomainService;     // ← 只需要 ddd4j Spring 注解
+import io.ddd4j.spring.annotation.DomainRepository;
+import io.ddd4j.spring.annotation.ApplicationService;
 import org.springframework.web.bind.annotation.RestController;  // Web 用 Spring 原生
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -595,14 +595,14 @@ public class UserController {
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.ddd4j.boot</groupId>
-        <artifactId>ddd4j-boot-parent</artifactId>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-parent</artifactId>
         <version>${revision}</version>
     </parent>
 
     <groupId>io.ddd4j</groupId>
     <artifactId>ddd4j-spring</artifactId>
-    <description>ddd4j-boot 注解模块：12 个 DDD 注解同名复制（用 Spring 元注解融合）</description>
+    <description>ddd4j-spring 注解模块：DDD 注解同名复制（用 Spring 元注解融合）</description>
 
     <dependencies>
         <!-- 依赖 ddd4j-annotation（提供 DDDAnnotation marker 元注解） -->
@@ -1174,16 +1174,16 @@ public class UserController {
                             │
         ┌───────────────────┼───────────────────┐
         ▼                   ▼                   ▼
-   ddd4j-boot-        ddd4j-javalin-      ddd4j-quarkus-
+   ddd4j-spring       ddd4j-guice         ddd4j-quarkus
    annotation         annotation          annotation
-   (12 个 DDD 注解)   (12 个 DDD 注解       (12 个 DDD 注解
-        │              + 7 个路由参数)        │
+   (DDD 注解)         (DDD 注解)          (DDD 注解)
+        │                   │                   │
         ▼                   ▼                   ▼
    spring-context      guice               jakarta.enterprise.cdi-api
    (元注解)            (元注解)            (元注解)
 
 业务模块（独立）：
-  ddd4j-auth        ddd4j-websocket    ddd4j-cache      ddd4j-mq
+  ddd4j-auth        ddd4j-web          ddd4j-cache      ddd4j-mq
   (具体鉴权注解)     (具体 WS 注解)      (具体缓存注解)    (具体 MQ 注解)
 ```
 
@@ -1192,8 +1192,8 @@ public class UserController {
 | 规则     | 说明                                                                   |
 |--------|----------------------------------------------------------------------|
 | **R1** | `ddd4j-annotation` **绝不依赖**任何框架                                      |
-| **R2** | 3 个框架注解模块**强依赖** `ddd4j-annotation`（用 `DDDAnnotation` marker）        |
-| **R3** | 3 个框架注解模块**互不依赖**                                                    |
+| **R2** | 框架注解模块**强依赖** `ddd4j-annotation`（用 `DDDAnnotation` marker）          |
+| **R3** | 框架注解模块**互不依赖**                                                      |
 | **R4** | 业务项目**按需**引入 1 个框架注解模块，**禁止**同时引入多个                                  |
 | **R5** | 业务代码**只写同名 DDD 注解**（如 `@DomainService`）+ 业务模块具体注解（如 `@SaCheckLogin`） |
 | **R6** | 业务代码**不通过 ddd4j-annotation 抽象**业务模块的具体能力（auth/websocket/cache）       |
@@ -1208,10 +1208,10 @@ public class UserController {
 @ArchTest
 static final ArchRule domain_service_in_domain =
     classes().that().areAnnotatedWith(
-        // 检测 3 套注解模块中的同名 DDD 注解
-        io.ddd4j.boot.annotation.ddd.DomainService.class
+        // 检测框架注解模块中的同名 DDD 注解
+        io.ddd4j.spring.annotation.DomainService.class
         .or(io.ddd4j.quarkus.annotation.ddd.DomainService.class)
-        .or(io.ddd4j.javalin.annotation.ddd.DomainService.class)
+        .or(io.ddd4j.guice.annotation.ddd.DomainService.class)
     )
     .should().resideInAPackage("..domain..");
 ```

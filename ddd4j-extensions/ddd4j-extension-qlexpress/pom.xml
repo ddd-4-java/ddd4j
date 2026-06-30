@@ -28,16 +28,23 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
         </dependency>
-        <!-- For JetCache -->
-        <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-starter-redis -->
+        <!-- For JetCache core API -->
         <dependency>
             <groupId>com.alicp.jetcache</groupId>
-            <artifactId>jetcache-starter-redis-lettuce</artifactId>
+            <artifactId>jetcache-core</artifactId>
         </dependency>
-        <!-- For Redis -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>redistpl-plus-spring-boot-starter</artifactId>
+            <groupId>com.alicp.jetcache</groupId>
+            <artifactId>jetcache-anno</artifactId>
+        </dependency>
+        <!-- For Redis API -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
         <!-- Spring Web（用于REST接口，可选） -->
         <dependency>

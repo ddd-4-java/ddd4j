@@ -291,10 +291,10 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 **已实现**：
 
-- ddd4j-boot-bom / dependencies / parent / core / data / cache / auth
-- ddd4j-boot-data-{crypto,datascope,external,logs,mybatis,spring}
+- ddd4j-boot-bom / dependencies / parent / data / cache / auth / ddd
+- ddd4j-boot-data-{crypto,datascope,external,logs,mybatis}
 - ddd4j-boot-auth-{satoken,security,shiro}
-- ddd4j-boot-monitor / ddd4j-boot-mq
+- ddd4j-boot-cache / ddd4j-boot-extensions / ddd4j-boot-mq
 - ddd4j-boot-samples × 16
 
 **待补齐**：

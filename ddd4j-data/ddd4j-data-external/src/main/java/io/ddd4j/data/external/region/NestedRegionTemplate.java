@@ -6,17 +6,11 @@
  */
 package io.ddd4j.data.external.region;
 
-import com.github.hiwepy.ip2region.spring.boot.IP2regionTemplate;
-import com.github.hiwepy.ip2region.spring.boot.ext.RegionAddress;
-import com.github.hiwepy.ip2region.spring.boot.ext.RegionEnum;
-import com.github.hiwepy.ip2region.spring.boot.ext.XdbSearcher;
-import hitool.core.lang3.network.InetAddressUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisKey;
-import org.springframework.data.redis.core.RedisOperationTemplate;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
+import java.util.Objects;
 
 
 /**
@@ -25,19 +19,19 @@ import java.time.Duration;
 @Slf4j
 public class NestedRegionTemplate {
 
-    private RedisOperationTemplate redisOperation;
-    private IP2regionTemplate ip2RegionTemplate;
+    private RegionCache regionCache;
+    private IpRegionTemplate ipRegionTemplate;
     private PconlineRegionTemplate pconlineRegionTemplate;
 
-    public NestedRegionTemplate(RedisOperationTemplate redisOperation, IP2regionTemplate ip2RegionTemplate,
+    public NestedRegionTemplate(RegionCache regionCache, IpRegionTemplate ipRegionTemplate,
                                 PconlineRegionTemplate pconlineRegionTemplate) {
-        this.redisOperation = redisOperation;
-        this.ip2RegionTemplate = ip2RegionTemplate;
+        this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
+        this.ipRegionTemplate = Objects.isNull(ipRegionTemplate) ? IpRegionTemplate.none() : ipRegionTemplate;
         this.pconlineRegionTemplate = pconlineRegionTemplate;
     }
 
     private static String trimWhitespace(String value) {
-        return java.util.Objects.isNull(value) ? null : value.strip();
+        return Objects.isNull(value) ? null : value.strip();
     }
 
     public RegionEnum getRegion(String regionCode, String ipAddress) {
@@ -63,12 +57,12 @@ public class NestedRegionTemplate {
         try {
             // 1、去除参数两头空白
             ipAddress = trimWhitespace(ipAddress);
-            if (InetAddressUtils.internalIp(ipAddress)) {
+            if (IpAddressKit.internalIp(ipAddress)) {
                 return RegionEnum.UK;
             }
             // 2、优先从本地缓存获取数据
-            String redisKey = RedisKey.IP_REGION_INFO.getKey(ipAddress);
-            String regionCode = redisOperation.getString(redisKey);
+            String redisKey = RegionCacheKeys.ipRegion(ipAddress);
+            String regionCode = regionCache.getString(redisKey);
             if (StringUtils.hasText(regionCode)) {
                 return RegionEnum.getByCode2(regionCode);
             }
@@ -85,10 +79,10 @@ public class NestedRegionTemplate {
                 }
             }
             if (regionEnum.isValidRegion()) {
-                redisOperation.set(redisKey, regionEnum.getCode2(), Duration.ofMinutes(30));
+                regionCache.set(redisKey, regionEnum.getCode2(), Duration.ofMinutes(30));
                 return regionEnum;
             }
-            redisOperation.set(redisKey, RegionEnum.UK.getCode2(), Duration.ofMinutes(30));
+            regionCache.set(redisKey, RegionEnum.UK.getCode2(), Duration.ofMinutes(30));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -99,19 +93,19 @@ public class NestedRegionTemplate {
         try {
             // 1、去除参数两头空白
             ipAddress = trimWhitespace(ipAddress);
-            if (InetAddressUtils.internalIp(ipAddress)) {
+            if (IpAddressKit.internalIp(ipAddress)) {
                 return XdbSearcher.NOT_MATCH;
             }
             // 2、优先从本地缓存获取数据
-            String redisKey = RedisKey.IP_LOCATION_INFO.getKey(ipAddress);
-            String regionAddress = redisOperation.getString(redisKey);
+            String redisKey = RegionCacheKeys.ipLocation(ipAddress);
+            String regionAddress = regionCache.getString(redisKey);
             if (StringUtils.hasText(regionAddress)) {
                 return regionAddress;
             }
             // 3、尝试使用ip2region的ip库进行IP解析
             regionAddress = getIp2RegionTemplate().getRegion(ipAddress);
             log.debug("Get Location : {} By ipAddress: {} From Ip2Region ", regionAddress, ipAddress);
-            redisOperation.set(redisKey, regionAddress, Duration.ofMinutes(30));
+            regionCache.set(redisKey, regionAddress, Duration.ofMinutes(30));
             return regionAddress;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -123,7 +117,7 @@ public class NestedRegionTemplate {
         try {
             // 1、去除参数两头空白
             ipAddress = trimWhitespace(ipAddress);
-            if (InetAddressUtils.internalIp(ipAddress)) {
+            if (IpAddressKit.internalIp(ipAddress)) {
                 return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
             }
             // 2、尝试使用ip2region的ip库进行IP解析
@@ -159,7 +153,7 @@ public class NestedRegionTemplate {
     public boolean isMainlandIp(String ipAddress) {
         // 1、去除参数两头空白
         ipAddress = trimWhitespace(ipAddress);
-        if (InetAddressUtils.internalIp(ipAddress)) {
+        if (IpAddressKit.internalIp(ipAddress)) {
             return true;
         }
         // 2、尝试使用ip2region的ip库进行IP解析
@@ -175,8 +169,8 @@ public class NestedRegionTemplate {
         return regionEnum.isChinaMainland();
     }
 
-    public IP2regionTemplate getIp2RegionTemplate() {
-        return ip2RegionTemplate;
+    public IpRegionTemplate getIp2RegionTemplate() {
+        return ipRegionTemplate;
     }
 
     public PconlineRegionTemplate getPconlineRegionTemplate() {

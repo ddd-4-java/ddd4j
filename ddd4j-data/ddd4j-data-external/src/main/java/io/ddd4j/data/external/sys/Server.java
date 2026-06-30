@@ -1,6 +1,6 @@
 package io.ddd4j.data.external.sys;
 
-import hitool.core.lang3.network.InetAddressUtils;
+import io.ddd4j.data.external.region.IpAddressKit;
 import io.ddd4j.kit.lang.ArithKit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -113,8 +113,8 @@ public class Server {
      */
     private void setSysInfo() {
         Properties props = System.getProperties();
-        sys.setComputerName(InetAddressUtils.getHostName());
-        sys.setComputerIp(InetAddressUtils.getHostAddress());
+        sys.setComputerName(IpAddressKit.getHostName());
+        sys.setComputerIp(IpAddressKit.getHostAddress());
         sys.setOsName(props.getProperty("os.name"));
         sys.setOsArch(props.getProperty("os.arch"));
         sys.setUserDir(props.getProperty("user.dir"));

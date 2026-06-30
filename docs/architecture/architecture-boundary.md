@@ -140,12 +140,11 @@ ddd4j/                                       ← 通用基础层（无 starter�
 
 ddd4j-boot/                                  ← Spring Boot 框架胶水（groupId: io.ddd4j.boot）
 ├── ddd4j-boot-ddd/                          ← @EnableDdd4j + DddAutoConfiguration
-├── ddd4j-boot-data/                         ← Spring Boot 数据自动配置
-├── ddd4j-boot-spring-aspect/                ← 待新建：@DddTransactional AOP 切面 + AsyncAspect
-├── ddd4j-boot-data-mybatis/                 ← 待新建：BaseRepositoryImpl + Spring 事务切面
-├── ddd4j-boot-auth-satoken/                 ← 待新建：@EnableDdd4jAuth + SaTokenEnhanceAutoConfiguration
-├── ddd4j-boot-auth-shiro/
-├── ddd4j-boot-auth-security/                ← 待新建：@EnableDdd4jAuthSecurity
+├── ddd4j-boot-data/                         ← Spring Boot 数据自动配置（含 mybatis/crypto/external/logs/datascope）
+├── ddd4j-boot-auth/                         ← Spring Boot 认证自动配置（satoken/security/shiro/license）
+├── ddd4j-boot-cache/                        ← Spring Boot 缓存集成
+├── ddd4j-boot-extensions/                   ← Spring Boot 扩展集成
+├── ddd4j-boot-mq/                           ← Spring Boot MQ 自动配置
 └── ddd4j-boot-samples/
 
 ddd4j-quarkus/                               ← Quarkus 框架胶水（groupId: io.ddd4j.quarkus）
@@ -199,17 +198,17 @@ ddd4j-javalin/                               ← Javalin 框架胶水（groupId:
 
 ### 8.1 业务方升级兼容性
 
-旧 `DddAutoConfiguration` / `BaseController` 等类**已加 `@Deprecated` 但保留**，业务方短期仍可工作：
+旧 `DddAutoConfiguration` 已从 `ddd4j-spring` 收敛到 `ddd4j-boot-ddd`，业务方应通过 Boot 入口启用：
 
 ```java
 // 旧用法（仍可用，但编译警告）
 @SpringBootApplication
-@Import(DddAutoConfiguration.class)  // ← ddd4j-spring 自带，但已 @Deprecated
+@Import(DddAutoConfiguration.class)  // ← 旧直接导入方式，不推荐
 public class Application { }
 
 // 推荐新用法（迁移后）
 @SpringBootApplication
-@EnableDdd4j  // ← 由 ddd4j-boot-ddd-autoconfigure 提供
+@EnableDdd4j  // ← 由 ddd4j-boot-ddd 提供
 public class Application { }
 ```
 

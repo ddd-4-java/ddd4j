@@ -11,8 +11,8 @@
     </parent>
 
     <artifactId>ddd4j-data-external</artifactId>
-    <description>ddd4j 数据层 - 外部服务：地理位置/天气/行政区划/序列号 Template 实现（Spring 专属扩展，深度依赖 RestClient
-        + RedisOperationTemplate）。Spring Boot auto-config 迁移到 ddd4j-boot-data。
+    <description>ddd4j 数据层 - 外部服务：地理位置/天气/行政区划/序列号 Template 实现（Spring Web RestClient + 主仓抽象接口）。
+        Spring Boot auto-config 与 starter 适配迁移到 ddd4j-boot-data。
     </description>
 
     <dependencies>
@@ -37,11 +37,6 @@
             <groupId>org.gavaghan</groupId>
             <artifactId>geodesy</artifactId>
         </dependency>
-        <!-- For Ip2region -->
-        <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>ip2region-spring-boot-starter</artifactId>
-        </dependency>
         <!-- For OSI -->
         <dependency>
             <groupId>com.github.oshi</groupId>
@@ -51,11 +46,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-        </dependency>
-        <!-- For Redis -->
-        <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>redistpl-plus-spring-boot-starter</artifactId>
         </dependency>
         <!-- Test -->
         <dependency>

@@ -7,22 +7,17 @@
 package io.ddd4j.data.external.region;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.github.hiwepy.ip2region.spring.boot.ext.RegionAddress;
-import com.github.hiwepy.ip2region.spring.boot.ext.RegionEnum;
-import com.github.hiwepy.ip2region.spring.boot.ext.XdbSearcher;
-import com.github.hiwepy.ip2region.spring.boot.util.IpUtils;
-import com.github.hiwepy.ip2region.spring.boot.util.Util;
-import hitool.core.lang3.time.CalendarUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisKey;
-import org.springframework.data.redis.core.RedisOperationTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,17 +31,16 @@ public class BaiduRegionTemplate {
     private static final String GET_LOCATION_BY_IP_URL = "https://api.map.baidu.com/location/ip?ak=%s&ip=%s&coor=bd09ll";
     private final String ak;
     private final RestClient restClient;
-    private RedisOperationTemplate redisOperation;
+    private RegionCache regionCache;
 
     public BaiduRegionTemplate(String ak, RestClient restClient) {
-        this.ak = ak;
-        this.restClient = restClient;
+        this(ak, restClient, RegionCache.none());
     }
 
-    public BaiduRegionTemplate(String ak, RestClient restClient, RedisOperationTemplate redisOperation) {
+    public BaiduRegionTemplate(String ak, RestClient restClient, RegionCache regionCache) {
         this.ak = ak;
         this.restClient = restClient;
-        this.redisOperation = redisOperation;
+        this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
     public static void main(String[] args) throws IOException {
@@ -55,6 +49,11 @@ public class BaiduRegionTemplate {
 
         Optional<JSONObject> mapLL2 = template.getLocationByIp("183.128.136.82"); // lng：116.86380647644208  lat：38.297615350325717
         log.debug(mapLL2.get().toJSONString());
+    }
+
+    private static long secondsUntilNextDay() {
+        LocalDateTime tomorrowStart = LocalDate.now().plusDays(1).atStartOfDay();
+        return Duration.between(LocalDateTime.now(), tomorrowStart).getSeconds();
     }
 
     /**
@@ -91,18 +90,16 @@ public class BaiduRegionTemplate {
         if (Objects.isNull(ip)) {
             throw new NullPointerException("ip can not empty");
         }
-        if (!IpUtils.isIpv4(ip)) {
+        if (!IpAddressKit.isIpv4(ip)) {
             throw new IllegalArgumentException("Invalid IPv4 address");
         }
         // 2、优先从本地缓存获取数据
-        String redisKey = RedisKey.IP_LOCATION_BAIDU_INFO.getKey(Util.ip2long(ip));
-        if (Objects.nonNull(redisOperation)) {
-            String redisValue = redisOperation.getString(redisKey);
-            if (Objects.nonNull(redisValue)) {
-                log.info(" IP : {} >> Location From Redis Cache : {} ", ip, redisValue);
-                JSONObject jsonObject = JSONObject.parseObject(redisValue);
-                return Optional.ofNullable(jsonObject);
-            }
+        String redisKey = RegionCacheKeys.baiduLocation(ip);
+        String redisValue = regionCache.getString(redisKey);
+        if (Objects.nonNull(redisValue)) {
+            log.info(" IP : {} >> Location From Redis Cache : {} ", ip, redisValue);
+            JSONObject jsonObject = JSONObject.parseObject(redisValue);
+            return Optional.ofNullable(jsonObject);
         }
         // 3、调用三方接口解析IP信息
         try {
@@ -119,9 +116,7 @@ public class BaiduRegionTemplate {
                     if (jsonObject.getInteger("status") != 0) {
                         throw new IOException(jsonObject.getString("message"));
                     }
-                    if (Objects.nonNull(redisOperation)) {
-                        redisOperation.set(redisKey, bodyString, CalendarUtils.getSecondsNextEarlyMorning());
-                    }
+                    regionCache.set(redisKey, bodyString, Duration.ofSeconds(secondsUntilNextDay()));
                     return Optional.of(jsonObject);
                 }
             }

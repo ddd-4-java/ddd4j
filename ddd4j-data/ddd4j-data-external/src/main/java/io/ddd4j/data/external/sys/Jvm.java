@@ -1,13 +1,12 @@
 package io.ddd4j.data.external.sys;
 
-import hitool.core.lang3.time.DateFormats;
-import hitool.core.lang3.time.LocalDateTimes;
 import io.ddd4j.kit.lang.ArithKit;
 import io.ddd4j.kit.lang.DateKit;
 import lombok.Data;
 
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * JVM相关信息
@@ -16,6 +15,8 @@ import java.time.LocalDateTime;
  */
 @Data
 public class Jvm {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     /**
      * 当前JVM占用的内存总数(M)
      */
@@ -74,7 +75,7 @@ public class Jvm {
     public String getStartTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
         LocalDateTime date = DateKit.millsToLocalDateTime(time);
-        return LocalDateTimes.format(date, DateFormats.YYYYMMDDHHMMSS);
+        return date.format(DATE_TIME_FORMATTER);
     }
 
     /**
@@ -83,7 +84,7 @@ public class Jvm {
     public String getRunTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
         LocalDateTime startDateTime = DateKit.millsToLocalDateTime(time);
-        return DateKit.getDatePoor(LocalDateTime.now(), startDateTime);
+        return DateKit.getDatePoor(startDateTime, LocalDateTime.now());
     }
 
     /**

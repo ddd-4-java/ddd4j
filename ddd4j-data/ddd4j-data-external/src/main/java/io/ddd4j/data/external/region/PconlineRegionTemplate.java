@@ -7,13 +7,7 @@
 package io.ddd4j.data.external.region;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.github.hiwepy.ip2region.spring.boot.ext.RegionAddress;
-import com.github.hiwepy.ip2region.spring.boot.ext.RegionEnum;
-import com.github.hiwepy.ip2region.spring.boot.ext.XdbSearcher;
-import com.github.hiwepy.ip2region.spring.boot.util.IpUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisKey;
-import org.springframework.data.redis.core.RedisOperationTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
@@ -50,15 +44,15 @@ public class PconlineRegionTemplate {
     }
 
     private final RestClient restClient;
-    private RedisOperationTemplate redisOperation;
+    private RegionCache regionCache;
 
     public PconlineRegionTemplate(RestClient restClient) {
-        this.restClient = restClient;
+        this(restClient, RegionCache.none());
     }
 
-    public PconlineRegionTemplate(RestClient restClient, RedisOperationTemplate redisOperation) {
+    public PconlineRegionTemplate(RestClient restClient, RegionCache regionCache) {
         this.restClient = restClient;
-        this.redisOperation = redisOperation;
+        this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
     public static void main(String[] args) throws IOException {
@@ -85,18 +79,16 @@ public class PconlineRegionTemplate {
         if (Objects.isNull(ip)) {
             throw new NullPointerException("IP can not empty");
         }
-        if (!IpUtils.isIpv4(ip)) {
+        if (!IpAddressKit.isIpv4(ip)) {
             throw new IllegalArgumentException("Invalid IPv4 address");
         }
         // 2、优先从本地缓存获取数据
-        String redisKey = RedisKey.IP_LOCATION_PCONLINE_INFO.getKey(ip);
-        if (Objects.nonNull(redisOperation)) {
-            String redisValue = redisOperation.getString(redisKey);
-            if (Objects.nonNull(redisValue)) {
-                log.info(" IP : {} >> Location From Redis Cache : {} ", ip, redisValue);
-                JSONObject jsonObject = JSONObject.parseObject(redisValue);
-                return Optional.ofNullable(jsonObject);
-            }
+        String redisKey = RegionCacheKeys.pconlineLocation(ip);
+        String redisValue = regionCache.getString(redisKey);
+        if (Objects.nonNull(redisValue)) {
+            log.info(" IP : {} >> Location From Redis Cache : {} ", ip, redisValue);
+            JSONObject jsonObject = JSONObject.parseObject(redisValue);
+            return Optional.ofNullable(jsonObject);
         }
         // 3、调用三方接口解析IP信息
         try {
@@ -116,9 +108,7 @@ public class PconlineRegionTemplate {
                     JSONObject jsonObject = JSONObject.parseObject(bodyString);
                     String addr = jsonObject.getString("addr");
                     if (StringUtils.hasText(addr)) {
-                        if (Objects.nonNull(redisOperation)) {
-                            redisOperation.set(redisKey, bodyString, Duration.ofMinutes(30));
-                        }
+                        regionCache.set(redisKey, bodyString, Duration.ofMinutes(30));
                         return Optional.of(jsonObject);
                     }
                 }
@@ -172,7 +162,7 @@ public class PconlineRegionTemplate {
 
     public RegionEnum getRegionByIp(String ip) {
         try {
-            if (!IpUtils.isIpv4(ip)) {
+            if (!IpAddressKit.isIpv4(ip)) {
                 return RegionEnum.UK;
             }
             Optional<JSONObject> optional = this.getLocationByIp(ip);
