@@ -51,11 +51,7 @@
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
         </dependency>
-        <!-- Kafka 官方 Spring 集成：spring-kafka（Boot 无独立 starter-kafka artifact）+ KafkaAutoConfiguration -->
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-        </dependency>
         <!-- Compile dependencies -->
         <dependency>
             <groupId>commons-io</groupId>

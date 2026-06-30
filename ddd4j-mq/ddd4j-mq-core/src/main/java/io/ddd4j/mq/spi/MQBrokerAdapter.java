@@ -26,10 +26,14 @@ public interface MQBrokerAdapter {
     /**
      * 创建事件发布器。
      *
-     * @param props MQ 配置
+     * <p>默认实现返回构造时注入的发布器；子类可覆写。
+     *
+     * @param props MQ 配置（预留，当前未使用）
      * @return 发布端口实现
      */
-    MQEventPublisher createPublisher(Ddd4jMQProperties props);
+    default MQEventPublisher createPublisher(Ddd4jMQProperties props) {
+        return null;
+    }
 
     /**
      * 注册消费端点（委托底层 Broker 客户端，如 Kafka Consumer / RabbitMQ Channel）。

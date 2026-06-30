@@ -9,7 +9,7 @@ import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Objects;
 
@@ -35,10 +35,10 @@ public class SqsMQEventPublisher implements MQEventPublisher {
         }
 
         // 逻辑块：补齐事件元数据
-        if (!StringUtils.hasText(event.getTopic())) {
+        if (!StrKit.isNotBlank(event.getTopic())) {
             event.setTopic(properties.getDefaultTopic());
         }
-        if (!StringUtils.hasText(event.getNamespace())) {
+        if (!StrKit.isNotBlank(event.getNamespace())) {
             event.setNamespace(properties.getNamespace());
         }
         if (event.getMsgId() == null) {
@@ -49,7 +49,7 @@ public class SqsMQEventPublisher implements MQEventPublisher {
         String queueUrl = resolveQueueUrl(destination);
         String payload = JsonKit.toJson(event);
         SendMessageRequest request = new SendMessageRequest(queueUrl, payload);
-        if (StringUtils.hasText(destination.getTag())) {
+        if (StrKit.isNotBlank(destination.getTag())) {
             request.withMessageGroupId(destination.getTag());
         }
         amazonSqs.sendMessage(request);
@@ -60,10 +60,10 @@ public class SqsMQEventPublisher implements MQEventPublisher {
      * 解析目标队列 URL（destination.topic 或默认配置）。
      */
     private String resolveQueueUrl(MQDestination destination) {
-        if (StringUtils.hasText(destination.getTopic()) && destination.getTopic().startsWith("http")) {
+        if (StrKit.isNotBlank(destination.getTopic()) && destination.getTopic().startsWith("http")) {
             return destination.getTopic();
         }
-        if (StringUtils.hasText(defaultQueueUrl)) {
+        if (StrKit.isNotBlank(defaultQueueUrl)) {
             return defaultQueueUrl;
         }
         return destination.physicalDestination();

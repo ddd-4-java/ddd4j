@@ -10,7 +10,7 @@ import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -36,10 +36,10 @@ public class OnsMQEventPublisher implements MQEventPublisher {
         }
 
         // 逻辑块：补齐事件元数据
-        if (!StringUtils.hasText(event.getTopic())) {
+        if (!StrKit.isNotBlank(event.getTopic())) {
             event.setTopic(properties.getDefaultTopic());
         }
-        if (!StringUtils.hasText(event.getNamespace())) {
+        if (!StrKit.isNotBlank(event.getNamespace())) {
             event.setNamespace(properties.getNamespace());
         }
         if (event.getMsgId() == null) {
@@ -48,7 +48,7 @@ public class OnsMQEventPublisher implements MQEventPublisher {
 
         // 逻辑块：序列化并发送 ONS 消息
         String topic = buildTopic(destination);
-        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
+        String tag = StrKit.isNotBlank(destination.getTag()) ? destination.getTag() : event.getTag();
         String payload = JsonKit.toJson(event);
         Message message = new Message(topic, tag, payload.getBytes(StandardCharsets.UTF_8));
         message.setKey(event.getMsgId());
@@ -61,10 +61,10 @@ public class OnsMQEventPublisher implements MQEventPublisher {
      * 根据目的地生成 ONS Topic（namespace.topic）。
      */
     private String buildTopic(MQDestination destination) {
-        if (StringUtils.hasText(destination.getNamespace())) {
+        if (StrKit.isNotBlank(destination.getNamespace())) {
             return destination.getNamespace() + "." + destination.getTopic();
         }
-        if (StringUtils.hasText(properties.getNamespace())) {
+        if (StrKit.isNotBlank(properties.getNamespace())) {
             return properties.getNamespace() + "." + destination.physicalDestination();
         }
         return destination.physicalDestination();

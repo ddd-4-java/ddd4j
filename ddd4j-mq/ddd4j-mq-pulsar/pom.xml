@@ -29,13 +29,7 @@
             <artifactId>pulsar-client-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.pulsar</groupId>
-            <artifactId>spring-pulsar</artifactId>
-        </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-messaging</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

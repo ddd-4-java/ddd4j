@@ -8,7 +8,7 @@ import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -32,10 +32,10 @@ public class TdmqMQEventPublisher implements MQEventPublisher {
         Objects.requireNonNull(tdmqClient, "tdmqClient");
 
         // 逻辑块：补齐事件元数据
-        if (!StringUtils.hasText(event.getTopic())) {
+        if (!StrKit.isNotBlank(event.getTopic())) {
             event.setTopic(properties.getDefaultTopic());
         }
-        if (!StringUtils.hasText(event.getNamespace())) {
+        if (!StrKit.isNotBlank(event.getNamespace())) {
             event.setNamespace(properties.getNamespace());
         }
         if (event.getMsgId() == null) {
@@ -44,7 +44,7 @@ public class TdmqMQEventPublisher implements MQEventPublisher {
 
         // 逻辑块：序列化并委托 TDMQ 客户端
         String topic = destination.physicalDestination();
-        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
+        String tag = StrKit.isNotBlank(destination.getTag()) ? destination.getTag() : event.getTag();
         String payload = JsonKit.toJson(event);
         tdmqClient.publish(topic, tag, payload.getBytes(StandardCharsets.UTF_8));
         log.debug("Published TDMQ event (placeholder), topic={}, tag={}, msgId={}", topic, tag, event.getMsgId());

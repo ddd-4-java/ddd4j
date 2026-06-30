@@ -10,7 +10,7 @@ import io.nats.client.JetStream;
 import io.nats.client.JetStreamApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,10 +37,10 @@ public class NatsMQEventPublisher implements MQEventPublisher {
         }
 
         // 逻辑块：补齐事件元数据
-        if (!StringUtils.hasText(event.getTopic())) {
+        if (!StrKit.isNotBlank(event.getTopic())) {
             event.setTopic(properties.getDefaultTopic());
         }
-        if (!StringUtils.hasText(event.getNamespace())) {
+        if (!StrKit.isNotBlank(event.getNamespace())) {
             event.setNamespace(properties.getNamespace());
         }
         if (event.getMsgId() == null) {
@@ -66,15 +66,15 @@ public class NatsMQEventPublisher implements MQEventPublisher {
      * 根据目的地与 tag 生成 NATS subject。
      */
     private String buildSubject(MQDestination destination, String eventTag) {
-        String namespace = StringUtils.hasText(destination.getNamespace())
+        String namespace = StrKit.isNotBlank(destination.getNamespace())
                 ? destination.getNamespace()
                 : properties.getNamespace();
-        String topic = StringUtils.hasText(destination.getTopic())
+        String topic = StrKit.isNotBlank(destination.getTopic())
                 ? destination.getTopic()
                 : properties.getDefaultTopic();
-        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : eventTag;
-        String base = StringUtils.hasText(namespace) ? namespace + "." + topic : topic;
-        if (!StringUtils.hasText(tag)) {
+        String tag = StrKit.isNotBlank(destination.getTag()) ? destination.getTag() : eventTag;
+        String base = StrKit.isNotBlank(namespace) ? namespace + "." + topic : topic;
+        if (!StrKit.isNotBlank(tag)) {
             return base;
         }
         return base + "." + tag;
