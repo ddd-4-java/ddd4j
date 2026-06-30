@@ -3,13 +3,23 @@ package io.ddd4j.mq.redisstream;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
+import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
+import io.lettuce.core.XAddArgs;
+import io.lettuce.core.XGroupCreateArgs;
+import io.lettuce.core.XReadArgs;
+import io.lettuce.core.api.sync.RedisCommands;
+import org.redisson.api.RStream;
+import org.redisson.api.RedissonClient;
+import org.redisson.api.StreamMessageId;
+import org.redisson.api.stream.StreamAddArgs;
+import org.redisson.api.stream.StreamCreateGroupArgs;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
-import redis.clients.jedis.params.XAddParams;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -18,9 +28,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Redis Stream adapter contract tests.
@@ -44,6 +56,8 @@ class RedisStreamMQBrokerAdapterTest {
     @Test
     void publisherShouldXaddResolvedStream() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
+        when(jedis.xadd(eq("sales.order.paid"), any(redis.clients.jedis.params.XAddParams.class), any(Map.class)))
+                .thenReturn(new StreamEntryID("1-0"));
         Ddd4jMQProperties properties = new Ddd4jMQProperties();
         properties.setNamespace("sales");
         RedisStreamMQEventPublisher publisher = new RedisStreamMQEventPublisher(
@@ -55,7 +69,7 @@ class RedisStreamMQBrokerAdapterTest {
 
         publisher.publish(event, MQDestination.of("order", "paid"));
 
-        verify(jedis).xadd(eq("sales.order.paid"), any(XAddParams.class), any(Map.class));
+        verify(jedis).xadd(eq("sales.order.paid"), any(redis.clients.jedis.params.XAddParams.class), any(Map.class));
     }
 
     @Test
@@ -87,6 +101,40 @@ class RedisStreamMQBrokerAdapterTest {
 
         verify(jedis).xack("sales.order.paid", "sample", id);
         assertTrue(ack.isAcknowledged());
+    }
+
+    @Test
+    void redissonOperationsShouldMapStreamCommands() {
+        RedissonClient client = mock(RedissonClient.class);
+        RStream<String, String> stream = mock(RStream.class);
+        when(client.<String, String>getStream("sales.order.paid")).thenReturn(stream);
+        when(stream.add(any(StreamAddArgs.class))).thenReturn(new StreamMessageId(1L, 0L));
+        RedissonRedisStreamOperations operations = new RedissonRedisStreamOperations(client);
+
+        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        operations.createGroup("sales.order.paid", "sample");
+        operations.ack("sales.order.paid", "sample", "1-0");
+
+        assertEquals("1-0", id);
+        verify(stream).add(any(StreamAddArgs.class));
+        verify(stream).createGroup(any(StreamCreateGroupArgs.class));
+        verify(stream).ack("sample", new StreamMessageId(1L, 0L));
+    }
+
+    @Test
+    void lettuceOperationsShouldMapStreamCommands() {
+        RedisCommands<String, String> commands = mock(RedisCommands.class);
+        when(commands.xadd(eq("sales.order.paid"), any(XAddArgs.class), anyMap())).thenReturn("1-0");
+        LettuceRedisStreamOperations operations = new LettuceRedisStreamOperations(commands);
+
+        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        operations.createGroup("sales.order.paid", "sample");
+        operations.ack("sales.order.paid", "sample", "1-0");
+
+        assertEquals("1-0", id);
+        verify(commands).xadd(eq("sales.order.paid"), any(XAddArgs.class), anyMap());
+        verify(commands).xgroupCreate(any(XReadArgs.StreamOffset.class), eq("sample"), any(XGroupCreateArgs.class));
+        verify(commands).xack("sales.order.paid", "sample", "1-0");
     }
 
     private static MQListenerDefinition definition(String tags) throws Exception {

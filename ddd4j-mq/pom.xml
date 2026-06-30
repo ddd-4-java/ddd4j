@@ -34,6 +34,12 @@
         <module>ddd4j-mq-redis-stream</module>
         <module>ddd4j-mq-rocketmq</module>
         <module>ddd4j-mq-spring</module>
+        <module>ddd4j-mq-pulsar</module>
+        <module>ddd4j-mq-activemq</module>
+        <module>ddd4j-mq-mqtt</module>
+        <module>ddd4j-mq-mqtt-mica</module>
+        <module>ddd4j-mq-ons</module>
+        <module>ddd4j-mq-sqs</module>
     </modules>
 
 </project>

@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-mq-redis-stream</artifactId>
-    <description>Ddd4j Redis Stream adapter based on Jedis and ddd4j MQ SPI.</description>
+    <description>Ddd4j Redis Stream adapter based on Jedis, Redisson, Lettuce and ddd4j MQ SPI.</description>
 
     <dependencies>
         <dependency>
@@ -22,6 +22,14 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

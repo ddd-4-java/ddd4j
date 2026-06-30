@@ -2,6 +2,7 @@ package io.ddd4j.mq.redisstream;
 
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 
@@ -20,10 +21,11 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
     public static final String HEADER_REDIS_GROUP = "ddd4j.redis.group";
     public static final String HEADER_REDIS_ENTRY_ID = "ddd4j.redis.entryId";
 
-    private final UnifiedJedis jedis;
+    private final RedisStreamOperations operations;
     private final String stream;
     private final String group;
-    private final StreamEntryID entryId;
+    private final String entryId;
+    private final Object nativeEntryId;
     private final String messageId;
     private final String correlationId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
@@ -35,17 +37,29 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
             StreamEntryID entryId,
             String messageId,
             String correlationId) {
-        this.jedis = Objects.requireNonNull(jedis, "jedis");
+        this(new JedisRedisStreamOperations(jedis), stream, group, entryId.toString(), entryId, messageId, correlationId);
+    }
+
+    public RedisStreamMessageAcknowledgment(
+            RedisStreamOperations operations,
+            String stream,
+            String group,
+            String entryId,
+            Object nativeEntryId,
+            String messageId,
+            String correlationId) {
+        this.operations = Objects.requireNonNull(operations, "operations");
         this.stream = Objects.requireNonNull(stream, "stream");
         this.group = Objects.requireNonNull(group, "group");
         this.entryId = Objects.requireNonNull(entryId, "entryId");
-        this.messageId = messageId == null ? entryId.toString() : messageId;
+        this.nativeEntryId = nativeEntryId;
+        this.messageId = messageId == null ? entryId : messageId;
         this.correlationId = correlationId;
     }
 
     @Override
     public long deliveryTag() {
-        return entryId.getTime();
+        return RedisStreamIds.deliveryTag(entryId);
     }
 
     @Override
@@ -81,7 +95,7 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
     @Override
     public void ack(boolean multiple) {
         if (acknowledged.compareAndSet(false, true)) {
-            jedis.xack(stream, group, entryId);
+            operations.ack(stream, group, entryId);
         }
     }
 
@@ -117,8 +131,12 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
         if (nativeType.isInstance(entryId)) {
             return Optional.of(nativeType.cast(entryId));
         }
-        if (nativeType.isInstance(jedis)) {
-            return Optional.of(nativeType.cast(jedis));
+        if (nativeEntryId != null && nativeType.isInstance(nativeEntryId)) {
+            return Optional.of(nativeType.cast(nativeEntryId));
+        }
+        Object nativeClient = operations.nativeClient();
+        if (nativeClient != null && nativeType.isInstance(nativeClient)) {
+            return Optional.of(nativeType.cast(nativeClient));
         }
         return Optional.empty();
     }

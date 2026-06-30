@@ -1,20 +1,16 @@
 package io.ddd4j.mq.nats;
 
 import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.nats.autoconfigure.Ddd4jNatsMQAutoConfiguration;
+import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import io.nats.client.Connection;
+import io.nats.client.Nats;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -24,15 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * NATS 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ * NATS 发布路径 Testcontainers 冒烟集成测试（纯 Java，无 Spring）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        Ddd4jMQPropertiesConfiguration.class,
-        Ddd4jNatsMQAutoConfiguration.class
-})
 @EnabledIf("io.ddd4j.mq.nats.NatsContainerIT#isDockerAvailable")
 class NatsContainerIT {
 
@@ -43,27 +34,30 @@ class NatsContainerIT {
             .withCommand("-js", "-m", "8222")
             .waitingFor(Wait.forListeningPort());
 
-    @Autowired
-    private MQEventPublisher mqEventPublisher;
-
-    @Autowired
-    private Connection natsConnection;
+    private static Connection natsConnection;
+    private static MQEventPublisher mqEventPublisher;
 
     /**
      * 启动 NATS 容器（JetStream 模式）。
      */
     @BeforeAll
-    static void startNats() {
+    static void startNats() throws Exception {
         NATS.start();
+        String servers = "nats://" + NATS.getHost() + ":" + NATS.getMappedPort(NATS_PORT);
+        natsConnection = Nats.connect(servers);
+        Ddd4jMQProperties properties = new Ddd4jMQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("nats");
+        properties.setNamespace("it");
+        mqEventPublisher = new NatsMQEventPublisher(natsConnection, properties);
     }
 
-    @DynamicPropertySource
-    static void registerProperties(DynamicPropertyRegistry registry) {
-        String servers = "nats://" + NATS.getHost() + ":" + NATS.getMappedPort(NATS_PORT);
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "nats");
-        registry.add("ddd4j.mq.namespace", () -> "it");
-        registry.add("ddd4j.mq.nats.servers", () -> servers);
+    @AfterAll
+    static void stopNats() throws Exception {
+        if (natsConnection != null) {
+            natsConnection.close();
+        }
+        NATS.stop();
     }
 
     /**

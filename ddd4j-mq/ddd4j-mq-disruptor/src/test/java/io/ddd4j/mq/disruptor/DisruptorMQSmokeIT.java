@@ -1,19 +1,17 @@
 package io.ddd4j.mq.disruptor;
 
 import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.disruptor.autoconfigure.Ddd4jDisruptorMQAutoConfiguration;
 import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.spring.config.Ddd4jMQPropertiesConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -26,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-        Ddd4jMQPropertiesConfiguration.class,
         DisruptorMQSmokeIT.DisruptorPropertiesConfiguration.class,
         Ddd4jDisruptorMQAutoConfiguration.class
 })
@@ -34,13 +31,6 @@ class DisruptorMQSmokeIT {
 
     @Autowired
     private MQEventPublisher mqEventPublisher;
-
-    @DynamicPropertySource
-    static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "disruptor");
-        registry.add("ddd4j.mq.namespace", () -> "it");
-    }
 
     @Test
     void publishShouldNotThrow() {
@@ -65,6 +55,15 @@ class DisruptorMQSmokeIT {
         /**
          * 注册 Disruptor 子配置 Bean。
          */
+        @Bean
+        Ddd4jMQProperties ddd4jMQProperties() {
+            Ddd4jMQProperties properties = new Ddd4jMQProperties();
+            properties.setEnabled(true);
+            properties.setBroker("disruptor");
+            properties.setNamespace("it");
+            return properties;
+        }
+
         @Bean
         DisruptorMQProperties disruptorMQProperties() {
             return new DisruptorMQProperties();

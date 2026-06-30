@@ -10,6 +10,7 @@ import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
 import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 
@@ -25,11 +26,11 @@ public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter, AutoCloseabl
     private final RedisStreamMQProperties redisProperties;
     private final Ddd4jMQProperties mqProperties;
     private final MQEventSerialization serialization;
-    private final UnifiedJedis jedis;
+    private final RedisStreamOperations operations;
     private final RedisStreamConsumerEndpointRegistrar consumerRegistrar;
 
     public RedisStreamMQBrokerAdapter(RedisStreamMQProperties redisProperties, Ddd4jMQProperties mqProperties) {
-        this(redisProperties, mqProperties, new JsonMQMessageSerialization(), redisProperties.newJedis());
+        this(redisProperties, mqProperties, new JsonMQMessageSerialization(), redisProperties.newOperations());
     }
 
     public RedisStreamMQBrokerAdapter(
@@ -37,11 +38,19 @@ public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter, AutoCloseabl
             Ddd4jMQProperties mqProperties,
             MQEventSerialization serialization,
             UnifiedJedis jedis) {
+        this(redisProperties, mqProperties, serialization, new JedisRedisStreamOperations(jedis));
+    }
+
+    public RedisStreamMQBrokerAdapter(
+            RedisStreamMQProperties redisProperties,
+            Ddd4jMQProperties mqProperties,
+            MQEventSerialization serialization,
+            RedisStreamOperations operations) {
         this.redisProperties = Objects.requireNonNull(redisProperties, "redisProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
-        this.jedis = Objects.requireNonNull(jedis, "jedis");
-        this.consumerRegistrar = new RedisStreamConsumerEndpointRegistrar(jedis, redisProperties);
+        this.operations = Objects.requireNonNull(operations, "operations");
+        this.consumerRegistrar = new RedisStreamConsumerEndpointRegistrar(operations, redisProperties);
     }
 
     @Override
@@ -51,7 +60,7 @@ public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter, AutoCloseabl
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new RedisStreamMQEventPublisher(jedis, props == null ? mqProperties : props, serialization);
+        return new RedisStreamMQEventPublisher(operations, props == null ? mqProperties : props, serialization);
     }
 
     @Override
@@ -67,8 +76,13 @@ public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter, AutoCloseabl
         Object stream = message.header(RedisStreamMessageAcknowledgment.HEADER_REDIS_STREAM);
         Object group = message.header(RedisStreamMessageAcknowledgment.HEADER_REDIS_GROUP);
         Object entryId = message.header(RedisStreamMessageAcknowledgment.HEADER_REDIS_ENTRY_ID);
-        if (stream instanceof String s && group instanceof String g && entryId instanceof StreamEntryID id) {
-            return new RedisStreamMessageAcknowledgment(jedis, s, g, id, message.getMessageId(), message.getCorrelationId());
+        if (stream instanceof String s && group instanceof String g) {
+            if (entryId instanceof StreamEntryID id) {
+                return new RedisStreamMessageAcknowledgment(operations, s, g, id.toString(), id, message.getMessageId(), message.getCorrelationId());
+            }
+            if (entryId instanceof String id) {
+                return new RedisStreamMessageAcknowledgment(operations, s, g, id, id, message.getMessageId(), message.getCorrelationId());
+            }
         }
         return null;
     }
@@ -81,6 +95,6 @@ public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter, AutoCloseabl
     @Override
     public void close() {
         consumerRegistrar.close();
-        jedis.close();
+        operations.close();
     }
 }

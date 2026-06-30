@@ -1,5 +1,8 @@
 package io.ddd4j.mq.redisstream;
 
+import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
+import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
+import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
 import redis.clients.jedis.UnifiedJedis;
 
 /**
@@ -15,9 +18,18 @@ public class RedisStreamMQProperties {
     private int blockMillis = 1000;
     private boolean autoCreateGroup = true;
     private boolean autoStartConsumers = true;
+    private RedisStreamClientType clientType = RedisStreamClientType.JEDIS;
 
     public UnifiedJedis newJedis() {
         return new UnifiedJedis(url);
+    }
+
+    public RedisStreamOperations newOperations() {
+        return switch (clientType) {
+            case JEDIS -> new JedisRedisStreamOperations(newJedis());
+            case REDISSON -> new RedissonRedisStreamOperations(url);
+            case LETTUCE -> new LettuceRedisStreamOperations(url);
+        };
     }
 
     public String getUrl() {
@@ -66,5 +78,13 @@ public class RedisStreamMQProperties {
 
     public void setAutoStartConsumers(boolean autoStartConsumers) {
         this.autoStartConsumers = autoStartConsumers;
+    }
+
+    public RedisStreamClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(RedisStreamClientType clientType) {
+        this.clientType = clientType == null ? RedisStreamClientType.JEDIS : clientType;
     }
 }

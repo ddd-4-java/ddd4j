@@ -6,9 +6,8 @@ import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.serialization.MQEventSerialization;
-import redis.clients.jedis.StreamEntryID;
+import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import redis.clients.jedis.UnifiedJedis;
-import redis.clients.jedis.params.XAddParams;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,22 +22,23 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
 
     public static final String FIELD_PAYLOAD = "payload";
 
-    private final UnifiedJedis jedis;
+    private final RedisStreamOperations operations;
     private final Ddd4jMQProperties properties;
     private final MQEventSerialization serialization;
 
     public RedisStreamMQEventPublisher(UnifiedJedis jedis, Ddd4jMQProperties properties, MQEventSerialization serialization) {
-        this.jedis = Objects.requireNonNull(jedis, "jedis");
+        this(new JedisRedisStreamOperations(jedis), properties, serialization);
+    }
+
+    public RedisStreamMQEventPublisher(RedisStreamOperations operations, Ddd4jMQProperties properties, MQEventSerialization serialization) {
+        this.operations = Objects.requireNonNull(operations, "operations");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
     @Override
     public <T extends MQEvent> void publish(T event, MQDestination destination) {
-        jedis.xadd(
-                resolveStream(event, destination, properties),
-                XAddParams.xAddParams().id(StreamEntryID.NEW_ENTRY),
-                fields(event, destination));
+        operations.add(resolveStream(event, destination, properties), fields(event, destination));
     }
 
     static String resolveStream(MQEvent event, MQDestination destination, Ddd4jMQProperties properties) {
