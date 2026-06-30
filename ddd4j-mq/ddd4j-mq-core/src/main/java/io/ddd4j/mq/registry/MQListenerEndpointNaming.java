@@ -24,15 +24,10 @@ public final class MQListenerEndpointNaming {
     }
 
     /**
-     * 解析首个 tag（复合表达式取首段）。
+     * 解析首个正向 tag（复合表达式取首个 include）。
      */
     public static String resolveTag(String tags) {
-        if (!hasText(tags) || "*".equals(tags.trim())) {
-            return null;
-        }
-        String trimmed = tags.trim();
-        int split = trimmed.indexOf("||");
-        return split > 0 ? trimmed.substring(0, split).trim() : trimmed;
+        return MQTagMatcher.findIncludes(tags).stream().findFirst().orElse(null);
     }
 
     /**

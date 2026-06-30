@@ -6,6 +6,7 @@ import io.ddd4j.core.contract.constant.ContextConstants;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
 @Data
 public class MQEvent implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -197,7 +199,6 @@ public class MQEvent implements Serializable {
      * 将 MQEvent 包装为 DomainEvent 的适配器
      */
     private static class MQEventAsDomainEvent extends DomainEvent<MQEvent> {
-        private static final long serialVersionUID = 1L;
 
         public MQEventAsDomainEvent(MQEvent source) {
             super(source);

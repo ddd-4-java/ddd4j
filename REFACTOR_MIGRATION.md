@@ -16,7 +16,7 @@
 **关键原则（已落实）**：
 
 - ✅ 纯 Java 模块（`ddd4j-core`、`ddd4j-core-api` 已合并）pom 中**零** `org.springframework.*` 依赖
-- ✅ ddd4j-mq-core 移除 `spring-context`（仅保留 `spring-messaging` 作为标准消息模型）
+- ✅ ddd4j-mq-core 移除 `spring-context` / `spring-messaging`，统一使用纯 Java `MQMessage` 模型；Spring 消息桥接已迁入 `ddd4j-mq-spring`
 - ✅ 三框架核心 SPI 全部实现：Spring/Quarkus/Javalin 各 3 个 SPI
 
 ---
@@ -34,24 +34,25 @@ ddd4j/                                                    # 纯 Java 公共底�
 ├── 三框架核心适配（与 ddd4j-core 同级）
 │   ├── ddd4j-spring                                     # Spring 框架核心适配（27 java，3 SPI + 工具类）
 │   ├── ddd4j-quarkus                                    # Quarkus CDI 桥接（4 java，3 SPI）
-│   └── ddd4j-guice                                    # Javalin Guice 桥接（5 java，3 SPI + Module）
+│   └── ddd4j-guice                                      # Javalin Guice 桥接（5 java，3 SPI + Module）
 │
 ├── 业务模块聚合（pom 模块）
-│   ├── ddd4j-data/                                      # 数据抽象（5 子模块，无空壳）
-│   │   ├── ddd4j-data-core                              # 纯 Java Repository SPI
+│   ├── ddd4j-data/                                      # 数据抽象（6 子模块，无空壳）
 │   │   ├── ddd4j-data-mybatis                           # MyBatis-Plus 实现
+│   │   ├── ddd4j-data-spring                            # Spring 桥接：RepositoryBeanPostProcessor
 │   │   ├── ddd4j-data-crypto                            # 字段加解密
+│   │   ├── ddd4j-data-datascope                         # 数据权限
 │   │   ├── ddd4j-data-external                          # 外部服务
 │   │   └── ddd4j-data-logs                              # API 日志 AOP
 │   │
-│   ├── ddd4j-mq/                                        # 消息队列（16 子模块）
-│   │   ├── ddd4j-mq-core                                # ⭐ 纯 Java MQ SPI（仅 spring-messaging 依赖）
+│   ├── ddd4j-mq/                                        # 消息队列（4 子模块）
+│   │   ├── ddd4j-mq-core                                # ⭐ 纯 Java MQ SPI（MQMessage/MQBrokerAdapter）
 │   │   ├── ddd4j-mq-spring                              # ⭐ Spring 桥接（@Configuration/BeanPostProcessor）
-│   │   ├── 13 个 broker 实现（kafka/rabbitmq/rocketmq/...）
-│   │   └── 1 个 tdmq 占位模块
+│   │   ├── ddd4j-mq-nats                                # NATS JetStream 实现
+│   │   └── ddd4j-mq-disruptor                           # LMAX Disruptor 本地 MQ 实现
 │   │
 │   ├── ddd4j-web/                                       # Web 抽象（3 子模块：core/webmvc/webflux）
-│   └── ddd4j-auth/                                      # 认证抽象（6 子模块：core/datascope/license/satoken/security/shiro）
+│   └── ddd4j-auth/                                      # 认证抽象（5 子模块：license/satoken/security/shiro/spring）
 │
 ├── 跨领域扩展
 │   └── ddd4j-extensions/                                # 7 子模块（含 ddd4j-extension-monitor）
@@ -80,7 +81,7 @@ ddd4j/                                                    # 纯 Java 公共底�
 | 旧包                                                        | 新包                                                         | 备注                              |
 |-----------------------------------------------------------|------------------------------------------------------------|---------------------------------|
 | `io.ddd4j.core.api.*`                                     | `io.ddd4j.core.*`                                          | core-api 合并到 core，`.api.` 二级包删除 |
-| `io.ddd4j.core.util.HttpStatus`                           | `io.ddd4j.core.http.HttpStatus`                            | HTTP 状态码常量（纯常量类）                |
+| `io.ddd4j.core.util.HttpStatus`                           | `io.ddd4j.core.constant.HttpStatus`                        | HTTP 状态码常量（纯常量类）                |
 | `io.ddd4j.core.util.JsonKit`                              | `io.ddd4j.kit.lang.JsonKit`                                | 工具类收编到 kit                      |
 | `io.ddd4j.core.util.JacksonKit`                           | `io.ddd4j.kit.lang.JsonKit`                                | 工具类收编到 kit（合并 toType）           |
 | `io.ddd4j.core.util.{Arith,DateUtils,Functions,RankUtil}` | `io.ddd4j.kit.lang.{ArithKit,DateKit,FunctionKit,RankKit}` | 工具类收编到 kit                      |
@@ -116,10 +117,10 @@ ddd4j/                                                    # 纯 Java 公共底�
 
 ### 3.5 ddd4j-mq 重构
 
-- ✅ `mq-core/pom.xml` 移除 `spring-context`（compile scope）
+- ✅ `mq-core/pom.xml` 移除 `spring-context` / `spring-messaging`（compile scope）
 - ✅ 4 个文件从 `io.ddd4j.mq.{config,registry}` 迁到 `io.ddd4j.mq.spring.{config,registry}`
-- ✅ 11 个 broker test 的 import 路径已修正
-- ✅ ddd4j-mq/pom.xml 加入 `ddd4j-mq-spring` 到 modules 列表
+- ✅ 监听器调用链统一到纯 Java `MQMessage` / `MQConsumerContext` / `MessageAcknowledgment`
+- ✅ ddd4j-mq/pom.xml 当前 modules 为 `ddd4j-mq-core`、`ddd4j-mq-disruptor`、`ddd4j-mq-nats`、`ddd4j-mq-spring`
 
 ### 3.6 ddd4j-ddd ArchUnit 增强（C 方案）
 
@@ -146,7 +147,7 @@ import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.ArithKit;
 
 // 常量类（保留在 ddd4j-core）
-import io.ddd4j.core.http.HttpStatus;  // 纯常量
+import io.ddd4j.core.constant.HttpStatus;  // 纯常量
 ```
 
 ### 4.2 启用 DDD 架构检查

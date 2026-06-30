@@ -64,18 +64,10 @@ public final class MQBindingNaming {
     }
 
     /**
-     * 规范化 tag：复合表达式取首段（{@code A || B} → {@code A}）。
+     * 规范化 tag：复合表达式取首个 include（{@code A || B} → {@code A}）。
      */
     private static String normalizeTag(String tag) {
-        if (!hasText(tag)) {
-            return "";
-        }
-        String trimmed = tag.trim();
-        int split = trimmed.indexOf("||");
-        if (split > 0) {
-            return trimmed.substring(0, split).trim();
-        }
-        return trimmed;
+        return MQTagMatcher.findIncludes(tag).stream().findFirst().orElse("");
     }
 
     /**

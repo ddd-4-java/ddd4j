@@ -19,8 +19,6 @@
             <artifactId>ddd4j-mq-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring 基础（AutoConfiguration 需要） -->
-        <dependency>
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
@@ -28,12 +26,6 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-mq-spring</artifactId>
-            <version>${revision}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

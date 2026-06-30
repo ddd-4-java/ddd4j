@@ -48,12 +48,9 @@ public class NatsMQBrokerAdapter implements MQBrokerAdapter {
         // 逻辑块：优先从 NATS 原生 Message 解析 JetStream 确认
         Message natsMessage = message.nativeMessage(Message.class);
         if (natsMessage != null) {
-            return NatsMessageAcknowledgmentFactory.fromNatsMessage(natsMessage)
-                    .map(ack -> (MessageAcknowledgment) ack)
-                    .orElse(null);
+            return NatsMessageAcknowledgmentFactory.fromNatsMessage(natsMessage).orElse(null);
         }
-        NatsMessageAcknowledgment natsAck = message.nativeMessage(NatsMessageAcknowledgment.class);
-        return natsAck;
+        return message.nativeMessage(NatsMessageAcknowledgment.class);
     }
 
     @Override

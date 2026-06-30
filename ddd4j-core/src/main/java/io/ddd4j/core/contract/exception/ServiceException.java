@@ -1,6 +1,6 @@
 package io.ddd4j.core.contract.exception;
 
-import io.ddd4j.core.context.I18nKit;
+import io.ddd4j.core.util.I18nKit;
 import io.ddd4j.core.contract.enums.IEnum;
 import io.ddd4j.core.contract.enums.ResultCode;
 import lombok.Data;

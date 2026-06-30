@@ -2,3 +2,4 @@ io.ddd4j.web.webmvc.DefaultMessageSourceAutoConfiguration
 io.ddd4j.web.webmvc.DefaultSequenceConfiguration
 io.ddd4j.web.webmvc.DefaultSpringContextConfiguration
 io.ddd4j.web.webmvc.DefaultWebMvcConfiguration
+io.ddd4j.web.webmvc.config.InternalAccessWebMvcConfig

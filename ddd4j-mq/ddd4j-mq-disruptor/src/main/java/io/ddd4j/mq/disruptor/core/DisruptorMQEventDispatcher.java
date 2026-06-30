@@ -6,6 +6,7 @@ import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
 import io.ddd4j.mq.registry.MQListenerDefinition;
+import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -95,10 +96,7 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
     private String buildRouteKey(MQListenerDefinition definition) {
         String namespace = definition.getNamespace();
         String topic = definition.getTopic();
-        String tags = definition.getTags();
-        String tag = (tags == null || tags.isBlank() || "*".equals(tags.trim()))
-                ? null
-                : (tags.contains("||") ? tags.substring(0, tags.indexOf("||")).trim() : tags.trim());
+        String tag = MQListenerEndpointNaming.resolveTag(definition.getTags());
         DisruptorMQEvent probe = new DisruptorMQEvent();
         probe.setNamespace(namespace);
         probe.setTopic(topic);

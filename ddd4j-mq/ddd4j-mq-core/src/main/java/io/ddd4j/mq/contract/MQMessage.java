@@ -1,5 +1,8 @@
 package io.ddd4j.mq.contract;
 
+import lombok.Data;
+import lombok.Getter;
+
 import java.util.*;
 
 /**
@@ -19,12 +22,17 @@ import java.util.*;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Data
 public class MQMessage<T> {
 
     private final T payload;
     private final Map<String, Object> headers;
     private final String messageId;
     private final String correlationId;
+    /**
+     * -- GETTER --
+     *  逃生口：返回底层 Broker 原生消息（如 Kafka RecordMetadata、RabbitMQ Envelope 等）。
+     */
     private final Object nativeMessage;
 
     public MQMessage(T payload, Map<String, Object> headers, String messageId,
@@ -69,45 +77,22 @@ public class MQMessage<T> {
         return new MQMessage<>(payload, headers, UUID.randomUUID().toString(), null, null);
     }
 
-    public T getPayload() {
-        return payload;
-    }
-
     public T payload() {
         return payload;
-    }
-
-    public Map<String, Object> getHeaders() {
-        return headers;
     }
 
     public Map<String, Object> headers() {
         return headers;
     }
 
-    public String getMessageId() {
-        return messageId;
-    }
-
     public String messageId() {
         return messageId;
-    }
-
-    public String getCorrelationId() {
-        return correlationId;
     }
 
     // ── 工厂方法 ──
 
     public String correlationId() {
         return correlationId;
-    }
-
-    /**
-     * 逃生口：返回底层 Broker 原生消息（如 Kafka RecordMetadata、RabbitMQ Envelope 等）。
-     */
-    public Object getNativeMessage() {
-        return nativeMessage;
     }
 
     public Object nativeMessage() {

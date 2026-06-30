@@ -110,7 +110,7 @@
             <!-- Ddd4j MQ Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-activemq</artifactId>
+                <artifactId>ddd4j-mq-core</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -125,27 +125,12 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-mqtt</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-mqtt-mica</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-mq-nats</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-ons</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-pulsar</artifactId>
+                <artifactId>ddd4j-mq-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -161,16 +146,6 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-mq-rocketmq</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-sqs</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-tdmq</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -207,11 +182,6 @@
             </dependency>
 
             <!-- Ddd4j Web Extensions -->
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-validation</artifactId>
-                <version>${revision}</version>
-            </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-web-webflux</artifactId>

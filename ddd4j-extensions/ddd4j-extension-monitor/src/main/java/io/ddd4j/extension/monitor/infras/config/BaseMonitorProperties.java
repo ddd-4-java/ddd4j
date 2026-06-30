@@ -2,6 +2,7 @@ package io.ddd4j.extension.monitor.infras.config;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
-// @ConfigurationProperties(prefix = "base-monitor")
+@ConfigurationProperties(prefix = "base-monitor")
 public class BaseMonitorProperties {
     private Log log = new Log();
 
@@ -134,6 +135,10 @@ public class BaseMonitorProperties {
         @Data
         public static class DingTalkRobot {
             /**
+             * 是否启用钉钉机器人。
+             */
+            private boolean enable = true;
+            /**
              * 钉钉机器人配置 webhook
              */
             private String token = "";
@@ -148,6 +153,10 @@ public class BaseMonitorProperties {
          */
         @Data
         public static class QiWeiRobot {
+            /**
+             * 是否启用企微机器人。
+             */
+            private boolean enable = true;
             private String key = "";
         }
     }

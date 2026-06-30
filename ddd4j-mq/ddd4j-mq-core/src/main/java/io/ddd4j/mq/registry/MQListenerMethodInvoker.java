@@ -47,10 +47,20 @@ public class MQListenerMethodInvoker {
      */
     public AckDisposition invoke(MQListenerDefinition definition, MQConsumerContext context,
                                  MQMessage<?> message) throws Exception {
+        return invoke(definition, context, message, resolvePayload(definition, message));
+    }
+
+    /**
+     * 调用监听器方法并返回业务处置结果。
+     */
+    public AckDisposition invoke(
+            MQListenerDefinition definition,
+            MQConsumerContext context,
+            MQMessage<?> message,
+            Object payload) throws Exception {
 
         MQListenerScanner.prepareMethod(definition);
         Method method = definition.getMethod();
-        Object payload = resolvePayload(definition, message);
         if (payload instanceof MQEvent && !((MQEvent) payload).supports(definition.supports())) {
             return AckDisposition.DISCARD;
         }
@@ -63,7 +73,7 @@ public class MQListenerMethodInvoker {
     /**
      * 反序列化消息载荷为监听器方法所需类型。
      */
-    private Object resolvePayload(MQListenerDefinition definition, MQMessage<?> message) {
+    public Object resolvePayload(MQListenerDefinition definition, MQMessage<?> message) {
         Class<?> payloadType = resolvePayloadType(definition.getMethod());
         if (payloadType == null || payloadType == Void.class) {
             return message.getPayload();
@@ -146,6 +156,17 @@ public class MQListenerMethodInvoker {
             MQListenerDefinition definition,
             MQMessage<?> message,
             MessageAcknowledgment acknowledgment) {
+        return buildContext(definition, message, acknowledgment, null);
+    }
+
+    /**
+     * 构建消费上下文并注入租户 ThreadContext。
+     */
+    public MQConsumerContext buildContext(
+            MQListenerDefinition definition,
+            MQMessage<?> message,
+            MessageAcknowledgment acknowledgment,
+            Object payload) {
 
         String tenantId = resolveTenantId(message);
         if (hasText(tenantId)) {
@@ -161,6 +182,7 @@ public class MQListenerMethodInvoker {
                 .tenantId(tenantId)
                 .acknowledgment(acknowledgment)
                 .message(message)
+                .payload(payload)
                 .destination(destination)
                 .build();
     }

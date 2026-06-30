@@ -18,6 +18,7 @@
         <module>ddd4j-sample-auth-satoken</module>
         <module>ddd4j-sample-auth-shiro</module>
         <module>ddd4j-sample-auth-security</module>
+        <module>ddd4j-sample-auth-multi-login</module>
     </modules>
 
 </project>

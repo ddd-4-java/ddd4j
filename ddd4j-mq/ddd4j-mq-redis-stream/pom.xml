@@ -11,11 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-mq-redis-stream</artifactId>
-    <description>Ddd4j Redis Stream Component</description>
-
-    <properties>
-        <mq.testcontainers.version>1.20.6</mq.testcontainers.version>
-    </properties>
+    <description>Ddd4j Redis Stream adapter based on Jedis and ddd4j MQ SPI.</description>
 
     <dependencies>
         <dependency>
@@ -24,27 +20,13 @@
             <version>${revision}</version>
         </dependency>
         <dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>${mq.testcontainers.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-mq-spring</artifactId>
-            <version>${revision}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

@@ -12,8 +12,8 @@
 
     <artifactId>ddd4j-mq</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -spring(Spring Messaging 桥接) + 13 个 broker
-        实现。Quarkus/Javalin 桥接通过 ddd4j-quarkus/ddd4j-guice 顶层模块提供。
+    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + broker adapters + -spring bridge。
+        Kafka/RabbitMQ/RocketMQ/Redis Stream 模块实现 MQBrokerAdapter / MessageAcknowledgment / MQEventPublisher 模型。
     </description>
 
     <dependencies>
@@ -23,29 +23,17 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <modules>
         <module>ddd4j-mq-core</module>
-        <module>ddd4j-mq-spring</module>
-        <module>ddd4j-mq-activemq</module>
         <module>ddd4j-mq-disruptor</module>
         <module>ddd4j-mq-kafka</module>
-        <module>ddd4j-mq-mqtt</module>
-        <module>ddd4j-mq-mqtt-mica</module>
         <module>ddd4j-mq-nats</module>
-        <module>ddd4j-mq-ons</module>
-        <module>ddd4j-mq-pulsar</module>
         <module>ddd4j-mq-rabbitmq</module>
         <module>ddd4j-mq-redis-stream</module>
         <module>ddd4j-mq-rocketmq</module>
-        <module>ddd4j-mq-sqs</module>
-        <module>ddd4j-mq-tdmq</module>
+        <module>ddd4j-mq-spring</module>
     </modules>
 
 </project>

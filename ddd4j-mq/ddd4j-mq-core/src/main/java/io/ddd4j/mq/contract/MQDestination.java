@@ -7,10 +7,10 @@ import lombok.Getter;
 
 import java.util.Objects;
 
-@Getter
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Getter
 public class MQDestination {
 
     private final String topic;

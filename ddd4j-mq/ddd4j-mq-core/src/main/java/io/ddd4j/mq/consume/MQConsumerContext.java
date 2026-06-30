@@ -36,6 +36,11 @@ public class MQConsumerContext {
     private MQMessage<?> message;
 
     /**
+     * 已按监听器方法签名反序列化后的业务载荷。
+     */
+    private Object payload;
+
+    /**
      * 消费目的地语义
      */
     private MQDestination destination;

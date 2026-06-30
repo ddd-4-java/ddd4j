@@ -94,7 +94,8 @@ public class MQListenerRegistrar {
 
         return (message, ack) -> {
             MessageAcknowledgment effectiveAck = resolveAcknowledgment(adapter, message, ack);
-            MQConsumerContext context = invoker.buildContext(definition, message, effectiveAck);
+            Object payload = invoker.resolvePayload(definition, message);
+            MQConsumerContext context = invoker.buildContext(definition, message, effectiveAck, payload);
             AtomicReference<AckDisposition> dispositionRef = new AtomicReference<>();
             try {
                 MQConsumeTemplates.execute(
@@ -103,7 +104,7 @@ public class MQListenerRegistrar {
                         () -> runPreCheck(orderedInterceptors, context, message),
                         () -> {
                             try {
-                                AckDisposition disposition = invoker.invoke(definition, context, message);
+                                AckDisposition disposition = invoker.invoke(definition, context, message, payload);
                                 dispositionRef.set(disposition);
                                 return disposition;
                             } catch (Exception ex) {

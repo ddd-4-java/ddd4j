@@ -12,7 +12,7 @@
 | **运行时** | Java 17，不依赖任何容器框架 |
 | **消费方** | ddd4j-boot（Spring Boot）/ ddd4j-quarkus / ddd4j-javalin |
 | **底层依赖** | fuinorg ddd-4-java + cqrs-4-java + esc-api |
-| **铁律** | 零 `@AutoConfiguration` · 零 `spring.factories` · 零 starter |
+| **铁律** | core/annotation/mq-core 等基础契约层零 `@AutoConfiguration` · 零 `spring.factories` · 零 starter；Spring/Web/Auth/Extensions 等适配层只保留显式 `@Configuration`/`@Component` 胶水 |
 
 ### 🏗️ 三层架构分离
 
@@ -28,7 +28,7 @@
 │ ddd4j-boot / ddd4j-quarkus / ddd4j-javalin                        │
 │ 含：@AutoConfiguration / starter / Bean 注册 / 拦截器 / 异常处理     │
 └──────────────────────────┬──────────────────────────────────────────┘
-                           │ 依赖（零自动装配、零 starter）
+                           │ 依赖（基础契约层零自动装配、零 starter）
                            ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 第三层：ddd4j 通用基础层（本项目）                                    │
@@ -48,7 +48,7 @@
 - **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
 - **双轨 DDD 模型**：ActiveRecord 轨道（快速 CRUD）+ 纯净 DDD 轨道（零 ORM 依赖，支持 ES）
 - **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `BaseRepository`（数据仓库）
-- **12 种 MQ 统一抽象**：Kafka / RabbitMQ / RocketMQ / ActiveMQ / Pulsar / NATS / MQTT / Redis Stream / SQS / ONS / TDMQ / Disruptor
+- **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` SPI、`ddd4j-mq-spring` 桥接，以及 NATS / Disruptor 两个实现；其他 Broker 可按 `MQBrokerAdapter` 扩展
 - **三框架适配**：`ddd4j-spring` / `ddd4j-quarkus` / `ddd4j-guice` 提供 SPI 的框架实现
 - **ArchUnit 编译期守护**：9 条架构边界规则，CI 阶段强制执行分层纪律
 - **COLA / Clean Architecture 支持**：注解驱动的架构规范检查
@@ -73,8 +73,8 @@
 | `ddd4j-core` | **纯 Java 契约层** | `Model` `Query` `Page` `R` `BaseRepository` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
 | `ddd4j-kit` | 工具箱 | 继承式增强 Hutool，Cache/Lang/Web 工具 |
 | `ddd4j-ddd` | DDD 架构规范检查 | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit） |
-| `ddd4j-data` | 数据层抽象 | Repository SPI + MyBatis-Plus 实现 + 加密/数据权限/日志 |
-| `ddd4j-mq` | 消息队列抽象 | `MQBrokerAdapter` SPI + 12 种 MQ 实现 |
+| `ddd4j-data` | 数据层抽象 | MyBatis-Plus 实现 + Spring 桥接 + 加密/数据权限/外部服务/日志 |
+| `ddd4j-mq` | 消息队列抽象 | `MQBrokerAdapter` SPI + Spring 桥接 + NATS / Disruptor 实现 |
 | `ddd4j-web` | Web 层抽象 | `RequestInfo` `SessionContext` + WebMVC/WebFlux 实现 |
 | `ddd4j-auth` | 认证授权抽象 | `Subject` SPI + Sa-Token/Security/Shiro 实现 |
 | `ddd4j-cache` | 缓存抽象 | 缓存 SPI 及实现 |
@@ -88,7 +88,7 @@
 **模块结构树**：
 
 ```
-|--ddd4j                                #通用基础层（零 starter，零自动装配）
+|--ddd4j                                #通用基础层（基础契约层零 starter，零自动装配）
 |----ddd4j-bom                          #BOM依赖管理，用于外部项目引用 ddd4j 模块版本管理
 |----ddd4j-dependencies                 #公共依赖，便于依赖组件版本控制
 |----ddd4j-annotation                   #注解层，DDD构造型注解+API注解，零框架依赖
@@ -98,7 +98,6 @@
 |------ddd4j-ddd-clean                  #Clean Architecture分层纪律规则
 |------ddd4j-ddd-cola                   #COLA菱形架构分层纪律规则
 |----ddd4j-data                         #数据抽象聚合
-|------ddd4j-data-core                  #纯Java Repository SPI，零ORM依赖
 |------ddd4j-data-mybatis               #MyBatis-Plus实现：BaseRepositoryImpl、TypeHandler、拦截器
 |------ddd4j-data-spring                #Spring桥接：RepositoryBean注册、静态注册表初始化
 |------ddd4j-data-crypto                #加解密策略：CryptoStrategy/Provider/注解
@@ -106,20 +105,9 @@
 |------ddd4j-data-external              #外部服务集成：地理位置/天气/行政区划/序列号
 |------ddd4j-data-logs                  #API操作日志：ApiOperationLogAspect+Provider
 |----ddd4j-mq                           #消息队列抽象聚合
-|------ddd4j-mq-core                    #纯Java MQ SPI：MQEventPublisher/MQBrokerAdapter/MQListener
+|------ddd4j-mq-core                    #纯Java MQ SPI：MQEventPublisher/MQBrokerAdapter/MQListener/MQMessage
 |------ddd4j-mq-spring                  #Spring Messaging桥接：Message↔MQMessage转换
-|------ddd4j-mq-kafka                   #Apache Kafka实现
-|------ddd4j-mq-rabbitmq                #RabbitMQ实现
-|------ddd4j-mq-rocketmq                #Apache RocketMQ实现
-|------ddd4j-mq-activemq                #Apache ActiveMQ Artemis实现
-|------ddd4j-mq-pulsar                  #Apache Pulsar实现
 |------ddd4j-mq-nats                    #NATS JetStream实现
-|------ddd4j-mq-mqtt                    #Eclipse Paho MQTT实现
-|------ddd4j-mq-mqtt-mica               #Mica MQTT Client实现
-|------ddd4j-mq-redis-stream            #Redis Stream实现
-|------ddd4j-mq-sqs                     #AWS SQS实现
-|------ddd4j-mq-ons                     #阿里云ONS实现
-|------ddd4j-mq-tdmq                    #腾讯云TDMQ实现
 |------ddd4j-mq-disruptor               #LMAX Disruptor本地MQ实现
 |----ddd4j-web                          #Web抽象聚合
 |------ddd4j-web-core                   #纯Java SPI：RequestInfo/SessionContext/IpUtils
@@ -130,6 +118,7 @@
 |------ddd4j-auth-satoken               #Sa-Token实现
 |------ddd4j-auth-security              #Spring Security实现
 |------ddd4j-auth-shiro                 #Apache Shiro实现
+|------ddd4j-auth-license               #软件授权组件
 |----ddd4j-cache                        #缓存抽象及实现
 |----ddd4j-spring                       #Spring适配层：DomainEventPublisher/I18nProvider/SubjectProvider
 |----ddd4j-quarkus                      #Quarkus适配层：CDI实现
