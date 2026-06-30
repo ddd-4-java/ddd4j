@@ -37,7 +37,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
             return authHeader.substring(BEARER_PREFIX.length()).trim();
         }
         String tokenParam = request.getParameter("token");
-        if (java.util.Objects.nonNull(tokenParam) && !!org.springframework.util.StringUtils.hasText(tokenParam)) {
+        if (java.util.Objects.nonNull(tokenParam) && org.springframework.util.StringUtils.hasText(tokenParam)) {
             return tokenParam.trim();
         }
         return null;

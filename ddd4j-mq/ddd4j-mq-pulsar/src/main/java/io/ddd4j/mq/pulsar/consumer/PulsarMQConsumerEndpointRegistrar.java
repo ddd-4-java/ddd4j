@@ -1,6 +1,5 @@
 package io.ddd4j.mq.pulsar.consumer;
 
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.contract.MQMessages;
@@ -8,12 +7,7 @@ import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgment;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQTagMatcher;
-import org.apache.pulsar.client.api.Consumer;
-import org.apache.pulsar.client.api.Message;
-import org.apache.pulsar.client.api.MessageId;
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.client.api.SubscriptionType;
+import org.apache.pulsar.client.api.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -31,6 +25,10 @@ public class PulsarMQConsumerEndpointRegistrar {
     public PulsarMQConsumerEndpointRegistrar(PulsarClient client, PulsarMQProperties properties) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    private static String messageIdString(MessageId id) {
+        return java.util.Objects.isNull(id) ? null : id.toString();
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
@@ -62,7 +60,10 @@ public class PulsarMQConsumerEndpointRegistrar {
                     consumer, msg, messageIdString(msg.getMessageId()), null);
             handler.handle(mq, ack);
         } catch (Exception ex) {
-            try { consumer.negativeAcknowledge(msg); } catch (Exception ignore) {}
+            try {
+                consumer.negativeAcknowledge(msg);
+            } catch (Exception ignore) {
+            }
         }
     }
 
@@ -82,9 +83,5 @@ public class PulsarMQConsumerEndpointRegistrar {
                 messageIdString(msg.getMessageId()),
                 null,
                 msg);
-    }
-
-    private static String messageIdString(MessageId id) {
-        return java.util.Objects.isNull(id) ? null : id.toString();
     }
 }

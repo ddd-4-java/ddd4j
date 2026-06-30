@@ -7,16 +7,8 @@ import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQTagMatcher;
+import jakarta.jms.*;
 
-import jakarta.jms.BytesMessage;
-import jakarta.jms.Connection;
-import jakarta.jms.Destination;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.MessageConsumer;
-import jakarta.jms.MessageListener;
-import jakarta.jms.Session;
-import jakarta.jms.TextMessage;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +27,42 @@ public class ActiveMQConsumerEndpointRegistrar {
     public ActiveMQConsumerEndpointRegistrar(Connection connection, ActiveMQProperties properties) {
         this.connection = Objects.requireNonNull(connection, "connection");
         this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    private static String extractTag(Message message, MQListenerDefinition def) {
+        try {
+            String tag = message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG);
+            if (java.util.Objects.nonNull(tag)) {
+                return tag;
+            }
+        } catch (JMSException ignore) {
+        }
+        return null;
+    }
+
+    private static String messageIdOf(Message message) {
+        try {
+            return message.getJMSMessageID();
+        } catch (JMSException e) {
+            return null;
+        }
+    }
+
+    private static String correlationIdOf(Message message) {
+        try {
+            return message.getJMSCorrelationID();
+        } catch (JMSException e) {
+            return null;
+        }
+    }
+
+    private static long messageIdHash(Message message) {
+        try {
+            String id = message.getJMSMessageID();
+            return java.util.Objects.isNull(id) ? 0L : (long) id.hashCode();
+        } catch (JMSException e) {
+            return 0L;
+        }
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
@@ -60,7 +88,10 @@ public class ActiveMQConsumerEndpointRegistrar {
         try {
             String tag = extractTag(message, def);
             if (!MQTagMatcher.match(tag, def.getTags())) {
-                try { message.acknowledge(); } catch (JMSException ignore) {}
+                try {
+                    message.acknowledge();
+                } catch (JMSException ignore) {
+                }
                 return;
             }
             MQMessage<String> mqMessage = toMessage(message, session);
@@ -68,7 +99,10 @@ public class ActiveMQConsumerEndpointRegistrar {
                     session, message, messageIdHash(message), messageIdOf(message), correlationIdOf(message));
             handler.handle(mqMessage, ack);
         } catch (Exception ex) {
-            try { session.recover(); } catch (JMSException ignore) {}
+            try {
+                session.recover();
+            } catch (JMSException ignore) {
+            }
         }
     }
 
@@ -80,16 +114,6 @@ public class ActiveMQConsumerEndpointRegistrar {
             physical = def.getNamespace() + "." + physical;
         }
         return session.createTopic(physical);
-    }
-
-    private static String extractTag(Message message, MQListenerDefinition def) {
-        try {
-            String tag = message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG);
-            if (java.util.Objects.nonNull(tag)) {
-                return tag;
-            }
-        } catch (JMSException ignore) {}
-        return null;
     }
 
     private MQMessage<String> toMessage(Message message, Session session) throws JMSException {
@@ -117,18 +141,5 @@ public class ActiveMQConsumerEndpointRegistrar {
             payload = tm.getText();
         }
         return MQMessage.of(payload, headers, messageIdOf(message), correlationIdOf(message), message);
-    }
-
-    private static String messageIdOf(Message message) {
-        try { return message.getJMSMessageID(); } catch (JMSException e) { return null; }
-    }
-    private static String correlationIdOf(Message message) {
-        try { return message.getJMSCorrelationID(); } catch (JMSException e) { return null; }
-    }
-    private static long messageIdHash(Message message) {
-        try {
-            String id = message.getJMSMessageID();
-            return java.util.Objects.isNull(id) ? 0L : (long) id.hashCode();
-        } catch (JMSException e) { return 0L; }
     }
 }

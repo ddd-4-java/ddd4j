@@ -3,7 +3,6 @@ package io.ddd4j.mq.mqtt.publisher;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.serialization.MQEventSerialization;
@@ -31,6 +30,18 @@ public class MqttMQEventPublisher implements MQEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
+    private static String firstText(String... values) {
+        if (java.util.Objects.isNull(values)) {
+            return null;
+        }
+        for (String v : values) {
+            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     @Override
     public <T extends MQEvent> void publish(T event, MQDestination destination) {
         try {
@@ -49,17 +60,5 @@ public class MqttMQEventPublisher implements MQEventPublisher {
         } catch (Exception ex) {
             throw new IllegalStateException("Publish MQTT event failed", ex);
         }
-    }
-
-    private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
     }
 }

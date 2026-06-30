@@ -14,21 +14,33 @@ import io.ddd4j.mq.sqs.spi.SqsMQProperties;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class SqsMQBrokerAdapterTest {
+
+    @SuppressWarnings("unchecked")
+    private static MQEventSerialization stringSerialization() {
+        return new MQEventSerialization() {
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            public <T> T serialize(Object src) {
+                return (T) "payload";
+            }
+        };
+    }
 
     @Test
     void ackShouldDeleteSqsMessageOnce() {
@@ -86,20 +98,5 @@ class SqsMQBrokerAdapterTest {
 
         assertTrue(adapter.supports(MQBrokerType.SQS));
         assertEquals(MQBrokerType.SQS, adapter.brokerType());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static MQEventSerialization stringSerialization() {
-        return new MQEventSerialization() {
-            @Override
-            public <S, T> T deserialize(S src, Class<T> dist) {
-                return null;
-            }
-
-            @Override
-            public <T> T serialize(Object src) {
-                return (T) "payload";
-            }
-        };
     }
 }

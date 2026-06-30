@@ -40,6 +40,38 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
         this.consumerFactory = Objects.requireNonNull(consumerFactory, "consumerFactory");
     }
 
+    private static MQMessage<String> toMessage(MessageExt message) {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE, message);
+        headers.put(MQMessages.HEADER_DESTINATION_TOPIC, message.getTopic());
+        headers.put(MQMessages.HEADER_DESTINATION_TAG, message.getTags());
+        headers.put(MQMessages.HEADER_TENANT_ID, message.getUserProperty(MQMessages.HEADER_TENANT_ID));
+        return MQMessage.of(
+                new String(message.getBody(), StandardCharsets.UTF_8),
+                headers,
+                message.getMsgId(),
+                message.getKeys(),
+                message);
+    }
+
+    private static String resolveTopic(MQListenerDefinition definition) {
+        String concat = MQListenerEndpointNaming.resolveConcat(definition);
+        return hasText(definition.getNamespace())
+                ? definition.getNamespace() + concat + definition.getTopic()
+                : definition.getTopic();
+    }
+
+    private static String subscriptionExpression(String tags) {
+        if (java.util.Objects.isNull(tags) || io.ddd4j.kit.lang.StrKit.isBlank(tags) || tags.contains("-")) {
+            return "*";
+        }
+        return tags;
+    }
+
+    private static boolean hasText(String s) {
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+    }
+
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
         try {
             DefaultMQPushConsumer consumer = consumerFactory.create(resolveGroup(definition));
@@ -83,42 +115,10 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 
-    private static MQMessage<String> toMessage(MessageExt message) {
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE, message);
-        headers.put(MQMessages.HEADER_DESTINATION_TOPIC, message.getTopic());
-        headers.put(MQMessages.HEADER_DESTINATION_TAG, message.getTags());
-        headers.put(MQMessages.HEADER_TENANT_ID, message.getUserProperty(MQMessages.HEADER_TENANT_ID));
-        return MQMessage.of(
-                new String(message.getBody(), StandardCharsets.UTF_8),
-                headers,
-                message.getMsgId(),
-                message.getKeys(),
-                message);
-    }
-
     private String resolveGroup(MQListenerDefinition definition) {
         if (hasText(definition.getGroup())) {
             return definition.getGroup();
         }
         return rocketProperties.getConsumerGroupPrefix() + "-" + definition.bindingName();
-    }
-
-    private static String resolveTopic(MQListenerDefinition definition) {
-        String concat = MQListenerEndpointNaming.resolveConcat(definition);
-        return hasText(definition.getNamespace())
-                ? definition.getNamespace() + concat + definition.getTopic()
-                : definition.getTopic();
-    }
-
-    private static String subscriptionExpression(String tags) {
-        if (java.util.Objects.isNull(tags) || io.ddd4j.kit.lang.StrKit.isBlank(tags) || tags.contains("-")) {
-            return "*";
-        }
-        return tags;
-    }
-
-    private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

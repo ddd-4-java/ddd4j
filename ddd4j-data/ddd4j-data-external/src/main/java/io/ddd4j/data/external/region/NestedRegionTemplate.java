@@ -36,6 +36,9 @@ public class NestedRegionTemplate {
         this.pconlineRegionTemplate = pconlineRegionTemplate;
     }
 
+    private static String trimWhitespace(String value) {
+        return java.util.Objects.isNull(value) ? null : value.strip();
+    }
 
     public RegionEnum getRegion(String regionCode, String ipAddress) {
         RegionEnum regionEnum = this.getRegionByCode(regionCode);
@@ -178,10 +181,6 @@ public class NestedRegionTemplate {
 
     public PconlineRegionTemplate getPconlineRegionTemplate() {
         return pconlineRegionTemplate;
-    }
-
-    private static String trimWhitespace(String value) {
-        return java.util.Objects.isNull(value) ? null : value.strip();
     }
 
 }

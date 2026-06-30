@@ -82,9 +82,9 @@ public class CleanArchitectureChecker {
     /**
      * 构造器（带注解驱动规则）。
      *
-     * @param basePackage               业务根包名（如 com.example.myapp）
-     * @param domainEntityAnnotation    业务项目使用的 @DomainEntity 注解类（可选）
-     * @param domainServiceAnnotation   业务项目使用的 @DomainService 注解类（可选）
+     * @param basePackage                  业务根包名（如 com.example.myapp）
+     * @param domainEntityAnnotation       业务项目使用的 @DomainEntity 注解类（可选）
+     * @param domainServiceAnnotation      业务项目使用的 @DomainService 注解类（可选）
      * @param applicationServiceAnnotation 业务项目使用的 @ApplicationService 注解类（可选）
      * @param domainRepositoryAnnotation   业务项目使用的 @DomainRepository 注解类（可选）
      */

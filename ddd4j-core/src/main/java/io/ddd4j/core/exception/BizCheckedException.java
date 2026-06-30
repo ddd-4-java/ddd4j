@@ -12,7 +12,7 @@ import lombok.Getter;
 
 /**
  * 推荐使用 {@link io.ddd4j.core.contract.exception.ServiceException}。
- *             本类将在 5.0.x 版本移除。
+ * 本类将在 5.0.x 版本移除。
  */
 public class BizCheckedException extends Exception {
 

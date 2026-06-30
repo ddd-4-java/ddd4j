@@ -2,13 +2,7 @@ package io.ddd4j.guice.annotation.ddd;
 
 import com.google.inject.Singleton;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
-import io.ddd4j.guice.annotation.web.BodyParam;
-import io.ddd4j.guice.annotation.web.Context;
-import io.ddd4j.guice.annotation.web.CookieParam;
-import io.ddd4j.guice.annotation.web.FormParam;
-import io.ddd4j.guice.annotation.web.HeaderParam;
-import io.ddd4j.guice.annotation.web.PathParam;
-import io.ddd4j.guice.annotation.web.QueryParam;
+import io.ddd4j.guice.annotation.web.*;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

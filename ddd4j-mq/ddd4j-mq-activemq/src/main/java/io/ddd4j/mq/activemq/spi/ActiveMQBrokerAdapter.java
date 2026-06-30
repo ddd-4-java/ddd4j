@@ -19,6 +19,7 @@ import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
+
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -90,7 +91,11 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     public void close() throws Exception {
         Connection c = connectionRef.get();
         if (java.util.Objects.nonNull(c)) {
-            try { c.close(); } finally { connectionRef.set(null); }
+            try {
+                c.close();
+            } finally {
+                connectionRef.set(null);
+            }
         }
     }
 

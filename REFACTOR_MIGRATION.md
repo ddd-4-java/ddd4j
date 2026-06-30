@@ -16,7 +16,8 @@
 **关键原则（已落实）**：
 
 - ✅ 纯 Java 模块（`ddd4j-core`、`ddd4j-core-api` 已合并）pom 中**零** `org.springframework.*` 依赖
-- ✅ ddd4j-mq-core 移除 `spring-context` / `spring-messaging`，统一使用纯 Java `MQMessage` 模型；Spring 消息桥接已迁入 `ddd4j-mq-spring`
+- ✅ ddd4j-mq-core 移除 `spring-context` / `spring-messaging`，统一使用纯 Java `MQMessage` 模型；Spring 消息桥接已迁入
+  `ddd4j-mq-spring`
 - ✅ 三框架核心 SPI 全部实现：Spring/Quarkus/Javalin 各 3 个 SPI
 
 ---

@@ -43,6 +43,34 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 public final class CleanDDDLayerRules {
 
     /**
+     * 规则5：domain 包不得依赖 web/controller/adapter 包。
+     */
+    public static final ArchRule DOMAIN_NOT_DEPEND_ON_WEB = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                    "..controller..", "..adapter..", "..web..")
+            .because("领域层不得依赖 Web/Controller/Adapter 层");
+    /**
+     * 规则6：domain 包不得依赖 infrastructure 包。
+     */
+    public static final ArchRule DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                    "..infrastructure..", "..infras..")
+            .because("领域层不得依赖基础设施层（依赖方向应反转）");
+    /**
+     * 规则7：domain 包不得依赖 Spring 框架。
+     */
+    public static final ArchRule DOMAIN_NOT_DEPEND_ON_FRAMEWORK = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                    "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
+            .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
+
+    private CleanDDDLayerRules() {
+    }
+
+    /**
      * 规则1：标了 {@code @DomainEntity} 的类必须在 {@code ..domain..} 包。
      */
     public static ArchRule domainEntityInDomain(Class<? extends Annotation> domainEntityAnnotation) {
@@ -83,33 +111,6 @@ public final class CleanDDDLayerRules {
     }
 
     /**
-     * 规则5：domain 包不得依赖 web/controller/adapter 包。
-     */
-    public static final ArchRule DOMAIN_NOT_DEPEND_ON_WEB = noClasses()
-            .that().resideInAPackage("..domain..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                    "..controller..", "..adapter..", "..web..")
-            .because("领域层不得依赖 Web/Controller/Adapter 层");
-
-    /**
-     * 规则6：domain 包不得依赖 infrastructure 包。
-     */
-    public static final ArchRule DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE = noClasses()
-            .that().resideInAPackage("..domain..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                    "..infrastructure..", "..infras..")
-            .because("领域层不得依赖基础设施层（依赖方向应反转）");
-
-    /**
-     * 规则7：domain 包不得依赖 Spring 框架。
-     */
-    public static final ArchRule DOMAIN_NOT_DEPEND_ON_FRAMEWORK = noClasses()
-            .that().resideInAPackage("..domain..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                    "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
-            .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
-
-    /**
      * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain..} 包。
      */
     public static ArchRule domainGatewayInDomain(Class<? extends Annotation> domainGatewayAnnotation) {
@@ -137,8 +138,5 @@ public final class CleanDDDLayerRules {
                 .that().areAnnotatedWith(queryServiceAnnotation)
                 .should().resideInAnyPackage("..app..", "..application..")
                 .because("标了 @QueryService 的类必须在 app/application 包");
-    }
-
-    private CleanDDDLayerRules() {
     }
 }

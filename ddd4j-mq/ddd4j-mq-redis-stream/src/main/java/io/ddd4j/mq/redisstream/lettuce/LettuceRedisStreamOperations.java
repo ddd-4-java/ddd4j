@@ -2,23 +2,12 @@ package io.ddd4j.mq.redisstream.lettuce;
 
 import io.ddd4j.mq.redisstream.RedisStreamOperations;
 import io.ddd4j.mq.redisstream.RedisStreamRecord;
-import io.lettuce.core.Consumer;
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.RedisCommandExecutionException;
-import io.lettuce.core.StreamMessage;
-import io.lettuce.core.XAddArgs;
-import io.lettuce.core.XGroupCreateArgs;
-import io.lettuce.core.XReadArgs;
+import io.lettuce.core.*;
 import io.lettuce.core.XReadArgs.StreamOffset;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Redis Stream operations backed by Lettuce.
@@ -58,6 +47,10 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         this.commands = Objects.requireNonNull(commands, "commands");
         this.closeTarget = closeTarget;
         this.nativeClient = java.util.Objects.isNull(nativeClient) ? commands : nativeClient;
+    }
+
+    private static RedisClient createClient(String redisUrl) {
+        return RedisClient.create(redisUrl);
     }
 
     @Override
@@ -123,9 +116,5 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         } catch (Exception ex) {
             throw new IllegalStateException("Close Lettuce Redis client failed", ex);
         }
-    }
-
-    private static RedisClient createClient(String redisUrl) {
-        return RedisClient.create(redisUrl);
     }
 }

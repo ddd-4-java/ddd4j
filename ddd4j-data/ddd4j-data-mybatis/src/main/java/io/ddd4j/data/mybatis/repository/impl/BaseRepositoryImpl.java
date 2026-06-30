@@ -19,11 +19,11 @@ import io.ddd4j.data.mybatis.annotation.*;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.JsonKit;
+import jakarta.annotation.Nonnull;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
-import jakarta.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -452,7 +452,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     private String getFieldName(String fieldName, String queryAction) {
         String replaceLast = replaceLast(fieldName, queryAction, "");
-        return java.util.Objects.nonNull(replaceLast) && !!org.springframework.util.StringUtils.hasLength(replaceLast) ? replaceLast.toLowerCase() : replaceLast;
+        return java.util.Objects.nonNull(replaceLast) && org.springframework.util.StringUtils.hasLength(replaceLast) ? replaceLast.toLowerCase() : replaceLast;
     }
 
     protected void getColumnByField(String fieldName, Consumer<String> action) {
@@ -491,7 +491,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         // 关键字查询：keyword + fields 转 ors
         if (java.util.Objects.nonNull(query.getKeyword()) && java.util.Objects.nonNull(query.getFields()) && !query.getFields().isEmpty()) {
             for (String field : query.getFields().split(query.getSplit())) {
-                if (!!org.springframework.util.StringUtils.hasLength(field)) {
+                if (org.springframework.util.StringUtils.hasLength(field)) {
                     if (java.util.Objects.isNull(query.getOrs())) {
                         query.setOrs(new HashMap<>());
                     }
@@ -584,13 +584,13 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         } else if (key.endsWith(NOT_IN_QUERY) && this.isCollectionType(value) && !((Collection<?>) value).isEmpty()) {
             List<?> list = ((Collection<?>) value).stream().distinct().collect(Collectors.toList());
             this.getColumnByField(this.getFieldName(key, NOT_IN_QUERY), (p) -> wrapper.notIn(p, list));
-        } else if (key.endsWith(NOT_IN_QUERY) && value instanceof String && !!org.springframework.util.StringUtils.hasLength(((String) value))) {
+        } else if (key.endsWith(NOT_IN_QUERY) && value instanceof String && org.springframework.util.StringUtils.hasLength(((String) value))) {
             List<String> list = Arrays.stream(((String) value).split(query.getSplit())).distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList());
             this.getColumnByField(this.getFieldName(key, NOT_IN_QUERY), (p) -> wrapper.notIn(p, list));
         } else if (key.endsWith(IN_QUERY) && this.isCollectionType(value) && !((Collection<?>) value).isEmpty()) {
             List<?> list = ((Collection<?>) value).stream().distinct().collect(Collectors.toList());
             this.getColumnByField(this.getFieldName(key, IN_QUERY), (p) -> wrapper.in(p, list));
-        } else if (key.endsWith(IN_QUERY) && value instanceof String && !!org.springframework.util.StringUtils.hasLength(((String) value))) {
+        } else if (key.endsWith(IN_QUERY) && value instanceof String && org.springframework.util.StringUtils.hasLength(((String) value))) {
             List<String> list = Arrays.stream(((String) value).split(query.getSplit())).distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList());
             this.getColumnByField(this.getFieldName(key, IN_QUERY), (p) -> wrapper.in(p, list));
         } else if (key.endsWith(LIKE_QUERY) && value instanceof CharSequence && this.isStringNotBlank(value)) {
@@ -669,7 +669,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         if (java.util.Objects.nonNull(query.getOrderBys())) {
             String[] orderBys = query.getOrderBys().split(query.getSplit());
             for (String orderBy : orderBys) {
-                if (java.util.Objects.nonNull(orderBy) && !!org.springframework.util.StringUtils.hasLength(orderBy)) {
+                if (java.util.Objects.nonNull(orderBy) && org.springframework.util.StringUtils.hasLength(orderBy)) {
                     // 统一转成下划线形式，传参可以是驼峰式，也可以是下划线
                     String column = TableScheme.toUnderline(orderBy.replace("_asc", "").replace("_ASC", "").replace("_desc", "").replace("_DESC", ""));
                     wrapper.orderBy(this.tableScheme.containsColumn(column), !orderBy.toLowerCase().endsWith("_desc"), column);

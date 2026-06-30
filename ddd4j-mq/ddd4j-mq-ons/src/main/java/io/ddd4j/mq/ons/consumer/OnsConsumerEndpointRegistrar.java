@@ -1,10 +1,6 @@
 package io.ddd4j.mq.ons.consumer;
 
-import com.aliyun.openservices.ons.api.Action;
-import com.aliyun.openservices.ons.api.Consumer;
-import com.aliyun.openservices.ons.api.ConsumeContext;
-import com.aliyun.openservices.ons.api.Message;
-import com.aliyun.openservices.ons.api.ONSFactory;
+import com.aliyun.openservices.ons.api.*;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.contract.MQMessages;

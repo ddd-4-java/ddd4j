@@ -12,7 +12,9 @@
     </parent>
 
     <artifactId>ddd4j-mq-activemq</artifactId>
-    <description>Ddd4j ActiveMQ Classic (v5) adapter based on activemq-client and ddd4j MQ SPI. Pure Java, zero Spring.</description>
+    <description>Ddd4j ActiveMQ Classic (v5) adapter based on activemq-client and ddd4j MQ SPI. Pure Java, zero
+        Spring.
+    </description>
 
     <dependencies>
         <dependency>

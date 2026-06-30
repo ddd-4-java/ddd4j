@@ -41,29 +41,11 @@ public class KafkaMQEventPublisher implements MQEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
-    @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
-        String topic = resolveTopic(event, destination);
-        String tag = firstText(destination.getTag(), event.getTag());
-        ProducerRecord<String, String> record = new ProducerRecord<>(
-                topic,
-                tag,
-                serialization.serialize(event));
-        addHeader(record, MQMessages.HEADER_DESTINATION_TOPIC, topic);
-        addHeader(record, MQMessages.HEADER_DESTINATION_TAG, tag);
-        addHeader(record, MQMessages.HEADER_TENANT_ID, event.getTenantId());
-        producer.send(record);
-    }
-
     static String resolveTopic(MQEvent event, MQDestination destination, Ddd4jMQProperties properties) {
         String namespace = firstText(destination.getNamespace(), event.getNamespace(), properties.getNamespace());
         String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
         String concat = firstText(event.getConcat(), "_");
         return java.util.Objects.isNull(namespace) ? topic : namespace + concat + topic;
-    }
-
-    private String resolveTopic(MQEvent event, MQDestination destination) {
-        return resolveTopic(event, destination, mqProperties);
     }
 
     private static void addHeader(ProducerRecord<String, String> record, String key, String value) {
@@ -82,5 +64,23 @@ public class KafkaMQEventPublisher implements MQEventPublisher {
             }
         }
         return null;
+    }
+
+    @Override
+    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+        String topic = resolveTopic(event, destination);
+        String tag = firstText(destination.getTag(), event.getTag());
+        ProducerRecord<String, String> record = new ProducerRecord<>(
+                topic,
+                tag,
+                serialization.serialize(event));
+        addHeader(record, MQMessages.HEADER_DESTINATION_TOPIC, topic);
+        addHeader(record, MQMessages.HEADER_DESTINATION_TAG, tag);
+        addHeader(record, MQMessages.HEADER_TENANT_ID, event.getTenantId());
+        producer.send(record);
+    }
+
+    private String resolveTopic(MQEvent event, MQDestination destination) {
+        return resolveTopic(event, destination, mqProperties);
     }
 }

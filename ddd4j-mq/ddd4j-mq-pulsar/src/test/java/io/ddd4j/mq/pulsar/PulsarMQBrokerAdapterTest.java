@@ -11,14 +11,7 @@ import io.ddd4j.mq.pulsar.spi.PulsarMQBrokerAdapter;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.serialization.MQEventSerialization;
-import org.apache.pulsar.client.api.Consumer;
-import org.apache.pulsar.client.api.Message;
-import org.apache.pulsar.client.api.MessageId;
-import org.apache.pulsar.client.api.Producer;
-import org.apache.pulsar.client.api.ProducerBuilder;
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.client.api.TypedMessageBuilder;
+import org.apache.pulsar.client.api.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -26,17 +19,27 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class PulsarMQBrokerAdapterTest {
+
+    @SuppressWarnings("unchecked")
+    private static MQEventSerialization stringSerialization() {
+        return new MQEventSerialization() {
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            public <T> T serialize(Object src) {
+                return (T) "payload";
+            }
+        };
+    }
 
     @Test
     void ackShouldDelegateToPulsarConsumer() throws Exception {
@@ -106,20 +109,5 @@ class PulsarMQBrokerAdapterTest {
 
         assertTrue(adapter.supports(MQBrokerType.PULSAR));
         assertEquals(MQBrokerType.PULSAR, adapter.brokerType());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static MQEventSerialization stringSerialization() {
-        return new MQEventSerialization() {
-            @Override
-            public <S, T> T deserialize(S src, Class<T> dist) {
-                return null;
-            }
-
-            @Override
-            public <T> T serialize(Object src) {
-                return (T) "payload";
-            }
-        };
     }
 }

@@ -5,12 +5,12 @@ import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
 import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
-import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 

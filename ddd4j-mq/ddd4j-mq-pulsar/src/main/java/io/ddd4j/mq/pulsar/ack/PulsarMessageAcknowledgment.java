@@ -5,7 +5,6 @@ import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
-import org.apache.pulsar.client.api.MessageId;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,7 +30,7 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     public PulsarMessageAcknowledgment(Consumer<?> consumer, Message<?> message,
-                                        String messageId, String correlationId) {
+                                       String messageId, String correlationId) {
         this.consumer = consumer;
         this.message = message;
         this.messageId = messageId;
@@ -39,15 +38,40 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
         this.deliveryId = java.util.Objects.isNull(messageId) ? 0L : Math.abs((long) messageId.hashCode());
     }
 
-    @Override public long deliveryTag() { return deliveryId; }
-    @Override public String messageId() { return messageId; }
-    @Override public String correlationId() { return correlationId; }
-    @Override public boolean isOpen() { return java.util.Objects.nonNull(consumer) && consumer.isConnected(); }
-    @Override public boolean isAcknowledged() { return acknowledged.get(); }
-    @Override public MQBrokerType brokerType() { return MQBrokerType.PULSAR; }
+    @Override
+    public long deliveryTag() {
+        return deliveryId;
+    }
 
     @Override
-    public void ack() { ack(false); }
+    public String messageId() {
+        return messageId;
+    }
+
+    @Override
+    public String correlationId() {
+        return correlationId;
+    }
+
+    @Override
+    public boolean isOpen() {
+        return java.util.Objects.nonNull(consumer) && consumer.isConnected();
+    }
+
+    @Override
+    public boolean isAcknowledged() {
+        return acknowledged.get();
+    }
+
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.PULSAR;
+    }
+
+    @Override
+    public void ack() {
+        ack(false);
+    }
 
     @Override
     public void ack(boolean multiple) {
@@ -61,7 +85,9 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public void nack(boolean requeue) { nack(false, requeue); }
+    public void nack(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
     public void nack(boolean multiple, boolean requeue) {
@@ -77,10 +103,14 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public void reject(boolean requeue) { nack(false, requeue); }
+    public void reject(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
-    public void recover(boolean requeue) { nack(false, requeue); }
+    public void recover(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
@@ -116,5 +146,7 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @FunctionalInterface
-    private interface IoOperation { void run() throws Exception; }
+    private interface IoOperation {
+        void run() throws Exception;
+    }
 }

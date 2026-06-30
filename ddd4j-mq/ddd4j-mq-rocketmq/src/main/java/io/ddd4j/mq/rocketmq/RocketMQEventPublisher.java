@@ -29,15 +29,6 @@ public class RocketMQEventPublisher implements MQEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
-    @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
-        try {
-            producer.send(toMessage(event, destination, properties, serialization));
-        } catch (Exception ex) {
-            throw new IllegalStateException("Publish RocketMQ event failed", ex);
-        }
-    }
-
     static Message toMessage(
             MQEvent event,
             MQDestination destination,
@@ -79,5 +70,14 @@ public class RocketMQEventPublisher implements MQEventPublisher {
             }
         }
         return null;
+    }
+
+    @Override
+    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+        try {
+            producer.send(toMessage(event, destination, properties, serialization));
+        } catch (Exception ex) {
+            throw new IllegalStateException("Publish RocketMQ event failed", ex);
+        }
     }
 }

@@ -14,7 +14,6 @@ import io.ddd4j.kit.web.IpKit;
 import io.ddd4j.spring.util.WebUtils;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

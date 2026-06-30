@@ -40,7 +40,8 @@ public class MicaMqttMQConsumerEndpointRegistrar {
         client.subscribe(subscribeTopic, properties.mqttQoS(), (ctx, topic1, message, payload) -> {
             try {
                 handleMessage(topic1, payload, definition, handler);
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         });
     }
 

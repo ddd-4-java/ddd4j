@@ -12,7 +12,7 @@ import lombok.Getter;
 
 /**
  * 自 3.4.x 起，推荐使用 {@link io.ddd4j.core.contract.exception.ServiceException}（带 i18n 支持）。
- *             本类将在 5.0.x 版本移除。
+ * 本类将在 5.0.x 版本移除。
  */
 public class BizRuntimeException extends RuntimeException {
 

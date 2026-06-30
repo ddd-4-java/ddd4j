@@ -1,6 +1,7 @@
 package io.ddd4j.annotation.ddd;
 
 import io.ddd4j.annotation.Contract;
+
 import java.lang.annotation.*;
 
 /**

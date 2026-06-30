@@ -12,12 +12,12 @@ import io.lettuce.core.XAddArgs;
 import io.lettuce.core.XGroupCreateArgs;
 import io.lettuce.core.XReadArgs;
 import io.lettuce.core.api.sync.RedisCommands;
+import org.junit.jupiter.api.Test;
 import org.redisson.api.RStream;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.StreamMessageId;
 import org.redisson.api.stream.StreamAddArgs;
 import org.redisson.api.stream.StreamCreateGroupArgs;
-import org.junit.jupiter.api.Test;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 
@@ -27,12 +27,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Redis Stream adapter contract tests.
@@ -40,6 +36,20 @@ import static org.mockito.Mockito.when;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class RedisStreamMQBrokerAdapterTest {
+
+    private static MQListenerDefinition definition(String tags) throws Exception {
+        Method method = SampleConsumer.class.getDeclaredMethod("handle", MQEvent.class);
+        return MQListenerDefinition.builder()
+                .bean(new SampleConsumer())
+                .method(method)
+                .group("sample")
+                .namespace("sales")
+                .topic("order")
+                .tags(tags)
+                .supports(List.of("*"))
+                .concat(".")
+                .build();
+    }
 
     @Test
     void supportsRedisStreamBrokerType() {
@@ -135,20 +145,6 @@ class RedisStreamMQBrokerAdapterTest {
         verify(commands).xadd(eq("sales.order.paid"), any(XAddArgs.class), anyMap());
         verify(commands).xgroupCreate(any(XReadArgs.StreamOffset.class), eq("sample"), any(XGroupCreateArgs.class));
         verify(commands).xack("sales.order.paid", "sample", "1-0");
-    }
-
-    private static MQListenerDefinition definition(String tags) throws Exception {
-        Method method = SampleConsumer.class.getDeclaredMethod("handle", MQEvent.class);
-        return MQListenerDefinition.builder()
-                .bean(new SampleConsumer())
-                .method(method)
-                .group("sample")
-                .namespace("sales")
-                .topic("order")
-                .tags(tags)
-                .supports(List.of("*"))
-                .concat(".")
-                .build();
     }
 
     static class SampleConsumer {

@@ -13,12 +13,7 @@ import org.redisson.client.RedisException;
 import org.redisson.config.Config;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Redis Stream operations backed by Redisson.
@@ -39,6 +34,19 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
     public RedissonRedisStreamOperations(RedissonClient redisson, boolean closeClient) {
         this.redisson = Objects.requireNonNull(redisson, "redisson");
         this.closeClient = closeClient;
+    }
+
+    private static RedissonClient createClient(String redisUrl) {
+        Config config = new Config();
+        config.useSingleServer().setAddress(redisUrl);
+        return Redisson.create(config);
+    }
+
+    private static StreamMessageId messageId(String entryId) {
+        String[] parts = entryId.split("-", 2);
+        long id0 = Long.parseLong(parts[0]);
+        long id1 = parts.length > 1 ? Long.parseLong(parts[1]) : 0L;
+        return new StreamMessageId(id0, id1);
     }
 
     @Override
@@ -103,18 +111,5 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
 
     private RStream<String, String> stream(String stream) {
         return redisson.getStream(stream);
-    }
-
-    private static RedissonClient createClient(String redisUrl) {
-        Config config = new Config();
-        config.useSingleServer().setAddress(redisUrl);
-        return Redisson.create(config);
-    }
-
-    private static StreamMessageId messageId(String entryId) {
-        String[] parts = entryId.split("-", 2);
-        long id0 = Long.parseLong(parts[0]);
-        long id1 = parts.length > 1 ? Long.parseLong(parts[1]) : 0L;
-        return new StreamMessageId(id0, id1);
     }
 }

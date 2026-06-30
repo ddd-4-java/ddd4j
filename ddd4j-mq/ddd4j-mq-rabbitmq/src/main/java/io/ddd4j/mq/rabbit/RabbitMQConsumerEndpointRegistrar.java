@@ -1,10 +1,6 @@
 package io.ddd4j.mq.rabbit;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.BuiltinExchangeType;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.*;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.contract.MQMessages;
@@ -14,11 +10,7 @@ import io.ddd4j.mq.registry.MQTagMatcher;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Programmatic RabbitMQ consumer registrar.
@@ -33,6 +25,10 @@ public class RabbitMQConsumerEndpointRegistrar {
     public RabbitMQConsumerEndpointRegistrar(RabbitChannelProvider channelProvider, RabbitMQProperties rabbitProperties) {
         this.channelProvider = Objects.requireNonNull(channelProvider, "channelProvider");
         this.rabbitProperties = Objects.requireNonNull(rabbitProperties, "rabbitProperties");
+    }
+
+    private static boolean hasText(String s) {
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
@@ -123,9 +119,5 @@ public class RabbitMQConsumerEndpointRegistrar {
         return java.util.Objects.nonNull(routingKey) && routingKey.startsWith(prefix)
                 ? routingKey.substring(prefix.length())
                 : null;
-    }
-
-    private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

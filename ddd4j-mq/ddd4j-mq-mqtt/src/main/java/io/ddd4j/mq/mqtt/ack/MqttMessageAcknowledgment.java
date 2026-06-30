@@ -33,22 +33,68 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
         this.messageId = message.getId();
     }
 
-    @Override public long deliveryTag() { return messageId; }
-    @Override public String messageId() { return Integer.toString(messageId); }
-    @Override public String correlationId() { return null; }
-    @Override public boolean isOpen() { return java.util.Objects.nonNull(message); }
-    @Override public boolean isAcknowledged() { return acknowledged.get(); }
-    @Override public MQBrokerType brokerType() { return MQBrokerType.MQTT; }
-
-    @Override public void ack() { ack(false); }
-    @Override public void ack(boolean multiple) { runOnce(() -> { /* MQTT 协议层已自动 PUBACK */ }); }
-    @Override public void nack(boolean requeue) { nack(false, requeue); }
-    @Override public void nack(boolean multiple, boolean requeue) {
-        // MQTT 没有原生 nack；仅标记本地为未处理（业务侧可订阅 DLQ topic 重新发布）
-        runOnce(() -> { throw new UnsupportedAckOperationException("MQTT has no native nack; use a DLQ topic"); });
+    @Override
+    public long deliveryTag() {
+        return messageId;
     }
-    @Override public void reject(boolean requeue) { nack(false, requeue); }
-    @Override public void recover(boolean requeue) { nack(false, requeue); }
+
+    @Override
+    public String messageId() {
+        return Integer.toString(messageId);
+    }
+
+    @Override
+    public String correlationId() {
+        return null;
+    }
+
+    @Override
+    public boolean isOpen() {
+        return java.util.Objects.nonNull(message);
+    }
+
+    @Override
+    public boolean isAcknowledged() {
+        return acknowledged.get();
+    }
+
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.MQTT;
+    }
+
+    @Override
+    public void ack() {
+        ack(false);
+    }
+
+    @Override
+    public void ack(boolean multiple) {
+        runOnce(() -> { /* MQTT 协议层已自动 PUBACK */ });
+    }
+
+    @Override
+    public void nack(boolean requeue) {
+        nack(false, requeue);
+    }
+
+    @Override
+    public void nack(boolean multiple, boolean requeue) {
+        // MQTT 没有原生 nack；仅标记本地为未处理（业务侧可订阅 DLQ topic 重新发布）
+        runOnce(() -> {
+            throw new UnsupportedAckOperationException("MQTT has no native nack; use a DLQ topic");
+        });
+    }
+
+    @Override
+    public void reject(boolean requeue) {
+        nack(false, requeue);
+    }
+
+    @Override
+    public void recover(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
@@ -72,5 +118,7 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @FunctionalInterface
-    private interface IoOperation { void run(); }
+    private interface IoOperation {
+        void run();
+    }
 }

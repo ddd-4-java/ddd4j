@@ -39,14 +39,40 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
         this.requeueOnNack = requeueOnNack;
     }
 
-    @Override public long deliveryTag() { return java.util.Objects.isNull(receiptHandle) ? 0L : (long) receiptHandle.hashCode(); }
-    @Override public String messageId() { return messageId; }
-    @Override public String correlationId() { return null; }
-    @Override public boolean isOpen() { return java.util.Objects.nonNull(client); }
-    @Override public boolean isAcknowledged() { return acknowledged.get(); }
-    @Override public MQBrokerType brokerType() { return MQBrokerType.SQS; }
+    @Override
+    public long deliveryTag() {
+        return java.util.Objects.isNull(receiptHandle) ? 0L : (long) receiptHandle.hashCode();
+    }
 
-    @Override public void ack() { ack(false); }
+    @Override
+    public String messageId() {
+        return messageId;
+    }
+
+    @Override
+    public String correlationId() {
+        return null;
+    }
+
+    @Override
+    public boolean isOpen() {
+        return java.util.Objects.nonNull(client);
+    }
+
+    @Override
+    public boolean isAcknowledged() {
+        return acknowledged.get();
+    }
+
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.SQS;
+    }
+
+    @Override
+    public void ack() {
+        ack(false);
+    }
 
     @Override
     public void ack(boolean multiple) {
@@ -54,7 +80,10 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
                 .queueUrl(queueUrl).receiptHandle(receiptHandle).build()));
     }
 
-    @Override public void nack(boolean requeue) { nack(false, requeue); }
+    @Override
+    public void nack(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
     public void nack(boolean multiple, boolean requeue) {
@@ -68,9 +97,15 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
         }
     }
 
-    @Override public void reject(boolean requeue) { nack(false, requeue); }
+    @Override
+    public void reject(boolean requeue) {
+        nack(false, requeue);
+    }
 
-    @Override public void recover(boolean requeue) { nack(false, requeue); }
+    @Override
+    public void recover(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
@@ -102,5 +137,7 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @FunctionalInterface
-    private interface IoOperation { void run(); }
+    private interface IoOperation {
+        void run();
+    }
 }

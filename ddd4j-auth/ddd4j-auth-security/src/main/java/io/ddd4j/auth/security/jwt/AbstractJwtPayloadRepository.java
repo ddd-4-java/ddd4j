@@ -49,12 +49,14 @@ public abstract class AbstractJwtPayloadRepository implements JwtPayloadReposito
 
     /**
      * 获取用于对JWT进行数字签名的签名密钥。
+     *
      * @return
      */
     abstract Key getSigningKey();
 
     /**
      * 获取用于验证任何发现的JWS数字签名的算法特定签名验证密钥。
+     *
      * @return
      */
     abstract Key getVerificationKey();

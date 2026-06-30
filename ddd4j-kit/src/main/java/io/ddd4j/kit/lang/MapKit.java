@@ -1,8 +1,8 @@
 package io.ddd4j.kit.lang;
 
 import cn.hutool.core.map.MapUtil;
-import lombok.extern.slf4j.Slf4j;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.*;

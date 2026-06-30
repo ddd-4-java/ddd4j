@@ -1,6 +1,7 @@
 package io.ddd4j.annotation.cqrs;
 
 import io.ddd4j.annotation.Contract;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

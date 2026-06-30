@@ -58,7 +58,10 @@ public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         this.consumerRegistrar = new MqttConsumerEndpointRegistrar(client, properties);
     }
 
-    @Override public MQBrokerType brokerType() { return MQBrokerType.MQTT; }
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.MQTT;
+    }
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
@@ -83,15 +86,25 @@ public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         return null;
     }
 
-    @Override public boolean supports(MQBrokerType configured) { return MQBrokerType.MQTT == configured; }
+    @Override
+    public boolean supports(MQBrokerType configured) {
+        return MQBrokerType.MQTT == configured;
+    }
 
     @Override
     public void close() throws Exception {
         MqttClient c = clientRef.get();
         if (java.util.Objects.nonNull(c)) {
-            try { c.disconnect(); c.close(); } finally { clientRef.set(null); }
+            try {
+                c.disconnect();
+                c.close();
+            } finally {
+                clientRef.set(null);
+            }
         }
     }
 
-    private MqttClient client() { return clientRef.get(); }
+    private MqttClient client() {
+        return clientRef.get();
+    }
 }

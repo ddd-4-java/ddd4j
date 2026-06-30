@@ -24,26 +24,85 @@ public class MicaMqttProperties {
     private int readBufferSize = 8 * 1024;
     private int maxInflight = 100;
 
-    public String getServerIp() { return serverIp; }
-    public void setServerIp(String serverIp) { this.serverIp = serverIp; }
-    public int getPort() { return port; }
-    public void setPort(int port) { this.port = port; }
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    public String getClientIdPrefix() { return clientIdPrefix; }
-    public void setClientIdPrefix(String clientIdPrefix) { this.clientIdPrefix = clientIdPrefix; }
-    public boolean isUseSsl() { return useSsl; }
-    public void setUseSsl(boolean useSsl) { this.useSsl = useSsl; }
-    public int getQos() { return qos; }
-    public void setQos(int qos) { this.qos = qos; }
-    public int getKeepAliveSeconds() { return keepAliveSeconds; }
-    public void setKeepAliveSeconds(int keepAliveSeconds) { this.keepAliveSeconds = keepAliveSeconds; }
-    public int getReadBufferSize() { return readBufferSize; }
-    public void setReadBufferSize(int readBufferSize) { this.readBufferSize = readBufferSize; }
-    public int getMaxInflight() { return maxInflight; }
-    public void setMaxInflight(int maxInflight) { this.maxInflight = maxInflight; }
+    public String getServerIp() {
+        return serverIp;
+    }
+
+    public void setServerIp(String serverIp) {
+        this.serverIp = serverIp;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getClientIdPrefix() {
+        return clientIdPrefix;
+    }
+
+    public void setClientIdPrefix(String clientIdPrefix) {
+        this.clientIdPrefix = clientIdPrefix;
+    }
+
+    public boolean isUseSsl() {
+        return useSsl;
+    }
+
+    public void setUseSsl(boolean useSsl) {
+        this.useSsl = useSsl;
+    }
+
+    public int getQos() {
+        return qos;
+    }
+
+    public void setQos(int qos) {
+        this.qos = qos;
+    }
+
+    public int getKeepAliveSeconds() {
+        return keepAliveSeconds;
+    }
+
+    public void setKeepAliveSeconds(int keepAliveSeconds) {
+        this.keepAliveSeconds = keepAliveSeconds;
+    }
+
+    public int getReadBufferSize() {
+        return readBufferSize;
+    }
+
+    public void setReadBufferSize(int readBufferSize) {
+        this.readBufferSize = readBufferSize;
+    }
+
+    public int getMaxInflight() {
+        return maxInflight;
+    }
+
+    public void setMaxInflight(int maxInflight) {
+        this.maxInflight = maxInflight;
+    }
 
     public String newClientId() {
         return (java.util.Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();

@@ -12,28 +12,69 @@ import java.util.Objects;
  */
 public class ActiveMQProperties {
 
-    /** Broker URL（例：{@code tcp://host:61616} 或 {@code failover:(tcp://...)}）。 */
+    /**
+     * Broker URL（例：{@code tcp://host:61616} 或 {@code failover:(tcp://...)}）。
+     */
     private String brokerUrl = "tcp://localhost:61616";
     private String username;
     private String password;
     private String clientIdPrefix = "ddd4j-mq-";
-    /** 是否在注册时自动创建 queues / topics（Artemis 默认按需自动创建）。 */
+    /**
+     * 是否在注册时自动创建 queues / topics（Artemis 默认按需自动创建）。
+     */
     private boolean autoDeclare = true;
-    /** 消息默认持久化。 */
+    /**
+     * 消息默认持久化。
+     */
     private boolean durable = true;
 
-    public String getBrokerUrl() { return brokerUrl; }
-    public void setBrokerUrl(String brokerUrl) { this.brokerUrl = brokerUrl; }
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    public String getClientIdPrefix() { return clientIdPrefix; }
-    public void setClientIdPrefix(String clientIdPrefix) { this.clientIdPrefix = clientIdPrefix; }
-    public boolean isAutoDeclare() { return autoDeclare; }
-    public void setAutoDeclare(boolean autoDeclare) { this.autoDeclare = autoDeclare; }
-    public boolean isDurable() { return durable; }
-    public void setDurable(boolean durable) { this.durable = durable; }
+    public String getBrokerUrl() {
+        return brokerUrl;
+    }
+
+    public void setBrokerUrl(String brokerUrl) {
+        this.brokerUrl = brokerUrl;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getClientIdPrefix() {
+        return clientIdPrefix;
+    }
+
+    public void setClientIdPrefix(String clientIdPrefix) {
+        this.clientIdPrefix = clientIdPrefix;
+    }
+
+    public boolean isAutoDeclare() {
+        return autoDeclare;
+    }
+
+    public void setAutoDeclare(boolean autoDeclare) {
+        this.autoDeclare = autoDeclare;
+    }
+
+    public boolean isDurable() {
+        return durable;
+    }
+
+    public void setDurable(boolean durable) {
+        this.durable = durable;
+    }
 
     public ActiveMQConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);

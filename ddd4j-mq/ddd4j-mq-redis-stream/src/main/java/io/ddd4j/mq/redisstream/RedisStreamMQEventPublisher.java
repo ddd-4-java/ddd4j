@@ -5,8 +5,8 @@ import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
+import io.ddd4j.mq.serialization.MQEventSerialization;
 import redis.clients.jedis.UnifiedJedis;
 
 import java.util.LinkedHashMap;
@@ -36,11 +36,6 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
-    @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
-        operations.add(resolveStream(event, destination, properties), fields(event, destination));
-    }
-
     static String resolveStream(MQEvent event, MQDestination destination, Ddd4jMQProperties properties) {
         String namespace = firstText(destination.getNamespace(), event.getNamespace(), properties.getNamespace());
         String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
@@ -48,16 +43,6 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
         String concat = firstText(event.getConcat(), ".");
         String base = java.util.Objects.isNull(namespace) ? topic : namespace + concat + topic;
         return java.util.Objects.isNull(tag) ? base : base + concat + tag;
-    }
-
-    private Map<String, String> fields(MQEvent event, MQDestination destination) {
-        Map<String, String> fields = new LinkedHashMap<>();
-        fields.put(FIELD_PAYLOAD, serialization.serialize(event).toString());
-        put(fields, MQMessages.HEADER_DESTINATION_TOPIC, destination.getTopic());
-        put(fields, MQMessages.HEADER_DESTINATION_TAG, firstText(destination.getTag(), event.getTag()));
-        put(fields, MQMessages.HEADER_TENANT_ID, event.getTenantId());
-        put(fields, MQMessages.HEADER_MESSAGE_ID, event.getMsgId());
-        return fields;
     }
 
     private static void put(Map<String, String> fields, String key, String value) {
@@ -76,5 +61,20 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
             }
         }
         return null;
+    }
+
+    @Override
+    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+        operations.add(resolveStream(event, destination, properties), fields(event, destination));
+    }
+
+    private Map<String, String> fields(MQEvent event, MQDestination destination) {
+        Map<String, String> fields = new LinkedHashMap<>();
+        fields.put(FIELD_PAYLOAD, serialization.serialize(event).toString());
+        put(fields, MQMessages.HEADER_DESTINATION_TOPIC, destination.getTopic());
+        put(fields, MQMessages.HEADER_DESTINATION_TAG, firstText(destination.getTag(), event.getTag()));
+        put(fields, MQMessages.HEADER_TENANT_ID, event.getTenantId());
+        put(fields, MQMessages.HEADER_MESSAGE_ID, event.getMsgId());
+        return fields;
     }
 }

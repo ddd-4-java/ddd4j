@@ -52,7 +52,10 @@ public class SqsBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         this.consumerRegistrar = new SqsConsumerEndpointRegistrar(client, properties);
     }
 
-    @Override public MQBrokerType brokerType() { return MQBrokerType.SQS; }
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.SQS;
+    }
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
@@ -78,15 +81,24 @@ public class SqsBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         return null;
     }
 
-    @Override public boolean supports(MQBrokerType configured) { return MQBrokerType.SQS == configured; }
+    @Override
+    public boolean supports(MQBrokerType configured) {
+        return MQBrokerType.SQS == configured;
+    }
 
     @Override
     public void close() {
         SqsClient c = clientRef.get();
         if (java.util.Objects.nonNull(c)) {
-            try { c.close(); } finally { clientRef.set(null); }
+            try {
+                c.close();
+            } finally {
+                clientRef.set(null);
+            }
         }
     }
 
-    private SqsClient client() { return clientRef.get(); }
+    private SqsClient client() {
+        return clientRef.get();
+    }
 }

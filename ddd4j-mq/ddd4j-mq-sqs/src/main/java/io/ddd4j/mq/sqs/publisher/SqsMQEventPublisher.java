@@ -11,7 +11,6 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,11 +26,30 @@ public class SqsMQEventPublisher implements MQEventPublisher {
     private final MQEventSerialization serialization;
 
     public SqsMQEventPublisher(SqsClient client, SqsMQProperties properties,
-                              Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
+                               Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
+    }
+
+    private static void put(Map<String, MessageAttributeValue> attrs, String key, String value) {
+        if (java.util.Objects.isNull(value)) {
+            return;
+        }
+        attrs.put(key, MessageAttributeValue.builder().dataType("String").stringValue(value).build());
+    }
+
+    private static String firstText(String... values) {
+        if (java.util.Objects.isNull(values)) {
+            return null;
+        }
+        for (String v : values) {
+            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+                return v;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -57,24 +75,5 @@ public class SqsMQEventPublisher implements MQEventPublisher {
         } catch (Exception ex) {
             throw new IllegalStateException("Publish SQS event failed", ex);
         }
-    }
-
-    private static void put(Map<String, MessageAttributeValue> attrs, String key, String value) {
-        if (java.util.Objects.isNull(value)) {
-            return;
-        }
-        attrs.put(key, MessageAttributeValue.builder().dataType("String").stringValue(value).build());
-    }
-
-    private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
     }
 }

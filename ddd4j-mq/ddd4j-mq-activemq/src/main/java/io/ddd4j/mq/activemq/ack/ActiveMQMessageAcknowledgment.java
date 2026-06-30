@@ -7,6 +7,7 @@ import io.ddd4j.mq.registry.MQBrokerType;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -31,7 +32,7 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     public ActiveMQMessageAcknowledgment(Session session, Message message,
-                                          long deliveryId, String messageId, String correlationId) {
+                                         long deliveryId, String messageId, String correlationId) {
         this.session = session;
         this.message = message;
         this.deliveryId = deliveryId;

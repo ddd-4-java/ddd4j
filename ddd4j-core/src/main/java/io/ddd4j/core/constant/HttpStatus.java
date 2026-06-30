@@ -69,6 +69,7 @@ public final class HttpStatus {
     public static final int SC_BANDWIDTH_LIMIT_EXCEEDED = 509;
     public static final int SC_NOT_EXTENDED = 510;
     public static final int SC_NETWORK_AUTHENTICATION_REQUIRED = 511;
+
     private HttpStatus() {
         // 工具类，禁止实例化
     }

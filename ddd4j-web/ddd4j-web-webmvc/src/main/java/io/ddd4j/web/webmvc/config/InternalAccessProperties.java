@@ -20,7 +20,7 @@ public class InternalAccessProperties {
     public static InternalAccessProperties from(Environment environment) {
         InternalAccessProperties properties = new InternalAccessProperties();
         String raw = java.util.Objects.isNull(environment) ? null : environment.getProperty(BEARER_TOKENS_PROPERTY);
-        if (java.util.Objects.nonNull(raw) && !!org.springframework.util.StringUtils.hasText(raw)) {
+        if (java.util.Objects.nonNull(raw) && org.springframework.util.StringUtils.hasText(raw)) {
             properties.setBearerTokens(List.of(raw.split(",")).stream()
                     .map(String::trim)
                     .filter(token -> !token.isEmpty())

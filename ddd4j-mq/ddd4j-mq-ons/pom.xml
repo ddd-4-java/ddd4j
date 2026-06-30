@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-mq-ons</artifactId>
-    <description>Ddd4j Alibaba ONS (Open Notification Service) adapter — pure Java, native com.aliyun.openservices:ons-client.</description>
+    <description>Ddd4j Alibaba ONS (Open Notification Service) adapter — pure Java, native
+        com.aliyun.openservices:ons-client.
+    </description>
 
     <dependencies>
         <dependency>

@@ -19,6 +19,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class MQEventPersistInterceptorTest {
 
+    private static MQConsumerContext context(MQEvent event) {
+        return MQConsumerContext.builder()
+                .payload(event)
+                .message(MQMessage.of("raw"))
+                .build();
+    }
+
+    private static MQEvent event(String tag) {
+        MQEvent event = new MQEvent();
+        event.setTopic("order.paid");
+        event.setTag(tag);
+        event.setMsgId("msg-" + tag);
+        return event;
+    }
+
     @Test
     void persistDisabledShouldSkipStorer() {
         Ddd4jMQProperties properties = new Ddd4jMQProperties();
@@ -68,20 +83,5 @@ class MQEventPersistInterceptorTest {
         int result = interceptor.preCheck(context(event("A")), MQMessage.of("raw"));
 
         assertEquals(MQConsumeTemplates.PRE_CONTINUE, result);
-    }
-
-    private static MQConsumerContext context(MQEvent event) {
-        return MQConsumerContext.builder()
-                .payload(event)
-                .message(MQMessage.of("raw"))
-                .build();
-    }
-
-    private static MQEvent event(String tag) {
-        MQEvent event = new MQEvent();
-        event.setTopic("order.paid");
-        event.setTag(tag);
-        event.setMsgId("msg-" + tag);
-        return event;
     }
 }

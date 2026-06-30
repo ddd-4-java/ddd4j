@@ -43,12 +43,6 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         this(client, properties, mqProperties, serialization, true);
     }
 
-    public static MicaMqttMQBrokerAdapter disconnected(MicaMqttProperties properties,
-                                                       Ddd4jMQProperties mqProperties,
-                                                       MQEventSerialization serialization) {
-        return new MicaMqttMQBrokerAdapter(null, properties, mqProperties, serialization, false);
-    }
-
     private MicaMqttMQBrokerAdapter(MqttClient client, MicaMqttProperties properties,
                                     Ddd4jMQProperties mqProperties, MQEventSerialization serialization,
                                     boolean requireClient) {
@@ -63,7 +57,16 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         }
     }
 
-    @Override public MQBrokerType brokerType() { return MQBrokerType.MQTT_MICA; }
+    public static MicaMqttMQBrokerAdapter disconnected(MicaMqttProperties properties,
+                                                       Ddd4jMQProperties mqProperties,
+                                                       MQEventSerialization serialization) {
+        return new MicaMqttMQBrokerAdapter(null, properties, mqProperties, serialization, false);
+    }
+
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.MQTT_MICA;
+    }
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
@@ -94,15 +97,24 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         return null;
     }
 
-    @Override public boolean supports(MQBrokerType configured) { return MQBrokerType.MQTT_MICA == configured; }
+    @Override
+    public boolean supports(MQBrokerType configured) {
+        return MQBrokerType.MQTT_MICA == configured;
+    }
 
     @Override
     public void close() {
         MqttClient c = clientRef.get();
         if (java.util.Objects.nonNull(c)) {
-            try { c.stop(); } finally { clientRef.set(null); }
+            try {
+                c.stop();
+            } finally {
+                clientRef.set(null);
+            }
         }
     }
 
-    private MqttClient client() { return clientRef.get(); }
+    private MqttClient client() {
+        return clientRef.get();
+    }
 }

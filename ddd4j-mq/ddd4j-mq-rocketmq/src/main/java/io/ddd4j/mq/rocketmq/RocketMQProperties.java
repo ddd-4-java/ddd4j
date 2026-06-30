@@ -16,6 +16,10 @@ public class RocketMQProperties {
     private boolean autoStartProducer = true;
     private boolean autoStartConsumers = true;
 
+    private static boolean hasText(String s) {
+        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+    }
+
     public DefaultMQProducer newProducer() {
         DefaultMQProducer producer = new DefaultMQProducer(producerGroup);
         if (hasText(nameServer)) {
@@ -70,9 +74,5 @@ public class RocketMQProperties {
 
     public void setAutoStartConsumers(boolean autoStartConsumers) {
         this.autoStartConsumers = autoStartConsumers;
-    }
-
-    private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

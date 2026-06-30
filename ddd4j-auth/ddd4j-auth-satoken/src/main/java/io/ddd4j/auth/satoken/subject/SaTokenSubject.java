@@ -37,7 +37,7 @@ public class SaTokenSubject implements Subject {
      * @return StpLogic
      */
     protected StpLogic stpLogic(String realm) {
-        if (java.util.Objects.isNull(realm) || !org.springframework.util.StringUtils.hasLength(realm)) {
+        if (java.util.Objects.isNull(realm) || !io.ddd4j.kit.lang.StrKit.isNotEmpty(realm)) {
             return StpUtil.stpLogic;
         }
         return cn.dev33.satoken.SaManager.getStpLogic(realm, true);

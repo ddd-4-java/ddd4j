@@ -35,40 +35,11 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
         this.kafkaProperties = Objects.requireNonNull(kafkaProperties, "kafkaProperties");
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
-        Objects.requireNonNull(definition, "definition");
-        Objects.requireNonNull(handler, "handler");
-
-        String groupId = resolveGroupId(definition);
-        Consumer<String, String> consumer = new KafkaConsumer<>(kafkaProperties.consumerProperties(groupId));
-        String topic = resolveTopic(definition);
-        consumer.subscribe(List.of(topic));
-        RegisteredConsumer registered = new RegisteredConsumer(consumer, definition, handler);
-        registeredConsumers.add(registered);
-        if (kafkaProperties.isAutoStartConsumers()) {
-            registered.start(kafkaProperties);
-        }
-        log.info("Registered Kafka MQ consumer: topic={}, group={}", topic, groupId);
-    }
-
-    @Override
-    public void close() {
-        registeredConsumers.forEach(RegisteredConsumer::stop);
-        registeredConsumers.clear();
-    }
-
     private static String resolveTopic(MQListenerDefinition definition) {
         String concat = MQListenerEndpointNaming.resolveConcat(definition);
         return hasText(definition.getNamespace())
                 ? definition.getNamespace() + concat + definition.getTopic()
                 : definition.getTopic();
-    }
-
-    private String resolveGroupId(MQListenerDefinition definition) {
-        if (hasText(definition.getGroup())) {
-            return definition.getGroup();
-        }
-        return kafkaProperties.getGroupIdPrefix() + "-" + definition.bindingName();
     }
 
     private static MQMessage<String> toMessage(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
@@ -91,6 +62,35 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
 
     private static boolean hasText(String s) {
         return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+    }
+
+    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+        Objects.requireNonNull(definition, "definition");
+        Objects.requireNonNull(handler, "handler");
+
+        String groupId = resolveGroupId(definition);
+        Consumer<String, String> consumer = new KafkaConsumer<>(kafkaProperties.consumerProperties(groupId));
+        String topic = resolveTopic(definition);
+        consumer.subscribe(List.of(topic));
+        RegisteredConsumer registered = new RegisteredConsumer(consumer, definition, handler);
+        registeredConsumers.add(registered);
+        if (kafkaProperties.isAutoStartConsumers()) {
+            registered.start(kafkaProperties);
+        }
+        log.info("Registered Kafka MQ consumer: topic={}, group={}", topic, groupId);
+    }
+
+    @Override
+    public void close() {
+        registeredConsumers.forEach(RegisteredConsumer::stop);
+        registeredConsumers.clear();
+    }
+
+    private String resolveGroupId(MQListenerDefinition definition) {
+        if (hasText(definition.getGroup())) {
+            return definition.getGroup();
+        }
+        return kafkaProperties.getGroupIdPrefix() + "-" + definition.bindingName();
     }
 
     private static final class RegisteredConsumer {

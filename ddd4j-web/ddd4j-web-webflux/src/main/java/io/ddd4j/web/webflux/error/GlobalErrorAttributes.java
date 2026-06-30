@@ -22,7 +22,9 @@ import java.util.Objects;
 @Component
 public class GlobalErrorAttributes {
 
-    /** 与 Boot {@code DefaultErrorAttributes.ERROR_ATTRIBUTE} 语义一致，便于 Router 与 {@link ServerWebExchange} 共用 */
+    /**
+     * 与 Boot {@code DefaultErrorAttributes.ERROR_ATTRIBUTE} 语义一致，便于 Router 与 {@link ServerWebExchange} 共用
+     */
     public static final String ERROR_ATTRIBUTE = GlobalErrorAttributes.class.getName() + ".ERROR";
 
     /**

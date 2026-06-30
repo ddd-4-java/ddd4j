@@ -59,7 +59,10 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         return p;
     }
 
-    @Override public MQBrokerType brokerType() { return MQBrokerType.ONS; }
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.ONS;
+    }
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
@@ -84,15 +87,24 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         return null;
     }
 
-    @Override public boolean supports(MQBrokerType configured) { return MQBrokerType.ONS == configured; }
+    @Override
+    public boolean supports(MQBrokerType configured) {
+        return MQBrokerType.ONS == configured;
+    }
 
     @Override
     public void close() {
         Producer p = producerRef.get();
         if (java.util.Objects.nonNull(p)) {
-            try { p.shutdown(); } finally { producerRef.set(null); }
+            try {
+                p.shutdown();
+            } finally {
+                producerRef.set(null);
+            }
         }
     }
 
-    private Producer producer() { return producerRef.get(); }
+    private Producer producer() {
+        return producerRef.get();
+    }
 }

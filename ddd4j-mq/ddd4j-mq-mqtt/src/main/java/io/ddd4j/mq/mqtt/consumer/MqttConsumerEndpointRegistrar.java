@@ -6,7 +6,6 @@ import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgment;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
 import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import io.ddd4j.mq.registry.MQTagMatcher;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -43,7 +42,8 @@ public class MqttConsumerEndpointRegistrar {
             }
             client.setCallback(new MqttCallback() {
                 @Override
-                public void connectionLost(Throwable cause) {}
+                public void connectionLost(Throwable cause) {
+                }
 
                 @Override
                 public void messageArrived(String arrivedTopic, MqttMessage message) {
@@ -51,7 +51,8 @@ public class MqttConsumerEndpointRegistrar {
                 }
 
                 @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {}
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                }
             });
             client.subscribe(subscribeTopic, properties.getQos());
         } catch (Exception ex) {

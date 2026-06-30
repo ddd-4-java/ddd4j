@@ -12,7 +12,6 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,14 @@ public class SqsConsumerEndpointRegistrar {
     public SqsConsumerEndpointRegistrar(SqsClient client, SqsMQProperties properties) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    private static String attr(Message message, String key) {
+        if (java.util.Objects.isNull(message.messageAttributes())) {
+            return null;
+        }
+        var v = message.messageAttributes().get(key);
+        return java.util.Objects.isNull(v) ? null : v.stringValue();
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
@@ -88,16 +95,9 @@ public class SqsConsumerEndpointRegistrar {
                 client.changeMessageVisibility(b -> b.queueUrl(queueUrl)
                         .receiptHandle(message.receiptHandle())
                         .visibilityTimeout(0));
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
-    }
-
-    private static String attr(Message message, String key) {
-        if (java.util.Objects.isNull(message.messageAttributes())) {
-            return null;
-        }
-        var v = message.messageAttributes().get(key);
-        return java.util.Objects.isNull(v) ? null : v.stringValue();
     }
 
     private MQMessage<String> toMessage(Message message, SqsClient client, String queueUrl) {

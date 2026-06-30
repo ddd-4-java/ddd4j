@@ -10,9 +10,7 @@ import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MicaMqttMQBrokerAdapterTest {
 

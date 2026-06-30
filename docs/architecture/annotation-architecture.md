@@ -73,7 +73,7 @@ public class UserDomainServiceImpl implements UserDomainService {
 | `ddd4j-annotation`         | **通用基础注解**（纯 Java 标记 + 业务模块抽象）                                 | 零框架依赖                                                            |
 | `ddd4j-boot-annotation`    | **Spring 深度整合**：DDD 注解同名复制 + `@Service`/`@Repository` 元注解      | 用 Spring 原生注解作为**元注解**                                           |
 | `ddd4j-javalin-annotation` | **Javalin 深度整合**：DDD 注解同名复制 + Guice `@Singleton` 元注解 + 路由参数解析  | Javalin 没有注解，用 Guice `@Singleton` 作为**元注解** + 新增 Javalin 框架缺失的能力 |
-| `ddd4j-quarkus` | **Quarkus 深度整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
+| `ddd4j-quarkus`            | **Quarkus 深度整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
 
 ---
 

@@ -35,16 +35,51 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
         this.offset = message.getOffset();
     }
 
-    @Override public long deliveryTag() { return offset; }
-    @Override public String messageId() { return messageId; }
-    @Override public String correlationId() { return key; }
-    @Override public boolean isOpen() { return java.util.Objects.nonNull(context); }
-    @Override public boolean isAcknowledged() { return acknowledged.get(); }
-    @Override public MQBrokerType brokerType() { return MQBrokerType.ONS; }
+    @Override
+    public long deliveryTag() {
+        return offset;
+    }
 
-    @Override public void ack() { ack(false); }
-    @Override public void ack(boolean multiple) { runOnce(() -> action = Action.CommitMessage); }
-    @Override public void nack(boolean requeue) { nack(false, requeue); }
+    @Override
+    public String messageId() {
+        return messageId;
+    }
+
+    @Override
+    public String correlationId() {
+        return key;
+    }
+
+    @Override
+    public boolean isOpen() {
+        return java.util.Objects.nonNull(context);
+    }
+
+    @Override
+    public boolean isAcknowledged() {
+        return acknowledged.get();
+    }
+
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.ONS;
+    }
+
+    @Override
+    public void ack() {
+        ack(false);
+    }
+
+    @Override
+    public void ack(boolean multiple) {
+        runOnce(() -> action = Action.CommitMessage);
+    }
+
+    @Override
+    public void nack(boolean requeue) {
+        nack(false, requeue);
+    }
+
     @Override
     public void nack(boolean multiple, boolean requeue) {
         runOnce(() -> {
@@ -55,8 +90,16 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
             }
         });
     }
-    @Override public void reject(boolean requeue) { nack(false, requeue); }
-    @Override public void recover(boolean requeue) { nack(false, requeue); }
+
+    @Override
+    public void reject(boolean requeue) {
+        nack(false, requeue);
+    }
+
+    @Override
+    public void recover(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
@@ -87,5 +130,7 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @FunctionalInterface
-    private interface IoOperation { void run(); }
+    private interface IoOperation {
+        void run();
+    }
 }

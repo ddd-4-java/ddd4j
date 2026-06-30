@@ -19,14 +19,26 @@ import org.mockito.ArgumentCaptor;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class OnsMQBrokerAdapterTest {
+
+    @SuppressWarnings("unchecked")
+    private static MQEventSerialization stringSerialization() {
+        return new MQEventSerialization() {
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            public <T> T serialize(Object src) {
+                return (T) "payload";
+            }
+        };
+    }
 
     @Test
     void ackShouldExposeListenerReturnAction() {
@@ -69,20 +81,5 @@ class OnsMQBrokerAdapterTest {
 
         assertTrue(adapter.supports(MQBrokerType.ONS));
         assertEquals(MQBrokerType.ONS, adapter.brokerType());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static MQEventSerialization stringSerialization() {
-        return new MQEventSerialization() {
-            @Override
-            public <S, T> T deserialize(S src, Class<T> dist) {
-                return null;
-            }
-
-            @Override
-            public <T> T serialize(Object src) {
-                return (T) "payload";
-            }
-        };
     }
 }

@@ -35,6 +35,18 @@ public class PulsarMQEventPublisher implements MQEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
+    private static String firstText(String... values) {
+        if (java.util.Objects.isNull(values)) {
+            return null;
+        }
+        for (String v : values) {
+            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     @Override
     public <T extends MQEvent> void publish(T event, MQDestination destination) {
         try {
@@ -70,17 +82,5 @@ public class PulsarMQEventPublisher implements MQEventPublisher {
             this.producer = p;
         }
         return p;
-    }
-
-    private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
     }
 }

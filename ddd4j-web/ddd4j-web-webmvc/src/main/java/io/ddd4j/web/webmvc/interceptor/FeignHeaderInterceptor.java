@@ -37,7 +37,7 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
                     HttpServletRequest request = attributes.getRequest();
                     for (String header : USE_WEB_HEADERS) {
                         String headerValue = request.getHeader(header);
-                        if (java.util.Objects.nonNull(headerValue) && !!org.springframework.util.StringUtils.hasLength(headerValue)) {
+                        if (java.util.Objects.nonNull(headerValue) && org.springframework.util.StringUtils.hasLength(headerValue)) {
                             template.header(header, headerValue);
                         }
                     }
@@ -76,7 +76,7 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
                 String[] headers = new String[]{"system-id", "client-type", "own-language"};
                 for (String header : headers) {
                     String headerValue = attributes.getRequest().getHeader(header);
-                    if (java.util.Objects.nonNull(headerValue) && !!org.springframework.util.StringUtils.hasLength(headerValue)) {
+                    if (java.util.Objects.nonNull(headerValue) && org.springframework.util.StringUtils.hasLength(headerValue)) {
                         template.header(header, headerValue);
                     }
                 }

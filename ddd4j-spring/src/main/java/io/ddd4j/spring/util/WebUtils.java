@@ -31,12 +31,12 @@ public final class WebUtils {
             return null;
         }
         String addr = request.getHeader("X-Forwarded-For");
-        if (java.util.Objects.nonNull(addr) && !!org.springframework.util.StringUtils.hasLength(addr) && !"unknown".equalsIgnoreCase(addr)) {
+        if (java.util.Objects.nonNull(addr) && org.springframework.util.StringUtils.hasLength(addr) && !"unknown".equalsIgnoreCase(addr)) {
             int index = addr.indexOf(',');
             return index > 0 ? addr.substring(0, index).trim() : addr.trim();
         }
         addr = request.getHeader("X-Real-IP");
-        if (java.util.Objects.nonNull(addr) && !!org.springframework.util.StringUtils.hasLength(addr) && !"unknown".equalsIgnoreCase(addr)) {
+        if (java.util.Objects.nonNull(addr) && org.springframework.util.StringUtils.hasLength(addr) && !"unknown".equalsIgnoreCase(addr)) {
             return addr;
         }
         return request.getRemoteAddr();

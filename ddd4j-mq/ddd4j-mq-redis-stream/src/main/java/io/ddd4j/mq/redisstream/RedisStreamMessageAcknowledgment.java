@@ -1,8 +1,8 @@
 package io.ddd4j.mq.redisstream;
 
 import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
+import io.ddd4j.mq.registry.MQBrokerType;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 

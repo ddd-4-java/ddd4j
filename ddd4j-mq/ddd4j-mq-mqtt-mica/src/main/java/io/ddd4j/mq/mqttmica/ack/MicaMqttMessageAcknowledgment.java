@@ -27,25 +27,69 @@ public class MicaMqttMessageAcknowledgment implements MessageAcknowledgment {
         this.correlationId = correlationId;
     }
 
-    @Override public long deliveryTag() { return messageId; }
-    @Override public String messageId() { return Long.toString(messageId); }
-    @Override public String correlationId() { return correlationId; }
-    @Override public boolean isOpen() { return true; }
-    @Override public boolean isAcknowledged() { return acknowledged.get(); }
-    @Override public MQBrokerType brokerType() { return MQBrokerType.MQTT_MICA; }
+    @Override
+    public long deliveryTag() {
+        return messageId;
+    }
 
-    @Override public void ack() { ack(false); }
-    @Override public void ack(boolean multiple) { runOnce(); }
-    @Override public void nack(boolean requeue) { nack(false, requeue); }
-    @Override public void nack(boolean multiple, boolean requeue) {
+    @Override
+    public String messageId() {
+        return Long.toString(messageId);
+    }
+
+    @Override
+    public String correlationId() {
+        return correlationId;
+    }
+
+    @Override
+    public boolean isOpen() {
+        return true;
+    }
+
+    @Override
+    public boolean isAcknowledged() {
+        return acknowledged.get();
+    }
+
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.MQTT_MICA;
+    }
+
+    @Override
+    public void ack() {
+        ack(false);
+    }
+
+    @Override
+    public void ack(boolean multiple) {
+        runOnce();
+    }
+
+    @Override
+    public void nack(boolean requeue) {
+        nack(false, requeue);
+    }
+
+    @Override
+    public void nack(boolean multiple, boolean requeue) {
         if (requeue) {
             runOnce(); // mica 客户端层无 nack
         } else {
             runOnce();
         }
     }
-    @Override public void reject(boolean requeue) { nack(false, requeue); }
-    @Override public void recover(boolean requeue) { nack(false, requeue); }
+
+    @Override
+    public void reject(boolean requeue) {
+        nack(false, requeue);
+    }
+
+    @Override
+    public void recover(boolean requeue) {
+        nack(false, requeue);
+    }
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {

@@ -29,6 +29,20 @@ import static org.mockito.Mockito.verify;
  */
 class RocketMQBrokerAdapterTest {
 
+    private static MQListenerDefinition definition(String tags) throws Exception {
+        Method method = SampleConsumer.class.getDeclaredMethod("handle", MQEvent.class);
+        return MQListenerDefinition.builder()
+                .bean(new SampleConsumer())
+                .method(method)
+                .group("sample")
+                .namespace("sales")
+                .topic("order")
+                .tags(tags)
+                .supports(java.util.List.of("*"))
+                .concat(".")
+                .build();
+    }
+
     @Test
     void supportsRocketBrokerType() {
         RocketMQBrokerAdapter adapter = new RocketMQBrokerAdapter(new RocketMQProperties(), new Ddd4jMQProperties());
@@ -78,20 +92,6 @@ class RocketMQBrokerAdapterTest {
 
         assertTrue(ack.isAcknowledged());
         assertTrue(ack.shouldReconsume());
-    }
-
-    private static MQListenerDefinition definition(String tags) throws Exception {
-        Method method = SampleConsumer.class.getDeclaredMethod("handle", MQEvent.class);
-        return MQListenerDefinition.builder()
-                .bean(new SampleConsumer())
-                .method(method)
-                .group("sample")
-                .namespace("sales")
-                .topic("order")
-                .tags(tags)
-                .supports(java.util.List.of("*"))
-                .concat(".")
-                .build();
     }
 
     static class SampleConsumer {

@@ -29,6 +29,18 @@ public class MicaMqttMQEventPublisher implements MQEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
+    private static String firstText(String... values) {
+        if (java.util.Objects.isNull(values)) {
+            return null;
+        }
+        for (String v : values) {
+            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     @Override
     public <T extends MQEvent> void publish(T event, MQDestination destination) {
         try {
@@ -43,17 +55,5 @@ public class MicaMqttMQEventPublisher implements MQEventPublisher {
         } catch (Exception ex) {
             throw new IllegalStateException("Publish mica-mqtt event failed", ex);
         }
-    }
-
-    private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
     }
 }

@@ -55,7 +55,10 @@ public class PulsarMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         this.consumerRegistrar = new PulsarMQConsumerEndpointRegistrar(client, properties);
     }
 
-    @Override public MQBrokerType brokerType() { return MQBrokerType.PULSAR; }
+    @Override
+    public MQBrokerType brokerType() {
+        return MQBrokerType.PULSAR;
+    }
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
@@ -85,15 +88,24 @@ public class PulsarMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         return null;
     }
 
-    @Override public boolean supports(MQBrokerType configured) { return MQBrokerType.PULSAR == configured; }
+    @Override
+    public boolean supports(MQBrokerType configured) {
+        return MQBrokerType.PULSAR == configured;
+    }
 
     @Override
     public void close() throws Exception {
         PulsarClient c = clientRef.get();
         if (java.util.Objects.nonNull(c)) {
-            try { c.close(); } finally { clientRef.set(null); }
+            try {
+                c.close();
+            } finally {
+                clientRef.set(null);
+            }
         }
     }
 
-    private PulsarClient client() { return clientRef.get(); }
+    private PulsarClient client() {
+        return clientRef.get();
+    }
 }

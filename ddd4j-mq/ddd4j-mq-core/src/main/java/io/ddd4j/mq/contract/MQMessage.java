@@ -1,7 +1,6 @@
 package io.ddd4j.mq.contract;
 
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.*;
 
@@ -31,7 +30,7 @@ public class MQMessage<T> {
     private final String correlationId;
     /**
      * -- GETTER --
-     *  逃生口：返回底层 Broker 原生消息（如 Kafka RecordMetadata、RabbitMQ Envelope 等）。
+     * 逃生口：返回底层 Broker 原生消息（如 Kafka RecordMetadata、RabbitMQ Envelope 等）。
      */
     private final Object nativeMessage;
 

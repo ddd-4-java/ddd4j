@@ -3,18 +3,13 @@ package io.ddd4j.mq.redisstream;
 import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.contract.MQMessages;
+import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
 import io.ddd4j.mq.registry.MQTagMatcher;
-import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import redis.clients.jedis.UnifiedJedis;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,28 +35,6 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
         this.redisProperties = Objects.requireNonNull(redisProperties, "redisProperties");
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
-        Set<String> streams = resolveStreams(definition);
-        if (redisProperties.isAutoCreateGroup()) {
-            streams.forEach(stream -> createGroupIfNecessary(stream, definition.getGroup()));
-        }
-        RegisteredConsumer consumer = new RegisteredConsumer(operations, redisProperties, definition, handler, streams);
-        consumers.add(consumer);
-        if (redisProperties.isAutoStartConsumers()) {
-            consumer.start();
-        }
-    }
-
-    @Override
-    public void close() {
-        consumers.forEach(RegisteredConsumer::stop);
-        consumers.clear();
-    }
-
-    private void createGroupIfNecessary(String stream, String group) {
-        operations.createGroup(stream, group);
-    }
-
     private static Set<String> resolveStreams(MQListenerDefinition definition) {
         Set<String> includes = MQTagMatcher.findIncludes(definition.getTags());
         Set<String> streams = new LinkedHashSet<>();
@@ -83,6 +56,28 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
 
     private static boolean hasText(String s) {
         return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+    }
+
+    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+        Set<String> streams = resolveStreams(definition);
+        if (redisProperties.isAutoCreateGroup()) {
+            streams.forEach(stream -> createGroupIfNecessary(stream, definition.getGroup()));
+        }
+        RegisteredConsumer consumer = new RegisteredConsumer(operations, redisProperties, definition, handler, streams);
+        consumers.add(consumer);
+        if (redisProperties.isAutoStartConsumers()) {
+            consumer.start();
+        }
+    }
+
+    @Override
+    public void close() {
+        consumers.forEach(RegisteredConsumer::stop);
+        consumers.clear();
+    }
+
+    private void createGroupIfNecessary(String stream, String group) {
+        operations.createGroup(stream, group);
     }
 
     private static final class RegisteredConsumer {

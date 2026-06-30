@@ -39,6 +39,33 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 public final class ColaDDDLayerRules {
 
     /**
+     * 规则5：domain 包不得依赖 adapter 包（COLA 核心约束）。
+     */
+    public static final ArchRule DOMAIN_NOT_DEPEND_ON_ADAPTER = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAPackage("..adapter..")
+            .because("COLA 核心约束：domain 不得依赖 adapter（依赖方向应反转）");
+    /**
+     * 规则6：domain 包不得依赖 application / infrastructure 包。
+     */
+    public static final ArchRule DOMAIN_NOT_DEPEND_ON_APPLICATION = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                    "..application..", "..infrastructure..")
+            .because("COLA: domain 不得依赖 application / infrastructure");
+    /**
+     * 规则7：domain 包不得依赖 Spring/MyBatis 框架。
+     */
+    public static final ArchRule DOMAIN_NOT_DEPEND_ON_FRAMEWORK = noClasses()
+            .that().resideInAPackage("..domain..")
+            .should().dependOnClassesThat().resideInAnyPackage(
+                    "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
+            .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
+
+    private ColaDDDLayerRules() {
+    }
+
+    /**
      * 规则1：标了 {@code @DomainEntity} 的类必须在 {@code ..domain..} 包（COLA 中通常在 domain.model）。
      */
     public static ArchRule domainEntityInDomain(Class<? extends Annotation> domainEntityAnnotation) {
@@ -84,32 +111,6 @@ public final class ColaDDDLayerRules {
     }
 
     /**
-     * 规则5：domain 包不得依赖 adapter 包（COLA 核心约束）。
-     */
-    public static final ArchRule DOMAIN_NOT_DEPEND_ON_ADAPTER = noClasses()
-            .that().resideInAPackage("..domain..")
-            .should().dependOnClassesThat().resideInAPackage("..adapter..")
-            .because("COLA 核心约束：domain 不得依赖 adapter（依赖方向应反转）");
-
-    /**
-     * 规则6：domain 包不得依赖 application / infrastructure 包。
-     */
-    public static final ArchRule DOMAIN_NOT_DEPEND_ON_APPLICATION = noClasses()
-            .that().resideInAPackage("..domain..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                    "..application..", "..infrastructure..")
-            .because("COLA: domain 不得依赖 application / infrastructure");
-
-    /**
-     * 规则7：domain 包不得依赖 Spring/MyBatis 框架。
-     */
-    public static final ArchRule DOMAIN_NOT_DEPEND_ON_FRAMEWORK = noClasses()
-            .that().resideInAPackage("..domain..")
-            .should().dependOnClassesThat().resideInAnyPackage(
-                    "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
-            .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
-
-    /**
      * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain.gateway..} 包。
      */
     public static ArchRule domainGatewayInDomain(Class<? extends Annotation> domainGatewayAnnotation) {
@@ -137,8 +138,5 @@ public final class ColaDDDLayerRules {
                 .that().areAnnotatedWith(queryServiceAnnotation)
                 .should().resideInAnyPackage("..application.query..", "..application..")
                 .because("标了 @QueryService 的类必须在 application.query（COLA CQS 读侧）");
-    }
-
-    private ColaDDDLayerRules() {
     }
 }

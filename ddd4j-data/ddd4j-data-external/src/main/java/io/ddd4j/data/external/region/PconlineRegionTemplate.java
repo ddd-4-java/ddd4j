@@ -69,6 +69,10 @@ public class PconlineRegionTemplate {
         mapLL2.ifPresent(location -> log.info("Location: {}", location.toJSONString()));
     }
 
+    private static String trimWhitespace(String value) {
+        return java.util.Objects.isNull(value) ? null : value.strip();
+    }
+
     /**
      * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=183.128.136.82
      *
@@ -225,10 +229,6 @@ public class PconlineRegionTemplate {
             log.error("IP : {} >> Country/Region Parser Error：{}", ip, e.getMessage());
         }
         return true;
-    }
-
-    private static String trimWhitespace(String value) {
-        return java.util.Objects.isNull(value) ? null : value.strip();
     }
 
 }

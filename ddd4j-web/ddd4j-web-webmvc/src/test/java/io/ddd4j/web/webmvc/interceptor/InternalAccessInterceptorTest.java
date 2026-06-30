@@ -13,9 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link InternalAccessInterceptor} tests.
@@ -23,6 +21,24 @@ import static org.mockito.Mockito.when;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class InternalAccessInterceptorTest {
+
+    private static InternalAccessInterceptor interceptor(String token) {
+        InternalAccessProperties properties = new InternalAccessProperties();
+        properties.setBearerTokens(List.of(token));
+        return new InternalAccessInterceptor(properties);
+    }
+
+    private static HttpServletRequest request(String authorization) {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getHeader("Authorization")).thenReturn(authorization);
+        return request;
+    }
+
+    private static HandlerMethod handler(String methodName) throws Exception {
+        SampleController controller = new SampleController();
+        Method method = SampleController.class.getDeclaredMethod(methodName);
+        return new HandlerMethod(controller, method);
+    }
 
     @Test
     void bearerTokenHitShouldPass() throws Exception {
@@ -69,24 +85,6 @@ class InternalAccessInterceptorTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         assertTrue(interceptor.preHandle(request, response, new ResourceHttpRequestHandler()));
-    }
-
-    private static InternalAccessInterceptor interceptor(String token) {
-        InternalAccessProperties properties = new InternalAccessProperties();
-        properties.setBearerTokens(List.of(token));
-        return new InternalAccessInterceptor(properties);
-    }
-
-    private static HttpServletRequest request(String authorization) {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("Authorization")).thenReturn(authorization);
-        return request;
-    }
-
-    private static HandlerMethod handler(String methodName) throws Exception {
-        SampleController controller = new SampleController();
-        Method method = SampleController.class.getDeclaredMethod(methodName);
-        return new HandlerMethod(controller, method);
     }
 
     static class SampleController {

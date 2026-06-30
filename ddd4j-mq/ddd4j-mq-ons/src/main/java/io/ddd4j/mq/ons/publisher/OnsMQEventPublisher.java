@@ -2,11 +2,9 @@ package io.ddd4j.mq.ons.publisher;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
-import com.aliyun.openservices.ons.api.SendResult;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.serialization.MQEventSerialization;
@@ -32,6 +30,18 @@ public class OnsMQEventPublisher implements MQEventPublisher {
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
+    private static String firstText(String... values) {
+        if (java.util.Objects.isNull(values)) {
+            return null;
+        }
+        for (String v : values) {
+            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     @Override
     public <T extends MQEvent> void publish(T event, MQDestination destination) {
         try {
@@ -47,17 +57,5 @@ public class OnsMQEventPublisher implements MQEventPublisher {
         } catch (Exception ex) {
             throw new IllegalStateException("Publish ONS event failed", ex);
         }
-    }
-
-    private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
     }
 }

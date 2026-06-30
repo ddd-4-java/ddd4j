@@ -26,6 +26,19 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
         this.bearerTokens = new HashSet<>(java.util.Objects.isNull(properties) ? Set.of() : properties.getBearerTokens());
     }
 
+    private static boolean isInternalAccess(HandlerMethod handlerMethod) {
+        return AnnotatedElementUtils.hasAnnotation(handlerMethod.getMethod(), InternalAccess.class)
+                || AnnotatedElementUtils.hasAnnotation(handlerMethod.getBeanType(), InternalAccess.class);
+    }
+
+    private static String resolveBearerToken(String authorization) {
+        if (java.util.Objects.isNull(authorization) || !authorization.startsWith(BEARER_PREFIX)) {
+            return null;
+        }
+        String token = authorization.substring(BEARER_PREFIX.length()).trim();
+        return !org.springframework.util.StringUtils.hasLength(token) ? null : token;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof ResourceHttpRequestHandler || !(handler instanceof HandlerMethod handlerMethod)) {
@@ -46,18 +59,5 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
     @Override
     public int getOrder() {
         return -700;
-    }
-
-    private static boolean isInternalAccess(HandlerMethod handlerMethod) {
-        return AnnotatedElementUtils.hasAnnotation(handlerMethod.getMethod(), InternalAccess.class)
-                || AnnotatedElementUtils.hasAnnotation(handlerMethod.getBeanType(), InternalAccess.class);
-    }
-
-    private static String resolveBearerToken(String authorization) {
-        if (java.util.Objects.isNull(authorization) || !authorization.startsWith(BEARER_PREFIX)) {
-            return null;
-        }
-        String token = authorization.substring(BEARER_PREFIX.length()).trim();
-        return !org.springframework.util.StringUtils.hasLength(token) ? null : token;
     }
 }

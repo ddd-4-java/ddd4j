@@ -11,7 +11,8 @@
     </parent>
 
     <artifactId>ddd4j-mq-pulsar</artifactId>
-    <description>Ddd4j Apache Pulsar adapter based on pulsar-client 4.x and ddd4j MQ SPI. Pure Java, zero Spring.</description>
+    <description>Ddd4j Apache Pulsar adapter based on pulsar-client 4.x and ddd4j MQ SPI. Pure Java, zero Spring.
+    </description>
 
     <dependencies>
         <dependency>

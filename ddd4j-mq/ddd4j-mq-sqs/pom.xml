@@ -11,7 +11,8 @@
     </parent>
 
     <artifactId>ddd4j-mq-sqs</artifactId>
-    <description>Ddd4j AWS SQS adapter based on AWS SDK v2 (awssdk-sqs) and ddd4j MQ SPI. Pure Java, zero Spring.</description>
+    <description>Ddd4j AWS SQS adapter based on AWS SDK v2 (awssdk-sqs) and ddd4j MQ SPI. Pure Java, zero Spring.
+    </description>
 
     <dependencies>
         <dependency>

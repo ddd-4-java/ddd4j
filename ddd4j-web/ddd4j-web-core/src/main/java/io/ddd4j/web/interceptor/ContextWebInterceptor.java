@@ -49,7 +49,7 @@ public class ContextWebInterceptor implements WebInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 提取租户 ID（兼容三种 header 命名）
         String tenantId = extractHeader(request, "tenant_id", "tenant-id", "tenantId");
-        if (java.util.Objects.nonNull(tenantId) && !!org.springframework.util.StringUtils.hasLength(tenantId)) {
+        if (java.util.Objects.nonNull(tenantId) && io.ddd4j.kit.lang.StrKit.isNotEmpty(tenantId)) {
             ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
         }
 
@@ -63,7 +63,7 @@ public class ContextWebInterceptor implements WebInterceptor {
 
         // 提取角色（整数）
         String roleHeader = request.getHeader("role");
-        if (java.util.Objects.nonNull(roleHeader) && !!org.springframework.util.StringUtils.hasLength(roleHeader)) {
+        if (java.util.Objects.nonNull(roleHeader) && io.ddd4j.kit.lang.StrKit.isNotEmpty(roleHeader)) {
             try {
                 ThreadContext.set(ContextConstants.ROLE, Integer.parseInt(roleHeader));
             } catch (NumberFormatException e) {
@@ -73,14 +73,14 @@ public class ContextWebInterceptor implements WebInterceptor {
 
         // 解析语言偏好（如 "en-US,en;q=0.9" -> "en-US"）
         String acceptLanguage = request.getHeader("Accept-Language");
-        if (java.util.Objects.nonNull(acceptLanguage) && !!org.springframework.util.StringUtils.hasLength(acceptLanguage)) {
+        if (java.util.Objects.nonNull(acceptLanguage) && io.ddd4j.kit.lang.StrKit.isNotEmpty(acceptLanguage)) {
             String lang = acceptLanguage.split(",")[0].replace('-', '_');
             ThreadContext.set(ContextConstants.LOCALE, Locale.forLanguageTag(lang));
         }
 
         // 会话解析（子类可重写）
         String thirdSession = request.getHeader("third_session");
-        if (java.util.Objects.nonNull(thirdSession) && !!org.springframework.util.StringUtils.hasLength(thirdSession)) {
+        if (java.util.Objects.nonNull(thirdSession) && io.ddd4j.kit.lang.StrKit.isNotEmpty(thirdSession)) {
             try {
                 SessionContext sessionContext = resolveSession(request);
                 if (java.util.Objects.nonNull(sessionContext)) {
@@ -128,7 +128,7 @@ public class ContextWebInterceptor implements WebInterceptor {
     private String extractHeader(HttpServletRequest request, String... names) {
         for (String name : names) {
             String value = request.getHeader(name);
-            if (java.util.Objects.nonNull(value) && !!org.springframework.util.StringUtils.hasLength(value)) {
+            if (java.util.Objects.nonNull(value) && io.ddd4j.kit.lang.StrKit.isNotEmpty(value)) {
                 return value;
             }
         }

@@ -11,13 +11,24 @@ import org.springframework.stereotype.Service;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("ddd4j-spring DDD 注解与 Spring 元注解融合验收")
 class SpringDddAnnotationFusionTest {
+
+    private static void assertMetaAnnotations(Class<? extends Annotation> annotationType,
+                                              Class<? extends Annotation> springAnnotationType) {
+        assertNotNull(annotationType.getAnnotation(DDDAnnotation.class));
+        assertNotNull(annotationType.getAnnotation(springAnnotationType));
+    }
+
+    private static Class<?> loadOptional(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            return null;
+        }
+    }
 
     @Test
     void dddAnnotationsShouldExposeSpringMetaAnnotations() {
@@ -76,19 +87,5 @@ class SpringDddAnnotationFusionTest {
 
         assertEquals(10, annotations.size());
         assertNull(loadOptional("io.ddd4j.spring.annotation.ddd.DomainEvent"));
-    }
-
-    private static void assertMetaAnnotations(Class<? extends Annotation> annotationType,
-                                              Class<? extends Annotation> springAnnotationType) {
-        assertNotNull(annotationType.getAnnotation(DDDAnnotation.class));
-        assertNotNull(annotationType.getAnnotation(springAnnotationType));
-    }
-
-    private static Class<?> loadOptional(String className) {
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException ex) {
-            return null;
-        }
     }
 }

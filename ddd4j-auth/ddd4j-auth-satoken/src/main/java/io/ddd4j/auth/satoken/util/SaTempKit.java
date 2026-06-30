@@ -75,7 +75,7 @@ public class SaTempKit {
     // -------- 检查
 
     public static SaTempToken checkTempToken(String tempToken) {
-        if (java.util.Objects.isNull(tempToken) || !org.springframework.util.StringUtils.hasText(tempToken)) {
+        if (java.util.Objects.isNull(tempToken) || !io.ddd4j.kit.lang.StrKit.isNotBlank(tempToken)) {
             throw new SaTokenException(SaErrorCode.CODE_11001, "未能读取到有效Token");
         }
         // 获取指定 业务标识、指定 Token 的剩余有效期，单位：秒
@@ -90,7 +90,8 @@ public class SaTempKit {
             throw new SaTokenException(SaErrorCode.CODE_11012, "无效的Token，未通过校验");
         }
         // 检查登录时的账号id值是否为空
-        if (java.util.Objects.isNull(saTempToken.getLoginId()) || !org.springframework.util.StringUtils.hasText(saTempToken.getLoginId())) {
+        if (java.util.Objects.isNull(saTempToken.getLoginId())
+                || !io.ddd4j.kit.lang.StrKit.isNotBlank(saTempToken.getLoginId())) {
             throw new SaTokenException(SaErrorCode.CODE_11002, "登录时的账号id值为空");
         }
         return saTempToken;
@@ -101,7 +102,8 @@ public class SaTempKit {
             throw new SaTokenException(SaErrorCode.CODE_11012, "无效的Token，未通过校验");
         }
         // 检查登录时的账号id值是否为空
-        if (java.util.Objects.isNull(saTempToken.getLoginId()) || !org.springframework.util.StringUtils.hasText(saTempToken.getLoginId())) {
+        if (java.util.Objects.isNull(saTempToken.getLoginId())
+                || !io.ddd4j.kit.lang.StrKit.isNotBlank(saTempToken.getLoginId())) {
             throw new SaTokenException(SaErrorCode.CODE_11002, "登录时的账号id值为空");
         }
         return saTempToken;

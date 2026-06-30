@@ -7,14 +7,8 @@ import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.contract.MQMessages;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.serialization.MQEventSerialization;
+import jakarta.jms.*;
 
-import jakarta.jms.BytesMessage;
-import jakarta.jms.Connection;
-import jakarta.jms.DeliveryMode;
-import jakarta.jms.Destination;
-import jakarta.jms.JMSException;
-import jakarta.jms.MessageProducer;
-import jakarta.jms.Session;
 import java.util.Objects;
 
 /**
@@ -37,31 +31,6 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
-    }
-
-    @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
-        try {
-            Destination target = resolveDestination(session, destination);
-            try (MessageProducer producer = session.createProducer(target)) {
-                producer.setDeliveryMode(properties.isDurable() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
-                BytesMessage message = session.createBytesMessage();
-                message.writeBytes(serialization.serialize(event).toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-                message.setStringProperty(MQMessages.HEADER_DESTINATION_TOPIC, destination.getTopic());
-                if (java.util.Objects.nonNull(destination.getTag())) {
-                    message.setStringProperty(MQMessages.HEADER_DESTINATION_TAG, destination.getTag());
-                }
-                if (java.util.Objects.nonNull(event.getTenantId())) {
-                    message.setStringProperty(MQMessages.HEADER_TENANT_ID, event.getTenantId());
-                }
-                if (java.util.Objects.nonNull(event.getMsgId())) {
-                    message.setJMSMessageID(event.getMsgId());
-                }
-                producer.send(message);
-            }
-        } catch (JMSException ex) {
-            throw new IllegalStateException("Publish ActiveMQ event failed", ex);
-        }
     }
 
     /**
@@ -98,5 +67,30 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
             }
         }
         return null;
+    }
+
+    @Override
+    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+        try {
+            Destination target = resolveDestination(session, destination);
+            try (MessageProducer producer = session.createProducer(target)) {
+                producer.setDeliveryMode(properties.isDurable() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
+                BytesMessage message = session.createBytesMessage();
+                message.writeBytes(serialization.serialize(event).toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                message.setStringProperty(MQMessages.HEADER_DESTINATION_TOPIC, destination.getTopic());
+                if (java.util.Objects.nonNull(destination.getTag())) {
+                    message.setStringProperty(MQMessages.HEADER_DESTINATION_TAG, destination.getTag());
+                }
+                if (java.util.Objects.nonNull(event.getTenantId())) {
+                    message.setStringProperty(MQMessages.HEADER_TENANT_ID, event.getTenantId());
+                }
+                if (java.util.Objects.nonNull(event.getMsgId())) {
+                    message.setJMSMessageID(event.getMsgId());
+                }
+                producer.send(message);
+            }
+        } catch (JMSException ex) {
+            throw new IllegalStateException("Publish ActiveMQ event failed", ex);
+        }
     }
 }
