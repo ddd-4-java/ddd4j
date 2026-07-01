@@ -40,6 +40,7 @@
         <module>ddd4j-mq-mqtt-mica</module>
         <module>ddd4j-mq-ons</module>
         <module>ddd4j-mq-sqs</module>
+        <module>ddd4j-mq-tdmq</module>
     </modules>
 
 </project>

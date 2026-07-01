@@ -183,6 +183,11 @@
                 <artifactId>ddd4j-mq-sqs</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-mq-tdmq</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!-- Ddd4j General Extensions -->
             <dependency>
