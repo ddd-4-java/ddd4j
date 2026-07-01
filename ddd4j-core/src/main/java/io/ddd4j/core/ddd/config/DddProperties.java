@@ -3,7 +3,7 @@ package io.ddd4j.core.ddd.config;
 import lombok.Data;
 
 /**
- * ddd4j-ddd 配置属性。
+ * ddd4j-ddd-rules 配置属性。
  *
  * <p>对应 {@code application.yml} 中的 {@code ddd4j.ddd} 前缀：
  * <pre>

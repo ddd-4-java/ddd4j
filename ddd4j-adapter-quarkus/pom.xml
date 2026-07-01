@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-adapter-quarkus</artifactId>
+    <description>Ddd4j Quarkus 框架核心适配：核心 SPI、CDI、CQRS 读侧与 EventStore 桥接。与
+        ddd4j-adapter-spring、ddd4j-adapter-guice 平级。
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- 纯 Java 核心契约 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.fuin.cqrs4j</groupId>
+            <artifactId>cqrs-4-java-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.fuin.ddd4j</groupId>
+            <artifactId>ddd-4-java-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.fuin.esc</groupId>
+            <artifactId>esc-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.fuin.esc</groupId>
+            <artifactId>esc-mem</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-quartz</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Quarkus Arc (CDI) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Quarkus Core -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Hibernate ORM Panache + JPA (for QuarkusJpaProjectionPosition) -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

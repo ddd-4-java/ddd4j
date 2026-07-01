@@ -73,26 +73,24 @@
     <modules>
         <module>ddd4j-bom</module>
         <module>ddd4j-dependencies</module>
-        <!-- 注解层：零框架依赖（仅 spring-context） -->
+        <!-- 契约与基础层：保持框架无关或低耦合基础能力 -->
         <module>ddd4j-annotation</module>
         <module>ddd4j-core</module>
-        <!-- 工具箱：继承式增强 Hutool（与 ddd4j-core 同级的基础设施） -->
         <module>ddd4j-kit</module>
-        <!-- 监控告警：钉钉/企微机器人 + 日志告警（与 ddd4j-core 同级） -->
-        <!-- 纯 DDD 轨道：集成 fuinorg ddd-4-java + cqrs-4-java，领域层零 MyBatis Plus 依赖 -->
-        <module>ddd4j-ddd</module>
+        <!-- DDD 架构规则：Clean/COLA 等目录与依赖边界约束 -->
+        <module>ddd4j-ddd-rules</module>
 
-        <!-- 能力聚合层：保持根目录平铺，聚合内部按 core/spring/框架/厂商实现继续平铺 -->
+        <!-- 能力聚合层：保持根目录平铺，内部按 core/框架/厂商实现继续平铺 -->
         <module>ddd4j-data</module>
         <module>ddd4j-mq</module>
         <module>ddd4j-web</module>
         <module>ddd4j-auth</module>
         <module>ddd4j-cache</module>
 
-        <!-- 框架核心适配层（与 ddd4j-core 同级，提供核心 SPI 的容器实现；自动装配留给外部脚手架） -->
-        <module>ddd4j-spring</module>
-        <module>ddd4j-quarkus-cdi</module>
-        <module>ddd4j-guice</module>
+        <!-- 框架核心适配层：提供核心 SPI 的容器实现；自动装配留给外部脚手架 -->
+        <module>ddd4j-adapter-spring</module>
+        <module>ddd4j-adapter-quarkus</module>
+        <module>ddd4j-adapter-guice</module>
 
         <!-- 业务能力 × 框架实现模块已下沉到各自能力聚合层下，例如 ddd4j-web-*、ddd4j-mq-* -->
         <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress） -->

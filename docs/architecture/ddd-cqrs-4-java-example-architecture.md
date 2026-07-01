@@ -14,7 +14,7 @@
 - **Quarkus** 框架下的命令侧 + 查询侧
 - **Spring Boot** 框架下的命令侧 + 查询侧
 
-是 ddd4j 实现 `ddd4j-quarkus` 和 `ddd4j-spring` 适配层的**最佳参考实现**。
+是 ddd4j 实现 `ddd4j-quarkus` 和 `ddd4j-adapter-spring` 适配层的**最佳参考实现**。
 
 | 维度       | 数据                                   |
 |----------|--------------------------------------|
@@ -283,7 +283,7 @@ ddd4j-service-order/     ← 业务服务模块
 
 **ddd4j 应做**：
 
-- `ddd4j-spring` 与 `ddd4j-quarkus`（及 `ddd4j-javalin`）下用同一套共享契约
+- `ddd4j-adapter-spring` 与 `ddd4j-quarkus`（及 `ddd4j-javalin`）下用同一套共享契约
 - 提供 Person/Vendor 等参考聚合根的可运行示例
 
 ### 5.4 docker-compose 简化本地开发
@@ -505,7 +505,7 @@ ddd4j-samples/
 
 - **Person 聚合根** → 改为 `Order` / `Product` 等业务示例
 - **QryProjectionPosition** → 抽取到 `ddd4j-core` 作为公共 SPI
-- **SpringJpaViewManager** → 抽取到 `ddd4j-spring` 作为默认视图管理器
+- **SpringJpaViewManager** → 抽取到 `ddd4j-adapter-spring` 作为默认视图管理器
 - **QuarkusViewManager** → 抽取到 `ddd4j-quarkus` 作为默认视图管理器
 
 ### 8.3 共享契约模块的复用
@@ -544,4 +544,4 @@ ddd4j 应：
 1. **复制其工程结构**到 `ddd4j-samples/`
 2. **抽取核心模式**（投影位置、视图管理器、事件分块）到 ddd4j 各层
 3. **复用其共享契约设计**作为业务项目模板
-4. **借鉴其双框架对照**为 ddd4j-spring / ddd4j-quarkus / ddd4j-javalin 提供平行参考实现
+4. **借鉴其双框架对照**为 ddd4j-adapter-spring / ddd4j-quarkus / ddd4j-javalin 提供平行参考实现

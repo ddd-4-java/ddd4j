@@ -45,9 +45,9 @@
 | `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` | Spring Boot 2.7+ 自动装配  | `ddd4j-boot-*`                                                     |
 | `@AutoConfiguration` 注解类                                                           | Spring Boot 自动装配入口     | `ddd4j-boot-ddd-autoconfigure` / `ddd4j-boot-auth-*-autoconfigure` |
 | `spring-boot-starter` 命名模块                                                         | Spring Boot 启动器        | 不应有此模块                                                             |
-| `BaseController` / `BaseMapperController` 子类                                       | 业务 Controller 基类属于框架胶水 | `ddd4j-spring` / `ddd4j-web-webmvc`                                |
+| `BaseController` / `BaseMapperController` 子类                                       | 业务 Controller 基类属于框架胶水 | `ddd4j-adapter-spring` / `ddd4j-web-webmvc`                                |
 | 全局 `@ControllerAdvice` / `ExceptionMapper`                                         | 异常处理属于框架胶水             | `ddd4j-web-webmvc` / `ddd4j-web-webflux` / `ddd4j-web-quarkus`      |
-| `Slf4jMDCInterceptor` / `AsyncAspect` / `IdempotentKit`                            | AOP 切面属于框架胶水           | `ddd4j-spring` / `ddd4j-web-webmvc` / `ddd4j-web-webflux`          |
+| `Slf4jMDCInterceptor` / `AsyncAspect` / `IdempotentKit`                            | AOP 切面属于框架胶水           | `ddd4j-adapter-spring` / `ddd4j-web-webmvc` / `ddd4j-web-webflux`          |
 | `javax.servlet` / `jakarta.servlet` import                                         | Servlet 容器属于具体框架       | `ddd4j-web-webmvc` / `ddd4j-web-javalin`                           |
 | `com.baomidou.mybatisplus.*` import                                                | MyBatis-Plus 属于具体 ORM  | `ddd4j-data-mybatis`                                               |
 | `org.springframework.transaction.annotation.Transactional`                         | Spring 事务属于具体框架        | 改用 ddd4j 自有 `@DddTransactional`                                    |
@@ -64,12 +64,12 @@
 | 纯 Java 抽象基类              | `DomainEvent` / `Query` / `Page` / `R` / `DddAggregateRoot` / `DddDomainEvent`                                                              | `ddd4j-core/src/main/java/io/ddd4j/core/`                                |
 | DDD 战术构建块                | `DddAggregateRoot` / `DddDomainEvent` / `DddEventStoreRepository` / `DddAggregateCommand` / `DddCommandExecutor` / `DddView` / `DddJpaView` | `ddd4j-core/src/main/java/io/ddd4j/core/ddd/`                            |
 | CQRS 读侧 SPI              | `ProjectionPosition` / `ProjectionPositionRepository` / `ViewManager` / `ViewScheduler`                                                     | `ddd4j-core/src/main/java/io/ddd4j/core/cqrs/`                           |
-| ArchUnit 规则集             | `CleanDDDLayerRules` / `ColaDDDLayerRules` / `Ddd4jBoundaryTest`                                                                            | `ddd4j-ddd/`                                                             |
+| ArchUnit 规则集             | `CleanDDDLayerRules` / `ColaDDDLayerRules` / `Ddd4jBoundaryTest`                                                                            | `ddd4j-ddd-rules/`                                                             |
 | 工具类（无框架依赖）               | `MappingKit` / `JsonKit` / `IpKit`（纯 Java 解析部分）                                                                                             | `ddd4j-kit/src/main/java/`                                               |
 | 框架无关注解                   | `@DddTransactional`                                                                                                                         | `ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/annotation/`     |
-| SPI 默认实现（带 `@Component`） | `SpringDomainEventPublisher` / `SpringI18nProvider` / `SpringSubjectProvider`                                                               | `ddd4j-spring/src/main/java/io/ddd4j/spring/`                            |
-| 框架上下文门面                  | `SpringContext`                                                                                                                             | `ddd4j-spring/src/main/java/io/ddd4j/spring/context/`                    |
-| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / 下游 Javalin ViewManager                                                                  | `ddd4j-spring/cqrs/` / `ddd4j-quarkus-cdi/cqrs/` / `ddd4j-javalin`       |
+| SPI 默认实现（带 `@Component`） | `SpringDomainEventPublisher` / `SpringI18nProvider` / `SpringSubjectProvider`                                                               | `ddd4j-adapter-spring/src/main/java/io/ddd4j/spring/`                            |
+| 框架上下文门面                  | `SpringContext`                                                                                                                             | `ddd4j-adapter-spring/src/main/java/io/ddd4j/spring/context/`                    |
+| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / 下游 Javalin ViewManager                                                                  | `ddd4j-adapter-spring/cqrs/` / `ddd4j-adapter-quarkus/cqrs/` / `ddd4j-javalin`       |
 
 ---
 
@@ -79,9 +79,9 @@
 
 | # | 操作                           | 文件                                                                                                                                                                                                    | 状态    |
 |---|------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------|
-| 1 | 删除重复类                        | `ddd4j-spring/config/BaseCoreConfig.java`                                                                                                                                                             | ✅ 已删除 |
-| 2 | 删除重复类                        | `ddd4j-spring/util/HttpStatus.java`                                                                                                                                                                   | ✅ 已删除 |
-| 3 | 删除重复造轮子                      | `ddd4j-spring/properties/BasePropertySourcePostProcessor.java` + `BasePropertySource.java` + `SpringPropertySourcePostProcessor.java`                                                                 | ✅ 已删除 |
+| 1 | 删除重复类                        | `ddd4j-adapter-spring/config/BaseCoreConfig.java`                                                                                                                                                             | ✅ 已删除 |
+| 2 | 删除重复类                        | `ddd4j-adapter-spring/util/HttpStatus.java`                                                                                                                                                                   | ✅ 已删除 |
+| 3 | 删除重复造轮子                      | `ddd4j-adapter-spring/properties/BasePropertySourcePostProcessor.java` + `BasePropertySource.java` + `SpringPropertySourcePostProcessor.java`                                                                 | ✅ 已删除 |
 | 4 | 删除三方重复                       | `ddd4j-web/ddd4j-web-core/utils/IpUtils.java`                                                                                                                                                         | ✅ 已删除 |
 | 5 | 拆分 Kit                       | `ddd4j-kit/web/IpKit.java` 移除 Servlet 部分，新增 `parseRemoteAddr(...)` 纯 Java 方法                                                                                                                          | ✅ 已完成 |
 | 6 | 修复 MyBatis 污染                | `BaseRepositoryImpl` 移除 `@Transactional(rollbackFor=...)` + `@NonNull`，引入 `@DddTransactional` 注解                                                                                                      | ✅ 已完成 |
@@ -100,8 +100,8 @@
 
 | #  | 框架            | 实现类                                                                                                                                                     | 状态           |
 |----|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
-| 12 | ddd4j-spring  | `SpringJpaViewManager` + `SpringViewScheduler` + `SpringJpaProjectionPosition` + `SpringJpaProjectionPositionRepository` + `SpringEventHandlerRegistry` | ✅ 已完成（5 个文件） |
-| 13 | ddd4j-quarkus-cdi | `QuarkusJpaViewManager` + `QuarkusJpaProjectionPosition` + `QuarkusJpaProjectionPositionRepository` + `QuarkusEventHandlerRegistry`                 | ✅ 已完成（4 个文件） |
+| 12 | ddd4j-adapter-spring  | `SpringJpaViewManager` + `SpringViewScheduler` + `SpringJpaProjectionPosition` + `SpringJpaProjectionPositionRepository` + `SpringEventHandlerRegistry` | ✅ 已完成（5 个文件） |
+| 13 | ddd4j-adapter-quarkus | `QuarkusJpaViewManager` + `QuarkusJpaProjectionPosition` + `QuarkusJpaProjectionPositionRepository` + `QuarkusEventHandlerRegistry`                 | ✅ 已完成（4 个文件） |
 | 14 | ddd4j-javalin | `JavalinViewManager` + `JavalinJpaProjectionPosition` + `JavalinInMemoryProjectionPositionRepository`                                                   | ✅ 已完成（3 个文件） |
 
 ### 4.4 P2 已完成（2 项完成）
@@ -109,7 +109,7 @@
 | #  | 操作                        | 文件                                                                            | 状态    |
 |----|---------------------------|-------------------------------------------------------------------------------|-------|
 | 15 | 编写 `@DddTransactional` 注解 | `ddd4j-data-mybatis/annotation/DddTransactional.java`                         | ✅ 已完成 |
-| 16 | 编写 ArchUnit 边界守护          | `ddd4j-ddd/src/test/java/io/ddd4j/ddd/boundary/Ddd4jBoundaryTest.java`（5 条规则） | ✅ 已完成 |
+| 16 | 编写 ArchUnit 边界守护          | `ddd4j-ddd-rules/src/test/java/io/ddd4j/ddd/boundary/Ddd4jBoundaryTest.java`（5 条规则） | ✅ 已完成 |
 
 ---
 
@@ -120,7 +120,7 @@ ddd4j/                                       ← 平铺式通用基础层（无 
 ├── ddd4j-annotation/                        ← 纯 Java 注解 + @CreateEvent/@UpdateEvent/@DeleteEvent
 ├── ddd4j-core/                              ← 纯 Java 契约 + cqrs/projection SPI
 ├── ddd4j-kit/                               ← 纯 Java 工具（拆分 IpKit 后零 Servlet）
-├── ddd4j-ddd/                               ← CleanDDDLayerRules + ColaDDDLayerRules + Ddd4jBoundaryTest
+├── ddd4j-ddd-rules/                               ← CleanDDDLayerRules + ColaDDDLayerRules + Ddd4jBoundaryTest
 ├── ddd4j-data/                              ← mybatis / spring / crypto / external / logs / datascope
 │   ├── ddd4j-data-mybatis/                  ← 纯 MyBatis-Plus 适配（含 @DddTransactional 注解）
 │   ├── ddd4j-data-spring/                   ← Spring 桥接
@@ -130,9 +130,9 @@ ddd4j/                                       ← 平铺式通用基础层（无 
 ├── ddd4j-auth/                              ← 纯 Java 认证抽象 + SPI
 ├── ddd4j-cache/                             ← 缓存抽象及实现
 ├── ddd4j-extensions/                        ← 纯 Java 扩展
-├── ddd4j-spring/                            ← Spring 框架 SPI 实现（含 cqrs/ 子包）
-├── ddd4j-quarkus-cdi/                       ← Quarkus CDI 适配（含 cqrs/ 子包）
-├── ddd4j-guice/                             ← Guice 适配
+├── ddd4j-adapter-spring/                            ← Spring 框架 SPI 实现（含 cqrs/ 子包）
+├── ddd4j-adapter-quarkus/                       ← Quarkus CDI 适配（含 cqrs/ 子包）
+├── ddd4j-adapter-guice/                             ← Guice 适配
 ├── ddd4j-samples/                           ← Auth/CQRS 示例
 └── ddd4j-parent/                            ← Maven 父 POM
 
@@ -150,10 +150,10 @@ ddd4j-boot/                                  ← Spring Boot 框架胶水（grou
 └── ddd4j-boot-samples/
 
 ddd4j-quarkus/                               ← Quarkus 框架胶水（groupId: io.ddd4j.quarkus）
-└── 各 Quarkus 专属扩展与自动装配；ddd4j 内仅保留 `ddd4j-quarkus-cdi` 通用 CDI 适配
+└── 各 Quarkus 专属扩展与自动装配；ddd4j 内仅保留 `ddd4j-adapter-quarkus` 通用 CDI 适配
 
 ddd4j-javalin/                               ← Javalin 框架胶水（groupId: io.ddd4j.javalin）
-└── 各 Javalin 专属扩展与自动装配；ddd4j 内仅保留 `ddd4j-guice` 与 `ddd4j-web-javalin` 通用适配
+└── 各 Javalin 专属扩展与自动装配；ddd4j 内仅保留 `ddd4j-adapter-guice` 与 `ddd4j-web-javalin` 通用适配
 ```
 
 ---
@@ -180,7 +180,7 @@ ddd4j-javalin/                               ← Javalin 框架胶水（groupId:
 
 | #  | 验收项                                                                       | 状态             |
 |----|---------------------------------------------------------------------------|----------------|
-| 1  | ✅ ddd4j-core 零 `org.springframework.*` import（除通过 ddd4j-spring SPI 转发的部分） | 通过 ArchUnit 守护 |
+| 1  | ✅ ddd4j-core 零 `org.springframework.*` import（除通过 ddd4j-adapter-spring SPI 转发的部分） | 通过 ArchUnit 守护 |
 | 2  | ✅ ddd4j-core 零 `com.baomidou.*` import                                    | 通过 ArchUnit 守护 |
 | 3  | ✅ ddd4j-core 零 `jakarta.servlet.*` import                                 | 通过 ArchUnit 守护 |
 | 4  | ✅ ddd4j-* 全模块零 `@AutoConfiguration` 注解                                    | 通过 ArchUnit 守护 |
@@ -200,7 +200,7 @@ ddd4j-javalin/                               ← Javalin 框架胶水（groupId:
 
 ### 8.1 业务方升级兼容性
 
-旧 `DddAutoConfiguration` 已从 `ddd4j-spring` 收敛到 `ddd4j-boot-ddd`，业务方应通过 Boot 入口启用：
+旧 `DddAutoConfiguration` 已从 `ddd4j-adapter-spring` 收敛到 `ddd4j-boot-ddd`，业务方应通过 Boot 入口启用：
 
 ```java
 // 旧用法（仍可用，但编译警告）
@@ -218,9 +218,9 @@ public class Application { }
 
 | 旧坐标                                                                           | 新坐标（迁移完成后）                                                                        |
 |-------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
-| `io.ddd4j:ddd4j-spring` 中的 `DddAutoConfiguration`                             | `io.ddd4j.boot:ddd4j-boot-ddd:DddAutoConfiguration`                               |
+| `io.ddd4j:ddd4j-adapter-spring` 中的 `DddAutoConfiguration`                             | `io.ddd4j.boot:ddd4j-boot-ddd:DddAutoConfiguration`                               |
 | `io.ddd4j.core.web.BaseController` / `io.ddd4j.core.web.BaseMapperController` | `io.ddd4j.spring.web.BaseController` / `io.ddd4j.spring.web.BaseMapperController` |
-| `io.ddd4j:ddd4j-spring` 中的 `Slf4jMDCInterceptor`                              | `io.ddd4j:ddd4j-web-webmvc:Slf4jMDCInterceptor`                                   |
+| `io.ddd4j:ddd4j-adapter-spring` 中的 `Slf4jMDCInterceptor`                              | `io.ddd4j:ddd4j-web-webmvc:Slf4jMDCInterceptor`                                   |
 | `org.springframework.transaction.annotation.Transactional`                    | `io.ddd4j.data.mybatis.annotation.DddTransactional`                               |
 | `org.springframework.lang.NonNull`                                            | `javax.annotation.Nonnull`                                                        |
 | `IpKit.getRemoteAddr(HttpServletRequest)`                                     | `IpKit.parseRemoteAddr(xForwardedFor, xRealIp, remoteAddr)`                       |

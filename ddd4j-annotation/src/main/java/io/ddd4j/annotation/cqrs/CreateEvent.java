@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * }
  * }</pre>
  *
- * <p>由各框架适配层（{@code ddd4j-spring} / {@code ddd4j-quarkus}）的
+ * <p>由各框架适配层（{@code ddd4j-adapter-spring} / {@code ddd4j-adapter-quarkus}）的
  * {@code SpringEventHandlerRegistry} / {@code QuarkusEventHandlerRegistry} 在运行时反射装配到
  * {@link io.ddd4j.core.cqrs.event.DddEventDispatcher} 路由表。
  *

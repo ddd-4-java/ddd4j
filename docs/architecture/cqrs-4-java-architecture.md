@@ -379,7 +379,7 @@ P2 可选：
             ┌──────────────────┼──────────────────┐
             ▼                  ▼                  ▼
     ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-    │ ddd4j-spring │  │ ddd4j-quarkus│  │ddd4j-javalin │
+    │ ddd4j-adapter-spring │  │ ddd4j-adapter-quarkus│  │ddd4j-javalin │
     │ (Spring 适配) │  │ (Quarkus 适配)│  │(Javalin 适配)│
     └──────────────┘  └──────────────┘  └──────────────┘
 ```
@@ -426,12 +426,12 @@ public interface CommandExecutor<CONTEXT, RESULT, CMD extends Command> {
 ### 7.3 长期：双框架视图管理器
 
 ```java
-// ddd4j-quarkus/src/main/java/io/ddd4j/quarkus/view/
+// ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/view/
 @ApplicationScoped
 public class QuarkusJpaViewManager { ...
 }
 
-// ddd4j-spring/src/main/java/io/ddd4j/spring/view/
+// ddd4j-adapter-spring/src/main/java/io/ddd4j/spring/view/
 public class SpringJpaViewManager implements SchedulingConfigurer { ...
 }
 ```
@@ -451,7 +451,7 @@ ddd4j 应在此基础上：
 
 1. **继承** ddd-4-java 的 `AbstractAggregateRoot`
 2. **补充** `Command` / `CommandExecutor` / `View` / `JpaView` 抽象
-3. **实现** `ddd4j-spring` / `ddd4j-quarkus` 各自的视图管理器
+3. **实现** `ddd4j-adapter-spring` / `ddd4j-adapter-quarkus` 各自的视图管理器
 4. **复用** `esc-api` 作为事件存储后端
 
 这样 ddd4j 才能在事件溯源 + CQRS 维度上，达到与 fuinorg 系列同等的成熟度。

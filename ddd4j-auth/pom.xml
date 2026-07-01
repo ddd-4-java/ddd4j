@@ -32,7 +32,6 @@
     </dependencies>
 
     <modules>
-        <module>ddd4j-auth-license</module>
         <module>ddd4j-auth-satoken</module>
         <module>ddd4j-auth-security</module>
         <module>ddd4j-auth-shiro</module>

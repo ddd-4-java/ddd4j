@@ -9,8 +9,8 @@ import java.io.Serializable;
  * 重启后可从上次位置继续拉取，不丢消息、不重复处理。
  *
  * <p>本接口为 ddd4j 通用基础层的纯 Java SPI，<b>无任何框架依赖</b>。
- * 具体持久化（关系数据库、Redis、文件）由各框架适配层（{@code ddd4j-spring}、
- * {@code ddd4j-quarkus}、{@code ddd4j-javalin}）实现。
+ * 具体持久化（关系数据库、Redis、文件）由各框架适配层（{@code ddd4j-adapter-spring}、
+ * {@code ddd4j-adapter-quarkus}、{@code ddd4j-javalin}）实现。
  *
  * <p>字段语义：
  * <ul>

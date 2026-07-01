@@ -25,7 +25,7 @@
         <!-- Spring 桥接层 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-spring</artifactId>
+            <artifactId>ddd4j-adapter-spring</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Spring WebMVC -->

@@ -11,7 +11,7 @@
 ## 一、重构目标（已完成）
 
 将 ddd4j 从"Spring 强耦合的单一仓库"重构为"**纯 Java 公共底座 + 三框架适配层**"，使 `ddd4j-boot`、`ddd4j-quarkus`、
-`ddd4j-javalin` 三个独立脚手架可**自由选择**继承的模块；`ddd4j-guice` 是 Javalin 侧复用的 Guice 适配层。
+`ddd4j-javalin` 三个独立脚手架可**自由选择**继承的模块；`ddd4j-adapter-guice` 是 Javalin 侧复用的 Guice 适配层。
 
 **关键原则（已落实）**：
 
@@ -35,12 +35,12 @@ ddd4j/                                                    # 平铺式纯 Java �
 │   ├── ddd4j-annotation                                 # 纯 Java DDD 构造型注解
 │   ├── ddd4j-core                                       # ⭐ 合并自原 ddd4j-core + ddd4j-core-api（统一 io.ddd4j.core.*）
 │   ├── ddd4j-kit                                        # ⭐ 收编 ddd4j-core 14 个工具类（JsonKit/DateKit 等）
-│   └── ddd4j-ddd                                        # DDD 架构规范（ArchUnit 增强：Clean + COLA）
+│   └── ddd4j-ddd-rules                                        # DDD 架构规范（ArchUnit 增强：Clean + COLA）
 │
 ├── 三框架核心适配（与 ddd4j-core 同级）
-│   ├── ddd4j-spring                                     # Spring 框架核心适配（27 java，3 SPI + 工具类）
-│   ├── ddd4j-quarkus-cdi                                # Quarkus CDI 桥接（核心 SPI + CQRS/EventStore）
-│   └── ddd4j-guice                                      # Guice 桥接（Javalin 侧复用）
+│   ├── ddd4j-adapter-spring                                     # Spring 框架核心适配（27 java，3 SPI + 工具类）
+│   ├── ddd4j-adapter-quarkus                                # Quarkus CDI 桥接（核心 SPI + CQRS/EventStore）
+│   └── ddd4j-adapter-guice                                      # Guice 桥接（Javalin 侧复用）
 │
 ├── 业务模块聚合（pom 模块）
 │   ├── ddd4j-data/                                      # 数据抽象（6 子模块，无空壳）
@@ -127,9 +127,9 @@ ddd4j/                                                    # 平铺式纯 Java �
 - ✅ 监听器调用链统一到纯 Java `MQMessage` / `MQConsumerContext` / `MessageAcknowledgment`
 - ✅ ddd4j-mq/pom.xml 当前 modules 为 `ddd4j-mq-core`、`ddd4j-mq-spring`、`ddd4j-mq-disruptor`、`ddd4j-mq-nats`、`ddd4j-mq-kafka`、`ddd4j-mq-rabbitmq`、`ddd4j-mq-rocketmq`、`ddd4j-mq-redis-stream`、`ddd4j-mq-pulsar`、`ddd4j-mq-activemq`、`ddd4j-mq-mqtt`、`ddd4j-mq-mqtt-mica`、`ddd4j-mq-ons`、`ddd4j-mq-sqs`、`ddd4j-mq-tdmq`
 
-### 3.6 ddd4j-ddd ArchUnit 增强（C 方案）
+### 3.6 ddd4j-ddd-rules ArchUnit 增强（C 方案）
 
-- ✅ `DDDLayerRules` 从 `ddd4j-core/test` 迁到 `ddd4j-ddd-clean/main`
+- ✅ `DDDLayerRules` 从 `ddd4j-core/test` 迁到 `ddd4j-ddd-rules-clean/main`
 - ✅ 改名 `CleanDDDLayerRules` + 新增 `ColaDDDLayerRules`
 - ✅ `CleanArchitectureTest` / `ColaArchitectureTest` 抽象基类（`@AnalyzeClasses` + `@ArchTest`）
 - ✅ 业务项目使用：写空 `extends CleanArchitectureTest {}` 即可自动应用所有规则
@@ -161,7 +161,7 @@ import io.ddd4j.core.constant.HttpStatus;  // 纯常量
 <!-- 业务项目 pom.xml -->
 <dependency>
     <groupId>io.ddd4j</groupId>
-    <artifactId>ddd4j-ddd-clean</artifactId>  <!-- 或 ddd4j-ddd-cola -->
+    <artifactId>ddd4j-ddd-rules-clean</artifactId>  <!-- 或 ddd4j-ddd-rules-cola -->
     <version>2.0.x</version>
     <scope>test</scope>
 </dependency>
@@ -198,7 +198,7 @@ mvn test  # 违反规则 → JUnit 失败 → 构建失败
 | PR2   | ddd4j-mq-core 迁出 Spring 集成     | ✅  |
 | PR3   | 清理 Auth 注解双地址                  | ✅  |
 | PR4   | 修复 ddd4j-mq/pom.xml modules    | ✅  |
-| PR5   | ArchUnit 强化 ddd4j-ddd（C 方案）    | ✅  |
+| PR5   | ArchUnit 强化 ddd4j-ddd-rules（C 方案）    | ✅  |
 | PR6-A | 14 个工具类收编到 ddd4j-kit           | ✅  |
 | PR6-B | 清理 git 工作树（116 文件）             | ✅  |
 | PR6-C | 更新本文档                          | ✅  |

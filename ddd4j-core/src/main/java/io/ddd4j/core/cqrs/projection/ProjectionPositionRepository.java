@@ -8,8 +8,8 @@ import java.util.Optional;
  *
  * <p>由各框架适配层实现：
  * <ul>
- *   <li>{@code ddd4j-spring}：基于 JPA {@code JpaRepository<ProjectionPosition, String>}</li>
- *   <li>{@code ddd4j-quarkus}：基于 Panache {@code PanacheRepositoryBase<ProjectionPosition, String>}</li>
+ *   <li>{@code ddd4j-adapter-spring}：基于 JPA {@code JpaRepository<ProjectionPosition, String>}</li>
+ *   <li>{@code ddd4j-adapter-quarkus}：基于 Panache {@code PanacheRepositoryBase<ProjectionPosition, String>}</li>
  *   <li>{@code ddd4j-javalin}：基于 JDBI {@code @RegisterBeanMapper}</li>
  * </ul>
  *

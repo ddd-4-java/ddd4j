@@ -3,8 +3,8 @@ package io.ddd4j.annotation;
 import java.lang.annotation.*;
 
 /**
- * ddd4j 总契约标记：所有 ddd4j 提供的注解（包括 ddd4j-annotation / ddd4j-spring /
- * ddd4j-guice 注解 / ddd4j-quarkus）都应标注此契约。
+ * ddd4j 总契约标记：所有 ddd4j 提供的注解（包括 ddd4j-annotation / ddd4j-adapter-spring /
+ * ddd4j-adapter-guice 注解 / ddd4j-adapter-quarkus）都应标注此契约。
  *
  * <p>作用：
  * <ul>

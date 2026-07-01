@@ -12,8 +12,8 @@ package io.ddd4j.core.cqrs.projection;
  *
  * <p>本接口定义 SPI，具体实现由各框架适配层提供：
  * <ul>
- *   <li>{@code ddd4j-spring}：{@code SpringJpaViewManager}（基于 {@code SchedulingConfigurer}）</li>
- *   <li>{@code ddd4j-quarkus}：{@code QuarkusJpaViewManager}（基于 {@code @Scheduled}）</li>
+ *   <li>{@code ddd4j-adapter-spring}：{@code SpringJpaViewManager}（基于 {@code SchedulingConfigurer}）</li>
+ *   <li>{@code ddd4j-adapter-quarkus}：{@code QuarkusJpaViewManager}（基于 {@code @Scheduled}）</li>
  *   <li>{@code ddd4j-javalin}：{@code JavalinViewManager}（手动 / 自定义线程池）</li>
  * </ul>
  *

@@ -1,9 +1,9 @@
 # ddd4j-auth 模块架构优化方案
 
-> **审查范围**：`ddd4j-auth/` 下全部 5 个当前子模块（license / satoken / security / shiro / spring）
+> **审查范围**：`ddd4j-auth/` 下认证授权子模块（satoken / security / shiro / spring）；license 已迁出到 `ddd4j-extensions`
 > **审查方式**：codegraph 索引 + 源码逐文件核对
 > **审查时间**：2026-06-29；**状态校准**：2026-07-01 按当前平铺模块重新核实
-> **当前事实**：`Subject` / `SubjectKit` / `SubjectProvider` / `AuthRequest` 等契约仍位于 `ddd4j-core`；`ddd4j-auth-spring` 已提供 `SubjectRegistrar` 写回 `SubjectKit`；数据权限已迁出 auth 聚合。
+> **当前事实**：`Subject` / `SubjectKit` / `SubjectProvider` / `AuthRequest` 等契约仍位于 `ddd4j-core`；`ddd4j-auth-spring` 已提供 `SubjectRegistrar` 写回 `SubjectKit`；数据权限与软件授权均已迁出 auth 聚合。
 > **阅读方式**：本文保留为历史优化方案与 backlog，不再代表当前模块清单的完成态。
 
 ---
@@ -14,7 +14,7 @@
 
 | 子模块                    | 当前内容                                                 | 问题                                                  |
 |------------------------|------------------------------------------------------|-----------------------------------------------------|
-| `ddd4j-auth-license`   | TrueLicense 证书管理                                     | ⚠️ 与鉴权无关，是 License 授权，应独立                           |
+| `ddd4j-extension-license`   | TrueLicense 证书管理                                     | ✅ 已迁出到 `ddd4j-extensions`                          |
 | `ddd4j-auth-satoken`   | `SaTokenSubject` + `SaTokenEnhanceAutoConfiguration` | ❌ `SaTokenSubject.getPrincipal()` 全返回 null（**未实现**） |
 | `ddd4j-auth-security`  | `SecuritySubject` + JWT 配置                           | ❌ `SecuritySubject` 所有方法返回 false/null（**空壳**）       |
 | `ddd4j-auth-shiro`     | `ShiroSubject` + `WebShiroBizConfiguration`          | ✅ 唯一完整实现，但耦合 Spring                                 |
@@ -52,7 +52,7 @@ public static Subject getSubject() {
 ```
 
 **历史问题**：当时三个适配模块都 `@Bean public SubjectProvider subjectProvider()`，但**没有任何代码把 Bean
-写回 `SubjectKit.subjectProvider` 静态字段**。当前代码中 `ddd4j-auth-spring/SubjectRegistrar` 与 `ddd4j-quarkus-cdi/DddInitializer` 已覆盖该注册路径。
+写回 `SubjectKit.subjectProvider` 静态字段**。当前代码中 `ddd4j-auth-spring/SubjectRegistrar` 与 `ddd4j-adapter-quarkus/DddInitializer` 已覆盖该注册路径。
 
 - Spring 容器里有一个 `SubjectProvider` Bean
 - 当前 Spring 桥接通过 `SubjectRegistrar` 调用 `SubjectKit.register(provider)`
@@ -76,14 +76,14 @@ public static Subject getSubject() {
 | `ddd4j-auth-satoken`   | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
 | `ddd4j-auth-security`  | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
 | `ddd4j-auth-shiro`     | 无任何注册                                            | ❌ **完全缺失**         |
-| `ddd4j-auth-license`   | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports** |
+| `ddd4j-extension-license`   | 已迁出 auth 聚合，归属 `ddd4j-extensions` | ✅ **不再纳入 auth 自动配置审查** |
 
 **结果**：除了 datascope，其余 4 个模块的 `@Configuration` 类**根本不会被 Spring Boot 自动装配**。
 
 ### 1.6 功能错位（datascope / license 不属于 auth）
 
 - `ddd4j-auth-datascope`：数据权限（DataScope），是**查询层**关注的能力，应归 `ddd4j-data` 或独立的 `ddd4j-security` 聚合
-- `ddd4j-auth-license`：TrueLicense 证书，是**软件授权**，与用户鉴权无关，应独立为 `ddd4j-license`
+- `ddd4j-extension-license`：TrueLicense 证书，是**软件授权**，与用户鉴权无关，已迁入 `ddd4j-extensions/ddd4j-extension-license`
 
 ### 1.7 与达标模块的范式差距
 
@@ -104,9 +104,7 @@ ddd4j-auth/（当前现状）
 ├── ❌ 没有 auth-core 纯 SPI 模块
 ├── ddd4j-auth-satoken/     ← 实现 + Spring 配置混在一起
 ├── ddd4j-auth-security/    ← 实现 + Spring 配置混在一起（且空壳）
-├── ddd4j-auth-shiro/       ← 实现 + Spring 配置混在一起
-├── ddd4j-auth-datascope/   ← 错位（不属于 auth）
-└── ddd4j-auth-license/     ← 错位（不属于 auth）
+└── ddd4j-auth-shiro/       ← 实现 + Spring 配置混在一起
 ```
 
 ---
@@ -141,7 +139,7 @@ ddd4j-auth/（重构后）
 
 【移出 auth 聚合】
 ├── ddd4j-auth-datascope → 迁移到 ddd4j-data/ddd4j-data-datascope
-└── ddd4j-auth-license   → 当前仍保留在 auth 聚合；如后续独立软件授权能力，再迁到新的 license/extension 模块
+└── ddd4j-extension-license → 已迁到 ddd4j-extensions/ddd4j-extension-license
 ```
 
 ### 2.2 核心契约设计（以 Subject 为唯一中心）
@@ -453,7 +451,7 @@ public <T extends AuthPrincipal> T getPrincipal() {
 | 6 | 新增 `ddd4j-auth-core` 纯 Java SPI 模块          | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider 体系（含会话能力） |
 | 7 | 新增 `ddd4j-auth-spring` Spring 桥接模块          | `SubjectRegistrar` + 自动装配                                    |
 | 8 | `ddd4j-auth-datascope` 迁移到 `ddd4j-data`     | 数据权限不属于鉴权                                                    |
-| 9 | `ddd4j-auth-license` 迁移到 `ddd4j-extensions` | 软件授权不属于鉴权                                                    |
+| 9 | `ddd4j-extension-license` 迁移到 `ddd4j-extensions` | 软件授权不属于鉴权                                                    |
 
 ### P2：能力增强（借鉴 Sa-Token）
 
@@ -587,7 +585,7 @@ ddd4j-mq（已达标范式）：
 ├── ddd4j-mq-core/          ← 纯 Java SPI（零 Spring）
 ├── ddd4j-mq-kafka/         ← 纯 Java 实现（依赖 spring-kafka 但 @ConditionalOnClass 在 -spring 模块）
 ├── ddd4j-mq-spring/        ← Spring 桥接（注册 MQBrokerAdapter Bean）
-└── 与下游整合：ddd4j-spring/ddd4j-quarkus 各自提供
+└── 与下游整合：ddd4j-adapter-spring/ddd4j-quarkus 各自提供
 ```
 
 ### 8.2 当前 Spring 污染点扫描结果
@@ -637,8 +635,8 @@ ddd4j-auth/（通用脚手架，框架无关）
     ├── WebSecurityBizConfiguration.java
     └── WebSecurityJwtConfiguration.java
 
-【Spring 桥接下沉到 ddd4j-spring 或下游项目】
-ddd4j-spring/ddd4j-spring-auth/     ← 【新增】Spring 通用桥接
+【Spring 桥接下沉到 ddd4j-adapter-spring 或下游项目】
+ddd4j-adapter-spring/ddd4j-adapter-spring-auth/     ← 【新增】Spring 通用桥接
 ├── SubjectRegistrar.java           ← BeanPostProcessor 把 SubjectProvider 写回 SubjectKit
 ├── AuthSpringAutoConfiguration.java
 └── satoken/
@@ -672,7 +670,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 | 文件                                                | 迁入目标                                            | 原因                                                      |
 |---------------------------------------------------|-------------------------------------------------|---------------------------------------------------------|
-| `SaTokenEnhanceAutoConfiguration.java`            | `ddd4j-spring-auth` 或 `ddd4j-boot-auth-satoken` | 依赖 `@Configuration`/`@Bean`/`InitializingBean`          |
+| `SaTokenEnhanceAutoConfiguration.java`            | `ddd4j-adapter-spring-auth` 或 `ddd4j-boot-auth-satoken` | 依赖 `@Configuration`/`@Bean`/`InitializingBean`          |
 | `SaTokenExceptionHandler.java`                    | `ddd4j-boot-auth-satoken`                       | 依赖 `@ControllerAdvice`/`@ExceptionHandler`/`spring-web` |
 | `SaMixCheckLoginHandler` 中的 `StringUtils.hasText` | 替换为纯 Java `!str.isBlank()`                      | `org.springframework.util.StringUtils`                  |
 
@@ -758,7 +756,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
         │  + Spring 桥接      │  + Spring 桥接         │ （已含）
         ▼                    ▼                       │
 ┌──────────────────────────────────┐                 │
-│  ddd4j-spring-auth / 下游项目      │                 │
+│  ddd4j-adapter-spring-auth / 下游项目      │                 │
 │  SubjectRegistrar（注册到Kit）     │                 │
 │  SaTokenSpringAutoConfiguration   │                 │
 │  SaTokenExceptionHandler          │                 │
@@ -792,7 +790,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 | 5 | **`ddd4j-auth-satoken` 去 Spring 化**  | 移除 `spring-web` 依赖；迁出 `SaTokenEnhanceAutoConfiguration`/`SaTokenExceptionHandler`；`StringUtils.hasText` → `!str.isBlank()` |
 | 6 | **`ddd4j-auth-shiro` 去 Spring 化**    | 迁出 `WebShiroBizConfiguration`                                                                                              |
 | 7 | **新增 `ddd4j-auth-core` 纯 Java SPI**  | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider；扩展 Subject 会话能力（login/logout/refresh/verify）；新增 AuthRequest             |
-| 8 | **新增 `ddd4j-spring-auth` Spring 桥接** | `SubjectRegistrar`（BeanPostProcessor）+ 从 satoken/shiro 迁入的 AutoConfiguration                                               |
+| 8 | **新增 `ddd4j-adapter-spring-auth` Spring 桥接** | `SubjectRegistrar`（BeanPostProcessor）+ 从 satoken/shiro 迁入的 AutoConfiguration                                               |
 
 #### P2：下游整合（三容器各自实现）
 
@@ -818,7 +816,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 | #  | 任务                                            | 说明        |
 |----|-----------------------------------------------|-----------|
 | 16 | **`ddd4j-auth-datascope` → `ddd4j-data`**     | 数据权限不属于鉴权 |
-| 17 | **`ddd4j-auth-license` → `ddd4j-extensions`** | 软件授权不属于鉴权 |
+| 17 | **`ddd4j-extension-license` → `ddd4j-extensions`** | 软件授权不属于鉴权 |
 
 ### 8.8 修订后的验收标准
 

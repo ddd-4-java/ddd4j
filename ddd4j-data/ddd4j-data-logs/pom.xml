@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-data-logs</artifactId>
-    <description>ddd4j 数据层 - API 操作日志：ApiOperationLogAspect 切面 + Provider（纯 AspectJ + ddd4j-spring 桥接）。Spring
+    <description>ddd4j 数据层 - API 操作日志：ApiOperationLogAspect 切面 + Provider（纯 AspectJ + ddd4j-adapter-spring 桥接）。Spring
         Boot auto-config 迁移到 ddd4j-boot-data。
     </description>
 
@@ -36,7 +36,7 @@
         <!-- For Spring（ApiOperationLogAspect 使用 @Component） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-spring</artifactId>
+            <artifactId>ddd4j-adapter-spring</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

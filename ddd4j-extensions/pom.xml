@@ -17,10 +17,11 @@
     </description>
 
     <modules>
-        <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress/validation） -->
+        <!-- 跨领域扩展（akka/excel/jackson/license/monitor/pf4j/qlexpress/validation） -->
         <module>ddd4j-extension-akka</module>
         <module>ddd4j-extension-excel</module>
         <module>ddd4j-extension-jackson</module>
+        <module>ddd4j-extension-license</module>
         <module>ddd4j-extension-pf4j</module>
         <module>ddd4j-extension-qlexpress</module>
         <module>ddd4j-extension-validation</module>
