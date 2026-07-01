@@ -91,7 +91,7 @@
 
         <!-- 三框架核心适配层（与 ddd4j-core 同级，提供 3 个核心 SPI 的框架实现） -->
         <module>ddd4j-spring</module>
-        <module>ddd4j-quarkus</module>
+        <module>ddd4j-quarkus-cdi</module>
         <module>ddd4j-guice</module>
 
         <!-- 业务模块 × 三框架 整合模块（ddd4j-{data,mq,web,auth}-{spring,quarkus,guice}）已下沉到各自业务聚合层下 -->

@@ -10,7 +10,7 @@
         <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
     </parent>
 
-    <artifactId>ddd4j-quarkus</artifactId>
+    <artifactId>ddd4j-quarkus-cdi</artifactId>
     <description>Ddd4j Quarkus 框架核心适配：3 个核心 SPI 的 CDI 实现（DomainEventPublisher/SubjectProvider/I18nProvider）。与
         ddd4j-spring、ddd4j-guice 平级。
     </description>
