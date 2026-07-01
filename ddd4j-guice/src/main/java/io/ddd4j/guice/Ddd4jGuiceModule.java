@@ -23,8 +23,17 @@ import com.google.inject.Singleton;
 import io.ddd4j.core.context.I18nProvider;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
+import io.ddd4j.core.cqrs.projection.DefaultProjectionService;
+import io.ddd4j.core.cqrs.projection.InMemoryProjectionPositionRepository;
+import io.ddd4j.core.cqrs.projection.NoopEventChunkReader;
+import io.ddd4j.core.cqrs.projection.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.projection.ProjectionRunner;
+import io.ddd4j.core.cqrs.projection.ProjectionService;
+import io.ddd4j.core.cqrs.projection.ViewManager;
+import io.ddd4j.core.cqrs.projection.ViewScheduler;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
+import io.ddd4j.guice.cqrs.GuiceViewManager;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -57,6 +66,11 @@ public class Ddd4jGuiceModule extends AbstractModule {
         bind(DomainEventPublisher.class).to(GuiceDomainEventPublisher.class).in(Singleton.class);
         bind(SubjectProvider.class).to(GuiceSubjectProvider.class).in(Singleton.class);
         bind(I18nProvider.class).to(GuiceI18nProvider.class).in(Singleton.class);
+        bind(ProjectionPositionRepository.class).to(InMemoryProjectionPositionRepository.class).in(Singleton.class);
+        bind(ProjectionService.class).to(DefaultProjectionService.class).in(Singleton.class);
+        bind(GuiceViewManager.class).in(Singleton.class);
+        bind(ViewManager.class).to(GuiceViewManager.class);
+        bind(ViewScheduler.class).to(GuiceViewManager.class);
     }
 
     /**
@@ -68,6 +82,15 @@ public class Ddd4jGuiceModule extends AbstractModule {
         EventBus bus = new EventBus();
         log.info("Guava EventBus created");
         return bus;
+    }
+
+    /**
+     * 默认投影运行器。业务侧可在自己的模块中绑定更具体的事件读取器和运行器。
+     */
+    @Provides
+    @Singleton
+    public ProjectionRunner<Object> projectionRunner(ProjectionService projectionService) {
+        return new ProjectionRunner<>(projectionService, new NoopEventChunkReader<>());
     }
 
     /**

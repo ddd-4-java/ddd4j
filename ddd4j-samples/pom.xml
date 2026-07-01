@@ -19,6 +19,7 @@
         <module>ddd4j-sample-auth-shiro</module>
         <module>ddd4j-sample-auth-security</module>
         <module>ddd4j-sample-auth-multi-login</module>
+        <module>ddd4j-sample-cqrs-person</module>
     </modules>
 
 </project>
