@@ -6,6 +6,9 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.biz.context.NestedMessageSource;
+import org.springframework.biz.utils.SpringContextUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -22,6 +25,7 @@ import java.util.ResourceBundle;
 @Slf4j(topic = "### BASE-CORE : I18nKit ###")
 @UtilityClass
 public class I18nKit {
+
     // 国际化文件前缀
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
@@ -222,5 +226,17 @@ public class I18nKit {
             }
         }
         return obj.toString();
+    }
+
+    public static String getMessage(String key) {
+        return getMessage(key, null);
+    }
+
+    public static String getMessage(String key, String[] args) {
+        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, LocaleContextHolder.getLocale());
+    }
+
+    public static String getMessage(String key, String[] args, String defaultMsg) {
+        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
     }
 }

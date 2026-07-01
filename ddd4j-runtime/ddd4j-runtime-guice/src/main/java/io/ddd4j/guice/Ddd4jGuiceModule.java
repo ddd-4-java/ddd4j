@@ -34,6 +34,9 @@ import io.ddd4j.core.cqrs.projection.ViewScheduler;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.guice.cqrs.GuiceViewManager;
+import io.ddd4j.guice.event.GuiceDomainEventPublisher;
+import io.ddd4j.guice.i18n.GuiceI18nProvider;
+import io.ddd4j.guice.subject.GuiceSubjectProvider;
 import lombok.extern.slf4j.Slf4j;
 
 /**

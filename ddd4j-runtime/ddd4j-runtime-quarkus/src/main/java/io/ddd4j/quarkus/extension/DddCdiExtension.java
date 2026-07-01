@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.core.extension;
+package io.ddd4j.quarkus.extension;
 
 import io.ddd4j.quarkus.annotation.ddd.*;
 import jakarta.enterprise.context.ApplicationScoped;

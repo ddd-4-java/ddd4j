@@ -1,4 +1,4 @@
-package io.ddd4j.guice;
+package io.ddd4j.guice.subject;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;

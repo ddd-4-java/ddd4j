@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.ddd.config;
+package io.ddd4j.quarkus.event;
 
 import io.ddd4j.core.ddd.config.DddProperties;
 import io.quarkus.runtime.StartupEvent;

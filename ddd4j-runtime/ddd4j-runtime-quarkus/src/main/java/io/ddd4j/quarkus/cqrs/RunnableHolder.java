@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.ddd.cqrs;
+package io.ddd4j.quarkus.cqrs;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

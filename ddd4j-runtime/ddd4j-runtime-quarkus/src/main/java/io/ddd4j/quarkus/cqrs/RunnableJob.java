@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.ddd.cqrs;
+package io.ddd4j.quarkus.cqrs;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

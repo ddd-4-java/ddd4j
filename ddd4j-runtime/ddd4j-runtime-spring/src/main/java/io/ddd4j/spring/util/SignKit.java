@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Slf4j
-public class SignUtils {
+public class SignKit {
 
     /**
      * 1、获取密钥
@@ -190,20 +190,20 @@ public class SignUtils {
 
         String appId = "1", appVersion = "20000", appChannel = "ASO000", fixedSecret = "z2023";
 
-        String salt = SignUtils.salt(appId, appVersion, appChannel, fixedSecret);
+        String salt = SignKit.salt(appId, appVersion, appChannel, fixedSecret);
         log.info("salt={}", salt);
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         String token = "";
         String body = "";
 
-        String sign = SignUtils.sign(token, formData, body, salt);
+        String sign = SignKit.sign(token, formData, body, salt);
 
         log.info("sign={}", sign);
 
         String clientSign = "2136d6ec5e2c17b3ac787bf6f86fffe7ab7b0c389efa970a";
 
-        log.info("verified={}", SignUtils.verify(token, appId, appVersion, appChannel, fixedSecret, clientSign, formData, body));
+        log.info("verified={}", SignKit.verify(token, appId, appVersion, appChannel, fixedSecret, clientSign, formData, body));
 
     }
 

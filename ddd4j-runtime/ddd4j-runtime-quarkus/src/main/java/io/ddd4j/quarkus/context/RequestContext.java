@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.core.context;
+package io.ddd4j.quarkus.context;
 
 import jakarta.enterprise.context.RequestScoped;
 import lombok.Getter;

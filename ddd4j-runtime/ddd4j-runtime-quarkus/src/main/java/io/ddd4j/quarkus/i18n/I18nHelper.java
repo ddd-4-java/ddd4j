@@ -1,6 +1,7 @@
-package io.ddd4j.quarkus.core.i18n;
+package io.ddd4j.quarkus.i18n;
 
 import io.ddd4j.kit.lang.StrKit;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Locale;
@@ -18,13 +19,10 @@ public final class I18nHelper {
 
     private static final String BUNDLE_PREFIX = "i18n/message";
     private static final Map<String, ResourceBundle> CACHE = new ConcurrentHashMap<>();
+    @Getter
     private static volatile String defaultLang = "zh";
 
     private I18nHelper() {
-    }
-
-    public static String getDefaultLang() {
-        return defaultLang;
     }
 
     public static void setDefaultLang(String lang) {

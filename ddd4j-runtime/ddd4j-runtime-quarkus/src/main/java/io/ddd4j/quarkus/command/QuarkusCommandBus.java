@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.core.command;
+package io.ddd4j.quarkus.command;
 
 import io.ddd4j.core.ddd.command.DddCommandExecutor;
 import io.quarkus.runtime.StartupEvent;

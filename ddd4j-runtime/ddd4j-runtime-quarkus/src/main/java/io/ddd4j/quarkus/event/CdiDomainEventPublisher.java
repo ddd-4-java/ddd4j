@@ -1,41 +1,40 @@
-package io.ddd4j.guice;
+package io.ddd4j.quarkus.event;
 
 import java.util.Objects;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 
 /**
- * Guice 实现的领域事件发布者
+ * Quarkus CDI 实现的领域事件发布者
  * <p>
- * 使用 Google Guava {@link EventBus} 发布进程内领域事件。
+ * 使用 CDI {@code Event<DomainEvent>} 发布领域事件。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Slf4j
-public class GuiceDomainEventPublisher implements DomainEventPublisher {
-
-    private final EventBus eventBus;
+@ApplicationScoped
+public class CdiDomainEventPublisher implements DomainEventPublisher {
 
     @Inject
-    public GuiceDomainEventPublisher(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
+    Event<Object> event;
 
     @Override
-    public void publish(DomainEvent event) {
-        if (Objects.isNull(event)) {
+    public void publish(DomainEvent domainEvent) {
+        if (Objects.isNull(domainEvent)) {
             log.warn("Attempted to publish null domain event");
             return;
         }
-        log.debug("Publishing domain event: {}", event.getClass().getSimpleName());
-        eventBus.post(event);
+        log.debug("Publishing domain event: {}, aggregateId: {}",
+                domainEvent.getClass().getSimpleName(), domainEvent.source());
+        event.fire(domainEvent);
     }
 
     @Override

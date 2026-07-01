@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.ddd.cqrs;
+package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.projection.ViewScheduler;
 import jakarta.enterprise.context.ApplicationScoped;

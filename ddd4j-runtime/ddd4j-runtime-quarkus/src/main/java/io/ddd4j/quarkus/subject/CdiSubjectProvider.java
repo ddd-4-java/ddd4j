@@ -1,4 +1,4 @@
-package io.ddd4j.quarkus.core;
+package io.ddd4j.quarkus.subject;
 
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
