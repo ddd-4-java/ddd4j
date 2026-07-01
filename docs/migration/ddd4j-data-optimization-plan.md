@@ -1,11 +1,11 @@
 # ddd4j-data 模块优化方案（三层范式版）
 
-> **最后更新**：2026-06-29（基于最新代码核实）
-> **审计范围**：`ddd4j/ddd4j-data`（通用基础层，5 个子模块）
+> **最后更新**：2026-07-01（基于当前平铺模块重新核实）
+> **审计范围**：`ddd4j/ddd4j-data`（通用基础层，6 个子模块）
 > **正确分层认知**：
 > - `ddd4j/ddd4j-*` = **通用基础层**（纯 Java SPI + 可选 Spring 桥接，**不含 Spring Boot auto-config**）
 > - `ddd4j-boot/ddd4j-boot-*` = **Spring Boot 整合层**（auto-config 放这里）
-> - `ddd4j-quarkus/*` / `ddd4j-javalin/*` = **其他框架整合层**
+> - `ddd4j-quarkus/*` / `ddd4j-javalin/*` = **其他框架整合层**；`ddd4j` 内仅保留可复用的 `ddd4j-quarkus-cdi`、`ddd4j-guice` 与 `ddd4j-web-*` 通用适配
 >
 > **对照范本**：`ddd4j-mq`（`-core` 纯 Java + `-spring` Spring 桥接）→ `ddd4j-boot-mq`（Spring Boot auto-config）
 > **核心问题**：`ddd4j-data` 通用层错误地混入了 Spring Boot auto-config 代码，应迁移到 `ddd4j-boot-data`
@@ -38,11 +38,12 @@
 
 ## 二、ddd4j-data 现状（最新核实 2026-06-29）
 
-### 2.1 子模块清单（5 个，含新增 datascope）
+### 2.1 子模块清单（6 个，含 Spring 桥接与 datascope）
 
 | 子模块                      | 文件数 | 定位                                    |
 |--------------------------|-----|---------------------------------------|
 | ddd4j-data-mybatis       | 41  | MyBatis-Plus 实现                       |
+| ddd4j-data-spring        | —   | Spring 桥接与仓储注册                       |
 | ddd4j-data-crypto        | 18  | 加解密策略                                 |
 | ddd4j-data-external      | 19  | 外部服务（geo/region/sequence/sys/weather） |
 | ddd4j-data-logs          | 4   | API 操作日志（AspectJ）                     |

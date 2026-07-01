@@ -11,7 +11,7 @@
 ## 一、重构目标（已完成）
 
 将 ddd4j 从"Spring 强耦合的单一仓库"重构为"**纯 Java 公共底座 + 三框架适配层**"，使 `ddd4j-boot`、`ddd4j-quarkus`、
-`ddd4j-guice` 三个独立项目可**自由选择**继承的模块。
+`ddd4j-javalin` 三个独立脚手架可**自由选择**继承的模块；`ddd4j-guice` 是 Javalin 侧复用的 Guice 适配层。
 
 **关键原则（已落实）**：
 
@@ -25,8 +25,13 @@
 ## 二、最终模块结构（2.0.x 完成态）
 
 ```
-ddd4j/                                                    # 纯 Java 公共底座 + 三框架适配
-├── 基础包（与 ddd4j-core 同级，零 Spring）
+ddd4j/                                                    # 平铺式纯 Java 公共底座 + 三框架适配
+├── 工程治理（根目录平铺）
+│   ├── ddd4j-bom                                        # BOM
+│   ├── ddd4j-dependencies                               # 依赖版本
+│   └── ddd4j-parent                                     # 父 POM
+│
+├── 基础包（与 ddd4j-core 同级）
 │   ├── ddd4j-annotation                                 # 纯 Java DDD 构造型注解
 │   ├── ddd4j-core                                       # ⭐ 合并自原 ddd4j-core + ddd4j-core-api（统一 io.ddd4j.core.*）
 │   ├── ddd4j-kit                                        # ⭐ 收编 ddd4j-core 14 个工具类（JsonKit/DateKit 等）
@@ -34,8 +39,8 @@ ddd4j/                                                    # 纯 Java 公共底�
 │
 ├── 三框架核心适配（与 ddd4j-core 同级）
 │   ├── ddd4j-spring                                     # Spring 框架核心适配（27 java，3 SPI + 工具类）
-│   ├── ddd4j-quarkus                                    # Quarkus CDI 桥接（4 java，3 SPI）
-│   └── ddd4j-guice                                      # Javalin Guice 桥接（5 java，3 SPI + Module）
+│   ├── ddd4j-quarkus-cdi                                # Quarkus CDI 桥接（核心 SPI + CQRS/EventStore）
+│   └── ddd4j-guice                                      # Guice 桥接（Javalin 侧复用）
 │
 ├── 业务模块聚合（pom 模块）
 │   ├── ddd4j-data/                                      # 数据抽象（6 子模块，无空壳）
@@ -46,22 +51,21 @@ ddd4j/                                                    # 纯 Java 公共底�
 │   │   ├── ddd4j-data-external                          # 外部服务
 │   │   └── ddd4j-data-logs                              # API 日志 AOP
 │   │
-│   ├── ddd4j-mq/                                        # 消息队列（4 子模块）
+│   ├── ddd4j-mq/                                        # 消息队列（15 子模块：core/spring + 13 个 Broker/本地实现）
 │   │   ├── ddd4j-mq-core                                # ⭐ 纯 Java MQ SPI（MQMessage/MQBrokerAdapter）
 │   │   ├── ddd4j-mq-spring                              # ⭐ Spring 桥接（@Configuration/BeanPostProcessor）
+│   │   ├── ddd4j-mq-kafka / rabbitmq / rocketmq / redis-stream
+│   │   ├── ddd4j-mq-pulsar / activemq / mqtt / mqtt-mica
+│   │   ├── ddd4j-mq-ons / sqs / tdmq
 │   │   ├── ddd4j-mq-nats                                # NATS JetStream 实现
 │   │   └── ddd4j-mq-disruptor                           # LMAX Disruptor 本地 MQ 实现
 │   │
-│   ├── ddd4j-web/                                       # Web 抽象（3 子模块：core/webmvc/webflux）
+│   ├── ddd4j-web/                                       # Web 抽象（5 子模块：core/javalin/quarkus/webmvc/webflux）
 │   └── ddd4j-auth/                                      # 认证抽象（5 子模块：license/satoken/security/shiro/spring）
 │
-├── 跨领域扩展
-│   └── ddd4j-extensions/                                # 7 子模块（含 ddd4j-extension-monitor）
-│
-└── 工程类
-    ├── ddd4j-bom                                        # BOM
-    ├── ddd4j-dependencies                               # 依赖版本
-    └── ddd4j-parent                                     # 父 POM
+├── ddd4j-cache                                          # 缓存抽象及多实现
+├── ddd4j-extensions                                     # 7 子模块（akka/excel/jackson/monitor/pf4j/qlexpress/validation）
+└── ddd4j-samples                                        # Auth 多实现、多登录、Person CQRS/ES 示例
 ```
 
 ---
@@ -74,7 +78,7 @@ ddd4j/                                                    # 纯 Java 公共底�
 |------|-------------------------------------------------------|----------------------------------------------------|
 | ✅ 删除 | `ddd4j-core-api`（28 java）                             | 与 `ddd4j-core` 完全重复，统一 package 为 `io.ddd4j.core.*` |
 | ✅ 合并 | `ddd4j-mq-spring`（4 java）                             | 从 `ddd4j-mq-core` 迁出 Spring 集成代码                   |
-| ✅ 删除 | 9 个空壳模块（`ddd4j-{data,mq,web,auth}-{quarkus,javalin}`） | 0 java 文件，无意义                                      |
+| ✅ 删除/重建 | 旧空壳模块（`ddd4j-{data,mq,auth}-{quarkus,javalin}` 等） | 0 java 文件的空壳已清理；Web 的 Quarkus/Javalin 实现按 `ddd4j-web-*` 新结构保留 |
 | ✅ 删除 | `ddd4j-annotation/auth/{BaseAuth,Inside}.java`        | 旧位置重复，统一到 `io.ddd4j.auth.annotation.*`             |
 
 ### 3.2 包路径统一
@@ -121,7 +125,7 @@ ddd4j/                                                    # 纯 Java 公共底�
 - ✅ `mq-core/pom.xml` 移除 `spring-context` / `spring-messaging`（compile scope）
 - ✅ 4 个文件从 `io.ddd4j.mq.{config,registry}` 迁到 `io.ddd4j.mq.spring.{config,registry}`
 - ✅ 监听器调用链统一到纯 Java `MQMessage` / `MQConsumerContext` / `MessageAcknowledgment`
-- ✅ ddd4j-mq/pom.xml 当前 modules 为 `ddd4j-mq-core`、`ddd4j-mq-disruptor`、`ddd4j-mq-nats`、`ddd4j-mq-spring`
+- ✅ ddd4j-mq/pom.xml 当前 modules 为 `ddd4j-mq-core`、`ddd4j-mq-spring`、`ddd4j-mq-disruptor`、`ddd4j-mq-nats`、`ddd4j-mq-kafka`、`ddd4j-mq-rabbitmq`、`ddd4j-mq-rocketmq`、`ddd4j-mq-redis-stream`、`ddd4j-mq-pulsar`、`ddd4j-mq-activemq`、`ddd4j-mq-mqtt`、`ddd4j-mq-mqtt-mica`、`ddd4j-mq-ons`、`ddd4j-mq-sqs`、`ddd4j-mq-tdmq`
 
 ### 3.6 ddd4j-ddd ArchUnit 增强（C 方案）
 

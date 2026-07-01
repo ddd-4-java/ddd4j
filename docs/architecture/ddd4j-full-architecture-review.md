@@ -1,11 +1,13 @@
 # ddd4j 2.0.x 全栈架构审查报告（架构师视角）
 
-> **审查对象**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`（v2.0.x，17+ 子模块，737 文件 / 12,356
-> 符号 / 23,473 边 codegraph 索引）
+> **审查对象**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`（v2.0.x，平铺模块，823 文件 / 13,671
+> 节点 / 23,360 边 codegraph 索引，2026-07-01 同步）
 > **对标项目**：
 > - `workspace-bmgw/codeup/ddd4j`（v1.x，com.dddframework，Spring 强绑定，Java 8）
 > - `workspace-bmgw/codeup/cloud-agents`（基于 v1.x 的智能体服务集群）
-    > **审查目标**：确认 v2.x 能否完全替代 v1.x，并指导 v1.x → v2.x 的迁移适配
+> **审查目标**：确认 v2.x 能否完全替代 v1.x，并指导 v1.x → v2.x 的迁移适配
+>
+> **状态校准**：本文为历史全栈审查报告，当前模块事实以根 `README.md`、`REFACTOR_MIGRATION.md` 和 `docs/architecture/architecture.md` 为准。
 
 ---
 
@@ -30,9 +32,9 @@
 | **Spring 绑定**  | Spring 2.7.18 强绑定                  | 框架无关 + 三框架 SPI                                                                                     | ✅ 优于 v1.x |
 | **聚合根模型**      | `Model`（充血模型，耦合 Repository）        | `Model` + `DddAggregateRoot`（双轨，纯净 DDD 来自 fuinorg）                                                 | ✅ 完全替代    |
 | **仓储 SPI**     | `BaseRepository`（带 MyBatis 注入）     | `BaseRepository` + `Repository`（纯 Java SPI）                                                        | ✅ 完全替代    |
-| **MQ 抽象**      | 4 种（Kafka/RabbitMQ/RocketMQ/Redis） | 12 种（增加 ActiveMQ/MQTT/Pulsar/NATS/Disruptor/ONS/TDMQ/SQS/MicaMQTT）                                 | ✅ 优于 v1.x |
+| **MQ 抽象**      | 4 种（Kafka/RabbitMQ/RocketMQ/Redis） | 13 个 Broker/本地实现（增加 ActiveMQ/MQTT/Pulsar/NATS/Disruptor/ONS/TDMQ/SQS/MicaMQTT 等）                  | ✅ 优于 v1.x |
 | **Web 控制器**    | `AggregateController` 动态路由         | `BaseAggregateController` + `BaseClientAggregateController` 模板方法 + `AggregateController` 动态路由（双模式） | ✅ 完全替代    |
-| **认证**         | 仅 BaseAuth 拦截器                     | Sa-Token + Spring Security + Shiro + OAuth2 Resource Server                                        | ✅ 优于 v1.x |
+| **认证**         | 仅 BaseAuth 拦截器                     | Subject SPI + Sa-Token + Spring Security + Shiro                                                     | ✅ 优于 v1.x |
 | **数据权限**       | 无                                  | `ddl4j-data-datascope`（基于 MyBatis 拦截器）                                                             | ✅ 优于 v1.x |
 | **加密**         | 无                                  | `ddd4j-data-crypto`                                                                                | ✅ 优于 v1.x |
 | **DDD 架构守护**   | 无                                  | `CleanDDDLayerRules` + `ColaDDDLayerRules`（ArchUnit 注解驱动）                                          | ✅ 优于 v1.x |
@@ -40,8 +42,8 @@
 | **事件溯源**       | 无                                  | `DddAggregateRoot` + `DddEventStoreRepository`（基于 fuinorg esc-api）                                 | ✅ 优于 v1.x |
 | **多容器支持**      | 仅 Spring                           | Spring + Quarkus + Guice + Javalin                                                                 | ✅ 优于 v1.x |
 | **缓存**         | RedisKit                           | `ddd4j-cache`（Caffeine + Redis 多级）                                                                 | ✅ 优于 v1.x |
-| **扩展点**        | 单一 Hutool                          | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                         | ✅ 优于 v1.x |
-| **示例工程**       | `ddd-demo`                         | `ddd4j-samples` × 3（auth-satoken/auth-security/auth-shiro）                                         | ⚠️ 数量少    |
+| **扩展点**        | 单一 Hutool                          | akka / excel / jackson / monitor / pf4j / qlexpress / validation                                   | ✅ 优于 v1.x |
+| **示例工程**       | `ddd-demo`                         | `ddd4j-samples` × 5（auth 三实现、多登录、Person CQRS/ES）                                             | 🟡 继续增强    |
 | **Quarkus 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
 | **Javalin 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
 | **Cloud 生态**   | 无                                  | 待定（仅有 ddd4j-boot 一站式）                                                                              | ❌ 缺口      |
@@ -81,7 +83,7 @@ import。
 
 3. **阶段三：清除 v1.x**（4-6 周）
     - 所有业务模块切换完成，删除 v1.x 依赖
-    - 启用 v2.x 的新特性（DDD 架构守护、CQRS 读侧、12 种 MQ 切换）
+    - 启用 v2.x 的新特性（DDD 架构守护、CQRS 读侧、13 个 MQ Broker/本地实现切换）
 
 ---
 
@@ -91,16 +93,16 @@ import。
 
 | 模块                   | 子模块数                                             | 状态    | 评估                                          |
 |----------------------|--------------------------------------------------|-------|---------------------------------------------|
-| `ddd4j-auth`         | 5（core/satoken/security/shiro/spring）            | 🟢 优秀 | 多种认证方案并存，按需选型，SPI 抽象清晰                      |
+| `ddd4j-auth`         | 5（license/satoken/security/shiro/spring）         | 🟢 优秀 | 多种认证方案并存，按需选型，Subject 契约位于 ddd4j-core       |
 | `ddd4j-cache`        | 1                                                | 🟢 优秀 | Caffeine + Redis 多级缓存策略完整                   |
 | `ddd4j-data`         | 6（crypto/datascope/external/logs/mybatis/spring） | 🟢 优秀 | 数据层完整抽象，MyBatis 插件化可扩展                      |
-| `ddd4j-mq`           | 13（core + 12 种 MQ）                               | 🟢 优秀 | **核心亮点**，MQBrokerAdapter SPI 让 MQ 切换零业务代码改动 |
+| `ddd4j-mq`           | 15（core/spring + 13 个 Broker/本地实现）             | 🟢 优秀 | **核心亮点**，MQBrokerAdapter SPI 让 MQ 切换零业务代码改动 |
 | `ddd4j-kit`          | 1                                                | 🟢 优秀 | Hutool 继承式增强，不重复造轮子                         |
 | `ddd4j-dependencies` | 1                                                | 🟢 优秀 | 第三方版本集中管理，已锁定 Spring 6.x                    |
 
 ### 2.2 人工调优点提炼
 
-**`ddd4j-mq` 的 12 种 MQ 适配**——这是 ddd4j 区别于同类脚手架的**核心差异点**：
+**`ddd4j-mq` 的 13 个 Broker/本地实现适配**——这是 ddd4j 区别于同类脚手架的**核心差异点**：
 
 ```
 MQBrokerAdapter SPI（ddd4j-mq-core）
@@ -245,34 +247,26 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 | 模块                 | 子模块                                                          | 状态    | 评估                                                  |
 |--------------------|--------------------------------------------------------------|-------|-----------------------------------------------------|
 | `ddd4j-ddd`        | clean / cola                                                 | 🟢 良好 | ArchUnit 注解驱动规则，业务项目可继承                             |
-| `ddd4j-extensions` | akka/excel/jackson/license/monitor/pf4j/qlexpress/validation | 🟢 优秀 | 8 个扩展点，可按需引入                                        |
-| `ddd4j-guice`      | 1                                                            | 🟠 中等 | Guice Module + EventBus 实现，但缺 Web 层                 |
-| `ddd4j-quarkus`    | 1（仅核心）                                                       | 🟠 中等 | QuarkusJpaViewManager 实现完整，但缺 Web/MQ/Auth/Extension |
+| `ddd4j-extensions` | akka/excel/jackson/monitor/pf4j/qlexpress/validation         | 🟢 优秀 | 7 个扩展点，可按需引入                                        |
+| `ddd4j-guice`      | 1                                                            | 🟠 中等 | Guice Module + EventBus 实现，Javalin Web 能力在 `ddd4j-web-javalin` |
+| `ddd4j-quarkus-cdi`| 1                                                            | 🟡 中等 | Quarkus CDI/CQRS 核心适配已存在，Web 能力在 `ddd4j-web-quarkus` |
 | `ddd4j-spring`     | 1                                                            | 🟡 中等 | Spring 适配器实现最完整，但与 ddd4j-web-webmvc 有部分重叠           |
 
 ### 4.2 问题：集成模块"广而不深"
 
-**ddd4j-quarkus 仅有 1 个子模块**（核心），对比 ddd4j-boot 应该有：
+`ddd4j` 内部不再追求复制一套 `ddd4j-quarkus-*` 或 `ddd4j-javalin-*` 全家桶；当前约定是平铺公共能力：
 
-- ddd4j-quarkus-core ✓
-- ddd4j-quarkus-web ✗（缺失）
-- ddd4j-quarkus-mq ✗（缺失）
-- ddd4j-quarkus-auth ✗（缺失）
-- ddd4j-quarkus-cache ✗（缺失）
-- ddd4j-quarkus-data ✗（缺失）
-- ddd4j-quarkus-monitor ✗（缺失）
-- ddd4j-quarkus-ddd ✗（缺失）
-
-**ddd4j-javalin 缺独立的注解/核心模块**（直接复用 ddd4j-annotation + ddd4j-core，但 Javalin DI 是 Guice，需要 ddd4j-guice）。
-
-**ddd4j-guice 仅有 5 个核心类**
-（Ddd4jGuiceModule、GuiceContext、GuiceDomainEventPublisher、BaseHandler、SubjectProvider），不足以支撑 Javalin 微服务。
+- Quarkus 通用 CDI/CQRS/EventStore 适配位于 `ddd4j-quarkus-cdi`
+- Quarkus Web 适配位于 `ddd4j-web/ddd4j-web-quarkus`
+- Javalin 复用 Guice DI 能力，核心适配位于 `ddd4j-guice`
+- Javalin Web 适配位于 `ddd4j-web/ddd4j-web-javalin`
+- 具体框架专属自动装配、starter、样例放到外部 `ddd4j-quarkus` / `ddd4j-javalin`
 
 ### 4.3 改进建议
 
-1. **ddd4j-quarkus 子模块化**：参考 ddd4j-boot/ddd4j-boot-* 命名规范补齐
-2. **ddd4j-javalin 与 ddd4j-guice 整合**：明确分工（javalin = Web，guice = DI 引擎）
-3. **ddd4j-spring 与 ddd4j-web-webmvc 边界**：web-webmvc 是抽象 Web 规范，spring 适配层做桥接
+1. **保持平铺模块**：公共能力保留在 `ddd4j-*` 与各 feature 聚合下，不复制 Boot 式嵌套结构
+2. **明确 Quarkus/Javalin 分工**：`ddd4j-quarkus-cdi` / `ddd4j-guice` 做核心 SPI，`ddd4j-web-*` 做 Web 适配
+3. **继续收口 Spring/Web 边界**：`ddd4j-spring` 做容器 SPI，`ddd4j-web-webmvc` / `ddd4j-web-webflux` 做 Web 能力
 
 ---
 
@@ -283,8 +277,8 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 | 集成项目                             | 模块数  | 成熟度    | 主要差距                                         |
 |----------------------------------|------|--------|----------------------------------------------|
 | `ddd4j-boot` (Spring Boot 3.5.x) | ~20+ | 🟢 85% | 模块齐全，缺 Cloud 生态（Gateway/Config/Stream）       |
-| `ddd4j-quarkus`                  | 13   | 🟡 60% | 缺独立 web/mq/auth 子模块（仅 ddd4j-quarkus-core 成熟） |
-| `ddd4j-javalin`                  | 5    | 🔴 30% | **最薄弱**，缺核心的 web/mq 适配                       |
+| `ddd4j-quarkus`                  | 外部项目 | 待单独核实 | 当前文档不再用本仓 CodeGraph 结果推断外部仓完成度          |
+| `ddd4j-javalin`                  | 外部项目 | 待单独核实 | 当前文档不再用本仓 CodeGraph 结果推断外部仓完成度          |
 | `ddd4j-cloud`                    | 0    | ❌ 0%   | **完全缺失**                                     |
 
 ### 5.2 ddd4j-boot（最成熟）
@@ -308,25 +302,19 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 5.3 ddd4j-quarkus
 
-**已有模块**：
+外部 `ddd4j-quarkus` 的模块成熟度需要在该仓单独用 CodeGraph 复核。本仓当前只确认：
 
-- ddd4j-quarkus-bom / dependencies / parent / core
-- ddd4j-quarkus
-- ddd4j-quarkus-auth / cache / data / ddd / monitor / mq / web
-- ddd4j-quarkus-samples
-
-**评估**：**模块结构已存在但代码实现薄弱**。`ddd4j-quarkus-web` 缺少 RESTEasy 适配细节，`ddd4j-quarkus-mq` 缺少
-KurrentDB/EventStore 集成。
+- `ddd4j-quarkus-cdi` 提供通用 CDI/CQRS/EventStore 适配
+- `ddd4j-web-quarkus` 提供 Quarkus Web 通用适配
+- starter、自动装配、Quarkus 专属样例不应回流到 `ddd4j`
 
 ### 5.4 ddd4j-javalin
 
-**已有模块**：
+外部 `ddd4j-javalin` 的模块成熟度需要在该仓单独用 CodeGraph 复核。本仓当前只确认：
 
-- ddd4j-javalin-bom / dependencies / parent
-- ddd4j-javalin-samples
-
-**评估**：**严重欠缺**。缺 `ddd4j-javalin-core` / `ddd4j-javalin-web` / `ddd4j-javalin-mq` / `ddd4j-javalin-auth`。当前仅做了
-POM 架构，核心适配代码几乎空白。
+- `ddd4j-guice` 提供 Guice DI/EventBus 适配
+- `ddd4j-web-javalin` 提供 Javalin Web 通用适配
+- Javalin 专属 starter、路由装配、样例不应回流到 `ddd4j`
 
 ### 5.5 ddd4j-cloud
 
@@ -338,7 +326,7 @@ POM 架构，核心适配代码几乎空白。
 |--------|--------------------------------------|--------------------|
 | **P0** | 补齐 `ddd4j-cloud` 微服务治理模块             | 阻塞 v1.x 大型项目替代     |
 | **P0** | 补齐 `ddd4j-javalin` 核心模块              | 阻塞 Javalin 用户      |
-| **P1** | 补齐 `ddd4j-quarkus-web/mq/auth`       | 提升 Quarkus 集成度     |
+| **P1** | 外部 `ddd4j-quarkus` 补强 Web/MQ/Auth 自动装配与示例 | 提升 Quarkus 集成度     |
 | **P1** | `ddd4j-boot-cloud-*` Spring Cloud 集成 | 完善 Spring Cloud 生态 |
 | **P2** | ddd4j-boot-xxljob / ddd4j-boot-redis | 业务侧常用组件            |
 

@@ -13,7 +13,7 @@ ddd4j 通用基础层的架构分层遵循一个**铁律**：
 | 层级               | 内容                                                              | 归属                                               |
 |------------------|-----------------------------------------------------------------|--------------------------------------------------|
 | **纯契约层**         | 零框架 import 的 Java 接口 / 抽象类 / 注解                                 | `ddd4j-core` / `ddd4j-annotation`                |
-| **SPI 默认实现层**    | 三框架各自的 SPI 纯 Java 实现（无 starter）                                 | `ddd4j-spring` / `ddd4j-quarkus` / `ddd4j-guice` |
+| **SPI 默认实现层**    | 三框架各自的 SPI 实现（无 starter）                                         | `ddd4j-spring` / `ddd4j-quarkus-cdi` / `ddd4j-guice` |
 | **自动装配 / 胶水代码层** | Spring Boot starter / `@AutoConfiguration` / `spring.factories` | `ddd4j-boot-ddd-autoconfigure` 等                 |
 
 > **错误做法**：把 `DddAutoConfiguration`（含 `@Bean` 装配 EventStore/MultiCommandExecutor）放进 `ddd4j-spring`
@@ -90,7 +90,7 @@ public class MyApplication { ... }
 public class MyConfig { ... }
 ```
 
-> `@EnableDdd4j` 是 ddd4j 跨框架的统一入口。`ddd4j-spring` / `ddd4j-quarkus` / `ddd4j-javalin` 各自提供同名注解，按容器自动激活对应适配。
+> `@EnableDdd4j` 属于具体框架脚手架的启用入口。`ddd4j-spring` / `ddd4j-quarkus-cdi` / `ddd4j-guice` 只提供可复用 SPI 实现，不承载 Spring Boot starter 或自动装配。
 
 ---
 
@@ -378,9 +378,9 @@ public class SpringContext implements ApplicationContextAware {
 
 ---
 
-## 八、与 ddd4j-quarkus / ddd4j-javalin 的对照
+## 八、与 ddd4j-quarkus-cdi / ddd4j-javalin 的对照
 
-| 维度          | ddd4j-spring                               | ddd4j-quarkus       | ddd4j-javalin              |
+| 维度          | ddd4j-spring                               | ddd4j-quarkus-cdi   | ddd4j-javalin              |
 |-------------|--------------------------------------------|---------------------|----------------------------|
 | **DI 容器**   | ApplicationContext                         | Arc (CDI)           | Guice Injector             |
 | **事件发布**    | `ApplicationEventPublisher.publishEvent()` | `Event<T>.fire()`   | Guava `EventBus.post()`    |

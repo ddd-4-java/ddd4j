@@ -1,9 +1,10 @@
 # ddd4j-auth 模块架构优化方案
 
-> **审查范围**：`ddd4j-auth/` 下全部 5 个子模块（datascope / license / satoken / security / shiro）
+> **审查范围**：`ddd4j-auth/` 下全部 5 个当前子模块（license / satoken / security / shiro / spring）
 > **审查方式**：codegraph 索引 + 源码逐文件核对
-> **审查时间**：2026-06-29
-> **审查结论**：现状**未达标**，与 `ddd4j-mq` / `ddd4j-kit` 已达标模块存在系统性差距，需要一次性重构到可使用标准。
+> **审查时间**：2026-06-29；**状态校准**：2026-07-01 按当前平铺模块重新核实
+> **当前事实**：`Subject` / `SubjectKit` / `SubjectProvider` / `AuthRequest` 等契约仍位于 `ddd4j-core`；`ddd4j-auth-spring` 已提供 `SubjectRegistrar` 写回 `SubjectKit`；数据权限已迁出 auth 聚合。
+> **阅读方式**：本文保留为历史优化方案与 backlog，不再代表当前模块清单的完成态。
 
 ---
 
@@ -13,7 +14,6 @@
 
 | 子模块                    | 当前内容                                                 | 问题                                                  |
 |------------------------|------------------------------------------------------|-----------------------------------------------------|
-| `ddd4j-auth-datascope` | `DataScopeProvider` + `@RequiresDataPermissions`     | ⚠️ 与鉴权无关，是数据权限，应归 data 层                            |
 | `ddd4j-auth-license`   | TrueLicense 证书管理                                     | ⚠️ 与鉴权无关，是 License 授权，应独立                           |
 | `ddd4j-auth-satoken`   | `SaTokenSubject` + `SaTokenEnhanceAutoConfiguration` | ❌ `SaTokenSubject.getPrincipal()` 全返回 null（**未实现**） |
 | `ddd4j-auth-security`  | `SecuritySubject` + JWT 配置                           | ❌ `SecuritySubject` 所有方法返回 false/null（**空壳**）       |
@@ -51,14 +51,14 @@ public static Subject getSubject() {
 }
 ```
 
-**问题**：三个适配模块都 `@Bean public SubjectProvider subjectProvider()`，但**没有任何代码把 Bean
-写回 `SubjectKit.subjectProvider` 静态字段**。也就是说：
+**历史问题**：当时三个适配模块都 `@Bean public SubjectProvider subjectProvider()`，但**没有任何代码把 Bean
+写回 `SubjectKit.subjectProvider` 静态字段**。当前代码中 `ddd4j-auth-spring/SubjectRegistrar` 与 `ddd4j-quarkus-cdi/DddInitializer` 已覆盖该注册路径。
 
-- Spring 容器里有一个 `SubjectProvider` Bean ✅
-- 但 `SubjectKit.getSubject()` 永远抛 `IllegalStateException` ❌
-- 任何调用 `SubjectKit.getPrincipal()` 的业务代码都会 NPE/异常
+- Spring 容器里有一个 `SubjectProvider` Bean
+- 当前 Spring 桥接通过 `SubjectRegistrar` 调用 `SubjectKit.register(provider)`
+- 当前 Quarkus CDI 桥接通过 `DddInitializer` 调用 `SubjectKit.register(subjectProvider)`
 
-这是**整个 auth 模块当前不可用的根本原因**。
+这部分已从“当前不可用问题”调整为“历史问题与回归关注点”。
 
 ### 1.4 三实现完整度天差地别
 
@@ -141,7 +141,7 @@ ddd4j-auth/（重构后）
 
 【移出 auth 聚合】
 ├── ddd4j-auth-datascope → 迁移到 ddd4j-data/ddd4j-data-datascope
-└── ddd4j-auth-license   → 迁移到 ddd4j-extensions/ddd4j-extension-license
+└── ddd4j-auth-license   → 当前仍保留在 auth 聚合；如后续独立软件授权能力，再迁到新的 license/extension 模块
 ```
 
 ### 2.2 核心契约设计（以 Subject 为唯一中心）

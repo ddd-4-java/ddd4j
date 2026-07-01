@@ -6,9 +6,9 @@
 
 ## 1. 设计目标
 
-1. **ddd4j-mq 只做适配层（Port）**：零 Broker SDK，可独立单测。
-2. **Spring Messaging 作为统一消息模型**：`org.springframework.messaging.Message` 替代自定义 `MQMessage`。
-3. **实现交给成熟组件**：Spring Framework 集成库（`spring-rabbit`、`spring-kafka` 等）及各 `ddd4j-mq-*` 模块。
+1. **ddd4j-mq-core 只做纯 Java 契约层（Port）**：零 Spring、零 Broker SDK，可独立单测。
+2. **`MQMessage<T>` 作为统一消息模型**：Spring Messaging 仅在 `ddd4j-mq-spring` 桥接层出现。
+3. **实现交给成熟组件**：各 `ddd4j-mq-*` 模块适配对应 Broker 客户端或本地组件。
 4. **以 RabbitMQ Channel 确认语义为基准**，统一多 Broker 的 ack 模型。
 5. **保留 ddd4j 优秀 DX**：`MQEvent`、`@MQEventListener`、租户上下文注入、JSON 序列化约定。
 
@@ -25,7 +25,7 @@
 
 ### 2.2 不是什么
 
-- **不是** Rabbit/Kafka/Rocket 客户端实现（禁止在本模块引入 `amqp-client`、`kafka-clients` 等）。
+- **不是** Rabbit/Kafka/Rocket 客户端实现（禁止在 `ddd4j-mq-core` 引入 `amqp-client`、`kafka-clients` 等）。
 - **不是** Spring Cloud Stream 集成（归属 `ddd4j-cloud-mq-stream-*`）。
 - **不是** 任务调度器或本地内存队列。
 
@@ -39,16 +39,17 @@
 │  - 领域事件类 extends MQEvent                                     │
 │  - @MQEventListener 或 Spring Cloud Stream Consumer<Message<T>>  │
 ├─────────────────────────────────────────────────────────────────┤
-│  ddd4j-cloud-mq-stream          Spring Cloud Stream 桥接      │
-│  ddd4j-cloud-mq-stream-*        + 各 binder                   │
+│  ddd4j-cloud-mq-stream          Spring Cloud Stream 桥接（外部规划）│
+│  ddd4j-cloud-mq-stream-*        + 各 binder（外部规划）          │
 ├─────────────────────────────────────────────────────────────────┤
-│ ddd4j（Spring Framework 生态）                                    │
-│  ddd4j-mq                    纯契约 + SPI（本模块）              │
-│  ddd4j-mq-rabbitmq           spring-rabbit                      │
-│  ddd4j-mq-kafka              spring-kafka                       │
-│  ddd4j-mq-pulsar             spring-pulsar                      │
-│  ddd4j-mq-redis-stream       spring-data-redis                  │
-│  ddd4j-mq-activemq           spring-jms                         │
+│ ddd4j MQ 平铺模块                                                  │
+│  ddd4j-mq-core               纯 Java MQMessage + SPI             │
+│  ddd4j-mq-spring             Spring Message ↔ MQMessage 桥接     │
+│  ddd4j-mq-rabbitmq           RabbitMQ 适配                       │
+│  ddd4j-mq-kafka              Kafka 适配                          │
+│  ddd4j-mq-pulsar             Pulsar 适配                         │
+│  ddd4j-mq-redis-stream       Redis Stream 适配                   │
+│  ddd4j-mq-activemq           ActiveMQ 适配                       │
 │  ddd4j-mq-nats / -mqtt / -mqtt-mica / -ons / -tdmq / -sqs      │
 │  ddd4j-mq-disruptor          com.lmax:disruptor（本地）          │
 ├─────────────────────────────────────────────────────────────────┤
@@ -61,9 +62,10 @@
 
 | 模块                        | 允许依赖                                        | 禁止依赖                                |
 |---------------------------|---------------------------------------------|-------------------------------------|
-| `ddd4j-mq`                | `ddd4j-core`、`spring-messaging`             | 一切 Broker SDK、`spring-cloud-stream` |
-| `ddd4j-mq-{broker}`       | `ddd4j-mq` + 对应 Broker 客户端                  | `ddd4j-cloud-*`                     |
-| `ddd4j-cloud-mq-stream-*` | `ddd4j-mq` + `spring-cloud-stream` + binder | —                                   |
+| `ddd4j-mq-core`           | `ddd4j-core`、轻量工具依赖                         | Spring、Broker SDK、`spring-cloud-stream` |
+| `ddd4j-mq-spring`         | `ddd4j-mq-core`、Spring Framework 消息/容器桥接     | `spring-boot-autoconfigure`、`spring-cloud-stream` |
+| `ddd4j-mq-{broker}`       | `ddd4j-mq-core` + 对应 Broker 客户端              | `ddd4j-cloud-*`                     |
+| `ddd4j-cloud-mq-stream-*` | `ddd4j-mq-core` + `spring-cloud-stream` + binder | —                                   |
 
 ### 3.2 应用如何选择依赖
 
@@ -87,36 +89,38 @@
 
 ---
 
-## 4. Spring Messaging 统一消息模型
+## 4. 纯 Java MQMessage 统一消息模型
 
 ### 4.1 设计原则
 
-**`org.springframework.messaging.Message` 替代自定义 `MQMessage` 作为唯一消息类型。**
+**`MQMessage<T>` 是核心层唯一消息类型。**
 
-- `spring-messaging` 是 Spring Framework 模块（非 Spring Boot），提供 `Message`、`MessageHeaders`、`MessageBuilder` 等消息领域标准抽象
-- 核心 SPI 层和所有实现模块统一使用 `Message<?>` 作为消息载体
-- 原生消息逃生口通过 `MessageHeaders` 自定义 key 传递，不破坏类型体系
+- `ddd4j-mq-core` 不依赖 `org.springframework.messaging.*`
+- Spring 生态通过 `ddd4j-mq-spring` 的 `SpringMessageAdapter` 做双向转换
+- 原生消息逃生口通过 `MQMessage.nativeMessage()` 和 headers 传递，不破坏类型体系
 
 ### 4.2 类型映射
 
-| 概念        | Message / MessageHeaders                     |
+| 概念        | MQMessage / Headers                          |
 |-----------|----------------------------------------------|
-| 消息载体      | `org.springframework.messaging.Message<T>`   |
-| 载荷        | `Message.getPayload()`                       |
-| 消息头       | `Message.getHeaders()` (MessageHeaders)      |
-| 消息 ID     | `MessageHeaders.getId()`                     |
-| 关联 ID     | `MessageHeaders.get("ddd4j.correlation.id")` |
-| 原生消息      | `MessageHeaders.get("ddd4j.native.message")` |
+| 消息载体      | `io.ddd4j.mq.contract.MQMessage<T>`          |
+| 载荷        | `MQMessage.getPayload()`                     |
+| 消息头       | `MQMessage.getHeaders()`                     |
+| 消息 ID     | `MQMessage.getMessageId()`                   |
+| 关联 ID     | `MQMessage.getCorrelationId()`               |
+| 原生消息      | `MQMessage.getNativeMessage()`               |
 | Header 读取 | `MQMessages.headerAsString(message, key)`    |
 
 ### 4.3 依赖策略
 
 ```xml
-<!-- ddd4j-mq/pom.xml -->
+<!-- ddd4j-mq-core/pom.xml -->
 <dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-messaging</artifactId>
+    <groupId>io.ddd4j</groupId>
+    <artifactId>ddd4j-core</artifactId>
 </dependency>
+
+<!-- ddd4j-mq-spring 才引入 spring-messaging 做桥接 -->
 ```
 
 ---
@@ -155,7 +159,7 @@
 
 ## 6. MQMessages 工具类
 
-`MQMessages` 是 `Message` 的静态工具类，提供便捷操作：
+`MQMessages` 是 `MQMessage` 的静态工具类，提供便捷操作：
 
 ```java
 public final class MQMessages {
@@ -165,20 +169,20 @@ public final class MQMessages {
     public static final String HEADER_TENANT_ID = "ddd4j.tenant.id";
 
     // ── 原生消息逃生口 ──
-    public static <N> N nativeMessage(Message<?> message, Class<N> type);
+    public static <N> N nativeMessage(MQMessage<?> message, Class<N> type);
 
     // ── 便捷读取 ──
-    public static String headerAsString(Message<?> message, String key);
-    public static Object header(Message<?> message, String key);
+    public static String headerAsString(MQMessage<?> message, String key);
+    public static Object header(MQMessage<?> message, String key);
 
     // ── 构建方法 ──
-    public static <T> Message<T> of(T payload, Map<String, Object> headers);
-    public static <T> Message<T> of(T payload, Map<String, Object> headers, Object nativeMessage);
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers);
+    public static <T> MQMessage<T> of(T payload, Map<String, Object> headers, String messageId);
 
     // ── Header 提取 ──
-    public static String extractMessageId(Message<?> message);
-    public static String extractCorrelationId(Message<?> message);
-    public static String extractTenantId(Message<?> message);
+    public static String extractMessageId(MQMessage<?> message);
+    public static String extractCorrelationId(MQMessage<?> message);
+    public static String extractTenantId(MQMessage<?> message);
 }
 ```
 
@@ -567,11 +571,11 @@ public void onOrderCreated(OrderCreatedEvent event) {
 @MQEventListener(topic = "order")
 public void onOrder(OrderEvent event) { ... }
 
-// ✅ 需要 headers 时：声明 Message 参数
+// ✅ 需要 headers 时：声明 MQMessage 参数
 @MQEventListener(topic = "order")
-public void onOrder(Message<OrderEvent> message) {
+public void onOrder(MQMessage<OrderEvent> message) {
     OrderEvent event = message.getPayload();
-    String tenantId = message.getHeaders().get("ddd4j.tenant.id", String.class);
+    String tenantId = MQMessages.headerAsString(message, "ddd4j.tenant.id");
 }
 
 // ✅ 需要手动 ack 时：声明 Acknowledgment 参数
@@ -588,8 +592,8 @@ public void onOrder(OrderEvent event, MessageAcknowledgment ack) {
 // ✅ 需要完整上下文时：声明 MQConsumerContext 参数
 @MQEventListener(topic = "order")
 public void onOrder(OrderEvent event, MQConsumerContext context) {
-    Message<?> message = context.getMessage();
-    MessageHeaders headers = message.getHeaders();
+    MQMessage<?> message = context.getMessage();
+    Map<String, Object> headers = message.getHeaders();
     // ...
 }
 ```
@@ -672,7 +676,7 @@ public enum AckDisposition {
 ```java
 public final class MQConsumeTemplates {
     public static void execute(
-            Message<?> message,
+            MQMessage<?> message,
             MessageAcknowledgment ack,
             IntSupplier preCheck,              // 0=继续, 1=DISCARD, 2=DEFER
             Supplier<AckDisposition> business);

@@ -53,9 +53,8 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 - **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
 - **双轨 DDD 模型**：ActiveRecord 轨道（快速 CRUD）+ 纯净 DDD 轨道（零 ORM 依赖，支持 ES）
 - **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `BaseRepository`（数据仓库）
-- **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` SPI、`ddd4j-mq-spring` 桥接，以及 NATS / Disruptor 两个实现；其他 Broker 可按
-  `MQBrokerAdapter` 扩展
-- **三框架适配**：`ddd4j-spring` / `ddd4j-quarkus` / `ddd4j-guice` 提供 SPI 的框架实现
+- **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` 纯 Java SPI、`ddd4j-mq-spring` 桥接，以及 Kafka/RabbitMQ/RocketMQ/Redis Stream/NATS/Pulsar/ActiveMQ/MQTT/ONS/SQS/TDMQ/Disruptor 等实现
+- **三框架适配**：`ddd4j-spring` / `ddd4j-quarkus-cdi` / `ddd4j-guice` 提供 SPI 的框架实现，Web 侧由 `ddd4j-web-*` 模块承载
 - **ArchUnit 编译期守护**：9 条架构边界规则，CI 阶段强制执行分层纪律
 - **COLA / Clean Architecture 支持**：注解驱动的架构规范检查
 
@@ -65,7 +64,7 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 - **[CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)**：命令查询职责分离核心概念
 - **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
 - **[架构边界规范](./docs/architecture/architecture-boundary.md)**：ddd4j 与各框架项目的职责铁律
-- **[架构全景](./docs/architecture/architecture.md)**：模块全景、SPI 设计、双框架适配对照
+- **[架构全景](./docs/architecture/architecture.md)**：模块全景、SPI 设计、三框架适配对照
 
 ### 🏗️ 项目架构
 
@@ -80,16 +79,16 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 | `ddd4j-kit`          | 工具箱             | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                |
 | `ddd4j-ddd`          | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                            |
 | `ddd4j-data`         | 数据层抽象           | MyBatis-Plus 实现 + Spring 桥接 + 加密/数据权限/外部服务/日志                                                 |
-| `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + NATS / Disruptor 实现                                       |
-| `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + WebMVC/WebFlux 实现                                            |
+| `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + 多 Broker 实现                                               |
+| `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 实现                            |
 | `ddd4j-auth`         | 认证授权抽象          | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                    |
 | `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                    |
 | `ddd4j-spring`       | Spring 适配层      | `SpringDomainEventPublisher` `SpringContext` `SpringI18nProvider`                             |
-| `ddd4j-quarkus`      | Quarkus 适配层     | `CdiDomainEventPublisher` + CDI 实现                                                            |
+| `ddd4j-quarkus-cdi`  | Quarkus CDI 适配层 | `CdiDomainEventPublisher` `CdiSubjectProvider` `QuarkusJpaViewManager`                         |
 | `ddd4j-guice`        | Guice 适配层       | `GuiceDomainEventPublisher` + Guava EventBus                                                  |
-| `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                    |
+| `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / monitor / pf4j / qlexpress / validation                              |
 | `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                    |
-| `ddd4j-samples`      | 示例工程            | Sa-Token / Spring Security / Shiro 集成示例                                                       |
+| `ddd4j-samples`      | 示例工程            | Auth 多实现 + 多登录 + Person CQRS/ES 示例                                                         |
 
 **模块结构树**：
 
@@ -113,10 +112,23 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |----ddd4j-mq                           #消息队列抽象聚合
 |------ddd4j-mq-core                    #纯Java MQ SPI：MQEventPublisher/MQBrokerAdapter/MQListener/MQMessage
 |------ddd4j-mq-spring                  #Spring Messaging桥接：Message↔MQMessage转换
+|------ddd4j-mq-kafka                   #Kafka实现
+|------ddd4j-mq-rabbitmq                #RabbitMQ实现
+|------ddd4j-mq-rocketmq                #RocketMQ实现
+|------ddd4j-mq-redis-stream            #Redis Stream实现（Jedis/Redisson/Lettuce）
 |------ddd4j-mq-nats                    #NATS JetStream实现
+|------ddd4j-mq-pulsar                  #Apache Pulsar实现
+|------ddd4j-mq-activemq                #ActiveMQ实现
+|------ddd4j-mq-mqtt                    #MQTT实现
+|------ddd4j-mq-mqtt-mica               #Mica MQTT实现
+|------ddd4j-mq-ons                     #阿里云ONS实现
+|------ddd4j-mq-sqs                     #AWS SQS实现
+|------ddd4j-mq-tdmq                    #腾讯TDMQ实现
 |------ddd4j-mq-disruptor               #LMAX Disruptor本地MQ实现
 |----ddd4j-web                          #Web抽象聚合
 |------ddd4j-web-core                   #纯Java SPI：RequestInfo/SessionContext/IpUtils
+|------ddd4j-web-javalin                #Javalin Web适配
+|------ddd4j-web-quarkus                #Quarkus Web适配
 |------ddd4j-web-webmvc                 #Spring MVC实现：Controller/拦截器/全局异常处理
 |------ddd4j-web-webflux                #Spring WebFlux实现：响应式Controller/ErrorAttributes
 |----ddd4j-auth                         #认证/授权抽象聚合（Subject 契约定义在 ddd4j-core）
@@ -127,13 +139,12 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |------ddd4j-auth-license               #软件授权组件
 |----ddd4j-cache                        #缓存抽象及实现
 |----ddd4j-spring                       #Spring适配层：DomainEventPublisher/I18nProvider/SubjectProvider
-|----ddd4j-quarkus                      #Quarkus适配层：CDI实现
+|----ddd4j-quarkus-cdi                  #Quarkus CDI适配层：核心SPI/CQRS/EventStore适配
 |----ddd4j-guice                        #Guice适配层：Guava EventBus实现
 |----ddd4j-extensions                   #跨领域扩展
 |------ddd4j-extension-akka             #Akka Actor系统组件
 |------ddd4j-extension-excel            #Excel导入导出组件
 |------ddd4j-extension-jackson          #Jackson序列化增强组件
-|------ddd4j-extension-license          #软件授权TrueLicense组件
 |------ddd4j-extension-monitor          #监控告警：钉钉/企微机器人+日志告警
 |------ddd4j-extension-pf4j             #PF4J插件化组件
 |------ddd4j-extension-qlexpress        #QLExpress规则引擎组件
@@ -143,6 +154,8 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |--------ddd4j-sample-auth-satoken      #Sa-Token集成示例，演示SubjectKit统一鉴权入口
 |--------ddd4j-sample-auth-security     #Spring Security集成示例
 |--------ddd4j-sample-auth-shiro        #Apache Shiro集成示例
+|--------ddd4j-sample-auth-multi-login  #多登录场景示例
+|--------ddd4j-sample-cqrs-person       #Person CQRS/ES示例
 ```
 
 ### 📖 使用说明
@@ -197,7 +210,7 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 | 框架          | 适配层             | DI 容器                | 事件发布                    | Web 框架               |
 |-------------|-----------------|----------------------|-------------------------|----------------------|
 | Spring Boot | `ddd4j-spring`  | `ApplicationContext` | `AppCtx.publishEvent()` | Spring MVC / WebFlux |
-| Quarkus     | `ddd4j-quarkus` | Arc (CDI)            | `Event<T>.fire()`       | RESTEasy (JAX-RS)    |
+| Quarkus     | `ddd4j-quarkus-cdi` | Arc (CDI)        | `Event<T>.fire()`       | RESTEasy / JAX-RS    |
 | Javalin     | `ddd4j-guice`   | Guice Injector       | `EventBus.post()`       | Javalin              |
 
 #### 3. 业务项目继承父 POM

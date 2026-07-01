@@ -46,9 +46,9 @@
 | `@AutoConfiguration` 注解类                                                           | Spring Boot 自动装配入口     | `ddd4j-boot-ddd-autoconfigure` / `ddd4j-boot-auth-*-autoconfigure` |
 | `spring-boot-starter` 命名模块                                                         | Spring Boot 启动器        | 不应有此模块                                                             |
 | `BaseController` / `BaseMapperController` 子类                                       | 业务 Controller 基类属于框架胶水 | `ddd4j-spring` / `ddd4j-web-webmvc`                                |
-| 全局 `@ControllerAdvice` / `ExceptionMapper`                                         | 异常处理属于框架胶水             | `ddd4j-web-core` / `ddd4j-quarkus-web`                             |
+| 全局 `@ControllerAdvice` / `ExceptionMapper`                                         | 异常处理属于框架胶水             | `ddd4j-web-webmvc` / `ddd4j-web-webflux` / `ddd4j-web-quarkus`      |
 | `Slf4jMDCInterceptor` / `AsyncAspect` / `IdempotentKit`                            | AOP 切面属于框架胶水           | `ddd4j-spring` / `ddd4j-web-webmvc` / `ddd4j-web-webflux`          |
-| `javax.servlet` / `jakarta.servlet` import                                         | Servlet 容器属于具体框架       | `ddd4j-web-webmvc` / `ddd4j-javalin-api`                           |
+| `javax.servlet` / `jakarta.servlet` import                                         | Servlet 容器属于具体框架       | `ddd4j-web-webmvc` / `ddd4j-web-javalin`                           |
 | `com.baomidou.mybatisplus.*` import                                                | MyBatis-Plus 属于具体 ORM  | `ddd4j-data-mybatis`                                               |
 | `org.springframework.transaction.annotation.Transactional`                         | Spring 事务属于具体框架        | 改用 ddd4j 自有 `@DddTransactional`                                    |
 | `org.springframework.lang.NonNull`                                                 | Spring 工具注解            | 改用 `javax.annotation.Nonnull`                                      |
@@ -69,7 +69,7 @@
 | 框架无关注解                   | `@DddTransactional`                                                                                                                         | `ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/annotation/`     |
 | SPI 默认实现（带 `@Component`） | `SpringDomainEventPublisher` / `SpringI18nProvider` / `SpringSubjectProvider`                                                               | `ddd4j-spring/src/main/java/io/ddd4j/spring/`                            |
 | 框架上下文门面                  | `SpringContext`                                                                                                                             | `ddd4j-spring/src/main/java/io/ddd4j/spring/context/`                    |
-| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / `JavalinViewManager`                                                                     | `ddd4j-spring/cqrs/` / `ddd4j-quarkus/cqrs/` / `ddd4j-javalin-api/cqrs/` |
+| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / 下游 Javalin ViewManager                                                                  | `ddd4j-spring/cqrs/` / `ddd4j-quarkus-cdi/cqrs/` / `ddd4j-javalin`       |
 
 ---
 
@@ -101,7 +101,7 @@
 | #  | 框架            | 实现类                                                                                                                                                     | 状态           |
 |----|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
 | 12 | ddd4j-spring  | `SpringJpaViewManager` + `SpringViewScheduler` + `SpringJpaProjectionPosition` + `SpringJpaProjectionPositionRepository` + `SpringEventHandlerRegistry` | ✅ 已完成（5 个文件） |
-| 13 | ddd4j-quarkus | `QuarkusJpaViewManager` + `QuarkusJpaProjectionPosition` + `QuarkusJpaProjectionPositionRepository` + `QuarkusEventHandlerRegistry`                     | ✅ 已完成（4 个文件） |
+| 13 | ddd4j-quarkus-cdi | `QuarkusJpaViewManager` + `QuarkusJpaProjectionPosition` + `QuarkusJpaProjectionPositionRepository` + `QuarkusEventHandlerRegistry`                 | ✅ 已完成（4 个文件） |
 | 14 | ddd4j-javalin | `JavalinViewManager` + `JavalinJpaProjectionPosition` + `JavalinInMemoryProjectionPositionRepository`                                                   | ✅ 已完成（3 个文件） |
 
 ### 4.4 P2 已完成（2 项完成）
@@ -116,22 +116,24 @@
 ## 五、最终模块结构（迁移完成态）
 
 ```
-ddd4j/                                       ← 通用基础层（无 starter）
+ddd4j/                                       ← 平铺式通用基础层（无 starter）
 ├── ddd4j-annotation/                        ← 纯 Java 注解 + @CreateEvent/@UpdateEvent/@DeleteEvent
 ├── ddd4j-core/                              ← 纯 Java 契约 + cqrs/projection SPI
 ├── ddd4j-kit/                               ← 纯 Java 工具（拆分 IpKit 后零 Servlet）
 ├── ddd4j-ddd/                               ← CleanDDDLayerRules + ColaDDDLayerRules + Ddd4jBoundaryTest
-├── ddd4j-data/                              ← data-core / crypto / external / logs / datascope（纯 Java 部分）
+├── ddd4j-data/                              ← mybatis / spring / crypto / external / logs / datascope
 │   ├── ddd4j-data-mybatis/                  ← 纯 MyBatis-Plus 适配（含 @DddTransactional 注解）
-│   └── ddd4j-data-jpa/                      ← 纯 JPA 适配
-├── ddd4j-mq/                                ← 12 种 MQ 统一抽象（纯 Java）
-├── ddd4j-web/                               ← 纯 Java Web 接口（context + session SPI）
+│   ├── ddd4j-data-spring/                   ← Spring 桥接
+│   └── ddd4j-data-{crypto,datascope,external,logs}/
+├── ddd4j-mq/                                ← core/spring + 13 个 Broker/本地实现
+├── ddd4j-web/                               ← core/javalin/quarkus/webmvc/webflux
 ├── ddd4j-auth/                              ← 纯 Java 认证抽象 + SPI
-├── ddd4j-monitor/                           ← 纯 Java 监控抽象
+├── ddd4j-cache/                             ← 缓存抽象及实现
 ├── ddd4j-extensions/                        ← 纯 Java 扩展
 ├── ddd4j-spring/                            ← Spring 框架 SPI 实现（含 cqrs/ 子包）
-├── ddd4j-quarkus/                           ← Quarkus CDI 适配（含 cqrs/ 子包）
+├── ddd4j-quarkus-cdi/                       ← Quarkus CDI 适配（含 cqrs/ 子包）
 ├── ddd4j-guice/                             ← Guice 适配
+├── ddd4j-samples/                           ← Auth/CQRS 示例
 └── ddd4j-parent/                            ← Maven 父 POM
 
 ═══════════════════════════════════════════════════════════════
@@ -148,10 +150,10 @@ ddd4j-boot/                                  ← Spring Boot 框架胶水（grou
 └── ddd4j-boot-samples/
 
 ddd4j-quarkus/                               ← Quarkus 框架胶水（groupId: io.ddd4j.quarkus）
-└── ddd4j-quarkus-cdi/                       ← 待新建：@EnableDdd4jQuarkus + DddCdiExtension
+└── 各 Quarkus 专属扩展与自动装配；ddd4j 内仅保留 `ddd4j-quarkus-cdi` 通用 CDI 适配
 
 ddd4j-javalin/                               ← Javalin 框架胶水（groupId: io.ddd4j.javalin）
-└── ddd4j-javalin-api/                       ← 待新建：@EnableDdd4jJavalin + DddModule
+└── 各 Javalin 专属扩展与自动装配；ddd4j 内仅保留 `ddd4j-guice` 与 `ddd4j-web-javalin` 通用适配
 ```
 
 ---
@@ -161,7 +163,7 @@ ddd4j-javalin/                               ← Javalin 框架胶水（groupId:
 `io.ddd4j.ddd.boundary.Ddd4jBoundaryTest` 在 CI 阶段强制执行 5 条规则：
 
 1. **no_autoconfiguration_in_ddd4j**：ddd4j 全模块不得包含 `@AutoConfiguration`
-2. **no_spring_in_core_modules**：core / kit / annotation / monitor 不得依赖 `org.springframework.*`
+2. **no_spring_in_core_modules**：core / kit / annotation 不得依赖 `org.springframework.*`
 3. **no_spring_messaging_in_mq_core**：mq-core 不得依赖 `org.springframework.messaging.*`
 4. **no_spring_factories_in_core**：core 不得引用 `AutoConfiguration.imports` / `EnableAutoConfiguration`
 5. **no_hutool_all_in_core**：core 不得依赖 hutool 全量包

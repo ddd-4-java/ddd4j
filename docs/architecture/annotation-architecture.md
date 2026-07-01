@@ -3,6 +3,7 @@
 > **文档版本**：v2.0.x
 > **适用范围**：`ddd4j`（通用基础层） / `ddd4j-boot`（Spring） / `ddd4j-javalin`（Javalin） / `ddd4j-quarkus`（Quarkus）
 > **配套架构图**：参见 `architecture.md` 与 `ddd4j_architecture.html`
+> **状态校准**：当前 `ddd4j` 仓库保持平铺结构；Javalin 注解能力已收敛到 `ddd4j-guice`，Quarkus 注解/CDI 适配位于 `ddd4j-quarkus-cdi`，不再使用旧 `ddd4j-javalin-annotation` / `ddd4j-quarkus` 内部模块名。
 > **核心理念**：**只下 DDD 注解**——让业务代码只写一个 `@DomainService`，同时获得 DDD 语义 + 框架 Bean 自动注册；*
 *其他注解（auth/websocket/cache/cqrs 投影事件）保留在 ddd4j-annotation 或由具体业务模块提供**
 
@@ -72,8 +73,8 @@ public class UserDomainServiceImpl implements UserDomainService {
 |----------------------------|----------------------------------------------------------------|------------------------------------------------------------------|
 | `ddd4j-annotation`         | **通用基础注解**（纯 Java 标记 + 业务模块抽象）                                 | 零框架依赖                                                            |
 | `ddd4j-spring`             | **Spring 深度整合**：DDD 注解同名复制 + `@Service`/`@Repository` 元注解      | 用 Spring 原生注解作为**元注解**                                           |
-| `ddd4j-javalin-annotation` | **Javalin 深度整合**：DDD 注解同名复制 + Guice `@Singleton` 元注解 + 路由参数解析  | Javalin 没有注解，用 Guice `@Singleton` 作为**元注解** + 新增 Javalin 框架缺失的能力 |
-| `ddd4j-quarkus`            | **Quarkus 深度整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
+| `ddd4j-guice`              | **Javalin/Guice 整合**：DDD 注解同名复制 + Guice `@Singleton` 元注解 + 路由参数解析 | Javalin 没有注解，用 Guice `@Singleton` 作为**元注解** + 新增 Javalin 框架缺失的能力 |
+| `ddd4j-quarkus-cdi`        | **Quarkus CDI 整合**：DDD 注解同名复制 + Jakarta `@ApplicationScoped` 元注解 | 用 Jakarta CDI 原生注解作为**元注解**                                      |
 
 ---
 
@@ -627,11 +628,11 @@ public class UserController {
 
 ---
 
-## 六、Quarkus 深度整合层 `ddd4j-quarkus`
+## 六、Quarkus 深度整合层 `ddd4j-quarkus-cdi`
 
 ### 6.1 模块定位
 
-- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-quarkus/`
+- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-quarkus-cdi/`
 - **职责**：**同名复制 12 个 DDD 注解** + 用 Jakarta CDI 原生注解作为**元注解**——实现 `@DomainService` 兼顾
   `@ApplicationScoped`
 - **依赖**：`jakarta.enterprise.cdi-api`
@@ -661,7 +662,7 @@ public class UserController {
 ### 6.3 推荐的包结构（极简）
 
 ```
-ddd4j-quarkus/
+ddd4j-quarkus-cdi/
 ├── src/main/java/io/ddd4j/quarkus/annotation/
 │   └── ddd/                        ← 只有 DDD 注解同名复制（11 个）
 │       ├── DomainEntity.java
@@ -816,15 +817,15 @@ public class UserController {
 
 ---
 
-## 七、Javalin 深度整合层 `ddd4j-javalin-annotation`
+## 七、Javalin/Guice 深度整合层 `ddd4j-guice`
 
 ### 7.1 模块定位
 
-- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-javalin/ddd4j-javalin-annotation/`
+- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-guice/`
 - **职责**：**同名复制 12 个 DDD 注解** + 用 Guice `@Singleton` 作为**元注解** + **新增 Javalin 框架真正没有的路由参数解析
   **
 - **依赖**：`guice` / `javalin`（provided）
-- **当前状态**：`ddd4j-javalin-extensions/ddd4j-javalin-api` 已有 10+ 注解，应**重构为顶层模块**
+- **当前状态**：Javalin 注解与 Guice 元注解能力已收敛到 `ddd4j-guice`；Javalin Web 能力位于 `ddd4j-web-javalin`
 
 ### 7.2 核心设计原则
 
@@ -855,8 +856,8 @@ public class UserController {
 ### 7.3 推荐的包结构
 
 ```
-ddd4j-javalin-annotation/
-├── src/main/java/io/ddd4j/javalin/annotation/
+ddd4j-guice/
+├── src/main/java/io/ddd4j/guice/annotation/
 │   ├── ddd/                        ← 11 个 DDD 注解同名复制（核心）
 │   │   ├── DomainEntity.java
 │   │   ├── DomainValueObject.java
@@ -1053,13 +1054,13 @@ public class UserController {
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.ddd4j.javalin</groupId>
-        <artifactId>ddd4j-javalin-parent</artifactId>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>ddd4j-javalin-annotation</artifactId>
-    <description>ddd4j-javalin 注解模块：12 个 DDD 注解同名复制（用 Guice @Singleton 元注解融合）+ Javalin 路由参数解析</description>
+    <artifactId>ddd4j-guice</artifactId>
+    <description>ddd4j-guice 适配模块：DDD 注解同名复制（用 Guice @Singleton 元注解融合）+ Guice/Javalin 通用适配</description>
 
     <dependencies>
         <!-- 依赖 ddd4j-annotation（提供 DDDAnnotation marker） -->
@@ -1179,7 +1180,7 @@ public class UserController {
                             │
         ┌───────────────────┼───────────────────┐
         ▼                   ▼                   ▼
-   ddd4j-spring       ddd4j-guice         ddd4j-quarkus
+   ddd4j-spring       ddd4j-guice         ddd4j-quarkus-cdi
    annotation         annotation          annotation
    (DDD 注解)         (DDD 注解)          (DDD 注解)
         │                   │                   │
@@ -1244,8 +1245,8 @@ static final ArchRule domain_service_in_domain =
 |------------|------------------------------------------------------------------------------------------------|-------|
 | **Step 1** | 删除 5 个无价值注解（`@BaseAuth`/`@EnableBaseAuth`/`@Inside`/`@WebSocketMapping`/`@RedisTopic`）         | 1 天   |
 | **Step 2** | 创建 `ddd4j-spring` 模块（顶层），同名复制 12 个 DDD 注解 + 用 Spring 元注解融合                                     | 1 周   |
-| **Step 3** | 重构 `ddd4j-javalin-extensions/ddd4j-javalin-api` → 顶层 `ddd4j-javalin-annotation`（同名复制 + 路由参数解析） | 1 周   |
-| **Step 4** | 补全 `ddd4j-quarkus` 中的 Quarkus 注解实现（同名复制 DDD 注解 + 用 Jakarta 元注解融合）                              | 1 周   |
+| **Step 3** | Javalin 注解能力收敛到 `ddd4j-guice`，Javalin Web 能力收敛到 `ddd4j-web-javalin`                              | 已完成/持续补强 |
+| **Step 4** | Quarkus 注解/CDI 能力收敛到 `ddd4j-quarkus-cdi`，Quarkus Web 能力收敛到 `ddd4j-web-quarkus`                    | 已完成/持续补强 |
 | **Step 5** | 更新 ArchUnit 规则支持 3 套同名注解                                                                       | 1 周   |
 | **Step 6** | 改造 3 个 samples 业务代码使用新注解（**只写一个 DDD 注解**）                                                      | 1-2 周 |
 | **Step 7** | 编写统一使用文档 + 迁移指南                                                                                | 1 周   |
