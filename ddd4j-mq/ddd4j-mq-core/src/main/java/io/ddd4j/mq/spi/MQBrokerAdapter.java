@@ -26,13 +26,14 @@ public interface MQBrokerAdapter {
     /**
      * 创建事件发布器。
      *
-     * <p>默认实现返回构造时注入的发布器；子类可覆写。
+     * <p>适配器必须显式提供发布器，避免遗漏实现后在运行期产生延迟 NPE。
      *
      * @param props MQ 配置（预留，当前未使用）
      * @return 发布端口实现
      */
     default MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return null;
+        throw new UnsupportedOperationException(
+                getClass().getName() + " does not provide an MQEventPublisher");
     }
 
     /**

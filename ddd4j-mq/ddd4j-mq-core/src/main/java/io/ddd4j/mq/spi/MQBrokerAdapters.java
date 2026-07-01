@@ -35,12 +35,16 @@ public final class MQBrokerAdapters {
                     "No MQBrokerAdapter bean found for broker=" + configured
                             + ". Add ddd4j-cmpt-* module matching ddd4j.mq.broker.");
         }
-        return adapters.stream()
+        MQEventPublisher publisher = adapters.stream()
                 .filter(adapter -> adapter.supports(configured))
                 .findFirst()
                 .map(adapter -> adapter.createPublisher(props))
                 .orElseThrow(() -> new IllegalStateException(
                         "No MQBrokerAdapter supports broker=" + configured + ", registered=" + adapters.size()));
+        if (Objects.isNull(publisher)) {
+            throw new IllegalStateException("MQBrokerAdapter returned null publisher for broker=" + configured);
+        }
+        return publisher;
     }
 
     /**
