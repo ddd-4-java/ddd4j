@@ -11,7 +11,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * ddd4j 通用基础层边界守护。
  *
  * <p>本测试确保 ddd4j monorepo 中的所有子模块（{@code ddd4j-core}、
- * {@code ddd4j-adapter-spring}、{@code ddd4j-adapter-quarkus}、{@code ddd4j-javalin}、
+ * {@code ddd4j-runtime-spring}、{@code ddd4j-runtime-quarkus}、{@code ddd4j-javalin}、
  * {@code ddd4j-data}、{@code ddd4j-auth} 等）不会被自动装配污染。
  *
  * <p>具体规则：

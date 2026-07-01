@@ -11,7 +11,7 @@
 ## 一、重构目标（已完成）
 
 将 ddd4j 从"Spring 强耦合的单一仓库"重构为"**纯 Java 公共底座 + 三框架适配层**"，使 `ddd4j-boot`、`ddd4j-quarkus`、
-`ddd4j-javalin` 三个独立脚手架可**自由选择**继承的模块；`ddd4j-adapter-guice` 是 Javalin 侧复用的 Guice 适配层。
+`ddd4j-javalin` 三个独立脚手架可**自由选择**继承的模块；`ddd4j-runtime-guice` 是 Javalin 侧复用的 Guice 适配层。
 
 **关键原则（已落实）**：
 
@@ -38,9 +38,9 @@ ddd4j/                                                    # 平铺式纯 Java �
 │   └── ddd4j-ddd-rules                                        # DDD 架构规范（ArchUnit 增强：Clean + COLA）
 │
 ├── 三框架核心适配（与 ddd4j-core 同级）
-│   ├── ddd4j-adapter-spring                                     # Spring 框架核心适配（27 java，3 SPI + 工具类）
-│   ├── ddd4j-adapter-quarkus                                # Quarkus CDI 桥接（核心 SPI + CQRS/EventStore）
-│   └── ddd4j-adapter-guice                                      # Guice 桥接（Javalin 侧复用）
+│   ├── ddd4j-runtime-spring                                     # Spring 框架核心适配（27 java，3 SPI + 工具类）
+│   ├── ddd4j-runtime-quarkus                                # Quarkus CDI 桥接（核心 SPI + CQRS/EventStore）
+│   └── ddd4j-runtime-guice                                      # Guice 桥接（Javalin 侧复用）
 │
 ├── 业务模块聚合（pom 模块）
 │   ├── ddd4j-data/                                      # 数据抽象（6 子模块，无空壳）

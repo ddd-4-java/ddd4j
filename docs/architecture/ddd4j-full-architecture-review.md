@@ -208,8 +208,8 @@ ddd4j-annotation-api（纯 Java，零 Spring 依赖）   ← 新增
 ddd4j-annotation（向后兼容，仍 @Service 等元注解，但注释中说明）
   ↓
   ┌──── 业务项目按需选择 ────┐
-  ddd4j-adapter-spring 提供 @SpringDomainService
-  ddd4j-adapter-quarkus 提供 Quarkus DDD 构造型注解与适配实现
+  ddd4j-runtime-spring 提供 @SpringDomainService
+  ddd4j-runtime-quarkus 提供 Quarkus DDD 构造型注解与适配实现
 ```
 
 **`ddd4j-core` 拆分**：
@@ -248,25 +248,25 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 |--------------------|--------------------------------------------------------------|-------|-----------------------------------------------------|
 | `ddd4j-ddd-rules`        | clean / cola                                                 | 🟢 良好 | ArchUnit 注解驱动规则，业务项目可继承                             |
 | `ddd4j-extensions` | akka/excel/jackson/monitor/pf4j/qlexpress/validation         | 🟢 优秀 | 7 个扩展点，可按需引入                                        |
-| `ddd4j-adapter-guice`      | 1                                                            | 🟠 中等 | Guice Module + EventBus 实现，Javalin Web 能力在 `ddd4j-web-javalin` |
-| `ddd4j-adapter-quarkus`| 1                                                            | 🟡 中等 | Quarkus CDI/CQRS 核心适配已存在，Web 能力在 `ddd4j-web-quarkus` |
-| `ddd4j-adapter-spring`     | 1                                                            | 🟡 中等 | Spring 适配器实现最完整，但与 ddd4j-web-webmvc 有部分重叠           |
+| `ddd4j-runtime-guice`      | 1                                                            | 🟠 中等 | Guice Module + EventBus 实现，Javalin Web 能力在 `ddd4j-web-javalin` |
+| `ddd4j-runtime-quarkus`| 1                                                            | 🟡 中等 | Quarkus CDI/CQRS 核心适配已存在，Web 能力在 `ddd4j-web-quarkus` |
+| `ddd4j-runtime-spring`     | 1                                                            | 🟡 中等 | Spring 适配器实现最完整，但与 ddd4j-web-webmvc 有部分重叠           |
 
 ### 4.2 问题：集成模块"广而不深"
 
 `ddd4j` 内部不再追求复制一套 `ddd4j-quarkus-*` 或 `ddd4j-javalin-*` 全家桶；当前约定是平铺公共能力：
 
-- Quarkus 通用 CDI/CQRS/EventStore 适配位于 `ddd4j-adapter-quarkus`
+- Quarkus 通用 CDI/CQRS/EventStore 适配位于 `ddd4j-runtime-quarkus`
 - Quarkus Web 适配位于 `ddd4j-web/ddd4j-web-quarkus`
-- Javalin 复用 Guice DI 能力，核心适配位于 `ddd4j-adapter-guice`
+- Javalin 复用 Guice DI 能力，核心适配位于 `ddd4j-runtime-guice`
 - Javalin Web 适配位于 `ddd4j-web/ddd4j-web-javalin`
 - 具体框架专属自动装配、starter、样例放到外部 `ddd4j-quarkus` / `ddd4j-javalin`
 
 ### 4.3 改进建议
 
 1. **保持平铺模块**：公共能力保留在 `ddd4j-*` 与各 feature 聚合下，不复制 Boot 式嵌套结构
-2. **明确 Quarkus/Javalin 分工**：`ddd4j-adapter-quarkus` / `ddd4j-adapter-guice` 做核心 SPI，`ddd4j-web-*` 做 Web 适配
-3. **继续收口 Spring/Web 边界**：`ddd4j-adapter-spring` 做容器 SPI，`ddd4j-web-webmvc` / `ddd4j-web-webflux` 做 Web 能力
+2. **明确 Quarkus/Javalin 分工**：`ddd4j-runtime-quarkus` / `ddd4j-runtime-guice` 做核心 SPI，`ddd4j-web-*` 做 Web 适配
+3. **继续收口 Spring/Web 边界**：`ddd4j-runtime-spring` 做容器 SPI，`ddd4j-web-webmvc` / `ddd4j-web-webflux` 做 Web 能力
 
 ---
 
@@ -304,7 +304,7 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 外部 `ddd4j-quarkus` 的模块成熟度需要在该仓单独用 CodeGraph 复核。本仓当前只确认：
 
-- `ddd4j-adapter-quarkus` 提供通用 CDI/CQRS/EventStore 适配
+- `ddd4j-runtime-quarkus` 提供通用 CDI/CQRS/EventStore 适配
 - `ddd4j-web-quarkus` 提供 Quarkus Web 通用适配
 - starter、自动装配、Quarkus 专属样例不应回流到 `ddd4j`
 
@@ -312,7 +312,7 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 外部 `ddd4j-javalin` 的模块成熟度需要在该仓单独用 CodeGraph 复核。本仓当前只确认：
 
-- `ddd4j-adapter-guice` 提供 Guice DI/EventBus 适配
+- `ddd4j-runtime-guice` 提供 Guice DI/EventBus 适配
 - `ddd4j-web-javalin` 提供 Javalin Web 通用适配
 - Javalin 专属 starter、路由装配、样例不应回流到 `ddd4j`
 

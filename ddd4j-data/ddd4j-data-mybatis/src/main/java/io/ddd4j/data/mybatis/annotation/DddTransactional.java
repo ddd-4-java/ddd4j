@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * 写方法（save/update/delete），表示该方法需要在事务中执行。
  *
  * <p><b>框架无关设计</b>：本注解定义在 {@code ddd4j-data-mybatis}（不依赖 Spring），
- * 由各框架适配层（{@code ddd4j-adapter-spring} / {@code ddd4j-adapter-quarkus} 等）通过
+ * 由各框架适配层（{@code ddd4j-runtime-spring} / {@code ddd4j-runtime-quarkus} 等）通过
  * AOP / Interceptor Binding 识别并代理事务。
  *
  * <p><b>Spring 用法</b>：业务项目引入 {@code ddd4j-boot-spring-aspect} 后，

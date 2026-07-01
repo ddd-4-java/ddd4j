@@ -10,7 +10,7 @@
 **功能**：将 Spring Cloud Feign 调用异常统一转换为 `ServiceException`，避免业务代码到处捕获 Feign 原生异常。
 
 **未迁移原因**：依赖 `spring-cloud-starter-openfeign`（`FeignErrorDecoderFactory`），属于 Spring Cloud 生态组件，非通用 Web
-基础设施。强行引入会污染 `ddd4j-web-webmvc` / `ddd4j-adapter-spring` 的依赖树。
+基础设施。强行引入会污染 `ddd4j-web-webmvc` / `ddd4j-runtime-spring` 的依赖树。
 
 **业务项目自行引入方式**：
 

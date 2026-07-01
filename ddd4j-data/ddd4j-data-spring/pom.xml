@@ -25,7 +25,7 @@
         <!-- Spring 桥接层 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-adapter-spring</artifactId>
+            <artifactId>ddd4j-runtime-spring</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Spring TX（@Transactional 支持） -->

@@ -2,7 +2,7 @@
 
 > 基于 codegraph 对 ddd4j 2.0.x 的深度探索；2026-07-01 已同步当前索引（823 files, 13,671 nodes）
 >
-> **状态校准**：当前 `ddd4j` 仓库内的 Quarkus 通用适配模块是 `ddd4j-adapter-quarkus`，不是旧文档中的 `ddd4j-quarkus` / `ddd4j-quarkus-core`。Quarkus 专属脚手架仍归外部 `ddd4j-quarkus` 项目。
+> **状态校准**：当前 `ddd4j` 仓库内的 Quarkus 通用适配模块是 `ddd4j-runtime-quarkus`，不是旧文档中的 `ddd4j-quarkus` / `ddd4j-quarkus-core`。Quarkus 专属脚手架仍归外部 `ddd4j-quarkus` 项目。
 
 ## 一、DDD4J 2.0.x 核心架构
 
@@ -19,9 +19,9 @@ ddd4j (通用基础层)
 ├── ddd4j-web             ← Web 层 SPI
 ├── ddd4j-auth            ← 认证授权 SPI
 ├── ddd4j-cache           ← 缓存 SPI
-├── ddd4j-adapter-spring          ← Spring 框架适配
-├── ddd4j-adapter-guice           ← Guice 框架适配
-├── ddd4j-adapter-quarkus     ← Quarkus CDI 框架适配（当前评估对象）
+├── ddd4j-runtime-spring          ← Spring 框架适配
+├── ddd4j-runtime-guice           ← Guice 框架适配
+├── ddd4j-runtime-quarkus     ← Quarkus CDI 框架适配（当前评估对象）
 └── ddd4j-extensions      ← 扩展模块
 ```
 
@@ -48,19 +48,19 @@ ddd4j-core 定义纯 Java SPI 接口，由三框架各自实现：
 
 ```
 DomainEventPublisher (ddd4j-core)
-├── SpringDomainEventPublisher (ddd4j-adapter-spring)  → ApplicationEventPublisher
-├── CdiDomainEventPublisher (ddd4j-adapter-quarkus) → CDI Event<DomainEvent>
-└── GuiceDomainEventPublisher (ddd4j-adapter-guice)    → EventBus
+├── SpringDomainEventPublisher (ddd4j-runtime-spring)  → ApplicationEventPublisher
+├── CdiDomainEventPublisher (ddd4j-runtime-quarkus) → CDI Event<DomainEvent>
+└── GuiceDomainEventPublisher (ddd4j-runtime-guice)    → EventBus
 
 ViewManager (ddd4j-core)
-├── SpringJpaViewManager (ddd4j-adapter-spring)
-├── QuarkusJpaViewManager (ddd4j-adapter-quarkus)  ← 已实现
+├── SpringJpaViewManager (ddd4j-runtime-spring)
+├── QuarkusJpaViewManager (ddd4j-runtime-quarkus)  ← 已实现
 └── JavalinViewManager (ddd4j-javalin)
 
 SubjectProvider (ddd4j-core)
-├── SpringSubjectProvider (ddd4j-adapter-spring)
-├── CdiSubjectProvider (ddd4j-adapter-quarkus)
-└── GuiceSubjectProvider (ddd4j-adapter-guice)
+├── SpringSubjectProvider (ddd4j-runtime-spring)
+├── CdiSubjectProvider (ddd4j-runtime-quarkus)
+└── GuiceSubjectProvider (ddd4j-runtime-guice)
 ```
 
 ---
@@ -71,7 +71,7 @@ SubjectProvider (ddd4j-core)
 
 ```
 ddd4j/
-├── ddd4j-adapter-quarkus           ← ddd4j 内部 Quarkus CDI 通用适配
+├── ddd4j-runtime-quarkus           ← ddd4j 内部 Quarkus CDI 通用适配
 ├── ddd4j-web/ddd4j-web-quarkus ← ddd4j 内部 Quarkus Web 通用适配
 └── 外部 ddd4j-quarkus           ← Quarkus 专属脚手架、扩展与示例
 ```
@@ -100,7 +100,7 @@ public class DddCdiExtension implements Extension {
 }
 ```
 
-**注意**：该扩展位于 `ddd4j-adapter-quarkus`，依赖 `io.ddd4j.annotation.*`（来自 ddd4j 通用层）。
+**注意**：该扩展位于 `ddd4j-runtime-quarkus`，依赖 `io.ddd4j.annotation.*`（来自 ddd4j 通用层）。
 
 ### 2.4 CdiDomainEventPublisher 详细分析
 
@@ -125,7 +125,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
 ### 3.1 已完成的适配（✅）
 
-| 能力        | ddd4j-core SPI                           | ddd4j-adapter-quarkus 实现          | 状态 |
+| 能力        | ddd4j-core SPI                           | ddd4j-runtime-quarkus 实现          | 状态 |
 |-----------|------------------------------------------|-------------------------------|----|
 | DDD 注解扫描  | `@DDDAnnotation`                         | `DddCdiExtension`             | ✅  |
 | 领域事件发布    | `DomainEventPublisher`                   | `CdiDomainEventPublisher`     | ✅  |
@@ -136,7 +136,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
 ### 3.2 已实现与待补强的适配
 
-| 能力                | ddd4j-core SPI                 | ddd4j-adapter-quarkus 当前状态                  | 优先级    |
+| 能力                | ddd4j-core SPI                 | ddd4j-runtime-quarkus 当前状态                  | 优先级    |
 |-------------------|--------------------------------|---------------------------------------|--------|
 | **视图管理器**         | `ViewManager`                  | `QuarkusJpaViewManager` 已实现，需继续补强测试 | **P0** |
 | **投影位置仓储**        | `ProjectionPositionRepository` | `QuarkusJpaProjectionPositionRepository` 已实现 | **P0** |
@@ -178,11 +178,11 @@ ddd4j-core 定义了完整的 CQRS 读侧 SPI：
 - `ProjectionPositionRepository` — 投影位置持久化
 - `DddView` / `JpaView` — 视图基类
 
-`ddd4j-adapter-quarkus` 已实现核心 CQRS 读侧 SPI；当前重点应从“新增文件”转为“补测试、补样例、补边界规则”。
+`ddd4j-runtime-quarkus` 已实现核心 CQRS 读侧 SPI；当前重点应从“新增文件”转为“补测试、补样例、补边界规则”。
 
 #### 问题 4：缺少 EventStore 集成
 
-ddd4j-core 依赖 fuinorg `esc-api`（EventStore 抽象），`ddd4j-adapter-quarkus` 已提供基础配置；外部 `ddd4j-quarkus` 脚手架仍需补齐：
+ddd4j-core 依赖 fuinorg `esc-api`（EventStore 抽象），`ddd4j-runtime-quarkus` 已提供基础配置；外部 `ddd4j-quarkus` 脚手架仍需补齐：
 
 - EventStore 的 Quarkus 自动配置
 - EventStore 连接工厂
@@ -194,7 +194,7 @@ ddd4j-core 依赖 fuinorg `esc-api`（EventStore 抽象），`ddd4j-adapter-quar
 
 ### Phase 1：补全 DDD 注解扫描（1-2 天）
 
-**文件**：`ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/core/extension/DddCdiExtension.java`
+**文件**：`ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/core/extension/DddCdiExtension.java`
 
 **改动**：
 
@@ -211,20 +211,20 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 
 **当前文件**：
 
-1. `ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java`
+1. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java`
     - 已实现 `ViewManager` 接口
     - 使用 Quarkus `@Scheduled` 或 `ScheduledExecutorService` 调度视图更新
     - 注入 `EventStore`、`EntityManager`、`ProjectionPositionRepository`
 
-2. `ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java`
+2. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java`
     - 已实现 `ProjectionPosition` 接口
     - 使用 Panache 或 JPA 实体持久化
 
-3. `ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPositionRepository.java`
+3. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPositionRepository.java`
     - 已实现 `ProjectionPositionRepository` 接口
     - 使用 Panache Repository 或 JPA Repository
 
-4. `ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/ddd/cqrs/QuarkusViewScheduler.java`
+4. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/ddd/cqrs/QuarkusViewScheduler.java`
     - 承载 Quarkus 视图调度
     - 集成 Quarkus Quartz/JPA 事务管理
 
@@ -234,7 +234,7 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 
 1.
 
-`ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/ddd/config/Ddd4jEventStoreConfig.java`
+`ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/ddd/config/Ddd4jEventStoreConfig.java`
 - 当前 Quarkus EventStore 配置类
 
 2.
@@ -251,7 +251,7 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 
 **新增文件**：
 
-1. `ddd4j-adapter-quarkus/src/main/java/io/ddd4j/quarkus/core/command/QuarkusCommandBus.java`
+1. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/core/command/QuarkusCommandBus.java`
     - 已提供 CDI 命令总线实现
     - 自动发现 `@CommandExecutor` 标注的 Bean
     - 路由命令到对应的执行器
@@ -309,10 +309,10 @@ public abstract class DddCommandExecutor<CMD extends Command>
 }
 ```
 
-### 5.4 ddd4j-adapter-spring ViewManager 实现参考
+### 5.4 ddd4j-runtime-spring ViewManager 实现参考
 
 ```java
-// ddd4j-adapter-spring 中的 SpringJpaViewManager 可作为 Quarkus 实现的参考
+// ddd4j-runtime-spring 中的 SpringJpaViewManager 可作为 Quarkus 实现的参考
 // 关键差异：
 // - Spring: SchedulingConfigurer + @Scheduled
 // - Quarkus: @Scheduled 或 ScheduledExecutorService
@@ -332,7 +332,7 @@ public abstract class DddCommandExecutor<CMD extends Command>
 | **P1** | 命令总线路由                              | 1-2 天 | CQRS 写侧    |
 | **P2** | Web 控制器模板                           | 1-2 天 | REST API   |
 
-**总计预估**：当前 `ddd4j-adapter-quarkus` 已具备核心 CDI/CQRS 适配，后续主要工作应放到外部 `ddd4j-quarkus` 脚手架的 Web/MQ/Auth/Data 示例与自动装配补强。
+**总计预估**：当前 `ddd4j-runtime-quarkus` 已具备核心 CDI/CQRS 适配，后续主要工作应放到外部 `ddd4j-quarkus` 脚手架的 Web/MQ/Auth/Data 示例与自动装配补强。
 
 ---
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-runtime</artifactId>
+    <packaging>pom</packaging>
+    <description>Ddd4j 运行时绑定聚合：Spring / Quarkus / Guice 容器下的核心 SPI 实现。</description>
+
+    <modules>
+        <module>ddd4j-runtime-spring</module>
+        <module>ddd4j-runtime-quarkus</module>
+        <module>ddd4j-runtime-guice</module>
+    </modules>
+
+</project>

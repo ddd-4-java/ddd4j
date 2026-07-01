@@ -52,7 +52,7 @@ public static Subject getSubject() {
 ```
 
 **历史问题**：当时三个适配模块都 `@Bean public SubjectProvider subjectProvider()`，但**没有任何代码把 Bean
-写回 `SubjectKit.subjectProvider` 静态字段**。当前代码中 `ddd4j-auth-spring/SubjectRegistrar` 与 `ddd4j-adapter-quarkus/DddInitializer` 已覆盖该注册路径。
+写回 `SubjectKit.subjectProvider` 静态字段**。当前代码中 `ddd4j-auth-spring/SubjectRegistrar` 与 `ddd4j-runtime-quarkus/DddInitializer` 已覆盖该注册路径。
 
 - Spring 容器里有一个 `SubjectProvider` Bean
 - 当前 Spring 桥接通过 `SubjectRegistrar` 调用 `SubjectKit.register(provider)`
@@ -585,7 +585,7 @@ ddd4j-mq（已达标范式）：
 ├── ddd4j-mq-core/          ← 纯 Java SPI（零 Spring）
 ├── ddd4j-mq-kafka/         ← 纯 Java 实现（依赖 spring-kafka 但 @ConditionalOnClass 在 -spring 模块）
 ├── ddd4j-mq-spring/        ← Spring 桥接（注册 MQBrokerAdapter Bean）
-└── 与下游整合：ddd4j-adapter-spring/ddd4j-quarkus 各自提供
+└── 与下游整合：ddd4j-runtime-spring/ddd4j-quarkus 各自提供
 ```
 
 ### 8.2 当前 Spring 污染点扫描结果
@@ -635,8 +635,8 @@ ddd4j-auth/（通用脚手架，框架无关）
     ├── WebSecurityBizConfiguration.java
     └── WebSecurityJwtConfiguration.java
 
-【Spring 桥接下沉到 ddd4j-adapter-spring 或下游项目】
-ddd4j-adapter-spring/ddd4j-adapter-spring-auth/     ← 【新增】Spring 通用桥接
+【Spring 桥接下沉到 ddd4j-runtime-spring 或下游项目】
+ddd4j-runtime-spring/ddd4j-runtime-spring-auth/     ← 【新增】Spring 通用桥接
 ├── SubjectRegistrar.java           ← BeanPostProcessor 把 SubjectProvider 写回 SubjectKit
 ├── AuthSpringAutoConfiguration.java
 └── satoken/
@@ -670,7 +670,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 | 文件                                                | 迁入目标                                            | 原因                                                      |
 |---------------------------------------------------|-------------------------------------------------|---------------------------------------------------------|
-| `SaTokenEnhanceAutoConfiguration.java`            | `ddd4j-adapter-spring-auth` 或 `ddd4j-boot-auth-satoken` | 依赖 `@Configuration`/`@Bean`/`InitializingBean`          |
+| `SaTokenEnhanceAutoConfiguration.java`            | `ddd4j-runtime-spring-auth` 或 `ddd4j-boot-auth-satoken` | 依赖 `@Configuration`/`@Bean`/`InitializingBean`          |
 | `SaTokenExceptionHandler.java`                    | `ddd4j-boot-auth-satoken`                       | 依赖 `@ControllerAdvice`/`@ExceptionHandler`/`spring-web` |
 | `SaMixCheckLoginHandler` 中的 `StringUtils.hasText` | 替换为纯 Java `!str.isBlank()`                      | `org.springframework.util.StringUtils`                  |
 
@@ -756,7 +756,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
         │  + Spring 桥接      │  + Spring 桥接         │ （已含）
         ▼                    ▼                       │
 ┌──────────────────────────────────┐                 │
-│  ddd4j-adapter-spring-auth / 下游项目      │                 │
+│  ddd4j-runtime-spring-auth / 下游项目      │                 │
 │  SubjectRegistrar（注册到Kit）     │                 │
 │  SaTokenSpringAutoConfiguration   │                 │
 │  SaTokenExceptionHandler          │                 │
@@ -790,7 +790,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 | 5 | **`ddd4j-auth-satoken` 去 Spring 化**  | 移除 `spring-web` 依赖；迁出 `SaTokenEnhanceAutoConfiguration`/`SaTokenExceptionHandler`；`StringUtils.hasText` → `!str.isBlank()` |
 | 6 | **`ddd4j-auth-shiro` 去 Spring 化**    | 迁出 `WebShiroBizConfiguration`                                                                                              |
 | 7 | **新增 `ddd4j-auth-core` 纯 Java SPI**  | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider；扩展 Subject 会话能力（login/logout/refresh/verify）；新增 AuthRequest             |
-| 8 | **新增 `ddd4j-adapter-spring-auth` Spring 桥接** | `SubjectRegistrar`（BeanPostProcessor）+ 从 satoken/shiro 迁入的 AutoConfiguration                                               |
+| 8 | **新增 `ddd4j-runtime-spring-auth` Spring 桥接** | `SubjectRegistrar`（BeanPostProcessor）+ 从 satoken/shiro 迁入的 AutoConfiguration                                               |
 
 #### P2：下游整合（三容器各自实现）
 

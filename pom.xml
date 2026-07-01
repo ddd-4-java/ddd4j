@@ -87,10 +87,8 @@
         <module>ddd4j-auth</module>
         <module>ddd4j-cache</module>
 
-        <!-- 框架核心适配层：提供核心 SPI 的容器实现；自动装配留给外部脚手架 -->
-        <module>ddd4j-adapter-spring</module>
-        <module>ddd4j-adapter-quarkus</module>
-        <module>ddd4j-adapter-guice</module>
+        <!-- 运行时绑定层：提供核心 SPI 的容器实现；自动装配留给外部脚手架 -->
+        <module>ddd4j-runtime</module>
 
         <!-- 业务能力 × 框架实现模块已下沉到各自能力聚合层下，例如 ddd4j-web-*、ddd4j-mq-* -->
         <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress） -->

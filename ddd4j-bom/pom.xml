@@ -58,20 +58,25 @@
                 <version>${revision}</version>
             </dependency>
 
-            <!-- Ddd4j Framework Adapters -->
+            <!-- Ddd4j Runtime Bindings -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-adapter-spring</artifactId>
+                <artifactId>ddd4j-runtime</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-adapter-quarkus</artifactId>
+                <artifactId>ddd4j-runtime-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-adapter-guice</artifactId>
+                <artifactId>ddd4j-runtime-quarkus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-guice</artifactId>
                 <version>${revision}</version>
             </dependency>
 
