@@ -5,7 +5,7 @@ package io.ddd4j.core.cqrs.projection;
  *
  * @param <E> 事件类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public interface TypedEventHandler<E> {
 

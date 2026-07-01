@@ -17,7 +17,7 @@ import java.util.Collection;
  * 使用 CDI {@code Event<DomainEvent>} 发布领域事件。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 @Slf4j
 @ApplicationScoped

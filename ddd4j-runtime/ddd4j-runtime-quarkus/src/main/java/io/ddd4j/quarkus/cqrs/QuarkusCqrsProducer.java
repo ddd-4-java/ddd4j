@@ -17,7 +17,7 @@ import jakarta.inject.Singleton;
  * Quarkus CQRS 默认 CDI 生产者。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 @ApplicationScoped
 public class QuarkusCqrsProducer {

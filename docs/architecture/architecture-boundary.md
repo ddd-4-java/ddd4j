@@ -67,9 +67,9 @@
 | ArchUnit 规则集             | `CleanDDDLayerRules` / `ColaDDDLayerRules` / `Ddd4jBoundaryTest`                                                                            | `ddd4j-ddd-rules/`                                                             |
 | 工具类（无框架依赖）               | `MappingKit` / `JsonKit` / `IpKit`（纯 Java 解析部分）                                                                                             | `ddd4j-kit/src/main/java/`                                               |
 | 框架无关注解                   | `@DddTransactional`                                                                                                                         | `ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/annotation/`     |
-| SPI 默认实现（带 `@Component`） | `SpringDomainEventPublisher` / `SpringI18nProvider` / `SpringSubjectProvider`                                                               | `ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                            |
-| 框架上下文门面                  | `SpringContext`                                                                                                                             | `ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/context/`                    |
-| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / 下游 Javalin ViewManager                                                                  | `ddd4j-runtime-spring/cqrs/` / `ddd4j-runtime-quarkus/cqrs/` / `ddd4j-javalin`       |
+| SPI 默认实现（带 `@Component`） | `SpringDomainEventPublisher` / `SpringI18nProvider` / `SpringSubjectProvider`                                                               | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                            |
+| 框架上下文门面                  | `SpringContext`                                                                                                                             | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/context/`                    |
+| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / 下游 Javalin ViewManager                                                                  | `ddd4j-runtime/ddd4j-runtime-spring/cqrs/` / `ddd4j-runtime/ddd4j-runtime-quarkus/cqrs/` / `ddd4j-javalin`       |
 
 ---
 
@@ -79,9 +79,9 @@
 
 | # | 操作                           | 文件                                                                                                                                                                                                    | 状态    |
 |---|------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------|
-| 1 | 删除重复类                        | `ddd4j-runtime-spring/config/BaseCoreConfig.java`                                                                                                                                                             | ✅ 已删除 |
-| 2 | 删除重复类                        | `ddd4j-runtime-spring/util/HttpStatus.java`                                                                                                                                                                   | ✅ 已删除 |
-| 3 | 删除重复造轮子                      | `ddd4j-runtime-spring/properties/BasePropertySourcePostProcessor.java` + `BasePropertySource.java` + `SpringPropertySourcePostProcessor.java`                                                                 | ✅ 已删除 |
+| 1 | 删除重复类                        | `ddd4j-runtime/ddd4j-runtime-spring/config/BaseCoreConfig.java`                                                                                                                                                             | ✅ 已删除 |
+| 2 | 删除重复类                        | `ddd4j-runtime/ddd4j-runtime-spring/util/HttpStatus.java`                                                                                                                                                                   | ✅ 已删除 |
+| 3 | 删除重复造轮子                      | `ddd4j-runtime/ddd4j-runtime-spring/properties/BasePropertySourcePostProcessor.java` + `BasePropertySource.java` + `SpringPropertySourcePostProcessor.java`                                                                 | ✅ 已删除 |
 | 4 | 删除三方重复                       | `ddd4j-web/ddd4j-web-core/utils/IpUtils.java`                                                                                                                                                         | ✅ 已删除 |
 | 5 | 拆分 Kit                       | `ddd4j-kit/web/IpKit.java` 移除 Servlet 部分，新增 `parseRemoteAddr(...)` 纯 Java 方法                                                                                                                          | ✅ 已完成 |
 | 6 | 修复 MyBatis 污染                | `BaseRepositoryImpl` 移除 `@Transactional(rollbackFor=...)` + `@NonNull`，引入 `@DddTransactional` 注解                                                                                                      | ✅ 已完成 |
@@ -130,9 +130,10 @@ ddd4j/                                       ← 平铺式通用基础层（无 
 ├── ddd4j-auth/                              ← 纯 Java 认证抽象 + SPI
 ├── ddd4j-cache/                             ← 缓存抽象及实现
 ├── ddd4j-extensions/                        ← 纯 Java 扩展
-├── ddd4j-runtime-spring/                            ← Spring 框架 SPI 实现（含 cqrs/ 子包）
-├── ddd4j-runtime-quarkus/                       ← Quarkus CDI 适配（含 cqrs/ 子包）
-├── ddd4j-runtime-guice/                             ← Guice 适配
+├── ddd4j-runtime/                           ← 三框架运行时绑定聚合
+│   ├── ddd4j-runtime-spring/                ← Spring 框架 SPI 实现（含 cqrs/ 子包）
+│   ├── ddd4j-runtime-quarkus/               ← Quarkus CDI 运行时绑定（含 cqrs/ 子包）
+│   └── ddd4j-runtime-guice/                 ← Guice 运行时绑定
 ├── ddd4j-samples/                           ← Auth/CQRS 示例
 └── ddd4j-parent/                            ← Maven 父 POM
 

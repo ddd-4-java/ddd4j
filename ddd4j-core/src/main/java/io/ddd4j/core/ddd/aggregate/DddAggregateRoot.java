@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see AbstractAggregateRoot
  * @see org.fuin.ddd4j.core.ApplyEvent
- * @since 3.4.x
+ * @since 2.0.x
  */
 @Getter
 public abstract class DddAggregateRoot<ID extends AggregateRootId> extends AbstractAggregateRoot<ID> {

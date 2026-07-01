@@ -30,7 +30,7 @@ import org.fuin.cqrs4j.core.View;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see View
  * @see DddJpaView
- * @since 3.4.x
+ * @since 2.0.x
  */
 public abstract class DddView implements View {
 

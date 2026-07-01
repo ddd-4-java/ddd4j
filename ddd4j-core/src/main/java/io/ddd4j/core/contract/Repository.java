@@ -25,7 +25,7 @@ import java.util.Optional;
  * @param <Q> 查询条件类型（Query）
  * @param <P> 主键类型（Primary Key）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public interface Repository<M, Q, P extends Serializable> {
 

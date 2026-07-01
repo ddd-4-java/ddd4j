@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
  * 使用 Java 标准 {@link ResourceBundle} 加载 i18n 资源。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 @ApplicationScoped
 public class CdiI18nProvider implements I18nProvider {

@@ -1,6 +1,6 @@
 # ddd4j-runtime-spring
 
-> **ddd4j 的 Spring Framework 适配层（纯 SPI 实现）**：把 ddd4j-core 纯 Java SPI 接口（`DomainEventPublisher` /
+> **ddd4j 的 Spring Framework 运行时绑定层（纯 SPI 实现）**：把 ddd4j-core 纯 Java SPI 接口（`DomainEventPublisher` /
 `I18nProvider` / `SubjectProvider`）落地到 Spring 容器。**本模块不包含 Spring Boot 自动装配**，那是
 `ddd4j-boot-ddd-autoconfigure` 的职责。
 
@@ -50,7 +50,7 @@ ddd4j 通用基础层的架构分层遵循一个**铁律**：
 
 | 维度       | 数据                                                                     |
 |----------|------------------------------------------------------------------------|
-| **路径**   | `ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                          |
+| **路径**   | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                          |
 | **代码量**  | 26 个 Java 文件 / 2,980 行                                                 |
 | **核心定位** | SPI 接口的 Spring 实现 + 上下文门面                                              |
 | **强依赖**  | `ddd4j-core` / `ddd4j-kit` / `ddd4j-annotation` + Spring Framework 6.x |

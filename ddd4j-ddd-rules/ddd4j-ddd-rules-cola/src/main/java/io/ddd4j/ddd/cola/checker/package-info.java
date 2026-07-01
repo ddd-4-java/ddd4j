@@ -11,6 +11,6 @@
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 package io.ddd4j.ddd.cola.checker;

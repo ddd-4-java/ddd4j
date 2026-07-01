@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
  * 或业务侧替换为数据库、Redis 等持久化实现。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public class InMemoryProjectionPositionRepository implements ProjectionPositionRepository {
 

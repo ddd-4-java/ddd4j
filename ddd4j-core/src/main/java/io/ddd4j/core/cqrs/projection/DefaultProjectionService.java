@@ -6,7 +6,7 @@ import java.util.Objects;
  * 基于 {@link ProjectionPositionRepository} 的默认投影位置服务。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public class DefaultProjectionService implements ProjectionService {
 

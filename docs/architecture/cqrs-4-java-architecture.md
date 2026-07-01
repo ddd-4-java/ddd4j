@@ -426,12 +426,12 @@ public interface CommandExecutor<CONTEXT, RESULT, CMD extends Command> {
 ### 7.3 长期：双框架视图管理器
 
 ```java
-// ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/view/
+// ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/view/
 @ApplicationScoped
 public class QuarkusJpaViewManager { ...
 }
 
-// ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/view/
+// ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/view/
 public class SpringJpaViewManager implements SchedulingConfigurer { ...
 }
 ```

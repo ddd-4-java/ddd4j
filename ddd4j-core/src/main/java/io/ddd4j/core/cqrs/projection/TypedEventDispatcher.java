@@ -14,7 +14,7 @@ import java.util.Objects;
  * <p>用于替代业务代码里大量 {@code instanceof} 分支，保持读侧投影处理逻辑清晰。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public class TypedEventDispatcher {
 

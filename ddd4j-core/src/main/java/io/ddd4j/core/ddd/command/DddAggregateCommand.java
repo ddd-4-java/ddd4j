@@ -54,7 +54,7 @@ import java.io.Serial;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see AbstractAggregateCommand
  * @see AggregateCommand
- * @since 3.4.x
+ * @since 2.0.x
  */
 public abstract class DddAggregateCommand<ROOT_ID extends AggregateRootId, ENTITY_ID extends EntityId>
         extends AbstractAggregateCommand<ROOT_ID, ENTITY_ID> {

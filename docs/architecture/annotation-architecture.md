@@ -269,7 +269,7 @@ ddd4j-auth、ddd4j-websocket、ddd4j-cache）提供具体实现。
 
 ### 5.1 模块定位
 
-- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime-spring/`
+- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-spring/`
 - **职责**：**同名复制 12 个 DDD 注解** + 用 Spring 原生注解作为**元注解**——实现 `@DomainService` 兼顾 `@Service`
 - **依赖**：`spring-context`（提供元注解）
 - **使用方**：基于 ddd4j-boot 的 Spring Boot 业务项目
@@ -300,7 +300,7 @@ ddd4j-auth、ddd4j-websocket、ddd4j-cache）提供具体实现。
 ### 5.3 推荐的包结构（极简）
 
 ```
-ddd4j-runtime-spring/
+ddd4j-runtime/ddd4j-runtime-spring/
 ├── src/main/java/io/ddd4j/spring/annotation/
 │   ├── DomainEntity.java       // 兼顾 @Component
 │   ├── DomainValueObject.java  // 兼顾 @Component
@@ -632,7 +632,7 @@ public class UserController {
 
 ### 6.1 模块定位
 
-- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime-quarkus/`
+- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-quarkus/`
 - **职责**：**同名复制 12 个 DDD 注解** + 用 Jakarta CDI 原生注解作为**元注解**——实现 `@DomainService` 兼顾
   `@ApplicationScoped`
 - **依赖**：`jakarta.enterprise.cdi-api`
@@ -662,7 +662,7 @@ public class UserController {
 ### 6.3 推荐的包结构（极简）
 
 ```
-ddd4j-runtime-quarkus/
+ddd4j-runtime/ddd4j-runtime-quarkus/
 ├── src/main/java/io/ddd4j/quarkus/annotation/
 │   └── ddd/                        ← 只有 DDD 注解同名复制（11 个）
 │       ├── DomainEntity.java
@@ -821,7 +821,7 @@ public class UserController {
 
 ### 7.1 模块定位
 
-- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime-guice/`
+- **位置**：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/`
 - **职责**：**同名复制 12 个 DDD 注解** + 用 Guice `@Singleton` 作为**元注解** + **新增 Javalin 框架真正没有的路由参数解析
   **
 - **依赖**：`guice` / `javalin`（provided）
@@ -856,7 +856,7 @@ public class UserController {
 ### 7.3 推荐的包结构
 
 ```
-ddd4j-runtime-guice/
+ddd4j-runtime/ddd4j-runtime-guice/
 ├── src/main/java/io/ddd4j/guice/annotation/
 │   ├── ddd/                        ← 11 个 DDD 注解同名复制（核心）
 │   │   ├── DomainEntity.java

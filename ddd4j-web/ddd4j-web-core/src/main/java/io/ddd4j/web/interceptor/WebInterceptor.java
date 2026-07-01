@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * 各框架适配层（Spring MVC / Quarkus RESTEasy / Javalin）提供具体实现。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public interface WebInterceptor {
 

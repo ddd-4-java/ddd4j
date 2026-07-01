@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @param <Q> 查询条件类型
  * @param <P> 主键类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public class MybatisRepositoryAdapter<M extends Model, Q extends Query, P extends Serializable>
         implements Repository<M, Q, P> {

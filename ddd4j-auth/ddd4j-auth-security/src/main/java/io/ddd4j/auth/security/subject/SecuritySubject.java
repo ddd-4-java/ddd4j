@@ -21,7 +21,7 @@ import java.util.Objects;
  * <p>本模块<b>允许</b> Spring 依赖（Spring Security 本就是 Spring 生态组件）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public class SecuritySubject implements Subject {
 

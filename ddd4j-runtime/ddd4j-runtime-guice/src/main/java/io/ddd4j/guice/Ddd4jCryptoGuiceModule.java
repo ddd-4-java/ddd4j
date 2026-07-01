@@ -1,4 +1,4 @@
-package io.ddd4j.guice.data.crypto;
+package io.ddd4j.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

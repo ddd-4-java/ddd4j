@@ -53,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
  * }</pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 @Slf4j
 public class Ddd4jGuiceModule extends AbstractModule {

@@ -18,7 +18,7 @@ import org.fuin.cqrs4j.esc.ProjectionService;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see ProjectionService
  * @see DddEventDispatcher
- * @since 3.4.x
+ * @since 2.0.x
  */
 public abstract class DddProjectionService implements ProjectionService {
 

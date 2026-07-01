@@ -51,7 +51,7 @@ import java.io.Serial;
  * @param <ID> 事件源实体标识类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see AbstractDomainEvent
- * @since 3.4.x
+ * @since 2.0.x
  */
 public abstract class DddDomainEvent<ID extends EntityId> extends AbstractDomainEvent<ID> {
 

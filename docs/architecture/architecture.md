@@ -194,7 +194,7 @@ public interface Repository<M, Q, P extends Serializable> {
 | `DddAggregateRoot`                   | 继承 `AbstractAggregateRoot` | 增加 `createTime`/`updateTime` 审计字段（无 ORM 注解） |
 | `DddDomainEvent`                     | 继承 `AbstractDomainEvent`   | 兼容 Jackson 序列化                              |
 | `DddEventStoreRepository`            | 继承 `EventStoreRepository`  | 封装乐观锁冲突重试（最多 3 次）                           |
-| `DomainEventPublisher` (ddd4j 自创)    | —                          | 三框架适配（Spring/CDI/Guice）                     |
+| `DomainEventPublisher` (ddd4j 自创)    | —                          | 三框架运行时绑定（Spring/CDI/Guice）                     |
 | `MQEventPublisher` (ddd4j 自创)        | —                          | 12 种 MQ 统一抽象                                |
 | `BaseAggregateController` (ddd4j 自创) | —                          | 通用 CRUD + 业务行为（disable/enable）              |
 | `CleanDDDLayerRules` (ddd4j 自创)      | —                          | ArchUnit 编译期架构守护                            |
@@ -211,7 +211,7 @@ public interface Repository<M, Q, P extends Serializable> {
 | **P0** | `MultiCommandExecutor` 组合                           | 复用 fuinorg 实现                     |
 | **P0** | `Result<T>` + `ResultType`                          | 与 `R<T>` 区分（业务结果 vs HTTP 结果）      |
 | **P1** | `View` / `JpaView` 接口                               | 抽取到 `ddd4j-core`                  |
-| **P1** | `ViewManager` 抽象                                    | ddd4j-runtime-spring / ddd4j-runtime-quarkus 各自实现 |
+| **P1** | `ViewManager` 抽象                                    | ddd4j-runtime/ddd4j-runtime-spring 与 ddd4j-runtime/ddd4j-runtime-quarkus 各自实现 |
 | **P1** | `ProjectionPosition` 投影位置持久化                        | 抽取为公共 SPI                         |
 | **P1** | `@CreateEvent` / `@UpdateEvent` / `@DeleteEvent` 注解 | 复用 fuinorg                        |
 | **P2** | 多序列化器（JAXB / JSON-B）                                | 视业务需求                             |
@@ -219,9 +219,9 @@ public interface Repository<M, Q, P extends Serializable> {
 
 ---
 
-## 七、双框架适配对照表
+## 七、三框架运行时绑定对照表
 
-| 维度         | ddd4j-runtime-spring                        | ddd4j-runtime-quarkus         | ddd4j-javalin     |
+| 维度         | ddd4j-runtime-spring                        | ddd4j-runtime-quarkus         | ddd4j-runtime-guice     |
 |------------|-------------------------------------|---------------------------|-------------------|
 | **DI 容器**  | `ApplicationContext`                | `Arc` (CDI)               | `Guice Injector`  |
 | **事件发布**   | `ApplicationContext.publishEvent()` | `Event<T>.fire()`         | `EventBus.post()` |

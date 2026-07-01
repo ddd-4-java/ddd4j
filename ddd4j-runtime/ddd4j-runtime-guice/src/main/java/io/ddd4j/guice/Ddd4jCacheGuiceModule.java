@@ -1,4 +1,4 @@
-package io.ddd4j.guice.cache;
+package io.ddd4j.guice;
 
 import com.google.inject.AbstractModule;
 import io.ddd4j.cache.CacheKit;

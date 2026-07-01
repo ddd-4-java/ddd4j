@@ -19,9 +19,10 @@ ddd4j (通用基础层)
 ├── ddd4j-web             ← Web 层 SPI
 ├── ddd4j-auth            ← 认证授权 SPI
 ├── ddd4j-cache           ← 缓存 SPI
-├── ddd4j-runtime-spring          ← Spring 框架适配
-├── ddd4j-runtime-guice           ← Guice 框架适配
-├── ddd4j-runtime-quarkus     ← Quarkus CDI 框架适配（当前评估对象）
+├── ddd4j-runtime                 ← 三框架运行时绑定聚合
+│   ├── ddd4j-runtime-spring      ← Spring 框架运行时绑定
+│   ├── ddd4j-runtime-guice       ← Guice 框架运行时绑定
+│   └── ddd4j-runtime-quarkus     ← Quarkus CDI 运行时绑定（当前评估对象）
 └── ddd4j-extensions      ← 扩展模块
 ```
 
@@ -194,7 +195,7 @@ ddd4j-core 依赖 fuinorg `esc-api`（EventStore 抽象），`ddd4j-runtime-quar
 
 ### Phase 1：补全 DDD 注解扫描（1-2 天）
 
-**文件**：`ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/core/extension/DddCdiExtension.java`
+**文件**：`ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/core/extension/DddCdiExtension.java`
 
 **改动**：
 
@@ -211,20 +212,20 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 
 **当前文件**：
 
-1. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java`
+1. `ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java`
     - 已实现 `ViewManager` 接口
     - 使用 Quarkus `@Scheduled` 或 `ScheduledExecutorService` 调度视图更新
     - 注入 `EventStore`、`EntityManager`、`ProjectionPositionRepository`
 
-2. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java`
+2. `ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java`
     - 已实现 `ProjectionPosition` 接口
     - 使用 Panache 或 JPA 实体持久化
 
-3. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPositionRepository.java`
+3. `ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPositionRepository.java`
     - 已实现 `ProjectionPositionRepository` 接口
     - 使用 Panache Repository 或 JPA Repository
 
-4. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/ddd/cqrs/QuarkusViewScheduler.java`
+4. `ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/ddd/cqrs/QuarkusViewScheduler.java`
     - 承载 Quarkus 视图调度
     - 集成 Quarkus Quartz/JPA 事务管理
 
@@ -234,7 +235,7 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 
 1.
 
-`ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/ddd/config/Ddd4jEventStoreConfig.java`
+`ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/ddd/config/Ddd4jEventStoreConfig.java`
 - 当前 Quarkus EventStore 配置类
 
 2.
@@ -251,7 +252,7 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 
 **新增文件**：
 
-1. `ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/core/command/QuarkusCommandBus.java`
+1. `ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/core/command/QuarkusCommandBus.java`
     - 已提供 CDI 命令总线实现
     - 自动发现 `@CommandExecutor` 标注的 Bean
     - 路由命令到对应的执行器

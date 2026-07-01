@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see Query#doFills(List)
- * @since 3.4.x
+ * @since 2.0.x
  */
 @Intercepts({@Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})})
 public class ModelsFillsPlugin implements Interceptor {

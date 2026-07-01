@@ -6,6 +6,6 @@
  * 用户通过 {@code Ddd4jGuiceModule} 一行启用全部 SPI。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 package io.ddd4j.guice;

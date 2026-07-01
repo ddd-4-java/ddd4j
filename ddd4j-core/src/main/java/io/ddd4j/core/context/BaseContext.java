@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see ThreadContext 线程级上下文
  * @see I18nKit 国际化上下文
- * @since 3.4.x
+ * @since 2.0.x
  */
 @UtilityClass
 public class BaseContext {

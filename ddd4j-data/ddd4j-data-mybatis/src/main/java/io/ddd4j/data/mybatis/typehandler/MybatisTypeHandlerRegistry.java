@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 本注册表仅提供 core SPI 的统一查询入口，供非 MyBatis 场景或框架适配层使用。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 @SuppressWarnings("unchecked")
 public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {

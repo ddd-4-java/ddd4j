@@ -11,7 +11,7 @@ import java.util.Objects;
  * 对齐 Sa-Token 的 {@code SaLoginParameter}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public class AuthRequest {
 

@@ -36,7 +36,7 @@ import java.util.Objects;
  * </pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class InsertIgnorePlugin implements Interceptor {

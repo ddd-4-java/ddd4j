@@ -47,7 +47,7 @@ import org.fuin.esc.api.EventStore;
  * @param <A>  聚合根类型（必须是 {@link DddAggregateRoot} 子类）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see EventStoreRepository
- * @since 3.4.x
+ * @since 2.0.x
  */
 public abstract class DddEventStoreRepository<ID extends AggregateRootId, A extends DddAggregateRoot<ID>> extends EventStoreRepository<ID, A> {
 

@@ -64,7 +64,7 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 - **[CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)**：命令查询职责分离核心概念
 - **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
 - **[架构边界规范](./docs/architecture/architecture-boundary.md)**：ddd4j 与各框架项目的职责铁律
-- **[架构全景](./docs/architecture/architecture.md)**：模块全景、SPI 设计、三框架适配对照
+- **[架构全景](./docs/architecture/architecture.md)**：模块全景、SPI 设计、三框架运行时绑定对照
 
 ### 🏗️ 项目架构
 

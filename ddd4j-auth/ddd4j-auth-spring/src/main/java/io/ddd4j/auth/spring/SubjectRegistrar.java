@@ -16,7 +16,7 @@ import org.springframework.core.Ordered;
  * 但没有任何代码写回 SubjectKit.subjectProvider 静态字段。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public class SubjectRegistrar implements BeanPostProcessor, Ordered {
 

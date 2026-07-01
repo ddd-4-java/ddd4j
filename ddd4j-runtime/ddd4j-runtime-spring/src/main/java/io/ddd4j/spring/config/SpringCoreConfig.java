@@ -15,7 +15,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * 已废弃，请使用本类。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 @Configuration(proxyBeanMethods = false)
 @EnableAspectJAutoProxy(exposeProxy = true)

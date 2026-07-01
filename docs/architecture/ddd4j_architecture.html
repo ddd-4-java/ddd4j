@@ -420,7 +420,7 @@
                 <text fill="#555" font-size="11" x="0" y="20">• 业务应用：ddd4j-boot（Spring）· ddd4j-quarkus ·
                     ddd4j-javalin 三框架并列
                 </text>
-                <text fill="#555" font-size="11" x="0" y="38">• 适配层：ddd4j-runtime-spring / ddd4j-runtime-quarkus / ddd4j-runtime-guice 各自实现
+                <text fill="#555" font-size="11" x="0" y="38">• 运行时绑定层：ddd4j-runtime 聚合 ddd4j-runtime-spring / ddd4j-runtime-quarkus / ddd4j-runtime-guice
                     DomainEventPublisher / MQEventPublisher / Repository
                 </text>
                 <text fill="#555" font-size="11" x="0" y="56">• 通用层：core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（12 种
@@ -514,7 +514,7 @@
         <li><strong>封装</strong> cqrs-4-java 的 <code>EventStoreRepository</code> → ddd4j
             <code>DddEventStoreRepository</code>（乐观锁冲突重试 3 次）
         </li>
-        <li><strong>扩展</strong> cqrs-4-java 的 Command/View 抽象到 ddd4j 三框架适配层</li>
+        <li><strong>扩展</strong> cqrs-4-java 的 Command/View 抽象到 ddd4j 三框架运行时绑定层</li>
         <li><strong>依赖</strong> esc-api 作为 EventStore 抽象接口（EventStoreDB / KurrentDB）</li>
     </ul>
 
@@ -577,7 +577,7 @@
         <li><strong>站在巨人肩膀上</strong>：直接复用 fuinorg ddd-4-java + cqrs-4-java + esc-api</li>
     </ul>
 
-    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">三框架适配对照</h2>
+    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">三框架运行时绑定对照</h2>
     <table style="width:100%; border-collapse:collapse; font-size:13px;">
         <tr style="background:#F2F2F7;">
             <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">维度</th>

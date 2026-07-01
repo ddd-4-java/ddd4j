@@ -13,7 +13,7 @@ import java.util.Objects;
  * <p>该实现依赖 Servlet RequestContext，归属 {@code ddd4j-web-webmvc}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.4.x
+ * @since 2.0.x
  */
 public final class WebUtils {
 

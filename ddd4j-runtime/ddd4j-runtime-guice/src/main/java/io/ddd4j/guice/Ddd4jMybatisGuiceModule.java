@@ -1,4 +1,4 @@
-package io.ddd4j.guice.data.mybatis;
+package io.ddd4j.guice;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
