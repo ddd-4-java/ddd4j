@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -41,7 +42,7 @@ public class DddAnnotationModule extends AbstractModule {
 
     public DddAnnotationModule(boolean enableClassGraph, String... basePackages) {
         this.enableClassGraph = enableClassGraph;
-        this.basePackages = basePackages == null ? new String[0] : basePackages;
+        this.basePackages = Objects.isNull(basePackages) ? new String[0] : basePackages;
     }
 
     @Override

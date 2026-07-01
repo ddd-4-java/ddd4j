@@ -1,5 +1,7 @@
 package io.ddd4j.spring.util;
 
+import java.util.Objects;
+
 import cn.hutool.core.collection.CollUtil;
 import lombok.experimental.UtilityClass;
 
@@ -29,7 +31,7 @@ public final class MappingKit {
     }
 
     public <T, S> T convert(S source) {
-        if (java.util.Objects.isNull(source)) {
+        if (Objects.isNull(source)) {
             return null;
         }
         Class<T> targetClass = get(source.getClass());

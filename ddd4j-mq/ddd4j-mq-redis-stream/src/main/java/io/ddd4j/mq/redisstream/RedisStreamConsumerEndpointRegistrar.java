@@ -51,11 +51,11 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
         String base = hasText(definition.getNamespace())
                 ? definition.getNamespace() + concat + definition.getTopic()
                 : definition.getTopic();
-        return java.util.Objects.isNull(tag) ? base : base + concat + tag;
+        return Objects.isNull(tag) ? base : base + concat + tag;
     }
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
@@ -116,7 +116,7 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
 
         private void stop() {
             running.set(false);
-            if (java.util.Objects.nonNull(executor)) {
+            if (Objects.nonNull(executor)) {
                 executor.shutdownNow();
             }
         }
@@ -129,7 +129,7 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
                         properties.getCount(),
                         properties.getBlockMillis(),
                         streams);
-                if (java.util.Objects.isNull(records) || records.isEmpty()) {
+                if (Objects.isNull(records) || records.isEmpty()) {
                     continue;
                 }
                 records.forEach((stream, entries) -> entries.forEach(entry -> consume(stream, entry)));

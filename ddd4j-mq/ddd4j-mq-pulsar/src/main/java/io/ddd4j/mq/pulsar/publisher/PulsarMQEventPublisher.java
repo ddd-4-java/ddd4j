@@ -36,11 +36,11 @@ public class PulsarMQEventPublisher implements MQEventPublisher {
     }
 
     private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
+        if (Objects.isNull(values)) {
             return null;
         }
         for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+            if (Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
                 return v;
             }
         }
@@ -57,13 +57,13 @@ public class PulsarMQEventPublisher implements MQEventPublisher {
             TypedMessageBuilder<byte[]> builder = p.newMessage()
                     .value(serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8))
                     .property(MQMessages.HEADER_DESTINATION_TOPIC, destination.getTopic());
-            if (java.util.Objects.nonNull(event.getMsgId())) {
+            if (Objects.nonNull(event.getMsgId())) {
                 builder.property(MQMessages.HEADER_MESSAGE_ID, event.getMsgId());
             }
-            if (java.util.Objects.nonNull(event.getTenantId())) {
+            if (Objects.nonNull(event.getTenantId())) {
                 builder.property(MQMessages.HEADER_TENANT_ID, event.getTenantId());
             }
-            if (java.util.Objects.nonNull(event.getTag())) {
+            if (Objects.nonNull(event.getTag())) {
                 builder.property(MQMessages.HEADER_DESTINATION_TAG, event.getTag());
             }
             builder.sendAsync();
@@ -74,7 +74,7 @@ public class PulsarMQEventPublisher implements MQEventPublisher {
 
     private synchronized Producer<byte[]> producer(String topic) throws Exception {
         Producer<byte[]> p = producer;
-        if (java.util.Objects.isNull(p)) {
+        if (Objects.isNull(p)) {
             p = client.newProducer(Schema.BYTES)
                     .topic(topic)
                     .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)

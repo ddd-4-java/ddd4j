@@ -32,12 +32,12 @@ public class MqttConsumerEndpointRegistrar {
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
         try {
-            String topic = java.util.Objects.isNull(definition.getTopic()) ? "ddd4j/default/topic" : definition.getTopic();
+            String topic = Objects.isNull(definition.getTopic()) ? "ddd4j/default/topic" : definition.getTopic();
             String tag = io.ddd4j.mq.registry.MQTagMatcher.findIncludes(definition.getTags())
                     .stream().findFirst().orElse(null);
             // MQTT 通配符：监听 tag=foo 的，使用 foo/#；仅监听主 topic，使用 topic
-            String subscribeTopic = (java.util.Objects.isNull(tag)) ? topic : topic + "/#";
-            if (java.util.Objects.nonNull(definition.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(definition.getNamespace())) {
+            String subscribeTopic = (Objects.isNull(tag)) ? topic : topic + "/#";
+            if (Objects.nonNull(definition.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(definition.getNamespace())) {
                 subscribeTopic = definition.getNamespace() + "/" + subscribeTopic;
             }
             client.setCallback(new MqttCallback() {
@@ -71,7 +71,7 @@ public class MqttConsumerEndpointRegistrar {
         }
         Map<String, Object> headers = new HashMap<>();
         headers.put(MQMessages.HEADER_DESTINATION_TOPIC, def.getTopic());
-        if (java.util.Objects.nonNull(tag)) {
+        if (Objects.nonNull(tag)) {
             headers.put(MQMessages.HEADER_DESTINATION_TAG, tag);
         }
         headers.put(MqttMessageAcknowledgment.HEADER_MQTT_MESSAGE, message);

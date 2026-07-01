@@ -38,25 +38,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
-        <!-- JWT 扩展依赖待 hiwepy 3.3.x 发布后启用。 -->
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <!-- 排除依赖未发布 hiwepy 私仓的 JWT 扩展类，待 3.3.x 发布后移除 exclusion -->
-                    <excludes>
-                        <exclude>**/jwt/**</exclude>
-                        <exclude>**/WebSecurityJwtConfiguration.java</exclude>
-                        <exclude>**/WebSecurityBizConfiguration.java</exclude>
-                        <exclude>**/SecurityConstants.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

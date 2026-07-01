@@ -61,7 +61,7 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
                     .id(StreamMessageId.NEWEST)
                     .makeStream());
         } catch (RedisException ex) {
-            if (java.util.Objects.isNull(ex.getMessage()) || !ex.getMessage().contains("BUSYGROUP")) {
+            if (Objects.isNull(ex.getMessage()) || !ex.getMessage().contains("BUSYGROUP")) {
                 throw ex;
             }
         }
@@ -82,7 +82,7 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
                     StreamReadGroupArgs.neverDelivered()
                             .count(count)
                             .timeout(Duration.ofMillis(blockMillis)));
-            if (java.util.Objects.isNull(records) || records.isEmpty()) {
+            if (Objects.isNull(records) || records.isEmpty()) {
                 continue;
             }
             List<RedisStreamRecord> normalized = new ArrayList<>();

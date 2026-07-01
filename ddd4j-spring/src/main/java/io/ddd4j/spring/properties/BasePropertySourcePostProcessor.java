@@ -1,5 +1,7 @@
 package io.ddd4j.spring.properties;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.Ordered;
@@ -24,7 +26,7 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
                     .addLast(new PropertySource<>("ddd4j-app-props", System.getProperties()) {
                         @Override
                         public Object getProperty(String name) {
-                            if (java.util.Objects.nonNull(name) && name.startsWith("ddd4j.")) {
+                            if (Objects.nonNull(name) && name.startsWith("ddd4j.")) {
                                 return System.getProperty(name);
                             }
                             return null;

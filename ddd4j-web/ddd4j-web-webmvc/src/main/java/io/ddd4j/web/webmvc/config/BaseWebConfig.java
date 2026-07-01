@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.config;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.RequestInterceptor;
 import io.ddd4j.core.config.BaseCoreProperties;
@@ -86,7 +88,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     public void addInterceptors(InterceptorRegistry registry) {
-        if (java.util.Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {
+        if (Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {
             baseWebInterceptors.forEach(baseInterceptor -> {
                 log.debug("Loading {}", baseInterceptor.getClass().getSimpleName());
                 registry.addInterceptor(baseInterceptor).addPathPatterns(baseInterceptor.pathPatterns()).excludePathPatterns(baseInterceptor.excludePathPatterns());

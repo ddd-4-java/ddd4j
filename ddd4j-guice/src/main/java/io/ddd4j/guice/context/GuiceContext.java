@@ -55,7 +55,7 @@ public class GuiceContext {
      * 获取 Injector（阻塞等待初始化完成）
      */
     public static Injector getInjector() {
-        if (java.util.Objects.isNull(injector)) {
+        if (Objects.isNull(injector)) {
             try {
                 INIT_SIGNAL.await();
             } catch (InterruptedException e) {
@@ -70,7 +70,7 @@ public class GuiceContext {
      * 设置 Injector（应用启动时调用一次）
      */
     public static void setInjector(Injector inj) {
-        if (java.util.Objects.nonNull(injector)) {
+        if (Objects.nonNull(injector)) {
             log.warn("GuiceContext already initialized, overwriting existing Injector");
         }
         injector = inj;
@@ -133,17 +133,17 @@ public class GuiceContext {
     public static String getProperty(String key, String defaultValue) {
         // 优先从系统属性获取
         String value = System.getProperty(key);
-        if (java.util.Objects.nonNull(value)) {
+        if (Objects.nonNull(value)) {
             return value;
         }
         // 再从环境变量获取
         value = System.getenv(key);
-        if (java.util.Objects.nonNull(value)) {
+        if (Objects.nonNull(value)) {
             return value;
         }
         // 再从自定义属性获取
         Object attr = ATTRIBUTES.get(key);
-        if (java.util.Objects.nonNull(attr)) {
+        if (Objects.nonNull(attr)) {
             return attr.toString();
         }
         return defaultValue;
@@ -167,7 +167,7 @@ public class GuiceContext {
      * 判断 Injector 是否已初始化
      */
     public static boolean isInitialized() {
-        return java.util.Objects.nonNull(injector);
+        return Objects.nonNull(injector);
     }
 
     /**

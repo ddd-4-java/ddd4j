@@ -1,5 +1,7 @@
 package io.ddd4j.sample.auth.multilogin.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.auth.multilogin.subject.InMemorySubject;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,7 +27,7 @@ public class BearerTokenSubjectFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
-        if (java.util.Objects.nonNull(authorization) && authorization.startsWith(BEARER_PREFIX)) {
+        if (Objects.nonNull(authorization) && authorization.startsWith(BEARER_PREFIX)) {
             subject.bind(authorization.substring(BEARER_PREFIX.length()));
         }
         try {

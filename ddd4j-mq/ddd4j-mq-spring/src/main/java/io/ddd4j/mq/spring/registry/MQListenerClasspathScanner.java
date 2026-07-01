@@ -1,5 +1,7 @@
 package io.ddd4j.mq.spring.registry;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.annotation.MQEventListener;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -41,11 +43,11 @@ public final class MQListenerClasspathScanner {
 
         for (String beanName : beanNames) {
             BeanDefinition beanDefinition = beanDefinitionLookup.apply(beanName);
-            if (java.util.Objects.isNull(beanDefinition)) {
+            if (Objects.isNull(beanDefinition)) {
                 continue;
             }
             Class<?> beanClass = resolveBeanClass(beanDefinition, classLoader);
-            if (java.util.Objects.isNull(beanClass) || isInfrastructureClass(beanClass)) {
+            if (Objects.isNull(beanClass) || isInfrastructureClass(beanClass)) {
                 continue;
             }
             scanClass(beanName, beanClass, consumer);
@@ -59,11 +61,11 @@ public final class MQListenerClasspathScanner {
         List<Method> found = new ArrayList<>();
         for (Method method : beanClass.getDeclaredMethods()) {
             MQEventListener annotation = AnnotationUtils.findAnnotation(method, MQEventListener.class);
-            if (java.util.Objects.isNull(annotation)) {
+            if (Objects.isNull(annotation)) {
                 continue;
             }
             found.add(method);
-            if (java.util.Objects.nonNull(consumer)) {
+            if (Objects.nonNull(consumer)) {
                 consumer.accept(beanName, method);
             }
         }
@@ -75,9 +77,9 @@ public final class MQListenerClasspathScanner {
      */
     public static Class<?> resolveBeanClass(BeanDefinition beanDefinition, ClassLoader classLoader) {
         String className = beanDefinition.getBeanClassName();
-        if (!StringUtils.hasText(className) && java.util.Objects.nonNull(beanDefinition.getResolvableType())) {
+        if (!StringUtils.hasText(className) && Objects.nonNull(beanDefinition.getResolvableType())) {
             Class<?> resolved = beanDefinition.getResolvableType().resolve();
-            if (java.util.Objects.nonNull(resolved)) {
+            if (Objects.nonNull(resolved)) {
                 return resolved;
             }
         }

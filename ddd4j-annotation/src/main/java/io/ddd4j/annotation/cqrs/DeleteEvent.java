@@ -18,7 +18,9 @@ import java.lang.annotation.Target;
  *     @DeleteEvent(OrderDeletedEvent.class)
  *     public void onOrderDeleted(EntityManager em, OrderDeletedEvent event) {
  *         OrderListEntry entry = em.find(OrderListEntry.class, event.getEntityId());
- *         if (entry != null) em.remove(entry);
+ *         if (Objects.nonNull(entry)) {
+ *             em.remove(entry);
+ *         }
  *     }
  * }
  * }</pre>

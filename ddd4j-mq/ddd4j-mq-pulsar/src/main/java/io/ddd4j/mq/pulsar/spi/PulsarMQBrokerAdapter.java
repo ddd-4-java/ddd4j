@@ -62,7 +62,7 @@ public class PulsarMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new PulsarMQEventPublisher(client(), properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
+        return new PulsarMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -72,16 +72,16 @@ public class PulsarMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         Object pulsarMsg = message.header(PulsarMessageAcknowledgment.HEADER_PULSAR_MESSAGE);
         if (pulsarMsg instanceof org.apache.pulsar.client.api.Message<?> m) {
             Object idObj = message.header(PulsarMessageAcknowledgment.HEADER_PULSAR_MESSAGE_ID);
-            String id = java.util.Objects.isNull(idObj) ? null : String.valueOf(idObj);
+            String id = Objects.isNull(idObj) ? null : String.valueOf(idObj);
             Object consumerObj = message.header(PulsarMessageAcknowledgment.HEADER_PULSAR_CONSUMER);
             org.apache.pulsar.client.api.Consumer<?> c = consumerObj instanceof org.apache.pulsar.client.api.Consumer<?> cons ? cons : null;
-            if (java.util.Objects.nonNull(c)) {
+            if (Objects.nonNull(c)) {
                 return new PulsarMessageAcknowledgment(c, m, id, null);
             }
         }
@@ -96,7 +96,7 @@ public class PulsarMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() throws Exception {
         PulsarClient c = clientRef.get();
-        if (java.util.Objects.nonNull(c)) {
+        if (Objects.nonNull(c)) {
             try {
                 c.close();
             } finally {

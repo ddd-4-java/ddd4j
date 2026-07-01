@@ -39,7 +39,7 @@ public class ThreadContext {
      */
     public static Map<Object, Object> getResources() {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
-        return java.util.Objects.isNull(map) ? Collections.emptyMap() : new HashMap<>(map);
+        return Objects.isNull(map) ? Collections.emptyMap() : new HashMap<>(map);
     }
 
     /**
@@ -64,11 +64,11 @@ public class ThreadContext {
      */
     public static Object get(Object key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
-        if (java.util.Objects.isNull(map)) {
+        if (Objects.isNull(map)) {
             return null;
         }
         Object value = map.get(key);
-        if (java.util.Objects.nonNull(value) && log.isTraceEnabled()) {
+        if (Objects.nonNull(value) && log.isTraceEnabled()) {
             log.trace("Retrieved value of type [{}] for key [{}] bound to thread [{}]",
                     value.getClass().getName(), key, Thread.currentThread().getName());
         }
@@ -83,10 +83,10 @@ public class ThreadContext {
      * @param value The value to bind to the thread.
      */
     public static void put(Object key, Object value) {
-        if (java.util.Objects.isNull(key)) {
+        if (Objects.isNull(key)) {
             throw new IllegalArgumentException("key cannot be null");
         }
-        if (java.util.Objects.isNull(value)) {
+        if (Objects.isNull(value)) {
             remove(key);
             return;
         }
@@ -106,8 +106,8 @@ public class ThreadContext {
      */
     public static Object remove(Object key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
-        Object value = java.util.Objects.nonNull(map) ? map.remove(key) : null;
-        if (java.util.Objects.nonNull(value) && log.isTraceEnabled()) {
+        Object value = Objects.nonNull(map) ? map.remove(key) : null;
+        if (Objects.nonNull(value) && log.isTraceEnabled()) {
             log.trace("Removed value of type [{}] for key [{}] from thread [{}]",
                     value.getClass().getName(), key, Thread.currentThread().getName());
         }
@@ -118,7 +118,7 @@ public class ThreadContext {
 
     public static <T> T get(String key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
-        return java.util.Objects.isNull(map) ? null : (T) map.get(key);
+        return Objects.isNull(map) ? null : (T) map.get(key);
     }
 
     public static <T> T get(String key, T defaultValue) {
@@ -189,7 +189,7 @@ public class ThreadContext {
      * @param subject the Subject object to bind to the thread. If the argument is null, nothing will be done.
      */
     public static void bind(io.ddd4j.core.subject.Subject subject) {
-        if (java.util.Objects.nonNull(subject)) {
+        if (Objects.nonNull(subject)) {
             put(SUBJECT_KEY, subject);
         }
     }
@@ -214,7 +214,7 @@ public class ThreadContext {
     }
 
     private static void ensureResourcesInitialized() {
-        if (java.util.Objects.isNull(THREAD_LOCAL_POOL.get())) {
+        if (Objects.isNull(THREAD_LOCAL_POOL.get())) {
             THREAD_LOCAL_POOL.set(new ConcurrentHashMap<>(4));
         }
     }

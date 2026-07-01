@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.function;
 
+import java.util.Objects;
+
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
 import com.alibaba.qlexpress4.runtime.function.CustomFunction;
@@ -32,17 +34,17 @@ public class EndsWithFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
+        if (Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("endsWith函数需要2个参数：source和suffix");
         }
 
         Object sourceObj = getParameterValue(parameters, 0, qContext);
         Object suffixObj = getParameterValue(parameters, 1, qContext);
 
-        String source = java.util.Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
-        String suffix = java.util.Objects.nonNull(suffixObj) ? suffixObj.toString() : null;
+        String source = Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
+        String suffix = Objects.nonNull(suffixObj) ? suffixObj.toString() : null;
 
-        boolean result = java.util.Objects.nonNull(source) && source.endsWith(suffix);
+        boolean result = Objects.nonNull(source) && source.endsWith(suffix);
         return result;
     }
 
@@ -51,7 +53,7 @@ public class EndsWithFunction implements CustomFunction {
      */
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
-            if (java.util.Objects.nonNull(parameters.get(index))) {
+            if (Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);

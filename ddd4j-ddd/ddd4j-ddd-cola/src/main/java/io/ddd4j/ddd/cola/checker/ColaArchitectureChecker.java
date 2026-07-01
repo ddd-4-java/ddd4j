@@ -1,5 +1,7 @@
 package io.ddd4j.ddd.cola.checker;
 
+import java.util.Objects;
+
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -130,7 +132,7 @@ public class ColaArchitectureChecker {
      */
     private void checkArchUnitRules(String sourceRoot) {
         JavaClasses classes = importClasses(sourceRoot);
-        if (java.util.Objects.isNull(classes) || classes.isEmpty()) {
+        if (Objects.isNull(classes) || classes.isEmpty()) {
             log.debug("ArchUnit: 未找到可分析的 class 文件，跳过依赖检查");
             return;
         }
@@ -139,16 +141,16 @@ public class ColaArchitectureChecker {
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_ADAPTER, classes);
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION, classes);
         checkArchRule(ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK, classes);
-        if (java.util.Objects.nonNull(domainEntityAnnotation)) {
+        if (Objects.nonNull(domainEntityAnnotation)) {
             checkArchRule(ColaDDDLayerRules.domainEntityInDomain(domainEntityAnnotation), classes);
         }
-        if (java.util.Objects.nonNull(domainServiceAnnotation)) {
+        if (Objects.nonNull(domainServiceAnnotation)) {
             checkArchRule(ColaDDDLayerRules.domainServiceInDomain(domainServiceAnnotation), classes);
         }
-        if (java.util.Objects.nonNull(applicationServiceAnnotation)) {
+        if (Objects.nonNull(applicationServiceAnnotation)) {
             checkArchRule(ColaDDDLayerRules.applicationServiceInApp(applicationServiceAnnotation), classes);
         }
-        if (java.util.Objects.nonNull(domainRepositoryAnnotation)) {
+        if (Objects.nonNull(domainRepositoryAnnotation)) {
             checkArchRule(ColaDDDLayerRules.repositoryImplInAdapter(domainRepositoryAnnotation), classes);
         }
     }
@@ -174,7 +176,7 @@ public class ColaArchitectureChecker {
             rule.check(classes);
         } catch (AssertionError e) {
             String message = e.getMessage();
-            if (java.util.Objects.nonNull(message)) {
+            if (Objects.nonNull(message)) {
                 for (String line : message.split("\n")) {
                     String trimmed = line.trim();
                     if (!io.ddd4j.kit.lang.StrKit.isEmpty(trimmed)) {

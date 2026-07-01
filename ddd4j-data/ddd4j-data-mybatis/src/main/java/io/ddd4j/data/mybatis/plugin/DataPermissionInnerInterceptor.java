@@ -15,6 +15,8 @@
  */
 package io.ddd4j.data.mybatis.plugin;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,20 +57,20 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         MappedStatement ms = (MappedStatement) SystemMetaObject.forObject(sh)
                 .getValue("delegate.mappedStatement");
-        if (java.util.Objects.isNull(ms) || SqlCommandType.SELECT != ms.getSqlCommandType()) {
+        if (Objects.isNull(ms) || SqlCommandType.SELECT != ms.getSqlCommandType()) {
             return;
         }
         if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) {
             return;
         }
         BoundSql boundSql = sh.getBoundSql();
-        if (java.util.Objects.isNull(boundSql)) {
+        if (Objects.isNull(boundSql)) {
             return;
         }
         String originalSql = boundSql.getSql();
         try {
             String scopeCondition = provider.dataScopeCondition(ms.getId());
-            if (java.util.Objects.isNull(scopeCondition) || !org.springframework.util.StringUtils.hasLength(scopeCondition)) {
+            if (Objects.isNull(scopeCondition) || !org.springframework.util.StringUtils.hasLength(scopeCondition)) {
                 return;
             }
             Select select = (Select) CCJSqlParserUtil.parse(originalSql);
@@ -77,7 +79,7 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
             }
             Expression where = ps.getWhere();
             Expression scope = CCJSqlParserUtil.parseCondExpression(scopeCondition);
-            if (java.util.Objects.isNull(where)) {
+            if (Objects.isNull(where)) {
                 ps.setWhere(scope);
             } else {
                 ps.setWhere(new AndExpression(where, scope));

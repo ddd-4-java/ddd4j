@@ -1,5 +1,7 @@
 package io.ddd4j.core.util;
 
+import java.util.Objects;
+
 import lombok.experimental.UtilityClass;
 
 import java.util.Map;
@@ -23,7 +25,7 @@ public final class MappingKit {
 
     public static <K, V> V get(String field, K source) {
         Map<Object, Object> mappings = BEAN_MAPPINGS.get(field);
-        if (java.util.Objects.isNull(mappings)) {
+        if (Objects.isNull(mappings)) {
             return null;
         }
         return (V) mappings.get(source);

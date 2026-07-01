@@ -60,7 +60,7 @@ public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter, AutoCloseabl
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new RedisStreamMQEventPublisher(operations, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
+        return new RedisStreamMQEventPublisher(operations, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class RedisStreamMQBrokerAdapter implements MQBrokerAdapter, AutoCloseabl
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         Object stream = message.header(RedisStreamMessageAcknowledgment.HEADER_REDIS_STREAM);

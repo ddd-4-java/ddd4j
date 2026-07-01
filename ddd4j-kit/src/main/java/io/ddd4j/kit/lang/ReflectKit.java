@@ -1,5 +1,7 @@
 package io.ddd4j.kit.lang;
 
+import java.util.Objects;
+
 import cn.hutool.core.util.ReflectUtil;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -52,7 +54,7 @@ public class ReflectKit extends ReflectUtil {
                 }
                 field.setAccessible(true); // 确保可以访问私有字段
                 Object value = field.get(obj);
-                if (java.util.Objects.nonNull(value)) {
+                if (Objects.nonNull(value)) {
                     return false; // 如果某个字段不为 null，则直接返回 false
                 }
             }

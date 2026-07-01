@@ -1,5 +1,7 @@
 package io.ddd4j.extension.monitor.application.service;
 
+import java.util.Objects;
+
 import io.ddd4j.extension.monitor.domain.common.vo.CodeVersionVO;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +30,7 @@ public class CodeVersionService implements ApplicationListener<ApplicationEvent>
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (!(event instanceof ContextRefreshedEvent refreshed) || java.util.Objects.nonNull(refreshed.getApplicationContext().getParent())) {
+        if (!(event instanceof ContextRefreshedEvent refreshed) || Objects.nonNull(refreshed.getApplicationContext().getParent())) {
             return;
         }
         try {
@@ -44,7 +46,7 @@ public class CodeVersionService implements ApplicationListener<ApplicationEvent>
             this.markdownTextAppend(sb, "提交用户", CODE_VERSION.getCommitUser());
             this.markdownTextAppend(sb, "提交信息", CODE_VERSION.getCommitMessage());
             this.markdownTextAppend(sb, "提交时间", CODE_VERSION.getCommitTime());
-            if (java.util.Objects.nonNull(projectStackTrace)) {
+            if (Objects.nonNull(projectStackTrace)) {
                 this.markdownTextAppend(sb, "StackTraces", projectStackTrace);
             }
             sender.send(sb.toString());

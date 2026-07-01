@@ -1,5 +1,7 @@
 package io.ddd4j.mq.ons.ack;
 
+import java.util.Objects;
+
 import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
@@ -52,7 +54,7 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public boolean isOpen() {
-        return java.util.Objects.nonNull(context);
+        return Objects.nonNull(context);
     }
 
     @Override
@@ -103,7 +105,7 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (java.util.Objects.isNull(type)) {
+        if (Objects.isNull(type)) {
             return Optional.empty();
         }
         if (type.isInstance(context)) {

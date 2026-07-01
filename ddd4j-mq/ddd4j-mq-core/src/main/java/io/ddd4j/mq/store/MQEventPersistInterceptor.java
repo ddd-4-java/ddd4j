@@ -1,5 +1,7 @@
 package io.ddd4j.mq.store;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.ack.MQConsumeTemplates;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
@@ -36,11 +38,11 @@ public class MQEventPersistInterceptor implements MQConsumeInterceptor {
 
     @Override
     public int preCheck(MQConsumerContext context, MQMessage<?> message) {
-        if (java.util.Objects.isNull(properties) || !properties.isPersist() || java.util.Objects.isNull(storer)) {
+        if (Objects.isNull(properties) || !properties.isPersist() || Objects.isNull(storer)) {
             return MQConsumeTemplates.PRE_CONTINUE;
         }
-        Object payload = java.util.Objects.isNull(context) ? null : context.getPayload();
-        if (!(payload instanceof MQEvent) && java.util.Objects.nonNull(message)) {
+        Object payload = Objects.isNull(context) ? null : context.getPayload();
+        if (!(payload instanceof MQEvent) && Objects.nonNull(message)) {
             payload = message.getPayload();
         }
         if (payload instanceof MQEvent event) {

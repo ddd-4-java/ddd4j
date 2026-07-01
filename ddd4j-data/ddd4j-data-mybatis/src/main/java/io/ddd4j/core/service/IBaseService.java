@@ -25,6 +25,7 @@ import java.io.Serializable;
  * 本接口将在 5.0.x 版本移除。
  */
 @Deprecated(since = "3.4.x", forRemoval = true)
+@SuppressWarnings("removal")
 public interface IBaseService<T extends Model<?>> extends IService<T> {
 
     boolean setStatus(Serializable id, Serializable status);

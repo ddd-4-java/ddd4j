@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.function;
 
+import java.util.Objects;
+
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
 import com.alibaba.qlexpress4.runtime.function.CustomFunction;
@@ -32,17 +34,17 @@ public class StartsWithFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
+        if (Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("startsWith函数需要2个参数：source和prefix");
         }
 
         Object sourceObj = getParameterValue(parameters, 0, qContext);
         Object prefixObj = getParameterValue(parameters, 1, qContext);
 
-        String source = java.util.Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
-        String prefix = java.util.Objects.nonNull(prefixObj) ? prefixObj.toString() : null;
+        String source = Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
+        String prefix = Objects.nonNull(prefixObj) ? prefixObj.toString() : null;
 
-        boolean result = java.util.Objects.nonNull(source) && source.startsWith(prefix);
+        boolean result = Objects.nonNull(source) && source.startsWith(prefix);
         return result;
     }
 
@@ -51,7 +53,7 @@ public class StartsWithFunction implements CustomFunction {
      */
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
-            if (java.util.Objects.nonNull(parameters.get(index))) {
+            if (Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);

@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.utils;
 
+import java.util.Objects;
+
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.web.config.BaseWebProperties;
@@ -97,7 +99,7 @@ public class WebSocketService {
 
     public void disconnect(String clientId) {
         WebSocketConnectionManager manager = MANAGERS.get(clientId);
-        if (java.util.Objects.isNull(manager)) {
+        if (Objects.isNull(manager)) {
             return;
         }
         manager.stop();
@@ -105,7 +107,7 @@ public class WebSocketService {
 
     public void sendMessage(String clientId, Object message) {
         WebSocketSession webSocketSession = SESSIONS.get(clientId);
-        if (java.util.Objects.nonNull(webSocketSession) && webSocketSession.isOpen()) {
+        if (Objects.nonNull(webSocketSession) && webSocketSession.isOpen()) {
             String payload = JsonKit.toJson(message);
             log.info("[{}] <= {}", clientId, payload);
             try {

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,7 +42,7 @@ public final class I18nHelper {
         }
 
         String result = resolve(lang, key);
-        if (parameters != null && parameters.length > 0) {
+        if (Objects.nonNull(parameters) && parameters.length > 0) {
             try {
                 result = String.format(result, parameters);
             } catch (Exception ex) {
@@ -53,13 +54,13 @@ public final class I18nHelper {
 
     private static String resolve(String lang, String key) {
         ResourceBundle bundle = CACHE.computeIfAbsent(lang, I18nHelper::loadBundle);
-        if (bundle != null && bundle.containsKey(key)) {
+        if (Objects.nonNull(bundle) && bundle.containsKey(key)) {
             return bundle.getString(key);
         }
         if (lang.contains("-")) {
             String fallback = lang.substring(0, lang.indexOf('-'));
             ResourceBundle fallbackBundle = CACHE.computeIfAbsent(fallback, I18nHelper::loadBundle);
-            if (fallbackBundle != null && fallbackBundle.containsKey(key)) {
+            if (Objects.nonNull(fallbackBundle) && fallbackBundle.containsKey(key)) {
                 return fallbackBundle.getString(key);
             }
         }

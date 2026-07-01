@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.core;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.annotation.api.RawResponse;
@@ -36,7 +38,7 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object data, MethodParameter returnType, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
-        if (java.util.Objects.isNull(data) || returnType.getParameterType().isAssignableFrom(void.class)) {
+        if (Objects.isNull(data) || returnType.getParameterType().isAssignableFrom(void.class)) {
             return R.ok();
         }
         if (Model.class.isAssignableFrom(returnType.getParameterType())) {

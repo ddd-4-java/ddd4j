@@ -1,5 +1,7 @@
 package io.ddd4j.ddd.clean.checker;
 
+import java.util.Objects;
+
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -136,7 +138,7 @@ public class CleanArchitectureChecker {
     private void checkArchUnitRules(String sourceRoot) {
         // 尝试 importPath：优先用已编译的 class，否则用源文件目录
         JavaClasses classes = importClasses(sourceRoot);
-        if (java.util.Objects.isNull(classes) || classes.isEmpty()) {
+        if (Objects.isNull(classes) || classes.isEmpty()) {
             log.debug("ArchUnit: 未找到可分析的 class 文件，跳过依赖检查");
             return;
         }
@@ -145,16 +147,16 @@ public class CleanArchitectureChecker {
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_WEB, classes);
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE, classes);
         checkArchRule(CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK, classes);
-        if (java.util.Objects.nonNull(domainEntityAnnotation)) {
+        if (Objects.nonNull(domainEntityAnnotation)) {
             checkArchRule(CleanDDDLayerRules.domainEntityInDomain(domainEntityAnnotation), classes);
         }
-        if (java.util.Objects.nonNull(domainServiceAnnotation)) {
+        if (Objects.nonNull(domainServiceAnnotation)) {
             checkArchRule(CleanDDDLayerRules.domainServiceInDomain(domainServiceAnnotation), classes);
         }
-        if (java.util.Objects.nonNull(applicationServiceAnnotation)) {
+        if (Objects.nonNull(applicationServiceAnnotation)) {
             checkArchRule(CleanDDDLayerRules.applicationServiceInApp(applicationServiceAnnotation), classes);
         }
-        if (java.util.Objects.nonNull(domainRepositoryAnnotation)) {
+        if (Objects.nonNull(domainRepositoryAnnotation)) {
             checkArchRule(CleanDDDLayerRules.repositoryImplInInfrastructure(domainRepositoryAnnotation), classes);
         }
     }
@@ -181,7 +183,7 @@ public class CleanArchitectureChecker {
         } catch (AssertionError e) {
             // 把 ArchUnit 的失败信息拆分为单行违规
             String message = e.getMessage();
-            if (java.util.Objects.nonNull(message)) {
+            if (Objects.nonNull(message)) {
                 for (String line : message.split("\n")) {
                     String trimmed = line.trim();
                     if (!io.ddd4j.kit.lang.StrKit.isEmpty(trimmed) && !trimmed.startsWith("Architecture Violation")) {

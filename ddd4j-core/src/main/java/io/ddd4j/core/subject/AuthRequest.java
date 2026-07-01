@@ -71,7 +71,7 @@ public class AuthRequest {
     }
 
     public String getLoginIdAsString() {
-        return java.util.Objects.isNull(loginId) ? null : String.valueOf(loginId);
+        return Objects.isNull(loginId) ? null : String.valueOf(loginId);
     }
 
     public AuthPrincipal getPrincipal() {
@@ -136,7 +136,7 @@ public class AuthRequest {
         if (this == o) {
             return true;
         }
-        if (java.util.Objects.isNull(o) || getClass() != o.getClass()) {
+        if (Objects.isNull(o) || getClass() != o.getClass()) {
             return false;
         }
         AuthRequest that = (AuthRequest) o;

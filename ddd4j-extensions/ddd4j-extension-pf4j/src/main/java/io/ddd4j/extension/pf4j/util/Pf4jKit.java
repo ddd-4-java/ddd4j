@@ -1,5 +1,7 @@
 package io.ddd4j.extension.pf4j.util;
 
+import java.util.Objects;
+
 import io.ddd4j.extension.pf4j.annotation.ExtensionMapping;
 import io.ddd4j.extension.pf4j.exception.PluginInvokeException;
 import org.pf4j.PluginManager;
@@ -17,7 +19,7 @@ public class Pf4jKit {
             List<T> extensions = pluginManager.getExtensions(type, pluginId);
             for (T extension : extensions) {
                 ExtensionMapping em = extension.getClass().getAnnotation(ExtensionMapping.class);
-                if (java.util.Objects.nonNull(em) && hasText(em.id()) && em.id().equals(extensionId)) {
+                if (Objects.nonNull(em) && hasText(em.id()) && em.id().equals(extensionId)) {
                     return extension;
                 }
             }
@@ -29,7 +31,7 @@ public class Pf4jKit {
      * JDK 字符串判空（替代 Spring StringUtils.hasText）。
      */
     private static boolean hasText(String str) {
-        if (java.util.Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str)) {
+        if (Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str)) {
             return false;
         }
         for (int i = 0; i < str.length(); i++) {

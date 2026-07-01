@@ -1,5 +1,7 @@
 package io.ddd4j.mq.pulsar.ack;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
@@ -35,7 +37,7 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
         this.message = message;
         this.messageId = messageId;
         this.correlationId = correlationId;
-        this.deliveryId = java.util.Objects.isNull(messageId) ? 0L : Math.abs((long) messageId.hashCode());
+        this.deliveryId = Objects.isNull(messageId) ? 0L : Math.abs((long) messageId.hashCode());
     }
 
     @Override
@@ -55,7 +57,7 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public boolean isOpen() {
-        return java.util.Objects.nonNull(consumer) && consumer.isConnected();
+        return Objects.nonNull(consumer) && consumer.isConnected();
     }
 
     @Override
@@ -114,7 +116,7 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (java.util.Objects.isNull(type)) {
+        if (Objects.isNull(type)) {
             return Optional.empty();
         }
         if (type.isInstance(consumer)) {

@@ -1,5 +1,7 @@
 package io.ddd4j.mq.ack;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.registry.MQBrokerType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -112,7 +114,7 @@ public class NoOpMessageAcknowledgment implements MessageAcknowledgment {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<T> unwrap(Class<T> nativeType) {
-        if (java.util.Objects.nonNull(nativeHandle) && nativeType.isInstance(nativeHandle)) {
+        if (Objects.nonNull(nativeHandle) && nativeType.isInstance(nativeHandle)) {
             return Optional.of((T) nativeHandle);
         }
         return Optional.empty();

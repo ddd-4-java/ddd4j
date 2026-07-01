@@ -1,5 +1,7 @@
 package io.ddd4j.mq.rocketmq;
 
+import java.util.Objects;
+
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 
@@ -17,7 +19,7 @@ public class RocketMQProperties {
     private boolean autoStartConsumers = true;
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     public DefaultMQProducer newProducer() {

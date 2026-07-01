@@ -43,18 +43,18 @@ public class RabbitMQEventPublisher implements MQEventPublisher {
         String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
         String tag = firstText(destination.getTag(), event.getTag());
         String concat = firstText(event.getConcat(), ".");
-        String base = java.util.Objects.isNull(namespace) ? topic : namespace + concat + topic;
-        return java.util.Objects.isNull(tag) ? base : base + concat + tag;
+        String base = Objects.isNull(namespace) ? topic : namespace + concat + topic;
+        return Objects.isNull(tag) ? base : base + concat + tag;
     }
 
     private static void put(Map<String, Object> headers, String key, Object value) {
-        if (java.util.Objects.nonNull(value)) {
+        if (Objects.nonNull(value)) {
             headers.put(key, value);
         }
     }
 
     private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
+        if (Objects.isNull(values)) {
             return null;
         }
         for (String value : values) {
@@ -66,7 +66,7 @@ public class RabbitMQEventPublisher implements MQEventPublisher {
     }
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     @Override

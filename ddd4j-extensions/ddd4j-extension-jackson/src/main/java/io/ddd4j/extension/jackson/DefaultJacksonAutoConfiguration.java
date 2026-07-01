@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import hitool.core.lang3.time.DateFormats;
 import io.ddd4j.extension.jackson.ser.MyBeanSerializerModifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +27,8 @@ import java.time.format.DateTimeFormatter;
  */
 @Configuration(proxyBeanMethods = false)
 public class DefaultJacksonAutoConfiguration {
+
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     @Value("${spring.jackson.default-null-array-serializer:true}")
     private boolean defaultNullArraySerializer;
@@ -50,14 +51,14 @@ public class DefaultJacksonAutoConfiguration {
     @Primary
     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
         ObjectMapper objectMapper = builder
-                .simpleDateFormat(DateFormats.DATE_LONGFORMAT)
+                .simpleDateFormat(DATE_TIME_PATTERN)
                 .failOnEmptyBeans(false)
                 .failOnUnknownProperties(false)
                 .featuresToEnable(MapperFeature.USE_GETTERS_AS_SETTERS, MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS)
                 .createXmlMapper(false)
                 .build();
         JavaTimeModule module = new JavaTimeModule();
-        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)));
         module.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
         module.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_TIME_PATTERN)));
         objectMapper.registerModule(module);

@@ -1,5 +1,7 @@
 package io.ddd4j.mq.disruptor.ack;
 
+import java.util.Objects;
+
 import com.lmax.disruptor.RingBuffer;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
@@ -52,7 +54,7 @@ public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public boolean isOpen() {
-        return java.util.Objects.nonNull(ringBuffer);
+        return Objects.nonNull(ringBuffer);
     }
 
     @Override
@@ -77,7 +79,7 @@ public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public void nack(boolean requeue) {
-        if (requeue && java.util.Objects.nonNull(ringBuffer) && !acknowledged.get()) {
+        if (requeue && Objects.nonNull(ringBuffer) && !acknowledged.get()) {
             republish();
         }
         acknowledged.set(true);

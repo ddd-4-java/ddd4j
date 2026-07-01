@@ -66,7 +66,7 @@ public class GlobalErrorAttributes {
             errorAttributes.put("data", error.getMessage());
         } else if (Objects.nonNull(error)) {
             errorAttributes.put("code", HttpStatus.INTERNAL_SERVER_ERROR);
-            errorAttributes.put("data", java.util.Objects.nonNull(error.getMessage()) ? error.getMessage() : "INTERNAL SERVER ERROR");
+            errorAttributes.put("data", Objects.nonNull(error.getMessage()) ? error.getMessage() : "INTERNAL SERVER ERROR");
         } else {
             errorAttributes.put("code", HttpStatus.INTERNAL_SERVER_ERROR);
             errorAttributes.put("data", "INTERNAL SERVER ERROR");

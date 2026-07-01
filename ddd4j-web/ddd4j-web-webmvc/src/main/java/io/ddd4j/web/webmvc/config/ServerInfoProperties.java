@@ -15,7 +15,7 @@ import lombok.Data;
 public class ServerInfoProperties {
 
     /**
-     * 服务节点UID: spring-boot-admin 服务端注册ID
+     * 服务节点 UID
      */
     private String uid;
     /**

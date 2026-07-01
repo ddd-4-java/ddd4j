@@ -35,7 +35,7 @@ import java.util.List;
  *     &#64;Override
  *     public void dispatchEvent(EntityManager em, Event event) {
  *         List&lt;JpaEventHandler&gt; list = handlers.get(event.getEventType());
- *         if (list != null) {
+ *         if (Objects.nonNull(list)) {
  *             for (JpaEventHandler handler : list) {
  *                 handler.handle(em, event);
  *             }

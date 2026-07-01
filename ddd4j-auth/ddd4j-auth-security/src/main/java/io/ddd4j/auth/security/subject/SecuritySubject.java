@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 基于 Spring Security 的 {@link Subject} 实现。
@@ -42,19 +43,23 @@ public class SecuritySubject implements Subject {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private <T extends AuthPrincipal> T castPrincipal(Object principal) {
+        if (principal instanceof AuthPrincipal) {
+            return (T) principal;
+        }
+        return null;
+    }
+
     // ==================== 身份与会话读取 ====================
 
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         Authentication auth = getAuthentication();
-        if (java.util.Objects.isNull(auth)) {
+        if (Objects.isNull(auth)) {
             return null;
         }
-        Object principal = auth.getPrincipal();
-        if (principal instanceof AuthPrincipal) {
-            return (T) principal;
-        }
-        return null;
+        return castPrincipal(auth.getPrincipal());
     }
 
     @Override
@@ -74,9 +79,9 @@ public class SecuritySubject implements Subject {
     @Override
     public String login(AuthRequest request) {
         // 构建 Spring Security Authentication
-        Object credentials = java.util.Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : "";
+        Object credentials = Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : "";
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                java.util.Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : request.getLoginId(),
+                Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : request.getLoginId(),
                 credentials
         );
         auth.setDetails(request.getExtra());
@@ -93,7 +98,7 @@ public class SecuritySubject implements Subject {
     @Override
     public void logout(Object loginId) {
         // Spring Security 无中心会话，JWT 场景需配合 Token 黑名单
-        if (java.util.Objects.nonNull(loginId) && loginId.equals(getLoginId())) {
+        if (Objects.nonNull(loginId) && loginId.equals(getLoginId())) {
             logout();
         }
     }
@@ -107,7 +112,7 @@ public class SecuritySubject implements Subject {
     public String refresh() {
         // Spring Security 无状态，JWT 场景由 JwtIssuer 重签
         Authentication auth = getAuthentication();
-        return java.util.Objects.nonNull(auth) ? auth.getName() : null;
+        return Objects.nonNull(auth) ? auth.getName() : null;
     }
 
     @Override
@@ -121,7 +126,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isPermitted(String permission) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -131,7 +136,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isPermitted(Object loginId, String permission) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -141,7 +146,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean[] isPermitted(String... permissions) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -155,7 +160,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean[] isPermitted(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -169,7 +174,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isPermittedAny(String... permissions) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -184,7 +189,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -199,7 +204,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isPermittedAll(String... permissions) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -214,7 +219,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
         List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
@@ -229,7 +234,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean hasRole(String roleIdentifier) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -239,7 +244,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean hasRole(Object loginId, String roleIdentifier) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -249,7 +254,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -263,7 +268,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean[] hasRoles(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -277,7 +282,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -292,7 +297,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -307,7 +312,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -322,7 +327,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         AuthPrincipal principal = getPrincipalByLoginId(loginId);
-        if (java.util.Objects.isNull(principal) || java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
         List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
@@ -339,7 +344,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isAuthenticated() {
         Authentication auth = getAuthentication();
-        return java.util.Objects.nonNull(auth) && auth.isAuthenticated();
+        return Objects.nonNull(auth) && auth.isAuthenticated();
     }
 
     @Override
@@ -350,7 +355,7 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isRemembered() {
         Authentication auth = getAuthentication();
-        return java.util.Objects.nonNull(auth) && auth instanceof org.springframework.security.authentication.RememberMeAuthenticationToken;
+        return Objects.nonNull(auth) && auth instanceof org.springframework.security.authentication.RememberMeAuthenticationToken;
     }
 
     @Override
@@ -367,7 +372,7 @@ public class SecuritySubject implements Subject {
     @Override
     public Object getLoginId() {
         Authentication auth = getAuthentication();
-        if (java.util.Objects.isNull(auth)) {
+        if (Objects.isNull(auth)) {
             return null;
         }
         return auth.getName();
@@ -376,13 +381,13 @@ public class SecuritySubject implements Subject {
     @Override
     public Object getUserId() {
         AuthPrincipal principal = getPrincipal();
-        return java.util.Objects.nonNull(principal) ? principal.getUserId() : null;
+        return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 
     @Override
     public Object getExtra(String tokenValue, String key) {
         AuthPrincipal principal = getPrincipalByToken(tokenValue);
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return null;
         }
         return principal.getProfile().get(key);

@@ -33,7 +33,7 @@ public class ActiveMQConsumerEndpointRegistrar {
     private static String extractTag(Message message, MQListenerDefinition def) {
         try {
             String tag = message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG);
-            if (java.util.Objects.nonNull(tag)) {
+            if (Objects.nonNull(tag)) {
                 return tag;
             }
         } catch (JMSException ignore) {
@@ -60,7 +60,7 @@ public class ActiveMQConsumerEndpointRegistrar {
     private static long messageIdHash(Message message) {
         try {
             String id = message.getJMSMessageID();
-            return java.util.Objects.isNull(id) ? 0L : (long) id.hashCode();
+            return Objects.isNull(id) ? 0L : (long) id.hashCode();
         } catch (JMSException e) {
             return 0L;
         }
@@ -108,10 +108,10 @@ public class ActiveMQConsumerEndpointRegistrar {
     }
 
     private Destination resolveDestination(Session session, MQListenerDefinition def) throws JMSException {
-        String topic = java.util.Objects.isNull(def.getTopic()) ? "ddd4j.default.topic" : def.getTopic();
+        String topic = Objects.isNull(def.getTopic()) ? "ddd4j.default.topic" : def.getTopic();
         String tag = MQTagMatcher.findIncludes(def.getTags()).stream().findFirst().orElse(null);
-        String physical = java.util.Objects.isNull(tag) ? topic : topic + "." + tag;
-        if (java.util.Objects.nonNull(def.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(def.getNamespace())) {
+        String physical = Objects.isNull(tag) ? topic : topic + "." + tag;
+        if (Objects.nonNull(def.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(def.getNamespace())) {
             physical = def.getNamespace() + "." + physical;
         }
         return session.createTopic(physical);
@@ -119,13 +119,13 @@ public class ActiveMQConsumerEndpointRegistrar {
 
     private MQMessage<String> toMessage(Message message, Session session) throws JMSException {
         Map<String, Object> headers = new HashMap<>();
-        if (java.util.Objects.nonNull(message.getStringProperty(MQMessages.HEADER_DESTINATION_TOPIC))) {
+        if (Objects.nonNull(message.getStringProperty(MQMessages.HEADER_DESTINATION_TOPIC))) {
             headers.put(MQMessages.HEADER_DESTINATION_TOPIC, message.getStringProperty(MQMessages.HEADER_DESTINATION_TOPIC));
         }
-        if (java.util.Objects.nonNull(message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG))) {
+        if (Objects.nonNull(message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG))) {
             headers.put(MQMessages.HEADER_DESTINATION_TAG, message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG));
         }
-        if (java.util.Objects.nonNull(message.getStringProperty(MQMessages.HEADER_TENANT_ID))) {
+        if (Objects.nonNull(message.getStringProperty(MQMessages.HEADER_TENANT_ID))) {
             headers.put(MQMessages.HEADER_TENANT_ID, message.getStringProperty(MQMessages.HEADER_TENANT_ID));
         }
         headers.put(ActiveMQMessageAcknowledgment.HEADER_AMQ_SESSION, session);

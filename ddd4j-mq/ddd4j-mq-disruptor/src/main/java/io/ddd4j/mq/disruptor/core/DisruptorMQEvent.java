@@ -1,5 +1,7 @@
 package io.ddd4j.mq.disruptor.core;
 
+import java.util.Objects;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +28,7 @@ public class DisruptorMQEvent {
      */
     public String routeKey() {
         String base = namespace + "." + topic;
-        if (java.util.Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) || "*".equals(tag)) {
+        if (Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) || "*".equals(tag)) {
             return base;
         }
         return base + "." + tag;

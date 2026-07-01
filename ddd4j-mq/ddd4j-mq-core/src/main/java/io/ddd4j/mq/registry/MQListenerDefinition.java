@@ -1,5 +1,7 @@
 package io.ddd4j.mq.registry;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.annotation.MQEventListener;
 import lombok.Builder;
 import lombok.Getter;
@@ -69,10 +71,10 @@ public class MQListenerDefinition {
             String defaultGroup,
             String defaultNamespace) {
 
-        String group = java.util.Objects.nonNull(ann.group()) && !io.ddd4j.kit.lang.StrKit.isBlank(ann.group())
+        String group = Objects.nonNull(ann.group()) && !io.ddd4j.kit.lang.StrKit.isBlank(ann.group())
                 ? ann.group()
                 : defaultGroup + "_" + method.getName();
-        String namespace = java.util.Objects.nonNull(ann.namespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(ann.namespace())
+        String namespace = Objects.nonNull(ann.namespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(ann.namespace())
                 ? ann.namespace()
                 : defaultNamespace;
 
@@ -92,7 +94,7 @@ public class MQListenerDefinition {
      * 返回策略匹配支持列表（不可变）。
      */
     public List<String> supports() {
-        return java.util.Objects.isNull(supports) ? Collections.emptyList() : Collections.unmodifiableList(supports);
+        return Objects.isNull(supports) ? Collections.emptyList() : Collections.unmodifiableList(supports);
     }
 
     /**
@@ -113,7 +115,7 @@ public class MQListenerDefinition {
      * 物理 destination（namespace.topic）。
      */
     public String physicalDestination() {
-        if (java.util.Objects.nonNull(namespace) && !io.ddd4j.kit.lang.StrKit.isBlank(namespace)) {
+        if (Objects.nonNull(namespace) && !io.ddd4j.kit.lang.StrKit.isBlank(namespace)) {
             return namespace + "." + topic;
         }
         return topic;

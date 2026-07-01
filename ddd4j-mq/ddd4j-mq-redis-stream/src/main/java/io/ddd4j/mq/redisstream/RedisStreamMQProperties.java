@@ -6,6 +6,8 @@ import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
 import redis.clients.jedis.RedisClient;
 import redis.clients.jedis.UnifiedJedis;
 
+import java.util.Objects;
+
 /**
  * Redis Stream adapter configuration.
  *
@@ -86,6 +88,6 @@ public class RedisStreamMQProperties {
     }
 
     public void setClientType(RedisStreamClientType clientType) {
-        this.clientType = java.util.Objects.isNull(clientType) ? RedisStreamClientType.JEDIS : clientType;
+        this.clientType = Objects.isNull(clientType) ? RedisStreamClientType.JEDIS : clientType;
     }
 }

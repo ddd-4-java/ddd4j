@@ -206,11 +206,11 @@ public class CacheKit {
     @SuppressWarnings("unchecked")
     public <T> T get(String biz, String key) {
         Cache<String, Object> cache = caches.get(biz);
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             return (T) cache.getIfPresent(key);
         }
         cache = loadingCaches.get(biz);
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             try {
                 return (T) cache.get(key);
             } catch (Exception e) {
@@ -234,7 +234,7 @@ public class CacheKit {
     @SuppressWarnings("unchecked")
     public <T> T get(String biz, String key, Function<String, Object> mappingFunction) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        return java.util.Objects.isNull(cache) ? null : (T) cache.get(key, mappingFunction);
+        return Objects.isNull(cache) ? null : (T) cache.get(key, mappingFunction);
     }
 
     /**
@@ -246,7 +246,7 @@ public class CacheKit {
      */
     public void put(String biz, String key, Object value) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             cache.put(key, value);
         }
     }
@@ -259,7 +259,7 @@ public class CacheKit {
      */
     public void invalidate(String biz, String key) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             cache.invalidate(key);
         }
     }
@@ -271,7 +271,7 @@ public class CacheKit {
      */
     public void invalidateAll(String biz) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             cache.invalidateAll();
         }
     }
@@ -285,7 +285,7 @@ public class CacheKit {
      */
     public boolean exists(String biz, String key) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        return java.util.Objects.nonNull(cache) && java.util.Objects.nonNull(cache.getIfPresent(key));
+        return Objects.nonNull(cache) && Objects.nonNull(cache.getIfPresent(key));
     }
 
     /**
@@ -296,7 +296,7 @@ public class CacheKit {
      */
     public CacheStats getStats(String biz) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        return java.util.Objects.isNull(cache) ? null : cache.stats();
+        return Objects.isNull(cache) ? null : cache.stats();
     }
 
     /**
@@ -329,10 +329,10 @@ public class CacheKit {
      */
     public void refresh(String biz, String key) {
         Cache<String, Object> cache = loadingCaches.get(biz);
-        if (java.util.Objects.isNull(cache)) {
+        if (Objects.isNull(cache)) {
             cache = caches.get(biz);
         }
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             cache.refresh(key);
         }
     }
@@ -472,7 +472,7 @@ public class CacheKit {
      */
     public boolean expire(String biz, String key, long seconds) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             return cache.expire(key, seconds);
         }
         return false;
@@ -489,7 +489,7 @@ public class CacheKit {
      */
     public long getExpire(String biz, String key) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        return java.util.Objects.isNull(cache) ? -3L : cache.getExpire(key);
+        return Objects.isNull(cache) ? -3L : cache.getExpire(key);
     }
 
     /**
@@ -501,7 +501,7 @@ public class CacheKit {
      */
     public boolean persist(String biz, String key) {
         Cache<String, Object> cache = getEffectiveCache(biz);
-        if (java.util.Objects.nonNull(cache)) {
+        if (Objects.nonNull(cache)) {
             return cache.persist(key);
         }
         return false;
@@ -523,7 +523,7 @@ public class CacheKit {
         if (cache instanceof CacheLock) {
             return ((CacheLock) cache).tryLock(key, waitSeconds, leaseSeconds);
         }
-        throw new UnsupportedOperationException("缓存 " + biz + " (" + (java.util.Objects.isNull(cache) ? "null" : cache.getClass().getSimpleName()) + ") 不支持分布式锁");
+        throw new UnsupportedOperationException("缓存 " + biz + " (" + (Objects.isNull(cache) ? "null" : cache.getClass().getSimpleName()) + ") 不支持分布式锁");
     }
 
     // ==================== 分布式锁操作 ====================
@@ -565,7 +565,7 @@ public class CacheKit {
      */
     private Cache<String, Object> getEffectiveCache(String biz) {
         Cache<String, Object> cache = caches.get(biz);
-        return java.util.Objects.nonNull(cache) ? cache : loadingCaches.get(biz);
+        return Objects.nonNull(cache) ? cache : loadingCaches.get(biz);
     }
 
     // ==================== 内部方法 ====================

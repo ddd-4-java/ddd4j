@@ -1,5 +1,7 @@
 package io.ddd4j.mq.sqs.ack;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
@@ -41,7 +43,7 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public long deliveryTag() {
-        return java.util.Objects.isNull(receiptHandle) ? 0L : (long) receiptHandle.hashCode();
+        return Objects.isNull(receiptHandle) ? 0L : (long) receiptHandle.hashCode();
     }
 
     @Override
@@ -56,7 +58,7 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public boolean isOpen() {
-        return java.util.Objects.nonNull(client);
+        return Objects.nonNull(client);
     }
 
     @Override
@@ -109,7 +111,7 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (java.util.Objects.isNull(type)) {
+        if (Objects.isNull(type)) {
             return Optional.empty();
         }
         if (type.isInstance(client)) {

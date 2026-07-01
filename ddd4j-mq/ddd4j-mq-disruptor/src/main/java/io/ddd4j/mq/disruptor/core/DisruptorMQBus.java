@@ -1,5 +1,7 @@
 package io.ddd4j.mq.disruptor.core;
 
+import java.util.Objects;
+
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
@@ -11,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 /**
- * LMAX Disruptor RingBuffer 生命周期管理（参考 {@code disruptor-spring-boot-starter}）。
+ * LMAX Disruptor RingBuffer 生命周期管理。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -78,7 +80,7 @@ public class DisruptorMQBus {
      */
     @PreDestroy
     public void shutdown() {
-        if (java.util.Objects.nonNull(disruptor)) {
+        if (Objects.nonNull(disruptor)) {
             disruptor.shutdown();
             log.info("DisruptorMQBus shutdown");
         }

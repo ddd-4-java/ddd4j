@@ -21,7 +21,7 @@ import java.util.Date;
 public abstract class SpringDomainEvent<T> extends ApplicationEvent {
 
     // 监听者能否执行的条件，用于控制事件监听器能否执行（策略模式）
-    private Collection supports;
+    private Collection<?> supports;
     // 结果
     @Setter
     private Object result;
@@ -41,7 +41,7 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
      * @param source   事件内容
      * @param supports 支持执行的条件，配合supports方法使用
      */
-    public SpringDomainEvent(T source, Collection supports) {
+    public SpringDomainEvent(T source, Collection<?> supports) {
         super(source);
         this.supports = supports;
     }
@@ -63,6 +63,7 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
      * @return 事件内容
      */
     @Deprecated
+    @SuppressWarnings("unchecked")
     public <S> S get() {
         return (S) source();
     }
@@ -72,10 +73,12 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
      *
      * @return 事件内容
      */
+    @SuppressWarnings("unchecked")
     public T source() {
         return (T) super.getSource();
     }
 
+    @SuppressWarnings("unchecked")
     public <R> R result() {
         return (R) this.result;
     }
@@ -83,6 +86,7 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     /**
      * 立即发布事件
      */
+    @SuppressWarnings("unchecked")
     public <R> R publish() {
         SpringContext.getApplicationContext().publishEvent(this);
         return (R) result;

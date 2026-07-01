@@ -1,5 +1,14 @@
 package io.ddd4j.spring.context;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import lombok.NonNull;
@@ -15,14 +24,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 /**
  * Spring上下文：显式获取SpringBean、注册Bean；SpringEvent事件发布
@@ -76,7 +77,7 @@ public class SpringContext implements ApplicationContextAware {
     @SneakyThrows
     public static ApplicationContext getApplicationContext() {
         // 阻塞等待初始化完成
-        if (java.util.Objects.isNull(APPLICATION_CONTEXT)) {
+        if (Objects.isNull(APPLICATION_CONTEXT)) {
             APPLICATION_CONTEXT_START_SIGNAL.await();
         }
         return APPLICATION_CONTEXT;
@@ -88,6 +89,7 @@ public class SpringContext implements ApplicationContextAware {
         APPLICATION_CONTEXT_START_SIGNAL.countDown();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T getBean(@NonNull String name) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("获取的Bean名称不能为空");

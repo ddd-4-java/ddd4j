@@ -1,5 +1,7 @@
 package io.ddd4j.extension.akka;
 
+import java.util.Objects;
+
 import akka.actor.ActorSystem;
 import io.ddd4j.extension.akka.actor.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +51,8 @@ public class AkkaAutoConfiguration {
             } else {
                 Object this$applicationContext = this.getApplicationContext();
                 Object other$applicationContext = other.getApplicationContext();
-                if (java.util.Objects.isNull(this$applicationContext)) {
-                    if (java.util.Objects.nonNull(other$applicationContext)) {
+                if (Objects.isNull(this$applicationContext)) {
+                    if (Objects.nonNull(other$applicationContext)) {
                         return false;
                     }
                 } else if (!this$applicationContext.equals(other$applicationContext)) {
@@ -69,7 +71,7 @@ public class AkkaAutoConfiguration {
     public int hashCode() {
         int result = 1;
         Object $applicationContext = this.getApplicationContext();
-        result = result * 59 + (java.util.Objects.isNull($applicationContext) ? 43 : $applicationContext.hashCode());
+        result = result * 59 + (Objects.isNull($applicationContext) ? 43 : $applicationContext.hashCode());
         return result;
     }
 

@@ -28,7 +28,7 @@ public final class RuleId implements Serializable {
      * @throws IllegalArgumentException 如果value为null
      */
     public RuleId(final String value) {
-        if (java.util.Objects.isNull(value)) {
+        if (Objects.isNull(value)) {
             throw new IllegalArgumentException("RuleId value cannot be null");
         }
         this.value = value;
@@ -53,7 +53,7 @@ public final class RuleId implements Serializable {
      * @throws IllegalArgumentException 如果value为null
      */
     public static RuleId valueOf(final Long value) {
-        if (java.util.Objects.isNull(value)) {
+        if (Objects.isNull(value)) {
             throw new IllegalArgumentException("RuleId value cannot be null");
         }
         return new RuleId(String.valueOf(value));
@@ -88,7 +88,7 @@ public final class RuleId implements Serializable {
         if (this == o) {
             return true;
         }
-        if (java.util.Objects.isNull(o) || getClass() != o.getClass()) {
+        if (Objects.isNull(o) || getClass() != o.getClass()) {
             return false;
         }
         RuleId ruleId = (RuleId) o;

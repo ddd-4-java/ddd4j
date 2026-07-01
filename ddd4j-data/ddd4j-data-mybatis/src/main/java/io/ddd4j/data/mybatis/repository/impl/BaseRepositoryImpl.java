@@ -63,7 +63,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     private static String replaceLast(String raw, String match, String replace) {
-        if (java.util.Objects.isNull(raw) || !org.springframework.util.StringUtils.hasLength(raw) || java.util.Objects.isNull(replace)) {
+        if (Objects.isNull(raw) || !org.springframework.util.StringUtils.hasLength(raw) || Objects.isNull(replace)) {
             //参数不合法，原样返回
             return raw;
         }
@@ -77,7 +77,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     public static <T, S> T convert(S source) {
-        if (java.util.Objects.isNull(source)) {
+        if (Objects.isNull(source)) {
             return null;
         }
         Class<T> targetClass = MappingKit.get("MODEL_PO", source.getClass());
@@ -85,7 +85,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     public static <T, S> List<T> convert(List<S> source) {
-        if (java.util.Objects.isNull(source) || source.isEmpty() || java.util.Objects.isNull(source.get(0))) {
+        if (Objects.isNull(source) || source.isEmpty() || Objects.isNull(source.get(0))) {
             return new ArrayList<>();
         }
         Class<T> targetClass = MappingKit.get("MODEL_PO", source.get(0).getClass());
@@ -126,7 +126,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public boolean save(List<? extends Model> models) {
-        if (java.util.Objects.isNull(models) || models.size() == 0) {
+        if (Objects.isNull(models) || models.size() == 0) {
             return false;
         }
         List<P> pos = convert(models);
@@ -155,9 +155,9 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         updateFill(po);
         boolean result = SqlHelper.retBool(this.mapper.update(po, this.getBaseWrapper(query)));
         if (result) {
-            if (java.util.Objects.nonNull(tableScheme.getId())) {
+            if (Objects.nonNull(tableScheme.getId())) {
                 Serializable id = TableScheme.findFieldValue(po, tableScheme.getId());
-                if (java.util.Objects.nonNull(id)) {
+                if (Objects.nonNull(id)) {
                     P updated = this.mapper.selectById(id);
                     BeanKit.copy(updated, model);
                 }
@@ -169,7 +169,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public boolean update(List<? extends Model> models) {
-        if (java.util.Objects.isNull(models) || models.isEmpty()) {
+        if (Objects.isNull(models) || models.isEmpty()) {
             return false;
         }
         List<P> pos = convert(models);
@@ -194,7 +194,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public boolean delete(Serializable id) {
-        return java.util.Objects.nonNull(id) && SqlHelper.retBool(this.mapper.deleteById(id));
+        return Objects.nonNull(id) && SqlHelper.retBool(this.mapper.deleteById(id));
     }
 
     @Override
@@ -206,7 +206,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public boolean delete(List<? extends Serializable> ids) {
-        if (java.util.Objects.isNull(ids) || ids.isEmpty()) {
+        if (Objects.isNull(ids) || ids.isEmpty()) {
             log.warn("batch function query is empty or null");
             return false;
         }
@@ -225,7 +225,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public List<M> list(List<? extends Serializable> ids) {
-        if (java.util.Objects.isNull(ids) || ids.isEmpty()) {
+        if (Objects.isNull(ids) || ids.isEmpty()) {
             throw new IllegalArgumentException("Error: ids must not be empty");
         }
         if (ids.size() >= 100) {
@@ -238,7 +238,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     public List<M> list(Q query) {
         List<M> models = convert(this.mapper.selectList(this.getBaseWrapper(query)));
         log.debug("Query: {}, Params: {}", query.getClass().getSimpleName(), JsonKit.toJson(BeanKit.toMap(query, false, LOG_IGNORE_FIELDS)));
-        if (java.util.Objects.nonNull(models) && !models.isEmpty()) {
+        if (Objects.nonNull(models) && !models.isEmpty()) {
             fill(query, models);
         }
         return models;
@@ -251,7 +251,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         List<P> list = this.mapper.selectList(wrapper);
         M model = convert(list.isEmpty() ? null : list.get(0));
         log.debug("Query: {}, Params: {}", query.getClass().getSimpleName(), JsonKit.toJson(BeanKit.toMap(query, false, LOG_IGNORE_FIELDS)));
-        if (java.util.Objects.nonNull(model)) {
+        if (Objects.nonNull(model)) {
             fill(query, model);
         }
         return model;
@@ -261,7 +261,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     public M one(Q query) {
         M model = convert(this.mapper.selectOne(this.getBaseWrapper(query)));
         log.debug("Query: {}, Params: {}", query.getClass().getSimpleName(), JsonKit.toJson(BeanKit.toMap(query, false, LOG_IGNORE_FIELDS)));
-        if (java.util.Objects.nonNull(model)) {
+        if (Objects.nonNull(model)) {
             fill(query, model);
         }
         return model;
@@ -276,7 +276,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     public int count(Q query) {
         Long count = this.mapper.selectCount(this.getBaseWrapper(query));
         log.debug("Query: {}, Params: {}", query.getClass().getSimpleName(), JsonKit.toJson(BeanKit.toMap(query, false, LOG_IGNORE_FIELDS)));
-        return java.util.Objects.nonNull(count) ? count.intValue() : 0;
+        return Objects.nonNull(count) ? count.intValue() : 0;
     }
 
     @Override
@@ -292,7 +292,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
             List<P> list = this.mapper.selectList(wrapper);
             List<M> records = convert(list);
             Page<M> modelPage = Page.succeed(records, records.size(), 1, records.size());
-            if (java.util.Objects.nonNull(records) && !records.isEmpty()) {
+            if (Objects.nonNull(records) && !records.isEmpty()) {
                 fill(query, records);
             }
             return modelPage;
@@ -305,7 +305,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
         List<M> records = convert(result.getRecords());
         Page<M> modelPage = Page.succeed(records, result.getTotal(), query.getCurrent(), query.getSize());
-        if (java.util.Objects.nonNull(records) && !records.isEmpty()) {
+        if (Objects.nonNull(records) && !records.isEmpty()) {
             fill(query, records);
         }
         return modelPage;
@@ -318,14 +318,14 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public boolean deleteByKeys(List<Serializable> keys) {
-        return java.util.Objects.nonNull(keys) && !keys.isEmpty() && SqlHelper.retBool(this.mapper.delete(this.getKeyWrapper(keys)));
+        return Objects.nonNull(keys) && !keys.isEmpty() && SqlHelper.retBool(this.mapper.delete(this.getKeyWrapper(keys)));
     }
 
     @Override
     public boolean updateByKey(M model) {
         P po = convert(model);
         String key = this.getKeyValue(po);
-        if (java.util.Objects.isNull(key) || !org.springframework.util.StringUtils.hasLength(key)) {
+        if (Objects.isNull(key) || !org.springframework.util.StringUtils.hasLength(key)) {
             throw new IllegalArgumentException("当前entity实体业务key字段为null，无法适用当前方法更新！");
         } else {
             updateFill(po);
@@ -335,7 +335,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public boolean updateByKey(List<? extends Model> models) {
-        if (java.util.Objects.isNull(models) || models.isEmpty()) {
+        if (Objects.isNull(models) || models.isEmpty()) {
             log.warn("batch function query is empty or null");
             return false;
         }
@@ -347,7 +347,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public M getByKey(String key) {
-        if (java.util.Objects.isNull(key) || !org.springframework.util.StringUtils.hasLength(key)) {
+        if (Objects.isNull(key) || !org.springframework.util.StringUtils.hasLength(key)) {
             log.warn("The key annotated by @BizKey must not blank");
             return null;
         }
@@ -356,7 +356,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     @Override
     public List<M> listByKey(List<Serializable> keys) {
-        if (java.util.Objects.isNull(keys) || keys.isEmpty()) {
+        if (Objects.isNull(keys) || keys.isEmpty()) {
             return null;
         }
         if (keys.size() >= 100) {
@@ -378,19 +378,19 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         QueryWrapper<P> wrapper = new QueryWrapper<>();
         if (!ignoreTenantId) {
             String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
-            if (java.util.Objects.nonNull(tableScheme.getTenantId()) && java.util.Objects.nonNull(tenantId)) {
+            if (Objects.nonNull(tableScheme.getTenantId()) && Objects.nonNull(tenantId)) {
                 wrapper.eq(TableScheme.getColumn(tableScheme.getTenantId()), tenantId);
             }
         }
         String systemId = ThreadContext.get(ContextConstants.SYSTEM_ID);
-        if (java.util.Objects.nonNull(tableScheme.getSystemId()) && java.util.Objects.nonNull(systemId)) {
+        if (Objects.nonNull(tableScheme.getSystemId()) && Objects.nonNull(systemId)) {
             wrapper.eq(TableScheme.getColumn(tableScheme.getSystemId()), systemId);
         }
         return wrapper;
     }
 
     protected QueryWrapper<P> getKeyWrapper(Serializable key) {
-        if (java.util.Objects.isNull(tableScheme.getBizKeyField())) {
+        if (Objects.isNull(tableScheme.getBizKeyField())) {
             throw new IllegalArgumentException("当前entity实体没找到业务key字段，请在entity实体中使用@BizKey注解标记对应的字段！");
         } else {
             QueryWrapper<P> wrapper = getDefaultWrapper(false);
@@ -400,7 +400,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     protected QueryWrapper<P> getKeyWrapper(List<Serializable> keys) {
-        if (java.util.Objects.isNull(tableScheme.getBizKeyField())) {
+        if (Objects.isNull(tableScheme.getBizKeyField())) {
             throw new IllegalArgumentException("当前entity实体没找到业务key字段，请在entity实体中使用@BizKey注解标记对应的字段！");
         } else {
             QueryWrapper<P> wrapper = getDefaultWrapper(false);
@@ -416,7 +416,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     protected boolean insertBatch(List<P> pos) {
-        if (java.util.Objects.isNull(pos) || pos.isEmpty()) {
+        if (Objects.isNull(pos) || pos.isEmpty()) {
             return false;
         }
         for (P po : pos) {
@@ -427,7 +427,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     public boolean updateBatch(List<P> pos, int batchSize) {
-        if (java.util.Objects.isNull(pos) || pos.isEmpty()) {
+        if (Objects.isNull(pos) || pos.isEmpty()) {
             log.warn("batch function query is empty or null");
             return false;
         }
@@ -447,12 +447,12 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     private boolean isStringNotBlank(Object value) {
-        return java.util.Objects.nonNull(value) && (!(value instanceof CharSequence) || ((CharSequence) value).length() != 0);
+        return Objects.nonNull(value) && (!(value instanceof CharSequence) || ((CharSequence) value).length() != 0);
     }
 
     private String getFieldName(String fieldName, String queryAction) {
         String replaceLast = replaceLast(fieldName, queryAction, "");
-        return java.util.Objects.nonNull(replaceLast) && org.springframework.util.StringUtils.hasLength(replaceLast) ? replaceLast.toLowerCase() : replaceLast;
+        return Objects.nonNull(replaceLast) && org.springframework.util.StringUtils.hasLength(replaceLast) ? replaceLast.toLowerCase() : replaceLast;
     }
 
     protected void getColumnByField(String fieldName, Consumer<String> action) {
@@ -464,7 +464,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     protected String getKeyValue(P po) {
         try {
             Object value = this.tableScheme.bizKeyField.get(po);
-            return java.util.Objects.nonNull(value) ? value.toString() : null;
+            return Objects.nonNull(value) ? value.toString() : null;
         } catch (IllegalAccessException | IllegalArgumentException var3) {
             log.error("获取当前实体对象的key值出现错误！", var3);
             throw new IllegalArgumentException("获取当前实体对象的key值出现错误!");
@@ -481,7 +481,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     private BaseRepositoryImpl<MP, M, P, Q> select(Q query, QueryWrapper<P> baseWrapper) {
-        if (java.util.Objects.nonNull(query.getSelect()) && !query.getSelect().isEmpty()) {
+        if (Objects.nonNull(query.getSelect()) && !query.getSelect().isEmpty()) {
             baseWrapper.select(query.getSelect().split(query.getSplit()));
         }
         return this;
@@ -489,10 +489,10 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
     private BaseRepositoryImpl<MP, M, P, Q> where(Q query, QueryWrapper<P> baseWrapper) {
         // 关键字查询：keyword + fields 转 ors
-        if (java.util.Objects.nonNull(query.getKeyword()) && java.util.Objects.nonNull(query.getFields()) && !query.getFields().isEmpty()) {
+        if (Objects.nonNull(query.getKeyword()) && Objects.nonNull(query.getFields()) && !query.getFields().isEmpty()) {
             for (String field : query.getFields().split(query.getSplit())) {
                 if (org.springframework.util.StringUtils.hasLength(field)) {
-                    if (java.util.Objects.isNull(query.getOrs())) {
+                    if (Objects.isNull(query.getOrs())) {
                         query.setOrs(new HashMap<>());
                     }
                     query.getOrs().putIfAbsent(field, query.getKeyword());
@@ -500,7 +500,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
             }
         }
         // ors 查询：a = xx or b = yy
-        if (java.util.Objects.nonNull(query.getOrs()) && !query.getOrs().isEmpty()) {
+        if (Objects.nonNull(query.getOrs()) && !query.getOrs().isEmpty()) {
             Map<String, Object> ors = query.getOrs();
             if (ors.values().stream().anyMatch(this::isStringNotBlank)) {
                 baseWrapper.and(w -> ors.forEach((k, v) -> {
@@ -512,7 +512,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         }
         // 字段后缀自动条件构建：遍历 Query 所有字段，按后缀（Not/In/Like/Min/Max/Start/End/IsNull/InJson 等）自动生成查询条件
         Map<String, Object> mapParams = BeanKit.toMapClean(query);
-        if (java.util.Objects.nonNull(mapParams)) {
+        if (Objects.nonNull(mapParams)) {
             mapParams.forEach((k, v) -> this.setCondition(query, baseWrapper, k, v));
         }
         return this;
@@ -542,7 +542,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
      * </ul>
      */
     private QueryWrapper<P> setCondition(Query query, QueryWrapper<P> wrapper, String key, Object value) {
-        if (java.util.Objects.isNull(value) || EXCLUDE_FIELDS.contains(key)) {
+        if (Objects.isNull(value) || EXCLUDE_FIELDS.contains(key)) {
             return wrapper;
         }
         // 处理 or 查询
@@ -566,7 +566,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
      */
     @SuppressWarnings("unchecked")
     private QueryWrapper<P> setSimpleCondition(Query query, QueryWrapper<P> wrapper, String key, Object value) {
-        if (java.util.Objects.isNull(value)) {
+        if (Objects.isNull(value)) {
             return wrapper;
         }
         if (key.endsWith(START_QUERY) && this.isDateType(value)) {
@@ -610,7 +610,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
                 String jsonField = parts[0];
                 String jsonColumn = parts[1].toLowerCase();
                 String formattedValue = formatJsonValue(value);
-                if (java.util.Objects.nonNull(formattedValue)) {
+                if (Objects.nonNull(formattedValue)) {
                     this.getColumnByField(jsonField, (col) -> wrapper.apply("JSON_CONTAINS({0}, '{1}', '${2}')", col, formattedValue, jsonColumn));
                 }
             }
@@ -646,30 +646,30 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     private BaseRepositoryImpl<MP, M, P, Q> groupBy(Q query, QueryWrapper<P> wrapper) {
-        if (java.util.Objects.nonNull(query) && java.util.Objects.nonNull(query.getGroupBy()) && !query.getGroupBy().isEmpty()) {
+        if (Objects.nonNull(query) && Objects.nonNull(query.getGroupBy()) && !query.getGroupBy().isEmpty()) {
             wrapper.groupBy(query.getGroupBy());
         }
         return this;
     }
 
     private BaseRepositoryImpl<MP, M, P, Q> having(Q query, QueryWrapper<P> wrapper) {
-        if (java.util.Objects.nonNull(query) && java.util.Objects.nonNull(query.getHaving()) && !query.getHaving().isEmpty()) {
+        if (Objects.nonNull(query) && Objects.nonNull(query.getHaving()) && !query.getHaving().isEmpty()) {
             wrapper.having(query.getHaving());
         }
         return this;
     }
 
     private BaseRepositoryImpl<MP, M, P, Q> orderBy(Q query, QueryWrapper<P> wrapper) {
-        if (java.util.Objects.isNull(query.getOrderBys()) || query.getOrderBys().isEmpty()) {
-            if (java.util.Objects.nonNull(tableScheme.getDefaultOrderBy()) && tableScheme.getDefaultOrderBy().length > 0) {
+        if (Objects.isNull(query.getOrderBys()) || query.getOrderBys().isEmpty()) {
+            if (Objects.nonNull(tableScheme.getDefaultOrderBy()) && tableScheme.getDefaultOrderBy().length > 0) {
                 // 设置默认排序
                 query.setOrderBys(String.join(query.getSplit(), tableScheme.getDefaultOrderBy()));
             }
         }
-        if (java.util.Objects.nonNull(query.getOrderBys())) {
+        if (Objects.nonNull(query.getOrderBys())) {
             String[] orderBys = query.getOrderBys().split(query.getSplit());
             for (String orderBy : orderBys) {
-                if (java.util.Objects.nonNull(orderBy) && org.springframework.util.StringUtils.hasLength(orderBy)) {
+                if (Objects.nonNull(orderBy) && org.springframework.util.StringUtils.hasLength(orderBy)) {
                     // 统一转成下划线形式，传参可以是驼峰式，也可以是下划线
                     String column = TableScheme.toUnderline(orderBy.replace("_asc", "").replace("_ASC", "").replace("_desc", "").replace("_DESC", ""));
                     wrapper.orderBy(this.tableScheme.containsColumn(column), !orderBy.toLowerCase().endsWith("_desc"), column);
@@ -680,17 +680,17 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     }
 
     protected boolean checkIsDataColumn(String fieldName, Class<P> tClass) {
-        if (java.util.Objects.isNull(fieldName) || !org.springframework.util.StringUtils.hasLength(fieldName)) {
+        if (Objects.isNull(fieldName) || !org.springframework.util.StringUtils.hasLength(fieldName)) {
             return false;
         } else {
             Field field = FieldUtils.getField(tClass, fieldName, true);
-            return java.util.Objects.nonNull(field);
+            return Objects.nonNull(field);
         }
     }
 
     private void insertFill(P po) {
         try {
-            if (java.util.Objects.nonNull(tableScheme.getTenantId()) && ThreadContext.contains(ContextConstants.TENANT_ID)) {
+            if (Objects.nonNull(tableScheme.getTenantId()) && ThreadContext.contains(ContextConstants.TENANT_ID)) {
                 String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
                 if (tableScheme.getTenantId().getType() == Long.class) {
                     tableScheme.getTenantId().set(po, Long.valueOf(tenantId));
@@ -700,7 +700,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
                     tableScheme.getTenantId().set(po, tenantId);
                 }
             }
-            if (java.util.Objects.nonNull(tableScheme.getSystemId()) && ThreadContext.contains(ContextConstants.SYSTEM_ID)) {
+            if (Objects.nonNull(tableScheme.getSystemId()) && ThreadContext.contains(ContextConstants.SYSTEM_ID)) {
                 String systemId = ThreadContext.get(ContextConstants.SYSTEM_ID);
                 if (tableScheme.getSystemId().getType() == Long.class) {
                     tableScheme.getSystemId().set(po, Long.valueOf(systemId));
@@ -710,9 +710,9 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
                     tableScheme.getSystemId().set(po, systemId);
                 }
             }
-            if (java.util.Objects.nonNull(tableScheme.getTableLogic())) {
+            if (Objects.nonNull(tableScheme.getTableLogic())) {
                 String defaultValue = tableScheme.getTableLogic().getAnnotation(TableLogic.class).value();
-                if (java.util.Objects.isNull(defaultValue) || !org.springframework.util.StringUtils.hasLength(defaultValue)) {
+                if (Objects.isNull(defaultValue) || !org.springframework.util.StringUtils.hasLength(defaultValue)) {
                     if (tableScheme.getTableLogic().getType().equals(Boolean.class) || tableScheme.getTableLogic().getType().equals(boolean.class)) {
                         tableScheme.getTableLogic().set(po, false);
                     } else if (tableScheme.getTableLogic().getType().equals(Integer.class) || tableScheme.getTableLogic().getType().equals(int.class)) {
@@ -727,9 +727,9 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
                 }
             }
             for (Field onCreateField : tableScheme.getOnCreateFields()) {
-                if (onCreateField.getType().equals(LocalDateTime.class) && java.util.Objects.isNull(onCreateField.get(po))) {
+                if (onCreateField.getType().equals(LocalDateTime.class) && Objects.isNull(onCreateField.get(po))) {
                     onCreateField.set(po, LocalDateTime.now());
-                } else if (onCreateField.getType().equals(LocalDate.class) && java.util.Objects.isNull(onCreateField.get(po))) {
+                } else if (onCreateField.getType().equals(LocalDate.class) && Objects.isNull(onCreateField.get(po))) {
                     onCreateField.set(po, LocalDate.now());
                 }
             }
@@ -740,9 +740,9 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
     private void updateFill(P po) {
         try {
             for (Field onUpdateField : tableScheme.getOnUpdateFields()) {
-                if (onUpdateField.getType().equals(LocalDateTime.class) && java.util.Objects.isNull(onUpdateField.get(po))) {
+                if (onUpdateField.getType().equals(LocalDateTime.class) && Objects.isNull(onUpdateField.get(po))) {
                     onUpdateField.set(po, LocalDateTime.now());
-                } else if (onUpdateField.getType().equals(LocalDate.class) && java.util.Objects.isNull(onUpdateField.get(po))) {
+                } else if (onUpdateField.getType().equals(LocalDate.class) && Objects.isNull(onUpdateField.get(po))) {
                     onUpdateField.set(po, LocalDate.now());
                 }
             }
@@ -770,7 +770,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
          * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
          */
         protected static String toUnderline(String humpString) {
-            if (java.util.Objects.isNull(humpString) || !org.springframework.util.StringUtils.hasLength(humpString)) {
+            if (Objects.isNull(humpString) || !org.springframework.util.StringUtils.hasLength(humpString)) {
                 return humpString;
             }
             Matcher matcher = HUMP_PATTERN.matcher(humpString);
@@ -795,16 +795,16 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
         protected static String getColumn(Field field) {
             TableField tableField = field.getAnnotation(TableField.class);
-            return java.util.Objects.nonNull(tableField) && java.util.Objects.nonNull(tableField.value()) && !tableField.value().isEmpty() ? tableField.value() : TableScheme.toUnderline(field.getName());
+            return Objects.nonNull(tableField) && Objects.nonNull(tableField.value()) && !tableField.value().isEmpty() ? tableField.value() : TableScheme.toUnderline(field.getName());
         }
 
         protected static TableScheme build(Class<?> poClass) {
-            if (java.util.Objects.isNull(poClass)) {
+            if (Objects.isNull(poClass)) {
                 return null;
             } else {
                 TableScheme tableScheme = new TableScheme();
                 TableName table = poClass.getAnnotation(TableName.class);
-                if (java.util.Objects.isNull(table)) {
+                if (Objects.isNull(table)) {
                     throw new IllegalArgumentException("PO class must annotated with @TableName(\"table_name\")");
                 } else {
                     tableScheme.setTableName(table.value());
@@ -817,9 +817,9 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
                             String fieldName = poField.getName();
                             // 优先读取TableField.value字段，否则把字段从驼峰式转换为下划线
                             TableField tableField = poField.getAnnotation(TableField.class);
-                            String column = java.util.Objects.nonNull(tableField) && java.util.Objects.nonNull(tableField.value()) && !tableField.value().isEmpty() ? tableField.value() : TableScheme.toUnderline(fieldName);
+                            String column = Objects.nonNull(tableField) && Objects.nonNull(tableField.value()) && !tableField.value().isEmpty() ? tableField.value() : TableScheme.toUnderline(fieldName);
                             tableScheme.field2Column.put(fieldName.toLowerCase(), column);
-                            if (java.util.Objects.nonNull(poField.getAnnotation(BizKey.class))) {
+                            if (Objects.nonNull(poField.getAnnotation(BizKey.class))) {
                                 tableScheme.bizKeyField = poField;
                             }
                             if (poField.isAnnotationPresent(TableId.class)) {
@@ -844,10 +844,10 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
 
                     }
                     OrderBy orderBy = poClass.getAnnotation(OrderBy.class);
-                    if (java.util.Objects.isNull(orderBy) && java.util.Objects.nonNull(poClass.getSuperclass())) {
+                    if (Objects.isNull(orderBy) && Objects.nonNull(poClass.getSuperclass())) {
                         orderBy = poClass.getSuperclass().getAnnotation(OrderBy.class);
                     }
-                    if (java.util.Objects.nonNull(orderBy) && java.util.Objects.nonNull(orderBy.value()) && orderBy.value().length != 0) {
+                    if (Objects.nonNull(orderBy) && Objects.nonNull(orderBy.value()) && orderBy.value().length != 0) {
                         tableScheme.setDefaultOrderBy(orderBy.value());
                     }
                     return tableScheme;
@@ -856,7 +856,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         }
 
         protected boolean containsField(String field) {
-            return java.util.Objects.nonNull(field2Column) && field2Column.containsKey(field.toLowerCase());
+            return Objects.nonNull(field2Column) && field2Column.containsKey(field.toLowerCase());
         }
 
         protected String getField(String field) {
@@ -864,7 +864,7 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Mod
         }
 
         protected boolean containsColumn(String column) {
-            return java.util.Objects.nonNull(field2Column) && field2Column.containsValue(column.toLowerCase());
+            return Objects.nonNull(field2Column) && field2Column.containsValue(column.toLowerCase());
         }
 
     }

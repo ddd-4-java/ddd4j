@@ -1,5 +1,7 @@
 package io.ddd4j.core.util;
 
+import java.util.Objects;
+
 import io.ddd4j.core.context.I18nProvider;
 
 import java.util.Locale;
@@ -28,7 +30,7 @@ public final class I18nKit {
      * @param provider I18nProvider 实现
      */
     public static void register(I18nProvider provider) {
-        if (java.util.Objects.nonNull(provider)) {
+        if (Objects.nonNull(provider)) {
             I18nKit.provider = provider;
         }
     }
@@ -40,7 +42,7 @@ public final class I18nKit {
      * @param provider I18nProvider 实现
      */
     public static void register(Locale locale, I18nProvider provider) {
-        if (java.util.Objects.nonNull(locale) && java.util.Objects.nonNull(provider)) {
+        if (Objects.nonNull(locale) && Objects.nonNull(provider)) {
             LOCALE_PROVIDERS.put(locale.toString(), provider);
         }
     }
@@ -65,9 +67,9 @@ public final class I18nKit {
      * @return 国际化后的消息
      */
     public static String get(Locale locale, String key, Object... args) {
-        if (java.util.Objects.nonNull(locale)) {
+        if (Objects.nonNull(locale)) {
             I18nProvider localeProvider = LOCALE_PROVIDERS.get(locale.toString());
-            if (java.util.Objects.nonNull(localeProvider)) {
+            if (Objects.nonNull(localeProvider)) {
                 return localeProvider.getMessage(key, args);
             }
         }

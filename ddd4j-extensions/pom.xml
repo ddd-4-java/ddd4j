@@ -63,7 +63,7 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Framework 集成测试：@ExtendWith(SpringExtension) / @DynamicPropertySource（非 spring-boot-test） -->
+        <!-- Framework 集成测试：@ExtendWith(SpringExtension) / @DynamicPropertySource（非 Boot 测试 starter） -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>

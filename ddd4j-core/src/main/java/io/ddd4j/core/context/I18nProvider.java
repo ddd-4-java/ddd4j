@@ -1,5 +1,7 @@
 package io.ddd4j.core.context;
 
+import java.util.Objects;
+
 import io.ddd4j.kit.lang.StrKit;
 
 import java.text.MessageFormat;
@@ -37,7 +39,7 @@ public interface I18nProvider {
         } catch (MissingResourceException e) {
             // 找不到资源文件，使用原始 key
         }
-        if (java.util.Objects.isNull(args) || args.length == 0) {
+        if (Objects.isNull(args) || args.length == 0) {
             return pattern;
         }
         return MessageFormat.format(pattern, args);

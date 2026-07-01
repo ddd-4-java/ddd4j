@@ -47,7 +47,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
         Objects.requireNonNull(definition, "definition");
         Method method = definition.getMethod();
         Object bean = definition.getBean();
-        if (java.util.Objects.nonNull(bean) && !method.canAccess(bean)) {
+        if (Objects.nonNull(bean) && !method.canAccess(bean)) {
             method.setAccessible(true);
         }
     }
@@ -76,7 +76,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
         }
         ReflectionUtils.doWithMethods(targetClass, method -> {
             MQEventListener annotation = AnnotationUtils.findAnnotation(method, MQEventListener.class);
-            if (java.util.Objects.nonNull(annotation)) {
+            if (Objects.nonNull(annotation)) {
                 registry.register(buildDefinition(bean, beanName, method, annotation));
             }
         }, ReflectionUtils.USER_DECLARED_METHODS);

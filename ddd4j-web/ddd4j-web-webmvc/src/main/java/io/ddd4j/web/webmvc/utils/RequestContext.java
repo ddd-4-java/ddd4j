@@ -18,7 +18,7 @@ import java.util.*;
 public class RequestContext {
     public HttpServletRequest get() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (java.util.Objects.isNull(attributes)) {
+        if (Objects.isNull(attributes)) {
             return null;
         }
         return attributes.getRequest();
@@ -26,7 +26,7 @@ public class RequestContext {
 
     public String getUrl() {
         HttpServletRequest request = get();
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return null;
         }
         return request.getRequestURL().toString();
@@ -34,7 +34,7 @@ public class RequestContext {
 
     public String getUri() {
         HttpServletRequest request = get();
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return null;
         }
         return request.getRequestURI();
@@ -45,11 +45,11 @@ public class RequestContext {
             return ThreadContext.get(ContextConstants.REQUEST_PARAMS);
         }
         HttpServletRequest request = get();
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return null;
         }
         if (Objects.equals(request.getMethod(), "GET")) {
-            if (java.util.Objects.nonNull(request.getParameterMap()) && !request.getParameterMap().isEmpty()) {
+            if (Objects.nonNull(request.getParameterMap()) && !request.getParameterMap().isEmpty()) {
                 return JsonKit.toJson(request.getParameterMap().entrySet());
             }
         } else {
@@ -65,7 +65,7 @@ public class RequestContext {
 
     public Map<String, String> getHeaders() {
         HttpServletRequest request = get();
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return Collections.emptyMap();
         }
         Map<String, String> headers = new HashMap<>();
@@ -80,7 +80,7 @@ public class RequestContext {
 
     public String getHeader(String header) {
         HttpServletRequest request = get();
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return null;
         }
         return request.getHeader(header);
@@ -88,7 +88,7 @@ public class RequestContext {
 
     public String getOrDefault(String header, String defaultValue) {
         String o = getHeader(header);
-        if (java.util.Objects.isNull(o)) {
+        if (Objects.isNull(o)) {
             return defaultValue;
         }
         return o;
@@ -97,7 +97,7 @@ public class RequestContext {
     public Integer getOrDefault(String header, Integer defaultValue) {
         try {
             String headerValue = getHeader(header);
-            if (java.util.Objects.isNull(headerValue)) {
+            if (Objects.isNull(headerValue)) {
                 return defaultValue;
             }
             return Integer.valueOf(headerValue);

@@ -36,7 +36,7 @@ public class MQDestination {
     }
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     public String physicalDestination() {
@@ -52,7 +52,7 @@ public class MQDestination {
         if (this == o) {
             return true;
         }
-        if (java.util.Objects.isNull(o) || getClass() != o.getClass()) {
+        if (Objects.isNull(o) || getClass() != o.getClass()) {
             return false;
         }
         MQDestination that = (MQDestination) o;

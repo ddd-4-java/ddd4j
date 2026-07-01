@@ -59,7 +59,7 @@ public class MQListenerRegistrar {
     @Order
     @EventListener
     public void onApplicationReady(ContextRefreshedEvent event) {
-        if (java.util.Objects.nonNull(event.getApplicationContext().getParent())) {
+        if (Objects.nonNull(event.getApplicationContext().getParent())) {
             return;
         }
         List<MQListenerDefinition> definitions = scanner.scan();
@@ -135,10 +135,10 @@ public class MQListenerRegistrar {
             MessageAcknowledgment ack) {
 
         MessageAcknowledgment resolved = adapter.resolveAcknowledgment(message);
-        if (java.util.Objects.nonNull(resolved)) {
+        if (Objects.nonNull(resolved)) {
             return resolved;
         }
-        return java.util.Objects.nonNull(ack) ? ack : new NoOpMessageAcknowledgment();
+        return Objects.nonNull(ack) ? ack : new NoOpMessageAcknowledgment();
     }
 
     /**
@@ -180,7 +180,7 @@ public class MQListenerRegistrar {
      * 按 order 升序排列拦截器。
      */
     private List<MQConsumeInterceptor> orderedInterceptors() {
-        if (java.util.Objects.isNull(interceptors) || interceptors.isEmpty()) {
+        if (Objects.isNull(interceptors) || interceptors.isEmpty()) {
             return List.of();
         }
         return interceptors.stream()

@@ -1,5 +1,7 @@
 package io.ddd4j.mq.registry;
 
+import java.util.Objects;
+
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -60,7 +62,7 @@ public final class MQBindingNaming {
      * 规范化 topic：去除首尾空白。
      */
     private static String normalizeTopic(String topic) {
-        return java.util.Objects.isNull(topic) ? "" : topic.trim();
+        return Objects.isNull(topic) ? "" : topic.trim();
     }
 
     /**
@@ -103,6 +105,6 @@ public final class MQBindingNaming {
     }
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 }

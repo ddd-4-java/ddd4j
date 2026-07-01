@@ -1,5 +1,7 @@
 package io.ddd4j.mq.mqttmica.spi;
 
+import java.util.Objects;
+
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 import org.dromara.mica.mqtt.core.client.MqttClientCreator;
@@ -105,7 +107,7 @@ public class MicaMqttProperties {
     }
 
     public String newClientId() {
-        return (java.util.Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
+        return (Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
     }
 
     public MqttClient client() {

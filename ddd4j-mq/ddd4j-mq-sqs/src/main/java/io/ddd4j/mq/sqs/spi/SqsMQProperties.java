@@ -1,5 +1,7 @@
 package io.ddd4j.mq.sqs.spi;
 
+import java.util.Objects;
+
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -119,7 +121,7 @@ public class SqsMQProperties {
     }
 
     public AwsCredentialsProvider credentialsProvider() {
-        if (java.util.Objects.nonNull(accessKey) && !io.ddd4j.kit.lang.StrKit.isBlank(accessKey) && java.util.Objects.nonNull(secretKey) && !io.ddd4j.kit.lang.StrKit.isBlank(secretKey)) {
+        if (Objects.nonNull(accessKey) && !io.ddd4j.kit.lang.StrKit.isBlank(accessKey) && Objects.nonNull(secretKey) && !io.ddd4j.kit.lang.StrKit.isBlank(secretKey)) {
             return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
         }
         return DefaultCredentialsProvider.create();
@@ -129,7 +131,7 @@ public class SqsMQProperties {
         SqsClientBuilder b = SqsClient.builder()
                 .region(Region.of(region))
                 .credentialsProvider(credentialsProvider());
-        if (java.util.Objects.nonNull(endpointOverride) && !io.ddd4j.kit.lang.StrKit.isBlank(endpointOverride)) {
+        if (Objects.nonNull(endpointOverride) && !io.ddd4j.kit.lang.StrKit.isBlank(endpointOverride)) {
             b.endpointOverride(URI.create(endpointOverride));
         }
         return b.build();

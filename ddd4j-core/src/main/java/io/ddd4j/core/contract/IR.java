@@ -1,5 +1,7 @@
 package io.ddd4j.core.contract;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.exception.ServiceException;
 
 import java.io.Serializable;
@@ -29,7 +31,7 @@ public interface IR extends Serializable {
             throw new ServiceException(notOkThrows + " -> {}", this);
         }
         T data = getData();
-        if (java.util.Objects.isNull(data)) {
+        if (Objects.isNull(data)) {
             throw new ServiceException(notOkThrows + " -> {}", this);
         }
         return data;

@@ -1,5 +1,7 @@
 package io.ddd4j.data.mybatis.typehandler;
 
+import java.util.Objects;
+
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -58,7 +60,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
     private static class ListJsonTypeHandler implements TypeHandler<List, String> {
         @Override
         public String serialize(List value) {
-            if (java.util.Objects.isNull(value)) {
+            if (Objects.isNull(value)) {
                 return null;
             }
             return JSONUtil.toJsonStr(value);
@@ -66,7 +68,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
 
         @Override
         public List deserialize(String stored) {
-            if (java.util.Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
+            if (Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
                 return null;
             }
             return JSONUtil.parseArray(stored).toList(Object.class);
@@ -79,7 +81,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
     private static class SetJsonTypeHandler implements TypeHandler<Set, String> {
         @Override
         public String serialize(Set value) {
-            if (java.util.Objects.isNull(value)) {
+            if (Objects.isNull(value)) {
                 return null;
             }
             return JSONUtil.toJsonStr(value);
@@ -87,7 +89,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
 
         @Override
         public Set deserialize(String stored) {
-            if (java.util.Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
+            if (Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
                 return null;
             }
             Set<Object> set = new HashSet<>();
@@ -105,7 +107,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
     private static class JsonObjectJsonTypeHandler implements TypeHandler<JSONObject, String> {
         @Override
         public String serialize(JSONObject value) {
-            if (java.util.Objects.isNull(value)) {
+            if (Objects.isNull(value)) {
                 return null;
             }
             return value.toString();
@@ -113,7 +115,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
 
         @Override
         public JSONObject deserialize(String stored) {
-            if (java.util.Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
+            if (Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
                 return null;
             }
             return JSONUtil.parseObj(stored);
@@ -126,7 +128,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
     private static class JsonArrayJsonTypeHandler implements TypeHandler<JSONArray, String> {
         @Override
         public String serialize(JSONArray value) {
-            if (java.util.Objects.isNull(value)) {
+            if (Objects.isNull(value)) {
                 return null;
             }
             return value.toString();
@@ -134,7 +136,7 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
 
         @Override
         public JSONArray deserialize(String stored) {
-            if (java.util.Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
+            if (Objects.isNull(stored) || !org.springframework.util.StringUtils.hasLength(stored)) {
                 return null;
             }
             return JSONUtil.parseArray(stored);

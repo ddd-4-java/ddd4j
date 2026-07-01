@@ -27,7 +27,7 @@ public class MQListenerDefinitionRegistry {
         Objects.requireNonNull(definition, "definition");
         definitions.add(definition);
         log.debug("Registered @MQEventListener: bean={}, method={}, topic={}",
-                java.util.Objects.nonNull(definition.getBeanName()) ? definition.getBeanName() : definition.getBean().getClass().getSimpleName(),
+                Objects.nonNull(definition.getBeanName()) ? definition.getBeanName() : definition.getBean().getClass().getSimpleName(),
                 definition.getMethod().getName(),
                 definition.getTopic());
     }

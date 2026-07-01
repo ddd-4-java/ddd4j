@@ -1,5 +1,7 @@
 package io.ddd4j.mq.ack;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQBrokerType;
 
@@ -65,7 +67,7 @@ public final class MQConsumeTemplates {
      * 将 {@link AckDisposition} 映射为底层 ack 操作。
      */
     public static void applyDisposition(MessageAcknowledgment ack, AckDisposition disposition) {
-        if (java.util.Objects.isNull(disposition)) {
+        if (Objects.isNull(disposition)) {
             ack.requeue();
             return;
         }

@@ -1,5 +1,7 @@
 package io.ddd4j.data.mybatis.plugin;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
@@ -45,17 +47,16 @@ public class SqlMonitorPlugin implements Interceptor {
         StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
         BoundSql boundSql = statementHandler.getBoundSql();
         ThreadContext.set(ContextConstants.PREPARING_SQL, boundSql.getSql().replaceAll("\\n", " ").replaceAll("\\s\\s", " "));
-        if (statementHandler.getParameterHandler().getParameterObject() instanceof MapperMethod.ParamMap) {
-            MapperMethod.ParamMap parameterObject = (MapperMethod.ParamMap) statementHandler.getParameterHandler().getParameterObject();
-            if (parameterObject.containsKey("param1") && parameterObject.get("param1") instanceof QueryWrapper) {
-                Map<String, Object> params = ((QueryWrapper) parameterObject.get("param1")).getParamNameValuePairs();
-                if (java.util.Objects.nonNull(params) && params.size() > 0) {
+        if (statementHandler.getParameterHandler().getParameterObject() instanceof MapperMethod.ParamMap<?> parameterObject) {
+            if (parameterObject.containsKey("param1") && parameterObject.get("param1") instanceof QueryWrapper<?> queryWrapper) {
+                Map<String, Object> params = queryWrapper.getParamNameValuePairs();
+                if (Objects.nonNull(params) && !params.isEmpty()) {
                     List<String> keys = new ArrayList<>(params.keySet());
                     Collections.sort(keys);
                     List<String> sortedSqlParams = new ArrayList<>();
                     for (String key : keys) {
                         Object o = params.get(key);
-                        if (java.util.Objects.nonNull(o)) {
+                        if (Objects.nonNull(o)) {
                             sortedSqlParams.add(String.valueOf(o));
                         }
                     }

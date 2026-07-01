@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.interceptor;
 
+import java.util.Objects;
+
 import io.ddd4j.annotation.api.InternalAccess;
 import io.ddd4j.web.webmvc.config.InternalAccessProperties;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +25,7 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
     private final Set<String> bearerTokens;
 
     public InternalAccessInterceptor(InternalAccessProperties properties) {
-        this.bearerTokens = new HashSet<>(java.util.Objects.isNull(properties) ? Set.of() : properties.getBearerTokens());
+        this.bearerTokens = new HashSet<>(Objects.isNull(properties) ? Set.of() : properties.getBearerTokens());
     }
 
     private static boolean isInternalAccess(HandlerMethod handlerMethod) {
@@ -32,7 +34,7 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
     }
 
     private static String resolveBearerToken(String authorization) {
-        if (java.util.Objects.isNull(authorization) || !authorization.startsWith(BEARER_PREFIX)) {
+        if (Objects.isNull(authorization) || !authorization.startsWith(BEARER_PREFIX)) {
             return null;
         }
         String token = authorization.substring(BEARER_PREFIX.length()).trim();
@@ -49,7 +51,7 @@ public class InternalAccessInterceptor extends BaseWebInterceptor {
         }
         String authorization = request.getHeader("Authorization");
         String token = resolveBearerToken(authorization);
-        if (java.util.Objects.nonNull(token) && bearerTokens.contains(token)) {
+        if (Objects.nonNull(token) && bearerTokens.contains(token)) {
             return true;
         }
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized internal access");

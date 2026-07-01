@@ -42,7 +42,7 @@ public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
     @Override
     public String messageId() {
         String header = header("messageId");
-        return java.util.Objects.isNull(header) ? record.topic() + "-" + record.partition() + "-" + record.offset() : header;
+        return Objects.isNull(header) ? record.topic() + "-" + record.partition() + "-" + record.offset() : header;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
-        if (java.util.Objects.isNull(nativeType)) {
+        if (Objects.isNull(nativeType)) {
             return Optional.empty();
         }
         if (nativeType.isInstance(consumer)) {
@@ -120,7 +120,7 @@ public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
 
     private String header(String key) {
         Header header = record.headers().lastHeader(key);
-        if (java.util.Objects.isNull(header) || java.util.Objects.isNull(header.value())) {
+        if (Objects.isNull(header) || Objects.isNull(header.value())) {
             return null;
         }
         return new String(header.value(), StandardCharsets.UTF_8);

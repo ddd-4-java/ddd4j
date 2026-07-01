@@ -1,5 +1,7 @@
 package io.ddd4j.core.cache;
 
+import java.util.Objects;
+
 import java.util.function.Consumer;
 
 /**
@@ -182,7 +184,7 @@ public final class CacheConfig {
          * @param name 缓存名称（业务标识）
          */
         public Builder(String name) {
-            if (java.util.Objects.isNull(name) || io.ddd4j.kit.lang.StrKit.isEmpty(name)) {
+            if (Objects.isNull(name) || io.ddd4j.kit.lang.StrKit.isEmpty(name)) {
                 throw new IllegalArgumentException("缓存名称不能为空");
             }
             this.name = name;

@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.extension.authc;
 
+import java.util.Objects;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.pf4j.PluginRuntimeException;
@@ -29,15 +31,15 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return null;
         }
         String authHeader = request.getHeader(AUTHORIZATION_HEADER);
-        if (java.util.Objects.nonNull(authHeader) && authHeader.startsWith(BEARER_PREFIX)) {
+        if (Objects.nonNull(authHeader) && authHeader.startsWith(BEARER_PREFIX)) {
             return authHeader.substring(BEARER_PREFIX.length()).trim();
         }
         String tokenParam = request.getParameter("token");
-        if (java.util.Objects.nonNull(tokenParam) && org.springframework.util.StringUtils.hasText(tokenParam)) {
+        if (Objects.nonNull(tokenParam) && org.springframework.util.StringUtils.hasText(tokenParam)) {
             return tokenParam.trim();
         }
         return null;
@@ -45,13 +47,13 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     @Override
     public void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
-        if (java.util.Objects.isNull(request) || java.util.Objects.isNull(params)) {
+        if (Objects.isNull(request) || Objects.isNull(params)) {
             return;
         }
         Enumeration<String> headerNames = request.getHeaderNames();
-        while (java.util.Objects.nonNull(headerNames) && headerNames.hasMoreElements()) {
+        while (Objects.nonNull(headerNames) && headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
-            if (java.util.Objects.nonNull(name) && name.toLowerCase().startsWith("x-")) {
+            if (Objects.nonNull(name) && name.toLowerCase().startsWith("x-")) {
                 params.putIfAbsent(name, request.getHeader(name));
             }
         }
@@ -59,14 +61,14 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     @Override
     public void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {
-        if (java.util.Objects.isNull(request) || java.util.Objects.isNull(params)) {
+        if (Objects.isNull(request) || Objects.isNull(params)) {
             return;
         }
         Map<String, String[]> paramMap = request.getParameterMap();
-        if (java.util.Objects.nonNull(paramMap)) {
+        if (Objects.nonNull(paramMap)) {
             for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
                 String[] values = entry.getValue();
-                if (java.util.Objects.nonNull(values) && values.length > 0) {
+                if (Objects.nonNull(values) && values.length > 0) {
                     params.putIfAbsent(entry.getKey(), values.length == 1 ? values[0] : values);
                 }
             }

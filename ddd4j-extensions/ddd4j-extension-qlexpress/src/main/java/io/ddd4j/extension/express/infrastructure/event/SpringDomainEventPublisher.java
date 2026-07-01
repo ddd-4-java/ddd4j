@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.event;
 
+import java.util.Objects;
+
 import io.ddd4j.extension.express.domain.event.DomainEventPublisher;
 import io.ddd4j.extension.express.domain.event.RuleCreatedEvent;
 import io.ddd4j.extension.express.domain.event.RuleDeletedEvent;
@@ -42,7 +44,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
     @Override
     public void publishRuleCreated(RuleCreatedEvent event) {
         // Spring的ApplicationEventPublisher可以发布任何对象，不一定是ApplicationEvent的子类
-        if (java.util.Objects.nonNull(event)) {
+        if (Objects.nonNull(event)) {
             eventPublisher.publishEvent(event);
         }
     }
@@ -54,7 +56,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
      */
     @Override
     public void publishRuleUpdated(RuleUpdatedEvent event) {
-        if (java.util.Objects.nonNull(event)) {
+        if (Objects.nonNull(event)) {
             eventPublisher.publishEvent(event);
         }
     }
@@ -66,7 +68,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
      */
     @Override
     public void publishRuleDeleted(RuleDeletedEvent event) {
-        if (java.util.Objects.nonNull(event)) {
+        if (Objects.nonNull(event)) {
             eventPublisher.publishEvent(event);
         }
     }

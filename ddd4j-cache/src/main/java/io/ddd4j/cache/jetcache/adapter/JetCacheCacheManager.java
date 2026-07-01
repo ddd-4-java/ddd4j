@@ -74,7 +74,7 @@ public class JetCacheCacheManager implements CacheManager {
     public JetCacheCacheManager(com.alicp.jetcache.CacheManager jetCacheManager, String cacheArea) {
         Objects.requireNonNull(jetCacheManager, "jetCacheManager 不能为空");
         this.jetCacheManager = jetCacheManager;
-        this.cacheArea = java.util.Objects.nonNull(cacheArea) ? cacheArea : DEFAULT_AREA;
+        this.cacheArea = Objects.nonNull(cacheArea) ? cacheArea : DEFAULT_AREA;
     }
 
     @Override

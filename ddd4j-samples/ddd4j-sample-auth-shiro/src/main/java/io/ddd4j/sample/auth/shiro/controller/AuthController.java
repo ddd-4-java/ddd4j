@@ -1,5 +1,7 @@
 package io.ddd4j.sample.auth.shiro.controller;
 
+import java.util.Objects;
+
 import io.ddd4j.core.subject.AuthPrincipal;
 import io.ddd4j.core.subject.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
@@ -60,7 +62,7 @@ public class AuthController {
     @GetMapping("/me")
     public Map<String, Object> me() {
         AuthPrincipal principal = SubjectKit.getPrincipal();
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return Map.of("authenticated", false);
         }
         Map<String, Object> result = new HashMap<>();

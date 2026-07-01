@@ -3,11 +3,13 @@ package io.ddd4j.guice.annotation.ddd;
 import com.google.inject.Singleton;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import io.ddd4j.guice.annotation.web.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Objects;
 
 /**
  * 独立验证器：验证 ddd4j-guice 内聚的 11 个 DDD 注解
@@ -16,6 +18,7 @@ import java.lang.annotation.Target;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public final class AnnotationFusionVerifier {
 
     private AnnotationFusionVerifier() {
@@ -25,7 +28,7 @@ public final class AnnotationFusionVerifier {
         int passed = 0;
         int failed = 0;
 
-        System.out.println("=== DDD 注解元注解融合验证 ===");
+        log.info("=== DDD 注解元注解融合验证 ===");
         passed += verify("DomainService", DomainService.class);
         passed += verify("DomainRepository", DomainRepository.class);
         passed += verify("ApplicationService", ApplicationService.class);
@@ -37,19 +40,19 @@ public final class AnnotationFusionVerifier {
         passed += verify("DomainAssembler", DomainAssembler.class);
         passed += verify("DomainConverter", DomainConverter.class);
 
-        System.out.println();
-        System.out.println("=== @DomainEvent 不下沉验证 ===");
+        log.info("");
+        log.info("=== @DomainEvent 不下沉验证 ===");
         try {
             Class.forName("io.ddd4j.guice.annotation.ddd.DomainEvent");
-            System.out.println("FAIL: @DomainEvent 不应在 ddd4j-guice 聚合注解中");
+            log.error("FAIL: @DomainEvent 不应在 ddd4j-guice 聚合注解中");
             failed++;
         } catch (ClassNotFoundException e) {
-            System.out.println("PASS: @DomainEvent 不在 ddd4j-guice 聚合注解中");
+            log.info("PASS: @DomainEvent 不在 ddd4j-guice 聚合注解中");
             passed++;
         }
 
-        System.out.println();
-        System.out.println("=== Web 路由参数注解验证 ===");
+        log.info("");
+        log.info("=== Web 路由参数注解验证 ===");
         passed += verifyWebAnnotation("PathParam", PathParam.class);
         passed += verifyWebAnnotation("QueryParam", QueryParam.class);
         passed += verifyWebAnnotation("FormParam", FormParam.class);
@@ -58,35 +61,35 @@ public final class AnnotationFusionVerifier {
         passed += verifyWebAnnotation("BodyParam", BodyParam.class);
         passed += verifyWebAnnotation("Context", Context.class);
 
-        System.out.println();
-        System.out.println("=== 业务代码使用模式验证 ===");
+        log.info("");
+        log.info("=== 业务代码使用模式验证 ===");
         java.lang.annotation.Annotation domainServiceOnBiz = BusinessDomainService.class.getAnnotation(DomainService.class);
-        if (java.util.Objects.isNull(domainServiceOnBiz)) {
-            System.out.println("FAIL: 业务类未标注 @DomainService");
+        if (Objects.isNull(domainServiceOnBiz)) {
+            log.error("FAIL: 业务类未标注 @DomainService");
             failed++;
         } else {
             DDDAnnotation ddd = DomainService.class.getAnnotation(DDDAnnotation.class);
             Singleton singleton = DomainService.class.getAnnotation(Singleton.class);
-            if (java.util.Objects.nonNull(ddd) && java.util.Objects.nonNull(singleton)) {
-                System.out.println("PASS: 业务代码 @DomainService -> 元注解链路完整（@DDDAnnotation + @Singleton 可被框架识别）");
+            if (Objects.nonNull(ddd) && Objects.nonNull(singleton)) {
+                log.info("PASS: 业务代码 @DomainService -> 元注解链路完整（@DDDAnnotation + @Singleton 可被框架识别）");
                 passed++;
             } else {
-                System.out.println("FAIL: @DomainService 元注解缺失");
+                log.error("FAIL: @DomainService 元注解缺失");
                 failed++;
             }
         }
 
-        System.out.println();
-        System.out.println("========================================");
+        log.info("");
+        log.info("========================================");
         int total = passed + failed;
-        System.out.println("总计: " + total + " | 通过: " + passed + " | 失败: " + failed);
-        System.out.println("========================================");
+        log.info("总计: {} | 通过: {} | 失败: {}", total, passed, failed);
+        log.info("========================================");
 
         if (failed > 0) {
-            System.err.println("VERIFICATION FAILED");
+            log.error("VERIFICATION FAILED");
             System.exit(1);
         } else {
-            System.out.println("ALL PASSED! ddd4j-guice 注解收敛符合架构设计");
+            log.info("ALL PASSED! ddd4j-guice 注解收敛符合架构设计");
         }
     }
 
@@ -95,16 +98,16 @@ public final class AnnotationFusionVerifier {
             Class<? extends java.lang.annotation.Annotation> dddAnnotation) {
 
         DDDAnnotation ddd = dddAnnotation.getAnnotation(DDDAnnotation.class);
-        if (java.util.Objects.isNull(ddd)) {
-            System.out.println("FAIL " + name + ": 缺少 @DDDAnnotation");
+        if (Objects.isNull(ddd)) {
+            log.error("FAIL {}: 缺少 @DDDAnnotation", name);
             return 0;
         }
         Singleton singleton = dddAnnotation.getAnnotation(Singleton.class);
-        if (java.util.Objects.isNull(singleton)) {
-            System.out.println("FAIL " + name + ": 缺少 @Singleton");
+        if (Objects.isNull(singleton)) {
+            log.error("FAIL {}: 缺少 @Singleton", name);
             return 0;
         }
-        System.out.println("PASS " + name + ": @DDDAnnotation + @Singleton");
+        log.info("PASS {}: @DDDAnnotation + @Singleton", name);
         return 1;
     }
 
@@ -112,17 +115,17 @@ public final class AnnotationFusionVerifier {
             String name,
             Class<? extends java.lang.annotation.Annotation> annotation) {
         Target target = annotation.getAnnotation(Target.class);
-        if (java.util.Objects.isNull(target) || target.value().length == 0
+        if (Objects.isNull(target) || target.value().length == 0
                 || target.value()[0] != ElementType.PARAMETER) {
-            System.out.println("FAIL " + name + ": @Target 必须为 PARAMETER");
+            log.error("FAIL {}: @Target 必须为 PARAMETER", name);
             return 0;
         }
         Retention retention = annotation.getAnnotation(Retention.class);
-        if (java.util.Objects.isNull(retention) || retention.value() != RetentionPolicy.RUNTIME) {
-            System.out.println("FAIL " + name + ": @Retention 必须为 RUNTIME");
+        if (Objects.isNull(retention) || retention.value() != RetentionPolicy.RUNTIME) {
+            log.error("FAIL {}: @Retention 必须为 RUNTIME", name);
             return 0;
         }
-        System.out.println("PASS " + name + ": @Target PARAMETER + @Retention RUNTIME");
+        log.info("PASS {}: @Target PARAMETER + @Retention RUNTIME", name);
         return 1;
     }
 }

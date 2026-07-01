@@ -87,7 +87,7 @@ public class R<T> implements IR {
      * 失败响应（cloud 兼容别名，等价于 {@link #fail(T)}）。
      */
     public static <T> R<T> failed(T data) {
-        return fail(java.util.Objects.nonNull(data) ? ResultCode.FAIL.getCode() : ResultCode.FAIL.getCode(), ResultCode.FAIL.getDesc());
+        return fail(Objects.nonNull(data) ? ResultCode.FAIL.getCode() : ResultCode.FAIL.getCode(), ResultCode.FAIL.getDesc());
     }
 
     /**
@@ -130,11 +130,11 @@ public class R<T> implements IR {
      * @return ddd4j R 实例
      */
     public static <T> R<T> fromResult(org.fuin.cqrs4j.core.Result<T> result) {
-        if (java.util.Objects.isNull(result)) {
+        if (Objects.isNull(result)) {
             return fail();
         }
-        Serializable code = java.util.Objects.nonNull(result.getCode()) ? result.getCode() : ResultCode.FAIL.getCode();
-        String msg = java.util.Objects.nonNull(result.getMessage()) ? result.getMessage() : ResultCode.FAIL.getDesc();
+        Serializable code = Objects.nonNull(result.getCode()) ? result.getCode() : ResultCode.FAIL.getCode();
+        String msg = Objects.nonNull(result.getMessage()) ? result.getMessage() : ResultCode.FAIL.getDesc();
         if (result.getType() == org.fuin.cqrs4j.core.ResultType.OK) {
             return ok(msg, result.getData());
         }
@@ -146,7 +146,7 @@ public class R<T> implements IR {
     }
 
     public Boolean isEmpty() {
-        return !isOk() || java.util.Objects.isNull(data);
+        return !isOk() || Objects.isNull(data);
     }
 
     /**
@@ -177,7 +177,7 @@ public class R<T> implements IR {
 
         @Override
         public String getCode() {
-            return java.util.Objects.nonNull(r.getCode()) ? r.getCode().toString() : null;
+            return Objects.nonNull(r.getCode()) ? r.getCode().toString() : null;
         }
 
         @Override

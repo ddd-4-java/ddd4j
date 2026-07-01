@@ -38,10 +38,10 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
     static Destination resolveDestination(Session session, MQDestination destination) throws JMSException {
         String topic = firstText(destination.getTopic(), "ddd4j.default.topic");
         String tag = destination.getTag();
-        String physical = java.util.Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) ? topic : topic + "." + tag;
+        String physical = Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) ? topic : topic + "." + tag;
         // JMS 没有 native namespace 概念 —— 用前缀表达
         String ns = destination.getNamespace();
-        if (java.util.Objects.nonNull(ns) && !io.ddd4j.kit.lang.StrKit.isBlank(ns)) {
+        if (Objects.nonNull(ns) && !io.ddd4j.kit.lang.StrKit.isBlank(ns)) {
             physical = ns + "." + physical;
         }
         if (physical.startsWith("queue:")) {
@@ -55,11 +55,11 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
     }
 
     private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
+        if (Objects.isNull(values)) {
             return null;
         }
         for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+            if (Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
                 return v;
             }
         }
@@ -75,13 +75,13 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
                 BytesMessage message = session.createBytesMessage();
                 message.writeBytes(serialization.serialize(event).toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 message.setStringProperty(MQMessages.HEADER_DESTINATION_TOPIC, destination.getTopic());
-                if (java.util.Objects.nonNull(destination.getTag())) {
+                if (Objects.nonNull(destination.getTag())) {
                     message.setStringProperty(MQMessages.HEADER_DESTINATION_TAG, destination.getTag());
                 }
-                if (java.util.Objects.nonNull(event.getTenantId())) {
+                if (Objects.nonNull(event.getTenantId())) {
                     message.setStringProperty(MQMessages.HEADER_TENANT_ID, event.getTenantId());
                 }
-                if (java.util.Objects.nonNull(event.getMsgId())) {
+                if (Objects.nonNull(event.getMsgId())) {
                     message.setJMSMessageID(event.getMsgId());
                 }
                 producer.send(message);

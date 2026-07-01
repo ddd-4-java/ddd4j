@@ -1,5 +1,7 @@
 package io.ddd4j.kit.lang;
 
+import java.util.Objects;
+
 import cn.hutool.core.collection.CollUtil;
 import lombok.experimental.UtilityClass;
 
@@ -18,7 +20,7 @@ import java.util.List;
 public class CollKit extends CollUtil {
 
     public <T> T[] convert(Collection<T> coll) {
-        if (java.util.Objects.isNull(coll) || coll.isEmpty()) {
+        if (Objects.isNull(coll) || coll.isEmpty()) {
             return null;
         }
         Class tClass = null;
@@ -30,18 +32,18 @@ public class CollKit extends CollUtil {
     }
 
     public <T> List<T> convert(T[] array) {
-        if (java.util.Objects.isNull(array) || array.length == 0) {
+        if (Objects.isNull(array) || array.length == 0) {
             return new ArrayList<>();
         }
         return new ArrayList<>(Arrays.asList(array));
     }
 
     public <T> boolean isNotEmpty(T[] array) {
-        return java.util.Objects.nonNull(array) && array.length != 0;
+        return Objects.nonNull(array) && array.length != 0;
     }
 
     public <T> boolean isEmpty(T[] array) {
-        return java.util.Objects.isNull(array) || array.length == 0;
+        return Objects.isNull(array) || array.length == 0;
     }
 
 }

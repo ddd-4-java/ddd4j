@@ -1,15 +1,18 @@
 package io.ddd4j.spring.annotation;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
+import java.util.Objects;
 
 /**
  * 独立验证器：验证 ddd4j-spring 的 DDD 注解与 Spring 元注解融合正确。
  */
+@Slf4j
 public final class AnnotationFusionVerifier {
 
     private AnnotationFusionVerifier() {
@@ -30,46 +33,46 @@ public final class AnnotationFusionVerifier {
         passed += verify("DomainAssembler", DomainAssembler.class, Component.class);
         passed += verify("DomainConverter", DomainConverter.class, Component.class);
 
-        System.out.println();
-        System.out.println("--- @DomainEvent 不下沉验证 ---");
+        log.info("");
+        log.info("--- @DomainEvent 不下沉验证 ---");
         try {
             Class.forName("io.ddd4j.spring.annotation.DomainEvent");
-            System.out.println("FAIL: @DomainEvent 不应在 ddd4j-spring 中");
+            log.error("FAIL: @DomainEvent 不应在 ddd4j-spring 中");
             failed++;
         } catch (ClassNotFoundException ex) {
-            System.out.println("PASS: @DomainEvent 不在 ddd4j-spring");
+            log.info("PASS: @DomainEvent 不在 ddd4j-spring");
             passed++;
         }
 
-        System.out.println();
-        System.out.println("========================================");
-        System.out.println("总计: " + (passed + failed) + " | 通过: " + passed + " | 失败: " + failed);
-        System.out.println("========================================");
+        log.info("");
+        log.info("========================================");
+        log.info("总计: {} | 通过: {} | 失败: {}", passed + failed, passed, failed);
+        log.info("========================================");
 
         if (failed > 0) {
-            System.err.println("验证未通过");
+            log.error("验证未通过");
             System.exit(1);
         }
 
-        System.out.println("全部验证通过，ddd4j-spring 注解收敛完成");
+        log.info("全部验证通过，ddd4j-spring 注解收敛完成");
     }
 
     private static int verify(String name,
                               Class<? extends Annotation> annotationType,
                               Class<? extends Annotation> springAnnotationType) {
         DDDAnnotation dddAnnotation = annotationType.getAnnotation(DDDAnnotation.class);
-        if (java.util.Objects.isNull(dddAnnotation)) {
-            System.out.println("FAIL " + name + ": 缺少 @DDDAnnotation 元注解");
+        if (Objects.isNull(dddAnnotation)) {
+            log.error("FAIL {}: 缺少 @DDDAnnotation 元注解", name);
             return 0;
         }
-        System.out.println("PASS " + name + ": 已标注 @DDDAnnotation");
+        log.info("PASS {}: 已标注 @DDDAnnotation", name);
 
         Annotation springAnnotation = annotationType.getAnnotation(springAnnotationType);
-        if (java.util.Objects.isNull(springAnnotation)) {
-            System.out.println("FAIL " + name + ": 缺少 " + springAnnotationType.getSimpleName() + " 元注解");
+        if (Objects.isNull(springAnnotation)) {
+            log.error("FAIL {}: 缺少 {} 元注解", name, springAnnotationType.getSimpleName());
             return 0;
         }
-        System.out.println("PASS " + name + ": 已融合 @" + springAnnotationType.getSimpleName());
+        log.info("PASS {}: 已融合 @{}", name, springAnnotationType.getSimpleName());
         return 1;
     }
 }

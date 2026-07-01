@@ -232,7 +232,6 @@
         <httpconn.version>1.0.1.RELEASE</httpconn.version>
         <httputils.version>1.0.0.RELEASE</httputils.version>
         <htmlparser.version>2.1</htmlparser.version>
-        <hitool.version>3.0.x.20241003.RELEASE</hitool.version>
         <hive.version>4.2.0</hive.version>
         <hutool.version>5.8.46</hutool.version>
         <hystrix.version>1.5.18</hystrix.version>
@@ -520,12 +519,6 @@
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
         <spring-kafka.version>3.3.16</spring-kafka.version>
         <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
-        <!-- 第三方 Boot starter 版本（Phase 2 迁出 boot 轨前暂 pin） -->
-        <spring-boot-starter-mybatis.version>3.0.5</spring-boot-starter-mybatis.version>
-        <spring-boot-starter-ip2region.version>3.3.x.20241003.RELEASE</spring-boot-starter-ip2region.version>
-        <spring-boot-starter-redistpl-plus.version>3.3.x.20241003.RELEASE</spring-boot-starter-redistpl-plus.version>
-        <spring-boot-starter-security-biz.version>3.3.x.20250712-SNAPSHOT</spring-boot-starter-security-biz.version>
-        <spring-boot-starter-security-jwt.version>3.3.x.20250712-SNAPSHOT</spring-boot-starter-security-jwt.version>
         <spring-plugin.version>3.0.0</spring-plugin.version>
         <spring-javassist.version>6.1.x.20250712-SNAPSHOT</spring-javassist.version>
         <spring-initializr.version>0.24.0</spring-initializr.version>
@@ -3766,24 +3759,6 @@
                 <artifactId>HikariCP</artifactId>
                 <version>${hikaricp.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/hitool-core -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>hitool-core</artifactId>
-                <version>${hitool.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/hitool-crypto -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>hitool-crypto</artifactId>
-                <version>${hitool.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/hitool-mail -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>hitool-mail</artifactId>
-                <version>${hitool.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.hive/hive-exec -->
             <dependency>
                 <groupId>org.apache.hive</groupId>
@@ -4149,12 +4124,6 @@
                 <groupId>org.influxdb</groupId>
                 <artifactId>influxdb-java</artifactId>
                 <version>${influxdb-java.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/ip2region-spring-boot-starter -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>ip2region-spring-boot-starter</artifactId>
-                <version>${spring-boot-starter-ip2region.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.sun.istack/istack-commons-runtime -->
             <dependency>
@@ -5478,12 +5447,6 @@
                 <artifactId>mica-mqtt-client</artifactId>
                 <version>${mica-mqtt.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.dromara.mica-mqtt/mica-mqtt-client-spring-boot-starter -->
-            <dependency>
-                <groupId>org.dromara.mica-mqtt</groupId>
-                <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
-                <version>${mica-mqtt.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-stackdriver — Micrometer Stackdriver 指标上报 -->
             <dependency>
                 <groupId>io.micrometer</groupId>
@@ -5634,18 +5597,6 @@
                 <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-spring-boot3-starter -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.baomidou/dynamic-datasource-spring-boot3-starter -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
-                <version>${dynamic-datasource.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/dynamic-datasource-spring -->
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -5669,12 +5620,6 @@
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-spring</artifactId>
                 <version>${mybatis-spring.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${spring-boot-starter-mybatis.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.scripting/mybatis-thymeleaf -->
             <dependency>
@@ -6671,12 +6616,6 @@
                 <artifactId>redisson-spring-data-33</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/redistpl-plus-spring-boot-starter -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>redistpl-plus-spring-boot-starter</artifactId>
-                <version>${spring-boot-starter-redistpl-plus.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.reflections/reflections -->
             <dependency>
                 <groupId>org.reflections</groupId>
@@ -7036,18 +6975,6 @@
                 <groupId>io.seata</groupId>
                 <artifactId>seata-metrics-exporter-prometheus</artifactId>
                 <version>${seata.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/security-biz-spring-boot-starter -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>security-biz-spring-boot-starter</artifactId>
-                <version>${spring-boot-starter-security-biz.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/security-jwt-spring-boot-starter -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>security-jwt-spring-boot-starter</artifactId>
-                <version>${spring-boot-starter-security-jwt.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.sendgrid/sendgrid-java — SendGrid 邮件 SDK -->
             <dependency>

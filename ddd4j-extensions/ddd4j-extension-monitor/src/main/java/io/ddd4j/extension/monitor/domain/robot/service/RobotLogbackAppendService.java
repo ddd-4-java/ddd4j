@@ -1,5 +1,7 @@
 package io.ddd4j.extension.monitor.domain.robot.service;
 
+import java.util.Objects;
+
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -36,7 +38,7 @@ public class RobotLogbackAppendService {
     public void init() {
         this.initLoggerContext();
         loggerContext.putProperty("ip", IpUtils.getLocalAddress());
-        if (java.util.Objects.nonNull(baseMonitorProperties.getLog().getApp()) && StrKit.isNotBlank(baseMonitorProperties.getLog().getApp().getProject())) {
+        if (Objects.nonNull(baseMonitorProperties.getLog().getApp()) && StrKit.isNotBlank(baseMonitorProperties.getLog().getApp().getProject())) {
             loggerContext.putProperty("project", baseMonitorProperties.getLog().getApp().getProject());
         }
         AsyncAppender asyncAppender = this.asyncAppender();
@@ -89,19 +91,19 @@ public class RobotLogbackAppendService {
         ThresholdFilter thresholdFilter = this.buildThresholdFilter();
         asyncAppender.addFilter(thresholdFilter);
         EvaluatorFilter<ILoggingEvent> ignoresFilter = this.ignores();
-        if (java.util.Objects.nonNull(ignoresFilter)) {
+        if (Objects.nonNull(ignoresFilter)) {
             asyncAppender.addFilter(ignoresFilter);
         }
         EvaluatorFilter<ILoggingEvent> ignoreLogNamesFilter = this.ignoreLogNames();
-        if (java.util.Objects.nonNull(ignoreLogNamesFilter)) {
+        if (Objects.nonNull(ignoreLogNamesFilter)) {
             asyncAppender.addFilter(ignoreLogNamesFilter);
         }
         EvaluatorFilter<ILoggingEvent> includesFilter = this.includes();
-        if (java.util.Objects.nonNull(includesFilter)) {
+        if (Objects.nonNull(includesFilter)) {
             asyncAppender.addFilter(includesFilter);
         }
         EvaluatorFilter<ILoggingEvent> keywordExpressionFilter = this.keywordExpression();
-        if (java.util.Objects.nonNull(keywordExpressionFilter)) {
+        if (Objects.nonNull(keywordExpressionFilter)) {
             asyncAppender.addFilter(keywordExpressionFilter);
         }
         this.addLoggerNameRobotAppender(asyncAppender);
@@ -113,7 +115,7 @@ public class RobotLogbackAppendService {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
         for (String loggerName : config.getAppendLoggerNames()) {
             Logger logger = loggerContext.getLogger(loggerName);
-            if (java.util.Objects.isNull(logger)) {
+            if (Objects.isNull(logger)) {
                 log.warn("alarm logger name ={} not found", loggerName);
                 continue;
             }

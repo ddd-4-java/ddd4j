@@ -26,13 +26,13 @@ public class OnsConsumerEndpointRegistrar {
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
-        String group = java.util.Objects.isNull(definition.getGroup()) || io.ddd4j.kit.lang.StrKit.isBlank(definition.getGroup())
+        String group = Objects.isNull(definition.getGroup()) || io.ddd4j.kit.lang.StrKit.isBlank(definition.getGroup())
                 ? properties.getConsumerId() : definition.getGroup();
-        if (java.util.Objects.isNull(group)) {
+        if (Objects.isNull(group)) {
             throw new IllegalStateException("OnsConsumerEndpointRegistrar requires consumerId or @MQEventListener(group=...)");
         }
-        String topic = java.util.Objects.isNull(definition.getTopic()) ? properties.getTopic() : definition.getTopic();
-        if (java.util.Objects.isNull(topic)) {
+        String topic = Objects.isNull(definition.getTopic()) ? properties.getTopic() : definition.getTopic();
+        if (Objects.isNull(topic)) {
             throw new IllegalStateException("OnsConsumerEndpointRegistrar requires topic");
         }
         String tag = MQTagMatcher.findIncludes(definition.getTags()).stream().findFirst().orElse(null);
@@ -50,7 +50,7 @@ public class OnsConsumerEndpointRegistrar {
             }
             Map<String, Object> headers = new HashMap<>();
             headers.put(MQMessages.HEADER_DESTINATION_TOPIC, message.getTopic());
-            if (java.util.Objects.nonNull(message.getTag())) {
+            if (Objects.nonNull(message.getTag())) {
                 headers.put(MQMessages.HEADER_DESTINATION_TAG, message.getTag());
             }
             headers.put(OnsMessageAcknowledgment.HEADER_ONS_MESSAGE, message);

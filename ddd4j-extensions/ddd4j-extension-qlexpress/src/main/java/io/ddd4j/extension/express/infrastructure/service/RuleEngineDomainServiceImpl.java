@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.service;
 
+import java.util.Objects;
+
 import com.alibaba.qlexpress4.CheckOptions;
 import com.alibaba.qlexpress4.Express4Runner;
 import com.alibaba.qlexpress4.runtime.context.ExpressContext;
@@ -97,6 +99,6 @@ public class RuleEngineDomainServiceImpl implements RuleEngineDomainService {
      */
     @Override
     public boolean isRuleAvailable(RuleDefinition rule) {
-        return java.util.Objects.nonNull(rule) && rule.isAvailable();
+        return Objects.nonNull(rule) && rule.isAvailable();
     }
 }

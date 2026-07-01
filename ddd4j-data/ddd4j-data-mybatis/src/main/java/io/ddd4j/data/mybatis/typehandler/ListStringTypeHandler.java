@@ -1,5 +1,7 @@
 package io.ddd4j.data.mybatis.typehandler;
 
+import java.util.Objects;
+
 import cn.hutool.json.JSONUtil;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -45,7 +47,7 @@ public class ListStringTypeHandler implements TypeHandler<List<String>> {
     }
 
     private List<String> toList(String value) {
-        if (java.util.Objects.isNull(value)) {
+        if (Objects.isNull(value)) {
             return null;
         }
         return JSONUtil.parseArray(value).toList(String.class);

@@ -55,7 +55,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
         try {
             Session session = connection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-            return new ActiveMQEventPublisher(connection(), session, properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
+            return new ActiveMQEventPublisher(connection(), session, properties, Objects.isNull(props) ? mqProperties : props, serialization);
         } catch (JMSException ex) {
             throw new IllegalStateException("Create ActiveMQ publisher failed", ex);
         }
@@ -68,7 +68,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         Object session = message.header(ActiveMQMessageAcknowledgment.HEADER_AMQ_SESSION);
@@ -90,7 +90,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() throws Exception {
         Connection c = connectionRef.get();
-        if (java.util.Objects.nonNull(c)) {
+        if (Objects.nonNull(c)) {
             try {
                 c.close();
             } finally {
@@ -102,7 +102,7 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     private synchronized Connection connection() {
         Connection c = connectionRef.get();
         try {
-            if (java.util.Objects.isNull(c)) {
+            if (Objects.isNull(c)) {
                 Connection nc = properties.connectionFactory().createConnection();
                 nc.start();
                 connectionRef.set(nc);

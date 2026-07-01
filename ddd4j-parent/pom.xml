@@ -31,6 +31,7 @@
         <scripts-dir>${project.build.directory}/generated-resources/appassembler</scripts-dir>
         <scripts-jsw-dir>${project.build.directory}/generated-resources/appassembler/jsw</scripts-jsw-dir>
         <scripts-bin-fileName>ddd4j</scripts-bin-fileName>
+        <scripts-main-class>io.ddd4j.Main</scripts-main-class>
 
         <!-- Docker 构建控制：设置为 true 可跳过 Docker 构建（用于本地开发时 Docker 环境有问题的情况） -->
         <docker.skip>true</docker.skip>
@@ -787,7 +788,7 @@
                                 <!-- 生成的脚本文件的名称，比如start.sh,你也可以根据你的需要命名成其他名字 -->
                                 <!-- <licenseHeaderFile></licenseHeaderFile> -->
                                 <!--指定主类，脚本名。会生成shell/bat两种类型,也可用platforms指定运行平台 -->
-                                <mainClass>org.springframework.boot.loader.JarLauncher</mainClass>
+                                <mainClass>${scripts-main-class}</mainClass>
                                 <!-- 插件将会为其生成bin文件的默认平台。使用字符串值进行配置 - “全部”（默认/空）| “windows”| “UNIX”。 -->
                                 <platforms>
                                     <platform>windows</platform>
@@ -915,7 +916,7 @@
                                 <!-- 唯一ID，会影响生成的目录名 -->
                                 <id>${project.artifactId}</id>
                                 <environmentSetupFileName>setenv</environmentSetupFileName>
-                                <mainClass>org.springframework.boot.loader.JarLauncher</mainClass>
+                                <mainClass>${scripts-main-class}</mainClass>
                                 <platforms>
                                     <platform>jsw</platform>
                                 </platforms>

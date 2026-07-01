@@ -15,6 +15,8 @@
  */
 package io.ddd4j.guice.web;
 
+import java.util.Objects;
+
 import io.ddd4j.guice.util.WebKit;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -56,7 +58,7 @@ public class JavalinMDCPlugin implements Handler {
     @Override
     public void handle(Context ctx) {
         String requestId = ctx.header("X-Request-Id");
-        if (java.util.Objects.isNull(requestId) || io.ddd4j.kit.lang.StrKit.isEmpty(requestId)) {
+        if (Objects.isNull(requestId) || io.ddd4j.kit.lang.StrKit.isEmpty(requestId)) {
             requestId = UUID.randomUUID().toString().replace("-", "");
         }
         MDC.put(MDC_REQUEST_ID, requestId);

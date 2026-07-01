@@ -1,5 +1,7 @@
 package io.ddd4j.mq.disruptor.spi;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
@@ -45,7 +47,7 @@ public class DisruptorMQBrokerAdapter implements MQBrokerAdapter {
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
         DisruptorMessageAcknowledgment ack = message.nativeMessage(DisruptorMessageAcknowledgment.class);
-        if (java.util.Objects.nonNull(ack)) {
+        if (Objects.nonNull(ack)) {
             return ack;
         }
         return DisruptorMessageAcknowledgmentFactory.from(message).orElse(null);

@@ -3,7 +3,6 @@ package io.ddd4j.web.webflux.error;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import hitool.core.format.ByteUnitFormat;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.exception.BizCheckedException;
@@ -64,6 +63,10 @@ import java.util.*;
 @ResponseBody
 @Slf4j
 public class GlobalExceptionHandler extends BaseExceptionHandler {
+
+    private static String formatKilobytes(long bytes) {
+        return String.format("%.0f KB", bytes / 1024.0d);
+    }
 
     @Getter
     @Autowired
@@ -427,7 +430,7 @@ public class GlobalExceptionHandler extends BaseExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizeExceededException(ServerWebExchange exchange, MaxUploadSizeExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", ByteUnitFormat.B.to(ByteUnitFormat.K, ex.getMaxUploadSize()));
+        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", formatKilobytes(ex.getMaxUploadSize()));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(exchange, ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);
@@ -442,7 +445,7 @@ public class GlobalExceptionHandler extends BaseExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizePerFileExceededException(ServerWebExchange exchange, MaxUploadSizePerFileExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", ByteUnitFormat.B.to(ByteUnitFormat.K, ex.getMaxUploadSizePerFile()));
+        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", formatKilobytes(ex.getMaxUploadSizePerFile()));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(exchange, ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);

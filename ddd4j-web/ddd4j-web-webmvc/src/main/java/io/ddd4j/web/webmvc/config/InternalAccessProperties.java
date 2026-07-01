@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.config;
 
+import java.util.Objects;
+
 import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
@@ -19,8 +21,8 @@ public class InternalAccessProperties {
 
     public static InternalAccessProperties from(Environment environment) {
         InternalAccessProperties properties = new InternalAccessProperties();
-        String raw = java.util.Objects.isNull(environment) ? null : environment.getProperty(BEARER_TOKENS_PROPERTY);
-        if (java.util.Objects.nonNull(raw) && org.springframework.util.StringUtils.hasText(raw)) {
+        String raw = Objects.isNull(environment) ? null : environment.getProperty(BEARER_TOKENS_PROPERTY);
+        if (Objects.nonNull(raw) && org.springframework.util.StringUtils.hasText(raw)) {
             properties.setBearerTokens(List.of(raw.split(",")).stream()
                     .map(String::trim)
                     .filter(token -> !token.isEmpty())
@@ -34,6 +36,6 @@ public class InternalAccessProperties {
     }
 
     public void setBearerTokens(List<String> bearerTokens) {
-        this.bearerTokens = java.util.Objects.isNull(bearerTokens) ? new ArrayList<>() : new ArrayList<>(bearerTokens);
+        this.bearerTokens = Objects.isNull(bearerTokens) ? new ArrayList<>() : new ArrayList<>(bearerTokens);
     }
 }

@@ -1,5 +1,7 @@
 package io.ddd4j.guice;
 
+import java.util.Objects;
+
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import io.ddd4j.core.contract.DomainEvent;
@@ -28,7 +30,7 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
 
     @Override
     public void publish(DomainEvent event) {
-        if (java.util.Objects.isNull(event)) {
+        if (Objects.isNull(event)) {
             log.warn("Attempted to publish null domain event");
             return;
         }
@@ -38,7 +40,7 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
 
     @Override
     public void publishAll(Collection<DomainEvent> events) {
-        if (java.util.Objects.isNull(events) || events.isEmpty()) {
+        if (Objects.isNull(events) || events.isEmpty()) {
             return;
         }
         log.debug("Publishing {} domain events", events.size());

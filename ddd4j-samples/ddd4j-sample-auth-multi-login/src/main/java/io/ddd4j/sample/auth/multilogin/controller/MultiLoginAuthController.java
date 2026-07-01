@@ -1,5 +1,7 @@
 package io.ddd4j.sample.auth.multilogin.controller;
 
+import java.util.Objects;
+
 import io.ddd4j.core.subject.AuthPrincipal;
 import io.ddd4j.core.subject.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
@@ -46,7 +48,7 @@ public class MultiLoginAuthController {
         String loginId = command.provider() + ":" + command.openId();
         AuthPrincipal principal = new AuthPrincipal()
                 .setLoginId(loginId)
-                .setUserId(java.util.Objects.isNull(command.unionId()) || !org.springframework.util.StringUtils.hasText(command.unionId()) ? loginId : command.unionId())
+                .setUserId(Objects.isNull(command.unionId()) || !org.springframework.util.StringUtils.hasText(command.unionId()) ? loginId : command.unionId())
                 .setOpenid(command.openId())
                 .setUnionId(command.unionId())
                 .setUserType("third-party");
@@ -65,7 +67,7 @@ public class MultiLoginAuthController {
     @GetMapping("/me")
     public Map<String, Object> me() {
         AuthPrincipal principal = SubjectKit.getPrincipal();
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return Map.of("authenticated", false);
         }
         Map<String, Object> result = new LinkedHashMap<>();

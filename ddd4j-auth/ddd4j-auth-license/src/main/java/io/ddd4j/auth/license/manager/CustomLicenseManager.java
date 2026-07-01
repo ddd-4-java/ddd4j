@@ -1,5 +1,7 @@
 package io.ddd4j.auth.license.manager;
 
+import java.util.Objects;
+
 import de.schlichtherle.license.*;
 import de.schlichtherle.xml.GenericCertificate;
 import de.schlichtherle.xml.XMLConstants;
@@ -58,7 +60,7 @@ public class CustomLicenseManager extends LicenseManager {
 
         // Load license key from preferences,
         final byte[] key = getLicenseKey();
-        if (java.util.Objects.isNull(key)) {
+        if (Objects.isNull(key)) {
             throw new NoLicenseInstalledException(getLicenseParam().getSubject());
         }
 
@@ -79,14 +81,14 @@ public class CustomLicenseManager extends LicenseManager {
         final Date now = new Date();
         final Date notBefore = content.getNotBefore();
         final Date notAfter = content.getNotAfter();
-        if (java.util.Objects.nonNull(notAfter) && now.after(notAfter)) {
+        if (Objects.nonNull(notAfter) && now.after(notAfter)) {
             throw new LicenseContentException("证书失效时间不能早于当前时间");
         }
-        if (java.util.Objects.nonNull(notBefore) && java.util.Objects.nonNull(notAfter) && notAfter.before(notBefore)) {
+        if (Objects.nonNull(notBefore) && Objects.nonNull(notAfter) && notAfter.before(notBefore)) {
             throw new LicenseContentException("证书生效时间不能晚于证书失效时间");
         }
         final String consumerType = content.getConsumerType();
-        if (java.util.Objects.isNull(consumerType)) {
+        if (Objects.isNull(consumerType)) {
             throw new LicenseContentException("用户类型不能为空");
         }
     }
@@ -119,10 +121,10 @@ public class CustomLicenseManager extends LicenseManager {
             log.error("XMLDecoder解析XML编码失败", e);
         } finally {
             try {
-                if (java.util.Objects.nonNull(decoder)) {
+                if (Objects.nonNull(decoder)) {
                     decoder.close();
                 }
-                if (java.util.Objects.nonNull(inputStream)) {
+                if (Objects.nonNull(inputStream)) {
                     inputStream.close();
                 }
             } catch (Exception e) {

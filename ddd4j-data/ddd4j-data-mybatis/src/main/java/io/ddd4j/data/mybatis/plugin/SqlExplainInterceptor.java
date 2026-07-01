@@ -15,6 +15,8 @@
  */
 package io.ddd4j.data.mybatis.plugin;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,15 +56,15 @@ public class SqlExplainInterceptor implements InnerInterceptor {
         MappedStatement ms = (MappedStatement) org.apache.ibatis.reflection.SystemMetaObject
                 .forObject(sh)
                 .getValue("delegate.mappedStatement");
-        if (java.util.Objects.isNull(ms)) {
+        if (Objects.isNull(ms)) {
             return;
         }
         if (InterceptorIgnoreHelper.willIgnoreOthersByKey(ms.getId(), "slowSql")) {
             return;
         }
         BoundSql boundSql = sh.getBoundSql();
-        String sql = java.util.Objects.nonNull(boundSql) ? boundSql.getSql() : null;
-        if (java.util.Objects.nonNull(sql) && sql.length() > longSqlThreshold) {
+        String sql = Objects.nonNull(boundSql) ? boundSql.getSql() : null;
+        if (Objects.nonNull(sql) && sql.length() > longSqlThreshold) {
             log.warn("Long SQL detected [length={}, mapper={}]: {}", sql.length(),
                     ms.getId(), sql.substring(0, 200) + "...");
         }

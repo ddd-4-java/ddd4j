@@ -17,6 +17,7 @@ import java.util.List;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = false)
 @Deprecated(since = "3.4.x", forRemoval = true)
+@SuppressWarnings("removal")
 public class PaginationEntity<T extends Model<?>> extends BaseEntity<T> {
 
     protected static final int DEFAULT_LIMIT = 15;

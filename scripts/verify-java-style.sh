@@ -48,6 +48,8 @@ run_guard "forbid object null comparisons" '^(?!\s*(?:\*|//)).*(?<![\w.])(?:this
 run_guard "forbid String.isBlank()" '\.isBlank\(\)'
 run_guard "forbid trim().isEmpty()" 'trim\(\)\.isEmpty\(\)'
 run_guard "forbid manual string null-or-empty checks" '(==\s*null\s*\|\|\s*[^;]*\.isEmpty\(\))|(!=\s*null\s*&&\s*[^;]*!\s*[^;]*\.isEmpty\(\))'
+run_guard "forbid System.out/System.err" 'System\.(out|err)\.'
+run_guard "forbid printStackTrace" '\.printStackTrace\(\)'
 run_guard "forbid direct logger factory usage in application code" 'LoggerFactory\.getLogger\(' \
   --glob '!**/target/**' \
   --glob '!**/.idea/**' \

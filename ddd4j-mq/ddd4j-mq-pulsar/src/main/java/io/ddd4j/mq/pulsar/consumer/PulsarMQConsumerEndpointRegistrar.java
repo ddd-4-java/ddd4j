@@ -28,7 +28,7 @@ public class PulsarMQConsumerEndpointRegistrar {
     }
 
     private static String messageIdString(MessageId id) {
-        return java.util.Objects.isNull(id) ? null : id.toString();
+        return Objects.isNull(id) ? null : id.toString();
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
@@ -70,7 +70,7 @@ public class PulsarMQConsumerEndpointRegistrar {
     private MQMessage<String> toMessage(Consumer<byte[]> consumer, Message<byte[]> msg) {
         Map<String, Object> headers = new HashMap<>();
         msg.getProperties().forEach((k, v) -> {
-            if (java.util.Objects.nonNull(v)) {
+            if (Objects.nonNull(v)) {
                 headers.put(k, v);
             }
         });

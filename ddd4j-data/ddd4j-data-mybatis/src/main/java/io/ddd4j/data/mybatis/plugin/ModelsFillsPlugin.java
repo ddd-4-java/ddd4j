@@ -3,6 +3,7 @@ package io.ddd4j.data.mybatis.plugin;
 import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.Page;
 import io.ddd4j.core.contract.Query;
+import io.ddd4j.kit.lang.CollKit;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -12,7 +13,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 模型聚合填充插件。
@@ -51,10 +52,10 @@ public class ModelsFillsPlugin implements Interceptor {
         Object result = invocation.proceed();
         Object parameter = invocation.getArgs()[1];
         // 获取 Mapper 方法的参数
-        if (parameter instanceof MapperMethod.ParamMap) {
-            for (Object value : ((Map) parameter).values()) {
-                if (value instanceof Query) {
-                    fills((Query) value, result);
+        if (parameter instanceof MapperMethod.ParamMap<?> paramMap) {
+            for (Object value : paramMap.values()) {
+                if (value instanceof Query query) {
+                    fills(query, result);
                     break;
                 }
             }
@@ -71,17 +72,26 @@ public class ModelsFillsPlugin implements Interceptor {
     }
 
     private void fills(Query query, Object result) {
-        if (result instanceof Model) {
-            query.doFills(Collections.singletonList((Model) result));
-        } else if (result instanceof List) {
-            if (!((List) result).isEmpty() && ((List) result).get(0) instanceof Model) {
-                query.doFills((List) result);
+        if (result instanceof Model model) {
+            query.doFills(Collections.singletonList(model));
+        } else if (result instanceof List<?> models) {
+            if (isModelList(models)) {
+                query.doFills(toModels(models));
             }
-        } else if (result instanceof Page) {
-            if (!((Page) result).isEmpty() && ((Page) result).getRecords().get(0) instanceof Model) {
-                query.doFills(((Page) result).getRecords());
+        } else if (result instanceof Page<?> page) {
+            List<?> records = page.getRecords();
+            if (isModelList(records)) {
+                query.doFills(toModels(records));
             }
         }
+    }
+
+    private boolean isModelList(List<?> values) {
+        return CollKit.isNotEmpty(values) && values.get(0) instanceof Model;
+    }
+
+    private List<Model> toModels(List<?> values) {
+        return values.stream().map(Model.class::cast).collect(Collectors.toList());
     }
 
 }

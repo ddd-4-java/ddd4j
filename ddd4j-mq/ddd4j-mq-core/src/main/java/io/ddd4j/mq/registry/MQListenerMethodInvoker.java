@@ -1,5 +1,7 @@
 package io.ddd4j.mq.registry;
 
+import java.util.Objects;
+
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.core.contract.constant.ContextConstants;
@@ -39,7 +41,7 @@ public class MQListenerMethodInvoker {
     }
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     /**
@@ -75,11 +77,11 @@ public class MQListenerMethodInvoker {
      */
     public Object resolvePayload(MQListenerDefinition definition, MQMessage<?> message) {
         Class<?> payloadType = resolvePayloadType(definition.getMethod());
-        if (java.util.Objects.isNull(payloadType) || payloadType == Void.class) {
+        if (Objects.isNull(payloadType) || payloadType == Void.class) {
             return message.getPayload();
         }
         Object raw = message.getPayload();
-        if (java.util.Objects.isNull(raw)) {
+        if (Objects.isNull(raw)) {
             return null;
         }
         if (payloadType.isInstance(raw)) {
@@ -137,7 +139,7 @@ public class MQListenerMethodInvoker {
      * 将方法返回值映射为 {@link AckDisposition}。
      */
     private AckDisposition resolveDisposition(Object result) {
-        if (java.util.Objects.isNull(result)) {
+        if (Objects.isNull(result)) {
             return AckDisposition.ACK;
         }
         if (result instanceof AckDisposition) {

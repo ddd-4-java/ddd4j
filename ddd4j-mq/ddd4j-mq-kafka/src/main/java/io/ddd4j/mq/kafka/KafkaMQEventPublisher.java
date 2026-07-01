@@ -45,21 +45,21 @@ public class KafkaMQEventPublisher implements MQEventPublisher {
         String namespace = firstText(destination.getNamespace(), event.getNamespace(), properties.getNamespace());
         String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
         String concat = firstText(event.getConcat(), "_");
-        return java.util.Objects.isNull(namespace) ? topic : namespace + concat + topic;
+        return Objects.isNull(namespace) ? topic : namespace + concat + topic;
     }
 
     private static void addHeader(ProducerRecord<String, String> record, String key, String value) {
-        if (java.util.Objects.nonNull(value)) {
+        if (Objects.nonNull(value)) {
             record.headers().add(new RecordHeader(key, value.getBytes(StandardCharsets.UTF_8)));
         }
     }
 
     private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
+        if (Objects.isNull(values)) {
             return null;
         }
         for (String value : values) {
-            if (java.util.Objects.nonNull(value) && !io.ddd4j.kit.lang.StrKit.isBlank(value)) {
+            if (Objects.nonNull(value) && !io.ddd4j.kit.lang.StrKit.isBlank(value)) {
                 return value;
             }
         }

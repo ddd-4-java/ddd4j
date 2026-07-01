@@ -1,5 +1,7 @@
 package io.ddd4j.mq.nats.spi;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
@@ -47,7 +49,7 @@ public class NatsMQBrokerAdapter implements MQBrokerAdapter {
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
         // 逻辑块：优先从 NATS 原生 Message 解析 JetStream 确认
         Message natsMessage = message.nativeMessage(Message.class);
-        if (java.util.Objects.nonNull(natsMessage)) {
+        if (Objects.nonNull(natsMessage)) {
             return NatsMessageAcknowledgmentFactory.fromNatsMessage(natsMessage).orElse(null);
         }
         return message.nativeMessage(NatsMessageAcknowledgment.class);

@@ -19,6 +19,7 @@ import java.util.List;
  * @author <a href="https://github.com/wandl">wandl</a>
  */
 @Deprecated(since = "3.4.x", forRemoval = true)
+@SuppressWarnings("removal")
 public interface BaseMapper<T extends Model<?>> extends com.baomidou.mybatisplus.core.mapper.BaseMapper<T> {
 
     int setStatus(@Param("id") Serializable id, @Param("status") Serializable status);

@@ -49,16 +49,16 @@ public final class MQTagMatcher {
             }
         }
 
-        if (java.util.Objects.nonNull(candidate) && excludes.contains(candidate)) {
+        if (Objects.nonNull(candidate) && excludes.contains(candidate)) {
             return false;
         }
         if (wildcard) {
             return true;
         }
         if (includes.isEmpty()) {
-            return java.util.Objects.isNull(candidate) || !excludes.contains(candidate);
+            return Objects.isNull(candidate) || !excludes.contains(candidate);
         }
-        return java.util.Objects.nonNull(candidate) && includes.contains(candidate);
+        return Objects.nonNull(candidate) && includes.contains(candidate);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class MQTagMatcher {
     }
 
     private static List<String> tokens(String expression) {
-        if (java.util.Objects.isNull(expression) || io.ddd4j.kit.lang.StrKit.isBlank(expression) || Objects.equals(WILDCARD, expression.trim())) {
+        if (Objects.isNull(expression) || io.ddd4j.kit.lang.StrKit.isBlank(expression) || Objects.equals(WILDCARD, expression.trim())) {
             return List.of();
         }
         return List.of(expression.replace(OR, " ").trim().split("\\s+")).stream()
@@ -90,7 +90,7 @@ public final class MQTagMatcher {
     }
 
     private static String trimToNull(String s) {
-        if (java.util.Objects.isNull(s) || io.ddd4j.kit.lang.StrKit.isBlank(s)) {
+        if (Objects.isNull(s) || io.ddd4j.kit.lang.StrKit.isBlank(s)) {
             return null;
         }
         return s.trim();

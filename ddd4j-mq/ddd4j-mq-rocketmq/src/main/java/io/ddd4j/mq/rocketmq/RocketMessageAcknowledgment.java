@@ -91,7 +91,7 @@ public class RocketMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
-        if (java.util.Objects.isNull(nativeType)) {
+        if (Objects.isNull(nativeType)) {
             return Optional.empty();
         }
         if (nativeType.isInstance(message)) {

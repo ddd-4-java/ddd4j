@@ -30,10 +30,10 @@ public class MicaMqttMQConsumerEndpointRegistrar {
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
-        String topic = java.util.Objects.isNull(definition.getTopic()) ? "ddd4j/default/topic" : definition.getTopic();
+        String topic = Objects.isNull(definition.getTopic()) ? "ddd4j/default/topic" : definition.getTopic();
         String tag = MQTagMatcher.findIncludes(definition.getTags()).stream().findFirst().orElse(null);
-        String subscribeTopic = (java.util.Objects.isNull(tag)) ? topic : topic + "/#";
-        if (java.util.Objects.nonNull(definition.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(definition.getNamespace())) {
+        String subscribeTopic = (Objects.isNull(tag)) ? topic : topic + "/#";
+        if (Objects.nonNull(definition.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(definition.getNamespace())) {
             subscribeTopic = definition.getNamespace() + "/" + subscribeTopic;
         }
         // mica AIO client API: subscribe(topic, qos, messageHandler)
@@ -56,7 +56,7 @@ public class MicaMqttMQConsumerEndpointRegistrar {
         }
         Map<String, Object> headers = new HashMap<>();
         headers.put(MQMessages.HEADER_DESTINATION_TOPIC, def.getTopic());
-        if (java.util.Objects.nonNull(tag)) {
+        if (Objects.nonNull(tag)) {
             headers.put(MQMessages.HEADER_DESTINATION_TAG, tag);
         }
         long messageId = idGen.getAndIncrement();

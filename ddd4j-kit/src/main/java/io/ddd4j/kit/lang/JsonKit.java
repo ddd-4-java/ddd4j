@@ -141,7 +141,7 @@ public class JsonKit {
      * 对象转 JSON 字符串
      */
     public static String toJson(Object object) {
-        if (java.util.Objects.isNull(object)) {
+        if (Objects.isNull(object)) {
             return null;
         }
         if (object instanceof String) {
@@ -223,7 +223,7 @@ public class JsonKit {
      * JSON 字符串转对象
      */
     public static <T> T toObject(Object object, Class<T> clazz) {
-        if (java.util.Objects.isNull(object)) {
+        if (Objects.isNull(object)) {
             return null;
         }
         if (!(object instanceof String)) {
@@ -246,7 +246,7 @@ public class JsonKit {
      * JSON 字符串转对象（带 JavaType）
      */
     public static <T> T toObject(Object object, JavaType javaType) {
-        if (java.util.Objects.isNull(object)) {
+        if (Objects.isNull(object)) {
             return null;
         }
         if (!(object instanceof String)) {
@@ -269,7 +269,7 @@ public class JsonKit {
      * JSON 字符串转列表
      */
     public static <T> List<T> toList(Object object, Class<T> beanType) {
-        if (java.util.Objects.isNull(object)) {
+        if (Objects.isNull(object)) {
             return new ArrayList<>();
         }
         if (!(object instanceof String)) {
@@ -293,7 +293,7 @@ public class JsonKit {
      * JSON 字符串转对象（带 TypeReference）
      */
     public static <T> T toPojo(Object object, TypeReference<T> typeReference) {
-        if (java.util.Objects.isNull(object)) {
+        if (Objects.isNull(object)) {
             return null;
         }
         if (!(object instanceof String)) {

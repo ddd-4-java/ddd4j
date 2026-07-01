@@ -73,7 +73,7 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         RobotLayout layout = new RobotLayout();
         layout.setContext(loggerContext);
         BaseMonitorProperties.Log.App applicationConfig = SpringContext.getBean(BaseMonitorProperties.class).getLog().getApp();
-        if (java.util.Objects.isNull(applicationConfig)) {
+        if (Objects.isNull(applicationConfig)) {
             applicationConfig = new BaseMonitorProperties.Log.App();
         }
         String app = applicationConfig.getName();
@@ -89,7 +89,7 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     }
 
     private static synchronized void acquire() {
-        if (java.util.Objects.isNull(rateLimiter)) {
+        if (Objects.isNull(rateLimiter)) {
             BaseMonitorProperties properties = SpringContext.getBean(BaseMonitorProperties.class);
             rateLimiter = RateLimiter.create(properties.getLog().getRateLimiterPermitsPerSecond());
         }
@@ -98,7 +98,7 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
     @Override
     protected void append(ILoggingEvent eventObject) {
-        if (java.util.Objects.isNull(encoder)) {
+        if (Objects.isNull(encoder)) {
             addWarn("encoder is null");
             return;
         }

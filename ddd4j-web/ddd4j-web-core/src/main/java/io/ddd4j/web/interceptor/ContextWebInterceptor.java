@@ -1,5 +1,7 @@
 package io.ddd4j.web.interceptor;
 
+import java.util.Objects;
+
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import io.ddd4j.web.core.SessionContext;
@@ -49,7 +51,7 @@ public class ContextWebInterceptor implements WebInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 提取租户 ID（兼容三种 header 命名）
         String tenantId = extractHeader(request, "tenant_id", "tenant-id", "tenantId");
-        if (java.util.Objects.nonNull(tenantId) && io.ddd4j.kit.lang.StrKit.isNotEmpty(tenantId)) {
+        if (Objects.nonNull(tenantId) && io.ddd4j.kit.lang.StrKit.isNotEmpty(tenantId)) {
             ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
         }
 
@@ -63,7 +65,7 @@ public class ContextWebInterceptor implements WebInterceptor {
 
         // 提取角色（整数）
         String roleHeader = request.getHeader("role");
-        if (java.util.Objects.nonNull(roleHeader) && io.ddd4j.kit.lang.StrKit.isNotEmpty(roleHeader)) {
+        if (Objects.nonNull(roleHeader) && io.ddd4j.kit.lang.StrKit.isNotEmpty(roleHeader)) {
             try {
                 ThreadContext.set(ContextConstants.ROLE, Integer.parseInt(roleHeader));
             } catch (NumberFormatException e) {
@@ -73,17 +75,17 @@ public class ContextWebInterceptor implements WebInterceptor {
 
         // 解析语言偏好（如 "en-US,en;q=0.9" -> "en-US"）
         String acceptLanguage = request.getHeader("Accept-Language");
-        if (java.util.Objects.nonNull(acceptLanguage) && io.ddd4j.kit.lang.StrKit.isNotEmpty(acceptLanguage)) {
+        if (Objects.nonNull(acceptLanguage) && io.ddd4j.kit.lang.StrKit.isNotEmpty(acceptLanguage)) {
             String lang = acceptLanguage.split(",")[0].replace('-', '_');
             ThreadContext.set(ContextConstants.LOCALE, Locale.forLanguageTag(lang));
         }
 
         // 会话解析（子类可重写）
         String thirdSession = request.getHeader("third_session");
-        if (java.util.Objects.nonNull(thirdSession) && io.ddd4j.kit.lang.StrKit.isNotEmpty(thirdSession)) {
+        if (Objects.nonNull(thirdSession) && io.ddd4j.kit.lang.StrKit.isNotEmpty(thirdSession)) {
             try {
                 SessionContext sessionContext = resolveSession(request);
-                if (java.util.Objects.nonNull(sessionContext)) {
+                if (Objects.nonNull(sessionContext)) {
                     ThreadContext.set(ContextConstants.SESSION, sessionContext);
                     ThreadContext.set(ContextConstants.USER_ID, sessionContext.getUserId());
                     log.debug("Session resolved, userId={}", sessionContext.getUserId());
@@ -128,7 +130,7 @@ public class ContextWebInterceptor implements WebInterceptor {
     private String extractHeader(HttpServletRequest request, String... names) {
         for (String name : names) {
             String value = request.getHeader(name);
-            if (java.util.Objects.nonNull(value) && io.ddd4j.kit.lang.StrKit.isNotEmpty(value)) {
+            if (Objects.nonNull(value) && io.ddd4j.kit.lang.StrKit.isNotEmpty(value)) {
                 return value;
             }
         }

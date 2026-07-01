@@ -70,15 +70,15 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        if (java.util.Objects.isNull(client())) {
+        if (Objects.isNull(client())) {
             throw new IllegalStateException("mica-mqtt client is not initialized");
         }
-        return new MicaMqttMQEventPublisher(client(), properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
+        return new MicaMqttMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
     public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
-        if (java.util.Objects.isNull(consumerRegistrar)) {
+        if (Objects.isNull(consumerRegistrar)) {
             throw new IllegalStateException("mica-mqtt client is not initialized");
         }
         consumerRegistrar.register(definition, handler);
@@ -86,7 +86,7 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         Object idObj = message.header(MicaMqttMessageAcknowledgment.HEADER_MICA_MESSAGE_ID);
@@ -105,7 +105,7 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() {
         MqttClient c = clientRef.get();
-        if (java.util.Objects.nonNull(c)) {
+        if (Objects.nonNull(c)) {
             try {
                 c.stop();
             } finally {

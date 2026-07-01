@@ -85,7 +85,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     public JedisCache(UnifiedJedis jedis, CacheConfig config, Class<V> valueType, ObjectMapper objectMapper) {
         this.jedis = Objects.requireNonNull(jedis);
         this.valueType = Objects.requireNonNull(valueType);
-        this.objectMapper = java.util.Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper();
+        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper();
         this.keyPrefix = config.getName() + ":";
         long expSec = config.getExpireAfterWriteSeconds();
         this.expireSeconds = expSec;
@@ -108,7 +108,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     public V getIfPresent(String key) {
         try {
             String json = jedis.get(key(key));
-            if (java.util.Objects.isNull(json)) {
+            if (Objects.isNull(json)) {
                 return null;
             }
             if (valueType == String.class) {
@@ -123,9 +123,9 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     @Override
     public V get(String key, Function<String, V> mappingFunction) {
         V value = getIfPresent(key);
-        if (java.util.Objects.isNull(value)) {
+        if (Objects.isNull(value)) {
             value = mappingFunction.apply(key);
-            if (java.util.Objects.nonNull(value)) {
+            if (Objects.nonNull(value)) {
                 put(key, value);
             }
         }
@@ -136,7 +136,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     public void put(String key, V value) {
         try {
             String json = (value instanceof String) ? (String) value : objectMapper.writeValueAsString(value);
-            if (java.util.Objects.nonNull(setParams)) {
+            if (Objects.nonNull(setParams)) {
                 jedis.set(key(key), json, setParams);
             } else {
                 jedis.set(key(key), json);
@@ -200,13 +200,13 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     @Override
     public boolean replace(String key, V expected, V newValue) {
         try {
-            if (java.util.Objects.isNull(expected)) {
+            if (Objects.isNull(expected)) {
                 return putIfAbsent(key, newValue);
             }
             String expectedJson = (expected instanceof String) ? (String) expected : objectMapper.writeValueAsString(expected);
             String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
             Object result = jedis.eval(CAS_REPLACE_SCRIPT, 1, key(key), expectedJson, newJson);
-            return java.util.Objects.nonNull(result) && !Long.valueOf(0).equals(result);
+            return Objects.nonNull(result) && !Long.valueOf(0).equals(result);
         } catch (Exception e) {
             return false;
         }
@@ -217,7 +217,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         try {
             String expectedJson = (expected instanceof String) ? (String) expected : objectMapper.writeValueAsString(expected);
             Object result = jedis.eval(CAS_DELETE_SCRIPT, 1, key(key), expectedJson);
-            return java.util.Objects.nonNull(result) && !Long.valueOf(0).equals(result);
+            return Objects.nonNull(result) && !Long.valueOf(0).equals(result);
         } catch (Exception e) {
             return false;
         }

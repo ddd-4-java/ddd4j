@@ -1,5 +1,7 @@
 package io.ddd4j.mq.nats;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
@@ -54,7 +56,7 @@ class NatsContainerIT {
 
     @AfterAll
     static void stopNats() throws Exception {
-        if (java.util.Objects.nonNull(natsConnection)) {
+        if (Objects.nonNull(natsConnection)) {
             natsConnection.close();
         }
         NATS.stop();

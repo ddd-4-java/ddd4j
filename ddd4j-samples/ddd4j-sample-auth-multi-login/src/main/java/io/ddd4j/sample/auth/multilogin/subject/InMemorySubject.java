@@ -40,7 +40,7 @@ public class InMemorySubject implements Subject {
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         String token = currentToken.get();
-        if (java.util.Objects.isNull(token)) {
+        if (Objects.isNull(token)) {
             return null;
         }
         return (T) principalsByToken.get(token);
@@ -77,11 +77,11 @@ public class InMemorySubject implements Subject {
     @Override
     public void logout() {
         String token = currentToken.get();
-        if (java.util.Objects.isNull(token)) {
+        if (Objects.isNull(token)) {
             return;
         }
         AuthPrincipal principal = principalsByToken.remove(token);
-        if (java.util.Objects.nonNull(principal)) {
+        if (Objects.nonNull(principal)) {
             principalsByLoginId.remove(principal.getLoginId());
             tokenByLoginId.remove(principal.getLoginId());
         }
@@ -91,7 +91,7 @@ public class InMemorySubject implements Subject {
     @Override
     public void logout(Object loginId) {
         String token = tokenByLoginId.remove(loginId);
-        if (java.util.Objects.nonNull(token)) {
+        if (Objects.nonNull(token)) {
             principalsByToken.remove(token);
         }
         principalsByLoginId.remove(loginId);
@@ -108,7 +108,7 @@ public class InMemorySubject implements Subject {
     @Override
     public String refresh() {
         AuthPrincipal principal = getPrincipal();
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return null;
         }
         String oldToken = currentToken.get();
@@ -227,7 +227,7 @@ public class InMemorySubject implements Subject {
 
     @Override
     public boolean isAuthenticated() {
-        return java.util.Objects.nonNull(getPrincipal());
+        return Objects.nonNull(getPrincipal());
     }
 
     @Override
@@ -243,13 +243,13 @@ public class InMemorySubject implements Subject {
     @Override
     public boolean isTrustDeviceId(String deviceId) {
         AuthPrincipal principal = getPrincipal();
-        return java.util.Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
+        return Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
     @Override
     public boolean isTrustDeviceId(Object userId, String deviceId) {
         AuthPrincipal principal = getPrincipalByLoginId(userId);
-        return java.util.Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
+        return Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
     @Override
@@ -261,7 +261,7 @@ public class InMemorySubject implements Subject {
     @Override
     public boolean isDisabled(Object loginId) {
         Long disabledUntil = disabledUntilEpochSecond.get(loginId);
-        if (java.util.Objects.isNull(disabledUntil)) {
+        if (Objects.isNull(disabledUntil)) {
             return false;
         }
         if (disabledUntil == PERMANENT_DISABLE) {
@@ -280,7 +280,7 @@ public class InMemorySubject implements Subject {
     }
 
     private void validate(AuthRequest request) {
-        if (java.util.Objects.isNull(request) || java.util.Objects.isNull(request.getLoginId())) {
+        if (Objects.isNull(request) || Objects.isNull(request.getLoginId())) {
             throw new IllegalArgumentException("loginId must not be null");
         }
         if (isDisabled(request.getLoginId())) {
@@ -297,16 +297,16 @@ public class InMemorySubject implements Subject {
 
     private AuthPrincipal normalizePrincipal(AuthRequest request) {
         AuthPrincipal principal = request.getPrincipal();
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             principal = new AuthPrincipal().setLoginId(request.getLoginId()).setUserId(request.getLoginId());
         }
-        if (java.util.Objects.isNull(principal.getLoginId())) {
+        if (Objects.isNull(principal.getLoginId())) {
             principal.setLoginId(request.getLoginId());
         }
-        if (java.util.Objects.isNull(principal.getUserId())) {
+        if (Objects.isNull(principal.getUserId())) {
             principal.setUserId(request.getLoginId());
         }
-        if (java.util.Objects.isNull(principal.getDeviceType())) {
+        if (Objects.isNull(principal.getDeviceType())) {
             principal.setDeviceType(request.getDeviceType());
         }
         principal.getProfile().putAll(request.getExtra());
@@ -315,12 +315,12 @@ public class InMemorySubject implements Subject {
     }
 
     private String createToken(AuthRequest request) {
-        String realm = java.util.Objects.isNull(request.getRealm()) || !org.springframework.util.StringUtils.hasText(request.getRealm()) ? "default" : request.getRealm();
+        String realm = Objects.isNull(request.getRealm()) || !org.springframework.util.StringUtils.hasText(request.getRealm()) ? "default" : request.getRealm();
         return realm + ":" + UUID.randomUUID();
     }
 
     private boolean hasPermission(AuthPrincipal principal, String permission) {
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return false;
         }
         Set<String> permissions = new HashSet<>(principal.getPerms());
@@ -329,7 +329,7 @@ public class InMemorySubject implements Subject {
     }
 
     private boolean[] permissionChecks(AuthPrincipal principal, String... permissions) {
-        if (java.util.Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
         }
         boolean[] result = new boolean[permissions.length];
@@ -340,14 +340,14 @@ public class InMemorySubject implements Subject {
     }
 
     private boolean hasRole(AuthPrincipal principal, String roleIdentifier) {
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return false;
         }
         return SubjectKit.getStrategy().hasElement.apply(roleIdentifiers(principal), roleIdentifier);
     }
 
     private boolean[] roleChecks(AuthPrincipal principal, String... roleIdentifiers) {
-        if (java.util.Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
         boolean[] result = new boolean[roleIdentifiers.length];
@@ -358,22 +358,22 @@ public class InMemorySubject implements Subject {
     }
 
     private List<String> roleIdentifiers(AuthPrincipal principal) {
-        if (java.util.Objects.isNull(principal)) {
+        if (Objects.isNull(principal)) {
             return Collections.emptyList();
         }
         List<String> roles = new ArrayList<>(SubjectKit.getDataProvider().getRoleList(principal));
-        if (java.util.Objects.nonNull(principal.getRoleCode())) {
+        if (Objects.nonNull(principal.getRoleCode())) {
             roles.add(principal.getRoleCode());
         }
-        if (java.util.Objects.nonNull(principal.getRoleId())) {
+        if (Objects.nonNull(principal.getRoleId())) {
             roles.add(String.valueOf(principal.getRoleId()));
         }
-        if (java.util.Objects.nonNull(principal.getRoles())) {
+        if (Objects.nonNull(principal.getRoles())) {
             for (AuthPrincipal.RolePair role : principal.getRoles()) {
-                if (java.util.Objects.nonNull(role.getRoleCode())) {
+                if (Objects.nonNull(role.getRoleCode())) {
                     roles.add(role.getRoleCode());
                 }
-                if (java.util.Objects.nonNull(role.getRoleId())) {
+                if (Objects.nonNull(role.getRoleId())) {
                     roles.add(role.getRoleId());
                 }
             }
@@ -394,6 +394,6 @@ public class InMemorySubject implements Subject {
     }
 
     private boolean isBlank(Object value) {
-        return java.util.Objects.isNull(value) || !org.springframework.util.StringUtils.hasText(String.valueOf(value));
+        return Objects.isNull(value) || !org.springframework.util.StringUtils.hasText(String.valueOf(value));
     }
 }

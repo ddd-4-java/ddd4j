@@ -73,7 +73,7 @@ public final class MQMessages {
             return null;
         }
         Object v = message.header(key);
-        return java.util.Objects.isNull(v) ? null : String.valueOf(v);
+        return Objects.isNull(v) ? null : String.valueOf(v);
     }
 
     /**
@@ -149,22 +149,22 @@ public final class MQMessages {
     // ── Header 提取 ──
 
     public static String extractMessageId(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         String id = message.getMessageId();
-        if (java.util.Objects.nonNull(id)) {
+        if (Objects.nonNull(id)) {
             return id;
         }
         return headerAsString(message, HEADER_MESSAGE_ID);
     }
 
     public static String extractCorrelationId(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         String id = message.getCorrelationId();
-        if (java.util.Objects.nonNull(id)) {
+        if (Objects.nonNull(id)) {
             return id;
         }
         return headerAsString(message, HEADER_CORRELATION_ID);
@@ -188,7 +188,7 @@ public final class MQMessages {
     // ── 私有工具 ──
 
     private static Map<String, Object> normalize(Map<String, Object> headers) {
-        if (java.util.Objects.isNull(headers) || headers.isEmpty()) {
+        if (Objects.isNull(headers) || headers.isEmpty()) {
             return Collections.emptyMap();
         }
         return new HashMap<>(headers);
@@ -198,7 +198,7 @@ public final class MQMessages {
      * 将任何形式的 ID 字符串归一化为标准 UUID 格式。
      */
     private static String normalizeMessageId(String messageId) {
-        if (java.util.Objects.isNull(messageId)) {
+        if (Objects.isNull(messageId)) {
             return null;
         }
         if (messageId.length() == 36) {

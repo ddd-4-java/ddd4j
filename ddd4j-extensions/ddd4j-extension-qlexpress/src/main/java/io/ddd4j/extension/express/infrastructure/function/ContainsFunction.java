@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.function;
 
+import java.util.Objects;
+
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
 import com.alibaba.qlexpress4.runtime.function.CustomFunction;
@@ -32,7 +34,7 @@ public class ContainsFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
+        if (Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("contains函数需要2个参数：source和target");
         }
 
@@ -41,10 +43,10 @@ public class ContainsFunction implements CustomFunction {
         Object sourceObj = getParameterValue(parameters, 0, qContext);
         Object targetObj = getParameterValue(parameters, 1, qContext);
 
-        String source = java.util.Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
-        String target = java.util.Objects.nonNull(targetObj) ? targetObj.toString() : null;
+        String source = Objects.nonNull(sourceObj) ? sourceObj.toString() : null;
+        String target = Objects.nonNull(targetObj) ? targetObj.toString() : null;
 
-        boolean result = java.util.Objects.nonNull(source) && source.contains(target);
+        boolean result = Objects.nonNull(source) && source.contains(target);
         return result;
     }
 
@@ -54,7 +56,7 @@ public class ContainsFunction implements CustomFunction {
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
             // 尝试方式1：parameters.get(index).getObject(qContext)
-            if (java.util.Objects.nonNull(parameters.get(index))) {
+            if (Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 // 如果参数对象有 getObject 方法
                 try {
@@ -73,7 +75,7 @@ public class ContainsFunction implements CustomFunction {
         try {
             java.lang.reflect.Method getMethod = parameters.getClass().getMethod("get", int.class);
             Object param = getMethod.invoke(parameters, index);
-            if (java.util.Objects.nonNull(param)) {
+            if (Objects.nonNull(param)) {
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);
                     return getObjectMethod.invoke(param, qContext);

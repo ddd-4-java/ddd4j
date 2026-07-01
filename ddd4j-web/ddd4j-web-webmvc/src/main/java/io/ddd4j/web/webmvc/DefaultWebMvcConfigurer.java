@@ -20,8 +20,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import hitool.core.lang3.time.DateFormats;
-import io.ddd4j.core.MediaTypes;
 import io.ddd4j.extension.jackson.ser.MyBeanSerializerModifier;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.http.MediaType;
@@ -46,13 +44,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
+
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String TIME_PATTERN = "HH:mm:ss";
 
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
@@ -95,25 +97,25 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DateFormats.DATE_LONGFORMAT);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
         simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
         simpleModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
 
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DateFormats.DATE_FORMAT);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DATE_PATTERN);
         simpleModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormat));
         simpleModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormat));
 
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(DateFormats.TIME_FORMAT);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_PATTERN);
         simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
         simpleModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
         simpleModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
             @Override
             public Date deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-                if (java.util.Objects.isNull(p)) {
+                if (Objects.isNull(p)) {
                     return null;
                 }
                 JsonNode node = p.getCodec().readTree(p);
-                if (java.util.Objects.isNull(node) || java.util.Objects.isNull(node.asText())) {
+                if (Objects.isNull(node) || Objects.isNull(node.asText())) {
                     return null;
                 }
                 return DateUtil.parse(node.asText());
@@ -124,7 +126,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
                 .modules(simpleModule, new JavaTimeModule())
                 // objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.SIMPLIFIED_CHINESE));
-                .simpleDateFormat(DateFormats.DATE_LONGFORMAT)
+                .simpleDateFormat(DATE_TIME_PATTERN)
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .failOnEmptyBeans(false)
                 .failOnUnknownProperties(false)
@@ -136,7 +138,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         //SerializerProvider serializerProvider = objectMapper.getSerializerProvider();
         //serializerProvider.setNullValueSerializer(NullObjectJsonSerializer.INSTANCE);
         MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter(objectMapper);
-        jackson2HttpMessageConverter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.valueOf(MediaTypes.APPLICATION_ACTUATOR2_JSON), MediaType.valueOf(MediaTypes.APPLICATION_ACTUATOR3_JSON)));
+        jackson2HttpMessageConverter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
         converters.add(jackson2HttpMessageConverter);
         converters.add(new ByteArrayHttpMessageConverter());
         converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));

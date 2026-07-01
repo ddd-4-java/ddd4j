@@ -1,5 +1,7 @@
 package io.ddd4j.mq.mqttmica.ack;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
@@ -93,7 +95,7 @@ public class MicaMqttMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (java.util.Objects.isNull(type)) {
+        if (Objects.isNull(type)) {
             return Optional.empty();
         }
         if (type.isInstance(this)) {

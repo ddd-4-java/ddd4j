@@ -1,5 +1,7 @@
 package io.ddd4j.core.util;
 
+import java.util.Objects;
+
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
 import lombok.experimental.UtilityClass;
@@ -22,25 +24,25 @@ public class ExceptionKit {
         List<StackTraceElement> stackTraceElements = new ArrayList<>(e.getStackTrace().length);
         Collections.addAll(stackTraceElements, e.getStackTrace());
         String projectStackTraces = getProjectStackTraces(stackTraceElements);
-        if (java.util.Objects.nonNull(projectStackTraces)) {
+        if (Objects.nonNull(projectStackTraces)) {
             return projectStackTraces;
         }
         return e.getLocalizedMessage();
     }
 
     public String getProjectStackTraces(List<StackTraceElement> stackTraceElements) {
-        if (java.util.Objects.isNull(stackTraceElements)) {
+        if (Objects.isNull(stackTraceElements)) {
             return null;
         }
         String projectPackage = BaseContext.get(ContextConstants.PROJECT_PACKAGE);
-        if (java.util.Objects.nonNull(projectPackage)) {
+        if (Objects.nonNull(projectPackage)) {
             StringJoiner stringJoiner = new StringJoiner("; ", "", "");
             for (int i = 0; i < stackTraceElements.size(); i++) {
                 StackTraceElement s = stackTraceElements.get(i);
                 String fileName = s.getFileName();
                 int lineNumber = s.getLineNumber();
                 // 忽略条件
-                if (java.util.Objects.isNull(fileName) || lineNumber == -1) {
+                if (Objects.isNull(fileName) || lineNumber == -1) {
                     continue;
                 }
                 if (i == 0) {

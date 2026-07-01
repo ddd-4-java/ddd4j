@@ -1,5 +1,7 @@
 package io.ddd4j.auth.license.creator;
 
+import java.util.Objects;
+
 import de.schlichtherle.license.*;
 import io.ddd4j.auth.license.CustomKeyStoreParam;
 import io.ddd4j.auth.license.manager.CustomLicenseManager;
@@ -79,7 +81,7 @@ public class LicenseCreator {
         licenseContent.setInfo(param.getDescription());
 
         //扩展校验，这里可以自定义一些额外的校验信息(也可以用json字符串保存)
-        if (java.util.Objects.nonNull(param.getLicenseExtraModel())) {
+        if (Objects.nonNull(param.getLicenseExtraModel())) {
             licenseContent.setExtra(param.getLicenseExtraModel());
         }
 

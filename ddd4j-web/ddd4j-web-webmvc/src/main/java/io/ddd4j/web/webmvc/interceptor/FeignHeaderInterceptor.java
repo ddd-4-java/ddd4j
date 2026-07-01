@@ -33,23 +33,23 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
             String webTenantId = "";
             String webSystemId = "";
             if (feignHeader.useWebRequestHeader()) {
-                if (java.util.Objects.nonNull(attributes)) {
+                if (Objects.nonNull(attributes)) {
                     HttpServletRequest request = attributes.getRequest();
                     for (String header : USE_WEB_HEADERS) {
                         String headerValue = request.getHeader(header);
-                        if (java.util.Objects.nonNull(headerValue) && org.springframework.util.StringUtils.hasLength(headerValue)) {
+                        if (Objects.nonNull(headerValue) && org.springframework.util.StringUtils.hasLength(headerValue)) {
                             template.header(header, headerValue);
                         }
                     }
                     webTenantId = request.getHeader(TENANT_ID);
                     webSystemId = request.getHeader(SYSTEM_ID);
-                    if (java.util.Objects.isNull(webTenantId) || !org.springframework.util.StringUtils.hasLength(webTenantId)) {
+                    if (Objects.isNull(webTenantId) || !org.springframework.util.StringUtils.hasLength(webTenantId)) {
                         webTenantId = request.getHeader("switch-tenant-id");
-                        if (java.util.Objects.isNull(webTenantId) || !org.springframework.util.StringUtils.hasLength(webTenantId)) {
+                        if (Objects.isNull(webTenantId) || !org.springframework.util.StringUtils.hasLength(webTenantId)) {
                             webTenantId = ThreadContext.get(TENANT_ID);
                         }
                     }
-                    if (java.util.Objects.isNull(webSystemId) || !org.springframework.util.StringUtils.hasLength(webSystemId)) {
+                    if (Objects.isNull(webSystemId) || !org.springframework.util.StringUtils.hasLength(webSystemId)) {
                         webSystemId = ThreadContext.get(SYSTEM_ID);
                     }
                     for (String headerTenantId : HEADER_TENANT_IDS) {
@@ -58,25 +58,25 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
                 }
             }
 
-            if (feignHeader.autoFillTenantId() && (java.util.Objects.isNull(webTenantId) || !org.springframework.util.StringUtils.hasLength(webTenantId))) {
+            if (feignHeader.autoFillTenantId() && (Objects.isNull(webTenantId) || !org.springframework.util.StringUtils.hasLength(webTenantId))) {
                 String tenantId = ThreadContext.get(TENANT_ID);
                 for (String headerTenantId : HEADER_TENANT_IDS) {
                     template.header(headerTenantId, tenantId);
                 }
             }
 
-            if (feignHeader.autoFillSystemId() && (java.util.Objects.isNull(webSystemId) || !org.springframework.util.StringUtils.hasLength(webSystemId))) {
-                String systemId = (java.util.Objects.isNull(ThreadContext.get(SYSTEM_ID)) || ThreadContext.<String>get(SYSTEM_ID).isEmpty()) ? "0" : ThreadContext.get(SYSTEM_ID);
+            if (feignHeader.autoFillSystemId() && (Objects.isNull(webSystemId) || !org.springframework.util.StringUtils.hasLength(webSystemId))) {
+                String systemId = (Objects.isNull(ThreadContext.get(SYSTEM_ID)) || ThreadContext.<String>get(SYSTEM_ID).isEmpty()) ? "0" : ThreadContext.get(SYSTEM_ID);
                 for (String headerSystemId : HEADER_SYSTEM_IDS) {
                     template.header(headerSystemId, systemId);
                 }
             }
         } else {
-            if (java.util.Objects.nonNull(attributes)) {
+            if (Objects.nonNull(attributes)) {
                 String[] headers = new String[]{"system-id", "client-type", "own-language"};
                 for (String header : headers) {
                     String headerValue = attributes.getRequest().getHeader(header);
-                    if (java.util.Objects.nonNull(headerValue) && org.springframework.util.StringUtils.hasLength(headerValue)) {
+                    if (Objects.nonNull(headerValue) && org.springframework.util.StringUtils.hasLength(headerValue)) {
                         template.header(header, headerValue);
                     }
                 }

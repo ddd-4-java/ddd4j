@@ -83,7 +83,7 @@ public class NatsMQConsumerEndpointRegistrar implements AutoCloseable {
      * 批量注册监听器。
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (java.util.Objects.isNull(definitions) || definitions.isEmpty()) {
+        if (Objects.isNull(definitions) || definitions.isEmpty()) {
             log.debug("No @MQEventListener definitions found for NATS");
             return;
         }
@@ -133,13 +133,13 @@ public class NatsMQConsumerEndpointRegistrar implements AutoCloseable {
                     .orElseGet(NoOpMessageAcknowledgment::new);
             handler.handle(mqMessage, ack);
             if (!properties.getConsumer().isManualAck() && !ack.isAcknowledged()
-                    && java.util.Objects.nonNull(natsMessage.metaData())) {
+                    && Objects.nonNull(natsMessage.metaData())) {
                 ack.ack();
             }
         } catch (Exception ex) {
             log.error("NATS consumer failed: bean={}, method={}",
                     beanLabel(definition), definition.getMethod().getName(), ex);
-            if (java.util.Objects.nonNull(natsMessage.metaData())) {
+            if (Objects.nonNull(natsMessage.metaData())) {
                 try {
                     natsMessage.nak();
                 } catch (Exception nakEx) {
@@ -150,10 +150,10 @@ public class NatsMQConsumerEndpointRegistrar implements AutoCloseable {
     }
 
     private String beanLabel(MQListenerDefinition definition) {
-        if (java.util.Objects.nonNull(definition.getBean())) {
+        if (Objects.nonNull(definition.getBean())) {
             return definition.getBean().getClass().getSimpleName();
         }
-        if (java.util.Objects.nonNull(definition.getBeanName())) {
+        if (Objects.nonNull(definition.getBeanName())) {
             return definition.getBeanName();
         }
         return definition.getMethod().getDeclaringClass().getSimpleName();

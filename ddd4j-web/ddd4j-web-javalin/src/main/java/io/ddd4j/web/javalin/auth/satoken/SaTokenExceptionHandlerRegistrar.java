@@ -5,6 +5,7 @@ import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Javalin + Sa-Token 异常处理注册器。
@@ -21,7 +22,7 @@ public final class SaTokenExceptionHandlerRegistrar {
             ctx.status(401);
             ctx.json(Map.of(
                     "code", ex.getCode(),
-                    "msg", ex.getMessage() == null ? "" : ex.getMessage()
+                    "msg", Objects.isNull(ex.getMessage()) ? "" : ex.getMessage()
             ));
         });
     }

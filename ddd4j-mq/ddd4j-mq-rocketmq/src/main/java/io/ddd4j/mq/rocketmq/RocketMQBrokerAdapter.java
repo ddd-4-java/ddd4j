@@ -50,13 +50,13 @@ public class RocketMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
         try {
-            if (java.util.Objects.isNull(producer)) {
+            if (Objects.isNull(producer)) {
                 producer = rocketProperties.newProducer();
                 if (rocketProperties.isAutoStartProducer()) {
                     producer.start();
                 }
             }
-            return new RocketMQEventPublisher(producer, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
+            return new RocketMQEventPublisher(producer, Objects.isNull(props) ? mqProperties : props, serialization);
         } catch (Exception ex) {
             throw new IllegalStateException("Create RocketMQ publisher failed", ex);
         }
@@ -69,15 +69,15 @@ public class RocketMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         MessageExt nativeMessage = message.nativeMessage(MessageExt.class);
-        if (java.util.Objects.isNull(nativeMessage)) {
+        if (Objects.isNull(nativeMessage)) {
             Object headerMessage = message.header(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE);
             nativeMessage = headerMessage instanceof MessageExt ext ? ext : null;
         }
-        return java.util.Objects.isNull(nativeMessage) ? null : new RocketMessageAcknowledgment(nativeMessage);
+        return Objects.isNull(nativeMessage) ? null : new RocketMessageAcknowledgment(nativeMessage);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class RocketMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() {
         consumerRegistrar.close();
-        if (java.util.Objects.nonNull(producer)) {
+        if (Objects.nonNull(producer)) {
             producer.shutdown();
         }
     }

@@ -37,7 +37,7 @@ public class MQMessage<T> {
     public MQMessage(T payload, Map<String, Object> headers, String messageId,
                      String correlationId, Object nativeMessage) {
         this.payload = payload;
-        this.headers = java.util.Objects.isNull(headers)
+        this.headers = Objects.isNull(headers)
                 ? Collections.emptyMap()
                 : Collections.unmodifiableMap(new HashMap<>(headers));
         this.messageId = messageId;
@@ -104,7 +104,7 @@ public class MQMessage<T> {
 
     public String headerAsString(String key) {
         Object v = headers.get(key);
-        return java.util.Objects.isNull(v) ? null : String.valueOf(v);
+        return Objects.isNull(v) ? null : String.valueOf(v);
     }
 
     /**
@@ -112,7 +112,7 @@ public class MQMessage<T> {
      */
     @SuppressWarnings("unchecked")
     public <N> N nativeMessage(Class<N> type) {
-        if (java.util.Objects.nonNull(nativeMessage) && type.isInstance(nativeMessage)) {
+        if (Objects.nonNull(nativeMessage) && type.isInstance(nativeMessage)) {
             return (N) nativeMessage;
         }
         return null;
@@ -125,7 +125,7 @@ public class MQMessage<T> {
         if (this == o) {
             return true;
         }
-        if (java.util.Objects.isNull(o) || getClass() != o.getClass()) {
+        if (Objects.isNull(o) || getClass() != o.getClass()) {
             return false;
         }
         MQMessage<?> that = (MQMessage<?>) o;

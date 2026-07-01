@@ -1,5 +1,7 @@
 package io.ddd4j.spring.cqrs;
 
+import java.util.Objects;
+
 import io.ddd4j.annotation.cqrs.CreateEvent;
 import io.ddd4j.annotation.cqrs.DeleteEvent;
 import io.ddd4j.annotation.cqrs.UpdateEvent;
@@ -62,7 +64,7 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
         if (method.isAnnotationPresent(annotationType)) {
             java.lang.annotation.Annotation annotation = method.getAnnotation(annotationType);
             Class<?> eventType = extractEventType(annotation);
-            if (java.util.Objects.nonNull(eventType)) {
+            if (Objects.nonNull(eventType)) {
                 handlerTable.put(eventType, method);
                 log.debug("Registered {} handler: {} -> {}#{}",
                         annotationType.getSimpleName(), eventType.getSimpleName(),

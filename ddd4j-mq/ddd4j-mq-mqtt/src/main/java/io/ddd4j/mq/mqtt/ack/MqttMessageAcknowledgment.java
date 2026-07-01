@@ -1,5 +1,7 @@
 package io.ddd4j.mq.mqtt.ack;
 
+import java.util.Objects;
+
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
@@ -50,7 +52,7 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public boolean isOpen() {
-        return java.util.Objects.nonNull(message);
+        return Objects.nonNull(message);
     }
 
     @Override
@@ -98,7 +100,7 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> type) {
-        if (java.util.Objects.isNull(type)) {
+        if (Objects.isNull(type)) {
             return Optional.empty();
         }
         if (type.isInstance(message)) {

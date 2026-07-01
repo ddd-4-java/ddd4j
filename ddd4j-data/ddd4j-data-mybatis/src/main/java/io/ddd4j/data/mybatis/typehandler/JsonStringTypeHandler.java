@@ -1,5 +1,7 @@
 package io.ddd4j.data.mybatis.typehandler;
 
+import java.util.Objects;
+
 import io.ddd4j.kit.lang.JsonKit;
 
 import java.lang.reflect.Array;
@@ -43,10 +45,10 @@ public abstract class JsonStringTypeHandler<T> extends BaseTypeHandler<T> {
 
     @Override
     protected T parse(String json) {
-        if (java.util.Objects.nonNull(this.componentType)) {
+        if (Objects.nonNull(this.componentType)) {
             // Json 解析为对象数组
             List<?> list = JsonKit.toList(json, this.componentType);
-            if (java.util.Objects.isNull(list)) {
+            if (Objects.isNull(list)) {
                 return null;
             }
             return (T) list.toArray(this.componentArray);

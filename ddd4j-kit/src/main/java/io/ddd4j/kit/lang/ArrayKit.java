@@ -1,5 +1,7 @@
 package io.ddd4j.kit.lang;
 
+import java.util.Objects;
+
 import cn.hutool.core.util.ArrayUtil;
 import lombok.experimental.UtilityClass;
 
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 public class ArrayKit extends ArrayUtil {
 
     public <T> T[] convert(Collection<T> coll) {
-        if (java.util.Objects.isNull(coll) || coll.size() == 0) {
+        if (Objects.isNull(coll) || coll.size() == 0) {
             return null;
         }
         Class tClass = null;
@@ -49,11 +51,11 @@ public class ArrayKit extends ArrayUtil {
     }
 
     public <T> boolean isNotEmpty(T[] array) {
-        return java.util.Objects.nonNull(array) && array.length != 0;
+        return Objects.nonNull(array) && array.length != 0;
     }
 
     public <T> boolean isEmpty(T[] array) {
-        return java.util.Objects.isNull(array) || array.length == 0;
+        return Objects.isNull(array) || array.length == 0;
     }
 
 }

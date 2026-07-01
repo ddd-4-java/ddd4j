@@ -5,6 +5,7 @@ import io.ddd4j.core.cqrs.projection.ProjectionPositionRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -40,7 +41,7 @@ public class GuiceInMemoryProjectionPositionRepository implements ProjectionPosi
     @Override
     public void resetToZero(String streamId) {
         ProjectionPosition old = store.get(streamId);
-        if (old != null) {
+        if (Objects.nonNull(old)) {
             store.put(streamId, old.withNextEventNumber(0L));
         }
     }

@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.cache;
 
+import java.util.Objects;
+
 import io.ddd4j.extension.express.application.service.RuleCacheService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,7 +40,7 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return null;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -53,9 +55,9 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (java.util.Objects.isNull(ruleCode)
+        if (Objects.isNull(ruleCode)
                 || !org.springframework.util.StringUtils.hasText(ruleCode)
-                || java.util.Objects.isNull(rule)) {
+                || Objects.isNull(rule)) {
             return;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -69,7 +71,7 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -82,7 +84,7 @@ public class RedisRuleCacheService implements RuleCacheService {
     @Override
     public void evictAll() {
         Set<String> keys = redisTemplate.keys(RULE_CACHE_PREFIX + "*");
-        if (java.util.Objects.nonNull(keys) && !keys.isEmpty()) {
+        if (Objects.nonNull(keys) && !keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }

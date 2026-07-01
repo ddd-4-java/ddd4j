@@ -15,6 +15,8 @@
  */
 package io.ddd4j.data.mybatis.plugin;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +53,7 @@ public class EncryptFieldInnerInterceptor implements InnerInterceptor {
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         MappedStatement ms = (MappedStatement) SystemMetaObject.forObject(sh)
                 .getValue("delegate.mappedStatement");
-        if (java.util.Objects.isNull(ms)) {
+        if (Objects.isNull(ms)) {
             return;
         }
         SqlCommandType type = ms.getSqlCommandType();
@@ -62,15 +64,15 @@ public class EncryptFieldInnerInterceptor implements InnerInterceptor {
             return;
         }
         BoundSql boundSql = sh.getBoundSql();
-        if (java.util.Objects.isNull(boundSql)) {
+        if (Objects.isNull(boundSql)) {
             return;
         }
         String sql = boundSql.getSql();
-        if (java.util.Objects.isNull(sql)) {
+        if (Objects.isNull(sql)) {
             return;
         }
         Set<String> encryptedFields = encryptor.encryptedFields(ms.getId());
-        if (java.util.Objects.isNull(encryptedFields) || encryptedFields.isEmpty()) {
+        if (Objects.isNull(encryptedFields) || encryptedFields.isEmpty()) {
             return;
         }
         // 占位：实际加密由业务方 FieldEncryptor 钩子在 ParameterHandler 中替换参数值

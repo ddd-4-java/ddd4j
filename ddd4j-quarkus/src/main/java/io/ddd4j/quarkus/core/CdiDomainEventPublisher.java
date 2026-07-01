@@ -1,5 +1,7 @@
 package io.ddd4j.quarkus.core;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,7 +28,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
     @Override
     public void publish(DomainEvent domainEvent) {
-        if (java.util.Objects.isNull(domainEvent)) {
+        if (Objects.isNull(domainEvent)) {
             log.warn("Attempted to publish null domain event");
             return;
         }
@@ -37,7 +39,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
     @Override
     public void publishAll(Collection<DomainEvent> events) {
-        if (java.util.Objects.isNull(events) || events.isEmpty()) {
+        if (Objects.isNull(events) || events.isEmpty()) {
             return;
         }
         log.debug("Publishing {} domain events", events.size());

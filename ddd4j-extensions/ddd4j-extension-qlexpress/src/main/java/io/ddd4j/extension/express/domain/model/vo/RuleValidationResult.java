@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.domain.model.vo;
 
+import java.util.Objects;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class RuleValidationResult {
     private RuleValidationResult(Builder builder) {
         this.valid = builder.valid;
         this.message = builder.message;
-        this.errors = java.util.Objects.nonNull(builder.errors) ? new ArrayList<>(builder.errors) : new ArrayList<>();
+        this.errors = Objects.nonNull(builder.errors) ? new ArrayList<>(builder.errors) : new ArrayList<>();
     }
 
     /**
@@ -78,7 +80,7 @@ public class RuleValidationResult {
         }
 
         public Builder addError(String error) {
-            if (java.util.Objects.isNull(this.errors)) {
+            if (Objects.isNull(this.errors)) {
                 this.errors = new ArrayList<>();
             }
             this.errors.add(error);

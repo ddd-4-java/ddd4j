@@ -30,11 +30,11 @@ public class MicaMqttMQEventPublisher implements MQEventPublisher {
     }
 
     private static String firstText(String... values) {
-        if (java.util.Objects.isNull(values)) {
+        if (Objects.isNull(values)) {
             return null;
         }
         for (String v : values) {
-            if (java.util.Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
+            if (Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
                 return v;
             }
         }
@@ -47,8 +47,8 @@ public class MicaMqttMQEventPublisher implements MQEventPublisher {
             String topic = firstText(destination.getTopic(), event.getTopic(), "ddd4j/default/topic");
             String ns = destination.getNamespace();
             String tag = destination.getTag();
-            String physical = (java.util.Objects.isNull(ns) || io.ddd4j.kit.lang.StrKit.isBlank(ns) ? "" : ns + "/") + topic
-                    + (java.util.Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) ? "" : "/" + tag);
+            String physical = (Objects.isNull(ns) || io.ddd4j.kit.lang.StrKit.isBlank(ns) ? "" : ns + "/") + topic
+                    + (Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) ? "" : "/" + tag);
             client.publish(physical,
                     serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8),
                     properties.mqttQoS());

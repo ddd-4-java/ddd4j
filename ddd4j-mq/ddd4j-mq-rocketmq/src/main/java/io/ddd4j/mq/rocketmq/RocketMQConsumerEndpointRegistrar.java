@@ -62,14 +62,14 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
     }
 
     private static String subscriptionExpression(String tags) {
-        if (java.util.Objects.isNull(tags) || io.ddd4j.kit.lang.StrKit.isBlank(tags) || tags.contains("-")) {
+        if (Objects.isNull(tags) || io.ddd4j.kit.lang.StrKit.isBlank(tags) || tags.contains("-")) {
             return "*";
         }
         return tags;
     }
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {

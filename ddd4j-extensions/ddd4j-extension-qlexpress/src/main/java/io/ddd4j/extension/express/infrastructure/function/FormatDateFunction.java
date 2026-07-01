@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.function;
 
+import java.util.Objects;
+
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
 import com.alibaba.qlexpress4.runtime.function.CustomFunction;
@@ -43,15 +45,15 @@ public class FormatDateFunction implements CustomFunction {
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) throws Throwable {
-        if (java.util.Objects.isNull(parameters) || parameters.size() < 2) {
+        if (Objects.isNull(parameters) || parameters.size() < 2) {
             throw new IllegalArgumentException("formatDate函数需要2个参数：date和pattern");
         }
 
         Object dateObj = getParameterValue(parameters, 0, qContext);
         Object patternObj = getParameterValue(parameters, 1, qContext);
-        String pattern = java.util.Objects.nonNull(patternObj) ? patternObj.toString() : null;
+        String pattern = Objects.nonNull(patternObj) ? patternObj.toString() : null;
 
-        if (java.util.Objects.isNull(dateObj)) {
+        if (Objects.isNull(dateObj)) {
             return null;
         }
 
@@ -71,7 +73,7 @@ public class FormatDateFunction implements CustomFunction {
      */
     private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
         try {
-            if (java.util.Objects.nonNull(parameters.get(index))) {
+            if (Objects.nonNull(parameters.get(index))) {
                 Object param = parameters.get(index);
                 try {
                     java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);

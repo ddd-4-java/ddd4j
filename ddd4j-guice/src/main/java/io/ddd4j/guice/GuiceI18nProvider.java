@@ -1,5 +1,7 @@
 package io.ddd4j.guice;
 
+import java.util.Objects;
+
 import io.ddd4j.core.context.I18nProvider;
 
 import java.util.Locale;
@@ -18,13 +20,13 @@ public class GuiceI18nProvider implements I18nProvider {
 
     @Override
     public String getMessage(String key, Object... args) {
-        if (java.util.Objects.isNull(key)) {
+        if (Objects.isNull(key)) {
             return null;
         }
         try {
             ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.getDefault());
             String pattern = bundle.getString(key);
-            if (java.util.Objects.isNull(args) || args.length == 0) {
+            if (Objects.isNull(args) || args.length == 0) {
                 return pattern;
             }
             return String.format(pattern, args);

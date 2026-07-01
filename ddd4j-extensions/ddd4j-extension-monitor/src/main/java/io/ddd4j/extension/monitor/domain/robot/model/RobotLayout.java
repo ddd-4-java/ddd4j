@@ -1,5 +1,7 @@
 package io.ddd4j.extension.monitor.domain.robot.model;
 
+import java.util.Objects;
+
 import ch.qos.logback.classic.pattern.ThrowableProxyConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
@@ -56,12 +58,12 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
         this.markdownTextAppend(sb, "App", app);
         this.markdownTextAppend(sb, "Project", project);
         this.markdownTextAppend(sb, "IP", ip);
-        if (java.util.Objects.nonNull(CodeVersionService.CODE_VERSION)) {
+        if (Objects.nonNull(CodeVersionService.CODE_VERSION)) {
             this.markdownTextAppend(sb, "Commit", StrKit.format("{} @{}", CodeVersionService.CODE_VERSION.getCommitId().substring(CodeVersionService.CODE_VERSION.getCommitId().length() - 8), CodeVersionService.CODE_VERSION.getCommitUser()));
         }
         this.markdownTextAppend(sb, "Message", event.getFormattedMessage());
         this.mdcAppend(sb, event);
-        if (java.util.Objects.nonNull(event.getThrowableProxy())) {
+        if (Objects.nonNull(event.getThrowableProxy())) {
             String stackTrace = throwableProxyConverter.convert(event);
             BaseMonitorProperties baseMonitorProperties = SpringContext.getBean(BaseMonitorProperties.class);
             stackTrace = stackTrace.length() > baseMonitorProperties.getLog().getConfig().getMaxLength() ? stackTrace.substring(0, baseMonitorProperties.getLog().getConfig().getMaxLength() - 1) + "..." : stackTrace;

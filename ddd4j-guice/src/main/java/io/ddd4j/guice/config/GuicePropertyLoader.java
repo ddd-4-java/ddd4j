@@ -15,6 +15,8 @@
  */
 package io.ddd4j.guice.config;
 
+import java.util.Objects;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +63,7 @@ public class GuicePropertyLoader extends AbstractModule {
         Properties merged = new Properties();
         for (String configFile : configFiles) {
             Properties props = loadProperties(configFile);
-            if (java.util.Objects.nonNull(props)) {
+            if (Objects.nonNull(props)) {
                 merged.putAll(props);
                 log.info("Loaded {} properties from {}", props.size(), configFile);
             }
@@ -74,7 +76,7 @@ public class GuicePropertyLoader extends AbstractModule {
 
     private Properties loadProperties(String resourcePath) {
         try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
-            if (java.util.Objects.isNull(is)) {
+            if (Objects.isNull(is)) {
                 log.debug("Config file not found: {}", resourcePath);
                 return null;
             }

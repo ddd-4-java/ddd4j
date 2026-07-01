@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.application.service;
 
+import java.util.Objects;
+
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import io.ddd4j.extension.express.domain.model.vo.RuleValidationResult;
 import io.ddd4j.extension.express.domain.repository.RuleDefinitionRepository;
@@ -234,20 +236,20 @@ public class RuleManagementService {
      * @return 规则定义，如果不存在返回Optional.empty()
      */
     public Optional<RuleDefinition> getRuleByCode(String ruleCode) {
-        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return Optional.empty();
         }
 
         // 第一级：本地环境查询（硬编码规则）
         RuleDefinition localRule = localRuleRegistry.get(ruleCode);
-        if (java.util.Objects.nonNull(localRule)) {
+        if (Objects.nonNull(localRule)) {
             log.debug("从本地环境获取规则: {}", ruleCode);
             return Optional.of(localRule);
         }
 
         // 第二级：Redis缓存查询
         RuleDefinition cachedRule = ruleCacheService.get(ruleCode);
-        if (java.util.Objects.nonNull(cachedRule)) {
+        if (Objects.nonNull(cachedRule)) {
             log.debug("从Redis缓存获取规则: {}", ruleCode);
             return Optional.of(cachedRule);
         }
@@ -285,8 +287,8 @@ public class RuleManagementService {
                 .filter(RuleDefinition::isAvailable)
                 .sorted((r1, r2) -> {
                     int priorityCompare = Integer.compare(
-                            java.util.Objects.nonNull(r2.getPriority()) ? r2.getPriority() : 0,
-                            java.util.Objects.nonNull(r1.getPriority()) ? r1.getPriority() : 0
+                            Objects.nonNull(r2.getPriority()) ? r2.getPriority() : 0,
+                            Objects.nonNull(r1.getPriority()) ? r1.getPriority() : 0
                     );
                     if (priorityCompare != 0) {
                         return priorityCompare;

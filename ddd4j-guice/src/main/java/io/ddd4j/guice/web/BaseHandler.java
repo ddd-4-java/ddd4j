@@ -15,6 +15,8 @@
  */
 package io.ddd4j.guice.web;
 
+import java.util.Objects;
+
 import io.ddd4j.core.context.I18nProvider;
 import io.ddd4j.core.contract.DomainEvent;
 import io.ddd4j.core.contract.DomainEventPublisher;
@@ -59,7 +61,7 @@ public abstract class BaseHandler {
         log.error("Exception in request [{} {}]: {}", ctx.method(), ctx.url(), ex.getMessage(), ex);
         try {
             DomainEventPublisher publisher = GuiceContext.getInstance(DomainEventPublisher.class);
-            if (java.util.Objects.nonNull(publisher)) {
+            if (Objects.nonNull(publisher)) {
                 // 创建异常事件并发布
                 DomainEvent<Exception> event = new ExceptionEvent(ex, ctx.url());
                 publisher.publish(event);

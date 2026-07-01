@@ -1,5 +1,7 @@
 package io.ddd4j.spring.subject;
 
+import java.util.Objects;
+
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,7 @@ public class SpringSubjectProvider implements SubjectProvider {
 
     @Override
     public Subject getSubject() {
-        if (java.util.Objects.isNull(subject)) {
+        if (Objects.isNull(subject)) {
             log.debug("No Subject implementation found in Spring container");
             return null;
         }

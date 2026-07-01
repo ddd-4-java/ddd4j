@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.api;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.BaseRepository;
 import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.Page;
@@ -22,11 +24,11 @@ public class CRUDController<M extends Model, Q extends Query> {
     protected BaseRepository<M, Q> repository;
 
     private BaseRepository<M, Q> getRepository() {
-        if (java.util.Objects.isNull(this.repository)) {
+        if (Objects.isNull(this.repository)) {
             Class<M> modelClass = ReflectKit.getSuperClassGenericType(this.getClass(), 0);
             this.repository = BaseRepository.of(modelClass);
         }
-        if (java.util.Objects.isNull(this.repository)) {
+        if (Objects.isNull(this.repository)) {
             log.error("未找到实体仓库");
         }
         return repository;

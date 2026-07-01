@@ -1,5 +1,7 @@
 package io.ddd4j.kit.lang;
 
+import java.util.Objects;
+
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -58,7 +60,7 @@ public class RankKit {
         for (T item : sortedList) {
             U loopKey = keyExtractor.apply(item);
             rankNumber = loopKey.equals(currentKey) ? rankNumber : rowNumber;
-            if (java.util.Objects.nonNull(top) && top > 0 && rankNumber > top) {
+            if (Objects.nonNull(top) && top > 0 && rankNumber > top) {
                 break;
             }
             result.add(new RankModel<>(rankNumber, item));
@@ -75,7 +77,7 @@ public class RankKit {
         for (T item : sortedList) {
             U loopKey = keyExtractor.apply(item);
             rankNumber = loopKey.equals(currentKey) ? rankNumber : rankNumber + 1;
-            if (java.util.Objects.nonNull(top) && top > 0 && rankNumber > top) {
+            if (Objects.nonNull(top) && top > 0 && rankNumber > top) {
                 break;
             }
             result.add(new RankModel<>(rankNumber, item));
@@ -88,7 +90,7 @@ public class RankKit {
         List<RankModel<T>> result = new ArrayList<>();
         int rankNumber = 1;
         for (T item : sortedList) {
-            if (java.util.Objects.nonNull(top) && top > 0 && rankNumber > top) {
+            if (Objects.nonNull(top) && top > 0 && rankNumber > top) {
                 break;
             }
             result.add(new RankModel<>(rankNumber, item));

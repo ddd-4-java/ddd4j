@@ -45,26 +45,26 @@ public class BeanKit {
         for (int var5 = 0; var5 < var4; ++var5) {
             String cn = var3[var5];
             cn = cn.toLowerCase();
-            if (java.util.Objects.isNull(sb)) {
+            if (Objects.isNull(sb)) {
                 sb = new StringBuilder(cn);
             } else {
                 sb.append(cn.substring(0, 1).toUpperCase()).append(cn.substring(1));
             }
         }
 
-        return java.util.Objects.nonNull(sb) ? sb.toString() : null;
+        return Objects.nonNull(sb) ? sb.toString() : null;
     }
 
     public Map<String, Object> toMap(Object obj) {
-        return toMap(obj, true, null);
+        return toMap(obj, true, new String[0]);
     }
 
     public Map<String, Object> toMapClean(Object obj) {
-        return toMap(obj, false, null);
+        return toMap(obj, false, new String[0]);
     }
 
     public Map<String, Object> toMap(Object obj, boolean withNull, String... ignoreFields) {
-        if (java.util.Objects.isNull(obj)) {
+        if (Objects.isNull(obj)) {
             return null;
         } else {
             Map<String, Object> map = new HashMap<>();
@@ -78,7 +78,7 @@ public class BeanKit {
     }
 
     public void mapsToObjects(List<Map<String, Object>> mapList, List objectList, Class clazz) {
-        if (java.util.Objects.nonNull(mapList) && !mapList.isEmpty() && java.util.Objects.nonNull(objectList)) {
+        if (Objects.nonNull(mapList) && !mapList.isEmpty() && Objects.nonNull(objectList)) {
             Iterator var3 = mapList.iterator();
 
             while (var3.hasNext()) {
@@ -92,7 +92,7 @@ public class BeanKit {
     }
 
     public void objectsToObjects(List sourceList, List targetList, Class targetClass) {
-        if (java.util.Objects.nonNull(sourceList) && !sourceList.isEmpty() && java.util.Objects.nonNull(targetList)) {
+        if (Objects.nonNull(sourceList) && !sourceList.isEmpty() && Objects.nonNull(targetList)) {
             Iterator var3 = sourceList.iterator();
 
             while (var3.hasNext()) {
@@ -115,7 +115,7 @@ public class BeanKit {
 
     public String listToString(List<String> list, String separator, String surround) {
         StringBuilder builder = new StringBuilder();
-        if (java.util.Objects.nonNull(list) && !list.isEmpty()) {
+        if (Objects.nonNull(list) && !list.isEmpty()) {
             int i = 0;
             Iterator var5 = list.iterator();
 
@@ -125,7 +125,7 @@ public class BeanKit {
                     builder.append(separator);
                 }
 
-                if (java.util.Objects.nonNull(surround)) {
+                if (Objects.nonNull(surround)) {
                     builder.append(surround).append(str).append(surround);
                 } else {
                     builder.append(str);
@@ -162,7 +162,7 @@ public class BeanKit {
     }
 
     public void objectToObject(Object source, Object target, boolean ignoreNull, boolean withCreateInfo, boolean withUpdateInfo) {
-        if (java.util.Objects.nonNull(source) && java.util.Objects.nonNull(target)) {
+        if (Objects.nonNull(source) && Objects.nonNull(target)) {
             List<String> ignorePropertiesList = new ArrayList();
             if (!withCreateInfo) {
                 ignorePropertiesList.add("creator");
@@ -195,7 +195,7 @@ public class BeanKit {
             for (int var5 = 0; var5 < var4; ++var5) {
                 Field field = var3[var5];
                 field.setAccessible(true);
-                if (java.util.Objects.isNull(field.get(source))) {
+                if (Objects.isNull(field.get(source))) {
                     ignorePropertiesList.add(field.getName());
                 }
             }
@@ -267,7 +267,7 @@ public class BeanKit {
     }
 
     public <T, Q> List<T> ofList(List<Q> sources, Class<T> targetClass) {
-        if (java.util.Objects.isNull(sources) || sources.isEmpty()) {
+        if (Objects.isNull(sources) || sources.isEmpty()) {
             return new ArrayList();
         } else {
             List<T> targetList = new ArrayList();
@@ -277,7 +277,7 @@ public class BeanKit {
     }
 
     public <T> List<T> ofMapList(List<Map<String, Object>> sources, Class<T> targetClass) {
-        if (java.util.Objects.isNull(sources) || sources.isEmpty()) {
+        if (Objects.isNull(sources) || sources.isEmpty()) {
             return new ArrayList();
         } else {
             List<T> targetList = new ArrayList();
@@ -296,7 +296,7 @@ public class BeanKit {
         for (int var6 = 0; var6 < var5; ++var6) {
             PropertyDescriptor pd = var4[var6];
             Object srcValue = src.getPropertyValue(pd.getName());
-            if (java.util.Objects.isNull(srcValue)) {
+            if (Objects.isNull(srcValue)) {
                 emptyNames.add(pd.getName());
             }
         }
@@ -327,7 +327,7 @@ public class BeanKit {
     }
 
     public <T> T copy(Object source, Class<T> target, Class<?> targetSuper) {
-        if (java.util.Objects.isNull(source)) {
+        if (Objects.isNull(source)) {
             return null;
         } else {
             Object targetObject = null;
@@ -344,7 +344,7 @@ public class BeanKit {
     }
 
     public <T> List<T> copy(Collection<?> sourceList, Class<T> target) {
-        if (java.util.Objects.isNull(sourceList)) {
+        if (Objects.isNull(sourceList)) {
             return null;
         } else {
             ArrayList targetList = new ArrayList(sourceList.size());
@@ -367,7 +367,7 @@ public class BeanKit {
     }
 
     public <T> T copy(Object source, Class<T> target, String... ignoreProperties) {
-        if (java.util.Objects.isNull(source)) {
+        if (Objects.isNull(source)) {
             return null;
         } else {
             Object targetObject = null;
@@ -384,7 +384,7 @@ public class BeanKit {
     }
 
     public <T> List<T> copy(Collection<?> sourceList, Class<T> target, String... ignoreProperties) {
-        if (java.util.Objects.isNull(sourceList)) {
+        if (Objects.isNull(sourceList)) {
             return null;
         } else {
             ArrayList targetList = new ArrayList(sourceList.size());
@@ -405,20 +405,20 @@ public class BeanKit {
     }
 
     public void toMap(Object source, Map target, boolean withNull, String... ignoredFieldCol) {
-        if (java.util.Objects.isNull(source)) {
+        if (Objects.isNull(source)) {
             throw new ServiceException("source cannot be null");
         }
-        if (java.util.Objects.isNull(target)) {
+        if (Objects.isNull(target)) {
             throw new ServiceException("target cannot be null");
         }
         Set<String> ignores = new HashSet<>();
-        if (java.util.Objects.nonNull(ignoredFieldCol)) {
+        if (Objects.nonNull(ignoredFieldCol)) {
             ignores.addAll(Arrays.asList(ignoredFieldCol));
         }
         try {
             Set<String> fieldNames = new HashSet<>();
             Class<?> fieldClass = source.getClass();
-            while (java.util.Objects.nonNull(fieldClass) && fieldClass != Object.class) {
+            while (Objects.nonNull(fieldClass) && fieldClass != Object.class) {
                 Field[] declaredFields = fieldClass.getDeclaredFields();
                 for (Field field : declaredFields) {
                     if (!Modifier.isStatic(field.getModifiers())) {
@@ -436,12 +436,12 @@ public class BeanKit {
                 }
                 Method getter = pd.getReadMethod();
                 Method setter = pd.getWriteMethod();
-                if (!fieldNames.contains(fieldName) && java.util.Objects.isNull(setter)) {
+                if (!fieldNames.contains(fieldName) && Objects.isNull(setter)) {
                     continue;
                 }
-                if (java.util.Objects.nonNull(getter)) {
+                if (Objects.nonNull(getter)) {
                     Object value = getter.invoke(source);
-                    if (java.util.Objects.nonNull(value) || withNull) {
+                    if (Objects.nonNull(value) || withNull) {
                         target.put(fieldName, value);
                     }
                 } else if (withNull) {
@@ -455,7 +455,7 @@ public class BeanKit {
     }
 
     protected boolean isEmpty(Object obj) {
-        if (java.util.Objects.isNull(obj)) {
+        if (Objects.isNull(obj)) {
             return true;
         } else if (obj instanceof Optional) {
             return !((Optional) obj).isPresent();

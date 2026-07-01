@@ -25,7 +25,7 @@ public final class DisruptorMessageAcknowledgmentFactory {
     public static Optional<DisruptorMessageAcknowledgment> from(MQMessage<?> message) {
         Objects.requireNonNull(message, "message");
         DisruptorMQEvent event = message.nativeMessage(DisruptorMQEvent.class);
-        if (java.util.Objects.isNull(event)) {
+        if (Objects.isNull(event)) {
             return Optional.empty();
         }
         Object tagHeader = message.getHeaders().get("disruptor.deliveryTag");

@@ -1,5 +1,7 @@
 package io.ddd4j.core.contract;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonAlias;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.constant.ContextConstants;
@@ -101,12 +103,12 @@ public class MQEvent implements Serializable {
      */
     public void publish(String topic, String tag, String tenantId) {
         setTopic(topic);
-        if (java.util.Objects.isNull(getTopic())) {
+        if (Objects.isNull(getTopic())) {
             setTopic(DomainEvent.getDefaultTopic());
         }
         setTag(tag);
-        setTenantId(java.util.Objects.nonNull(tenantId) ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
-        setMsgId(java.util.Objects.isNull(getMsgId()) ? String.valueOf(System.currentTimeMillis()) : getMsgId());
+        setTenantId(Objects.nonNull(tenantId) ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
+        setMsgId(Objects.isNull(getMsgId()) ? String.valueOf(System.currentTimeMillis()) : getMsgId());
 
         // 根据发布模式自动决定推送方式
         switch (publishMode) {
@@ -138,7 +140,7 @@ public class MQEvent implements Serializable {
      */
     private void publishViaDomainEvent() {
         DomainEventPublisher publisher = DomainEvent.getPublisher();
-        if (java.util.Objects.nonNull(publisher)) {
+        if (Objects.nonNull(publisher)) {
             publisher.publish(new MQEventAsDomainEvent(this));
         }
     }
@@ -149,7 +151,7 @@ public class MQEvent implements Serializable {
      * @return 是否已成功发布
      */
     private boolean publishViaMQEventPublisher() {
-        if (java.util.Objects.isNull(mqEventPublisher)) {
+        if (Objects.isNull(mqEventPublisher)) {
             return false;
         }
         try {

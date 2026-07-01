@@ -53,7 +53,7 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
         this.group = Objects.requireNonNull(group, "group");
         this.entryId = Objects.requireNonNull(entryId, "entryId");
         this.nativeEntryId = nativeEntryId;
-        this.messageId = java.util.Objects.isNull(messageId) ? entryId : messageId;
+        this.messageId = Objects.isNull(messageId) ? entryId : messageId;
         this.correlationId = correlationId;
     }
 
@@ -125,17 +125,17 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public <T> Optional<T> unwrap(Class<T> nativeType) {
-        if (java.util.Objects.isNull(nativeType)) {
+        if (Objects.isNull(nativeType)) {
             return Optional.empty();
         }
         if (nativeType.isInstance(entryId)) {
             return Optional.of(nativeType.cast(entryId));
         }
-        if (java.util.Objects.nonNull(nativeEntryId) && nativeType.isInstance(nativeEntryId)) {
+        if (Objects.nonNull(nativeEntryId) && nativeType.isInstance(nativeEntryId)) {
             return Optional.of(nativeType.cast(nativeEntryId));
         }
         Object nativeClient = operations.nativeClient();
-        if (java.util.Objects.nonNull(nativeClient) && nativeType.isInstance(nativeClient)) {
+        if (Objects.nonNull(nativeClient) && nativeType.isInstance(nativeClient)) {
             return Optional.of(nativeType.cast(nativeClient));
         }
         return Optional.empty();

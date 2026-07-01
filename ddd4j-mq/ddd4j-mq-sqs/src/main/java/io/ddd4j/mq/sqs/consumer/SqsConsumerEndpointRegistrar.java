@@ -38,16 +38,16 @@ public class SqsConsumerEndpointRegistrar {
     }
 
     private static String attr(Message message, String key) {
-        if (java.util.Objects.isNull(message.messageAttributes())) {
+        if (Objects.isNull(message.messageAttributes())) {
             return null;
         }
         var v = message.messageAttributes().get(key);
-        return java.util.Objects.isNull(v) ? null : v.stringValue();
+        return Objects.isNull(v) ? null : v.stringValue();
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
         String queueUrl = definition.getTopic();
-        if (java.util.Objects.isNull(queueUrl) || !queueUrl.startsWith("http")) {
+        if (Objects.isNull(queueUrl) || !queueUrl.startsWith("http")) {
             throw new IllegalArgumentException("SQS MQDestination.topic must be a queueUrl (https://...). Got: " + queueUrl);
         }
         AtomicBoolean running = new AtomicBoolean(true);
@@ -102,9 +102,9 @@ public class SqsConsumerEndpointRegistrar {
 
     private MQMessage<String> toMessage(Message message, SqsClient client, String queueUrl) {
         Map<String, Object> headers = new HashMap<>();
-        if (java.util.Objects.nonNull(message.messageAttributes())) {
+        if (Objects.nonNull(message.messageAttributes())) {
             message.messageAttributes().forEach((k, v) -> {
-                if (java.util.Objects.nonNull(v.stringValue())) {
+                if (Objects.nonNull(v.stringValue())) {
                     headers.put(k, v.stringValue());
                 }
             });

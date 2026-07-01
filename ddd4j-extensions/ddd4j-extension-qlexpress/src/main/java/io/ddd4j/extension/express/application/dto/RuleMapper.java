@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.application.dto;
 
+import java.util.Objects;
+
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +25,7 @@ public class RuleMapper {
      * @return 规则响应DTO
      */
     public RuleResponse toResponse(RuleDefinition rule) {
-        if (java.util.Objects.isNull(rule)) {
+        if (Objects.isNull(rule)) {
             return null;
         }
 
@@ -54,7 +56,7 @@ public class RuleMapper {
      * @return 规则定义实体
      */
     public RuleDefinition toEntity(CreateRuleRequest request) {
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return null;
         }
 
@@ -64,8 +66,8 @@ public class RuleMapper {
         rule.setRuleExpression(request.getRuleExpression());
         rule.setRuleDescription(request.getRuleDescription());
         rule.setRuleType(request.getRuleType());
-        rule.setEnabled(java.util.Objects.nonNull(request.getEnabled()) ? request.getEnabled() : true);
-        rule.setPriority(java.util.Objects.nonNull(request.getPriority()) ? request.getPriority() : 0);
+        rule.setEnabled(Objects.nonNull(request.getEnabled()) ? request.getEnabled() : true);
+        rule.setPriority(Objects.nonNull(request.getPriority()) ? request.getPriority() : 0);
 
         // 函数相关字段
         rule.setFunctionClass(request.getFunctionClass());
@@ -85,7 +87,7 @@ public class RuleMapper {
      * @param request 更新规则请求DTO
      */
     public void updateEntity(RuleDefinition rule, UpdateRuleRequest request) {
-        if (java.util.Objects.isNull(rule) || java.util.Objects.isNull(request)) {
+        if (Objects.isNull(rule) || Objects.isNull(request)) {
             return;
         }
 
@@ -94,10 +96,10 @@ public class RuleMapper {
         rule.setRuleDescription(request.getRuleDescription());
         rule.setRuleType(request.getRuleType());
 
-        if (java.util.Objects.nonNull(request.getEnabled())) {
+        if (Objects.nonNull(request.getEnabled())) {
             rule.setEnabled(request.getEnabled());
         }
-        if (java.util.Objects.nonNull(request.getPriority())) {
+        if (Objects.nonNull(request.getPriority())) {
             rule.setPriority(request.getPriority());
         }
 

@@ -2,8 +2,10 @@ package io.ddd4j.guice.cqrs;
 
 import io.ddd4j.core.cqrs.projection.ViewManager;
 import io.ddd4j.core.cqrs.projection.ViewScheduler;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -32,7 +34,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     @Override
     public void stop() {
         if (running.compareAndSet(true, false)) {
-            if (executor != null) {
+            if (Objects.nonNull(executor)) {
                 executor.shutdownNow();
                 try {
                     if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
@@ -81,7 +83,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     }
 
     private long parseCronToPeriodSeconds(String cron) {
-        if (cron == null || cron.isEmpty()) {
+        if (StrKit.isEmpty(cron)) {
             return 60L;
         }
         if (cron.startsWith("0/")) {

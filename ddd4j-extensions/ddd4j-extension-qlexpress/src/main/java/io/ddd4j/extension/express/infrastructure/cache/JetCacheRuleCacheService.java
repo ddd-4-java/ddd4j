@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.infrastructure.cache;
 
+import java.util.Objects;
+
 import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.CreateCache;
@@ -103,13 +105,13 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return null;
         }
 
         try {
             RuleDefinition rule = cache.get(ruleCode);
-            if (java.util.Objects.nonNull(rule)) {
+            if (Objects.nonNull(rule)) {
                 log.debug("从JetCache多级缓存获取规则: {}", ruleCode);
             } else {
                 log.debug("JetCache缓存未命中: {}", ruleCode);
@@ -131,9 +133,9 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (java.util.Objects.isNull(ruleCode)
+        if (Objects.isNull(ruleCode)
                 || !org.springframework.util.StringUtils.hasText(ruleCode)
-                || java.util.Objects.isNull(rule)) {
+                || Objects.isNull(rule)) {
             return;
         }
 
@@ -154,7 +156,7 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (java.util.Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
             return;
         }
 

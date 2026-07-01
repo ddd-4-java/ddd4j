@@ -1,5 +1,7 @@
 package io.ddd4j.web.webmvc.api;
 
+import java.util.Objects;
+
 import io.ddd4j.core.contract.BaseRepository;
 import io.ddd4j.core.contract.Model;
 import io.ddd4j.core.contract.Page;
@@ -68,7 +70,7 @@ public interface AggregateController {
     @PostMapping("/{model}/create")
     default Model create(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
         Model m = Model.convert(model, body);
-        if (java.util.Objects.isNull(m)) {
+        if (Objects.isNull(m)) {
             return null;
         }
         m.save();
@@ -85,7 +87,7 @@ public interface AggregateController {
     @PostMapping({"/{model}/update", "/{model}/modify"})
     default void update(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
         Model m = Model.convert(model, body);
-        if (java.util.Objects.nonNull(m)) {
+        if (Objects.nonNull(m)) {
             m.update();
         }
     }
@@ -103,7 +105,7 @@ public interface AggregateController {
     @PostMapping("/{model}/save")
     default Model save(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
         Model m = Model.convert(model, body);
-        if (java.util.Objects.isNull(m)) {
+        if (Objects.isNull(m)) {
             return null;
         }
         m.saveOrUpdate();

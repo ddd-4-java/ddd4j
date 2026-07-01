@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.domain.model.entity;
 
+import java.util.Objects;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -142,7 +144,7 @@ public class RuleDefinition implements Serializable {
     public RuleDefinition(RuleId ruleId, String ruleCode, String ruleName, String ruleExpression,
                           String ruleDescription, String ruleType, Boolean enabled, Integer priority) {
         this.ruleId = ruleId;
-        this.id = java.util.Objects.nonNull(ruleId) ? ruleId.toLong() : null;
+        this.id = Objects.nonNull(ruleId) ? ruleId.toLong() : null;
         this.ruleCode = ruleCode;
         this.ruleName = ruleName;
         this.ruleExpression = ruleExpression;
@@ -168,7 +170,7 @@ public class RuleDefinition implements Serializable {
      */
     public RuleDefinition(Long id, String ruleCode, String ruleName, String ruleExpression,
                           String ruleDescription, String ruleType, Boolean enabled, Integer priority) {
-        this(java.util.Objects.nonNull(id) ? RuleId.valueOf(id) : null, ruleCode, ruleName, ruleExpression,
+        this(Objects.nonNull(id) ? RuleId.valueOf(id) : null, ruleCode, ruleName, ruleExpression,
                 ruleDescription, ruleType, enabled, priority);
     }
 
@@ -211,7 +213,7 @@ public class RuleDefinition implements Serializable {
      * @return true表示规则可用，false表示规则不可用
      */
     public boolean isAvailable() {
-        return java.util.Objects.nonNull(enabled) && enabled;
+        return Objects.nonNull(enabled) && enabled;
     }
 
     // Getters and Setters
@@ -221,7 +223,7 @@ public class RuleDefinition implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-        if (java.util.Objects.nonNull(id)) {
+        if (Objects.nonNull(id)) {
             this.ruleId = RuleId.valueOf(id);
         }
     }
@@ -232,7 +234,7 @@ public class RuleDefinition implements Serializable {
 
     public void setRuleId(RuleId ruleId) {
         this.ruleId = ruleId;
-        if (java.util.Objects.nonNull(ruleId)) {
+        if (Objects.nonNull(ruleId)) {
             this.id = ruleId.toLong();
         }
     }
@@ -426,7 +428,7 @@ public class RuleDefinition implements Serializable {
      */
     public boolean isFunctionRule() {
         return "FUNCTION".equals(ruleType)
-                && java.util.Objects.nonNull(functionClass)
+                && Objects.nonNull(functionClass)
                 && org.springframework.util.StringUtils.hasText(functionClass);
     }
 
@@ -436,7 +438,7 @@ public class RuleDefinition implements Serializable {
      * @return true表示是表达式规则，false表示是函数规则
      */
     public boolean isExpressionRule() {
-        return java.util.Objects.nonNull(ruleExpression)
+        return Objects.nonNull(ruleExpression)
                 && org.springframework.util.StringUtils.hasText(ruleExpression);
     }
 }

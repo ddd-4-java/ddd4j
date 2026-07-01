@@ -51,7 +51,7 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     private static Producer createAndStartProducer(OnsMQProperties properties) {
         Objects.requireNonNull(properties, "properties");
-        if (java.util.Objects.isNull(properties.getProducerId()) || io.ddd4j.kit.lang.StrKit.isBlank(properties.getProducerId())) {
+        if (Objects.isNull(properties.getProducerId()) || io.ddd4j.kit.lang.StrKit.isBlank(properties.getProducerId())) {
             throw new IllegalStateException("OnsMQProperties.producerId is required");
         }
         Producer p = ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId()));
@@ -66,7 +66,7 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new OnsMQEventPublisher(producer(), properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
+        return new OnsMQEventPublisher(producer(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         Object m = message.header(OnsMessageAcknowledgment.HEADER_ONS_MESSAGE);
@@ -95,7 +95,7 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() {
         Producer p = producerRef.get();
-        if (java.util.Objects.nonNull(p)) {
+        if (Objects.nonNull(p)) {
             try {
                 p.shutdown();
             } finally {

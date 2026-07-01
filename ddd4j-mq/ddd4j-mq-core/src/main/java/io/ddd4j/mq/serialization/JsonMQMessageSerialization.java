@@ -1,6 +1,9 @@
 package io.ddd4j.mq.serialization;
 
+import java.util.Objects;
+
 import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.kit.lang.StrKit;
 
 /**
  * 默认 JSON 消息序列化实现。
@@ -11,18 +14,19 @@ public class JsonMQMessageSerialization implements MQMessageSerialization, MQEve
 
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {
-        if (java.util.Objects.isNull(src)) {
+        if (Objects.isNull(src)) {
             return null;
         }
         String text = src instanceof String s ? s : String.valueOf(src);
-        if (io.ddd4j.kit.lang.StrKit.isEmpty(text)) {
+        if (StrKit.isEmpty(text)) {
             return null;
         }
         return JsonKit.toObject(text, dist);
     }
 
     @Override
-    public String serialize(Object src) throws RuntimeException {
-        return JsonKit.toJson(src);
+    @SuppressWarnings("unchecked")
+    public <T> T serialize(Object src) throws RuntimeException {
+        return (T) JsonKit.toJson(src);
     }
 }

@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.domain.model.vo;
 
+import java.util.Objects;
+
 import java.time.LocalDateTime;
 
 /**
@@ -55,7 +57,7 @@ public class RuleExecutionResult {
         this.errorMessage = builder.errorMessage;
         this.result = builder.result;
         this.ruleCode = builder.ruleCode;
-        this.executedAt = java.util.Objects.nonNull(builder.executedAt) ? builder.executedAt : LocalDateTime.now();
+        this.executedAt = Objects.nonNull(builder.executedAt) ? builder.executedAt : LocalDateTime.now();
         this.executionTime = builder.executionTime;
     }
 

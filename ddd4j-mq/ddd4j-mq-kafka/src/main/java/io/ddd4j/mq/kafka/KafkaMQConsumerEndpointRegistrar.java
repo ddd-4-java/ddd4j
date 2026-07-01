@@ -54,14 +54,14 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
 
     private static String valueHeader(ConsumerRecord<String, String> record, String key) {
         var header = record.headers().lastHeader(key);
-        if (java.util.Objects.isNull(header) || java.util.Objects.isNull(header.value())) {
+        if (Objects.isNull(header) || Objects.isNull(header.value())) {
             return null;
         }
         return new String(header.value(), StandardCharsets.UTF_8);
     }
 
     private static boolean hasText(String s) {
-        return java.util.Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
+        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
@@ -127,7 +127,7 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
                 consumer.wakeup();
                 consumer.close();
             } finally {
-                if (java.util.Objects.nonNull(executor)) {
+                if (Objects.nonNull(executor)) {
                     executor.shutdownNow();
                 }
             }

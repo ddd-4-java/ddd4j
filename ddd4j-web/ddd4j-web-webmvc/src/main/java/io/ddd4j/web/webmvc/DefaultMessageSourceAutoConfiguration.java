@@ -6,6 +6,8 @@
  */
 package io.ddd4j.web.webmvc.webmvc;
 
+import java.util.Objects;
+
 import io.ddd4j.spring.properties.BasePropertySourcePostProcessor;
 import io.ddd4j.web.webmvc.config.MessageSourceConfigurationProperties;
 import io.ddd4j.web.webmvc.error.I18nResourceBasenameHandler;
@@ -66,12 +68,12 @@ public class DefaultMessageSourceAutoConfiguration {
         if (!CollectionUtils.isEmpty(properties.getBasename())) {
             messageSource.setBasenames(properties.getBasename().toArray(new String[0]));
         }
-        if (java.util.Objects.nonNull(properties.getEncoding())) {
+        if (Objects.nonNull(properties.getEncoding())) {
             messageSource.setDefaultEncoding(properties.getEncoding().name());
         }
         messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());
         Duration cacheDuration = properties.getCacheDuration();
-        if (java.util.Objects.nonNull(cacheDuration)) {
+        if (Objects.nonNull(cacheDuration)) {
             messageSource.setCacheMillis(cacheDuration.toMillis());
         }
         messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());

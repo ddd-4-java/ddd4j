@@ -30,7 +30,7 @@ public final class MQBrokerAdapters {
         if (configured == MQBrokerType.NONE) {
             throw new IllegalStateException("ddd4j.mq.broker is not configured or unsupported: " + props.getBroker());
         }
-        if (java.util.Objects.isNull(adapters) || adapters.isEmpty()) {
+        if (Objects.isNull(adapters) || adapters.isEmpty()) {
             throw new IllegalStateException(
                     "No MQBrokerAdapter bean found for broker=" + configured
                             + ". Add ddd4j-cmpt-* module matching ddd4j.mq.broker.");
@@ -56,7 +56,7 @@ public final class MQBrokerAdapters {
         if (configured == MQBrokerType.NONE) {
             throw new IllegalStateException("ddd4j.mq.broker is not configured or unsupported: " + props.getBroker());
         }
-        if (java.util.Objects.isNull(adapters) || adapters.isEmpty()) {
+        if (Objects.isNull(adapters) || adapters.isEmpty()) {
             throw new IllegalStateException("No MQBrokerAdapter bean found for broker=" + configured);
         }
         return adapters.stream()

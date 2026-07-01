@@ -1,5 +1,7 @@
 package io.ddd4j.core.contract;
 
+import java.util.Objects;
+
 import java.util.Collection;
 
 /**
@@ -29,7 +31,7 @@ public interface DomainEventPublisher {
      * @param events 领域事件集合
      */
     default void publishAll(Collection<DomainEvent> events) {
-        if (java.util.Objects.nonNull(events)) {
+        if (Objects.nonNull(events)) {
             events.forEach(this::publish);
         }
     }

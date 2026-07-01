@@ -1,5 +1,7 @@
 package io.ddd4j.kit.web;
 
+import java.util.Objects;
+
 import cn.hutool.core.net.Ipv4Util;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -90,7 +92,7 @@ public class IpKit extends Ipv4Util {
             paramMap.put("ip", ip);
             // 带参GET请求
             String returnStr = HttpUtil.get(url, paramMap);
-            if (java.util.Objects.nonNull(returnStr)) {
+            if (Objects.nonNull(returnStr)) {
                 JSONObject rs = JSONUtil.parseObj(returnStr);
                 String region = rs.getStr("addr");
                 return region;
@@ -111,7 +113,7 @@ public class IpKit extends Ipv4Util {
             paramMap.put("ip", ip);
             // 带参GET请求
             String returnStr = HttpUtil.get(url, paramMap);
-            if (java.util.Objects.nonNull(returnStr)) {
+            if (Objects.nonNull(returnStr)) {
                 JSONObject rs = JSONUtil.parseObj(returnStr);
                 Map<String, String> map = new HashMap<>();
                 map.put("pro", rs.getStr("pro"));
@@ -164,7 +166,7 @@ public class IpKit extends Ipv4Util {
      * @return 客户端真实 IP
      */
     public static String getRemoteAddr(Object request) {
-        if (java.util.Objects.isNull(request)) {
+        if (Objects.isNull(request)) {
             return "unknown";
         }
         try {

@@ -65,7 +65,7 @@ public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new MqttMQEventPublisher(client(), properties, java.util.Objects.isNull(props) ? mqProperties : props, serialization);
+        return new MqttMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
     @Override
     public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        if (java.util.Objects.isNull(message)) {
+        if (Objects.isNull(message)) {
             return null;
         }
         Object msg = message.header(MqttMessageAcknowledgment.HEADER_MQTT_MESSAGE);
@@ -94,7 +94,7 @@ public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     @Override
     public void close() throws Exception {
         MqttClient c = clientRef.get();
-        if (java.util.Objects.nonNull(c)) {
+        if (Objects.nonNull(c)) {
             try {
                 c.disconnect();
                 c.close();

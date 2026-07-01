@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.application.service;
 
+import java.util.Objects;
+
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import io.ddd4j.extension.express.domain.model.vo.RuleExecutionResult;
 import io.ddd4j.extension.express.domain.model.vo.RuleValidationResult;
@@ -57,7 +59,7 @@ public class RuleEngineApplicationService {
         // 1. 获取规则定义（带缓存）
         RuleDefinition rule = getRuleDefinition(ruleCode);
 
-        if (java.util.Objects.isNull(rule)) {
+        if (Objects.isNull(rule)) {
             return RuleExecutionResult.builder()
                     .success(false)
                     .errorCode("RULE_NOT_FOUND")
@@ -130,7 +132,7 @@ public class RuleEngineApplicationService {
     private RuleDefinition getRuleDefinition(String ruleCode) {
         // 先从缓存获取
         RuleDefinition cachedRule = ruleCacheService.get(ruleCode);
-        if (java.util.Objects.nonNull(cachedRule)) {
+        if (Objects.nonNull(cachedRule)) {
             return cachedRule;
         }
 
