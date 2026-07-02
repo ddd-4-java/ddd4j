@@ -1,6 +1,6 @@
 package io.ddd4j.sample.richmodel.order.infrastructure.persistence;
 
-import io.ddd4j.core.domain.model.DomainObjectMapper;
+import io.ddd4j.core.ddd.model.DomainObjectMapper;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.richmodel.order.domain.model.Money;
 import io.ddd4j.sample.richmodel.order.domain.model.Order;
@@ -41,9 +41,10 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
     }
 
     @Override
-    public void save(Order aggregate) {
+    public Order save(Order aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
         rows.put(aggregate.id(), toPersistenceObject(aggregate));
+        return aggregate;
     }
 
     @Override

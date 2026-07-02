@@ -1,6 +1,6 @@
 package io.ddd4j.sample.richmodel.order.domain.event;
 
-import io.ddd4j.core.domain.event.DomainEvent;
+import io.ddd4j.core.ddd.event.DomainEvent;
 
 /**
  * Raised when an order line is added.

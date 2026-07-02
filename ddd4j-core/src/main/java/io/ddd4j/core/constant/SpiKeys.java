@@ -38,10 +38,10 @@ public final class SpiKeys {
 
     // ========== 事件相关 SPI ==========
 
-    /** MQ 事件发布者 SPI key，对应 {@code io.ddd4j.core.domain.event.MQEventPublisher} */
+    /** MQ 事件发布者 SPI key，对应 {@code io.ddd4j.core.event.MQEventPublisher} */
     public static final String MQ_EVENT_PUBLISHER = PREFIX + "mq.MQEventPublisher";
 
-    /** 进程内领域事件发布者 SPI key，对应 {@code io.ddd4j.core.domain.event.DomainEventPublisher} */
+    /** 进程内领域事件发布者 SPI key，对应 {@code io.ddd4j.core.ddd.event.DomainEventPublisher} */
     public static final String DOMAIN_EVENT_PUBLISHER = PREFIX + "domain.DomainEventPublisher";
 
     /** 认证主体提供者 SPI key，对应 {@code io.ddd4j.core.subject.SubjectProvider} */
@@ -52,14 +52,14 @@ public final class SpiKeys {
 
     // ========== CQRS 相关 SPI（预留） ==========
 
-    /** 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.domain.query.CommandExecutorRegistry} */
+    /** 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.cqrs.query.CommandExecutorRegistry} */
     public static final String COMMAND_EXECUTOR_REGISTRY = PREFIX + "cqrs.CommandExecutorRegistry";
 
-    /** 投影位置持久化 SPI key，对应 {@code io.ddd4j.core.domain.query.projection.ProjectionPositionRepository} */
+    /** 投影位置持久化 SPI key，对应 {@code io.ddd4j.core.cqrs.projection.ProjectionPositionRepository} */
     public static final String PROJECTION_POSITION_REPOSITORY = PREFIX + "cqrs.ProjectionPositionRepository";
 
     // ========== 数据相关 SPI ==========
 
-    /** 仓储注册表 SPI key，对应 {@code io.ddd4j.core.domain.contract.BaseRepository}（替代静态实例表） */
+    /** 仓储注册表 SPI key，对应 {@code io.ddd4j.core.ddd.repository.Repository}（替代旧静态实例表） */
     public static final String REPOSITORY_REGISTRY = PREFIX + "data.RepositoryRegistry";
 }

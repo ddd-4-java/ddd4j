@@ -9,7 +9,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import io.ddd4j.core.domain.event.TypeHandlerRegistry;
+import io.ddd4j.core.event.TypeHandlerRegistry;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
 import io.ddd4j.data.mybatis.typehandler.MybatisTypeHandlerRegistry;

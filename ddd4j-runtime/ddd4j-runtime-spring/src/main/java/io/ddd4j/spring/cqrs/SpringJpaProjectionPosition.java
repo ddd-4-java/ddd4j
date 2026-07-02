@@ -1,6 +1,6 @@
 package io.ddd4j.spring.cqrs;
 
-import io.ddd4j.core.domain.query.projection.ProjectionPosition;
+import io.ddd4j.core.cqrs.projection.ProjectionPosition;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

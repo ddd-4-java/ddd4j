@@ -1,7 +1,7 @@
 package io.ddd4j.quarkus.event;
 
-import io.ddd4j.core.domain.event.DomainEvent;
-import io.ddd4j.core.domain.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;

@@ -2,8 +2,8 @@ package io.ddd4j.guice.event;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import io.ddd4j.core.domain.event.DomainEvent;
-import io.ddd4j.core.domain.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;

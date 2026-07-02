@@ -1,7 +1,7 @@
 package io.ddd4j.guice.cqrs;
 
-import io.ddd4j.core.domain.query.projection.ProjectionPosition;
-import io.ddd4j.core.domain.query.projection.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.projection.ProjectionPosition;
+import io.ddd4j.core.cqrs.projection.ProjectionPositionRepository;
 
 import java.util.List;
 import java.util.Map;

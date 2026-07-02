@@ -1,11 +1,11 @@
 package io.ddd4j.web.webmvc.api;
 
-import io.ddd4j.core.domain.contract.Page;
-import io.ddd4j.core.domain.model.AggregateRoot;
-import io.ddd4j.core.domain.query.Query;
-import io.ddd4j.core.domain.repository.Repository;
-import io.ddd4j.core.domain.repository.RepositoryRegistry;
-import io.ddd4j.core.domain.repository.RichRepository;
+import io.ddd4j.core.contract.Page;
+import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.cqrs.query.Query;
+import io.ddd4j.core.ddd.repository.Repository;
+import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.core.ddd.repository.RichRepository;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;

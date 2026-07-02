@@ -1,6 +1,6 @@
 package io.ddd4j.mq.mqtt.publisher;
 
-import io.ddd4j.core.domain.event.MQEvent;
+import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;

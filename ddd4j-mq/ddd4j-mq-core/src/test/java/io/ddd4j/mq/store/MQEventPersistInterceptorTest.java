@@ -1,6 +1,6 @@
 package io.ddd4j.mq.store;
 
-import io.ddd4j.core.domain.event.MQEvent;
+import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.mq.ack.MQConsumeTemplates;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerContext;

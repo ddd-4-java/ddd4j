@@ -16,8 +16,8 @@
 package io.ddd4j.guice.web;
 
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.core.domain.event.DomainEvent;
-import io.ddd4j.core.domain.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.guice.util.WebKit;
 import io.javalin.http.Context;

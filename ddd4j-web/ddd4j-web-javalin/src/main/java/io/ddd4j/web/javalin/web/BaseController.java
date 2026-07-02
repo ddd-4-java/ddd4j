@@ -3,7 +3,7 @@ package io.ddd4j.web.javalin.web;
 import com.google.inject.Inject;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.core.domain.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.javalin.http.Context;
 
 /**

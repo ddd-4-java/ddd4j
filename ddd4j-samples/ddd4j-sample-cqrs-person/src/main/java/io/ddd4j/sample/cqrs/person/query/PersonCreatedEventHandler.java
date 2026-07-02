@@ -1,6 +1,6 @@
 package io.ddd4j.sample.cqrs.person.query;
 
-import io.ddd4j.core.domain.query.projection.TypedEventHandler;
+import io.ddd4j.core.cqrs.projection.TypedEventHandler;
 import io.ddd4j.sample.cqrs.person.domain.PersonCreatedEvent;
 
 import java.util.Objects;

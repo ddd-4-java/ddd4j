@@ -72,6 +72,13 @@ public class AuthRequest {
         return Objects.isNull(loginId) ? null : String.valueOf(loginId);
     }
 
+    public AuthRequest extra(String key, Object value) {
+        if (Objects.isNull(extra)) {
+            extra = new HashMap<>();
+        }
+        extra.put(Objects.requireNonNull(key, "key must not be null"), value);
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {

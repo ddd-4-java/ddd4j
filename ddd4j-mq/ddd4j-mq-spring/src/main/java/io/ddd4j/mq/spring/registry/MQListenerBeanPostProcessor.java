@@ -1,6 +1,6 @@
 package io.ddd4j.mq.spring.registry;
 
-import io.ddd4j.core.domain.contract.annotation.MQEventListener;
+import io.ddd4j.core.contract.annotation.MQEventListener;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerDefinitionRegistry;

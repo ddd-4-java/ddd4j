@@ -1,7 +1,7 @@
 package io.ddd4j.mq.registry;
 
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.domain.event.MQEvent;
+import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.mq.ack.AckDisposition;
 import io.ddd4j.mq.ack.MessageAcknowledgment;

@@ -1,6 +1,6 @@
 package io.ddd4j.mq.publish;
 
-import io.ddd4j.core.domain.event.MQEvent;
+import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.mq.contract.MQDestination;
 
 /**
@@ -11,7 +11,7 @@ import io.ddd4j.mq.contract.MQDestination;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public interface MQEventPublisher extends io.ddd4j.core.domain.event.MQEventPublisher {
+public interface MQEventPublisher extends io.ddd4j.core.event.MQEventPublisher {
 
     /**
      * 发布领域事件到指定目的地。

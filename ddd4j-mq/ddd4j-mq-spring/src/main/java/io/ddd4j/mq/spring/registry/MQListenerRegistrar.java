@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 应用就绪后扫描 {@link io.ddd4j.core.domain.contract.annotation.MQEventListener} 并通过 {@link MQBrokerAdapter} 动态注册消费端点。
+ * 应用就绪后扫描 {@link io.ddd4j.core.contract.annotation.MQEventListener} 并通过 {@link MQBrokerAdapter} 动态注册消费端点。
  *
  * <p>消息处理流程：
  * <pre>

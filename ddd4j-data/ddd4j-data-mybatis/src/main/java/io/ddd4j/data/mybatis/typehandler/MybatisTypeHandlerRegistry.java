@@ -3,7 +3,7 @@ package io.ddd4j.data.mybatis.typehandler;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import io.ddd4j.core.domain.event.TypeHandlerRegistry;
+import io.ddd4j.core.event.TypeHandlerRegistry;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

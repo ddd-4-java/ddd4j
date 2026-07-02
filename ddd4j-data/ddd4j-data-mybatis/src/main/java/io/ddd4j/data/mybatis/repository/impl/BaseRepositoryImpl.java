@@ -2,8 +2,8 @@ package io.ddd4j.data.mybatis.repository.impl;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import io.ddd4j.core.domain.model.AggregateRoot;
-import io.ddd4j.core.domain.query.Query;
+import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 
 import java.io.Serializable;

@@ -1,8 +1,8 @@
 package io.ddd4j.core.context;
 
 import io.ddd4j.core.constant.SpiKeys;
-import io.ddd4j.core.domain.event.DomainEvent;
-import io.ddd4j.core.domain.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

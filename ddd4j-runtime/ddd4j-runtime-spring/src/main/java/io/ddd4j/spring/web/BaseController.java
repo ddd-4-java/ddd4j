@@ -7,7 +7,7 @@
 package io.ddd4j.spring.web;
 
 import io.ddd4j.core.ApiRestResponse;
-import io.ddd4j.core.domain.event.ExceptionEvent;
+import io.ddd4j.core.ddd.event.ExceptionEvent;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,6 +1,6 @@
 package io.ddd4j.mq.nats.publisher;
 
-import io.ddd4j.core.domain.event.MQEvent;
+import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.Ddd4jMQProperties;

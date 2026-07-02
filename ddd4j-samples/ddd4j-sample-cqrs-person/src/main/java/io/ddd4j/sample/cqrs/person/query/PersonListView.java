@@ -1,7 +1,7 @@
 package io.ddd4j.sample.cqrs.person.query;
 
-import io.ddd4j.core.domain.query.projection.ProjectionView;
-import io.ddd4j.core.domain.query.projection.TypedEventDispatcher;
+import io.ddd4j.core.cqrs.projection.ProjectionView;
+import io.ddd4j.core.cqrs.projection.TypedEventDispatcher;
 import io.ddd4j.sample.cqrs.person.domain.PersonCreatedEvent;
 import io.ddd4j.sample.cqrs.person.domain.PersonDeletedEvent;
 import io.ddd4j.sample.cqrs.person.domain.PersonEvent;

@@ -1,7 +1,7 @@
 package io.ddd4j.web.quarkus;
 
-import io.ddd4j.core.domain.contract.Page;
-import io.ddd4j.core.domain.contract.R;
+import io.ddd4j.core.contract.Page;
+import io.ddd4j.core.contract.R;
 import io.ddd4j.kit.lang.StrKit;
 import io.vertx.core.http.HttpServerRequest;
 import jakarta.ws.rs.core.Context;

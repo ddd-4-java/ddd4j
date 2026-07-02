@@ -76,7 +76,7 @@ class CoreIndependenceTest {
      */
     @ArchTest
     static final ArchRule contract_package_is_pure_java =
-            noClasses().that().resideInAPackage("io.ddd4j.core.domain.contract..")
+            noClasses().that().resideInAPackage("io.ddd4j.core.contract..")
                     .should().dependOnClassesThat().resideInAnyPackage(
                             "org.springframework..",
                             "com.baomidou..",

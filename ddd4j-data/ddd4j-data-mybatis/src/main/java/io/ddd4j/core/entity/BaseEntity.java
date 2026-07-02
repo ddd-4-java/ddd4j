@@ -29,7 +29,7 @@ import java.util.Objects;
  * <p>
  * <b>替代方案</b>（按场景选择）：
  * <ul>
- *   <li><b>纯净 DDD 轨道</b>：使用 {@link io.ddd4j.core.domain.contract.Model}
+ *   <li><b>纯净 DDD 轨道</b>：使用 {@link io.ddd4j.core.ddd.model.AggregateRoot}
  *       （不继承任何框架类，适合 COLA/Clean/Hexagonal 架构）</li>
  *   <li><b>事件溯源轨道</b>：使用 {@code io.ddd4j.ddd.aggregate.DddAggregateRoot}
  *       （基于 fuinorg ddd-4-java，支持 ES/CQRS）</li>

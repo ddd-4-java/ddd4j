@@ -1,6 +1,6 @@
 package io.ddd4j.sample.richmodel.order.domain.model;
 
-import io.ddd4j.core.domain.model.AggregateRoot;
+import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.richmodel.order.domain.event.OrderCancelledEvent;
 import io.ddd4j.sample.richmodel.order.domain.event.OrderCreatedEvent;

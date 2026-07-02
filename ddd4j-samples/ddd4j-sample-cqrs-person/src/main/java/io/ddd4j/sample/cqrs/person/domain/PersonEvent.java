@@ -1,7 +1,7 @@
 package io.ddd4j.sample.cqrs.person.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.ddd4j.core.domain.query.projection.TypedEvent;
+import io.ddd4j.core.cqrs.projection.TypedEvent;
 
 import java.time.Instant;
 

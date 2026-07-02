@@ -1,7 +1,7 @@
 package io.ddd4j.web.webmvc.core;
 
-import io.ddd4j.core.domain.contract.R;
-import io.ddd4j.core.domain.contract.enums.ResultCode;
+import io.ddd4j.core.contract.R;
+import io.ddd4j.core.contract.enums.ResultCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.ValidateException;
 import io.ddd4j.core.util.ExceptionKit;

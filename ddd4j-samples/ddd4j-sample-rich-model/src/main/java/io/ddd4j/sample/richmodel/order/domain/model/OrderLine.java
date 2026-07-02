@@ -1,6 +1,6 @@
 package io.ddd4j.sample.richmodel.order.domain.model;
 
-import io.ddd4j.core.domain.Entity;
+import io.ddd4j.core.ddd.model.Entity;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Objects;

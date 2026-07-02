@@ -223,7 +223,7 @@ ddd4j 的普通 DDD 主路径不要求领域模型继承 MyBatis-Plus 的 `Model
 `ddd4j-core`，基础设施层再用 `ddd4j-data-mybatis` 适配 MyBatis-Plus。
 
 ```java
-import io.ddd4j.core.domain.AggregateRoot;
+import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Objects;
@@ -257,11 +257,11 @@ public class Order extends AggregateRoot<Long> {
 ```
 
 ```java
-import io.ddd4j.core.domain.DomainRepository;
+import io.ddd4j.core.ddd.repository.Repository;
 
 import java.util.Optional;
 
-public interface OrderRepository extends DomainRepository<Order, Long> {
+public interface OrderRepository extends Repository<Order, Long> {
 
     Optional<Order> findByOrderNo(String orderNo);
 }

@@ -1,8 +1,8 @@
 package io.ddd4j.quarkus.command;
 
-import io.ddd4j.core.domain.command.Command;
-import io.ddd4j.core.domain.command.CommandExecutor;
-import io.ddd4j.core.domain.command.Result;
+import io.ddd4j.core.cqrs.command.Command;
+import io.ddd4j.core.cqrs.command.CommandExecutor;
+import io.ddd4j.core.cqrs.command.Result;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
