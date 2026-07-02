@@ -1,8 +1,8 @@
 package io.ddd4j.core.util;
 
-import io.ddd4j.core.contract.IR;
-import io.ddd4j.core.contract.enums.ResultCode;
-import io.ddd4j.core.contract.exception.ServiceException;
+import io.ddd4j.core.domain.contract.IR;
+import io.ddd4j.core.domain.contract.enums.ResultCode;
+import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Array;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * 业务断言类，断言不通过将抛出 {@link ServiceException}。
+ * 业务断言类，断言不通过将抛出 {@link BizRuntimeException}。
  *
  * <p>纯 Java 实现（零框架依赖），所有断言方法均支持：
  * <ul>
@@ -36,7 +36,7 @@ public class BizAssert {
      * 断言是否为真，如果为 {@code false} 抛出给定的异常<br>
      *
      * <pre class="code">
-     * Assert.isTrue(i &gt; 0, ServiceException::new);
+     * Assert.isTrue(i &gt; 0, BizRuntimeException::new);
      * </pre>
      *
      * @param <X>        异常类型
@@ -52,238 +52,238 @@ public class BizAssert {
 
     public void isTrue(Boolean expect, Integer code, String falseThrow, Object... params) {
         if (!expect) {
-            throw new ServiceException(code, falseThrow, params);
+            throw new BizRuntimeException(code, falseThrow, params);
         }
     }
 
     public void isTrue(Boolean expect, String ifFalse, Object... params) {
         if (!expect) {
-            throw new ServiceException(ifFalse, params);
+            throw new BizRuntimeException(ifFalse, params);
         }
     }
 
     public void equals(Object a, Object b, Integer code, String ifNotEquals, Object... params) {
         if (!Objects.equals(a, b)) {
-            throw new ServiceException(code, ifNotEquals, params);
+            throw new BizRuntimeException(code, ifNotEquals, params);
         }
     }
 
     public void equals(Object a, Object b, String ifNotEquals, Object... params) {
         if (!Objects.equals(a, b)) {
-            throw new ServiceException(ifNotEquals, params);
+            throw new BizRuntimeException(ifNotEquals, params);
         }
     }
 
     public void equals(Object a, Object b) {
         if (!Objects.equals(a, b)) {
-            throw new ServiceException("a must equals with b");
+            throw new BizRuntimeException("a must equals with b");
         }
     }
 
     public void notEquals(Object a, Object b, Integer code, String ifEquals, Object... params) {
         if (Objects.equals(a, b)) {
-            throw new ServiceException(code, ifEquals, params);
+            throw new BizRuntimeException(code, ifEquals, params);
         }
     }
 
     public void notEquals(Object a, Object b, String ifEquals, Object... params) {
         if (Objects.equals(a, b)) {
-            throw new ServiceException(ifEquals, params);
+            throw new BizRuntimeException(ifEquals, params);
         }
     }
 
     public void notEquals(Object a, Object b) {
         if (Objects.equals(a, b)) {
-            throw new ServiceException("a must not equals with b");
+            throw new BizRuntimeException("a must not equals with b");
         }
     }
 
     public void contains(Collection collection, Object element, Integer code, String ifNotContains, Object... params) {
         if (Objects.isNull(collection) || !collection.contains(element)) {
-            throw new ServiceException(code, ifNotContains, params);
+            throw new BizRuntimeException(code, ifNotContains, params);
         }
     }
 
     public void contains(Collection collection, Object element, String ifNotContains, Object... params) {
         if (Objects.isNull(collection) || !collection.contains(element)) {
-            throw new ServiceException(ifNotContains, params);
+            throw new BizRuntimeException(ifNotContains, params);
         }
     }
 
     public void contains(Collection collection, Object element) {
         if (Objects.isNull(collection) || !collection.contains(element)) {
-            throw new ServiceException("collection must contains the element");
+            throw new BizRuntimeException("collection must contains the element");
         }
     }
 
     public void notContains(Collection collection, Object element, Integer code, String ifContains, Object... params) {
         if (Objects.nonNull(collection) && collection.contains(element)) {
-            throw new ServiceException(code, ifContains, params);
+            throw new BizRuntimeException(code, ifContains, params);
         }
     }
 
     public void notContains(Collection collection, Object element, String ifContains, Object... params) {
         if (Objects.nonNull(collection) && collection.contains(element)) {
-            throw new ServiceException(ifContains, params);
+            throw new BizRuntimeException(ifContains, params);
         }
     }
 
     public void notContains(Collection collection, Object element) {
         if (Objects.nonNull(collection) && collection.contains(element)) {
-            throw new ServiceException("collection must contains the element");
+            throw new BizRuntimeException("collection must contains the element");
         }
     }
 
     public void after(LocalDateTime a, LocalDateTime b, Integer code, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
-            throw new ServiceException(code, ifBefore, params);
+            throw new BizRuntimeException(code, ifBefore, params);
         }
     }
 
     public void after(LocalDateTime a, LocalDateTime b, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
-            throw new ServiceException(ifBefore, params);
+            throw new BizRuntimeException(ifBefore, params);
         }
     }
 
     public void after(LocalDateTime a, LocalDateTime b) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
-            throw new ServiceException("a must after b");
+            throw new BizRuntimeException("a must after b");
         }
     }
 
     public void after(LocalDate a, LocalDate b, Integer code, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
-            throw new ServiceException(code, ifBefore, params);
+            throw new BizRuntimeException(code, ifBefore, params);
         }
     }
 
     public void after(LocalDate a, LocalDate b, String ifBefore, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
-            throw new ServiceException(ifBefore, params);
+            throw new BizRuntimeException(ifBefore, params);
         }
     }
 
     public void after(LocalDate a, LocalDate b) {
         if (Objects.isNull(a) || Objects.isNull(b) || !a.isAfter(b)) {
-            throw new ServiceException("a must after b");
+            throw new BizRuntimeException("a must after b");
         }
     }
 
     public void gt(Integer a, Integer b, Integer code, String ifLessEquals, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a <= b) {
-            throw new ServiceException(code, ifLessEquals, params);
+            throw new BizRuntimeException(code, ifLessEquals, params);
         }
     }
 
     public void gt(Integer a, Integer b, String ifLessEquals, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a <= b) {
-            throw new ServiceException(ifLessEquals, params);
+            throw new BizRuntimeException(ifLessEquals, params);
         }
     }
 
     public void gt(Integer a, Integer b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a <= b) {
-            throw new ServiceException("a must > b");
+            throw new BizRuntimeException("a must > b");
         }
     }
 
     public void ge(Integer a, Integer b, Integer code, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a < b) {
-            throw new ServiceException(code, ifLess, params);
+            throw new BizRuntimeException(code, ifLess, params);
         }
     }
 
     public void ge(Integer a, Integer b, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a < b) {
-            throw new ServiceException(ifLess, params);
+            throw new BizRuntimeException(ifLess, params);
         }
     }
 
     public void ge(Integer a, Integer b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a < b) {
-            throw new ServiceException("a must >= b");
+            throw new BizRuntimeException("a must >= b");
         }
     }
 
     public void ge(BigDecimal a, BigDecimal b, Integer code, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) < 0) {
-            throw new ServiceException(code, ifLess, params);
+            throw new BizRuntimeException(code, ifLess, params);
         }
     }
 
     public void ge(BigDecimal a, BigDecimal b, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) < 0) {
-            throw new ServiceException(ifLess, params);
+            throw new BizRuntimeException(ifLess, params);
         }
     }
 
     public void ge(BigDecimal a, BigDecimal b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) < 0) {
-            throw new ServiceException("a must >= b");
+            throw new BizRuntimeException("a must >= b");
         }
     }
 
     public void gt(BigDecimal a, BigDecimal b, Integer code, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) <= 0) {
-            throw new ServiceException(code, ifLess, params);
+            throw new BizRuntimeException(code, ifLess, params);
         }
     }
 
     public void gt(BigDecimal a, BigDecimal b, String ifLess, Object... params) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) <= 0) {
-            throw new ServiceException(ifLess, params);
+            throw new BizRuntimeException(ifLess, params);
         }
     }
 
     public void gt(BigDecimal a, BigDecimal b) {
         if (Objects.isNull(a) || Objects.isNull(b) || a.compareTo(b) <= 0) {
-            throw new ServiceException("a must > b");
+            throw new BizRuntimeException("a must > b");
         }
     }
 
     public <T> T notNull(T dontNull, Integer code, String ifNull, Object... params) {
         if (Objects.isNull(dontNull)) {
-            throw new ServiceException(code, ifNull, params);
+            throw new BizRuntimeException(code, ifNull, params);
         }
         return dontNull;
     }
 
     public <T> T notNull(T dontNull, String ifNull, Object... params) {
         if (Objects.isNull(dontNull)) {
-            throw new ServiceException(ifNull, params);
+            throw new BizRuntimeException(ifNull, params);
         }
         return dontNull;
     }
 
     public <T> T notNull(T dontNull) {
         if (Objects.isNull(dontNull)) {
-            throw new ServiceException("object must not be null");
+            throw new BizRuntimeException("object must not be null");
         }
         return dontNull;
     }
 
     public void isNull(Object nullVal, Integer code, String ifNotNull, Object... params) {
         if (Objects.nonNull(nullVal)) {
-            throw new ServiceException(code, ifNotNull, params);
+            throw new BizRuntimeException(code, ifNotNull, params);
         }
     }
 
     public void isNull(Object nullVal, String ifNotNull, Object... params) {
         if (Objects.nonNull(nullVal)) {
-            throw new ServiceException(ifNotNull, params);
+            throw new BizRuntimeException(ifNotNull, params);
         }
     }
 
     public void isNull(Object nullVal) {
         if (Objects.nonNull(nullVal)) {
-            throw new ServiceException("object must be null");
+            throw new BizRuntimeException("object must be null");
         }
     }
 
     public void hasValue(Object object, Integer code, String missingValue, Object... params) {
         if (Objects.isNull(object) || isEmpty(object)) {
-            throw new ServiceException(code, missingValue, params);
+            throw new BizRuntimeException(code, missingValue, params);
         }
     }
 
@@ -297,7 +297,7 @@ public class BizAssert {
 
     public void mustEmpty(Object object, Integer code, String hasValue, Object... params) {
         if (Objects.nonNull(object) && !isEmpty(object)) {
-            throw new ServiceException(code, hasValue, params);
+            throw new BizRuntimeException(code, hasValue, params);
         }
     }
 
@@ -311,7 +311,7 @@ public class BizAssert {
 
     public <T> T isOk(IR r, Integer code, String ifNotOk, Object... params) {
         if (Objects.isNull(r) || !r.isOk()) {
-            throw new ServiceException(code, ifNotOk, params);
+            throw new BizRuntimeException(code, ifNotOk, params);
         }
         return r.getData();
     }
@@ -326,7 +326,7 @@ public class BizAssert {
 
     public <T> T isOk(IR r, Supplier<String> notOk) {
         if (Objects.isNull(r) || !r.isOk()) {
-            throw new ServiceException(notOk.get());
+            throw new BizRuntimeException(notOk.get());
         }
         return r.getData();
     }

@@ -15,14 +15,13 @@
  */
 package io.ddd4j.guice.util;
 
-import java.util.Objects;
-
 import io.javalin.http.Context;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.Objects;
 
 /**
  * Javalin Web 工具类（等价于 Spring 的 WebUtils）。

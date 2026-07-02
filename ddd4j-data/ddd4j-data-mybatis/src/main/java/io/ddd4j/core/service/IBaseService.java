@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @deprecated 自 3.4.x 起，ddd4j-boot 重构为纯 DDD 脚手架。本接口继承 MyBatis Plus 的
  * {@link IService}，导致领域层耦合 ORM 框架。
  * <p>
- * <b>替代方案</b>：使用 {@link io.ddd4j.core.contract.Repository}
+ * <b>替代方案</b>：使用 {@link io.ddd4j.core.domain.repository.Repository}
  * （框架无关的仓储接口，领域层定义、基础设施层实现）。
  * <p>
  * 本接口将在 5.0.x 版本移除。

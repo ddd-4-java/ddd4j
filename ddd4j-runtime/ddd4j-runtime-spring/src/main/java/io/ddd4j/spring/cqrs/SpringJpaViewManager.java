@@ -1,7 +1,7 @@
 package io.ddd4j.spring.cqrs;
 
-import io.ddd4j.core.cqrs.projection.ViewManager;
-import io.ddd4j.core.cqrs.projection.ViewScheduler;
+import io.ddd4j.core.domain.query.projection.ViewManager;
+import io.ddd4j.core.domain.query.projection.ViewScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;

@@ -1,6 +1,6 @@
 package io.ddd4j.spring.util;
 
-import io.ddd4j.core.contract.exception.ServiceException;
+import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.experimental.UtilityClass;
 import org.springframework.beans.*;
 
@@ -147,7 +147,7 @@ public class BeanKit {
         try {
             target = Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new ServiceException("{} {}", REFLECT_ERROR, e.getLocalizedMessage());
+            throw new BizRuntimeException("{} {}", REFLECT_ERROR, e.getLocalizedMessage());
         }
 
         return target;
@@ -200,7 +200,7 @@ public class BeanKit {
                 }
             }
         } catch (IllegalAccessException | IllegalArgumentException e) {
-            throw new ServiceException("{} {}", REFLECT_ERROR, e.getLocalizedMessage());
+            throw new BizRuntimeException("{} {}", REFLECT_ERROR, e.getLocalizedMessage());
         }
 
     }
@@ -233,7 +233,7 @@ public class BeanKit {
                 }
             }
         } catch (Exception e) {
-            throw new ServiceException("Map --> Bean Error {} {} {}", map, obj, e.getLocalizedMessage());
+            throw new BizRuntimeException("Map --> Bean Error {} {} {}", map, obj, e.getLocalizedMessage());
         }
 
     }
@@ -336,7 +336,7 @@ public class BeanKit {
                 targetObject = target.getDeclaredConstructor().newInstance();
                 BeanUtils.copyProperties(source, targetObject, targetSuper);
             } catch (Exception e) {
-                throw new ServiceException("Convert Error {} {} {} {}", source, target, targetSuper, e.getLocalizedMessage());
+                throw new BizRuntimeException("Convert Error {} {} {} {}", source, target, targetSuper, e.getLocalizedMessage());
             }
 
             return (T) targetObject;
@@ -359,7 +359,7 @@ public class BeanKit {
                     targetList.add(targetObject);
                 }
             } catch (Exception e) {
-                throw new ServiceException("Map --> Bean Error {} {} {}", sourceList, target, e.getLocalizedMessage());
+                throw new BizRuntimeException("Map --> Bean Error {} {} {}", sourceList, target, e.getLocalizedMessage());
             }
 
             return targetList;
@@ -376,7 +376,7 @@ public class BeanKit {
                 targetObject = target.getDeclaredConstructor().newInstance();
                 BeanUtils.copyProperties(source, targetObject, ignoreProperties);
             } catch (Exception e) {
-                throw new ServiceException("Convert Error {} {} {}", source, target, e.getLocalizedMessage());
+                throw new BizRuntimeException("Convert Error {} {} {}", source, target, e.getLocalizedMessage());
             }
 
             return (T) targetObject;
@@ -397,7 +397,7 @@ public class BeanKit {
                     targetList.add(targetObject);
                 }
             } catch (Exception e) {
-                throw new ServiceException("Convert Error {} {} {}", sourceList, target, e.getLocalizedMessage());
+                throw new BizRuntimeException("Convert Error {} {} {}", sourceList, target, e.getLocalizedMessage());
             }
 
             return targetList;
@@ -406,10 +406,10 @@ public class BeanKit {
 
     public void toMap(Object source, Map target, boolean withNull, String... ignoredFieldCol) {
         if (Objects.isNull(source)) {
-            throw new ServiceException("source cannot be null");
+            throw new BizRuntimeException("source cannot be null");
         }
         if (Objects.isNull(target)) {
-            throw new ServiceException("target cannot be null");
+            throw new BizRuntimeException("target cannot be null");
         }
         Set<String> ignores = new HashSet<>();
         if (Objects.nonNull(ignoredFieldCol)) {
@@ -449,7 +449,7 @@ public class BeanKit {
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new ServiceException("{} {}", REFLECT_ERROR, e.getLocalizedMessage());
+            throw new BizRuntimeException("{} {}", REFLECT_ERROR, e.getLocalizedMessage());
         }
 
     }

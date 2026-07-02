@@ -40,7 +40,7 @@ import java.util.List;
  * @deprecated 自 3.4.x 起，ddd4j-boot 重构为纯 DDD 脚手架。本类继承 MyBatis Plus 的
  * {@link ServiceImpl}，耦合 ORM 框架。
  * <p>
- * <b>替代方案</b>：在基础设施层实现 {@link io.ddd4j.core.contract.Repository}，
+ * <b>替代方案</b>：在基础设施层实现 {@link io.ddd4j.core.domain.repository.Repository}，
  * 用 MyBatis Plus 的 Mapper 作为内部实现细节，不暴露到领域层。
  * <p>
  * 本类将在 5.0.x 版本移除。

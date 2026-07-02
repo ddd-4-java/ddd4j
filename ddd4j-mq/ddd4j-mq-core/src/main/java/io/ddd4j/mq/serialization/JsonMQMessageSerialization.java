@@ -1,9 +1,9 @@
 package io.ddd4j.mq.serialization;
 
-import java.util.Objects;
-
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.StrKit;
+
+import java.util.Objects;
 
 /**
  * 默认 JSON 消息序列化实现。

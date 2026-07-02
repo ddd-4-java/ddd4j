@@ -1,6 +1,6 @@
 package io.ddd4j.mq.tdmq;
 
-import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.core.domain.event.MQEvent;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
@@ -22,6 +22,26 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TdmqMQBrokerAdapterTest {
+
+    private static Ddd4jMQProperties mqProperties() {
+        Ddd4jMQProperties properties = new Ddd4jMQProperties();
+        properties.setNamespace("demo");
+        properties.setDefaultTopic("orders");
+        return properties;
+    }
+
+    private static MQListenerDefinition listenerDefinition() throws NoSuchMethodException {
+        Method method = Listener.class.getDeclaredMethod("onMessage", String.class);
+        return MQListenerDefinition.builder()
+                .bean(new Listener())
+                .method(method)
+                .group("orders-consumer")
+                .namespace("demo")
+                .topic("orders")
+                .tags("paid")
+                .concat(".")
+                .build();
+    }
 
     @Test
     void supportsTdmqBrokerTypeOnly() {
@@ -80,26 +100,6 @@ class TdmqMQBrokerAdapterTest {
         ack.nack(true);
         assertTrue(callbackValue.get());
         assertTrue(ack.isAcknowledged());
-    }
-
-    private static Ddd4jMQProperties mqProperties() {
-        Ddd4jMQProperties properties = new Ddd4jMQProperties();
-        properties.setNamespace("demo");
-        properties.setDefaultTopic("orders");
-        return properties;
-    }
-
-    private static MQListenerDefinition listenerDefinition() throws NoSuchMethodException {
-        Method method = Listener.class.getDeclaredMethod("onMessage", String.class);
-        return MQListenerDefinition.builder()
-                .bean(new Listener())
-                .method(method)
-                .group("orders-consumer")
-                .namespace("demo")
-                .topic("orders")
-                .tags("paid")
-                .concat(".")
-                .build();
     }
 
     private static final class Listener {

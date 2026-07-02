@@ -1,7 +1,5 @@
 package io.ddd4j.mq.ons.ack;
 
-import java.util.Objects;
-
 import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
@@ -9,6 +7,7 @@ import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 

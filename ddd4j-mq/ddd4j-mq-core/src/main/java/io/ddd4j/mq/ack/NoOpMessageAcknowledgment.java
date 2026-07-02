@@ -1,10 +1,9 @@
 package io.ddd4j.mq.ack;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.registry.MQBrokerType;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 

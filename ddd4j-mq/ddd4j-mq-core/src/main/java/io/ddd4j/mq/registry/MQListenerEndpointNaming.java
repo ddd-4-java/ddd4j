@@ -1,8 +1,8 @@
 package io.ddd4j.mq.registry;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.config.Ddd4jMQProperties;
+
+import java.util.Objects;
 
 
 /**

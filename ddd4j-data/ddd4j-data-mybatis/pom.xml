@@ -51,6 +51,10 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-extension</artifactId>
+        </dependency>
         <!-- MyBatis Plus JSqlParser（PaginationInnerInterceptor / TenantLineInnerInterceptor 在此模块） -->
         <dependency>
             <groupId>com.baomidou</groupId>

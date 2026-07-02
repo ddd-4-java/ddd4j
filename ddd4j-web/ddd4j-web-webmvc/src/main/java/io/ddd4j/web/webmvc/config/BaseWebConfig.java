@@ -1,10 +1,8 @@
 package io.ddd4j.web.webmvc.config;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.RequestInterceptor;
-import io.ddd4j.core.config.BaseCoreProperties;
+import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.web.utils.BaseWebSocketServer;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
@@ -29,6 +27,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 
 @Configuration
 @Slf4j(topic = "### BASE-WEB : BaseWebConfig ###")

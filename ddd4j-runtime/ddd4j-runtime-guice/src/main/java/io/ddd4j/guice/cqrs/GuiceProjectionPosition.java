@@ -1,6 +1,6 @@
 package io.ddd4j.guice.cqrs;
 
-import io.ddd4j.core.cqrs.projection.ProjectionPosition;
+import io.ddd4j.core.domain.query.projection.ProjectionPosition;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -2,7 +2,7 @@ package io.ddd4j.mq.ons.publisher;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.core.domain.event.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;

@@ -75,19 +75,19 @@ ddd4j/                                                    # 平铺式纯 Java �
 
 ### 3.1 模块合并/删除
 
-| 操作   | 模块/文件                                                 | 原因                                                 |
-|------|-------------------------------------------------------|----------------------------------------------------|
-| ✅ 删除 | `ddd4j-core-api`（28 java）                             | 与 `ddd4j-core` 完全重复，统一 package 为 `io.ddd4j.core.*` |
-| ✅ 合并 | `ddd4j-mq-spring`（4 java）                             | 从 `ddd4j-mq-core` 迁出 Spring 集成代码                   |
+| 操作      | 模块/文件                                             | 原因                                                            |
+|---------|---------------------------------------------------|---------------------------------------------------------------|
+| ✅ 删除    | `ddd4j-core-api`（28 java）                         | 与 `ddd4j-core` 完全重复，统一 package 为 `io.ddd4j.core.*`            |
+| ✅ 合并    | `ddd4j-mq-spring`（4 java）                         | 从 `ddd4j-mq-core` 迁出 Spring 集成代码                              |
 | ✅ 删除/重建 | 旧空壳模块（`ddd4j-{data,mq,auth}-{quarkus,javalin}` 等） | 0 java 文件的空壳已清理；Web 的 Quarkus/Javalin 实现按 `ddd4j-web-*` 新结构保留 |
-| ✅ 删除 | `ddd4j-annotation/auth/{BaseAuth,Inside}.java`        | 旧位置重复，统一到 `io.ddd4j.auth.annotation.*`             |
+| ✅ 删除    | `ddd4j-annotation/auth/{BaseAuth,Inside}.java`    | 旧位置重复，统一到 `io.ddd4j.auth.annotation.*`                        |
 
 ### 3.2 包路径统一
 
 | 旧包                                                        | 新包                                                         | 备注                              |
 |-----------------------------------------------------------|------------------------------------------------------------|---------------------------------|
 | `io.ddd4j.core.api.*`                                     | `io.ddd4j.core.*`                                          | core-api 合并到 core，`.api.` 二级包删除 |
-| `io.ddd4j.core.util.HttpStatus`                           | `io.ddd4j.core.constant.HttpStatus`                        | HTTP 状态码常量（纯常量类）                |
+| `io.ddd4j.core.util.HttpStatus`                           | `io.ddd4j.core.HttpStatus`                        | HTTP 状态码常量（纯常量类）                |
 | `io.ddd4j.core.util.JsonKit`                              | `io.ddd4j.kit.lang.JsonKit`                                | 工具类收编到 kit                      |
 | `io.ddd4j.core.util.JacksonKit`                           | `io.ddd4j.kit.lang.JsonKit`                                | 工具类收编到 kit（合并 toType）           |
 | `io.ddd4j.core.util.{Arith,DateUtils,Functions,RankUtil}` | `io.ddd4j.kit.lang.{ArithKit,DateKit,FunctionKit,RankKit}` | 工具类收编到 kit                      |
@@ -126,7 +126,9 @@ ddd4j/                                                    # 平铺式纯 Java �
 - ✅ `mq-core/pom.xml` 移除 `spring-context` / `spring-messaging`（compile scope）
 - ✅ 4 个文件从 `io.ddd4j.mq.{config,registry}` 迁到 `io.ddd4j.mq.spring.{config,registry}`
 - ✅ 监听器调用链统一到纯 Java `MQMessage` / `MQConsumerContext` / `MessageAcknowledgment`
-- ✅ ddd4j-mq/pom.xml 当前 modules 为 `ddd4j-mq-core`、`ddd4j-mq-spring`、`ddd4j-mq-disruptor`、`ddd4j-mq-nats`、`ddd4j-mq-kafka`、`ddd4j-mq-rabbitmq`、`ddd4j-mq-rocketmq`、`ddd4j-mq-redis-stream`、`ddd4j-mq-pulsar`、`ddd4j-mq-activemq`、`ddd4j-mq-mqtt`、`ddd4j-mq-mqtt-mica`、`ddd4j-mq-ons`、`ddd4j-mq-sqs`、`ddd4j-mq-tdmq`
+- ✅ ddd4j-mq/pom.xml 当前 modules 为 `ddd4j-mq-core`、`ddd4j-mq-spring`、`ddd4j-mq-disruptor`、`ddd4j-mq-nats`、
+  `ddd4j-mq-kafka`、`ddd4j-mq-rabbitmq`、`ddd4j-mq-rocketmq`、`ddd4j-mq-redis-stream`、`ddd4j-mq-pulsar`、
+  `ddd4j-mq-activemq`、`ddd4j-mq-mqtt`、`ddd4j-mq-mqtt-mica`、`ddd4j-mq-ons`、`ddd4j-mq-sqs`、`ddd4j-mq-tdmq`
 
 ### 3.6 ddd4j-ddd-rules ArchUnit 增强（C 方案）
 
@@ -153,7 +155,7 @@ import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.ArithKit;
 
 // 常量类（保留在 ddd4j-core）
-import io.ddd4j.core.constant.HttpStatus;  // 纯常量
+import io.ddd4j.core.HttpStatus;  // 纯常量
 ```
 
 ### 4.2 启用 DDD 架构检查
@@ -193,16 +195,16 @@ mvn test  # 违反规则 → JUnit 失败 → 构建失败
 
 ## 六、完整执行清单
 
-| 步骤    | 内容                             | 状态 |
-|-------|--------------------------------|----|
-| PR1   | 合并 ddd4j-core + ddd4j-core-api | ✅  |
-| PR2   | ddd4j-mq-core 迁出 Spring 集成     | ✅  |
-| PR3   | 清理 Auth 注解双地址                  | ✅  |
-| PR4   | 修复 ddd4j-mq/pom.xml modules    | ✅  |
-| PR5   | ArchUnit 强化 ddd4j-ddd-rules（C 方案）    | ✅  |
-| PR6-A | 14 个工具类收编到 ddd4j-kit           | ✅  |
-| PR6-B | 清理 git 工作树（116 文件）             | ✅  |
-| PR6-C | 更新本文档                          | ✅  |
+| 步骤    | 内容                                | 状态 |
+|-------|-----------------------------------|----|
+| PR1   | 合并 ddd4j-core + ddd4j-core-api    | ✅  |
+| PR2   | ddd4j-mq-core 迁出 Spring 集成        | ✅  |
+| PR3   | 清理 Auth 注解双地址                     | ✅  |
+| PR4   | 修复 ddd4j-mq/pom.xml modules       | ✅  |
+| PR5   | ArchUnit 强化 ddd4j-ddd-rules（C 方案） | ✅  |
+| PR6-A | 14 个工具类收编到 ddd4j-kit              | ✅  |
+| PR6-B | 清理 git 工作树（116 文件）                | ✅  |
+| PR6-C | 更新本文档                             | ✅  |
 
 ---
 

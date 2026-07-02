@@ -1,15 +1,10 @@
 package io.ddd4j.kit.lang;
 
-import java.util.Objects;
-
 import cn.hutool.core.collection.CollUtil;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * 集合工具类

@@ -1,12 +1,11 @@
 package io.ddd4j.extension.pf4j.util;
 
-import java.util.Objects;
-
 import io.ddd4j.extension.pf4j.annotation.ExtensionMapping;
 import io.ddd4j.extension.pf4j.exception.PluginInvokeException;
 import org.pf4j.PluginManager;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

@@ -1,6 +1,6 @@
 package io.ddd4j.mq.spi;
 
-import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.core.domain.event.MQEvent;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link MQBrokerAdapters} tests.
@@ -23,6 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class MQBrokerAdaptersTest {
+
+    private static Ddd4jMQProperties properties(String broker) {
+        Ddd4jMQProperties properties = new Ddd4jMQProperties();
+        properties.setBroker(broker);
+        return properties;
+    }
 
     @Test
     void shouldRejectUnconfiguredBroker() {
@@ -83,12 +87,6 @@ class MQBrokerAdaptersTest {
         MQBrokerAdapter actual = assertDoesNotThrow(() -> MQBrokerAdapters.selectAdapter(List.of(adapter), properties));
 
         assertSame(adapter, actual);
-    }
-
-    private static Ddd4jMQProperties properties(String broker) {
-        Ddd4jMQProperties properties = new Ddd4jMQProperties();
-        properties.setBroker(broker);
-        return properties;
     }
 
     private static class TestAdapter implements MQBrokerAdapter {

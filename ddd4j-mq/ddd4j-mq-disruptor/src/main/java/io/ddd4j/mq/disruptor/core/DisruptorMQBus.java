@@ -1,7 +1,5 @@
 package io.ddd4j.mq.disruptor.core;
 
-import java.util.Objects;
-
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
@@ -11,6 +9,8 @@ import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 /**
  * LMAX Disruptor RingBuffer 生命周期管理。

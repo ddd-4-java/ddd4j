@@ -1,8 +1,8 @@
 package io.ddd4j.data.mybatis.repository.impl;
 
-import io.ddd4j.core.contract.Model;
-import io.ddd4j.core.contract.Query;
-import io.ddd4j.core.contract.Repository;
+import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.contract.Query;
+import io.ddd4j.core.domain.repository.Repository;
 
 import java.io.Serializable;
 import java.util.Collection;

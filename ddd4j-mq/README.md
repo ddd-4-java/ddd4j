@@ -60,12 +60,12 @@
 
 ### 3.1 依赖规则
 
-| 模块                        | 允许依赖                                        | 禁止依赖                                |
-|---------------------------|---------------------------------------------|-------------------------------------|
-| `ddd4j-mq-core`           | `ddd4j-core`、轻量工具依赖                         | Spring、Broker SDK、`spring-cloud-stream` |
-| `ddd4j-mq-spring`         | `ddd4j-mq-core`、Spring Framework 消息/容器桥接     | `spring-boot-autoconfigure`、`spring-cloud-stream` |
-| `ddd4j-mq-{broker}`       | `ddd4j-mq-core` + 对应 Broker 客户端              | `ddd4j-cloud-*`                     |
-| `ddd4j-cloud-mq-stream-*` | `ddd4j-mq-core` + `spring-cloud-stream` + binder | —                                   |
+| 模块                        | 允许依赖                                             | 禁止依赖                                              |
+|---------------------------|--------------------------------------------------|---------------------------------------------------|
+| `ddd4j-mq-core`           | `ddd4j-core`、轻量工具依赖                              | Spring、Broker SDK、`spring-cloud-stream`           |
+| `ddd4j-mq-spring`         | `ddd4j-mq-core`、Spring Framework 消息/容器桥接         | `spring-boot-autoconfigure`、`spring-cloud-stream` |
+| `ddd4j-mq-{broker}`       | `ddd4j-mq-core` + 对应 Broker 客户端                  | `ddd4j-cloud-*`                                   |
+| `ddd4j-cloud-mq-stream-*` | `ddd4j-mq-core` + `spring-cloud-stream` + binder | —                                                 |
 
 ### 3.2 应用如何选择依赖
 
@@ -101,15 +101,15 @@
 
 ### 4.2 类型映射
 
-| 概念        | MQMessage / Headers                          |
-|-----------|----------------------------------------------|
-| 消息载体      | `io.ddd4j.mq.contract.MQMessage<T>`          |
-| 载荷        | `MQMessage.getPayload()`                     |
-| 消息头       | `MQMessage.getHeaders()`                     |
-| 消息 ID     | `MQMessage.getMessageId()`                   |
-| 关联 ID     | `MQMessage.getCorrelationId()`               |
-| 原生消息      | `MQMessage.getNativeMessage()`               |
-| Header 读取 | `MQMessages.headerAsString(message, key)`    |
+| 概念        | MQMessage / Headers                       |
+|-----------|-------------------------------------------|
+| 消息载体      | `io.ddd4j.mq.contract.MQMessage<T>`       |
+| 载荷        | `MQMessage.getPayload()`                  |
+| 消息头       | `MQMessage.getHeaders()`                  |
+| 消息 ID     | `MQMessage.getMessageId()`                |
+| 关联 ID     | `MQMessage.getCorrelationId()`            |
+| 原生消息      | `MQMessage.getNativeMessage()`            |
+| Header 读取 | `MQMessages.headerAsString(message, key)` |
 
 ### 4.3 依赖策略
 

@@ -1,8 +1,6 @@
 package io.ddd4j.mq.registry;
 
-import java.util.Objects;
-
-import io.ddd4j.core.contract.annotation.MQEventListener;
+import io.ddd4j.core.domain.contract.annotation.MQEventListener;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * {@link MQEventListener} 解析后的监听器定义。

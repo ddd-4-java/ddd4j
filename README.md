@@ -48,13 +48,18 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 ### ✨ 主要特性
 
 - **框架无关**：核心契约层零 Spring/MyBatis/Servlet import，可同时被 Spring Boot / Quarkus / Javalin 复用
-- **DDD 战术模式**：基于 fuinorg ddd-4-java，提供 `DddAggregateRoot`、`DddDomainEvent`、`DddEventStoreRepository` 等构建块
+- **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `DomainRepository`，并基于 fuinorg ddd-4-java 提供 ES 轨道
+  `DddAggregateRoot`、`DddDomainEvent`、`DddEventStoreRepository`
 - **CQRS 命令查询分离**：基于 fuinorg cqrs-4-java，提供 Command/View/ProjectionPosition 等 SPI
 - **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
-- **双轨 DDD 模型**：ActiveRecord 轨道（快速 CRUD）+ 纯净 DDD 轨道（零 ORM 依赖，支持 ES）
-- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `BaseRepository`（数据仓库）
-- **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` 纯 Java SPI、`ddd4j-mq-spring` 桥接，以及 Kafka/RabbitMQ/RocketMQ/Redis Stream/NATS/Pulsar/ActiveMQ/MQTT/ONS/SQS/TDMQ/Disruptor 等实现
-- **三框架运行时绑定**：`ddd4j-runtime` 聚合 `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`，提供 SPI 的框架实现，Web 侧由 `ddd4j-web-*` 模块承载
+- **三轨 DDD 模型**：兼容 `Model/Query` 快速 CRUD 轨道 + `AggregateRoot/DomainRepository` 普通充血模型轨道 + fuinorg
+  CQRS/ES 轨道
+- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `DomainRepository` 与
+  `BaseRepository`（领域仓储与兼容数据仓储）
+- **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` 纯 Java SPI、`ddd4j-mq-spring` 桥接，以及 Kafka/RabbitMQ/RocketMQ/Redis
+  Stream/NATS/Pulsar/ActiveMQ/MQTT/ONS/SQS/TDMQ/Disruptor 等实现
+- **三框架运行时绑定**：`ddd4j-runtime` 聚合 `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`，提供
+  SPI 的框架实现，Web 侧由 `ddd4j-web-*` 模块承载
 - **ArchUnit 编译期守护**：9 条架构边界规则，CI 阶段强制执行分层纪律
 - **COLA / Clean Architecture 支持**：注解驱动的架构规范检查
 
@@ -70,23 +75,23 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 
 **Maven 模块架构**：
 
-| 模块                   | 角色              | 关键产物                                                                                          |
-|----------------------|-----------------|-----------------------------------------------------------------------------------------------|
-| `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                    |
-| `ddd4j-dependencies` | 第三方依赖集中管理       | Spring 6.x / Jackson 2.22 / Reactor 等                                                         |
-| `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                    |
-| `ddd4j-core`         | **纯 Java 契约层**  | `Model` `Query` `Page` `R` `BaseRepository` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
-| `ddd4j-kit`          | 工具箱             | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                |
-| `ddd4j-ddd-rules`          | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                            |
-| `ddd4j-data`         | 数据层抽象           | MyBatis-Plus 实现 + Spring 桥接 + 加密/数据权限/外部服务/日志                                                 |
-| `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + 多 Broker 实现                                               |
-| `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 实现                            |
-| `ddd4j-auth`         | 认证授权抽象          | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                    |
-| `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                    |
-| `ddd4j-runtime`      | 三框架运行时绑定      | `ddd4j-runtime-spring` `ddd4j-runtime-quarkus` `ddd4j-runtime-guice`                          |
-| `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                    |
-| `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                    |
-| `ddd4j-samples`      | 示例工程            | Auth 多实现 + 多登录 + Person CQRS/ES 示例                                                         |
+| 模块                   | 角色              | 关键产物                                                                                                                                                  |
+|----------------------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                                                                            |
+| `ddd4j-dependencies` | 第三方依赖集中管理       | Spring 6.x / Jackson 2.22 / Reactor 等                                                                                                                 |
+| `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                                                            |
+| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `DomainRepository` `DomainObjectMapper` `Model` `Query` `Page` `R` `BaseRepository` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
+| `ddd4j-kit`          | 工具箱             | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                                                                        |
+| `ddd4j-ddd-rules`    | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                                                                    |
+| `ddd4j-data`         | 数据层抽象           | MyBatis-Plus 充血模型仓储/兼容仓储实现 + Spring 桥接 + 加密/数据权限/外部服务/日志                                                                                              |
+| `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + 多 Broker 实现                                                                                                       |
+| `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 实现                                                                                    |
+| `ddd4j-auth`         | 认证授权抽象          | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                                                                            |
+| `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                                            |
+| `ddd4j-runtime`      | 三框架运行时绑定        | `ddd4j-runtime-spring` `ddd4j-runtime-quarkus` `ddd4j-runtime-guice`                                                                                  |
+| `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                                            |
+| `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                                                                            |
+| `ddd4j-samples`      | 示例工程            | Auth 多实现 + 多登录 + Person CQRS/ES 示例                                                                                                                    |
 
 **模块结构树**：
 
@@ -95,13 +100,13 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |----ddd4j-bom                          #BOM依赖管理，用于外部项目引用 ddd4j 模块版本管理
 |----ddd4j-dependencies                 #公共依赖，便于依赖组件版本控制
 |----ddd4j-annotation                   #注解层，DDD构造型注解+API注解，零框架依赖
-|----ddd4j-core                         #核心契约层，纯Java DDD基础抽象（Model/Query/BaseRepository/DomainEvent/DddAggregateRoot等）
+|----ddd4j-core                         #核心契约层，纯Java DDD基础抽象（AggregateRoot/DomainRepository/Model/Query/BaseRepository/DomainEvent/DddAggregateRoot等）
 |----ddd4j-kit                          #工具箱，继承式增强Hutool，提供Cache/Lang/Web工具
 |----ddd4j-ddd-rules                          #DDD架构规范检查（基于ArchUnit）
 |------ddd4j-ddd-rules-clean                  #Clean Architecture分层纪律规则
 |------ddd4j-ddd-rules-cola                   #COLA菱形架构分层纪律规则
 |----ddd4j-data                         #数据抽象聚合
-|------ddd4j-data-mybatis               #MyBatis-Plus实现：BaseRepositoryImpl、TypeHandler、拦截器
+|------ddd4j-data-mybatis               #MyBatis-Plus实现：MybatisAggregateRepository、BaseRepositoryImpl、TypeHandler、拦截器
 |------ddd4j-data-spring                #Spring桥接：RepositoryBean注册、静态注册表初始化
 |------ddd4j-data-crypto                #加解密策略：CryptoStrategy/Provider/注解
 |------ddd4j-data-datascope             #数据权限组件
@@ -206,13 +211,106 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 
 #### 2. 三框架运行时绑定方式
 
-| 框架          | 运行时绑定             | DI 容器                | 事件发布                    | Web 框架               |
-|-------------|-----------------|----------------------|-------------------------|----------------------|
+| 框架          | 运行时绑定                   | DI 容器                | 事件发布                    | Web 框架               |
+|-------------|-------------------------|----------------------|-------------------------|----------------------|
 | Spring Boot | `ddd4j-runtime-spring`  | `ApplicationContext` | `AppCtx.publishEvent()` | Spring MVC / WebFlux |
-| Quarkus     | `ddd4j-runtime-quarkus` | Arc (CDI)        | `Event<T>.fire()`       | RESTEasy / JAX-RS    |
+| Quarkus     | `ddd4j-runtime-quarkus` | Arc (CDI)            | `Event<T>.fire()`       | RESTEasy / JAX-RS    |
 | Javalin     | `ddd4j-runtime-guice`   | Guice Injector       | `EventBus.post()`       | Javalin              |
 
-#### 3. 业务项目继承父 POM
+#### 3. 普通充血模型与 PO 分离
+
+ddd4j 的普通 DDD 主路径不要求领域模型继承 MyBatis-Plus 的 `Model`，也不要求通过固定前缀或固定父类识别模型。领域层只依赖
+`ddd4j-core`，基础设施层再用 `ddd4j-data-mybatis` 适配 MyBatis-Plus。
+
+```java
+import io.ddd4j.core.domain.AggregateRoot;
+import io.ddd4j.kit.lang.StrKit;
+
+import java.util.Objects;
+
+public class Order extends AggregateRoot<Long> {
+
+    private final Long id;
+    private String buyerName;
+
+    public Order(Long id, String buyerName) {
+        this.id = Objects.requireNonNull(id, "id must not be null");
+        renameBuyer(buyerName);
+    }
+
+    @Override
+    public Long id() {
+        return id;
+    }
+
+    public void renameBuyer(String buyerName) {
+        if (StrKit.isBlank(buyerName)) {
+            throw new IllegalArgumentException("buyerName must not be blank");
+        }
+        this.buyerName = buyerName;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
+}
+```
+
+```java
+import io.ddd4j.core.domain.DomainRepository;
+
+import java.util.Optional;
+
+public interface OrderRepository extends DomainRepository<Order, Long> {
+
+    Optional<Order> findByOrderNo(String orderNo);
+}
+```
+
+```java
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
+import io.ddd4j.kit.lang.StrKit;
+
+import java.util.Optional;
+
+public class MybatisOrderRepository extends MybatisAggregateRepository<Order, OrderPO, Long>
+        implements OrderRepository {
+
+    public MybatisOrderRepository(BaseMapper<OrderPO> mapper) {
+        super(mapper);
+    }
+
+    @Override
+    public Optional<Order> findByOrderNo(String orderNo) {
+        if (StrKit.isBlank(orderNo)) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(lambdaQuery()
+                .eq(OrderPO::getOrderNo, orderNo)
+                .one())
+                .map(this::toModel);
+    }
+
+    @Override
+    public Order toModel(OrderPO po) {
+        return new Order(po.getId(), po.getBuyerName());
+    }
+
+    @Override
+    public OrderPO toPersistenceObject(Order model) {
+        OrderPO po = new OrderPO();
+        po.setId(model.id());
+        po.setBuyerName(model.buyerName());
+        return po;
+    }
+}
+```
+
+这条路径的约束是：`Order` 是 Model，`OrderPO` 是持久化对象；MyBatis-Plus 的 `Wrappers`、`ChainQuery`、
+`LambdaQueryChainWrapper`、`LambdaUpdateChainWrapper` 等只出现在基础设施仓储实现中，不进入领域模型。
+
+#### 4. 业务项目继承父 POM
 
 ```xml
 <parent>
@@ -269,15 +367,15 @@ order-service/
 
 ### 📄 相关文档
 
-| 文档                                                          | 说明                  |
-|-------------------------------------------------------------|---------------------|
+| 文档                                                          | 说明                     |
+|-------------------------------------------------------------|------------------------|
 | [架构全景](./docs/architecture/architecture.md)                 | 模块全景、SPI 设计、三框架运行时绑定对照 |
-| [架构边界规范](./docs/architecture/architecture-boundary.md)      | ddd4j 与各框架项目的职责铁律   |
-| [DDD 思维导图](./docs/ddd/DDD%20思维导图.md)                        | DDD 战略+战术设计知识体系     |
-| [CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)                      | CQRS 核心概念           |
-| [DDD 经典分层架构](./docs/ddd/1、DDD%20经典分层架构目录结构.md)              | 分层架构目录参考            |
-| [六边形架构](./docs/ddd/2、六边形架构详细目录结构参考.md)                      | 六边形架构目录参考           |
-| [整洁架构](./docs/ddd/3、整洁架构详细目录结构参考.md)                        | 整洁架构目录参考            |
-| [COLA V5 架构](./docs/ddd/4、COLA%20V5%20架构详细目录结构参考.md)        | COLA 菱形架构目录参考       |
-| [数据层优化计划](./docs/migration/ddd4j-data-optimization-plan.md) | ddd4j-data 模块优化方案   |
-| [迁移指南](./docs/migration/optional-migrations.md)             | 从旧版迁移到 2.0.x 的指南    |
+| [架构边界规范](./docs/architecture/architecture-boundary.md)      | ddd4j 与各框架项目的职责铁律      |
+| [DDD 思维导图](./docs/ddd/DDD%20思维导图.md)                        | DDD 战略+战术设计知识体系        |
+| [CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)                      | CQRS 核心概念              |
+| [DDD 经典分层架构](./docs/ddd/1、DDD%20经典分层架构目录结构.md)              | 分层架构目录参考               |
+| [六边形架构](./docs/ddd/2、六边形架构详细目录结构参考.md)                      | 六边形架构目录参考              |
+| [整洁架构](./docs/ddd/3、整洁架构详细目录结构参考.md)                        | 整洁架构目录参考               |
+| [COLA V5 架构](./docs/ddd/4、COLA%20V5%20架构详细目录结构参考.md)        | COLA 菱形架构目录参考          |
+| [数据层优化计划](./docs/migration/ddd4j-data-optimization-plan.md) | ddd4j-data 模块优化方案      |
+| [迁移指南](./docs/migration/optional-migrations.md)             | 从旧版迁移到 2.0.x 的指南       |

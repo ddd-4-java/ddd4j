@@ -1,9 +1,7 @@
 package io.ddd4j.auth.shiro.subject;
 
-import java.util.Objects;
-
-import io.ddd4j.core.subject.AuthPrincipal;
-import io.ddd4j.core.subject.AuthRequest;
+import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -11,6 +9,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 基于 Apache Shiro 的 {@link Subject} 实现。

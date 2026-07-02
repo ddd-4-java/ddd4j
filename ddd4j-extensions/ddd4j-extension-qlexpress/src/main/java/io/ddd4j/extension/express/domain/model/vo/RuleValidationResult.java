@@ -1,9 +1,8 @@
 package io.ddd4j.extension.express.domain.model.vo;
 
-import java.util.Objects;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 规则验证结果值对象

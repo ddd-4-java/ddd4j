@@ -1,6 +1,6 @@
 package io.ddd4j.data.spring;
 
-import io.ddd4j.core.contract.BaseRepository;
+import io.ddd4j.core.domain.contract.BaseRepository;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;

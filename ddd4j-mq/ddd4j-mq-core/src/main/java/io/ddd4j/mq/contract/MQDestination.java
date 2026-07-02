@@ -1,6 +1,6 @@
 package io.ddd4j.mq.contract;
 
-import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.core.domain.event.MQEvent;
 import io.ddd4j.mq.registry.MQBindingNaming;
 import lombok.Getter;
 

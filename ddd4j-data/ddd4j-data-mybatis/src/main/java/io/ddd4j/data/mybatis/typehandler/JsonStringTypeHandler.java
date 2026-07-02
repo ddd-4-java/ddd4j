@@ -1,11 +1,10 @@
 package io.ddd4j.data.mybatis.typehandler;
 
-import java.util.Objects;
-
 import io.ddd4j.kit.lang.JsonKit;
 
 import java.lang.reflect.Array;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 自定义 POJO 类型转换器父类：json/varchar &lt;-&gt; T。

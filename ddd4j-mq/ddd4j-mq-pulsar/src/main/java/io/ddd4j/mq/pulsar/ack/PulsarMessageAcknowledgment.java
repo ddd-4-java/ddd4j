@@ -1,13 +1,12 @@
 package io.ddd4j.mq.pulsar.ack;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -4,7 +4,7 @@ import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.core.domain.event.MQEvent;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;

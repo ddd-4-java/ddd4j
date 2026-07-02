@@ -8,6 +8,7 @@ package io.ddd4j.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.ddd4j.core.constant.Constants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
@@ -28,10 +29,6 @@ public class ApiRestResponse<T> {
     @Getter
     private final int code;
 
-    @Schema(name = "status", type = "string", description = "旧接口成功、失败或异常辅助判断标记:success、fail、error", allowableValues = {"success", "fail", "error"})
-    @Getter
-    private final String status;
-
     @Schema(name = "message", type = "string", description = "成功或异常消息")
     @Getter
     private final String message;
@@ -45,52 +42,39 @@ public class ApiRestResponse<T> {
 
     public ApiRestResponse() {
         this.code = ApiCode.SC_SUCCESS.getCode();
-        this.status = Constants.RT_SUCCESS;
         this.message = ApiCode.SC_SUCCESS.getReason();
     }
 
     protected ApiRestResponse(final ApiCode code) {
         this.code = code.getCode();
-        ;
-        this.status = code.getStatus();
         this.message = code.getReason();
     }
 
     protected ApiRestResponse(final ApiCode code, final T data) {
         this.code = code.getCode();
-        ;
-        this.status = code.getStatus();
         this.message = code.getReason();
         this.data = data;
     }
 
     protected ApiRestResponse(final CustomApiCode code) {
         this.code = code.getCode();
-        ;
-        this.status = code.getStatus();
         this.message = code.getReason();
     }
 
     protected ApiRestResponse(final CustomApiCode code, final T data) {
         this.code = code.getCode();
-        ;
-        this.status = code.getStatus();
         this.message = code.getReason();
         this.data = data;
     }
 
     protected ApiRestResponse(final ApiCode code, final String message, final T data) {
         this.code = code.getCode();
-        ;
-        this.status = code.getStatus();
         this.message = message;
         this.data = data;
     }
 
     protected ApiRestResponse(final ApiCode code, final String message, final T data, List<Map<String, String>> error) {
         this.code = code.getCode();
-        ;
-        this.status = code.getStatus();
         this.message = message;
         this.data = data;
         this.error = error;
@@ -102,7 +86,6 @@ public class ApiRestResponse<T> {
 
     protected ApiRestResponse(final int code, final String status, final String message) {
         this.code = code;
-        this.status = status;
         this.message = message;
     }
 
@@ -112,7 +95,6 @@ public class ApiRestResponse<T> {
 
     protected ApiRestResponse(final int code, final String status, final String message, final T data) {
         this.code = code;
-        this.status = status;
         this.message = message;
         this.data = data;
     }
@@ -240,14 +222,13 @@ public class ApiRestResponse<T> {
 
     @JsonIgnore
     public boolean isSuccess() {
-        return status == Constants.RT_SUCCESS || code == ApiCodeValue.SC_SUCCESS;
+        return code == ApiCodeValue.SC_SUCCESS;
     }
 
     public Map<String, Object> toMap() {
         Map<String, Object> rtMap = new HashMap<String, Object>();
         rtMap.put("code", code);
-        rtMap.put("status", status);
-        rtMap.put("message", message);
+        rtMap.put("msg", message);
         rtMap.put("data", data);
         return rtMap;
     }

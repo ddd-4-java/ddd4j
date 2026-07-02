@@ -1,11 +1,10 @@
 package io.ddd4j.guice.i18n;
 
-import java.util.Objects;
-
-import io.ddd4j.core.context.I18nProvider;
+import io.ddd4j.core.i18n.I18nProvider;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**

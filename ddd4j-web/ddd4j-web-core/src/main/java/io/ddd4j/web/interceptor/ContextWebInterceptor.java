@@ -1,15 +1,14 @@
 package io.ddd4j.web.interceptor;
 
-import java.util.Objects;
-
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.constant.ContextConstants;
+import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.web.core.SessionContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * 上下文 Web 拦截器（Servlet 实现）。

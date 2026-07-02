@@ -1,7 +1,5 @@
 package io.ddd4j.extension.express.infrastructure.service;
 
-import java.util.Objects;
-
 import com.alibaba.qlexpress4.CheckOptions;
 import com.alibaba.qlexpress4.Express4Runner;
 import com.alibaba.qlexpress4.runtime.context.ExpressContext;
@@ -13,6 +11,7 @@ import io.ddd4j.extension.express.domain.service.RuleEngineDomainService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 规则引擎领域服务实现

@@ -1,12 +1,12 @@
 package io.ddd4j.spring.subject;
 
-import java.util.Objects;
-
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * Spring 实现的 Subject 提供者

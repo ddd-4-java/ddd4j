@@ -1,7 +1,7 @@
 package io.ddd4j.web.quarkus;
 
-import io.ddd4j.core.contract.R;
-import io.ddd4j.core.contract.exception.ServiceException;
+import io.ddd4j.core.domain.contract.R;
+import io.ddd4j.core.exception.BizRuntimeException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -30,7 +30,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
  * <ul>
  *   <li>{@link WebApplicationException}：保留原始 HTTP 状态，404/401 转友好文案</li>
  *   <li>{@link IllegalArgumentException}：400 参数错误</li>
- *   <li>{@link io.ddd4j.core.contract.exception.ServiceException}：业务异常，默认 400</li>
+ *   <li>{@link io.ddd4j.core.exception.BizRuntimeException}：业务异常，默认 400</li>
  *   <li>其余异常：500 服务器错误，记录 warn 日志</li>
  * </ul>
  *
@@ -66,7 +66,7 @@ public class DefaultExceptionHandler implements ExceptionMapper<Exception> {
             return build(400, "参数不正确", standard);
         }
         // 业务异常（ddd4j-core 已有）
-        if (exception instanceof ServiceException se) {
+        if (exception instanceof BizRuntimeException se) {
             return build(se.getCode(), se.getMessage(), standard ? 400 : 0);
         }
         log.warn("Failed to process request", exception);

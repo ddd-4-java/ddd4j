@@ -1,8 +1,8 @@
 package io.ddd4j.sample.cqrs.person;
 
-import io.ddd4j.core.cqrs.projection.DefaultProjectionService;
-import io.ddd4j.core.cqrs.projection.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.projection.ProjectionRunner;
+import io.ddd4j.core.domain.query.projection.DefaultProjectionService;
+import io.ddd4j.core.domain.query.projection.InMemoryProjectionPositionRepository;
+import io.ddd4j.core.domain.query.projection.ProjectionRunner;
 import io.ddd4j.sample.cqrs.person.application.PersonCommandService;
 import io.ddd4j.sample.cqrs.person.domain.CreatePersonCommand;
 import io.ddd4j.sample.cqrs.person.domain.DeletePersonCommand;

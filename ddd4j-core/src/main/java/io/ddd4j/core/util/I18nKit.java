@@ -1,11 +1,10 @@
 package io.ddd4j.core.util;
 
-import java.util.Objects;
-
-import io.ddd4j.core.context.I18nProvider;
+import io.ddd4j.core.i18n.I18nProvider;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

@@ -1,9 +1,7 @@
 package io.ddd4j.sample.auth.satoken.controller;
 
-import java.util.Objects;
-
-import io.ddd4j.core.subject.AuthPrincipal;
-import io.ddd4j.core.subject.AuthRequest;
+import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 鉴权示例控制器：演示 SubjectKit 统一鉴权入口。

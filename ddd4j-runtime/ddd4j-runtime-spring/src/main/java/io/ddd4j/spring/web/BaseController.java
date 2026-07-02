@@ -7,7 +7,7 @@
 package io.ddd4j.spring.web;
 
 import io.ddd4j.core.ApiRestResponse;
-import io.ddd4j.core.exception.PayloadExceptionEvent;
+import io.ddd4j.core.domain.event.ExceptionEvent;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,7 +50,7 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
      * 统一处理异常，并抛出异常事件方便进行统一的日志实现
      */
     protected void logException(Object source, Exception ex) {
-        getEventPublisher().publishEvent(new PayloadExceptionEvent(source, ex));
+        getEventPublisher().publishEvent(new ExceptionEvent(source, ex));
     }
 
     /**

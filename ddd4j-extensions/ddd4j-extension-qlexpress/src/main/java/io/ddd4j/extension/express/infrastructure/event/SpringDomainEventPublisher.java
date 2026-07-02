@@ -1,13 +1,13 @@
 package io.ddd4j.extension.express.infrastructure.event;
 
-import java.util.Objects;
-
 import io.ddd4j.extension.express.domain.event.DomainEventPublisher;
 import io.ddd4j.extension.express.domain.event.RuleCreatedEvent;
 import io.ddd4j.extension.express.domain.event.RuleDeletedEvent;
 import io.ddd4j.extension.express.domain.event.RuleUpdatedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * Spring领域事件发布者实现

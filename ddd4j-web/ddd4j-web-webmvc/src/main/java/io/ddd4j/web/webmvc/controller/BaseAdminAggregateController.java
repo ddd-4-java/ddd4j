@@ -15,8 +15,8 @@
  */
 package io.ddd4j.web.webmvc.controller;
 
-import io.ddd4j.core.contract.Page;
-import io.ddd4j.core.contract.R;
+import io.ddd4j.core.domain.contract.Page;
+import io.ddd4j.core.domain.contract.R;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;

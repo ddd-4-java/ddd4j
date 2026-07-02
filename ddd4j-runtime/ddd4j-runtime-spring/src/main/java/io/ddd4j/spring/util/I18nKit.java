@@ -1,9 +1,7 @@
 package io.ddd4j.spring.util;
 
-import java.util.Objects;
-
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.constant.ContextConstants;
+import io.ddd4j.core.constant.ContextConstants;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.biz.context.NestedMessageSource;
@@ -15,6 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 /**

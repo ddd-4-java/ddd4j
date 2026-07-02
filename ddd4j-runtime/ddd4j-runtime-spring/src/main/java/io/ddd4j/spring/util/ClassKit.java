@@ -1,7 +1,5 @@
 package io.ddd4j.spring.util;
 
-import java.util.Objects;
-
 import lombok.experimental.UtilityClass;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -15,6 +13,7 @@ import org.springframework.web.method.HandlerMethod;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * 类工具类

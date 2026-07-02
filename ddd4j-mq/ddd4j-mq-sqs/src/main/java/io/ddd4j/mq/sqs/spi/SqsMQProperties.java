@@ -1,7 +1,5 @@
 package io.ddd4j.mq.sqs.spi;
 
-import java.util.Objects;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -11,6 +9,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.SqsClientBuilder;
 
 import java.net.URI;
+import java.util.Objects;
 
 /**
  * AWS SQS adapter configuration (Pure Java, zero Spring).

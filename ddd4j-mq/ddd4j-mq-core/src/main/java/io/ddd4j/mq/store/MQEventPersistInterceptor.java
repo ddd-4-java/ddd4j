@@ -1,14 +1,14 @@
 package io.ddd4j.mq.store;
 
-import java.util.Objects;
-
-import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.core.domain.event.MQEvent;
 import io.ddd4j.mq.ack.MQConsumeTemplates;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumeInterceptor;
 import io.ddd4j.mq.consume.MQConsumerContext;
 import io.ddd4j.mq.contract.MQMessage;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
  * MQ 事件持久化拦截器。

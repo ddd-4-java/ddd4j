@@ -1,11 +1,9 @@
 package io.ddd4j.web.webmvc.api;
 
-import java.util.Objects;
-
-import io.ddd4j.core.contract.BaseRepository;
-import io.ddd4j.core.contract.Model;
-import io.ddd4j.core.contract.Page;
-import io.ddd4j.core.contract.Query;
+import io.ddd4j.core.domain.contract.BaseRepository;
+import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.contract.Page;
+import io.ddd4j.core.domain.contract.Query;
 import io.ddd4j.web.utils.ReflectKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Objects;
 
 @Deprecated
 /**

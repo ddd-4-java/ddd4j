@@ -1,6 +1,6 @@
 package io.ddd4j.data.logs.aspect;
 
-import io.ddd4j.core.Constants;
+import io.ddd4j.core.constant.Constants;
 import io.ddd4j.spring.util.WebUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;

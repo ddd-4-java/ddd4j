@@ -2,7 +2,8 @@
 
 > 基于 codegraph 对 ddd4j 2.0.x 的深度探索；2026-07-01 已同步当前索引（823 files, 13,671 nodes）
 >
-> **状态校准**：当前 `ddd4j` 仓库内的 Quarkus 通用适配模块是 `ddd4j-runtime-quarkus`，不是旧文档中的 `ddd4j-quarkus` / `ddd4j-quarkus-core`。Quarkus 专属脚手架仍归外部 `ddd4j-quarkus` 项目。
+> **状态校准**：当前 `ddd4j` 仓库内的 Quarkus 通用适配模块是 `ddd4j-runtime-quarkus`，不是旧文档中的 `ddd4j-quarkus` /
+`ddd4j-quarkus-core`。Quarkus 专属脚手架仍归外部 `ddd4j-quarkus` 项目。
 
 ## 一、DDD4J 2.0.x 核心架构
 
@@ -126,7 +127,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
 ### 3.1 已完成的适配（✅）
 
-| 能力        | ddd4j-core SPI                           | ddd4j-runtime-quarkus 实现          | 状态 |
+| 能力        | ddd4j-core SPI                           | ddd4j-runtime-quarkus 实现      | 状态 |
 |-----------|------------------------------------------|-------------------------------|----|
 | DDD 注解扫描  | `@DDDAnnotation`                         | `DddCdiExtension`             | ✅  |
 | 领域事件发布    | `DomainEventPublisher`                   | `CdiDomainEventPublisher`     | ✅  |
@@ -137,16 +138,16 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 
 ### 3.2 已实现与待补强的适配
 
-| 能力                | ddd4j-core SPI                 | ddd4j-runtime-quarkus 当前状态                  | 优先级    |
-|-------------------|--------------------------------|---------------------------------------|--------|
-| **视图管理器**         | `ViewManager`                  | `QuarkusJpaViewManager` 已实现，需继续补强测试 | **P0** |
+| 能力                | ddd4j-core SPI                 | ddd4j-runtime-quarkus 当前状态                   | 优先级    |
+|-------------------|--------------------------------|----------------------------------------------|--------|
+| **视图管理器**         | `ViewManager`                  | `QuarkusJpaViewManager` 已实现，需继续补强测试          | **P0** |
 | **投影位置仓储**        | `ProjectionPositionRepository` | `QuarkusJpaProjectionPositionRepository` 已实现 | **P0** |
-| **投影位置实体**        | `ProjectionPosition`           | `QuarkusJpaProjectionPosition` 已实现      | **P0** |
-| **JPA 视图**        | `DddView` / `JpaView`          | 由 Quarkus JPA/Panache 视图实现承载          | **P1** |
-| **EventStore 集成** | `EventStore`                   | `Ddd4jEventStoreConfig` 已存在，需补强配置示例与健康检查 | **P1** |
-| **命令总线**          | `DddCommandExecutor`           | `QuarkusCommandBus` 已存在，需补强路由测试       | **P1** |
-| **聚合根仓储**         | `DddEventStoreRepository`      | Quarkus 仓储适配                          | **P1** |
-| **Web 控制器模板**     | `BaseAggregateController`      | Quarkus REST 控制器模板                    | **P2** |
+| **投影位置实体**        | `ProjectionPosition`           | `QuarkusJpaProjectionPosition` 已实现           | **P0** |
+| **JPA 视图**        | `DddView` / `JpaView`          | 由 Quarkus JPA/Panache 视图实现承载                 | **P1** |
+| **EventStore 集成** | `EventStore`                   | `Ddd4jEventStoreConfig` 已存在，需补强配置示例与健康检查     | **P1** |
+| **命令总线**          | `DddCommandExecutor`           | `QuarkusCommandBus` 已存在，需补强路由测试              | **P1** |
+| **聚合根仓储**         | `DddEventStoreRepository`      | Quarkus 仓储适配                                 | **P1** |
+| **Web 控制器模板**     | `BaseAggregateController`      | Quarkus REST 控制器模板                           | **P2** |
 
 ### 3.3 架构边界问题
 
@@ -236,16 +237,19 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 1.
 
 `ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/ddd/config/Ddd4jEventStoreConfig.java`
+
 - 当前 Quarkus EventStore 配置类
 
 2.
 
 外部 `ddd4j-quarkus` 可继续补 `EventStoreProducer`
+
 - CDI Producer：创建 EventStore 实例
 
 3.
 
 外部 `ddd4j-quarkus` 可继续补 `EventStoreHealthCheck`
+
 - Quarkus 健康检查
 
 ### Phase 4：命令总线路由（1-2 天）
@@ -325,15 +329,16 @@ public abstract class DddCommandExecutor<CMD extends Command>
 
 ## 六、优先级总结
 
-| 优先级    | 任务                                  | 工作量   | 影响范围       |
-|--------|-------------------------------------|-------|------------|
-| **P0** | 补全 DddCdiExtension 扫描范围             | 0.5 天 | 所有 DDD 注解类 |
+| 优先级    | 任务                                     | 工作量   | 影响范围       |
+|--------|----------------------------------------|-------|------------|
+| **P0** | 补全 DddCdiExtension 扫描范围                | 0.5 天 | 所有 DDD 注解类 |
 | **P0** | 校验并补强 ViewManager + ProjectionPosition | 1-2 天 | CQRS 读侧    |
-| **P1** | EventStore 集成                       | 2-3 天 | 事件溯源       |
-| **P1** | 命令总线路由                              | 1-2 天 | CQRS 写侧    |
-| **P2** | Web 控制器模板                           | 1-2 天 | REST API   |
+| **P1** | EventStore 集成                          | 2-3 天 | 事件溯源       |
+| **P1** | 命令总线路由                                 | 1-2 天 | CQRS 写侧    |
+| **P2** | Web 控制器模板                              | 1-2 天 | REST API   |
 
-**总计预估**：当前 `ddd4j-runtime-quarkus` 已具备核心 CDI/CQRS 适配，后续主要工作应放到外部 `ddd4j-quarkus` 脚手架的 Web/MQ/Auth/Data 示例与自动装配补强。
+**总计预估**：当前 `ddd4j-runtime-quarkus` 已具备核心 CDI/CQRS 适配，后续主要工作应放到外部 `ddd4j-quarkus` 脚手架的
+Web/MQ/Auth/Data 示例与自动装配补强。
 
 ---
 

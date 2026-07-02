@@ -1,10 +1,9 @@
 package io.ddd4j.mq.ack;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQBrokerType;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntSupplier;

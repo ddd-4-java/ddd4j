@@ -1,9 +1,8 @@
 package io.ddd4j.mq.mqtt.spi;
 
-import java.util.Objects;
-
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**

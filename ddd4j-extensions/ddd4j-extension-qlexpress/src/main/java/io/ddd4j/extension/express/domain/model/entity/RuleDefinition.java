@@ -1,9 +1,8 @@
 package io.ddd4j.extension.express.domain.model.entity;
 
-import java.util.Objects;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * 规则定义实体

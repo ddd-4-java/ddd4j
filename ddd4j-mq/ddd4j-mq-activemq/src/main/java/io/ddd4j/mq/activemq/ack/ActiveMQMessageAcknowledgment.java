@@ -1,15 +1,13 @@
 package io.ddd4j.mq.activemq.ack;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
-
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 

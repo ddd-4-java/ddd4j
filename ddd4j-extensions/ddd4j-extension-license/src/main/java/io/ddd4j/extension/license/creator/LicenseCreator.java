@@ -1,7 +1,5 @@
 package io.ddd4j.extension.license.creator;
 
-import java.util.Objects;
-
 import de.schlichtherle.license.*;
 import io.ddd4j.extension.license.CustomKeyStoreParam;
 import io.ddd4j.extension.license.manager.CustomLicenseManager;
@@ -10,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.security.auth.x500.X500Principal;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 
 /**

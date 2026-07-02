@@ -1,9 +1,7 @@
 package io.ddd4j.mq.registry;
 
-import java.util.Objects;
-
-
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * 支持的 Broker 类型枚举（与 {@code ddd4j.mq.broker} 对齐）。

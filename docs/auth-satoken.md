@@ -9,7 +9,8 @@
 ## 关键类与路径
 
 - Sa-Token Subject 实现：`ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubject.java`
-- SubjectProvider 实现：`ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectProvider.java`
+- SubjectProvider 实现：
+  `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectProvider.java`
 - 扩展常量：`ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/SaConstants.java`
 - 载荷读取：`ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/StpKit.java`
 - 临时 Token：`ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/SaTempKit.java`
@@ -41,6 +42,7 @@ String roleId = StpKit.getRoleIdAsString();
 
 ## 最佳实践
 
-- 所有鉴权受保护的接口统一走 Sa-Token 拦截；在业务层优先通过 `SubjectKit` 读取认证主体和权限语义，必要时再使用 `StpUtil`/`StpKit`
+- 所有鉴权受保护的接口统一走 Sa-Token 拦截；在业务层优先通过 `SubjectKit` 读取认证主体和权限语义，必要时再使用 `StpUtil`/
+  `StpKit`
 - 对 JWT 载荷的扩展键使用 `SaConstants` 约定字段，避免语义不一致
 - 对管理端/移动端区分 `deviceType`，用于风控与日志聚合

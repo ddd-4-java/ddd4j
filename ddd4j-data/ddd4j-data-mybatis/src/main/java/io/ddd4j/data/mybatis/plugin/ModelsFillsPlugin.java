@@ -1,8 +1,8 @@
 package io.ddd4j.data.mybatis.plugin;
 
-import io.ddd4j.core.contract.Model;
-import io.ddd4j.core.contract.Page;
-import io.ddd4j.core.contract.Query;
+import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.contract.Page;
+import io.ddd4j.core.domain.contract.Query;
 import io.ddd4j.kit.lang.CollKit;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;

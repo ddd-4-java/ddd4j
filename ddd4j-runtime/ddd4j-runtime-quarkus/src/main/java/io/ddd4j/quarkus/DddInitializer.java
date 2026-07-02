@@ -1,6 +1,6 @@
 package io.ddd4j.quarkus;
 
-import io.ddd4j.core.context.I18nProvider;
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.I18nKit;
 import io.ddd4j.core.util.SubjectKit;

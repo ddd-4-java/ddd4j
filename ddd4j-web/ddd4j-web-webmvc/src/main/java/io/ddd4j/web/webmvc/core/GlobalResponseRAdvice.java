@@ -1,14 +1,12 @@
 package io.ddd4j.web.webmvc.core;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.annotation.api.RawResponse;
-import io.ddd4j.core.contract.IR;
-import io.ddd4j.core.contract.Model;
-import io.ddd4j.core.contract.R;
-import io.ddd4j.core.contract.exception.ServiceException;
+import io.ddd4j.core.domain.contract.IR;
+import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.contract.R;
+import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.web.config.BaseWebProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +17,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.util.Objects;
 
 @RestControllerAdvice
 /**
@@ -50,7 +50,7 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
                 //将数据包装在R对象里后转换为json串进行返回
                 return objectMapper.writeValueAsString(R.ok(data));
             } catch (JsonProcessingException e) {
-                throw new ServiceException(e);
+                throw new BizRuntimeException(e);
             }
         }
         //否则直接包装成R对象返回

@@ -1,6 +1,6 @@
 package io.ddd4j.sample.auth.multilogin.event;
 
-import io.ddd4j.core.subject.AuthRequest;
+import io.ddd4j.core.auth.AuthRequest;
 
 import java.time.Instant;
 

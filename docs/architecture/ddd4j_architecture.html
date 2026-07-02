@@ -11,19 +11,51 @@
             background-color: #F5F5F7; /* iOS System Gray 6 */
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
+            gap: 32px;
             min-height: 100vh;
         }
 
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1280px;
             background: white;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             padding: 40px;
             box-sizing: border-box;
+            overflow-x: auto;
+        }
+
+        .architecture-svg {
+            display: block;
+            width: 100%;
+            min-width: 1120px;
+            height: auto;
+        }
+
+        .info-card {
+            width: 100%;
+            max-width: 1280px;
+            padding: 32px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding: 20px;
+            }
+
+            .container,
+            .info-card {
+                padding: 24px;
+                border-radius: 18px;
+            }
         }
     </style>
 </head>
@@ -45,9 +77,9 @@
        6. Gap: 30px
        7. Management: Height 90px
 
-       Total SVG Height: ~700px
+       Total SVG Height: ~860px
     -->
-    <svg height="700" viewBox="0 0 1120 700" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <svg class="architecture-svg" height="860" viewBox="0 0 1120 860" width="1120" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <!-- Filters for iOS/Material depth -->
             <filter height="120%" id="dropShadow" width="120%" x="-10%" y="-10%">
@@ -277,9 +309,9 @@
 
         <!-- ==============================
              Layer 3: 核心基础 (Core)
-             Y: 400, Height: 160
+             Y: 410, Height: 160
         =============================== -->
-        <g transform="translate(0, 400)">
+        <g transform="translate(0, 410)">
             <!-- Left Label -->
             <rect fill="url(#bg-blue)" filter="url(#dropShadow)" height="160" rx="16" width="120" x="0" y="0"/>
             <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
@@ -321,8 +353,8 @@
                           y="22">领域对象 (Domain Objects)
                     </text>
                     <g transform="translate(15, 46)">
-                        <text fill="#555" font-size="12" x="0" y="10">• BaseDTO / BaseEntity / BaseParam</text>
-                        <text fill="#555" font-size="12" x="0" y="32">• BizRuntimeException / BizException</text>
+                        <text fill="#555" font-size="12" x="0" y="10">• AggregateRoot / DomainRepository</text>
+                        <text fill="#555" font-size="12" x="0" y="32">• DomainEvent / DomainEventPublisher</text>
                         <text fill="#555" font-size="12" x="0" y="54">• Subject / AuthPrincipal</text>
                         <text fill="#555" font-size="12" x="0" y="76">• Constants / Enums</text>
                     </g>
@@ -350,9 +382,9 @@
 
         <!-- ==============================
              Layer 4: 工程管理 (Management)
-             Y: 590, Height: 90
+             Y: 600, Height: 90
         =============================== -->
-        <g transform="translate(0, 590)">
+        <g transform="translate(0, 600)">
             <!-- Left Label -->
             <rect fill="url(#bg-orange)" filter="url(#dropShadow)" height="90" rx="16" width="120" x="0" y="0"/>
             <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
@@ -401,35 +433,38 @@
 
         <!-- ==============================
              Layer 5: 最终架构定位 (Final Architecture Positioning)
-             Y: 700, Height: 120
+             Y: 720, Height: 130
         =============================== -->
-        <g transform="translate(0, 700)">
+        <g transform="translate(0, 720)">
             <!-- Left Label -->
-            <rect fill="url(#bg-purple)" filter="url(#dropShadow)" height="120" rx="16" width="120" x="0" y="0"/>
+            <rect fill="url(#bg-purple)" filter="url(#dropShadow)" height="130" rx="16" width="120" x="0" y="0"/>
             <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
-                  y="60">最终定位
+                  y="65">最终定位
             </text>
 
             <!-- Right Content Container -->
-            <rect fill="#F3E5F5" height="120" rx="16" stroke="#E1BEE7" stroke-width="1" width="980" x="140" y="0"/>
+            <rect fill="#F3E5F5" height="130" rx="16" stroke="#E1BEE7" stroke-width="1" width="980" x="140" y="0"/>
 
-            <g transform="translate(150, 12)">
+            <g transform="translate(150, 18)">
                 <text fill="#6A1B9A" font-size="13" font-weight="bold" x="0" y="0">ddd4j = 框架无关 DDD/CQRS/ES
                     通用基础层
                 </text>
-                <text fill="#555" font-size="11" x="0" y="20">• 业务应用：ddd4j-boot（Spring）· ddd4j-quarkus ·
+                <text fill="#555" font-size="11" x="0" y="22">• 业务应用：ddd4j-boot（Spring）· ddd4j-quarkus ·
                     ddd4j-javalin 三框架并列
                 </text>
-                <text fill="#555" font-size="11" x="0" y="38">• 运行时绑定层：ddd4j-runtime 聚合 ddd4j-runtime-spring / ddd4j-runtime-quarkus / ddd4j-runtime-guice
-                    DomainEventPublisher / MQEventPublisher / Repository
+                <text fill="#555" font-size="11" x="0" y="42">• 运行时绑定层：ddd4j-runtime 聚合 ddd4j-runtime-spring /
+                    ddd4j-runtime-quarkus / ddd4j-runtime-guice
                 </text>
-                <text fill="#555" font-size="11" x="0" y="56">• 通用层：core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（12 种
+                <text fill="#555" font-size="11" x="0" y="60">• 运行时 SPI：DomainEventPublisher / MQEventPublisher / DomainRepository
+                    分别由运行时适配
+                </text>
+                <text fill="#555" font-size="11" x="0" y="78">• 通用层：core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（12 种
                     MQ）· web/auth/monitor
                 </text>
-                <text fill="#555" font-size="11" x="0" y="74">• 下方依赖：fuinorg ddd-4-java（DDD 基类）· cqrs-4-java（CQRS
+                <text fill="#555" font-size="11" x="0" y="96">• 下方依赖：fuinorg ddd-4-java（DDD 基类）· cqrs-4-java（CQRS
                     框架）· esc-api（EventStore）
                 </text>
-                <text fill="#555" font-size="11" x="0" y="92">• 核心 SPI：DomainEventPublisher（3 框架）·
+                <text fill="#555" font-size="11" x="0" y="114">• 核心 SPI：DomainEventPublisher（3 框架）·
                     MQBrokerAdapter（12 种 MQ）· Repository（多 ORM）· ArchUnit 编译期架构守护
                 </text>
             </g>
@@ -442,7 +477,7 @@
      最终架构定位信息卡（HTML 文字版）
      配套 SVG 架构图（上方）
 ============================================================ -->
-<div style="margin-top: 32px; padding: 32px; background: #FFFFFF; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+<div class="info-card">
     <h1 style="margin:0 0 16px; font-size: 24px; color: #1D1D1F;">Ddd4j 最终架构定位</h1>
     <p style="color:#555; line-height:1.6; margin:0 0 20px;">
         <strong>ddd4j 是一个框架无关的 DDD/CQRS/ES 通用基础层</strong>，目标是为 Spring Boot、Quarkus、Javalin 三种容器框架提供
@@ -553,7 +588,9 @@
         <tr>
             <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
             <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ViewManager 抽象</td>
-            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-runtime-spring / ddd4j-runtime-quarkus 各自实现</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-runtime-spring / ddd4j-runtime-quarkus
+                各自实现
+            </td>
         </tr>
         <tr>
             <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>

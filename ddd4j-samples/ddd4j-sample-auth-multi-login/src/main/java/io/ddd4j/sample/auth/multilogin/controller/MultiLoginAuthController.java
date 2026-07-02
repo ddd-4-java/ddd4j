@@ -1,9 +1,7 @@
 package io.ddd4j.sample.auth.multilogin.controller;
 
-import java.util.Objects;
-
-import io.ddd4j.core.subject.AuthPrincipal;
-import io.ddd4j.core.subject.AuthRequest;
+import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.auth.multilogin.audit.LoginAuditListener;
 import io.ddd4j.sample.auth.multilogin.controller.dto.PhoneLoginRequest;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")

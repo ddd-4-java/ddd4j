@@ -1,7 +1,5 @@
 package io.ddd4j.quarkus.cqrs;
 
-import java.util.Objects;
-
 import io.ddd4j.annotation.cqrs.CreateEvent;
 import io.ddd4j.annotation.cqrs.DeleteEvent;
 import io.ddd4j.annotation.cqrs.UpdateEvent;
@@ -17,6 +15,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

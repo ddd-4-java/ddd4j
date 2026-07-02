@@ -20,6 +20,7 @@
         <module>ddd4j-sample-auth-security</module>
         <module>ddd4j-sample-auth-multi-login</module>
         <module>ddd4j-sample-cqrs-person</module>
+        <module>ddd4j-sample-rich-model</module>
     </modules>
 
 </project>

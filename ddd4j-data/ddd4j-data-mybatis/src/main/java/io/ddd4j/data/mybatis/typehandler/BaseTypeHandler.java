@@ -1,7 +1,5 @@
 package io.ddd4j.data.mybatis.typehandler;
 
-import java.util.Objects;
-
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeReference;
@@ -10,6 +8,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * 自定义类型处理器基类：varchar &lt;-&gt; T。

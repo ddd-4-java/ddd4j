@@ -1,7 +1,5 @@
 package io.ddd4j.extension.express.infrastructure.cache;
 
-import java.util.Objects;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import io.ddd4j.extension.express.application.service.RuleCacheService;
@@ -9,6 +7,7 @@ import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 

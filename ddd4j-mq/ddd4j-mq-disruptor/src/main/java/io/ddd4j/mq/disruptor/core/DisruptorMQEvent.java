@@ -1,9 +1,9 @@
 package io.ddd4j.mq.disruptor.core;
 
-import java.util.Objects;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Objects;
 
 /**
  * Disruptor RingBuffer 事件槽：承载本地 MQ 消息载荷与路由元数据。

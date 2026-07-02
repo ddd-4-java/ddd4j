@@ -1,5 +1,6 @@
 package io.ddd4j.core.subject;
 
+import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
 
 import java.util.List;

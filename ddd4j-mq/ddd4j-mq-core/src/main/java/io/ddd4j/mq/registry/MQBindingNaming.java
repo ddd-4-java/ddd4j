@@ -1,10 +1,8 @@
 package io.ddd4j.mq.registry;
 
-import java.util.Objects;
-
-
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

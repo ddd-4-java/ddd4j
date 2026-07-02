@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * CQRS 读侧"更新"事件处理器。
  *
- * <p>标注于 {@link io.ddd4j.core.cqrs.query.DddView} 子类的方法，标识该方法处理"实体被更新"类型的事件。
+ * <p>标注于 {@link io.ddd4j.core.domain.query.query.DddView} 子类的方法，标识该方法处理"实体被更新"类型的事件。
  *
  * <p>典型用法：
  * <pre>{@code

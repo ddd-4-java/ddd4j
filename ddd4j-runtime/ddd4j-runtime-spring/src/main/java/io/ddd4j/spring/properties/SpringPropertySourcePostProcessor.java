@@ -1,12 +1,12 @@
 package io.ddd4j.spring.properties;
 
-import java.util.Objects;
-
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertySource;
+
+import java.util.Objects;
 
 /**
  * Spring 属性源后置处理器。

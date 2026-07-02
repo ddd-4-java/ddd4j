@@ -1,7 +1,5 @@
 package io.ddd4j.mq.sqs.ack;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.ack.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
@@ -9,6 +7,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 

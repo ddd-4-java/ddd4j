@@ -6,7 +6,7 @@
  */
 package io.ddd4j.core;
 
-import io.ddd4j.core.constant.HttpStatus;
+import io.ddd4j.core.constant.Constants;
 
 /**
  * Enumeration of Api Code.

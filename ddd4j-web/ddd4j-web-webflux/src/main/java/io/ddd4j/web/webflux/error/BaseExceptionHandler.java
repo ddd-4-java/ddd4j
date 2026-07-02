@@ -6,7 +6,7 @@
  */
 package io.ddd4j.web.webflux.error;
 
-import io.ddd4j.core.Constants;
+import io.ddd4j.core.constant.Constants;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;

@@ -11,15 +11,15 @@
 **ddd4j 是一个框架无关的 DDD/CQRS/ES 通用基础层**，目标是为 Spring Boot、Quarkus、Javalin 三种容器框架提供**同一套纯净领域模型契约
 **。
 
-| 维度                 | 数据                                                                    |
-|--------------------|-----------------------------------------------------------------------|
-| **定位**             | DDD 战术模式 + CQRS 命令查询分离 + ES 事件溯源 的通用脚手架                               |
-| **运行时**            | Java 17；Spring Framework 6.x / Quarkus CDI / Guice-Javalin 三类适配并列      |
-| **依赖 ddd-4-java**  | ✅ 强依赖（fuinorg DDD 基类）                                                 |
-| **依赖 cqrs-4-java** | ✅ 强依赖（fuinorg CQRS 框架）                                                |
-| **依赖 esc-api**     | ✅ 强依赖（fuinorg EventStore API）                                         |
+| 维度                 | 数据                                                                           |
+|--------------------|------------------------------------------------------------------------------|
+| **定位**             | DDD 战术模式 + CQRS 命令查询分离 + ES 事件溯源 的通用脚手架                                      |
+| **运行时**            | Java 17；Spring Framework 6.x / Quarkus CDI / Guice-Javalin 三类适配并列            |
+| **依赖 ddd-4-java**  | ✅ 强依赖（fuinorg DDD 基类）                                                        |
+| **依赖 cqrs-4-java** | ✅ 强依赖（fuinorg CQRS 框架）                                                       |
+| **依赖 esc-api**     | ✅ 强依赖（fuinorg EventStore API）                                                |
 | **核心特性**           | 零 Spring 强绑定的纯 Java 契约 + 三框架 SPI 适配 + 13 个 MQ Broker/本地实现 + ArchUnit 编译期架构守护 |
-| **代码规模**           | 823 文件 / 13,671 节点 / 23,360 边（codegraph 索引，2026-07-01 同步）             |
+| **代码规模**           | 823 文件 / 13,671 节点 / 23,360 边（codegraph 索引，2026-07-01 同步）                    |
 
 ---
 
@@ -97,21 +97,21 @@
 
 ## 三、ddd4j 内部模块全景
 
-| 模块                 | 角色              | 关键产物                                                                                                                    |
-|--------------------|-----------------|-------------------------------------------------------------------------------------------------------------------------|
-| `ddd4j-annotation` | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository` `@EnableBaseAuth` `@ApiModule`               |
-| `ddd4j-core`       | 纯 Java 契约       | `Model` `Query` `Page` `R` `BaseRepository` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` `DddEventStoreRepository` |
-| `ddd4j-kit`        | 工具箱             | 继承式增强 Hutool                                                                                                            |
-| `ddd4j-ddd-rules`        | DDD 架构规范        | `CleanDDDLayerRules`（ArchUnit）+ `ColaDDDLayerRules`（ArchUnit）                                                           |
-| `ddd4j-data`       | 数据层             | MyBatis-Plus 适配、Spring 桥接、加密、数据权限、外部服务、操作日志                                                                  |
-| `ddd4j-mq`         | 消息队列            | core/spring + Kafka/RabbitMQ/RocketMQ/RedisStream/ActiveMQ/MQTT/Pulsar/NATS/Disruptor/MicaMQTT/ONS/SQS/TDMQ |
-| `ddd4j-web`        | Web 层           | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 适配                                                |
-| `ddd4j-auth`       | 认证授权            | Subject SPI + Sa-Token/Spring Security/Shiro + License                                                               |
-| `ddd4j-cache`      | 缓存抽象            | Caffeine / Guava / Hutool / Jedis / Lettuce / Redisson / JetCache / Memcached                                         |
-| `ddd4j-runtime-spring`     | Spring 适配       | `SpringContext` `SpringDomainEventPublisher`                                                                            |
-| `ddd4j-runtime-quarkus`| Quarkus CDI 适配  | `CdiDomainEventPublisher` `CdiSubjectProvider` `QuarkusJpaViewManager`                                                 |
-| `ddd4j-runtime-guice`      | Guice 适配        | `GuiceDomainEventPublisher` `GuiceContext`                                                                              |
-| `ddd4j-extensions` | 跨领域扩展           | akka / excel / jackson / monitor / pf4j / qlexpress / validation                                                       |
+| 模块                      | 角色              | 关键产物                                                                                                                    |
+|-------------------------|-----------------|-------------------------------------------------------------------------------------------------------------------------|
+| `ddd4j-annotation`      | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository` `@EnableBaseAuth` `@ApiModule`               |
+| `ddd4j-core`            | 纯 Java 契约       | `Model` `Query` `Page` `R` `BaseRepository` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` `DddEventStoreRepository` |
+| `ddd4j-kit`             | 工具箱             | 继承式增强 Hutool                                                                                                            |
+| `ddd4j-ddd-rules`       | DDD 架构规范        | `CleanDDDLayerRules`（ArchUnit）+ `ColaDDDLayerRules`（ArchUnit）                                                           |
+| `ddd4j-data`            | 数据层             | MyBatis-Plus 适配、Spring 桥接、加密、数据权限、外部服务、操作日志                                                                             |
+| `ddd4j-mq`              | 消息队列            | core/spring + Kafka/RabbitMQ/RocketMQ/RedisStream/ActiveMQ/MQTT/Pulsar/NATS/Disruptor/MicaMQTT/ONS/SQS/TDMQ             |
+| `ddd4j-web`             | Web 层           | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 适配                                                      |
+| `ddd4j-auth`            | 认证授权            | Subject SPI + Sa-Token/Spring Security/Shiro + License                                                                  |
+| `ddd4j-cache`           | 缓存抽象            | Caffeine / Guava / Hutool / Jedis / Lettuce / Redisson / JetCache / Memcached                                           |
+| `ddd4j-runtime-spring`  | Spring 适配       | `SpringContext` `SpringDomainEventPublisher`                                                                            |
+| `ddd4j-runtime-quarkus` | Quarkus CDI 适配  | `CdiDomainEventPublisher` `CdiSubjectProvider` `QuarkusJpaViewManager`                                                  |
+| `ddd4j-runtime-guice`   | Guice 适配        | `GuiceDomainEventPublisher` `GuiceContext`                                                                              |
+| `ddd4j-extensions`      | 跨领域扩展           | akka / excel / jackson / monitor / pf4j / qlexpress / validation                                                        |
 
 ---
 
@@ -194,7 +194,7 @@ public interface Repository<M, Q, P extends Serializable> {
 | `DddAggregateRoot`                   | 继承 `AbstractAggregateRoot` | 增加 `createTime`/`updateTime` 审计字段（无 ORM 注解） |
 | `DddDomainEvent`                     | 继承 `AbstractDomainEvent`   | 兼容 Jackson 序列化                              |
 | `DddEventStoreRepository`            | 继承 `EventStoreRepository`  | 封装乐观锁冲突重试（最多 3 次）                           |
-| `DomainEventPublisher` (ddd4j 自创)    | —                          | 三框架运行时绑定（Spring/CDI/Guice）                     |
+| `DomainEventPublisher` (ddd4j 自创)    | —                          | 三框架运行时绑定（Spring/CDI/Guice）                  |
 | `MQEventPublisher` (ddd4j 自创)        | —                          | 12 种 MQ 统一抽象                                |
 | `BaseAggregateController` (ddd4j 自创) | —                          | 通用 CRUD + 业务行为（disable/enable）              |
 | `CleanDDDLayerRules` (ddd4j 自创)      | —                          | ArchUnit 编译期架构守护                            |
@@ -203,33 +203,33 @@ public interface Repository<M, Q, P extends Serializable> {
 
 ## 六、ddd4j 应补充的 CQRS/ES 能力（基于 cqrs-4-java 对照）
 
-| 优先级    | 缺失能力                                                | 实施建议                              |
-|--------|-----------------------------------------------------|-----------------------------------|
-| **P0** | `Command` / `AggregateCommand` 接口                   | 抽取到 `ddd4j-core` 作为契约             |
-| **P0** | `CommandExecutor` SPI                               | 三框架各自实现                           |
-| **P0** | `CommandHandler` 注解 + 自动注册                          | 兼容 Spring `@Component` / CDI Bean |
-| **P0** | `MultiCommandExecutor` 组合                           | 复用 fuinorg 实现                     |
-| **P0** | `Result<T>` + `ResultType`                          | 与 `R<T>` 区分（业务结果 vs HTTP 结果）      |
-| **P1** | `View` / `JpaView` 接口                               | 抽取到 `ddd4j-core`                  |
+| 优先级    | 缺失能力                                                | 实施建议                                                                          |
+|--------|-----------------------------------------------------|-------------------------------------------------------------------------------|
+| **P0** | `Command` / `AggregateCommand` 接口                   | 抽取到 `ddd4j-core` 作为契约                                                         |
+| **P0** | `CommandExecutor` SPI                               | 三框架各自实现                                                                       |
+| **P0** | `CommandHandler` 注解 + 自动注册                          | 兼容 Spring `@Component` / CDI Bean                                             |
+| **P0** | `MultiCommandExecutor` 组合                           | 复用 fuinorg 实现                                                                 |
+| **P0** | `Result<T>` + `ResultType`                          | 与 `R<T>` 区分（业务结果 vs HTTP 结果）                                                  |
+| **P1** | `View` / `JpaView` 接口                               | 抽取到 `ddd4j-core`                                                              |
 | **P1** | `ViewManager` 抽象                                    | ddd4j-runtime/ddd4j-runtime-spring 与 ddd4j-runtime/ddd4j-runtime-quarkus 各自实现 |
-| **P1** | `ProjectionPosition` 投影位置持久化                        | 抽取为公共 SPI                         |
-| **P1** | `@CreateEvent` / `@UpdateEvent` / `@DeleteEvent` 注解 | 复用 fuinorg                        |
-| **P2** | 多序列化器（JAXB / JSON-B）                                | 视业务需求                             |
-| **P2** | APT 代码生成（Command/View 模板）                           | 参考 fuinorg codegen                |
+| **P1** | `ProjectionPosition` 投影位置持久化                        | 抽取为公共 SPI                                                                     |
+| **P1** | `@CreateEvent` / `@UpdateEvent` / `@DeleteEvent` 注解 | 复用 fuinorg                                                                    |
+| **P2** | 多序列化器（JAXB / JSON-B）                                | 视业务需求                                                                         |
+| **P2** | APT 代码生成（Command/View 模板）                           | 参考 fuinorg codegen                                                            |
 
 ---
 
 ## 七、三框架运行时绑定对照表
 
-| 维度         | ddd4j-runtime-spring                        | ddd4j-runtime-quarkus         | ddd4j-runtime-guice     |
-|------------|-------------------------------------|---------------------------|-------------------|
-| **DI 容器**  | `ApplicationContext`                | `Arc` (CDI)               | `Guice Injector`  |
-| **事件发布**   | `ApplicationContext.publishEvent()` | `Event<T>.fire()`         | `EventBus.post()` |
-| **配置属性**   | `@ConfigurationProperties`          | `@ConfigProperty`         | `@Provides`       |
-| **Web 框架** | Spring MVC / WebFlux                | Quarkus RESTEasy (JAX-RS) | Javalin           |
-| **事务**     | `@Transactional`                    | `@Transactional` (JTA)    | 手动控制              |
-| **调度**     | `SchedulingConfigurer`              | `@Scheduled`              | 自定义线程池            |
-| **AOP**    | Spring AOP                          | Interceptor Binding       | MethodInterceptor |
+| 维度         | ddd4j-runtime-spring                | ddd4j-runtime-quarkus     | ddd4j-runtime-guice |
+|------------|-------------------------------------|---------------------------|---------------------|
+| **DI 容器**  | `ApplicationContext`                | `Arc` (CDI)               | `Guice Injector`    |
+| **事件发布**   | `ApplicationContext.publishEvent()` | `Event<T>.fire()`         | `EventBus.post()`   |
+| **配置属性**   | `@ConfigurationProperties`          | `@ConfigProperty`         | `@Provides`         |
+| **Web 框架** | Spring MVC / WebFlux                | Quarkus RESTEasy (JAX-RS) | Javalin             |
+| **事务**     | `@Transactional`                    | `@Transactional` (JTA)    | 手动控制                |
+| **调度**     | `SchedulingConfigurer`              | `@Scheduled`              | 自定义线程池              |
+| **AOP**    | Spring AOP                          | Interceptor Binding       | MethodInterceptor   |
 
 ---
 

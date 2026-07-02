@@ -1,4 +1,4 @@
-package io.ddd4j.core.cqrs.projection;
+package io.ddd4j.core.domain.query.projection;
 
 import org.junit.jupiter.api.Test;
 

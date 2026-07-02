@@ -1,8 +1,7 @@
 package io.ddd4j.extension.express.domain.model.vo;
 
-import java.util.Objects;
-
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * 规则执行结果值对象

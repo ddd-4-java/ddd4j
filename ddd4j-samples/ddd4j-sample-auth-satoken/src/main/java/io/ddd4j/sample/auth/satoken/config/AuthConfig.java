@@ -1,6 +1,6 @@
 package io.ddd4j.sample.auth.satoken.config;
 
-import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

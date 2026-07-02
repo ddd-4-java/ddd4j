@@ -1,13 +1,13 @@
 package io.ddd4j.extension.akka;
 
-import java.util.Objects;
-
 import akka.actor.ActorSystem;
 import io.ddd4j.extension.akka.actor.SpringExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Objects;
 
 /**
  * Akka Auto Configuration

@@ -1,9 +1,9 @@
 package io.ddd4j.mq.rocketmq;
 
-import java.util.Objects;
-
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+
+import java.util.Objects;
 
 /**
  * RocketMQ adapter configuration.

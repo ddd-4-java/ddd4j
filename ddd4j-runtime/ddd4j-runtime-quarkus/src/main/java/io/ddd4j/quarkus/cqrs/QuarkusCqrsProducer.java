@@ -1,12 +1,6 @@
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.projection.DefaultProjectionService;
-import io.ddd4j.core.cqrs.projection.EventChunkReader;
-import io.ddd4j.core.cqrs.projection.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.projection.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.projection.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.projection.ProjectionRunner;
-import io.ddd4j.core.cqrs.projection.ProjectionService;
+import io.ddd4j.core.domain.query.projection.*;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;

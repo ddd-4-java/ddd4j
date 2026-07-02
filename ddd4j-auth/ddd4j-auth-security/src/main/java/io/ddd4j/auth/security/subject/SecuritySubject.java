@@ -1,7 +1,7 @@
 package io.ddd4j.auth.security.subject;
 
-import io.ddd4j.core.subject.AuthPrincipal;
-import io.ddd4j.core.subject.AuthRequest;
+import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,7 +1,5 @@
 package io.ddd4j.sample.auth.multilogin.web;
 
-import java.util.Objects;
-
 import io.ddd4j.sample.auth.multilogin.subject.InMemorySubject;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 public class BearerTokenSubjectFilter extends OncePerRequestFilter {

@@ -1,9 +1,9 @@
 package io.ddd4j.extension.express.application.dto;
 
-import java.util.Objects;
-
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * 规则DTO映射器

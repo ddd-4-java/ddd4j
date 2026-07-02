@@ -15,14 +15,13 @@
  */
 package io.ddd4j.guice.config;
 
-import java.util.Objects;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Properties;
 
 /**

@@ -1,7 +1,5 @@
 package io.ddd4j.kit.lang;
 
-import java.util.Objects;
-
 import cn.hutool.core.util.ReflectUtil;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -11,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * 反射工具类

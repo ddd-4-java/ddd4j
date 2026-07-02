@@ -1,11 +1,10 @@
 package io.ddd4j.kit.lang;
 
-import java.util.Objects;
-
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**

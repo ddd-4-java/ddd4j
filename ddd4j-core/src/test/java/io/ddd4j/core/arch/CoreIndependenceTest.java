@@ -72,11 +72,11 @@ class CoreIndependenceTest {
                     .should().dependOnClassesThat().resideInAPackage("org.aspectj..");
 
     /**
-     * 核心 contract 包不得依赖任何外部框架（纯 Java + Jackson + Lombok）。
+     * 核心 contract 包（domain.contract）不得依赖任何外部框架（纯 Java + Jackson + Lombok）。
      */
     @ArchTest
     static final ArchRule contract_package_is_pure_java =
-            noClasses().that().resideInAPackage("io.ddd4j.core.contract..")
+            noClasses().that().resideInAPackage("io.ddd4j.core.domain.contract..")
                     .should().dependOnClassesThat().resideInAnyPackage(
                             "org.springframework..",
                             "com.baomidou..",

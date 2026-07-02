@@ -9,11 +9,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.BaseRepository;
-import io.ddd4j.core.contract.Model;
-import io.ddd4j.core.contract.Page;
-import io.ddd4j.core.contract.Query;
-import io.ddd4j.core.contract.constant.ContextConstants;
+import io.ddd4j.core.domain.contract.BaseRepository;
+import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.contract.Page;
+import io.ddd4j.core.domain.contract.Query;
+import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.data.mybatis.annotation.*;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
@@ -37,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.ddd4j.core.contract.Query.*;
+import static io.ddd4j.core.domain.contract.Query.*;
 
 @Slf4j(topic = "### BASE-DATA : BaseRepository ###")
 public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Model, P, Q extends Query> implements BaseRepository<M, Q>, Serializable {

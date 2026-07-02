@@ -1,7 +1,5 @@
 package io.ddd4j.mq.spring.bridge;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.contract.MQMessage;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
@@ -9,6 +7,7 @@ import org.springframework.messaging.support.MessageBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**

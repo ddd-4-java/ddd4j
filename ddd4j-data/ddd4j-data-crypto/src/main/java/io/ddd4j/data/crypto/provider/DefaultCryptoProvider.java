@@ -1,8 +1,5 @@
 package io.ddd4j.data.crypto.provider;
 
-import java.util.Objects;
-
-
 import io.ddd4j.data.crypto.CryptoProperties;
 import io.ddd4j.data.crypto.domain.enums.CryptoType;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
@@ -10,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

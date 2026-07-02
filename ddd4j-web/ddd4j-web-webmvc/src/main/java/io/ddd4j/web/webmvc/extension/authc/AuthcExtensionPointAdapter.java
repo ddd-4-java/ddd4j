@@ -1,13 +1,12 @@
 package io.ddd4j.web.webmvc.extension.authc;
 
-import java.util.Objects;
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.pf4j.PluginRuntimeException;
 
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 认证扩展点默认适配器（Spring Web 适配）。

@@ -1,9 +1,8 @@
 package io.ddd4j.mq.ons.spi;
 
-import java.util.Objects;
-
 import com.aliyun.openservices.ons.api.PropertyKeyConst;
 
+import java.util.Objects;
 import java.util.Properties;
 
 /**

@@ -1,7 +1,6 @@
 package io.ddd4j.data.mybatis.param;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import io.ddd4j.core.param.BaseTimeRangeQueryParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
@@ -13,7 +12,8 @@ import java.util.List;
 /**
  * 分页查询参数基类（MyBatis Plus 轨道）。
  *
- * <p>从 {@code ddd4j-core} 迁入（3.4.x 起），消除核心模块对 MyBatis-Plus 的耦合。
+ * <p>Pagination and query request objects belong to data adapters, not
+ * {@code ddd4j-core} domain contracts.</p>
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

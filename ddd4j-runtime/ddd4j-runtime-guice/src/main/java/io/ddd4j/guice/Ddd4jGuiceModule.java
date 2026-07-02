@@ -20,17 +20,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import io.ddd4j.core.context.I18nProvider;
-import io.ddd4j.core.contract.DomainEvent;
-import io.ddd4j.core.contract.DomainEventPublisher;
-import io.ddd4j.core.cqrs.projection.DefaultProjectionService;
-import io.ddd4j.core.cqrs.projection.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.projection.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.projection.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.projection.ProjectionRunner;
-import io.ddd4j.core.cqrs.projection.ProjectionService;
-import io.ddd4j.core.cqrs.projection.ViewManager;
-import io.ddd4j.core.cqrs.projection.ViewScheduler;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.context.SpiKeys;
+import io.ddd4j.core.domain.event.DomainEventPublisher;
+import io.ddd4j.core.domain.event.MQEventPublisher;
+import io.ddd4j.core.domain.query.projection.*;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.guice.cqrs.GuiceViewManager;
@@ -98,15 +93,37 @@ public class Ddd4jGuiceModule extends AbstractModule {
 
     /**
      * GuiceContext 初始化器（Eager Singleton）
+     * <p>
+     * 启动期将 Guice 管理的 SPI 实现注入到 ddd4j 上下文（替代旧的 DomainEvent.registerPublisher 静态注册）：
+     * <ul>
+     *   <li>{@link DomainEventPublisher} → {@link SpiKeys#DOMAIN_EVENT_PUBLISHER}</li>
+     *   <li>{@link MQEventPublisher}（如可用） → {@link SpiKeys#MQ_EVENT_PUBLISHER}</li>
+     *   <li>{@link SubjectProvider} → {@link SpiKeys#SUBJECT_PROVIDER}</li>
+     *   <li>{@link I18nProvider} → {@link SpiKeys#I18N_PROVIDER}</li>
+     * </ul>
      */
     public static class GuiceContextInitializer {
         @com.google.inject.Inject
         public GuiceContextInitializer(Injector injector) {
             GuiceContext.setInjector(injector);
-            // 注册 DomainEventPublisher 到 DomainEvent 静态字段
-            DomainEventPublisher publisher = injector.getInstance(DomainEventPublisher.class);
-            DomainEvent.registerPublisher(publisher);
-            log.info("GuiceContext and DomainEventPublisher initialized");
+
+            // 注册 4 个核心 SPI 到上下文（线程级优先 → 全局兜底）
+            BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
+                    injector.getInstance(DomainEventPublisher.class));
+            BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class,
+                    injector.getInstance(SubjectProvider.class));
+            BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class,
+                    injector.getInstance(I18nProvider.class));
+
+            // MQEventPublisher 可选注入（仅当业务方引入 ddd4j-mq-* 模块时才存在）
+            try {
+                MQEventPublisher mqPublisher = injector.getInstance(MQEventPublisher.class);
+                BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, mqPublisher);
+            } catch (Exception e) {
+                log.debug("MQEventPublisher not provided, MQEvent publishing will be unavailable");
+            }
+
+            log.info("GuiceContext and ddd4j SPI services initialized");
         }
     }
 }

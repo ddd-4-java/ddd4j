@@ -1,10 +1,9 @@
 package io.ddd4j.core.util;
 
-import java.util.Objects;
-
 import lombok.experimental.UtilityClass;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

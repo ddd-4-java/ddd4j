@@ -1,7 +1,5 @@
 package io.ddd4j.mq.nats.spi;
 
-import java.util.Objects;
-
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
@@ -17,6 +15,8 @@ import io.ddd4j.mq.spi.MQBrokerAdapter;
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Objects;
 
 /**
  * NATS Broker 适配器，桥接 ddd4j MQ SPI 与 jnats 客户端。

@@ -1,10 +1,10 @@
 package io.ddd4j.extension.express.infrastructure.function;
 
-import java.util.Objects;
-
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
 import com.alibaba.qlexpress4.runtime.function.CustomFunction;
+
+import java.util.Objects;
 
 /**
  * 自定义函数：字符串结尾判断

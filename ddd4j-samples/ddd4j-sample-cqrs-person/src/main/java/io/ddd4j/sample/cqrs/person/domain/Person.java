@@ -9,13 +9,10 @@ import java.util.Objects;
 @Getter
 public class Person {
 
-    private PersonId id;
-
-    private PersonName name;
-
-    private boolean deleted;
-
     private final List<PersonEvent> changes = new ArrayList<>();
+    private PersonId id;
+    private PersonName name;
+    private boolean deleted;
 
     public static Person create(PersonId id, PersonName name) {
         Person person = new Person();

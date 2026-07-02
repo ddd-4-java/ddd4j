@@ -1,16 +1,11 @@
 package io.ddd4j.data.mybatis.typehandler;
 
-import java.util.Objects;
-
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import io.ddd4j.core.contract.TypeHandlerRegistry;
+import io.ddd4j.core.domain.event.TypeHandlerRegistry;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

@@ -1,7 +1,5 @@
 package io.ddd4j.extension.license.manager;
 
-import java.util.Objects;
-
 import de.schlichtherle.license.*;
 import de.schlichtherle.xml.GenericCertificate;
 import de.schlichtherle.xml.XMLConstants;
@@ -13,6 +11,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * 自定义LicenseManager，用于增加额外的信息校验(除了LicenseManager的校验，我们还可以在这个类里面添加额外的校验信息)

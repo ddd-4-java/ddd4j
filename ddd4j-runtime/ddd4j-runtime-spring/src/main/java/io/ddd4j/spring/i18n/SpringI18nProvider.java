@@ -1,9 +1,8 @@
 package io.ddd4j.spring.i18n;
 
-import io.ddd4j.core.context.I18nProvider;
+import io.ddd4j.core.i18n.I18nProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.biz.context.NestedMessageSource;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 

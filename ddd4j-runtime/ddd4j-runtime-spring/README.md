@@ -10,11 +10,11 @@
 
 ddd4j 通用基础层的架构分层遵循一个**铁律**：
 
-| 层级               | 内容                                                              | 归属                                               |
-|------------------|-----------------------------------------------------------------|--------------------------------------------------|
-| **纯契约层**         | 零框架 import 的 Java 接口 / 抽象类 / 注解                                 | `ddd4j-core` / `ddd4j-annotation`                |
-| **SPI 默认实现层**    | 三框架各自的 SPI 实现（无 starter）                                         | `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice` |
-| **自动装配 / 胶水代码层** | Spring Boot starter / `@AutoConfiguration` / `spring.factories` | `ddd4j-boot-ddd-autoconfigure` 等                 |
+| 层级               | 内容                                                              | 归属                                                                       |
+|------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------|
+| **纯契约层**         | 零框架 import 的 Java 接口 / 抽象类 / 注解                                 | `ddd4j-core` / `ddd4j-annotation`                                        |
+| **SPI 默认实现层**    | 三框架各自的 SPI 实现（无 starter）                                        | `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice` |
+| **自动装配 / 胶水代码层** | Spring Boot starter / `@AutoConfiguration` / `spring.factories` | `ddd4j-boot-ddd-autoconfigure` 等                                         |
 
 > **错误做法**：把 `DddAutoConfiguration`（含 `@Bean` 装配 EventStore/MultiCommandExecutor）放进 `ddd4j-runtime-spring`
 > **正确做法**：`ddd4j-runtime-spring` 只提供 `SpringDomainEventPublisher` 这种**带 `@Component` 的 Bean 实现**；
@@ -50,7 +50,7 @@ ddd4j 通用基础层的架构分层遵循一个**铁律**：
 
 | 维度       | 数据                                                                     |
 |----------|------------------------------------------------------------------------|
-| **路径**   | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                          |
+| **路径**   | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`    |
 | **代码量**  | 26 个 Java 文件 / 2,980 行                                                 |
 | **核心定位** | SPI 接口的 Spring 实现 + 上下文门面                                              |
 | **强依赖**  | `ddd4j-core` / `ddd4j-kit` / `ddd4j-annotation` + Spring Framework 6.x |
@@ -90,7 +90,8 @@ public class MyApplication { ... }
 public class MyConfig { ... }
 ```
 
-> `@EnableDdd4j` 属于具体框架脚手架的启用入口。`ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice` 只提供可复用 SPI 实现，不承载 Spring Boot starter 或自动装配。
+> `@EnableDdd4j` 属于具体框架脚手架的启用入口。`ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`
+> 只提供可复用 SPI 实现，不承载 Spring Boot starter 或自动装配。
 
 ---
 
@@ -380,14 +381,14 @@ public class SpringContext implements ApplicationContextAware {
 
 ## 八、与 ddd4j-runtime-quarkus / ddd4j-javalin 的对照
 
-| 维度          | ddd4j-runtime-spring                               | ddd4j-runtime-quarkus   | ddd4j-javalin              |
-|-------------|--------------------------------------------|---------------------|----------------------------|
-| **DI 容器**   | ApplicationContext                         | Arc (CDI)           | Guice Injector             |
-| **事件发布**    | `ApplicationEventPublisher.publishEvent()` | `Event<T>.fire()`   | Guava `EventBus.post()`    |
-| **上下文入口**   | `SpringContext`                            | `ArcContainerProxy` | `GuiceContext`             |
-| **Bean 扫描** | `DddClassPathBeanDefinitionScanner`        | `Arc` 自动发现          | `Guice Module.configure()` |
-| **AOP**     | Spring AOP (`@Aspect`)                     | Interceptor Binding | MethodInterceptor          |
-| **工具丰富度**   | ⭐⭐⭐ 最多                                     | ⭐⭐                  | ⭐                          |
+| 维度          | ddd4j-runtime-spring                       | ddd4j-runtime-quarkus | ddd4j-javalin              |
+|-------------|--------------------------------------------|-----------------------|----------------------------|
+| **DI 容器**   | ApplicationContext                         | Arc (CDI)             | Guice Injector             |
+| **事件发布**    | `ApplicationEventPublisher.publishEvent()` | `Event<T>.fire()`     | Guava `EventBus.post()`    |
+| **上下文入口**   | `SpringContext`                            | `ArcContainerProxy`   | `GuiceContext`             |
+| **Bean 扫描** | `DddClassPathBeanDefinitionScanner`        | `Arc` 自动发现            | `Guice Module.configure()` |
+| **AOP**     | Spring AOP (`@Aspect`)                     | Interceptor Binding   | MethodInterceptor          |
+| **工具丰富度**   | ⭐⭐⭐ 最多                                     | ⭐⭐                    | ⭐                          |
 
 `ddd4j-runtime-spring` 在三框架中**工具最丰富、集成度最高**（因为 Spring 生态最成熟），但**业务代码**通过 SPI 调用，**与
 Quarkus/Javalin 项目结构相同**——这是 ddd4j 框架无关设计的核心价值。

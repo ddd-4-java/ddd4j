@@ -64,15 +64,15 @@ import java.util.*;
 @Slf4j
 public class GlobalExceptionHandler extends BaseExceptionHandler {
 
-    private static String formatKilobytes(long bytes) {
-        return String.format("%.0f KB", bytes / 1024.0d);
-    }
-
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
     @Autowired
     private ServerI18nProperties serverI18NProperties;
+
+    private static String formatKilobytes(long bytes) {
+        return String.format("%.0f KB", bytes / 1024.0d);
+    }
 
     // --- 4xx Client Error ---
 

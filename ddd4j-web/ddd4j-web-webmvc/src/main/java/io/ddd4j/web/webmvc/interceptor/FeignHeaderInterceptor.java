@@ -3,7 +3,7 @@ package io.ddd4j.web.webmvc.interceptor;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.annotation.FeignHeader;
+import io.ddd4j.core.domain.contract.annotation.FeignHeader;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -11,8 +11,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Objects;
 
-import static io.ddd4j.core.contract.constant.ContextConstants.SYSTEM_ID;
-import static io.ddd4j.core.contract.constant.ContextConstants.TENANT_ID;
+import static io.ddd4j.core.constant.ContextConstants.SYSTEM_ID;
+import static io.ddd4j.core.constant.ContextConstants.TENANT_ID;
 
 /**
  * Feign请求头拦截器

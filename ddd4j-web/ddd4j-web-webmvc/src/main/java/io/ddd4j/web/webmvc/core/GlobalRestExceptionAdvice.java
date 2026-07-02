@@ -1,9 +1,9 @@
 package io.ddd4j.web.webmvc.core;
 
-import io.ddd4j.core.contract.R;
-import io.ddd4j.core.contract.enums.ResultCode;
-import io.ddd4j.core.contract.exception.ServiceException;
-import io.ddd4j.core.contract.exception.ValidateException;
+import io.ddd4j.core.domain.contract.R;
+import io.ddd4j.core.domain.contract.enums.ResultCode;
+import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.core.exception.ValidateException;
 import io.ddd4j.core.util.ExceptionKit;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -58,8 +58,8 @@ public class GlobalRestExceptionAdvice {
         return R.fail(404, "地址错误！！！" + request.getRequestURI() + "非法访问!");
     }
 
-    @ExceptionHandler({ServiceException.class})
-    public R<String> serviceException(HttpServletRequest request, ServiceException e) {
+    @ExceptionHandler({BizRuntimeException.class})
+    public R<String> serviceException(HttpServletRequest request, BizRuntimeException e) {
         log.warn("服务异常：", e);
         return R.fail(e.getCode(), e.getMessage());
     }

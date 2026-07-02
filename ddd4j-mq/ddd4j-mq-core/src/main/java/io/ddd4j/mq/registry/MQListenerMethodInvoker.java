@@ -1,10 +1,8 @@
 package io.ddd4j.mq.registry;
 
-import java.util.Objects;
-
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.core.contract.constant.ContextConstants;
+import io.ddd4j.core.domain.event.MQEvent;
+import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.mq.ack.AckDisposition;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.consume.MQConsumerContext;
@@ -18,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 反射调用 {@link MQListenerDefinition} 目标方法，解析参数与 {@link AckDisposition} 返回值。

@@ -15,14 +15,13 @@
  */
 package io.ddd4j.guice.web;
 
-import java.util.Objects;
-
 import io.ddd4j.guice.util.WebKit;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**

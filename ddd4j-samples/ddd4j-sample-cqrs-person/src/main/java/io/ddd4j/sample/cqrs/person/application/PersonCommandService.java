@@ -1,11 +1,6 @@
 package io.ddd4j.sample.cqrs.person.application;
 
-import io.ddd4j.sample.cqrs.person.domain.CreatePersonCommand;
-import io.ddd4j.sample.cqrs.person.domain.DeletePersonCommand;
-import io.ddd4j.sample.cqrs.person.domain.Person;
-import io.ddd4j.sample.cqrs.person.domain.PersonId;
-import io.ddd4j.sample.cqrs.person.domain.PersonName;
-import io.ddd4j.sample.cqrs.person.domain.PersonRepository;
+import io.ddd4j.sample.cqrs.person.domain.*;
 
 import java.util.Objects;
 

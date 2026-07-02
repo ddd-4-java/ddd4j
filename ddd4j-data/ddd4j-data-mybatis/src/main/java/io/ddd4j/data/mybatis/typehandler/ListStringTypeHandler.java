@@ -1,7 +1,5 @@
 package io.ddd4j.data.mybatis.typehandler;
 
-import java.util.Objects;
-
 import cn.hutool.json.JSONUtil;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
@@ -13,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 使用该对象需要在xml中指定 typeHandler

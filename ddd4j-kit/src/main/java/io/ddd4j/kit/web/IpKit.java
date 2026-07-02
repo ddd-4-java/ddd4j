@@ -1,7 +1,5 @@
 package io.ddd4j.kit.web;
 
-import java.util.Objects;
-
 import cn.hutool.core.net.Ipv4Util;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -17,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * IP 地址工具（纯 Java，不依赖 Servlet / Spring）。

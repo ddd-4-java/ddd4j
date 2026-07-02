@@ -15,17 +15,16 @@
  */
 package io.ddd4j.guice.web;
 
-import java.util.Objects;
-
-import io.ddd4j.core.context.I18nProvider;
-import io.ddd4j.core.contract.DomainEvent;
-import io.ddd4j.core.contract.DomainEventPublisher;
+import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.domain.event.DomainEvent;
+import io.ddd4j.core.domain.event.DomainEventPublisher;
 import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.guice.util.WebKit;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Javalin 基础处理器（等价于 Spring 的 BaseController）。

@@ -6,8 +6,6 @@
  */
 package io.ddd4j.web.webmvc.webmvc;
 
-import java.util.Objects;
-
 import io.ddd4j.spring.properties.BasePropertySourcePostProcessor;
 import io.ddd4j.web.webmvc.config.MessageSourceConfigurationProperties;
 import io.ddd4j.web.webmvc.error.I18nResourceBasenameHandler;
@@ -23,6 +21,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
+import java.util.Objects;
 
 /**
  * MessageSource 与属性源默认配置（Boot 条件装配已迁出至 ddd4j-boot 轨）。

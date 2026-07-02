@@ -1,6 +1,6 @@
 package io.ddd4j.mq.store;
 
-import io.ddd4j.core.contract.MQEvent;
+import io.ddd4j.core.domain.event.MQEvent;
 
 /**
  * MQ 事件持久化端口。

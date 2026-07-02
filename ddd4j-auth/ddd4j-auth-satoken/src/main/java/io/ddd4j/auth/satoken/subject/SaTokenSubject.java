@@ -1,18 +1,17 @@
 package io.ddd4j.auth.satoken.subject;
 
-import java.util.Objects;
-
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import io.ddd4j.auth.satoken.util.StpKit;
-import io.ddd4j.core.subject.AuthPrincipal;
-import io.ddd4j.core.subject.AuthRequest;
+import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 基于 Sa-Token 的 {@link Subject} 实现（纯 Java，零 Spring 依赖）。

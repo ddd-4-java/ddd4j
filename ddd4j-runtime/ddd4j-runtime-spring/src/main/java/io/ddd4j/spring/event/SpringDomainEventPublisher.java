@@ -1,14 +1,14 @@
 package io.ddd4j.spring.event;
 
-import java.util.Objects;
-
-import io.ddd4j.core.contract.DomainEvent;
-import io.ddd4j.core.contract.DomainEventPublisher;
+import io.ddd4j.core.domain.event.DomainEvent;
+import io.ddd4j.core.domain.event.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Spring 实现的领域事件发布者
@@ -24,11 +24,13 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
     private final ApplicationEventPublisher publisher;
 
     public SpringDomainEventPublisher(ApplicationEventPublisher publisher) {
+        log.debug("Initializing SpringDomainEventPublisher");
+        Objects.requireNonNull(publisher, "ApplicationEventPublisher cannot be null");
         this.publisher = publisher;
     }
 
     @Override
-    public void publish(DomainEvent event) {
+    public <T> void publish(DomainEvent<T> event) {
         if (Objects.isNull(event)) {
             log.warn("Attempted to publish null domain event");
             return;
@@ -38,12 +40,12 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
     }
 
     @Override
-    public void publishAll(Collection<DomainEvent> events) {
+    public <T> void publishAll(Collection<DomainEvent<T>> events) {
         if (Objects.isNull(events) || events.isEmpty()) {
             return;
         }
         log.debug("Publishing {} domain events", events.size());
-        for (DomainEvent event : events) {
+        for (DomainEvent<T> event : events) {
             publish(event);
         }
     }

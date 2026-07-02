@@ -5,7 +5,8 @@
 > **正确分层认知**：
 > - `ddd4j/ddd4j-*` = **通用基础层**（纯 Java SPI + 可选 Spring 桥接，**不含 Spring Boot auto-config**）
 > - `ddd4j-boot/ddd4j-boot-*` = **Spring Boot 整合层**（auto-config 放这里）
-> - `ddd4j-quarkus/*` / `ddd4j-javalin/*` = **其他框架整合层**；`ddd4j` 内仅保留可复用的 `ddd4j-runtime-quarkus`、`ddd4j-runtime-guice` 与 `ddd4j-web-*` 通用适配
+> - `ddd4j-quarkus/*` / `ddd4j-javalin/*` = **其他框架整合层**；`ddd4j` 内仅保留可复用的 `ddd4j-runtime-quarkus`、
+    `ddd4j-runtime-guice` 与 `ddd4j-web-*` 通用适配
 >
 > **对照范本**：`ddd4j-mq`（`-core` 纯 Java + `-spring` Spring 桥接）→ `ddd4j-boot-mq`（Spring Boot auto-config）
 > **核心问题**：`ddd4j-data` 通用层错误地混入了 Spring Boot auto-config 代码，应迁移到 `ddd4j-boot-data`
@@ -43,7 +44,7 @@
 | 子模块                      | 文件数 | 定位                                    |
 |--------------------------|-----|---------------------------------------|
 | ddd4j-data-mybatis       | 41  | MyBatis-Plus 实现                       |
-| ddd4j-data-spring        | —   | Spring 桥接与仓储注册                       |
+| ddd4j-data-spring        | —   | Spring 桥接与仓储注册                        |
 | ddd4j-data-crypto        | 18  | 加解密策略                                 |
 | ddd4j-data-external      | 19  | 外部服务（geo/region/sequence/sys/weather） |
 | ddd4j-data-logs          | 4   | API 操作日志（AspectJ）                     |

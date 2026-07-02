@@ -1,7 +1,5 @@
 package io.ddd4j.extension.express.infrastructure.cache;
 
-import java.util.Objects;
-
 import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.CreateCache;
@@ -9,6 +7,8 @@ import io.ddd4j.extension.express.application.service.RuleCacheService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 
 /**

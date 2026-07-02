@@ -1,8 +1,6 @@
 package io.ddd4j.mq.spring.registry;
 
-import java.util.Objects;
-
-import io.ddd4j.core.contract.annotation.MQEventListener;
+import io.ddd4j.core.domain.contract.annotation.MQEventListener;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
@@ -12,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**

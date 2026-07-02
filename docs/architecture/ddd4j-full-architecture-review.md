@@ -5,9 +5,10 @@
 > **对标项目**：
 > - `workspace-bmgw/codeup/ddd4j`（v1.x，com.dddframework，Spring 强绑定，Java 8）
 > - `workspace-bmgw/codeup/cloud-agents`（基于 v1.x 的智能体服务集群）
-> **审查目标**：确认 v2.x 能否完全替代 v1.x，并指导 v1.x → v2.x 的迁移适配
+    > **审查目标**：确认 v2.x 能否完全替代 v1.x，并指导 v1.x → v2.x 的迁移适配
 >
-> **状态校准**：本文为历史全栈审查报告，当前模块事实以根 `README.md`、`REFACTOR_MIGRATION.md` 和 `docs/architecture/architecture.md` 为准。
+> **状态校准**：本文为历史全栈审查报告，当前模块事实以根 `README.md`、`REFACTOR_MIGRATION.md` 和
+`docs/architecture/architecture.md` 为准。
 
 ---
 
@@ -32,9 +33,9 @@
 | **Spring 绑定**  | Spring 2.7.18 强绑定                  | 框架无关 + 三框架 SPI                                                                                     | ✅ 优于 v1.x |
 | **聚合根模型**      | `Model`（充血模型，耦合 Repository）        | `Model` + `DddAggregateRoot`（双轨，纯净 DDD 来自 fuinorg）                                                 | ✅ 完全替代    |
 | **仓储 SPI**     | `BaseRepository`（带 MyBatis 注入）     | `BaseRepository` + `Repository`（纯 Java SPI）                                                        | ✅ 完全替代    |
-| **MQ 抽象**      | 4 种（Kafka/RabbitMQ/RocketMQ/Redis） | 13 个 Broker/本地实现（增加 ActiveMQ/MQTT/Pulsar/NATS/Disruptor/ONS/TDMQ/SQS/MicaMQTT 等）                  | ✅ 优于 v1.x |
+| **MQ 抽象**      | 4 种（Kafka/RabbitMQ/RocketMQ/Redis） | 13 个 Broker/本地实现（增加 ActiveMQ/MQTT/Pulsar/NATS/Disruptor/ONS/TDMQ/SQS/MicaMQTT 等）                   | ✅ 优于 v1.x |
 | **Web 控制器**    | `AggregateController` 动态路由         | `BaseAggregateController` + `BaseClientAggregateController` 模板方法 + `AggregateController` 动态路由（双模式） | ✅ 完全替代    |
-| **认证**         | 仅 BaseAuth 拦截器                     | Subject SPI + Sa-Token + Spring Security + Shiro                                                     | ✅ 优于 v1.x |
+| **认证**         | 仅 BaseAuth 拦截器                     | Subject SPI + Sa-Token + Spring Security + Shiro                                                   | ✅ 优于 v1.x |
 | **数据权限**       | 无                                  | `ddl4j-data-datascope`（基于 MyBatis 拦截器）                                                             | ✅ 优于 v1.x |
 | **加密**         | 无                                  | `ddd4j-data-crypto`                                                                                | ✅ 优于 v1.x |
 | **DDD 架构守护**   | 无                                  | `CleanDDDLayerRules` + `ColaDDDLayerRules`（ArchUnit 注解驱动）                                          | ✅ 优于 v1.x |
@@ -43,7 +44,7 @@
 | **多容器支持**      | 仅 Spring                           | Spring + Quarkus + Guice + Javalin                                                                 | ✅ 优于 v1.x |
 | **缓存**         | RedisKit                           | `ddd4j-cache`（Caffeine + Redis 多级）                                                                 | ✅ 优于 v1.x |
 | **扩展点**        | 单一 Hutool                          | akka / excel / jackson / monitor / pf4j / qlexpress / validation                                   | ✅ 优于 v1.x |
-| **示例工程**       | `ddd-demo`                         | `ddd4j-samples` × 5（auth 三实现、多登录、Person CQRS/ES）                                             | 🟡 继续增强    |
+| **示例工程**       | `ddd-demo`                         | `ddd4j-samples` × 5（auth 三实现、多登录、Person CQRS/ES）                                                   | 🟡 继续增强   |
 | **Quarkus 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
 | **Javalin 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
 | **Cloud 生态**   | 无                                  | 待定（仅有 ddd4j-boot 一站式）                                                                              | ❌ 缺口      |
@@ -96,7 +97,7 @@ import。
 | `ddd4j-auth`         | 5（license/satoken/security/shiro/spring）         | 🟢 优秀 | 多种认证方案并存，按需选型，Subject 契约位于 ddd4j-core       |
 | `ddd4j-cache`        | 1                                                | 🟢 优秀 | Caffeine + Redis 多级缓存策略完整                   |
 | `ddd4j-data`         | 6（crypto/datascope/external/logs/mybatis/spring） | 🟢 优秀 | 数据层完整抽象，MyBatis 插件化可扩展                      |
-| `ddd4j-mq`           | 15（core/spring + 13 个 Broker/本地实现）             | 🟢 优秀 | **核心亮点**，MQBrokerAdapter SPI 让 MQ 切换零业务代码改动 |
+| `ddd4j-mq`           | 15（core/spring + 13 个 Broker/本地实现）               | 🟢 优秀 | **核心亮点**，MQBrokerAdapter SPI 让 MQ 切换零业务代码改动 |
 | `ddd4j-kit`          | 1                                                | 🟢 优秀 | Hutool 继承式增强，不重复造轮子                         |
 | `ddd4j-dependencies` | 1                                                | 🟢 优秀 | 第三方版本集中管理，已锁定 Spring 6.x                    |
 
@@ -244,13 +245,13 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 4.1 整体评估
 
-| 模块                 | 子模块                                                          | 状态    | 评估                                                  |
-|--------------------|--------------------------------------------------------------|-------|-----------------------------------------------------|
-| `ddd4j-ddd-rules`        | clean / cola                                                 | 🟢 良好 | ArchUnit 注解驱动规则，业务项目可继承                             |
-| `ddd4j-extensions` | akka/excel/jackson/monitor/pf4j/qlexpress/validation         | 🟢 优秀 | 7 个扩展点，可按需引入                                        |
-| `ddd4j-runtime-guice`      | 1                                                            | 🟠 中等 | Guice Module + EventBus 实现，Javalin Web 能力在 `ddd4j-web-javalin` |
-| `ddd4j-runtime-quarkus`| 1                                                            | 🟡 中等 | Quarkus CDI/CQRS 核心适配已存在，Web 能力在 `ddd4j-web-quarkus` |
-| `ddd4j-runtime-spring`     | 1                                                            | 🟡 中等 | Spring 适配器实现最完整，但与 ddd4j-web-webmvc 有部分重叠           |
+| 模块                      | 子模块                                                  | 状态    | 评估                                                             |
+|-------------------------|------------------------------------------------------|-------|----------------------------------------------------------------|
+| `ddd4j-ddd-rules`       | clean / cola                                         | 🟢 良好 | ArchUnit 注解驱动规则，业务项目可继承                                        |
+| `ddd4j-extensions`      | akka/excel/jackson/monitor/pf4j/qlexpress/validation | 🟢 优秀 | 7 个扩展点，可按需引入                                                   |
+| `ddd4j-runtime-guice`   | 1                                                    | 🟠 中等 | Guice Module + EventBus 实现，Javalin Web 能力在 `ddd4j-web-javalin` |
+| `ddd4j-runtime-quarkus` | 1                                                    | 🟡 中等 | Quarkus CDI/CQRS 核心适配已存在，Web 能力在 `ddd4j-web-quarkus`           |
+| `ddd4j-runtime-spring`  | 1                                                    | 🟡 中等 | Spring 适配器实现最完整，但与 ddd4j-web-webmvc 有部分重叠                      |
 
 ### 4.2 问题：集成模块"广而不深"
 
@@ -274,12 +275,12 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 5.1 当前矩阵
 
-| 集成项目                             | 模块数  | 成熟度    | 主要差距                                         |
-|----------------------------------|------|--------|----------------------------------------------|
-| `ddd4j-boot` (Spring Boot 3.5.x) | ~20+ | 🟢 85% | 模块齐全，缺 Cloud 生态（Gateway/Config/Stream）       |
-| `ddd4j-quarkus`                  | 外部项目 | 待单独核实 | 当前文档不再用本仓 CodeGraph 结果推断外部仓完成度          |
-| `ddd4j-javalin`                  | 外部项目 | 待单独核实 | 当前文档不再用本仓 CodeGraph 结果推断外部仓完成度          |
-| `ddd4j-cloud`                    | 0    | ❌ 0%   | **完全缺失**                                     |
+| 集成项目                             | 模块数  | 成熟度    | 主要差距                                   |
+|----------------------------------|------|--------|----------------------------------------|
+| `ddd4j-boot` (Spring Boot 3.5.x) | ~20+ | 🟢 85% | 模块齐全，缺 Cloud 生态（Gateway/Config/Stream） |
+| `ddd4j-quarkus`                  | 外部项目 | 待单独核实  | 当前文档不再用本仓 CodeGraph 结果推断外部仓完成度         |
+| `ddd4j-javalin`                  | 外部项目 | 待单独核实  | 当前文档不再用本仓 CodeGraph 结果推断外部仓完成度         |
+| `ddd4j-cloud`                    | 0    | ❌ 0%   | **完全缺失**                               |
 
 ### 5.2 ddd4j-boot（最成熟）
 
@@ -322,13 +323,13 @@ ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 
 
 ### 5.6 优先级
 
-| 优先级    | 任务                                   | 业务影响               |
-|--------|--------------------------------------|--------------------|
-| **P0** | 补齐 `ddd4j-cloud` 微服务治理模块             | 阻塞 v1.x 大型项目替代     |
-| **P0** | 补齐 `ddd4j-javalin` 核心模块              | 阻塞 Javalin 用户      |
+| 优先级    | 任务                                        | 业务影响               |
+|--------|-------------------------------------------|--------------------|
+| **P0** | 补齐 `ddd4j-cloud` 微服务治理模块                  | 阻塞 v1.x 大型项目替代     |
+| **P0** | 补齐 `ddd4j-javalin` 核心模块                   | 阻塞 Javalin 用户      |
 | **P1** | 外部 `ddd4j-quarkus` 补强 Web/MQ/Auth 自动装配与示例 | 提升 Quarkus 集成度     |
-| **P1** | `ddd4j-boot-cloud-*` Spring Cloud 集成 | 完善 Spring Cloud 生态 |
-| **P2** | ddd4j-boot-xxljob / ddd4j-boot-redis | 业务侧常用组件            |
+| **P1** | `ddd4j-boot-cloud-*` Spring Cloud 集成      | 完善 Spring Cloud 生态 |
+| **P2** | ddd4j-boot-xxljob / ddd4j-boot-redis      | 业务侧常用组件            |
 
 ---
 

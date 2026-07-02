@@ -1,7 +1,5 @@
 package io.ddd4j.extension.express.application.service;
 
-import java.util.Objects;
-
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import io.ddd4j.extension.express.domain.model.vo.RuleExecutionResult;
 import io.ddd4j.extension.express.domain.model.vo.RuleValidationResult;
@@ -10,6 +8,7 @@ import io.ddd4j.extension.express.domain.service.RuleEngineDomainService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

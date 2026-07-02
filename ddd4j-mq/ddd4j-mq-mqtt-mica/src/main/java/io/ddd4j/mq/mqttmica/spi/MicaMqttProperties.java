@@ -1,11 +1,10 @@
 package io.ddd4j.mq.mqttmica.spi;
 
-import java.util.Objects;
-
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 import org.dromara.mica.mqtt.core.client.MqttClientCreator;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**

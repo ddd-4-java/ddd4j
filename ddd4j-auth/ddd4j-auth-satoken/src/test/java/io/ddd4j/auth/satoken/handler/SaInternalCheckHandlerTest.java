@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link SaInternalCheckHandler} tests.
@@ -18,6 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class SaInternalCheckHandlerTest {
+
+    private static SaInternalCheck annotation(String methodName) throws NoSuchMethodException {
+        return method(methodName).getAnnotation(SaInternalCheck.class);
+    }
+
+    private static AnnotatedElement method(String methodName) throws NoSuchMethodException {
+        return Fixture.class.getDeclaredMethod(methodName);
+    }
 
     @Test
     void shouldRejectMissingApiKey() throws NoSuchMethodException {
@@ -57,14 +62,6 @@ class SaInternalCheckHandlerTest {
         SaInternalCheckHandler handler = new SaInternalCheckHandler();
 
         assertEquals(SaInternalCheck.class, handler.getHandlerAnnotationClass());
-    }
-
-    private static SaInternalCheck annotation(String methodName) throws NoSuchMethodException {
-        return method(methodName).getAnnotation(SaInternalCheck.class);
-    }
-
-    private static AnnotatedElement method(String methodName) throws NoSuchMethodException {
-        return Fixture.class.getDeclaredMethod(methodName);
     }
 
     private static class TestSaInternalCheckHandler extends SaInternalCheckHandler {
