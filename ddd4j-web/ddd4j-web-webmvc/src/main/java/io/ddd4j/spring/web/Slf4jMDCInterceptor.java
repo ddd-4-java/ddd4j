@@ -1,6 +1,6 @@
 package io.ddd4j.spring.web;
 
-import io.ddd4j.core.XHeaders;
+import io.ddd4j.core.constant.XHeaders;
 import io.ddd4j.kit.web.IpKit;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

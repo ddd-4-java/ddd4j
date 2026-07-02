@@ -1,7 +1,7 @@
 package io.ddd4j.spring.util;
 
 import cn.hutool.json.JSONUtil;
-import io.ddd4j.core.XHeaders;
+import io.ddd4j.core.constant.XHeaders;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

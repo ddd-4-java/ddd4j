@@ -4,7 +4,7 @@
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-package io.ddd4j.core;
+package io.ddd4j.core.constant;
 
 
 public class JVMNetProxy {

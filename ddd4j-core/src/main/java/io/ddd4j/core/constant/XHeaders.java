@@ -1,4 +1,4 @@
-package io.ddd4j.core;
+package io.ddd4j.core.constant;
 
 public class XHeaders {
 

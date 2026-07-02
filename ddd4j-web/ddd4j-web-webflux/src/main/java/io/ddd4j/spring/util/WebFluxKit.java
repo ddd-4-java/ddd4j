@@ -1,6 +1,6 @@
 package io.ddd4j.spring.util;
 
-import io.ddd4j.core.XHeaders;
+import io.ddd4j.core.constant.XHeaders;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
