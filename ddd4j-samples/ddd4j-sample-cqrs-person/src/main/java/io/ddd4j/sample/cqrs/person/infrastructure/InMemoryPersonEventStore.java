@@ -1,7 +1,7 @@
 package io.ddd4j.sample.cqrs.person.infrastructure;
 
-import io.ddd4j.core.cqrs.projection.EventChunk;
-import io.ddd4j.core.cqrs.projection.EventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.EventChunk;
+import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.sample.cqrs.person.domain.PersonEvent;
 import io.ddd4j.sample.cqrs.person.domain.PersonId;

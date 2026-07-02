@@ -1,6 +1,6 @@
 package io.ddd4j.mq.registry;
 
-import io.ddd4j.core.contract.annotation.MQEventListener;
+import io.ddd4j.mq.annotation.MQEventListener;
 import lombok.Builder;
 import lombok.Getter;
 

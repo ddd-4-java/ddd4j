@@ -3,7 +3,7 @@ package io.ddd4j.web.webmvc.interceptor;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.contract.annotation.FeignHeader;
+import io.ddd4j.web.webmvc.annotation.FeignHeader;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;

@@ -55,7 +55,7 @@ public final class SpiKeys {
     /** 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.cqrs.query.CommandExecutorRegistry} */
     public static final String COMMAND_EXECUTOR_REGISTRY = PREFIX + "cqrs.CommandExecutorRegistry";
 
-    /** 投影位置持久化 SPI key，对应 {@code io.ddd4j.core.cqrs.projection.ProjectionPositionRepository} */
+    /** 投影位置持久化 SPI key，对应 {@code io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository} */
     public static final String PROJECTION_POSITION_REPOSITORY = PREFIX + "cqrs.ProjectionPositionRepository";
 
     // ========== 数据相关 SPI ==========

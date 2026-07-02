@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * CQRS 命令执行结果。
  * <p>
- * 与 HTTP 响应 {@code io.ddd4j.core.contract.R} 区分：
+ * 与 HTTP 响应 {@code io.ddd4j.core.api.R} 区分：
  * <ul>
  *   <li>{@link Result}：命令执行结果（领域层）</li>
  *   <li>{@code R}：HTTP 响应包装（接口层）</li>

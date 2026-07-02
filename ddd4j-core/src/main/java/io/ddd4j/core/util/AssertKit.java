@@ -1,7 +1,7 @@
 package io.ddd4j.core.util;
 
-import io.ddd4j.core.contract.IR;
-import io.ddd4j.core.contract.enums.ResultCode;
+import io.ddd4j.core.api.IR;
+import io.ddd4j.core.api.ResultCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.experimental.UtilityClass;
 

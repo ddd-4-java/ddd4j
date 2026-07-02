@@ -25,7 +25,7 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.event.MQEventPublisher;
-import io.ddd4j.core.cqrs.projection.*;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.guice.cqrs.GuiceViewManager;

@@ -11,7 +11,7 @@ import java.util.Optional;
  * <p>
  * 取代以下三个历史接口：
  * <ul>
- *   <li>{@code io.ddd4j.core.contract.BaseRepository}（ActiveRecord CRUD + 静态注册表）</li>
+ *   <li>旧 ActiveRecord 风格 BaseRepository（CRUD + 静态注册表）</li>
  *   <li>{@code io.ddd4j.core.ddd.repository.Repository}（Optional 风格）</li>
  *   <li>{@code io.ddd4j.core.ddd.model.DomainObjectMapper}（含 delete/existsById 默认方法）</li>
  * </ul>

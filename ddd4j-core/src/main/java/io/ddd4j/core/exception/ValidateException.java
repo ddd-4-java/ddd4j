@@ -1,6 +1,6 @@
 package io.ddd4j.core.exception;
 
-import io.ddd4j.core.contract.enums.ResultCode;
+import io.ddd4j.core.api.ResultCode;
 
 import java.util.Map;
 import java.util.StringJoiner;

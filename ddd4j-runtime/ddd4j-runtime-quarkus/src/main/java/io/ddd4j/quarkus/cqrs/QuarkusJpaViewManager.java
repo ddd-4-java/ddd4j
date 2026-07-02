@@ -1,6 +1,6 @@
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.projection.ViewManager;
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;

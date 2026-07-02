@@ -1,6 +1,6 @@
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.projection.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;

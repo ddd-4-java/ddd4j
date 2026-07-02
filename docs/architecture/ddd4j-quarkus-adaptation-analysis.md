@@ -35,12 +35,12 @@ ddd4j (通用基础层)
 | `DddDomainEvent<ID>`           | `io.ddd4j.core.ddd.event`       | 领域事件基类                                  |
 | `DddCommandExecutor<CMD>`      | `io.ddd4j.core.ddd.command`     | 命令执行器基类                                 |
 | `DddView`                      | `io.ddd4j.core.ddd.query`       | 查询视图基类                                  |
-| `ViewManager`                  | `io.ddd4j.core.cqrs.projection` | 视图管理器 SPI（纯 Java）                       |
-| `ProjectionPosition`           | `io.ddd4j.core.cqrs.projection` | 投影位置 SPI                                |
-| `ProjectionPositionRepository` | `io.ddd4j.core.cqrs.projection` | 投影位置仓储 SPI                              |
-| `DomainEventPublisher`         | `io.ddd4j.core.contract`        | 领域事件发布者 SPI                             |
-| `BaseRepository`               | `io.ddd4j.core.contract`        | 基础仓储接口                                  |
-| `Repository`                   | `io.ddd4j.core.contract`        | 纯 Java 仓储接口                             |
+| `ViewManager`                  | `io.ddd4j.core.cqrs.readmodel` | 视图管理器 SPI（纯 Java）                       |
+| `ProjectionPosition`           | `io.ddd4j.core.cqrs.readmodel` | 投影位置 SPI                                |
+| `ProjectionPositionRepository` | `io.ddd4j.core.cqrs.readmodel` | 投影位置仓储 SPI                              |
+| `DomainEventPublisher`         | `io.ddd4j.core.ddd.event`       | 领域事件发布者 SPI                             |
+| `Repository`                   | `io.ddd4j.core.ddd.repository`  | 纯 Java 仓储接口                             |
+| `RichRepository`               | `io.ddd4j.core.ddd.repository`  | 富查询仓储 SPI                               |
 | `SubjectProvider`              | `io.ddd4j.core.subject`         | 认证主体提供者 SPI                             |
 | `I18nProvider`                 | `io.ddd4j.core.context`         | 国际化提供者 SPI                              |
 
@@ -277,7 +277,7 @@ if (type.isAnnotationPresent(CommandExecutor.class)) { ... }
 ### 5.1 ddd4j-core ViewManager SPI
 
 ```java
-// ddd4j-core/src/main/java/io/ddd4j/core/cqrs/projection/ViewManager.java
+// ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ViewManager.java
 public interface ViewManager {
     void start();
     void stop();
@@ -289,7 +289,7 @@ public interface ViewManager {
 ### 5.2 ddd4j-core ProjectionPosition SPI
 
 ```java
-// ddd4j-core/src/main/java/io/ddd4j/core/cqrs/projection/ProjectionPosition.java
+// ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionPosition.java
 public interface ProjectionPosition {
     String getStreamId();
     long getNextEventNumber();

@@ -53,12 +53,12 @@
 
 | v1.x 类                                                         | v2.x 对应类                                                      | 兼容性      |
 |----------------------------------------------------------------|---------------------------------------------------------------|----------|
-| `com.dddframework.core.contract.Model`                         | `io.ddd4j.core.contract.Model`                                | 🟡 需修改包名 |
-| `com.dddframework.core.contract.Query`                         | `io.ddd4j.core.contract.Query`                                | 🟡 需修改包名 |
-| `com.dddframework.core.contract.BaseRepository`                | `io.ddd4j.core.contract.BaseRepository`                       | 🟡 需修改包名 |
-| `com.dddframework.core.contract.R`                             | `io.ddd4j.core.contract.R`                                    | 🟡 需修改包名 |
-| `com.dddframework.core.contract.MQEvent`                       | `io.ddd4j.core.contract.MQEvent`                              | 🟡 需修改包名 |
-| `com.dddframework.core.contract.DomainEvent`                   | `io.ddd4j.core.contract.DomainEvent`                          | 🟡 需修改包名 |
+| `com.dddframework.core.contract.Model`                         | `io.ddd4j.core.ddd.model.AggregateRoot`                                | 🟡 需修改包名 |
+| `com.dddframework.core.contract.Query`                         | `io.ddd4j.core.cqrs.query.Query`                                | 🟡 需修改包名 |
+| `com.dddframework.core.contract.BaseRepository`                | `io.ddd4j.core.ddd.repository.Repository`                       | 🟡 需修改包名 |
+| `com.dddframework.core.contract.R`                             | `io.ddd4j.core.api.R`                                    | 🟡 需修改包名 |
+| `com.dddframework.core.contract.MQEvent`                       | `io.ddd4j.core.event.MQEvent`                              | 🟡 需修改包名 |
+| `com.dddframework.core.contract.DomainEvent`                   | `io.ddd4j.core.ddd.event.DomainEvent`                          | 🟡 需修改包名 |
 | `com.dddframework.core.context.ThreadContext`                  | `io.ddd4j.core.context.ThreadContext`                         | 🟡 需修改包名 |
 | `com.dddframework.core.context.SpringContext`                  | `io.ddd4j.spring.context.SpringContext`                       | 🟡 路径变化  |
 | `com.dddframework.web.core.GlobalRestExceptionAdvice`          | `io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice`          | 🟡 路径变化  |
@@ -213,17 +213,18 @@ ddd4j-annotation（向后兼容，仍 @Service 等元注解，但注释中说明
   ddd4j-runtime-quarkus 提供 Quarkus DDD 构造型注解与适配实现
 ```
 
-**`ddd4j-core` 拆分**：
+**`ddd4j-core` 当前拆分**：
 
 ```
-ddd4j-core-api（纯 Java 契约，零外部依赖）   ← 新增
-  ├── contract/ (Model/Query/Page/R/IR/BaseRepository/DomainEvent/DomainEventPublisher/MQEvent/MQEventPublisher)
+ddd4j-core（纯 Java 契约，零外部框架依赖）
+  ├── api/ (Page/R/IR/ResultCode)
   ├── context/ (ThreadContext/BaseContext/I18nProvider/SubjectProvider)
-  ├── ddd/ (DddAggregateRoot/DddDomainEvent/DddEventStoreRepository)
-  ├── cqrs/ (Command/CommandExecutor/View/ViewManager/ViewScheduler/JpaView)
+  ├── ddd/ (AggregateRoot/DomainEvent/Repository/RichRepository/EventSourcingRepository)
+  ├── cqrs/ (command/query/readmodel)
+  ├── event/ (MQEvent/MQEventPublisher/TypeHandlerRegistry)
   ├── subject/ (AuthPrincipal/Subject)
-  ├── exception/ (ServiceException/ValidateException)
-  └── enums/ (ResultCode/IEnum)
+  ├── exception/ (BizRuntimeException/ValidateException)
+  └── enums/ (IEnum)
 
 ddd4j-core（向后兼容，保留 entity/service/web/dto/param 子包）   ← 标记 @Deprecated
   ↓ 业务项目迁移后删除
@@ -379,7 +380,7 @@ com.qushiyun（业务集团）
 **问题**：cloud-agents 10 个核心文件全部引用 `com.dddframework`，v2.x 包名为 `io.ddd4j`。
 
 **影响面**：每个使用 ddd4j 的业务类都需要改 import + 完全限定名（`com.dddframework.core.contract.Model` →
-`io.ddd4j.core.contract.Model`）。
+`io.ddd4j.core.ddd.model.AggregateRoot`）。
 
 **v2.x 改进建议**：
 

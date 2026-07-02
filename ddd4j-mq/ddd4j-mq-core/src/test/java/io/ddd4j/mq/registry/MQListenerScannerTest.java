@@ -1,6 +1,6 @@
 package io.ddd4j.mq.registry;
 
-import io.ddd4j.core.contract.annotation.MQEventListener;
+import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.ack.AckDisposition;
 import io.ddd4j.mq.consume.MQConsumerContext;
 import org.junit.jupiter.api.Test;

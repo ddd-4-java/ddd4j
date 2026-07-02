@@ -1,7 +1,7 @@
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.projection.ProjectionPosition;
-import io.ddd4j.core.cqrs.projection.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;

@@ -237,7 +237,7 @@ public interface Repository<M, Q, P extends Serializable> {
 
 ### 8.1 框架无关的纯净契约层
 
-ddd4j-core 绝大部分文件（`contract/`、`context/`、`ddd/`、`util/`）零框架 import，可同时被 Spring / Quarkus / Javalin 复用。
+ddd4j-core 绝大部分文件（`api/`、`context/`、`ddd/`、`cqrs/`、`event/`、`util/`）零框架 import，可同时被 Spring / Quarkus / Javalin 复用。
 
 ### 8.2 12 种 MQ 统一抽象
 

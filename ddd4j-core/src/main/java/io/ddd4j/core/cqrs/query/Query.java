@@ -1,7 +1,7 @@
 package io.ddd4j.core.cqrs.query;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.ddd4j.core.contract.Page;
+import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.ddd.repository.RichRepository;

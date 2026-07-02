@@ -1,8 +1,8 @@
 package io.ddd4j.web.quarkus.controller;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.core.contract.Page;
-import io.ddd4j.core.contract.R;
+import io.ddd4j.core.api.Page;
+import io.ddd4j.core.api.R;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;

@@ -20,7 +20,7 @@
 ```java
 package com.example.infra.feign;
 
-import io.ddd4j.core.contract.exception.ServiceException;
+import io.ddd4j.core.exception.BizRuntimeException;
 import feign.codec.ErrorDecoder;
 import org.springframework.cloud.openfeign.FeignErrorDecoderFactory;
 import java.io.IOException;
@@ -41,11 +41,11 @@ public class GlobalFeignErrorAdvice implements FeignErrorDecoderFactory {
                 try {
                     Reader reader = response.body().asReader(Charset.defaultCharset());
                     errorMsg = toString(reader);
-                    return new ServiceException(errorMsg);
+                    return new BizRuntimeException(errorMsg);
                 } catch (Exception ignore) {
                 }
             }
-            return new ServiceException(errorMsg);
+            return new BizRuntimeException(errorMsg);
         };
     }
 

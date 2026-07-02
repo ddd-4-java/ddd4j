@@ -1,6 +1,6 @@
 package io.ddd4j.core.ddd.model;
 
-import io.ddd4j.core.contract.Page;
+import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.repository.Repository;

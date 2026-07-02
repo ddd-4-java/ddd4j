@@ -9,7 +9,7 @@ import java.util.Collection;
  * <ul>
  *   <li>{@code io.ddd4j.core.ddd.query.DddView}（fuinorg 标记接口）</li>
  *   <li>{@code io.ddd4j.core.ddd.query.DddJpaView}（fuinorg JPA 抽象）</li>
- *   <li>{@code io.ddd4j.core.cqrs.projection.ProjectionView}（ddd4j 框架无关投影）</li>
+ *   <li>{@code io.ddd4j.core.cqrs.readmodel.ProjectionView}（ddd4j 框架无关投影）</li>
  * </ul>
  *
  * <h3>统一抽象</h3>
@@ -22,7 +22,7 @@ import java.util.Collection;
  *
  * <h3>与 {@code ProjectionView} 的关系</h3>
  * <p>
- * 本接口是 {@link io.ddd4j.core.cqrs.projection.ProjectionView} 的业务层别名，
+ * 本接口是 {@link io.ddd4j.core.cqrs.readmodel.ProjectionView} 的业务层别名，
  * 提供一致的 DDD 战术命名（{@code View} vs 技术命名 {@code ProjectionView}）。
  * 框架无关投影使用 {@code ProjectionView}，业务侧视图使用本接口。
  * </p>
