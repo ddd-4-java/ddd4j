@@ -22,9 +22,9 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.domain.contract.Page;
-import io.ddd4j.core.domain.contract.Query;
 import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.core.domain.model.DomainObjectMapper;
+import io.ddd4j.core.domain.query.Query;
 import io.ddd4j.core.domain.repository.RepositoryRegistry;
 import io.ddd4j.core.domain.repository.RichRepository;
 import io.ddd4j.core.util.MappingKit;
@@ -63,23 +63,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.ddd4j.core.domain.contract.Query.END_QUERY;
-import static io.ddd4j.core.domain.contract.Query.EXCLUDE_FIELDS;
-import static io.ddd4j.core.domain.contract.Query.IN_JSON_QUERY;
-import static io.ddd4j.core.domain.contract.Query.IN_QUERY;
-import static io.ddd4j.core.domain.contract.Query.LIKE_LEFT_QUERY;
-import static io.ddd4j.core.domain.contract.Query.LIKE_QUERY;
-import static io.ddd4j.core.domain.contract.Query.LIKE_RIGHT_QUERY;
-import static io.ddd4j.core.domain.contract.Query.MAX_EQUALS_QUERY;
-import static io.ddd4j.core.domain.contract.Query.MAX_QUERY;
-import static io.ddd4j.core.domain.contract.Query.MIN_EQUALS_QUERY;
-import static io.ddd4j.core.domain.contract.Query.MIN_QUERY;
-import static io.ddd4j.core.domain.contract.Query.NOT_IN_QUERY;
-import static io.ddd4j.core.domain.contract.Query.NOT_LIKE_QUERY;
-import static io.ddd4j.core.domain.contract.Query.NOT_QUERY;
-import static io.ddd4j.core.domain.contract.Query.NULL_QUERY;
-import static io.ddd4j.core.domain.contract.Query.ORS_QUERY;
-import static io.ddd4j.core.domain.contract.Query.START_QUERY;
+import static io.ddd4j.core.domain.query.Query.END_QUERY;
+import static io.ddd4j.core.domain.query.Query.EXCLUDE_FIELDS;
+import static io.ddd4j.core.domain.query.Query.IN_JSON_QUERY;
+import static io.ddd4j.core.domain.query.Query.IN_QUERY;
+import static io.ddd4j.core.domain.query.Query.LIKE_LEFT_QUERY;
+import static io.ddd4j.core.domain.query.Query.LIKE_QUERY;
+import static io.ddd4j.core.domain.query.Query.LIKE_RIGHT_QUERY;
+import static io.ddd4j.core.domain.query.Query.MAX_EQUALS_QUERY;
+import static io.ddd4j.core.domain.query.Query.MAX_QUERY;
+import static io.ddd4j.core.domain.query.Query.MIN_EQUALS_QUERY;
+import static io.ddd4j.core.domain.query.Query.MIN_QUERY;
+import static io.ddd4j.core.domain.query.Query.NOT_IN_QUERY;
+import static io.ddd4j.core.domain.query.Query.NOT_LIKE_QUERY;
+import static io.ddd4j.core.domain.query.Query.NOT_QUERY;
+import static io.ddd4j.core.domain.query.Query.NULL_QUERY;
+import static io.ddd4j.core.domain.query.Query.ORS_QUERY;
+import static io.ddd4j.core.domain.query.Query.START_QUERY;
 
 /**
  * MyBatis-Plus repository base for rich aggregate roots.
@@ -108,11 +108,10 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     private BaseDataProperties baseDataProperties;
 
     protected MybatisAggregateRepository() {
-        configureTypes(resolveModelClass(), resolvePersistenceObjectClass(), null);
     }
 
     protected MybatisAggregateRepository(BaseMapper<P> mapper) {
-        this();
+        configureTypes(resolveModelClass(), resolvePersistenceObjectClass(), null);
         setMapper(mapper);
     }
 
@@ -135,7 +134,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         this.modelClass = modelClass;
         this.persistenceObjectClass = persistenceObjectClass;
         this.queryClass = queryClass;
-        if (Objects.nonNull(persistenceObjectClass)) {
+        if (Objects.nonNull(modelClass) && Objects.nonNull(persistenceObjectClass)) {
             this.tableScheme = TableScheme.build(persistenceObjectClass);
             MappingKit.map("MODEL_PO", modelClass, persistenceObjectClass);
             MappingKit.map("MODEL_PO", persistenceObjectClass, modelClass);

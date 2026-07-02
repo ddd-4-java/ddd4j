@@ -22,6 +22,7 @@ import java.util.Objects;
  * @param <T> 目标 Java 类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@SuppressWarnings("unchecked")
 public abstract class BaseTypeHandler<T> extends org.apache.ibatis.type.BaseTypeHandler<T> {
 
     /**

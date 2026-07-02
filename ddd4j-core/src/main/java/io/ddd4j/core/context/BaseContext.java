@@ -87,9 +87,15 @@ public class BaseContext {
      * @throws IllegalArgumentException key/value/type 为 null，或 value 不是 type 的实例
      */
     public <T> void inject(String key, Class<T> type, T value) {
-        Objects.requireNonNull(key, "SPI key cannot be null");
-        Objects.requireNonNull(type, "SPI type cannot be null");
-        Objects.requireNonNull(value, "SPI service cannot be null");
+        if (Objects.isNull(key)) {
+            throw new IllegalArgumentException("SPI key cannot be null");
+        }
+        if (Objects.isNull(type)) {
+            throw new IllegalArgumentException("SPI type cannot be null");
+        }
+        if (Objects.isNull(value)) {
+            throw new IllegalArgumentException("SPI service cannot be null");
+        }
         if (!type.isInstance(value)) {
             throw new IllegalArgumentException(
                     "SPI service must be instance of " + type.getName()
@@ -116,11 +122,11 @@ public class BaseContext {
      * @return 包装的服务实例 Optional，未找到或类型不匹配返回 {@link Optional#empty()}
      */
     public <T> Optional<T> inject(String key, Class<T> type) {
-        if (key == null || type == null) {
+        if (Objects.isNull(key) || Objects.isNull(type)) {
             return Optional.empty();
         }
         Object value = GLOBAL.get(key);
-        if (value == null || !type.isInstance(value)) {
+        if (Objects.isNull(value) || !type.isInstance(value)) {
             return Optional.empty();
         }
         @SuppressWarnings("unchecked")
@@ -137,7 +143,7 @@ public class BaseContext {
      * @return 被移除的服务实例 Optional，未找到返回 {@link Optional#empty()}
      */
     public Optional<Object> remove(String key) {
-        if (key == null) {
+        if (Objects.isNull(key)) {
             return Optional.empty();
         }
         return Optional.ofNullable(GLOBAL.remove(key));
@@ -161,7 +167,7 @@ public class BaseContext {
      * @param <V>   值类型
      */
     public <K, V> void inject(K key, V value) {
-        if (key == null) {
+        if (Objects.isNull(key)) {
             throw new IllegalArgumentException("key cannot be null");
         }
         GLOBAL.put(String.valueOf(key), value);
@@ -180,7 +186,7 @@ public class BaseContext {
      */
     @SuppressWarnings("unchecked")
     public <K, V> V get(K key) {
-        if (key == null) {
+        if (Objects.isNull(key)) {
             return null;
         }
         return (V) GLOBAL.get(String.valueOf(key));
@@ -197,7 +203,7 @@ public class BaseContext {
      */
     public <K, V> V get(K key, V defaultValue) {
         V value = get(key);
-        return value != null ? value : defaultValue;
+        return Objects.nonNull(value) ? value : defaultValue;
     }
 
     /**
@@ -208,7 +214,7 @@ public class BaseContext {
      * @return {@code true} 表示存在，{@code false} 表示不存在
      */
     public <K> boolean contains(K key) {
-        if (key == null) {
+        if (Objects.isNull(key)) {
             return false;
         }
         return GLOBAL.containsKey(String.valueOf(key));

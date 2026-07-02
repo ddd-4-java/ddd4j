@@ -1,6 +1,5 @@
 package io.ddd4j.data.spring;
 
-import io.ddd4j.core.domain.repository.Repository;
 import io.ddd4j.data.mybatis.config.BaseDataProperties;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ public class RepositoryBeanPostProcessor implements BeanPostProcessor, Applicati
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof BaseRepositoryImpl<?, ?, ?, ?> repositoryImpl) {
             // 注入 BaseDataProperties

@@ -17,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ContextLookupTest {
 
     private final String testKey = "ddd4j.test." + UUID.randomUUID();
+    private static final String[] sharedKeys = {
+            SpiKeys.DOMAIN_EVENT_PUBLISHER,
+            SpiKeys.MQ_EVENT_PUBLISHER
+    };
 
     private static DomainEventPublisher stubPublisher(String name) {
         return new DomainEventPublisher() {
@@ -31,13 +35,21 @@ class ContextLookupTest {
 
     @BeforeEach
     void setUp() {
-        BaseContext.remove(testKey);
+        clearSharedKeys();
     }
 
     @AfterEach
     void tearDown() {
+        clearSharedKeys();
+    }
+
+    private void clearSharedKeys() {
         BaseContext.remove(testKey);
         ThreadContext.remove(testKey);
+        for (String sharedKey : sharedKeys) {
+            BaseContext.remove(sharedKey);
+            ThreadContext.remove(sharedKey);
+        }
     }
 
     @Test

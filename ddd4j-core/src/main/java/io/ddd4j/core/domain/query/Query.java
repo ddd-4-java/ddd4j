@@ -7,6 +7,7 @@ import io.ddd4j.core.domain.repository.RepositoryRegistry;
 import io.ddd4j.core.domain.repository.RichRepository;
 import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.CollKit;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -416,7 +417,9 @@ public abstract class Query<T> extends Page<T> {
 
     public Map<String, Object> map() {
         List<Map<String, Object>> result = maps();
-        if (result == null || result.isEmpty()) return Collections.emptyMap();
+        if (Objects.isNull(result)) {
+            return Collections.emptyMap();
+        }
         return result.get(0);
     }
 
@@ -438,6 +441,6 @@ public abstract class Query<T> extends Page<T> {
      * @return 仓储实例
      */
     protected Repository repository() {
-        return RepositoryRegistry.repositoryForQuery((Class<? extends Query>) this.getClass());
+        return RepositoryRegistry.repositoryForQuery(this.getClass());
     }
 }

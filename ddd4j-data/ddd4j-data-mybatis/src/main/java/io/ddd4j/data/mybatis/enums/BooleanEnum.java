@@ -1,38 +1,21 @@
 package io.ddd4j.data.mybatis.enums;
 
 import com.baomidou.mybatisplus.annotation.IEnum;
+import lombok.Getter;
 
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Getter
 public enum BooleanEnum implements IEnum<Integer> {
 
     IS_FALSE(false, "否"),
     IS_TRUE(true, "是");
 
-    private boolean is;
-
-    private String nameCn;
+    private final boolean is;
 
     BooleanEnum(boolean is, String nameCn) {
         this.is = is;
-        this.nameCn = nameCn;
-    }
-
-    public boolean isIs() {
-        return is;
-    }
-
-    public void setIs(boolean is) {
-        this.is = is;
-    }
-
-    public String getNameCn() {
-        return nameCn;
-    }
-
-    public void setNameCn(String nameCn) {
-        this.nameCn = nameCn;
     }
 
     // 添加一个静态方法来根据值获取枚举
