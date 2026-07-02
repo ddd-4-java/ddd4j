@@ -15,11 +15,12 @@
  */
 package io.ddd4j.spring.context;
 
-import io.ddd4j.core.context.Contexts;
-import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.domain.event.DomainEventPublisher;
 import io.ddd4j.core.domain.event.MQEventPublisher;
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -28,6 +29,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * Spring 启动期 SPI 注入器：将 Spring 容器中的 SPI Bean 注入到 ddd4j 上下文。
@@ -66,7 +69,7 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
     public void onApplicationEvent(ContextRefreshedEvent event) {
         // DomainEventPublisher（必需）
         DomainEventPublisher domainPublisher = domainEventPublisherProvider.getIfAvailable();
-        if (domainPublisher != null) {
+        if (Objects.nonNull(domainPublisher)) {
             BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, domainPublisher);
         } else {
             log.warn("No DomainEventPublisher bean found. DomainEvent.publish() will fail.");
@@ -74,7 +77,7 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
 
         // MQEventPublisher（可选）
         MQEventPublisher mqPublisher = mqEventPublisherProvider.getIfAvailable();
-        if (mqPublisher != null) {
+        if (Objects.nonNull(mqPublisher)) {
             BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, mqPublisher);
         } else {
             log.debug("No MQEventPublisher bean found. MQEvent.publish() will fail.");
@@ -82,17 +85,17 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
 
         // SubjectProvider（可选）
         SubjectProvider subjectProvider = subjectProviderProvider.getIfAvailable();
-        if (subjectProvider != null) {
+        if (Objects.nonNull(subjectProvider)) {
             BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider);
         }
 
         // I18nProvider（可选）
         I18nProvider i18nProvider = i18nProviderProvider.getIfAvailable();
-        if (i18nProvider != null) {
+        if (Objects.nonNull(i18nProvider)) {
             BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider);
         }
 
         log.info("Spring ddd4j SPI services initialized (DomainEventPublisher={}, MQEventPublisher={})",
-                domainPublisher != null, mqPublisher != null);
+                Objects.nonNull(domainPublisher), Objects.nonNull(mqPublisher));
     }
 }

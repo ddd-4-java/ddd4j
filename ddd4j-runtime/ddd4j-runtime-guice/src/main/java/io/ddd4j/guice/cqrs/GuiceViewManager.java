@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseable {
 
     private final AtomicBoolean running = new AtomicBoolean(false);
-    private final ConcurrentMap<String, java.util.concurrent.ScheduledFuture<?>> handles = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ScheduledFuture<?>> handles = new ConcurrentHashMap<>();
     private ScheduledExecutorService executor;
 
     @Override

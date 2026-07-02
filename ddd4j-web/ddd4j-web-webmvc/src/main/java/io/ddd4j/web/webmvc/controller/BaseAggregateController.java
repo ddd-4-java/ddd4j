@@ -28,7 +28,7 @@ import java.io.Serializable;
  * 业务项目的聚合根 Controller 应继承此类，类型参数：
  * </p>
  * <ul>
- *   <li>{@code M}：聚合根领域模型（{@link Model} 子接口）</li>
+ *   <li>{@code M}：聚合根领域模型（{@link AggregateRoot} 子类）</li>
  *   <li>{@code Q}：查询参数对象</li>
  *   <li>{@code ID}：主键类型</li>
  * </ul>
@@ -50,7 +50,7 @@ import java.io.Serializable;
  * @param <ID> 主键
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public abstract class BaseAggregateController<M extends Model, Q, ID extends Serializable> {
+public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID extends Serializable> {
 
     /**
      * 分页查询

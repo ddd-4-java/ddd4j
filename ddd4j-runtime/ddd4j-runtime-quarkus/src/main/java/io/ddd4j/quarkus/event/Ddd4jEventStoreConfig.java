@@ -1,6 +1,5 @@
 package io.ddd4j.quarkus.event;
 
-import io.ddd4j.core.ddd.config.DddProperties;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -8,6 +7,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.fuin.esc.api.EventStore;
 import org.fuin.esc.mem.InMemoryEventStore;
 
@@ -21,24 +21,24 @@ import java.util.concurrent.Executors;
 public class Ddd4jEventStoreConfig {
 
     @Inject
-    DddProperties dddProperties;
+    @ConfigProperty(name = "ddd4j.ddd.event-store.type", defaultValue = "mem")
+    String eventStoreType;
 
     @Produces
     @Singleton
     public EventStore eventStore() {
-        String type = dddProperties.getEventStore().getType();
-        log.info("Creating EventStore with type: {}", type);
+        log.info("Creating EventStore with type: {}", eventStoreType);
 
-        if ("mem".equals(type)) {
+        if ("mem".equalsIgnoreCase(eventStoreType)) {
             log.info("Using in-memory EventStore (development/test mode)");
             return new InMemoryEventStore(Executors.newCachedThreadPool());
         }
 
-        log.warn("EventStore type '{}' not supported by auto-configuration. Please provide your own EventStore bean.", type);
+        log.warn("EventStore type '{}' not supported by auto-configuration. Please provide your own EventStore bean.", eventStoreType);
         return new InMemoryEventStore(Executors.newCachedThreadPool());
     }
 
     void onStart(@Observes StartupEvent event) {
-        log.info("Ddd4jEventStoreConfig initialized with type: {}", dddProperties.getEventStore().getType());
+        log.info("Ddd4jEventStoreConfig initialized with type: {}", eventStoreType);
     }
 }

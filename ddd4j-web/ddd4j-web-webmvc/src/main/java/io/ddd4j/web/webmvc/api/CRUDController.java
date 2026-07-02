@@ -1,9 +1,10 @@
 package io.ddd4j.web.webmvc.api;
 
-import io.ddd4j.core.domain.repository.Repository;
-import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.core.domain.contract.Page;
 import io.ddd4j.core.domain.model.AggregateRoot;
+import io.ddd4j.core.domain.query.Query;
+import io.ddd4j.core.domain.repository.Repository;
+import io.ddd4j.core.domain.repository.RepositoryRegistry;
 import io.ddd4j.web.utils.ReflectKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,21 +12,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-@Deprecated
 /**
+ * Legacy typed CRUD controller backed by the new aggregate repository SPI.
+ *
+ * @param <M> aggregate root type
+ * @param <Q> query type
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @deprecated prefer business-specific aggregate controllers.
  */
+@Deprecated
 @Slf4j(topic = "### BASE-WEB : CRUDController ###")
-public class CRUDController<M extends Model, Q extends Query> {
-    protected BaseRepository<M, Q> repository;
+@SuppressWarnings({"unchecked", "rawtypes"})
+public class CRUDController<M extends AggregateRoot<?>, Q extends Query<?>> {
 
-    private BaseRepository<M, Q> getRepository() {
+    protected Repository<M, Serializable> repository;
+
+    private Repository<M, Serializable> getRepository() {
         if (Objects.isNull(this.repository)) {
             Class<M> modelClass = ReflectKit.getSuperClassGenericType(this.getClass(), 0);
-            this.repository = BaseRepository.of(modelClass);
+            this.repository = (Repository<M, Serializable>) RepositoryRegistry.repository(modelClass);
         }
         if (Objects.isNull(this.repository)) {
             log.error("未找到实体仓库");
@@ -55,32 +64,36 @@ public class CRUDController<M extends Model, Q extends Query> {
 
     @GetMapping("/detail")
     public M detail(Q query) {
-        return query.first();
+        return (M) query.first();
     }
 
     @GetMapping("/detail/{id}")
     public M detail(@PathVariable("id") String id) {
-        return getRepository().get(id);
+        return getRepository().findById(id).orElse(null);
     }
 
     @PostMapping({"/save", "/create"})
     public M save(@RequestBody M model) {
-        model.save();
-        return model;
+        return getRepository().save(model);
     }
 
     @PostMapping("/saveBatch")
     public void saveBatch(@RequestBody List<M> models) {
-        getRepository().save(models);
+        if (Objects.isNull(models)) {
+            return;
+        }
+        for (M model : models) {
+            getRepository().save(model);
+        }
     }
 
     @PostMapping({"/update", "/modify"})
     public void update(@RequestBody M model) {
-        model.update();
+        getRepository().save(model);
     }
 
     @PostMapping({"/delete/{id}", "/remove/{id}"})
     public void delete(@PathVariable("id") String id) {
-        getRepository().delete(id);
+        getRepository().deleteById(id);
     }
 }

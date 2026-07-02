@@ -1,127 +1,199 @@
 package io.ddd4j.web.webmvc.api;
 
-import io.ddd4j.core.domain.repository.Repository;
-import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.core.domain.contract.Page;
 import io.ddd4j.core.domain.model.AggregateRoot;
-import org.springframework.web.bind.annotation.*;
+import io.ddd4j.core.domain.query.Query;
+import io.ddd4j.core.domain.repository.Repository;
+import io.ddd4j.core.domain.repository.RepositoryRegistry;
+import io.ddd4j.core.domain.repository.RichRepository;
+import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.core.util.MappingKit;
+import io.ddd4j.kit.lang.BeanKit;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * 聚合控制器，实现该控制器的Controller，自带CRUD方法
+ * Dynamic aggregate controller backed by the framework-neutral rich model SPI.
+ *
+ * <p>This keeps the old generic Web entry style, but no longer depends on the
+ * removed {@code Model/BaseRepository} active-record registry.</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public interface AggregateController {
 
-    // 公共POST分页
     @PostMapping("/{model}/page")
-    default Page<Model> postPage(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
-        return Query.convert(model, body).page();
+    default Page<? extends AggregateRoot<?>> postPage(@PathVariable("model") String model,
+                                                      @RequestBody Map<String, Object> body) {
+        return query(model, body).page();
     }
 
-    // 公共分页
     @GetMapping("/{model}/page")
-    default Page<Model> getPage(@PathVariable("model") String model, @RequestParam Map<String, Object> params) {
-        return Query.convert(model, params).page();
+    default Page<? extends AggregateRoot<?>> getPage(@PathVariable("model") String model,
+                                                     @RequestParam Map<String, Object> params) {
+        return query(model, params).page();
     }
 
-    // 公共POST列表
     @PostMapping("/{model}/list")
-    default List<Model> postList(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
-        return Query.convert(model, body).list();
+    default List<? extends AggregateRoot<?>> postList(@PathVariable("model") String model,
+                                                      @RequestBody Map<String, Object> body) {
+        return query(model, body).list();
     }
 
-    // 公共列表
     @GetMapping("/{model}/list")
-    default List<Model> getList(@PathVariable("model") String model, @RequestParam Map<String, Object> params) {
-        return Query.convert(model, params).list();
+    default List<? extends AggregateRoot<?>> getList(@PathVariable("model") String model,
+                                                     @RequestParam Map<String, Object> params) {
+        return query(model, params).list();
     }
 
-    // 公共详情
     @GetMapping("/{model}/detail")
-    default Model detail(@PathVariable("model") String model, @RequestParam Map<String, Object> params) {
-        return Query.convert(model, params).first();
+    default AggregateRoot<?> detail(@PathVariable("model") String model,
+                                    @RequestParam Map<String, Object> params) {
+        return query(model, params).first();
     }
 
-    // 公共详情
     @GetMapping("/{model}/detail/{id}")
-    default Model detail(@PathVariable("model") String model, @PathVariable("id") String id) {
-        return BaseRepository.of(Model.ofName(model)).get(id);
+    default AggregateRoot<?> detail(@PathVariable("model") String model,
+                                    @PathVariable("id") String id) {
+        return (AggregateRoot<?>) repository(model).findById(id).orElse(null);
     }
 
-    // 公共是否存在
     @GetMapping("/{model}/exist")
-    default Boolean exist(@PathVariable("model") String model, @RequestParam Map<String, Object> params) {
-        return Query.convert(model, params).exist();
+    default Boolean exist(@PathVariable("model") String model,
+                          @RequestParam Map<String, Object> params) {
+        return query(model, params).exist();
     }
 
-    // 公共计数
     @GetMapping("/{model}/count")
-    default Integer count(@PathVariable("model") String model, @RequestParam Map<String, Object> params) {
-        return Query.convert(model, params).count();
+    default Long count(@PathVariable("model") String model,
+                       @RequestParam Map<String, Object> params) {
+        return query(model, params).count();
     }
 
-    // 公共创建
     @PostMapping("/{model}/create")
-    default Model create(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
-        Model m = Model.convert(model, body);
-        if (Objects.isNull(m)) {
-            return null;
-        }
-        m.save();
-        return m;
+    default AggregateRoot<?> create(@PathVariable("model") String model,
+                                    @RequestBody Map<String, Object> body) {
+        AggregateRoot<?> aggregate = aggregate(model, body);
+        return (AggregateRoot<?>) repository(model).save(aggregate);
     }
 
-    // 公共批量创建
     @PostMapping("/{model}/saveBatch")
-    default void saveBatch(@PathVariable("model") String model, @RequestBody List<Map<String, Object>> body) {
-        BaseRepository.of(Model.ofName(model)).save(Model.convert(model, body));
+    default void saveBatch(@PathVariable("model") String model,
+                           @RequestBody List<Map<String, Object>> body) {
+        Repository repository = repository(model);
+        for (AggregateRoot<?> aggregate : aggregates(model, body)) {
+            repository.save(aggregate);
+        }
     }
 
-    // 公共修改
     @PostMapping({"/{model}/update", "/{model}/modify"})
-    default void update(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
-        Model m = Model.convert(model, body);
-        if (Objects.nonNull(m)) {
-            m.update();
-        }
+    default void update(@PathVariable("model") String model,
+                        @RequestBody Map<String, Object> body) {
+        AggregateRoot<?> aggregate = aggregate(model, body);
+        repository(model).save(aggregate);
     }
 
-    // 公共批量修改
     @PostMapping({"/{model}/updateBatch", "/{model}/modifyBatch"})
-    default void updateBatch(@PathVariable("model") String model, @RequestBody List<Map<String, Object>> body) {
-        List<Model> models = Model.convert(model, body);
-        for (Model m : models) {
-            m.update();
+    default void updateBatch(@PathVariable("model") String model,
+                             @RequestBody List<Map<String, Object>> body) {
+        Repository repository = repository(model);
+        for (AggregateRoot<?> aggregate : aggregates(model, body)) {
+            repository.save(aggregate);
         }
     }
 
-    // 公共保存（创建或修改）
     @PostMapping("/{model}/save")
-    default Model save(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
-        Model m = Model.convert(model, body);
-        if (Objects.isNull(m)) {
-            return null;
-        }
-        m.saveOrUpdate();
-        return m;
+    default AggregateRoot<?> save(@PathVariable("model") String model,
+                                  @RequestBody Map<String, Object> body) {
+        AggregateRoot<?> aggregate = aggregate(model, body);
+        return (AggregateRoot<?>) repository(model).save(aggregate);
     }
 
-    // 公共删除
     @PostMapping({"/{model}/delete/{id}", "/{model}/remove/{id}"})
-    default void delete(@PathVariable("model") String model, @PathVariable("id") String id) {
-        BaseRepository.of(Model.ofName(model)).delete(id);
+    default void delete(@PathVariable("model") String model,
+                        @PathVariable("id") String id) {
+        repository(model).deleteById(id);
     }
 
-    // 公共按条件删除
     @PostMapping("/{model}/remove")
-    default void removeByQuery(@PathVariable("model") String model, @RequestBody Map<String, Object> body) {
-        Query query = Query.convert(model, body);
-        BaseRepository.of(Model.ofName(model)).delete(query);
+    default void removeByQuery(@PathVariable("model") String model,
+                               @RequestBody Map<String, Object> body) {
+        Query<?> query = query(model, body);
+        RichRepository richRepository = richRepository(model);
+        richRepository.deleteByQuery(query);
     }
 
+    private Repository repository(String model) {
+        return RepositoryRegistry.repository((Class) modelClass(model));
+    }
+
+    private RichRepository richRepository(String model) {
+        Repository repository = repository(model);
+        if (repository instanceof RichRepository richRepository) {
+            return richRepository;
+        }
+        throw new BizRuntimeException("Repository for model {} does not support rich query", model);
+    }
+
+    private Query<?> query(String model, Map<String, Object> source) {
+        Class<? extends Query> queryClass = queryClass(model);
+        Query<?> query = BeanKit.ofMap(source, queryClass);
+        if (Objects.nonNull(query)) {
+            return query;
+        }
+        return newInstance(queryClass);
+    }
+
+    private AggregateRoot<?> aggregate(String model, Map<String, Object> source) {
+        Class<? extends AggregateRoot<?>> modelClass = modelClass(model);
+        AggregateRoot<?> aggregate = BeanKit.ofMap(source, modelClass);
+        if (Objects.nonNull(aggregate)) {
+            return aggregate;
+        }
+        return newInstance(modelClass);
+    }
+
+    private List<AggregateRoot<?>> aggregates(String model, List<Map<String, Object>> source) {
+        List<AggregateRoot<?>> aggregates = new ArrayList<>();
+        if (Objects.isNull(source)) {
+            return aggregates;
+        }
+        for (Map<String, Object> row : source) {
+            aggregates.add(aggregate(model, row));
+        }
+        return aggregates;
+    }
+
+    private Class<? extends AggregateRoot<?>> modelClass(String model) {
+        Object mapped = MappingKit.get("MODEL_NAME", model);
+        if (mapped instanceof Class<?> mappedClass && AggregateRoot.class.isAssignableFrom(mappedClass)) {
+            return (Class<? extends AggregateRoot<?>>) mappedClass;
+        }
+        throw new BizRuntimeException("Aggregate model mapping not found for {}", model);
+    }
+
+    private Class<? extends Query> queryClass(String model) {
+        Object mapped = MappingKit.get("MODEL_QUERY", modelClass(model));
+        if (mapped instanceof Class<?> mappedClass && Query.class.isAssignableFrom(mappedClass)) {
+            return (Class<? extends Query>) mappedClass;
+        }
+        throw new BizRuntimeException("Query mapping not found for model {}", model);
+    }
+
+    private <T> T newInstance(Class<T> type) {
+        try {
+            return type.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new BizRuntimeException("Cannot instantiate " + type.getName(), e);
+        }
+    }
 }

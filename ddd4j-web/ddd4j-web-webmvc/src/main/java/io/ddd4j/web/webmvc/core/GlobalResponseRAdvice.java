@@ -41,7 +41,7 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
         if (Objects.isNull(data) || returnType.getParameterType().isAssignableFrom(void.class)) {
             return R.ok();
         }
-        if (Model.class.isAssignableFrom(returnType.getParameterType())) {
+        if (AggregateRoot.class.isAssignableFrom(returnType.getParameterType())) {
             return R.ok(data);
         }
         // String类型不能直接包装
