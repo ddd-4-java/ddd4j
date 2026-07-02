@@ -1,9 +1,9 @@
 package io.ddd4j.web.webmvc.api;
 
-import io.ddd4j.core.domain.contract.BaseRepository;
-import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.repository.Repository;
+import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.core.domain.contract.Page;
-import io.ddd4j.core.domain.contract.Query;
+import io.ddd4j.core.domain.model.AggregateRoot;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

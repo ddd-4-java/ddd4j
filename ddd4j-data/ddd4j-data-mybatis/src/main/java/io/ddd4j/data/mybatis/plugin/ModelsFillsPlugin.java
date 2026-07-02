@@ -1,8 +1,8 @@
 package io.ddd4j.data.mybatis.plugin;
 
-import io.ddd4j.core.domain.contract.Model;
 import io.ddd4j.core.domain.contract.Page;
-import io.ddd4j.core.domain.contract.Query;
+import io.ddd4j.core.domain.query.Query;
+import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.kit.lang.CollKit;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * <ol>
  *   <li>检查 Mapper 方法参数是否包含 {@link Query} 对象</li>
  *   <li>如果是，调用 {@link Query#doFills(List)} 对查询结果进行聚合填充</li>
- *   <li>支持单个 Model、List&lt;Model&gt;、Page&lt;Model&gt; 三种返回类型</li>
+ *   <li>支持单个 AggregateRoot、List&lt;AggregateRoot&gt;、Page&lt;AggregateRoot&gt; 三种返回类型</li>
  * </ol>
  *
  * <p>使用方式：在 Spring 配置中注册此插件：
@@ -72,26 +72,28 @@ public class ModelsFillsPlugin implements Interceptor {
     }
 
     private void fills(Query query, Object result) {
-        if (result instanceof Model model) {
-            query.doFills(Collections.singletonList(model));
-        } else if (result instanceof List<?> models) {
-            if (isModelList(models)) {
-                query.doFills(toModels(models));
+        if (result instanceof AggregateRoot<?> aggregateRoot) {
+            query.doFills(Collections.singletonList(aggregateRoot));
+        } else if (result instanceof List<?> aggregates) {
+            if (isAggregateRootList(aggregates)) {
+                query.doFills(toAggregateRoots(aggregates));
             }
         } else if (result instanceof Page<?> page) {
             List<?> records = page.getRecords();
-            if (isModelList(records)) {
-                query.doFills(toModels(records));
+            if (isAggregateRootList(records)) {
+                query.doFills(toAggregateRoots(records));
             }
         }
     }
 
-    private boolean isModelList(List<?> values) {
-        return CollKit.isNotEmpty(values) && values.get(0) instanceof Model;
+    private boolean isAggregateRootList(List<?> values) {
+        return CollKit.isNotEmpty(values) && values.get(0) instanceof AggregateRoot<?>;
     }
 
-    private List<Model> toModels(List<?> values) {
-        return values.stream().map(Model.class::cast).collect(Collectors.toList());
+    private List<AggregateRoot<?>> toAggregateRoots(List<?> values) {
+        return values.stream()
+                .map(value -> (AggregateRoot<?>) value)
+                .collect(Collectors.toList());
     }
 
 }

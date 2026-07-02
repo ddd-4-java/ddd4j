@@ -47,7 +47,7 @@ import java.util.Optional;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
-public interface Repository<M extends AggregateRoot<ID>, ID extends Serializable> {
+public interface Repository<M extends AggregateRoot<?>, ID extends Serializable> {
 
     /**
      * 按标识查找聚合根。
@@ -82,9 +82,10 @@ public interface Repository<M extends AggregateRoot<ID>, ID extends Serializable
      *
      * @param aggregate 聚合根
      */
+    @SuppressWarnings("unchecked")
     default void delete(M aggregate) {
         if (Objects.nonNull(aggregate)) {
-            deleteById(aggregate.id());
+            deleteById((ID) aggregate.id());
         }
     }
 

@@ -1,6 +1,6 @@
 package io.ddd4j.web.quarkus.controller;
 
-import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.core.domain.contract.Page;
 import io.ddd4j.core.domain.contract.R;
 import io.ddd4j.web.quarkus.TenantAwareResource;

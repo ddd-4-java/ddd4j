@@ -17,10 +17,11 @@ package io.ddd4j.data.mybatis.plugin;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.util.Objects;
@@ -33,8 +34,9 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Slf4j
 public class SqlExplainInterceptor implements InnerInterceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(SqlExplainInterceptor.class);
 
     /**
      * 长 SQL 阈值（字符数），默认 2000

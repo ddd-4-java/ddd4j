@@ -1,6 +1,7 @@
 package io.ddd4j.core.context;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.subject.Subject;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;

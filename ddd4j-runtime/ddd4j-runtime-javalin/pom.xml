@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../../ddd4j-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-runtime-javalin</artifactId>
+    <description>ddd4j Javalin 运行时适配：将 ddd4j 核心 SPI 注入 Javalin 容器。</description>
+
+    <dependencies>
+        <!-- 核心契约 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-annotation</artifactId>
+        </dependency>
+
+        <!-- Javalin -->
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+        </dependency>
+    </dependencies>
+</project>

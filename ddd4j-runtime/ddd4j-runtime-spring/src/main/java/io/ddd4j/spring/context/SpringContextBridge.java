@@ -17,7 +17,7 @@ package io.ddd4j.spring.context;
 
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.core.context.SpiKeys;
+import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.domain.event.DomainEventPublisher;
 import io.ddd4j.core.domain.event.MQEventPublisher;
 import io.ddd4j.core.subject.SubjectProvider;

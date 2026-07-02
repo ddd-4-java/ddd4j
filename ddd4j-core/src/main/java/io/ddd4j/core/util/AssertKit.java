@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
-public class BizAssert {
+public class AssertKit {
     /**
      * 断言是否为真，如果为 {@code false} 抛出给定的异常<br>
      *

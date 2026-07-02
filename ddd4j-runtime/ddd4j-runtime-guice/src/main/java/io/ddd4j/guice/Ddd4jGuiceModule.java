@@ -22,7 +22,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.core.context.SpiKeys;
+import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.domain.event.DomainEventPublisher;
 import io.ddd4j.core.domain.event.MQEventPublisher;
 import io.ddd4j.core.domain.query.projection.*;

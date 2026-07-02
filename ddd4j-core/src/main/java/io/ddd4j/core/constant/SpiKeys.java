@@ -1,4 +1,7 @@
-package io.ddd4j.core.context;
+package io.ddd4j.core.constant;
+
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.context.ThreadContext;
 
 /**
  * ddd4j SPI 服务约定 key 常量。

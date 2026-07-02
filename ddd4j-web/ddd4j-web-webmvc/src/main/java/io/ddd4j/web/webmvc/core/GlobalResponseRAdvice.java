@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.annotation.api.RawResponse;
 import io.ddd4j.core.domain.contract.IR;
-import io.ddd4j.core.domain.contract.Model;
+import io.ddd4j.core.domain.model.AggregateRoot;
 import io.ddd4j.core.domain.contract.R;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.web.config.BaseWebProperties;

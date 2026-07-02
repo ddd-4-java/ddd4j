@@ -72,6 +72,30 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends Model<?>> extend
     @Getter
     private ApplicationContext context;
 
+    public NestedMessageSource getMessageSource() {
+        return messageSource;
+    }
+
+    public CacheManager getCacheManager() {
+        return cacheManager;
+    }
+
+    public Mapper getBeanMapper() {
+        return beanMapper;
+    }
+
+    public StringValueResolver getValueResolver() {
+        return valueResolver;
+    }
+
+    public ApplicationEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    public ApplicationContext getContext() {
+        return context;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
     }

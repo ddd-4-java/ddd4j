@@ -17,7 +17,6 @@ package io.ddd4j.data.mybatis.plugin;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -30,6 +29,8 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.util.Objects;
@@ -43,8 +44,9 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Slf4j
 public class DataPermissionInnerInterceptor implements InnerInterceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(DataPermissionInnerInterceptor.class);
 
     private final DataScopeProvider provider;
 

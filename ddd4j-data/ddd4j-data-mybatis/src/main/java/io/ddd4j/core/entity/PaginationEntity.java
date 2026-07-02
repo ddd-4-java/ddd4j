@@ -52,4 +52,8 @@ public class PaginationEntity<T extends Model<?>> extends BaseEntity<T> {
         return limit <= 0 ? DEFAULT_LIMIT : limit;
     }
 
+    public List<OrderItem> getOrders() {
+        return orders;
+    }
+
 }

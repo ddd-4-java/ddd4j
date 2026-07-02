@@ -17,6 +17,7 @@
     <modules>
         <module>ddd4j-runtime-spring</module>
         <module>ddd4j-runtime-quarkus</module>
+        <module>ddd4j-runtime-javalin</module>
         <module>ddd4j-runtime-guice</module>
     </modules>
 

@@ -1,7 +1,7 @@
 package io.ddd4j.core.domain.event;
 
 import io.ddd4j.core.context.Contexts;
-import io.ddd4j.core.context.SpiKeys;
+import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.constant.ContextConstants;
 import lombok.Getter;
