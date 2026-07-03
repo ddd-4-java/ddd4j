@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledFuture;
 @Slf4j(topic = "### DDD4J-SPRING : ViewScheduler ###")
 public class SpringViewScheduler implements ViewScheduler {
 
+    /** Spring 任务调度器 */
     private final TaskScheduler taskScheduler;
 
     public SpringViewScheduler(TaskScheduler taskScheduler) {

@@ -24,11 +24,23 @@ public class BaseMonitorConfig {
         return new RobotLogbackAppendService();
     }
 
+    /**
+     * 创建企微机器人发送器 Bean
+     *
+     * @param properties 监控配置属性
+     * @return 企微机器人发送器实例
+     */
     @Bean
     public QiWeiRobotSender qiWeiRobotSender(BaseMonitorProperties properties) {
         return new QiWeiRobotSender(properties.getLog().getQiwei().getKey());
     }
 
+    /**
+     * 创建钉钉机器人发送器 Bean
+     *
+     * @param properties 监控配置属性
+     * @return 钉钉机器人发送器实例
+     */
     @Bean
     public DingDingRobotSender dingDingRobotSender(BaseMonitorProperties properties) {
         return new DingDingRobotSender(properties.getLog().getDingding().getToken(), properties.getLog().getDingding().getSecret());

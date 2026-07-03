@@ -6,13 +6,17 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
+/**
+ * 数值格式校验注解
+ *
+ * <p>校验字符串是否符合指定的数值正则表达式格式。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Constraint(validatedBy = {NumberValueValidator.class})
-/**
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
 public @interface NumberValue {
 
     String regex() default "^[0-9\\-]+$";

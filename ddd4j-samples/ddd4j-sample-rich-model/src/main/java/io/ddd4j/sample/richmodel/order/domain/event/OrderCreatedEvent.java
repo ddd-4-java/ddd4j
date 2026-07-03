@@ -3,7 +3,11 @@ package io.ddd4j.sample.richmodel.order.domain.event;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 /**
- * Raised when an order is created.
+ * 订单创建事件。
+ *
+ * <p>当新订单被创建时触发。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OrderCreatedEvent extends DomainEvent<String> {
 

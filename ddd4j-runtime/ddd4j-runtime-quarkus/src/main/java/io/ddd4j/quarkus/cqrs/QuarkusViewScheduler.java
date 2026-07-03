@@ -10,13 +10,21 @@ import java.util.UUID;
 
 /**
  * Quarkus CQRS 视图调度器。
+ * <p>
+ * 基于 Quartz {@link Scheduler} 实现 {@link ViewScheduler} SPI，
+ * 按 CRON 表达式定时触发视图增量拉取。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 @ApplicationScoped
 public class QuarkusViewScheduler implements ViewScheduler {
 
+    /** Quartz JobDataMap 中任务标识的键名 */
     static final String TASK_KEY = "ddd4j.task";
 
+    /** Quartz 调度器 */
     @Inject
     Scheduler scheduler;
 

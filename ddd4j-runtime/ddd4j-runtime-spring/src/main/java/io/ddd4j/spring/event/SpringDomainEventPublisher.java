@@ -21,6 +21,7 @@ import java.util.Objects;
 @Component
 public class SpringDomainEventPublisher implements DomainEventPublisher {
 
+    /** Spring 应用事件发布器 */
     private final ApplicationEventPublisher publisher;
 
     public SpringDomainEventPublisher(ApplicationEventPublisher publisher) {

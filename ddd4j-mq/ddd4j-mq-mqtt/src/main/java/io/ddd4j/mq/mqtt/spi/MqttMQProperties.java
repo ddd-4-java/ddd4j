@@ -6,7 +6,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Eclipse Paho MQTT v3 adapter configuration (Pure Java, zero Spring).
+ * Eclipse Paho MQTT v3 适配器配置（纯 Java，零 Spring 依赖）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MqttMQProperties {
 

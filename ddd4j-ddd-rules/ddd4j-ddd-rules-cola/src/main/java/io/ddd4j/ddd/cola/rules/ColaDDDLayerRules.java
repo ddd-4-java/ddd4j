@@ -62,6 +62,9 @@ public final class ColaDDDLayerRules {
                     "org.springframework..", "com.baomidou..", "org.apache.ibatis..")
             .because("领域层不得依赖 Spring/MyBatis/iBatis 等框架");
 
+    /**
+     * 私有构造方法，防止实例化工具类。
+     */
     private ColaDDDLayerRules() {
     }
 

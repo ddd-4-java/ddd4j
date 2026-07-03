@@ -6,9 +6,11 @@ import org.apache.pulsar.client.api.PulsarClient;
 import java.util.Objects;
 
 /**
- * Apache Pulsar adapter configuration (Pure Java, zero Spring).
+ * Apache Pulsar 适配器配置（纯 Java，零 Spring 依赖）。
  *
- * <p>Version aligned with {@code ${pulsar.version}} via {@code pulsar-bom}.
+ * <p>版本通过 {@code pulsar-bom} 与 {@code ${pulsar.version}} 对齐。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class PulsarMQProperties {
 

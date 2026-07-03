@@ -32,6 +32,7 @@ import java.util.Objects;
  */
 public class WebKit {
 
+    /** 客户端 IP 获取时依次尝试的 HTTP 请求头 */
     private static final String[] IP_HEADER_CANDIDATES = {
             "X-Forwarded-For",
             "Proxy-Client-IP",

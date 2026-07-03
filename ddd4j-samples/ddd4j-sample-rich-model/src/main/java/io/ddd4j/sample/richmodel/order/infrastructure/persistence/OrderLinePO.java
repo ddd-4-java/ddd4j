@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * Persistence object for order line.
+ * 订单行持久化对象。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 @Builder
@@ -16,10 +18,28 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OrderLinePO {
 
+    /**
+     * 订单行 ID
+     */
     private String id;
+    /**
+     * 商品 ID
+     */
     private String productId;
+    /**
+     * 商品名称
+     */
     private String productName;
+    /**
+     * 数量
+     */
     private Integer quantity;
+    /**
+     * 单价
+     */
     private BigDecimal unitPrice;
+    /**
+     * 货币代码
+     */
     private String currency;
 }

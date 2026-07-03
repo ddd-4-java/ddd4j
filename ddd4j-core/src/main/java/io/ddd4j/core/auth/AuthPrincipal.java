@@ -6,6 +6,20 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * 认证主体（Principal），承载用户认证授权后的完整身份信息。
+ * <p>
+ * 包含三部分信息：
+ * <ul>
+ *   <li><b>认证授权信息</b>：组织ID、用户ID、角色、权限等核心身份属性</li>
+ *   <li><b>辅助信息</b>：是否绑定、是否完善、是否需要多因子验证</li>
+ *   <li><b>请求来源</b>：客户端ID、设备信息、IP地址等登录上下文</li>
+ * </ul>
+ * <p>
+ * 通过 {@link Subject#getPrincipal()} 获取当前会话的认证主体实例。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @Accessors(chain = true)
 @Data
 public class AuthPrincipal implements Serializable {
@@ -14,8 +28,6 @@ public class AuthPrincipal implements Serializable {
 
     /**
      * 所属组织ID
-     *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
      */
     private Object orgId;
     /**

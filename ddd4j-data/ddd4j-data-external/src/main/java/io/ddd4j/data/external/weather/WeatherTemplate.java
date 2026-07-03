@@ -21,16 +21,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 免费天气查询
- * <a href="https://www.sojson.com/api/weather.html">接口文档</a>
+ * 免费天气查询模板
+ * <p>通过 sojson 天气接口获取城市天气信息，支持本地缓存</p>
+ * <p>接口文档：<a href="https://www.sojson.com/api/weather.html">https://www.sojson.com/api/weather.html</a></p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class WeatherTemplate {
 
-    //请求连接地址
+    /** 天气查询请求地址 */
     private final static String SOJSON_WEATHER_URL = "http://t.weather.sojson.com/api/weather/city/%s";
 
+    /** REST 客户端 */
     private final RestClient restClient;
+    /** 天气数据本地缓存（1 小时过期） */
     private final LoadingCache<String, Optional<JSONObject>> WEATHER_DATA_CACHES = Caffeine.newBuilder()
             // 设置写缓存后1个小时过期
             .expireAfterWrite(1, TimeUnit.HOURS)
@@ -65,10 +70,22 @@ public class WeatherTemplate {
                 }
             });
 
+    /**
+     * 构造函数
+     *
+     * @param restClient REST 客户端
+     */
     public WeatherTemplate(RestClient restClient) {
         this.restClient = restClient;
     }
 
+    /**
+     * 获取指定城市的天气信息
+     *
+     * @param city_code 城市代码
+     * @return 天气 JSON 数据，未找到返回 null
+     * @throws ExecutionException 执行异常
+     */
     public JSONObject getWeather(String city_code) throws ExecutionException {
         Optional<JSONObject> opt = WEATHER_DATA_CACHES.get(city_code);
         return Objects.isNull(opt) ? null : opt.orElse(null);

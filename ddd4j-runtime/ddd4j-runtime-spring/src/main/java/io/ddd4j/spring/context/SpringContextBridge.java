@@ -49,9 +49,13 @@ import java.util.Objects;
 @Order(Ordered.HIGHEST_PRECEDENCE + 100)
 public class SpringContextBridge implements ApplicationListener<ContextRefreshedEvent> {
 
+    /** 领域事件发布器提供者 */
     private final ObjectProvider<DomainEventPublisher> domainEventPublisherProvider;
+    /** MQ 事件发布器提供者 */
     private final ObjectProvider<MQEventPublisher> mqEventPublisherProvider;
+    /** Subject 提供者 */
     private final ObjectProvider<SubjectProvider> subjectProviderProvider;
+    /** 国际化提供者 */
     private final ObjectProvider<I18nProvider> i18nProviderProvider;
 
     public SpringContextBridge(

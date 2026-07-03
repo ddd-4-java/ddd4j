@@ -2,11 +2,12 @@ package io.ddd4j.sample.auth.multilogin.subject;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
-import io.ddd4j.sample.auth.multilogin.event.LoginFailedEvent;
-import io.ddd4j.sample.auth.multilogin.event.LoginSucceededEvent;
+import io.ddd4j.core.auth.event.AuthFailedEvent;
+import io.ddd4j.core.auth.event.AuthSucceededEvent;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.cache.subject.InMemorySubject;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * 测试 cache 版 {@link InMemorySubject}：事件发布走 ddd4j 通用 {@link DomainEvent}。
+ */
 class InMemorySubjectTest {
 
     private final List<Object> events = new ArrayList<>();
-    private final ApplicationEventPublisher eventPublisher = event -> {
-        if (!(event instanceof ApplicationEvent)) {
-            events.add(event);
+    private final DomainEventPublisher eventPublisher = new DomainEventPublisher() {
+        @Override
+        public <T> void publish(DomainEvent<T> event) {
+            events.add(event.source());
         }
     };
 
@@ -39,7 +44,7 @@ class InMemorySubjectTest {
         assertThat(token).startsWith("mobile:");
         assertThat(subject.isAuthenticated()).isTrue();
         assertThat(currentPrincipal).isSameAs(principal);
-        assertThat(events).hasOnlyElementsOfType(LoginSucceededEvent.class);
+        assertThat(events).hasOnlyElementsOfType(AuthSucceededEvent.class);
     }
 
     @Test
@@ -53,6 +58,6 @@ class InMemorySubjectTest {
         assertThatThrownBy(() -> subject.login(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("invalid phone verification code");
-        assertThat(events).hasOnlyElementsOfType(LoginFailedEvent.class);
+        assertThat(events).hasOnlyElementsOfType(AuthFailedEvent.class);
     }
 }

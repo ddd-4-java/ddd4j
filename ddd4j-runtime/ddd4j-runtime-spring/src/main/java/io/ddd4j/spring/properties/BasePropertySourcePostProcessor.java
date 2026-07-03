@@ -10,6 +10,9 @@ import java.util.Objects;
 
 /**
  * 基础属性源后置处理器。
+ * <p>
+ * 将应用配置属性（如 application.yml 中的 ddd4j.* 配置）注入到 Spring Environment，
+ * 供 ddd4j 各模块通过 {@code @Value("${ddd4j.xxx}")} 读取使用。
  *
  * <p>将应用配置属性（如 application.yml 中的 ddd4j.* 配置）注入到 Spring Environment，
  * 供 {@code ddd4j-webmvc} 等模块通过 {@code @Value("${ddd4j.xxx}")} 读取。

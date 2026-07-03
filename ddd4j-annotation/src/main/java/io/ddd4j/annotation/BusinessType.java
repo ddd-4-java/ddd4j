@@ -57,14 +57,31 @@ public enum BusinessType {
      */
     SMS("sms", "发送短信");
 
+    /**
+     * 业务类型标识键
+     */
     private String key;
+    /**
+     * 业务类型描述
+     */
     private String desc;
 
+    /**
+     * 构造业务类型枚举
+     *
+     * @param key  业务类型标识键
+     * @param desc 业务类型描述
+     */
     BusinessType(String key, String desc) {
         this.key = key;
         this.desc = desc;
     }
 
+    /**
+     * 将所有业务类型转换为 Map 列表
+     *
+     * @return 包含所有业务类型键值对的列表
+     */
     public static List<Map<String, String>> toList() {
         List<Map<String, String>> typeList = new LinkedList<Map<String, String>>();
         for (BusinessType typeEnum : BusinessType.values()) {
@@ -73,26 +90,57 @@ public enum BusinessType {
         return typeList;
     }
 
+    /**
+     * 获取业务类型标识键
+     *
+     * @return 业务类型键
+     */
     public String getKey() {
         return key;
     }
 
+    /**
+     * 设置业务类型标识键
+     *
+     * @param key 业务类型键
+     */
     public void setKey(String key) {
         this.key = key;
     }
 
+    /**
+     * 获取业务类型描述
+     *
+     * @return 业务类型描述
+     */
     public String getDesc() {
         return desc;
     }
 
+    /**
+     * 设置业务类型描述
+     *
+     * @param desc 业务类型描述
+     */
     public void setDesc(String desc) {
         this.desc = desc;
     }
 
+    /**
+     * 比较当前业务类型是否与指定类型相同
+     *
+     * @param relation 待比较的业务类型
+     * @return 若相同返回 true，否则返回 false
+     */
     public boolean equals(BusinessType relation) {
         return this.compareTo(relation) == 0;
     }
 
+    /**
+     * 将当前业务类型转换为包含键值对的 Map
+     *
+     * @return 包含 "key" 和 "desc" 的 Map
+     */
     public Map<String, String> toMap() {
         Map<String, String> typeMap = new HashMap<String, String>();
         typeMap.put("key", this.getKey());

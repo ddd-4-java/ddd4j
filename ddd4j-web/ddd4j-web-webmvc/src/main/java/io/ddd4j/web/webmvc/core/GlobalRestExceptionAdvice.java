@@ -21,13 +21,19 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestControllerAdvice
 /**
+ * 全局 REST 异常通知处理器。
+ * <p>统一处理参数校验异常、业务运行时异常、NPE、404 及通用运行时异常，返回统一错误响应。</p>
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@RestControllerAdvice
 @Slf4j(topic = "### BASE-WEB : GlobalRestExceptionAdvice ###")
 public class GlobalRestExceptionAdvice {
 
+    /**
+     * 处理参数绑定异常。
+     */
     @ExceptionHandler({BindException.class})
     public R<String> bindException(HttpServletRequest request, Model model, BindException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
@@ -36,6 +42,9 @@ public class GlobalRestExceptionAdvice {
         return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), String.join(",", errList));
     }
 
+    /**
+     * 处理参数校验异常。
+     */
     @ExceptionHandler({ValidateException.class})
     public R<String> validatorException(HttpServletRequest request, ValidateException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
@@ -43,6 +52,9 @@ public class GlobalRestExceptionAdvice {
         return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), e.getMessage());
     }
 
+    /**
+     * 处理方法参数无效异常。
+     */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public R<String> methodArgumentNotValidExceptionHandler(HttpServletRequest request, MethodArgumentNotValidException e) {
         FieldError fieldError = e.getBindingResult().getFieldError();
@@ -51,6 +63,9 @@ public class GlobalRestExceptionAdvice {
         return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), fieldError.getDefaultMessage());
     }
 
+    /**
+     * 处理 404 地址未找到异常。
+     */
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public R<String> handle(HttpServletRequest request, NoHandlerFoundException e) {
@@ -58,12 +73,18 @@ public class GlobalRestExceptionAdvice {
         return R.fail(404, "地址错误！！！" + request.getRequestURI() + "非法访问!");
     }
 
+    /**
+     * 处理业务运行时异常。
+     */
     @ExceptionHandler({BizRuntimeException.class})
     public R<String> serviceException(HttpServletRequest request, BizRuntimeException e) {
         log.warn("服务异常：", e);
         return R.fail(e.getCode(), e.getMessage());
     }
 
+    /**
+     * 处理空指针异常。
+     */
     @ExceptionHandler({NullPointerException.class})
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
@@ -71,6 +92,9 @@ public class GlobalRestExceptionAdvice {
         return R.fail(ResultCode.FAIL.getCode(), e.getMessage());
     }
 
+    /**
+     * 处理通用运行时异常。
+     */
     @ExceptionHandler({RuntimeException.class})
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);

@@ -15,14 +15,27 @@ import java.util.Objects;
 
 /**
  * 嵌套的地区解析模板
+ * <p>组合多个 IP 地区解析服务，按优先级依次尝试，支持缓存</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class NestedRegionTemplate {
 
+    /** 缓存服务 */
     private RegionCache regionCache;
+    /** IP2Region 解析模板 */
     private IpRegionTemplate ipRegionTemplate;
+    /** 太平洋网络 IP 解析模板 */
     private PconlineRegionTemplate pconlineRegionTemplate;
 
+    /**
+     * 构造函数
+     *
+     * @param regionCache            缓存服务
+     * @param ipRegionTemplate       IP2Region 解析模板
+     * @param pconlineRegionTemplate 太平洋网络 IP 解析模板
+     */
     public NestedRegionTemplate(RegionCache regionCache, IpRegionTemplate ipRegionTemplate,
                                 PconlineRegionTemplate pconlineRegionTemplate) {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
@@ -30,10 +43,23 @@ public class NestedRegionTemplate {
         this.pconlineRegionTemplate = pconlineRegionTemplate;
     }
 
+    /**
+     * 去除字符串两端的空白
+     *
+     * @param value 原始字符串
+     * @return 去除空白后的字符串
+     */
     private static String trimWhitespace(String value) {
         return Objects.isNull(value) ? null : value.strip();
     }
 
+    /**
+     * 获取地区枚举（优先使用地区代码，失败则通过 IP 解析）
+     *
+     * @param regionCode 地区代码
+     * @param ipAddress  IP 地址
+     * @return 地区枚举
+     */
     public RegionEnum getRegion(String regionCode, String ipAddress) {
         RegionEnum regionEnum = this.getRegionByCode(regionCode);
         if (!regionEnum.isValidRegion()) {
@@ -43,6 +69,12 @@ public class NestedRegionTemplate {
         return regionEnum;
     }
 
+    /**
+     * 根据地区代码获取地区枚举
+     *
+     * @param regionCode 地区代码（code2/code3）
+     * @return 地区枚举
+     */
     public RegionEnum getRegionByCode(String regionCode) {
         RegionEnum regionEnum = RegionEnum.getByCode2(regionCode);
         log.debug("Get Region : {} By regionCode : {}, is Valid : {} ", regionEnum.name(), regionCode, regionEnum.isValidRegion());
@@ -53,6 +85,12 @@ public class NestedRegionTemplate {
         return regionEnum;
     }
 
+    /**
+     * 根据 IP 地址获取地区枚举
+     *
+     * @param ipAddress IPv4 地址
+     * @return 地区枚举
+     */
     public RegionEnum getRegionByIp(String ipAddress) {
         try {
             // 1、去除参数两头空白
@@ -89,6 +127,12 @@ public class NestedRegionTemplate {
         return RegionEnum.UK;
     }
 
+    /**
+     * 根据 IP 地址获取位置信息
+     *
+     * @param ipAddress IPv4 地址
+     * @return 位置信息字符串
+     */
     public String getLocationByIp(String ipAddress) {
         try {
             // 1、去除参数两头空白
@@ -113,6 +157,12 @@ public class NestedRegionTemplate {
         return XdbSearcher.NOT_MATCH;
     }
 
+    /**
+     * 根据 IP 地址获取地区地址对象
+     *
+     * @param ipAddress IPv4 地址
+     * @return 地区地址对象
+     */
     public RegionAddress getRegionAddress(String ipAddress) {
         try {
             // 1、去除参数两头空白
@@ -137,6 +187,13 @@ public class NestedRegionTemplate {
         return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
     }
 
+    /**
+     * 判断是否为大陆 IP（优先使用地区代码）
+     *
+     * @param regionCode 地区代码
+     * @param ipAddress  IP 地址
+     * @return true 如果是大陆地区
+     */
     public boolean isMainlandIp(String regionCode, String ipAddress) {
         try {
             RegionEnum regionEnum = this.getRegionByCode(regionCode);
@@ -150,6 +207,12 @@ public class NestedRegionTemplate {
         return Boolean.FALSE;
     }
 
+    /**
+     * 判断是否为大陆 IP
+     *
+     * @param ipAddress IP 地址
+     * @return true 如果是大陆地区
+     */
     public boolean isMainlandIp(String ipAddress) {
         // 1、去除参数两头空白
         ipAddress = trimWhitespace(ipAddress);

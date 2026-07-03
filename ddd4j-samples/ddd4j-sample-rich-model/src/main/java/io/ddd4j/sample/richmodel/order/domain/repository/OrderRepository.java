@@ -6,9 +6,17 @@ import io.ddd4j.sample.richmodel.order.domain.model.Order;
 import java.util.Optional;
 
 /**
- * Order aggregate repository contract.
+ * 订单聚合仓库接口。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface OrderRepository extends Repository<Order, String> {
 
+    /**
+     * 根据订单编号查询订单。
+     *
+     * @param orderNo 订单编号
+     * @return 查询结果
+     */
     Optional<Order> findByOrderNo(String orderNo);
 }

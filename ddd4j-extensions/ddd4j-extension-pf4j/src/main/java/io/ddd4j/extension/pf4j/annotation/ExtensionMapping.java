@@ -13,12 +13,24 @@ import java.lang.annotation.*;
 @Inherited
 public @interface ExtensionMapping {
 
+    /**
+     * 扩展点 ID
+     */
     public String id() default "";
 
+    /**
+     * 扩展点标题
+     */
     public String title() default "";
 
+    /**
+     * 扩展点版本号
+     */
     public String ver() default "1.0.0";
 
+    /**
+     * 扩展点描述
+     */
     public String desc() default "";
 
 }

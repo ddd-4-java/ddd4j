@@ -16,6 +16,9 @@ import java.util.Set;
 
 /**
  * DDD 注解扫描绑定模块：用 ClassGraph 扫描 DDD 注解标注的类并绑定到 Guice。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 public class DddAnnotationModule extends AbstractModule {
@@ -33,13 +36,26 @@ public class DddAnnotationModule extends AbstractModule {
             "io.ddd4j.guice.annotation.ddd.DomainConverter"
     };
 
+    /** 待扫描的基础包路径 */
     private final String[] basePackages;
+    /** 是否启用 ClassGraph 自动扫描 */
     private final boolean enableClassGraph;
 
+    /**
+     * 创建 DDD 注解绑定模块（默认启用 ClassGraph 扫描）。
+     *
+     * @param basePackages 待扫描的基础包路径
+     */
     public DddAnnotationModule(String... basePackages) {
         this(true, basePackages);
     }
 
+    /**
+     * 创建 DDD 注解绑定模块。
+     *
+     * @param enableClassGraph 是否启用 ClassGraph 自动扫描
+     * @param basePackages     待扫描的基础包路径
+     */
     public DddAnnotationModule(boolean enableClassGraph, String... basePackages) {
         this.enableClassGraph = enableClassGraph;
         this.basePackages = Objects.isNull(basePackages) ? new String[0] : basePackages;

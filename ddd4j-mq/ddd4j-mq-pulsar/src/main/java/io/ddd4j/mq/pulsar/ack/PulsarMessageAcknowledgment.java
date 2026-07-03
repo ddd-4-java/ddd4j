@@ -11,22 +11,32 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Apache Pulsar manual acknowledgment mapping.
+ * Apache Pulsar 手动确认映射实现。
  *
- * <p>Wraps a {@link Consumer} and the received {@link Message} (Pulsar Message, not JMS Message).
- * Pulsar nack semantics: {@link Consumer#negativeAcknowledge(Message)} redelivers
- * the message (with optional delay), {@link Consumer#acknowledge(Message)} acks.
+ * <p>包装了 {@link Consumer} 和收到的 {@link Message}（Pulsar 消息，非 JMS 消息）。
+ * Pulsar nack 语义：{@link Consumer#negativeAcknowledge(Message)} 重新投递消息（带可选延迟），
+ * {@link Consumer#acknowledge(Message)} 确认消息。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
 
+    /** Header 键：Pulsar 消费者 */
     public static final String HEADER_PULSAR_CONSUMER = "ddd4j.pulsar.consumer";
+    /** Header 键：Pulsar 消息 */
     public static final String HEADER_PULSAR_MESSAGE = "ddd4j.pulsar.message";
+    /** Header 键：Pulsar 消息 ID */
     public static final String HEADER_PULSAR_MESSAGE_ID = "ddd4j.pulsar.messageId";
 
+    /** Pulsar 消费者实例 */
     private final Consumer<?> consumer;
+    /** Pulsar 消息实例 */
     private final Message<?> message;
+    /** 消息 ID */
     private final String messageId;
+    /** 关联 ID */
     private final String correlationId;
+    /** 投递 ID */
     private final long deliveryId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 

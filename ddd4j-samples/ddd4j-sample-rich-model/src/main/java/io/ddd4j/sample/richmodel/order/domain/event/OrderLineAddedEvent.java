@@ -3,7 +3,11 @@ package io.ddd4j.sample.richmodel.order.domain.event;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 /**
- * Raised when an order line is added.
+ * 订单行添加事件。
+ *
+ * <p>当订单中添加新的商品行时触发。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OrderLineAddedEvent extends DomainEvent<String> {
 

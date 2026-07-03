@@ -1,11 +1,13 @@
 package io.ddd4j.sample.richmodel.order.application;
 
 /**
- * Command for creating a draft order.
+ * 创建订单命令。
  *
- * @param orderNo order number
- * @param buyerId buyer id
- * @param buyerName buyer display name
+ * @param orderNo   订单编号
+ * @param buyerId   买家 ID
+ * @param buyerName 买家显示名称
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) {
 }

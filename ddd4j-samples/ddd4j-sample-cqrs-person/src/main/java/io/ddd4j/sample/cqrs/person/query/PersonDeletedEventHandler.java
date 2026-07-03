@@ -6,6 +6,14 @@ import io.ddd4j.sample.cqrs.person.domain.PersonDeletedEvent;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * 人员删除事件处理器（读模型）。
+ *
+ * <p>当人员被删除时，从内存列表中移除对应条目，
+ * 用于维护人员列表的读模型投影。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class PersonDeletedEventHandler implements TypedEventHandler<PersonDeletedEvent> {
 
     private final ConcurrentMap<String, PersonListEntry> entries;

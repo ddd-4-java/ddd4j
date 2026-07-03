@@ -18,7 +18,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Programmatic Eclipse Paho MQTT consumer registrar.
+ * Eclipse Paho MQTT 消费者端点注册器（编程式注册）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MqttConsumerEndpointRegistrar {
 

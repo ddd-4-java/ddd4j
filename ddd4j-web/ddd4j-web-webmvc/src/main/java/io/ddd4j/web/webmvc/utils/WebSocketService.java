@@ -21,16 +21,28 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * WebSocket工具
+ * WebSocket 工具服务。
+ * <p>提供 WebSocket 客户端连接管理、消息收发、心跳检测及自动重连功能。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-WEB : WebSocketService ###")
 public class WebSocketService {
 
+    /** 会话缓存（clientId -> WebSocketSession） */
     private static final Map<String, WebSocketSession> SESSIONS = new ConcurrentHashMap<>();
+    /** 连接管理器缓存（clientId -> WebSocketConnectionManager） */
     private static final Map<String, WebSocketConnectionManager> MANAGERS = new ConcurrentHashMap<>();
 
+    /**
+     * 建立 WebSocket 连接。
+     *
+     * @param clientId       客户端标识
+     * @param url            连接地址
+     * @param onMessage      消息接收回调
+     * @param onConnected    连接成功回调
+     * @param sendHeartbeat  心跳发送逻辑（返回 true 表示需要自动重连）
+     */
     @SneakyThrows
     public void connect(String clientId, String url, Consumer<String> onMessage, Consumer<String> onConnected, Supplier<Boolean> sendHeartbeat) {
         TextWebSocketHandler handler = new TextWebSocketHandler() {
@@ -96,6 +108,11 @@ public class WebSocketService {
     }
 
 
+    /**
+     * 断开 WebSocket 连接。
+     *
+     * @param clientId 客户端标识
+     */
     public void disconnect(String clientId) {
         WebSocketConnectionManager manager = MANAGERS.get(clientId);
         if (Objects.isNull(manager)) {
@@ -104,6 +121,12 @@ public class WebSocketService {
         manager.stop();
     }
 
+    /**
+     * 发送消息到指定客户端。
+     *
+     * @param clientId 客户端标识
+     * @param message  消息内容
+     */
     public void sendMessage(String clientId, Object message) {
         WebSocketSession webSocketSession = SESSIONS.get(clientId);
         if (Objects.nonNull(webSocketSession) && webSocketSession.isOpen()) {

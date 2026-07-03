@@ -20,6 +20,14 @@ import org.springframework.context.*;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.StringValueResolver;
 
+/**
+ * Spring MVC 基础控制器。
+ * <p>
+ * 提供国际化消息获取、异常事件发布、API 响应封装等基础能力。
+ * 业务 Controller 应继承此类以获得统一的基础能力。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @ApiResponses({
         @ApiResponse(responseCode = "400", description = "参数类型不匹配或格式不正确", content = @Content(schema = @Schema(implementation = ApiRestResponse.class))),
         @ApiResponse(responseCode = "401", description = "不允许访问（功能未授权）", content = @Content(schema = @Schema(implementation = ApiRestResponse.class))),
@@ -36,12 +44,16 @@ import org.springframework.util.StringValueResolver;
 })
 public class BaseController implements ApplicationEventPublisherAware, ApplicationContextAware, EmbeddedValueResolverAware {
 
+    /** 嵌入式值解析器 */
     @Getter
     private StringValueResolver valueResolver;
+    /** 应用事件发布器 */
     @Getter
     private ApplicationEventPublisher eventPublisher;
+    /** Spring 应用上下文 */
     @Getter
     private ApplicationContext context;
+    /** 嵌套消息源（国际化） */
     @Autowired(required = false)
     @Getter
     private NestedMessageSource messageSource;

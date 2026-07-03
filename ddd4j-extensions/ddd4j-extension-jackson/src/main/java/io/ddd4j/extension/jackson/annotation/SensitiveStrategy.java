@@ -33,12 +33,25 @@ public enum SensitiveStrategy {
 
     ;
 
+    /**
+     * 脱敏处理函数
+     */
     private final Function<String, String> desensitizer;
 
+    /**
+     * 构造函数
+     *
+     * @param desensitizer 脱敏处理函数
+     */
     SensitiveStrategy(Function<String, String> desensitizer) {
         this.desensitizer = desensitizer;
     }
 
+    /**
+     * 获取脱敏处理函数
+     *
+     * @return 脱敏处理函数
+     */
     public Function<String, String> desensitizer() {
         return desensitizer;
     }

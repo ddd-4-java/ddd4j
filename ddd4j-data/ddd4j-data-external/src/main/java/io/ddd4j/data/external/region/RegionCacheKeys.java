@@ -16,18 +16,42 @@ public final class RegionCacheKeys {
     private RegionCacheKeys() {
     }
 
+    /**
+     * 生成 IP 地区缓存的键
+     *
+     * @param ip IP 地址
+     * @return 缓存键
+     */
     public static String ipRegion(String ip) {
         return key("ip:region", ip);
     }
 
+    /**
+     * 生成 IP 位置缓存的键
+     *
+     * @param ip IP 地址
+     * @return 缓存键
+     */
     public static String ipLocation(String ip) {
         return key("ip:location", ip);
     }
 
+    /**
+     * 生成百度 IP 位置缓存的键
+     *
+     * @param ip IP 地址
+     * @return 缓存键
+     */
     public static String baiduLocation(String ip) {
         return key("baidu:ip:location", IpAddressKit.ip2long(ip));
     }
 
+    /**
+     * 生成太平洋网络 IP 位置缓存的键
+     *
+     * @param ip IP 地址
+     * @return 缓存键
+     */
     public static String pconlineLocation(String ip) {
         return key("pconline:ip:location", ip);
     }

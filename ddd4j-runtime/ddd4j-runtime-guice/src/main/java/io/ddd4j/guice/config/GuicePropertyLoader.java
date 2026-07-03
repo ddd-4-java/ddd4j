@@ -37,8 +37,10 @@ import java.util.Properties;
 @Slf4j
 public class GuicePropertyLoader extends AbstractModule {
 
+    /** 默认配置文件路径 */
     private static final String DEFAULT_CONFIG = "ddd4j-default.properties";
 
+    /** 待加载的配置文件路径列表 */
     private final String[] configFiles;
 
     /**

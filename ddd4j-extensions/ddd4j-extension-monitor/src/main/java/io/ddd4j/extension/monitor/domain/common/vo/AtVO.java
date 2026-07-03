@@ -12,6 +12,12 @@ import java.util.List;
 @Data
 public class AtVO {
 
+    /**
+     * @ 的手机号列表
+     */
     private List<String> atMobiles;
+    /**
+     * 是否 @ 所有人
+     */
     private Boolean isAtAll = false;
 }

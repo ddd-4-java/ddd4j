@@ -16,20 +16,37 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Programmatic ActiveMQ (JMS) consumer registrar.
+ * ActiveMQ (JMS) 消费者端点注册器（编程式注册）。
  *
- * <p>Uses native JMS {@link MessageListener} (no Spring listener container).
+ * <p>使用原生 JMS {@link MessageListener}（无需 Spring 监听容器）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class ActiveMQConsumerEndpointRegistrar {
 
+    /** JMS 连接实例 */
     private final Connection connection;
+    /** ActiveMQ 配置属性 */
     private final ActiveMQProperties properties;
 
+    /**
+     * 构造 ActiveMQ 消费者端点注册器。
+     *
+     * @param connection JMS 连接
+     * @param properties ActiveMQ 配置属性
+     */
     public ActiveMQConsumerEndpointRegistrar(Connection connection, ActiveMQProperties properties) {
         this.connection = Objects.requireNonNull(connection, "connection");
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * 从 JMS 消息中提取标签（tag）信息。
+     *
+     * @param message JMS 消息
+     * @param def     监听器定义
+     * @return 标签字符串，如果不存在则返回 null
+     */
     private static String extractTag(Message message, MQListenerDefinition def) {
         try {
             String tag = message.getStringProperty(MQMessages.HEADER_DESTINATION_TAG);
@@ -41,6 +58,12 @@ public class ActiveMQConsumerEndpointRegistrar {
         return null;
     }
 
+    /**
+     * 从 JMS 消息中获取消息 ID。
+     *
+     * @param message JMS 消息
+     * @return 消息 ID，获取失败时返回 null
+     */
     private static String messageIdOf(Message message) {
         try {
             return message.getJMSMessageID();
@@ -49,6 +72,12 @@ public class ActiveMQConsumerEndpointRegistrar {
         }
     }
 
+    /**
+     * 从 JMS 消息中获取关联 ID。
+     *
+     * @param message JMS 消息
+     * @return 关联 ID，获取失败时返回 null
+     */
     private static String correlationIdOf(Message message) {
         try {
             return message.getJMSCorrelationID();
@@ -57,6 +86,12 @@ public class ActiveMQConsumerEndpointRegistrar {
         }
     }
 
+    /**
+     * 从 JMS 消息 ID 计算哈希值作为投递标签。
+     *
+     * @param message JMS 消息
+     * @return 投递标签哈希值
+     */
     private static long messageIdHash(Message message) {
         try {
             String id = message.getJMSMessageID();
@@ -66,6 +101,13 @@ public class ActiveMQConsumerEndpointRegistrar {
         }
     }
 
+    /**
+     * 注册 MQ 监听器到 ActiveMQ 消费者端点。
+     *
+     * @param definition 监听器定义
+     * @param handler    消费处理器
+     * @throws IllegalStateException 如果注册失败
+     */
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
         try {
             Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);

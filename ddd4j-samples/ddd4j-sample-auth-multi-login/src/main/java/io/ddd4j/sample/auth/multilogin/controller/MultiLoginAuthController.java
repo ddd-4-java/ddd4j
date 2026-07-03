@@ -13,6 +13,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * 多登录认证控制器。
+ *
+ * <p>提供手机号登录、第三方登录、查询当前用户、登出等 RESTful 接口。
+ * 认证逻辑统一通过 {@link io.ddd4j.core.util.SubjectKit} 委托给底层鉴权 SPI。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @RestController
 @RequestMapping("/auth")
 public class MultiLoginAuthController {
@@ -23,6 +31,12 @@ public class MultiLoginAuthController {
         this.auditListener = auditListener;
     }
 
+    /**
+     * 手机号验证码登录。
+     *
+     * @param command 手机号登录请求参数
+     * @return 登录结果（Token 与认证主体信息）
+     */
     @PostMapping("/login/phone")
     public Map<String, Object> phoneLogin(@RequestBody PhoneLoginRequest command) {
         AuthPrincipal principal = new AuthPrincipal()
@@ -42,6 +56,12 @@ public class MultiLoginAuthController {
         return loginResponse(SubjectKit.login(request), principal);
     }
 
+    /**
+     * 第三方平台登录（微信、QQ 等）。
+     *
+     * @param command 第三方登录请求参数
+     * @return 登录结果（Token 与认证主体信息）
+     */
     @PostMapping("/login/third-party")
     public Map<String, Object> thirdPartyLogin(@RequestBody ThirdPartyLoginRequest command) {
         String loginId = command.provider() + ":" + command.openId();
@@ -63,6 +83,11 @@ public class MultiLoginAuthController {
         return loginResponse(SubjectKit.login(request), principal);
     }
 
+    /**
+     * 获取当前登录用户信息。
+     *
+     * @return 当前用户信息（未登录时返回 authenticated=false）
+     */
     @GetMapping("/me")
     public Map<String, Object> me() {
         AuthPrincipal principal = SubjectKit.getPrincipal();
@@ -78,23 +103,46 @@ public class MultiLoginAuthController {
         return result;
     }
 
+    /**
+     * 登出当前用户。
+     *
+     * @return 操作结果
+     */
     @PostMapping("/logout")
     public Map<String, Object> logout() {
         SubjectKit.logout();
         return Map.of("success", true);
     }
 
+    /**
+     * 获取最近的登录审计事件列表。
+     *
+     * @return 审计事件列表
+     */
     @GetMapping("/events")
     public Map<String, Object> events() {
         return Map.of("events", auditListener.recentEvents());
     }
 
+    /**
+     * 处理登录失败的异常。
+     *
+     * @param exception 参数校验异常
+     * @return 失败响应
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Map<String, Object> handleLoginFailure(IllegalArgumentException exception) {
         return Map.of("success", false, "message", exception.getMessage());
     }
 
+    /**
+     * 构建登录成功响应。
+     *
+     * @param token     Bearer Token
+     * @param principal 认证主体
+     * @return 响应 Map
+     */
     private Map<String, Object> loginResponse(String token, AuthPrincipal principal) {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("tokenType", "Bearer");

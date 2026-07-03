@@ -8,9 +8,18 @@ import io.ddd4j.data.crypto.domain.enums.CryptoType;
 import io.ddd4j.data.crypto.domain.enums.SymmetricAlgorithmType;
 import lombok.Data;
 
+/**
+ * 加密配置属性类
+ * <p>用于配置加密解密方式、对称加密算法、密钥等参数</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @Data
 public class CryptoProperties {
 
+    /**
+     * 配置前缀
+     */
     public static final String PREFIX = "crypto";
 
     /**

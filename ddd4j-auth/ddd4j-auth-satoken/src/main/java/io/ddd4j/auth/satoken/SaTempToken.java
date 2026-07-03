@@ -5,6 +5,17 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
+/**
+ * 临时 Token 实体类，封装认证过程中的临时凭证信息。
+ *
+ * <p>包含认证方式、用户身份信息（OpenId/UnionId/LoginId）、
+ * 辅助信息（昵称/头像/手机/邮箱等）、请求来源信息（客户端/设备/IP 等）。
+ *
+ * <p>用于 {@code SaMixCheckLogin} 注解流程中的临时 Token 解析与校验。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
 @Accessors(chain = true)
 @Data
 public class SaTempToken implements Serializable {

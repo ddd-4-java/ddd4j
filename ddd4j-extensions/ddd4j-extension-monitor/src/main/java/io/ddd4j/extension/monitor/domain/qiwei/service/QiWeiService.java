@@ -18,8 +18,17 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j(topic = "### BASE-MONITOR : QiWeiService ###")
 public class QiWeiService {
 
+    /**
+     * 企微机器人 Webhook 基础地址
+     */
     public static final String BASE_URL = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=";
+    /**
+     * HTTP 客户端（RestTemplate）
+     */
     private static final RestTemplate restTemplate = new RestTemplate();
+    /**
+     * HTTP 客户端（RestClient，备用）
+     */
     private static final RestClient restClient = RestClient.builder().build();
 
     /**

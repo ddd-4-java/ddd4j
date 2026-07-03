@@ -10,11 +10,25 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Person 领域对象序列化测试。
+ *
+ * <p>验证 {@link CreatePersonCommand} 和 {@link PersonCreatedEvent} 的
+ * JSON 序列化与反序列化正确性。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 class PersonSerializationTest {
 
+    /**
+     * Jackson ObjectMapper（注册 JavaTimeModule 支持 Java 8 时间类型）
+     */
     private final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
 
+    /**
+     * 验证 {@link CreatePersonCommand} 的 JSON 序列化与反序列化。
+     */
     @Test
     void shouldRoundTripCreatePersonCommand() throws Exception {
         CreatePersonCommand command = CreatePersonCommand.builder()
@@ -28,6 +42,9 @@ class PersonSerializationTest {
         assertThat(actual).isEqualTo(command);
     }
 
+    /**
+     * 验证 {@link PersonCreatedEvent} 的 JSON 序列化与反序列化。
+     */
     @Test
     void shouldRoundTripPersonCreatedEvent() throws Exception {
         PersonCreatedEvent event = new PersonCreatedEvent(new PersonId("p-100"), new PersonName("Ada"));

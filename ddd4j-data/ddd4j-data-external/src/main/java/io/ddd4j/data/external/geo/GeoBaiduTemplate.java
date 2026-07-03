@@ -24,13 +24,24 @@ import java.util.Optional;
 @Slf4j
 public class GeoBaiduTemplate {
 
+    /** 地理编码请求地址模板 */
     private static String geocoder = "http://api.map.baidu.com/geocoding/v3/?address=%s&output=json&ak=%s";
+    /** IP定位请求地址模板 */
     private static String geocoder2 = "http://api.map.baidu.com/location/ip?ak=%s&ip=%s&coor=bd09ll";
+    /** 高精度IP定位请求地址模板 */
     private static String highacciploc = "https://api.map.baidu.com/highacciploc/v1?qcip=220.181.38.113&qterm=pc&ak=%s&coord=bd09ll";
 
+    /** REST 客户端 */
     private final RestClient restClient;
+    /** 百度地图AK密钥 */
     private final String ak;
 
+    /**
+     * 构造函数
+     *
+     * @param restClient REST 客户端
+     * @param ak         百度地图AK密钥
+     */
     public GeoBaiduTemplate(RestClient restClient, String ak) {
         super();
         this.restClient = restClient;

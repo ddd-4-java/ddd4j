@@ -26,18 +26,42 @@ import java.util.Objects;
 @Slf4j
 public class DefaultCryptoStrategy implements CryptoStrategy {
 
+    /** JSON 对象映射器 */
     @Getter
     private ObjectMapper objectMapper;
 
+    /**
+     * 构造函数
+     *
+     * @param objectMapper JSON 对象映射器
+     */
     public DefaultCryptoStrategy(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 获取加解密方式
+     *
+     * @return 内部加解密方式
+     */
     @Override
     public CryptoType getType() {
         return CryptoType.INTERNAL;
     }
 
+    /**
+     * 字段加密
+     *
+     * @param value         待加密字段的值
+     * @param algorithmType 加密算法类型
+     * @param encMode       采用的加密模式
+     * @param padMode       填充模式
+     * @param key           Base64 格式的密钥字符串
+     * @param iv            Base64 格式的初始向量
+     * @param plainIsEncode 明文是否进行了 base64 编码
+     * @param <T>           字段类型
+     * @return 加密后的字符串
+     */
     @Override
     public <T> String encrypt(T value, SymmetricAlgorithmType algorithmType, String encMode, String padMode, String key, String iv, boolean plainIsEncode) {
         try {
@@ -60,6 +84,20 @@ public class DefaultCryptoStrategy implements CryptoStrategy {
         }
     }
 
+    /**
+     * 字段解密
+     *
+     * @param value         待解密字段的值
+     * @param algorithmType 加密算法类型
+     * @param encMode       采用的加密模式
+     * @param padMode       填充模式
+     * @param key           Base64 格式的密钥字符串
+     * @param iv            Base64 格式的初始向量
+     * @param plainIsEncode 明文是否进行了 base64 编码
+     * @param rtType        返回值类型
+     * @param <T>           字段类型
+     * @return 解密后的字段值
+     */
     @Override
     public <T> T decrypt(String value, SymmetricAlgorithmType algorithmType, String encMode, String padMode, String key, String iv, boolean plainIsEncode, Class<T> rtType) {
         try {
@@ -76,6 +114,17 @@ public class DefaultCryptoStrategy implements CryptoStrategy {
         }
     }
 
+    /**
+     * HMAC 签名
+     *
+     * @param value         待签名的值
+     * @param hmacAlgorithm HMAC 算法类型
+     * @param key           Base64 格式的密钥字符串
+     * @param iv            Base64 格式的初始向量
+     * @param plainIsEncode 明文是否进行了 base64 编码
+     * @param <T>           字段类型
+     * @return 签名后的字符串
+     */
     @Override
     public <T> String hmac(T value, HmacAlgorithm hmacAlgorithm, String key, String iv, boolean plainIsEncode) {
         try {

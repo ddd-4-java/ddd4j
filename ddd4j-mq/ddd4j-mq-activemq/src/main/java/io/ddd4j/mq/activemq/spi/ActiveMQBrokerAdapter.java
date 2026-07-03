@@ -24,20 +24,40 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * ActiveMQ Classic broker adapter (pure Java, zero Spring).
+ * ActiveMQ Classic Broker 适配器（纯 Java，零 Spring 依赖）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 
+    /** ActiveMQ 配置属性 */
     private final ActiveMQProperties properties;
+    /** MQ 全局配置 */
     private final Ddd4jMQProperties mqProperties;
+    /** 事件序列化器 */
     private final MQEventSerialization serialization;
+    /** JMS 连接引用（线程安全） */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
+    /** 消费者端点注册器 */
     private final ActiveMQConsumerEndpointRegistrar consumerRegistrar;
 
+    /**
+     * 构造 ActiveMQ Broker 适配器，使用默认 JSON 序列化器。
+     *
+     * @param properties   ActiveMQ 配置属性
+     * @param mqProperties MQ 全局配置
+     */
     public ActiveMQBrokerAdapter(ActiveMQProperties properties, Ddd4jMQProperties mqProperties) {
         this(properties, mqProperties, new JsonMQMessageSerialization());
     }
 
+    /**
+     * 构造 ActiveMQ Broker 适配器。
+     *
+     * @param properties   ActiveMQ 配置属性
+     * @param mqProperties MQ 全局配置
+     * @param serialization 事件序列化器
+     */
     public ActiveMQBrokerAdapter(ActiveMQProperties properties, Ddd4jMQProperties mqProperties,
                                  MQEventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");

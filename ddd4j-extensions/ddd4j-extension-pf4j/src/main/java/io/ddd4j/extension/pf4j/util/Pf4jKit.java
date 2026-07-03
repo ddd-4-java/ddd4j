@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * PF4J 工具类
+ *
+ * <p>提供获取扩展点实例的工具方法，支持按插件 ID 和扩展点 ID 精确查找。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class Pf4jKit {

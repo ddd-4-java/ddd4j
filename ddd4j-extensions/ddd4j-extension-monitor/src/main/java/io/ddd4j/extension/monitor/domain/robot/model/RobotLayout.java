@@ -27,14 +27,29 @@ import java.util.Objects;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class RobotLayout extends LayoutBase<ILoggingEvent> {
+    /**
+     * 线程安全的日期格式化
+     */
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
-    // 应用名称
+    /**
+     * 应用名称
+     */
     private String app;
-    // ip 地址
+    /**
+     * 服务器 IP 地址
+     */
     private String ip = "";
+    /**
+     * 项目名称
+     */
     private String project = "";
-    // 需要打印的mdc的信息
+    /**
+     * 需要打印的 MDC 信息列表
+     */
     private List<String> mdcList = new ArrayList<>();
+    /**
+     * 异常堆栈转换器
+     */
     private ThrowableProxyConverter throwableProxyConverter = new ThrowableProxyConverter();
 
     @Override

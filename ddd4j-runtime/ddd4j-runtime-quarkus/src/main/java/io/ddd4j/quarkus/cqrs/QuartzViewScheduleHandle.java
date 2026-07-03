@@ -10,12 +10,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Quartz 调度句柄。
+ * <p>
+ * {@link ViewScheduler.ViewScheduleHandle} 的 Quartz 实现，
+ * 持有 {@link Scheduler} 引用以支持取消调度操作。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
 
+    /** Quartz 调度器 */
     private final Scheduler scheduler;
+    /** 调度标识 */
     private final String identity;
+    /** 活跃状态标志 */
     private final AtomicBoolean active = new AtomicBoolean(true);
 
     QuartzViewScheduleHandle(Scheduler scheduler, String identity) {

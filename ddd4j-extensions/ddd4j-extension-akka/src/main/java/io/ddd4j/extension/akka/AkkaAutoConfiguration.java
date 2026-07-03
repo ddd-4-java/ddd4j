@@ -24,6 +24,9 @@ public class AkkaAutoConfiguration {
     public AkkaAutoConfiguration() {
     }
 
+    /**
+     * 创建并配置 ActorSystem Bean
+     */
     @Bean
     public ActorSystem actorSystem(AkkaProperties properties) {
         ActorSystem system = ActorSystem.create(properties.getName());

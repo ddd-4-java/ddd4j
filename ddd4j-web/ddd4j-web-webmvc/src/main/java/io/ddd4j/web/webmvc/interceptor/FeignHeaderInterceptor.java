@@ -15,16 +15,24 @@ import static io.ddd4j.core.constant.ContextConstants.SYSTEM_ID;
 import static io.ddd4j.core.constant.ContextConstants.TENANT_ID;
 
 /**
- * Feign请求头拦截器
+ * Feign 请求头拦截器。
+ * <p>自动向 Feign 请求中添加认证、租户、系统 ID 等请求头，支持通过 {@link FeignHeader} 注解精细控制。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
+    /** 租户 ID 请求头名称列表 */
     public static final String[] HEADER_TENANT_IDS = new String[]{"tenant_id", "tenant-id", "tenantId"};
+    /** 系统 ID 请求头名称列表 */
     public static final String[] HEADER_SYSTEM_IDS = new String[]{"system_id", "system-id", "systemId"};
     private static final String[] USE_WEB_HEADERS = new String[]{"tenant-id", "system-id", "third-session", "enterprise-id", "shop-id", "app-id", "switch-tenant-id", "Authorization", "client-type", "own-language"};
     private static final String[] REMOVE_AUTHORIZATION_HEADER_TARGETS = new String[]{"cloud-mall-api", "cloud-pay-api", "subscribe-service"};
 
+    /**
+     * 应用请求头到 Feign 请求模板。
+     *
+     * @param template Feign 请求模板
+     */
     public void apply(RequestTemplate template) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         template.header("from", "Y");

@@ -15,7 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * In-memory repository that still keeps the Model/PO boundary.
+ * 基于内存的订单仓库实现（保持 Model/PO 分离）。
+ *
+ * <p>使用 ConcurrentHashMap 存储订单持久化对象，
+ * 通过 {@link DomainObjectMapper} 实现领域模型与持久化对象的双向转换。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class InMemoryOrderRepository implements OrderRepository, DomainObjectMapper<Order, OrderPO> {
 

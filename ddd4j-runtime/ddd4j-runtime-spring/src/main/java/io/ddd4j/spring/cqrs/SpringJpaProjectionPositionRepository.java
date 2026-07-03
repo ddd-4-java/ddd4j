@@ -23,6 +23,7 @@ import java.util.Optional;
 public class SpringJpaProjectionPositionRepository
         implements ProjectionPositionRepository {
 
+    /** Spring Data JPA 仓库代理 */
     private final JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
 
     public SpringJpaProjectionPositionRepository(JpaRepository<SpringJpaProjectionPosition, String> jpaRepository) {

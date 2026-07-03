@@ -9,9 +9,18 @@ package io.ddd4j.data.external;
 import cn.hutool.core.date.SystemClock;
 import lombok.Data;
 
+/**
+ * 全局序列号生成配置属性类
+ * <p>用于配置雪花算法的工作机器ID、数据中心ID等参数</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @Data
 public class SequenceProperties {
 
+    /**
+     * 配置前缀
+     */
     public static final String PREFIX = "sequence";
 
     /**

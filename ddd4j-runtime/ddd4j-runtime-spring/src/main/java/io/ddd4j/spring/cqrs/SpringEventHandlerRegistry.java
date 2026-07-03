@@ -31,7 +31,9 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
 
+    /** Spring 应用上下文 */
     private final ApplicationContext applicationContext;
+    /** 事件类型到处理器方法的路由表 */
     private final ConcurrentMap<Class<?>, Method> handlerTable = new ConcurrentHashMap<>();
 
     public SpringEventHandlerRegistry(ApplicationContext applicationContext) {

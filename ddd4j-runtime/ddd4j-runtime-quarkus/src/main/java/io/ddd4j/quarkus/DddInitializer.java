@@ -12,14 +12,19 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Quarkus 启动初始化器：在应用启动时注册 I18nProvider 和 SubjectProvider。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 @ApplicationScoped
 public class DddInitializer {
 
+    /** 国际化提供者 */
     @Inject
     I18nProvider i18nProvider;
 
+    /** Subject 提供者 */
     @Inject
     SubjectProvider subjectProvider;
 

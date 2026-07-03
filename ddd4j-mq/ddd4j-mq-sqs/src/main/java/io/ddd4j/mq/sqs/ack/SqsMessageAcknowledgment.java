@@ -12,25 +12,45 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * AWS SQS manual acknowledgment mapping.
+ * AWS SQS 手动确认映射实现。
  *
  * <p>SQS 没有原生 ack 语义：ack 等价于 {@code deleteMessage(receiptHandle)}，nack(requeue=true)
  * 等价于 {@code changeMessageVisibility(receiptHandle, 0)}（让消息立即可被另一消费者接收）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class SqsMessageAcknowledgment implements MessageAcknowledgment {
 
+    /** Header 键：SQS 客户端 */
     public static final String HEADER_SQS_CLIENT = "ddd4j.sqs.client";
+    /** Header 键：SQS 消息体 */
     public static final String HEADER_SQS_MESSAGE = "ddd4j.sqs.message";
+    /** Header 键：SQS 队列 URL */
     public static final String HEADER_SQS_QUEUE_URL = "ddd4j.sqs.queueUrl";
 
+    /** AWS SQS 客户端实例 */
     private final SqsClient client;
+    /** SQS 消息实例 */
     private final Message message;
+    /** 队列 URL */
     private final String queueUrl;
+    /** 消息 ID */
     private final String messageId;
+    /** 消息回执句柄 */
     private final String receiptHandle;
+    /** 确认状态标记 */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
+    /** nack 时是否允许重新入队 */
     private final boolean requeueOnNack;
 
+    /**
+     * 构造 SQS 消息确认实例。
+     *
+     * @param client        AWS SQS 客户端
+     * @param message       SQS 消息
+     * @param queueUrl      队列 URL
+     * @param requeueOnNack nack 时是否允许重新入队
+     */
     public SqsMessageAcknowledgment(SqsClient client, Message message, String queueUrl, boolean requeueOnNack) {
         this.client = client;
         this.message = message;

@@ -32,20 +32,32 @@ public abstract class ColaArchitectureTest {
 
     // ============ 包依赖规则（COLA 核心约束）============
 
+    /**
+     * 领域层不得依赖适配器层（COLA 核心约束）
+     */
     @ArchTest
     public static final ArchRule domain_not_depend_on_adapter =
             ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_ADAPTER.allowEmptyShould(true);
 
+    /**
+     * 领域层不得依赖应用层/基础设施层
+     */
     @ArchTest
     public static final ArchRule domain_not_depend_on_application =
             ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_APPLICATION.allowEmptyShould(true);
 
+    /**
+     * 领域层不得依赖 Spring/MyBatis 等框架
+     */
     @ArchTest
     public static final ArchRule domain_not_depend_on_framework =
             ColaDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK.allowEmptyShould(true);
 
     // ============ COLA 特有规则：adapter 实现 domain.gateway 接口============
 
+    /**
+     * 适配器层（持久化）的实现类必须依赖 domain.gateway 接口（依赖倒置）
+     */
     @ArchTest
     public static final ArchRule adapter_persistence_should_implement_gateway = classes()
             .that().resideInAPackage("..adapter.persistence..")
@@ -56,6 +68,9 @@ public abstract class ColaArchitectureTest {
 
     // ============ COLA 特有规则：application 不依赖 adapter============
 
+    /**
+     * 应用层不得依赖适配器层（编排不应直接调用实现）
+     */
     @ArchTest
     public static final ArchRule application_not_depend_on_adapter = noClasses()
             .that().resideInAPackage("..application..")

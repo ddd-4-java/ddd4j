@@ -33,7 +33,9 @@ import java.util.concurrent.ConcurrentMap;
 @ApplicationScoped
 public class QuarkusEventHandlerRegistry {
 
+    /** 事件类型到处理器方法的路由表 */
     private final ConcurrentMap<Class<?>, Method> handlerTable = new ConcurrentHashMap<>();
+    /** CDI Bean 管理器 */
     @Inject
     BeanManager beanManager;
 

@@ -115,6 +115,11 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- ArchUnit（核心模块独立性自检） -->
         <dependency>
             <groupId>com.tngtech.archunit</groupId>

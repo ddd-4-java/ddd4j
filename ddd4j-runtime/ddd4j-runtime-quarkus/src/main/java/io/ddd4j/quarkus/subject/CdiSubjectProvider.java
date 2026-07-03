@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class CdiSubjectProvider implements SubjectProvider {
 
+    /** CDI Subject 实例 */
     @Inject
     Instance<Subject> subjectInstance;
 

@@ -12,7 +12,9 @@ import redis.clients.jedis.resps.StreamEntry;
 import java.util.*;
 
 /**
- * Redis Stream operations backed by Jedis.
+ * 基于 Jedis 客户端的 Redis Stream 操作实现。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class JedisRedisStreamOperations implements RedisStreamOperations {
 

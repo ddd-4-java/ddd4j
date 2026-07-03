@@ -15,10 +15,13 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-@RestControllerAdvice
 /**
+ * 全局请求体通知处理器。
+ * <p>拦截所有请求体，将请求参数转换为 JSON 并存入 {@link ThreadContext}，同时记录请求日志。</p>
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@RestControllerAdvice
 @Slf4j(topic = "==> RequestBody")
 public class GlobalRequestAdvice implements RequestBodyAdvice {
 

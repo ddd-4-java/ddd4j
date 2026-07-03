@@ -21,8 +21,16 @@ public class LicenseCreator {
 
     private final static X500Principal DEFAULT_HOLDER_AND_ISSUER = new X500Principal("CN=localhost, OU=localhost, O=localhost, L=SH, ST=SH, C=CN");
 
+    /**
+     * License 生成参数
+     */
     private LicenseCreatorParam param;
 
+    /**
+     * 构造函数
+     *
+     * @param param License 生成参数
+     */
     public LicenseCreator(LicenseCreatorParam param) {
         this.param = param;
     }

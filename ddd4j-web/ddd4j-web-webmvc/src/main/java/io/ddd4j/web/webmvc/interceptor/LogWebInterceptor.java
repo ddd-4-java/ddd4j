@@ -13,14 +13,16 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
- * 日志Web拦截器
+ * 日志 Web 拦截器。
+ * <p>打印请求路径、请求方法及响应耗时，用于请求日志记录。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @func 打印请求路径、请求方法
  */
 @Slf4j
 public class LogWebInterceptor extends BaseWebInterceptor {
+    /** 请求开始时间（线程本地） */
     final ThreadLocal<LocalDateTime> beginTime = new ThreadLocal<>();
+    /** Web 基础配置属性 */
     @Autowired
     BaseWebProperties baseWebProperties;
 

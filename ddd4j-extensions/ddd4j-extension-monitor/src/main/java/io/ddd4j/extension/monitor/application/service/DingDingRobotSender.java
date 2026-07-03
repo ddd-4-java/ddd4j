@@ -9,7 +9,13 @@ import io.ddd4j.extension.monitor.domain.dingding.service.DingDingService;
  */
 public class DingDingRobotSender implements Sender {
 
+    /**
+     * 钉钉机器人 Webhook Token
+     */
     private final String token;
+    /**
+     * 钉钉机器人加签密钥
+     */
     private final String secret;
 
     public DingDingRobotSender(String token, String secret) {

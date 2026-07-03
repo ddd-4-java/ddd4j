@@ -20,9 +20,9 @@ import java.util.Date;
 @Slf4j
 public abstract class SpringDomainEvent<T> extends ApplicationEvent {
 
-    // 监听者能否执行的条件，用于控制事件监听器能否执行（策略模式）
+    /** 监听者能否执行的条件，用于控制事件监听器能否执行（策略模式） */
     private Collection<?> supports;
-    // 结果
+    /** 事件处理结果 */
     @Setter
     private Object result;
 

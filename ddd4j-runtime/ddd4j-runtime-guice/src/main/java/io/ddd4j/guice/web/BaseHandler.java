@@ -89,6 +89,7 @@ public abstract class BaseHandler {
      */
     public static class ExceptionEvent extends DomainEvent<Exception> {
         private static final long serialVersionUID = 1L;
+        /** 请求 URL */
         private final String requestUrl;
 
         public ExceptionEvent(Exception source, String requestUrl) {

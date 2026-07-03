@@ -9,7 +9,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Persistence object for order aggregate.
+ * 订单持久化对象。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 @Builder
@@ -17,12 +19,36 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderPO {
 
+    /**
+     * 订单 ID
+     */
     private String id;
+    /**
+     * 订单编号
+     */
     private String orderNo;
+    /**
+     * 买家 ID
+     */
     private String buyerId;
+    /**
+     * 买家名称
+     */
     private String buyerName;
+    /**
+     * 订单状态
+     */
     private String status;
+    /**
+     * 总金额
+     */
     private BigDecimal totalAmount;
+    /**
+     * 货币代码
+     */
     private String currency;
+    /**
+     * 订单行列表
+     */
     private List<OrderLinePO> lines;
 }

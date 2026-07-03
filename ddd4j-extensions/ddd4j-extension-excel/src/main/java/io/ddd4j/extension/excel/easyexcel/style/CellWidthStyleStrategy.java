@@ -14,11 +14,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Slf4j
 /**
+ * 自适应列宽策略
+ *
+ * <p>根据单元格内容自动调整 Excel 列宽，支持表头和数据的自适应宽度。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class CellWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
+    /**
+     * 缓存每张工作表中每列的最大宽度（key: sheetNo -> (columnIndex -> maxWidth)）
+     */
     private final Map<Integer, Map<Integer, Integer>> CACHE = new HashMap<>();
 
     @Override

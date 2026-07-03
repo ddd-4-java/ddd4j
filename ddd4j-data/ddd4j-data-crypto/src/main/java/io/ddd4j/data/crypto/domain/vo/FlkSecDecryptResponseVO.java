@@ -4,6 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+/**
+ * 弗兰科信息解密响应 VO
+ * <p>封装远程解密接口返回的响应数据</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FlkSecDecryptResponseVO {

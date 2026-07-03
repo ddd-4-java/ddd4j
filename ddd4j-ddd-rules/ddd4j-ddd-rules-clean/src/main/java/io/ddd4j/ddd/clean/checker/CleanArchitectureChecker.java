@@ -51,26 +51,56 @@ import java.util.Set;
 @Slf4j
 public class CleanArchitectureChecker {
 
+    /**
+     * Clean Architecture 必需的四层目录名称
+     */
     private static final Set<String> REQUIRED_LAYERS = Set.of(
             "domain", "application", "adapter", "infrastructure"
     );
 
+    /**
+     * 领域层（domain）推荐的子包名称
+     */
     private static final Set<String> DOMAIN_SUB_PACKAGES = Set.of(
             "entity", "valueobject", "repository", "event", "service"
     );
 
+    /**
+     * 应用层（application）推荐的子包名称
+     */
     private static final Set<String> APPLICATION_SUB_PACKAGES = Set.of(
             "service", "command", "query", "port"
     );
 
+    /**
+     * 适配器层（adapter）推荐的子包名称
+     */
     private static final Set<String> ADAPTER_SUB_PACKAGES = Set.of(
             "persistence", "web", "messaging", "gateway"
     );
+    /**
+     * 违规项列表
+     */
     final List<String> violations = new ArrayList<>();
+    /**
+     * 业务根包名（如 com.example.myapp）
+     */
     private final String basePackage;
+    /**
+     * 业务项目使用的 @DomainEntity 注解类
+     */
     private final Class<? extends java.lang.annotation.Annotation> domainEntityAnnotation;
+    /**
+     * 业务项目使用的 @DomainService 注解类
+     */
     private final Class<? extends java.lang.annotation.Annotation> domainServiceAnnotation;
+    /**
+     * 业务项目使用的 @ApplicationService 注解类
+     */
     private final Class<? extends java.lang.annotation.Annotation> applicationServiceAnnotation;
+    /**
+     * 业务项目使用的 @DomainRepository 注解类
+     */
     private final Class<? extends java.lang.annotation.Annotation> domainRepositoryAnnotation;
 
     /**
@@ -160,6 +190,13 @@ public class CleanArchitectureChecker {
         }
     }
 
+    /**
+     * 使用 ClassFileImporter 导入指定源码根目录的 class 文件。
+     * <p>优先尝试导入已编译的 class 文件（target/classes），失败时回退到源文件目录。</p>
+     *
+     * @param sourceRoot 源码根目录
+     * @return 导入的 Java 类集合，导入失败时返回 null
+     */
     private JavaClasses importClasses(String sourceRoot) {
         try {
             File root = new File(sourceRoot);
@@ -176,6 +213,12 @@ public class CleanArchitectureChecker {
         }
     }
 
+    /**
+     * 执行单条 ArchUnit 规则检查，并捕获违规信息。
+     *
+     * @param rule    ArchUnit 规则
+     * @param classes 待检查的 Java 类集合
+     */
     private void checkArchRule(ArchRule rule, JavaClasses classes) {
         try {
             rule.check(classes);
@@ -195,6 +238,11 @@ public class CleanArchitectureChecker {
         }
     }
 
+    /**
+     * 检查基础包路径下是否包含 Clean Architecture 必需的四层目录。
+     *
+     * @param basePath 基础包路径
+     */
     private void checkRequiredLayers(Path basePath) {
         for (String layer : REQUIRED_LAYERS) {
             Path layerPath = basePath.resolve(layer);

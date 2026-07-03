@@ -14,6 +14,14 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * 签名工具类。
+ * <p>
+ * 提供基于 MD5 的 API 签名/验签能力，支持 token、表单参数、请求体等参与签名计算。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
 @Slf4j
 public class SignKit {
 

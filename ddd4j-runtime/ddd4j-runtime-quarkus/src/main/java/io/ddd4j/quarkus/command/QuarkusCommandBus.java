@@ -15,15 +15,23 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Quarkus command bus backed by the framework-neutral ddd4j command SPI.
+ * Quarkus 命令总线。
+ * <p>
+ * 基于框架中立的 ddd4j 命令 SPI 实现，在启动时扫描所有 {@link CommandExecutor} Bean
+ * 并构建命令类型到执行器的路由表。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 @ApplicationScoped
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class QuarkusCommandBus {
 
+    /** 命令类型到执行器的路由映射 */
     private final Map<Class<? extends Command>, CommandExecutor<?>> executorMap = new ConcurrentHashMap<>();
 
+    /** CDI 命令执行器实例集 */
     @Inject
     Instance<CommandExecutor<?>> executors;
 
@@ -37,10 +45,23 @@ public class QuarkusCommandBus {
         log.info("QuarkusCommandBus initialized with {} executors", executors.stream().count());
     }
 
+    /**
+     * 执行命令（不关心返回值）。
+     *
+     * @param command 命令对象
+     * @return 执行结果
+     */
     public Result<?> executeVoid(Command command) {
         return execute(command);
     }
 
+    /**
+     * 执行命令并返回结果。
+     *
+     * @param command 命令对象
+     * @param <R>     结果类型
+     * @return 执行结果
+     */
     public <R> Result<R> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");

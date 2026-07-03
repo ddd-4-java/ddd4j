@@ -10,5 +10,8 @@ import lombok.Data;
 @Data
 public class TextVO {
 
+    /**
+     * 文本消息内容
+     */
     private String content;
 }

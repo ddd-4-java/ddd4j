@@ -12,6 +12,13 @@ import java.util.Objects;
 
 /**
  * CDI 扩展：扫描 DDD 构造型注解并自动注册为 CDI Bean。
+ * <p>
+ * 实现 {@link Extension} 接口，在 CDI 容器处理注解类型时识别 DDD 构造型注解
+ * （如 {@link DomainService}、{@link ApplicationService} 等），
+ * 自动为标注这些注解的类添加 {@link ApplicationScoped} 作用域。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 public class DddCdiExtension implements Extension {

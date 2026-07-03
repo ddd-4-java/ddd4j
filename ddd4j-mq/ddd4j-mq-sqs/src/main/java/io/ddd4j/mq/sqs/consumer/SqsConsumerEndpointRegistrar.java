@@ -22,10 +22,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Programmatic AWS SQS consumer registrar.
+ * AWS SQS 消费者端点注册器（编程式注册）。
  *
  * <p>每个监听器启动一个轮询线程（long poll），逐条把消息转给 {@link MQConsumerHandler}。
  * SQS 没有 topic/tag 概念：{@code MQListenerDefinition.topic} 必须直接是 queueUrl。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class SqsConsumerEndpointRegistrar {
 

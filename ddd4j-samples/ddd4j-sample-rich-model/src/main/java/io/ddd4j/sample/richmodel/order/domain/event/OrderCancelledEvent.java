@@ -3,7 +3,11 @@ package io.ddd4j.sample.richmodel.order.domain.event;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 /**
- * Raised when an order is cancelled.
+ * 订单取消事件。
+ *
+ * <p>当订单被取消时触发。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OrderCancelledEvent extends DomainEvent<String> {
 

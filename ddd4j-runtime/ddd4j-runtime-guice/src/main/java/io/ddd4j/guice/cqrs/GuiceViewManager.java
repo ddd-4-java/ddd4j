@@ -11,12 +11,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Guice 环境默认的 CQRS 读侧视图管理器。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseable {
 
+    /** 运行状态标志 */
     private final AtomicBoolean running = new AtomicBoolean(false);
+    /** 已调度的视图任务句柄集 */
     private final ConcurrentMap<String, ScheduledFuture<?>> handles = new ConcurrentHashMap<>();
+    /** 调度线程池执行器 */
     private ScheduledExecutorService executor;
 
     @Override

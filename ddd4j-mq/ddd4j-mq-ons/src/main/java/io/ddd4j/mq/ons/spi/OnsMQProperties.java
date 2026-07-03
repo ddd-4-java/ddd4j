@@ -6,9 +6,11 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * Alibaba ONS adapter configuration (Pure Java, zero Spring).
+ * 阿里云 ONS 适配器配置（纯 Java，零 Spring 依赖）。
  *
  * <p>需要阿里云 AccessKey、Topic、ProducerId、ConsumerId 等。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OnsMQProperties {
 

@@ -25,11 +25,32 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
 
+/**
+ * 幂等性工具类。
+ * <p>提供基于 {@link ApiIdempotent} 注解的幂等键生成能力，支持 SpEL 表达式和自动路由拼接。</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @Slf4j
 public class IdempotentKit {
 
+    /** SpEL 表达式解析器 */
     protected static final ExpressionParser expressionParser = new SpelExpressionParser();
 
+    /**
+     * 生成幂等性键。
+     * <p>根据 {@link ApiIdempotent} 注解配置生成幂等键：
+     * <ul>
+     *   <li>如果注解指定了 value 且为非 SpEL 模式，直接返回该值</li>
+     *   <li>如果为 SpEL 模式，解析表达式后返回值</li>
+     *   <li>如果未指定 value，则拼接路由和方法参数后计算 MD5</li>
+     * </ul>
+     *
+     * @param joinPoint  切点
+     * @param idempotent 幂等注解
+     * @return 幂等键
+     * @throws IOException 参数解析异常
+     */
     public static String getIdempotentKey(ProceedingJoinPoint joinPoint, ApiIdempotent idempotent) throws IOException {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();

@@ -30,6 +30,14 @@ public class RepositoryBeanPostProcessor implements BeanPostProcessor, Applicati
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Bean 初始化后处理：识别 {@link BaseRepositoryImpl} 子类，注入 {@link BaseDataProperties}
+     * 并将其注册到 {@link RepositoryRegistry}。
+     *
+     * @param bean     Bean 实例
+     * @param beanName Bean 名称
+     * @return 处理后的 Bean 实例
+     */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof BaseRepositoryImpl<?, ?, ?, ?> repositoryImpl) {
@@ -53,6 +61,12 @@ public class RepositoryBeanPostProcessor implements BeanPostProcessor, Applicati
         return bean;
     }
 
+    /**
+     * 将仓库实现注册到框架无关的 {@link RepositoryRegistry}。
+     *
+     * @param modelClass 聚合根类型
+     * @param repository 仓库实现
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void registerRepository(Class<?> modelClass, Repository<?, ?> repository) {
         RepositoryRegistry.register((Class) modelClass, (Repository) repository);

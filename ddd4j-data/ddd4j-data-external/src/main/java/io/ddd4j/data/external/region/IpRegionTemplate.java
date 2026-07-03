@@ -23,13 +23,36 @@ public interface IpRegionTemplate {
         }
     };
 
+    /**
+     * 获取空实现
+     *
+     * @return 空实现的 IpRegionTemplate 实例
+     */
     static IpRegionTemplate none() {
         return NONE;
     }
 
+    /**
+     * 根据 IP 获取地区信息字符串
+     *
+     * @param ip IPv4 地址
+     * @return 地区信息字符串
+     */
     String getRegion(String ip);
 
+    /**
+     * 根据 IP 获取地区地址对象
+     *
+     * @param ip IPv4 地址
+     * @return 地区地址对象
+     */
     RegionAddress getRegionAddress(String ip);
 
+    /**
+     * 根据 IP 获取地区枚举
+     *
+     * @param ip IPv4 地址
+     * @return 地区枚举
+     */
     RegionEnum getRegionByIp(String ip);
 }

@@ -6,15 +6,21 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-//JDK动态代理实现InvocationHandler接口
-
 /**
+ * JDK 动态代理实现
+ *
+ * <p>基于 JDK 的 {@link java.lang.reflect.Proxy} 实现动态代理，
+ * 只能代理实现了接口的类。提供对目标方法的日志记录功能。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class JdkProxy implements InvocationHandler {
 
-    private Object target;//需要代理的目标对象
+    /**
+     * 需要代理的目标对象
+     */
+    private Object target;
 
     public JdkProxy(Object target) {
         this.target = target;

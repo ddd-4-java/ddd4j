@@ -4,6 +4,14 @@ import io.ddd4j.annotation.Contract;
 
 import java.lang.annotation.*;
 
+/**
+ * API 幂等性注解。
+ *
+ * <p>用于标注 Controller 方法或类，启用接口幂等性保护。
+ * 支持基于请求参数（ARGS）或 Token 的幂等控制策略，可配置过期时间、重试次数等参数。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 @Contract
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

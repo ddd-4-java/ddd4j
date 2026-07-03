@@ -16,9 +16,18 @@ import java.util.Enumeration;
 @Slf4j(topic = "### BASE-MONITOR : IpUtils ###")
 public class IpUtils {
 
+    /**
+     * 本机 IP 地址缓存
+     */
     public static String HOST_ADDRESS = "";
 
-    // 获取本机Ip
+    /**
+     * 获取本机 IPv4 地址
+     *
+     * <p>遍历所有网络接口，排除回环接口和虚拟接口，返回第一个非 .0.1 结尾的 IPv4 地址。
+     *
+     * @return 本机 IP 地址，如果获取失败返回空字符串
+     */
     public static String getLocalAddress() {
         if (StrKit.isNotBlank(HOST_ADDRESS)) {
             return HOST_ADDRESS;

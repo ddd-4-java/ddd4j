@@ -25,8 +25,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j(topic = "### DDD4J-SPRING : ViewManager ###")
 public class SpringJpaViewManager implements ViewManager {
 
+    /** 视图调度器 */
     private final ViewScheduler scheduler;
+    /** 运行状态标志 */
     private final AtomicBoolean running = new AtomicBoolean(false);
+    /** 已调度的视图任务句柄集 */
     private final ConcurrentMap<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
     public SpringJpaViewManager(ViewScheduler scheduler) {

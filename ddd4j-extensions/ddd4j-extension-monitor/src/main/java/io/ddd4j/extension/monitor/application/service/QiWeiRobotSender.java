@@ -10,6 +10,9 @@ import io.ddd4j.extension.monitor.domain.qiwei.service.QiWeiService;
  */
 public class QiWeiRobotSender implements Sender {
 
+    /**
+     * 企微机器人 Webhook Key
+     */
     private final String key;
 
     public QiWeiRobotSender(String key) {

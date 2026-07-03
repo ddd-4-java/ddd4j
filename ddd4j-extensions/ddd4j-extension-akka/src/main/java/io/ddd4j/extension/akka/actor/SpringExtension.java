@@ -29,10 +29,21 @@ public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringE
         public SpringExt() {
         }
 
+        /**
+         * 初始化 Spring 应用上下文
+         *
+         * @param applicationContext Spring 应用上下文
+         */
         public void initialize(ApplicationContext applicationContext) {
             this.applicationContext = applicationContext;
         }
 
+        /**
+         * 创建 Actor Props
+         *
+         * @param actorBeanName Actor Bean 名称
+         * @return Props 对象
+         */
         public Props props(String actorBeanName) {
             return Props.create(SpringActorProducer.class, new Object[]{this.applicationContext, actorBeanName});
         }

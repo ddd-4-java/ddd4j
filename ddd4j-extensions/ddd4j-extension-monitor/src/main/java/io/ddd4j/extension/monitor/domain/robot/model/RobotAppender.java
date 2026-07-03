@@ -32,22 +32,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 @EqualsAndHashCode(callSuper = false)
 @Slf4j(topic = "### BASE-MONITOR : RobotAppender ###")
 public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
+    /**
+     * 消息发送计数统计
+     */
     private static Map<String, Integer> msgCount = new ConcurrentHashMap<>(3);
+    /**
+     * 最近发送的消息内容
+     */
     private static String LATEST_MSG = "";
+    /**
+     * 最近消息的连续发送次数
+     */
     private static AtomicInteger LATEST_MSG_COUNT = new AtomicInteger(0);
 
-    // 每个机器人每分钟最多发送20条
+    /**
+     * 消息发送速率限制器，每个机器人每分钟最多发送20条
+     */
     private static RateLimiter rateLimiter;
 
-    // 发送速率 [每分钟最多20次] 1/3.5~= 0.2857
+    /**
+     * 发送速率限制 [每分钟最多20次] 1/3.5~= 0.2857
+     */
     private Double rateLimiterPermitsPerSecond = 0.2857;
 
     /**
-     * 定义 layout 处理器 Encode
+     * 定义 layout 处理器 Encoder，用于格式化日志输出
      *
      * @see PatternLayoutEncoder
      * @see LayoutWrappingEncoder
-     * {@see http://logback.qos.ch/manual/encoders.html}
+     * @see <a href="http://logback.qos.ch/manual/encoders.html">Logback Encoder 文档</a>
      */
     private Encoder<ILoggingEvent> encoder;
 
@@ -56,6 +69,12 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         super.setName("dRobot");
     }
 
+    /**
+     * 构建 RobotAppender 实例
+     *
+     * @param loggerContext Logback 日志上下文
+     * @return RobotAppender 实例
+     */
     public static RobotAppender build(LoggerContext loggerContext) {
         RobotAppender robotAppender = new RobotAppender();
         robotAppender.setRateLimiterPermitsPerSecond(SpringContext.getBean(BaseMonitorProperties.class).getLog().getRateLimiterPermitsPerSecond());

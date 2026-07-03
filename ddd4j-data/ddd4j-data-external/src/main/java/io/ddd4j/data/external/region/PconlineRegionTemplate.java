@@ -20,19 +20,26 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * IP地址解析
- * http://whois.pconline.com.cn/
- * https://blog.csdn.net/m0_73978383/article/details/149198389
+ * 太平洋网络 IP 地址解析模板
+ * <p>通过太平洋网络的 IP 查询接口获取 IP 地址对应的地理位置信息</p>
+ * <p>参考文档：<a href="http://whois.pconline.com.cn/">http://whois.pconline.com.cn/</a></p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class PconlineRegionTemplate {
 
+    /** 太平洋网络 IP 查询地址 */
     private static final String GET_COUNTRY_BY_IP_URL = "https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=%s";
-    // 810000 香港， 820000 澳门 ，710000 台湾， 999999国外
+    /** 特殊行政区划代码：810000 香港，820000 澳门 ，710000 台湾，999999 国外 */
     private static final String[] SPECIAL_PROVINCE = new String[]{"810000", "820000", "710000", "999999"};
+    /** 中国 */
     private static final String CHINA = "中国";
+    /** 特殊地区名称 */
     private static final String[] SPECIAL_REGION = new String[]{"香港", "澳门", "台湾"};
+    /** 特殊地区枚举映射 */
     private static Map<String, RegionEnum> SPECIAL_REGION_MAP;
+    /** 特殊行政区划代码集合 */
     private static Set<String> SPECIAL_PROVINCE_SET;
 
     static {
@@ -43,13 +50,26 @@ public class PconlineRegionTemplate {
         SPECIAL_PROVINCE_SET = Arrays.stream(SPECIAL_PROVINCE).collect(Collectors.toSet());
     }
 
+    /** REST 客户端 */
     private final RestClient restClient;
+    /** 缓存服务 */
     private RegionCache regionCache;
 
+    /**
+     * 构造函数（无缓存）
+     *
+     * @param restClient REST 客户端
+     */
     public PconlineRegionTemplate(RestClient restClient) {
         this(restClient, RegionCache.none());
     }
 
+    /**
+     * 构造函数
+     *
+     * @param restClient  REST 客户端
+     * @param regionCache 缓存服务
+     */
     public PconlineRegionTemplate(RestClient restClient, RegionCache regionCache) {
         this.restClient = restClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
@@ -120,6 +140,12 @@ public class PconlineRegionTemplate {
         return Optional.empty();
     }
 
+    /**
+     * 根据 IP 地址获取地区地址对象
+     *
+     * @param ip IPv4 地址
+     * @return 地区地址对象
+     */
     public RegionAddress getRegionAddress(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -160,6 +186,12 @@ public class PconlineRegionTemplate {
         }
     }
 
+    /**
+     * 根据 IP 地址获取地区枚举
+     *
+     * @param ip IPv4 地址
+     * @return 地区枚举
+     */
     public RegionEnum getRegionByIp(String ip) {
         try {
             if (!IpAddressKit.isIpv4(ip)) {

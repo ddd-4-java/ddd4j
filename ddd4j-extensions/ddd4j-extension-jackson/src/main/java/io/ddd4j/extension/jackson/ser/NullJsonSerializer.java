@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
+ * JSON null 值序列化器
+ *
+ * <p>当序列化的值为 null 时，输出 null 值。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

@@ -44,8 +44,11 @@ import java.util.concurrent.CountDownLatch;
 @Slf4j
 public class GuiceContext {
 
+    /** 初始化等待信号 */
     private static final CountDownLatch INIT_SIGNAL = new CountDownLatch(1);
+    /** 自定义属性存储 */
     private static final Map<String, Object> ATTRIBUTES = new ConcurrentHashMap<>();
+    /** Guice 注入器实例 */
     private static volatile Injector injector;
 
     private GuiceContext() {

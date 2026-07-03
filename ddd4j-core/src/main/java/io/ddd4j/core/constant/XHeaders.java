@@ -1,5 +1,20 @@
 package io.ddd4j.core.constant;
 
+/**
+ * 自定义 HTTP 请求头常量定义。
+ * <p>
+ * 定义客户端与服务器之间传递的扩展请求头，包括：
+ * <ul>
+ *   <li>请求追踪：{@link #X_REQUEST_ID}、{@link #X_AUTHORIZATION}</li>
+ *   <li>地理位置：{@link #X_LONGITUDE}、{@link #X_LATITUDE}、{@link #X_REGION} 等</li>
+ *   <li>国际化：{@link #X_LANGUAGE}、{@link #X_TIMEZONE}</li>
+ *   <li>安全：{@link #X_SIGN}、{@link #X_ENCRYPT}</li>
+ *   <li>客户端信息：{@link #X_APP_ID}、{@link #X_DEVICE_MODEL} 等</li>
+ *   <li>用户身份：{@link #X_UID}、{@link #X_UNAME}、{@link #X_ROLE} 等</li>
+ * </ul>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class XHeaders {
 
     /**

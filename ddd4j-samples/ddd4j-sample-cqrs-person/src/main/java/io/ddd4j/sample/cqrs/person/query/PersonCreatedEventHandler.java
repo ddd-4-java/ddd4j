@@ -6,6 +6,14 @@ import io.ddd4j.sample.cqrs.person.domain.PersonCreatedEvent;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * 人员创建事件处理器（读模型）。
+ *
+ * <p>当人员被创建时，将人员信息添加到内存列表中，
+ * 用于维护人员列表的读模型投影。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class PersonCreatedEventHandler implements TypedEventHandler<PersonCreatedEvent> {
 
     private final ConcurrentMap<String, PersonListEntry> entries;

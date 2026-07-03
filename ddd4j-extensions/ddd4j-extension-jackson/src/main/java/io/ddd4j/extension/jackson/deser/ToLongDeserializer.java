@@ -20,7 +20,7 @@ public class ToLongDeserializer extends JsonDeserializer<Long> {
 
     @Override
     public Long deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         String value = jsonParser.getText();
         try {
             return StringUtils.hasText(value) ? new BigDecimal(value).longValue() : null;

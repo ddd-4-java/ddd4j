@@ -20,7 +20,10 @@ import java.lang.reflect.Method;
 @Slf4j
 public class CglibProxy implements MethodInterceptor {
 
-    private Object target;//需要代理的目标对象
+    /**
+     * 需要代理的目标对象
+     */
+    private Object target;
 
     public CglibProxy(Object target) {
         this.target = target;

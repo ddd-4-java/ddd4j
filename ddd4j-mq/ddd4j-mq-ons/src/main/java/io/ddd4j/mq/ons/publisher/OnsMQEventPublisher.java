@@ -13,7 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * Alibaba ONS event publisher (pure Java, native ons-client).
+ * 阿里云 ONS 事件发布器（纯 Java，原生 ons-client）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OnsMQEventPublisher implements MQEventPublisher {
 

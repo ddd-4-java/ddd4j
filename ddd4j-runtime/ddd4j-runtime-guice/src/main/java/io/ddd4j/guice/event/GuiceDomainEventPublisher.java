@@ -20,6 +20,7 @@ import java.util.Objects;
 @Slf4j
 public class GuiceDomainEventPublisher implements DomainEventPublisher {
 
+    /** Guava 事件总线 */
     private final EventBus eventBus;
 
     @Inject

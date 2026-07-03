@@ -49,16 +49,28 @@ public enum ProvinceEnum {
 
     ;
 
-    // 行政区划代码
+    /** 行政区划代码 */
     private String code;
-    // 单位名称
+    /** 单位名称 */
     private String cname;
 
+    /**
+     * 构造函数
+     *
+     * @param code  行政区划代码
+     * @param cname 省份名称
+     */
     private ProvinceEnum(String code, String cname) {
         this.code = code;
         this.cname = cname;
     }
 
+    /**
+     * 根据行政区划代码获取省份枚举
+     *
+     * @param code 行政区划代码
+     * @return 省份枚举
+     */
     public static ProvinceEnum getByCode(String code) {
         for (ProvinceEnum region : ProvinceEnum.values()) {
             if (region.getCode().equalsIgnoreCase(code)) {
@@ -69,6 +81,12 @@ public enum ProvinceEnum {
         return ProvinceEnum.UK;
     }
 
+    /**
+     * 根据中文名称获取省份枚举
+     *
+     * @param cn_name 中文名称
+     * @return 省份枚举
+     */
     public static ProvinceEnum getByCnName(String cn_name) {
         for (ProvinceEnum region : ProvinceEnum.values()) {
             if (region.getCname().equalsIgnoreCase(cn_name)) {

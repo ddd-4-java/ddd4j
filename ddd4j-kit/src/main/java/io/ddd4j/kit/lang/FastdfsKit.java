@@ -14,7 +14,6 @@ import java.security.MessageDigest;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.x
  */
-@Deprecated
 public class FastdfsKit {
 
     public static String g_charset = "ISO8859-1";

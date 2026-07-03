@@ -40,20 +40,32 @@ public abstract class CleanArchitectureTest {
 
     // ============ 包依赖规则（Clean 四层核心约束）============
 
+    /**
+     * 领域层不得依赖 Web/Controller/Adapter 层
+     */
     @ArchTest
     public static final ArchRule domain_not_depend_on_web =
             CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_WEB.allowEmptyShould(true);
 
+    /**
+     * 领域层不得依赖基础设施层
+     */
     @ArchTest
     public static final ArchRule domain_not_depend_on_infrastructure =
             CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE.allowEmptyShould(true);
 
+    /**
+     * 领域层不得依赖 Spring/MyBatis 等框架
+     */
     @ArchTest
     public static final ArchRule domain_not_depend_on_framework =
             CleanDDDLayerRules.DOMAIN_NOT_DEPEND_ON_FRAMEWORK.allowEmptyShould(true);
 
     // ============ Clean 经典规则：application 不应依赖 adapter / infrastructure============
 
+    /**
+     * 应用层只依赖领域层，不能反向依赖适配器/基础设施层（依赖倒置原则）
+     */
     @ArchTest
     public static final ArchRule application_not_depend_on_adapter = noClasses()
             .that().resideInAnyPackage("..app..", "..application..")
@@ -64,6 +76,9 @@ public abstract class CleanArchitectureTest {
 
     // ============ Clean 经典规则：adapter 实现 domain.repository 接口============
 
+    /**
+     * 适配器层（持久化）的实现类必须依赖 domain 层定义的 Repository 接口
+     */
     @ArchTest
     public static final ArchRule adapter_persistence_should_implement_repository = classes()
             .that().resideInAPackage("..adapter.persistence..")

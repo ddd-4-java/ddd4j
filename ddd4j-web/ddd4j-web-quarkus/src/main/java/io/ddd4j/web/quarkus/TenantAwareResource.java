@@ -32,6 +32,7 @@ import java.util.function.Function;
  */
 public class TenantAwareResource {
 
+    /** Vert.x HTTP 服务端请求（由 JAX-RS 注入） */
     @Context
     HttpServerRequest request;
 

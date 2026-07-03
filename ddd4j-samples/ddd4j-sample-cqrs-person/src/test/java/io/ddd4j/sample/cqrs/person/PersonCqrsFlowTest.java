@@ -15,8 +15,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Person CQRS 流程集成测试。
+ *
+ * <p>验证人员创建和删除的完整 CQRS 流程：命令 → 事件存储 → 读模型投影。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 class PersonCqrsFlowTest {
 
+    /**
+     * 验证人员创建和删除的完整 CQRS 流程：
+     * 创建人员 → 事件存储 → 读模型投影 → 删除人员 → 投影更新。
+     */
     @Test
     void shouldProjectPersonCreatedAndDeletedEvents() {
         InMemoryPersonEventStore eventStore = new InMemoryPersonEventStore();

@@ -12,25 +12,43 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * ActiveMQ Classic (JMS) manual acknowledgment mapping.
+ * ActiveMQ Classic (JMS) 手动确认映射实现。
  *
- * <p>Wraps a {@link Session} and the JMS message; the
- * {@link #ack()} / {@link #nack(boolean)} methods map onto
- * {@code Session.recover()} and JMS {@code Message.acknowledge()}.
+ * <p>包装了 {@link Session} 和 JMS 消息；{@link #ack()} / {@link #nack(boolean)} 方法映射到
+ * {@code Session.recover()} 和 JMS {@code Message.acknowledge()} 操作。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
 
+    /** Header 键：ActiveMQ JMS Session */
     public static final String HEADER_AMQ_SESSION = "ddd4j.activemq.session";
+    /** Header 键：ActiveMQ JMS Message */
     public static final String HEADER_AMQ_MESSAGE = "ddd4j.activemq.message";
+    /** Header 键：ActiveMQ 投递 ID */
     public static final String HEADER_AMQ_DELIVERY_ID = "ddd4j.activemq.deliveryId";
 
+    /** JMS Session 实例 */
     private final Session session;
+    /** JMS 消息实例 */
     private final Message message;
+    /** 投递 ID */
     private final long deliveryId;
+    /** 消息 ID */
     private final String messageId;
+    /** 关联 ID */
     private final String correlationId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
+    /**
+     * 构造 ActiveMQ 消息确认实例。
+     *
+     * @param session       JMS Session
+     * @param message       JMS 消息
+     * @param deliveryId    投递 ID
+     * @param messageId     消息 ID
+     * @param correlationId 关联 ID
+     */
     public ActiveMQMessageAcknowledgment(Session session, Message message,
                                          long deliveryId, String messageId, String correlationId) {
         this.session = session;
@@ -123,6 +141,13 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
         return Optional.empty();
     }
 
+    /**
+     * 确保确认操作只执行一次，防止重复 ack/nack。
+     *
+     * @param op 要执行的 IO 操作
+     * @throws UnsupportedAckOperationException 如果消息已被确认
+     * @throws IllegalStateException            如果确认操作失败
+     */
     private void runOnce(IoOperation op) {
         if (!acknowledged.compareAndSet(false, true)) {
             throw new UnsupportedAckOperationException(
@@ -137,8 +162,16 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
         }
     }
 
+    /**
+     * JMS IO 操作函数式接口，用于包装可能抛出 {@link JMSException} 的操作。
+     */
     @FunctionalInterface
     private interface IoOperation {
+        /**
+         * 执行 IO 操作。
+         *
+         * @throws JMSException 如果操作失败
+         */
         void run() throws JMSException;
     }
 }

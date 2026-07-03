@@ -20,7 +20,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Eclipse Paho MQTT broker adapter (pure Java, zero Spring).
+ * Eclipse Paho MQTT Broker 适配器（纯 Java，零 Spring 依赖）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 

@@ -13,8 +13,20 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 订单富模型流程集成测试。
+ *
+ * <p>验证订单创建、添加商品、支付完整流程，
+ * 以及领域模型与持久化对象保持分离。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 class OrderRichModelFlowTest {
 
+    /**
+     * 验证订单完整流程：创建草稿 → 添加商品 → 支付，
+     * 以及领域模型与持久化对象保持分离。
+     */
     @Test
     void shouldKeepDomainModelAndPersistenceObjectSeparated() {
         InMemoryOrderRepository repository = new InMemoryOrderRepository();

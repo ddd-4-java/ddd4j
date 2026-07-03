@@ -37,11 +37,25 @@ public class MybatisTypeHandlerRegistry implements TypeHandlerRegistry {
         handlers.put(JSONArray.class, new JsonArrayJsonTypeHandler());
     }
 
+    /**
+     * 注册类型处理器。
+     *
+     * @param javaType Java 类型
+     * @param handler  类型处理器
+     * @param <T>      Java 类型泛型
+     */
     @Override
     public <T> void register(Class<T> javaType, TypeHandler<T, ?> handler) {
         handlers.put(javaType, handler);
     }
 
+    /**
+     * 查找类型处理器。
+     *
+     * @param javaType Java 类型
+     * @param <T>      Java 类型泛型
+     * @return 类型处理器，未注册时返回 null
+     */
     @Override
     public <T> TypeHandler<T, ?> lookup(Class<T> javaType) {
         return (TypeHandler<T, ?>) handlers.get(javaType);

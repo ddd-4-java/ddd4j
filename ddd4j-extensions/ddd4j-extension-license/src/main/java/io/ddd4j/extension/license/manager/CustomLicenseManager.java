@@ -74,6 +74,8 @@ public class CustomLicenseManager extends LicenseManager {
 
     /**
      * 校验生成证书的参数信息
+     *
+     * @throws LicenseContentException 如果证书参数校验失败
      */
     protected synchronized void validateCreate(final LicenseContent content) throws LicenseContentException {
         final LicenseParam param = getLicenseParam();
@@ -94,7 +96,9 @@ public class CustomLicenseManager extends LicenseManager {
 
 
     /**
-     * 复写validate方法，用于增加我们额外的校验信息
+     * 复写 validate 方法，用于增加我们额外的校验信息
+     *
+     * @throws LicenseContentException 如果自定义校验失败
      */
     @Override
     protected synchronized void validate(final LicenseContent content) throws LicenseContentException {

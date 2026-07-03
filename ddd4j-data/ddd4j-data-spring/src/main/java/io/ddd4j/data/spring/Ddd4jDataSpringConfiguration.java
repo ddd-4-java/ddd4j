@@ -14,6 +14,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class Ddd4jDataSpringConfiguration {
 
+    /**
+     * 注册 {@link RepositoryBeanPostProcessor} Bean，用于扫描 {@code BaseRepositoryImpl} 子类
+     * 并自动注入 mapper 和配置。
+     *
+     * @return RepositoryBeanPostProcessor 实例
+     */
     @Bean
     public RepositoryBeanPostProcessor repositoryBeanPostProcessor() {
         return new RepositoryBeanPostProcessor();

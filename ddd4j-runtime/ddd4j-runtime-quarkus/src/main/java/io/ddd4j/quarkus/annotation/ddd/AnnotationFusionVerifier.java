@@ -8,6 +8,9 @@ import java.util.Objects;
 
 /**
  * 独立验证器：验证 ddd4j-runtime-quarkus 的 DDD 注解与 Jakarta CDI 元注解融合正确。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 public final class AnnotationFusionVerifier {

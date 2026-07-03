@@ -13,11 +13,18 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
+ * 数据脱敏 JSON 序列化器
+ *
+ * <p>根据 {@link Sensitive} 注解中指定的脱敏策略，对字符串字段进行脱敏序列化。
+ * 支持上下文感知，可在运行时动态获取字段上的注解信息。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.8.RELEASE
- * https://mp.weixin.qq.com/s/GmELzTYIwYAIpTVRyCh9mw
  */
 public class SensitiveJsonSerializer extends JsonSerializer<String> implements ContextualSerializer {
+    /**
+     * 脱敏策略，由注解 {@link Sensitive#strategy()} 动态设置
+     */
     private SensitiveStrategy strategy;
 
     @Override

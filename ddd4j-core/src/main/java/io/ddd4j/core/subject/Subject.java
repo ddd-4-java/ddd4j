@@ -9,6 +9,23 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * 认证主体（Subject）接口 —— 当前用户的安全操作抽象。
+ * <p>
+ * 对齐 Shiro {@code Subject} 与 Sa-Token {@code StpLogic} 的能力边界，提供：
+ * <ul>
+ *   <li><b>身份获取</b>：{@link #getPrincipal()}、{@link #getLoginId()} 等</li>
+ *   <li><b>权限校验</b>：{@link #isPermitted(String)}、{@link #hasRole(String)} 等</li>
+ *   <li><b>会话生命周期</b>：{@link #login(AuthRequest)}、{@link #logout()}、{@link #kickout(Object)}</li>
+ *   <li><b>会话数据</b>：{@link #setAttribute(String, Object)}、{@link #getAttribute(String)}</li>
+ *   <li><b>封禁管理</b>：{@link #disable(Object, long)}、{@link #isDisabled(Object)}</li>
+ * </ul>
+ * <p>
+ * 各鉴权框架（Sa-Token / Shiro / Spring Security）提供各自的实现，
+ * 业务代码统一通过 {@link SubjectKit} 门面调用。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public interface Subject {
 
     <T extends AuthPrincipal> T getPrincipal();

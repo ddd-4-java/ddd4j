@@ -16,7 +16,9 @@ import java.time.Duration;
 import java.util.*;
 
 /**
- * Redis Stream operations backed by Redisson.
+ * 基于 Redisson 客户端的 Redis Stream 操作实现。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class RedissonRedisStreamOperations implements RedisStreamOperations {
 

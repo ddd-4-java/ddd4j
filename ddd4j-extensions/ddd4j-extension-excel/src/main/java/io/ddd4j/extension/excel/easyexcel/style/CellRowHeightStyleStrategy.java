@@ -10,13 +10,24 @@ import org.apache.poi.ss.usermodel.Row;
  */
 public class CellRowHeightStyleStrategy extends AbstractRowHeightStyleStrategy {
 
+    /**
+     * 默认行高（单位：20 分之 1 磅）
+     */
     private static final int DEFAULT_ROW_HEIGHT = 20;
 
+    /**
+     * 表头行高（单位：20 分之 1 磅），默认 3240/20 = 162 磅
+     */
     private int firstRowHeight = 3240;
 
     public CellRowHeightStyleStrategy() {
     }
 
+    /**
+     * 构造函数，指定表头行高
+     *
+     * @param firstRowHeight 表头行高（单位：20 分之 1 磅）
+     */
     public CellRowHeightStyleStrategy(int firstRowHeight) {
         this.firstRowHeight = firstRowHeight;
     }

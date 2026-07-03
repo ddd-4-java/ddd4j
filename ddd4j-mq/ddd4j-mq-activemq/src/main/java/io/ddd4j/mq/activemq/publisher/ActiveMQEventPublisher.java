@@ -13,14 +13,28 @@ import java.lang.IllegalStateException;
 import java.util.Objects;
 
 /**
- * ActiveMQ event publisher (pure Java, JMS API).
+ * ActiveMQ 事件发布器（纯 Java，JMS API）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class ActiveMQEventPublisher implements MQEventPublisher {
 
+    /** ActiveMQ 配置属性 */
     private final ActiveMQProperties properties;
+    /** 事件序列化器 */
     private final MQEventSerialization serialization;
+    /** JMS Session 实例 */
     private final Session session;
 
+    /**
+     * 构造 ActiveMQ 事件发布器。
+     *
+     * @param connection    JMS 连接
+     * @param session       JMS Session
+     * @param properties    ActiveMQ 配置属性
+     * @param mqProperties  MQ 全局配置
+     * @param serialization 事件序列化器
+     */
     public ActiveMQEventPublisher(Connection connection, Session session,
                                   ActiveMQProperties properties,
                                   Ddd4jMQProperties mqProperties,
@@ -32,8 +46,14 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
 
     /**
      * 解析 {@link MQDestination} 为 JMS Destination。
+     *
      * <p>约定：{@code namespace} 为前缀（解析成 {@code topic}/{@code queue} 子名），{@code tag} 为后缀。
      * 通过字符串前缀 {@code queue:} / {@code topic:} 可强制类型，否则根据 tag 是否以 {@code queue.} 开头判定。
+     *
+     * @param session     JMS Session
+     * @param destination MQ 目标地址
+     * @return JMS Destination 对象
+     * @throws JMSException 如果解析失败
      */
     static Destination resolveDestination(Session session, MQDestination destination) throws JMSException {
         String topic = firstText(destination.getTopic(), "ddd4j.default.topic");
@@ -54,6 +74,12 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
         return session.createTopic(physical);
     }
 
+    /**
+     * 返回第一个非空非空白字符串。
+     *
+     * @param values 字符串数组
+     * @return 第一个有效值，如果全部无效则返回 null
+     */
     private static String firstText(String... values) {
         if (Objects.isNull(values)) {
             return null;

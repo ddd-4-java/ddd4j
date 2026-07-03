@@ -20,10 +20,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 /**
+ * 默认 API 操作日志提供者实现
+ * <p>通过 AOP 切面记录 API 调用日志，包括请求 URI、IP、参数、耗时等信息</p>
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
 
     @Override
@@ -41,6 +44,15 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         this.doApiOperationLog(joinPoint, apiOperation, null, ex, stopWatch);
     }
 
+    /**
+     * 执行操作日志记录
+     *
+     * @param joinPoint    连接点
+     * @param apiOperation API 操作注解
+     * @param rt           返回值
+     * @param ex           异常信息
+     * @param stopWatch    性能计时器
+     */
     protected void doApiOperationLog(JoinPoint joinPoint, Operation apiOperation, Object rt, Throwable ex, StopWatch stopWatch) {
 
         // 1、获取AOP信息
@@ -92,6 +104,16 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         log.info(Constants.accessMarker, stopWatch.prettyPrint());
     }
 
+    /**
+     * 保存日志（子类可重写此方法实现持久化）
+     *
+     * @param joinPoint    连接点
+     * @param method       方法
+     * @param apiOperation API 操作注解
+     * @param rt           返回值
+     * @param ex           异常信息
+     * @param stopWatch    性能计时器
+     */
     protected void saveLog(JoinPoint joinPoint, Method method, Operation apiOperation, Object rt, Throwable ex, StopWatch stopWatch) {
         // do nothing
     }

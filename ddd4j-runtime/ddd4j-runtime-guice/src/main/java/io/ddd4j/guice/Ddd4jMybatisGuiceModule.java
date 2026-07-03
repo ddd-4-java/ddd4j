@@ -28,23 +28,50 @@ import java.util.Set;
 
 /**
  * ddd4j MyBatis 的 Guice 桥接模块。
+ * <p>
+ * 管理 MyBatis-Plus 的 Guice 集成，包括 DataSource、SqlSessionFactory 的初始化，
+ * Mapper 接口注册，以及 Repository 实现与 Mapper 的自动注入。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 public class Ddd4jMybatisGuiceModule extends AbstractModule {
 
+    /** 数据源 */
     private final DataSource dataSource;
+    /** 注册的 Mapper 接口集 */
     private final Set<Class<?>> mapperInterfaces = new LinkedHashSet<>();
+    /** Repository 实现类到 Mapper 接口的映射 */
     private final Map<Class<?>, Class<?>> repositoryToMapper = new LinkedHashMap<>();
 
+    /**
+     * 创建 MyBatis Guice 桥接模块。
+     *
+     * @param dataSource 数据源
+     */
     public Ddd4jMybatisGuiceModule(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * 注册 Mapper 接口。
+     *
+     * @param mapperInterface Mapper 接口类
+     * @return 当前模块（链式调用）
+     */
     public Ddd4jMybatisGuiceModule addMapper(Class<?> mapperInterface) {
         this.mapperInterfaces.add(mapperInterface);
         return this;
     }
 
+    /**
+     * 绑定 Repository 实现与 Mapper 接口的对应关系。
+     *
+     * @param repositoryImpl Repository 实现类
+     * @param mapperInterface Mapper 接口类
+     * @return 当前模块（链式调用）
+     */
     public Ddd4jMybatisGuiceModule bindRepository(Class<?> repositoryImpl, Class<?> mapperInterface) {
         this.repositoryToMapper.put(repositoryImpl, mapperInterface);
         this.mapperInterfaces.add(mapperInterface);

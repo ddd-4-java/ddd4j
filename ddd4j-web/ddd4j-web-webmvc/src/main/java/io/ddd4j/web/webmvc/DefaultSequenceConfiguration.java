@@ -15,9 +15,19 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Objects;
 
+/**
+ * 雪花算法 ID 生成器默认配置。
+ * <p>基于 Hutool {@link Snowflake} 实现分布式全局唯一 ID 生成。</p>
+ */
 @Configuration(proxyBeanMethods = false)
 public class DefaultSequenceConfiguration {
 
+    /**
+     * 创建雪花算法 ID 生成器 Bean。
+     *
+     * @param properties 序列号配置属性
+     * @return Snowflake 实例
+     */
     @Bean
     public Snowflake sequence(SequenceProperties properties) {
         long dataCenterId = IdUtil.getDataCenterId(31);

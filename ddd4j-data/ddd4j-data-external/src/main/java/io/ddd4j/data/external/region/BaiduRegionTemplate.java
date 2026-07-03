@@ -22,21 +22,40 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * IP获取经纬度：   http://lbsyun.baidu.com/index.php?title=webapi/ip-api
- * https://blog.csdn.net/Li_Chunxiao_/article/details/107082921
+ * 百度地图 IP 定位模板
+ * <p>IP获取经纬度：   http://lbsyun.baidu.com/index.php?title=webapi/ip-api</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
 public class BaiduRegionTemplate {
 
+    /** IP定位请求地址 */
     private static final String GET_LOCATION_BY_IP_URL = "https://api.map.baidu.com/location/ip?ak=%s&ip=%s&coor=bd09ll";
+    /** 百度地图AK密钥 */
     private final String ak;
+    /** REST 客户端 */
     private final RestClient restClient;
+    /** 缓存服务 */
     private RegionCache regionCache;
 
+    /**
+     * 构造函数（无缓存）
+     *
+     * @param ak         百度地图AK密钥
+     * @param restClient REST 客户端
+     */
     public BaiduRegionTemplate(String ak, RestClient restClient) {
         this(ak, restClient, RegionCache.none());
     }
 
+    /**
+     * 构造函数
+     *
+     * @param ak          百度地图AK密钥
+     * @param restClient  REST 客户端
+     * @param regionCache 缓存服务
+     */
     public BaiduRegionTemplate(String ak, RestClient restClient, RegionCache regionCache) {
         this.ak = ak;
         this.restClient = restClient;

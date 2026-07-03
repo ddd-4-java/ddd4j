@@ -15,11 +15,14 @@ import java.io.IOException;
  * 对标 ddd4j-web 的 {@code LogWebInterceptor}（Spring HandlerInterceptor），
  * Quarkus 轨道采用 JAX-RS {@link ContainerRequestFilter} 方案。
  * </p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Provider
 @Slf4j(topic = "access")
 public class AccessLogFilter implements ContainerRequestFilter {
 
+    /** Vert.x HTTP 服务端请求（由 JAX-RS 注入） */
     @Context
     HttpServerRequest request;
 

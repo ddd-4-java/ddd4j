@@ -45,10 +45,13 @@ public class BaseMonitorProperties {
          */
         private Config config = new Config();
 
-        @Data
-        public static class App {
+    @Data
+    public static class App {
 
-            private String project = "";
+        /**
+         * 项目名称
+         */
+        private String project = "";
 
             /**
              * 当前环境 not set is  Environment=>spring.profiles.active
@@ -151,11 +154,14 @@ public class BaseMonitorProperties {
          */
         @Data
         public static class QiWeiRobot {
-            /**
-             * 是否启用企微机器人。
-             */
-            private boolean enable = true;
-            private String key = "";
+        /**
+         * 是否启用企微机器人。
+         */
+        private boolean enable = true;
+        /**
+         * 企微机器人 Webhook Key
+         */
+        private String key = "";
         }
     }
 

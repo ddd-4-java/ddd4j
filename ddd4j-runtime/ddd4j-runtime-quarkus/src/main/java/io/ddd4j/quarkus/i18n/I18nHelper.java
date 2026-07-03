@@ -9,24 +9,46 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Quarkus 原生国际化辅助。
+ * <p>
+ * 提供基于 {@link ResourceBundle} 的国际化消息解析能力，
+ * 支持多语言回退、参数格式化及默认语言设置。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 public final class I18nHelper {
 
+    /** 国际化资源文件前缀 */
     private static final String BUNDLE_PREFIX = "i18n/message";
+    /** 国际化 ResourceBundle 缓存（key=语言标签） */
     private static final Map<String, ResourceBundle> CACHE = new ConcurrentHashMap<>();
     @Getter
+    /** 默认语言（zh） */
     private static volatile String defaultLang = "zh";
 
     private I18nHelper() {
     }
 
+    /**
+     * 设置默认语言。
+     *
+     * @param lang 语言标签（如 zh、en）
+     */
     public static void setDefaultLang(String lang) {
         if (StrKit.isNotEmpty(lang)) {
             defaultLang = lang;
         }
     }
 
+    /**
+     * 获取国际化消息。
+     *
+     * @param lang       语言标签
+     * @param key        消息键值
+     * @param parameters 格式化参数
+     * @return 国际化字符串
+     */
     public static String i18n(String lang, String key, Object... parameters) {
         if (StrKit.isEmpty(key)) {
             return "";

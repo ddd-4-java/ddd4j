@@ -15,15 +15,26 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 
-@Slf4j
-@Service
 /**
+ * 代码版本服务
+ *
+ * <p>监听应用启动事件，读取 git.properties 中的代码版本信息，
+ * 并在应用启动成功后通过告警机器人发送版本通知。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
+@Service
 public class CodeVersionService implements ApplicationListener<ApplicationEvent> {
+    /**
+     * 当前代码版本信息，应用启动时初始化
+     */
     public static CodeVersionVO CODE_VERSION = null;
     @Autowired
     Sender sender;
+    /**
+     * 应用名称，从配置文件中读取
+     */
     @Value("${spring.application.name:UNKNOWN}")
     private String appName;
 

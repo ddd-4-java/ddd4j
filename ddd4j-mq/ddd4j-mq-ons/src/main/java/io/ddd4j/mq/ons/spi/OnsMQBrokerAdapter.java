@@ -21,7 +21,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Alibaba ONS broker adapter (pure Java, zero Spring).
+ * 阿里云 ONS Broker 适配器（纯 Java，零 Spring 依赖）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
 

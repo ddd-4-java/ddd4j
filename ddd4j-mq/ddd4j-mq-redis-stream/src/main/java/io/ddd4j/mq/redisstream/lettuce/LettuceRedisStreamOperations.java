@@ -10,7 +10,9 @@ import io.lettuce.core.api.sync.RedisCommands;
 import java.util.*;
 
 /**
- * Redis Stream operations backed by Lettuce.
+ * 基于 Lettuce 客户端的 Redis Stream 操作实现。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class LettuceRedisStreamOperations implements RedisStreamOperations {
 

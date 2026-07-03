@@ -39,7 +39,7 @@ public class LicenseVerify {
      */
     private String publicKeysStorePath;
     /**
-     * LicenseManager
+     * License 管理器，用于证书的安装、校验和卸载操作
      */
     private LicenseManager licenseManager;
     /**
@@ -47,6 +47,15 @@ public class LicenseVerify {
      */
     private boolean installSuccess;
 
+    /**
+     * 构造函数
+     *
+     * @param subject             证书 subject
+     * @param publicAlias         公钥别称
+     * @param storePass           访问公钥库的密码
+     * @param licensePath         证书生成路径
+     * @param publicKeysStorePath 密钥库存储路径
+     */
     public LicenseVerify(String subject, String publicAlias, String storePass, String licensePath, String publicKeysStorePath) {
         this.subject = subject;
         this.publicAlias = publicAlias;

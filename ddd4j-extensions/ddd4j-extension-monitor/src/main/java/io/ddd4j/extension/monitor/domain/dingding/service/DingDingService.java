@@ -20,7 +20,13 @@ import java.util.Base64;
 @Slf4j(topic = "### BASE-MONITOR : DingDingService ###")
 public class DingDingService {
 
+    /**
+     * 钉钉机器人 Webhook 基础地址
+     */
     public static final String BASE_URL = "https://oapi.dingtalk.com/robot/send?access_token=";
+    /**
+     * HTTP 客户端
+     */
     private static final RestTemplate restTemplate = new RestTemplate();
 
     /**

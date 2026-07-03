@@ -4,6 +4,9 @@ import java.lang.annotation.*;
 
 /**
  * Javalin 请求头参数注解
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

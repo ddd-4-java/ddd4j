@@ -11,7 +11,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Spring WebMVC MDC logging context interceptor.
+ * Spring WebMVC MDC 日志上下文拦截器。
+ * <p>在请求处理前将请求 ID、URL、客户端地址等信息注入 MDC，请求完成后清理。</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MdcInterceptor implements HandlerInterceptor {
 

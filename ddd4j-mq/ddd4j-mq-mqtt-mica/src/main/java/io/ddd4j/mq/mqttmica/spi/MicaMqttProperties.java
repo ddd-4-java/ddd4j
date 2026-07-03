@@ -8,21 +8,33 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * mica-mqtt AIO client configuration (Pure Java, zero Spring).
+ * mica-mqtt AIO 客户端配置（纯 Java，零 Spring 依赖）。
  *
- * <p>Version aligned with {@code ${mica-mqtt.version}} = 2.6.6.
+ * <p>版本与 {@code ${mica-mqtt.version}} = 2.6.6 对齐。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MicaMqttProperties {
 
+    /** MQTT 服务器 IP */
     private String serverIp = "127.0.0.1";
+    /** MQTT 服务器端口 */
     private int port = 1883;
+    /** 认证用户名 */
     private String username;
+    /** 认证密码 */
     private String password;
+    /** 客户端 ID 前缀 */
     private String clientIdPrefix = "ddd4j-mica-";
+    /** 是否使用 SSL 连接 */
     private boolean useSsl = false;
+    /** 默认 QoS 级别 */
     private int qos = 1;
+    /** 心跳保活秒数 */
     private int keepAliveSeconds = 30;
+    /** 读取缓冲区大小（字节） */
     private int readBufferSize = 8 * 1024;
+    /** 最大未完成消息数 */
     private int maxInflight = 100;
 
     public String getServerIp() {

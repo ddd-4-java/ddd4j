@@ -25,11 +25,18 @@ import java.util.Objects;
 import static ch.qos.logback.core.AsyncAppenderBase.DEFAULT_MAX_FLUSH_TIME;
 
 /**
+ * Logback 日志告警追加服务
+ *
+ * <p>负责将 Logback 日志通过异步 Appender 发送到钉钉/企微机器人。
+ * 支持日志级别过滤、关键字匹配、日志名称排除等过滤策略。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-MONITOR : RobotLogbackAppendService ###")
 public class RobotLogbackAppendService {
-    // logback loggerContext
+    /**
+     * Logback 日志上下文
+     */
     private LoggerContext loggerContext = null;
     @Autowired
     private BaseMonitorProperties baseMonitorProperties;

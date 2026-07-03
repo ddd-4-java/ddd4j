@@ -4,6 +4,11 @@ import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.CustomApiCode;
 
 /**
+ * 加解密操作异常。
+ * <p>
+ * 当加密、解密、签名验证等密码学操作失败时抛出。
+ * 继承 {@link BizRuntimeException}，支持国际化消息和业务错误码。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class CryptoException extends BizRuntimeException {

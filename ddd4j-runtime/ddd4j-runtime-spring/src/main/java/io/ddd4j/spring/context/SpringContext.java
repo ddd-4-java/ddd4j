@@ -35,11 +35,13 @@ import java.util.function.Consumer;
 @Order(PriorityOrdered.HIGHEST_PRECEDENCE)
 public class SpringContext implements ApplicationContextAware {
 
-    // 应用启动完成的信号
+    /** 应用启动完成的信号 */
     public static final CountDownLatch APP_START_SIGNAL = new CountDownLatch(1);
-    // Spring上下文初始化完成的信号
+    /** Spring 上下文初始化完成的信号 */
     public static final CountDownLatch APPLICATION_CONTEXT_START_SIGNAL = new CountDownLatch(1);
+    /** 用于异步执行启动后置逻辑的线程池 */
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
+    /** Spring ApplicationContext 实例 */
     private static ApplicationContext APPLICATION_CONTEXT;
 
     public SpringContext() {

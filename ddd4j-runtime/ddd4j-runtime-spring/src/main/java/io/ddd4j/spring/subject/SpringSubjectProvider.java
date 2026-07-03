@@ -19,6 +19,7 @@ import java.util.Objects;
 @Component
 public class SpringSubjectProvider implements SubjectProvider {
 
+    /** Subject 实例 */
     private final Subject subject;
 
     @Autowired

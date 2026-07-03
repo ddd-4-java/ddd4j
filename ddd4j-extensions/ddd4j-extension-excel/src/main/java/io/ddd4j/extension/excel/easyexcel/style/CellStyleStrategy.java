@@ -19,7 +19,13 @@ import java.util.List;
  */
 public class CellStyleStrategy extends HorizontalCellStyleStrategy {
 
+    /**
+     * 表头单元格样式
+     */
     private final WriteCellStyle headWriteCellStyle;
+    /**
+     * 数据内容单元格样式
+     */
     private final WriteCellStyle contentWriteCellStyle;
 
     /**
@@ -27,6 +33,13 @@ public class CellStyleStrategy extends HorizontalCellStyleStrategy {
      */
     private final List<Integer> columnIndexes;
 
+    /**
+     * 构造函数
+     *
+     * @param columnIndexes         需要特殊样式处理的列索引列表
+     * @param headWriteCellStyle    表头单元格样式
+     * @param contentWriteCellStyle 数据内容单元格样式
+     */
     public CellStyleStrategy(List<Integer> columnIndexes, WriteCellStyle headWriteCellStyle, WriteCellStyle contentWriteCellStyle) {
         this.columnIndexes = columnIndexes;
         this.headWriteCellStyle = headWriteCellStyle;

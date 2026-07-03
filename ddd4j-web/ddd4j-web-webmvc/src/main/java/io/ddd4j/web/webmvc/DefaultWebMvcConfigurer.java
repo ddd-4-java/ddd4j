@@ -50,17 +50,27 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+/**
+ * Spring WebMVC 自定义配置器。
+ * <p>配置消息转换器（Jackson JSON/日期序列化）、拦截器、静态资源映射等。</p>
+ */
 public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
+    /** 日期时间格式 */
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    /** 日期格式 */
     private static final String DATE_PATTERN = "yyyy-MM-dd";
+    /** 时间格式 */
     private static final String TIME_PATTERN = "HH:mm:ss";
 
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
+    /** 语言切换拦截器 */
     private LocaleChangeInterceptor localeChangeInterceptor;
+    /** MDC 日志拦截器 */
     private MdcInterceptor mdcInterceptor;
+    /** 本地资源配置 */
     private LocalResourceProperteis localResourceProperteis;
 
     public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
@@ -78,16 +88,11 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
     }
 
     /**
-     * https://blog.csdn.net/litte_frog/article/details/82764215
-     * ByteArrayHttpMessageConverter – converts byte arrays
-     * StringHttpMessageConverter – converts Strings
-     * ResourceHttpMessageConverter – converts org.springframework.core.io.Resource for any type of octet stream
-     * SourceHttpMessageConverter – converts javax.xml.transform.Source
-     * FormHttpMessageConverter – converts form data to/from a MultiValueMap<String, String>.
-     * Jaxb2RootElementHttpMessageConverter – converts Java objects to/from XML (added only if JAXB2 is present on the classpath)
-     * MappingJackson2HttpMessageConverter – converts JSON (added only if Jackson 2 is present on the classpath)
+     * 配置 HTTP 消息转换器。
+     * <p>注册 Jackson JSON 转换器（含 Long 转 String、日期时间格式化、自定义序列化修饰器）以及
+     * ByteArray、String、Resource、Source、Form 等默认转换器。</p>
      *
-     * @param converters
+     * @param converters 消息转换器列表
      */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -163,6 +168,10 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE + 1);
     }
 
+    /**
+     * 配置静态资源映射。
+     * <p>支持本地文件资源映射、静态目录资源及 WebJars 资源。</p>
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 本地资源映射

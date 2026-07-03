@@ -118,24 +118,52 @@ public class ThreadContext {
 
     // ========================= String Key API =========================
 
+    /**
+     * 获取当前线程绑定中指定 key 的值。
+     *
+     * @param key 键
+     * @param <T> 值类型
+     * @return 对应的值，不存在返回 null
+     */
     public static <T> T get(String key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
         return Objects.isNull(map) ? null : (T) map.get(key);
     }
 
+    /**
+     * 获取当前线程绑定中指定 key 的值，不存在返回默认值。
+     *
+     * @param key          键
+     * @param defaultValue 默认值
+     * @param <T>          值类型
+     * @return 对应的值，不存在返回 defaultValue
+     */
     public static <T> T get(String key, T defaultValue) {
         Object o = get(key);
         return Objects.nonNull(o) ? (T) o : defaultValue;
     }
 
+    /**
+     * 获取当前线程绑定的全部键值对。
+     */
     public Map<Object, Object> getValues() {
         return THREAD_LOCAL_POOL.get();
     }
 
+    /**
+     * 设置当前线程绑定的全部键值对。
+     */
     public void setValues(Map<Object, Object> values) {
         THREAD_LOCAL_POOL.set(values);
     }
 
+    /**
+     * 条件设置：仅当 condition 为 true 时绑定值到当前线程。
+     *
+     * @param condition 执行条件
+     * @param key       键
+     * @param value     值
+     */
     public static void set(boolean condition, String key, Object value) {
         if (!condition) {
             return;
@@ -143,6 +171,12 @@ public class ThreadContext {
         set(key, value);
     }
 
+    /**
+     * 绑定字符串键值对到当前线程。
+     *
+     * @param key   键
+     * @param value 值（null 或空字符串不处理）
+     */
     public static void set(String key, Object value) {
         if (Objects.isNull(value)) {
             return;
@@ -158,11 +192,22 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.set(map);
     }
 
+    /**
+     * 判断当前线程是否包含指定 key。
+     *
+     * @param key 键
+     * @return true 表示包含
+     */
     public boolean contains(String key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
         return Objects.nonNull(map) && map.containsKey(key);
     }
 
+    /**
+     * 从当前线程移除指定 key 的绑定。
+     *
+     * @param key 键
+     */
     public static void remove(String key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
         if (Objects.nonNull(map)) {

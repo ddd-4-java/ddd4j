@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 对标 ddd4j-web 的 {@code WebUtils}（Spring 拦截器方案），Quarkus 轨道采用 Vert.x HttpServerRequest 方案。
  * </p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class WebUtils {
 

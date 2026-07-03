@@ -12,22 +12,40 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Alibaba ONS manual acknowledgment mapping.
- * ONS consumes are acknowledged by the {@link Action} returned from the listener.
+ * 阿里云 ONS 手动确认映射实现。
+ *
+ * <p>ONS 消费通过监听器返回的 {@link Action} 来确认消息。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OnsMessageAcknowledgment implements MessageAcknowledgment {
 
+    /** Header 键：ONS 消息体 */
     public static final String HEADER_ONS_MESSAGE = "ddd4j.ons.message";
+    /** Header 键：ONS 消费上下文 */
     public static final String HEADER_ONS_CONTEXT = "ddd4j.ons.context";
 
+    /** ONS 消费上下文 */
     private final ConsumeContext context;
+    /** ONS 消息实例 */
     private final Message message;
+    /** 消息 ID */
     private final String messageId;
+    /** 消息 Key */
     private final String key;
+    /** 消息偏移量 */
     private final long offset;
+    /** 确认状态标记 */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
+    /** 确认动作（提交/稍后重试） */
     private volatile Action action = Action.CommitMessage;
 
+    /**
+     * 构造 ONS 消息确认实例。
+     *
+     * @param context ONS 消费上下文
+     * @param message ONS 消息
+     */
     public OnsMessageAcknowledgment(ConsumeContext context, Message message) {
         this.context = context;
         this.message = message;

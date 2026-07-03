@@ -12,9 +12,13 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Guice 环境默认的内存版投影位置仓储。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 public class GuiceInMemoryProjectionPositionRepository implements ProjectionPositionRepository {
 
+    /** 投影位置内存存储 */
     private final ConcurrentMap<String, ProjectionPosition> store = new ConcurrentHashMap<>();
 
     @Override

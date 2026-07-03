@@ -14,22 +14,52 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Order aggregate root.
+ * 订单聚合根。
  *
- * <p>This model is deliberately free from MyBatis, JPA, Spring, Javalin and
- * Quarkus annotations. Persistence adapters map it to PO classes.</p>
+ * <p>该模型刻意不依赖 MyBatis、JPA、Spring、Javalin 和 Quarkus 注解。
+ * 持久化适配层将其映射为 PO 类。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class Order extends AggregateRoot<String> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 订单 ID
+     */
     private final String id;
+    /**
+     * 订单编号
+     */
     private final String orderNo;
+    /**
+     * 买家 ID
+     */
     private final String buyerId;
+    /**
+     * 买家名称
+     */
     private String buyerName;
+    /**
+     * 订单状态
+     */
     private OrderStatus status;
+    /**
+     * 订单行列表
+     */
     private final List<OrderLine> lines = new ArrayList<>();
 
+    /**
+     * 构造函数。
+     *
+     * @param id        订单 ID
+     * @param orderNo   订单编号
+     * @param buyerId   买家 ID
+     * @param buyerName 买家名称
+     * @param status    订单状态
+     * @param lines     订单行列表
+     */
     public Order(String id, String orderNo, String buyerId, String buyerName, OrderStatus status, List<OrderLine> lines) {
         if (StrKit.isBlank(id)) {
             throw new IllegalArgumentException("id must not be blank");
@@ -50,6 +80,14 @@ public class Order extends AggregateRoot<String> {
         }
     }
 
+    /**
+     * 创建草稿订单。
+     *
+     * @param orderNo   订单编号
+     * @param buyerId   买家 ID
+     * @param buyerName 买家名称
+     * @return 草稿订单
+     */
     public static Order draft(String orderNo, String buyerId, String buyerName) {
         Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, List.of());
         order.registerEvent(new OrderCreatedEvent(order.id()));
@@ -77,16 +115,31 @@ public class Order extends AggregateRoot<String> {
         return status;
     }
 
+    /**
+     * 获取订单行列表（不可变）。
+     *
+     * @return 订单行列表
+     */
     public List<OrderLine> lines() {
         return List.copyOf(lines);
     }
 
+    /**
+     * 计算订单总金额。
+     *
+     * @return 总金额
+     */
     public Money totalAmount() {
         return lines.stream()
                 .map(OrderLine::subtotal)
                 .reduce(Money.zero("CNY"), Money::add);
     }
 
+    /**
+     * 重命名买家。
+     *
+     * @param buyerName 新买家名称
+     */
     public void renameBuyer(String buyerName) {
         if (StrKit.isBlank(buyerName)) {
             throw new IllegalArgumentException("buyerName must not be blank");
@@ -94,6 +147,14 @@ public class Order extends AggregateRoot<String> {
         this.buyerName = buyerName;
     }
 
+    /**
+     * 添加订单行。
+     *
+     * @param productId   商品 ID
+     * @param productName 商品名称
+     * @param quantity    数量
+     * @param unitPrice   单价
+     */
     public void addLine(String productId, String productName, int quantity, Money unitPrice) {
         assertDraft();
         OrderLine line = OrderLine.create(productId, productName, quantity, unitPrice);
@@ -101,6 +162,11 @@ public class Order extends AggregateRoot<String> {
         registerEvent(new OrderLineAddedEvent(id));
     }
 
+    /**
+     * 支付订单。
+     *
+     * @throws IllegalStateException 如果订单不是草稿状态或订单行为空
+     */
     public void pay() {
         assertDraft();
         if (lines.isEmpty()) {
@@ -110,6 +176,11 @@ public class Order extends AggregateRoot<String> {
         registerEvent(new OrderPaidEvent(id));
     }
 
+    /**
+     * 发货订单。
+     *
+     * @throws IllegalStateException 如果订单不是已支付状态
+     */
     public void ship() {
         if (status != OrderStatus.PAID) {
             throw new IllegalStateException("only paid order can be shipped");
@@ -118,6 +189,11 @@ public class Order extends AggregateRoot<String> {
         registerEvent(new OrderShippedEvent(id));
     }
 
+    /**
+     * 取消订单。
+     *
+     * @throws IllegalStateException 如果订单已发货
+     */
     public void cancel() {
         if (status == OrderStatus.SHIPPED) {
             throw new IllegalStateException("shipped order cannot be cancelled");

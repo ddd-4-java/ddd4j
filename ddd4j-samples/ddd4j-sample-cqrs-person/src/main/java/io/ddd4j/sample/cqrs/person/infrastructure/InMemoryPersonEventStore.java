@@ -12,12 +12,31 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * 基于内存的事件存储实现。
+ *
+ * <p>用于演示 Event Sourcing 模式中的事件存储能力，
+ * 支持追加事件、按人员 ID 查询和按序批量读取。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class InMemoryPersonEventStore implements EventChunkReader<PersonEvent> {
 
+    /**
+     * 事件流 ID
+     */
     public static final String STREAM_ID = "person-stream";
 
+    /**
+     * 内存事件列表（线程安全）
+     */
     private final List<PersonEvent> events = new CopyOnWriteArrayList<>();
 
+    /**
+     * 追加新事件到事件流。
+     *
+     * @param newEvents 新事件列表
+     */
     public void append(List<PersonEvent> newEvents) {
         if (CollKit.isEmpty(newEvents)) {
             return;
@@ -25,6 +44,12 @@ public class InMemoryPersonEventStore implements EventChunkReader<PersonEvent> {
         events.addAll(newEvents);
     }
 
+    /**
+     * 根据人员 ID 查询关联的所有事件。
+     *
+     * @param personId 人员 ID
+     * @return 关联的事件列表
+     */
     public List<PersonEvent> readByPersonId(PersonId personId) {
         PersonId id = Objects.requireNonNull(personId, "personId must not be null");
         return events.stream()

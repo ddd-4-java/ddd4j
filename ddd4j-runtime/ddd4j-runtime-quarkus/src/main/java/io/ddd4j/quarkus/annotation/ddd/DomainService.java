@@ -7,6 +7,9 @@ import java.lang.annotation.*;
 
 /**
  * Quarkus 业务服务 Bean（领域服务）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @DDDAnnotation
 @Documented

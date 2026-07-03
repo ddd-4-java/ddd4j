@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Programmatic Apache Pulsar consumer registrar.
+ * Apache Pulsar 消费者端点注册器（编程式注册）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class PulsarMQConsumerEndpointRegistrar {
 

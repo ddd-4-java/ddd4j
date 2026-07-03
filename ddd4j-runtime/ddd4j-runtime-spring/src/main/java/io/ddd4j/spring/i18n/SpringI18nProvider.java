@@ -19,6 +19,7 @@ import java.util.Locale;
 @Component
 public class SpringI18nProvider implements I18nProvider {
 
+    /** Spring 嵌套消息源 */
     private final NestedMessageSource messageSource;
 
     public SpringI18nProvider(NestedMessageSource messageSource) {

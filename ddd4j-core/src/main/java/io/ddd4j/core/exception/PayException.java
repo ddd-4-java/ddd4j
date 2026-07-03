@@ -4,6 +4,11 @@ import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.CustomApiCode;
 
 /**
+ * 支付异常。
+ * <p>
+ * 当支付操作（下单、退款、查询等）失败时抛出。
+ * 继承 {@link BizRuntimeException}，支持国际化消息和业务错误码。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class PayException extends BizRuntimeException {

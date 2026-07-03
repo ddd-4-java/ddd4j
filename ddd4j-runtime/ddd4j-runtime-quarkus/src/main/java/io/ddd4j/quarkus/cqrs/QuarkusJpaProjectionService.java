@@ -11,11 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Quarkus CQRS 投影拉取服务。
+ * <p>
+ * 基于 {@code @Scheduled} 定时拉取投影事件，驱动 CQRS 读侧视图增量更新。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 @ApplicationScoped
 public class QuarkusJpaProjectionService {
 
+    /** 投影位置仓储实例 */
     @Inject
     Instance<ProjectionPositionRepository> projectionPositionRepository;
 

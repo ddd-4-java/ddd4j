@@ -6,6 +6,15 @@ import org.springframework.stereotype.Repository;
 
 import java.lang.annotation.*;
 
+/**
+ * Spring 领域仓储注解。
+ * <p>
+ * 标记一个类为 DDD 领域仓储，自动融合 Spring {@link Repository} 元注解，
+ * 使被标注的类自动被 Spring 容器扫描并注册为 Repository Bean。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
 @DDDAnnotation
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

@@ -17,7 +17,9 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Apache Pulsar event publisher (pure Java, native pulsar-client).
+ * Apache Pulsar 事件发布器（纯 Java，原生 pulsar-client）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class PulsarMQEventPublisher implements MQEventPublisher {
 

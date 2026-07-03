@@ -15,11 +15,18 @@ import java.util.concurrent.Executors;
 
 /**
  * Quarkus EventStore 自动配置。
+ * <p>
+ * 根据 {@code ddd4j.ddd.event-store.type} 配置自动创建 {@link EventStore} 实例，
+ * 默认使用内存版 EventStore（适用于开发/测试模式）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 @ApplicationScoped
 public class Ddd4jEventStoreConfig {
 
+    /** EventStore 类型配置 */
     @Inject
     @ConfigProperty(name = "ddd4j.ddd.event-store.type", defaultValue = "mem")
     String eventStoreType;

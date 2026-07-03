@@ -16,7 +16,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * AWS SQS event publisher (pure Java, AWS SDK v2).
+ * AWS SQS 事件发布器（纯 Java，AWS SDK v2）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class SqsMQEventPublisher implements MQEventPublisher {
 

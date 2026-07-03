@@ -13,7 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * Eclipse Paho MQTT event publisher (pure Java).
+ * Eclipse Paho MQTT 事件发布器（纯 Java）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MqttMQEventPublisher implements MQEventPublisher {
 

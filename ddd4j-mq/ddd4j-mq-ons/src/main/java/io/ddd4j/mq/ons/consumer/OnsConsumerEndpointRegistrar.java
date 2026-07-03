@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Programmatic Alibaba ONS consumer registrar.
+ * 阿里云 ONS 消费者端点注册器（编程式注册）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class OnsConsumerEndpointRegistrar {
 

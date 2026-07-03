@@ -12,13 +12,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
- * mica-mqtt AIO event publisher (pure Java).
+ * mica-mqtt AIO 事件发布器（纯 Java）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MicaMqttMQEventPublisher implements MQEventPublisher {
 
+    /** mica-mqtt 客户端实例 */
     private final MqttClient client;
+    /** mica-mqtt 配置属性 */
     private final MicaMqttProperties properties;
+    /** MQ 全局配置 */
     private final Ddd4jMQProperties mqProperties;
+    /** 事件序列化器 */
     private final MQEventSerialization serialization;
 
     public MicaMqttMQEventPublisher(MqttClient client, MicaMqttProperties properties,

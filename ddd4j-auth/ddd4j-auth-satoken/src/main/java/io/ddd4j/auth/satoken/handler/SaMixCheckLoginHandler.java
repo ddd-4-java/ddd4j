@@ -91,6 +91,12 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
         // 校验通过，什么也不做
     }
 
+    /**
+     * 从临时 Token 中提取 Token 载荷（JWT 扩展信息）。
+     *
+     * @param value 临时 Token 对象
+     * @return Token 扩展数据 Map
+     */
     public Map<String, Object> getTokenPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
             put(SaConstants.PAYLOAD_AUTH_TYPE, value.getAuthType());
@@ -99,6 +105,12 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
         }};
     }
 
+    /**
+     * 从临时 Token 中提取终端载荷（设备信息）。
+     *
+     * @param value 临时 Token 对象
+     * @return 终端扩展数据 Map
+     */
     public Map<String, Object> getTerminalPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
             put(SaConstants.FIELD_APP_ID, value.getAppId());

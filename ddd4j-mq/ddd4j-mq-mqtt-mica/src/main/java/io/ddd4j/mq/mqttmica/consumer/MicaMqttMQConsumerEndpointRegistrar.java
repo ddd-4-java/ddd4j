@@ -16,19 +16,36 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Programmatic mica-mqtt consumer registrar.
+ * mica-mqtt 消费者端点注册器（编程式注册）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MicaMqttMQConsumerEndpointRegistrar {
 
+    /** mica-mqtt 客户端实例 */
     private final MqttClient client;
+    /** mica-mqtt 配置属性 */
     private final MicaMqttProperties properties;
+    /** 消息 ID 生成器 */
     private final AtomicLong idGen = new AtomicLong(1);
 
+    /**
+     * 构造 mica-mqtt 消费者端点注册器。
+     *
+     * @param client     mica-mqtt 客户端
+     * @param properties mica-mqtt 配置属性
+     */
     public MicaMqttMQConsumerEndpointRegistrar(MqttClient client, MicaMqttProperties properties) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    /**
+     * 注册 MQ 监听器到 mica-mqtt 消费者端点。
+     *
+     * @param definition 监听器定义
+     * @param handler    消费处理器
+     */
     public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
         String topic = Objects.isNull(definition.getTopic()) ? "ddd4j/default/topic" : definition.getTopic();
         String tag = MQTagMatcher.findIncludes(definition.getTags()).stream().findFirst().orElse(null);
