@@ -1,0 +1,30 @@
+package io.ddd4j.core.exception;
+
+import java.io.Serial;
+
+/**
+ * 账号不存在异常（登录时账号未注册）。
+ *
+ * <p>跨三鉴权框架统一抛出：
+ * <ul>
+ *   <li>SaToken：{@code NotLoginException}(code 10011) / {@code DisableServiceException}</li>
+ *   <li>Shiro：{@code UnknownAccountException}</li>
+ *   <li>Spring Security：{@code UsernameNotFoundException}</li>
+ * </ul>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.0
+ */
+public class UnknownAccountException extends AuthenticationException {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    public UnknownAccountException(String message) {
+        super(message);
+    }
+
+    public UnknownAccountException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

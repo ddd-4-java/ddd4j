@@ -1,0 +1,30 @@
+package io.ddd4j.core.exception;
+
+import java.io.Serial;
+
+/**
+ * Token 无效异常（格式错误/签名错误/伪造）。
+ *
+ * <p>跨三鉴权框架统一抛出：
+ * <ul>
+ *   <li>SaToken：{@code NotLoginException}(code 10012, "无效的Token")</li>
+ *   <li>Shiro：{@code IncorrectCredentialsException} 或 {@code CorruptTokenException}</li>
+ *   <li>Spring Security：{@code BadCredentialsException} 或 {@code InvalidBearerTokenException}</li>
+ * </ul>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.0
+ */
+public class TokenInvalidException extends AuthenticationException {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    public TokenInvalidException(String message) {
+        super(message);
+    }
+
+    public TokenInvalidException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

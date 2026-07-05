@@ -3,9 +3,18 @@ package io.ddd4j.auth.shiro.subject;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
+import io.ddd4j.core.exception.AccountDisabledException;
+import io.ddd4j.core.exception.AccountLockedException;
+import io.ddd4j.core.exception.BadCredentialsException;
+import io.ddd4j.core.exception.CredentialsExpiredException;
+import io.ddd4j.core.exception.NotLoggedInException;
+import io.ddd4j.core.exception.SessionExpiredException;
+import io.ddd4j.core.exception.UnknownAccountException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.DisabledAccountException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -340,9 +349,28 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
         try {
             subject.login(token);
-        } catch (UnknownAccountException e) {
-            // 未注册账号：业务侧 Realm 应抛此异常
-            throw e;
+        } catch (org.apache.shiro.authc.UnknownAccountException e) {
+            // Shiro 账号不存在 → ddd4j 通用 UnknownAccount
+            throw new UnknownAccountException(e.getMessage(), e);
+        } catch (IncorrectCredentialsException e) {
+            // Shiro 密码错误 → ddd4j 通用 BadCredentials
+            throw new BadCredentialsException(e.getMessage(), e);
+        } catch (LockedAccountException e) {
+            // Shiro 账号被锁 → ddd4j 通用 AccountLocked
+            throw new AccountLockedException(e.getMessage(), e);
+        } catch (DisabledAccountException e) {
+            // Shiro 账号被禁 → ddd4j 通用 AccountDisabled
+            throw new AccountDisabledException(e.getMessage(), e);
+        } catch (org.apache.shiro.authc.ExpiredCredentialsException e) {
+            // Shiro 凭证过期 → ddd4j 通用 CredentialsExpired
+            throw new CredentialsExpiredException(e.getMessage(), e);
+        } catch (org.apache.shiro.session.ExpiredSessionException e) {
+            // Shiro session 过期 → ddd4j 通用 SessionExpired
+            throw new SessionExpiredException(e.getMessage(), e);
+        } catch (RuntimeException e) {
+            // Shiro 其他认证异常（含未实现的账号过期等）：未登录/无主体等 → ddd4j 通用 NotLoggedIn
+            // （用 RuntimeException 兜底，避开 shiro 1.7.0 包路径兼容问题）
+            throw new NotLoggedInException(e.getMessage(), e);
         }
 
         // 3. 登录成功：把 AuthPrincipal 写入 Session，并保留 sessionConfig

@@ -2,6 +2,10 @@ package io.ddd4j.auth.satoken.subject;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaCookieConfig;
+import cn.dev33.satoken.exception.DisableServiceException;
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
+import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
@@ -12,6 +16,12 @@ import io.ddd4j.core.auth.AuthLogoutMode;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
+import io.ddd4j.core.exception.AccountDisabledException;
+import io.ddd4j.core.exception.NotLoggedInException;
+import io.ddd4j.core.exception.PermissionDeniedException;
+import io.ddd4j.core.exception.RoleDeniedException;
+import io.ddd4j.core.exception.SessionExpiredException;
+import io.ddd4j.core.exception.TokenExpiredException;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
 
