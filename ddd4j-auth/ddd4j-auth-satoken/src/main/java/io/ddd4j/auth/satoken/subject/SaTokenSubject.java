@@ -119,13 +119,26 @@ public class SaTokenSubject implements Subject {
             param.setCookie(toSaCookieConfig(cfg.getCookie()));
         }
 
-        // 调用 Sa-Token 登录，建立会话
-        if (Objects.nonNull(cfg.getPresetToken())) {
-            // 已预定 token：先 set token 再 login
-            logic.setTokenValue(cfg.getPresetToken());
+        // 调用 Sa-Token 登录，建立会话（异常映射到 ddd4j 通用 AuthException）
+        try {
+            if (Objects.nonNull(cfg.getPresetToken())) {
+                // 已预定 token：先 set token 再 login
+                logic.setTokenValue(cfg.getPresetToken());
+            }
+            // sa-token 1.42 的 login(...) 返回 void；完成后通过 getTokenValue() 拿到 token
+            logic.login(request.getLoginIdAsString(), param);
+        } catch (NotLoginException e) {
+            // sa-token 登录失败（含"账号无效/凭证错误"）：code 10011 -> NotLoggedInException
+            // （业务侧通过 SaErrorCode 区分具体原因，本类做通用映射）
+            throw new NotLoggedInException("Sa-Token login failed: " + e.getMessage(), e);
+        } catch (DisableServiceException e) {
+            // sa-token 账号被禁用：code 10011 -> AccountDisabled
+            throw new AccountDisabledException("Sa-Token account disabled: " + e.getMessage(), e);
+        } catch (RuntimeException e) {
+            // sa-token 其他异常：兜底
+            throw new NotLoggedInException("Sa-Token login error: " + e.getMessage(), e);
         }
-        // sa-token 1.42 的 login(...) 返回 void；完成后通过 getTokenValue() 拿到 token
-        logic.login(request.getLoginIdAsString(), param);
+
         String token = logic.getTokenValue();
 
         // 登录后立即创建 TokenSession（如果配置需要）

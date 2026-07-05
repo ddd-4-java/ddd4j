@@ -2,11 +2,22 @@ package io.ddd4j.auth.security.subject;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
+import io.ddd4j.core.exception.AccountDisabledException;
+import io.ddd4j.core.exception.AccountExpiredException;
+import io.ddd4j.core.exception.BadCredentialsException;
+import io.ddd4j.core.exception.CredentialsExpiredException;
+import io.ddd4j.core.exception.NotLoggedInException;
+import io.ddd4j.core.exception.SessionExpiredException;
+import io.ddd4j.core.exception.UnknownAccountException;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Objects;
@@ -79,13 +90,35 @@ public class SecuritySubject implements Subject {
     @Override
     public String login(AuthRequest request) {
         // 构建 Spring Security Authentication
+        // 注意：本类为 stub 实现——业务方通常通过 Spring Security AuthenticationManager 完成实际认证。
+        // 这里仅设置 SecurityContext，不触发 AuthenticationProvider；
+        // 真实场景应替换为 AuthenticationManager.authenticate(...)。
+        // 我们把通用异常映射加在这里是为了与 Shiro/SaToken 行为对齐（三鉴权统一抛 ddd4j AuthException）。
         Object credentials = Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : "";
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : request.getLoginId(),
                 credentials
         );
         auth.setDetails(request.getExtra());
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        } catch (UsernameNotFoundException e) {
+            // Spring Security 账号不存在 → ddd4j 通用 UnknownAccount
+            throw new UnknownAccountException(e.getMessage(), e);
+        } catch (LockedException e) {
+            throw new io.ddd4j.core.exception.AccountLockedException(e.getMessage(), e);
+        } catch (DisabledException e) {
+            throw new AccountDisabledException(e.getMessage(), e);
+        } catch (AccountExpiredException e) {
+            throw new AccountExpiredException(e.getMessage(), e);
+        } catch (CredentialsExpiredException e) {
+            throw new CredentialsExpiredException(e.getMessage(), e);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException(e.getMessage(), e);
+        } catch (AuthenticationException e) {
+            // Spring Security 其他认证异常：未登录 → ddd4j 通用 NotLoggedIn
+            throw new NotLoggedInException(e.getMessage(), e);
+        }
         // Spring Security 无状态，返回 loginId 作为凭证标识
         return request.getLoginIdAsString();
     }
