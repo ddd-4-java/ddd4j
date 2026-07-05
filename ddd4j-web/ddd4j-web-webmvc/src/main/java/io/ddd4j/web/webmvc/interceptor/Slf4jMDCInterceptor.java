@@ -1,4 +1,4 @@
-package io.ddd4j.spring.web;
+package io.ddd4j.web.webmvc.interceptor;
 
 import io.ddd4j.core.constant.XHeaders;
 import io.ddd4j.kit.web.IpKit;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.RequestInterceptor;
 import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.web.utils.BaseWebSocketServer;
+import io.ddd4j.web.webmvc.ws.BaseWebSocketServer;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
 import io.ddd4j.web.webmvc.core.GlobalResponseRAdvice;
 import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;

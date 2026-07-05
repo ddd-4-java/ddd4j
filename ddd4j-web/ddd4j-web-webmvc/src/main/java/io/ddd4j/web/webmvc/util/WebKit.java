@@ -1,4 +1,4 @@
-package io.ddd4j.spring.util;
+package io.ddd4j.web.webmvc.util;
 
 import cn.hutool.json.JSONUtil;
 import io.ddd4j.core.constant.XHeaders;

@@ -17,11 +17,6 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-web-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>

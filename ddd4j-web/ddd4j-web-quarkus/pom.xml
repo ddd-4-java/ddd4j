@@ -15,11 +15,6 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-web-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-runtime-quarkus</artifactId>
             <version>${revision}</version>
         </dependency>

@@ -1,4 +1,4 @@
-package io.ddd4j.spring.util;
+package io.ddd4j.web.webflux.util;
 
 import io.ddd4j.core.constant.XHeaders;
 import lombok.extern.slf4j.Slf4j;

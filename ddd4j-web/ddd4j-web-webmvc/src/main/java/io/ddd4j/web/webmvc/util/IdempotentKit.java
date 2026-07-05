@@ -1,4 +1,4 @@
-package io.ddd4j.spring.util;
+package io.ddd4j.web.webmvc.util;
 
 import com.alibaba.fastjson2.JSONObject;
 import io.ddd4j.annotation.api.ApiIdempotent;

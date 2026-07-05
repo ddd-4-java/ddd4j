@@ -16,12 +16,6 @@
     </description>
 
     <dependencies>
-        <!-- 纯 Java Web 抽象 -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-web-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
         <!-- Spring 桥接层 -->
         <dependency>
             <groupId>io.ddd4j</groupId>

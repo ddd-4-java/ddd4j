@@ -1,6 +1,6 @@
 package io.ddd4j.web.webmvc.interceptor;
 
-import io.ddd4j.web.config.BaseWebProperties;
+import io.ddd4j.web.webmvc.config.BaseWebProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;

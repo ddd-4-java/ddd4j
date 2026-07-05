@@ -23,11 +23,6 @@
         <!-- For BaseExceptionHandler -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-web-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>

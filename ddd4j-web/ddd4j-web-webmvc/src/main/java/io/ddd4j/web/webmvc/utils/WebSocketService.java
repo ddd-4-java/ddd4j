@@ -2,7 +2,7 @@ package io.ddd4j.web.webmvc.utils;
 
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.spring.context.SpringContext;
-import io.ddd4j.web.config.BaseWebProperties;
+import io.ddd4j.web.webmvc.config.BaseWebProperties;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;

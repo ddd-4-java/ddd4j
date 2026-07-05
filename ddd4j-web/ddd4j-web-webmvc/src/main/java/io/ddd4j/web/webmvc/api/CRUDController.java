@@ -5,7 +5,7 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.web.utils.ReflectKit;
+import io.ddd4j.kit.lang.ReflectKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

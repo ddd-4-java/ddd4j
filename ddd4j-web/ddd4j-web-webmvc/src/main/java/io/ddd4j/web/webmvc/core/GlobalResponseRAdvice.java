@@ -7,7 +7,7 @@ import io.ddd4j.core.api.IR;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.exception.BizRuntimeException;
-import io.ddd4j.web.config.BaseWebProperties;
+import io.ddd4j.web.webmvc.config.BaseWebProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.MethodParameter;

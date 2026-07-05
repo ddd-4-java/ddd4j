@@ -10,7 +10,7 @@ import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.kit.web.IpKit;
-import io.ddd4j.spring.util.WebUtils;
+import io.ddd4j.web.webmvc.util.WebUtils;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;

@@ -2,7 +2,7 @@ package io.ddd4j.data.logs.aspect;
 
 import cn.hutool.core.lang.Snowflake;
 import io.ddd4j.core.constant.XHeaders;
-import io.ddd4j.spring.util.WebUtils;
+import io.ddd4j.web.webmvc.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

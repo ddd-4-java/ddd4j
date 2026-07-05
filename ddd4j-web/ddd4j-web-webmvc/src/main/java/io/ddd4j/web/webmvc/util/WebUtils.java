@@ -1,4 +1,4 @@
-package io.ddd4j.spring.util;
+package io.ddd4j.web.webmvc.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.StringUtils;

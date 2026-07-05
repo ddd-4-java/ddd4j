@@ -2,7 +2,7 @@
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
  */
-package io.ddd4j.web.exception;
+package io.ddd4j.web.webmvc.exception;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import io.ddd4j.kit.web.IpKit;
