@@ -1,0 +1,29 @@
+# ddd4j Javalin CQRS/ES 示例启动配置
+#
+# 本示例使用 application.yml 仅作为启动元数据记录（端口、组件开关）。
+# 真实的 SPI 实例、事件存储、读模型视图由 Ddd4jCqrsSetup#bootstrap() 在
+# main 方法里手工装配 —— 这正是 Javalin 无 DI 场景下的标准做法。
+#
+# 若未来需要把本示例迁移到 Spring / Quarkus / Guice，只需把
+# Ddd4jCqrsSetup 替换为对应的 ddd4j-runtime-* 模块，业务代码完全一致。
+
+server:
+  port: 7001
+
+ddd4j:
+  cqrs:
+    # 是否启用进程内事件总线（关闭后读模型只能通过 ProjectionRunner.runOnce 批处理更新）
+    in-process-event-bus: true
+    # 事件投影调度 CRON（保留与 PersonListView.getCron() 一致；本示例无后台调度，仅记录）
+    projection-cron: "0/5 * * * * ?"
+  spi:
+    # SPI 实现类（仅用于文档记录；真实注入在 Ddd4jCqrsSetup 中完成）
+    domain-event-publisher: io.ddd4j.sample.javalin.cqrs.config.PersonEventBridge
+    mq-event-publisher: io.ddd4j.sample.javalin.cqrs.spi.NoOpMQEventPublisher
+    subject-provider: io.ddd4j.sample.javalin.cqrs.spi.AnonymousSubjectProvider
+    i18n-provider: io.ddd4j.sample.javalin.cqrs.spi.DefaultI18nProvider
+
+logging:
+  level:
+    # 屏蔽 ddd4j 内部 DEBUG 日志
+    io.ddd4j: INFO

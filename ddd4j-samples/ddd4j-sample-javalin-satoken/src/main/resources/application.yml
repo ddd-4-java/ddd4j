@@ -1,0 +1,4 @@
+# Javalin + Sa-Token 鉴权示例配置
+# 端口在 JavalinSaTokenApplication.main() 中设置：app.start(8085)
+server:
+  port: 8085

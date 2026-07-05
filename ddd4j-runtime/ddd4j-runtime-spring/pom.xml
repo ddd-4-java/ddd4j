@@ -105,6 +105,32 @@
             <artifactId>swagger-annotations</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--
+            鉴权框架桥接（exception handlers）— 只有当业务方引入三鉴权之一时才编译相关 handler。
+            Optional=true：避免 ddd4j-runtime-spring 强依赖任意鉴权框架。
+        -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-auth-satoken</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-auth-shiro</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

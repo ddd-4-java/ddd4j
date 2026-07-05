@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-samples</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-sample-quarkus-cqrs</artifactId>
+    <description>Quarkus 平台上的 ddd4j Order/Goods CQRS 完整示例：
+        将 Order 充血模型 + Goods 第三轨 (Model/Query) 双业务完整移植到 Quarkus 运行时，
+        演示 ① CDI @ApplicationScoped 业务装配 ② JAX-RS REST 端点（命令/查询分离）③
+        ProjectionView 内存读模型 ④ CDI @Observes 监听 ddd4j DomainEvent 桥接 ⑤
+        CacheKit 缓存读侧（CQRS 缓存增强）。
+    </description>
+
+    <properties>
+        <!-- Quarkus 平台版本与 ddd4j-dependencies 保持一致（3.x LTS 系列） -->
+        <quarkus.platform.version>3.15.1</quarkus.platform.version>
+        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.package.type>fast-jar</quarkus.package.type>
+        <surefire-plugin.version>3.2.5</surefire-plugin.version>
+        <failsafe-plugin.version>3.2.5</failsafe-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 显式引入 Quarkus BOM，统一管控 quarkus-* 版本 -->
+            <dependency>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- ================= ddd4j 核心依赖 ================= -->
+        <!-- 纯 Java 业务契约：BaseContext、Contexts、SPI 接口、聚合根基类、ProjectionView -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- DDD 构造型注解（@DomainService / @DomainRepository 等） -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 工具包：StrKit、CollectionKit 等 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- Quarkus 运行时绑定：CDI 启动期自动注入 4 个核心 SPI 到 BaseContext -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-runtime-quarkus</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- Quarkus Web 适配：TenantAwareResource、DefaultExceptionHandler、JAX-RS 异常映射 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-web-quarkus</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 缓存能力：CacheKit、本地缓存（Caffeine/Guava）门面（CQRS 读侧缓存增强） -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-cache</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- ================= Quarkus 扩展 ================= -->
+        <!-- REST（Quarkus 3.x 推荐使用 quarkus-rest，原 resteasy-reactive 已合并） -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest</artifactId>
+        </dependency>
+
+        <!-- CDI / Arc（Quarkus 默认包含，显式声明更清晰） -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+
+        <!-- ================= JSON ================= -->
+        <!-- Jackson 数据绑定：用于 PersonEvent/Person 的序列化与 JAX-RS 请求/响应 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- ================= 测试依赖 ================= -->
+        <!-- Quarkus 集成测试支持 -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- REST 客户端（@QuarkusTest 中调用本地端点） -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- AssertJ -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Quarkus 构建插件：dev / build / generate-code 入口 -->
+            <plugin>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 单元测试 -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
+            <!-- 集成测试（Quarkus @QuarkusTest 走 failsafe） -->
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <maven.home>${maven.home}</maven.home>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

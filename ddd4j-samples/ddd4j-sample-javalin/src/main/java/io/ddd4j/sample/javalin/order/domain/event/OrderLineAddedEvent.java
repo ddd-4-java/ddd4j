@@ -1,0 +1,19 @@
+package io.ddd4j.sample.javalin.order.domain.event;
+
+import io.ddd4j.core.ddd.event.DomainEvent;
+
+/**
+ * 订单行添加事件。
+ *
+ * <p>当订单中添加新的商品行（{@code Order.addLine(...)}）时触发。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+public class OrderLineAddedEvent extends DomainEvent<String> {
+
+    private static final long serialVersionUID = 1L;
+
+    public OrderLineAddedEvent(String orderId) {
+        super(orderId);
+    }
+}

@@ -1,0 +1,61 @@
+package io.ddd4j.sample.javalin.shiro.rbac.repository;
+
+import io.ddd4j.sample.javalin.shiro.rbac.domain.Permission;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+/**
+ * 权限仓储：内存实现。
+ *
+ * <p>仅用于演示 RBAC 完整 CRUD 流程。生产环境应替换为 JDBC / MyBatis / JPA 实现。
+ *
+ * <p>本类在所有 7 个示例（Spring/Quarkus/Javalin × Sa-Token/Shiro/Security）中<b>完全一致</b>，
+ * 证明切换底层鉴权框架时业务代码零改动。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+public class InMemoryPermissionRepository {
+
+    private final ConcurrentMap<String, Permission> store = new ConcurrentHashMap<>();
+
+    /**
+     * 新增或更新权限。
+     */
+    public Permission save(Permission permission) {
+        store.put(permission.code(), permission);
+        return permission;
+    }
+
+    /**
+     * 按编码查询权限。
+     */
+    public Optional<Permission> findByCode(String code) {
+        return Optional.ofNullable(store.get(code));
+    }
+
+    /**
+     * 删除权限。
+     */
+    public boolean deleteByCode(String code) {
+        return store.remove(code) != null;
+    }
+
+    /**
+     * 查询全部权限。
+     */
+    public Collection<Permission> findAll() {
+        return Collections.unmodifiableCollection(store.values());
+    }
+
+    /**
+     * 当前权限数量。
+     */
+    public int count() {
+        return store.size();
+    }
+
+}
