@@ -23,6 +23,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@SuppressWarnings("unchecked")
 public class SecuritySubject implements Subject {
 
     /**
@@ -43,7 +44,6 @@ public class SecuritySubject implements Subject {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private <T extends AuthPrincipal> T castPrincipal(Object principal) {
         if (principal instanceof AuthPrincipal) {
             return (T) principal;

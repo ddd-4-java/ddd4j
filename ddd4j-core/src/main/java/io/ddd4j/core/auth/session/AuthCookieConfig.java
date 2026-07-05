@@ -1,4 +1,4 @@
-package io.ddd4j.core.auth;
+package io.ddd4j.core.auth.session;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

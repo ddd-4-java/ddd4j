@@ -9,7 +9,7 @@ import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.date.DateTime;
-import io.ddd4j.auth.satoken.SaConstants;
+import io.ddd4j.core.constant.AuthConstants;
 import io.ddd4j.auth.satoken.SaTempToken;
 import io.ddd4j.auth.satoken.annotation.SaMixCheckLogin;
 import io.ddd4j.auth.satoken.util.SaTempKit;
@@ -40,7 +40,7 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
     @Override
     public void checkMethod(SaMixCheckLogin at, AnnotatedElement element) {
         // 获取前端请求提交的临时验证码
-        String tempToken = SaHolder.getRequest().getParam(SaConstants.PARAM_TEMP_TOKEN);
+        String tempToken = SaHolder.getRequest().getParam(AuthConstants.PARAM_TEMP_TOKEN);
         // 如果存在，则校验
         if (Objects.nonNull(tempToken) && io.ddd4j.kit.lang.StrKit.isNotBlank(tempToken)) {
             try {
@@ -99,9 +99,9 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
      */
     public Map<String, Object> getTokenPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
-            put(SaConstants.PAYLOAD_AUTH_TYPE, value.getAuthType());
-            put(SaConstants.PAYLOAD_ISSUED_AT, DateTime.now());
-            put(SaConstants.PAYLOAD_SUBJECT, value.getLoginId());
+            put(AuthConstants.JWT_AUTH_TYPE, value.getAuthType());
+            put(AuthConstants.JWT_ISSUED_AT, DateTime.now());
+            put(AuthConstants.JWT_SUBJECT, value.getLoginId());
         }};
     }
 
@@ -113,11 +113,11 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
      */
     public Map<String, Object> getTerminalPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
-            put(SaConstants.FIELD_APP_ID, value.getAppId());
-            put(SaConstants.FIELD_APP_CHANNEL, value.getAppChannel());
-            put(SaConstants.FIELD_APP_VERSION, value.getAppVersion());
-            put(SaConstants.FIELD_DEVICE_TYPE, value.getDeviceType());
-            put(SaConstants.FIELD_DEVICE_ID, value.getDeviceId());
+            put(AuthConstants.FIELD_APP_ID, value.getAppId());
+            put(AuthConstants.FIELD_APP_CHANNEL, value.getAppChannel());
+            put(AuthConstants.FIELD_APP_VERSION, value.getAppVersion());
+            put(AuthConstants.FIELD_DEVICE_TYPE, value.getDeviceType());
+            put(AuthConstants.FIELD_DEVICE_ID, value.getDeviceId());
         }};
     }
 

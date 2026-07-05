@@ -1,5 +1,8 @@
-package io.ddd4j.core.auth;
+package io.ddd4j.core.auth.session;
 
+import io.ddd4j.core.auth.AuthLogoutMode;
+import io.ddd4j.core.auth.AuthReplacedLoginExitMode;
+import io.ddd4j.core.auth.AuthReplacedRange;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

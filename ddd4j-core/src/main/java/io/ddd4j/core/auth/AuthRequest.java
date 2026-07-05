@@ -1,5 +1,6 @@
 package io.ddd4j.core.auth;
 
+import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.subject.Subject;
 import lombok.Data;
 import lombok.experimental.Accessors;

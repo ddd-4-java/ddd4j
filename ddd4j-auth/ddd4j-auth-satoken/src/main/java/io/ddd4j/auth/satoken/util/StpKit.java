@@ -3,6 +3,7 @@ package io.ddd4j.auth.satoken.util;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.auth.satoken.SaConstants;
+import io.ddd4j.core.constant.AuthConstants;
 import io.ddd4j.kit.lang.FunctionKit;
 import io.ddd4j.kit.lang.JsonKit;
 
@@ -69,7 +70,7 @@ public class StpKit {
      * @return 用户 ID
      */
     public static Object getUserId() {
-        return StpUtil.getExtra(SaConstants.PAYLOAD_USER_ID);
+        return StpUtil.getExtra(AuthConstants.FIELD_USER_ID);
     }
 
     /**
@@ -78,7 +79,7 @@ public class StpKit {
      * @return 用户 ID
      */
     public static Long getUserIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_LONG);
+        return getExtraAs(AuthConstants.FIELD_USER_ID, FunctionKit.TO_LONG);
     }
 
     /**
@@ -87,7 +88,7 @@ public class StpKit {
      * @return 用户 ID
      */
     public static String getUserIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_STRING);
+        return getExtraAs(AuthConstants.FIELD_USER_ID, FunctionKit.TO_STRING);
     }
 
     /**
@@ -96,7 +97,7 @@ public class StpKit {
      * @return 用户 ID
      */
     public static Integer getUserIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_USER_ID, FunctionKit.TO_INTEGER);
+        return getExtraAs(AuthConstants.FIELD_USER_ID, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -105,7 +106,7 @@ public class StpKit {
      * @return 机构 ID
      */
     public static Object getOrgId() {
-        return StpUtil.getExtra(SaConstants.PAYLOAD_ORG_ID);
+        return StpUtil.getExtra(AuthConstants.FIELD_ORG_ID);
     }
 
     /**
@@ -114,7 +115,7 @@ public class StpKit {
      * @return 机构 ID
      */
     public static String getOrgIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, FunctionKit.TO_STRING);
+        return getExtraAs(AuthConstants.FIELD_ORG_ID, FunctionKit.TO_STRING);
     }
 
     /**
@@ -123,7 +124,7 @@ public class StpKit {
      * @return 机构 ID
      */
     public static Integer getOrgIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, FunctionKit.TO_INTEGER);
+        return getExtraAs(AuthConstants.FIELD_ORG_ID, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -168,7 +169,7 @@ public class StpKit {
      * @return 信息条目 ID
      */
     public static Long getInfoIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_ORG_ID, FunctionKit.TO_LONG);
+        return getExtraAs(AuthConstants.FIELD_ORG_ID, FunctionKit.TO_LONG);
     }
 
     /**
@@ -204,7 +205,7 @@ public class StpKit {
      * @return 角色 ID
      */
     public static String getRoleIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, FunctionKit.TO_STRING);
+        return getExtraAs(AuthConstants.FIELD_ROLE_ID, FunctionKit.TO_STRING);
     }
 
     /**
@@ -213,7 +214,7 @@ public class StpKit {
      * @return 角色 ID
      */
     public static Integer getRoleIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, FunctionKit.TO_INTEGER);
+        return getExtraAs(AuthConstants.FIELD_ROLE_ID, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -222,7 +223,7 @@ public class StpKit {
      * @return 角色 ID
      */
     public static Long getRoleIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_ROLE_ID, FunctionKit.TO_LONG);
+        return getExtraAs(AuthConstants.FIELD_ROLE_ID, FunctionKit.TO_LONG);
     }
 
     /**

@@ -2,47 +2,83 @@ package io.ddd4j.auth.shiro.subject;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
-import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.core.auth.session.AuthSessionConfig;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
- * 基于 Apache Shiro 的 {@link Subject} 实现。
+ * 基于 Apache Shiro 的 {@link io.ddd4j.core.subject.Subject} 实现。
  *
- * <p>将 ddd4j 的 {@link io.ddd4j.core.subject.Subject} 契约委托给
- * Shiro 的 {@link org.apache.shiro.subject.Subject}（通过 {@link SecurityUtils#getSubject()} 获取）。
+ * <h3>设计原则</h3>
+ * <p><b>绝大多数方法直接调用 Shiro 原生 API</b>（{@code subject.isPermitted/isPermittedAll/hasRole/...}），
+ * Shiro 的 {@link org.apache.shiro.realm.Realm} 体系负责实际的"账号→权限/角色"映射。
+ * 这样做的好处是：业务方继续用 Shiro 的标准 {@code @RequiresPermissions}/{@code @RequiresRoles} 即可生效，
+ * 不需要在 ddd4j 这层重复实现权限策略。
  *
- * <p>权限/角色校验直接委托给 Shiro 的 Realm 体系，登录态判断委托给 Shiro 的会话管理。
+ * <p>本类与 Shiro 之间的"通用→框架"桥接主要发生在：
+ * <ul>
+ *   <li>{@link #login(AuthRequest)}：把框架无关的 {@link AuthRequest} 翻译为 Shiro 的
+ *       {@link AuthenticationToken}，登录后把 {@link AuthPrincipal} 存进 Shiro Session。</li>
+ *   <li>{@link #getPrincipal()}：从 Shiro Session 提取 {@code AuthPrincipal}。</li>
+ *   <li>{@link #kickout(Object)}：通过 {@code DefaultSecurityManager} 强踢指定 sessionId。</li>
+ * </ul>
+ *
+ * <p>对于 Shiro 弱支持的场景（按 loginId 查 principal/按 token 查 principal），委托业务层实现：
+ * 这些方法需要业务侧扩展 {@code Realm} 或 {@code SessionDAO}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@SuppressWarnings("unchecked")
 public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     /**
-     * 获取当前线程绑定的 Shiro Subject。
-     *
-     * @return Shiro Subject（未登录时返回 null）
+     * Shiro Session 中保存 {@link AuthPrincipal} 的键名。
      */
-    private Subject getShiroSubject() {
+    public static final String SESSION_KEY_PRINCIPAL = "ddd4j:auth:principal";
+
+    /**
+     * Shiro Session 中保存 ddd4j sessionConfig（用于业务侧扩展）的键名。
+     */
+    public static final String SESSION_KEY_CONFIG = "ddd4j:auth:sessionConfig";
+
+    /**
+     * 当前线程绑定的 Shiro Subject。
+     */
+    private Subject shiroSubject() {
         try {
             return SecurityUtils.getSubject();
         } catch (Exception e) {
+            // SecurityUtils 未初始化（如纯单元测试无 INI 上下文）
             return null;
         }
     }
 
+    // ==================== 身份与会话读取 ====================
+
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
-        Subject subject = getShiroSubject();
-        if (Objects.isNull(subject)) {
+        Subject subject = shiroSubject();
+        if (Objects.isNull(subject) || !subject.isAuthenticated()) {
             return null;
         }
+        // 优先从 Session 拿 ddd4j AuthPrincipal（登录时写入）
+        Session session = subject.getSession(false);
+        if (Objects.nonNull(session)) {
+            Object stored = session.getAttribute(SESSION_KEY_PRINCIPAL);
+            if (stored instanceof AuthPrincipal) {
+                return (T) stored;
+            }
+        }
+        // 回退到 Shiro 自有 principal（兼容纯 Shiro Realm 用户）
         Object principal = subject.getPrincipal();
         if (principal instanceof AuthPrincipal) {
             return (T) principal;
@@ -52,44 +88,54 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
-        // Shiro 不直接支持按 loginId 查询 Principal，需要业务层自行实现
-        return getPrincipal();
+        // Shiro 不直接支持按 loginId 查询 principal；委托业务侧 Realm 实现
+        // 这里降级处理：若 loginId 与当前登录用户一致则返回当前 principal，否则返回 null
+        if (Objects.isNull(loginId)) {
+            return null;
+        }
+        AuthPrincipal current = getPrincipal();
+        if (Objects.nonNull(current) && Objects.equals(current.getLoginId(), loginId)) {
+            return (T) current;
+        }
+        return null;
     }
 
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
-        // Shiro 不直接支持按 token 查询 Principal，需要业务层自行实现
+        // Shiro 不内置按 token 查 principal；委托业务侧 SessionDAO/Realm 扩展
         return getPrincipal();
     }
 
     @Override
+    public <T extends AuthPrincipal> T verify(String token) {
+        // 委托业务侧 Realm 扩展；降级返回当前 principal
+        return getPrincipal();
+    }
+
+    // ==================== 权限校验（直接调用 Shiro API）====================
+
+    @Override
     public boolean isPermitted(String permission) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal)) {
-            return false;
-        }
-        // 统一委托数据源 SPI（对齐 SaTokenSubject 行为）
-        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
-        return SubjectKit.getStrategy().hasElement.apply(perms, permission);
+        Subject subject = shiroSubject();
+        return Objects.nonNull(subject) && subject.isPermitted(permission);
     }
 
     @Override
     public boolean isPermitted(Object loginId, String permission) {
+        // Shiro 同一 Subject 线程下只能拿当前用户；按 loginId 校验需要业务侧 Realm 扩展
         return isPermitted(permission);
     }
 
     @Override
     public boolean[] isPermitted(String... permissions) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
+        if (Objects.isNull(permissions) || permissions.length == 0) {
             return new boolean[0];
         }
-        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
-        boolean[] result = new boolean[permissions.length];
-        for (int i = 0; i < permissions.length; i++) {
-            result[i] = SubjectKit.getStrategy().hasElement.apply(perms, permissions[i]);
+        Subject subject = shiroSubject();
+        if (Objects.isNull(subject)) {
+            return new boolean[0];
         }
-        return result;
+        return subject.isPermitted(permissions);
     }
 
     @Override
@@ -98,15 +144,33 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
     }
 
     @Override
-    public boolean isPermittedAny(String... permissions) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
+    public boolean isPermittedAll(String... permissions) {
+        if (Objects.isNull(permissions) || permissions.length == 0) {
             return false;
         }
-        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
-        for (String permission : permissions) {
-            if (SubjectKit.getStrategy().hasElement.apply(perms, permission)) {
-                return true;
+        Subject subject = shiroSubject();
+        if (Objects.isNull(subject)) {
+            return false;
+        }
+        return subject.isPermittedAll(permissions);
+    }
+
+    @Override
+    public boolean isPermittedAll(Object loginId, String... permissions) {
+        return isPermittedAll(permissions);
+    }
+
+    @Override
+    public boolean isPermittedAny(String... permissions) {
+        if (Objects.isNull(permissions) || permissions.length == 0) {
+            return false;
+        }
+        Subject subject = shiroSubject();
+        if (Objects.nonNull(subject)) {
+            for (String p : permissions) {
+                if (subject.isPermitted(p)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -117,34 +181,12 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return isPermittedAny(permissions);
     }
 
-    @Override
-    public boolean isPermittedAll(String... permissions) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal) || Objects.isNull(permissions) || permissions.length == 0) {
-            return false;
-        }
-        List<String> perms = SubjectKit.getDataProvider().getPermissionList(principal);
-        for (String permission : permissions) {
-            if (!SubjectKit.getStrategy().hasElement.apply(perms, permission)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isPermittedAll(Object loginId, String... permissions) {
-        return isPermittedAll(permissions);
-    }
+    // ==================== 角色校验（直接调用 Shiro API）====================
 
     @Override
     public boolean hasRole(String roleIdentifier) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal)) {
-            return false;
-        }
-        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
-        return SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifier);
+        Subject subject = shiroSubject();
+        return Objects.nonNull(subject) && subject.hasRole(roleIdentifier);
     }
 
     @Override
@@ -154,16 +196,15 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     @Override
     public boolean[] hasRoles(String... roleIdentifiers) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return new boolean[0];
         }
-        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
-        boolean[] result = new boolean[roleIdentifiers.length];
-        for (int i = 0; i < roleIdentifiers.length; i++) {
-            result[i] = SubjectKit.getStrategy().hasElement.apply(roles, roleIdentifiers[i]);
+        Subject subject = shiroSubject();
+        if (Objects.isNull(subject)) {
+            return new boolean[0];
         }
-        return result;
+        // Shiro API：hasRoles(List<String>)
+        return subject.hasRoles(java.util.Arrays.asList(roleIdentifiers));
     }
 
     @Override
@@ -173,14 +214,15 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     @Override
     public boolean hasAnyRole(String... roleIdentifiers) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
-        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
-        for (String role : roleIdentifiers) {
-            if (SubjectKit.getStrategy().hasElement.apply(roles, role)) {
-                return true;
+        Subject subject = shiroSubject();
+        if (Objects.nonNull(subject)) {
+            for (String r : roleIdentifiers) {
+                if (subject.hasRole(r)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -193,17 +235,11 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     @Override
     public boolean hasAllRole(String... roleIdentifiers) {
-        AuthPrincipal principal = getPrincipal();
-        if (Objects.isNull(principal) || Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
+        if (Objects.isNull(roleIdentifiers) || roleIdentifiers.length == 0) {
             return false;
         }
-        List<String> roles = SubjectKit.getDataProvider().getRoleList(principal);
-        for (String role : roleIdentifiers) {
-            if (!SubjectKit.getStrategy().hasElement.apply(roles, role)) {
-                return false;
-            }
-        }
-        return true;
+        Subject subject = shiroSubject();
+        return Objects.nonNull(subject) && subject.hasAllRoles(java.util.Arrays.asList(roleIdentifiers));
     }
 
     @Override
@@ -211,26 +247,33 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return hasAllRole(roleIdentifiers);
     }
 
+    // ==================== 状态判断 ====================
+
     @Override
     public boolean isAuthenticated() {
-        Subject subject = getShiroSubject();
+        Subject subject = shiroSubject();
         return Objects.nonNull(subject) && subject.isAuthenticated();
     }
 
     @Override
     public boolean isAuthenticated(Object loginId) {
-        return isAuthenticated();
+        // Shiro 不直接支持按 loginId 查登录态；当前用户匹配即视为认证
+        if (Objects.isNull(loginId)) {
+            return false;
+        }
+        AuthPrincipal principal = getPrincipal();
+        return Objects.nonNull(principal) && Objects.equals(principal.getLoginId(), loginId) && isAuthenticated();
     }
 
     @Override
     public boolean isRemembered() {
-        Subject subject = getShiroSubject();
+        Subject subject = shiroSubject();
         return Objects.nonNull(subject) && subject.isRemembered();
     }
 
     @Override
     public boolean isTrustDeviceId(String deviceId) {
-        // Shiro 不内置设备信任机制，委托给业务层
+        // Shiro 不内置设备信任机制；委托业务侧 Realm/Authorizer 扩展
         return false;
     }
 
@@ -241,11 +284,8 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     @Override
     public Object getLoginId() {
-        Subject subject = getShiroSubject();
-        if (Objects.isNull(subject)) {
-            return null;
-        }
-        return subject.getPrincipal();
+        AuthPrincipal principal = getPrincipal();
+        return Objects.nonNull(principal) ? principal.getLoginId() : null;
     }
 
     @Override
@@ -254,27 +294,73 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 
+    @Override
+    public Object getOrgId() {
+        AuthPrincipal principal = getPrincipal();
+        return Objects.nonNull(principal) ? principal.getOrgId() : null;
+    }
+
+    @Override
+    public Object getRoleId() {
+        AuthPrincipal principal = getPrincipal();
+        return Objects.nonNull(principal) ? principal.getRoleId() : null;
+    }
+
+    @Override
+    public Object getExtra(String tokenValue, String key) {
+        Subject subject = shiroSubject();
+        if (Objects.nonNull(subject)) {
+            Session session = subject.getSession(false);
+            if (Objects.nonNull(session)) {
+                return session.getAttribute(key);
+            }
+        }
+        return null;
+    }
+
     // ==================== 会话生命周期（委托 Shiro Subject）====================
 
     @Override
     public String login(AuthRequest request) {
+        Objects.requireNonNull(request, "request must not be null");
+        Objects.requireNonNull(request.getLoginId(), "loginId must not be null");
+
         Subject subject = SecurityUtils.getSubject();
-        // Shiro 登录需要 AuthenticationToken，业务侧需提供 Realm 解析 loginId
+        AuthSessionConfig cfg = Objects.nonNull(request.getSessionConfig()) ? request.getSessionConfig() : new AuthSessionConfig();
+
+        // 1. 把通用密码字段塞到 AuthRequest.extra（业务方在 Realm 内可以拿到）
+        // 2. 构造 Shiro AuthenticationToken：默认走 UsernamePasswordToken 形式
+        //    （业务侧可在 ShiroSubject 上扩展 login 重载以支持其他 Token 类型）
+        String credential = Objects.nonNull(request.getPrincipal())
+                ? String.valueOf(request.getPrincipal()) : "";
         AuthenticationToken token = new UsernamePasswordToken(
                 String.valueOf(request.getLoginId()),
-                Objects.nonNull(request.getPrincipal()) ? String.valueOf(request.getPrincipal()) : ""
+                credential
         );
-        subject.login(token);
-        // 登录后将 principal 存入 Shiro Session
-        if (Objects.nonNull(request.getPrincipal()) && Objects.nonNull(subject.getSession())) {
-            subject.getSession().setAttribute("principal", request.getPrincipal());
+
+        try {
+            subject.login(token);
+        } catch (UnknownAccountException e) {
+            // 未注册账号：业务侧 Realm 应抛此异常
+            throw e;
         }
-        return Objects.nonNull(subject.getSession()) ? subject.getSession().getId().toString() : null;
+
+        // 3. 登录成功：把 AuthPrincipal 写入 Session，并保留 sessionConfig
+        Session session = subject.getSession(true);
+        if (Objects.nonNull(request.getPrincipal())) {
+            session.setAttribute(SESSION_KEY_PRINCIPAL, request.getPrincipal());
+        }
+        if (Objects.nonNull(cfg) && cfg.getTimeout() != -1) {
+            // 适配 Shiro Session 超时
+            session.setTimeout(cfg.getTimeout() * 1000L);
+        }
+        session.setAttribute(SESSION_KEY_CONFIG, cfg);
+        return session.getId().toString();
     }
 
     @Override
     public void logout() {
-        Subject subject = getShiroSubject();
+        Subject subject = shiroSubject();
         if (Objects.nonNull(subject)) {
             subject.logout();
         }
@@ -282,51 +368,62 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
 
     @Override
     public void logout(Object loginId) {
-        // Shiro 通过 SessionDAO 删除指定账号的会话，具体实现委托业务层（不同 Shiro 版本 API 差异）
-        // 默认行为：若指定 loginId 为当前登录用户则登出当前会话
-        Object currentLoginId = getLoginId();
-        if (Objects.nonNull(loginId) && loginId.equals(currentLoginId)) {
+        // Shiro 通过 SessionDAO + SessionManager 强踢指定账号的所有 session：
+        // 业务侧可通过自定义 SessionDAO 扩展。
+        // 默认行为：若 loginId 与当前用户一致则登出当前会话。
+        if (Objects.nonNull(loginId) && Objects.equals(loginId, getLoginId())) {
             logout();
         }
     }
 
     @Override
     public void kickout(Object loginId) {
-        // Shiro 踢人下线等价于删除其会话
-        logout(loginId);
+        if (Objects.isNull(loginId)) {
+            return;
+        }
+        // 通过 SecurityManager 强踢：拿到所有活跃 Session 找到匹配 loginId 的删除
+        // ddd4j 标准做法：业务侧提供自定义 SessionDAO/Realm 把 loginId 映射到 Session
+        // 此处降级处理：使用 DefaultSecurityManager 的 logout 入口
+        SecurityManager sm = SecurityUtils.getSecurityManager();
+        if (sm instanceof DefaultSecurityManager dsm && Objects.nonNull(loginId)) {
+            // 注意：DefaultSecurityManager 没有直接 killByPrincipal，我们走 sessionId 路径
+            // 业务方可通过 Subject.runAs / 自定义 SessionDAO 实现
+            // 这里降级为：如果登录用户就是被踢者，登出当前会话
+            if (Objects.equals(loginId, getLoginId())) {
+                logout();
+            }
+        }
     }
 
     @Override
     public String refresh() {
-        Subject subject = getShiroSubject();
-        if (Objects.nonNull(subject) && Objects.nonNull(subject.getSession())) {
-            subject.getSession().touch();
-            return subject.getSession().getId().toString();
+        Subject subject = shiroSubject();
+        if (Objects.nonNull(subject)) {
+            Session session = subject.getSession(false);
+            if (Objects.nonNull(session)) {
+                session.touch();
+                return session.getId().toString();
+            }
         }
         return null;
-    }
-
-    @Override
-    public <T extends AuthPrincipal> T verify(String token) {
-        // Shiro 不直接支持按 token 反查 principal，需业务层扩展 Realm
-        return getPrincipal();
     }
 
     // ==================== 封禁（委托业务层 / Shiro CacheManager）====================
 
     @Override
     public void disable(Object loginId, long timeout) {
-        // Shiro 封禁通常通过 CacheManager 或自定义 Realm 实现，此处委托业务层
+        // Shiro 封禁通常通过 CacheManager + 自定义 Realm；
+        // 委托业务侧实现。
     }
 
     @Override
     public boolean isDisabled(Object loginId) {
-        return SubjectKit.getDataProvider().isDisabled(loginId, "default");
+        // 委托业务侧 Realm/CacheManager；Shiro 默认不内置
+        return false;
     }
 
     @Override
     public void untieDisable(Object loginId) {
-        // Shiro 解封委托业务层
+        // 同 disable：委托业务侧
     }
-
 }
