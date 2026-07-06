@@ -95,7 +95,7 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public void ack(boolean multiple) {
-        runOnce(() -> message.acknowledge());
+        runOnce(message::acknowledge);
     }
 
     @Override
@@ -107,10 +107,10 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
     public void nack(boolean multiple, boolean requeue) {
         // JMS 没有 native 的 nack(requeue)，通过 Session.recover() 把已消费但未 ack 的消息重投
         if (requeue) {
-            runOnce(() -> session.recover());
+            runOnce(session::recover);
         } else {
             // requeue=false 等价于 ack（不重新入队，通常进 DLQ）
-            runOnce(() -> message.acknowledge());
+            runOnce(message::acknowledge);
         }
     }
 
@@ -121,7 +121,7 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
 
     @Override
     public void recover(boolean requeue) {
-        runOnce(() -> session.recover());
+        runOnce(session::recover);
     }
 
     @Override

@@ -4,6 +4,7 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.exception.BizRuntimeException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,13 +62,17 @@ class RepositoryRegistryTest {
     @Test
     void repository_shouldThrowBizRuntimeExceptionWhenNotRegistered() {
         assertThatThrownBy(() -> RepositoryRegistry.repository(Order.class))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(BizRuntimeException.class)
+                .hasMessageContaining("Repository not found for aggregate Order")
+                .hasMessageContaining("Register it via RepositoryRegistry.register(Order, repository)");
     }
 
     @Test
     void repositoryForQuery_shouldThrowWhenNotRegistered() {
         assertThatThrownBy(() -> RepositoryRegistry.repositoryForQuery(OrderQuery.class))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(BizRuntimeException.class)
+                .hasMessageContaining("Repository not found for query OrderQuery")
+                .hasMessageContaining("Register it via RepositoryRegistry.register(modelClass, OrderQuery, repository)");
     }
 
     @Test
@@ -96,7 +101,7 @@ class RepositoryRegistryTest {
         RepositoryRegistry.unregister(Order.class);
 
         assertThatThrownBy(() -> RepositoryRegistry.repository(Order.class))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(BizRuntimeException.class);
     }
 
     @Test
@@ -107,7 +112,7 @@ class RepositoryRegistryTest {
         RepositoryRegistry.unregisterQuery(OrderQuery.class);
 
         assertThatThrownBy(() -> RepositoryRegistry.repositoryForQuery(OrderQuery.class))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(BizRuntimeException.class);
     }
 
     @Test
