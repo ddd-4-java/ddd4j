@@ -12,16 +12,27 @@
 
     <artifactId>ddd4j-samples</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j 示例工程聚合</description>
+    <description>ddd4j 框架无关的核心架构示例（DDD/CQRS/Cache + Auth 鉴权矩阵）</description>
 
     <modules>
-        <module>ddd4j-sample-auth-satoken</module>
-        <module>ddd4j-sample-auth-shiro</module>
-        <module>ddd4j-sample-auth-security</module>
-        <module>ddd4j-sample-auth-multi-login</module>
-        <module>ddd4j-sample-cqrs-person</module>
-        <module>ddd4j-sample-rich-model</module>
+        <!-- 核心 DDD 示例：每框架一个，演示 Order 充血模型 + Goods 第三轨 + Cache + MQ -->
+        <module>ddd4j-sample-spring</module>
+        <module>ddd4j-sample-quarkus</module>
         <module>ddd4j-sample-javalin</module>
+
+        <!-- CQRS/ES 示例：每框架一个，演示 Order + Goods 读写分离 + 缓存 -->
+        <module>ddd4j-sample-spring-cqrs</module>
+        <module>ddd4j-sample-quarkus-cqrs</module>
+        <module>ddd4j-sample-javalin-cqrs</module>
+
+        <!-- Auth 鉴权矩阵：框架 × 认证方案（业务代码全部一致） -->
+        <module>ddd4j-sample-spring-satoken</module>
+        <module>ddd4j-sample-spring-shiro</module>
+        <module>ddd4j-sample-spring-security</module>
+        <module>ddd4j-sample-quarkus-satoken</module>
+        <module>ddd4j-sample-quarkus-shiro</module>
+        <module>ddd4j-sample-javalin-satoken</module>
+        <module>ddd4j-sample-javalin-shiro</module>
     </modules>
 
 </project>

@@ -2,12 +2,14 @@ package io.ddd4j.cache.local;
 
 import com.google.common.cache.CacheBuilder;
 import io.ddd4j.core.cache.Cache;
+import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
 
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 /**
@@ -101,6 +103,48 @@ public class GuavaCache<K, V> implements Cache<K, V> {
     public CacheStats stats() {
         // Guava 统计信息不映射到 ddd4j CacheStats
         return null;
+    }
+
+    // ==================== CAS 实现（基于 asMap().replace + 重试）====================
+
+    @Override
+    public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
+        ConcurrentMap<K, V> map = cache.asMap();
+        for (int attempt = 0; attempt < 16; attempt++) {
+            V current = cache.getIfPresent(key);
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+                @Override public String key() { return String.valueOf(key); }
+                @Override public V value() { return current; }
+            };
+            V newValue;
+            try {
+                newValue = operation.apply(resp);
+                if (newValue == null) {
+                    return null;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+            if (current == null) {
+                if (map.putIfAbsent(key, newValue) == null) {
+                    return newValue;
+                }
+                continue;
+            }
+            if (map.replace(key, current, newValue)) {
+                return newValue;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
+        ConcurrentMap<K, V> map = cache.asMap();
+        if (expectedOldValue == null) {
+            return map.putIfAbsent(key, newValue) == null;
+        }
+        return map.replace(key, expectedOldValue, newValue);
     }
 
     /**
