@@ -27,6 +27,7 @@ public interface MQEventPublisher extends io.ddd4j.core.event.MQEventPublisher {
      *
      * @param event 领域事件
      */
+    @Override
     default void publish(MQEvent event) {
         publish(event, MQDestination.from(event));
     }
