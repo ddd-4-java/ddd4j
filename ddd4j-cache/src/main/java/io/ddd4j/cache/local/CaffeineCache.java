@@ -5,10 +5,12 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import io.ddd4j.core.cache.AtomicCache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
+import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.CasCache;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -332,8 +334,37 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
 
     @Override
     public boolean persist(K key) {
-        // Caffeine 不支持移除单 key 的过期策略
         return false;
+    }
+
+    // ==================== CAS SPI 实现（基于 asMap().compute 原子回调）====================
+
+    @Override
+    public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
+        // Caffeine 的 asMap().compute 是 JVM 内原子回调，天然等价于 CASOperation
+        return cache.asMap().compute(key, (k, current) -> {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+                @Override public String key() { return String.valueOf(k); }
+                @Override public V value() { return current; }
+            };
+            try {
+                V newValue = operation.apply(resp);
+                // 回调返回 null 表示删除 key
+                return newValue;
+            } catch (Exception e) {
+                // 异常：保持原值不变
+                return current;
+            }
+        });
+    }
+
+    @Override
+    public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
+        if (Objects.isNull(expectedOldValue)) {
+            // null expected = putIfAbsent
+            return Objects.isNull(cache.asMap().putIfAbsent(key, newValue));
+        }
+        return cache.asMap().replace(key, expectedOldValue, newValue);
     }
 
 }

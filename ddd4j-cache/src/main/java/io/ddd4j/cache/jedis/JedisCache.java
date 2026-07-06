@@ -6,6 +6,7 @@ import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -32,6 +33,7 @@ import java.util.function.Function;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@SuppressWarnings("unchecked")
 public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V> {
 
     /**
@@ -104,7 +106,6 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public V getIfPresent(String key) {
         try {
             String json = jedis.get(key(key));
@@ -293,4 +294,74 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         return jedis.persist(key(key)) == 1L;
     }
 
+    // ==================== CAS SPI 实现（基于 Redis Lua 脚本原子操作）====================
+
+    /**
+     * Redis Lua CAS 脚本：if get==old then set new end。
+     * <p>KEYS[1]=key, ARGV[1]=expectedOld, ARGV[2]=newValue, ARGV[3]=expire
+     */
+    private static final String LUA_CAS =
+            "local cur = redis.call('GET', KEYS[1]) " +
+            "if cur == ARGV[1] then " +
+            "  redis.call('SET', KEYS[1], ARGV[2]) " +
+            "  if tonumber(ARGV[3]) > 0 then redis.call('EXPIRE', KEYS[1], ARGV[3]) end " +
+            "  return 1 " +
+            "end " +
+            "return 0";
+
+    @Override
+    public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
+        String cachedKey = key(key);
+        int maxTries = operation.maxRetries() > 0 ? operation.maxRetries() : 16;
+        for (int attempt = 0; attempt < maxTries; attempt++) {
+            String currentJson = jedis.get(cachedKey);
+            V currentValue = deserialize(currentJson);
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+                @Override public String key() { return cachedKey; }
+                @Override public V value() { return currentValue; }
+            };
+            V newValue;
+            try {
+                newValue = operation.apply(resp);
+                if (newValue == null) {
+                    return null;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+            String newJson = serialize(newValue);
+            // 用 Lua 原子比较
+            Object result = jedis.eval(LUA_CAS, java.util.List.of(cachedKey),
+                    java.util.List.of(currentJson == null ? "" : currentJson, newJson, String.valueOf(expireSeconds)));
+            if (Long.valueOf(1).equals(result)) {
+                return newValue;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
+        String cachedKey = key(key);
+        String expectedJson = expectedOldValue == null ? null : serialize(expectedOldValue);
+        String newJson = serialize(newValue);
+        Object result = jedis.eval(LUA_CAS, java.util.List.of(cachedKey),
+                java.util.List.of(expectedJson == null ? "" : expectedJson, newJson, "0"));
+        return Long.valueOf(1).equals(result);
+    }
+
+    private String serialize(V value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof String) {
+            return (String) value;
+        }
+        try { return objectMapper.writeValueAsString(value); } catch (Exception e) { return ""; }
+    }
+
+    private V deserialize(String json) {
+        if (json == null || json.isEmpty()) return null;
+        try { return objectMapper.readValue(json, valueType); } catch (Exception e) { return null; }
+    }
 }

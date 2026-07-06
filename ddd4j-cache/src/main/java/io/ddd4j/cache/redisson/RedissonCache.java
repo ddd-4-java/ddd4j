@@ -339,4 +339,67 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         return redissonClient;
     }
 
+    // ==================== CAS SPI 实现（基于 RBucket.compareAndSet 值比较 + 重试）====================
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
+        String cachedKey = key(key);
+        int maxTries = operation.maxRetries() > 0 ? operation.maxRetries() : 16;
+        for (int attempt = 0; attempt < maxTries; attempt++) {
+            RBucket<String> bucket = redissonClient.getBucket(cachedKey);
+            String currentJson = bucket.get();
+            V currentValue = deserialize(currentJson);
+
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+                @Override public String key() { return cachedKey; }
+                @Override public V value() { return currentValue; }
+            };
+            V newValue;
+            try {
+                newValue = operation.apply(resp);
+                if (newValue == null) return null;
+            } catch (Exception e) {
+                return null;
+            }
+            String newJson = serialize(newValue);
+            if (currentJson == null) {
+                // key 不存在：setIfAbsent
+                if (bucket.setIfAbsent(newJson)) {
+                    if (expireSeconds > 0) bucket.expire(Duration.ofSeconds(expireSeconds));
+                    return newValue;
+                }
+                continue;
+            }
+            // Redisson RBucket.compareAndSet(old, new) — 值比较原子操作
+            if (bucket.compareAndSet(currentJson, newJson)) {
+                if (expireSeconds > 0) bucket.expire(Duration.ofSeconds(expireSeconds));
+                return newValue;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
+        String cachedKey = key(key);
+        RBucket<String> bucket = redissonClient.getBucket(cachedKey);
+        String expectedJson = expectedOldValue == null ? null : serialize(expectedOldValue);
+        String newJson = serialize(newValue);
+        if (expectedJson == null) {
+            return bucket.setIfAbsent(newJson);
+        }
+        return bucket.compareAndSet(expectedJson, newJson);
+    }
+
+    private String serialize(V value) {
+        if (value == null) return null;
+        if (value instanceof String) return (String) value;
+        try { return objectMapper.writeValueAsString(value); } catch (Exception e) { return null; }
+    }
+
+    private V deserialize(String json) {
+        if (json == null || json.isEmpty()) return null;
+        try { return objectMapper.readValue(json, valueType); } catch (Exception e) { return null; }
+    }
 }

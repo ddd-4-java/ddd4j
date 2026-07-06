@@ -57,7 +57,8 @@ import java.util.function.Function;
  */
 @UtilityClass
 @Slf4j
-public class CacheKit {
+@SuppressWarnings("unchecked")
+public final class CacheKit {
 
     /**
      * 所有缓存实例（biz → Cache），含本地和远程
@@ -121,7 +122,6 @@ public class CacheKit {
      * @param biz   业务标识
      * @param cache 自动加载缓存实例
      */
-    @SuppressWarnings("unchecked")
     public void registerLoading(String biz, Cache<? super String, ?> cache) {
         Objects.requireNonNull(biz, "业务标识不能为空");
         Objects.requireNonNull(cache, "缓存实例不能为空");
@@ -573,7 +573,6 @@ public class CacheKit {
     /**
      * 创建本地缓存实例。
      */
-    @SuppressWarnings("unchecked")
     private Cache<String, Object> createLocalCache(LocalCacheType type, CacheConfig config) {
         switch (type) {
             case CAFFEINE:

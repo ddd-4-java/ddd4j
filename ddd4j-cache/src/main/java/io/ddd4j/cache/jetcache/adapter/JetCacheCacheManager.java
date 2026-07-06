@@ -42,6 +42,7 @@ import java.util.function.Function;
  * @since 2.0.x
  */
 @Slf4j
+@SuppressWarnings("unchecked")
 public class JetCacheCacheManager implements CacheManager {
 
     /**
@@ -78,7 +79,6 @@ public class JetCacheCacheManager implements CacheManager {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getOrCreateCache(String name, CacheConfig config) {
         return (Cache<K, V>) caches.computeIfAbsent(name, key -> {
             QuickConfig quickConfig = io.ddd4j.cache.jetcache.config.CacheConfigConverter.toQuickConfig(config, cacheArea);
@@ -89,7 +89,6 @@ public class JetCacheCacheManager implements CacheManager {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name) {
         return (Cache<K, V>) caches.get(name);
     }
@@ -100,7 +99,6 @@ public class JetCacheCacheManager implements CacheManager {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getOrCreateLoadingCache(String name, CacheConfig config, Function<K, V> loader) {
         return (Cache<K, V>) caches.computeIfAbsent(name, key -> {
             QuickConfig quickConfig = io.ddd4j.cache.jetcache.config.CacheConfigConverter.toQuickConfig(config, cacheArea);

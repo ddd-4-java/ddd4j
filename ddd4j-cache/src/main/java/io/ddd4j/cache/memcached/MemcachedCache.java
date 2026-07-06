@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
+import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 import net.rubyeye.xmemcached.MemcachedClient;
@@ -145,4 +146,109 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         return memcachedClient;
     }
 
+    @SuppressWarnings("unchecked")
+    private V deserialize(String json) {
+        if (StrKit.isBlank(json)) return null;
+        try { return objectMapper.readValue(json, valueType); } catch (Exception e) { return null; }
+    }
+
+    // ==================== CAS SPI 实现（基于 xmemcached 原生 cas 版本号）====================
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public V compareAndSet(K key, long expireSeconds, CASOperation<V, V> operation) {
+        String cachedKey = serializeKey(key);
+        int maxTries = operation.maxRetries() > 0 ? operation.maxRetries() : 16;
+        for (int attempt = 0; attempt < maxTries; attempt++) {
+            // 1. gets → 当前值 + cas 版本号
+            net.rubyeye.xmemcached.GetsResponse<V> current;
+            try {
+                current = memcachedClient.gets(cachedKey);
+            } catch (Exception e) {
+                return null;
+            }
+            long currentCas = current == null ? 0L : current.getCas();
+            V currentValue = current == null ? null : deserialize((String) current.getValue());
+
+            // 2. 构造 ddd4j GetsResponse（version 仅 memcached 有真实值）
+            io.ddd4j.core.cache.GetsResponse<V> response =
+                    new io.ddd4j.core.cache.GetsResponse<>() {
+                        @Override public String key() { return cachedKey; }
+                        @Override public V value() { return currentValue; }
+                        @Override public long version() { return currentCas; }
+                    };
+
+            // 3. 回调计算新值
+            V newValue;
+            try {
+                newValue = operation.apply(response);
+                if (newValue == null) return null;
+            } catch (Exception e) {
+                return null;
+            }
+
+            // 4. 序列化 + cas 写入
+            String newJson;
+            try {
+                newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
+            } catch (Exception e) {
+                return null;
+            }
+            try {
+                int intExpire = (int) Math.min(Integer.MAX_VALUE, Math.max(0L, expireSeconds));
+                boolean ok = memcachedClient.cas(cachedKey, intExpire, newJson, currentCas);
+                if (ok) return newValue;
+                // 并发冲突：自动重试
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean compareAndSet(K key, V newValue, long expectedVersion) {
+        String cachedKey = serializeKey(key);
+        String newJson;
+        try {
+            newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            return memcachedClient.cas(cachedKey, 0, newJson, expectedVersion);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
+        // Memcached 的 CAS 基于版本号而非值比较；这里降级为 gets + 版本号 cas
+        String cachedKey = serializeKey(key);
+        try {
+            net.rubyeye.xmemcached.GetsResponse<V> current = memcachedClient.gets(cachedKey);
+            if (current == null) {
+                // key 不存在：expectedOldValue 为 null 时等价于 add
+                if (expectedOldValue == null) {
+                    String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
+                    return memcachedClient.add(cachedKey, expireSeconds, newJson);
+                }
+                return false;
+            }
+            V currentValue = deserialize((String) current.getValue());
+            // 值比较（注意：序列化后的 JSON 字符串比较，而非对象 equals）
+            String expectedJson = expectedOldValue == null ? null
+                    : (expectedOldValue instanceof String ? (String) expectedOldValue : objectMapper.writeValueAsString(expectedOldValue));
+            String currentJson = (String) current.getValue();
+            if (java.util.Objects.equals(expectedJson, currentJson)) {
+                String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
+                return memcachedClient.cas(cachedKey, 0, newJson, current.getCas());
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

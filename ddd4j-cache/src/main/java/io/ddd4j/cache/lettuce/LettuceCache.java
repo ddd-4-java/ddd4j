@@ -6,10 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
+import io.ddd4j.core.cache.CASOperation;
+import io.lettuce.core.ScriptOutputType;
 import io.lettuce.core.api.sync.RedisCommands;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -141,4 +145,69 @@ public class LettuceCache<V> implements Cache<String, V> {
         return null;
     }
 
+    // ==================== CAS SPI 实现（基于 Redis Lua 脚本原子操作）====================
+
+    private static final String LUA_CAS =
+            "local cur = redis.call('GET', KEYS[1]) " +
+            "if cur == ARGV[1] then " +
+            "  redis.call('SET', KEYS[1], ARGV[2]) " +
+            "  if tonumber(ARGV[3]) > 0 then redis.call('EXPIRE', KEYS[1], ARGV[3]) end " +
+            "  return 1 " +
+            "end " +
+            "return 0";
+
+    @Override
+    public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
+        String cachedKey = key(key);
+        int maxTries = operation.maxRetries() > 0 ? operation.maxRetries() : 16;
+        for (int attempt = 0; attempt < maxTries; attempt++) {
+            String currentJson = commands.get(cachedKey);
+            V currentValue = deserialize(currentJson);
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+                @Override public String key() { return cachedKey; }
+                @Override public V value() { return currentValue; }
+            };
+            V newValue;
+            try {
+                newValue = operation.apply(resp);
+                if (newValue == null) {
+                    return null;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+            String newJson = serialize(newValue);
+            String result = commands.eval(LUA_CAS, ScriptOutputType.INTEGER,
+                    new String[]{cachedKey},
+                    currentJson == null ? "" : currentJson, newJson, String.valueOf(expireSeconds));
+            if ("1".equals(result)) {
+                return newValue;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
+        String cachedKey = key(key);
+        String expectedJson = expectedOldValue == null ? "" : serialize(expectedOldValue);
+        String newJson = serialize(newValue);
+        String result = commands.eval(LUA_CAS, ScriptOutputType.INTEGER, new String[]{cachedKey}, expectedJson, newJson, "0");
+        return "1".equals(result);
+    }
+
+    private String serialize(V value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof String) {
+            return (String) value;
+        }
+        try { return objectMapper.writeValueAsString(value); } catch (Exception e) { return ""; }
+    }
+
+    private V deserialize(String json) {
+        if (json == null || json.isEmpty()) return null;
+        try { return objectMapper.readValue(json, valueType); } catch (Exception e) { return null; }
+    }
 }
