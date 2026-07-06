@@ -1,6 +1,6 @@
 package io.ddd4j.mq.listener;
 
-import io.ddd4j.mq.annotation.EventListener;
+import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.consume.AckType;
 import io.ddd4j.mq.consume.ConsumerContext;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class ListenerScannerTest {
         // 手动注册监听器定义（模拟 BeanPostProcessor 行为）
         DemoListener listener = new DemoListener();
         Method method = DemoListener.class.getMethod("onDemo", ConsumerContext.class, DemoEvent.class);
-        EventListener annotation = method.getAnnotation(EventListener.class);
+        MQEventListener annotation = method.getAnnotation(MQEventListener.class);
 
         registry.register(ListenerDefinition.builder()
                 .bean(listener)
@@ -51,7 +51,7 @@ class ListenerScannerTest {
 
     static class DemoListener {
 
-        @EventListener(topic = "demoTopic", tags = "create", group = "demoGroup", namespace = "test-ns")
+        @MQEventListener(topic = "demoTopic", tags = "create", group = "demoGroup", namespace = "test-ns")
         public AckType onDemo(ConsumerContext ctx, DemoEvent event) {
             return AckType.ACK;
         }

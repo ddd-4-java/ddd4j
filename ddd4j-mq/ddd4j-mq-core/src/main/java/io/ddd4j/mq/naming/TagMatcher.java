@@ -1,9 +1,10 @@
-package io.ddd4j.mq.listener;
+package io.ddd4j.mq.naming;
 
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * MQ tag 表达式匹配器。
@@ -82,7 +83,7 @@ public final class TagMatcher {
         if (Objects.isNull(expression) || io.ddd4j.kit.lang.StrKit.isBlank(expression) || Objects.equals(WILDCARD, expression.trim())) {
             return List.of();
         }
-        return List.of(expression.replace(OR, " ").trim().split("\\s+")).stream()
+        return Stream.of(expression.replace(OR, " ").trim().split("\\s+"))
                 .map(String::trim)
                 .filter(token -> !io.ddd4j.kit.lang.StrKit.isEmpty(token))
                 .filter(token -> !OR.equals(token))

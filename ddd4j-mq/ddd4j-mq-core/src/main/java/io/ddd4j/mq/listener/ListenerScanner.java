@@ -1,5 +1,6 @@
 package io.ddd4j.mq.listener;
 
+import io.ddd4j.mq.annotation.MQEventListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * {@link EventListener} 监听器定义访问门面。
+ * {@link MQEventListener} 监听器定义访问门面。
  * <p>
  * 定义由下游框架适配层（如 ddd4j-mq-spring 的 BeanPostProcessor）在容器初始化阶段写入 {@link ListenerDefinitionRegistry}，
  * 本类仅提供只读访问。

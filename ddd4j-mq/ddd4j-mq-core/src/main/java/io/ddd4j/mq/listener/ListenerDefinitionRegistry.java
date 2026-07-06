@@ -1,5 +1,6 @@
 package io.ddd4j.mq.listener;
 
+import io.ddd4j.mq.annotation.MQEventListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * {@link EventListener} 监听器定义注册表，由 {@code io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor} 在 Bean 初始化阶段填充。
+ * {@link MQEventListener} 监听器定义注册表，由 {@code io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor} 在 Bean 初始化阶段填充。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -26,7 +27,7 @@ public class ListenerDefinitionRegistry {
     public void register(ListenerDefinition definition) {
         Objects.requireNonNull(definition, "definition");
         definitions.add(definition);
-        log.debug("Registered @EventListener: bean={}, method={}, topic={}",
+        log.debug("Registered @MQEventListener: bean={}, method={}, topic={}",
                 Objects.nonNull(definition.getBeanName()) ? definition.getBeanName() : definition.getBean().getClass().getSimpleName(),
                 definition.getMethod().getName(),
                 definition.getTopic());
@@ -38,7 +39,7 @@ public class ListenerDefinitionRegistry {
      * @return 监听器定义列表
      */
     public List<ListenerDefinition> getDefinitions() {
-        return Collections.unmodifiableList(new ArrayList<>(definitions));
+        return List.copyOf(definitions);
     }
 
     /**

@@ -5,8 +5,6 @@ import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.auth.event.AuthFailedEvent;
 import io.ddd4j.core.auth.event.AuthSucceededEvent;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.kit.lang.StrKit;
 
@@ -41,14 +39,14 @@ public class InMemorySubject implements Subject {
     public static final String DISABLED_UNTIL_CACHE = "ddd4j:subject:disabled-until";
     public static final String CURRENT_TOKEN_CACHE = "ddd4j:subject:current-token";
 
-    private final DomainEventPublisher eventPublisher;
+    private final java.util.function.Consumer<Object> eventPublisher;
 
     /**
      * 构造基于 {@link CacheKit} 的内存版 Subject。
      *
-     * @param eventPublisher ddd4j 通用事件发布者 SPI
+     * @param eventPublisher ddd4j 通用事件发布者 SPI（接受任意事件对象）
      */
-    public InMemorySubject(DomainEventPublisher eventPublisher) {
+    public InMemorySubject(java.util.function.Consumer<Object> eventPublisher) {
         this.eventPublisher = Objects.requireNonNull(eventPublisher, "eventPublisher must not be null");
         ensureCaches();
     }
@@ -100,12 +98,10 @@ public class InMemorySubject implements Subject {
             CacheKit.put(PRINCIPALS_BY_LOGIN_ID_CACHE, cacheKey(request.getLoginId()), principal);
             CacheKit.put(TOKEN_BY_LOGIN_ID_CACHE, cacheKey(request.getLoginId()), token);
             setCurrentToken(token);
-            eventPublisher.publish(new DomainEvent<>(new AuthSucceededEvent(request, principal, token, Instant.now())) {
-            });
+            eventPublisher.accept(new AuthSucceededEvent(request, principal, token, Instant.now()));
             return token;
         } catch (RuntimeException exception) {
-            eventPublisher.publish(new DomainEvent<>(new AuthFailedEvent(request, exception.getMessage(), Instant.now())) {
-            });
+            eventPublisher.accept(new AuthFailedEvent(request, exception.getMessage(), Instant.now()));
             throw exception;
         }
     }

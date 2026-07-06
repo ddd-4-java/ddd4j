@@ -1,12 +1,9 @@
-package io.ddd4j.mq.listener;
+package io.ddd4j.mq.naming;
 
 import io.ddd4j.kit.lang.StrKit;
 import java.util.Arrays;
-import io.ddd4j.kit.lang.StrKit;
 import java.util.Locale;
-import io.ddd4j.kit.lang.StrKit;
 import java.util.Objects;
-import io.ddd4j.kit.lang.StrKit;
 import java.util.stream.Collectors;
 
 /**

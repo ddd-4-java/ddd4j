@@ -1,6 +1,7 @@
 package io.ddd4j.mq.listener;
 
-import io.ddd4j.mq.annotation.EventListener;
+import io.ddd4j.mq.annotation.MQEventListener;
+import io.ddd4j.mq.naming.BindingNaming;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * {@link EventListener} 解析后的监听器定义。
+ * {@link MQEventListener} 解析后的监听器定义。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -40,7 +41,7 @@ public class ListenerDefinition {
      * @param ann    注解实例
      * @return 监听器定义
      */
-    public static ListenerDefinition from(Object bean, Method method, EventListener ann) {
+    public static ListenerDefinition from(Object bean, Method method, MQEventListener ann) {
         return ListenerDefinition.builder()
                 .bean(bean)
                 .method(method)
@@ -66,7 +67,7 @@ public class ListenerDefinition {
     public static ListenerDefinition from(
             String beanName,
             Method method,
-            EventListener ann,
+            MQEventListener ann,
             String defaultGroup,
             String defaultNamespace) {
 

@@ -1,13 +1,15 @@
-package io.ddd4j.mq.listener;
+package io.ddd4j.mq.naming;
 
 import io.ddd4j.mq.config.MQProperties;
 
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.listener.ListenerDefinition;
+
 import java.util.Objects;
 
 
 /**
- * {@link EventListener} 端点物理命名约定（topic / queue / subject 等跨 Broker 复用）。
+ * {@link io.ddd4j.mq.annotation.MQEventListener} 端点物理命名约定（topic / queue / subject 等跨 Broker 复用）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

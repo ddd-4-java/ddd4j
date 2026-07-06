@@ -12,7 +12,7 @@ import java.lang.annotation.*;
  * <pre>
  *   namespace.topic.tag
  *   └───┬───┘ └─┬─┘ └┬┘
- *      环境隔离  业务分类  细分标签
+ *    环境隔离 业务分类 细分标签
  * </pre>
  * <ul>
  *   <li>{@code topic} —— 消费线程隔离维度，不同 topic 走不同消费线程池</li>
@@ -21,12 +21,12 @@ import java.lang.annotation.*;
  *
  * <h3>使用示例</h3>
  * <pre>{@code
- * @EventListener(topic = "order", tags = "paid")
+ * @MQEventListener(topic = "order", tags = "paid")
  * public void onOrderPaid(OrderPaidEvent event) {
  *     // 消费 order.paid 的消息
  * }
  *
- * @EventListener(topic = "order", tags = "paid || shipped -cancelled")
+ * @MQEventListener(topic = "order", tags = "paid || shipped -cancelled")
  * public void onOrderActive(OrderEvent event) {
  *     // 消费 paid 或 shipped，排除 cancelled
  * }
@@ -37,7 +37,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EventListener {
+public @interface MQEventListener {
 
     /**
      * 消费者组。
