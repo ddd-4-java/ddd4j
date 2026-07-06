@@ -4,12 +4,12 @@ import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.ons.ack.OnsAcknowledgment;
-import io.ddd4j.mq.ons.publisher.OnsEventPublisher;
+import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
 import io.ddd4j.mq.ons.spi.OnsBrokerAdapter;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
 import io.ddd4j.mq.config.BrokerType;
@@ -56,7 +56,7 @@ class OnsBrokerAdapterTest {
     void publisherShouldBuildOnsMessage() {
         Producer producer = mock(Producer.class);
         OnsMQProperties properties = new OnsMQProperties();
-        OnsEventPublisher publisher = new OnsEventPublisher(
+        OnsMQEventPublisher publisher = new OnsMQEventPublisher(
                 producer, properties, new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
         event.setMsgId("msg-1");

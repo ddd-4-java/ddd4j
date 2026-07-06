@@ -1,13 +1,13 @@
 package io.ddd4j.mq.activemq.publisher;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.activemq.config.ActiveMQProperties;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 import jakarta.jms.*;
 
@@ -19,7 +19,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class ActiveEventPublisher implements EventPublisher {
+public class ActiveMQEventPublisher implements MQEventPublisher {
 
     /** ActiveMQ 配置属性 */
     private final ActiveMQProperties properties;
@@ -39,7 +39,7 @@ public class ActiveEventPublisher implements EventPublisher {
      * @param mqProperties  MQ 全局配置
      * @param serialization 事件序列化器
      */
-    public ActiveEventPublisher(Connection connection, Session session,
+    public ActiveMQEventPublisher(Connection connection, Session session,
                                   ActiveMQProperties properties,
                                   MQProperties mqProperties,
                                   EventSerialization serialization) {

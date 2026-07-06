@@ -1,6 +1,6 @@
 package io.ddd4j.mq.config;
 
-import io.ddd4j.core.event.MQEvent.PublishMode;
+import io.ddd4j.mq.event.MQEvent.PublishMode;
 import io.ddd4j.mq.listener.BrokerType;
 import lombok.Data;
 

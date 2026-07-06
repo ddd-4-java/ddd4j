@@ -1,7 +1,5 @@
 package io.ddd4j.sample.javalin.shiro;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
@@ -16,12 +14,10 @@ import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.javalin.shiro.config.AuthConfig;
 import io.ddd4j.sample.javalin.shiro.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
-import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsRepository;
 import io.ddd4j.sample.javalin.shiro.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsResource;
 import io.ddd4j.sample.javalin.shiro.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.shiro.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
 import io.ddd4j.sample.javalin.shiro.order.infrastructure.InMemoryOrderRepository;
 import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;

@@ -2,13 +2,13 @@ package io.ddd4j.mq.ons.publisher;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 
 import java.nio.charset.StandardCharsets;
@@ -19,14 +19,14 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class OnsEventPublisher implements EventPublisher {
+public class OnsMQEventPublisher implements MQEventPublisher {
 
     private final Producer producer;
     private final OnsMQProperties properties;
     private final MQProperties mqProperties;
     private final EventSerialization serialization;
 
-    public OnsEventPublisher(Producer producer, OnsMQProperties properties,
+    public OnsMQEventPublisher(Producer producer, OnsMQProperties properties,
                                MQProperties mqProperties, EventSerialization serialization) {
         this.producer = Objects.requireNonNull(producer, "producer");
         this.properties = Objects.requireNonNull(properties, "properties");

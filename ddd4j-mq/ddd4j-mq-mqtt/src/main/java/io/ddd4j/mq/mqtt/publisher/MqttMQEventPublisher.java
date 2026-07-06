@@ -1,12 +1,12 @@
 package io.ddd4j.mq.mqtt.publisher;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -19,14 +19,14 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class MqttEventPublisher implements EventPublisher {
+public class MqttMQEventPublisher implements MQEventPublisher {
 
     private final MqttClient client;
     private final MqttMQProperties properties;
     private final MQProperties mqProperties;
     private final EventSerialization serialization;
 
-    public MqttEventPublisher(MqttClient client, MqttMQProperties properties,
+    public MqttMQEventPublisher(MqttClient client, MqttMQProperties properties,
                                 MQProperties mqProperties, EventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");

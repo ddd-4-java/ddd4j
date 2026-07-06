@@ -1,11 +1,11 @@
 package io.ddd4j.mq.disruptor;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.disruptor.autoconfigure.Ddd4jDisruptorMQAutoConfiguration;
 import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class DisruptorMQSmokeIT {
 
     @Autowired
-    private EventPublisher mqEventPublisher;
+    private MQEventPublisher mqEventPublisher;
 
     @Test
     void publishShouldNotThrow() {

@@ -17,7 +17,7 @@ class ActiveEventPublisherTest {
         Topic topic = mock(Topic.class);
         when(session.createTopic("sales.order.paid")).thenReturn(topic);
 
-        assertSame(topic, ActiveEventPublisher.resolveDestination(session, Destination.of("order", "paid", "sales")));
+        assertSame(topic, ActiveMQEventPublisher.resolveDestination(session, Destination.of("order", "paid", "sales")));
 
         verify(session).createTopic("sales.order.paid");
     }
@@ -28,7 +28,7 @@ class ActiveEventPublisherTest {
         Queue queue = mock(Queue.class);
         when(session.createQueue("jobs.high")).thenReturn(queue);
 
-        assertSame(queue, ActiveEventPublisher.resolveDestination(session, Destination.of("queue:jobs", "high")));
+        assertSame(queue, ActiveMQEventPublisher.resolveDestination(session, Destination.of("queue:jobs", "high")));
 
         verify(session).createQueue("jobs.high");
     }

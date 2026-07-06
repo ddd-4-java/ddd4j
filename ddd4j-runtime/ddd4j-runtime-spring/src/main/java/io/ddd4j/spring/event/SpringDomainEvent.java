@@ -1,12 +1,15 @@
 package io.ddd4j.spring.event;
 
 import io.ddd4j.spring.context.SpringContext;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Collections;
 import java.util.Date;
 
@@ -20,8 +23,10 @@ import java.util.Date;
 @Slf4j
 public abstract class SpringDomainEvent<T> extends ApplicationEvent {
 
-    /** 监听者能否执行的条件，用于控制事件监听器能否执行（策略模式） */
-    private Collection<?> supports;
+    /** 事件支持的策略键集合（策略模式） */
+    @Setter
+    @Getter
+    private Set<String> supportKeys;
     /** 事件处理结果 */
     @Setter
     private Object result;
@@ -41,9 +46,12 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
      * @param source   事件内容
      * @param supports 支持执行的条件，配合supports方法使用
      */
-    public SpringDomainEvent(T source, Collection<?> supports) {
+    public SpringDomainEvent(T source, Collection<?> supportKeys) {
         super(source);
-        this.supports = supports;
+        this.supportKeys = new HashSet<>();
+        for (Object key : supportKeys) {
+            this.supportKeys.add(String.valueOf(key));
+        }
     }
 
     /**
@@ -52,9 +60,9 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
      * @param source  事件内容
      * @param support 支持执行的条件，配合supports方法使用
      */
-    public SpringDomainEvent(T source, Object support) {
+    public SpringDomainEvent(T source, Object supportKey) {
         super(source);
-        this.supports = Collections.singleton(support);
+        this.supportKeys = Collections.singleton(String.valueOf(supportKey));
     }
 
     /**

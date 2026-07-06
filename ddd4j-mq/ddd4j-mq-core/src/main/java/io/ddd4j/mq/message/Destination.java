@@ -1,6 +1,6 @@
 package io.ddd4j.mq.message;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.BindingNaming;
 import lombok.Getter;
 

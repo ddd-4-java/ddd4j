@@ -75,33 +75,14 @@
         <dependency>
             <groupId>org.fuin.ddd4j</groupId>
             <artifactId>ddd-4-java-core</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.fuin.ddd4j</groupId>
             <artifactId>ddd-4-java-jackson</artifactId>
-            <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.fuin.cqrs4j</groupId>
-            <artifactId>cqrs-4-java-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.cqrs4j</groupId>
-            <artifactId>cqrs-4-java-jackson</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.cqrs4j</groupId>
-            <artifactId>cqrs-4-java-esc</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- EventStore（可选，事件溯源） -->
         <dependency>
             <groupId>org.fuin.ddd4j</groupId>
             <artifactId>ddd-4-java-esc</artifactId>
-            <optional>true</optional>
         </dependency>
         <!-- Jandex（JandexEntityIdFactory 需要） -->
         <dependency>

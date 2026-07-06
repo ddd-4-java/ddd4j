@@ -4,11 +4,11 @@ import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.activemq.ack.ActiveMQAcknowledgment;
 import io.ddd4j.mq.activemq.config.ActiveMQProperties;
 import io.ddd4j.mq.activemq.consumer.ActiveMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.activemq.publisher.ActiveEventPublisher;
+import io.ddd4j.mq.activemq.publisher.ActiveMQEventPublisher;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -17,7 +17,6 @@ import io.ddd4j.mq.spi.BrokerAdapter;
 
 import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
-import jakarta.jms.Message;
 import jakarta.jms.Session;
 
 import java.util.Objects;
@@ -72,10 +71,10 @@ public class ActiveBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
+    public MQEventPublisher createPublisher(MQProperties props) {
         try {
             Session session = connection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-            return new ActiveEventPublisher(connection(), session, properties, Objects.isNull(props) ? mqProperties : props, serialization);
+            return new ActiveMQEventPublisher(connection(), session, properties, Objects.isNull(props) ? mqProperties : props, serialization);
         } catch (JMSException ex) {
             throw new IllegalStateException("Create ActiveMQ publisher failed", ex);
         }

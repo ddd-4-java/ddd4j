@@ -1,12 +1,12 @@
 package io.ddd4j.mq.pulsar.publisher;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
 import io.ddd4j.mq.serialization.EventSerialization;
 import org.apache.pulsar.client.api.Producer;
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class PulsarEventPublisher implements EventPublisher {
+public class PulsarMQEventPublisher implements MQEventPublisher {
 
     private final PulsarClient client;
     private final PulsarMQProperties properties;
@@ -31,7 +31,7 @@ public class PulsarEventPublisher implements EventPublisher {
     private final EventSerialization serialization;
     private volatile Producer<byte[]> producer;
 
-    public PulsarEventPublisher(PulsarClient client, PulsarMQProperties properties,
+    public PulsarMQEventPublisher(PulsarClient client, PulsarMQProperties properties,
                                   MQProperties mqProperties, EventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");

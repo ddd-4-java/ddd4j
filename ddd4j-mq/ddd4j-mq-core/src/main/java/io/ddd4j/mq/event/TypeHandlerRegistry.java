@@ -1,4 +1,4 @@
-package io.ddd4j.core.event;
+package io.ddd4j.mq.event;
 
 /**
  * TypeHandler 注册 SPI（纯 Java，零框架依赖）。

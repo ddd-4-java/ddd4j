@@ -1,12 +1,12 @@
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -21,20 +21,20 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class KafkaEventPublisher implements EventPublisher {
+public class KafkaMQEventPublisher implements MQEventPublisher {
 
     private final Producer<String, String> producer;
     private final EventSerialization serialization;
     private final MQProperties mqProperties;
 
-    public KafkaEventPublisher(
+    public KafkaMQEventPublisher(
             KafkaMQProperties kafkaProperties,
             MQProperties mqProperties,
             EventSerialization serialization) {
         this(new KafkaProducer<>(kafkaProperties.producerProperties()), mqProperties, serialization);
     }
 
-    public KafkaEventPublisher(
+    public KafkaMQEventPublisher(
             Producer<String, String> producer,
             MQProperties mqProperties,
             EventSerialization serialization) {

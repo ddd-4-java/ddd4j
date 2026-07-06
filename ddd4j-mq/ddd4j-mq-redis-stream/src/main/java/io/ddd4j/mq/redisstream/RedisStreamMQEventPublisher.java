@@ -1,12 +1,12 @@
 package io.ddd4j.mq.redisstream;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
 import io.ddd4j.mq.serialization.EventSerialization;
 import redis.clients.jedis.UnifiedJedis;
@@ -20,7 +20,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class RedisStreamEventPublisher implements EventPublisher {
+public class RedisStreamMQEventPublisher implements MQEventPublisher {
 
     public static final String FIELD_PAYLOAD = "payload";
 
@@ -28,11 +28,11 @@ public class RedisStreamEventPublisher implements EventPublisher {
     private final MQProperties properties;
     private final EventSerialization serialization;
 
-    public RedisStreamEventPublisher(UnifiedJedis jedis, MQProperties properties, EventSerialization serialization) {
+    public RedisStreamMQEventPublisher(UnifiedJedis jedis, MQProperties properties, EventSerialization serialization) {
         this(new JedisRedisStreamOperations(jedis), properties, serialization);
     }
 
-    public RedisStreamEventPublisher(RedisStreamOperations operations, MQProperties properties, EventSerialization serialization) {
+    public RedisStreamMQEventPublisher(RedisStreamOperations operations, MQProperties properties, EventSerialization serialization) {
         this.operations = Objects.requireNonNull(operations, "operations");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

@@ -1,6 +1,6 @@
 package io.ddd4j.mq.redisstream;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
@@ -70,7 +70,7 @@ class RedisStreamBrokerAdapterTest {
                 .thenReturn(new StreamEntryID("1-0"));
         MQProperties properties = new MQProperties();
         properties.setNamespace("sales");
-        RedisStreamEventPublisher publisher = new RedisStreamEventPublisher(
+        RedisStreamMQEventPublisher publisher = new RedisStreamMQEventPublisher(
                 jedis,
                 properties,
                 new JsonSerialization());

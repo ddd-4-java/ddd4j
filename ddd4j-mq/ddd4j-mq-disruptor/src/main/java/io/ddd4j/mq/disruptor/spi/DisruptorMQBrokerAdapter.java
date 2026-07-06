@@ -8,8 +8,8 @@ import io.ddd4j.mq.disruptor.ack.DisruptorAcknowledgment;
 import io.ddd4j.mq.disruptor.ack.DisruptorAcknowledgmentFactory;
 import io.ddd4j.mq.disruptor.consumer.DisruptorMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
-import io.ddd4j.mq.disruptor.publisher.DisruptorEventPublisher;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.disruptor.publisher.DisruptorMQEventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.spi.BrokerAdapter;
@@ -35,8 +35,8 @@ public class DisruptorBrokerAdapter implements BrokerAdapter {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new DisruptorEventPublisher(disruptorMQBus, props);
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new DisruptorMQEventPublisher(disruptorMQBus, props);
     }
 
     @Override

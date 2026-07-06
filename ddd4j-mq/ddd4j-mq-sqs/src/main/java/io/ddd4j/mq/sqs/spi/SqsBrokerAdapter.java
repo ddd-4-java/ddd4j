@@ -4,7 +4,7 @@ import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -12,9 +12,8 @@ import io.ddd4j.mq.serialization.EventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import io.ddd4j.mq.sqs.ack.SqsAcknowledgment;
 import io.ddd4j.mq.sqs.consumer.SqsConsumerEndpointRegistrar;
-import io.ddd4j.mq.sqs.publisher.SqsEventPublisher;
+import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
 import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -60,8 +59,8 @@ public class SqsBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new SqsEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new SqsMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override

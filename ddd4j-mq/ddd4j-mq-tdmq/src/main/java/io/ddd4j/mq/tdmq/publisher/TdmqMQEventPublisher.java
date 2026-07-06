@@ -1,11 +1,11 @@
 package io.ddd4j.mq.tdmq.publisher;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +19,13 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-public class TdmqEventPublisher implements EventPublisher {
+public class TdmqMQEventPublisher implements MQEventPublisher {
 
     private final TdmqClient tdmqClient;
     private final MQProperties properties;
     private final EventSerialization serialization;
 
-    public TdmqEventPublisher(TdmqClient tdmqClient,
+    public TdmqMQEventPublisher(TdmqClient tdmqClient,
                                 MQProperties properties,
                                 EventSerialization serialization) {
         this.tdmqClient = Objects.requireNonNull(tdmqClient, "tdmqClient");

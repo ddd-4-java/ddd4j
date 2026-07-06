@@ -6,11 +6,10 @@ import com.aliyun.openservices.ons.api.Producer;
 import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
-import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.ons.ack.OnsAcknowledgment;
 import io.ddd4j.mq.ons.consumer.OnsConsumerEndpointRegistrar;
-import io.ddd4j.mq.ons.publisher.OnsEventPublisher;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -67,8 +66,8 @@ public class OnsBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new OnsEventPublisher(producer(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new OnsMQEventPublisher(producer(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package io.ddd4j.mq.mqtt;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.mqtt.ack.MqttAcknowledgment;
-import io.ddd4j.mq.mqtt.publisher.MqttEventPublisher;
+import io.ddd4j.mq.mqtt.publisher.MqttMQEventPublisher;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
 import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.serialization.EventSerialization;
@@ -55,7 +55,7 @@ class MqttBrokerAdapterTest {
         MqttClient client = mock(MqttClient.class);
         MqttMQProperties properties = new MqttMQProperties();
         properties.setQos(2);
-        MqttEventPublisher publisher = new MqttEventPublisher(
+        MqttMQEventPublisher publisher = new MqttMQEventPublisher(
                 client, properties, new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
 

@@ -7,13 +7,12 @@ import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.nats.ack.NatsAcknowledgment;
 import io.ddd4j.mq.nats.ack.NatsAcknowledgmentFactory;
 import io.ddd4j.mq.nats.consumer.NatsMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.nats.publisher.NatsEventPublisher;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import io.nats.client.Connection;
-import io.nats.client.Message;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
@@ -36,8 +35,8 @@ public class NatsBrokerAdapter implements BrokerAdapter {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new NatsEventPublisher(connection, props);
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new NatsMQEventPublisher(connection, props);
     }
 
     @Override

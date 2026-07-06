@@ -165,7 +165,7 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
             headers.put(RedisStreamAcknowledgment.HEADER_REDIS_GROUP, definition.getGroup());
             headers.put(RedisStreamAcknowledgment.HEADER_REDIS_ENTRY_ID, entry.id());
             return Message.of(
-                    fields.get(RedisStreamEventPublisher.FIELD_PAYLOAD),
+                    fields.get(RedisStreamMQEventPublisher.FIELD_PAYLOAD),
                     headers,
                     fields.get(MessageHeaders.HEADER_MESSAGE_ID),
                     fields.get(MessageHeaders.HEADER_CORRELATION_ID),

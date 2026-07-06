@@ -1,12 +1,12 @@
 package io.ddd4j.mq.rocketmq;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.common.message.Message;
@@ -19,13 +19,13 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class RocketEventPublisher implements EventPublisher {
+public class RocketMQEventPublisher implements MQEventPublisher {
 
     private final MQProducer producer;
     private final MQProperties properties;
     private final EventSerialization serialization;
 
-    public RocketEventPublisher(MQProducer producer, MQProperties properties, EventSerialization serialization) {
+    public RocketMQEventPublisher(MQProducer producer, MQProperties properties, EventSerialization serialization) {
         this.producer = Objects.requireNonNull(producer, "producer");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

@@ -4,7 +4,7 @@ import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -47,8 +47,8 @@ public class KafkaBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new KafkaEventPublisher(kafkaProperties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new KafkaMQEventPublisher(kafkaProperties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override

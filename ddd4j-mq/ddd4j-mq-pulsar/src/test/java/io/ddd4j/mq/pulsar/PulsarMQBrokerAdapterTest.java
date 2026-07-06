@@ -1,12 +1,12 @@
 package io.ddd4j.mq.pulsar;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.pulsar.ack.PulsarAcknowledgment;
-import io.ddd4j.mq.pulsar.publisher.PulsarEventPublisher;
+import io.ddd4j.mq.pulsar.publisher.PulsarMQEventPublisher;
 import io.ddd4j.mq.pulsar.spi.PulsarBrokerAdapter;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
 import io.ddd4j.mq.config.BrokerType;
@@ -82,7 +82,7 @@ class PulsarBrokerAdapterTest {
         when(messageBuilder.value(any(byte[].class))).thenReturn(messageBuilder);
         when(messageBuilder.property(any(), any())).thenReturn(messageBuilder);
         when(messageBuilder.sendAsync()).thenReturn(CompletableFuture.completedFuture(mock(MessageId.class)));
-        PulsarEventPublisher publisher = new PulsarEventPublisher(
+        PulsarMQEventPublisher publisher = new PulsarMQEventPublisher(
                 client, new PulsarMQProperties(), new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
         event.setMsgId("msg-1");

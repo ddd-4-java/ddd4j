@@ -3,13 +3,13 @@ package io.ddd4j.mq.rabbit;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 
 import java.nio.charset.StandardCharsets;
@@ -22,14 +22,14 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class RabbitEventPublisher implements EventPublisher {
+public class RabbitMQEventPublisher implements MQEventPublisher {
 
     private final RabbitChannelProvider channelProvider;
     private final RabbitMQProperties rabbitProperties;
     private final MQProperties mqProperties;
     private final EventSerialization serialization;
 
-    public RabbitEventPublisher(
+    public RabbitMQEventPublisher(
             RabbitChannelProvider channelProvider,
             RabbitMQProperties rabbitProperties,
             MQProperties mqProperties,

@@ -38,7 +38,7 @@ public final class SpiKeys {
 
     // ========== 事件相关 SPI ==========
 
-    /** MQ 事件发布者 SPI key，对应 {@code io.ddd4j.core.event.MQEventPublisher} */
+    /** MQ 事件发布者 SPI key，对应 {@code io.ddd4j.mq.event.MQEventPublisher} */
     public static final String MQ_EVENT_PUBLISHER = PREFIX + "mq.MQEventPublisher";
 
     /** 进程内领域事件发布者 SPI key，对应 {@code io.ddd4j.core.ddd.event.DomainEventPublisher} */

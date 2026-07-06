@@ -1,6 +1,5 @@
-package io.ddd4j.mq.publish;
+package io.ddd4j.mq.event;
 
-import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.mq.message.Destination;
 
 /**
@@ -11,7 +10,16 @@ import io.ddd4j.mq.message.Destination;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public interface EventPublisher extends io.ddd4j.core.event.EventPublisher {
+public interface MQEventPublisher {
+
+    /**
+     * 发布 MQ 事件（topic / tag / tenantId 已在 event 上设置完毕）。
+     *
+     * @param event 领域 MQ 事件
+     */
+    default void publish(MQEvent event) {
+        publish(event, Destination.from(event));
+    }
 
     /**
      * 发布领域事件到指定目的地。
@@ -22,13 +30,4 @@ public interface EventPublisher extends io.ddd4j.core.event.EventPublisher {
      */
     <T extends MQEvent> void publish(T event, Destination destination);
 
-    /**
-     * 从事件字段推断目的地并发布（便捷方法）。
-     *
-     * @param event 领域事件
-     */
-    @Override
-    default void publish(MQEvent event) {
-        publish(event, Destination.from(event));
-    }
 }

@@ -4,7 +4,7 @@ import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -14,7 +14,7 @@ import io.ddd4j.mq.tdmq.ack.TdmqAcknowledgmentFactory;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import io.ddd4j.mq.tdmq.client.TdmqClientPlaceholder;
 import io.ddd4j.mq.tdmq.consumer.TdmqMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.tdmq.publisher.TdmqEventPublisher;
+import io.ddd4j.mq.tdmq.publisher.TdmqMQEventPublisher;
 
 import java.util.Objects;
 
@@ -58,8 +58,8 @@ public class TdmqBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new TdmqEventPublisher(
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new TdmqMQEventPublisher(
                 tdmqClient,
                 Objects.isNull(props) ? mqProperties : props,
                 serialization);

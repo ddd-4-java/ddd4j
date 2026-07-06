@@ -6,8 +6,8 @@ import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.mqttmica.ack.MicaMqttAcknowledgment;
 import io.ddd4j.mq.mqttmica.consumer.MicaMqttMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.mqttmica.publisher.MicaMqttEventPublisher;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.mqttmica.publisher.MicaMqttMQEventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -71,11 +71,11 @@ public class MicaMqttBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
+    public MQEventPublisher createPublisher(MQProperties props) {
         if (Objects.isNull(client())) {
             throw new IllegalStateException("mica-mqtt client is not initialized");
         }
-        return new MicaMqttEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+        return new MicaMqttMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override

@@ -4,7 +4,7 @@ import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -48,7 +48,7 @@ public class RocketBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
+    public MQEventPublisher createPublisher(MQProperties props) {
         try {
             if (Objects.isNull(producer)) {
                 producer = rocketProperties.newProducer();
@@ -56,7 +56,7 @@ public class RocketBrokerAdapter implements BrokerAdapter, AutoCloseable {
                     producer.start();
                 }
             }
-            return new RocketEventPublisher(producer, Objects.isNull(props) ? mqProperties : props, serialization);
+            return new RocketMQEventPublisher(producer, Objects.isNull(props) ? mqProperties : props, serialization);
         } catch (Exception ex) {
             throw new IllegalStateException("Create RocketMQ publisher failed", ex);
         }

@@ -54,16 +54,14 @@ public abstract class BaseHandler {
     }
 
     /**
-     * 记录异常并发布领域事件
+     * 记录异常并发布领域事件。
      */
     protected void logException(Context ctx, Exception ex) {
         log.error("Exception in request [{} {}]: {}", ctx.method(), ctx.url(), ex.getMessage(), ex);
         try {
-            DomainEventPublisher publisher = GuiceContext.getInstance(DomainEventPublisher.class);
-            if (Objects.nonNull(publisher)) {
-                // 创建异常事件并发布
-                DomainEvent<Exception> event = new ExceptionEvent(ex, ctx.url());
-                publisher.publish(event);
+            com.google.common.eventbus.EventBus eventBus = GuiceContext.getInstance(com.google.common.eventbus.EventBus.class);
+            if (Objects.nonNull(eventBus)) {
+                eventBus.post(new io.ddd4j.core.ddd.event.ExceptionEvent(ctx.url(), ex));
             }
         } catch (Exception e) {
             log.warn("Failed to publish exception event", e);
@@ -82,23 +80,5 @@ public abstract class BaseHandler {
      */
     protected boolean isAjax(Context ctx) {
         return WebKit.isAjax(ctx);
-    }
-
-    /**
-     * 异常领域事件
-     */
-    public static class ExceptionEvent extends DomainEvent<Exception> {
-        private static final long serialVersionUID = 1L;
-        /** 请求 URL */
-        private final String requestUrl;
-
-        public ExceptionEvent(Exception source, String requestUrl) {
-            super(source);
-            this.requestUrl = requestUrl;
-        }
-
-        public String getRequestUrl() {
-            return requestUrl;
-        }
     }
 }

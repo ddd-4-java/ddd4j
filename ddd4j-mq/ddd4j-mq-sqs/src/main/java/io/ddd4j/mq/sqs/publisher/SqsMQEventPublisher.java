@@ -1,12 +1,12 @@
 package io.ddd4j.mq.sqs.publisher;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 import io.ddd4j.mq.sqs.spi.SqsMQProperties;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -22,14 +22,14 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class SqsEventPublisher implements EventPublisher {
+public class SqsMQEventPublisher implements MQEventPublisher {
 
     private final SqsClient client;
     private final SqsMQProperties properties;
     private final MQProperties mqProperties;
     private final EventSerialization serialization;
 
-    public SqsEventPublisher(SqsClient client, SqsMQProperties properties,
+    public SqsMQEventPublisher(SqsClient client, SqsMQProperties properties,
                                MQProperties mqProperties, EventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");

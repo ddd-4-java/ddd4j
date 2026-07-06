@@ -1,10 +1,7 @@
 package io.ddd4j.mq.consume;
 
-import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.consume.ConsumeTemplate;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
-import io.ddd4j.mq.consume.ConsumerInterceptor;
-import io.ddd4j.mq.consume.ConsumerContext;
 import io.ddd4j.mq.message.Message;
 import lombok.extern.slf4j.Slf4j;
 

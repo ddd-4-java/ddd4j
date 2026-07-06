@@ -1,10 +1,10 @@
 package io.ddd4j.mq.nats;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
-import io.ddd4j.mq.nats.publisher.NatsEventPublisher;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import org.junit.jupiter.api.AfterAll;
@@ -37,7 +37,7 @@ class NatsContainerIT {
             .waitingFor(Wait.forListeningPort());
 
     private static Connection natsConnection;
-    private static EventPublisher mqEventPublisher;
+    private static MQEventPublisher mqEventPublisher;
 
     /**
      * 启动 NATS 容器（JetStream 模式）。
@@ -51,7 +51,7 @@ class NatsContainerIT {
         properties.setEnabled(true);
         properties.setBroker("nats");
         properties.setNamespace("it");
-        mqEventPublisher = new NatsEventPublisher(natsConnection, properties);
+        mqEventPublisher = new NatsMQEventPublisher(natsConnection, properties);
     }
 
     @AfterAll

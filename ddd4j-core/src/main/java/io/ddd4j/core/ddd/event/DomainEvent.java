@@ -42,6 +42,7 @@ import java.util.*;
  * @since 4.0.0
  */
 @Slf4j
+@SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEvent<ID> implements Serializable {
 
     @Serial
@@ -55,10 +56,15 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
     private static volatile String defaultTopic = System.getProperty("ddd4j.mq.default-topic", "DEFAULT");
 
     /**
-     * 监听者能否执行的条件，用于控制事件监听器能否执行（策略模式）。
+     * 事件支持的策略键集合（策略模式）。
+     *
+     * <p>监听器通过 {@link @EventListener#supports()} 声明它处理哪些策略键，
+     * 消费时框架检查事件持有的 {@code supportKeys} 与监听器声明的键是否有交集。
+     * 为 {@code null} 或空时不做策略过滤。
      */
     @Setter
-    private Collection supports;
+    @Getter
+    private Set<String> supportKeys;
 
     /**
      * 事件处理结果（由 publisher 写回）。
@@ -86,10 +92,10 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * 构造领域事件（带因果关联）。
      *
      * @param entityIdPath   从聚合根到事件源的路径
-     * @param causationEvent 导致本事件的前置事件
+     * @param respondTo 导致本事件的前置事件
      */
-    protected DomainEvent(EntityIdPath entityIdPath, org.fuin.ddd4j.core.Event causationEvent) {
-        super(entityIdPath, causationEvent);
+    protected DomainEvent(EntityIdPath entityIdPath, org.fuin.ddd4j.core.Event respondTo) {
+        super(entityIdPath, respondTo);
     }
 
     /**
@@ -98,7 +104,6 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * @param <R> 结果类型
      * @return 处理结果
      */
-    @SuppressWarnings("unchecked")
     public <R> R result() {
         return (R) this.result;
     }
@@ -113,25 +118,28 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * @return 该租户能否监听
      */
     public boolean tenantIn(String... tenantIds) {
-        if (Objects.isNull(tenantIds)) return false;
-        return Arrays.asList(tenantIds).contains(ThreadContext.get(ContextConstants.TENANT_ID));
+        if (Objects.isNull(tenantIds)) {
+            return Boolean.FALSE;
+        }
+        String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
+        return Arrays.asList(tenantIds).contains(tenantId);
     }
 
     /**
-     * 条件判断（策略模式）。
+     * 策略匹配：检查事件持有的 {@link #supportKeys} 是否包含给定的任意一个键。
      *
      * <p>使用方式：监听方法标注
-     * {@code @EventListener(condition = "#event.supports('xxx', 'xxx')")}
+     * {@code @EventListener(condition = "#event.supports('paid', 'shipped')")}
      *
-     * @param supports 支持的类型
-     * @return 该条件下能否监听
+     * @param keys 监听器声明的策略键
+     * @return 事件支持任一键时 {@code true}；事件未设置策略或无交集时 {@code false}
      */
-    @SuppressWarnings("unchecked")
-    public <S> boolean supports(S... supports) {
-        if (Objects.isNull(this.supports) || Objects.isNull(supports)) return false;
-        List<S> supportList = Arrays.asList(supports);
-        for (Object support : this.supports) {
-            if (supportList.contains(support)) {
+    public boolean supports(String... keys) {
+        if (Objects.isNull(supportKeys) || supportKeys.isEmpty() || Objects.isNull(keys) || keys.length == 0) {
+            return false;
+        }
+        for (String key : keys) {
+            if (supportKeys.contains(key)) {
                 return true;
             }
         }
@@ -148,11 +156,10 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * @return 发布结果
      * @throws IllegalStateException 未找到 DomainEventPublisher
      */
-    @SuppressWarnings("unchecked")
     public <R> R publish() {
-        DomainEventPublisher publisher = Contexts.injectOrThrow(
-                SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
+        DomainEventPublisher publisher = Contexts.injectOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
         publisher.publish(this);
         return (R) result;
     }
+
 }

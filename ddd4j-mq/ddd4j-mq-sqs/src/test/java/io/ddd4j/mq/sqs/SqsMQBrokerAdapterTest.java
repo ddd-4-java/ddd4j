@@ -1,6 +1,6 @@
 package io.ddd4j.mq.sqs;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
@@ -8,7 +8,7 @@ import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.serialization.EventSerialization;
 import io.ddd4j.mq.sqs.ack.SqsAcknowledgment;
-import io.ddd4j.mq.sqs.publisher.SqsEventPublisher;
+import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
 import io.ddd4j.mq.sqs.spi.SqsBrokerAdapter;
 import io.ddd4j.mq.sqs.spi.SqsMQProperties;
 import org.junit.jupiter.api.Test;
@@ -73,7 +73,7 @@ class SqsBrokerAdapterTest {
     @Test
     void publisherShouldBuildSendMessageRequest() {
         SqsClient client = mock(SqsClient.class);
-        SqsEventPublisher publisher = new SqsEventPublisher(
+        SqsMQEventPublisher publisher = new SqsMQEventPublisher(
                 client, new SqsMQProperties(), new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
         event.setMsgId("msg-1");

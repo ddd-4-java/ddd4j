@@ -1,7 +1,7 @@
 package io.ddd4j.mq.listener;
 
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.mq.consume.AckType;
 import io.ddd4j.mq.consume.Acknowledgment;
@@ -15,11 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import io.ddd4j.kit.lang.StrKit;
 import java.lang.reflect.Method;
-import io.ddd4j.kit.lang.StrKit;
 import java.lang.reflect.Parameter;
-import io.ddd4j.kit.lang.StrKit;
 import java.util.Map;
-import io.ddd4j.kit.lang.StrKit;
 import java.util.Objects;
 
 /**

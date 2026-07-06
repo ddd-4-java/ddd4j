@@ -1,6 +1,6 @@
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.config.BrokerType;
@@ -34,7 +34,7 @@ class KafkaBrokerAdapterTest {
         properties.setDefaultTopic("default-topic");
         MockProducer<String, String> producer = new MockProducer<>(
                 true, null, new StringSerializer(), new StringSerializer());
-        KafkaEventPublisher publisher = new KafkaEventPublisher(producer, properties, new JsonSerialization());
+        KafkaMQEventPublisher publisher = new KafkaMQEventPublisher(producer, properties, new JsonSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 

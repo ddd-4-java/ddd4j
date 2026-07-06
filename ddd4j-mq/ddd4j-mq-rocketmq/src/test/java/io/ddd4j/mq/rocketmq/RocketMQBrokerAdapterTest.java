@@ -1,6 +1,6 @@
 package io.ddd4j.mq.rocketmq;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.config.BrokerType;
@@ -56,14 +56,14 @@ class RocketBrokerAdapterTest {
         MQProperties properties = new MQProperties();
         properties.setNamespace("sales");
         MQProducer producer = mock(MQProducer.class);
-        RocketEventPublisher publisher = new RocketEventPublisher(producer, properties, new JsonSerialization());
+        RocketMQEventPublisher publisher = new RocketMQEventPublisher(producer, properties, new JsonSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 
         publisher.publish(event, Destination.of("order", "paid"));
 
         verify(producer).send(any(Message.class));
-        Message message = RocketEventPublisher.toMessage(event, Destination.of("order", "paid"), properties, new JsonSerialization());
+        Message message = RocketMQEventPublisher.toMessage(event, Destination.of("order", "paid"), properties, new JsonSerialization());
         assertEquals("sales.order", message.getTopic());
         assertEquals("paid", message.getTags());
     }

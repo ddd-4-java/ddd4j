@@ -57,7 +57,7 @@
 | `com.dddframework.core.contract.Query`                         | `io.ddd4j.core.cqrs.query.Query`                                | 🟡 需修改包名 |
 | `com.dddframework.core.contract.BaseRepository`                | `io.ddd4j.core.ddd.repository.Repository`                       | 🟡 需修改包名 |
 | `com.dddframework.core.contract.R`                             | `io.ddd4j.core.api.R`                                    | 🟡 需修改包名 |
-| `com.dddframework.core.contract.MQEvent`                       | `io.ddd4j.core.event.MQEvent`                              | 🟡 需修改包名 |
+| `com.dddframework.core.contract.MQEvent`                       | `io.ddd4j.mq.event.MQEvent`                              | 🟡 需修改包名 |
 | `com.dddframework.core.contract.DomainEvent`                   | `io.ddd4j.core.ddd.event.DomainEvent`                          | 🟡 需修改包名 |
 | `com.dddframework.core.context.ThreadContext`                  | `io.ddd4j.core.context.ThreadContext`                         | 🟡 需修改包名 |
 | `com.dddframework.core.context.SpringContext`                  | `io.ddd4j.spring.context.SpringContext`                       | 🟡 路径变化  |

@@ -1,11 +1,11 @@
 package io.ddd4j.mq.nats.publisher;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.nats.client.Connection;
 import io.nats.client.JetStream;
 import io.nats.client.JetStreamApiException;
@@ -23,7 +23,7 @@ import java.util.Objects;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class NatsEventPublisher implements EventPublisher {
+public class NatsMQEventPublisher implements MQEventPublisher {
 
     private final Connection connection;
     private final MQProperties properties;

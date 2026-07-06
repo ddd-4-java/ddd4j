@@ -1,12 +1,12 @@
 package io.ddd4j.mq.mqttmica.publisher;
 
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttProperties;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.serialization.EventSerialization;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 
@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class MicaMqttEventPublisher implements EventPublisher {
+public class MicaMqttMQEventPublisher implements MQEventPublisher {
 
     /** mica-mqtt 客户端实例 */
     private final MqttClient client;
@@ -29,7 +29,7 @@ public class MicaMqttEventPublisher implements EventPublisher {
     /** 事件序列化器 */
     private final EventSerialization serialization;
 
-    public MicaMqttEventPublisher(MqttClient client, MicaMqttProperties properties,
+    public MicaMqttMQEventPublisher(MqttClient client, MicaMqttProperties properties,
                                     MQProperties mqProperties, EventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");

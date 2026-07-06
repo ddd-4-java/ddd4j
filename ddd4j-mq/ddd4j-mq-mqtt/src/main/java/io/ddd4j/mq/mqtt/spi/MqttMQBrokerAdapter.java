@@ -6,8 +6,8 @@ import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.mqtt.ack.MqttAcknowledgment;
 import io.ddd4j.mq.mqtt.consumer.MqttConsumerEndpointRegistrar;
-import io.ddd4j.mq.mqtt.publisher.MqttEventPublisher;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.mqtt.publisher.MqttMQEventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -66,8 +66,8 @@ public class MqttBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new MqttEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new MqttMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override

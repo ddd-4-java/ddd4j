@@ -4,7 +4,7 @@ import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 
@@ -31,7 +31,7 @@ public interface BrokerAdapter {
      * @param props MQ 配置
      * @return 发布端口实现
      */
-    default EventPublisher createPublisher(MQProperties props) {
+    default MQEventPublisher createPublisher(MQProperties props) {
         throw new UnsupportedOperationException(
                 getClass().getName() + " does not provide an EventPublisher");
     }

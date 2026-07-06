@@ -3,7 +3,7 @@ package io.ddd4j.mq.rabbit;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
-import io.ddd4j.core.event.MQEvent;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.config.BrokerType;
@@ -37,7 +37,7 @@ class RabbitBrokerAdapterTest {
         RabbitMQProperties rabbitProperties = new RabbitMQProperties();
         MQProperties mqProperties = new MQProperties();
         mqProperties.setNamespace("sales");
-        RabbitEventPublisher publisher = new RabbitEventPublisher(
+        RabbitMQEventPublisher publisher = new RabbitMQEventPublisher(
                 () -> channel,
                 rabbitProperties,
                 mqProperties,

@@ -1,5 +1,7 @@
 package io.ddd4j.core.ddd.event;
 
+import org.fuin.ddd4j.core.EntityId;
+
 import java.util.Collection;
 import java.util.Objects;
 
@@ -21,13 +23,13 @@ public interface DomainEventPublisher {
      * 发布领域事件
      * @param event 领域事件
      */
-    <T> void publish(DomainEvent<T> event);
+    <ID extends EntityId> void publish(DomainEvent<ID> event);
 
     /**
      * 批量发布领域事件
      * @param events 领域事件集合
      */
-    default <T> void publishAll(Collection<DomainEvent<T>> events) {
+    default <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         if (Objects.nonNull(events)) {
             events.forEach(this::publish);
         }

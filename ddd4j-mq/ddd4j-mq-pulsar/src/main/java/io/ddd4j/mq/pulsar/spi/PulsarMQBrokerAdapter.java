@@ -4,10 +4,10 @@ import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.pulsar.ack.PulsarAcknowledgment;
 import io.ddd4j.mq.pulsar.consumer.PulsarMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.pulsar.publisher.PulsarEventPublisher;
+import io.ddd4j.mq.pulsar.publisher.PulsarMQEventPublisher;
 import io.ddd4j.mq.listener.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.serialization.JsonSerialization;
@@ -63,8 +63,8 @@ public class PulsarBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public EventPublisher createPublisher(MQProperties props) {
-        return new PulsarEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public MQEventPublisher createPublisher(MQProperties props) {
+        return new PulsarMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
