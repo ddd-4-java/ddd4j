@@ -1,8 +1,12 @@
 package io.ddd4j.mq.registry;
 
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Arrays;
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Locale;
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Objects;
+import io.ddd4j.kit.lang.StrKit;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +30,7 @@ public final class MQBindingNaming {
      */
     public static String bindingName(String topic, String tag) {
         String base = toCamelCase(normalizeTopic(topic));
-        if (!hasText(tag) || "*".equals(tag.trim())) {
+        if (!StrKit.hasText(tag) || "*".equals(tag.trim())) {
             return io.ddd4j.kit.lang.StrKit.isEmpty(base) ? "default" : base;
         }
         String tagPart = toCamelCase(normalizeTag(tag));
@@ -74,7 +78,7 @@ public final class MQBindingNaming {
      * 将 {@code order.paid}、{@code order-paid}、{@code order_paid} 转为 {@code orderPaid}。
      */
     private static String toCamelCase(String raw) {
-        if (!hasText(raw)) {
+        if (!StrKit.hasText(raw)) {
             return "";
         }
         String[] parts = raw.split("[._\\-]+");
@@ -95,14 +99,11 @@ public final class MQBindingNaming {
      * 首字母大写，其余保持原样（已为小写时符合 camelCase 拼接规则）。
      */
     private static String capitalize(String segment) {
-        if (!hasText(segment)) {
+        if (!StrKit.hasText(segment)) {
             return "";
         }
         String lower = segment.toLowerCase(Locale.ROOT);
         return Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
     }
 
-    private static boolean hasText(String s) {
-        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
-    }
 }

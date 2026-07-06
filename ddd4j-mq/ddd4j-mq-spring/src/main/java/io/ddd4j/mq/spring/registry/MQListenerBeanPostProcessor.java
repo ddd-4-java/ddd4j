@@ -117,7 +117,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
                 .topic(annotation.topic())
                 .tags(annotation.tags())
                 .supports(List.of(annotation.supports()))
-                .concat(annotation.concat())
+                .concat(annotation.separator())
                 .build();
     }
 }

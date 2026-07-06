@@ -30,7 +30,7 @@ public class MQListenerDefinition {
     private final String topic;
     private final String tags;
     private final List<String> supports;
-    private final String concat;
+    private final String separator;
 
     /**
      * 从注解与方法元数据构建监听器定义。
@@ -49,7 +49,7 @@ public class MQListenerDefinition {
                 .topic(ann.topic())
                 .tags(ann.tags())
                 .supports(Arrays.asList(ann.supports()))
-                .concat(ann.concat())
+                .separator(ann.separator())
                 .build();
     }
 
@@ -85,7 +85,7 @@ public class MQListenerDefinition {
                 .topic(ann.topic())
                 .tags(ann.tags())
                 .supports(Arrays.asList(ann.supports()))
-                .concat(ann.concat())
+                .separator(ann.separator())
                 .build();
     }
 

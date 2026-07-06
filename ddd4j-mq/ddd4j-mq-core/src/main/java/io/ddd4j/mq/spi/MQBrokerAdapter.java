@@ -24,11 +24,11 @@ public interface MQBrokerAdapter {
     MQBrokerType brokerType();
 
     /**
-     * 创建事件发布器。
+     * 返回本适配器的发布器实例。
      *
-     * <p>适配器必须显式提供发布器，避免遗漏实现后在运行期产生延迟 NPE。
+     * <p>如适配器不提供发布能力（如纯消费端点），默认抛出 UnsupportedOperationException。
      *
-     * @param props MQ 配置（预留，当前未使用）
+     * @param props MQ 配置
      * @return 发布端口实现
      */
     default MQEventPublisher createPublisher(Ddd4jMQProperties props) {
@@ -50,10 +50,15 @@ public interface MQBrokerAdapter {
      * <p>实现模块应从 {@link MQMessage#nativeMessage()} 逃生口获取底层 Broker 原生对象
      * （如 Kafka RecordMetadata、RabbitMQ Envelope），并构建对应的 {@link MessageAcknowledgment}。
      *
+     * <p>默认返回 null，表示适配器不提供 ACK 解析能力，
+     * 由 {@link io.ddd4j.mq.consume.MQConsumeEngine} 回退到 Broker Registrar 传入的 ack 或 NoOp。
+     *
      * @param message 消息信封（{@link MQMessage}，纯 Java 模型）
-     * @return 确认端口
+     * @return 确认端口，null 表示不提供
      */
-    MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message);
+    default MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
+        return null;
+    }
 
     /**
      * 是否支持当前配置的 Broker 类型。

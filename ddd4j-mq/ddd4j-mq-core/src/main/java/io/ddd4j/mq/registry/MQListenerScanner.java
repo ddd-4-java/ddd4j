@@ -10,8 +10,8 @@ import java.util.Objects;
 /**
  * {@link MQEventListener} 监听器定义访问门面。
  * <p>
- * 定义由 {@code io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor} 在 Bean 初始化阶段写入 {@link MQListenerDefinitionRegistry}，
- * 本类仅提供只读访问，替代 legacy 全容器遍历扫描。
+ * 定义由下游框架适配层（如 ddd4j-mq-spring 的 BeanPostProcessor）在容器初始化阶段写入 {@link MQListenerDefinitionRegistry}，
+ * 本类仅提供只读访问。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -36,7 +36,7 @@ public class MQListenerScanner {
     }
 
     /**
-     * 返回 BeanPostProcessor 阶段已登记的监听器定义。
+     * 返回容器初始化阶段已登记的监听器定义。
      *
      * @return 不可变监听器定义列表
      */

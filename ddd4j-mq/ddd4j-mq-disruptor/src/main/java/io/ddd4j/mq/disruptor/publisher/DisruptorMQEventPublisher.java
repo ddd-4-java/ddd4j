@@ -4,11 +4,11 @@ import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.mq.contract.MQDestinationResolver;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.publish.MQEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -29,22 +29,11 @@ public class DisruptorMQEventPublisher implements MQEventPublisher {
         Objects.requireNonNull(event, "event");
         Objects.requireNonNull(destination, "destination");
 
-        if (!StringUtils.hasText(event.getTopic())) {
-            event.setTopic(properties.getDefaultTopic());
-        }
-        if (!StringUtils.hasText(event.getNamespace())) {
-            event.setNamespace(properties.getNamespace());
-        }
-        if (Objects.isNull(event.getMsgId())) {
-            event.setMsgId(String.valueOf(System.currentTimeMillis()));
-        }
-
-        String namespace = StringUtils.hasText(destination.getNamespace())
-                ? destination.getNamespace()
-                : event.getNamespace();
-        String topic = StringUtils.hasText(destination.getTopic()) ? destination.getTopic() : event.getTopic();
-        String tag = StringUtils.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
+        MQDestinationResolver.fillDefaults(event, properties);
         String payload = JsonKit.toJson(event);
+        String namespace = Objects.nonNull(destination.getNamespace()) ? destination.getNamespace() : event.getNamespace();
+        String topic = Objects.nonNull(destination.getTopic()) ? destination.getTopic() : event.getTopic();
+        String tag = Objects.nonNull(destination.getTag()) ? destination.getTag() : event.getTag();
 
         disruptorMQBus.publish(namespace, topic, tag, event.getMsgId(), payload);
         log.debug("Published Disruptor event: {}.{}, msgId={}", namespace, topic, event.getMsgId());

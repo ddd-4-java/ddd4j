@@ -1,12 +1,9 @@
 package io.ddd4j.mq.spi;
 
-import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.mq.ack.MessageAcknowledgment;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.registry.MQBrokerType;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import org.junit.jupiter.api.Test;
@@ -33,14 +30,14 @@ class MQBrokerAdaptersTest {
         Ddd4jMQProperties properties = properties("none");
 
         assertThrows(IllegalStateException.class,
-                () -> MQBrokerAdapters.createPublisher(List.of(new TestAdapter(MQBrokerType.KAFKA)), properties));
+                () -> MQBrokerAdapters.selectAdapter(List.of(new TestAdapter(MQBrokerType.KAFKA)), properties));
     }
 
     @Test
     void shouldRejectEmptyAdapters() {
         Ddd4jMQProperties properties = properties("kafka");
 
-        assertThrows(IllegalStateException.class, () -> MQBrokerAdapters.createPublisher(List.of(), properties));
+        assertThrows(IllegalStateException.class, () -> MQBrokerAdapters.selectAdapter(List.of(), properties));
         assertThrows(IllegalStateException.class, () -> MQBrokerAdapters.selectAdapter(null, properties));
     }
 
@@ -49,34 +46,7 @@ class MQBrokerAdaptersTest {
         Ddd4jMQProperties properties = properties("rabbit");
 
         assertThrows(IllegalStateException.class,
-                () -> MQBrokerAdapters.createPublisher(List.of(new TestAdapter(MQBrokerType.KAFKA)), properties));
-    }
-
-    @Test
-    void shouldRejectMissingPublisherImplementation() {
-        Ddd4jMQProperties properties = properties("kafka");
-
-        assertThrows(UnsupportedOperationException.class,
-                () -> MQBrokerAdapters.createPublisher(List.of(new TestAdapter(MQBrokerType.KAFKA)), properties));
-    }
-
-    @Test
-    void shouldRejectNullPublisher() {
-        Ddd4jMQProperties properties = properties("kafka");
-
-        assertThrows(IllegalStateException.class,
-                () -> MQBrokerAdapters.createPublisher(List.of(new NullPublisherAdapter(MQBrokerType.KAFKA)), properties));
-    }
-
-    @Test
-    void shouldCreatePublisher() {
-        Ddd4jMQProperties properties = properties("kafka");
-        MQEventPublisher publisher = new TestPublisher();
-
-        MQEventPublisher actual = assertDoesNotThrow(
-                () -> MQBrokerAdapters.createPublisher(List.of(new PublisherAdapter(MQBrokerType.KAFKA, publisher)), properties));
-
-        assertSame(publisher, actual);
+                () -> MQBrokerAdapters.selectAdapter(List.of(new TestAdapter(MQBrokerType.KAFKA)), properties));
     }
 
     @Test
@@ -114,40 +84,6 @@ class MQBrokerAdaptersTest {
         @Override
         public boolean supports(MQBrokerType configured) {
             return brokerType == configured;
-        }
-    }
-
-    private static class NullPublisherAdapter extends TestAdapter {
-
-        private NullPublisherAdapter(MQBrokerType brokerType) {
-            super(brokerType);
-        }
-
-        @Override
-        public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-            return null;
-        }
-    }
-
-    private static class PublisherAdapter extends TestAdapter {
-
-        private final MQEventPublisher publisher;
-
-        private PublisherAdapter(MQBrokerType brokerType, MQEventPublisher publisher) {
-            super(brokerType);
-            this.publisher = publisher;
-        }
-
-        @Override
-        public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-            return publisher;
-        }
-    }
-
-    private static class TestPublisher implements MQEventPublisher {
-
-        @Override
-        public <T extends MQEvent> void publish(T event, MQDestination destination) {
         }
     }
 }

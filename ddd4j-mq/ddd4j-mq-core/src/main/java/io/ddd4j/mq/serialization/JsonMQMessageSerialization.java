@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class JsonMQMessageSerialization implements MQMessageSerialization, MQEventSerialization {
+public class JsonMQMessageSerialization implements MQEventSerialization {
 
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {

@@ -2,6 +2,7 @@ package io.ddd4j.mq.registry;
 
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Objects;
 
 
@@ -16,11 +17,11 @@ public final class MQListenerEndpointNaming {
     }
 
     /**
-     * 解析连接符，默认 {@code .}。
+     * 解析分隔符，默认 {@code .}。
      */
-    public static String resolveConcat(MQListenerDefinition definition) {
-        if (Objects.nonNull(definition) && hasText(definition.getConcat())) {
-            return definition.getConcat();
+    public static String resolveSeparator(MQListenerDefinition definition) {
+        if (Objects.nonNull(definition) && StrKit.hasText(definition.getSeparator())) {
+            return definition.getSeparator();
         }
         return ".";
     }
@@ -36,26 +37,26 @@ public final class MQListenerEndpointNaming {
      * 构建物理 topic：namespace.topic[.tag]。
      */
     public static String physicalTopic(Ddd4jMQProperties properties, MQListenerDefinition definition) {
-        String concat = resolveConcat(definition);
-        String namespace = hasText(definition.getNamespace())
+        String sep = resolveSeparator(definition);
+        String namespace = StrKit.hasText(definition.getNamespace())
                 ? definition.getNamespace()
                 : properties.getNamespace();
         String topic = definition.getTopic();
         String tag = resolveTag(definition.getTags());
-        String base = namespace + concat + topic;
-        return Objects.isNull(tag) ? base : base + concat + tag;
+        String base = namespace + sep + topic;
+        return Objects.isNull(tag) ? base : base + sep + tag;
     }
 
     /**
      * 构建队列名：group.namespace.className.methodName（Rabbit / JMS 等）。
      */
     public static String queueName(MQListenerDefinition definition) {
-        String concat = resolveConcat(definition);
+        String sep = resolveSeparator(definition);
         String group = definition.getGroup();
         String namespace = definition.getNamespace();
         String className = definition.getMethod().getDeclaringClass().getSimpleName();
         String methodName = definition.getMethod().getName();
-        return group + concat + namespace + concat + className + concat + methodName;
+        return group + sep + namespace + sep + className + sep + methodName;
     }
 
     /**
@@ -67,7 +68,4 @@ public final class MQListenerEndpointNaming {
                 + definition.getMethod().getName();
     }
 
-    private static boolean hasText(String s) {
-        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
-    }
 }

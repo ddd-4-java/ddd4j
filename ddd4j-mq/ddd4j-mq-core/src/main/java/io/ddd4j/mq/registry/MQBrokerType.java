@@ -1,6 +1,8 @@
 package io.ddd4j.mq.registry;
 
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Locale;
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Objects;
 
 /**
@@ -38,7 +40,7 @@ public enum MQBrokerType {
      * 解析配置字符串为 Broker 类型（兼容 redisStream 等历史命名）。
      */
     public static MQBrokerType from(String raw) {
-        if (!hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
+        if (!StrKit.hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
             return NONE;
         }
         String normalized = raw.trim()
@@ -62,19 +64,6 @@ public enum MQBrokerType {
         };
     }
 
-    /**
-     * 解析配置字符串（{@link #from(String)} 别名，供配置类调用）。
-     *
-     * @param raw 配置值
-     * @return Broker 类型
-     */
-    public static MQBrokerType fromConfig(String raw) {
-        return from(raw);
-    }
-
-    private static boolean hasText(String s) {
-        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
-    }
 
     /**
      * 转为 kebab-case 配置值（如 {@code redis-stream}）。

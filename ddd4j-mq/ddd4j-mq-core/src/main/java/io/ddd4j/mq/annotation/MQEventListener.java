@@ -27,6 +27,6 @@ public @interface MQEventListener {
     // 支持处理的列表，策略模式。线程非隔离，即使topic和tags符合，最后也要符合该策略
     String[] supports() default "*";
 
-    // 连接符，默认{namespace}:{topic}:{tags}
-    String concat() default "";
+    // 分隔符，用于拼接 namespace/topic/tags 物理地址，为空时由各 Broker Adapter 决定默认分隔符（如 RabbitMQ 用 "."，Redis Stream 用 ":"）
+    String separator() default "";
 }

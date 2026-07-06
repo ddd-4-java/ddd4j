@@ -5,6 +5,7 @@ import io.ddd4j.mq.registry.MQBindingNaming;
 import lombok.Getter;
 
 
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Objects;
 
 /**
@@ -35,12 +36,9 @@ public class MQDestination {
         return new MQDestination(topic, tag, namespace);
     }
 
-    private static boolean hasText(String s) {
-        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
-    }
 
     public String physicalDestination() {
-        return hasText(namespace) ? namespace + "." + topic : topic;
+        return StrKit.hasText(namespace) ? namespace + "." + topic : topic;
     }
 
     public String bindingOutName() {

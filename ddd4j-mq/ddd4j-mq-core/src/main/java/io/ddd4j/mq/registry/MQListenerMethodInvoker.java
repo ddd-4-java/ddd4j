@@ -13,9 +13,13 @@ import io.ddd4j.mq.serialization.MQEventSerialization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import io.ddd4j.kit.lang.StrKit;
 import java.lang.reflect.Method;
+import io.ddd4j.kit.lang.StrKit;
 import java.lang.reflect.Parameter;
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Map;
+import io.ddd4j.kit.lang.StrKit;
 import java.util.Objects;
 
 /**
@@ -39,9 +43,6 @@ public class MQListenerMethodInvoker {
                 || Map.class.isAssignableFrom(type);
     }
 
-    private static boolean hasText(String s) {
-        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
-    }
 
     /**
      * 调用监听器方法并返回业务处置结果。
@@ -170,7 +171,7 @@ public class MQListenerMethodInvoker {
             Object payload) {
 
         String tenantId = resolveTenantId(message);
-        if (hasText(tenantId)) {
+        if (StrKit.hasText(tenantId)) {
             ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
         }
 
@@ -193,15 +194,15 @@ public class MQListenerMethodInvoker {
      */
     private String resolveTenantId(MQMessage<?> message) {
         String headerTenant = MQMessages.headerAsString(message, "tenantId");
-        if (hasText(headerTenant)) {
+        if (StrKit.hasText(headerTenant)) {
             return headerTenant;
         }
         String stdTenant = MQMessages.extractTenantId(message);
-        if (hasText(stdTenant)) {
+        if (StrKit.hasText(stdTenant)) {
             return stdTenant;
         }
         Object payload = message.getPayload();
-        if (payload instanceof MQEvent && hasText(((MQEvent) payload).getTenantId())) {
+        if (payload instanceof MQEvent && StrKit.hasText(((MQEvent) payload).getTenantId())) {
             return ((MQEvent) payload).getTenantId();
         }
         return ThreadContext.get(ContextConstants.TENANT_ID);

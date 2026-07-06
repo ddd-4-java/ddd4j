@@ -1,45 +1,29 @@
 package io.ddd4j.mq.spring.registry;
 
-import io.ddd4j.mq.ack.AckDisposition;
-import io.ddd4j.mq.ack.MQConsumeTemplates;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumeInterceptor;
-import io.ddd4j.mq.consume.MQConsumerContext;
 import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.consume.MQConsumeEngine;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerMethodInvoker;
 import io.ddd4j.mq.registry.MQListenerScanner;
 import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
 import io.ddd4j.mq.spi.MQBrokerAdapters;
+import io.ddd4j.mq.config.Ddd4jMQProperties;
+import io.ddd4j.mq.consume.MQConsumeInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 应用就绪后扫描 {@link io.ddd4j.mq.annotation.MQEventListener} 并通过 {@link MQBrokerAdapter} 动态注册消费端点。
  *
- * <p>消息处理流程：
- * <pre>
- *   Spring/Broker 原生消息
- *     ↓ SpringMessageAdapter.fromSpring(...)   ← 各 Broker 适配器内部完成
- *   纯 Java MQMessage
- *     ↓ MQListenerMethodInvoker.invoke()        ← 反射调用 @MQEventListener 方法
- *   业务方法
- * </pre>
- *
- * <p>已彻底迁移至纯 Java {@link MQMessage} 模型：不再直接持有
- * {@code org.springframework.messaging.Message} 引用。
+ * <p>本类仅负责 Spring 容器的监听器扫描和适配器选择，
+ * 消费模板逻辑（preCheck → invoke → disposition → afterConsume）由 {@link MQConsumeEngine} 统一驱动。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -70,122 +54,18 @@ public class MQListenerRegistrar {
 
         MQBrokerAdapter adapter = MQBrokerAdapters.selectAdapter(adapters, properties);
         MQListenerMethodInvoker invoker = new MQListenerMethodInvoker(serialization);
-        List<MQConsumeInterceptor> orderedInterceptors = orderedInterceptors();
+        MQConsumeEngine engine = new MQConsumeEngine(invoker, interceptors, properties);
 
         for (MQListenerDefinition definition : definitions) {
-            MQConsumerHandler handler = createHandler(definition, adapter, invoker, orderedInterceptors);
+            MQConsumerHandler handler = engine.createHandler(definition, adapter);
             adapter.registerConsumer(definition, handler);
             log.info("Registered MQ listener: bean={}, method={}, topic={}, group={}",
-                    definition.getBean().getClass().getSimpleName(),
+                    definition.getBean() != null
+                            ? definition.getBean().getClass().getSimpleName()
+                            : definition.getBeanName(),
                     definition.getMethod().getName(),
                     definition.getTopic(),
                     definition.getGroup());
         }
-    }
-
-    /**
-     * 为单个监听器定义创建默认消费处理器。
-     */
-    private MQConsumerHandler createHandler(
-            MQListenerDefinition definition,
-            MQBrokerAdapter adapter,
-            MQListenerMethodInvoker invoker,
-            List<MQConsumeInterceptor> orderedInterceptors) {
-
-        return (message, ack) -> {
-            MessageAcknowledgment effectiveAck = resolveAcknowledgment(adapter, message, ack);
-            Object payload = invoker.resolvePayload(definition, message);
-            MQConsumerContext context = invoker.buildContext(definition, message, effectiveAck, payload);
-            AtomicReference<AckDisposition> dispositionRef = new AtomicReference<>();
-            try {
-                MQConsumeTemplates.execute(
-                        message,
-                        effectiveAck,
-                        () -> runPreCheck(orderedInterceptors, context, message),
-                        () -> {
-                            try {
-                                AckDisposition disposition = invoker.invoke(definition, context, message, payload);
-                                dispositionRef.set(disposition);
-                                return disposition;
-                            } catch (Exception ex) {
-                                log.error("MQ listener invocation failed: bean={}, method={}",
-                                        definition.getBean().getClass().getSimpleName(),
-                                        definition.getMethod().getName(),
-                                        ex);
-                                throw new RuntimeException(ex);
-                            }
-                        });
-            } catch (Exception ex) {
-                if (properties.getConsumer().isManualAck() && !effectiveAck.isAcknowledged()) {
-                    effectiveAck.requeue();
-                }
-            } finally {
-                runAfterConsume(orderedInterceptors, context, message, dispositionRef.get());
-                invoker.clearContext();
-            }
-        };
-    }
-
-    /**
-     * 解析确认端口：优先使用 Adapter 从 nativeMessage 解析，回退传入 ack 或 NoOp。
-     */
-    private MessageAcknowledgment resolveAcknowledgment(
-            MQBrokerAdapter adapter,
-            MQMessage<?> message,
-            MessageAcknowledgment ack) {
-
-        MessageAcknowledgment resolved = adapter.resolveAcknowledgment(message);
-        if (Objects.nonNull(resolved)) {
-            return resolved;
-        }
-        return Objects.nonNull(ack) ? ack : new NoOpMessageAcknowledgment();
-    }
-
-    /**
-     * 执行拦截链 preCheck，返回首个非零结果。
-     */
-    private int runPreCheck(
-            List<MQConsumeInterceptor> orderedInterceptors,
-            MQConsumerContext context,
-            MQMessage<?> message) {
-
-        for (MQConsumeInterceptor interceptor : orderedInterceptors) {
-            int result = interceptor.preCheck(context, message);
-            if (result != MQConsumeTemplates.PRE_CONTINUE) {
-                return result;
-            }
-        }
-        return MQConsumeTemplates.PRE_CONTINUE;
-    }
-
-    /**
-     * 执行拦截链 afterConsume 回调。
-     */
-    private void runAfterConsume(
-            List<MQConsumeInterceptor> orderedInterceptors,
-            MQConsumerContext context,
-            MQMessage<?> message,
-            AckDisposition disposition) {
-
-        for (MQConsumeInterceptor interceptor : orderedInterceptors) {
-            try {
-                interceptor.afterConsume(context, message, disposition);
-            } catch (Exception ex) {
-                log.warn("MQConsumeInterceptor afterConsume failed: {}", interceptor.getClass().getSimpleName(), ex);
-            }
-        }
-    }
-
-    /**
-     * 按 order 升序排列拦截器。
-     */
-    private List<MQConsumeInterceptor> orderedInterceptors() {
-        if (Objects.isNull(interceptors) || interceptors.isEmpty()) {
-            return List.of();
-        }
-        return interceptors.stream()
-                .filter(Objects::nonNull)
-                .sorted(Comparator.comparingInt(MQConsumeInterceptor::order))
-                .toList();
     }
 }

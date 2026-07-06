@@ -24,4 +24,11 @@ public class StrKit extends StrUtil {
     public static boolean setIsBlank(CharSequence str) {
         return isBlank(str);
     }
+
+    /**
+     * 判断字符串是否有内容（非 null、非空白）。
+     */
+    public static boolean hasText(CharSequence str) {
+        return isNotBlank(str);
+    }
 }

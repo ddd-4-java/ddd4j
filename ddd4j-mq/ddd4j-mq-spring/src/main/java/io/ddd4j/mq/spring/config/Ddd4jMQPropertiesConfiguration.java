@@ -3,7 +3,7 @@ package io.ddd4j.mq.spring.config;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.consume.MQConsumeInterceptor;
 import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
-import io.ddd4j.mq.serialization.MQMessageSerialization;
+import io.ddd4j.mq.serialization.MQEventSerialization;
 import io.ddd4j.mq.store.MQEventPersistInterceptor;
 import io.ddd4j.mq.store.MQEventStorer;
 import org.springframework.beans.factory.ObjectProvider;
@@ -46,7 +46,7 @@ public class Ddd4jMQPropertiesConfiguration {
      * @return JSON 序列化实现
      */
     @Bean
-    public MQMessageSerialization mqMessageSerialization() {
+    public MQEventSerialization mqMessageSerialization() {
         return new JsonMQMessageSerialization();
     }
 
