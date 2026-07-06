@@ -1,6 +1,7 @@
-package io.ddd4j.mq.consume;
+package io.ddd4j.mq.consume.interceptor;
 
-import io.ddd4j.mq.consume.AckType;
+import io.ddd4j.mq.consume.ConsumerContext;
+import io.ddd4j.mq.consume.ack.AckType;
 import io.ddd4j.mq.message.Message;
 
 /**

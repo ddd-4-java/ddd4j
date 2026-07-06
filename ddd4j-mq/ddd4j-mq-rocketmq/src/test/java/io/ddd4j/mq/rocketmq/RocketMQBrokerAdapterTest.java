@@ -5,7 +5,7 @@ import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.producer.MQProducer;
@@ -56,14 +56,14 @@ class RocketBrokerAdapterTest {
         MQProperties properties = new MQProperties();
         properties.setNamespace("sales");
         MQProducer producer = mock(MQProducer.class);
-        RocketMQEventPublisher publisher = new RocketMQEventPublisher(producer, properties, new JsonSerialization());
+        RocketMQEventPublisher publisher = new RocketMQEventPublisher(producer, properties, new JsonMQEventSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 
         publisher.publish(event, Destination.of("order", "paid"));
 
         verify(producer).send(any(Message.class));
-        Message message = RocketMQEventPublisher.toMessage(event, Destination.of("order", "paid"), properties, new JsonSerialization());
+        Message message = RocketMQEventPublisher.toMessage(event, Destination.of("order", "paid"), properties, new JsonMQEventSerialization());
         assertEquals("sales.order", message.getTopic());
         assertEquals("paid", message.getTags());
     }

@@ -7,7 +7,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttProperties;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 
 import java.nio.charset.StandardCharsets;
@@ -27,10 +27,10 @@ public class MicaMqttMQEventPublisher implements MQEventPublisher {
     /** MQ 全局配置 */
     private final MQProperties mqProperties;
     /** 事件序列化器 */
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
     public MicaMqttMQEventPublisher(MqttClient client, MicaMqttProperties properties,
-                                    MQProperties mqProperties, EventSerialization serialization) {
+                                    MQProperties mqProperties, MQEventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

@@ -3,9 +3,9 @@ package io.ddd4j.mq.ons.ack;
 import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 
 import java.util.Objects;
 import java.util.Optional;

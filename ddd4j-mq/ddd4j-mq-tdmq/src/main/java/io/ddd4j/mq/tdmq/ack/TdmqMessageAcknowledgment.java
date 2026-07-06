@@ -1,9 +1,9 @@
 package io.ddd4j.mq.tdmq.ack;
 
-import io.ddd4j.mq.consume.AcknowledgmentContext;
-import io.ddd4j.mq.consume.Acknowledgment;
-import io.ddd4j.mq.consume.NoOpAcknowledgment;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.consume.ack.AcknowledgmentContext;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
+import io.ddd4j.mq.consume.ack.NoOpAcknowledgment;
+import io.ddd4j.mq.config.BrokerType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;

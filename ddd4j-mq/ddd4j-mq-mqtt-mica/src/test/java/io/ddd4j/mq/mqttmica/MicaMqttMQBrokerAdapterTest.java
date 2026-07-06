@@ -6,7 +6,7 @@ import io.ddd4j.mq.mqttmica.ack.MicaMqttAcknowledgment;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttBrokerAdapter;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttProperties;
 import io.ddd4j.mq.config.BrokerType;
-import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +42,7 @@ class MicaMqttBrokerAdapterTest {
     @Test
     void supportsMicaMqttBrokerType() {
         MicaMqttBrokerAdapter adapter = MicaMqttBrokerAdapter.disconnected(
-                new MicaMqttProperties(), new MQProperties(), new JsonSerialization());
+                new MicaMqttProperties(), new MQProperties(), new JsonMQEventSerialization());
 
         assertTrue(adapter.supports(BrokerType.MQTT_MICA));
         assertEquals(BrokerType.MQTT_MICA, adapter.brokerType());

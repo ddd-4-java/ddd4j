@@ -8,7 +8,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import jakarta.jms.*;
 
 import java.lang.IllegalStateException;
@@ -26,7 +26,7 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
     /** MQ 全局配置 */
     private final MQProperties mqProperties;
     /** 事件序列化器 */
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     /** JMS Session 实例 */
     private final Session session;
 
@@ -42,7 +42,7 @@ public class ActiveMQEventPublisher implements MQEventPublisher {
     public ActiveMQEventPublisher(Connection connection, Session session,
                                   ActiveMQProperties properties,
                                   MQProperties mqProperties,
-                                  EventSerialization serialization) {
+                                  MQEventSerialization serialization) {
         this.session = Objects.requireNonNull(session, "session");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

@@ -1,8 +1,8 @@
 package io.ddd4j.mq.mqtt.ack;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 

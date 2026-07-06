@@ -2,15 +2,15 @@ package io.ddd4j.mq.rabbit;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 
 import java.util.Objects;
@@ -24,19 +24,19 @@ public class RabbitBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final RabbitMQProperties rabbitProperties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final RabbitChannelProvider channelProvider;
     private final RabbitMQConsumerEndpointRegistrar consumerRegistrar;
     private Connection connection;
 
     public RabbitBrokerAdapter(RabbitMQProperties rabbitProperties, MQProperties mqProperties) {
-        this(rabbitProperties, mqProperties, new JsonSerialization(), null);
+        this(rabbitProperties, mqProperties, new JsonMQEventSerialization(), null);
     }
 
     public RabbitBrokerAdapter(
             RabbitMQProperties rabbitProperties,
             MQProperties mqProperties,
-            EventSerialization serialization,
+            MQEventSerialization serialization,
             RabbitChannelProvider channelProvider) {
         this.rabbitProperties = Objects.requireNonNull(rabbitProperties, "rabbitProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

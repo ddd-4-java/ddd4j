@@ -9,7 +9,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -24,10 +24,10 @@ public class OnsMQEventPublisher implements MQEventPublisher {
     private final Producer producer;
     private final OnsMQProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
     public OnsMQEventPublisher(Producer producer, OnsMQProperties properties,
-                               MQProperties mqProperties, EventSerialization serialization) {
+                               MQProperties mqProperties, MQEventSerialization serialization) {
         this.producer = Objects.requireNonNull(producer, "producer");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

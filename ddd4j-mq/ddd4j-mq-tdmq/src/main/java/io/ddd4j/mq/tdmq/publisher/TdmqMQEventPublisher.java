@@ -6,7 +6,7 @@ import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,11 +23,11 @@ public class TdmqMQEventPublisher implements MQEventPublisher {
 
     private final TdmqClient tdmqClient;
     private final MQProperties properties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
     public TdmqMQEventPublisher(TdmqClient tdmqClient,
                                 MQProperties properties,
-                                EventSerialization serialization) {
+                                MQEventSerialization serialization) {
         this.tdmqClient = Objects.requireNonNull(tdmqClient, "tdmqClient");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

@@ -1,4 +1,4 @@
-package io.ddd4j.mq.listener;
+package io.ddd4j.mq.config;
 
 import io.ddd4j.kit.lang.StrKit;
 import java.util.Locale;

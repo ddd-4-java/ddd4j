@@ -1,9 +1,9 @@
 package io.ddd4j.mq.rabbit;
 
 import com.rabbitmq.client.Channel;
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 
 import java.io.IOException;
 import java.util.Objects;

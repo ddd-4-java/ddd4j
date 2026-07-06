@@ -1,14 +1,14 @@
 package io.ddd4j.mq.tdmq.spi;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import io.ddd4j.mq.tdmq.ack.TdmqAcknowledgmentFactory;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
@@ -28,23 +28,23 @@ public class TdmqBrokerAdapter implements BrokerAdapter, AutoCloseable {
     private final TdmqClient tdmqClient;
     private final MQProperties mqProperties;
     private final TdmqMQProperties tdmqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final TdmqMQConsumerEndpointRegistrar consumerRegistrar;
 
     public TdmqBrokerAdapter(TdmqMQProperties tdmqProperties, MQProperties mqProperties) {
-        this(new TdmqClientPlaceholder(), tdmqProperties, mqProperties, new JsonSerialization());
+        this(new TdmqClientPlaceholder(), tdmqProperties, mqProperties, new JsonMQEventSerialization());
     }
 
     public TdmqBrokerAdapter(TdmqClient tdmqClient,
                                TdmqMQProperties tdmqProperties,
                                MQProperties mqProperties) {
-        this(tdmqClient, tdmqProperties, mqProperties, new JsonSerialization());
+        this(tdmqClient, tdmqProperties, mqProperties, new JsonMQEventSerialization());
     }
 
     public TdmqBrokerAdapter(TdmqClient tdmqClient,
                                TdmqMQProperties tdmqProperties,
                                MQProperties mqProperties,
-                               EventSerialization serialization) {
+                               MQEventSerialization serialization) {
         this.tdmqClient = Objects.requireNonNull(tdmqClient, "tdmqClient");
         this.tdmqProperties = Objects.requireNonNull(tdmqProperties, "tdmqProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

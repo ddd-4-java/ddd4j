@@ -8,7 +8,7 @@ import io.ddd4j.mq.mqtt.ack.MqttAcknowledgment;
 import io.ddd4j.mq.mqtt.publisher.MqttMQEventPublisher;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
 import io.ddd4j.mq.config.BrokerType;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,8 @@ import static org.mockito.Mockito.verify;
 class MqttBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static EventSerialization stringSerialization() {
-        return new EventSerialization() {
+    private static MQEventSerialization stringSerialization() {
+        return new MQEventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;

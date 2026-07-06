@@ -1,6 +1,6 @@
-package io.ddd4j.mq.consume;
+package io.ddd4j.mq.consume.ack;
 
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import lombok.Builder;
 import lombok.Data;
 

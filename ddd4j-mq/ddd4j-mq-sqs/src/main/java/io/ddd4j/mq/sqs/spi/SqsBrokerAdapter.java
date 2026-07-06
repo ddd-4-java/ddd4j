@@ -1,14 +1,14 @@
 package io.ddd4j.mq.sqs.spi;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import io.ddd4j.mq.sqs.ack.SqsAcknowledgment;
 import io.ddd4j.mq.sqs.consumer.SqsConsumerEndpointRegistrar;
@@ -27,16 +27,16 @@ public class SqsBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final SqsMQProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final AtomicReference<SqsClient> clientRef = new AtomicReference<>();
     private final SqsConsumerEndpointRegistrar consumerRegistrar;
 
     public SqsBrokerAdapter(SqsMQProperties properties, MQProperties mqProperties) {
-        this(properties, mqProperties, new JsonSerialization());
+        this(properties, mqProperties, new JsonMQEventSerialization());
     }
 
     public SqsBrokerAdapter(SqsMQProperties properties, MQProperties mqProperties,
-                            EventSerialization serialization) {
+                            MQEventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -45,7 +45,7 @@ public class SqsBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     public SqsBrokerAdapter(SqsClient client, SqsMQProperties properties,
-                            MQProperties mqProperties, EventSerialization serialization) {
+                            MQProperties mqProperties, MQEventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

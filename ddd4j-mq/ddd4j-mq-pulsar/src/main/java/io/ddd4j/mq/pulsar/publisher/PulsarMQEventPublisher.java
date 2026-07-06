@@ -8,7 +8,7 @@ import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.Schema;
@@ -28,11 +28,11 @@ public class PulsarMQEventPublisher implements MQEventPublisher {
     private final PulsarClient client;
     private final PulsarMQProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private volatile Producer<byte[]> producer;
 
     public PulsarMQEventPublisher(PulsarClient client, PulsarMQProperties properties,
-                                  MQProperties mqProperties, EventSerialization serialization) {
+                                  MQProperties mqProperties, MQEventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

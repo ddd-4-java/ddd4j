@@ -3,17 +3,17 @@ package io.ddd4j.mq.ons.spi;
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.ONSFactory;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.ons.ack.OnsAcknowledgment;
 import io.ddd4j.mq.ons.consumer.OnsConsumerEndpointRegistrar;
 import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 
 import java.util.Objects;
@@ -28,21 +28,21 @@ public class OnsBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final OnsMQProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final AtomicReference<Producer> producerRef = new AtomicReference<>();
     private final OnsConsumerEndpointRegistrar consumerRegistrar;
 
     public OnsBrokerAdapter(OnsMQProperties properties, MQProperties mqProperties) {
-        this(properties, mqProperties, new JsonSerialization());
+        this(properties, mqProperties, new JsonMQEventSerialization());
     }
 
     public OnsBrokerAdapter(OnsMQProperties properties, MQProperties mqProperties,
-                              EventSerialization serialization) {
+                              MQEventSerialization serialization) {
         this(createAndStartProducer(properties), properties, mqProperties, serialization);
     }
 
     public OnsBrokerAdapter(Producer producer, OnsMQProperties properties,
-                              MQProperties mqProperties, EventSerialization serialization) {
+                              MQProperties mqProperties, MQEventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

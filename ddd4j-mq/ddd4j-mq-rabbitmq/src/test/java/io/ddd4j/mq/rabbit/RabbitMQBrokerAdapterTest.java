@@ -7,7 +7,7 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.config.BrokerType;
-import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +41,7 @@ class RabbitBrokerAdapterTest {
                 () -> channel,
                 rabbitProperties,
                 mqProperties,
-                new JsonSerialization());
+                new JsonMQEventSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 

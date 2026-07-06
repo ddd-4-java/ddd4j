@@ -59,7 +59,6 @@ public final class MessageHeaders {
         return message.getHeaders();
     }
 
-    @SuppressWarnings("unchecked")
     public static <N> N nativeMessage(Message<?> message, Class<N> type) {
         if (Objects.isNull(message) || Objects.isNull(type)) {
             return null;

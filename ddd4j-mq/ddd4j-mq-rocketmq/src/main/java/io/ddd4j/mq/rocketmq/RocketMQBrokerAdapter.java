@@ -1,14 +1,14 @@
 package io.ddd4j.mq.rocketmq;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -24,18 +24,18 @@ public class RocketBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final RocketMQProperties rocketProperties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final RocketMQConsumerEndpointRegistrar consumerRegistrar;
     private DefaultMQProducer producer;
 
     public RocketBrokerAdapter(RocketMQProperties rocketProperties, MQProperties mqProperties) {
-        this(rocketProperties, mqProperties, new JsonSerialization());
+        this(rocketProperties, mqProperties, new JsonMQEventSerialization());
     }
 
     public RocketBrokerAdapter(
             RocketMQProperties rocketProperties,
             MQProperties mqProperties,
-            EventSerialization serialization) {
+            MQEventSerialization serialization) {
         this.rocketProperties = Objects.requireNonNull(rocketProperties, "rocketProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

@@ -6,7 +6,7 @@ import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.config.BrokerType;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.sqs.ack.SqsAcknowledgment;
 import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
 import io.ddd4j.mq.sqs.spi.SqsBrokerAdapter;
@@ -28,8 +28,8 @@ import static org.mockito.Mockito.verify;
 class SqsBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static EventSerialization stringSerialization() {
-        return new EventSerialization() {
+    private static MQEventSerialization stringSerialization() {
+        return new MQEventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;

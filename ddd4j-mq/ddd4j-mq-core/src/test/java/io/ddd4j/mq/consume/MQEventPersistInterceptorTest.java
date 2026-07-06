@@ -1,5 +1,6 @@
 package io.ddd4j.mq.consume;
 
+import io.ddd4j.mq.consume.interceptor.MQEventPersistInterceptor;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Message;
@@ -11,11 +12,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * {@link EventPersistInterceptor} 持久化拦截器单测。
+ * {@link MQEventPersistInterceptor} 持久化拦截器单测。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-class EventPersistInterceptorTest {
+class MQEventPersistInterceptorTest {
 
     private static ConsumerContext context(MQEvent event) {
         return ConsumerContext.builder()
@@ -37,7 +38,7 @@ class EventPersistInterceptorTest {
         MQProperties properties = new MQProperties();
         properties.setPersist(false);
         List<MQEvent> stored = new ArrayList<>();
-        EventPersistInterceptor interceptor = new EventPersistInterceptor(properties, stored::add);
+        MQEventPersistInterceptor interceptor = new MQEventPersistInterceptor(properties, stored::add);
 
         int result = interceptor.preCheck(context(event("A")), Message.of("raw"));
 
@@ -49,7 +50,7 @@ class EventPersistInterceptorTest {
     void missingStorerShouldNotInterruptConsumption() {
         MQProperties properties = new MQProperties();
         properties.setPersist(true);
-        EventPersistInterceptor interceptor = new EventPersistInterceptor(properties, null);
+        MQEventPersistInterceptor interceptor = new MQEventPersistInterceptor(properties, null);
 
         int result = interceptor.preCheck(context(event("A")), Message.of("raw"));
 
@@ -62,7 +63,7 @@ class EventPersistInterceptorTest {
         properties.setPersist(true);
         List<MQEvent> stored = new ArrayList<>();
         MQEvent event = event("A");
-        EventPersistInterceptor interceptor = new EventPersistInterceptor(properties, stored::add);
+        MQEventPersistInterceptor interceptor = new MQEventPersistInterceptor(properties, stored::add);
 
         int result = interceptor.preCheck(context(event), Message.of("raw"));
 
@@ -74,7 +75,7 @@ class EventPersistInterceptorTest {
     void storerExceptionShouldNotInterruptConsumption() {
         MQProperties properties = new MQProperties();
         properties.setPersist(true);
-        EventPersistInterceptor interceptor = new EventPersistInterceptor(properties, event -> {
+        MQEventPersistInterceptor interceptor = new MQEventPersistInterceptor(properties, event -> {
             throw new IllegalStateException("store failed");
         });
 

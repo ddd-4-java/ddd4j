@@ -1,4 +1,4 @@
-package io.ddd4j.mq.consume;
+package io.ddd4j.mq.consume.ack;
 
 /**
  * 业务层消费结果语义，映射到 {@link Acknowledgment} 底层操作。

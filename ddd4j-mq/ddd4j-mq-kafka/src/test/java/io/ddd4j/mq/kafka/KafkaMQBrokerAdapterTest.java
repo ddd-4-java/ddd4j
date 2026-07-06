@@ -4,7 +4,7 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.config.BrokerType;
-import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.apache.kafka.clients.producer.MockProducer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class KafkaBrokerAdapterTest {
         properties.setDefaultTopic("default-topic");
         MockProducer<String, String> producer = new MockProducer<>(
                 true, null, new StringSerializer(), new StringSerializer());
-        KafkaMQEventPublisher publisher = new KafkaMQEventPublisher(producer, properties, new JsonSerialization());
+        KafkaMQEventPublisher publisher = new KafkaMQEventPublisher(producer, properties, new JsonMQEventSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 

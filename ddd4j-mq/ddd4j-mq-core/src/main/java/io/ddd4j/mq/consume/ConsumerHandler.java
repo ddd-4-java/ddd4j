@@ -1,6 +1,6 @@
 package io.ddd4j.mq.consume;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.message.Message;
 
 /**

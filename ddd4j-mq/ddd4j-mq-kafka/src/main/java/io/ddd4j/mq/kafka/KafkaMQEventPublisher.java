@@ -7,7 +7,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -24,20 +24,20 @@ import java.util.Objects;
 public class KafkaMQEventPublisher implements MQEventPublisher {
 
     private final Producer<String, String> producer;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final MQProperties mqProperties;
 
     public KafkaMQEventPublisher(
             KafkaMQProperties kafkaProperties,
             MQProperties mqProperties,
-            EventSerialization serialization) {
+            MQEventSerialization serialization) {
         this(new KafkaProducer<>(kafkaProperties.producerProperties()), mqProperties, serialization);
     }
 
     public KafkaMQEventPublisher(
             Producer<String, String> producer,
             MQProperties mqProperties,
-            EventSerialization serialization) {
+            MQEventSerialization serialization) {
         this.producer = Objects.requireNonNull(producer, "producer");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

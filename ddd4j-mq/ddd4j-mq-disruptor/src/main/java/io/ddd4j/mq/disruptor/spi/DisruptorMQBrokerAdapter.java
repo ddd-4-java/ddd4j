@@ -1,6 +1,6 @@
 package io.ddd4j.mq.disruptor.spi;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
@@ -10,7 +10,7 @@ import io.ddd4j.mq.disruptor.consumer.DisruptorMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
 import io.ddd4j.mq.disruptor.publisher.DisruptorMQEventPublisher;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import lombok.RequiredArgsConstructor;

@@ -10,7 +10,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -27,13 +27,13 @@ public class RabbitMQEventPublisher implements MQEventPublisher {
     private final RabbitChannelProvider channelProvider;
     private final RabbitMQProperties rabbitProperties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
     public RabbitMQEventPublisher(
             RabbitChannelProvider channelProvider,
             RabbitMQProperties rabbitProperties,
             MQProperties mqProperties,
-            EventSerialization serialization) {
+            MQEventSerialization serialization) {
         this.channelProvider = Objects.requireNonNull(channelProvider, "channelProvider");
         this.rabbitProperties = Objects.requireNonNull(rabbitProperties, "rabbitProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

@@ -1,11 +1,11 @@
-package io.ddd4j.mq.serialization;
+package io.ddd4j.mq.event;
 
 /**
  * MQ 事件序列化/反序列化契约。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public interface EventSerialization {
+public interface MQEventSerialization {
 
     /**
      * 反序列化消息体为领域对象。

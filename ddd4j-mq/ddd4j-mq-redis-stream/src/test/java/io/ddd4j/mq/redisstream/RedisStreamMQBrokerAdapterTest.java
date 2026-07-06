@@ -7,7 +7,7 @@ import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
 import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
 import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import io.lettuce.core.XAddArgs;
 import io.lettuce.core.XGroupCreateArgs;
 import io.lettuce.core.XReadArgs;
@@ -56,7 +56,7 @@ class RedisStreamBrokerAdapterTest {
         RedisStreamBrokerAdapter adapter = new RedisStreamBrokerAdapter(
                 new RedisStreamMQProperties(),
                 new MQProperties(),
-                new JsonSerialization(),
+                new JsonMQEventSerialization(),
                 mock(UnifiedJedis.class));
 
         assertTrue(adapter.supports(BrokerType.REDIS_STREAM));
@@ -73,7 +73,7 @@ class RedisStreamBrokerAdapterTest {
         RedisStreamMQEventPublisher publisher = new RedisStreamMQEventPublisher(
                 jedis,
                 properties,
-                new JsonSerialization());
+                new JsonMQEventSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 

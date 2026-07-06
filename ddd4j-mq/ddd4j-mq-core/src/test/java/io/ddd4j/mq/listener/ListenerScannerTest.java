@@ -1,7 +1,7 @@
 package io.ddd4j.mq.listener;
 
 import io.ddd4j.mq.annotation.MQEventListener;
-import io.ddd4j.mq.consume.AckType;
+import io.ddd4j.mq.consume.ack.AckType;
 import io.ddd4j.mq.consume.ConsumerContext;
 import org.junit.jupiter.api.Test;
 

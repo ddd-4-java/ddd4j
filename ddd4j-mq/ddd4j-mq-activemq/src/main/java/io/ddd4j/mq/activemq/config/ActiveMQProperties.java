@@ -8,7 +8,7 @@ import java.util.Objects;
  * ActiveMQ Artemis 适配器配置（纯 Java，零 Spring 依赖）。
  *
  * <p>对应 {@code org.apache.activemq:artemis-client} 2.x 原生 JMS 客户端。
- * 同时兼容 {@link io.ddd4j.mq.listener.BrokerType#ACTIVEMQ}（历史 Classic v5 通过单独引入 {@code activemq-client} 5.x 也可适配）。
+ * 同时兼容 {@link io.ddd4j.mq.config.BrokerType#ACTIVEMQ}（历史 Classic v5 通过单独引入 {@code activemq-client} 5.x 也可适配）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

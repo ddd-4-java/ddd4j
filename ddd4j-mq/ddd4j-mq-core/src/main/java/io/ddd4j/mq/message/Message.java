@@ -29,8 +29,7 @@ public class Message<T> {
     private final String messageId;
     private final String correlationId;
     /**
-     * -- GETTER --
-     * 逃生口：返回底层 Broker 原生消息（如 Kafka RecordMetadata、RabbitMQ Envelope 等）。
+     * 返回底层 Broker 原生消息（如 Kafka RecordMetadata、RabbitMQ Envelope 等）。
      */
     private final Object nativeMessage;
 

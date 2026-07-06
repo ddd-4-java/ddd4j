@@ -1,6 +1,6 @@
 package io.ddd4j.mq.pulsar.spi;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
@@ -8,10 +8,10 @@ import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.pulsar.ack.PulsarAcknowledgment;
 import io.ddd4j.mq.pulsar.consumer.PulsarMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.pulsar.publisher.PulsarMQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import org.apache.pulsar.client.api.PulsarClient;
 
@@ -27,16 +27,16 @@ public class PulsarBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final PulsarMQProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final AtomicReference<PulsarClient> clientRef = new AtomicReference<>();
     private final PulsarMQConsumerEndpointRegistrar consumerRegistrar;
 
     public PulsarBrokerAdapter(PulsarMQProperties properties, MQProperties mqProperties) {
-        this(properties, mqProperties, new JsonSerialization());
+        this(properties, mqProperties, new JsonMQEventSerialization());
     }
 
     public PulsarBrokerAdapter(PulsarMQProperties properties, MQProperties mqProperties,
-                                 EventSerialization serialization) {
+                                 MQEventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -49,7 +49,7 @@ public class PulsarBrokerAdapter implements BrokerAdapter, AutoCloseable {
     }
 
     public PulsarBrokerAdapter(PulsarClient client, PulsarMQProperties properties,
-                                 MQProperties mqProperties, EventSerialization serialization) {
+                                 MQProperties mqProperties, MQEventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

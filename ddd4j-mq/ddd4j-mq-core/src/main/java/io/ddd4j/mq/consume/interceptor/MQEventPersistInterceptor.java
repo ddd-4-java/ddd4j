@@ -1,7 +1,10 @@
-package io.ddd4j.mq.consume;
+package io.ddd4j.mq.consume.interceptor;
 
+import io.ddd4j.mq.consume.ConsumeTemplate;
+import io.ddd4j.mq.consume.ConsumerContext;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.event.MQEventStorer;
 import io.ddd4j.mq.message.Message;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,19 +14,18 @@ import java.util.Objects;
  * MQ 事件持久化拦截器。
  *
  * <p>对齐旧库语义：仅在 {@code ddd4j.mq.persist=true} 且业务注册了
- * {@link EventStorer} 时工作；持久化失败只记录日志，不阻断后续消费。
+ * {@link MQEventStorer} 时工作；持久化失败只记录日志，不阻断后续消费。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-public class EventPersistInterceptor implements ConsumerInterceptor {
+@SuppressWarnings({"unchecked","rawtypes"})
+public class MQEventPersistInterceptor implements ConsumerInterceptor {
 
     private final MQProperties properties;
-    @SuppressWarnings("rawtypes")
-    private final EventStorer storer;
+    private final MQEventStorer storer;
 
-    @SuppressWarnings("rawtypes")
-    public EventPersistInterceptor(MQProperties properties, EventStorer storer) {
+    public MQEventPersistInterceptor(MQProperties properties, MQEventStorer storer) {
         this.properties = properties;
         this.storer = storer;
     }
@@ -48,7 +50,6 @@ public class EventPersistInterceptor implements ConsumerInterceptor {
         return ConsumeTemplate.PRE_CONTINUE;
     }
 
-    @SuppressWarnings("unchecked")
     private void persist(MQEvent event) {
         try {
             storer.store(event);

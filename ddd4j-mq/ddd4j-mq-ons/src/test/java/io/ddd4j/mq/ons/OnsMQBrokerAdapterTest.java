@@ -13,7 +13,7 @@ import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
 import io.ddd4j.mq.ons.spi.OnsBrokerAdapter;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
 import io.ddd4j.mq.config.BrokerType;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -26,8 +26,8 @@ import static org.mockito.Mockito.verify;
 class OnsBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static EventSerialization stringSerialization() {
-        return new EventSerialization() {
+    private static MQEventSerialization stringSerialization() {
+        return new MQEventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;

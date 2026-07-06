@@ -1,14 +1,14 @@
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -24,17 +24,17 @@ public class KafkaBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final KafkaMQProperties kafkaProperties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final KafkaMQConsumerEndpointRegistrar consumerRegistrar;
 
     public KafkaBrokerAdapter(KafkaMQProperties kafkaProperties, MQProperties mqProperties) {
-        this(kafkaProperties, mqProperties, new JsonSerialization());
+        this(kafkaProperties, mqProperties, new JsonMQEventSerialization());
     }
 
     public KafkaBrokerAdapter(
             KafkaMQProperties kafkaProperties,
             MQProperties mqProperties,
-            EventSerialization serialization) {
+            MQEventSerialization serialization) {
         this.kafkaProperties = Objects.requireNonNull(kafkaProperties, "kafkaProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

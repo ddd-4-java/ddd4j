@@ -1,5 +1,6 @@
 package io.ddd4j.mq.consume;
 
+import io.ddd4j.mq.consume.ack.AckType;
 import io.ddd4j.mq.message.Message;
 import org.junit.jupiter.api.Test;
 

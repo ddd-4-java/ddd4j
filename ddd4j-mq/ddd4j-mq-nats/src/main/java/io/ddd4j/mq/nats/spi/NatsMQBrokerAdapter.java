@@ -1,6 +1,6 @@
 package io.ddd4j.mq.nats.spi;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
@@ -9,7 +9,7 @@ import io.ddd4j.mq.nats.ack.NatsAcknowledgmentFactory;
 import io.ddd4j.mq.nats.consumer.NatsMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import io.nats.client.Connection;

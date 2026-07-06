@@ -1,7 +1,7 @@
 package io.ddd4j.mq.tdmq;
 
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.Message;

@@ -7,7 +7,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.sqs.spi.SqsMQProperties;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
@@ -27,10 +27,10 @@ public class SqsMQEventPublisher implements MQEventPublisher {
     private final SqsClient client;
     private final SqsMQProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
     public SqsMQEventPublisher(SqsClient client, SqsMQProperties properties,
-                               MQProperties mqProperties, EventSerialization serialization) {
+                               MQProperties mqProperties, MQEventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

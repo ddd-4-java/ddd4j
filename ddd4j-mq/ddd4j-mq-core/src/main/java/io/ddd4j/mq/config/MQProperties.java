@@ -1,7 +1,5 @@
 package io.ddd4j.mq.config;
 
-import io.ddd4j.mq.event.MQEvent.PublishMode;
-import io.ddd4j.mq.listener.BrokerType;
 import lombok.Data;
 
 /**
@@ -17,11 +15,6 @@ public class MQProperties {
      * 是否启用 MQ
      */
     private boolean enabled = false;
-
-    /**
-     * 事件发布模式：MQ | SPRING_EVENT | BOTH
-     */
-    private PublishMode publishMode = PublishMode.MQ;
 
     /**
      * 当前 Broker 类型（配置字符串，如 rabbit、kafka）

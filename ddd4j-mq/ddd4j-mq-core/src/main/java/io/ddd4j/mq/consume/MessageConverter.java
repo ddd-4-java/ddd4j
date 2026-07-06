@@ -1,5 +1,6 @@
 package io.ddd4j.mq.consume;
 
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.message.Message;
 
 /**
@@ -8,7 +9,7 @@ import io.ddd4j.mq.message.Message;
  * <p>各 Broker Adapter 只需实现这个接口，把 Broker 原生消息（如 Kafka ConsumerRecord、
  * Rabbit Message、NATS Message、Rocket MessageExt 等）转成纯 Java {@link Message}。
  *
- * <p>配合 {@link io.ddd4j.mq.consume.Acknowledgment} 的 Factory 模式，
+ * <p>配合 {@link Acknowledgment} 的 Factory 模式，
  * Broker 只需提供这两个转换函数，不再自己写 onMessage 全流程。
  *
  * @param <N> Broker 原生消息类型

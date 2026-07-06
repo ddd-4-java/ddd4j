@@ -1,6 +1,6 @@
 package io.ddd4j.mq.mqttmica.spi;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
@@ -8,10 +8,10 @@ import io.ddd4j.mq.mqttmica.ack.MicaMqttAcknowledgment;
 import io.ddd4j.mq.mqttmica.consumer.MicaMqttMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.mqttmica.publisher.MicaMqttMQEventPublisher;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 
@@ -27,26 +27,26 @@ public class MicaMqttBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final MicaMqttProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
     private final MicaMqttMQConsumerEndpointRegistrar consumerRegistrar;
 
     public MicaMqttBrokerAdapter(MicaMqttProperties properties, MQProperties mqProperties) {
-        this(properties, mqProperties, new JsonSerialization());
+        this(properties, mqProperties, new JsonMQEventSerialization());
     }
 
     public MicaMqttBrokerAdapter(MicaMqttProperties properties, MQProperties mqProperties,
-                                   EventSerialization serialization) {
+                                   MQEventSerialization serialization) {
         this(properties.client(), properties, mqProperties, serialization, true);
     }
 
     public MicaMqttBrokerAdapter(MqttClient client, MicaMqttProperties properties,
-                                   MQProperties mqProperties, EventSerialization serialization) {
+                                   MQProperties mqProperties, MQEventSerialization serialization) {
         this(client, properties, mqProperties, serialization, true);
     }
 
     private MicaMqttBrokerAdapter(MqttClient client, MicaMqttProperties properties,
-                                    MQProperties mqProperties, EventSerialization serialization,
+                                    MQProperties mqProperties, MQEventSerialization serialization,
                                     boolean requireClient) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
@@ -61,7 +61,7 @@ public class MicaMqttBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     public static MicaMqttBrokerAdapter disconnected(MicaMqttProperties properties,
                                                        MQProperties mqProperties,
-                                                       EventSerialization serialization) {
+                                                       MQEventSerialization serialization) {
         return new MicaMqttBrokerAdapter(null, properties, mqProperties, serialization, false);
     }
 

@@ -1,6 +1,4 @@
-package io.ddd4j.mq.consume;
-
-import io.ddd4j.mq.event.MQEvent;
+package io.ddd4j.mq.event;
 
 /**
  * MQ 事件持久化端口。
@@ -10,7 +8,7 @@ import io.ddd4j.mq.event.MQEvent;
  * @param <T> 事件类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public interface EventStorer<T extends MQEvent> {
+public interface MQEventStorer<T extends MQEvent> {
 
     /**
      * 持久化 MQ 事件。

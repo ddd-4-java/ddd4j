@@ -3,13 +3,13 @@ package io.ddd4j.mq.listener;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.core.constant.ContextConstants;
-import io.ddd4j.mq.consume.AckType;
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.AckType;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.consume.ConsumerContext;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ListenerMethodInvoker {
 
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
     private static boolean isInfrastructureParameter(Class<?> type) {
         return ConsumerContext.class.isAssignableFrom(type)

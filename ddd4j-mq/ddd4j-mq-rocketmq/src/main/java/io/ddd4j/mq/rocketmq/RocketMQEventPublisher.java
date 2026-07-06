@@ -7,7 +7,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.apache.rocketmq.client.producer.MQProducer;
 import org.apache.rocketmq.common.message.Message;
 
@@ -23,9 +23,9 @@ public class RocketMQEventPublisher implements MQEventPublisher {
 
     private final MQProducer producer;
     private final MQProperties properties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
-    public RocketMQEventPublisher(MQProducer producer, MQProperties properties, EventSerialization serialization) {
+    public RocketMQEventPublisher(MQProducer producer, MQProperties properties, MQEventSerialization serialization) {
         this.producer = Objects.requireNonNull(producer, "producer");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -35,7 +35,7 @@ public class RocketMQEventPublisher implements MQEventPublisher {
             MQEvent event,
             Destination destination,
             MQProperties properties,
-            EventSerialization serialization) {
+            MQEventSerialization serialization) {
         String topic = resolveTopic(event, destination, properties);
         String tag = StrKit.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
         byte[] body = serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8);

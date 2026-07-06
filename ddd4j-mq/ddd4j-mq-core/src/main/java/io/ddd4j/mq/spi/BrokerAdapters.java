@@ -1,7 +1,7 @@
 package io.ddd4j.mq.spi;
 
 import io.ddd4j.mq.config.MQProperties;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 
 import java.util.List;
 import java.util.Objects;

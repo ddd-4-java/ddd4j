@@ -8,7 +8,7 @@ import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import redis.clients.jedis.UnifiedJedis;
 
 import java.util.LinkedHashMap;
@@ -26,13 +26,13 @@ public class RedisStreamMQEventPublisher implements MQEventPublisher {
 
     private final RedisStreamOperations operations;
     private final MQProperties properties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
-    public RedisStreamMQEventPublisher(UnifiedJedis jedis, MQProperties properties, EventSerialization serialization) {
+    public RedisStreamMQEventPublisher(UnifiedJedis jedis, MQProperties properties, MQEventSerialization serialization) {
         this(new JedisRedisStreamOperations(jedis), properties, serialization);
     }
 
-    public RedisStreamMQEventPublisher(RedisStreamOperations operations, MQProperties properties, EventSerialization serialization) {
+    public RedisStreamMQEventPublisher(RedisStreamOperations operations, MQProperties properties, MQEventSerialization serialization) {
         this.operations = Objects.requireNonNull(operations, "operations");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

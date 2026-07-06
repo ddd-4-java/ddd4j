@@ -1,6 +1,6 @@
 package io.ddd4j.mq.activemq.spi;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.activemq.ack.ActiveMQAcknowledgment;
 import io.ddd4j.mq.activemq.config.ActiveMQProperties;
 import io.ddd4j.mq.activemq.consumer.ActiveMQConsumerEndpointRegistrar;
@@ -9,10 +9,10 @@ import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 
 import jakarta.jms.Connection;
@@ -34,7 +34,7 @@ public class ActiveBrokerAdapter implements BrokerAdapter, AutoCloseable {
     /** MQ 全局配置 */
     private final MQProperties mqProperties;
     /** 事件序列化器 */
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     /** JMS 连接引用（线程安全） */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
     /** 消费者端点注册器 */
@@ -47,7 +47,7 @@ public class ActiveBrokerAdapter implements BrokerAdapter, AutoCloseable {
      * @param mqProperties MQ 全局配置
      */
     public ActiveBrokerAdapter(ActiveMQProperties properties, MQProperties mqProperties) {
-        this(properties, mqProperties, new JsonSerialization());
+        this(properties, mqProperties, new JsonMQEventSerialization());
     }
 
     /**
@@ -58,7 +58,7 @@ public class ActiveBrokerAdapter implements BrokerAdapter, AutoCloseable {
      * @param serialization 事件序列化器
      */
     public ActiveBrokerAdapter(ActiveMQProperties properties, MQProperties mqProperties,
-                                 EventSerialization serialization) {
+                                 MQEventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");

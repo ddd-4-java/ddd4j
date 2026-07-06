@@ -2,6 +2,7 @@ package io.ddd4j.mq.serialization;
 
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.event.MQEventSerialization;
 
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class JsonSerialization implements EventSerialization {
+public class JsonMQEventSerialization implements MQEventSerialization {
 
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {

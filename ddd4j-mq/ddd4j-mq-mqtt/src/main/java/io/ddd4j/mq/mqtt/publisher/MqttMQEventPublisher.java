@@ -7,7 +7,7 @@ import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
 import io.ddd4j.mq.event.MQEventPublisher;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -24,10 +24,10 @@ public class MqttMQEventPublisher implements MQEventPublisher {
     private final MqttClient client;
     private final MqttMQProperties properties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
 
     public MqttMQEventPublisher(MqttClient client, MqttMQProperties properties,
-                                MQProperties mqProperties, EventSerialization serialization) {
+                                MQProperties mqProperties, MQEventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

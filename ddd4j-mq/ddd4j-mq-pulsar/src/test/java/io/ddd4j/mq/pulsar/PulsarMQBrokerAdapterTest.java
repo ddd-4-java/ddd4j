@@ -10,7 +10,7 @@ import io.ddd4j.mq.pulsar.publisher.PulsarMQEventPublisher;
 import io.ddd4j.mq.pulsar.spi.PulsarBrokerAdapter;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
 import io.ddd4j.mq.config.BrokerType;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import org.apache.pulsar.client.api.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,8 +27,8 @@ import static org.mockito.Mockito.*;
 class PulsarBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static EventSerialization stringSerialization() {
-        return new EventSerialization() {
+    private static MQEventSerialization stringSerialization() {
+        return new MQEventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;

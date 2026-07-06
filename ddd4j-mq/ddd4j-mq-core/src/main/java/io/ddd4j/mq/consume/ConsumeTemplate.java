@@ -1,7 +1,9 @@
 package io.ddd4j.mq.consume;
 
+import io.ddd4j.mq.consume.ack.AckType;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 
 import java.util.Objects;
 import java.util.Optional;

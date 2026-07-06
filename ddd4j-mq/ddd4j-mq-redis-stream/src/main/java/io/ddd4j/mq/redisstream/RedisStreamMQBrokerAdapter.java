@@ -1,15 +1,15 @@
 package io.ddd4j.mq.redisstream;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.spi.BrokerAdapter;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
@@ -25,18 +25,18 @@ public class RedisStreamBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final RedisStreamMQProperties redisProperties;
     private final MQProperties mqProperties;
-    private final EventSerialization serialization;
+    private final MQEventSerialization serialization;
     private final RedisStreamOperations operations;
     private final RedisStreamConsumerEndpointRegistrar consumerRegistrar;
 
     public RedisStreamBrokerAdapter(RedisStreamMQProperties redisProperties, MQProperties mqProperties) {
-        this(redisProperties, mqProperties, new JsonSerialization(), redisProperties.newOperations());
+        this(redisProperties, mqProperties, new JsonMQEventSerialization(), redisProperties.newOperations());
     }
 
     public RedisStreamBrokerAdapter(
             RedisStreamMQProperties redisProperties,
             MQProperties mqProperties,
-            EventSerialization serialization,
+            MQEventSerialization serialization,
             UnifiedJedis jedis) {
         this(redisProperties, mqProperties, serialization, new JedisRedisStreamOperations(jedis));
     }
@@ -44,7 +44,7 @@ public class RedisStreamBrokerAdapter implements BrokerAdapter, AutoCloseable {
     public RedisStreamBrokerAdapter(
             RedisStreamMQProperties redisProperties,
             MQProperties mqProperties,
-            EventSerialization serialization,
+            MQEventSerialization serialization,
             RedisStreamOperations operations) {
         this.redisProperties = Objects.requireNonNull(redisProperties, "redisProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");

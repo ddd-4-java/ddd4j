@@ -1,8 +1,8 @@
 package io.ddd4j.mq.rocketmq;
 
-import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
-import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.config.BrokerType;
 import org.apache.rocketmq.common.message.MessageExt;
 
 import java.util.Objects;

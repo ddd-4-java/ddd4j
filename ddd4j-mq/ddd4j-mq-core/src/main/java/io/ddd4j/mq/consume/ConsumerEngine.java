@@ -1,10 +1,10 @@
 package io.ddd4j.mq.consume;
 
-import io.ddd4j.mq.consume.AckType;
-import io.ddd4j.mq.consume.Acknowledgment;
-import io.ddd4j.mq.consume.ConsumeTemplate;
-import io.ddd4j.mq.consume.NoOpAcknowledgment;
+import io.ddd4j.mq.consume.ack.AckType;
+import io.ddd4j.mq.consume.ack.Acknowledgment;
+import io.ddd4j.mq.consume.ack.NoOpAcknowledgment;
 import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.interceptor.ConsumerInterceptor;
 import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.listener.ListenerMethodInvoker;
