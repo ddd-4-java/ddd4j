@@ -1,6 +1,6 @@
 package io.ddd4j.extension.express.infrastructure.event;
 
-import io.ddd4j.extension.express.domain.event.DomainEventPublisher;
+import io.ddd4j.extension.express.domain.event.RuleEventPublisher;
 import io.ddd4j.extension.express.domain.event.RuleCreatedEvent;
 import io.ddd4j.extension.express.domain.event.RuleDeletedEvent;
 import io.ddd4j.extension.express.domain.event.RuleUpdatedEvent;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 /**
- * Spring领域事件发布者实现
+ * Spring规则事件发布者实现
  *
  * <p>基础设施层：使用Spring的ApplicationEventPublisher实现事件发布。
- * 负责将领域事件发布到Spring事件系统中。
+ * 负责将规则事件发布到Spring事件系统中。
  *
  * <p>注意：此类是可选的，只有在使用Spring事件机制时才需要。
  * 如果不需要事件机制，可以不使用此类。
@@ -23,7 +23,7 @@ import java.util.Objects;
  * @since 1.0
  */
 @Component
-public class SpringDomainEventPublisher implements DomainEventPublisher {
+public class SpringRuleEventPublisher implements RuleEventPublisher {
 
     private final ApplicationEventPublisher eventPublisher;
 
@@ -32,7 +32,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
      *
      * @param eventPublisher Spring事件发布器
      */
-    public SpringDomainEventPublisher(ApplicationEventPublisher eventPublisher) {
+    public SpringRuleEventPublisher(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 

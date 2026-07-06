@@ -2,6 +2,7 @@ package io.ddd4j.sample.javalin;
 
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
@@ -47,11 +48,12 @@ import io.javalin.Javalin;
  * }</pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.0
+ * @since 2.0.0
  */
 public class JavalinSample {
 
     public static void main(String[] args) {
+
         // 1. 业务方自己准备 4 个 SPI 实例（这里用 sample 内的 NoOp 示例实现）
         DomainEventPublisher domainEventPublisher = new NoOpDomainEventPublisher();
         MQEventPublisher mqEventPublisher = new NoOpMQEventPublisher();
@@ -69,7 +71,7 @@ public class JavalinSample {
 
         // 业务代码内部统一通过 io.ddd4j.core.context.Contexts.inject(...) 查 SPI，零框架耦合
         // 示例：演示 SPI 查找（线程级 → 全局级）
-        DomainEventPublisher publisher = io.ddd4j.core.context.Contexts.injectOrThrow(
+        DomainEventPublisher publisher = Contexts.injectOrThrow(
                 SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
         System.out.println("[Bootstrap] DomainEventPublisher = " + publisher.getClass().getSimpleName());
 

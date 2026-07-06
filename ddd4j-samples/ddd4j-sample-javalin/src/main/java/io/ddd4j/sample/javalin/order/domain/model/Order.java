@@ -25,8 +25,6 @@ import java.util.UUID;
  */
 public class Order extends AggregateRoot<String> {
 
-    private static final long serialVersionUID = 1L;
-
     /**
      * 订单 ID
      */
