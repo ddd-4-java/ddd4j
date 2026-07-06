@@ -1,14 +1,14 @@
 package io.ddd4j.mq.mqtt;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgment;
-import io.ddd4j.mq.mqtt.publisher.MqttMQEventPublisher;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.mqtt.ack.MqttAcknowledgment;
+import io.ddd4j.mq.mqtt.publisher.MqttEventPublisher;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.serialization.MQEventSerialization;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.serialization.EventSerialization;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.jupiter.api.Test;
@@ -20,11 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class MqttMQBrokerAdapterTest {
+class MqttBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static MQEventSerialization stringSerialization() {
-        return new MQEventSerialization() {
+    private static EventSerialization stringSerialization() {
+        return new EventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;
@@ -41,7 +41,7 @@ class MqttMQBrokerAdapterTest {
     void ackShouldMarkMessageProcessedOnce() {
         MqttMessage message = new MqttMessage();
         message.setId(42);
-        MqttMessageAcknowledgment ack = new MqttMessageAcknowledgment(message, "sales/order");
+        MqttAcknowledgment ack = new MqttAcknowledgment(message, "sales/order");
 
         ack.ack();
 
@@ -55,11 +55,11 @@ class MqttMQBrokerAdapterTest {
         MqttClient client = mock(MqttClient.class);
         MqttMQProperties properties = new MqttMQProperties();
         properties.setQos(2);
-        MqttMQEventPublisher publisher = new MqttMQEventPublisher(
-                client, properties, new Ddd4jMQProperties(), stringSerialization());
+        MqttEventPublisher publisher = new MqttEventPublisher(
+                client, properties, new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
 
-        publisher.publish(event, MQDestination.of("order", "paid", "sales"));
+        publisher.publish(event, Destination.of("order", "paid", "sales"));
 
         ArgumentCaptor<MqttMessage> captor = ArgumentCaptor.forClass(MqttMessage.class);
         verify(client).publish(org.mockito.ArgumentMatchers.eq("sales/order/paid"), captor.capture());
@@ -70,10 +70,10 @@ class MqttMQBrokerAdapterTest {
     @Test
     void supportsMqttBrokerType() {
         MqttMQProperties properties = new MqttMQProperties();
-        io.ddd4j.mq.mqtt.spi.MqttMQBrokerAdapter adapter = new io.ddd4j.mq.mqtt.spi.MqttMQBrokerAdapter(
-                mock(MqttClient.class), properties, new Ddd4jMQProperties(), stringSerialization());
+        io.ddd4j.mq.mqtt.spi.MqttBrokerAdapter adapter = new io.ddd4j.mq.mqtt.spi.MqttBrokerAdapter(
+                mock(MqttClient.class), properties, new MQProperties(), stringSerialization());
 
-        assertTrue(adapter.supports(MQBrokerType.MQTT));
-        assertEquals(MQBrokerType.MQTT, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.MQTT));
+        assertEquals(BrokerType.MQTT, adapter.brokerType());
     }
 }

@@ -1,8 +1,8 @@
 package io.ddd4j.mq.redisstream;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
+import io.ddd4j.mq.consume.Acknowledgment;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.listener.BrokerType;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
+public class RedisStreamAcknowledgment implements Acknowledgment {
 
     public static final String HEADER_REDIS_STREAM = "ddd4j.redis.stream";
     public static final String HEADER_REDIS_GROUP = "ddd4j.redis.group";
@@ -30,7 +30,7 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
     private final String correlationId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
-    public RedisStreamMessageAcknowledgment(
+    public RedisStreamAcknowledgment(
             UnifiedJedis jedis,
             String stream,
             String group,
@@ -40,7 +40,7 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
         this(new JedisRedisStreamOperations(jedis), stream, group, entryId.toString(), entryId, messageId, correlationId);
     }
 
-    public RedisStreamMessageAcknowledgment(
+    public RedisStreamAcknowledgment(
             RedisStreamOperations operations,
             String stream,
             String group,
@@ -83,8 +83,8 @@ public class RedisStreamMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.REDIS_STREAM;
+    public BrokerType brokerType() {
+        return BrokerType.REDIS_STREAM;
     }
 
     @Override

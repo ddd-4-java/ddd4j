@@ -12,8 +12,9 @@
 
     <artifactId>ddd4j-mq</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + broker adapters + -spring bridge。
-        Kafka/RabbitMQ/RocketMQ/Redis Stream 模块实现 MQBrokerAdapter / MessageAcknowledgment / MQEventPublisher 模型。
+    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -disruptor(进程内高性能) + -nats(无外部服务依赖)。
+        ddd4j-mq-spring 是独立桥接模块(parent=ddd4j-dependencies)，仅服务于 ddd4j-boot-mq-* 下游。
+        其余 broker 实现已迁移至 ddd4j-boot/ddd4j-boot-mq 深度整合。
     </description>
 
     <dependencies>
@@ -27,18 +28,17 @@
 
     <modules>
         <module>ddd4j-mq-core</module>
+        <module>ddd4j-mq-activemq</module>
         <module>ddd4j-mq-disruptor</module>
         <module>ddd4j-mq-kafka</module>
+        <module>ddd4j-mq-mqtt</module>
+        <module>ddd4j-mq-mqtt-mica</module>
         <module>ddd4j-mq-nats</module>
+        <module>ddd4j-mq-ons</module>
+        <module>ddd4j-mq-pulsar</module>
         <module>ddd4j-mq-rabbitmq</module>
         <module>ddd4j-mq-redis-stream</module>
         <module>ddd4j-mq-rocketmq</module>
-        <module>ddd4j-mq-spring</module>
-        <module>ddd4j-mq-pulsar</module>
-        <module>ddd4j-mq-activemq</module>
-        <module>ddd4j-mq-mqtt</module>
-        <module>ddd4j-mq-mqtt-mica</module>
-        <module>ddd4j-mq-ons</module>
         <module>ddd4j-mq-sqs</module>
         <module>ddd4j-mq-tdmq</module>
     </modules>

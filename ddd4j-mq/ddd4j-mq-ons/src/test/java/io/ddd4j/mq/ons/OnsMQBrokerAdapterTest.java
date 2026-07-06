@@ -5,15 +5,15 @@ import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
-import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
-import io.ddd4j.mq.ons.spi.OnsMQBrokerAdapter;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.ons.ack.OnsAcknowledgment;
+import io.ddd4j.mq.ons.publisher.OnsEventPublisher;
+import io.ddd4j.mq.ons.spi.OnsBrokerAdapter;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.serialization.MQEventSerialization;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.serialization.EventSerialization;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class OnsMQBrokerAdapterTest {
+class OnsBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static MQEventSerialization stringSerialization() {
-        return new MQEventSerialization() {
+    private static EventSerialization stringSerialization() {
+        return new EventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;
@@ -43,7 +43,7 @@ class OnsMQBrokerAdapterTest {
     @Test
     void ackShouldExposeListenerReturnAction() {
         Message message = new Message("order", "paid", "key-1", new byte[0]);
-        OnsMessageAcknowledgment ack = new OnsMessageAcknowledgment(new ConsumeContext(), message);
+        OnsAcknowledgment ack = new OnsAcknowledgment(new ConsumeContext(), message);
 
         ack.nack(true);
 
@@ -56,13 +56,13 @@ class OnsMQBrokerAdapterTest {
     void publisherShouldBuildOnsMessage() {
         Producer producer = mock(Producer.class);
         OnsMQProperties properties = new OnsMQProperties();
-        OnsMQEventPublisher publisher = new OnsMQEventPublisher(
-                producer, properties, new Ddd4jMQProperties(), stringSerialization());
+        OnsEventPublisher publisher = new OnsEventPublisher(
+                producer, properties, new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
         event.setMsgId("msg-1");
         event.setTenantId("tenant-1");
 
-        publisher.publish(event, MQDestination.of("order", "paid"));
+        publisher.publish(event, Destination.of("order", "paid"));
 
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(producer).send(captor.capture());
@@ -76,10 +76,10 @@ class OnsMQBrokerAdapterTest {
 
     @Test
     void supportsOnsBrokerType() {
-        OnsMQBrokerAdapter adapter = new OnsMQBrokerAdapter(
-                mock(Producer.class), new OnsMQProperties(), new Ddd4jMQProperties(), stringSerialization());
+        OnsBrokerAdapter adapter = new OnsBrokerAdapter(
+                mock(Producer.class), new OnsMQProperties(), new MQProperties(), stringSerialization());
 
-        assertTrue(adapter.supports(MQBrokerType.ONS));
-        assertEquals(MQBrokerType.ONS, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.ONS));
+        assertEquals(BrokerType.ONS, adapter.brokerType());
     }
 }

@@ -1,12 +1,13 @@
 package io.ddd4j.mq.mqttmica.consumer;
 
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.mqttmica.ack.MicaMqttMessageAcknowledgment;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.mqttmica.ack.MicaMqttAcknowledgment;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttProperties;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.TagMatcher;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 
 import java.nio.charset.StandardCharsets;
@@ -46,9 +47,9 @@ public class MicaMqttMQConsumerEndpointRegistrar {
      * @param definition 监听器定义
      * @param handler    消费处理器
      */
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         String topic = Objects.isNull(definition.getTopic()) ? "ddd4j/default/topic" : definition.getTopic();
-        String tag = MQTagMatcher.findIncludes(definition.getTags()).stream().findFirst().orElse(null);
+        String tag = TagMatcher.findIncludes(definition.getTags()).stream().findFirst().orElse(null);
         String subscribeTopic = (Objects.isNull(tag)) ? topic : topic + "/#";
         if (Objects.nonNull(definition.getNamespace()) && !io.ddd4j.kit.lang.StrKit.isBlank(definition.getNamespace())) {
             subscribeTopic = definition.getNamespace() + "/" + subscribeTopic;
@@ -62,27 +63,31 @@ public class MicaMqttMQConsumerEndpointRegistrar {
         });
     }
 
-    private void handleMessage(String topic, byte[] payload, MQListenerDefinition def, MQConsumerHandler handler) {
+    private void handleMessage(String topic, byte[] payload, ListenerDefinition def, ConsumerHandler handler) {
         String tag = null;
         int lastSlash = topic.lastIndexOf('/');
         if (lastSlash >= 0) {
             tag = topic.substring(lastSlash + 1);
         }
-        if (!MQTagMatcher.match(tag, def.getTags())) {
+        if (!TagMatcher.match(tag, def.getTags())) {
             return;
         }
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(MQMessages.HEADER_DESTINATION_TOPIC, def.getTopic());
-        if (Objects.nonNull(tag)) {
-            headers.put(MQMessages.HEADER_DESTINATION_TAG, tag);
-        }
         long messageId = idGen.getAndIncrement();
-        headers.put(MicaMqttMessageAcknowledgment.HEADER_MICA_TOPIC, topic);
-        headers.put(MicaMqttMessageAcknowledgment.HEADER_MICA_MESSAGE_ID, messageId);
-        MQMessage<String> mq = MQMessage.of(
-                new String(payload, StandardCharsets.UTF_8), headers, null, null, payload);
+        String resolvedTag = tag;
+        MessageConverter<byte[]> converter = nativePayload -> {
+            Map<String, Object> hdrs = new HashMap<>();
+            hdrs.put(MessageHeaders.HEADER_DESTINATION_TOPIC, def.getTopic());
+            if (Objects.nonNull(resolvedTag)) {
+                hdrs.put(MessageHeaders.HEADER_DESTINATION_TAG, resolvedTag);
+            }
+            hdrs.put(MicaMqttAcknowledgment.HEADER_MICA_TOPIC, topic);
+            hdrs.put(MicaMqttAcknowledgment.HEADER_MICA_MESSAGE_ID, messageId);
+            return Message.of(
+                    new String(nativePayload, StandardCharsets.UTF_8), hdrs, null, null, nativePayload);
+        };
+        Message<?> mq = converter.convert(payload);
         try {
-            handler.handle(mq, new MicaMqttMessageAcknowledgment(messageId, topic, null));
+            handler.handle(mq, new MicaMqttAcknowledgment(messageId, topic, null));
         } catch (Exception ignore) {
             // mica-mqtt does not expose a native negative acknowledgment path.
         }

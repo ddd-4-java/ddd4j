@@ -1,12 +1,14 @@
 package io.ddd4j.mq.pulsar.publisher;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.DestinationResolver;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.publish.EventPublisher;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
-import io.ddd4j.mq.serialization.MQEventSerialization;
+import io.ddd4j.mq.serialization.EventSerialization;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.Schema;
@@ -21,52 +23,43 @@ import java.util.concurrent.TimeUnit;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class PulsarMQEventPublisher implements MQEventPublisher {
+public class PulsarEventPublisher implements EventPublisher {
 
     private final PulsarClient client;
     private final PulsarMQProperties properties;
-    private final Ddd4jMQProperties mqProperties;
-    private final MQEventSerialization serialization;
+    private final MQProperties mqProperties;
+    private final EventSerialization serialization;
     private volatile Producer<byte[]> producer;
 
-    public PulsarMQEventPublisher(PulsarClient client, PulsarMQProperties properties,
-                                  Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
+    public PulsarEventPublisher(PulsarClient client, PulsarMQProperties properties,
+                                  MQProperties mqProperties, EventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
-    private static String firstText(String... values) {
-        if (Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
-    }
-
     @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+    public <T extends MQEvent> void publish(T event, Destination destination) {
         try {
+            DestinationResolver.fillDefaults(event, mqProperties);
             String topic = properties.physicalTopic(
-                    firstText(destination.getTopic(), event.getTopic(), "ddd4j.default.topic"),
-                    firstText(destination.getTag(), event.getTag()));
+                    StrKit.hasText(destination.getTopic())
+                            ? destination.getTopic()
+                            : (StrKit.hasText(event.getTopic()) ? event.getTopic() : "ddd4j.default.topic"),
+                    StrKit.hasText(destination.getTag()) ? destination.getTag() : event.getTag());
             Producer<byte[]> p = producer(topic);
             TypedMessageBuilder<byte[]> builder = p.newMessage()
                     .value(serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8))
-                    .property(MQMessages.HEADER_DESTINATION_TOPIC, destination.getTopic());
+                    .property(MessageHeaders.HEADER_DESTINATION_TOPIC, destination.getTopic());
             if (Objects.nonNull(event.getMsgId())) {
-                builder.property(MQMessages.HEADER_MESSAGE_ID, event.getMsgId());
+                builder.property(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
             }
             if (Objects.nonNull(event.getTenantId())) {
-                builder.property(MQMessages.HEADER_TENANT_ID, event.getTenantId());
+                builder.property(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
             }
             if (Objects.nonNull(event.getTag())) {
-                builder.property(MQMessages.HEADER_DESTINATION_TAG, event.getTag());
+                builder.property(MessageHeaders.HEADER_DESTINATION_TAG, event.getTag());
             }
             builder.sendAsync();
         } catch (Exception ex) {

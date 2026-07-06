@@ -1,8 +1,8 @@
 package io.ddd4j.mq.pulsar.ack;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
+public class PulsarAcknowledgment implements Acknowledgment {
 
     /** Header 键：Pulsar 消费者 */
     public static final String HEADER_PULSAR_CONSUMER = "ddd4j.pulsar.consumer";
@@ -40,7 +40,7 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
     private final long deliveryId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
-    public PulsarMessageAcknowledgment(Consumer<?> consumer, Message<?> message,
+    public PulsarAcknowledgment(Consumer<?> consumer, Message<?> message,
                                        String messageId, String correlationId) {
         this.consumer = consumer;
         this.message = message;
@@ -75,8 +75,8 @@ public class PulsarMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.PULSAR;
+    public BrokerType brokerType() {
+        return BrokerType.PULSAR;
     }
 
     @Override

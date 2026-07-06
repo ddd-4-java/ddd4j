@@ -1,19 +1,19 @@
 package io.ddd4j.mq.disruptor.ack;
 
-import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.message.Message;
 import io.ddd4j.mq.disruptor.core.DisruptorMQEvent;
 
 import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 从 {@link MQMessage} 解析 {@link DisruptorMessageAcknowledgment}。
+ * 从 {@link Message} 解析 {@link DisruptorAcknowledgment}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public final class DisruptorMessageAcknowledgmentFactory {
+public final class DisruptorAcknowledgmentFactory {
 
-    private DisruptorMessageAcknowledgmentFactory() {
+    private DisruptorAcknowledgmentFactory() {
     }
 
     /**
@@ -22,7 +22,7 @@ public final class DisruptorMessageAcknowledgmentFactory {
      * @param message MQ 信封
      * @return 确认对象
      */
-    public static Optional<DisruptorMessageAcknowledgment> from(MQMessage<?> message) {
+    public static Optional<DisruptorAcknowledgment> from(Message<?> message) {
         Objects.requireNonNull(message, "message");
         DisruptorMQEvent event = message.nativeMessage(DisruptorMQEvent.class);
         if (Objects.isNull(event)) {
@@ -30,6 +30,6 @@ public final class DisruptorMessageAcknowledgmentFactory {
         }
         Object tagHeader = message.getHeaders().get("disruptor.deliveryTag");
         long deliveryTag = tagHeader instanceof Number number ? number.longValue() : event.getSequence();
-        return Optional.of(new DisruptorMessageAcknowledgment(event, null, deliveryTag));
+        return Optional.of(new DisruptorAcknowledgment(event, null, deliveryTag));
     }
 }

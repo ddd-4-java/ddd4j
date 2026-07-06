@@ -1,16 +1,16 @@
 package io.ddd4j.mq.pulsar;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.pulsar.ack.PulsarMessageAcknowledgment;
-import io.ddd4j.mq.pulsar.publisher.PulsarMQEventPublisher;
-import io.ddd4j.mq.pulsar.spi.PulsarMQBrokerAdapter;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.pulsar.ack.PulsarAcknowledgment;
+import io.ddd4j.mq.pulsar.publisher.PulsarEventPublisher;
+import io.ddd4j.mq.pulsar.spi.PulsarBrokerAdapter;
 import io.ddd4j.mq.pulsar.spi.PulsarMQProperties;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.serialization.MQEventSerialization;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.serialization.EventSerialization;
 import org.apache.pulsar.client.api.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,11 +24,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-class PulsarMQBrokerAdapterTest {
+class PulsarBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static MQEventSerialization stringSerialization() {
-        return new MQEventSerialization() {
+    private static EventSerialization stringSerialization() {
+        return new EventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;
@@ -46,7 +46,7 @@ class PulsarMQBrokerAdapterTest {
         Consumer<byte[]> consumer = mock(Consumer.class);
         Message<byte[]> message = mock(Message.class);
         when(consumer.isConnected()).thenReturn(true);
-        PulsarMessageAcknowledgment ack = new PulsarMessageAcknowledgment(consumer, message, "msg-1", "corr-1");
+        PulsarAcknowledgment ack = new PulsarAcknowledgment(consumer, message, "msg-1", "corr-1");
 
         ack.ack();
 
@@ -61,7 +61,7 @@ class PulsarMQBrokerAdapterTest {
         Message<byte[]> message = mock(Message.class);
         MessageId messageId = mock(MessageId.class);
         when(message.getMessageId()).thenReturn(messageId);
-        PulsarMessageAcknowledgment ack = new PulsarMessageAcknowledgment(consumer, message, "msg-2", "corr-2");
+        PulsarAcknowledgment ack = new PulsarAcknowledgment(consumer, message, "msg-2", "corr-2");
 
         ack.ack(true);
 
@@ -82,32 +82,32 @@ class PulsarMQBrokerAdapterTest {
         when(messageBuilder.value(any(byte[].class))).thenReturn(messageBuilder);
         when(messageBuilder.property(any(), any())).thenReturn(messageBuilder);
         when(messageBuilder.sendAsync()).thenReturn(CompletableFuture.completedFuture(mock(MessageId.class)));
-        PulsarMQEventPublisher publisher = new PulsarMQEventPublisher(
-                client, new PulsarMQProperties(), new Ddd4jMQProperties(), stringSerialization());
+        PulsarEventPublisher publisher = new PulsarEventPublisher(
+                client, new PulsarMQProperties(), new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
         event.setMsgId("msg-1");
         event.setTenantId("tenant-1");
         event.setTag("paid");
 
-        publisher.publish(event, MQDestination.of("order", "paid"));
+        publisher.publish(event, Destination.of("order", "paid"));
 
         ArgumentCaptor<byte[]> payload = ArgumentCaptor.forClass(byte[].class);
         verify(builder).topic("public/default/order:paid");
         verify(messageBuilder).value(payload.capture());
-        verify(messageBuilder).property(MQMessages.HEADER_DESTINATION_TOPIC, "order");
-        verify(messageBuilder).property(MQMessages.HEADER_MESSAGE_ID, "msg-1");
-        verify(messageBuilder).property(MQMessages.HEADER_TENANT_ID, "tenant-1");
-        verify(messageBuilder).property(MQMessages.HEADER_DESTINATION_TAG, "paid");
+        verify(messageBuilder).property(MessageHeaders.HEADER_DESTINATION_TOPIC, "order");
+        verify(messageBuilder).property(MessageHeaders.HEADER_MESSAGE_ID, "msg-1");
+        verify(messageBuilder).property(MessageHeaders.HEADER_TENANT_ID, "tenant-1");
+        verify(messageBuilder).property(MessageHeaders.HEADER_DESTINATION_TAG, "paid");
         verify(messageBuilder).sendAsync();
         assertArrayEquals("payload".getBytes(StandardCharsets.UTF_8), payload.getValue());
     }
 
     @Test
     void supportsPulsarBrokerType() {
-        PulsarMQBrokerAdapter adapter = new PulsarMQBrokerAdapter(
-                mock(PulsarClient.class), new PulsarMQProperties(), new Ddd4jMQProperties(), stringSerialization());
+        PulsarBrokerAdapter adapter = new PulsarBrokerAdapter(
+                mock(PulsarClient.class), new PulsarMQProperties(), new MQProperties(), stringSerialization());
 
-        assertTrue(adapter.supports(MQBrokerType.PULSAR));
-        assertEquals(MQBrokerType.PULSAR, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.PULSAR));
+        assertEquals(BrokerType.PULSAR, adapter.brokerType());
     }
 }

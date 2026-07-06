@@ -1,12 +1,13 @@
 package io.ddd4j.mq.rabbit;
 
 import com.rabbitmq.client.*;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.EndpointNaming;
+import io.ddd4j.mq.listener.TagMatcher;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,10 +32,10 @@ public class RabbitMQConsumerEndpointRegistrar {
         return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         try {
             Channel channel = channelProvider.channel();
-            String queue = MQListenerEndpointNaming.queueName(definition);
+            String queue = EndpointNaming.queueName(definition);
             if (rabbitProperties.isAutoDeclare()) {
                 channel.exchangeDeclare(rabbitProperties.getExchange(), BuiltinExchangeType.TOPIC, rabbitProperties.isDurable());
                 channel.queueDeclare(queue, rabbitProperties.isDurable(), false, false, null);
@@ -46,17 +47,19 @@ public class RabbitMQConsumerEndpointRegistrar {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope,
                                            AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    RabbitMessageAcknowledgment ack = new RabbitMessageAcknowledgment(
+                    RabbitAcknowledgment ack = new RabbitAcknowledgment(
                             channel,
                             envelope.getDeliveryTag(),
                             properties.getMessageId(),
                             properties.getCorrelationId());
                     try {
-                        if (!MQTagMatcher.match(resolveTag(properties, envelope, definition), definition.getTags())) {
+                        MessageConverter<byte[]> converter =
+                                nativeBody -> toMessage(nativeBody, channel, envelope, properties);
+                        if (!TagMatcher.match(resolveTag(properties, envelope, definition), definition.getTags())) {
                             ack.ackSingle();
                             return;
                         }
-                        handler.handle(toMessage(body, channel, envelope, properties), ack);
+                        handler.handle(converter.convert(body), ack);
                     } catch (Exception ex) {
                         ack.nack(false, true);
                     }
@@ -67,7 +70,7 @@ public class RabbitMQConsumerEndpointRegistrar {
         }
     }
 
-    private MQMessage<String> toMessage(
+    private Message<String> toMessage(
             byte[] body,
             Channel channel,
             Envelope envelope,
@@ -76,11 +79,11 @@ public class RabbitMQConsumerEndpointRegistrar {
         if (Objects.nonNull(properties.getHeaders())) {
             headers.putAll(properties.getHeaders());
         }
-        headers.put(RabbitMessageAcknowledgment.HEADER_RABBIT_CHANNEL, channel);
-        headers.put(RabbitMessageAcknowledgment.HEADER_RABBIT_DELIVERY_TAG, envelope.getDeliveryTag());
-        headers.put(MQMessages.HEADER_DESTINATION_TOPIC, envelope.getExchange());
-        headers.put(MQMessages.HEADER_DESTINATION_TAG, envelope.getRoutingKey());
-        return MQMessage.of(
+        headers.put(RabbitAcknowledgment.HEADER_RABBIT_CHANNEL, channel);
+        headers.put(RabbitAcknowledgment.HEADER_RABBIT_DELIVERY_TAG, envelope.getDeliveryTag());
+        headers.put(MessageHeaders.HEADER_DESTINATION_TOPIC, envelope.getExchange());
+        headers.put(MessageHeaders.HEADER_DESTINATION_TAG, envelope.getRoutingKey());
+        return Message.of(
                 new String(body, StandardCharsets.UTF_8),
                 headers,
                 properties.getMessageId(),
@@ -88,12 +91,12 @@ public class RabbitMQConsumerEndpointRegistrar {
                 envelope);
     }
 
-    private Set<String> routingKeys(MQListenerDefinition definition) {
-        String concat = MQListenerEndpointNaming.resolveConcat(definition);
+    private Set<String> routingKeys(ListenerDefinition definition) {
+        String concat = EndpointNaming.resolveSeparator(definition);
         String base = hasText(definition.getNamespace())
                 ? definition.getNamespace() + concat + definition.getTopic()
                 : definition.getTopic();
-        Set<String> includes = MQTagMatcher.findIncludes(definition.getTags());
+        Set<String> includes = TagMatcher.findIncludes(definition.getTags());
         Set<String> keys = new LinkedHashSet<>();
         if (includes.isEmpty()) {
             keys.add(base);
@@ -104,14 +107,14 @@ public class RabbitMQConsumerEndpointRegistrar {
         return keys;
     }
 
-    private String resolveTag(AMQP.BasicProperties properties, Envelope envelope, MQListenerDefinition definition) {
+    private String resolveTag(AMQP.BasicProperties properties, Envelope envelope, ListenerDefinition definition) {
         Object headerTag = Objects.isNull(properties.getHeaders())
                 ? null
-                : properties.getHeaders().get(MQMessages.HEADER_DESTINATION_TAG);
+                : properties.getHeaders().get(MessageHeaders.HEADER_DESTINATION_TAG);
         if (Objects.nonNull(headerTag)) {
             return String.valueOf(headerTag);
         }
-        String concat = MQListenerEndpointNaming.resolveConcat(definition);
+        String concat = EndpointNaming.resolveSeparator(definition);
         String prefix = hasText(definition.getNamespace())
                 ? definition.getNamespace() + concat + definition.getTopic() + concat
                 : definition.getTopic() + concat;

@@ -1,13 +1,14 @@
 package io.ddd4j.mq.ons.consumer;
 
 import com.aliyun.openservices.ons.api.*;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.ons.ack.OnsAcknowledgment;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.TagMatcher;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -27,43 +28,46 @@ public class OnsConsumerEndpointRegistrar {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         String group = Objects.isNull(definition.getGroup()) || io.ddd4j.kit.lang.StrKit.isBlank(definition.getGroup())
                 ? properties.getConsumerId() : definition.getGroup();
         if (Objects.isNull(group)) {
-            throw new IllegalStateException("OnsConsumerEndpointRegistrar requires consumerId or @MQEventListener(group=...)");
+            throw new IllegalStateException("OnsConsumerEndpointRegistrar requires consumerId or @EventListener(group=...)");
         }
         String topic = Objects.isNull(definition.getTopic()) ? properties.getTopic() : definition.getTopic();
         if (Objects.isNull(topic)) {
             throw new IllegalStateException("OnsConsumerEndpointRegistrar requires topic");
         }
-        String tag = MQTagMatcher.findIncludes(definition.getTags()).stream().findFirst().orElse(null);
+        String tag = TagMatcher.findIncludes(definition.getTags()).stream().findFirst().orElse(null);
         Consumer consumer = ONSFactory.createConsumer(properties.sessionProperties(group));
         consumer.subscribe(topic, properties.subscriptionExpression(tag),
                 (msg, ctx) -> handleMessage(msg, ctx, definition, handler));
         consumer.start();
     }
 
-    private Action handleMessage(Message message, ConsumeContext context, MQListenerDefinition def,
-                                 MQConsumerHandler handler) {
+    private Action handleMessage(Message message, ConsumeContext context, ListenerDefinition def,
+                                 ConsumerHandler handler) {
         try {
-            if (!MQTagMatcher.match(message.getTag(), def.getTags())) {
+            if (!TagMatcher.match(message.getTag(), def.getTags())) {
                 return Action.CommitMessage;
             }
-            Map<String, Object> headers = new HashMap<>();
-            headers.put(MQMessages.HEADER_DESTINATION_TOPIC, message.getTopic());
-            if (Objects.nonNull(message.getTag())) {
-                headers.put(MQMessages.HEADER_DESTINATION_TAG, message.getTag());
-            }
-            headers.put(OnsMessageAcknowledgment.HEADER_ONS_MESSAGE, message);
-            headers.put(OnsMessageAcknowledgment.HEADER_ONS_CONTEXT, context);
-            MQMessage<String> mq = MQMessage.of(
-                    new String(message.getBody(), StandardCharsets.UTF_8),
-                    headers,
-                    message.getMsgID(),
-                    message.getKey(),
-                    message);
-            OnsMessageAcknowledgment ack = new OnsMessageAcknowledgment(context, message);
+            MessageConverter<Message> converter = nativeMsg -> {
+                Map<String, Object> headers = new HashMap<>();
+                headers.put(MessageHeaders.HEADER_DESTINATION_TOPIC, nativeMsg.getTopic());
+                if (Objects.nonNull(nativeMsg.getTag())) {
+                    headers.put(MessageHeaders.HEADER_DESTINATION_TAG, nativeMsg.getTag());
+                }
+                headers.put(OnsAcknowledgment.HEADER_ONS_MESSAGE, nativeMsg);
+                headers.put(OnsAcknowledgment.HEADER_ONS_CONTEXT, context);
+                return Message.of(
+                        new String(nativeMsg.getBody(), StandardCharsets.UTF_8),
+                        headers,
+                        nativeMsg.getMsgID(),
+                        nativeMsg.getKey(),
+                        nativeMsg);
+            };
+            Message<?> mq = converter.convert(message);
+            OnsAcknowledgment ack = new OnsAcknowledgment(context, message);
             handler.handle(mq, ack);
             return ack.action();
         } catch (Exception ex) {

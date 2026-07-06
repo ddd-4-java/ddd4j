@@ -1,11 +1,13 @@
 package io.ddd4j.mq.mqtt.publisher;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.serialization.MQEventSerialization;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.serialization.EventSerialization;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -17,42 +19,33 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class MqttMQEventPublisher implements MQEventPublisher {
+public class MqttEventPublisher implements EventPublisher {
 
     private final MqttClient client;
     private final MqttMQProperties properties;
-    private final Ddd4jMQProperties mqProperties;
-    private final MQEventSerialization serialization;
+    private final MQProperties mqProperties;
+    private final EventSerialization serialization;
 
-    public MqttMQEventPublisher(MqttClient client, MqttMQProperties properties,
-                                Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
+    public MqttEventPublisher(MqttClient client, MqttMQProperties properties,
+                                MQProperties mqProperties, EventSerialization serialization) {
         this.client = Objects.requireNonNull(client, "client");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
-    private static String firstText(String... values) {
-        if (Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
-    }
-
     @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+    public <T extends MQEvent> void publish(T event, Destination destination) {
         try {
-            String topic = firstText(destination.getTopic(), event.getTopic(), "ddd4j/default/topic");
+            DestinationResolver.fillDefaults(event, mqProperties);
+            String topic = StrKit.hasText(destination.getTopic())
+                    ? destination.getTopic()
+                    : (StrKit.hasText(event.getTopic()) ? event.getTopic() : "ddd4j/default/topic");
             // MQTT topic 层级用 / 替代 .（MQTT 协议约定）；namespace 作前缀
             String ns = destination.getNamespace();
             String tag = destination.getTag();
-            String physical = (Objects.isNull(ns) || io.ddd4j.kit.lang.StrKit.isBlank(ns) ? "" : ns + "/") + topic
-                    + (Objects.isNull(tag) || io.ddd4j.kit.lang.StrKit.isBlank(tag) ? "" : "/" + tag);
+            String physical = (StrKit.hasText(ns) ? ns + "/" : "") + topic
+                    + (StrKit.hasText(tag) ? "/" + tag : "");
             MqttMessage msg = new MqttMessage(serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8));
             msg.setQos(properties.getQos());
             if (Objects.nonNull(event.getMsgId())) {

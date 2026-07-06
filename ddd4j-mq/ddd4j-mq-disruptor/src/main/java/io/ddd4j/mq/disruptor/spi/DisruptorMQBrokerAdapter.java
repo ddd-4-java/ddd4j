@@ -1,18 +1,18 @@
 package io.ddd4j.mq.disruptor.spi;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
-import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgmentFactory;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.disruptor.ack.DisruptorAcknowledgment;
+import io.ddd4j.mq.disruptor.ack.DisruptorAcknowledgmentFactory;
 import io.ddd4j.mq.disruptor.consumer.DisruptorMQConsumerEndpointRegistrar;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
-import io.ddd4j.mq.disruptor.publisher.DisruptorMQEventPublisher;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.disruptor.publisher.DisruptorEventPublisher;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.spi.BrokerAdapter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
@@ -23,38 +23,38 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
-public class DisruptorMQBrokerAdapter implements MQBrokerAdapter {
+public class DisruptorBrokerAdapter implements BrokerAdapter {
 
     private final DisruptorMQBus disruptorMQBus;
-    private final Ddd4jMQProperties properties;
+    private final MQProperties properties;
     private final DisruptorMQConsumerEndpointRegistrar consumerEndpointRegistrar;
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.DISRUPTOR;
+    public BrokerType brokerType() {
+        return BrokerType.DISRUPTOR;
     }
 
     @Override
-    public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new DisruptorMQEventPublisher(disruptorMQBus, props);
+    public EventPublisher createPublisher(MQProperties props) {
+        return new DisruptorEventPublisher(disruptorMQBus, props);
     }
 
     @Override
-    public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void registerConsumer(ListenerDefinition definition, ConsumerHandler handler) {
         consumerEndpointRegistrar.register(definition, handler);
     }
 
     @Override
-    public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
-        DisruptorMessageAcknowledgment ack = message.nativeMessage(DisruptorMessageAcknowledgment.class);
+    public Acknowledgment resolveAcknowledgment(Message<?> message) {
+        DisruptorAcknowledgment ack = message.nativeMessage(DisruptorAcknowledgment.class);
         if (Objects.nonNull(ack)) {
             return ack;
         }
-        return DisruptorMessageAcknowledgmentFactory.from(message).orElse(null);
+        return DisruptorAcknowledgmentFactory.from(message).orElse(null);
     }
 
     @Override
-    public boolean supports(MQBrokerType configured) {
-        return MQBrokerType.DISRUPTOR == configured;
+    public boolean supports(BrokerType configured) {
+        return BrokerType.DISRUPTOR == configured;
     }
 }

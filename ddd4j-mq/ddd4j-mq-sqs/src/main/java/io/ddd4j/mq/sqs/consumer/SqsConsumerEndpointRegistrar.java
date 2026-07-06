@@ -1,12 +1,13 @@
 package io.ddd4j.mq.sqs.consumer;
 
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import io.ddd4j.mq.registry.MQTagMatcher;
-import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgment;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.EndpointNaming;
+import io.ddd4j.mq.listener.TagMatcher;
+import io.ddd4j.mq.sqs.ack.SqsAcknowledgment;
 import io.ddd4j.mq.sqs.spi.SqsMQProperties;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -24,8 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * AWS SQS 消费者端点注册器（编程式注册）。
  *
- * <p>每个监听器启动一个轮询线程（long poll），逐条把消息转给 {@link MQConsumerHandler}。
- * SQS 没有 topic/tag 概念：{@code MQListenerDefinition.topic} 必须直接是 queueUrl。
+ * <p>每个监听器启动一个轮询线程（long poll），逐条把消息转给 {@link ConsumerHandler}。
+ * SQS 没有 topic/tag 概念：{@code ListenerDefinition.topic} 必须直接是 queueUrl。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -47,14 +48,14 @@ public class SqsConsumerEndpointRegistrar {
         return Objects.isNull(v) ? null : v.stringValue();
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         String queueUrl = definition.getTopic();
         if (Objects.isNull(queueUrl) || !queueUrl.startsWith("http")) {
-            throw new IllegalArgumentException("SQS MQDestination.topic must be a queueUrl (https://...). Got: " + queueUrl);
+            throw new IllegalArgumentException("SQS Destination.topic must be a queueUrl (https://...). Got: " + queueUrl);
         }
         AtomicBoolean running = new AtomicBoolean(true);
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "sqs-consumer-" + MQListenerEndpointNaming.endpointId("sqs", definition));
+            Thread t = new Thread(r, "sqs-consumer-" + EndpointNaming.endpointId("sqs", definition));
             t.setDaemon(true);
             return t;
         });
@@ -81,15 +82,16 @@ public class SqsConsumerEndpointRegistrar {
     }
 
     private void handleMessage(SqsClient client, Message message, String queueUrl,
-                               MQListenerDefinition def, MQConsumerHandler handler) {
-        String tag = attr(message, MQMessages.HEADER_DESTINATION_TAG);
-        if (!MQTagMatcher.match(tag, def.getTags())) {
+                               ListenerDefinition def, ConsumerHandler handler) {
+        String tag = attr(message, MessageHeaders.HEADER_DESTINATION_TAG);
+        if (!TagMatcher.match(tag, def.getTags())) {
             client.deleteMessage(b -> b.queueUrl(queueUrl).receiptHandle(message.receiptHandle()));
             return;
         }
         try {
-            MQMessage<String> mq = toMessage(message, client, queueUrl);
-            SqsMessageAcknowledgment ack = new SqsMessageAcknowledgment(client, message, queueUrl, properties.isRequeueOnNack());
+            MessageConverter<Message> converter = nativeMsg -> toMessage(nativeMsg, client, queueUrl);
+            Message<?> mq = converter.convert(message);
+            SqsAcknowledgment ack = new SqsAcknowledgment(client, message, queueUrl, properties.isRequeueOnNack());
             handler.handle(mq, ack);
         } catch (Exception ex) {
             // 默认 nack + 立即重投
@@ -102,7 +104,7 @@ public class SqsConsumerEndpointRegistrar {
         }
     }
 
-    private MQMessage<String> toMessage(Message message, SqsClient client, String queueUrl) {
+    private Message<String> toMessage(Message message, SqsClient client, String queueUrl) {
         Map<String, Object> headers = new HashMap<>();
         if (Objects.nonNull(message.messageAttributes())) {
             message.messageAttributes().forEach((k, v) -> {
@@ -111,9 +113,9 @@ public class SqsConsumerEndpointRegistrar {
                 }
             });
         }
-        headers.put(SqsMessageAcknowledgment.HEADER_SQS_CLIENT, client);
-        headers.put(SqsMessageAcknowledgment.HEADER_SQS_MESSAGE, message);
-        headers.put(SqsMessageAcknowledgment.HEADER_SQS_QUEUE_URL, queueUrl);
-        return MQMessage.of(message.body(), headers, message.messageId(), null, message);
+        headers.put(SqsAcknowledgment.HEADER_SQS_CLIENT, client);
+        headers.put(SqsAcknowledgment.HEADER_SQS_MESSAGE, message);
+        headers.put(SqsAcknowledgment.HEADER_SQS_QUEUE_URL, queueUrl);
+        return Message.of(message.body(), headers, message.messageId(), null, message);
     }
 }

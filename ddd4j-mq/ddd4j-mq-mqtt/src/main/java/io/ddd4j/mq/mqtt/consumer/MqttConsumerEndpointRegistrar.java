@@ -1,12 +1,13 @@
 package io.ddd4j.mq.mqtt.consumer;
 
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgment;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.mqtt.ack.MqttAcknowledgment;
 import io.ddd4j.mq.mqtt.spi.MqttMQProperties;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.TagMatcher;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -32,10 +33,10 @@ public class MqttConsumerEndpointRegistrar {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         try {
             String topic = Objects.isNull(definition.getTopic()) ? "ddd4j/default/topic" : definition.getTopic();
-            String tag = io.ddd4j.mq.registry.MQTagMatcher.findIncludes(definition.getTags())
+            String tag = io.ddd4j.mq.listener.TagMatcher.findIncludes(definition.getTags())
                     .stream().findFirst().orElse(null);
             // MQTT 通配符：监听 tag=foo 的，使用 foo/#；仅监听主 topic，使用 topic
             String subscribeTopic = (Objects.isNull(tag)) ? topic : topic + "/#";
@@ -62,29 +63,33 @@ public class MqttConsumerEndpointRegistrar {
         }
     }
 
-    private void handleMessage(String topic, MqttMessage message, MQListenerDefinition def, MQConsumerHandler handler) {
+    private void handleMessage(String topic, MqttMessage message, ListenerDefinition def, ConsumerHandler handler) {
         String tag = null;
         int lastSlash = topic.lastIndexOf('/');
         if (lastSlash >= 0) {
             tag = topic.substring(lastSlash + 1);
         }
-        if (!MQTagMatcher.match(tag, def.getTags())) {
+        if (!TagMatcher.match(tag, def.getTags())) {
             return;
         }
-        Map<String, Object> headers = new HashMap<>();
-        headers.put(MQMessages.HEADER_DESTINATION_TOPIC, def.getTopic());
-        if (Objects.nonNull(tag)) {
-            headers.put(MQMessages.HEADER_DESTINATION_TAG, tag);
-        }
-        headers.put(MqttMessageAcknowledgment.HEADER_MQTT_MESSAGE, message);
-        headers.put(MqttMessageAcknowledgment.HEADER_MQTT_TOPIC, topic);
-        MQMessage<String> mq = MQMessage.of(
-                new String(message.getPayload(), StandardCharsets.UTF_8),
-                headers,
-                Integer.toString(message.getId()),
-                null,
-                message);
-        MqttMessageAcknowledgment ack = new MqttMessageAcknowledgment(message, topic);
+        String resolvedTag = tag;
+        MessageConverter<MqttMessage> converter = nativeMsg -> {
+            Map<String, Object> headers = new HashMap<>();
+            headers.put(MessageHeaders.HEADER_DESTINATION_TOPIC, def.getTopic());
+            if (Objects.nonNull(resolvedTag)) {
+                headers.put(MessageHeaders.HEADER_DESTINATION_TAG, resolvedTag);
+            }
+            headers.put(MqttAcknowledgment.HEADER_MQTT_MESSAGE, nativeMsg);
+            headers.put(MqttAcknowledgment.HEADER_MQTT_TOPIC, topic);
+            return Message.of(
+                    new String(nativeMsg.getPayload(), StandardCharsets.UTF_8),
+                    headers,
+                    Integer.toString(nativeMsg.getId()),
+                    null,
+                    nativeMsg);
+        };
+        Message<?> mq = converter.convert(message);
+        MqttAcknowledgment ack = new MqttAcknowledgment(message, topic);
         try {
             handler.handle(mq, ack);
         } catch (Exception ex) {

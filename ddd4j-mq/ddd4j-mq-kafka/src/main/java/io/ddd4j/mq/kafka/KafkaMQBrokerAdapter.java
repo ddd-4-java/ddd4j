@@ -1,15 +1,15 @@
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
-import io.ddd4j.mq.serialization.MQEventSerialization;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.spi.BrokerAdapter;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -20,21 +20,21 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class KafkaMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
+public class KafkaBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final KafkaMQProperties kafkaProperties;
-    private final Ddd4jMQProperties mqProperties;
-    private final MQEventSerialization serialization;
+    private final MQProperties mqProperties;
+    private final EventSerialization serialization;
     private final KafkaMQConsumerEndpointRegistrar consumerRegistrar;
 
-    public KafkaMQBrokerAdapter(KafkaMQProperties kafkaProperties, Ddd4jMQProperties mqProperties) {
-        this(kafkaProperties, mqProperties, new JsonMQMessageSerialization());
+    public KafkaBrokerAdapter(KafkaMQProperties kafkaProperties, MQProperties mqProperties) {
+        this(kafkaProperties, mqProperties, new JsonSerialization());
     }
 
-    public KafkaMQBrokerAdapter(
+    public KafkaBrokerAdapter(
             KafkaMQProperties kafkaProperties,
-            Ddd4jMQProperties mqProperties,
-            MQEventSerialization serialization) {
+            MQProperties mqProperties,
+            EventSerialization serialization) {
         this.kafkaProperties = Objects.requireNonNull(kafkaProperties, "kafkaProperties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -42,36 +42,36 @@ public class KafkaMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.KAFKA;
+    public BrokerType brokerType() {
+        return BrokerType.KAFKA;
     }
 
     @Override
-    public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new KafkaMQEventPublisher(kafkaProperties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public EventPublisher createPublisher(MQProperties props) {
+        return new KafkaEventPublisher(kafkaProperties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
-    public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void registerConsumer(ListenerDefinition definition, ConsumerHandler handler) {
         consumerRegistrar.register(definition, handler);
     }
 
     @Override
-    public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
+    public Acknowledgment resolveAcknowledgment(Message<?> message) {
         Consumer<?, ?> consumer = Objects.isNull(message) ? null : message.nativeMessage(Consumer.class);
         ConsumerRecord<?, ?> record = Objects.isNull(message) ? null : message.nativeMessage(ConsumerRecord.class);
         if (Objects.isNull(consumer) && Objects.nonNull(message)) {
-            consumer = (Consumer<?, ?>) message.header(KafkaMessageAcknowledgment.HEADER_KAFKA_CONSUMER);
+            consumer = (Consumer<?, ?>) message.header(KafkaAcknowledgment.HEADER_KAFKA_CONSUMER);
         }
         if (Objects.isNull(record) && Objects.nonNull(message)) {
-            record = (ConsumerRecord<?, ?>) message.header(KafkaMessageAcknowledgment.HEADER_KAFKA_RECORD);
+            record = (ConsumerRecord<?, ?>) message.header(KafkaAcknowledgment.HEADER_KAFKA_RECORD);
         }
-        return Objects.isNull(consumer) || Objects.isNull(record) ? null : new KafkaMessageAcknowledgment(consumer, record);
+        return Objects.isNull(consumer) || Objects.isNull(record) ? null : new KafkaAcknowledgment(consumer, record);
     }
 
     @Override
-    public boolean supports(MQBrokerType configured) {
-        return MQBrokerType.KAFKA == configured;
+    public boolean supports(BrokerType configured) {
+        return BrokerType.KAFKA == configured;
     }
 
     @Override

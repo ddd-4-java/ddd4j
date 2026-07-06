@@ -1,8 +1,8 @@
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
+public class KafkaAcknowledgment implements Acknowledgment {
 
     public static final String HEADER_KAFKA_CONSUMER = "ddd4j.kafka.consumer";
     public static final String HEADER_KAFKA_RECORD = "ddd4j.kafka.record";
@@ -29,7 +29,7 @@ public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
     private final ConsumerRecord<?, ?> record;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
-    public KafkaMessageAcknowledgment(Consumer<?, ?> consumer, ConsumerRecord<?, ?> record) {
+    public KafkaAcknowledgment(Consumer<?, ?> consumer, ConsumerRecord<?, ?> record) {
         this.consumer = Objects.requireNonNull(consumer, "consumer");
         this.record = Objects.requireNonNull(record, "record");
     }
@@ -61,8 +61,8 @@ public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.KAFKA;
+    public BrokerType brokerType() {
+        return BrokerType.KAFKA;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class KafkaMessageAcknowledgment implements MessageAcknowledgment {
     @Override
     public void recover(boolean requeue) {
         if (!requeue) {
-            throw new UnsupportedAckOperationException(MQBrokerType.KAFKA, "recover(false)");
+            throw new UnsupportedAckOperationException(BrokerType.KAFKA, "recover(false)");
         }
         consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
     }

@@ -1,11 +1,11 @@
 package io.ddd4j.mq.rocketmq;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.serialization.JsonSerialization;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.producer.MQProducer;
@@ -27,11 +27,11 @@ import static org.mockito.Mockito.verify;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-class RocketMQBrokerAdapterTest {
+class RocketBrokerAdapterTest {
 
-    private static MQListenerDefinition definition(String tags) throws Exception {
+    private static ListenerDefinition definition(String tags) throws Exception {
         Method method = SampleConsumer.class.getDeclaredMethod("handle", MQEvent.class);
-        return MQListenerDefinition.builder()
+        return ListenerDefinition.builder()
                 .bean(new SampleConsumer())
                 .method(method)
                 .group("sample")
@@ -45,25 +45,25 @@ class RocketMQBrokerAdapterTest {
 
     @Test
     void supportsRocketBrokerType() {
-        RocketMQBrokerAdapter adapter = new RocketMQBrokerAdapter(new RocketMQProperties(), new Ddd4jMQProperties());
+        RocketBrokerAdapter adapter = new RocketBrokerAdapter(new RocketMQProperties(), new MQProperties());
 
-        assertTrue(adapter.supports(MQBrokerType.ROCKET));
-        assertEquals(MQBrokerType.ROCKET, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.ROCKET));
+        assertEquals(BrokerType.ROCKET, adapter.brokerType());
     }
 
     @Test
     void publisherShouldBuildRocketMessage() throws Exception {
-        Ddd4jMQProperties properties = new Ddd4jMQProperties();
+        MQProperties properties = new MQProperties();
         properties.setNamespace("sales");
         MQProducer producer = mock(MQProducer.class);
-        RocketMQEventPublisher publisher = new RocketMQEventPublisher(producer, properties, new JsonMQMessageSerialization());
+        RocketEventPublisher publisher = new RocketEventPublisher(producer, properties, new JsonSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 
-        publisher.publish(event, MQDestination.of("order", "paid"));
+        publisher.publish(event, Destination.of("order", "paid"));
 
         verify(producer).send(any(Message.class));
-        Message message = RocketMQEventPublisher.toMessage(event, MQDestination.of("order", "paid"), properties, new JsonMQMessageSerialization());
+        Message message = RocketEventPublisher.toMessage(event, Destination.of("order", "paid"), properties, new JsonSerialization());
         assertEquals("sales.order", message.getTopic());
         assertEquals("paid", message.getTags());
     }
@@ -86,7 +86,7 @@ class RocketMQBrokerAdapterTest {
         MessageExt message = new MessageExt();
         message.setMsgId("msg-1");
         message.setQueueOffset(9L);
-        RocketMessageAcknowledgment ack = new RocketMessageAcknowledgment(message);
+        RocketAcknowledgment ack = new RocketAcknowledgment(message);
 
         ack.nack(true);
 

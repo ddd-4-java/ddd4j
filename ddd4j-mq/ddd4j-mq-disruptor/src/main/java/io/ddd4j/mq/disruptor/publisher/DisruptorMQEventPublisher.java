@@ -2,11 +2,11 @@ package io.ddd4j.mq.disruptor.publisher;
 
 import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQDestinationResolver;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.publish.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,17 +19,17 @@ import java.util.Objects;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DisruptorMQEventPublisher implements MQEventPublisher {
+public class DisruptorEventPublisher implements EventPublisher {
 
     private final DisruptorMQBus disruptorMQBus;
-    private final Ddd4jMQProperties properties;
+    private final MQProperties properties;
 
     @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+    public <T extends MQEvent> void publish(T event, Destination destination) {
         Objects.requireNonNull(event, "event");
         Objects.requireNonNull(destination, "destination");
 
-        MQDestinationResolver.fillDefaults(event, properties);
+        DestinationResolver.fillDefaults(event, properties);
         String payload = JsonKit.toJson(event);
         String namespace = Objects.nonNull(destination.getNamespace()) ? destination.getNamespace() : event.getNamespace();
         String topic = Objects.nonNull(destination.getTopic()) ? destination.getTopic() : event.getTopic();

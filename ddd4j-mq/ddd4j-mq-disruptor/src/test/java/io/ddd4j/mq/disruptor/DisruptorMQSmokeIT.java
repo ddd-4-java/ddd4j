@@ -1,11 +1,11 @@
 package io.ddd4j.mq.disruptor;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.disruptor.autoconfigure.Ddd4jDisruptorMQAutoConfiguration;
 import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.publish.EventPublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class DisruptorMQSmokeIT {
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private EventPublisher mqEventPublisher;
 
     @Test
     void publishShouldNotThrow() {
@@ -43,7 +43,7 @@ class DisruptorMQSmokeIT {
 
         assertDoesNotThrow(() -> mqEventPublisher.publish(
                 event,
-                MQDestination.of("smoke", "ping", "it")));
+                Destination.of("smoke", "ping", "it")));
     }
 
     /**
@@ -56,8 +56,8 @@ class DisruptorMQSmokeIT {
          * 注册 Disruptor 子配置 Bean。
          */
         @Bean
-        Ddd4jMQProperties ddd4jMQProperties() {
-            Ddd4jMQProperties properties = new Ddd4jMQProperties();
+        MQProperties ddd4jMQProperties() {
+            MQProperties properties = new MQProperties();
             properties.setEnabled(true);
             properties.setBroker("disruptor");
             properties.setNamespace("it");

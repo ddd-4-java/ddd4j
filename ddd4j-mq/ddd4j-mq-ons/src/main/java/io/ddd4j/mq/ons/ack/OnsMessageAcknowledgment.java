@@ -3,9 +3,9 @@ package io.ddd4j.mq.ons.ack;
 import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class OnsMessageAcknowledgment implements MessageAcknowledgment {
+public class OnsAcknowledgment implements Acknowledgment {
 
     /** Header 键：ONS 消息体 */
     public static final String HEADER_ONS_MESSAGE = "ddd4j.ons.message";
@@ -46,7 +46,7 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
      * @param context ONS 消费上下文
      * @param message ONS 消息
      */
-    public OnsMessageAcknowledgment(ConsumeContext context, Message message) {
+    public OnsAcknowledgment(ConsumeContext context, Message message) {
         this.context = context;
         this.message = message;
         this.messageId = message.getMsgID();
@@ -80,8 +80,8 @@ public class OnsMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.ONS;
+    public BrokerType brokerType() {
+        return BrokerType.ONS;
     }
 
     @Override

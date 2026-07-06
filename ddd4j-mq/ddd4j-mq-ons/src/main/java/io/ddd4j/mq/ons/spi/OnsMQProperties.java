@@ -21,7 +21,7 @@ public class OnsMQProperties {
     private String consumerId;
     private String topic;
     /**
-     * 默认 tag 表达式（监听侧若 MQListenerDefinition.tags 为空则用此值）。
+     * 默认 tag 表达式（监听侧若 ListenerDefinition.tags 为空则用此值）。
      */
     private String defaultTag = "*";
     private String namespace;

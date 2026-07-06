@@ -1,9 +1,9 @@
 package io.ddd4j.mq.spring.registry;
 
-import io.ddd4j.mq.annotation.MQEventListener;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerDefinitionRegistry;
+import io.ddd4j.mq.annotation.EventListener;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.ListenerDefinitionRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.support.AopUtils;
@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 基于 Spring {@link BeanPostProcessor} 的 {@link MQEventListener} 发现器（从 ddd4j-mq-core 迁出）。
+ * 基于 Spring {@link BeanPostProcessor} 的 {@link EventListener} 发现器（从 ddd4j-mq-core 迁出）。
  * <p>
- * 在 Bean 完成初始化（含 AOP 代理）后内省目标类方法，写入 {@link MQListenerDefinitionRegistry}。
+ * 在 Bean 完成初始化（含 AOP 代理）后内省目标类方法，写入 {@link ListenerDefinitionRegistry}。
  * 模式对齐 Spring {@code EventListenerMethodProcessor} 与 Cloud {@code FunctionalConsumerRegistrar}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -33,8 +33,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, EnvironmentAware {
 
-    private final MQListenerDefinitionRegistry registry;
-    private final Ddd4jMQProperties properties;
+    private final ListenerDefinitionRegistry registry;
+    private final MQProperties properties;
 
     private String defaultGroupPrefix = "application";
 
@@ -43,7 +43,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
      *
      * @param definition 监听器定义
      */
-    public static void prepareMethod(MQListenerDefinition definition) {
+    public static void prepareMethod(ListenerDefinition definition) {
         Objects.requireNonNull(definition, "definition");
         Method method = definition.getMethod();
         Object bean = definition.getBean();
@@ -63,7 +63,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
     }
 
     /**
-     * Bean 初始化完成后扫描 {@link MQEventListener} 方法。
+     * Bean 初始化完成后扫描 {@link EventListener} 方法。
      */
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
@@ -75,7 +75,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
             return bean;
         }
         ReflectionUtils.doWithMethods(targetClass, method -> {
-            MQEventListener annotation = AnnotationUtils.findAnnotation(method, MQEventListener.class);
+            EventListener annotation = AnnotationUtils.findAnnotation(method, EventListener.class);
             if (Objects.nonNull(annotation)) {
                 registry.register(buildDefinition(bean, beanName, method, annotation));
             }
@@ -95,11 +95,11 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
     /**
      * 从注解与方法元数据构建监听器定义，补齐 group / namespace 默认值。
      */
-    private MQListenerDefinition buildDefinition(
+    private ListenerDefinition buildDefinition(
             Object bean,
             String beanName,
             Method method,
-            MQEventListener annotation) {
+            EventListener annotation) {
 
         String group = StringUtils.hasText(annotation.group())
                 ? annotation.group()
@@ -108,7 +108,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
                 ? annotation.namespace()
                 : properties.getNamespace();
 
-        return MQListenerDefinition.builder()
+        return ListenerDefinition.builder()
                 .bean(bean)
                 .beanName(beanName)
                 .method(method)
@@ -117,7 +117,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
                 .topic(annotation.topic())
                 .tags(annotation.tags())
                 .supports(List.of(annotation.supports()))
-                .concat(annotation.separator())
+                .separator(annotation.separator())
                 .build();
     }
 }

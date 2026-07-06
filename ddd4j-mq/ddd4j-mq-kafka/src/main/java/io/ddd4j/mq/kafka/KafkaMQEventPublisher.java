@@ -1,11 +1,13 @@
 package io.ddd4j.mq.kafka;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.serialization.MQEventSerialization;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.DestinationResolver;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.serialization.EventSerialization;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -19,33 +21,40 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class KafkaMQEventPublisher implements MQEventPublisher {
+public class KafkaEventPublisher implements EventPublisher {
 
     private final Producer<String, String> producer;
-    private final MQEventSerialization serialization;
-    private final Ddd4jMQProperties mqProperties;
+    private final EventSerialization serialization;
+    private final MQProperties mqProperties;
 
-    public KafkaMQEventPublisher(
+    public KafkaEventPublisher(
             KafkaMQProperties kafkaProperties,
-            Ddd4jMQProperties mqProperties,
-            MQEventSerialization serialization) {
+            MQProperties mqProperties,
+            EventSerialization serialization) {
         this(new KafkaProducer<>(kafkaProperties.producerProperties()), mqProperties, serialization);
     }
 
-    public KafkaMQEventPublisher(
+    public KafkaEventPublisher(
             Producer<String, String> producer,
-            Ddd4jMQProperties mqProperties,
-            MQEventSerialization serialization) {
+            MQProperties mqProperties,
+            EventSerialization serialization) {
         this.producer = Objects.requireNonNull(producer, "producer");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
-    static String resolveTopic(MQEvent event, MQDestination destination, Ddd4jMQProperties properties) {
-        String namespace = firstText(destination.getNamespace(), event.getNamespace(), properties.getNamespace());
-        String topic = firstText(destination.getTopic(), event.getTopic(), properties.getDefaultTopic());
-        String concat = firstText(event.getConcat(), "_");
-        return Objects.isNull(namespace) ? topic : namespace + concat + topic;
+    /**
+     * Kafka 物理地址拼接（使用下划线 {@code _} 作为默认分隔符，可被 event.concat 覆盖）。
+     */
+    static String resolveTopic(MQEvent event, Destination destination, MQProperties properties) {
+        String namespace = StrKit.hasText(destination.getNamespace())
+                ? destination.getNamespace()
+                : (StrKit.hasText(event.getNamespace()) ? event.getNamespace() : properties.getNamespace());
+        String topic = StrKit.hasText(destination.getTopic())
+                ? destination.getTopic()
+                : (StrKit.hasText(event.getTopic()) ? event.getTopic() : properties.getDefaultTopic());
+        String concat = StrKit.hasText(event.getConcat()) ? event.getConcat() : "_";
+        return StrKit.hasText(namespace) ? namespace + concat + topic : topic;
     }
 
     private static void addHeader(ProducerRecord<String, String> record, String key, String value) {
@@ -54,33 +63,24 @@ public class KafkaMQEventPublisher implements MQEventPublisher {
         }
     }
 
-    private static String firstText(String... values) {
-        if (Objects.isNull(values)) {
-            return null;
-        }
-        for (String value : values) {
-            if (Objects.nonNull(value) && !io.ddd4j.kit.lang.StrKit.isBlank(value)) {
-                return value;
-            }
-        }
-        return null;
-    }
-
     @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+    public <T extends MQEvent> void publish(T event, Destination destination) {
+        DestinationResolver.fillDefaults(event, mqProperties);
         String topic = resolveTopic(event, destination);
-        String tag = firstText(destination.getTag(), event.getTag());
+        String tag = StrKit.hasText(destination.getTag())
+                ? destination.getTag()
+                : event.getTag();
         ProducerRecord<String, String> record = new ProducerRecord<>(
                 topic,
                 tag,
                 serialization.serialize(event));
-        addHeader(record, MQMessages.HEADER_DESTINATION_TOPIC, topic);
-        addHeader(record, MQMessages.HEADER_DESTINATION_TAG, tag);
-        addHeader(record, MQMessages.HEADER_TENANT_ID, event.getTenantId());
+        addHeader(record, MessageHeaders.HEADER_DESTINATION_TOPIC, topic);
+        addHeader(record, MessageHeaders.HEADER_DESTINATION_TAG, tag);
+        addHeader(record, MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
         producer.send(record);
     }
 
-    private String resolveTopic(MQEvent event, MQDestination destination) {
+    private String resolveTopic(MQEvent event, Destination destination) {
         return resolveTopic(event, destination, mqProperties);
     }
 }

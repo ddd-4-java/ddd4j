@@ -1,18 +1,18 @@
 package io.ddd4j.mq.mqttmica;
 
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.mqttmica.ack.MicaMqttMessageAcknowledgment;
-import io.ddd4j.mq.mqttmica.spi.MicaMqttMQBrokerAdapter;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.mqttmica.ack.MicaMqttAcknowledgment;
+import io.ddd4j.mq.mqttmica.spi.MicaMqttBrokerAdapter;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttProperties;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.serialization.JsonSerialization;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MicaMqttMQBrokerAdapterTest {
+class MicaMqttBrokerAdapterTest {
 
     @Test
     void propertiesShouldMapIntegerQosToMicaEnum() {
@@ -30,7 +30,7 @@ class MicaMqttMQBrokerAdapterTest {
 
     @Test
     void ackShouldBeSingleUseMarker() {
-        MicaMqttMessageAcknowledgment ack = new MicaMqttMessageAcknowledgment(11L, "sales/order", "corr-1");
+        MicaMqttAcknowledgment ack = new MicaMqttAcknowledgment(11L, "sales/order", "corr-1");
 
         ack.ack();
 
@@ -41,10 +41,10 @@ class MicaMqttMQBrokerAdapterTest {
 
     @Test
     void supportsMicaMqttBrokerType() {
-        MicaMqttMQBrokerAdapter adapter = MicaMqttMQBrokerAdapter.disconnected(
-                new MicaMqttProperties(), new Ddd4jMQProperties(), new JsonMQMessageSerialization());
+        MicaMqttBrokerAdapter adapter = MicaMqttBrokerAdapter.disconnected(
+                new MicaMqttProperties(), new MQProperties(), new JsonSerialization());
 
-        assertTrue(adapter.supports(MQBrokerType.MQTT_MICA));
-        assertEquals(MQBrokerType.MQTT_MICA, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.MQTT_MICA));
+        assertEquals(BrokerType.MQTT_MICA, adapter.brokerType());
     }
 }

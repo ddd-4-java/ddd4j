@@ -2,10 +2,10 @@ package io.ddd4j.mq.nats.publisher;
 
 import io.ddd4j.core.event.MQEvent;
 import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQDestinationResolver;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.DestinationResolver;
+import io.ddd4j.mq.publish.EventPublisher;
 import io.nats.client.Connection;
 import io.nats.client.JetStream;
 import io.nats.client.JetStreamApiException;
@@ -23,21 +23,21 @@ import java.util.Objects;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class NatsMQEventPublisher implements MQEventPublisher {
+public class NatsEventPublisher implements EventPublisher {
 
     private final Connection connection;
-    private final Ddd4jMQProperties properties;
+    private final MQProperties properties;
 
     @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+    public <T extends MQEvent> void publish(T event, Destination destination) {
         Objects.requireNonNull(event, "event");
         Objects.requireNonNull(destination, "destination");
         if (Objects.isNull(connection)) {
             throw new IllegalStateException("NATS Connection is not available; configure ddd4j.mq.nats.servers");
         }
 
-        MQDestinationResolver.fillDefaults(event, properties);
-        String subject = MQDestinationResolver.resolvePhysicalAddress(event, destination, properties);
+        DestinationResolver.fillDefaults(event, properties);
+        String subject = DestinationResolver.resolvePhysicalAddress(event, destination, properties);
         String payload = JsonKit.toJson(event);
         byte[] body = payload.getBytes(StandardCharsets.UTF_8);
 

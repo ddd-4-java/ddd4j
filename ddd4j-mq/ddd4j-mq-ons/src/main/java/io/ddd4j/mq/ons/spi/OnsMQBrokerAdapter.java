@@ -3,19 +3,19 @@ package io.ddd4j.mq.ons.spi;
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.ONSFactory;
 import com.aliyun.openservices.ons.api.Producer;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.ons.ack.OnsMessageAcknowledgment;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.ons.ack.OnsAcknowledgment;
 import io.ddd4j.mq.ons.consumer.OnsConsumerEndpointRegistrar;
-import io.ddd4j.mq.ons.publisher.OnsMQEventPublisher;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
-import io.ddd4j.mq.serialization.MQEventSerialization;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.ons.publisher.OnsEventPublisher;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.spi.BrokerAdapter;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,25 +25,25 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
+public class OnsBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final OnsMQProperties properties;
-    private final Ddd4jMQProperties mqProperties;
-    private final MQEventSerialization serialization;
+    private final MQProperties mqProperties;
+    private final EventSerialization serialization;
     private final AtomicReference<Producer> producerRef = new AtomicReference<>();
     private final OnsConsumerEndpointRegistrar consumerRegistrar;
 
-    public OnsMQBrokerAdapter(OnsMQProperties properties, Ddd4jMQProperties mqProperties) {
-        this(properties, mqProperties, new JsonMQMessageSerialization());
+    public OnsBrokerAdapter(OnsMQProperties properties, MQProperties mqProperties) {
+        this(properties, mqProperties, new JsonSerialization());
     }
 
-    public OnsMQBrokerAdapter(OnsMQProperties properties, Ddd4jMQProperties mqProperties,
-                              MQEventSerialization serialization) {
+    public OnsBrokerAdapter(OnsMQProperties properties, MQProperties mqProperties,
+                              EventSerialization serialization) {
         this(createAndStartProducer(properties), properties, mqProperties, serialization);
     }
 
-    public OnsMQBrokerAdapter(Producer producer, OnsMQProperties properties,
-                              Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
+    public OnsBrokerAdapter(Producer producer, OnsMQProperties properties,
+                              MQProperties mqProperties, EventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -62,36 +62,36 @@ public class OnsMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.ONS;
+    public BrokerType brokerType() {
+        return BrokerType.ONS;
     }
 
     @Override
-    public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new OnsMQEventPublisher(producer(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public EventPublisher createPublisher(MQProperties props) {
+        return new OnsEventPublisher(producer(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
-    public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void registerConsumer(ListenerDefinition definition, ConsumerHandler handler) {
         consumerRegistrar.register(definition, handler);
     }
 
     @Override
-    public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
+    public Acknowledgment resolveAcknowledgment(Message<?> message) {
         if (Objects.isNull(message)) {
             return null;
         }
-        Object m = message.header(OnsMessageAcknowledgment.HEADER_ONS_MESSAGE);
-        Object ctx = message.header(OnsMessageAcknowledgment.HEADER_ONS_CONTEXT);
+        Object m = message.header(OnsAcknowledgment.HEADER_ONS_MESSAGE);
+        Object ctx = message.header(OnsAcknowledgment.HEADER_ONS_CONTEXT);
         if (m instanceof Message msg && ctx instanceof com.aliyun.openservices.ons.api.ConsumeContext c) {
-            return new OnsMessageAcknowledgment(c, msg);
+            return new OnsAcknowledgment(c, msg);
         }
         return null;
     }
 
     @Override
-    public boolean supports(MQBrokerType configured) {
-        return MQBrokerType.ONS == configured;
+    public boolean supports(BrokerType configured) {
+        return BrokerType.ONS == configured;
     }
 
     @Override

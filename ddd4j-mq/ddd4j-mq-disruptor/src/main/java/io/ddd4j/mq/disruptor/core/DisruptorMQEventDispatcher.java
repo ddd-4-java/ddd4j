@@ -2,14 +2,14 @@ package io.ddd4j.mq.disruptor.core;
 
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.disruptor.ack.DisruptorMessageAcknowledgment;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.disruptor.ack.DisruptorAcknowledgment;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.EndpointNaming;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Disruptor 事件分发器：按 routeKey 将 RingBuffer 事件路由到已注册的 {@link MQConsumerHandler}。
+ * Disruptor 事件分发器：按 routeKey 将 RingBuffer 事件路由到已注册的 {@link ConsumerHandler}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -28,6 +28,22 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
     private RingBuffer<DisruptorMQEvent> ringBuffer;
 
     /**
+     * Disruptor 原生消息 → Message 转换器。
+     */
+    private static final MessageConverter<DisruptorMQEvent> CONVERTER = event -> {
+        Map<String, Object> headers = new java.util.HashMap<>();
+        headers.put("topic", event.getTopic());
+        headers.put("tag", event.getTag());
+        headers.put("namespace", event.getNamespace());
+        return Message.of(
+                event.getPayload(),
+                headers,
+                event.getMessageId(),
+                event.getCorrelationId(),
+                event);
+    };
+
+    /**
      * 绑定 RingBuffer（Disruptor 启动后注入，用于 requeue）。
      */
     public void bindRingBuffer(RingBuffer<DisruptorMQEvent> ringBuffer) {
@@ -36,11 +52,8 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
 
     /**
      * 注册消费处理器。
-     *
-     * @param definition 监听器定义
-     * @param handler    消费处理函数
      */
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         Objects.requireNonNull(definition, "definition");
         Objects.requireNonNull(handler, "handler");
         String routeKey = buildRouteKey(definition);
@@ -68,21 +81,12 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
             event.clear();
             return;
         }
+        Message<?> message = CONVERTER.convert(event);
         for (RegisteredHandler registered : handlers) {
             try {
-                DisruptorMessageAcknowledgment ack = new DisruptorMessageAcknowledgment(
+                DisruptorAcknowledgment ack = new DisruptorAcknowledgment(
                         event, ringBuffer, sequence);
-                Map<String, Object> headers = new HashMap<>();
-                headers.put("topic", event.getTopic());
-                headers.put("tag", event.getTag());
-                headers.put("namespace", event.getNamespace());
-                MQMessage<String> message = MQMessage.of(
-                        event.getPayload(),
-                        headers,
-                        event.getMessageId(),
-                        event.getCorrelationId(),
-                        event);
-                registered.getHandler().handle(message, ack);
+                registered.handler().handle(message, ack);
             } catch (Exception ex) {
                 log.error("Disruptor consumer failed: routeKey={}", routeKey, ex);
             }
@@ -93,10 +97,10 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
     /**
      * 根据监听器定义构建 routeKey。
      */
-    private String buildRouteKey(MQListenerDefinition definition) {
+    private String buildRouteKey(ListenerDefinition definition) {
         String namespace = definition.getNamespace();
         String topic = definition.getTopic();
-        String tag = MQListenerEndpointNaming.resolveTag(definition.getTags());
+        String tag = EndpointNaming.resolveTag(definition.getTags());
         DisruptorMQEvent probe = new DisruptorMQEvent();
         probe.setNamespace(namespace);
         probe.setTopic(topic);
@@ -107,21 +111,6 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
     /**
      * 已注册 handler 记录。
      */
-    private static final class RegisteredHandler {
-        private final MQListenerDefinition definition;
-        private final MQConsumerHandler handler;
-
-        RegisteredHandler(MQListenerDefinition definition, MQConsumerHandler handler) {
-            this.definition = definition;
-            this.handler = handler;
-        }
-
-        public MQListenerDefinition getDefinition() {
-            return definition;
-        }
-
-        public MQConsumerHandler getHandler() {
-            return handler;
-        }
+    private record RegisteredHandler(ListenerDefinition definition, ConsumerHandler handler) {
     }
 }

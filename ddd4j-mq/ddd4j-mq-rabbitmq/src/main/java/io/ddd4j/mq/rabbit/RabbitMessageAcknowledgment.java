@@ -1,9 +1,9 @@
 package io.ddd4j.mq.rabbit;
 
 import com.rabbitmq.client.Channel;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class RabbitMessageAcknowledgment implements MessageAcknowledgment {
+public class RabbitAcknowledgment implements Acknowledgment {
 
     public static final String HEADER_RABBIT_CHANNEL = "ddd4j.rabbit.channel";
     public static final String HEADER_RABBIT_DELIVERY_TAG = "ddd4j.rabbit.deliveryTag";
@@ -26,7 +26,7 @@ public class RabbitMessageAcknowledgment implements MessageAcknowledgment {
     private final String correlationId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
-    public RabbitMessageAcknowledgment(Channel channel, long deliveryTag, String messageId, String correlationId) {
+    public RabbitAcknowledgment(Channel channel, long deliveryTag, String messageId, String correlationId) {
         this.channel = Objects.requireNonNull(channel, "channel");
         this.deliveryTag = deliveryTag;
         this.messageId = messageId;
@@ -59,8 +59,8 @@ public class RabbitMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.RABBIT;
+    public BrokerType brokerType() {
+        return BrokerType.RABBIT;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package io.ddd4j.mq.tdmq.ack;
 
-import io.ddd4j.mq.ack.AcknowledgmentContext;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.NoOpMessageAcknowledgment;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.AcknowledgmentContext;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.NoOpAcknowledgment;
+import io.ddd4j.mq.listener.BrokerType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-public final class TdmqMessageAcknowledgment implements MessageAcknowledgment {
+public final class TdmqAcknowledgment implements Acknowledgment {
 
     private final String messageId;
     private final String correlationId;
@@ -25,7 +25,7 @@ public final class TdmqMessageAcknowledgment implements MessageAcknowledgment {
     private final Consumer<Boolean> ackCallback;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
-    public TdmqMessageAcknowledgment(String messageId,
+    public TdmqAcknowledgment(String messageId,
                                      String correlationId,
                                      long deliveryTag,
                                      Consumer<Boolean> ackCallback) {
@@ -35,9 +35,9 @@ public final class TdmqMessageAcknowledgment implements MessageAcknowledgment {
         this.ackCallback = Objects.requireNonNull(ackCallback, "ackCallback");
     }
 
-    public static MessageAcknowledgment noOp() {
-        return new NoOpMessageAcknowledgment(AcknowledgmentContext.builder()
-                .brokerType(MQBrokerType.TDMQ)
+    public static Acknowledgment noOp() {
+        return new NoOpAcknowledgment(AcknowledgmentContext.builder()
+                .brokerType(BrokerType.TDMQ)
                 .build());
     }
 
@@ -67,8 +67,8 @@ public final class TdmqMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.TDMQ;
+    public BrokerType brokerType() {
+        return BrokerType.TDMQ;
     }
 
     @Override

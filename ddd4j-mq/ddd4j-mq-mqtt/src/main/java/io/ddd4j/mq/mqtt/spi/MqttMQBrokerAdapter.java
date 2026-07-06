@@ -1,18 +1,18 @@
 package io.ddd4j.mq.mqtt.spi;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.mqtt.ack.MqttMessageAcknowledgment;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.mqtt.ack.MqttAcknowledgment;
 import io.ddd4j.mq.mqtt.consumer.MqttConsumerEndpointRegistrar;
-import io.ddd4j.mq.mqtt.publisher.MqttMQEventPublisher;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
-import io.ddd4j.mq.serialization.MQEventSerialization;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.mqtt.publisher.MqttEventPublisher;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.spi.BrokerAdapter;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -24,20 +24,20 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
+public class MqttBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final MqttMQProperties properties;
-    private final Ddd4jMQProperties mqProperties;
-    private final MQEventSerialization serialization;
+    private final MQProperties mqProperties;
+    private final EventSerialization serialization;
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
     private final MqttConsumerEndpointRegistrar consumerRegistrar;
 
-    public MqttMQBrokerAdapter(MqttMQProperties properties, Ddd4jMQProperties mqProperties) {
-        this(properties, mqProperties, new JsonMQMessageSerialization());
+    public MqttBrokerAdapter(MqttMQProperties properties, MQProperties mqProperties) {
+        this(properties, mqProperties, new JsonSerialization());
     }
 
-    public MqttMQBrokerAdapter(MqttMQProperties properties, Ddd4jMQProperties mqProperties,
-                               MQEventSerialization serialization) {
+    public MqttBrokerAdapter(MqttMQProperties properties, MQProperties mqProperties,
+                               EventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -51,8 +51,8 @@ public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         this.consumerRegistrar = new MqttConsumerEndpointRegistrar(clientRef.get(), properties);
     }
 
-    public MqttMQBrokerAdapter(MqttClient client, MqttMQProperties properties,
-                               Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
+    public MqttBrokerAdapter(MqttClient client, MqttMQProperties properties,
+                               MQProperties mqProperties, EventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -61,36 +61,36 @@ public class MqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.MQTT;
+    public BrokerType brokerType() {
+        return BrokerType.MQTT;
     }
 
     @Override
-    public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new MqttMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+    public EventPublisher createPublisher(MQProperties props) {
+        return new MqttEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
-    public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void registerConsumer(ListenerDefinition definition, ConsumerHandler handler) {
         consumerRegistrar.register(definition, handler);
     }
 
     @Override
-    public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
+    public Acknowledgment resolveAcknowledgment(Message<?> message) {
         if (Objects.isNull(message)) {
             return null;
         }
-        Object msg = message.header(MqttMessageAcknowledgment.HEADER_MQTT_MESSAGE);
-        Object topic = message.header(MqttMessageAcknowledgment.HEADER_MQTT_TOPIC);
+        Object msg = message.header(MqttAcknowledgment.HEADER_MQTT_MESSAGE);
+        Object topic = message.header(MqttAcknowledgment.HEADER_MQTT_TOPIC);
         if (msg instanceof MqttMessage m && topic instanceof String t) {
-            return new MqttMessageAcknowledgment(m, t);
+            return new MqttAcknowledgment(m, t);
         }
         return null;
     }
 
     @Override
-    public boolean supports(MQBrokerType configured) {
-        return MQBrokerType.MQTT == configured;
+    public boolean supports(BrokerType configured) {
+        return BrokerType.MQTT == configured;
     }
 
     @Override

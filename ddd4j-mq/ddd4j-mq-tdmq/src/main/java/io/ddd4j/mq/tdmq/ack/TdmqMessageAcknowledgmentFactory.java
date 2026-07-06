@@ -1,7 +1,7 @@
 package io.ddd4j.mq.tdmq.ack;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.contract.MQMessage;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.message.Message;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -11,32 +11,32 @@ import java.util.function.Consumer;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public final class TdmqMessageAcknowledgmentFactory {
+public final class TdmqAcknowledgmentFactory {
 
     public static final String HEADER_ACK_CALLBACK = "tdmq.ackCallback";
     public static final String HEADER_DELIVERY_TAG = "tdmq.deliveryTag";
 
-    private TdmqMessageAcknowledgmentFactory() {
+    private TdmqAcknowledgmentFactory() {
     }
 
-    public static MessageAcknowledgment from(MQMessage<?> message) {
+    public static Acknowledgment from(Message<?> message) {
         if (Objects.isNull(message)) {
-            return TdmqMessageAcknowledgment.noOp();
+            return TdmqAcknowledgment.noOp();
         }
         Object callback = message.header(HEADER_ACK_CALLBACK);
         if (callback instanceof Consumer<?> rawCallback) {
             @SuppressWarnings("unchecked")
             Consumer<Boolean> ackCallback = (Consumer<Boolean>) rawCallback;
-            return new TdmqMessageAcknowledgment(
+            return new TdmqAcknowledgment(
                     message.messageId(),
                     message.correlationId(),
                     deliveryTag(message),
                     ackCallback);
         }
-        return TdmqMessageAcknowledgment.noOp();
+        return TdmqAcknowledgment.noOp();
     }
 
-    private static long deliveryTag(MQMessage<?> message) {
+    private static long deliveryTag(Message<?> message) {
         Object deliveryTag = message.header(HEADER_DELIVERY_TAG);
         if (deliveryTag instanceof Number n) {
             return n.longValue();

@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * AWS SQS 适配器配置（纯 Java，零 Spring 依赖）。
  *
- * <p>SQS 没有 topic/tag 概念：{@code MQDestination.topic} 直接被解释为 queueUrl。
+ * <p>SQS 没有 topic/tag 概念：{@code Destination.topic} 直接被解释为 queueUrl。
  * 多 queueUrl 场景下，业务可在发布/消费端各自注入 {@code Map<String,String>} 进行路由。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

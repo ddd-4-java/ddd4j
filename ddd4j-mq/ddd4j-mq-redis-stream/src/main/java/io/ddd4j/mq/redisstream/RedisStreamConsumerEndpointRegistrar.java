@@ -1,12 +1,13 @@
 package io.ddd4j.mq.redisstream;
 
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.redisstream.jedis.JedisRedisStreamOperations;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.EndpointNaming;
+import io.ddd4j.mq.listener.TagMatcher;
 import redis.clients.jedis.UnifiedJedis;
 
 import java.util.*;
@@ -35,8 +36,8 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
         this.redisProperties = Objects.requireNonNull(redisProperties, "redisProperties");
     }
 
-    private static Set<String> resolveStreams(MQListenerDefinition definition) {
-        Set<String> includes = MQTagMatcher.findIncludes(definition.getTags());
+    private static Set<String> resolveStreams(ListenerDefinition definition) {
+        Set<String> includes = TagMatcher.findIncludes(definition.getTags());
         Set<String> streams = new LinkedHashSet<>();
         if (includes.isEmpty()) {
             streams.add(stream(definition, null));
@@ -46,8 +47,8 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
         return streams;
     }
 
-    private static String stream(MQListenerDefinition definition, String tag) {
-        String concat = MQListenerEndpointNaming.resolveConcat(definition);
+    private static String stream(ListenerDefinition definition, String tag) {
+        String concat = EndpointNaming.resolveSeparator(definition);
         String base = hasText(definition.getNamespace())
                 ? definition.getNamespace() + concat + definition.getTopic()
                 : definition.getTopic();
@@ -58,7 +59,7 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
         return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         Set<String> streams = resolveStreams(definition);
         if (redisProperties.isAutoCreateGroup()) {
             streams.forEach(stream -> createGroupIfNecessary(stream, definition.getGroup()));
@@ -83,8 +84,8 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
     private static final class RegisteredConsumer {
         private final RedisStreamOperations operations;
         private final RedisStreamMQProperties properties;
-        private final MQListenerDefinition definition;
-        private final MQConsumerHandler handler;
+        private final ListenerDefinition definition;
+        private final ConsumerHandler handler;
         private final Set<String> streams;
         private final AtomicBoolean running = new AtomicBoolean(false);
         private ExecutorService executor;
@@ -92,8 +93,8 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
         private RegisteredConsumer(
                 RedisStreamOperations operations,
                 RedisStreamMQProperties properties,
-                MQListenerDefinition definition,
-                MQConsumerHandler handler,
+                ListenerDefinition definition,
+                ConsumerHandler handler,
                 Set<String> streams) {
             this.operations = operations;
             this.properties = properties;
@@ -138,35 +139,36 @@ public class RedisStreamConsumerEndpointRegistrar implements AutoCloseable {
 
         private void consume(String stream, RedisStreamRecord entry) {
             Map<String, String> fields = entry.fields();
-            String tag = fields.get(MQMessages.HEADER_DESTINATION_TAG);
-            if (!MQTagMatcher.match(tag, definition.getTags())) {
+            String tag = fields.get(MessageHeaders.HEADER_DESTINATION_TAG);
+            if (!TagMatcher.match(tag, definition.getTags())) {
                 return;
             }
-            RedisStreamMessageAcknowledgment ack = new RedisStreamMessageAcknowledgment(
+            RedisStreamAcknowledgment ack = new RedisStreamAcknowledgment(
                     operations,
                     stream,
                     definition.getGroup(),
                     entry.id(),
                     entry.nativeMessage(),
-                    fields.get(MQMessages.HEADER_MESSAGE_ID),
-                    fields.get(MQMessages.HEADER_CORRELATION_ID));
+                    fields.get(MessageHeaders.HEADER_MESSAGE_ID),
+                    fields.get(MessageHeaders.HEADER_CORRELATION_ID));
             try {
-                handler.handle(toMessage(stream, entry, fields), ack);
+                MessageConverter<RedisStreamRecord> converter = nativeEntry -> toMessage(stream, nativeEntry, fields);
+                handler.handle(converter.convert(entry), ack);
             } catch (Exception ex) {
                 ack.nack(true);
             }
         }
 
-        private MQMessage<String> toMessage(String stream, RedisStreamRecord entry, Map<String, String> fields) {
+        private Message<String> toMessage(String stream, RedisStreamRecord entry, Map<String, String> fields) {
             Map<String, Object> headers = new HashMap<>(fields);
-            headers.put(RedisStreamMessageAcknowledgment.HEADER_REDIS_STREAM, stream);
-            headers.put(RedisStreamMessageAcknowledgment.HEADER_REDIS_GROUP, definition.getGroup());
-            headers.put(RedisStreamMessageAcknowledgment.HEADER_REDIS_ENTRY_ID, entry.id());
-            return MQMessage.of(
-                    fields.get(RedisStreamMQEventPublisher.FIELD_PAYLOAD),
+            headers.put(RedisStreamAcknowledgment.HEADER_REDIS_STREAM, stream);
+            headers.put(RedisStreamAcknowledgment.HEADER_REDIS_GROUP, definition.getGroup());
+            headers.put(RedisStreamAcknowledgment.HEADER_REDIS_ENTRY_ID, entry.id());
+            return Message.of(
+                    fields.get(RedisStreamEventPublisher.FIELD_PAYLOAD),
                     headers,
-                    fields.get(MQMessages.HEADER_MESSAGE_ID),
-                    fields.get(MQMessages.HEADER_CORRELATION_ID),
+                    fields.get(MessageHeaders.HEADER_MESSAGE_ID),
+                    fields.get(MessageHeaders.HEADER_CORRELATION_ID),
                     entry.nativeMessage());
         }
     }

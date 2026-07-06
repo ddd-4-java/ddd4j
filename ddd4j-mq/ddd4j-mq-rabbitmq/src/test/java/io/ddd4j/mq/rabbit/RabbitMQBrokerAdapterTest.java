@@ -4,10 +4,10 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.serialization.JsonSerialization;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,31 +21,31 @@ import static org.mockito.Mockito.*;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-class RabbitMQBrokerAdapterTest {
+class RabbitBrokerAdapterTest {
 
     @Test
     void supportsRabbitBrokerType() {
-        RabbitMQBrokerAdapter adapter = new RabbitMQBrokerAdapter(new RabbitMQProperties(), new Ddd4jMQProperties());
+        RabbitBrokerAdapter adapter = new RabbitBrokerAdapter(new RabbitMQProperties(), new MQProperties());
 
-        assertTrue(adapter.supports(MQBrokerType.RABBIT));
-        assertEquals(MQBrokerType.RABBIT, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.RABBIT));
+        assertEquals(BrokerType.RABBIT, adapter.brokerType());
     }
 
     @Test
     void publisherShouldUseResolvedRoutingKey() throws Exception {
         Channel channel = mock(Channel.class);
         RabbitMQProperties rabbitProperties = new RabbitMQProperties();
-        Ddd4jMQProperties mqProperties = new Ddd4jMQProperties();
+        MQProperties mqProperties = new MQProperties();
         mqProperties.setNamespace("sales");
-        RabbitMQEventPublisher publisher = new RabbitMQEventPublisher(
+        RabbitEventPublisher publisher = new RabbitEventPublisher(
                 () -> channel,
                 rabbitProperties,
                 mqProperties,
-                new JsonMQMessageSerialization());
+                new JsonSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 
-        publisher.publish(event, MQDestination.of("order", "paid"));
+        publisher.publish(event, Destination.of("order", "paid"));
 
         verify(channel).exchangeDeclare(eq("ddd4j.mq"), eq(BuiltinExchangeType.TOPIC), eq(true));
         verify(channel).basicPublish(eq("ddd4j.mq"), eq("sales.order.paid"), any(AMQP.BasicProperties.class), any(byte[].class));
@@ -55,7 +55,7 @@ class RabbitMQBrokerAdapterTest {
     void manualAckShouldMapToChannelOperations() throws Exception {
         Channel channel = mock(Channel.class);
         when(channel.isOpen()).thenReturn(true);
-        RabbitMessageAcknowledgment ack = new RabbitMessageAcknowledgment(channel, 7L, "msg-1", "corr-1");
+        RabbitAcknowledgment ack = new RabbitAcknowledgment(channel, 7L, "msg-1", "corr-1");
 
         ack.ack(false);
 

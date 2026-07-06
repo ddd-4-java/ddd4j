@@ -1,8 +1,8 @@
 package io.ddd4j.mq.mqtt.ack;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class MqttMessageAcknowledgment implements MessageAcknowledgment {
+public class MqttAcknowledgment implements Acknowledgment {
 
     /** Header 键：MQTT 消息体 */
     public static final String HEADER_MQTT_MESSAGE = "ddd4j.mqtt.message";
@@ -36,7 +36,7 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
     /** 确认状态标记 */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
-    public MqttMessageAcknowledgment(MqttMessage message, String topic) {
+    public MqttAcknowledgment(MqttMessage message, String topic) {
         this.message = message;
         this.topic = topic;
         this.messageId = message.getId();
@@ -68,8 +68,8 @@ public class MqttMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.MQTT;
+    public BrokerType brokerType() {
+        return BrokerType.MQTT;
     }
 
     @Override

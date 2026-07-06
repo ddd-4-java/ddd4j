@@ -1,8 +1,8 @@
 package io.ddd4j.mq.sqs.ack;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class SqsMessageAcknowledgment implements MessageAcknowledgment {
+public class SqsAcknowledgment implements Acknowledgment {
 
     /** Header 键：SQS 客户端 */
     public static final String HEADER_SQS_CLIENT = "ddd4j.sqs.client";
@@ -51,7 +51,7 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
      * @param queueUrl      队列 URL
      * @param requeueOnNack nack 时是否允许重新入队
      */
-    public SqsMessageAcknowledgment(SqsClient client, Message message, String queueUrl, boolean requeueOnNack) {
+    public SqsAcknowledgment(SqsClient client, Message message, String queueUrl, boolean requeueOnNack) {
         this.client = client;
         this.message = message;
         this.queueUrl = queueUrl;
@@ -86,8 +86,8 @@ public class SqsMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.SQS;
+    public BrokerType brokerType() {
+        return BrokerType.SQS;
     }
 
     @Override

@@ -8,7 +8,7 @@ import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Objects;
 
@@ -101,7 +101,7 @@ public class DisruptorMQBus {
      * 解析等待策略配置。
      */
     private WaitStrategy resolveWaitStrategy(String name) {
-        if (!StringUtils.hasText(name)) {
+        if (!StrKit.hasText(name)) {
             return new YieldingWaitStrategy();
         }
         return switch (name.trim().toLowerCase()) {

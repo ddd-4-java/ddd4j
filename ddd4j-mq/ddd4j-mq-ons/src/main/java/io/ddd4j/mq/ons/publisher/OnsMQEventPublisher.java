@@ -3,11 +3,13 @@ package io.ddd4j.mq.ons.publisher;
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.Producer;
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.DestinationResolver;
 import io.ddd4j.mq.ons.spi.OnsMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.serialization.MQEventSerialization;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.serialization.EventSerialization;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -17,39 +19,32 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class OnsMQEventPublisher implements MQEventPublisher {
+public class OnsEventPublisher implements EventPublisher {
 
     private final Producer producer;
     private final OnsMQProperties properties;
-    private final Ddd4jMQProperties mqProperties;
-    private final MQEventSerialization serialization;
+    private final MQProperties mqProperties;
+    private final EventSerialization serialization;
 
-    public OnsMQEventPublisher(Producer producer, OnsMQProperties properties,
-                               Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
+    public OnsEventPublisher(Producer producer, OnsMQProperties properties,
+                               MQProperties mqProperties, EventSerialization serialization) {
         this.producer = Objects.requireNonNull(producer, "producer");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
     }
 
-    private static String firstText(String... values) {
-        if (Objects.isNull(values)) {
-            return null;
-        }
-        for (String v : values) {
-            if (Objects.nonNull(v) && !io.ddd4j.kit.lang.StrKit.isBlank(v)) {
-                return v;
-            }
-        }
-        return null;
-    }
-
     @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
+    public <T extends MQEvent> void publish(T event, Destination destination) {
         try {
-            String topic = firstText(destination.getTopic(), event.getTopic(), properties.getTopic(), "ddd4j.default.topic");
-            String tag = firstText(destination.getTag(), event.getTag());
-            Message msg = new Message(topic, tag, Objects.isNull(event.getMsgId()) ? event.getMsgId() : event.getMsgId(),
+            DestinationResolver.fillDefaults(event, mqProperties);
+            String topic = StrKit.hasText(destination.getTopic())
+                    ? destination.getTopic()
+                    : (StrKit.hasText(event.getTopic())
+                            ? event.getTopic()
+                            : (StrKit.hasText(properties.getTopic()) ? properties.getTopic() : "ddd4j.default.topic"));
+            String tag = StrKit.hasText(destination.getTag()) ? destination.getTag() : event.getTag();
+            Message msg = new Message(topic, tag, event.getMsgId(),
                     serialization.serialize(event).toString().getBytes(StandardCharsets.UTF_8));
             msg.setKey(event.getMsgId());
             if (Objects.nonNull(event.getTenantId())) {

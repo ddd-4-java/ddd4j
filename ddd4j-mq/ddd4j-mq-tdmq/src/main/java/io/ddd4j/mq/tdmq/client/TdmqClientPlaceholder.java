@@ -1,6 +1,6 @@
 package io.ddd4j.mq.tdmq.client;
 
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.listener.TagMatcher;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,7 +75,7 @@ public class TdmqClientPlaceholder implements TdmqClient {
         }
 
         boolean matches(String messageTag) {
-            return MQTagMatcher.match(messageTag, tagExpression);
+            return TagMatcher.match(messageTag, tagExpression);
         }
     }
 }

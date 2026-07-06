@@ -1,14 +1,14 @@
 package io.ddd4j.mq.sqs;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.serialization.MQEventSerialization;
-import io.ddd4j.mq.sqs.ack.SqsMessageAcknowledgment;
-import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.sqs.ack.SqsAcknowledgment;
+import io.ddd4j.mq.sqs.publisher.SqsEventPublisher;
 import io.ddd4j.mq.sqs.spi.SqsBrokerAdapter;
 import io.ddd4j.mq.sqs.spi.SqsMQProperties;
 import org.junit.jupiter.api.Test;
@@ -25,11 +25,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class SqsMQBrokerAdapterTest {
+class SqsBrokerAdapterTest {
 
     @SuppressWarnings("unchecked")
-    private static MQEventSerialization stringSerialization() {
-        return new MQEventSerialization() {
+    private static EventSerialization stringSerialization() {
+        return new EventSerialization() {
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;
@@ -46,7 +46,7 @@ class SqsMQBrokerAdapterTest {
     void ackShouldDeleteSqsMessageOnce() {
         SqsClient client = mock(SqsClient.class);
         Message message = Message.builder().messageId("msg-1").receiptHandle("receipt-1").build();
-        SqsMessageAcknowledgment ack = new SqsMessageAcknowledgment(client, message, "queue-url", true);
+        SqsAcknowledgment ack = new SqsAcknowledgment(client, message, "queue-url", true);
 
         ack.ack();
 
@@ -62,7 +62,7 @@ class SqsMQBrokerAdapterTest {
     void nackWithRequeueShouldResetVisibility() {
         SqsClient client = mock(SqsClient.class);
         Message message = Message.builder().messageId("msg-2").receiptHandle("receipt-2").build();
-        SqsMessageAcknowledgment ack = new SqsMessageAcknowledgment(client, message, "queue-url", true);
+        SqsAcknowledgment ack = new SqsAcknowledgment(client, message, "queue-url", true);
 
         ack.nack(true);
 
@@ -73,30 +73,30 @@ class SqsMQBrokerAdapterTest {
     @Test
     void publisherShouldBuildSendMessageRequest() {
         SqsClient client = mock(SqsClient.class);
-        SqsMQEventPublisher publisher = new SqsMQEventPublisher(
-                client, new SqsMQProperties(), new Ddd4jMQProperties(), stringSerialization());
+        SqsEventPublisher publisher = new SqsEventPublisher(
+                client, new SqsMQProperties(), new MQProperties(), stringSerialization());
         MQEvent event = new MQEvent();
         event.setMsgId("msg-1");
         event.setTenantId("tenant-1");
 
-        publisher.publish(event, MQDestination.of("fallback-queue", "https://sqs.test/queue"));
+        publisher.publish(event, Destination.of("fallback-queue", "https://sqs.test/queue"));
 
         ArgumentCaptor<SendMessageRequest> captor = ArgumentCaptor.forClass(SendMessageRequest.class);
         verify(client).sendMessage(captor.capture());
         SendMessageRequest request = captor.getValue();
         assertEquals("https://sqs.test/queue", request.queueUrl());
         assertEquals("payload", request.messageBody());
-        assertEquals("fallback-queue", request.messageAttributes().get(MQMessages.HEADER_DESTINATION_TOPIC).stringValue());
-        assertEquals("tenant-1", request.messageAttributes().get(MQMessages.HEADER_TENANT_ID).stringValue());
-        assertEquals("msg-1", request.messageAttributes().get(MQMessages.HEADER_MESSAGE_ID).stringValue());
+        assertEquals("fallback-queue", request.messageAttributes().get(MessageHeaders.HEADER_DESTINATION_TOPIC).stringValue());
+        assertEquals("tenant-1", request.messageAttributes().get(MessageHeaders.HEADER_TENANT_ID).stringValue());
+        assertEquals("msg-1", request.messageAttributes().get(MessageHeaders.HEADER_MESSAGE_ID).stringValue());
     }
 
     @Test
     void supportsSqsBrokerType() {
         SqsBrokerAdapter adapter = new SqsBrokerAdapter(
-                mock(SqsClient.class), new SqsMQProperties(), new Ddd4jMQProperties(), stringSerialization());
+                mock(SqsClient.class), new SqsMQProperties(), new MQProperties(), stringSerialization());
 
-        assertTrue(adapter.supports(MQBrokerType.SQS));
-        assertEquals(MQBrokerType.SQS, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.SQS));
+        assertEquals(BrokerType.SQS, adapter.brokerType());
     }
 }

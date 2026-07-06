@@ -1,19 +1,19 @@
 package io.ddd4j.mq.activemq.spi;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.activemq.ack.ActiveMQMessageAcknowledgment;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.activemq.ack.ActiveMQAcknowledgment;
 import io.ddd4j.mq.activemq.config.ActiveMQProperties;
 import io.ddd4j.mq.activemq.consumer.ActiveMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.activemq.publisher.ActiveMQEventPublisher;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
-import io.ddd4j.mq.serialization.MQEventSerialization;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.activemq.publisher.ActiveEventPublisher;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.spi.BrokerAdapter;
 
 import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
@@ -28,14 +28,14 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
+public class ActiveBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     /** ActiveMQ 配置属性 */
     private final ActiveMQProperties properties;
     /** MQ 全局配置 */
-    private final Ddd4jMQProperties mqProperties;
+    private final MQProperties mqProperties;
     /** 事件序列化器 */
-    private final MQEventSerialization serialization;
+    private final EventSerialization serialization;
     /** JMS 连接引用（线程安全） */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
     /** 消费者端点注册器 */
@@ -47,8 +47,8 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
      * @param properties   ActiveMQ 配置属性
      * @param mqProperties MQ 全局配置
      */
-    public ActiveMQBrokerAdapter(ActiveMQProperties properties, Ddd4jMQProperties mqProperties) {
-        this(properties, mqProperties, new JsonMQMessageSerialization());
+    public ActiveBrokerAdapter(ActiveMQProperties properties, MQProperties mqProperties) {
+        this(properties, mqProperties, new JsonSerialization());
     }
 
     /**
@@ -58,8 +58,8 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
      * @param mqProperties MQ 全局配置
      * @param serialization 事件序列化器
      */
-    public ActiveMQBrokerAdapter(ActiveMQProperties properties, Ddd4jMQProperties mqProperties,
-                                 MQEventSerialization serialization) {
+    public ActiveBrokerAdapter(ActiveMQProperties properties, MQProperties mqProperties,
+                                 EventSerialization serialization) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
         this.serialization = Objects.requireNonNull(serialization, "serialization");
@@ -67,44 +67,44 @@ public class ActiveMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.ACTIVEMQ;
+    public BrokerType brokerType() {
+        return BrokerType.ACTIVEMQ;
     }
 
     @Override
-    public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
+    public EventPublisher createPublisher(MQProperties props) {
         try {
             Session session = connection().createSession(false, Session.AUTO_ACKNOWLEDGE);
-            return new ActiveMQEventPublisher(connection(), session, properties, Objects.isNull(props) ? mqProperties : props, serialization);
+            return new ActiveEventPublisher(connection(), session, properties, Objects.isNull(props) ? mqProperties : props, serialization);
         } catch (JMSException ex) {
             throw new IllegalStateException("Create ActiveMQ publisher failed", ex);
         }
     }
 
     @Override
-    public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void registerConsumer(ListenerDefinition definition, ConsumerHandler handler) {
         consumerRegistrar.register(definition, handler);
     }
 
     @Override
-    public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
+    public Acknowledgment resolveAcknowledgment(Message<?> message) {
         if (Objects.isNull(message)) {
             return null;
         }
-        Object session = message.header(ActiveMQMessageAcknowledgment.HEADER_AMQ_SESSION);
-        Object msg = message.header(ActiveMQMessageAcknowledgment.HEADER_AMQ_MESSAGE);
+        Object session = message.header(ActiveMQAcknowledgment.HEADER_AMQ_SESSION);
+        Object msg = message.header(ActiveMQAcknowledgment.HEADER_AMQ_MESSAGE);
         if (session instanceof Session s && msg instanceof Message m) {
-            Object deliveryObj = message.header(ActiveMQMessageAcknowledgment.HEADER_AMQ_DELIVERY_ID);
+            Object deliveryObj = message.header(ActiveMQAcknowledgment.HEADER_AMQ_DELIVERY_ID);
             long deliveryId = deliveryObj instanceof Number n ? n.longValue() : 0L;
-            return new ActiveMQMessageAcknowledgment(s, m, deliveryId,
+            return new ActiveMQAcknowledgment(s, m, deliveryId,
                     message.getMessageId(), message.getCorrelationId());
         }
         return null;
     }
 
     @Override
-    public boolean supports(MQBrokerType configured) {
-        return MQBrokerType.ACTIVEMQ == configured;
+    public boolean supports(BrokerType configured) {
+        return BrokerType.ACTIVEMQ == configured;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package io.ddd4j.mq.disruptor.consumer;
 
-import io.ddd4j.mq.consume.MQConsumerHandler;
+import io.ddd4j.mq.consume.ConsumerHandler;
 import io.ddd4j.mq.disruptor.core.DisruptorMQBus;
-import io.ddd4j.mq.registry.MQListenerDefinition;
+import io.ddd4j.mq.listener.ListenerDefinition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 将 {@code @MQEventListener} 注册到 Disruptor 事件分发器。
+ * 将 {@code @EventListener} 注册到 Disruptor 事件分发器。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -20,12 +20,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DisruptorMQConsumerEndpointRegistrar {
 
     private final DisruptorMQBus disruptorMQBus;
-    private final List<MQListenerDefinition> registeredDefinitions = new CopyOnWriteArrayList<>();
+    private final List<ListenerDefinition> registeredDefinitions = new CopyOnWriteArrayList<>();
 
     /**
      * 注册单个监听器定义。
      */
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         Objects.requireNonNull(definition, "definition");
         Objects.requireNonNull(handler, "handler");
         disruptorMQBus.dispatcher().register(definition, handler);
@@ -35,11 +35,11 @@ public class DisruptorMQConsumerEndpointRegistrar {
     /**
      * 批量注册监听器。
      */
-    public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
+    public void registerAll(List<ListenerDefinition> definitions, ConsumerHandler handler) {
         if (Objects.isNull(definitions) || definitions.isEmpty()) {
             return;
         }
-        for (MQListenerDefinition definition : definitions) {
+        for (ListenerDefinition definition : definitions) {
             register(definition, handler);
         }
         log.info("Disruptor consumer registrar initialized with {} listener(s)", registeredDefinitions.size());
@@ -48,7 +48,7 @@ public class DisruptorMQConsumerEndpointRegistrar {
     /**
      * 返回已登记的监听器定义。
      */
-    public List<MQListenerDefinition> registeredDefinitions() {
+    public List<ListenerDefinition> registeredDefinitions() {
         return List.copyOf(registeredDefinitions);
     }
 }

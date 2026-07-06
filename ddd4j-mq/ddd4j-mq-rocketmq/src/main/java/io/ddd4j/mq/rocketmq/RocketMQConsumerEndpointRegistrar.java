@@ -1,11 +1,12 @@
 package io.ddd4j.mq.rocketmq;
 
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.EndpointNaming;
+import io.ddd4j.mq.listener.TagMatcher;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
@@ -40,13 +41,18 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
         this.consumerFactory = Objects.requireNonNull(consumerFactory, "consumerFactory");
     }
 
-    private static MQMessage<String> toMessage(MessageExt message) {
+    /**
+     * RocketMQ 原生消息 {@link MessageExt} → {@link Message} 转换器。
+     */
+    private static final MessageConverter<MessageExt> CONVERTER = RocketMQConsumerEndpointRegistrar::toMessage;
+
+    private static Message<String> toMessage(MessageExt message) {
         Map<String, Object> headers = new HashMap<>();
-        headers.put(RocketMessageAcknowledgment.HEADER_ROCKET_MESSAGE, message);
-        headers.put(MQMessages.HEADER_DESTINATION_TOPIC, message.getTopic());
-        headers.put(MQMessages.HEADER_DESTINATION_TAG, message.getTags());
-        headers.put(MQMessages.HEADER_TENANT_ID, message.getUserProperty(MQMessages.HEADER_TENANT_ID));
-        return MQMessage.of(
+        headers.put(RocketAcknowledgment.HEADER_ROCKET_MESSAGE, message);
+        headers.put(MessageHeaders.HEADER_DESTINATION_TOPIC, message.getTopic());
+        headers.put(MessageHeaders.HEADER_DESTINATION_TAG, message.getTags());
+        headers.put(MessageHeaders.HEADER_TENANT_ID, message.getUserProperty(MessageHeaders.HEADER_TENANT_ID));
+        return Message.of(
                 new String(message.getBody(), StandardCharsets.UTF_8),
                 headers,
                 message.getMsgId(),
@@ -54,8 +60,8 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
                 message);
     }
 
-    private static String resolveTopic(MQListenerDefinition definition) {
-        String concat = MQListenerEndpointNaming.resolveConcat(definition);
+    private static String resolveTopic(ListenerDefinition definition) {
+        String concat = EndpointNaming.resolveSeparator(definition);
         return hasText(definition.getNamespace())
                 ? definition.getNamespace() + concat + definition.getTopic()
                 : definition.getTopic();
@@ -72,7 +78,7 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
         return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         try {
             DefaultMQPushConsumer consumer = consumerFactory.create(resolveGroup(definition));
             String topic = resolveTopic(definition);
@@ -96,15 +102,15 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
 
     private ConsumeConcurrentlyStatus consume(
             List<MessageExt> messages,
-            MQListenerDefinition definition,
-            MQConsumerHandler handler) {
+            ListenerDefinition definition,
+            ConsumerHandler handler) {
         for (MessageExt message : messages) {
-            if (!MQTagMatcher.match(message.getTags(), definition.getTags())) {
+            if (!TagMatcher.match(message.getTags(), definition.getTags())) {
                 continue;
             }
-            RocketMessageAcknowledgment ack = new RocketMessageAcknowledgment(message);
+            RocketAcknowledgment ack = new RocketAcknowledgment(message);
             try {
-                handler.handle(toMessage(message), ack);
+                handler.handle(CONVERTER.convert(message), ack);
                 if (ack.shouldReconsume()) {
                     return ConsumeConcurrentlyStatus.RECONSUME_LATER;
                 }
@@ -115,7 +121,7 @@ public class RocketMQConsumerEndpointRegistrar implements AutoCloseable {
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 
-    private String resolveGroup(MQListenerDefinition definition) {
+    private String resolveGroup(ListenerDefinition definition) {
         if (hasText(definition.getGroup())) {
             return definition.getGroup();
         }

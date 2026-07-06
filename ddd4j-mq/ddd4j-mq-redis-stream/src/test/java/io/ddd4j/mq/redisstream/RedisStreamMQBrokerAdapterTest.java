@@ -1,13 +1,13 @@
 package io.ddd4j.mq.redisstream;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
 import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.serialization.JsonSerialization;
 import io.lettuce.core.XAddArgs;
 import io.lettuce.core.XGroupCreateArgs;
 import io.lettuce.core.XReadArgs;
@@ -35,11 +35,11 @@ import static org.mockito.Mockito.*;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-class RedisStreamMQBrokerAdapterTest {
+class RedisStreamBrokerAdapterTest {
 
-    private static MQListenerDefinition definition(String tags) throws Exception {
+    private static ListenerDefinition definition(String tags) throws Exception {
         Method method = SampleConsumer.class.getDeclaredMethod("handle", MQEvent.class);
-        return MQListenerDefinition.builder()
+        return ListenerDefinition.builder()
                 .bean(new SampleConsumer())
                 .method(method)
                 .group("sample")
@@ -53,14 +53,14 @@ class RedisStreamMQBrokerAdapterTest {
 
     @Test
     void supportsRedisStreamBrokerType() {
-        RedisStreamMQBrokerAdapter adapter = new RedisStreamMQBrokerAdapter(
+        RedisStreamBrokerAdapter adapter = new RedisStreamBrokerAdapter(
                 new RedisStreamMQProperties(),
-                new Ddd4jMQProperties(),
-                new JsonMQMessageSerialization(),
+                new MQProperties(),
+                new JsonSerialization(),
                 mock(UnifiedJedis.class));
 
-        assertTrue(adapter.supports(MQBrokerType.REDIS_STREAM));
-        assertEquals(MQBrokerType.REDIS_STREAM, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.REDIS_STREAM));
+        assertEquals(BrokerType.REDIS_STREAM, adapter.brokerType());
     }
 
     @Test
@@ -68,16 +68,16 @@ class RedisStreamMQBrokerAdapterTest {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
         when(jedis.xadd(eq("sales.order.paid"), any(redis.clients.jedis.params.XAddParams.class), any(Map.class)))
                 .thenReturn(new StreamEntryID("1-0"));
-        Ddd4jMQProperties properties = new Ddd4jMQProperties();
+        MQProperties properties = new MQProperties();
         properties.setNamespace("sales");
-        RedisStreamMQEventPublisher publisher = new RedisStreamMQEventPublisher(
+        RedisStreamEventPublisher publisher = new RedisStreamEventPublisher(
                 jedis,
                 properties,
-                new JsonMQMessageSerialization());
+                new JsonSerialization());
         MQEvent event = new MQEvent();
         event.setTag("paid");
 
-        publisher.publish(event, MQDestination.of("order", "paid"));
+        publisher.publish(event, Destination.of("order", "paid"));
 
         verify(jedis).xadd(eq("sales.order.paid"), any(redis.clients.jedis.params.XAddParams.class), any(Map.class));
     }
@@ -99,7 +99,7 @@ class RedisStreamMQBrokerAdapterTest {
     void manualAckShouldMapToXack() {
         UnifiedJedis jedis = mock(UnifiedJedis.class);
         StreamEntryID id = new StreamEntryID("1-0");
-        RedisStreamMessageAcknowledgment ack = new RedisStreamMessageAcknowledgment(
+        RedisStreamAcknowledgment ack = new RedisStreamAcknowledgment(
                 jedis,
                 "sales.order.paid",
                 "sample",

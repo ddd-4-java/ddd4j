@@ -1,18 +1,18 @@
 package io.ddd4j.mq.mqttmica.spi;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.mqttmica.ack.MicaMqttMessageAcknowledgment;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.mqttmica.ack.MicaMqttAcknowledgment;
 import io.ddd4j.mq.mqttmica.consumer.MicaMqttMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.mqttmica.publisher.MicaMqttMQEventPublisher;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
-import io.ddd4j.mq.serialization.MQEventSerialization;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.mqttmica.publisher.MicaMqttEventPublisher;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.spi.BrokerAdapter;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 
 import java.util.Objects;
@@ -23,30 +23,30 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
+public class MicaMqttBrokerAdapter implements BrokerAdapter, AutoCloseable {
 
     private final MicaMqttProperties properties;
-    private final Ddd4jMQProperties mqProperties;
-    private final MQEventSerialization serialization;
+    private final MQProperties mqProperties;
+    private final EventSerialization serialization;
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
     private final MicaMqttMQConsumerEndpointRegistrar consumerRegistrar;
 
-    public MicaMqttMQBrokerAdapter(MicaMqttProperties properties, Ddd4jMQProperties mqProperties) {
-        this(properties, mqProperties, new JsonMQMessageSerialization());
+    public MicaMqttBrokerAdapter(MicaMqttProperties properties, MQProperties mqProperties) {
+        this(properties, mqProperties, new JsonSerialization());
     }
 
-    public MicaMqttMQBrokerAdapter(MicaMqttProperties properties, Ddd4jMQProperties mqProperties,
-                                   MQEventSerialization serialization) {
+    public MicaMqttBrokerAdapter(MicaMqttProperties properties, MQProperties mqProperties,
+                                   EventSerialization serialization) {
         this(properties.client(), properties, mqProperties, serialization, true);
     }
 
-    public MicaMqttMQBrokerAdapter(MqttClient client, MicaMqttProperties properties,
-                                   Ddd4jMQProperties mqProperties, MQEventSerialization serialization) {
+    public MicaMqttBrokerAdapter(MqttClient client, MicaMqttProperties properties,
+                                   MQProperties mqProperties, EventSerialization serialization) {
         this(client, properties, mqProperties, serialization, true);
     }
 
-    private MicaMqttMQBrokerAdapter(MqttClient client, MicaMqttProperties properties,
-                                    Ddd4jMQProperties mqProperties, MQEventSerialization serialization,
+    private MicaMqttBrokerAdapter(MqttClient client, MicaMqttProperties properties,
+                                    MQProperties mqProperties, EventSerialization serialization,
                                     boolean requireClient) {
         this.properties = Objects.requireNonNull(properties, "properties");
         this.mqProperties = Objects.requireNonNull(mqProperties, "mqProperties");
@@ -59,27 +59,27 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
         }
     }
 
-    public static MicaMqttMQBrokerAdapter disconnected(MicaMqttProperties properties,
-                                                       Ddd4jMQProperties mqProperties,
-                                                       MQEventSerialization serialization) {
-        return new MicaMqttMQBrokerAdapter(null, properties, mqProperties, serialization, false);
+    public static MicaMqttBrokerAdapter disconnected(MicaMqttProperties properties,
+                                                       MQProperties mqProperties,
+                                                       EventSerialization serialization) {
+        return new MicaMqttBrokerAdapter(null, properties, mqProperties, serialization, false);
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.MQTT_MICA;
+    public BrokerType brokerType() {
+        return BrokerType.MQTT_MICA;
     }
 
     @Override
-    public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
+    public EventPublisher createPublisher(MQProperties props) {
         if (Objects.isNull(client())) {
             throw new IllegalStateException("mica-mqtt client is not initialized");
         }
-        return new MicaMqttMQEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
+        return new MicaMqttEventPublisher(client(), properties, Objects.isNull(props) ? mqProperties : props, serialization);
     }
 
     @Override
-    public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void registerConsumer(ListenerDefinition definition, ConsumerHandler handler) {
         if (Objects.isNull(consumerRegistrar)) {
             throw new IllegalStateException("mica-mqtt client is not initialized");
         }
@@ -87,21 +87,21 @@ public class MicaMqttMQBrokerAdapter implements MQBrokerAdapter, AutoCloseable {
     }
 
     @Override
-    public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
+    public Acknowledgment resolveAcknowledgment(Message<?> message) {
         if (Objects.isNull(message)) {
             return null;
         }
-        Object idObj = message.header(MicaMqttMessageAcknowledgment.HEADER_MICA_MESSAGE_ID);
-        Object topicObj = message.header(MicaMqttMessageAcknowledgment.HEADER_MICA_TOPIC);
+        Object idObj = message.header(MicaMqttAcknowledgment.HEADER_MICA_MESSAGE_ID);
+        Object topicObj = message.header(MicaMqttAcknowledgment.HEADER_MICA_TOPIC);
         if (idObj instanceof Number id && topicObj instanceof String t) {
-            return new MicaMqttMessageAcknowledgment(id.longValue(), t, null);
+            return new MicaMqttAcknowledgment(id.longValue(), t, null);
         }
         return null;
     }
 
     @Override
-    public boolean supports(MQBrokerType configured) {
-        return MQBrokerType.MQTT_MICA == configured;
+    public boolean supports(BrokerType configured) {
+        return BrokerType.MQTT_MICA == configured;
     }
 
     @Override

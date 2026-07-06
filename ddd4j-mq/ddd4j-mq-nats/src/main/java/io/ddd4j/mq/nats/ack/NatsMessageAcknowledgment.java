@@ -1,8 +1,8 @@
 package io.ddd4j.mq.nats.ack;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 import io.nats.client.Message;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-public final class NatsMessageAcknowledgment implements MessageAcknowledgment {
+public final class NatsAcknowledgment implements Acknowledgment {
 
     private final Message message;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
@@ -26,7 +26,7 @@ public final class NatsMessageAcknowledgment implements MessageAcknowledgment {
      *
      * @param message JetStream 消息
      */
-    public NatsMessageAcknowledgment(Message message) {
+    public NatsAcknowledgment(Message message) {
         this.message = Objects.requireNonNull(message, "message");
     }
 
@@ -56,8 +56,8 @@ public final class NatsMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.NATS;
+    public BrokerType brokerType() {
+        return BrokerType.NATS;
     }
 
     @Override
@@ -112,7 +112,7 @@ public final class NatsMessageAcknowledgment implements MessageAcknowledgment {
         if (Message.class.isAssignableFrom(nativeType)) {
             return Optional.of(nativeType.cast(message));
         }
-        if (NatsMessageAcknowledgment.class.isAssignableFrom(nativeType)) {
+        if (NatsAcknowledgment.class.isAssignableFrom(nativeType)) {
             return Optional.of(nativeType.cast(this));
         }
         return Optional.empty();

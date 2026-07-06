@@ -1,11 +1,12 @@
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.contract.MQMessages;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.registry.MQListenerEndpointNaming;
-import io.ddd4j.mq.registry.MQTagMatcher;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.consume.MessageConverter;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.listener.EndpointNaming;
+import io.ddd4j.mq.listener.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -35,20 +36,20 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
         this.kafkaProperties = Objects.requireNonNull(kafkaProperties, "kafkaProperties");
     }
 
-    private static String resolveTopic(MQListenerDefinition definition) {
-        String concat = MQListenerEndpointNaming.resolveConcat(definition);
+    private static String resolveTopic(ListenerDefinition definition) {
+        String concat = EndpointNaming.resolveSeparator(definition);
         return hasText(definition.getNamespace())
                 ? definition.getNamespace() + concat + definition.getTopic()
                 : definition.getTopic();
     }
 
-    private static MQMessage<String> toMessage(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
+    private static Message<String> toMessage(ConsumerRecord<String, String> record, Consumer<String, String> consumer) {
         Map<String, Object> headers = Map.of(
-                KafkaMessageAcknowledgment.HEADER_KAFKA_CONSUMER, consumer,
-                KafkaMessageAcknowledgment.HEADER_KAFKA_RECORD, record,
-                MQMessages.HEADER_DESTINATION_TOPIC, record.topic(),
-                MQMessages.HEADER_DESTINATION_TAG, valueHeader(record, MQMessages.HEADER_DESTINATION_TAG));
-        return MQMessage.of(record.value(), headers, valueHeader(record, "messageId"),
+                KafkaAcknowledgment.HEADER_KAFKA_CONSUMER, consumer,
+                KafkaAcknowledgment.HEADER_KAFKA_RECORD, record,
+                MessageHeaders.HEADER_DESTINATION_TOPIC, record.topic(),
+                MessageHeaders.HEADER_DESTINATION_TAG, valueHeader(record, MessageHeaders.HEADER_DESTINATION_TAG));
+        return Message.of(record.value(), headers, valueHeader(record, "messageId"),
                 valueHeader(record, "correlationId"), record);
     }
 
@@ -64,7 +65,7 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
         return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
     }
 
-    public void register(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void register(ListenerDefinition definition, ConsumerHandler handler) {
         Objects.requireNonNull(definition, "definition");
         Objects.requireNonNull(handler, "handler");
 
@@ -86,7 +87,7 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
         registeredConsumers.clear();
     }
 
-    private String resolveGroupId(MQListenerDefinition definition) {
+    private String resolveGroupId(ListenerDefinition definition) {
         if (hasText(definition.getGroup())) {
             return definition.getGroup();
         }
@@ -95,18 +96,24 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
 
     private static final class RegisteredConsumer {
         private final Consumer<String, String> consumer;
-        private final MQListenerDefinition definition;
-        private final MQConsumerHandler handler;
+        private final ListenerDefinition definition;
+        private final ConsumerHandler handler;
         private final AtomicBoolean running = new AtomicBoolean(false);
         private ExecutorService executor;
 
+        /**
+         * Kafka {@link ConsumerRecord} → {@link Message} 转换器（捕获当前 consumer）。
+         */
+        private final MessageConverter<ConsumerRecord<String, String>> converter;
+
         private RegisteredConsumer(
                 Consumer<String, String> consumer,
-                MQListenerDefinition definition,
-                MQConsumerHandler handler) {
+                ListenerDefinition definition,
+                ConsumerHandler handler) {
             this.consumer = consumer;
             this.definition = definition;
             this.handler = handler;
+            this.converter = record -> toMessage(record, consumer);
         }
 
         private void start(KafkaMQProperties properties) {
@@ -137,11 +144,11 @@ public class KafkaMQConsumerEndpointRegistrar implements AutoCloseable {
             while (running.get()) {
                 try {
                     for (ConsumerRecord<String, String> record : consumer.poll(properties.getPollTimeout())) {
-                        if (!MQTagMatcher.match(valueHeader(record, MQMessages.HEADER_DESTINATION_TAG), definition.getTags())) {
+                        if (!TagMatcher.match(valueHeader(record, MessageHeaders.HEADER_DESTINATION_TAG), definition.getTags())) {
                             continue;
                         }
-                        KafkaMessageAcknowledgment ack = new KafkaMessageAcknowledgment(consumer, record);
-                        handler.handle(toMessage(record, consumer), ack);
+                        KafkaAcknowledgment ack = new KafkaAcknowledgment(consumer, record);
+                        handler.handle(converter.convert(record), ack);
                     }
                 } catch (Exception ex) {
                     if (running.get()) {

@@ -1,8 +1,8 @@
 package io.ddd4j.mq.activemq.ack;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
+public class ActiveMQAcknowledgment implements Acknowledgment {
 
     /** Header 键：ActiveMQ JMS Session */
     public static final String HEADER_AMQ_SESSION = "ddd4j.activemq.session";
@@ -49,7 +49,7 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
      * @param messageId     消息 ID
      * @param correlationId 关联 ID
      */
-    public ActiveMQMessageAcknowledgment(Session session, Message message,
+    public ActiveMQAcknowledgment(Session session, Message message,
                                          long deliveryId, String messageId, String correlationId) {
         this.session = session;
         this.message = message;
@@ -84,8 +84,8 @@ public class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.ACTIVEMQ;
+    public BrokerType brokerType() {
+        return BrokerType.ACTIVEMQ;
     }
 
     @Override

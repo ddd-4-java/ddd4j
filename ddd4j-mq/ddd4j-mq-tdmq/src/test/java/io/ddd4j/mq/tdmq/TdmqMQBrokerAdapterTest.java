@@ -1,15 +1,15 @@
 package io.ddd4j.mq.tdmq;
 
 import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.tdmq.ack.TdmqMessageAcknowledgmentFactory;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Destination;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.tdmq.ack.TdmqAcknowledgmentFactory;
 import io.ddd4j.mq.tdmq.client.TdmqClientPlaceholder;
-import io.ddd4j.mq.tdmq.spi.TdmqMQBrokerAdapter;
+import io.ddd4j.mq.tdmq.spi.TdmqBrokerAdapter;
 import io.ddd4j.mq.tdmq.spi.TdmqMQProperties;
 import org.junit.jupiter.api.Test;
 
@@ -21,18 +21,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TdmqMQBrokerAdapterTest {
+class TdmqBrokerAdapterTest {
 
-    private static Ddd4jMQProperties mqProperties() {
-        Ddd4jMQProperties properties = new Ddd4jMQProperties();
+    private static MQProperties mqProperties() {
+        MQProperties properties = new MQProperties();
         properties.setNamespace("demo");
         properties.setDefaultTopic("orders");
         return properties;
     }
 
-    private static MQListenerDefinition listenerDefinition() throws NoSuchMethodException {
+    private static ListenerDefinition listenerDefinition() throws NoSuchMethodException {
         Method method = Listener.class.getDeclaredMethod("onMessage", String.class);
-        return MQListenerDefinition.builder()
+        return ListenerDefinition.builder()
                 .bean(new Listener())
                 .method(method)
                 .group("orders-consumer")
@@ -45,21 +45,21 @@ class TdmqMQBrokerAdapterTest {
 
     @Test
     void supportsTdmqBrokerTypeOnly() {
-        TdmqMQBrokerAdapter adapter = new TdmqMQBrokerAdapter(new TdmqMQProperties(), mqProperties());
+        TdmqBrokerAdapter adapter = new TdmqBrokerAdapter(new TdmqMQProperties(), mqProperties());
 
-        assertEquals(MQBrokerType.TDMQ, adapter.brokerType());
-        assertTrue(adapter.supports(MQBrokerType.TDMQ));
-        assertFalse(adapter.supports(MQBrokerType.KAFKA));
+        assertEquals(BrokerType.TDMQ, adapter.brokerType());
+        assertTrue(adapter.supports(BrokerType.TDMQ));
+        assertFalse(adapter.supports(BrokerType.KAFKA));
     }
 
     @Test
     void publishesToRegisteredPlaceholderConsumer() throws Exception {
-        Ddd4jMQProperties mqProperties = mqProperties();
-        TdmqMQBrokerAdapter adapter = new TdmqMQBrokerAdapter(
+        MQProperties mqProperties = mqProperties();
+        TdmqBrokerAdapter adapter = new TdmqBrokerAdapter(
                 new TdmqClientPlaceholder(),
                 new TdmqMQProperties(),
                 mqProperties);
-        AtomicReference<MQMessage<?>> received = new AtomicReference<>();
+        AtomicReference<Message<?>> received = new AtomicReference<>();
         AtomicBoolean acknowledged = new AtomicBoolean(false);
 
         adapter.registerConsumer(listenerDefinition(), (message, ack) -> {
@@ -72,7 +72,7 @@ class TdmqMQBrokerAdapterTest {
         event.setTopic("orders");
         event.setTag("paid");
         event.setNamespace("demo");
-        adapter.createPublisher(mqProperties).publish(event, MQDestination.of("orders", "paid", "demo"));
+        adapter.createPublisher(mqProperties).publish(event, Destination.of("orders", "paid", "demo"));
 
         assertNotNull(received.get());
         assertTrue(Objects.toString(received.get().payload()).contains("orders"));
@@ -82,20 +82,20 @@ class TdmqMQBrokerAdapterTest {
     @Test
     void resolvesAcknowledgmentFromMessageHeaders() {
         AtomicBoolean callbackValue = new AtomicBoolean(false);
-        MQMessage<String> message = MQMessage.of(
+        Message<String> message = Message.of(
                 "payload",
                 Map.of(
-                        TdmqMessageAcknowledgmentFactory.HEADER_ACK_CALLBACK,
+                        TdmqAcknowledgmentFactory.HEADER_ACK_CALLBACK,
                         (java.util.function.Consumer<Boolean>) callbackValue::set,
-                        TdmqMessageAcknowledgmentFactory.HEADER_DELIVERY_TAG,
+                        TdmqAcknowledgmentFactory.HEADER_DELIVERY_TAG,
                         7L),
                 "message-1",
                 "correlation-1");
 
-        MessageAcknowledgment ack = new TdmqMQBrokerAdapter(new TdmqMQProperties(), mqProperties())
+        Acknowledgment ack = new TdmqBrokerAdapter(new TdmqMQProperties(), mqProperties())
                 .resolveAcknowledgment(message);
 
-        assertEquals(MQBrokerType.TDMQ, ack.brokerType());
+        assertEquals(BrokerType.TDMQ, ack.brokerType());
         assertEquals(7L, ack.deliveryTag());
         ack.nack(true);
         assertTrue(callbackValue.get());

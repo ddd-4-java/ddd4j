@@ -1,11 +1,11 @@
 package io.ddd4j.mq.spring.config;
 
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumeInterceptor;
-import io.ddd4j.mq.serialization.JsonMQMessageSerialization;
-import io.ddd4j.mq.serialization.MQEventSerialization;
-import io.ddd4j.mq.store.MQEventPersistInterceptor;
-import io.ddd4j.mq.store.MQEventStorer;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerInterceptor;
+import io.ddd4j.mq.serialization.JsonSerialization;
+import io.ddd4j.mq.serialization.EventSerialization;
+import io.ddd4j.mq.consume.EventPersistInterceptor;
+import io.ddd4j.mq.consume.EventStorer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ import org.springframework.core.env.Environment;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
-public class Ddd4jMQPropertiesConfiguration {
+public class MQPropertiesConfiguration {
 
     /**
      * 从 {@link Environment} 绑定 {@code ddd4j.mq.*} 主配置。
@@ -28,8 +28,8 @@ public class Ddd4jMQPropertiesConfiguration {
      * @return MQ 主配置
      */
     @Bean
-    public Ddd4jMQProperties ddd4jMQProperties(Environment environment) {
-        Ddd4jMQProperties properties = new Ddd4jMQProperties();
+    public MQProperties ddd4jMQProperties(Environment environment) {
+        MQProperties properties = new MQProperties();
         properties.setEnabled(Boolean.parseBoolean(environment.getProperty("ddd4j.mq.enabled", "false")));
         properties.setBroker(environment.getProperty("ddd4j.mq.broker", "none"));
         properties.setNamespace(environment.getProperty("ddd4j.mq.namespace", ""));
@@ -46,12 +46,12 @@ public class Ddd4jMQPropertiesConfiguration {
      * @return JSON 序列化实现
      */
     @Bean
-    public MQEventSerialization mqMessageSerialization() {
-        return new JsonMQMessageSerialization();
+    public EventSerialization mqMessageSerialization() {
+        return new JsonSerialization();
     }
 
     /**
-     * MQ 事件持久化拦截器；没有 {@link MQEventStorer} 时自动 no-op。
+     * MQ 事件持久化拦截器；没有 {@link EventStorer} 时自动 no-op。
      *
      * @param properties     MQ 主配置
      * @param storerProvider 业务注册的持久化端口
@@ -59,9 +59,9 @@ public class Ddd4jMQPropertiesConfiguration {
      */
     @Bean
     @SuppressWarnings("rawtypes")
-    public MQConsumeInterceptor mqEventPersistInterceptor(
-            Ddd4jMQProperties properties,
-            ObjectProvider<MQEventStorer> storerProvider) {
-        return new MQEventPersistInterceptor(properties, storerProvider.getIfAvailable());
+    public ConsumerInterceptor mqEventPersistInterceptor(
+            MQProperties properties,
+            ObjectProvider<EventStorer> storerProvider) {
+        return new EventPersistInterceptor(properties, storerProvider.getIfAvailable());
     }
 }

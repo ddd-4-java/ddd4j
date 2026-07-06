@@ -1,8 +1,8 @@
 package io.ddd4j.mq.rocketmq;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 import org.apache.rocketmq.common.message.MessageExt;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class RocketMessageAcknowledgment implements MessageAcknowledgment {
+public class RocketAcknowledgment implements Acknowledgment {
 
     public static final String HEADER_ROCKET_MESSAGE = "ddd4j.rocket.message";
 
@@ -25,7 +25,7 @@ public class RocketMessageAcknowledgment implements MessageAcknowledgment {
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
     private volatile boolean reconsume;
 
-    public RocketMessageAcknowledgment(MessageExt message) {
+    public RocketAcknowledgment(MessageExt message) {
         this.message = Objects.requireNonNull(message, "message");
     }
 
@@ -55,8 +55,8 @@ public class RocketMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.ROCKET;
+    public BrokerType brokerType() {
+        return BrokerType.ROCKET;
     }
 
     @Override

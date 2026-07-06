@@ -1,8 +1,8 @@
 package io.ddd4j.mq.mqttmica.ack;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
+import io.ddd4j.mq.listener.BrokerType;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class MicaMqttMessageAcknowledgment implements MessageAcknowledgment {
+public class MicaMqttAcknowledgment implements Acknowledgment {
 
     /** Header 键：mica-mqtt 消息 ID */
     public static final String HEADER_MICA_MESSAGE_ID = "ddd4j.mica.messageId";
@@ -38,7 +38,7 @@ public class MicaMqttMessageAcknowledgment implements MessageAcknowledgment {
      * @param topic         主题
      * @param correlationId 关联 ID
      */
-    public MicaMqttMessageAcknowledgment(long messageId, String topic, String correlationId) {
+    public MicaMqttAcknowledgment(long messageId, String topic, String correlationId) {
         this.messageId = messageId;
         this.topic = topic;
         this.correlationId = correlationId;
@@ -70,8 +70,8 @@ public class MicaMqttMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.MQTT_MICA;
+    public BrokerType brokerType() {
+        return BrokerType.MQTT_MICA;
     }
 
     @Override

@@ -1,17 +1,17 @@
 package io.ddd4j.mq.nats.spi;
 
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.config.Ddd4jMQProperties;
-import io.ddd4j.mq.consume.MQConsumerHandler;
-import io.ddd4j.mq.contract.MQMessage;
-import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgment;
-import io.ddd4j.mq.nats.ack.NatsMessageAcknowledgmentFactory;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.consume.ConsumerHandler;
+import io.ddd4j.mq.message.Message;
+import io.ddd4j.mq.nats.ack.NatsAcknowledgment;
+import io.ddd4j.mq.nats.ack.NatsAcknowledgmentFactory;
 import io.ddd4j.mq.nats.consumer.NatsMQConsumerEndpointRegistrar;
-import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
-import io.ddd4j.mq.publish.MQEventPublisher;
-import io.ddd4j.mq.registry.MQBrokerType;
-import io.ddd4j.mq.registry.MQListenerDefinition;
-import io.ddd4j.mq.spi.MQBrokerAdapter;
+import io.ddd4j.mq.nats.publisher.NatsEventPublisher;
+import io.ddd4j.mq.publish.EventPublisher;
+import io.ddd4j.mq.listener.BrokerType;
+import io.ddd4j.mq.listener.ListenerDefinition;
+import io.ddd4j.mq.spi.BrokerAdapter;
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import lombok.RequiredArgsConstructor;
@@ -24,46 +24,46 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @RequiredArgsConstructor
-public class NatsMQBrokerAdapter implements MQBrokerAdapter {
+public class NatsBrokerAdapter implements BrokerAdapter {
 
     private final Connection connection;
-    private final Ddd4jMQProperties properties;
+    private final MQProperties properties;
     private final NatsMQConsumerEndpointRegistrar consumerEndpointRegistrar;
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.NATS;
+    public BrokerType brokerType() {
+        return BrokerType.NATS;
     }
 
     @Override
-    public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new NatsMQEventPublisher(connection, props);
+    public EventPublisher createPublisher(MQProperties props) {
+        return new NatsEventPublisher(connection, props);
     }
 
     @Override
-    public void registerConsumer(MQListenerDefinition definition, MQConsumerHandler handler) {
+    public void registerConsumer(ListenerDefinition definition, ConsumerHandler handler) {
         consumerEndpointRegistrar.register(definition, handler);
     }
 
     @Override
-    public MessageAcknowledgment resolveAcknowledgment(MQMessage<?> message) {
+    public Acknowledgment resolveAcknowledgment(Message<?> message) {
         // 逻辑块：优先从 NATS 原生 Message 解析 JetStream 确认
         Message natsMessage = message.nativeMessage(Message.class);
         if (Objects.nonNull(natsMessage)) {
-            return NatsMessageAcknowledgmentFactory.fromNatsMessage(natsMessage).orElse(null);
+            return NatsAcknowledgmentFactory.fromNatsMessage(natsMessage).orElse(null);
         }
-        return message.nativeMessage(NatsMessageAcknowledgment.class);
+        return message.nativeMessage(NatsAcknowledgment.class);
     }
 
     @Override
-    public boolean supports(MQBrokerType configured) {
-        return MQBrokerType.NATS == configured;
+    public boolean supports(BrokerType configured) {
+        return BrokerType.NATS == configured;
     }
 
     /**
      * 返回当前 MQ 配置。
      */
-    public Ddd4jMQProperties properties() {
+    public MQProperties properties() {
         return properties;
     }
 }

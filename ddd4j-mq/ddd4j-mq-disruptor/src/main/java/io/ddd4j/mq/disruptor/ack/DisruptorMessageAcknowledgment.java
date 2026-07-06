@@ -1,10 +1,10 @@
 package io.ddd4j.mq.disruptor.ack;
 
 import com.lmax.disruptor.RingBuffer;
-import io.ddd4j.mq.ack.MessageAcknowledgment;
-import io.ddd4j.mq.ack.UnsupportedAckOperationException;
+import io.ddd4j.mq.consume.Acknowledgment;
+import io.ddd4j.mq.consume.UnsupportedAckOperationException;
 import io.ddd4j.mq.disruptor.core.DisruptorMQEvent;
-import io.ddd4j.mq.registry.MQBrokerType;
+import io.ddd4j.mq.listener.BrokerType;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {
+public class DisruptorAcknowledgment implements Acknowledgment {
 
     private final DisruptorMQEvent event;
     private final RingBuffer<DisruptorMQEvent> ringBuffer;
@@ -27,7 +27,7 @@ public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {
      * @param ringBuffer  RingBuffer（requeue 用）
      * @param deliveryTag 投递序号
      */
-    public DisruptorMessageAcknowledgment(
+    public DisruptorAcknowledgment(
             DisruptorMQEvent event,
             RingBuffer<DisruptorMQEvent> ringBuffer,
             long deliveryTag) {
@@ -62,8 +62,8 @@ public class DisruptorMessageAcknowledgment implements MessageAcknowledgment {
     }
 
     @Override
-    public MQBrokerType brokerType() {
-        return MQBrokerType.DISRUPTOR;
+    public BrokerType brokerType() {
+        return BrokerType.DISRUPTOR;
     }
 
     @Override

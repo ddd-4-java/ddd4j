@@ -1,6 +1,6 @@
 package io.ddd4j.mq.spring.registry;
 
-import io.ddd4j.mq.annotation.MQEventListener;
+import io.ddd4j.mq.annotation.EventListener;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
- * Bean 定义阶段的 {@link MQEventListener} 类路径扫描器（从 ddd4j-mq-core 迁出）。
+ * Bean 定义阶段的 {@link EventListener} 类路径扫描器（从 ddd4j-mq-core 迁出）。
  * <p>
  * 供 Cloud {@code FunctionalConsumerRegistrar} 等在 BeanPostProcessor 之前注册 Stream 函数 Bean 时复用，
  * 与运行时 {@link MQListenerBeanPostProcessor} 形成「早期 BFPP + 晚期 BPP」双阶段发现模型。
@@ -27,7 +27,7 @@ public final class MQListenerClasspathScanner {
     }
 
     /**
-     * 扫描 Bean 定义注册表中的用户 Bean 类，回调每个 {@link MQEventListener} 方法。
+     * 扫描 Bean 定义注册表中的用户 Bean 类，回调每个 {@link EventListener} 方法。
      *
      * @param beanNames            Bean 名称列表
      * @param beanDefinitionLookup BeanDefinition 查找函数
@@ -54,12 +54,12 @@ public final class MQListenerClasspathScanner {
     }
 
     /**
-     * 扫描单个类上的 {@link MQEventListener} 方法。
+     * 扫描单个类上的 {@link EventListener} 方法。
      */
     public static List<Method> scanClass(String beanName, Class<?> beanClass, BiConsumer<String, Method> consumer) {
         List<Method> found = new ArrayList<>();
         for (Method method : beanClass.getDeclaredMethods()) {
-            MQEventListener annotation = AnnotationUtils.findAnnotation(method, MQEventListener.class);
+            EventListener annotation = AnnotationUtils.findAnnotation(method, EventListener.class);
             if (Objects.isNull(annotation)) {
                 continue;
             }
