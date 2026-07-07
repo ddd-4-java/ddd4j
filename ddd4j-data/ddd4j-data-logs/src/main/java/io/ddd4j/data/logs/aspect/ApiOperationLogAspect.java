@@ -1,7 +1,9 @@
 package io.ddd4j.data.logs.aspect;
 
 import cn.hutool.core.lang.Snowflake;
+import com.google.common.base.Stopwatch;
 import io.ddd4j.core.constant.XHeaders;
+import io.ddd4j.data.logs.ApiOperationLogProvider;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.webmvc.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,10 +58,10 @@ public class ApiOperationLogAspect {
     @Around("@annotation(io.swagger.v3.oas.annotations.Operation) && @annotation(apiOperation)")
     public Object aroundMethod(ProceedingJoinPoint pjd, Operation apiOperation) throws Throwable {
 
-        // 1、创建并启动 StopWatch
+        // 1、创建并启动 Stopwatch
         String requestId = this.getRequestId();
-        LogStopWatch stopWatch = new LogStopWatch(requestId);
-        stopWatch.start(Objects.nonNull(apiOperation.summary()) ? apiOperation.summary() : apiOperation.description());
+        String taskName = Objects.nonNull(apiOperation.summary()) ? apiOperation.summary() : apiOperation.description();
+        Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
 

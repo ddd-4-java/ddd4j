@@ -95,11 +95,6 @@
             <!-- Ddd4j General Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-akka</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-extension-excel</artifactId>
                 <version>${revision}</version>
             </dependency>

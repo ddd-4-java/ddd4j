@@ -2,8 +2,8 @@ package io.ddd4j.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import io.ddd4j.data.logs.aspect.ApiOperationLogProvider;
-import io.ddd4j.data.logs.aspect.DefaultApiOperationLogProvider;
+import io.ddd4j.data.logs.ApiOperationLogProvider;
+import io.ddd4j.data.logs.DefaultApiOperationLogProvider;
 import jakarta.inject.Singleton;
 
 /**

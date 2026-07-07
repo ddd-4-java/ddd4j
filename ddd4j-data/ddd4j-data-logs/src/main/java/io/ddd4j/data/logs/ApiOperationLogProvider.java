@@ -1,5 +1,6 @@
-package io.ddd4j.data.logs.aspect;
+package io.ddd4j.data.logs;
 
+import com.google.common.base.Stopwatch;
 import io.swagger.v3.oas.annotations.Operation;
 import org.aspectj.lang.JoinPoint;
 
@@ -29,7 +30,7 @@ public interface ApiOperationLogProvider {
      * @param rt           返回值
      * @param stopWatch    性能计时器
      */
-    default void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, LogStopWatch stopWatch) {
+    default void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, Stopwatch stopWatch) {
 
     }
 
@@ -43,7 +44,7 @@ public interface ApiOperationLogProvider {
      * @return 包装后的返回值
      * @throws Throwable 原始异常
      */
-    default Object wrapThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, LogStopWatch stopWatch) throws Throwable {
+    default Object wrapThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, com.google.common.base.Stopwatch stopWatch) throws Throwable {
         throw ex;
     }
 
@@ -55,7 +56,7 @@ public interface ApiOperationLogProvider {
      * @param ex           异常
      * @param stopWatch    性能计时器
      */
-    default void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, LogStopWatch stopWatch) {
+    default void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, com.google.common.base.Stopwatch stopWatch) {
 
     }
 

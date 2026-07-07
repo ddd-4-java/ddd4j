@@ -1,4 +1,4 @@
-package io.ddd4j.data.logs.aspect;
+package io.ddd4j.data.logs;
 
 import io.ddd4j.core.constant.Constants;
 import io.ddd4j.web.webmvc.util.WebUtils;
@@ -33,12 +33,12 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
     }
 
     @Override
-    public void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, LogStopWatch stopWatch) {
+    public void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, com.google.common.base.Stopwatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, rt, null, stopWatch);
     }
 
     @Override
-    public void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, LogStopWatch stopWatch) {
+    public void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, com.google.common.base.Stopwatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, null, ex, stopWatch);
     }
 
@@ -51,7 +51,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
      * @param ex           异常信息
      * @param stopWatch    性能计时器
      */
-    protected void doApiOperationLog(JoinPoint joinPoint, Operation apiOperation, Object rt, Throwable ex, LogStopWatch stopWatch) {
+    protected void doApiOperationLog(JoinPoint joinPoint, Operation apiOperation, Object rt, Throwable ex, com.google.common.base.Stopwatch stopWatch) {
 
         // 1、获取AOP信息
         Signature signature = joinPoint.getSignature();
@@ -70,7 +70,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         // 4、判断是否需要记录日志
         boolean needLog = log.isInfoEnabled() && Objects.isNull(hidden);
         if (!needLog) {
-            log.info(Constants.accessMarker, stopWatch.prettyPrint());
+            log.info(Constants.accessMarker, "Stopwatch: {}", stopWatch);
             return;
         }
 
@@ -81,7 +81,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         if (Objects.nonNull(request)) {
             uri = request.getRequestURI();
             ipAddress = WebUtils.getRemoteAddr(request);
-            log.info(Constants.accessMarker, "Request ID {} >> URI {} IP {} ", stopWatch.getId(), uri, ipAddress);
+            log.info(Constants.accessMarker, " >> URI {} IP {} ", uri, ipAddress);
         }
 
         // 6、筛选出有意义的参数
@@ -94,12 +94,12 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         this.saveLog(joinPoint, method, apiOperation, rt, ex, stopWatch);
 
         if (Objects.isNull(ex)) {
-            log.info(Constants.accessMarker, "Request ID {} >> invoke method {} with args {} Success!", stopWatch.getId(), methodName, methodArgs);
+            log.info(Constants.accessMarker, " >> invoke method {} with args {} Success! elapsed={}", methodName, methodArgs, stopWatch);
         } else {
-            log.error(Constants.accessMarker, "Request ID {} >> invoke method {} with args {} error {} ", stopWatch.getId(), methodName, methodArgs, ex.getMessage());
+            log.error(Constants.accessMarker, " >> invoke method {} with args {} error {} elapsed={}", methodName, methodArgs, ex.getMessage(), stopWatch);
         }
 
-        log.info(Constants.accessMarker, stopWatch.prettyPrint());
+        log.info(Constants.accessMarker, "Stopwatch: {}", stopWatch);
     }
 
     /**
@@ -112,7 +112,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
      * @param ex           异常信息
      * @param stopWatch    性能计时器
      */
-    protected void saveLog(JoinPoint joinPoint, Method method, Operation apiOperation, Object rt, Throwable ex, LogStopWatch stopWatch) {
+    protected void saveLog(JoinPoint joinPoint, Method method, Operation apiOperation, Object rt, Throwable ex, com.google.common.base.Stopwatch stopWatch) {
         // do nothing
     }
 
