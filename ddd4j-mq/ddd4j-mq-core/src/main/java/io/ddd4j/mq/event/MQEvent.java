@@ -39,6 +39,7 @@ import java.util.function.Consumer;
  */
 @Slf4j
 @Data
+@SuppressWarnings("unchecked")
 public class MQEvent implements Serializable {
 
     @Serial
@@ -107,8 +108,7 @@ public class MQEvent implements Serializable {
     public void publish(String topic, String tag, String tenantId) {
         setTopic(topic);
         if (Objects.isNull(getTopic())) {
-            MQProperties props = BaseContext
-                    .<String, MQProperties>get(MQ_PROPERTIES);
+            MQProperties props = BaseContext.get(MQ_PROPERTIES);
             setTopic(Objects.nonNull(props) ? props.getDefaultTopic() : "DEFAULT");
         }
         setTag(tag);
@@ -122,7 +122,6 @@ public class MQEvent implements Serializable {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends MQEvent> T tenantId(String tenantId) {
         this.tenantId = tenantId;
         return (T) this;

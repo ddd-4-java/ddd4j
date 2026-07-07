@@ -208,11 +208,11 @@ class ContextTest {
     }
 
     @Test
-    void contexts_injectOrThrow_shouldThrowWhenNotFound() {
+    void contexts_getOrThrow_shouldThrowWhenNotFound() {
         BaseContext.remove(SpiKeys.DOMAIN_EVENT_PUBLISHER);
         ThreadContext.clear();
 
-        assertThatThrownBy(() -> Contexts.injectOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class))
+        assertThatThrownBy(() -> Contexts.getOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("SPI service not found");
     }

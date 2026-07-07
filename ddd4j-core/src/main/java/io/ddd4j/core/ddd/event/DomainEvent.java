@@ -157,7 +157,7 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * @throws IllegalStateException 未找到 DomainEventPublisher
      */
     public <R> R publish() {
-        DomainEventPublisher publisher = Contexts.injectOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
+        DomainEventPublisher publisher = Contexts.getOrThrow(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
         publisher.publish(this);
         return (R) result;
     }

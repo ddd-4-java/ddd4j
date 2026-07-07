@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @UtilityClass
+@SuppressWarnings("unchecked")
 public class ThreadContext {
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
@@ -223,20 +224,19 @@ public class ThreadContext {
     /**
      * 按 SPI 约定 key 在当前线程上下文中查找指定类型的服务实例（类型安全）。
      * <p>
-     * 与 {@link BaseContext#inject(String, Class)} 配合使用：
+     * 与 {@link BaseContext#get(String, Class)} 配合使用：
      * <ul>
      *   <li>{@code ThreadContext}（本方法）：线程级，请求级 SPI 可覆盖全局默认</li>
      *   <li>{@code BaseContext}：JVM 级，全局默认 SPI</li>
      * </ul>
-     * 业务代码通常应使用 {@link io.ddd4j.core.context.Contexts#inject} 统一查找（线程优先 → 全局兜底）。
+     * 业务代码通常应使用 {@link io.ddd4j.core.context.Contexts#get} 统一查找（线程优先 → 全局兜底）。
      *
      * @param key  SPI 约定 key（参见 {@link SpiKeys}）
      * @param type 期望的服务类型
      * @param <T>  服务类型
      * @return 包装的服务实例 Optional，未找到或类型不匹配返回 {@link Optional#empty()}
      */
-    @SuppressWarnings("unchecked")
-    public <T> Optional<T> inject(String key, Class<T> type) {
+    public <T> Optional<T> get(String key, Class<T> type) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
         if (map == null) {
             return Optional.empty();

@@ -71,7 +71,7 @@ public class JavalinSample {
 
         // 业务代码内部统一通过 io.ddd4j.core.context.Contexts.inject(...) 查 SPI，零框架耦合
         // 示例：演示 SPI 查找（线程级 → 全局级）
-        DomainEventPublisher publisher = Contexts.injectOrThrow(
+        DomainEventPublisher publisher = Contexts.getOrThrow(
                 SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
         System.out.println("[Bootstrap] DomainEventPublisher = " + publisher.getClass().getSimpleName());
 

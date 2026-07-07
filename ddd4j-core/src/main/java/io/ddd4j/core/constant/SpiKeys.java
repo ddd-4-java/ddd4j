@@ -6,8 +6,8 @@ import io.ddd4j.core.context.ThreadContext;
 /**
  * ddd4j SPI 服务约定 key 常量。
  * <p>
- * 业务方通过 {@link BaseContext#inject(String, Class)} 或
- * {@link ThreadContext#inject(String, Class)} 按这些 key 查找 SPI 服务实例。
+ * 业务方通过 {@link BaseContext#get(String, Class)} 或
+ * {@link ThreadContext#get(String, Class)} 按这些 key 查找 SPI 服务实例。
  *
  * <h3>使用约定</h3>
  * <ul>

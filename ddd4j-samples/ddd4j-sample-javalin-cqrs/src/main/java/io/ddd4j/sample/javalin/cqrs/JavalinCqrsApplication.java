@@ -116,7 +116,7 @@ public class JavalinCqrsApplication {
             });
         });
 
-        DomainEventPublisher publisher = Contexts.injectOrThrow(
+        DomainEventPublisher publisher = Contexts.getOrThrow(
                 SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
         System.out.println("[Bootstrap] DomainEventPublisher ready: " + publisher.getClass().getSimpleName());
 

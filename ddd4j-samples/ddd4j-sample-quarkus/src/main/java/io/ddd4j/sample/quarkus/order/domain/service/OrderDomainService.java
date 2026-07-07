@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * 订单领域服务：跨聚合根的业务规则（如批量取消、统计）。
  *
- * <p>本服务演示在 Quarkus CDI 下通过 {@code Contexts.injectOrThrow} 查找
+ * <p>本服务演示在 Quarkus CDI 下通过 {@code Contexts.getOrThrow} 查找
  * ddd4j 启动期注入的 SPI：
  * <ul>
  *   <li>{@link DomainEventPublisher}：转发跨聚合根的领域事件</li>

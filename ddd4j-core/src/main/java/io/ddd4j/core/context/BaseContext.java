@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <ul>
  *   <li><b>SPI 服务实例注册</b>（推荐用法）：框架适配层在启动期通过 {@link #inject(String, Class, Object)}
  *       将 SPI 实例注入到约定 key 下（参见 {@link SpiKeys}）；业务代码通过
- *       {@link Contexts#inject(String, Class)} 按 key + 类型安全查找。
+ *       {@link Contexts#get(String, Class)} 按 key + 类型安全查找。
  *       替代旧的 {@code DomainEvent.registerPublisher} 静态注册模式。</li>
  *   <li><b>应用启动元数据</b>（兼容旧用法）：如 {@code PROJECT_PACKAGE}、
  *       {@code APPLICATION_NAME} 等不随请求变化的配置项。
@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, kafkaPublisher);
  *
  * // 2. 业务方查找（推荐走 Contexts 门面，自动支持线程级覆盖）
- * MQEventPublisher publisher = Contexts.injectOrThrow(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);
+ * MQEventPublisher publisher = Contexts.getOrThrow(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);
  * }</pre>
  *
  * <h3>查找优先级</h3>
@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <h3>API 索引</h3>
  * <ul>
  *   <li><b>SPI 类型安全 API</b>（3.0.0+ 推荐）：
- *       {@link #inject(String, Class, Object)} · {@link #inject(String, Class)} ·
+ *       {@link #inject(String, Class, Object)} · {@link #get(String, Class)} ·
  *       {@link #remove(String)}</li>
  *   <li><b>通用 KV API</b>（兼容旧用法，无类型校验）：
  *       {@link #inject(Object, Object)} · {@link #get(Object)} · {@link #get(Object, Object)} ·
@@ -55,6 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.0.0
  */
 @UtilityClass
+@SuppressWarnings("unchecked")
 public class BaseContext {
 
     /**
@@ -107,13 +108,13 @@ public class BaseContext {
     /**
      * 按 SPI 约定 key 查找类型安全的服务实例。
      * <p>
-     * 推荐通过 {@link Contexts#inject(String, Class)} 门面调用（自动支持线程级覆盖）。
+     * 推荐通过 {@link Contexts#get(String, Class)} 门面调用（自动支持线程级覆盖）。
      * <p>
      * 方法名选择 {@code inject} 而非 {@code lookup/get/find} 的原因：与 {@link #inject(String, Class, Object)}
      * 配对使用，读写语义统一（注入 / 注入查找）。这是从 SPI 注入角度的设计：
      * <ul>
      *   <li>{@code inject(key, type, value)} ← 注入实例</li>
-     *   <li>{@code inject(key, type)} ← 注入上下文中的实例（查）</li>
+     *   <li>{@code get(key, type)} ← 注入上下文中的实例（查）</li>
      * </ul>
      *
      * @param key  SPI 约定 key（参见 {@link SpiKeys}）
@@ -121,7 +122,7 @@ public class BaseContext {
      * @param <T>  服务类型
      * @return 包装的服务实例 Optional，未找到或类型不匹配返回 {@link Optional#empty()}
      */
-    public <T> Optional<T> inject(String key, Class<T> type) {
+    public <T> Optional<T> get(String key, Class<T> type) {
         if (Objects.isNull(key) || Objects.isNull(type)) {
             return Optional.empty();
         }
@@ -129,7 +130,6 @@ public class BaseContext {
         if (Objects.isNull(value) || !type.isInstance(value)) {
             return Optional.empty();
         }
-        @SuppressWarnings("unchecked")
         T casted = (T) value;
         return Optional.of(casted);
     }
@@ -177,14 +177,13 @@ public class BaseContext {
      * 从全局上下文获取指定 key 对应的值（不安全转型）。
      * <p>
      * 返回 {@link Object} 需要调用方自行强转，存在 {@link ClassCastException} 风险。
-     * SPI 服务查找请改用 {@link #service(String, Class)}。
+     * SPI 服务查找请改用 {@link #get(String, Class)}。
      *
      * @param key 键
      * @param <K> 键类型
      * @param <V> 期望的值类型
      * @return 对应的值，不存在时返回 {@code null}
      */
-    @SuppressWarnings("unchecked")
     public <K, V> V get(K key) {
         if (Objects.isNull(key)) {
             return null;

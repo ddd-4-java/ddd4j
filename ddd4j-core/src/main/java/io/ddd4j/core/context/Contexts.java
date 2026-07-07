@@ -21,7 +21,7 @@ import java.util.Optional;
  * MQEventPublisher publisher = Contexts.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);
  *
  * // 或抛出版本（未找到时直接抛异常）
- * MQEventPublisher publisher = Contexts.injectOrThrow(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);
+ * MQEventPublisher publisher = Contexts.getOrThrow(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);
  *
  * // 框架适配层启动期注册（类型安全版本）
  * Contexts.register(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, kafkaPublisher);
@@ -43,12 +43,12 @@ public class Contexts {
      * @param <T>  服务类型
      * @return 包装的服务实例 Optional
      */
-    public <T> Optional<T> inject(String key, Class<T> type) {
-        Optional<T> threadScoped = ThreadContext.inject(key, type);
+    public <T> Optional<T> get(String key, Class<T> type) {
+        Optional<T> threadScoped = ThreadContext.get(key, type);
         if (threadScoped.isPresent()) {
             return threadScoped;
         }
-        return BaseContext.inject(key, type);
+        return BaseContext.get(key, type);
     }
 
     /**
@@ -60,8 +60,8 @@ public class Contexts {
      * @return 服务实例（非 null）
      * @throws IllegalStateException 未找到匹配的服务
      */
-    public <T> T injectOrThrow(String key, Class<T> type) {
-        return inject(key, type).orElseThrow(() -> new IllegalStateException(
+    public <T> T getOrThrow(String key, Class<T> type) {
+        return get(key, type).orElseThrow(() -> new IllegalStateException(
                 "SPI service not found: key=" + key + ", type=" + type.getName()
                         + ". Ensure the framework adapter (e.g. ddd4j-runtime-spring/quarkus/guice) is registered."));
     }
@@ -70,7 +70,7 @@ public class Contexts {
      * 在两级上下文中按 SPI 约定 key 注册类型安全的服务实例。
      * <p>
      * 默认注册到 {@link BaseContext}（JVM 全局默认）。如需请求级覆盖，请使用
-     * {@link ThreadContext#service(String, Class, Object)}。
+     * {@link ThreadContext#inject(String, Class, Object)} 。
      *
      * @param key   SPI 约定 key
      * @param type  期望的服务类型
