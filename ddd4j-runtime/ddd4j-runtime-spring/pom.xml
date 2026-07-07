@@ -74,63 +74,6 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
-        <!-- For Dozer（BaseMapperController 的对象映射需要） -->
-        <dependency>
-            <groupId>com.github.dozermapper</groupId>
-            <artifactId>dozer-core</artifactId>
-        </dependency>
-        <!-- fuinorg DDD + CQRS（DddAutoConfiguration 需要） -->
-        <dependency>
-            <groupId>org.fuin.ddd4j</groupId>
-            <artifactId>ddd-4-java-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.ddd4j</groupId>
-            <artifactId>ddd-4-java-jackson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.ddd4j</groupId>
-            <artifactId>ddd-4-java-esc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.cqrs4j</groupId>
-            <artifactId>cqrs-4-java-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.esc</groupId>
-            <artifactId>esc-mem</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!--
-            鉴权框架桥接（exception handlers）— 只有当业务方引入三鉴权之一时才编译相关 handler。
-            Optional=true：避免 ddd4j-runtime-spring 强依赖任意鉴权框架。
-        -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-satoken</artifactId>
-            <version>${revision}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-shiro</artifactId>
-            <version>${revision}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

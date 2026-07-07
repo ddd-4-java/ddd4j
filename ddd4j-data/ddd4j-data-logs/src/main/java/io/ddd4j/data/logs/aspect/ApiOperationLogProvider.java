@@ -2,7 +2,6 @@ package io.ddd4j.data.logs.aspect;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.aspectj.lang.JoinPoint;
-import org.springframework.util.StopWatch;
 
 /**
  * API 操作日志提供者接口
@@ -30,7 +29,7 @@ public interface ApiOperationLogProvider {
      * @param rt           返回值
      * @param stopWatch    性能计时器
      */
-    default void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, StopWatch stopWatch) {
+    default void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, LogStopWatch stopWatch) {
 
     }
 
@@ -44,7 +43,7 @@ public interface ApiOperationLogProvider {
      * @return 包装后的返回值
      * @throws Throwable 原始异常
      */
-    default Object wrapThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, StopWatch stopWatch) throws Throwable {
+    default Object wrapThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, LogStopWatch stopWatch) throws Throwable {
         throw ex;
     }
 
@@ -56,7 +55,7 @@ public interface ApiOperationLogProvider {
      * @param ex           异常
      * @param stopWatch    性能计时器
      */
-    default void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, StopWatch stopWatch) {
+    default void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, LogStopWatch stopWatch) {
 
     }
 

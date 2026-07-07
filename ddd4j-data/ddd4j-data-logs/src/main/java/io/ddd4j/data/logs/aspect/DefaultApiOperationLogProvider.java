@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -35,12 +33,12 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
     }
 
     @Override
-    public void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, StopWatch stopWatch) {
+    public void afterReturing(JoinPoint joinPoint, Operation apiOperation, Object rt, LogStopWatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, rt, null, stopWatch);
     }
 
     @Override
-    public void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, StopWatch stopWatch) {
+    public void afterThrowing(JoinPoint joinPoint, Operation apiOperation, Throwable ex, LogStopWatch stopWatch) {
         this.doApiOperationLog(joinPoint, apiOperation, null, ex, stopWatch);
     }
 
@@ -53,7 +51,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
      * @param ex           异常信息
      * @param stopWatch    性能计时器
      */
-    protected void doApiOperationLog(JoinPoint joinPoint, Operation apiOperation, Object rt, Throwable ex, StopWatch stopWatch) {
+    protected void doApiOperationLog(JoinPoint joinPoint, Operation apiOperation, Object rt, Throwable ex, LogStopWatch stopWatch) {
 
         // 1、获取AOP信息
         Signature signature = joinPoint.getSignature();
@@ -64,9 +62,9 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         String methodName = methodSignature.getName();
 
         // 3、获取 Hidden 注解，如果获取到了，则不进行日志记录
-        Hidden hidden = AnnotationUtils.findAnnotation(method, Hidden.class);
+        Hidden hidden = method.getAnnotation(Hidden.class);
         if (Objects.isNull(hidden)) {
-            hidden = AnnotationUtils.findAnnotation(method.getDeclaringClass(), Hidden.class);
+            hidden = method.getDeclaringClass().getDeclaredAnnotation(Hidden.class);
         }
 
         // 4、判断是否需要记录日志
@@ -114,7 +112,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
      * @param ex           异常信息
      * @param stopWatch    性能计时器
      */
-    protected void saveLog(JoinPoint joinPoint, Method method, Operation apiOperation, Object rt, Throwable ex, StopWatch stopWatch) {
+    protected void saveLog(JoinPoint joinPoint, Method method, Operation apiOperation, Object rt, Throwable ex, LogStopWatch stopWatch) {
         // do nothing
     }
 

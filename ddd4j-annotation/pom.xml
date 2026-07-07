@@ -14,11 +14,9 @@
     <description>ddd4j 注解层：DDD 构造型注解 + API 注解，零框架依赖（纯 Java）</description>
 
     <dependencies>
-        <!-- Lombok（provided，编译期注解处理） -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
         </dependency>
         <!-- Test: ArchUnit 独立性自检 -->
         <dependency>

@@ -2,6 +2,7 @@ package io.ddd4j.data.logs.aspect;
 
 import cn.hutool.core.lang.Snowflake;
 import io.ddd4j.core.constant.XHeaders;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.webmvc.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,10 +11,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -21,21 +18,32 @@ import java.util.Objects;
  * API 操作日志切面
  * <p>拦截带有 {@link Operation} 注解的方法，自动记录请求日志、性能统计和异常信息</p>
  *
+ * <p>纯 AspectJ 实现，不含 Spring 注解。Bean 装配由上层框架（如 ddd4j-boot-data-logs）通过
+ * {@code @Bean} 构造方法注入完成。</p>
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Aspect
-@Component
 @Slf4j
 public class ApiOperationLogAspect {
 
     /** 请求 ID 参数名 */
     public static final String REQUEST_ID_KEY = "requestId";
     /** 雪花算法 ID 生成器 */
-    @Autowired
-    private Snowflake snowflake;
+    private final Snowflake snowflake;
     /** 操作日志提供者 */
-    @Autowired
-    private ApiOperationLogProvider logProvider;
+    private final ApiOperationLogProvider logProvider;
+
+    /**
+     * 构造方法装配。
+     *
+     * @param snowflake    雪花算法 ID 生成器
+     * @param logProvider  操作日志提供者
+     */
+    public ApiOperationLogAspect(Snowflake snowflake, ApiOperationLogProvider logProvider) {
+        this.snowflake = snowflake;
+        this.logProvider = logProvider;
+    }
 
     /**
      * 环绕通知：拦截带有 @Operation 注解的方法
@@ -50,7 +58,7 @@ public class ApiOperationLogAspect {
 
         // 1、创建并启动 StopWatch
         String requestId = this.getRequestId();
-        StopWatch stopWatch = new StopWatch(requestId);
+        LogStopWatch stopWatch = new LogStopWatch(requestId);
         stopWatch.start(Objects.nonNull(apiOperation.summary()) ? apiOperation.summary() : apiOperation.description());
 
         try {
@@ -96,16 +104,16 @@ public class ApiOperationLogAspect {
         String requestId = null;
         if (Objects.nonNull(request)) {
             String parameterRequestId = request.getParameter(REQUEST_ID_KEY);
-            if (StringUtils.hasText(parameterRequestId)) {
+            if (StrKit.hasText(parameterRequestId)) {
                 requestId = parameterRequestId;
             } else {
                 String headerRequestId = request.getHeader(XHeaders.X_REQUEST_ID);
-                if (StringUtils.hasText(headerRequestId)) {
+                if (StrKit.hasText(headerRequestId)) {
                     requestId = headerRequestId;
                 }
             }
         }
-        if (!StringUtils.hasText(requestId)) {
+        if (!StrKit.hasText(requestId)) {
             requestId = snowflake.nextIdStr();
         }
         return requestId;

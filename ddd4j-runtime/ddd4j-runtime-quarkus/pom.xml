@@ -41,37 +41,19 @@
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.fuin.cqrs4j</groupId>
-            <artifactId>cqrs-4-java-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.ddd4j</groupId>
-            <artifactId>ddd-4-java-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.esc</groupId>
-            <artifactId>esc-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fuin.esc</groupId>
-            <artifactId>esc-mem</artifactId>
-        </dependency>
+        <!-- Quarkus Core -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-quartz</artifactId>
-            <optional>true</optional>
+            <artifactId>quarkus-core</artifactId>
         </dependency>
         <!-- Quarkus Arc (CDI) -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
-            <optional>true</optional>
         </dependency>
-        <!-- Quarkus Core -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-core</artifactId>
+            <artifactId>quarkus-quartz</artifactId>
             <optional>true</optional>
         </dependency>
         <!-- Hibernate ORM Panache + JPA (for QuarkusJpaProjectionPosition) -->
