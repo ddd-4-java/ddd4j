@@ -16,6 +16,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.Deserializer;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -29,7 +30,7 @@ import java.util.function.Consumer;
  *
  * <p>双构造：
  * <ul>
- *   <li>{@link #KafkaMQClient(Producer)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
+ *   <li>{@link #KafkaMQClient(Producer<String, String>)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
  *   <li>{@link #KafkaMQClient(KafkaMQProperties)} —— 自行根据 properties 构造 producer</li>
  * </ul>
  *
@@ -173,6 +174,11 @@ public class KafkaMQClient implements MQClient {
 
     @Override
     public boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
+        if (Objects.isNull(properties)) {
+            return false;
+        }
+
+
         Properties props = properties.consumerProperties(buildGroupId(mqListener));
         props.put("bootstrap.servers", properties.getBootstrapServers());
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
@@ -189,7 +195,7 @@ public class KafkaMQClient implements MQClient {
                     MQEvent mqEvent = serialization().deserialize(payload, mqListener.payloadType());
                     if (mqEvent == null) {
                         consumer.commitSync();
-                        log.warn("Consume MQ [{}] failed: the mqEvent is null", mqListener.getTopic());
+                        log.warn("Consume MQ [{}] failed: the mqEvent is null", mqListener.getRouteExpression(this.defaultConcat()));
                         continue;
                     }
                     if (!TagMatcher.match(mqEvent.getTag(), mqListener.getTags())) {
