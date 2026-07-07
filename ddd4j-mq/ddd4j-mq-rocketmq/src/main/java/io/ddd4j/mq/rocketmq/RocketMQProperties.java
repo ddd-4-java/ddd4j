@@ -1,5 +1,8 @@
 package io.ddd4j.mq.rocketmq;
 
+import io.ddd4j.mq.MQProperties;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 
@@ -10,7 +13,9 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class RocketMQProperties {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class RocketMQProperties extends MQProperties {
 
     private String nameServer = "localhost:9876";
     private String producerGroup = "ddd4j-producer";

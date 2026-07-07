@@ -43,25 +43,27 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : KafkaMQClient ###")
 public class KafkaMQClient implements MQClient {
 
-    /** 已注入或懒构造的 Kafka producer */
-    private Producer<String, String> producer;
     /** KafkaMQProperties 用于懒构造 */
     private final KafkaMQProperties properties;
-
+    /** 已注入或懒构造的 Kafka producer */
+    private Producer<String, String> producer;
+    private Callback callback;
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      */
-    public KafkaMQClient(Producer<String, String> producer) {
-        this.producer = Objects.requireNonNull(producer, "KafkaMQ Producer is required");
+    public KafkaMQClient(Producer<String, String> producer, Callback callback) {
         this.properties = null;
+        this.producer = Objects.requireNonNull(producer, "KafkaMQ Producer is required");
+        this.callback = callback;
     }
 
     /**
      * 构造方法 2：自行根据 properties 构造 producer（lazy）。
      */
-    public KafkaMQClient(KafkaMQProperties properties) {
+    public KafkaMQClient(KafkaMQProperties properties, Callback callback) {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
         this.producer = null;
+        this.callback = callback;
     }
 
     @Override
@@ -92,10 +94,10 @@ public class KafkaMQClient implements MQClient {
         return mqEvent -> {
             String payload = serialization().serialize(mqEvent);
             String topic = resolveTopic(mqEvent, mqProperties);
-            String key = partitionKey(mqEvent);  // 借鉴 1
+            String key = partitionKey(mqEvent);
             ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, payload);
             // 异步 send 回调（非阻塞发布、统一 ack/nack 收口）
-            producer1.send(record, new SendCallback(topic, payload));
+            producer1.send(record, Objects.nonNull(callback) ? callback : new SendCallback(topic, payload));
             log.info("Publish MQ [{}]: {}", topic, payload);
         };
     }
@@ -124,14 +126,12 @@ public class KafkaMQClient implements MQClient {
      * 借鉴 4：通过 AdminClient 自动创建 topic（如不存在）。
      */
     private void ensureTopic(String namespace, String defaultTopic) {
-        if (Objects.isNull(this.properties)){
+        if (Objects.isNull(this.properties)) {
             return;
         }
+        // 统一复用父类 resolveTopic（与 initProducer 内的 topic 解析保持一致）
+        String topic = resolveTopic(namespace, defaultTopic, null, defaultConcat());
         try (AdminClient admin = AdminClient.create(properties.adminProperties())) {
-            String concat = defaultConcat();
-            String topic = namespace != null && !namespace.isEmpty()
-                    ? namespace + concat + defaultTopic
-                    : defaultTopic;
             if (admin.listTopics().names().get().contains(topic)) {
                 return;
             }
@@ -147,9 +147,10 @@ public class KafkaMQClient implements MQClient {
     }
 
     /**
-     * 借鉴 2：异步发送回调（统一收口，不阻塞 producer.send()）。
+     * 异步发送回调（统一收口，不阻塞 producer.send()）。
      */
-    private static final class SendCallback implements Callback {
+    public static final class SendCallback implements Callback {
+
         private final String topic;
         private final String payload;
 
