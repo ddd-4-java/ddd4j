@@ -19,7 +19,9 @@ import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * RocketMQ 客户端实现（对齐 base-mq RocketClient，纯 Java 零 Spring 依赖）。
@@ -83,13 +85,19 @@ public class RocketMQClient implements MQClient {
             DefaultMQProducer finalProducer = this.producer;
             return mqEvent -> {
                 String message = serialization().serialize(mqEvent);
-                String tags = mqEvent.getTag() == null ? "" : mqEvent.getTag();
+                String topic = resolveTopic(mqEvent, mqProperties);
+                String tag = mqEvent.getTag() == null ? "" : mqEvent.getTag();
                 try {
-                    finalProducer.send(new Message(mqEvent.getTopic(), tags,
-                            message.getBytes(RemotingHelper.DEFAULT_CHARSET)));
-                    log.info("Publish MQ [{}]: {}", mqEvent.getTopic() + "." + tags, message);
+                    Message msg = new Message(mqEvent.getTopic(), tag,
+                            message.getBytes(RemotingHelper.DEFAULT_CHARSET));
+                    // tag header 与 broker 端 selector property name 一致（无 .，合法标识符）
+                    if (Objects.nonNull(mqEvent.getTag())) {
+                        msg.putUserProperty(tagHeaderKey(), mqEvent.getTag());
+                    }
+                    finalProducer.send(msg);
+                    log.info("Publish MQ [{}]: {}", topic, message);
                 } catch (Exception e) {
-                    log.error("Publish MQ [{}]: {} failed!", mqEvent.getTopic() + "." + tags, message, e);
+                    log.error("Publish MQ [{}]: {} failed!", topic, message, e);
                 }
             };
         } catch (MQClientException e) {
@@ -113,13 +121,14 @@ public class RocketMQClient implements MQClient {
         if (Objects.nonNull(properties.getNameServer()) && !properties.getNameServer().isEmpty()) {
             consumer.setNamesrvAddr(properties.getNameServer());
         }
-        consumer.subscribe(listener.getTopic(), subscriptionExpression(listener.getTags()));
+        // broker 端 tag 过滤：RocketMQ 原生 subscribe(topic, tagsExpression) 由 broker 端按表达式过滤；
+        // 仅当 tags 是纯正向 include 集合时下发精确表达式（tagA || tagB），否则回退到应用层 TagMatcher。
+        Set<String> includes = TagMatcher.findIncludes(listener.getTags());
+        String subscription = includes.isEmpty() ? "*"
+                : includes.stream().collect(Collectors.joining(" || "));
+        consumer.subscribe(listener.getTopic(), subscription);
         consumer.registerMessageListener((MessageListenerConcurrently) (messageExts, context) -> {
             for (MessageExt messageExt : messageExts) {
-                String tag = messageExt.getTags();
-                if (!TagMatcher.match(tag, listener.getTags())) {
-                    continue;
-                }
                 String payload = new String(messageExt.getBody(), StandardCharsets.UTF_8);
                 MQEvent event;
                 try {
@@ -130,6 +139,10 @@ public class RocketMQClient implements MQClient {
                 }
                 if (Objects.isNull(event)) {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                    continue;
+                }
+                // 若 subscribe 没做精确过滤（如含 excludes/通配），在应用层再用 TagMatcher 兜底
+                if (includes.isEmpty() && !TagMatcher.match(event.getTag(), listener.getTags())) {
                     continue;
                 }
                 RocketAcknowledgment ack = new RocketAcknowledgment(messageExt);
@@ -148,15 +161,5 @@ public class RocketMQClient implements MQClient {
         });
         consumer.start();
         return true;
-    }
-
-    /**
-     * RocketMQ 订阅表达式：空或含 {@code -} 用通配 {@code *}；否则原样下发。
-     */
-    private static String subscriptionExpression(String tags) {
-        if (!io.ddd4j.kit.lang.StrKit.hasText(tags) || tags.contains("-")) {
-            return "*";
-        }
-        return tags;
     }
 }

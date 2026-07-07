@@ -1,12 +1,12 @@
 package io.ddd4j.mq.pulsar;
 
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Producer;
@@ -27,19 +27,12 @@ import java.util.function.Consumer;
 /**
  * Apache Pulsar 客户端实现（纯 Java，零 Spring 依赖）。
  *
- * <p>实现 {@link MQClient}：
- * <ul>
- *   <li>{@link #initProducer} —— 创建 Pulsar {@link Producer}（按 topic 缓存），返回 {@link Consumer}，
- *       {@link MQEvent#publish()} 通过它把消息推送到 broker</li>
- *   <li>{@link #initConsumer} —— 创建 Pulsar 消费者，tag 过滤后调 {@link #consume} 统一消费，
- *       传入 {@link PulsarAcknowledgment} 实现不同级别 ack</li>
- * </ul>
- *
- * <p>Pulsar 物理 topic 格式 {@code tenant/namespace/topic[:tag]}，由 {@link PulsarProperties#physicalTopic} 构造。
+ * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j(topic = "### DDD4J-MQ : PulsarMQClient ###")
 public class PulsarMQClient implements MQClient {
 
     private final PulsarProperties properties;
@@ -48,7 +41,17 @@ public class PulsarMQClient implements MQClient {
     private org.apache.pulsar.client.api.PulsarClient client;
 
     /**
-     * 构造 1：注入已初始化的原生 Pulsar 客户端（用于 runtime 集成自动注入）。
+     * 构造 1：传入配置，{@link #initProducer} 中通过 PulsarClient.builder().build() 创建原生客户端。
+     *
+     * @param properties Pulsar 配置
+     */
+    public PulsarMQClient(PulsarProperties properties) {
+        this.properties = Objects.requireNonNull(properties, "properties");
+        this.client = null;
+    }
+
+    /**
+     * 构造 2：注入已初始化的原生 Pulsar 客户端（用于 runtime 集成自动注入）。
      * 物理 topic 仍来自 {@link PulsarProperties#physicalTopic}，因此同时接受 properties。
      *
      * @param client     原生 PulsarClient
@@ -57,16 +60,6 @@ public class PulsarMQClient implements MQClient {
     public PulsarMQClient(org.apache.pulsar.client.api.PulsarClient client, PulsarProperties properties) {
         this.client = client;
         this.properties = Objects.requireNonNull(properties, "properties");
-    }
-
-    /**
-     * 构造 2：传入配置，{@link #initProducer} 中通过 PulsarClient.builder().build() 创建原生客户端。
-     *
-     * @param properties Pulsar 配置
-     */
-    public PulsarMQClient(PulsarProperties properties) {
-        this.properties = Objects.requireNonNull(properties, "properties");
-        this.client = null;
     }
 
     @Override
@@ -82,34 +75,32 @@ public class PulsarMQClient implements MQClient {
             if (Objects.isNull(this.client)) {
                 this.client = properties.client();
             }
-            return this::publish;
+            return event -> {
+                try {
+                    String topic = event.getTopic();
+                    String tag = event.getTag();
+                    String physical = properties.physicalTopic(topic, tag);
+                    Producer<byte[]> p = producer(physical);
+                    TypedMessageBuilder<byte[]> builder = p.newMessage()
+                            .value(serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8))
+                            .property(MessageHeaders.HEADER_DESTINATION_TOPIC, topic);
+                    if (Objects.nonNull(event.getMsgId())) {
+                        builder.property(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    }
+                    if (Objects.nonNull(event.getTenantId())) {
+                        builder.property(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                    }
+                    if (Objects.nonNull(tag)) {
+                        builder.property(tagHeaderKey(), tag);
+                    }
+                    builder.sendAsync();
+                    logger().info("Publish MQ [{}]: {}", physical, serialization().serialize(event));
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Publish Pulsar event failed", ex);
+                }
+            };
         } catch (Exception ex) {
             throw new IllegalStateException("Init Pulsar producer failed", ex);
-        }
-    }
-
-    private void publish(MQEvent event) {
-        try {
-            String topic = StrKit.hasText(event.getTopic()) ? event.getTopic() : "ddd4j.default.topic";
-            String tag = event.getTag();
-            String physical = properties.physicalTopic(topic, tag);
-            Producer<byte[]> p = producer(physical);
-            TypedMessageBuilder<byte[]> builder = p.newMessage()
-                    .value(serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8))
-                    .property(MessageHeaders.HEADER_DESTINATION_TOPIC, topic);
-            if (Objects.nonNull(event.getMsgId())) {
-                builder.property(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-            }
-            if (Objects.nonNull(event.getTenantId())) {
-                builder.property(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
-            }
-            if (Objects.nonNull(event.getTag())) {
-                builder.property(MessageHeaders.HEADER_DESTINATION_TAG, event.getTag());
-            }
-            builder.sendAsync();
-            logger().info("Publish MQ [{}]: {}", physical, serialization().serialize(event));
-        } catch (Exception ex) {
-            throw new IllegalStateException("Publish Pulsar event failed", ex);
         }
     }
 
@@ -131,64 +122,60 @@ public class PulsarMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Objects.requireNonNull(listener, "listener");
+        // Pulsar 物理 topic 用 tenant/namespace/topic 拼接，不含 tag（tag 作为 property 写入并应用层过滤）
         String topic = properties.physicalTopic(
-                StrKit.hasText(listener.getTopic()) ? listener.getTopic() : "ddd4j.default.topic",
-                null);
+                Objects.nonNull(listener.getTopic()) ? listener.getTopic() : "ddd4j.default.topic", null);
         String subscriptionName = properties.getSubscriptionName() + "-" + listener.namespaceTopicTags();
         org.apache.pulsar.client.api.Consumer<byte[]> consumer = client.newConsumer(Schema.BYTES)
                 .topic(topic)
                 .subscriptionName(subscriptionName)
                 .subscriptionType(SubscriptionType.valueOf(properties.getSubscriptionType()))
                 .negativeAckRedeliveryDelay(properties.getNegativeAckRedeliveryDelayMs(), TimeUnit.MILLISECONDS)
-                .messageListener((c, msg) -> handleMessage(c, msg, listener))
+                .messageListener((c, msg) -> {
+                    try {
+                        String tag = msg.getProperty(tagHeaderKey());
+                        if (!TagMatcher.match(tag, listener.getTags())) {
+                            ((org.apache.pulsar.client.api.Consumer) c).acknowledge(msg);
+                            return;
+                        }
+                        String messageId = messageIdString(msg.getMessageId());
+                        String payload = new String(msg.getValue(), StandardCharsets.UTF_8);
+                        MQEvent event = serialization().deserialize(payload, listener.payloadType());
+                        if (Objects.isNull(event)) {
+                            logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                            ((org.apache.pulsar.client.api.Consumer) c).acknowledge(msg);
+                            return;
+                        }
+                        if (Objects.nonNull(tag)) {
+                            event.setTag(tag);
+                        }
+                        if (Objects.nonNull(messageId)) {
+                            event.setMsgId(messageId);
+                        }
+                        PulsarAcknowledgment ack = new PulsarAcknowledgment(c, msg, messageId, null);
+                        try {
+                            consume(listener, event, ack);
+                            if (!ack.isAcknowledged()) {
+                                ack.ackSingle();
+                            }
+                        } catch (Throwable ex) {
+                            logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                            try {
+                                ((org.apache.pulsar.client.api.Consumer) c).negativeAcknowledge(msg);
+                            } catch (Exception ignore) {
+                            }
+                        }
+                    } catch (Throwable ex) {
+                        logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                        try {
+                            ((org.apache.pulsar.client.api.Consumer) c).negativeAcknowledge(msg);
+                        } catch (Exception ignore) {
+                        }
+                    }
+                })
                 .subscribe();
         consumers.add(consumer);
         return true;
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private void handleMessage(org.apache.pulsar.client.api.Consumer<byte[]> consumer, Message<byte[]> msg, MQListener listener) {
-        try {
-            String tag = msg.getProperty(MessageHeaders.HEADER_DESTINATION_TAG);
-            if (!TagMatcher.match(tag, listener.getTags())) {
-                ((org.apache.pulsar.client.api.Consumer) consumer).acknowledge(msg);
-                return;
-            }
-            String messageId = messageIdString(msg.getMessageId());
-            String payload = new String(msg.getValue(), StandardCharsets.UTF_8);
-            MQEvent event = serialization().deserialize(payload, listener.payloadType());
-            if (Objects.isNull(event)) {
-                logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
-                ((org.apache.pulsar.client.api.Consumer) consumer).acknowledge(msg);
-                return;
-            }
-            // 同步 tag/msgId 字段
-            if (Objects.nonNull(tag)) {
-                event.setTag(tag);
-            }
-            if (Objects.nonNull(messageId)) {
-                event.setMsgId(messageId);
-            }
-            PulsarAcknowledgment ack = new PulsarAcknowledgment(consumer, msg, messageId, null);
-            try {
-                consume(listener, event, ack);
-                if (!ack.isAcknowledged()) {
-                    ack.ackSingle();
-                }
-            } catch (Throwable ex) {
-                logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
-                try {
-                    ((org.apache.pulsar.client.api.Consumer) consumer).negativeAcknowledge(msg);
-                } catch (Exception ignore) {
-                }
-            }
-        } catch (Throwable ex) {
-            logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
-            try {
-                ((org.apache.pulsar.client.api.Consumer) consumer).negativeAcknowledge(msg);
-            } catch (Exception ignore) {
-            }
-        }
     }
 
     private static String messageIdString(MessageId id) {

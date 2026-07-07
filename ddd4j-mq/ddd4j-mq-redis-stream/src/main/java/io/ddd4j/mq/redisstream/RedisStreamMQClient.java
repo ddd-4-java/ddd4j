@@ -14,10 +14,10 @@ import redis.clients.jedis.resps.StreamEntry;
 import redis.clients.jedis.resps.StreamGroupInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -42,7 +42,11 @@ import java.util.stream.Collectors;
  *       autoAck=false 时手动 {@code xack}</li>
  * </ul>
  *
- * <p>Stream key = {@code namespace:topic[:tag]}，分隔符 {@code :}。
+ * <p>Stream key 通过 {@link MQClient#resolveTopic(MQEvent, MQProperties)} /
+ * {@link MQClient#resolveTopic(MQListener, MQProperties)} 解析；
+ * 默认拼接符 {@code :}（Redis Stream 习惯），可由 {@link #defaultConcat()} 覆写决定。
+ * tag header 通过 {@link #tagHeaderKey()}（默认 {@code "ddd4jTag"}）写入 stream 字段，
+ * 消费者读取同 key 走应用层 {@link TagMatcher#match} 过滤（Redis Stream 无 broker 端 selector）。
  *
  * <p>注：构造方法 1 接收 {@link UnifiedJedis} 而非旧版 {@code Jedis}——Jedis 7.x 已将
  * {@code Jedis} 与 {@code UnifiedJedis} 拆为兄弟接口，{@link RedisStreamAcknowledgment}
@@ -105,6 +109,16 @@ public class RedisStreamMQClient implements MQClient {
 		return "redisStream";
 	}
 
+	/**
+	 * Redis Stream 默认拼接符 {@code :}（Redis 命名习惯）。
+	 */
+	@Override
+	public String defaultConcat() {
+		return ":";
+	}
+
+	// ========================= 生产者 =========================
+
 	@Override
 	public Consumer<MQEvent> initProducer(MQProperties properties) {
 		if (started.compareAndSet(false, true)) {
@@ -120,12 +134,14 @@ public class RedisStreamMQClient implements MQClient {
 					try {
 						MQEvent mqEvent = SENDING_MSGS.take();
 						payload = serialization().serialize(mqEvent).toString();
-						String namespace = mqEvent.getNamespace() != null ? mqEvent.getNamespace() : properties().getNamespace();
-						String concat = mqEvent.getConcat() != null ? mqEvent.getConcat() : ":";
-						String tag = (mqEvent.getTag() == null || mqEvent.getTag().isEmpty()) ? "" : (concat + mqEvent.getTag());
-						// streamKey=namespace:topic:tag或namespace:topic或topic
-						streamKey = namespace + concat + mqEvent.getTopic() + tag;
-						jedis().xadd(streamKey, StreamEntryID.NEW_ENTRY, Collections.singletonMap("payload", payload));
+						streamKey = resolveTopic(mqEvent, properties);
+						Map<String, String> fields = new HashMap<>();
+						fields.put("payload", payload);
+						if (Objects.nonNull(mqEvent.getTag())) {
+							// tag header 走 tagHeaderKey()（与 selector/consumer 读对齐）
+							fields.put(tagHeaderKey(), mqEvent.getTag());
+						}
+						jedis().xadd(streamKey, StreamEntryID.NEW_ENTRY, fields);
 						log.info("Publish MQ [{}]: {}", streamKey, payload);
 					} catch (Exception e) {
 						log.error("Publish MQ [{}]: {} failed!", streamKey, payload, e);
@@ -137,19 +153,23 @@ public class RedisStreamMQClient implements MQClient {
 		return mqEvent -> SENDING_MSGS.offer(mqEvent);
 	}
 
+	// ========================= 消费者 =========================
+
 	@Override
 	public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
-		// streamKey=namespace:topic:tag或namespace:topic或topic
+		// 订阅 streamKey=namespace:topic[:tag]（应用层过滤全部正向 tag，故多 stream 各订阅一份）
 		List<String> topics = new ArrayList<>();
+		String mainTopic = resolveTopic(listener, properties);
+		topics.add(mainTopic);
 		if (listener.getTags() != null && !listener.getTags().isEmpty()) {
 			Set<String> tags = TagMatcher.findIncludes(listener.getTags());
-			if (!tags.isEmpty()) {
-				for (String tag : tags) {
-					topics.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic() + listener.getSeparator() + tag);
+			for (String tag : tags) {
+				String t = resolveTopic(namespace(listener.getNamespace(), properties),
+						listener.getTopic(), tag, concat(null, properties));
+				if (!topics.contains(t)) {
+					topics.add(t);
 				}
 			}
-		} else {
-			topics.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic());
 		}
 
 		Map<String, StreamEntryID> streamKeys = new HashMap<>();
@@ -158,7 +178,9 @@ public class RedisStreamMQClient implements MQClient {
 			// 创建消费组（忽略已存在）
 			for (String topic : topics) {
 				if (!jedis.exists(topic)) {
-					jedis.xadd(topic, StreamEntryID.NEW_ENTRY, Collections.singletonMap("payload", "{}"));
+					Map<String, String> empty = new HashMap<>();
+					empty.put("payload", "{}");
+					jedis.xadd(topic, StreamEntryID.NEW_ENTRY, empty);
 				}
 				List<StreamGroupInfo> streamGroupInfos = jedis.xinfoGroups(topic);
 				List<String> streamGroupInfoGroupNames = streamGroupInfos.stream().map(StreamGroupInfo::getName)
@@ -195,7 +217,7 @@ public class RedisStreamMQClient implements MQClient {
 					for (Map.Entry<String, List<StreamEntry>> entry : messages) {
 						for (StreamEntry streamEntry : entry.getValue()) {
 							String payload = streamEntry.getFields().get("payload");
-							String tag = streamEntry.getFields().get("tag");
+							String tag = streamEntry.getFields().get(tagHeaderKey());
 							if (!TagMatcher.match(tag, listener.getTags())) {
 								jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
 								continue;

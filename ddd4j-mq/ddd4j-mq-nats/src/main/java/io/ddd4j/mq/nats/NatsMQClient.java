@@ -24,20 +24,14 @@ import java.util.function.Consumer;
 /**
  * NATS JetStream 客户端实现（纯 Java，零 Spring 依赖）。
  *
- * <p>实现 {@link MQClient}：
- * <ul>
- *   <li>{@link #initProducer} —— 建 NATS {@link Connection}，
- *       返回 {@link Consumer<MQEvent>}。优先 JetStream.publish，失败回退 core NATS。
- *       subject 使用 {@code [namespace.]topic[.tag]}</li>
- *   <li>{@link #initConsumer} —— 建 JetStream Push Consumer（失败回退 core NATS Dispatcher），
- *       收到消息后做 tag 过滤、反序列化 → 构建 {@link NatsAcknowledgment} →
- *       调 {@link #consume} 统一消费。autoAck=true 时由框架自动 ack</li>
- * </ul>
+ * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
+ *
+ * <p>NATS 无原生 broker-side tag filter（仅 subject 通配），应用层 tag 过滤保留。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-@Slf4j
+@Slf4j(topic = "### DDD4J-MQ : NatsMQClient ###")
 public class NatsMQClient implements MQClient {
 
     private final NatsProperties properties;
@@ -74,25 +68,23 @@ public class NatsMQClient implements MQClient {
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         Connection conn = connection();
-        return event -> publish(conn, event);
-    }
-
-    private void publish(Connection conn, MQEvent event) {
-        try {
-            String subject = resolveSubject(event.getNamespace(), event.getTopic(), event.getTag());
-            String payload = JsonKit.toJson(event);
-            byte[] body = payload.getBytes(StandardCharsets.UTF_8);
+        return event -> {
             try {
-                JetStream jetStream = conn.jetStream();
-                jetStream.publish(subject, body);
-                logger().debug("Published NATS JetStream event, subject={}, msgId={}", subject, event.getMsgId());
-            } catch (IOException | JetStreamApiException ex) {
-                conn.publish(subject, body);
-                logger().debug("Published NATS core event, subject={}, msgId={}", subject, event.getMsgId());
+                String subject = resolveTopic(event, mqProperties);
+                String payload = JsonKit.toJson(event);
+                byte[] body = payload.getBytes(StandardCharsets.UTF_8);
+                try {
+                    JetStream jetStream = conn.jetStream();
+                    jetStream.publish(subject, body);
+                    log.debug("Published NATS JetStream event, subject={}, msgId={}", subject, event.getMsgId());
+                } catch (IOException | JetStreamApiException ex) {
+                    conn.publish(subject, body);
+                    log.debug("Published NATS core event, subject={}, msgId={}", subject, event.getMsgId());
+                }
+            } catch (Exception ex) {
+                throw new IllegalStateException("Publish NATS event failed", ex);
             }
-        } catch (Exception ex) {
-            throw new IllegalStateException("Publish NATS event failed", ex);
-        }
+        };
     }
 
     // ========================= 消费者 =========================
@@ -101,8 +93,7 @@ public class NatsMQClient implements MQClient {
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection conn = connection();
         boolean autoAck = mqProperties.isAutoAck();
-        String subject = resolveSubject(listener.getNamespace(), listener.getTopic(),
-                TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null));
+        String subject = resolveTopic(listener, mqProperties);
         try {
             JetStream jetStream = conn.jetStream();
             Dispatcher dispatcher = conn.createDispatcher(msg -> {
@@ -125,7 +116,11 @@ public class NatsMQClient implements MQClient {
     private void onMessage(Message natsMessage, MQListener listener, boolean autoAck) {
         try {
             String subject = natsMessage.getSubject();
-            String tag = extractTag(subject);
+            String tag = null;
+            int lastDot = subject.lastIndexOf('.');
+            if (lastDot >= 0) {
+                tag = subject.substring(lastDot + 1);
+            }
             if (!TagMatcher.match(tag, listener.getTags())) {
                 return;
             }
@@ -149,29 +144,7 @@ public class NatsMQClient implements MQClient {
         }
     }
 
-    // ========================= 工具 =========================
-
-    /**
-     * 解析发布 / 订阅 subject：{@code [namespace.]topic[.tag]}。
-     */
-    private static String resolveSubject(String namespace, String topic, String tag) {
-        String base = io.ddd4j.kit.lang.StrKit.hasText(topic) ? topic : "ddd4j.default.topic";
-        if (io.ddd4j.kit.lang.StrKit.hasText(namespace)) {
-            base = namespace + "." + base;
-        }
-        return io.ddd4j.kit.lang.StrKit.hasText(tag) ? base + "." + tag : base;
-    }
-
-    /**
-     * 从 subject 末段提取 tag。
-     */
-    private static String extractTag(String subject) {
-        if (Objects.isNull(subject)) {
-            return null;
-        }
-        int lastDot = subject.lastIndexOf('.');
-        return lastDot >= 0 ? subject.substring(lastDot + 1) : subject;
-    }
+    // ========================= 连接管理 =========================
 
     private synchronized Connection connection() {
         Connection c = connectionRef.get();

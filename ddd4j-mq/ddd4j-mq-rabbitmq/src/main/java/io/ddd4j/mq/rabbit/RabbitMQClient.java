@@ -32,8 +32,11 @@ import java.util.function.Consumer;
  *   <li>{@link #RabbitMQClient(RabbitMQProperties)} —— 自行根据 properties 构造 connection（lazy）</li>
  * </ul>
  *
- * <p>路由键（routingKey）= {@code namespace.topic[.tag]}，分隔符 {@code .}；
+ * <p>路由键（routingKey）通过 {@link MQClient#resolveTopic(MQEvent, MQProperties)} 解析，
  * 队列名（queue）= {@code group.namespace.className.methodName}。
+ *
+ * <p>RabbitMQ topic exchange 用 {@code *}/{@code #} 模式，与 ddd4j 的 {@code *}/{@code ||}/{@code -}
+ * 标签表达式不兼容，故 broker 端 tag 过滤走应用层 {@link TagMatcher#match}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -63,18 +66,16 @@ public class RabbitMQClient implements MQClient {
         return "rabbit";
     }
 
+    // ========================= 生产者 =========================
+
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
             Channel channel = connection().createChannel();
             String exchange = Objects.nonNull(properties) ? properties.getExchange() : "";
             return mqEvent -> {
-                String namespace = mqEvent.getNamespace() != null ? mqEvent.getNamespace() : "";
-                String topic = mqEvent.getTopic() != null ? mqEvent.getTopic() : "";
-                String concat = mqEvent.getConcat() != null && !mqEvent.getConcat().isEmpty() ? mqEvent.getConcat() : ".";
                 String payload = serialization().serialize(mqEvent);
-                String tagPart = mqEvent.getTag() != null ? concat + mqEvent.getTag() : "";
-                String routingKey = namespace + concat + topic + tagPart;
+                String routingKey = resolveTopic(mqEvent, mqProperties);
                 try {
                     channel.basicPublish(exchange, routingKey, null, payload.getBytes(StandardCharsets.UTF_8));
                     log.info("Publish MQ [{}]: {}", routingKey, payload);
@@ -87,6 +88,8 @@ public class RabbitMQClient implements MQClient {
         }
     }
 
+    // ========================= 消费者 =========================
+
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection connection = connection();
@@ -95,18 +98,21 @@ public class RabbitMQClient implements MQClient {
             String queue = listener.getGroup() + "." + listener.getNamespace() + "."
                     + listener.getMethod().getDeclaringClass().getSimpleName() + "."
                     + listener.getMethod().getName();
+            // 解析订阅 routingKey（监听器侧，与生产者同源）
+            String subscribeRoutingKey = resolveTopic(listener, mqProperties);
+            // 应用层过滤保留全部正向 tag（作为额外 routing key 订阅），
+            // 主订阅由 resolveTopic 取首个正向 tag 拼出。
             List<String> routingKeys = new ArrayList<>();
+            routingKeys.add(subscribeRoutingKey);
             if (listener.getTags() != null && !listener.getTags().isEmpty()) {
                 Set<String> tags = TagMatcher.findIncludes(listener.getTags());
-                if (!tags.isEmpty()) {
-                    for (String tag : tags) {
-                        routingKeys.add(listener.getNamespace() + "." + listener.getTopic() + "." + tag);
+                for (String tag : tags) {
+                    String rk = resolveTopic(namespace(listener.getNamespace(), mqProperties),
+                            listener.getTopic(), tag, concat(null, mqProperties));
+                    if (!routingKeys.contains(rk)) {
+                        routingKeys.add(rk);
                     }
-                } else {
-                    routingKeys.add(listener.getNamespace() + "." + listener.getTopic());
                 }
-            } else {
-                routingKeys.add(listener.getNamespace() + "." + listener.getTopic());
             }
             channel.queueDeclare(queue, true, false, false, null);
             String exchange = Objects.nonNull(properties) ? properties.getExchange() : "";
@@ -136,6 +142,7 @@ public class RabbitMQClient implements MQClient {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
                     return;
                 }
+                // 应用层 tag 过滤（RabbitMQ topic exchange 模式与 ddd4j 表达式不兼容，broker 端不可用）
                 if (!TagMatcher.match(mqEvent.getTag(), listener.getTags())) {
                     if (!mqProperties.isAutoAck()) {
                         try {
@@ -177,6 +184,8 @@ public class RabbitMQClient implements MQClient {
         }
         return true;
     }
+
+    // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     private Connection connection() {
         Connection c = connectionRef.get();

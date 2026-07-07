@@ -10,6 +10,7 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -21,50 +22,41 @@ import java.util.function.Consumer;
 /**
  * 阿里云 ONS 客户端实现（纯 Java，零 Spring 依赖）。
  *
- * <p>实现 {@link MQClient}：
- * <ul>
- *   <li>{@link #initProducer} —— 创建 ONS {@link Producer}，返回 {@link Consumer<MQEvent>}，
- *       {@link MQEvent#publish()} 通过它把消息推送到 broker</li>
- *   <li>{@link #initConsumer} —— 创建 ONS 消费者，tag 过滤后调 {@link #consume} 统一消费，
- *       传入 {@link OnsAcknowledgment} 实现不同级别 ack</li>
- * </ul>
+ * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
  *
- * <p>ONS 消费通过监听器返回的 {@link com.aliyun.openservices.ons.api.Action} 来确认消息；
- * 失败默认 {@link com.aliyun.openservices.ons.api.Action#ReconsumeLater} 触发重试。
+ * <p>ONS 是阿里云 RocketMQ，提供原生 subscription 表达式 tag 过滤。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j(topic = "### DDD4J-MQ : OnsMQClient ###")
 public class OnsMQClient implements MQClient {
 
     private final OnsProperties properties;
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
-    private final Producer injectedProducer;
     private volatile Producer producer;
     private volatile boolean producerStarted;
 
     /**
-     * 构造 1：注入已初始化的原生 ONS {@link Producer}（用于 runtime 集成自动注入）。
-     * 注：ONS 消费者侧仍需 {@link OnsProperties} 通过 ONSFactory 创建，因此构造 1 同时接受
-     * {@link OnsProperties}（供消费者侧使用）。当前 initProducer 内部逻辑不变，
-     * 本字段保留以备未来切换。
+     * 构造 1：传入配置，{@link #initProducer}/{@link #initConsumer} 中通过 ONSFactory 创建原生客户端。
+     *
+     * @param properties ONS 配置
+     */
+    public OnsMQClient(OnsProperties properties) {
+        this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    /**
+     * 构造 2：注入已初始化的原生 ONS {@link Producer}（用于 runtime 集成自动注入）。
+     * 注：ONS 消费者侧仍需 {@link OnsProperties} 通过 ONSFactory 创建，因此构造 2 同时接受
+     * {@link OnsProperties}（供消费者侧使用）。
      *
      * @param producer   原生 ONS producer（运行时构造预创建）
      * @param properties ONS 配置（消费者侧使用）
      */
     public OnsMQClient(Producer producer, OnsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
-        this.injectedProducer = producer;
-    }
-
-    /**
-     * 构造 2：传入配置，{@link #initProducer}/{@link #initConsumer} 中通过 ONSFactory 创建原生客户端。
-     *
-     * @param properties ONS 配置
-     */
-    public OnsMQClient(OnsProperties properties) {
-        this.properties = Objects.requireNonNull(properties, "properties");
-        this.injectedProducer = null;
+        this.producer = producer;
     }
 
     @Override
@@ -77,31 +69,29 @@ public class OnsMQClient implements MQClient {
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
-            Producer p = ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId()));
+            Producer p = Objects.nonNull(producer) ? producer
+                    : ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId()));
             p.start();
             this.producer = p;
             this.producerStarted = true;
-            return event -> publish(p, event);
+            return event -> {
+                try {
+                    String topic = resolveTopic(event, mqProperties);
+                    String tag = event.getTag();
+                    Message msg = new Message(topic, tag, event.getMsgId(),
+                            serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8));
+                    msg.setKey(event.getMsgId());
+                    if (Objects.nonNull(event.getTenantId())) {
+                        msg.putUserProperties(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                    }
+                    p.send(msg);
+                    logger().info("Publish MQ [{}]: {}", topic, serialization().serialize(event));
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Publish ONS event failed", ex);
+                }
+            };
         } catch (Exception ex) {
             throw new IllegalStateException("Init ONS producer failed", ex);
-        }
-    }
-
-    private void publish(Producer producer, MQEvent event) {
-        try {
-            String topic = StrKit.hasText(event.getTopic()) ? event.getTopic()
-                    : (StrKit.hasText(properties.getTopic()) ? properties.getTopic() : "ddd4j.default.topic");
-            String tag = event.getTag();
-            Message msg = new Message(topic, tag, event.getMsgId(),
-                    serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8));
-            msg.setKey(event.getMsgId());
-            if (Objects.nonNull(event.getTenantId())) {
-                msg.putUserProperties(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
-            }
-            producer.send(msg);
-            logger().info("Publish MQ [{}]: {}", topic, serialization().serialize(event));
-        } catch (Exception ex) {
-            throw new IllegalStateException("Publish ONS event failed", ex);
         }
     }
 
@@ -117,50 +107,46 @@ public class OnsMQClient implements MQClient {
         if (!StrKit.hasText(topic)) {
             throw new IllegalStateException("OnsClient requires topic");
         }
-        String tag = TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null);
+        // ONS 支持 subscription 表达式原生 tag 过滤
+        String tagExpression = properties.subscriptionExpression(
+                TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null));
         com.aliyun.openservices.ons.api.Consumer consumer = ONSFactory.createConsumer(properties.sessionProperties(group));
-        consumer.subscribe(topic, properties.subscriptionExpression(tag),
-                (msg, ctx) -> handleMessage(msg, ctx, listener));
-        consumer.start();
-        consumers.add(consumer);
-        return true;
-    }
-
-    private com.aliyun.openservices.ons.api.Action handleMessage(Message message,
-                                                                com.aliyun.openservices.ons.api.ConsumeContext context,
-                                                                MQListener listener) {
-        try {
-            if (!TagMatcher.match(message.getTag(), listener.getTags())) {
-                return com.aliyun.openservices.ons.api.Action.CommitMessage;
-            }
-            String payload = new String(message.getBody(), StandardCharsets.UTF_8);
-            MQEvent event = serialization().deserialize(payload, listener.payloadType());
-            if (Objects.isNull(event)) {
-                logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
-                return com.aliyun.openservices.ons.api.Action.CommitMessage;
-            }
-            // 同步 event 与原生消息的 tag/msgId/tenantId
-            if (Objects.nonNull(message.getTag())) {
-                event.setTag(message.getTag());
-            }
-            if (Objects.nonNull(message.getMsgID())) {
-                event.setMsgId(message.getMsgID());
-            }
-            OnsAcknowledgment ack = new OnsAcknowledgment(context, message);
+        consumer.subscribe(topic, tagExpression, (msg, ctx) -> {
             try {
-                consume(listener, event, ack);
-                if (!ack.isAcknowledged()) {
-                    ack.ackSingle();
+                if (!TagMatcher.match(msg.getTag(), listener.getTags())) {
+                    return com.aliyun.openservices.ons.api.Action.CommitMessage;
                 }
+                String payload = new String(msg.getBody(), StandardCharsets.UTF_8);
+                MQEvent event = serialization().deserialize(payload, listener.payloadType());
+                if (Objects.isNull(event)) {
+                    logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                    return com.aliyun.openservices.ons.api.Action.CommitMessage;
+                }
+                if (Objects.nonNull(msg.getTag())) {
+                    event.setTag(msg.getTag());
+                }
+                if (Objects.nonNull(msg.getMsgID())) {
+                    event.setMsgId(msg.getMsgID());
+                }
+                OnsAcknowledgment ack = new OnsAcknowledgment(ctx, msg);
+                try {
+                    consume(listener, event, ack);
+                    if (!ack.isAcknowledged()) {
+                        ack.ackSingle();
+                    }
+                } catch (Throwable ex) {
+                    logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                    return com.aliyun.openservices.ons.api.Action.ReconsumeLater;
+                }
+                return ack.action();
             } catch (Throwable ex) {
                 logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
                 return com.aliyun.openservices.ons.api.Action.ReconsumeLater;
             }
-            return ack.action();
-        } catch (Throwable ex) {
-            logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
-            return com.aliyun.openservices.ons.api.Action.ReconsumeLater;
-        }
+        });
+        consumer.start();
+        consumers.add(consumer);
+        return true;
     }
 
     @Override

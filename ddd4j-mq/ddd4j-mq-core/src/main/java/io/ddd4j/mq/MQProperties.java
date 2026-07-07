@@ -87,11 +87,6 @@ public class MQProperties {
     private String exchange = "";
 
     /**
-     * 三段式（namespace/topic/tag）拼接符，为空时由各 broker 实现决定默认值。
-     */
-    private String concat;
-
-    /**
      * 带命名空间前缀的拼接便捷方法。
      *
      * @param sep 分隔符

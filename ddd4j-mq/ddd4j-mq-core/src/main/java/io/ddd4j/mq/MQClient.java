@@ -208,18 +208,16 @@ public interface MQClient {
     /**
      * 解析最终的拼接符（concat）。
      *
-     * <p>优先级：{@link MQEvent#getConcat()} &gt; {@link MQProperties#getConcat()} &gt; 当前 Client 默认值。
+     * <p>优先级：{@link MQEvent#getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
+     * 注：不在 properties 层暴露 concat —— 避免全局配置覆盖 broker 惯例（Kafka 习惯 {@code "_"}、
+     * Redis 习惯 {@code ":"}、MQTT 习惯 {@code "/"}）。如需差异化，由各 broker 自己的 Properties 类覆写。
      *
-     * @param event      MQ 事件（可为 null）
-     * @param properties MQ 配置（不可为 null）
-     * @return 三段式拼接符（{@code "."} / {@code "_"} / {@code ":"}），空时返回 {@code "."}
+     * @param event MQ 事件（可为 null）
+     * @return 三段式拼接符
      */
-    default String concat(MQEvent event, MQProperties properties) {
+    default String concat(MQEvent event) {
         if (Objects.nonNull(event) && Objects.nonNull(event.getConcat()) && !event.getConcat().isEmpty()) {
             return event.getConcat();
-        }
-        if (Objects.nonNull(properties) && Objects.nonNull(properties.getConcat()) && !properties.getConcat().isEmpty()) {
-            return properties.getConcat();
         }
         return defaultConcat();
     }
@@ -294,7 +292,7 @@ public interface MQClient {
      * 便捷重载：从 {@link MQEvent} + {@link MQProperties} 解析物理地址（生产者侧）。
      */
     default String resolveTopic(MQEvent event, MQProperties properties) {
-        return resolveTopic(namespace(event, properties), event.getTopic(), event.getTag(), concat(event, properties));
+        return resolveTopic(namespace(event, properties), event.getTopic(), event.getTag(), concat(event));
     }
 
     /**
@@ -305,7 +303,44 @@ public interface MQClient {
         return resolveTopic(namespace(listener.getNamespace(), properties),
                 listener.getTopic(),
                 TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null),
-                concat(null, properties));
+                concat(null));
+    }
+
+    /**
+     * 业务路由 key（partition/sharding/ordered-delivery key）。
+     *
+     * <p>本质是「业务维度的顺序保证键」——Kafka 用它做 partition 路由（同 key 进同 partition），
+     * RabbitMQ 用 JMSXGroupId、Pulsar 用 partition key、RocketMQ 用 messageQueueSelector。
+     * 默认实现：{@code tag+"\|"+tenant}（同 tag 同租户顺序保留）。broker 可覆写。
+     *
+     * <p>子类可通过 {@link PartitionKeyStrategy} 选择内置策略（CUSTOM 时应重写本方法）。
+     *
+     * @param event MQ 事件（可为 null，null 时返回 null）
+     * @return 路由 key，{@code null} 表示不设 key（broker 自由路由）
+     */
+    default String partitionKey(MQEvent event) {
+        if (event == null) {
+            return null;
+        }
+        String tag = event.getTag();
+        String tenant = event.getTenantId();
+        if (tag != null && tenant != null) {
+            return tag + "|" + tenant;
+        }
+        return tag != null ? tag : tenant;
+    }
+
+    /**
+     * Partition/路由策略枚举（broker 可读取此枚举决定 partitionKey 取值）。
+     *
+     * <p>NONE：不设 key（轮询路由，性能最佳但无顺序保证）。
+     * <p>TAG：按 event.tag（同 tag 顺序）。
+     * <p>TENANT：按 event.tenantId（同租户顺序）。
+     * <p>TAG_TENANT：按 tag+tenant 复合 key（推荐，最常用）。
+     * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
+     */
+    enum PartitionKeyStrategy {
+        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
     }
 
     /**
@@ -365,10 +400,6 @@ public interface MQClient {
             }
         }
         if (includes.isEmpty() && excludes.isEmpty()) {
-            return null;
-        }
-        // 单独 "*" 不过滤
-        if (wildcard && includes.isEmpty() && excludes.isEmpty()) {
             return null;
         }
         // "*" + 仅 excludes：includes 视为通配（1=1）

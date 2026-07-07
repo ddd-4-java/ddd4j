@@ -11,6 +11,7 @@ import redis.clients.jedis.UnifiedJedis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -35,7 +36,9 @@ import java.util.function.Consumer;
  *       {@code onMessage} 回调里反序列化后调 {@link #consume(MQListener, MQEvent)}（pubsub 无 ack）</li>
  * </ul>
  *
- * <p>Channel = {@code namespace:topic[:tag]}，分隔符 {@code :}。
+ * <p>Channel 通过 {@link MQClient#resolveTopic(MQEvent, MQProperties)} /
+ * {@link MQClient#resolveTopic(MQListener, MQProperties)} 解析；默认拼接符 {@code :}（Redis 命名习惯）。
+ * Redis pubsub 无 broker 端 tag 过滤，走应用层 {@link TagMatcher#match}。
  *
  * <p>注：构造方法 1 接收 {@link UnifiedJedis} 而非旧版 {@code Jedis}——Jedis 7.x 已将
  * {@code Jedis} 与 {@code UnifiedJedis} 拆为兄弟接口，标准 Jedis 7.x 客户端（{@code JedisPooled} 等）均注入此类型。
@@ -97,6 +100,16 @@ public class RedisMQClient implements MQClient {
 		return "redis";
 	}
 
+	/**
+	 * Redis Pubsub 默认拼接符 {@code :}（Redis 命名习惯）。
+	 */
+	@Override
+	public String defaultConcat() {
+		return ":";
+	}
+
+	// ========================= 生产者 =========================
+
 	@Override
 	public Consumer<MQEvent> initProducer(MQProperties properties) {
 		if (started.compareAndSet(false, true)) {
@@ -112,11 +125,7 @@ public class RedisMQClient implements MQClient {
 					try {
 						MQEvent mqEvent = SENDING_MSGS.take();
 						payload = serialization().serialize(mqEvent).toString();
-						String namespace = mqEvent.getNamespace() != null ? mqEvent.getNamespace() : properties().getNamespace();
-						String concat = mqEvent.getConcat() != null ? mqEvent.getConcat() : ":";
-						String tag = (mqEvent.getTag() == null || mqEvent.getTag().isEmpty()) ? "" : (concat + mqEvent.getTag());
-						// channel=namespace:topic:tag或namespace:topic或topic
-						channel = namespace + concat + mqEvent.getTopic() + tag;
+						channel = resolveTopic(mqEvent, properties);
 						jedis().publish(channel, payload);
 						log.info("Publish MQ [{}]: {}", channel, payload);
 					} catch (Exception e) {
@@ -129,19 +138,23 @@ public class RedisMQClient implements MQClient {
 		return mqEvent -> SENDING_MSGS.offer(mqEvent);
 	}
 
+	// ========================= 消费者 =========================
+
 	@Override
 	public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
-		// channel=namespace:topic:tag或namespace:topic或topic
+		// channel=namespace:topic[:tag]；多正向 tag 各订阅一份
 		List<String> channels = new ArrayList<>();
+		String mainChannel = resolveTopic(listener, properties);
+		channels.add(mainChannel);
 		if (listener.getTags() != null && !listener.getTags().isEmpty()) {
 			Set<String> tags = TagMatcher.findIncludes(listener.getTags());
-			if (!tags.isEmpty()) {
-				for (String tag : tags) {
-					channels.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic() + listener.getSeparator() + tag);
+			for (String tag : tags) {
+				String c = resolveTopic(namespace(listener.getNamespace(), properties),
+						listener.getTopic(), tag, concat(null, properties));
+				if (!channels.contains(c)) {
+					channels.add(c);
 				}
 			}
-		} else {
-			channels.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic());
 		}
 		Executors.newSingleThreadExecutor(r -> {
 			Thread t = new Thread(r, "ddd4j-redis-pubsub-" + listener.namespaceTopicTags());
@@ -163,8 +176,7 @@ public class RedisMQClient implements MQClient {
 							log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
 							return;
 						}
-						String tag = mqEvent.getTag();
-						if (!TagMatcher.match(tag, listener.getTags())) {
+						if (!TagMatcher.match(mqEvent.getTag(), listener.getTags())) {
 							return;
 						}
 						try {

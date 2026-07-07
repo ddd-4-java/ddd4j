@@ -1,12 +1,12 @@
 package io.ddd4j.mq.sqs;
 
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
@@ -26,13 +26,7 @@ import java.util.function.Consumer;
 /**
  * AWS SQS 客户端实现（纯 Java，零 Spring 依赖）。
  *
- * <p>实现 {@link MQClient}：
- * <ul>
- *   <li>{@link #initProducer} —— 创建 SQS 客户端，返回 {@link Consumer<MQEvent>}，
- *       {@link MQEvent#publish()} 通过它把消息推送到 broker</li>
- *   <li>{@link #initConsumer} —— 为每个 listener 启动 long-poll 守护线程，tag 过滤后
- *       调 {@link #consume} 统一消费，传入 {@link SqsAcknowledgment} 实现不同级别 ack</li>
- * </ul>
+ * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
  *
  * <p>SQS 没有 topic/tag 概念：{@code MQListener.topic} 必须直接是 queueUrl。tag 通过
  * {@link MessageHeaders#HEADER_DESTINATION_TAG} 属性传递，仅用于客户端过滤。
@@ -40,14 +34,26 @@ import java.util.function.Consumer;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j(topic = "### DDD4J-MQ : SqsMQClient ###")
 public class SqsMQClient implements MQClient {
 
     private final SqsProperties properties;
     private final List<ScheduledExecutorService> pollers = new CopyOnWriteArrayList<>();
     private software.amazon.awssdk.services.sqs.SqsClient client;
 
+    /**
+     * 构造 1：传入配置，{@link #initProducer} 时 lazy 创建 SqsClient。
+     */
     public SqsMQClient(SqsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    /**
+     * 构造 2：注入已初始化的原生 {@link software.amazon.awssdk.services.sqs.SqsClient}（用于 runtime 集成自动注入）。
+     */
+    public SqsMQClient(software.amazon.awssdk.services.sqs.SqsClient client) {
+        this.client = Objects.requireNonNull(client, "SqsClient");
+        this.properties = new SqsProperties();
     }
 
     @Override
@@ -59,38 +65,39 @@ public class SqsMQClient implements MQClient {
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        this.client = properties.client();
-        return this::publish;
+        if (Objects.isNull(this.client)) {
+            this.client = properties.client();
+        }
+        return event -> {
+            try {
+                String queueUrl = event.getTopic();
+                Map<String, MessageAttributeValue> attrs = new HashMap<>();
+                if (Objects.nonNull(queueUrl)) {
+                    attrs.put(MessageHeaders.HEADER_DESTINATION_TOPIC, attrValue(queueUrl));
+                }
+                if (Objects.nonNull(event.getTenantId())) {
+                    attrs.put(MessageHeaders.HEADER_TENANT_ID, attrValue(event.getTenantId()));
+                }
+                if (Objects.nonNull(event.getMsgId())) {
+                    attrs.put(MessageHeaders.HEADER_MESSAGE_ID, attrValue(event.getMsgId()));
+                }
+                if (Objects.nonNull(event.getTag())) {
+                    attrs.put(tagHeaderKey(), attrValue(event.getTag()));
+                }
+                client.sendMessage(SendMessageRequest.builder()
+                        .queueUrl(queueUrl)
+                        .messageBody(serialization().serialize(event).toString())
+                        .messageAttributes(attrs)
+                        .build());
+                logger().info("Publish MQ [{}]: {}", queueUrl, serialization().serialize(event));
+            } catch (Exception ex) {
+                throw new IllegalStateException("Publish SQS event failed", ex);
+            }
+        };
     }
 
-    private void publish(MQEvent event) {
-        try {
-            String queueUrl = StrKit.hasText(event.getTopic()) ? event.getTopic() : "ddd4j.default.queue";
-            Map<String, MessageAttributeValue> attrs = new HashMap<>();
-            put(attrs, MessageHeaders.HEADER_DESTINATION_TOPIC, event.getTopic());
-            put(attrs, MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
-            if (Objects.nonNull(event.getMsgId())) {
-                put(attrs, MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-            }
-            if (Objects.nonNull(event.getTag())) {
-                put(attrs, MessageHeaders.HEADER_DESTINATION_TAG, event.getTag());
-            }
-            client.sendMessage(SendMessageRequest.builder()
-                    .queueUrl(queueUrl)
-                    .messageBody(serialization().serialize(event).toString())
-                    .messageAttributes(attrs)
-                    .build());
-            logger().info("Publish MQ [{}]: {}", queueUrl, serialization().serialize(event));
-        } catch (Exception ex) {
-            throw new IllegalStateException("Publish SQS event failed", ex);
-        }
-    }
-
-    private static void put(Map<String, MessageAttributeValue> attrs, String key, String value) {
-        if (Objects.isNull(value)) {
-            return;
-        }
-        attrs.put(key, MessageAttributeValue.builder().dataType("String").stringValue(value).build());
+    private static MessageAttributeValue attrValue(String value) {
+        return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
     }
 
     // ========================= 消费者 =========================
@@ -131,7 +138,7 @@ public class SqsMQClient implements MQClient {
     }
 
     private void handleMessage(Message message, String queueUrl, MQListener listener) {
-        String tag = attr(message, MessageHeaders.HEADER_DESTINATION_TAG);
+        String tag = attr(message, tagHeaderKey());
         if (!TagMatcher.match(tag, listener.getTags())) {
             try {
                 client.deleteMessage(b -> b.queueUrl(queueUrl).receiptHandle(message.receiptHandle()));
@@ -150,7 +157,6 @@ public class SqsMQClient implements MQClient {
                 ack.ackSingle();
                 return;
             }
-            // 同步 tenantId/msgId
             if (Objects.nonNull(tenantId)) {
                 event.setTenantId(tenantId);
             }

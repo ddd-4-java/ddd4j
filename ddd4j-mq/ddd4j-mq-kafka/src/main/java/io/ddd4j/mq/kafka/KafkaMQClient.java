@@ -6,12 +6,16 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -23,18 +27,20 @@ import java.util.function.Consumer;
 /**
  * Kafka 客户端实现（对齐 base-mq KafkaClient，纯 Java 零 Spring 依赖）。
  *
- * <p>命名 {@code KafkaMQClient} 避免与 {@link KafkaConsumer} 同名冲突。
- *
  * <p>双构造：
  * <ul>
  *   <li>{@link #KafkaMQClient(Producer)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
  *   <li>{@link #KafkaMQClient(KafkaMQProperties)} —— 自行根据 properties 构造 producer</li>
  * </ul>
  *
+ * <p>借鉴 1：分区 key（producer 按 tag/tenantId 路由，同 key 进同 partition 保证顺序）
+ * <p>借鉴 2：producer send 异步 callback（非阻塞发送、统一 ack/nack 收口）
+ * <p>借鉴 4：AdminClient 自动创建 topic（启动时确保 topic 存在，分区/副本数可配）
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-@Slf4j(topic = "### DDD4J-MQ : kafkaMQClient ###")
+@Slf4j(topic = "### DDD4J-MQ : KafkaMQClient ###")
 public class KafkaMQClient implements MQClient {
 
     /** 已注入或懒构造的 Kafka producer */
@@ -42,16 +48,20 @@ public class KafkaMQClient implements MQClient {
     /** KafkaMQProperties 用于懒构造 */
     private final KafkaMQProperties properties;
 
-    /** 构造方法 1：注入原生 producer */
+    /**
+     * 构造方法 1：注入原生 producer（runtime 自动装配用）。
+     */
     public KafkaMQClient(Producer<String, String> producer) {
-        this.producer = Objects.requireNonNull(producer, "producer");
+        this.producer = Objects.requireNonNull(producer, "KafkaMQ Producer is required");
         this.properties = null;
     }
 
-    /** 构造方法 2：自行根据 properties 构造 producer（lazy） */
+    /**
+     * 构造方法 2：自行根据 properties 构造 producer（lazy）。
+     */
     public KafkaMQClient(KafkaMQProperties properties) {
+        this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
         this.producer = null;
-        this.properties = Objects.requireNonNull(properties, "properties");
     }
 
     @Override
@@ -59,49 +69,113 @@ public class KafkaMQClient implements MQClient {
         return "kafka";
     }
 
+    /**
+     * Kafka topic 用 {@code "_"} 拼接 namespace（与 ActiveMQ 的 {@code "."} 区分）。
+     */
+    @Override
+    public String defaultConcat() {
+        return "_";
+    }
+
+    // ========================= 生产者 =========================
+
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        if (Objects.isNull(producer)) {
-            // 懒构造：从 KafkaMQProperties + MQProperties 合并
-            Properties props = new Properties();
-            props.put("bootstrap.servers", properties.getBootstrapServers());
-            props.put("acks", "all");
-            props.put("retries", mqProperties.getRetries());
-            props.put("batch.size", 16384);
-            props.put("linger.ms", 1);
-            props.put("buffer.memory", 33554432);
-            props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-            props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-            this.producer = new KafkaProducer<>(props);
+        if (Objects.isNull(producer) && Objects.nonNull(this.properties)) {
+            this.producer = new KafkaProducer<>(properties.producerProperties());
+            // 启动时通过 AdminClient 确保 topic 存在
+            if (properties.isAutoCreateTopics()) {
+                ensureTopic(mqProperties.getNamespace(), mqProperties.getDefaultTopic());
+            }
         }
-        Producer<String, String> p = this.producer;
+        Producer<String, String> producer1 = this.producer;
         return mqEvent -> {
             String payload = serialization().serialize(mqEvent);
-            String namespace = Objects.nonNull(mqEvent.getNamespace()) ? mqEvent.getNamespace() : mqProperties.getNamespace();
-            String topic = namespace + "_" + mqEvent.getTopic();
+            String topic = resolveTopic(mqEvent, mqProperties);
+            String key = partitionKey(mqEvent);  // 借鉴 1
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, payload);
+            // 异步 send 回调（非阻塞发布、统一 ack/nack 收口）
+            producer1.send(record, new SendCallback(topic, payload));
             log.info("Publish MQ [{}]: {}", topic, payload);
-            try {
-                p.send(new ProducerRecord<>(topic, payload));
-            } catch (Exception e) {
-                log.error("Publish MQ [{}]: {} failed!", topic, payload, e);
-            }
         };
     }
 
+    /**
+     * 根据 {@link PartitionKeyStrategy} 枚举计算 partition key。
+     * <p>Kafka 保证同 key 进同 partition → 同 tag / 同 tenantId 消息严格顺序。
+     * <p>TAG_TENANT/TAG/TENANT 三种复用父类 {@link #partitionKey(MQEvent)} 默认行为；NONE 返回 null；
+     * CUSTOM 时应由子类覆写 {@link #partitionKey(MQEvent)} 自定义。
+     */
+    @Override
+    public String partitionKey(MQEvent event) {
+        if (properties == null) {
+            return MQClient.super.partitionKey(event);  // 双构造 1：注入 producer 时走父类默认
+        }
+        return switch (properties.getPartitionKeyStrategy()) {
+            case NONE -> null;
+            case TAG -> event != null ? event.getTag() : null;
+            case TENANT -> event != null ? event.getTenantId() : null;
+            case TAG_TENANT -> MQClient.super.partitionKey(event);
+            case CUSTOM -> MQClient.super.partitionKey(event);  // 占位：子类应自己覆写
+        };
+    }
+
+    /**
+     * 借鉴 4：通过 AdminClient 自动创建 topic（如不存在）。
+     */
+    private void ensureTopic(String namespace, String defaultTopic) {
+        if (Objects.isNull(this.properties)){
+            return;
+        }
+        try (AdminClient admin = AdminClient.create(properties.adminProperties())) {
+            String concat = defaultConcat();
+            String topic = namespace != null && !namespace.isEmpty()
+                    ? namespace + concat + defaultTopic
+                    : defaultTopic;
+            if (admin.listTopics().names().get().contains(topic)) {
+                return;
+            }
+            NewTopic newTopic = new NewTopic(topic,
+                    properties.getDefaultTopicPartitions(),
+                    properties.getDefaultTopicReplication());
+            admin.createTopics(Collections.singletonList(newTopic)).all().get();
+            log.info("Kafka topic auto-created via AdminClient: {}", topic);
+        } catch (Exception ex) {
+            // 自动建 topic 失败不阻断 producer —— broker 可能禁用了自动创建或权限不足
+            log.warn("Kafka AdminClient create topic failed (will retry on next publish): {}", ex.getMessage());
+        }
+    }
+
+    /**
+     * 借鉴 2：异步发送回调（统一收口，不阻塞 producer.send()）。
+     */
+    private static final class SendCallback implements Callback {
+        private final String topic;
+        private final String payload;
+
+        SendCallback(String topic, String payload) {
+            this.topic = topic;
+            this.payload = payload;
+        }
+
+        @Override
+        public void onCompletion(RecordMetadata metadata, Exception exception) {
+            if (exception != null) {
+                log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
+            } else if (log.isDebugEnabled()) {
+                log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());
+            }
+        }
+    }
+
+    // ========================= 消费者 =========================
+
     @Override
     public boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
-        Properties props = new Properties();
+        Properties props = properties.consumerProperties(buildGroupId(mqListener));
         props.put("bootstrap.servers", properties.getBootstrapServers());
-        props.put("group.id", Objects.nonNull(mqListener.getGroup()) && !mqListener.getGroup().isEmpty()
-                ? mqListener.getGroup()
-                : "ddd4j-" + mqListener.getMethod().getName());
-        props.put("enable.auto.commit", mqProperties.isAutoAck());
-        props.put("auto.offset.reset", "earliest");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singletonList(
-                (Objects.nonNull(mqListener.getNamespace()) ? mqListener.getNamespace() : "") + "_" + mqListener.getTopic()));
+        consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
         Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "ddd4j-kafka-" + mqListener.getMethod().getName());
             t.setDaemon(true);
@@ -120,9 +194,10 @@ public class KafkaMQClient implements MQClient {
                     if (!TagMatcher.match(mqEvent.getTag(), mqListener.getTags())) {
                         continue;
                     }
+                    KafkaMessageAcknowledgment ack = new KafkaMessageAcknowledgment(consumer, record);
                     try {
-                        consume(mqListener, mqEvent);
-                        if (!mqProperties.isAutoAck()) {
+                        consume(mqListener, mqEvent, ack);
+                        if (!ack.isAcknowledged() && !mqProperties.isAutoAck()) {
                             consumer.commitSync();
                         }
                     } catch (Throwable e) {
@@ -135,5 +210,14 @@ public class KafkaMQClient implements MQClient {
             }
         });
         return true;
+    }
+
+    /**
+     * 构造 consumer group.id（兜底）。
+     */
+    private String buildGroupId(MQListener listener) {
+        return Objects.nonNull(listener.getGroup()) && !listener.getGroup().isEmpty()
+                ? listener.getGroup()
+                : "ddd4j-" + listener.getMethod().getName();
     }
 }

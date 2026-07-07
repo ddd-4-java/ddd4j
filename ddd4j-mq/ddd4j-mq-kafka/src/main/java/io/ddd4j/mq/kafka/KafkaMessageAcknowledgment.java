@@ -29,7 +29,7 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     public KafkaMessageAcknowledgment(Consumer<?, ?> consumer, ConsumerRecord<?, ?> record) {
-        this.consumer = Objects.requireNonNull(consumer, "consumer");
+        this.consumer = Objects.requireNonNull(consumer, "Kafka ");
         this.record = Objects.requireNonNull(record, "record");
     }
 

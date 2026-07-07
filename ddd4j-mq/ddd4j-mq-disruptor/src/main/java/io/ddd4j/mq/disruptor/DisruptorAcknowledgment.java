@@ -15,8 +15,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DisruptorAcknowledgment implements Acknowledgment {
 
-    private final DisruptorMQEvent event;
-    private final RingBuffer<DisruptorMQEvent> ringBuffer;
+    private final DisruptorMQClient.Event event;
+    private final RingBuffer<DisruptorMQClient.Event> ringBuffer;
     private final long deliveryTag;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
@@ -26,8 +26,8 @@ public class DisruptorAcknowledgment implements Acknowledgment {
      * @param deliveryTag 投递序号
      */
     public DisruptorAcknowledgment(
-            DisruptorMQEvent event,
-            RingBuffer<DisruptorMQEvent> ringBuffer,
+            DisruptorMQClient.Event event,
+            RingBuffer<DisruptorMQClient.Event> ringBuffer,
             long deliveryTag) {
         this.event = event;
         this.ringBuffer = ringBuffer;
@@ -41,12 +41,12 @@ public class DisruptorAcknowledgment implements Acknowledgment {
 
     @Override
     public String messageId() {
-        return event.getMessageId();
+        return event.messageId;
     }
 
     @Override
     public String correlationId() {
-        return event.getCorrelationId();
+        return Objects.nonNull(event.messageId) ? event.messageId : null;
     }
 
     @Override
@@ -112,13 +112,14 @@ public class DisruptorAcknowledgment implements Acknowledgment {
      * 将当前事件重新发布到 RingBuffer（本地 requeue）。
      */
     private void republish() {
-        ringBuffer.publishEvent((slot, sequence) -> slot.copyFrom(
-                event.getNamespace(),
-                event.getTopic(),
-                event.getTag(),
-                event.getMessageId(),
-                event.getCorrelationId(),
-                event.getPayload(),
-                sequence));
+        DisruptorMQClient.Event src = this.event;
+        ringBuffer.publishEvent((slot, sequence) -> {
+            slot.topic = src.topic;
+            slot.tag = src.tag;
+            slot.namespace = src.namespace;
+            slot.messageId = src.messageId;
+            slot.payload = src.payload;
+            slot.sequence = sequence;
+        });
     }
 }
