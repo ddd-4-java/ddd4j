@@ -7,7 +7,6 @@ import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.util.TagMatcher;
 import jakarta.jms.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
