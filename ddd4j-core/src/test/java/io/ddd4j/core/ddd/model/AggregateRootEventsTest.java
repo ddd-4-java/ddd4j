@@ -5,6 +5,7 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import org.fuin.ddd4j.core.EventType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class AggregateRootEventsTest {
 
         assertThat(order.hasDomainEvents()).isTrue();
         assertThat(order.domainEvents()).hasSize(1);
-        assertThat(order.domainEvents().get(0).source()).isEqualTo("created");
+        assertThat(order.domainEvents().get(0)).isEqualTo("created");
     }
 
     @Test
@@ -161,6 +162,11 @@ class AggregateRootEventsTest {
     static final class TestEvent extends DomainEvent<String> {
         TestEvent(String source) {
             super(source);
+        }
+
+        @Override
+        public EventType getEventType() {
+            return null;
         }
     }
 

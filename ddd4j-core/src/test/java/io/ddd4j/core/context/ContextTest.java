@@ -3,10 +3,12 @@ package io.ddd4j.core.context;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import org.fuin.ddd4j.core.EntityId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,8 +40,16 @@ class ContextTest {
     private DomainEventPublisher stub(String name) {
         return new DomainEventPublisher() {
             @Override
-            public <T> void publish(DomainEvent<T> event) {
-                // no-op
+            public <ID extends EntityId> void publish(DomainEvent<ID> event) {
+
+            }
+
+            @Override
+            public void publish(Object event) {
+            }
+
+            @Override
+            public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> domainEvents) {
             }
 
             @Override
@@ -56,7 +66,7 @@ class ContextTest {
         DomainEventPublisher publisher = stub("p1");
         BaseContext.inject(testKey, DomainEventPublisher.class, publisher);
 
-        Optional<DomainEventPublisher> resolved = BaseContext.inject(testKey, DomainEventPublisher.class);
+        Optional<DomainEventPublisher> resolved = BaseContext.get(testKey, DomainEventPublisher.class);
 
         assertThat(resolved).contains(publisher);
     }
@@ -86,7 +96,7 @@ class ContextTest {
     void baseContext_injectTyped_shouldReturnEmptyForTypeMismatch() {
         BaseContext.inject(testKey, "value");
 
-        assertThat(BaseContext.inject(testKey, Integer.class)).isEmpty();
+        assertThat(BaseContext.get(testKey, Integer.class)).isEmpty();
     }
 
     @Test
@@ -139,7 +149,7 @@ class ContextTest {
         DomainEventPublisher publisher = stub("tp");
         ThreadContext.inject(testKey, DomainEventPublisher.class, publisher);
 
-        Optional<DomainEventPublisher> resolved = ThreadContext.inject(testKey, DomainEventPublisher.class);
+        Optional<DomainEventPublisher> resolved = ThreadContext.get(testKey, DomainEventPublisher.class);
 
         assertThat(resolved).contains(publisher);
     }
@@ -148,12 +158,12 @@ class ContextTest {
     void threadContext_injectTyped_shouldReturnEmptyForTypeMismatch() {
         ThreadContext.inject(testKey, String.class, "value");
 
-        assertThat(ThreadContext.inject(testKey, Integer.class)).isEmpty();
+        assertThat(ThreadContext.get(testKey, Integer.class)).isEmpty();
     }
 
     @Test
     void threadContext_injectTyped_shouldReturnEmptyForMissing() {
-        assertThat(ThreadContext.inject(testKey, String.class)).isEmpty();
+        assertThat(ThreadContext.get(testKey, String.class)).isEmpty();
     }
 
     @Test
@@ -202,7 +212,7 @@ class ContextTest {
         DomainEventPublisher publisher = stub("base");
         Contexts.register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, publisher);
 
-        Optional<DomainEventPublisher> resolved = Contexts.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
+        Optional<DomainEventPublisher> resolved = Contexts.get(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
 
         assertThat(resolved).contains(publisher);
     }
@@ -224,7 +234,7 @@ class ContextTest {
         Contexts.register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, base);
         ThreadContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, thread);
 
-        Optional<DomainEventPublisher> resolved = Contexts.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
+        Optional<DomainEventPublisher> resolved = Contexts.get(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
 
         assertThat(resolved).contains(thread);
     }
@@ -234,6 +244,6 @@ class ContextTest {
         DomainEventPublisher publisher = stub("registered");
         Contexts.register(testKey, DomainEventPublisher.class, publisher);
 
-        assertThat(BaseContext.inject(testKey, DomainEventPublisher.class)).contains(publisher);
+        assertThat(BaseContext.get(testKey, DomainEventPublisher.class)).contains(publisher);
     }
 }

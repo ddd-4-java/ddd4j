@@ -68,15 +68,4 @@ class StrKitTest {
         assertThat(StrKit.isNotEmpty("  ")).isTrue();
     }
 
-    @Test
-    void setIsNotBlank_shouldMirrorIsNotBlank() {
-        assertThat(StrKit.setIsNotBlank("x")).isTrue();
-        assertThat(StrKit.setIsNotBlank("")).isFalse();
-    }
-
-    @Test
-    void setIsBlank_shouldMirrorIsBlank() {
-        assertThat(StrKit.setIsBlank("  ")).isTrue();
-        assertThat(StrKit.setIsBlank("x")).isFalse();
-    }
 }

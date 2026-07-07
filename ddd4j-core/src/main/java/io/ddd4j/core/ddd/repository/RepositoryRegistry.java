@@ -118,14 +118,14 @@ public final class RepositoryRegistry {
         String spiKey = key(modelClass);
 
         // 1. 线程级覆盖
-        Optional<Repository<M, ?>> threadScoped = ThreadContext.inject(spiKey, Repository.class)
+        Optional<Repository<M, ?>> threadScoped = ThreadContext.get(spiKey, Repository.class)
                 .map(r -> (Repository<M, ?>) r);
         if (threadScoped.isPresent()) {
             return threadScoped.get();
         }
 
         // 2. 全局默认
-        Optional<Repository<M, ?>> globalScoped = BaseContext.inject(spiKey, Repository.class)
+        Optional<Repository<M, ?>> globalScoped = BaseContext.get(spiKey, Repository.class)
                 .map(r -> (Repository<M, ?>) r);
         if (globalScoped.isPresent()) {
             return globalScoped.get();
@@ -152,13 +152,13 @@ public final class RepositoryRegistry {
     public static Repository<?, ?> repositoryForQuery(Class<? extends Query> queryClass) {
         String spiKey = key(queryClass);
 
-        Optional<Repository<?, ?>> threadScoped = ThreadContext.inject(spiKey, Repository.class)
+        Optional<Repository<?, ?>> threadScoped = ThreadContext.get(spiKey, Repository.class)
                 .map(r -> (Repository<?, ?>) r);
         if (threadScoped.isPresent()) {
             return threadScoped.get();
         }
 
-        Optional<Repository<?, ?>> globalScoped = BaseContext.inject(spiKey, Repository.class)
+        Optional<Repository<?, ?>> globalScoped = BaseContext.get(spiKey, Repository.class)
                 .map(r -> (Repository<?, ?>) r);
         if (globalScoped.isPresent()) {
             return globalScoped.get();

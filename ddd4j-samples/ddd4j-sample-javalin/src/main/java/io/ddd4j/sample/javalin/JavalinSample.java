@@ -16,18 +16,6 @@ import io.javalin.Javalin;
 /**
  * ddd4j 在 Javalin 框架下的最小启动示例。
  *
- * <h3>核心要点</h3>
- * <p>Javalin 本身<b>没有 DI 容器</b>，因此 ddd4j 不提供独立 runtime 模块。
- * 业务方只需要在 Javalin 启动时，把 4 个核心 SPI 实例手动写入
- * {@link BaseContext} 即可——这也是所有 ddd4j 业务代码查找 SPI 的统一入口。
- *
- * <h3>为什么不需要 ddd4j-runtime-javalin 模块</h3>
- * <p>把 SPI 注入到 {@link BaseContext} 这件事，本质上就是 4 行
- * {@code BaseContext.inject(key, type, instance)} 调用。任何基于 Javalin
- * 的工程都可以在自己的 main 方法里完成这件事，没有必要、也不应该有专门模块。
- * Spring / Quarkus / Guice 才需要独立 runtime 模块，因为它们要在容器启动期
- * <b>反射拿 SPI Bean</b>；Javalin 不存在容器抽象，所以也省掉了这一层。
- *
  * <h3>替代品对照</h3>
  * <table border="1">
  *   <caption>ddd4j 在 4 个 Web 框架中的适配策略</caption>
