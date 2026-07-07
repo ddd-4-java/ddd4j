@@ -1,6 +1,7 @@
 package io.ddd4j.mq.disruptor;
 
 import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.event.DisruptorEvent;
 import io.ddd4j.mq.BrokerType;
 import io.ddd4j.mq.message.Acknowledgment;
 
@@ -15,19 +16,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DisruptorAcknowledgment implements Acknowledgment {
 
-    private final DisruptorMQClient.Event event;
-    private final RingBuffer<DisruptorMQClient.Event> ringBuffer;
+    private final DisruptorEvent event;
+    private final RingBuffer<DisruptorEvent> ringBuffer;
     private final long deliveryTag;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
-     * @param event       当前事件
+     * @param event       当前事件（disruptor-extension 的 DisruptorEvent）
      * @param ringBuffer  RingBuffer（requeue 用）
      * @param deliveryTag 投递序号
      */
     public DisruptorAcknowledgment(
-            DisruptorMQClient.Event event,
-            RingBuffer<DisruptorMQClient.Event> ringBuffer,
+            DisruptorEvent event,
+            RingBuffer<DisruptorEvent> ringBuffer,
             long deliveryTag) {
         this.event = event;
         this.ringBuffer = ringBuffer;
@@ -41,12 +42,12 @@ public class DisruptorAcknowledgment implements Acknowledgment {
 
     @Override
     public String messageId() {
-        return event.messageId;
+        return event.getMessageId();
     }
 
     @Override
     public String correlationId() {
-        return Objects.nonNull(event.messageId) ? event.messageId : null;
+        return Objects.nonNull(event.getMessageId()) ? event.getMessageId() : null;
     }
 
     @Override
@@ -112,14 +113,14 @@ public class DisruptorAcknowledgment implements Acknowledgment {
      * 将当前事件重新发布到 RingBuffer（本地 requeue）。
      */
     private void republish() {
-        DisruptorMQClient.Event src = this.event;
+        DisruptorEvent src = this.event;
         ringBuffer.publishEvent((slot, sequence) -> {
-            slot.topic = src.topic;
-            slot.tag = src.tag;
-            slot.namespace = src.namespace;
-            slot.messageId = src.messageId;
-            slot.payload = src.payload;
-            slot.sequence = sequence;
+            slot.setTopic(src.getTopic());
+            slot.setTag(src.getTag());
+            slot.setNamespace(src.getNamespace());
+            slot.setMessageId(src.getMessageId());
+            slot.setPayload(src.getPayload());
+            slot.setSequence(sequence);
         });
     }
 }

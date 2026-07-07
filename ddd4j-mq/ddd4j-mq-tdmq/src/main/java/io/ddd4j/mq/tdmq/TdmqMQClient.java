@@ -157,6 +157,7 @@ public class TdmqMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    @Override
     public void close() {
         for (Subscription subscription : subscriptions) {
             try {

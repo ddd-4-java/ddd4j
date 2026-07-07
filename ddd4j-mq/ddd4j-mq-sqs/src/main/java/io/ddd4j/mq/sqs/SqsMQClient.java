@@ -207,6 +207,7 @@ public class SqsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    @Override
     public void close() {
         for (ScheduledExecutorService exec : pollers) {
             exec.shutdownNow();

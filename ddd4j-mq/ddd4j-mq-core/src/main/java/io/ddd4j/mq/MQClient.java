@@ -41,7 +41,7 @@ import java.util.function.Consumer;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public interface MQClient {
+public interface MQClient extends AutoCloseable {
 
     /** {@link BaseContext} key：MQ 序列化器 */
     String MQ_SERIALIZATION = MQEvent.MQ_EVENT_PUBLISHER + ".serialization";
@@ -95,6 +95,7 @@ public interface MQClient {
             }
         }
         log.info("MQ [{}] listening {} listener(s)", impl(), success);
+
     }
 
     /**
@@ -130,6 +131,11 @@ public interface MQClient {
      * 启动（如统一启动所有消费者）。
      */
     default void start() {
+    }
+
+    @Override
+    default void close() {
+        logger().info("Shutting down MQClient [{}]", impl());
     }
 
     /**

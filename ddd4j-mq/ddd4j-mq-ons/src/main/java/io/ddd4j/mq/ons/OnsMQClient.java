@@ -156,6 +156,7 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    @Override
     public void close() {
         for (com.aliyun.openservices.ons.api.Consumer c : new ArrayList<>(consumers)) {
             try {

@@ -15,6 +15,7 @@ import java.lang.annotation.*;
  *    环境隔离 业务分类 细分标签
  * </pre>
  * <ul>
+ *   <li>{@code namespace} —— 命名空间，用于多环境 / 多租户隔离</li>
  *   <li>{@code topic} —— 消费线程隔离维度，不同 topic 走不同消费线程池</li>
  *   <li>{@code tag} —— 同 topic 下共享消费线程，做消息过滤</li>
  * </ul>

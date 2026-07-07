@@ -189,6 +189,7 @@ public class PulsarMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    @Override
     public void close() throws Exception {
         for (org.apache.pulsar.client.api.Consumer<?> c : new ArrayList<>(consumers)) {
             try {

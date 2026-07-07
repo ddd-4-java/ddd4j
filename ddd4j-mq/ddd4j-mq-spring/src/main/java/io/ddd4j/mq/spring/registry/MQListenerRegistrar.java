@@ -50,6 +50,7 @@ public class MQListenerRegistrar {
      * @param event Spring 上下文刷新完成事件
      */
     @EventListener
+    @SuppressWarnings("rawtypes")
     public void onContextRefreshed(ContextRefreshedEvent event) {
         // 仅处理根上下文，避免 MVC/WebFlux 等父子容器重复触发
         if (Objects.nonNull(event.getApplicationContext().getParent())) {
@@ -66,7 +67,6 @@ public class MQListenerRegistrar {
             return;
         }
 
-        @SuppressWarnings("rawtypes")
         MQEventStorer storer = storerProvider.getIfAvailable();
         int total = listeners.size();
 
