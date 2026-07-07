@@ -3,13 +3,6 @@ package io.ddd4j.extension.monitor.application.service;
 import io.ddd4j.extension.monitor.domain.common.vo.CodeVersionVO;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -18,31 +11,39 @@ import java.util.Properties;
 /**
  * 代码版本服务
  *
- * <p>监听应用启动事件，读取 git.properties 中的代码版本信息，
- * 并在应用启动成功后通过告警机器人发送版本通知。
+ * <p>读取 git.properties 中的代码版本信息，并在应用启动成功后通过告警机器人发送版本通知。
+ *
+ * <p>本类为纯 Java 实现，不再依赖 Spring 容器；上层框架在应用就绪后调用 {@link #init()} 即可触发版本通知。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-@Service
-public class CodeVersionService implements ApplicationListener<ApplicationEvent> {
+public class CodeVersionService {
     /**
      * 当前代码版本信息，应用启动时初始化
      */
     public static CodeVersionVO CODE_VERSION = null;
-    @Autowired
-    Sender sender;
-    /**
-     * 应用名称，从配置文件中读取
-     */
-    @Value("${spring.application.name:UNKNOWN}")
-    private String appName;
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (!(event instanceof ContextRefreshedEvent refreshed) || Objects.nonNull(refreshed.getApplicationContext().getParent())) {
-            return;
-        }
+    /**
+     * 消息发送器
+     */
+    private final Sender sender;
+    /**
+     * 应用名称，由构造方法传入
+     */
+    private final String appName;
+
+    public CodeVersionService(Sender sender, String appName) {
+        this.sender = sender;
+        this.appName = appName;
+    }
+
+    /**
+     * 初始化：读取代码版本信息并发送启动通知。
+     *
+     * <p>由上层框架在应用就绪后调用，等价于原先监听 {@code ContextRefreshedEvent} 的行为。
+     */
+    public void init() {
         try {
             Properties p = new Properties();
             p.load(this.getClass().getClassLoader().getResourceAsStream("git.properties"));
@@ -65,7 +66,7 @@ public class CodeVersionService implements ApplicationListener<ApplicationEvent>
     }
 
     private void markdownTextAppend(StringBuilder sb, String key, String value) {
-        if (StringUtils.hasText(value)) {
+        if (StrKit.isNotBlank(value)) {
             sb.append("**").append(key).append(":** ").append(value).append("\n");
         }
     }

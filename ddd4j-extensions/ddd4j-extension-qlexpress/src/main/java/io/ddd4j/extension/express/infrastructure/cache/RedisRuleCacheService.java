@@ -2,19 +2,19 @@ package io.ddd4j.extension.express.infrastructure.cache;
 
 import io.ddd4j.extension.express.application.service.RuleCacheService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
-import org.springframework.data.redis.core.RedisTemplate;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Redis规则缓存服务实现
+ * 内存规则缓存服务实现
  *
- * <p>基础设施层：使用Redis实现缓存。
+ * <p>基础设施层：使用进程内 {@link ConcurrentHashMap} 实现缓存。
  * 当 Caffeine 不可用时，作为回退方案使用。
  *
- * <p>注意：此类通过ExpressAutoConfiguration自动配置，无需手动添加@Service注解
+ * <p>该实现为纯 Java 版本，去除了对 Redis 的依赖。
+ * 如需分布式缓存，可在上层基于 {@link RuleCacheService} 接口提供 Redis/Jedis 实现。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @version 1.0
@@ -22,14 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisRuleCacheService implements RuleCacheService {
 
-    private static final String RULE_CACHE_PREFIX = "rule_engine:rule:";
-    private static final long RULE_CACHE_TTL = 300; // 5分钟缓存
-
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    public RedisRuleCacheService(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    private final ConcurrentHashMap<String, RuleDefinition> store = new ConcurrentHashMap<>();
 
     /**
      * 获取规则
@@ -39,11 +32,10 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !StrKit.hasText(ruleCode)) {
             return null;
         }
-        String cacheKey = RULE_CACHE_PREFIX + ruleCode;
-        return (RuleDefinition) redisTemplate.opsForValue().get(cacheKey);
+        return store.get(ruleCode);
     }
 
     /**
@@ -55,12 +47,11 @@ public class RedisRuleCacheService implements RuleCacheService {
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
         if (Objects.isNull(ruleCode)
-                || !org.springframework.util.StringUtils.hasText(ruleCode)
+                || !StrKit.hasText(ruleCode)
                 || Objects.isNull(rule)) {
             return;
         }
-        String cacheKey = RULE_CACHE_PREFIX + ruleCode;
-        redisTemplate.opsForValue().set(cacheKey, rule, RULE_CACHE_TTL, TimeUnit.SECONDS);
+        store.put(ruleCode, rule);
     }
 
     /**
@@ -70,11 +61,10 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !StrKit.hasText(ruleCode)) {
             return;
         }
-        String cacheKey = RULE_CACHE_PREFIX + ruleCode;
-        redisTemplate.delete(cacheKey);
+        store.remove(ruleCode);
     }
 
     /**
@@ -82,9 +72,6 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evictAll() {
-        Set<String> keys = redisTemplate.keys(RULE_CACHE_PREFIX + "*");
-        if (Objects.nonNull(keys) && !keys.isEmpty()) {
-            redisTemplate.delete(keys);
-        }
+        store.clear();
     }
 }

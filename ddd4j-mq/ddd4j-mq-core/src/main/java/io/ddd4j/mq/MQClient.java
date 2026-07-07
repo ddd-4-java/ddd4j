@@ -16,8 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -76,11 +78,16 @@ public interface MQClient extends AutoCloseable {
         if (Objects.nonNull(storer)) {
             BaseContext.inject(MQ_STORER, storer);
         }
-        // 初始化生产者，注册为 MQEventPublisher（Consumer<MQEvent>）
+        // 初始化生产者，注册到 publishers Map（key=impl()，允许多 broker 共存）
         Consumer<MQEvent> producer = initProducer(properties);
-        if (Objects.nonNull(producer) && !BaseContext.contains(MQEvent.MQ_EVENT_PUBLISHER)) {
+        if (Objects.nonNull(producer)) {
             log.info("Initializing MQEventPublisher for [{}]", impl());
-            BaseContext.inject(MQEvent.MQ_EVENT_PUBLISHER, producer);
+            Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
+            if (Objects.isNull(publishers)) {
+                publishers = new ConcurrentHashMap<>();
+                BaseContext.inject(MQEvent.MQ_EVENT_PUBLISHER, publishers);
+            }
+            publishers.put(impl(), producer);
         }
         // 初始化消费者
         log.info("Initializing MQEventListener for [{}]", impl());

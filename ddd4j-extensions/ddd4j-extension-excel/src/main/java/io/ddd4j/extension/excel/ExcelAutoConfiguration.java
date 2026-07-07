@@ -6,8 +6,6 @@
  */
 package io.ddd4j.extension.excel;
 
-import org.springframework.context.annotation.Configuration;
-
 /**
  * Excel 自动配置类
  *
@@ -15,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Configuration
 public class ExcelAutoConfiguration {
 
 }

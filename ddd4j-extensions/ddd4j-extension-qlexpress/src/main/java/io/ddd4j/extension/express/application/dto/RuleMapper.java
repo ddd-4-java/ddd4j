@@ -1,7 +1,6 @@
 package io.ddd4j.extension.express.application.dto;
 
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
@@ -15,7 +14,6 @@ import java.util.Objects;
  * @version 1.0
  * @since 1.0
  */
-@Component
 public class RuleMapper {
 
     /**

@@ -1,7 +1,6 @@
 package io.ddd4j.extension.express.infrastructure.persistence;
 
 import io.ddd4j.extension.express.domain.repository.RuleDefinitionRepository;
-import org.springframework.stereotype.Repository;
 
 /**
  * 规则定义仓储实现
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  * @since 1.0
  */
-@Repository
 public interface RuleDefinitionRepositoryImpl extends RuleDefinitionRepository {
 
     // 默认实现为空，需要根据实际持久化方案来实现

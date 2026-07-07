@@ -8,10 +8,8 @@ import io.ddd4j.extension.monitor.application.service.CodeVersionService;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
 import io.ddd4j.extension.monitor.infras.utils.IpUtils;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.spring.context.SpringContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +49,10 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
      * 异常堆栈转换器
      */
     private ThrowableProxyConverter throwableProxyConverter = new ThrowableProxyConverter();
+    /**
+     * 监控配置属性（用于读取最大告警长度等配置，替代原先通过 SpringContext 获取）
+     */
+    private BaseMonitorProperties properties;
 
     @Override
     public void start() {
@@ -66,7 +68,7 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
             return CoreConstants.EMPTY_STRING;
         }
         StringBuilder sb = new StringBuilder();
-        if (StringUtils.hasText(this.getPresentationHeader())) {
+        if (StrKit.isNotBlank(this.getPresentationHeader())) {
             sb.append("## ").append(this.getPresentationHeader()).append("\n");
         }
         this.markdownTextAppend(sb, "App", app);
@@ -79,8 +81,10 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
         this.mdcAppend(sb, event);
         if (Objects.nonNull(event.getThrowableProxy())) {
             String stackTrace = throwableProxyConverter.convert(event);
-            BaseMonitorProperties baseMonitorProperties = SpringContext.getBean(BaseMonitorProperties.class);
-            stackTrace = stackTrace.length() > baseMonitorProperties.getLog().getConfig().getMaxLength() ? stackTrace.substring(0, baseMonitorProperties.getLog().getConfig().getMaxLength() - 1) + "..." : stackTrace;
+            Integer maxLength = Objects.nonNull(properties) ? properties.getLog().getConfig().getMaxLength() : null;
+            if (Objects.nonNull(maxLength) && stackTrace.length() > maxLength) {
+                stackTrace = stackTrace.substring(0, maxLength - 1) + "...";
+            }
             this.markdownTextAppend(sb, "StackTraces", stackTrace);
         }
         return sb.toString();
@@ -88,7 +92,7 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
 
     // md 格式
     private void markdownTextAppend(StringBuilder sb, String key, String value) {
-        if (StringUtils.hasText(value)) {
+        if (StrKit.isNotBlank(value)) {
             sb.append("**").append(key).append(":** ").append(value).append("\n");
         }
     }
@@ -97,7 +101,7 @@ public class RobotLayout extends LayoutBase<ILoggingEvent> {
     private void mdcAppend(StringBuilder sb, ILoggingEvent event) {
         Map<String, String> mdcPropertyMap = event.getMDCPropertyMap();
         for (Map.Entry<String, String> entry : mdcPropertyMap.entrySet()) {
-            if (StringUtils.hasText(entry.getKey()) && StringUtils.hasText(entry.getValue()) && mdcList.contains(entry.getKey())) {
+            if (StrKit.isNotBlank(entry.getKey()) && StrKit.isNotBlank(entry.getValue()) && mdcList.contains(entry.getKey())) {
                 this.markdownTextAppend(sb, entry.getKey(), entry.getValue());
             }
         }

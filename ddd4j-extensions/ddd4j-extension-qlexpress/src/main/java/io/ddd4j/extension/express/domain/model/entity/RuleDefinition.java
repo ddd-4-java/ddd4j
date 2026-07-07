@@ -1,5 +1,7 @@
 package io.ddd4j.extension.express.domain.model.entity;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -428,7 +430,7 @@ public class RuleDefinition implements Serializable {
     public boolean isFunctionRule() {
         return "FUNCTION".equals(ruleType)
                 && Objects.nonNull(functionClass)
-                && org.springframework.util.StringUtils.hasText(functionClass);
+                && StrKit.hasText(functionClass);
     }
 
     /**
@@ -438,6 +440,6 @@ public class RuleDefinition implements Serializable {
      */
     public boolean isExpressionRule() {
         return Objects.nonNull(ruleExpression)
-                && org.springframework.util.StringUtils.hasText(ruleExpression);
+                && StrKit.hasText(ruleExpression);
     }
 }

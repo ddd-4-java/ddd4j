@@ -10,11 +10,10 @@ import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.google.common.util.concurrent.RateLimiter;
 import io.ddd4j.extension.monitor.application.service.Sender;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
-import io.ddd4j.spring.context.SpringContext;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -56,6 +55,15 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     private Double rateLimiterPermitsPerSecond = 0.2857;
 
     /**
+     * 监控配置属性（由构建方注入，替代原先通过 SpringContext 获取）
+     */
+    private BaseMonitorProperties properties;
+    /**
+     * 消息发送器（由构建方注入，替代原先通过 SpringContext 获取）
+     */
+    private Sender sender;
+
+    /**
      * 定义 layout 处理器 Encoder，用于格式化日志输出
      *
      * @see PatternLayoutEncoder
@@ -73,14 +81,19 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
      * 构建 RobotAppender 实例
      *
      * @param loggerContext Logback 日志上下文
+     * @param properties    监控配置属性
+     * @param sender        消息发送器
+     * @param appName       应用名称（当配置中未指定时使用）
      * @return RobotAppender 实例
      */
-    public static RobotAppender build(LoggerContext loggerContext) {
+    public static RobotAppender build(LoggerContext loggerContext, BaseMonitorProperties properties, Sender sender, String appName) {
         RobotAppender robotAppender = new RobotAppender();
-        robotAppender.setRateLimiterPermitsPerSecond(SpringContext.getBean(BaseMonitorProperties.class).getLog().getRateLimiterPermitsPerSecond());
+        robotAppender.setProperties(properties);
+        robotAppender.setSender(sender);
+        robotAppender.setRateLimiterPermitsPerSecond(properties.getLog().getRateLimiterPermitsPerSecond());
         robotAppender.setContext(loggerContext);
-        RobotLayout layout = buildRobotLayout(loggerContext);
-        layout.setMdcList(SpringContext.getBean(BaseMonitorProperties.class).getLog().getConfig().getMdcList());
+        RobotLayout layout = buildRobotLayout(loggerContext, properties, appName);
+        layout.setMdcList(properties.getLog().getConfig().getMdcList());
         layout.start();
         robotAppender.setLayout(layout);
         robotAppender.start();
@@ -88,28 +101,28 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
     }
 
     // 构建RobotLayout
-    private static RobotLayout buildRobotLayout(LoggerContext loggerContext) {
+    private static RobotLayout buildRobotLayout(LoggerContext loggerContext, BaseMonitorProperties properties, String appName) {
         RobotLayout layout = new RobotLayout();
         layout.setContext(loggerContext);
-        BaseMonitorProperties.Log.App applicationConfig = SpringContext.getBean(BaseMonitorProperties.class).getLog().getApp();
+        layout.setProperties(properties);
+        BaseMonitorProperties.Log.App applicationConfig = properties.getLog().getApp();
         if (Objects.isNull(applicationConfig)) {
             applicationConfig = new BaseMonitorProperties.Log.App();
         }
         String app = applicationConfig.getName();
-        if (!StringUtils.hasText(app)) {
-            app = SpringContext.getEnv().getProperty("spring.application.name");
+        if (!StrKit.isNotBlank(app)) {
+            app = appName;
         }
         layout.setApp(app);
         String project = applicationConfig.getProject();
-        if (StringUtils.hasText(project)) {
+        if (StrKit.isNotBlank(project)) {
             layout.setProject(project);
         }
         return layout;
     }
 
-    private static synchronized void acquire() {
+    private static synchronized void acquire(BaseMonitorProperties properties) {
         if (Objects.isNull(rateLimiter)) {
-            BaseMonitorProperties properties = SpringContext.getBean(BaseMonitorProperties.class);
             rateLimiter = RateLimiter.create(properties.getLog().getRateLimiterPermitsPerSecond());
         }
         rateLimiter.acquire();
@@ -123,7 +136,7 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
         }
         byte[] encodeBytes = encoder.encode(eventObject);
         try {
-            acquire();
+            acquire(properties);
             String msg = new String(encodeBytes, StandardCharsets.UTF_8);
             if (!Objects.equals(LATEST_MSG, msg)) {
                 LATEST_MSG = msg;
@@ -131,7 +144,7 @@ public class RobotAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
             }
             if (LATEST_MSG_COUNT.incrementAndGet() < 3) {
                 // 连续发送同一条消息小于3次
-                SpringContext.getBean(Sender.class).send(msg);
+                sender.send(msg);
             }
         } catch (Exception e) {
             log.error("send robot error", e);

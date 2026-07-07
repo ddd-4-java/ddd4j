@@ -1,15 +1,16 @@
 package io.ddd4j.extension.monitor.domain.dingding.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 
 /**
@@ -27,24 +28,31 @@ public class DingDingService {
     /**
      * HTTP 客户端
      */
-    private static final RestTemplate restTemplate = new RestTemplate();
+    private static final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
 
     /**
      * 处理发送的钉钉消息
      *
-     * @param msg json格式数据
+     * @param accessToken 钉钉机器人 access_token
+     * @param secret      钉钉机器人加签密钥
+     * @param msg         json格式数据
      */
     public static void send(String accessToken, String secret, String msg) {
         try {
             Long timestamp = System.currentTimeMillis();
             String sign = getSign(timestamp, secret);
             String dingUrl = BASE_URL + accessToken + "&timestamp=" + timestamp + "&sign=" + sign;
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE));
-            HttpEntity<String> httpEntity = new HttpEntity<>(msg, headers);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(dingUrl))
+                    .timeout(Duration.ofSeconds(10))
+                    .header("Content-Type", "application/json; charset=UTF-8")
+                    .POST(HttpRequest.BodyPublishers.ofString(msg, StandardCharsets.UTF_8))
+                    .build();
 
-            String response = restTemplate.postForObject(dingUrl, httpEntity, String.class);
-            log.debug("【发送钉钉群消息】消息响应结果：{}", response);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            log.debug("【发送钉钉群消息】消息响应结果：{}", response.body());
         } catch (Exception e) {
             log.error("【发送钉钉群消息】error：" + e.getMessage(), e);
         }

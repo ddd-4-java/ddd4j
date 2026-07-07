@@ -6,9 +6,8 @@ import com.alibaba.qlexpress4.runtime.QContext;
 import com.alibaba.qlexpress4.runtime.function.CustomFunction;
 import io.ddd4j.extension.express.application.service.RuleManagementService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
-import jakarta.annotation.PostConstruct;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -30,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Component
 @Slf4j
 public class DynamicFunctionLoader {
 
@@ -48,8 +46,10 @@ public class DynamicFunctionLoader {
 
     /**
      * 初始化时加载所有启用的自定义函数
+     *
+     * <p>纯 Java 版本不再依赖容器的 {@code @PostConstruct} 回调，
+     * 需由调用方在构造实例后显式调用本方法（或在装配逻辑中调用）。
      */
-    @PostConstruct
     public void init() {
         try {
             loadAllEnabledFunctions();
@@ -101,7 +101,7 @@ public class DynamicFunctionLoader {
     private void loadClassFunction(RuleDefinition rule) throws Exception {
         String functionClass = rule.getFunctionClass();
         if (Objects.isNull(functionClass)
-                || !org.springframework.util.StringUtils.hasText(functionClass)) {
+                || !StrKit.hasText(functionClass)) {
             log.warn("函数类名为空: {}", rule.getRuleCode());
             return;
         }
@@ -119,7 +119,7 @@ public class DynamicFunctionLoader {
                 // 如果是静态方法，通过反射调用
                 String methodName = rule.getFunctionMethod();
                 if (Objects.nonNull(methodName)
-                        && org.springframework.util.StringUtils.hasText(methodName)) {
+                        && StrKit.hasText(methodName)) {
                     Method method = clazz.getMethod(methodName, Object[].class);
                     // 创建包装函数
                     CustomFunction wrapper = createMethodWrapper(clazz, method);

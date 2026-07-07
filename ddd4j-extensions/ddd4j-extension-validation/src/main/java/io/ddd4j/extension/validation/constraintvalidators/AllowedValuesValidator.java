@@ -1,9 +1,9 @@
 package io.ddd4j.extension.validation.constraintvalidators;
 
 import io.ddd4j.extension.validation.constraints.AllowableValues;
+import io.ddd4j.kit.lang.StrKit;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +22,12 @@ public class AllowedValuesValidator implements ConstraintValidator<AllowableValu
     @Override
     public void initialize(AllowableValues annotation) {
         nullable = annotation.nullable();
-        allows = Arrays.asList(StringUtils.tokenizeToStringArray(annotation.allows(), ","));
+        allows = Arrays.asList(StrKit.tokenizeToStringArray(annotation.allows(), ","));
     }
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (nullable && !StringUtils.hasText(value)) {
+        if (nullable && !StrKit.hasText(value)) {
             return true;
         }
         return allows.contains(value);

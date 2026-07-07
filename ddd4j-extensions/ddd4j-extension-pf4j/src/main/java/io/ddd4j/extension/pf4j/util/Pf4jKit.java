@@ -34,7 +34,7 @@ public class Pf4jKit {
      * JDK 字符串判空（替代 Spring StringUtils.hasText）。
      */
     private static boolean hasText(String str) {
-        if (Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str)) {
+        if (Objects.isNull(str) || str.isEmpty()) {
             return false;
         }
         for (int i = 0; i < str.length(); i++) {

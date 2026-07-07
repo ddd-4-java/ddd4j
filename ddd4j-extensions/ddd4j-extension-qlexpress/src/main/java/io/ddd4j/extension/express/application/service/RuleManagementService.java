@@ -4,6 +4,7 @@ import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
 import io.ddd4j.extension.express.domain.model.vo.RuleValidationResult;
 import io.ddd4j.extension.express.domain.repository.RuleDefinitionRepository;
 import io.ddd4j.extension.express.domain.service.RuleEngineDomainService;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -235,7 +236,7 @@ public class RuleManagementService {
      * @return 规则定义，如果不存在返回Optional.empty()
      */
     public Optional<RuleDefinition> getRuleByCode(String ruleCode) {
-        if (Objects.isNull(ruleCode) || !org.springframework.util.StringUtils.hasText(ruleCode)) {
+        if (Objects.isNull(ruleCode) || !StrKit.hasText(ruleCode)) {
             return Optional.empty();
         }
 

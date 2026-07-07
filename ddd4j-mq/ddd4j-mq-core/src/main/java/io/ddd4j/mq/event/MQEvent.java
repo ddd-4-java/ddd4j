@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -21,9 +22,10 @@ import java.util.function.Consumer;
  * <p>业务事件继承本类后，通过 {@link #publish()} 发布到 MQ Broker。
  * 仅走 MQ 通道，进程内事件请使用 {@code io.ddd4j.core.ddd.event.DomainEvent}。
  *
- * <p>发布机制（对齐 base-mq）：{@link #publish(String, String, String)} 通过
- * {@link BaseContext} 查找 key 为 {@link #MQ_EVENT_PUBLISHER} 的 {@link Consumer<MQEvent>}，
- * 由 {@link MQClient#initProducer(MQProperties)} 创建并注册。
+ * <p>发布机制（多 broker 路由）：{@link #publish(String, String, String)} 从 {@link BaseContext}
+ * 查找 key 为 {@link #MQ_EVENT_PUBLISHER} 的 {@code Map<String, Consumer<MQEvent>>}，
+ * 按 {@link #broker} 字段（或全局 {@link MQProperties#getBroker()} 配置）匹配对应的 broker 生产者。
+ * 每个 {@link MQClient} 在 {@code initProducer} 后以 {@link MQClient#impl()} 为 key 注册。
  *
  * <h3>使用示例</h3>
  * <pre>{@code
@@ -31,7 +33,12 @@ import java.util.function.Consumer;
  *     private String orderId;
  *     private BigDecimal amount;
  * }
+ *
+ * // 1. 走全局默认 broker（配置 ddd4j.mq.broker=kafka）
  * new OrderCreatedEvent("OBS-001", BigDecimal.valueOf(99.9)).publish();
+ *
+ * // 2. 指定推送到 redisStream
+ * new OrderCreatedEvent("OBS-001", BigDecimal.valueOf(99.9)).broker("redisStream").publish();
  * }</pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -46,14 +53,15 @@ public class MQEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * {@link BaseContext} key：MQ 事件发布者（{@link Consumer<MQEvent>}）。
-     * 由 {@link MQClient} 在 {@code initProducer} 后注册。
+     * {@link BaseContext} key：MQ 事件发布者 Map（{@code Map<String, Consumer<MQEvent>>}）。
+     * key = {@link MQClient#impl()} 返回值（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}），
+     * value = {@link MQClient#initProducer(MQProperties)} 返回的发布函数。
      */
     public static final String MQ_EVENT_PUBLISHER = "MQEventPublisher";
 
     /**
      * {@link BaseContext} key：MQ 配置（{@link MQProperties}），
-     * 用于获取 defaultTopic / namespace 默认值。
+     * 用于获取 defaultTopic / namespace / broker 默认值。
      */
     public static final String MQ_PROPERTIES = "MQProperties";
 
@@ -70,6 +78,11 @@ public class MQEvent implements Serializable {
     /** 租户 ID，默认从线程上下文获取（外部 JSON 常用 tenant_id） */
     @JsonAlias("tenant_id")
     protected String tenantId;
+    /**
+     * 目标 broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）。
+     * <p>为空时走全局默认 broker（{@link MQProperties#getBroker()} 配置）。
+     */
+    protected String broker;
 
     /**
      * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。
@@ -102,8 +115,14 @@ public class MQEvent implements Serializable {
     /**
      * 发布 MQ 事件。
      *
-     * <p>从 {@link BaseContext} 查找 {@link Consumer<MQEvent>}（由 {@link MQClient} 注册），
-     * 找到后调用 {@code consumer.accept(this)} 把事件推送到 broker 生产者。
+     * <p>从 {@link BaseContext} 查找 {@code Map<String, Consumer<MQEvent>>}（由各 {@link MQClient} 注册），
+     * 按以下优先级匹配目标 broker 生产者：
+     * <ol>
+     *   <li>{@link #broker} 字段非空 → 用此值作 key 查找</li>
+     *   <li>{@link MQProperties#getBroker()} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
+     *   <li>仅注册了一个 broker → 直接用（便捷场景）</li>
+     *   <li>都找不到 → warn 日志，事件不发布</li>
+     * </ol>
      */
     public void publish(String topic, String tag, String tenantId) {
         setTopic(topic);
@@ -114,16 +133,50 @@ public class MQEvent implements Serializable {
         setTag(tag);
         setTenantId(Objects.nonNull(tenantId) ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
         setMsgId(Objects.isNull(getMsgId()) ? String.valueOf(System.currentTimeMillis()) : getMsgId());
-        if (BaseContext.contains(MQ_EVENT_PUBLISHER)) {
-            BaseContext.<String, Consumer<MQEvent>>get(MQ_EVENT_PUBLISHER).accept(this);
+
+        Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQ_EVENT_PUBLISHER);
+        if (Objects.isNull(publishers) || publishers.isEmpty()) {
+            log.warn("No MQEventPublisher registered, event [{}] not published", getTopic());
+            return;
+        }
+
+        // 按优先级查找目标 broker
+        String targetBroker = getBroker();
+        if (Objects.isNull(targetBroker) || targetBroker.isEmpty()) {
+            MQProperties props = BaseContext.get(MQ_PROPERTIES);
+            targetBroker = Objects.nonNull(props) ? props.getBroker() : null;
+        }
+        Consumer<MQEvent> publisher = null;
+        if (Objects.nonNull(targetBroker) && !targetBroker.isEmpty() && !"none".equalsIgnoreCase(targetBroker)) {
+            publisher = publishers.get(targetBroker);
+        }
+        if (Objects.isNull(publisher) && publishers.size() == 1) {
+            publisher = publishers.values().iterator().next();
+        }
+        if (Objects.nonNull(publisher)) {
+            publisher.accept(this);
         } else {
-            log.warn("MQEventPublisher (Consumer<MQEvent>) not registered in BaseContext, event {} not published",
-                    getTopic());
+            log.warn("No MQEventPublisher found for broker=[{}], event [{}] not published. Registered: {}",
+                    targetBroker, getTopic(), publishers.keySet());
         }
     }
 
+    /**
+     * 链式设置租户 ID。
+     */
     public <T extends MQEvent> T tenantId(String tenantId) {
         this.tenantId = tenantId;
+        return (T) this;
+    }
+
+    /**
+     * 链式设置目标 broker。
+     *
+     * @param broker broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）
+     * @return this
+     */
+    public <T extends MQEvent> T broker(String broker) {
+        this.broker = broker;
         return (T) this;
     }
 }

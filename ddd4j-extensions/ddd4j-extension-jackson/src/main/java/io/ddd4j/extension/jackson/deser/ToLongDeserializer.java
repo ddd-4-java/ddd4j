@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,7 +23,7 @@ public class ToLongDeserializer extends JsonDeserializer<Long> {
             throws IOException {
         String value = jsonParser.getText();
         try {
-            return StringUtils.hasText(value) ? new BigDecimal(value).longValue() : null;
+            return StrKit.hasText(value) ? new BigDecimal(value).longValue() : null;
         } catch (NumberFormatException e) {
             log.error("解析长整形错误", e);
             return null;

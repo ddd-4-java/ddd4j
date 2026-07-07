@@ -1,10 +1,10 @@
 package io.ddd4j.extension.validation.constraintvalidators;
 
 import io.ddd4j.extension.validation.constraints.StringDateValue;
+import io.ddd4j.kit.lang.StrKit;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,7 +27,7 @@ public class StringDateValueValidator implements ConstraintValidator<StringDateV
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-        if (!StringUtils.hasText(value)) {
+        if (!StrKit.hasText(value)) {
             return true;
         }
         boolean res = false;

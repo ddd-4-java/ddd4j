@@ -7,18 +7,15 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.filter.EvaluatorFilter;
 import ch.qos.logback.core.spi.FilterReply;
+import io.ddd4j.extension.monitor.application.service.Sender;
 import io.ddd4j.extension.monitor.domain.robot.model.RobotAppender;
 import io.ddd4j.extension.monitor.infras.config.BaseMonitorProperties;
 import io.ddd4j.extension.monitor.infras.utils.IpUtils;
 import io.ddd4j.kit.lang.StrKit;
-import jakarta.annotation.PostConstruct;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -30,6 +27,9 @@ import static ch.qos.logback.core.AsyncAppenderBase.DEFAULT_MAX_FLUSH_TIME;
  * <p>负责将 Logback 日志通过异步 Appender 发送到钉钉/企微机器人。
  * 支持日志级别过滤、关键字匹配、日志名称排除等过滤策略。
  *
+ * <p>本类为纯 Java 实现，不再依赖 Spring 容器；上层框架在完成依赖装配后调用 {@link #init()} 即可触发装配，
+ * 调用 {@link #stop()} 可释放资源。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-MONITOR : RobotLogbackAppendService ###")
@@ -38,29 +38,76 @@ public class RobotLogbackAppendService {
      * Logback 日志上下文
      */
     private LoggerContext loggerContext = null;
-    @Autowired
+    /**
+     * 监控配置属性（由上层框架注入；可通过 {@link #setBaseMonitorProperties(BaseMonitorProperties)} 设置）
+     */
+    @Setter
     private BaseMonitorProperties baseMonitorProperties;
+    /**
+     * 消息发送器（由上层框架注入；可通过 {@link #setSender(Sender)} 设置）
+     */
+    @Setter
+    private Sender sender;
+    /**
+     * 应用名称（用于日志告警中展示，当配置未指定应用名称时使用）
+     */
+    @Setter
+    private String appName;
+    /**
+     * 已启动的异步 Appender，用于停止时释放资源
+     */
+    private AsyncAppender asyncAppender;
+    /**
+     * 已启动的机器人 Appender，用于停止时释放资源
+     */
+    private RobotAppender robotAppender;
 
-    @PostConstruct
+    public RobotLogbackAppendService() {
+    }
+
+    public RobotLogbackAppendService(BaseMonitorProperties baseMonitorProperties) {
+        this.baseMonitorProperties = baseMonitorProperties;
+    }
+
+    public RobotLogbackAppendService(BaseMonitorProperties baseMonitorProperties, Sender sender, String appName) {
+        this.baseMonitorProperties = baseMonitorProperties;
+        this.sender = sender;
+        this.appName = appName;
+    }
+
+    /**
+     * 初始化日志告警 Appender，等价于原先 {@code @PostConstruct} 的行为。
+     */
     public void init() {
         this.initLoggerContext();
         loggerContext.putProperty("ip", IpUtils.getLocalAddress());
         if (Objects.nonNull(baseMonitorProperties.getLog().getApp()) && StrKit.isNotBlank(baseMonitorProperties.getLog().getApp().getProject())) {
             loggerContext.putProperty("project", baseMonitorProperties.getLog().getApp().getProject());
         }
-        AsyncAppender asyncAppender = this.asyncAppender();
-        asyncAppender.start();
+        this.robotAppender = this.robotAppender();
+        this.asyncAppender = this.asyncAppender();
+        this.asyncAppender.start();
         Logger rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
         rootLogger.addAppender(asyncAppender);
     }
 
-    @Bean(destroyMethod = "stop")
+    /**
+     * 停止并释放 Appender 资源，等价于原先 {@code @Bean(destroyMethod = "stop")} 的行为。
+     */
+    public void stop() {
+        if (Objects.nonNull(asyncAppender)) {
+            asyncAppender.stop();
+        }
+        if (Objects.nonNull(robotAppender)) {
+            robotAppender.stop();
+        }
+    }
+
     public RobotAppender robotAppender() {
-        return RobotAppender.build(loggerContext);
+        return RobotAppender.build(loggerContext, baseMonitorProperties, sender, appName);
     }
 
     // 构建 异步的 AsyncAppender 包装RobotAppend
-    @Bean(destroyMethod = "stop")
     public AsyncAppender asyncAppender() {
         AsyncAppender asyncAppender = new AsyncAppender();
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
@@ -142,7 +189,7 @@ public class RobotLogbackAppendService {
     // 构建表达式 过滤器
     private EvaluatorFilter<ILoggingEvent> keywordExpression() {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
-        if (StringUtils.hasText(config.getKeywordExpression())) {
+        if (StrKit.isNotBlank(config.getKeywordExpression())) {
             return getEvaluatorFilter(config.getKeywordExpression(), FilterReply.ACCEPT, FilterReply.DENY);
         }
         return null;
@@ -151,7 +198,7 @@ public class RobotLogbackAppendService {
     // 包含关键字
     private EvaluatorFilter<ILoggingEvent> includes() {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
-        if (!CollectionUtils.isEmpty(config.getIncludes())) {
+        if (isNotEmpty(config.getIncludes())) {
             StringBuilder builder = new StringBuilder("return ");
             for (int index = 0; index < config.getIncludes().size(); index++) {
                 String keyword = config.getIncludes().get(index);
@@ -170,7 +217,7 @@ public class RobotLogbackAppendService {
     // 排除 关键 loggerName 的告警
     private EvaluatorFilter<ILoggingEvent> ignoreLogNames() {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
-        if (!CollectionUtils.isEmpty(config.getIgnoreLogNames())) {
+        if (isNotEmpty(config.getIgnoreLogNames())) {
             StringBuilder builder = new StringBuilder("return ");
             for (int index = 0; index < config.getIgnoreLogNames().size(); index++) {
                 String keyword = config.getIgnoreLogNames().get(index);
@@ -189,7 +236,7 @@ public class RobotLogbackAppendService {
     // 排除 关键 信息的告警
     private EvaluatorFilter<ILoggingEvent> ignores() {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
-        if (!CollectionUtils.isEmpty(config.getIgnores())) {
+        if (isNotEmpty(config.getIgnores())) {
             StringBuilder builder = new StringBuilder("return ");
             for (int index = 0; index < config.getIgnores().size(); index++) {
                 String keyword = config.getIgnores().get(index);
@@ -202,6 +249,16 @@ public class RobotLogbackAppendService {
             return getEvaluatorFilter(builder.toString(), FilterReply.DENY, FilterReply.NEUTRAL);
         }
         return null;
+    }
+
+    /**
+     * 判断集合是否非空（替代 {@code org.springframework.util.CollectionUtils.isEmpty}）。
+     *
+     * @param collection 待判断的集合
+     * @return 集合为 null 或空时返回 false，否则返回 true
+     */
+    private static boolean isNotEmpty(java.util.Collection<?> collection) {
+        return collection != null && !collection.isEmpty();
     }
 
 
