@@ -1,5 +1,6 @@
 package io.ddd4j.mq.activemq;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.activemq.util.ActivemqKit;
@@ -80,7 +81,8 @@ public class ActiveMQClient implements MQClient {
                     message.writeBytes(payload.getBytes(StandardCharsets.UTF_8));
                     message.setStringProperty(MessageHeaders.HEADER_DESTINATION_TOPIC, mqEvent.getTopic());
                     if (Objects.nonNull(mqEvent.getTag())) {
-                        message.setStringProperty(MessageHeaders.HEADER_DESTINATION_TAG, mqEvent.getTag());
+                        // tag header 与 broker 端 selector property name 一致（无 .，合法 SQL-92）
+                        message.setStringProperty(tagHeaderKey(), mqEvent.getTag());
                     }
                     if (Objects.nonNull(mqEvent.getTenantId())) {
                         message.setStringProperty(MessageHeaders.HEADER_TENANT_ID, mqEvent.getTenantId());
@@ -106,19 +108,13 @@ public class ActiveMQClient implements MQClient {
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         final Session session = getConnection().createSession(false, Session.CLIENT_ACKNOWLEDGE);
         String topic = resolveTopic(listener, mqProperties);
-        MessageConsumer consumer = session.createConsumer(ActivemqKit.createDestination(session, topic));
+        // broker 端 tag 过滤：把 MQEventListener.tags 表达式翻译成 JMS Message Selector，
+        // 不匹配的消息在 broker 端就过滤掉，不投递到 listener（broker 端精确过滤）。
+        String selector = tagsToSelector(listener.getTags());
+        MessageConsumer consumer = session.createConsumer(ActivemqKit.createDestination(session, topic), selector);
         consumer.setMessageListener(message -> {
             try {
-                String tag = ActivemqKit.stringProperty(message, MessageHeaders.HEADER_DESTINATION_TAG);
-                if (!TagMatcher.match(tag, listener.getTags())) {
-                    try {
-                        message.acknowledge();
-                    } catch (JMSException ignore) {
-                    }
-                    return;
-                }
-                MQEvent event = serialization().deserialize(
-                        ActivemqKit.extractPayload(message), listener.payloadType());
+                MQEvent event = serialization().deserialize(ActivemqKit.extractPayload(message), listener.payloadType());
                 if (Objects.isNull(event)) {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
                     return;
@@ -128,7 +124,7 @@ public class ActiveMQClient implements MQClient {
                         ActivemqKit.messageIdHash(message),
                         ActivemqKit.messageIdOf(message),
                         ActivemqKit.correlationIdOf(message));
-                consume(listener, event, ack);
+                this.consume(listener, event, ack);
                 if (!ack.isAcknowledged()) {
                     ack.ackSingle();
                 }
@@ -166,10 +162,10 @@ public class ActiveMQClient implements MQClient {
      */
     private static ActiveMQConnectionFactory buildFactory(ActiveMQProperties properties) {
         ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(properties.getBrokerUrl());
-        if (Objects.nonNull(properties.getUsername()) && !io.ddd4j.kit.lang.StrKit.isBlank(properties.getUsername())) {
+        if (Objects.nonNull(properties.getUsername()) && StrKit.isNotBlank(properties.getUsername())) {
             factory.setUser(properties.getUsername());
         }
-        if (Objects.nonNull(properties.getPassword()) && !io.ddd4j.kit.lang.StrKit.isBlank(properties.getPassword())) {
+        if (Objects.nonNull(properties.getPassword()) && StrKit.isNotBlank(properties.getPassword())) {
             factory.setPassword(properties.getPassword());
         }
         factory.setClientID(Objects.requireNonNullElse(properties.getClientIdPrefix(), "ddd4j-mq-"));

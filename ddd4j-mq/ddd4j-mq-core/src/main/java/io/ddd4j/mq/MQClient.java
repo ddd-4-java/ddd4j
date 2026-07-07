@@ -3,6 +3,8 @@ package io.ddd4j.mq;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
@@ -12,8 +14,10 @@ import io.ddd4j.mq.util.TagMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -302,6 +306,125 @@ public interface MQClient {
                 listener.getTopic(),
                 TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null),
                 concat(null, properties));
+    }
+
+    /**
+     * tag 消息头的 key（producer 写入 + consumer 读取 + selector 引用）统一用同一个常量。
+     *
+     * <p>默认 {@code "ddd4jTag"}（无 {@code .}，保证是合法 SQL-92 identifier，
+     * JMS Message Selector 可直接当 property 名用）。broker 可覆写。
+     *
+     * <p>应用层读 header 仍可读 {@link io.ddd4j.mq.message.MessageHeaders#HEADER_DESTINATION_TAG}
+     * 作为兼容，但 selector 必须用此 key。
+     */
+    default String tagHeaderKey() {
+        return "ddd4jTag";
+    }
+
+    /**
+     * 将 {@link MQEventListener#tags()} 表达式翻译为 broker 端 selector（SQL-92 子集），
+     * 让订阅时直接传给 broker 做 broker 端过滤（不投递到 listener）。适用于
+     * ActiveMQ Artemis、RocketMQ、Kafka 等支持 JMS Message Selector / 订阅 selector 的 broker。
+     *
+     * <p>对应规则：
+     * <ul>
+     *   <li>{@code "*"} / {@code null} / 空 → {@code null}（不过滤，所有都投递给 listener）</li>
+     *   <li>{@code "paid"} → {@code "tag = 'paid'"}（精确匹配）</li>
+     *   <li>{@code "paid || shipped"} → {@code "(tag = 'paid' OR tag = 'shipped')"}</li>
+     *   <li>{@code "* -cancelled"} → {@code "(tag <> 'cancelled' OR tag IS NULL)"}
+     *       （= 全部但排除 cancelled，无 tag 也允许）</li>
+     *   <li>{@code "paid -cancelled"} → {@code "(tag = 'paid' AND (tag <> 'cancelled' OR tag IS NULL))"}
+     *       （= paid 或无 tag，但不包含 cancelled）</li>
+     * </ul>
+     *
+     * <p>property name 通过 {@link #tagHeaderKey()} 获取，SQL 字符串字面量用 {@code '} 包。
+     *
+     * @param tags 监听器声明的 tag 表达式（{@code null} / 空 / {@code "*"} → 不过滤）
+     * @return JMS selector 字符串，{@code null} 表示不过滤（由调用方决定是用 broker 还是 fallback 应用层）
+     */
+    default String tagsToSelector(String tags) {
+        if (Objects.isNull(tags) || tags.trim().isEmpty()) {
+            return null;
+        }
+        // 解析 includes/excludes（与 TagMatcher 语义对齐：* 是通配符，不是字面量）
+        Set<String> includes = new LinkedHashSet<>();
+        boolean wildcard = false;
+        Set<String> excludes = new LinkedHashSet<>();
+        for (String token : StrKit.isBlank(tags) ? new String[0]
+                : tags.replace("||", " ").trim().split("\\s+")) {
+            String t = token.trim();
+            if (t.isEmpty() || "||".equals(t)) {
+                continue;
+            }
+            if ("*".equals(t)) {
+                wildcard = true;
+            } else if (t.startsWith("-") && t.length() > 1) {
+                excludes.add(t.substring(1));
+            } else {
+                includes.add(t);
+            }
+        }
+        if (includes.isEmpty() && excludes.isEmpty()) {
+            return null;
+        }
+        // 单独 "*" 不过滤
+        if (wildcard && includes.isEmpty() && excludes.isEmpty()) {
+            return null;
+        }
+        // "*" + 仅 excludes：includes 视为通配（1=1）
+        if (wildcard) {
+            includes = new LinkedHashSet<>();
+        }
+        if (includes.isEmpty() && excludes.isEmpty()) {
+            return null;
+        }
+        String prop = tagHeaderKey();
+        StringBuilder sb = new StringBuilder();
+        if (!includes.isEmpty()) {
+            // includes: tag IN (...) OR tag IS NULL（与 TagMatcher 一致：tag 为空时也算匹配）
+            sb.append("(");
+            boolean first = true;
+            for (String i : includes) {
+                if (!first) {
+                    sb.append(" OR ");
+                }
+                sb.append(prop).append(" = '").append(escape(i)).append("'");
+                first = false;
+            }
+            sb.append(" OR ").append(prop).append(" IS NULL)");
+        }
+        if (!excludes.isEmpty()) {
+            StringBuilder exclude = new StringBuilder();
+            boolean first = true;
+            for (String e : excludes) {
+                if (!first) {
+                    exclude.append(" AND ");
+                }
+                exclude.append("(").append(prop).append(" <> '").append(escape(e)).append("' OR ").append(prop).append(" IS NULL)");
+                first = false;
+            }
+            String left = sb.isEmpty() ? "1=1" : sb.toString();
+            sb = new StringBuilder();
+            sb.append("(").append(left).append(" AND ").append(exclude).append(")");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
+     */
+    private static String escape(String s) {
+        return s.replace("'", "''");
+    }
+
+    /**
+     * 是否在 broker 端做 tag 过滤（不是所有 broker 都支持，返回 false 时调用方应 fallback 应用层）。
+     *
+     * <p>默认 true 表示「我会用 tagsToSelector 传给 broker」。子 broker 可覆写返回 false 强制应用层过滤
+     * （如 Redis Stream / MQTT 等无 selector 机制的 broker）。
+     */
+    default boolean supportsBrokerTagFilter() {
+        return true;
     }
 
     /**
