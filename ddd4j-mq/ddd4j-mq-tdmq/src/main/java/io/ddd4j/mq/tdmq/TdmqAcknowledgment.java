@@ -1,16 +1,18 @@
-package io.ddd4j.mq.tdmq.ack;
+package io.ddd4j.mq.tdmq;
 
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.message.Acknowledgment;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 /**
  * 腾讯云 TDMQ 消息确认实现。
+ *
+ * <p>TDMQ 是腾讯云基于 Pulsar 的托管服务。{@link #ackCallback} 暴露由业务侧 TDMQ 客户端传入的 ack 回调，
+ * 由 ddd4j-MQ 的 consume 流程根据执行结果决定 ack/nack/requeue。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -20,22 +22,17 @@ public final class TdmqAcknowledgment implements Acknowledgment {
     private final String messageId;
     private final String correlationId;
     private final long deliveryTag;
-    private final Consumer<Boolean> ackCallback;
+    private final java.util.function.Consumer<Boolean> ackCallback;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     public TdmqAcknowledgment(String messageId,
                                      String correlationId,
                                      long deliveryTag,
-                                     Consumer<Boolean> ackCallback) {
+                                     java.util.function.Consumer<Boolean> ackCallback) {
         this.messageId = messageId;
         this.correlationId = correlationId;
         this.deliveryTag = deliveryTag;
         this.ackCallback = Objects.requireNonNull(ackCallback, "ackCallback");
-    }
-
-    public static Acknowledgment noOp() {
-        return new io.ddd4j.mq.tdmq.ack.TdmqAcknowledgment(null, null, 0L, ack -> {
-        });
     }
 
     @Override
