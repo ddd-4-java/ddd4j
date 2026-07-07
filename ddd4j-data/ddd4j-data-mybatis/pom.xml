@@ -91,17 +91,11 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!-- Jackson TypeHandler（MyJacksonTypeHandler 需要） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-extension-jackson</artifactId>
             <version>${revision}</version>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 
