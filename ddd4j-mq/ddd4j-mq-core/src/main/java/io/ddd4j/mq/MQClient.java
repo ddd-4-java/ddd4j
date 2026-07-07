@@ -91,7 +91,7 @@ public interface MQClient extends AutoCloseable {
                     success++;
                 }
             } catch (Exception e) {
-                log.error("Listen MQ [{}] failed!", listener.namespaceTopicTags(), e);
+                log.error("Listen MQ [{}] failed!", listener.getRouteExpression(this.defaultConcat()), e);
             }
         }
         log.info("MQ [{}] listening {} listener(s)", impl(), success);
@@ -170,7 +170,7 @@ public interface MQClient extends AutoCloseable {
         if (!event.supports(listener.supports())) {
             return;
         }
-        logger().info("Consume MQ [{}]: {}", listener.namespaceTopicTags(), serialization().serialize(event));
+        logger().info("Consume MQ [{}]: {}", listener.getRouteExpression(this.defaultConcat()), serialization().serialize(event));
         try {
             ThreadContext.set(ContextConstants.TENANT_ID, event.getTenantId());
             // MQ 事件持久化
@@ -181,7 +181,7 @@ public interface MQClient extends AutoCloseable {
                     try {
                         storer.store(event);
                     } catch (Exception e) {
-                        logger().error("Persist MQ failed [{}]: {}", listener.namespaceTopicTags(),
+                        logger().error("Persist MQ failed [{}]: {}", listener.getRouteExpression(this.defaultConcat()),
                                 serialization().serialize(event), e);
                     }
                 }
@@ -310,6 +310,19 @@ public interface MQClient extends AutoCloseable {
                 listener.getTopic(),
                 TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null),
                 concat(null));
+    }
+
+    /**
+     * Listener 端的物理路由键（{@code namespace.topic[.tag]}），
+     * 用 {@link #defaultConcat()} 拼接，确保与 producer 端 {@link #resolveTopic(MQEvent, MQProperties)} 同规则。
+     *
+     * <p>对齐 disruptor-extension {@code DisruptorEvent.getRouteExpression()}。
+     *
+     * @param listener 监听器定义
+     * @return 物理路由键
+     */
+    default String resolveRouteKey(MQListener listener) {
+        return listener.getRouteExpression(defaultConcat());
     }
 
     /**

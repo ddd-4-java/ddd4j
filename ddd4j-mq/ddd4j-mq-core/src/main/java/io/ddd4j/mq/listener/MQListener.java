@@ -3,6 +3,7 @@ package io.ddd4j.mq.listener;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.util.TagMatcher;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SuppressWarnings("unchecked")
 public class MQListener {
 
     /** 目标 Bean */
@@ -65,7 +67,6 @@ public class MQListener {
     /**
      * 返回监听方法首个参数类型（约定为 {@link MQEvent} 子类），用于反序列化。
      */
-    @SuppressWarnings("unchecked")
     public Class<? extends MQEvent> payloadType() {
         if (Objects.isNull(method) || method.getParameterCount() == 0) {
             return MQEvent.class;
@@ -82,35 +83,39 @@ public class MQListener {
     }
 
     /**
-     * 拼接 {@code namespace[separator]topic[separator]tags}（对齐 base-mq）。
+     * 物理路由键：{@code namespace.topic[.tag]}（与 disruptor-extension
+     * {@code DisruptorEvent.getRouteExpression()} 统一规则）。
+     *
+     * <h3>路由模型</h3>
+     * <pre>
+     *   namespace.topic.tag
+     *   └───┬───┘ └─┬─┘ └┬┘
+     *    环境隔离  业务分类  细分标签
+     * </pre>
+     * <ul>
+     *   <li>{@code namespace} —— 命名空间，用于多环境 / 多租户隔离</li>
+     *   <li>{@code topic} —— 消费线程隔离维度，不同 topic 走不同消费线程池</li>
+     *   <li>{@code tag} —— 同 topic 下共享消费线程，做消息过滤</li>
+     * </ul>
+     *
+     * <p>tag 取 {@code tags} 表达式中第一个正向 include（如 {@code "paid || shipped"} → {@code "paid"}），
+     * 与 event 端单 tag 对齐。tag 为 null/空/通配 {@code "*"} 时不追加第三段。
+     *
+     * @param separator 拼接符（由 {@link io.ddd4j.mq.MQClient#defaultConcat()} 传入，确保 listener 与 event 同规则）
      */
-    public String namespaceTopicTags() {
+    public String getRouteExpression(String separator) {
         String sep = Objects.isNull(separator) || separator.isEmpty() ? "." : separator;
         String ns = Objects.isNull(namespace) ? "" : namespace;
         String tp = Objects.isNull(topic) ? "" : topic;
-        String tg = Objects.isNull(tags) || tags.isEmpty() ? "" : sep + tags;
-        return ns + sep + tp + tg;
+        String base = ns + sep + tp;
+        if (Objects.isNull(tags) || tags.isEmpty() || "*".equals(tags.trim())) {
+            return base;
+        }
+        String firstTag = TagMatcher.findIncludes(tags).stream().findFirst().orElse(null);
+        if (Objects.isNull(firstTag) || firstTag.isEmpty()) {
+            return base;
+        }
+        return base + sep + firstTag;
     }
 
-    /**
-     * 带命名空间前缀的拼接便捷方法（对齐 base-mq）。
-     */
-    public String namespace(String separator) {
-        String sep = Objects.isNull(separator) || separator.isEmpty() ? this.separator : separator;
-        if (Objects.nonNull(namespace) && !namespace.isEmpty()) {
-            return namespace + sep;
-        }
-        return "";
-    }
-
-    /**
-     * 消费者组拼接（对齐 base-mq）。
-     */
-    public String group(String separator) {
-        String sep = Objects.isNull(separator) || separator.isEmpty() ? this.separator : separator;
-        if (Objects.nonNull(group) && !group.isEmpty()) {
-            return group + sep;
-        }
-        return "";
-    }
 }

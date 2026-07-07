@@ -113,19 +113,33 @@ public class DisruptorMQClient implements MQClient {
 
     /**
      * RingBuffer 事件回调入口（{@link #start()} 注册到 Disruptor）。
-     * 遍历所有已注册 listener，按 tag 过滤后分发。
+     *
+     * <p>匹配流程（统一遵循 disruptor-extension 的 {@code namespace.topic[.tag]} 路由模型）：
+     * <ol>
+     *   <li>route key 精确匹配：event 的 routeExpression vs listener 的 routeExpression</li>
+     *   <li>{@link TagMatcher} 二次过滤（应对 listener.tags 表达式如 {@code "paid || shipped"}）</li>
+     *   <li>反序列化 + 反射调用（{@link MQClient#consume} 默认方法）</li>
+     * </ol>
+     * 不匹配的 listener 跳过，避免跨 namespace/topic/tag 的误派发。
      */
     private void onEvent(DisruptorEvent event, long sequence, boolean endOfBatch) {
+        String eventRouteKey = event.getRouteExpression();   // namespace.topic[.tag]
+        String eventTag = event.getTag();
         for (MQListener listener : listeners) {
             try {
-                String tag = event.getTag();          // private 字段走 getter
-                if (!TagMatcher.match(tag, listener.getTags())) {
+                // 1. route key 精确匹配（统一规则：event.getRouteExpression() == resolveRouteKey(listener)）
+                if (!eventRouteKey.equals(resolveRouteKey(listener))) {
                     continue;
                 }
-                Object payload = event.getPayload();  // private 字段走 getter
+                // 2. TagMatcher 二次过滤（应对 listener.tags 表达式）
+                if (!TagMatcher.match(eventTag, listener.getTags())) {
+                    continue;
+                }
+                // 3. 反序列化 + 反射调用
+                Object payload = event.getPayload();
                 MQEvent mqEvent = serialization().deserialize(payload, listener.payloadType());
                 if (Objects.isNull(mqEvent)) {
-                    log.warn("Disruptor consume [{}] failed: mqEvent is null", listener.namespaceTopicTags());
+                    log.warn("Disruptor consume [{}] failed: mqEvent is null", eventRouteKey);
                     continue;
                 }
                 DisruptorAcknowledgment ack = new DisruptorAcknowledgment(event, ringBuffer, sequence);
@@ -134,7 +148,7 @@ public class DisruptorMQClient implements MQClient {
                     ack.ackSingle();
                 }
             } catch (Throwable ex) {
-                log.error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                log.error("Consume MQ [{}] failed", eventRouteKey, ex);
             }
         }
     }
