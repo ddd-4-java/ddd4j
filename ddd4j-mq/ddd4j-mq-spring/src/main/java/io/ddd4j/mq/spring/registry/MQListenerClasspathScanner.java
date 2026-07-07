@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Bean 定义阶段的 {@link MQEventListener} 类路径扫描器（从 ddd4j-mq-core 迁出）。
@@ -36,7 +37,7 @@ public final class MQListenerClasspathScanner {
      */
     public static void scanBeanDefinitions(
             Iterable<String> beanNames,
-            java.util.function.Function<String, BeanDefinition> beanDefinitionLookup,
+            Function<String, BeanDefinition> beanDefinitionLookup,
             ClassLoader classLoader,
             BiConsumer<String, Method> consumer) {
 

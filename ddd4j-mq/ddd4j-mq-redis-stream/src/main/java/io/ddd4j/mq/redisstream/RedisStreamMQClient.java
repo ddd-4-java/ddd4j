@@ -1,0 +1,241 @@
+package io.ddd4j.mq.redisstream;
+
+import io.ddd4j.mq.MQClient;
+import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.Acknowledgment;
+import io.ddd4j.mq.util.TagMatcher;
+import lombok.extern.slf4j.Slf4j;
+import redis.clients.jedis.StreamEntryID;
+import redis.clients.jedis.UnifiedJedis;
+import redis.clients.jedis.params.XReadGroupParams;
+import redis.clients.jedis.resps.StreamEntry;
+import redis.clients.jedis.resps.StreamGroupInfo;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+/**
+ * Redis Stream 客户端实现（纯 Java，零 Spring 依赖）。
+ *
+ * <p>100% 对齐 base-mq {@code RedisStreamClient} 风格：仅 3 个公开方法
+ * {@link #impl()} / {@link #initProducer} / {@link #initConsumer}，
+ * 逻辑全部内联，守护线程循环。
+ *
+ * <ul>
+ *   <li>{@link #initProducer} —— {@link BlockingQueue} + 守护线程，循环 take 后 {@code jedis.xadd(streamKey, payload)}，
+ *       {@link MQEvent#publish()} 通过它把消息推送到 broker</li>
+ *   <li>{@link #initConsumer} —— {@code xgroupCreate}（如不存在）+ 守护线程 {@code xreadGroup} 轮询，
+ *       每条消息反序列化、构建 {@link RedisStreamAcknowledgment} 后调 {@link #consume} 统一消费，
+ *       autoAck=false 时手动 {@code xack}</li>
+ * </ul>
+ *
+ * <p>Stream key = {@code namespace:topic[:tag]}，分隔符 {@code :}。
+ *
+ * <p>注：构造方法 1 接收 {@link UnifiedJedis} 而非旧版 {@code Jedis}——Jedis 7.x 已将
+ * {@code Jedis} 与 {@code UnifiedJedis} 拆为兄弟接口，{@link RedisStreamAcknowledgment}
+ * 的契约需要 {@code UnifiedJedis}，故统一走该类型（{@code JedisPooled} / 任何标准 Jedis 7.x 客户端均可注入）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
+@Slf4j(topic = "### DDD4J-MQ : redisStreamMQClient ###")
+public class RedisStreamMQClient implements MQClient {
+
+	BlockingQueue<MQEvent> SENDING_MSGS = new LinkedBlockingQueue<>();
+	private final AtomicBoolean started = new AtomicBoolean(false);
+
+	/**
+	 * 双构造：构造方法 1 直接持有外部注入的 Jedis 客户端（UnifiedJedis 形态）。
+	 */
+	private final UnifiedJedis injectedJedis;
+	/**
+	 * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
+	 */
+	private final RedisStreamMQProperties properties;
+	/**
+	 * lazy 构造的 Jedis（volatile 保证发布可见性）。
+	 */
+	private volatile UnifiedJedis lazyJedis;
+
+	public RedisStreamMQClient(UnifiedJedis jedis) {
+		this.injectedJedis = jedis;
+		this.properties = null;
+	}
+
+	public RedisStreamMQClient(RedisStreamMQProperties properties) {
+		this.injectedJedis = null;
+		this.properties = properties;
+	}
+
+	/**
+	 * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
+	 */
+	private UnifiedJedis jedis() {
+		if (injectedJedis != null) {
+			return injectedJedis;
+		}
+		UnifiedJedis j = lazyJedis;
+		if (j == null) {
+			synchronized (this) {
+				j = lazyJedis;
+				if (j == null) {
+					j = properties.newJedis();
+					lazyJedis = j;
+				}
+			}
+		}
+		return j;
+	}
+
+	@Override
+	public String impl() {
+		return "redisStream";
+	}
+
+	@Override
+	public Consumer<MQEvent> initProducer(MQProperties properties) {
+		if (started.compareAndSet(false, true)) {
+			Executors.newSingleThreadExecutor(r -> {
+				Thread t = new Thread(r, "ddd4j-redis-stream-publisher");
+				t.setDaemon(true);
+				return t;
+			}).submit(() -> {
+				log.info("MQ publisher start");
+				while (!Thread.currentThread().isInterrupted()) {
+					String payload = null;
+					String streamKey = null;
+					try {
+						MQEvent mqEvent = SENDING_MSGS.take();
+						payload = serialization().serialize(mqEvent).toString();
+						String namespace = mqEvent.getNamespace() != null ? mqEvent.getNamespace() : properties().getNamespace();
+						String concat = mqEvent.getConcat() != null ? mqEvent.getConcat() : ":";
+						String tag = (mqEvent.getTag() == null || mqEvent.getTag().isEmpty()) ? "" : (concat + mqEvent.getTag());
+						// streamKey=namespace:topic:tag或namespace:topic或topic
+						streamKey = namespace + concat + mqEvent.getTopic() + tag;
+						jedis().xadd(streamKey, StreamEntryID.NEW_ENTRY, Collections.singletonMap("payload", payload));
+						log.info("Publish MQ [{}]: {}", streamKey, payload);
+					} catch (Exception e) {
+						log.error("Publish MQ [{}]: {} failed!", streamKey, payload, e);
+					}
+				}
+				log.info("MQ publisher stopped");
+			});
+		}
+		return mqEvent -> SENDING_MSGS.offer(mqEvent);
+	}
+
+	@Override
+	public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
+		// streamKey=namespace:topic:tag或namespace:topic或topic
+		List<String> topics = new ArrayList<>();
+		if (listener.getTags() != null && !listener.getTags().isEmpty()) {
+			Set<String> tags = TagMatcher.findIncludes(listener.getTags());
+			if (!tags.isEmpty()) {
+				for (String tag : tags) {
+					topics.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic() + listener.getSeparator() + tag);
+				}
+			}
+		} else {
+			topics.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic());
+		}
+
+		Map<String, StreamEntryID> streamKeys = new HashMap<>();
+		try {
+			UnifiedJedis jedis = jedis();
+			// 创建消费组（忽略已存在）
+			for (String topic : topics) {
+				if (!jedis.exists(topic)) {
+					jedis.xadd(topic, StreamEntryID.NEW_ENTRY, Collections.singletonMap("payload", "{}"));
+				}
+				List<StreamGroupInfo> streamGroupInfos = jedis.xinfoGroups(topic);
+				List<String> streamGroupInfoGroupNames = streamGroupInfos.stream().map(StreamGroupInfo::getName)
+					.collect(Collectors.toList());
+				if (!streamGroupInfoGroupNames.contains(listener.getGroup())) {
+					jedis.xgroupCreate(topic, listener.getGroup(), new StreamEntryID("0-0"), true);
+				}
+				streamKeys.put(topic, StreamEntryID.UNRECEIVED_ENTRY);
+			}
+		} catch (Exception e) {
+			log.error("Create consumer group failed!", e);
+			return false;
+		}
+
+		Executors.newSingleThreadExecutor(r -> {
+			Thread t = new Thread(r, "ddd4j-redis-stream-" + listener.namespaceTopicTags());
+			t.setDaemon(true);
+			return t;
+		}).submit(() -> {
+			while (!Thread.currentThread().isInterrupted()) {
+				try {
+					UnifiedJedis jedis = jedis();
+					// 从消费组中读取消息
+					List<Map.Entry<String, List<StreamEntry>>> messages = jedis.xreadGroup(listener.getGroup(),
+						listener.getMethod().getName(),
+						XReadGroupParams.xReadGroupParams().count(10).block(1000),
+						streamKeys);
+					if (messages == null || messages.isEmpty()) {
+						// 没有消息，短暂休眠，避免CPU占用过高
+						TimeUnit.MILLISECONDS.sleep(1000);
+						continue;
+					}
+
+					for (Map.Entry<String, List<StreamEntry>> entry : messages) {
+						for (StreamEntry streamEntry : entry.getValue()) {
+							String payload = streamEntry.getFields().get("payload");
+							String tag = streamEntry.getFields().get("tag");
+							if (!TagMatcher.match(tag, listener.getTags())) {
+								jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
+								continue;
+							}
+							MQEvent mqEvent = serialization().deserialize(payload, listener.payloadType());
+							if (mqEvent == null) {
+								jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
+								log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+								continue;
+							}
+							Acknowledgment ack = new RedisStreamAcknowledgment(
+									jedis, entry.getKey(), listener.getGroup(), streamEntry.getID(),
+									mqEvent.getMsgId(), mqEvent.getMsgId());
+							try {
+								if (properties.isAutoAck()) {
+									jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
+								}
+								// 消费消息
+								consume(listener, mqEvent, ack);
+								// 确认消息
+								if (!properties.isAutoAck() && !ack.isAcknowledged()) {
+									jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
+								}
+							} catch (Throwable e) {
+								log.error("Consume MQ [{}] failed: {}", listener.namespaceTopicTags(), payload, e);
+							}
+						}
+					}
+				} catch (Exception e) {
+					log.error("Consume MQ [{}] failed!", listener.namespaceTopicTags(), e);
+					try {
+						TimeUnit.MILLISECONDS.sleep(5000);
+					} catch (InterruptedException ex) {
+						throw new RuntimeException(ex);
+					}
+				}
+			}
+		});
+
+		return true;
+	}
+
+}

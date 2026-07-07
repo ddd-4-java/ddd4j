@@ -38,12 +38,29 @@ import java.util.function.Consumer;
  * @since 2.0.x
  */
 @Slf4j
-public class NatsClient implements MQClient {
+public class NatsMQClient implements MQClient {
 
     private final NatsProperties properties;
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
 
-    public NatsClient(NatsProperties properties) {
+    /**
+     * 构造 1：注入已初始化的原生 NATS {@link Connection}（用于 runtime 集成自动注入）。
+     *
+     * @param connection 原生 NATS 连接
+     */
+    public NatsMQClient(Connection connection) {
+        this.properties = null;
+        if (Objects.nonNull(connection)) {
+            this.connectionRef.set(connection);
+        }
+    }
+
+    /**
+     * 构造 2：传入配置，{@link #connection()} 时 lazy 构造原生 NATS 连接。
+     *
+     * @param properties NATS 配置
+     */
+    public NatsMQClient(NatsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 

@@ -40,15 +40,33 @@ import java.util.function.Consumer;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public class PulsarClient implements MQClient {
+public class PulsarMQClient implements MQClient {
 
     private final PulsarProperties properties;
     private final List<org.apache.pulsar.client.api.Consumer<?>> consumers = new CopyOnWriteArrayList<>();
     private final ConcurrentMap<String, Producer<byte[]>> producers = new ConcurrentHashMap<>();
     private org.apache.pulsar.client.api.PulsarClient client;
 
-    public PulsarClient(PulsarProperties properties) {
+    /**
+     * 构造 1：注入已初始化的原生 Pulsar 客户端（用于 runtime 集成自动注入）。
+     * 物理 topic 仍来自 {@link PulsarProperties#physicalTopic}，因此同时接受 properties。
+     *
+     * @param client     原生 PulsarClient
+     * @param properties Pulsar 配置（topic 命名空间、订阅名等）
+     */
+    public PulsarMQClient(org.apache.pulsar.client.api.PulsarClient client, PulsarProperties properties) {
+        this.client = client;
         this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    /**
+     * 构造 2：传入配置，{@link #initProducer} 中通过 PulsarClient.builder().build() 创建原生客户端。
+     *
+     * @param properties Pulsar 配置
+     */
+    public PulsarMQClient(PulsarProperties properties) {
+        this.properties = Objects.requireNonNull(properties, "properties");
+        this.client = null;
     }
 
     @Override
@@ -61,7 +79,9 @@ public class PulsarClient implements MQClient {
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
-            this.client = properties.client();
+            if (Objects.isNull(this.client)) {
+                this.client = properties.client();
+            }
             return this::publish;
         } catch (Exception ex) {
             throw new IllegalStateException("Init Pulsar producer failed", ex);

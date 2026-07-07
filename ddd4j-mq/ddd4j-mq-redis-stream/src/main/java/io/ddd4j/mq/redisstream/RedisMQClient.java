@@ -1,0 +1,195 @@
+package io.ddd4j.mq.redisstream;
+
+import io.ddd4j.mq.MQClient;
+import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.util.TagMatcher;
+import lombok.extern.slf4j.Slf4j;
+import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.UnifiedJedis;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+
+/**
+ * Redis Pubsub 客户端实现（纯 Java，零 Spring 依赖）。
+ *
+ * <p>100% 对齐 base-mq {@code RedisClient} 风格：仅 3 个公开方法
+ * {@link #impl()} / {@link #initProducer} / {@link #initConsumer}，
+ * 逻辑全部内联，守护线程循环。
+ *
+ * <p>因 ddd4j 无独立 redis 模块，故与 Redis Stream 共置 {@code ddd4j-mq-redis-stream} 模块，
+ * 复用 {@link RedisStreamMQProperties} 获取连接配置。
+ *
+ * <ul>
+ *   <li>{@link #initProducer} —— {@link BlockingQueue} + 守护线程，循环 take 后 {@code jedis.publish(channel, payload)}，
+ *       {@link MQEvent#publish()} 通过它把消息推送到 broker</li>
+ *   <li>{@link #initConsumer} —— 守护线程 {@code jedis.subscribe(JedisPubSub, channels)}，
+ *       {@code onMessage} 回调里反序列化后调 {@link #consume(MQListener, MQEvent)}（pubsub 无 ack）</li>
+ * </ul>
+ *
+ * <p>Channel = {@code namespace:topic[:tag]}，分隔符 {@code :}。
+ *
+ * <p>注：构造方法 1 接收 {@link UnifiedJedis} 而非旧版 {@code Jedis}——Jedis 7.x 已将
+ * {@code Jedis} 与 {@code UnifiedJedis} 拆为兄弟接口，标准 Jedis 7.x 客户端（{@code JedisPooled} 等）均注入此类型。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
+@Slf4j(topic = "### DDD4J-MQ : redisMQClient ###")
+public class RedisMQClient implements MQClient {
+
+	BlockingQueue<MQEvent> SENDING_MSGS = new LinkedBlockingQueue<>();
+	private final AtomicBoolean started = new AtomicBoolean(false);
+
+	/**
+	 * 双构造：构造方法 1 直接持有外部注入的 Jedis 客户端（UnifiedJedis 形态）。
+	 */
+	private final UnifiedJedis injectedJedis;
+	/**
+	 * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
+	 */
+	private final RedisStreamMQProperties properties;
+	/**
+	 * lazy 构造的 Jedis（volatile 保证发布可见性）。
+	 */
+	private volatile UnifiedJedis lazyJedis;
+
+	public RedisMQClient(UnifiedJedis jedis) {
+		this.injectedJedis = jedis;
+		this.properties = null;
+	}
+
+	public RedisMQClient(RedisStreamMQProperties properties) {
+		this.injectedJedis = null;
+		this.properties = properties;
+	}
+
+	/**
+	 * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
+	 */
+	private UnifiedJedis jedis() {
+		if (injectedJedis != null) {
+			return injectedJedis;
+		}
+		UnifiedJedis j = lazyJedis;
+		if (j == null) {
+			synchronized (this) {
+				j = lazyJedis;
+				if (j == null) {
+					j = properties.newJedis();
+					lazyJedis = j;
+				}
+			}
+		}
+		return j;
+	}
+
+	@Override
+	public String impl() {
+		return "redis";
+	}
+
+	@Override
+	public Consumer<MQEvent> initProducer(MQProperties properties) {
+		if (started.compareAndSet(false, true)) {
+			Executors.newSingleThreadExecutor(r -> {
+				Thread t = new Thread(r, "ddd4j-redis-pubsub-publisher");
+				t.setDaemon(true);
+				return t;
+			}).submit(() -> {
+				log.info("MQ publisher start");
+				while (!Thread.currentThread().isInterrupted()) {
+					String channel = null;
+					String payload = null;
+					try {
+						MQEvent mqEvent = SENDING_MSGS.take();
+						payload = serialization().serialize(mqEvent).toString();
+						String namespace = mqEvent.getNamespace() != null ? mqEvent.getNamespace() : properties().getNamespace();
+						String concat = mqEvent.getConcat() != null ? mqEvent.getConcat() : ":";
+						String tag = (mqEvent.getTag() == null || mqEvent.getTag().isEmpty()) ? "" : (concat + mqEvent.getTag());
+						// channel=namespace:topic:tag或namespace:topic或topic
+						channel = namespace + concat + mqEvent.getTopic() + tag;
+						jedis().publish(channel, payload);
+						log.info("Publish MQ [{}]: {}", channel, payload);
+					} catch (Exception e) {
+						log.error("Publish MQ [{}]: {} failed!", channel, payload, e);
+					}
+				}
+				log.info("MQ publisher stopped");
+			});
+		}
+		return mqEvent -> SENDING_MSGS.offer(mqEvent);
+	}
+
+	@Override
+	public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
+		// channel=namespace:topic:tag或namespace:topic或topic
+		List<String> channels = new ArrayList<>();
+		if (listener.getTags() != null && !listener.getTags().isEmpty()) {
+			Set<String> tags = TagMatcher.findIncludes(listener.getTags());
+			if (!tags.isEmpty()) {
+				for (String tag : tags) {
+					channels.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic() + listener.getSeparator() + tag);
+				}
+			}
+		} else {
+			channels.add(listener.getNamespace() + listener.getSeparator() + listener.getTopic());
+		}
+		Executors.newSingleThreadExecutor(r -> {
+			Thread t = new Thread(r, "ddd4j-redis-pubsub-" + listener.namespaceTopicTags());
+			t.setDaemon(true);
+			return t;
+		}).submit(() -> {
+			try {
+				jedis().subscribe(new JedisPubSub() {
+					@Override
+					public void onMessage(String channel, String message) {
+						MQEvent mqEvent;
+						try {
+							mqEvent = serialization().deserialize(message, listener.payloadType());
+						} catch (Exception ex) {
+							log.warn("Consume MQ [{}] failed: deserialize error", listener.namespaceTopicTags(), ex);
+							return;
+						}
+						if (mqEvent == null) {
+							log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+							return;
+						}
+						String tag = mqEvent.getTag();
+						if (!TagMatcher.match(tag, listener.getTags())) {
+							return;
+						}
+						try {
+							// pubsub 无 ack 概念
+							consume(listener, mqEvent);
+						} catch (Throwable e) {
+							log.error("Consume MQ [{}] failed: {}", listener.namespaceTopicTags(), message, e);
+						}
+					}
+
+					@Override
+					public void onSubscribe(String channel, int subscribedChannels) {
+						log.info("Subscribed channel: {}", channel);
+					}
+
+					@Override
+					public void onUnsubscribe(String channel, int subscribedChannels) {
+						log.info("Unsubscribed channel: {}", channel);
+					}
+				}, channels.toArray(new String[0]));
+			} catch (Exception e) {
+				log.error("Subscribe MQ [{}] failed!", listener.namespaceTopicTags(), e);
+			}
+		});
+		return true;
+	}
+
+}

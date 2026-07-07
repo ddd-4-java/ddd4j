@@ -20,20 +20,20 @@ import java.util.function.Consumer;
  * <p>实现 {@link MQClient}：
  * <ul>
  *   <li>{@link #initProducer} —— 返回 {@link Consumer<MQEvent>}，发消息时委托给底层 TDMQ 客户端
- *       （业务可在 {@link TdmqClient#setBrokerPublisher(BrokerPublisher)} 注入业务侧 SDK）</li>
+ *       （业务可在 {@link TdmqMQClient#setBrokerPublisher(BrokerPublisher)} 注入业务侧 SDK）</li>
  *   <li>{@link #initConsumer} —— 通过 {@link BrokerSubscriber} 建立订阅，tag 过滤后调
  *       {@link #consume} 统一消费，传入 {@link TdmqAcknowledgment} 实现不同级别 ack</li>
  * </ul>
  *
  * <p>由于 ddd4j-mq-tdmq 不直接依赖腾讯云官方 SDK（保持无依赖、零 Spring），
  * 实际的 publish/subscribe 由业务侧通过 {@link BrokerPublisher} / {@link BrokerSubscriber} 注入。
- * 当未注入时，{@link TdmqClient} 提供"内存总线"实现，仅供本地联调/测试。
+ * 当未注入时，{@link TdmqMQClient} 提供"内存总线"实现，仅供本地联调/测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Slf4j
-public class TdmqClient implements MQClient {
+public class TdmqMQClient implements MQClient {
 
     private final TdmqProperties properties;
     private BrokerPublisher brokerPublisher;
@@ -42,7 +42,19 @@ public class TdmqClient implements MQClient {
     private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers =
             new java.util.concurrent.ConcurrentHashMap<>();
 
-    public TdmqClient(TdmqProperties properties) {
+    /**
+     * 双构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
+     */
+    public TdmqMQClient(TdmqProperties properties) {
+        this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    /**
+     * 双构造 2：注入外部 BrokerPublisher / BrokerSubscriber（runtime 集成时由业务 SDK 包装传入）。
+     */
+    public TdmqMQClient(BrokerPublisher publisher, BrokerSubscriber subscriber, TdmqProperties properties) {
+        this.brokerPublisher = publisher;
+        this.brokerSubscriber = subscriber;
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
@@ -72,7 +84,7 @@ public class TdmqClient implements MQClient {
         if (Objects.isNull(brokerPublisher)) {
             // 默认内存总线实现（仅本地联调）：未注入业务侧 publisher 时用内存总线
             this.brokerPublisher = new InMemoryBrokerPublisher(topicSubscribers);
-            log.warn("TdmqClient: no BrokerPublisher injected, falling back to in-memory broker (test only).");
+            log.warn("TdmqMQClient: no BrokerPublisher injected, falling back to in-memory broker (test only).");
         }
         return event -> publish(event);
     }
@@ -105,7 +117,7 @@ public class TdmqClient implements MQClient {
         String group = resolveGroup(listener);
         if (Objects.isNull(brokerSubscriber)) {
             this.brokerSubscriber = new InMemoryBrokerSubscriber(topicSubscribers);
-            log.warn("TdmqClient: no BrokerSubscriber injected, falling back to in-memory broker (test only).");
+            log.warn("TdmqMQClient: no BrokerSubscriber injected, falling back to in-memory broker (test only).");
         }
         Subscription subscription = brokerSubscriber.subscribe(topic, tagExpression, group,
                 (messageId, correlationId, payload, requeue) ->
@@ -212,7 +224,7 @@ public class TdmqClient implements MQClient {
     // ========================= 业务侧适配接口 =========================
 
     /**
-     * TDMQ 业务侧发布器，由 {@link TdmqClient} 通过 {@link #setBrokerPublisher} 注入。
+     * TDMQ 业务侧发布器，由 {@link TdmqMQClient} 通过 {@link #setBrokerPublisher} 注入。
      */
     @FunctionalInterface
     public interface BrokerPublisher {
@@ -230,7 +242,7 @@ public class TdmqClient implements MQClient {
     }
 
     /**
-     * TDMQ 业务侧订阅器，由 {@link TdmqClient} 通过 {@link #setBrokerSubscriber} 注入。
+     * TDMQ 业务侧订阅器，由 {@link TdmqMQClient} 通过 {@link #setBrokerSubscriber} 注入。
      */
     @FunctionalInterface
     public interface BrokerSubscriber {

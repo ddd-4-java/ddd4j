@@ -1,0 +1,202 @@
+package io.ddd4j.mq.rabbit;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DeliverCallback;
+import io.ddd4j.mq.MQClient;
+import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.util.TagMatcher;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+
+/**
+ * RabbitMQ 客户端实现（对齐 base-mq RabbitClient，纯 Java 零 Spring 依赖）。
+ *
+ * <p>命名 {@code RabbitMQClient}。
+ *
+ * <p>双构造：
+ * <ul>
+ *   <li>{@link #RabbitMQClient(Connection)} —— 注入已初始化的原生 connection（runtime 自动装配用）</li>
+ *   <li>{@link #RabbitMQClient(RabbitMQProperties)} —— 自行根据 properties 构造 connection（lazy）</li>
+ * </ul>
+ *
+ * <p>路由键（routingKey）= {@code namespace.topic[.tag]}，分隔符 {@code .}；
+ * 队列名（queue）= {@code group.namespace.className.methodName}。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
+@Slf4j(topic = "### DDD4J-MQ : rabbitMQClient ###")
+public class RabbitMQClient implements MQClient {
+
+    /** 已注入或懒构造的 RabbitMQ connection */
+    private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
+    /** 懒构造使用的配置（构造方法 2 传入） */
+    private final RabbitMQProperties properties;
+
+    /** 构造方法 1：注入原生 connection */
+    public RabbitMQClient(Connection connection) {
+        this.connectionRef.set(Objects.requireNonNull(connection, "connection"));
+        this.properties = null;
+    }
+
+    /** 构造方法 2：自行根据 properties 构造 connection（lazy） */
+    public RabbitMQClient(RabbitMQProperties properties) {
+        this.connectionRef.set(null);
+        this.properties = Objects.requireNonNull(properties, "properties");
+    }
+
+    @Override
+    public String impl() {
+        return "rabbit";
+    }
+
+    @Override
+    public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+        try {
+            Channel channel = connection().createChannel();
+            String exchange = Objects.nonNull(properties) ? properties.getExchange() : "";
+            return mqEvent -> {
+                String namespace = mqEvent.getNamespace() != null ? mqEvent.getNamespace() : "";
+                String topic = mqEvent.getTopic() != null ? mqEvent.getTopic() : "";
+                String concat = mqEvent.getConcat() != null && !mqEvent.getConcat().isEmpty() ? mqEvent.getConcat() : ".";
+                String payload = serialization().serialize(mqEvent);
+                String tagPart = mqEvent.getTag() != null ? concat + mqEvent.getTag() : "";
+                String routingKey = namespace + concat + topic + tagPart;
+                try {
+                    channel.basicPublish(exchange, routingKey, null, payload.getBytes(StandardCharsets.UTF_8));
+                    log.info("Publish MQ [{}]: {}", routingKey, payload);
+                } catch (Exception e) {
+                    log.error("Publish MQ [{}]: {} failed!", routingKey, payload, e);
+                }
+            };
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
+        Connection connection = connection();
+        try (Channel channel = connection.createChannel()) {
+            // 队列名=group.namespace.className.methodName
+            String queue = listener.getGroup() + "." + listener.getNamespace() + "."
+                    + listener.getMethod().getDeclaringClass().getSimpleName() + "."
+                    + listener.getMethod().getName();
+            List<String> routingKeys = new ArrayList<>();
+            if (listener.getTags() != null && !listener.getTags().isEmpty()) {
+                Set<String> tags = TagMatcher.findIncludes(listener.getTags());
+                if (!tags.isEmpty()) {
+                    for (String tag : tags) {
+                        routingKeys.add(listener.getNamespace() + "." + listener.getTopic() + "." + tag);
+                    }
+                } else {
+                    routingKeys.add(listener.getNamespace() + "." + listener.getTopic());
+                }
+            } else {
+                routingKeys.add(listener.getNamespace() + "." + listener.getTopic());
+            }
+            channel.queueDeclare(queue, true, false, false, null);
+            String exchange = Objects.nonNull(properties) ? properties.getExchange() : "";
+            for (String routingKey : routingKeys) {
+                channel.queueBind(queue, exchange, routingKey);
+            }
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                long deliveryTag = delivery.getEnvelope().getDeliveryTag();
+                MQEvent mqEvent;
+                try {
+                    mqEvent = serialization().deserialize(message, listener.payloadType());
+                } catch (Throwable ex) {
+                    log.error("Consume MQ [{}] deserialize failed: {}", listener.namespaceTopicTags(), message, ex);
+                    if (!mqProperties.isAutoAck()) {
+                        try {
+                            channel.basicAck(deliveryTag, false);
+                        } catch (IOException ignore) {
+                        }
+                    }
+                    return;
+                }
+                if (mqEvent == null) {
+                    if (!mqProperties.isAutoAck()) {
+                        channel.basicAck(deliveryTag, false);
+                    }
+                    log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                    return;
+                }
+                if (!TagMatcher.match(mqEvent.getTag(), listener.getTags())) {
+                    if (!mqProperties.isAutoAck()) {
+                        try {
+                            channel.basicAck(deliveryTag, false);
+                        } catch (IOException ignore) {
+                        }
+                    }
+                    return;
+                }
+                RabbitAcknowledgment ack = new RabbitAcknowledgment(channel, deliveryTag, mqEvent.getMsgId(), null);
+                try {
+                    consume(listener, mqEvent, ack);
+                    if (!mqProperties.isAutoAck() && !ack.isAcknowledged()) {
+                        ack.ackSingle();
+                    }
+                } catch (Throwable e) {
+                    log.error("Consume MQ [{}] failed: {}", listener.namespaceTopicTags(),
+                            serialization().serialize(mqEvent), e);
+                    if (!mqProperties.isAutoAck()) {
+                        try {
+                            channel.basicAck(deliveryTag, false);
+                        } catch (IOException ignore) {
+                        }
+                    }
+                }
+            };
+            java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r, "ddd4j-rabbit-" + listener.getMethod().getName());
+                t.setDaemon(true);
+                return t;
+            }).submit(() -> {
+                try {
+                    channel.basicConsume(queue, mqProperties.isAutoAck(), deliverCallback, consumerTag -> {
+                    });
+                } catch (Exception e) {
+                    log.error("Consume MQ [{}] basicConsume failed", listener.namespaceTopicTags(), e);
+                }
+            });
+        }
+        return true;
+    }
+
+    private Connection connection() {
+        Connection c = connectionRef.get();
+        if (Objects.isNull(c)) {
+            ConnectionFactory factory = properties.connectionFactory();
+            try {
+                Connection nc = factory.newConnection();
+                if (connectionRef.compareAndSet(null, nc)) {
+                    c = nc;
+                } else {
+                    c = connectionRef.get();
+                    try {
+                        nc.close();
+                    } catch (IOException ignore) {
+                    }
+                }
+            } catch (IOException | TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return c;
+    }
+}

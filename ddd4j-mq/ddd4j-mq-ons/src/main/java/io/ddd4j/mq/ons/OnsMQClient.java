@@ -35,15 +35,36 @@ import java.util.function.Consumer;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public class OnsClient implements MQClient {
+public class OnsMQClient implements MQClient {
 
     private final OnsProperties properties;
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
+    private final Producer injectedProducer;
     private volatile Producer producer;
     private volatile boolean producerStarted;
 
-    public OnsClient(OnsProperties properties) {
+    /**
+     * 构造 1：注入已初始化的原生 ONS {@link Producer}（用于 runtime 集成自动注入）。
+     * 注：ONS 消费者侧仍需 {@link OnsProperties} 通过 ONSFactory 创建，因此构造 1 同时接受
+     * {@link OnsProperties}（供消费者侧使用）。当前 initProducer 内部逻辑不变，
+     * 本字段保留以备未来切换。
+     *
+     * @param producer   原生 ONS producer（运行时构造预创建）
+     * @param properties ONS 配置（消费者侧使用）
+     */
+    public OnsMQClient(Producer producer, OnsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
+        this.injectedProducer = producer;
+    }
+
+    /**
+     * 构造 2：传入配置，{@link #initProducer}/{@link #initConsumer} 中通过 ONSFactory 创建原生客户端。
+     *
+     * @param properties ONS 配置
+     */
+    public OnsMQClient(OnsProperties properties) {
+        this.properties = Objects.requireNonNull(properties, "properties");
+        this.injectedProducer = null;
     }
 
     @Override
