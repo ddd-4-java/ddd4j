@@ -21,6 +21,11 @@ public class MQProperties {
     private boolean enabled = false;
 
     /**
+     * 分区路由策略（MQClient.PartitionKeyStrategy 枚举）。详见父类 Javadoc。
+     */
+    private MQClient.PartitionKeyStrategy partitionKeyStrategy = MQClient.PartitionKeyStrategy.TAG_TENANT;
+
+    /**
      * 当前 Broker 实现（配置字符串，如 kafka/rocket/rabbit/redis/redisStream），
      * 一个应用只用一套 MQ 发布和订阅。
      */

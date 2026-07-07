@@ -289,7 +289,7 @@ public interface MQBrokerAdapter {
 | nats         | `NatsMQBrokerAdapter`        | `io.ddd4j.mq.nats.spi`        |
 | ons          | `OnsMQBrokerAdapter`         | `io.ddd4j.mq.ons.spi`         |
 | pulsar       | `PulsarMQBrokerAdapter`      | `io.ddd4j.mq.pulsar.spi`      |
-| rabbitmq     | `RabbitMQBrokerAdapter`      | `io.ddd4j.mq.rabbit.spi`      |
+| rabbitmq     | `RabbitMQBrokerAdapter`      | `io.ddd4j.mq.rabbitmq.spi`      |
 | redis-stream | `RedisStreamMQBrokerAdapter` | `io.ddd4j.mq.redisstream.spi` |
 | sqs          | `SqsMQBrokerAdapter`         | `io.ddd4j.mq.sqs.spi`         |
 | tdmq         | `TdmqMQBrokerAdapter`        | `io.ddd4j.mq.tdmq.spi`        |

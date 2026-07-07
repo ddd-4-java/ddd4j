@@ -150,14 +150,14 @@ public class RedisMQClient implements MQClient {
 			Set<String> tags = TagMatcher.findIncludes(listener.getTags());
 			for (String tag : tags) {
 				String c = resolveTopic(namespace(listener.getNamespace(), properties),
-						listener.getTopic(), tag, concat(null, properties));
+						listener.getTopic(), tag, concat(null));
 				if (!channels.contains(c)) {
 					channels.add(c);
 				}
 			}
 		}
 		Executors.newSingleThreadExecutor(r -> {
-			Thread t = new Thread(r, "ddd4j-redis-pubsub-" + listener.namespaceTopicTags());
+			Thread t = new Thread(r, "ddd4j-redis-pubsub-" + listener.getRouteExpression(this.defaultConcat()));
 			t.setDaemon(true);
 			return t;
 		}).submit(() -> {
@@ -169,11 +169,11 @@ public class RedisMQClient implements MQClient {
 						try {
 							mqEvent = serialization().deserialize(message, listener.payloadType());
 						} catch (Exception ex) {
-							log.warn("Consume MQ [{}] failed: deserialize error", listener.namespaceTopicTags(), ex);
+							log.warn("Consume MQ [{}] failed: deserialize error", listener.getRouteExpression(RedisMQClient.this.defaultConcat()), ex);
 							return;
 						}
 						if (mqEvent == null) {
-							log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+							log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(RedisMQClient.this.defaultConcat()));
 							return;
 						}
 						if (!TagMatcher.match(mqEvent.getTag(), listener.getTags())) {
@@ -183,7 +183,7 @@ public class RedisMQClient implements MQClient {
 							// pubsub 无 ack 概念
 							consume(listener, mqEvent);
 						} catch (Throwable e) {
-							log.error("Consume MQ [{}] failed: {}", listener.namespaceTopicTags(), message, e);
+							log.error("Consume MQ [{}] failed: {}", listener.getRouteExpression(RedisMQClient.this.defaultConcat()), message, e);
 						}
 					}
 
@@ -198,7 +198,7 @@ public class RedisMQClient implements MQClient {
 					}
 				}, channels.toArray(new String[0]));
 			} catch (Exception e) {
-				log.error("Subscribe MQ [{}] failed!", listener.namespaceTopicTags(), e);
+				log.error("Subscribe MQ [{}] failed!", listener.getRouteExpression(this.defaultConcat()), e);
 			}
 		});
 		return true;

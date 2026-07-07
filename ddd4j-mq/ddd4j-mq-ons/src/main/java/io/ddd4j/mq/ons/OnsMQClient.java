@@ -119,7 +119,7 @@ public class OnsMQClient implements MQClient {
                 String payload = new String(msg.getBody(), StandardCharsets.UTF_8);
                 MQEvent event = serialization().deserialize(payload, listener.payloadType());
                 if (Objects.isNull(event)) {
-                    logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                    logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                     return com.aliyun.openservices.ons.api.Action.CommitMessage;
                 }
                 if (Objects.nonNull(msg.getTag())) {
@@ -135,12 +135,12 @@ public class OnsMQClient implements MQClient {
                         ack.ackSingle();
                     }
                 } catch (Throwable ex) {
-                    logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                    logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                     return com.aliyun.openservices.ons.api.Action.ReconsumeLater;
                 }
                 return ack.action();
             } catch (Throwable ex) {
-                logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                 return com.aliyun.openservices.ons.api.Action.ReconsumeLater;
             }
         });

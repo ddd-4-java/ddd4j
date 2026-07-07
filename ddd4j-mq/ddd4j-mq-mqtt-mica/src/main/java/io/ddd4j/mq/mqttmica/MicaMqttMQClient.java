@@ -1,5 +1,6 @@
 package io.ddd4j.mq.mqttmica;
 
+import io.ddd4j.kit.lang.IdKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
@@ -7,11 +8,11 @@ import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -30,7 +31,6 @@ public class MicaMqttMQClient implements MQClient {
 
     private final MicaMqttProperties properties;
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
-    private final AtomicLong idGen = new AtomicLong(1);
 
     /**
      * 构造 1：注入已初始化的原生 mica-mqtt 客户端（用于 runtime 集成自动注入）。
@@ -101,14 +101,14 @@ public class MicaMqttMQClient implements MQClient {
                 }
                 String payloadStr = new String(payload, StandardCharsets.UTF_8);
                 MQEvent event = serialization().deserialize(payloadStr, listener.payloadType());
-                long messageId = idGen.getAndIncrement();
+                long messageId = IdKit.getSnowflakeNextId();
                 Acknowledgment ack = new MicaMqttAcknowledgment(messageId, topic, null);
                 consume(listener, event, ack);
                 if (!ack.isAcknowledged()) {
                     ack.ackSingle();
                 }
             } catch (Throwable ex) {
-                logger().error("Consume mica-mqtt [{}] failed", listener.namespaceTopicTags(), ex);
+                logger().error("Consume mica-mqtt [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
             }
         });
         return true;
@@ -119,8 +119,8 @@ public class MicaMqttMQClient implements MQClient {
     /**
      * QoS：注入原生客户端（无 properties）时取默认 QoS = QOS1。
      */
-    private org.dromara.mica.mqtt.codec.MqttQoS qos() {
-        return Objects.isNull(properties) ? org.dromara.mica.mqtt.codec.MqttQoS.QOS1 : properties.mqttQoS();
+    private MqttQoS qos() {
+        return Objects.isNull(properties) ? MqttQoS.QOS1 : properties.mqttQoS();
     }
 
     private synchronized MqttClient client() {

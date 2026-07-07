@@ -7,6 +7,7 @@ import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
+import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
@@ -39,7 +40,7 @@ public class SqsMQClient implements MQClient {
 
     private final SqsProperties properties;
     private final List<ScheduledExecutorService> pollers = new CopyOnWriteArrayList<>();
-    private software.amazon.awssdk.services.sqs.SqsClient client;
+    private SqsClient client;
 
     /**
      * 构造 1：传入配置，{@link #initProducer} 时 lazy 创建 SqsClient。
@@ -49,9 +50,9 @@ public class SqsMQClient implements MQClient {
     }
 
     /**
-     * 构造 2：注入已初始化的原生 {@link software.amazon.awssdk.services.sqs.SqsClient}（用于 runtime 集成自动注入）。
+     * 构造 2：注入已初始化的原生 {@link SqsClient}（用于 runtime 集成自动注入）。
      */
-    public SqsMQClient(software.amazon.awssdk.services.sqs.SqsClient client) {
+    public SqsMQClient(SqsClient client) {
         this.client = Objects.requireNonNull(client, "SqsClient");
         this.properties = new SqsProperties();
     }
@@ -59,6 +60,15 @@ public class SqsMQClient implements MQClient {
     @Override
     public String impl() {
         return "sqs";
+    }
+
+    /**
+     * SQS 无原生 tag selector 机制，tag 过滤只能在应用层用 {@link TagMatcher#match} 完成
+     *（不匹配的消息直接 {@code deleteMessage} 丢弃，避免无限重投）。故覆写返回 false。
+     */
+    @Override
+    public boolean supportsBrokerTagFilter() {
+        return false;
     }
 
     // ========================= 生产者 =========================
@@ -110,7 +120,7 @@ public class SqsMQClient implements MQClient {
         }
         AtomicBoolean running = new AtomicBoolean(true);
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "sqs-consumer-" + listener.namespaceTopicTags());
+            Thread t = new Thread(r, "sqs-consumer-" + listener.getRouteExpression(this.defaultConcat()));
             t.setDaemon(true);
             return t;
         });
@@ -130,7 +140,7 @@ public class SqsMQClient implements MQClient {
                     handleMessage(message, queueUrl, listener);
                 }
             } catch (Exception ex) {
-                logger().warn("SQS receive failed: binding={}", listener.namespaceTopicTags(), ex);
+                logger().warn("SQS receive failed: binding={}", listener.getRouteExpression(this.defaultConcat()), ex);
             }
         }, 0, properties.getPollIntervalMs(), TimeUnit.MILLISECONDS);
         pollers.add(exec);
@@ -143,7 +153,7 @@ public class SqsMQClient implements MQClient {
             try {
                 client.deleteMessage(b -> b.queueUrl(queueUrl).receiptHandle(message.receiptHandle()));
             } catch (Exception ex) {
-                logger().warn("SQS deleteMessage failed: binding={}", listener.namespaceTopicTags(), ex);
+                logger().warn("SQS deleteMessage failed: binding={}", listener.getRouteExpression(this.defaultConcat()), ex);
             }
             return;
         }
@@ -153,7 +163,7 @@ public class SqsMQClient implements MQClient {
             String payload = message.body();
             MQEvent event = serialization().deserialize(payload, listener.payloadType());
             if (Objects.isNull(event)) {
-                logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                 ack.ackSingle();
                 return;
             }
@@ -173,7 +183,7 @@ public class SqsMQClient implements MQClient {
                     ack.ackSingle();
                 }
             } catch (Throwable ex) {
-                logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                 try {
                     client.changeMessageVisibility(b -> b.queueUrl(queueUrl)
                             .receiptHandle(message.receiptHandle())
@@ -182,7 +192,7 @@ public class SqsMQClient implements MQClient {
                 }
             }
         } catch (Throwable ex) {
-            logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+            logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
             try {
                 client.changeMessageVisibility(b -> b.queueUrl(queueUrl)
                         .receiptHandle(message.receiptHandle())

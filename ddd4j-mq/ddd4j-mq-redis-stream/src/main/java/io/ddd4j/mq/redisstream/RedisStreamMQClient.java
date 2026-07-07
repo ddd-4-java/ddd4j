@@ -165,7 +165,7 @@ public class RedisStreamMQClient implements MQClient {
 			Set<String> tags = TagMatcher.findIncludes(listener.getTags());
 			for (String tag : tags) {
 				String t = resolveTopic(namespace(listener.getNamespace(), properties),
-						listener.getTopic(), tag, concat(null, properties));
+						listener.getTopic(), tag, concat(null));
 				if (!topics.contains(t)) {
 					topics.add(t);
 				}
@@ -196,7 +196,7 @@ public class RedisStreamMQClient implements MQClient {
 		}
 
 		Executors.newSingleThreadExecutor(r -> {
-			Thread t = new Thread(r, "ddd4j-redis-stream-" + listener.namespaceTopicTags());
+			Thread t = new Thread(r, "ddd4j-redis-stream-" + listener.getRouteExpression(this.defaultConcat()));
 			t.setDaemon(true);
 			return t;
 		}).submit(() -> {
@@ -225,7 +225,7 @@ public class RedisStreamMQClient implements MQClient {
 							MQEvent mqEvent = serialization().deserialize(payload, listener.payloadType());
 							if (mqEvent == null) {
 								jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
-								log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+								log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
 								continue;
 							}
 							Acknowledgment ack = new RedisStreamAcknowledgment(
@@ -242,12 +242,12 @@ public class RedisStreamMQClient implements MQClient {
 									jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
 								}
 							} catch (Throwable e) {
-								log.error("Consume MQ [{}] failed: {}", listener.namespaceTopicTags(), payload, e);
+								log.error("Consume MQ [{}] failed: {}", listener.getRouteExpression(this.defaultConcat()), payload, e);
 							}
 						}
 					}
 				} catch (Exception e) {
-					log.error("Consume MQ [{}] failed!", listener.namespaceTopicTags(), e);
+					log.error("Consume MQ [{}] failed!", listener.getRouteExpression(this.defaultConcat()), e);
 					try {
 						TimeUnit.MILLISECONDS.sleep(5000);
 					} catch (InterruptedException ex) {

@@ -38,12 +38,6 @@ public class KafkaMQProperties extends MQProperties {
     private boolean autoStartConsumers = true;
 
     /**
-     * 分区路由策略（MQClient.PartitionKeyStrategy 枚举）。详见父类 Javadoc。
-     */
-    private io.ddd4j.mq.MQClient.PartitionKeyStrategy partitionKeyStrategy
-            = io.ddd4j.mq.MQClient.PartitionKeyStrategy.TAG_TENANT;
-
-    /**
      * 是否在 initProducer 时通过 AdminClient 自动创建缺失的 topic（借鉴 4）。
      */
     private boolean autoCreateTopics = true;

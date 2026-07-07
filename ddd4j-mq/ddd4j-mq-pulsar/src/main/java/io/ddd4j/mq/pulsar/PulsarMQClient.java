@@ -7,12 +7,7 @@ import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pulsar.client.api.Message;
-import org.apache.pulsar.client.api.MessageId;
-import org.apache.pulsar.client.api.Producer;
-import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.client.api.SubscriptionType;
-import org.apache.pulsar.client.api.TypedMessageBuilder;
+import org.apache.pulsar.client.api.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -38,7 +33,7 @@ public class PulsarMQClient implements MQClient {
     private final PulsarProperties properties;
     private final List<org.apache.pulsar.client.api.Consumer<?>> consumers = new CopyOnWriteArrayList<>();
     private final ConcurrentMap<String, Producer<byte[]>> producers = new ConcurrentHashMap<>();
-    private org.apache.pulsar.client.api.PulsarClient client;
+    private PulsarClient client;
 
     /**
      * 构造 1：传入配置，{@link #initProducer} 中通过 PulsarClient.builder().build() 创建原生客户端。
@@ -67,6 +62,35 @@ public class PulsarMQClient implements MQClient {
         return "pulsar";
     }
 
+    /**
+     * 仿照 {@code KafkaMQClient}：根据 {@link io.ddd4j.mq.MQProperties#getPartitionKeyStrategy()}
+     * 计算 Pulsar 消息 routing key，保证同 key 进同 partition（顺序投递）。
+     *
+     * <p>Pulsar 在 {@code Key_Shared} 订阅下按此 key 做哈希路由；生产端通过
+     * {@code TypedMessageBuilder.key(...)} 写入。
+     *
+     * <ul>
+     *   <li>NONE → {@code null}（轮询，无顺序保证）</li>
+     *   <li>TAG → event.tag</li>
+     *   <li>TENANT → event.tenantId</li>
+     *   <li>TAG_TENANT → 复用父类 {@code tag|tenant} 复合 key（默认）</li>
+     *   <li>CUSTOM → 父类默认（占位：子类自行覆写）</li>
+     * </ul>
+     */
+    @Override
+    public String partitionKey(MQEvent event) {
+        if (properties == null) {
+            return MQClient.super.partitionKey(event);  // 双构造 2：注入 client 时走父类默认
+        }
+        return switch (properties.getPartitionKeyStrategy()) {
+            case NONE -> null;
+            case TAG -> event != null ? event.getTag() : null;
+            case TENANT -> event != null ? event.getTenantId() : null;
+            case TAG_TENANT -> MQClient.super.partitionKey(event);
+            case CUSTOM -> MQClient.super.partitionKey(event);  // 占位：子类应自己覆写
+        };
+    }
+
     // ========================= 生产者 =========================
 
     @Override
@@ -84,6 +108,10 @@ public class PulsarMQClient implements MQClient {
                     TypedMessageBuilder<byte[]> builder = p.newMessage()
                             .value(serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8))
                             .property(MessageHeaders.HEADER_DESTINATION_TOPIC, topic);
+                    String routingKey = partitionKey(event);
+                    if (Objects.nonNull(routingKey)) {
+                        builder.key(routingKey); // Pulsar partition routing：同 key 进同 partition
+                    }
                     if (Objects.nonNull(event.getMsgId())) {
                         builder.property(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
                     }
@@ -125,7 +153,7 @@ public class PulsarMQClient implements MQClient {
         // Pulsar 物理 topic 用 tenant/namespace/topic 拼接，不含 tag（tag 作为 property 写入并应用层过滤）
         String topic = properties.physicalTopic(
                 Objects.nonNull(listener.getTopic()) ? listener.getTopic() : "ddd4j.default.topic", null);
-        String subscriptionName = properties.getSubscriptionName() + "-" + listener.namespaceTopicTags();
+        String subscriptionName = properties.getSubscriptionName() + "-" + listener.getRouteExpression(this.defaultConcat());
         org.apache.pulsar.client.api.Consumer<byte[]> consumer = client.newConsumer(Schema.BYTES)
                 .topic(topic)
                 .subscriptionName(subscriptionName)
@@ -142,7 +170,7 @@ public class PulsarMQClient implements MQClient {
                         String payload = new String(msg.getValue(), StandardCharsets.UTF_8);
                         MQEvent event = serialization().deserialize(payload, listener.payloadType());
                         if (Objects.isNull(event)) {
-                            logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                            logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                             ((org.apache.pulsar.client.api.Consumer) c).acknowledge(msg);
                             return;
                         }
@@ -159,14 +187,14 @@ public class PulsarMQClient implements MQClient {
                                 ack.ackSingle();
                             }
                         } catch (Throwable ex) {
-                            logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                            logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                             try {
                                 ((org.apache.pulsar.client.api.Consumer) c).negativeAcknowledge(msg);
                             } catch (Exception ignore) {
                             }
                         }
                     } catch (Throwable ex) {
-                        logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                        logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                         try {
                             ((org.apache.pulsar.client.api.Consumer) c).negativeAcknowledge(msg);
                         } catch (Exception ignore) {
@@ -190,7 +218,7 @@ public class PulsarMQClient implements MQClient {
     // ========================= 关闭 =========================
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         for (org.apache.pulsar.client.api.Consumer<?> c : new ArrayList<>(consumers)) {
             try {
                 c.close();
@@ -208,7 +236,11 @@ public class PulsarMQClient implements MQClient {
         }
         producers.clear();
         if (Objects.nonNull(client)) {
-            client.close();
+            try {
+                client.close();
+            } catch (Exception ex) {
+                logger().warn("Close Pulsar client failed", ex);
+            }
         }
     }
 }

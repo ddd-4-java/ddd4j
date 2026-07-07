@@ -9,6 +9,7 @@ import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.nio.charset.StandardCharsets;
@@ -29,15 +30,15 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : MqttMQClient ###")
 public class MqttMQClient implements MQClient {
 
-    private final MqttProperties properties;
-    private final AtomicReference<org.eclipse.paho.client.mqttv3.MqttClient> clientRef = new AtomicReference<>();
+    private final MqttMQProperties properties;
+    private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
 
     /**
      * 构造 1：注入已初始化的原生 Paho 客户端（用于 runtime 集成自动注入）。
      *
      * @param client 原生 MQTT 客户端
      */
-    public MqttMQClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
+    public MqttMQClient(MqttClient client) {
         this.properties = null;
         if (Objects.nonNull(client)) {
             this.clientRef.set(client);
@@ -45,11 +46,11 @@ public class MqttMQClient implements MQClient {
     }
 
     /**
-     * 构造 2：传入配置，{@link #connection()} 时 lazy 构造原生客户端。
+     * 构造 2：传入配置，{@link #getMqttClient()} 时 lazy 构造原生客户端。
      *
      * @param properties MQTT 配置
      */
-    public MqttMQClient(MqttProperties properties) {
+    public MqttMQClient(MqttMQProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
@@ -67,7 +68,7 @@ public class MqttMQClient implements MQClient {
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        org.eclipse.paho.client.mqttv3.MqttClient client = connection();
+        MqttClient client = getMqttClient();
         return event -> {
             try {
                 String physical = resolveTopic(event, mqProperties);
@@ -92,7 +93,7 @@ public class MqttMQClient implements MQClient {
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
-        org.eclipse.paho.client.mqttv3.MqttClient client = connection();
+        org.eclipse.paho.client.mqttv3.MqttClient client = getMqttClient();
         // MQTT subscribe 通配：保留原生 subscribe `topic/#` 行为（首个 include tag 拼接到末尾 /#）
         String physical = resolveTopic(listener, mqProperties);
         String includeTag = TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null);
@@ -122,7 +123,7 @@ public class MqttMQClient implements MQClient {
                         ack.ackSingle();
                     }
                 } catch (Throwable ex) {
-                    logger().error("Consume MQTT [{}] failed", listener.namespaceTopicTags(), ex);
+                    logger().error("Consume MQTT [{}] failed", listener.getRouteExpression(defaultConcat()), ex);
                 }
             }
 
@@ -143,14 +144,13 @@ public class MqttMQClient implements MQClient {
         return Objects.isNull(properties) ? 1 : properties.getQos();
     }
 
-    private synchronized org.eclipse.paho.client.mqttv3.MqttClient connection() {
-        org.eclipse.paho.client.mqttv3.MqttClient c = clientRef.get();
+    private synchronized MqttClient getMqttClient() {
+        MqttClient c = clientRef.get();
         if (Objects.nonNull(c)) {
             return c;
         }
         try {
-            org.eclipse.paho.client.mqttv3.MqttClient nc = new org.eclipse.paho.client.mqttv3.MqttClient(
-                    properties.getServerUri(), properties.newClientId());
+            MqttClient nc = new MqttClient(properties.getServerUri(), properties.newClientId());
             nc.connect(properties.connectOptions());
             clientRef.set(nc);
             c = nc;

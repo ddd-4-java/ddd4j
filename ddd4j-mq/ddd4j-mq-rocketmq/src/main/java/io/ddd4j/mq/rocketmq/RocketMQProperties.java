@@ -6,10 +6,11 @@ import lombok.EqualsAndHashCode;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 
-import java.util.Objects;
-
 /**
  * RocketMQ adapter configuration.
+ *
+ * <p>{@link RocketMQProperties} extends {@link MQProperties} —— 复用通用字段（namespace / defaultTopic /
+ * autoAck / persist / retries / username / password / producerGroup 等），仅声明 RocketMQ 专属字段。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -17,69 +18,42 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class RocketMQProperties extends MQProperties {
 
+    /**
+     * NameServer 地址（例：{@code localhost:9876} 或 {@code 192.168.1.1:9876;192.168.1.2:9876}）。
+     */
     private String nameServer = "localhost:9876";
-    private String producerGroup = "ddd4j-producer";
+    /**
+     * 消费者组名前缀（每个 listener 的 group 回落到 {@code consumerGroupPrefix + method}）。
+     */
     private String consumerGroupPrefix = "ddd4j";
+    /**
+     * 生产者是否自动启动。
+     */
     private boolean autoStartProducer = true;
+    /**
+     * 消费者是否自动启动。
+     */
     private boolean autoStartConsumers = true;
 
-    private static boolean hasText(String s) {
-        return Objects.nonNull(s) && !io.ddd4j.kit.lang.StrKit.isBlank(s);
-    }
-
+    /**
+     * 基于本配置创建原生生产者（含 nameServer）。
+     */
     public DefaultMQProducer newProducer() {
-        DefaultMQProducer producer = new DefaultMQProducer(producerGroup);
-        if (hasText(nameServer)) {
+        DefaultMQProducer producer = new DefaultMQProducer(getProducerGroup());
+        if (nameServer != null && !nameServer.isEmpty()) {
             producer.setNamesrvAddr(nameServer);
         }
         return producer;
     }
 
+    /**
+     * 基于本配置创建原生消费者（含 nameServer）。
+     */
     public DefaultMQPushConsumer newConsumer(String group) {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);
-        if (hasText(nameServer)) {
+        if (nameServer != null && !nameServer.isEmpty()) {
             consumer.setNamesrvAddr(nameServer);
         }
         return consumer;
-    }
-
-    public String getNameServer() {
-        return nameServer;
-    }
-
-    public void setNameServer(String nameServer) {
-        this.nameServer = nameServer;
-    }
-
-    public String getProducerGroup() {
-        return producerGroup;
-    }
-
-    public void setProducerGroup(String producerGroup) {
-        this.producerGroup = producerGroup;
-    }
-
-    public String getConsumerGroupPrefix() {
-        return consumerGroupPrefix;
-    }
-
-    public void setConsumerGroupPrefix(String consumerGroupPrefix) {
-        this.consumerGroupPrefix = consumerGroupPrefix;
-    }
-
-    public boolean isAutoStartProducer() {
-        return autoStartProducer;
-    }
-
-    public void setAutoStartProducer(boolean autoStartProducer) {
-        this.autoStartProducer = autoStartProducer;
-    }
-
-    public boolean isAutoStartConsumers() {
-        return autoStartConsumers;
-    }
-
-    public void setAutoStartConsumers(boolean autoStartConsumers) {
-        this.autoStartConsumers = autoStartConsumers;
     }
 }

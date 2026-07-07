@@ -177,8 +177,6 @@ public class KafkaMQClient implements MQClient {
         if (Objects.isNull(properties)) {
             return false;
         }
-
-
         Properties props = properties.consumerProperties(buildGroupId(mqListener));
         props.put("bootstrap.servers", properties.getBootstrapServers());
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);

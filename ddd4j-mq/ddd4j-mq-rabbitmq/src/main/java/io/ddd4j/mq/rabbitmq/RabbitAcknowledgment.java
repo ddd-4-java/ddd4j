@@ -1,4 +1,4 @@
-package io.ddd4j.mq.rabbit;
+package io.ddd4j.mq.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import io.ddd4j.mq.message.Acknowledgment;

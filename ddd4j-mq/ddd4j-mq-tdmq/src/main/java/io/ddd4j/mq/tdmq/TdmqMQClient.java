@@ -125,7 +125,7 @@ public class TdmqMQClient implements MQClient {
                         TdmqAcknowledgment ack = new TdmqAcknowledgment(messageId, correlationId, deliveryTag, requeue);
                         MQEvent event = serialization().deserialize(payloadText, listener.payloadType());
                         if (Objects.isNull(event)) {
-                            logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                            logger().warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                             ack.ackSingle();
                             return;
                         }
@@ -135,13 +135,13 @@ public class TdmqMQClient implements MQClient {
                                 ack.ackSingle();
                             }
                         } catch (Throwable ex) {
-                            logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                            logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                             if (!ack.isAcknowledged()) {
                                 ack.nack(properties.isRequeueOnError());
                             }
                         }
                     } catch (Throwable ex) {
-                        logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                        logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                         requeue.accept(properties.isRequeueOnError());
                     }
                 });

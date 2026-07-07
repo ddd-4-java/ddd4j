@@ -2,6 +2,8 @@ package io.ddd4j.mq.nats;
 
 import io.nats.client.Connection;
 import io.nats.client.Nats;
+import io.nats.client.Options;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -14,6 +16,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
+@Data
 public class NatsProperties {
 
     /** NATS 服务器地址列表（逗号分隔，如 {@code nats://host1:4222,nats://host2:4222}） */
@@ -27,52 +30,12 @@ public class NatsProperties {
     /** 连接超时（毫秒） */
     private long connectTimeoutMillis = 2000L;
 
-    public String getServers() {
-        return servers;
-    }
-
-    public void setServers(String servers) {
-        this.servers = servers;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConnectionName() {
-        return connectionName;
-    }
-
-    public void setConnectionName(String connectionName) {
-        this.connectionName = connectionName;
-    }
-
-    public long getConnectTimeoutMillis() {
-        return connectTimeoutMillis;
-    }
-
-    public void setConnectTimeoutMillis(long connectTimeoutMillis) {
-        this.connectTimeoutMillis = connectTimeoutMillis;
-    }
-
     /**
      * 创建并打开 NATS {@link Connection}。
      */
     public Connection connect() {
         try {
-            io.nats.client.Options.Builder builder = new io.nats.client.Options.Builder()
+            Options.Builder builder = new Options.Builder()
                     .servers(Objects.requireNonNull(servers, "servers").split(","))
                     .connectionName(connectionName)
                     .connectionTimeout(connectTimeoutMillis);
