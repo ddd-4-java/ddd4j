@@ -105,8 +105,7 @@ public class ActiveMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         final Session session = getConnection().createSession(false, Session.CLIENT_ACKNOWLEDGE);
-        String namespace = Objects.nonNull(listener.getNamespace()) ? listener.getNamespace() : mqProperties.getNamespace();
-        String topic = namespace + "." + listener.getTopic();
+        String topic = resolveTopic(listener, mqProperties);
         MessageConsumer consumer = session.createConsumer(ActivemqKit.createDestination(session, topic));
         consumer.setMessageListener(message -> {
             try {
@@ -155,9 +154,10 @@ public class ActiveMQClient implements MQClient {
                 connectionRef.set(nc);
                 connection = nc;
             } catch (JMSException ex) {
-                throw new java.lang.IllegalStateException("Open ActiveMQ connection failed", ex);
+                throw new IllegalStateException("Open ActiveMQ connection failed", ex);
             }
         }
+        log.info("Get ActiveMQ connection: {}", connection);
         return connection;
     }
 
