@@ -5,7 +5,6 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.mica.mqtt.codec.MqttQoS;
@@ -21,7 +20,7 @@ import java.util.function.Consumer;
  *
  * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
  *
- * <p>mica-mqtt 协议层自动处理 PUBACK；无原生 broker-side tag filter，应用层过滤保留。
+ * <p>mica-mqtt 协议层自动处理 PUBACK；无原生 broker-side tag filter，应用层 {@link TagMatcher} 过滤保留。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -33,19 +32,19 @@ public class MicaMqttMQClient implements MQClient {
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
 
     /**
-     * 构造 1：注入已初始化的原生 mica-mqtt 客户端（用于 runtime 集成自动注入）。
+     * 双构造 1：注入已初始化的原生 mica-mqtt 客户端（用于 runtime 集成自动注入）。
      *
      * @param client 原生 mica-mqtt 客户端
      */
     public MicaMqttMQClient(MqttClient client) {
-        this.properties = null;
+        this.properties = new MicaMqttProperties();
         if (Objects.nonNull(client)) {
             this.clientRef.set(client);
         }
     }
 
     /**
-     * 构造 2：传入配置，{@link #client()} 时 lazy 构造原生 mica-mqtt 客户端。
+     * 双构造 2：传入配置，{@link #client()} 时 lazy 构造原生 mica-mqtt 客户端。
      *
      * @param properties mica-mqtt 配置
      */
@@ -63,20 +62,30 @@ public class MicaMqttMQClient implements MQClient {
         return "/";
     }
 
+    /**
+     * mica-mqtt 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     */
+    @Override
+    public boolean supportsBrokerTagFilter() {
+        return false;
+    }
+
     // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         MqttClient client = client();
         return event -> {
+            String payload = serialization().serialize(event);
+            String topic = resolveTopic(event, mqProperties);
             try {
-                String physical = resolveTopic(event, mqProperties);
-                byte[] body = serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8);
-                client.publish(physical, body, qos());
-                logger().info("Publish mica-mqtt [{}]: {}", physical, serialization().serialize(event));
+                byte[] body = payload.getBytes(StandardCharsets.UTF_8);
+                client.publish(topic, body, qos());
             } catch (Exception ex) {
+                log.error("Publish mica-mqtt [{}]: {} failed!", topic, payload, ex);
                 throw new IllegalStateException("Publish mica-mqtt event failed", ex);
             }
+            log.info("Publish MQ [{}]: {}", topic, payload);
         };
     }
 
@@ -86,29 +95,34 @@ public class MicaMqttMQClient implements MQClient {
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         MqttClient client = client();
         // mica subscribe 通配：保留原生 subscribe `topic/#` 行为（首个 include tag 拼接到末尾 /#）
-        String physical = resolveTopic(listener, mqProperties);
+        String topic = resolveTopic(listener, mqProperties);
         String includeTag = TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null);
-        String subscribeTopic = Objects.isNull(includeTag) ? physical : physical + "/#";
-        client.subscribe(subscribeTopic, qos(), (ctx, topic, message, payload) -> {
+        String subscribeTopic = Objects.isNull(includeTag) ? topic : topic + "/#";
+        client.subscribe(subscribeTopic, qos(), (ctx, arrivedTopic, message, payload) -> {
             try {
+                String payloadStr = new String(payload, StandardCharsets.UTF_8);
+                MQEvent event = serialization().deserialize(payloadStr, listener.payloadType());
+                if (Objects.isNull(event)) {
+                    log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
+                    return;
+                }
+                // 应用层 tag 过滤（tag 取 topic 末段，mica payload 不带 user property）
                 String tag = null;
-                int lastSlash = topic.lastIndexOf('/');
+                int lastSlash = arrivedTopic.lastIndexOf('/');
                 if (lastSlash >= 0) {
-                    tag = topic.substring(lastSlash + 1);
+                    tag = arrivedTopic.substring(lastSlash + 1);
                 }
                 if (!TagMatcher.match(tag, listener.getTags())) {
                     return;
                 }
-                String payloadStr = new String(payload, StandardCharsets.UTF_8);
-                MQEvent event = serialization().deserialize(payloadStr, listener.payloadType());
                 long messageId = IdKit.getSnowflakeNextId();
-                Acknowledgment ack = new MicaMqttAcknowledgment(messageId, topic, null);
+                MicaMqttAcknowledgment ack = new MicaMqttAcknowledgment(messageId, arrivedTopic, null);
                 consume(listener, event, ack);
                 if (!ack.isAcknowledged()) {
                     ack.ackSingle();
                 }
             } catch (Throwable ex) {
-                logger().error("Consume mica-mqtt [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
+                log.error("Consume mica-mqtt [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
             }
         });
         return true;
@@ -117,10 +131,10 @@ public class MicaMqttMQClient implements MQClient {
     // ========================= 连接管理 =========================
 
     /**
-     * QoS：注入原生客户端（无 properties）时取默认 QoS = QOS1。
+     * QoS：注入原生客户端时取默认 QoS = QOS1，否则读 properties。
      */
     private MqttQoS qos() {
-        return Objects.isNull(properties) ? MqttQoS.QOS1 : properties.mqttQoS();
+        return properties.mqttQoS();
     }
 
     private synchronized MqttClient client() {

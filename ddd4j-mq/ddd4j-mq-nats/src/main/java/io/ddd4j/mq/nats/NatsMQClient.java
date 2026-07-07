@@ -1,11 +1,9 @@
 package io.ddd4j.mq.nats;
 
-import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import io.nats.client.Connection;
 import io.nats.client.Dispatcher;
@@ -26,7 +24,7 @@ import java.util.function.Consumer;
  *
  * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
  *
- * <p>NATS 无原生 broker-side tag filter（仅 subject 通配），应用层 tag 过滤保留。
+ * <p>NATS 无原生 broker-side tag filter（仅 subject 通配），应用层 {@link TagMatcher} tag 过滤保留。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -38,19 +36,19 @@ public class NatsMQClient implements MQClient {
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
 
     /**
-     * 构造 1：注入已初始化的原生 NATS {@link Connection}（用于 runtime 集成自动注入）。
+     * 双构造 1：注入已初始化的原生 NATS {@link Connection}（用于 runtime 集成自动注入）。
      *
      * @param connection 原生 NATS 连接
      */
     public NatsMQClient(Connection connection) {
-        this.properties = null;
+        this.properties = new NatsProperties();
         if (Objects.nonNull(connection)) {
             this.connectionRef.set(connection);
         }
     }
 
     /**
-     * 构造 2：传入配置，{@link #connection()} 时 lazy 构造原生 NATS 连接。
+     * 双构造 2：传入配置，{@link #connection()} 时 lazy 构造原生 NATS 连接。
      *
      * @param properties NATS 配置
      */
@@ -63,27 +61,36 @@ public class NatsMQClient implements MQClient {
         return "nats";
     }
 
+    /**
+     * NATS 无原生 broker-side tag selector，仅 subject 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     */
+    @Override
+    public boolean supportsBrokerTagFilter() {
+        return false;
+    }
+
     // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         Connection conn = connection();
         return event -> {
+            String payload = serialization().serialize(event);
+            String subject = resolveTopic(event, mqProperties);
             try {
-                String subject = resolveTopic(event, mqProperties);
-                String payload = JsonKit.toJson(event);
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
+                // JetStream 优先，失败回落 core NATS（如未启用 JetStream）
                 try {
                     JetStream jetStream = conn.jetStream();
                     jetStream.publish(subject, body);
-                    log.debug("Published NATS JetStream event, subject={}, msgId={}", subject, event.getMsgId());
                 } catch (IOException | JetStreamApiException ex) {
                     conn.publish(subject, body);
-                    log.debug("Published NATS core event, subject={}, msgId={}", subject, event.getMsgId());
                 }
             } catch (Exception ex) {
+                log.error("Publish NATS [{}]: {} failed!", subject, payload, ex);
                 throw new IllegalStateException("Publish NATS event failed", ex);
             }
+            log.info("Publish MQ [{}]: {}", subject, payload);
         };
     }
 
@@ -92,7 +99,6 @@ public class NatsMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection conn = connection();
-        boolean autoAck = mqProperties.isAutoAck();
         String subject = resolveTopic(listener, mqProperties);
         try {
             JetStream jetStream = conn.jetStream();
@@ -101,22 +107,29 @@ public class NatsMQClient implements MQClient {
             PushSubscribeOptions options = PushSubscribeOptions.builder()
                     .durable(listener.getGroup())
                     .build();
-            jetStream.subscribe(subject, dispatcher, msg -> onMessage(msg, listener, autoAck), false, options);
+            jetStream.subscribe(subject, dispatcher, msg -> onMessage(msg, listener), false, options);
             log.info("Registered NATS JetStream listener: subject={}, durable={}", subject, listener.getGroup());
         } catch (Exception ex) {
             log.warn("JetStream subscribe failed for subject={}, falling back to core NATS: {}",
                     subject, ex.getMessage());
-            Dispatcher dispatcher = conn.createDispatcher(msg -> onMessage(msg, listener, autoAck));
+            Dispatcher dispatcher = conn.createDispatcher(msg -> onMessage(msg, listener));
             dispatcher.subscribe(subject);
             log.info("Registered NATS core listener: subject={}", subject);
         }
         return true;
     }
 
-    private void onMessage(Message natsMessage, MQListener listener, boolean autoAck) {
+    private void onMessage(Message natsMessage, MQListener listener) {
         try {
-            String subject = natsMessage.getSubject();
+            String payload = new String(natsMessage.getData(), StandardCharsets.UTF_8);
+            MQEvent event = serialization().deserialize(payload, listener.payloadType());
+            if (Objects.isNull(event)) {
+                log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
+                return;
+            }
+            // 应用层 tag 过滤（tag 取 subject 末段）
             String tag = null;
+            String subject = natsMessage.getSubject();
             int lastDot = subject.lastIndexOf('.');
             if (lastDot >= 0) {
                 tag = subject.substring(lastDot + 1);
@@ -124,13 +137,10 @@ public class NatsMQClient implements MQClient {
             if (!TagMatcher.match(tag, listener.getTags())) {
                 return;
             }
-            String payload = new String(natsMessage.getData(), StandardCharsets.UTF_8);
-            MQEvent event = serialization().deserialize(payload, listener.payloadType());
-            Acknowledgment ack = new NatsAcknowledgment(natsMessage);
+            NatsAcknowledgment ack = new NatsAcknowledgment(natsMessage);
             consume(listener, event, ack);
-            if (!autoAck && Objects.nonNull(ack) && !ack.isAcknowledged()
-                    && Objects.nonNull(natsMessage.metaData())) {
-                ack.ack();
+            if (!ack.isAcknowledged()) {
+                ack.ackSingle();
             }
         } catch (Throwable ex) {
             log.error("NATS consumer failed: subject={}", natsMessage.getSubject(), ex);

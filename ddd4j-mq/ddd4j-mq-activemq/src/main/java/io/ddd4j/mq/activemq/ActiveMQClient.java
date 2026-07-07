@@ -115,7 +115,7 @@ public class ActiveMQClient implements MQClient {
             try {
                 MQEvent event = serialization().deserialize(ActivemqKit.extractPayload(message), listener.payloadType());
                 if (Objects.isNull(event)) {
-                    log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.namespaceTopicTags());
+                    log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
                     return;
                 }
                 ActiveMQAcknowledgment ack = new ActiveMQAcknowledgment(
@@ -128,7 +128,7 @@ public class ActiveMQClient implements MQClient {
                     ack.ackSingle();
                 }
             } catch (Throwable ex) {
-                log.error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                log.error("Consume MQ [{}] failed", listener.getRouteExpression(defaultConcat()), ex);
                 try {
                     session.recover();
                 } catch (JMSException ignore) {

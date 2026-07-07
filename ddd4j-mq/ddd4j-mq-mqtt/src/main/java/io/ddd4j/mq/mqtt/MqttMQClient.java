@@ -4,12 +4,10 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.nio.charset.StandardCharsets;
@@ -22,7 +20,10 @@ import java.util.function.Consumer;
  *
  * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
  *
- * <p>MQTT 无原生 broker-side tag filter（仅 topic 通配），应用层 tag 过滤保留。
+ * <p>MQTT 无原生 broker-side tag filter（仅 topic 通配），应用层 {@link TagMatcher} tag 过滤保留。
+ *
+ * <p>注意：Paho 原生类名 {@code MqttClient} 与 ddd4j 的 {@link MQClient} 概念相近但不同，
+ * 本类统一用全限定名 {@link org.eclipse.paho.client.mqttv3.MqttClient} 避免歧义。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -31,22 +32,22 @@ import java.util.function.Consumer;
 public class MqttMQClient implements MQClient {
 
     private final MqttMQProperties properties;
-    private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
+    private final AtomicReference<org.eclipse.paho.client.mqttv3.MqttClient> clientRef = new AtomicReference<>();
 
     /**
-     * 构造 1：注入已初始化的原生 Paho 客户端（用于 runtime 集成自动注入）。
+     * 双构造 1：注入已初始化的原生 Paho 客户端（用于 runtime 集成自动注入）。
      *
      * @param client 原生 MQTT 客户端
      */
-    public MqttMQClient(MqttClient client) {
-        this.properties = null;
+    public MqttMQClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
+        this.properties = new MqttMQProperties();
         if (Objects.nonNull(client)) {
             this.clientRef.set(client);
         }
     }
 
     /**
-     * 构造 2：传入配置，{@link #getMqttClient()} 时 lazy 构造原生客户端。
+     * 双构造 2：传入配置，{@link #connection()} 时 lazy 构造原生客户端。
      *
      * @param properties MQTT 配置
      */
@@ -64,28 +65,40 @@ public class MqttMQClient implements MQClient {
         return "/";
     }
 
+    /**
+     * MQTT 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
+     */
+    @Override
+    public boolean supportsBrokerTagFilter() {
+        return false;
+    }
+
     // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        MqttClient client = getMqttClient();
+        org.eclipse.paho.client.mqttv3.MqttClient client = connection();
         return event -> {
+            String payload = serialization().serialize(event);
+            String topic = resolveTopic(event, mqProperties);
             try {
-                String physical = resolveTopic(event, mqProperties);
-                byte[] body = serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8);
+                byte[] body = payload.getBytes(StandardCharsets.UTF_8);
                 MqttMessage msg = new MqttMessage(body);
                 msg.setQos(qos());
+                // Paho v3 不支持 user property，tag 已通过 resolveTopic 拼入物理 topic 末段，
+                // 消费侧按 topic 末段解析（见 readTag）。
                 if (Objects.nonNull(event.getMsgId())) {
                     try {
                         msg.setId(Integer.parseInt(event.getMsgId().hashCode() + ""));
                     } catch (Exception ignore) {
                     }
                 }
-                client.publish(physical, msg);
-                logger().info("Publish MQTT [{}]: {}", physical, serialization().serialize(event));
+                client.publish(topic, msg);
             } catch (Exception ex) {
+                log.error("Publish MQTT [{}]: {} failed!", topic, payload, ex);
                 throw new IllegalStateException("Publish MQTT event failed", ex);
             }
+            log.info("Publish MQ [{}]: {}", topic, payload);
         };
     }
 
@@ -93,37 +106,37 @@ public class MqttMQClient implements MQClient {
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
-        org.eclipse.paho.client.mqttv3.MqttClient client = getMqttClient();
+        org.eclipse.paho.client.mqttv3.MqttClient client = connection();
         // MQTT subscribe 通配：保留原生 subscribe `topic/#` 行为（首个 include tag 拼接到末尾 /#）
-        String physical = resolveTopic(listener, mqProperties);
+        String topic = resolveTopic(listener, mqProperties);
         String includeTag = TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null);
-        String subscribeTopic = Objects.isNull(includeTag) ? physical : physical + "/#";
+        String subscribeTopic = Objects.isNull(includeTag) ? topic : topic + "/#";
         client.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
-                logger().warn("MQTT connection lost", cause);
+                log.warn("MQTT connection lost", cause);
             }
 
             @Override
             public void messageArrived(String arrivedTopic, MqttMessage message) {
                 try {
-                    String tag = null;
-                    int lastSlash = arrivedTopic.lastIndexOf('/');
-                    if (lastSlash >= 0) {
-                        tag = arrivedTopic.substring(lastSlash + 1);
-                    }
-                    if (!TagMatcher.match(tag, listener.getTags())) {
-                        return;
-                    }
                     String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
                     MQEvent event = serialization().deserialize(payload, listener.payloadType());
-                    Acknowledgment ack = new MqttAcknowledgment(message, arrivedTopic);
+                    if (Objects.isNull(event)) {
+                        log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
+                        return;
+                    }
+                    // 应用层 tag 过滤（优先 user property 中的 tag，回落到 topic 末段）
+                    if (!TagMatcher.match(readTag(message, arrivedTopic), listener.getTags())) {
+                        return;
+                    }
+                    MqttAcknowledgment ack = new MqttAcknowledgment(message, arrivedTopic);
                     consume(listener, event, ack);
                     if (!ack.isAcknowledged()) {
                         ack.ackSingle();
                     }
                 } catch (Throwable ex) {
-                    logger().error("Consume MQTT [{}] failed", listener.getRouteExpression(defaultConcat()), ex);
+                    log.error("Consume MQTT [{}] failed", listener.getRouteExpression(defaultConcat()), ex);
                 }
             }
 
@@ -135,22 +148,34 @@ public class MqttMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 从到达的物理 topic 末段解析 tag（保持与生产者 {@link #resolveTopic} 拼接规则一致）。
+     */
+    private String readTag(MqttMessage message, String arrivedTopic) {
+        int lastSlash = arrivedTopic.lastIndexOf('/');
+        if (lastSlash >= 0) {
+            return arrivedTopic.substring(lastSlash + 1);
+        }
+        return null;
+    }
+
     // ========================= 连接管理 =========================
 
     /**
-     * QoS：注入原生客户端（无 properties）时取默认值 1。
+     * QoS：注入原生客户端时取默认值 1，否则读 properties。
      */
     private int qos() {
-        return Objects.isNull(properties) ? 1 : properties.getQos();
+        return properties.getQos();
     }
 
-    private synchronized MqttClient getMqttClient() {
-        MqttClient c = clientRef.get();
+    private synchronized org.eclipse.paho.client.mqttv3.MqttClient connection() {
+        org.eclipse.paho.client.mqttv3.MqttClient c = clientRef.get();
         if (Objects.nonNull(c)) {
             return c;
         }
         try {
-            MqttClient nc = new MqttClient(properties.getServerUri(), properties.newClientId());
+            org.eclipse.paho.client.mqttv3.MqttClient nc = new org.eclipse.paho.client.mqttv3.MqttClient(
+                    properties.getServerUri(), properties.newClientId());
             nc.connect(properties.connectOptions());
             clientRef.set(nc);
             c = nc;
