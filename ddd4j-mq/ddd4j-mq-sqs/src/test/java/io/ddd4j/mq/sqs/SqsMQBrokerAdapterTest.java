@@ -2,10 +2,10 @@ package io.ddd4j.mq.sqs;
 
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
-import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.MessageHeaders;
-import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.BrokerType;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.sqs.ack.SqsAcknowledgment;
 import io.ddd4j.mq.sqs.publisher.SqsMQEventPublisher;

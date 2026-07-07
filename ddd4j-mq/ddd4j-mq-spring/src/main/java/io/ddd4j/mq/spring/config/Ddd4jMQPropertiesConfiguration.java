@@ -1,11 +1,9 @@
 package io.ddd4j.mq.spring.config;
 
 import io.ddd4j.mq.config.MQProperties;
-import io.ddd4j.mq.consume.ConsumerInterceptor;
-import io.ddd4j.mq.serialization.JsonSerialization;
-import io.ddd4j.mq.serialization.EventSerialization;
-import io.ddd4j.mq.consume.EventPersistInterceptor;
-import io.ddd4j.mq.consume.EventStorer;
+import io.ddd4j.mq.event.MQEventSerialization;
+import io.ddd4j.mq.event.MQEventStorer;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +17,7 @@ import org.springframework.core.env.Environment;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Configuration(proxyBeanMethods = false)
-public class MQPropertiesConfiguration {
+public class Ddd4jMQPropertiesConfiguration {
 
     /**
      * 从 {@link Environment} 绑定 {@code ddd4j.mq.*} 主配置。
@@ -46,22 +44,18 @@ public class MQPropertiesConfiguration {
      * @return JSON 序列化实现
      */
     @Bean
-    public EventSerialization mqMessageSerialization() {
-        return new JsonSerialization();
+    public MQEventSerialization mqEventSerialization() {
+        return new JsonMQEventSerialization();
     }
 
     /**
-     * MQ 事件持久化拦截器；没有 {@link EventStorer} 时自动 no-op。
+     * MQ 事件持久化端口（可选）；业务方注册 {@link MQEventStorer} Bean 后由 {@code ConsumerEngine} 自动调用。
      *
-     * @param properties     MQ 主配置
      * @param storerProvider 业务注册的持久化端口
-     * @return 消费拦截器
+     * @return 持久化端口，未注册时返回 null
      */
     @Bean
-    @SuppressWarnings("rawtypes")
-    public ConsumerInterceptor mqEventPersistInterceptor(
-            MQProperties properties,
-            ObjectProvider<EventStorer> storerProvider) {
-        return new EventPersistInterceptor(properties, storerProvider.getIfAvailable());
+    public MQEventStorer<?> mqEventStorer(ObjectProvider<MQEventStorer<?>> storerProvider) {
+        return storerProvider.getIfAvailable();
     }
 }

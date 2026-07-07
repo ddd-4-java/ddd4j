@@ -1,11 +1,11 @@
 package io.ddd4j.mq.event;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import io.ddd4j.core.context.Contexts;
-import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.constant.ContextConstants;
-import io.ddd4j.core.constant.SpiKeys;
-import io.ddd4j.mq.message.Destination;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.mq.MQClient;
+import io.ddd4j.mq.MQProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,33 +13,25 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * MQ 事件基类（纯 Java，零 Spring 依赖）。
  *
  * <p>业务事件继承本类后，通过 {@link #publish()} 发布到 MQ Broker。
- * 仅走 MQ 通道，进程内事件请使用 {@link io.ddd4j.core.ddd.event.DomainEvent}。
+ * 仅走 MQ 通道，进程内事件请使用 {@code io.ddd4j.core.ddd.event.DomainEvent}。
+ *
+ * <p>发布机制（对齐 base-mq）：{@link #publish(String, String, String)} 通过
+ * {@link BaseContext} 查找 key 为 {@link #MQ_EVENT_PUBLISHER} 的 {@link Consumer<MQEvent>}，
+ * 由 {@link MQClient#initProducer(MQProperties)} 创建并注册。
  *
  * <h3>使用示例</h3>
  * <pre>{@code
  * public class OrderCreatedEvent extends MQEvent {
  *     private String orderId;
  *     private BigDecimal amount;
- *
- *     public OrderCreatedEvent() {}
- *     public OrderCreatedEvent(String orderId, BigDecimal amount) {
- *         this.orderId = orderId;
- *         this.amount = amount;
- *     }
  * }
- *
- * // 发布到 MQ
  * new OrderCreatedEvent("OBS-001", BigDecimal.valueOf(99.9)).publish();
- * }</pre>
- *
- * <h3>publisher 注入（框架适配层）</h3>
- * <pre>{@code
- * Contexts.register(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, publisher);
  * }</pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -53,66 +45,40 @@ public class MQEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 消息 ID，发布时为空则自动填充当前时间戳。
+     * {@link BaseContext} key：MQ 事件发布者（{@link Consumer<MQEvent>}）。
+     * 由 {@link MQClient} 在 {@code initProducer} 后注册。
      */
+    public static final String MQ_EVENT_PUBLISHER = "MQEventPublisher";
+
+    /**
+     * {@link BaseContext} key：MQ 配置（{@link MQProperties}），
+     * 用于获取 defaultTopic / namespace 默认值。
+     */
+    public static final String MQ_PROPERTIES = "MQProperties";
+
+    /** 消息 ID，默认当前时间戳 */
     protected String msgId;
-
-    /**
-     * 主题，为空时使用当前对象 topic。
-     */
+    /** 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定 */
+    private String namespace;
+    /** 主题，配置 {@code ddd4j.mq.default-topic} 后无须每次指定 */
     protected String topic;
-
-    /**
-     * 标签，同一主题下的消息过滤维度，只支持单个标签。
-     */
+    /** 标签，只支持单个标签，多标签需要分开发送 */
     protected String tag;
-
-    /**
-     * namespace/topic/tag 拼接符，为空时由 Broker Adapter 决定默认值。
-     *
-     * @deprecated 使用 {@code @EventListener.separator()} 代替
-     */
-    @Deprecated
+    /** namespace/topic/tag 拼接符，为空时由各 broker 实现决定默认值 */
     protected String concat;
-
-    /**
-     * 租户 ID，为空时自动从 {@link ThreadContext} 获取。
-     */
+    /** 租户 ID，默认从线程上下文获取（外部 JSON 常用 tenant_id） */
     @JsonAlias("tenant_id")
     protected String tenantId;
 
     /**
-     * 命名空间，用于多环境/多租户隔离。
+     * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。
      */
-    private String namespace;
-
-    // ========================= 策略匹配 =========================
-
-    /**
-     * 策略匹配：检查监听器声明的策略列表是否包含本事件的匹配键。
-     *
-     * <p>消费侧框架调用此方法，传入 {@code @EventListener.supports()} 声明的值。
-     * 默认匹配键为 {@code "*"}（通配），子类可覆写 {@link #match()} 返回自定义键。
-     *
-     * @param listenerKeys 监听器声明的策略键列表
-     * @return 匹配时 {@code true}
-     */
-    public boolean supports(List<String> listenerKeys) {
-        return listenerKeys.contains(match());
+    public boolean supports(List<String> supports) {
+        return supports.contains(match());
     }
 
     /**
-     * 返回本事件的策略匹配键，默认 {@code "*"}（匹配所有监听器）。
-     *
-     * <p>子类可覆写为具体值，实现事件级别的策略路由：
-     * <pre>{@code
-     * @Override
-     * public String match() {
-     *     return "vip";  // 只有 supports = {"vip"} 或 {"*"} 的监听器才能消费
-     * }
-     * }</pre>
-     *
-     * @return 策略键
+     * 策略匹配项，默认 {@code "*"}（匹配所有监听器），子类可覆写。
      */
     public String match() {
         return "*";
@@ -120,66 +86,42 @@ public class MQEvent implements Serializable {
 
     // ========================= 发布 =========================
 
-    /**
-     * 发布事件，使用当前对象上的 topic/tag/tenantId。
-     */
     public void publish() {
         publish(getTopic(), getTag(), getTenantId());
     }
 
-    /**
-     * 发布事件，指定 topic，其余使用当前对象值。
-     *
-     * @param topic 主题
-     */
     public void publish(String topic) {
         publish(topic, getTag(), getTenantId());
     }
 
-    /**
-     * 发布事件，指定 topic 和 tag，tenantId 使用当前对象值。
-     *
-     * @param topic 主题
-     * @param tag   标签
-     */
     public void publish(String topic, String tag) {
         publish(topic, tag, getTenantId());
     }
 
     /**
-     * 发布事件到 MQ Broker。
+     * 发布 MQ 事件。
      *
-     * <p>空值补齐规则：
-     * <ul>
-     *   <li>{@code topic} ← 参数 → 当前对象 topic（为空时由 BrokerAdapter 决定默认）</li>
-     *   <li>{@code tenantId} ← 参数 → {@link ThreadContext} 租户上下文</li>
-     *   <li>{@code msgId} ← 已有值 → 当前时间戳</li>
-     * </ul>
-     *
-     * @param topic    主题
-     * @param tag      标签
-     * @param tenantId 租户 ID
+     * <p>从 {@link BaseContext} 查找 {@link Consumer<MQEvent>}（由 {@link MQClient} 注册），
+     * 找到后调用 {@code consumer.accept(this)} 把事件推送到 broker 生产者。
      */
     public void publish(String topic, String tag, String tenantId) {
-        if (Objects.nonNull(topic)) {
-            this.setTopic(topic);
+        setTopic(topic);
+        if (Objects.isNull(getTopic())) {
+            MQProperties props = BaseContext
+                    .<String, MQProperties>get(MQ_PROPERTIES);
+            setTopic(Objects.nonNull(props) ? props.getDefaultTopic() : "DEFAULT");
         }
-        this.setTag(tag);
-        this.setTenantId(Objects.nonNull(tenantId) ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
-        this.setMsgId(Objects.isNull(getMsgId()) ? String.valueOf(System.currentTimeMillis()) : getMsgId());
-
-        MQEventPublisher publisher = Contexts.injectOrThrow(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);
-        publisher.publish(this, Destination.from(this));
+        setTag(tag);
+        setTenantId(Objects.nonNull(tenantId) ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
+        setMsgId(Objects.isNull(getMsgId()) ? String.valueOf(System.currentTimeMillis()) : getMsgId());
+        if (BaseContext.contains(MQ_EVENT_PUBLISHER)) {
+            BaseContext.<String, Consumer<MQEvent>>get(MQ_EVENT_PUBLISHER).accept(this);
+        } else {
+            log.warn("MQEventPublisher (Consumer<MQEvent>) not registered in BaseContext, event {} not published",
+                    getTopic());
+        }
     }
 
-    // ========================= 链式 setter =========================
-
-    /**
-     * 链式设置租户 ID。
-     *
-     * @param tenantId 租户 ID
-     * @return this
-     */
     @SuppressWarnings("unchecked")
     public <T extends MQEvent> T tenantId(String tenantId) {
         this.tenantId = tenantId;

@@ -1,7 +1,7 @@
 package io.ddd4j.mq.disruptor;
 
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.disruptor.autoconfigure.Ddd4jDisruptorMQAutoConfiguration;
 import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;

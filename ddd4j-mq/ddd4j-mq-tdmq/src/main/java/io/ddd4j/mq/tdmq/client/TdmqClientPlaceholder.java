@@ -1,6 +1,6 @@
 package io.ddd4j.mq.tdmq.client;
 
-import io.ddd4j.mq.listener.TagMatcher;
+import io.ddd4j.mq.util.TagMatcher;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

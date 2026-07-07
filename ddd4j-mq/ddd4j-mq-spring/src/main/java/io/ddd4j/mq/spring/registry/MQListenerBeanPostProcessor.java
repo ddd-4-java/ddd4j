@@ -1,9 +1,8 @@
 package io.ddd4j.mq.spring.registry;
 
-import io.ddd4j.mq.annotation.EventListener;
+import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.config.MQProperties;
-import io.ddd4j.mq.listener.ListenerDefinition;
-import io.ddd4j.mq.listener.ListenerDefinitionRegistry;
+import io.ddd4j.mq.listener.MQListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.support.AopUtils;
@@ -20,12 +19,13 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 基于 Spring {@link BeanPostProcessor} 的 {@link EventListener} 发现器（从 ddd4j-mq-core 迁出）。
+ * 基于 Spring {@link BeanPostProcessor} 的 {@link MQEventListener} 发现器。
  * <p>
- * 在 Bean 完成初始化（含 AOP 代理）后内省目标类方法，写入 {@link ListenerDefinitionRegistry}。
- * 模式对齐 Spring {@code EventListenerMethodProcessor} 与 Cloud {@code FunctionalConsumerRegistrar}。
+ * 在 Bean 完成初始化（含 AOP 代理）后内省目标类方法，构建 {@link MQListener} 并登记到本地列表，
+ * 供 {@link MQListenerRegistrar} 在应用就绪时统一订阅。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -33,24 +33,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, EnvironmentAware {
 
-    private final ListenerDefinitionRegistry registry;
+    private final List<MQListener> listeners = new CopyOnWriteArrayList<>();
     private final MQProperties properties;
 
     private String defaultGroupPrefix = "application";
-
-    /**
-     * 校验监听器定义非空且方法可访问。
-     *
-     * @param definition 监听器定义
-     */
-    public static void prepareMethod(ListenerDefinition definition) {
-        Objects.requireNonNull(definition, "definition");
-        Method method = definition.getMethod();
-        Object bean = definition.getBean();
-        if (Objects.nonNull(bean) && !method.canAccess(bean)) {
-            method.setAccessible(true);
-        }
-    }
 
     @Override
     public void setEnvironment(Environment environment) {
@@ -63,7 +49,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
     }
 
     /**
-     * Bean 初始化完成后扫描 {@link EventListener} 方法。
+     * Bean 初始化完成后扫描 {@link MQEventListener} 方法。
      */
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
@@ -75,12 +61,19 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
             return bean;
         }
         ReflectionUtils.doWithMethods(targetClass, method -> {
-            EventListener annotation = AnnotationUtils.findAnnotation(method, EventListener.class);
+            MQEventListener annotation = AnnotationUtils.findAnnotation(method, MQEventListener.class);
             if (Objects.nonNull(annotation)) {
-                registry.register(buildDefinition(bean, beanName, method, annotation));
+                listeners.add(buildListener(bean, beanName, method, annotation));
             }
         }, ReflectionUtils.USER_DECLARED_METHODS);
         return bean;
+    }
+
+    /**
+     * 返回已登记的监听器定义（不可变快照）。
+     */
+    public List<MQListener> getListeners() {
+        return List.copyOf(listeners);
     }
 
     /**
@@ -95,12 +88,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
     /**
      * 从注解与方法元数据构建监听器定义，补齐 group / namespace 默认值。
      */
-    private ListenerDefinition buildDefinition(
-            Object bean,
-            String beanName,
-            Method method,
-            EventListener annotation) {
-
+    private MQListener buildListener(Object bean, String beanName, Method method, MQEventListener annotation) {
         String group = StringUtils.hasText(annotation.group())
                 ? annotation.group()
                 : defaultGroupPrefix + "_" + method.getName();
@@ -108,9 +96,8 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
                 ? annotation.namespace()
                 : properties.getNamespace();
 
-        return ListenerDefinition.builder()
+        return MQListener.builder()
                 .bean(bean)
-                .beanName(beanName)
                 .method(method)
                 .group(group)
                 .namespace(namespace)

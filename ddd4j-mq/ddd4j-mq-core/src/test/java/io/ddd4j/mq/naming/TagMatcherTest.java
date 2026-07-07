@@ -1,5 +1,6 @@
-package io.ddd4j.mq.listener;
+package io.ddd4j.mq.naming;
 
+import io.ddd4j.mq.util.TagMatcher;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

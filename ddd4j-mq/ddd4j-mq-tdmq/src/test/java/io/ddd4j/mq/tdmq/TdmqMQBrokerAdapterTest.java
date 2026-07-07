@@ -1,11 +1,11 @@
 package io.ddd4j.mq.tdmq;
 
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.consume.ack.Acknowledgment;
-import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.message.Acknowledgment;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.message.Message;
-import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.BrokerType;
 import io.ddd4j.mq.listener.ListenerDefinition;
 import io.ddd4j.mq.tdmq.ack.TdmqAcknowledgmentFactory;
 import io.ddd4j.mq.tdmq.client.TdmqClientPlaceholder;

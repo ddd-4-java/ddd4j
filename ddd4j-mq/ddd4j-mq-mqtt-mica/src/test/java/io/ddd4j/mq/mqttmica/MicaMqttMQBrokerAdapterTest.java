@@ -1,11 +1,11 @@
 package io.ddd4j.mq.mqttmica;
 
 import io.ddd4j.mq.consume.UnsupportedAckOperationException;
-import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.mqttmica.ack.MicaMqttAcknowledgment;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttBrokerAdapter;
 import io.ddd4j.mq.mqttmica.spi.MicaMqttProperties;
-import io.ddd4j.mq.config.BrokerType;
+import io.ddd4j.mq.BrokerType;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.junit.jupiter.api.Test;

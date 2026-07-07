@@ -1,7 +1,7 @@
 package io.ddd4j.mq.nats;
 
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.config.MQProperties;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.message.Destination;
 import io.ddd4j.mq.nats.publisher.NatsMQEventPublisher;
 import io.ddd4j.mq.event.MQEventPublisher;

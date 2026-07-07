@@ -1,11 +1,10 @@
 package io.ddd4j.mq.message;
 
-import java.util.*;
-
 /**
- * 标准 Header Keys 与消息便捷读取工具（纯 Java，零 Spring 依赖）。
+ * 标准 Header Keys（纯 Java，零 Spring 依赖）。
  *
- * <p>工厂方法请直接使用 {@link Message#of(Object)} 系列。
+ * <p>各 Broker 的 Publisher / Consumer 通过这些常量 key 读写消息属性，
+ * 统一 topic / tag / tenant / correlation 等元数据的传递契约。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -14,91 +13,33 @@ public final class MessageHeaders {
 
     // ── 标准 Header Keys ──
 
+    /** 底层 Broker 原生消息（逃生口，通常不直接放进 header） */
     public static final String HEADER_NATIVE_MESSAGE = "ddd4j.native.message";
 
+    /** 消息 ID */
     public static final String HEADER_MESSAGE_ID = "ddd4j.message.id";
 
+    /** 关联 ID */
     public static final String HEADER_CORRELATION_ID = "ddd4j.correlation.id";
 
+    /** 因果 ID */
     public static final String HEADER_CAUSATION_ID = "ddd4j.causation.id";
 
+    /** 租户 ID */
     public static final String HEADER_TENANT_ID = "ddd4j.tenant.id";
 
+    /** Broker 类型 */
     public static final String HEADER_BROKER_TYPE = "ddd4j.broker.type";
 
+    /** 目的地 topic */
     public static final String HEADER_DESTINATION_TOPIC = "ddd4j.destination.topic";
 
+    /** 目的地 tag */
     public static final String HEADER_DESTINATION_TAG = "ddd4j.destination.tag";
 
+    /** 目的地 namespace */
     public static final String HEADER_DESTINATION_NAMESPACE = "ddd4j.destination.namespace";
 
     private MessageHeaders() {
-    }
-
-    // ── Header 便捷读取 ──
-
-    public static String headerAsString(Message<?> message, String key) {
-        if (Objects.isNull(message) || Objects.isNull(key)) {
-            return null;
-        }
-        Object v = message.header(key);
-        return Objects.isNull(v) ? null : String.valueOf(v);
-    }
-
-    public static Object header(Message<?> message, String key) {
-        if (Objects.isNull(message) || Objects.isNull(key)) {
-            return null;
-        }
-        return message.header(key);
-    }
-
-    public static Map<String, Object> headers(Message<?> message) {
-        if (Objects.isNull(message)) {
-            return Collections.emptyMap();
-        }
-        return message.getHeaders();
-    }
-
-    public static <N> N nativeMessage(Message<?> message, Class<N> type) {
-        if (Objects.isNull(message) || Objects.isNull(type)) {
-            return null;
-        }
-        return message.nativeMessage(type);
-    }
-
-    // ── Header 提取 ──
-
-    public static String extractMessageId(Message<?> message) {
-        if (Objects.isNull(message)) {
-            return null;
-        }
-        String id = message.getMessageId();
-        if (Objects.nonNull(id)) {
-            return id;
-        }
-        return headerAsString(message, HEADER_MESSAGE_ID);
-    }
-
-    public static String extractCorrelationId(Message<?> message) {
-        if (Objects.isNull(message)) {
-            return null;
-        }
-        String id = message.getCorrelationId();
-        if (Objects.nonNull(id)) {
-            return id;
-        }
-        return headerAsString(message, HEADER_CORRELATION_ID);
-    }
-
-    public static String extractTenantId(Message<?> message) {
-        return headerAsString(message, HEADER_TENANT_ID);
-    }
-
-    public static Map<String, Object> copyHeaders(Message<?> message) {
-        Map<String, Object> source = headers(message);
-        if (source.isEmpty()) {
-            return new HashMap<>();
-        }
-        return new HashMap<>(source);
     }
 }
