@@ -199,6 +199,111 @@ public interface MQClient {
         return LoggerFactory.getLogger("### DDD4J-MQ : " + impl() + "Client ###");
     }
 
+    // ========================= 物理地址拼接（生产者和消费者侧共享）=========================
+
+    /**
+     * 解析最终的拼接符（concat）。
+     *
+     * <p>优先级：{@link MQEvent#getConcat()} &gt; {@link MQProperties#getConcat()} &gt; 当前 Client 默认值。
+     *
+     * @param event      MQ 事件（可为 null）
+     * @param properties MQ 配置（不可为 null）
+     * @return 三段式拼接符（{@code "."} / {@code "_"} / {@code ":"}），空时返回 {@code "."}
+     */
+    default String concat(MQEvent event, MQProperties properties) {
+        if (Objects.nonNull(event) && Objects.nonNull(event.getConcat()) && !event.getConcat().isEmpty()) {
+            return event.getConcat();
+        }
+        if (Objects.nonNull(properties) && Objects.nonNull(properties.getConcat()) && !properties.getConcat().isEmpty()) {
+            return properties.getConcat();
+        }
+        return defaultConcat();
+    }
+
+    /**
+     * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
+     *
+     * <p>对齐 base-mq {@code MQListener.namespaceTopicTags()}：Rabbit/Rocket/Kafka 用 {@code "."}（Kafka 也常用 {@code "_"}），
+     * Redis Stream 用 {@code ":"}，MQTT 用 {@code "/"}。
+     *
+     * @return broker 默认 concat
+     */
+    default String defaultConcat() {
+        return ".";
+    }
+
+    /**
+     * 解析命名空间：{@link MQEvent#getNamespace()} 优先，回落到 {@link MQProperties#getNamespace()}。
+     *
+     * @param event      MQ 事件（可为 null）
+     * @param properties MQ 配置（不可为 null）
+     * @return 命名空间，可为 null
+     */
+    default String namespace(MQEvent event, MQProperties properties) {
+        if (Objects.nonNull(event) && Objects.nonNull(event.getNamespace()) && !event.getNamespace().isEmpty()) {
+            return event.getNamespace();
+        }
+        return namespace((String) null, properties);
+    }
+
+    /**
+     * 字符串版命名空间解析（{@link MQListener#getNamespace()} 直接传入）。
+     *
+     * @param namespace  显式命名空间（可为 null）
+     * @param properties MQ 配置（可为 null）
+     * @return 命名空间，可为 null
+     */
+    default String namespace(String namespace, MQProperties properties) {
+        if (Objects.nonNull(namespace) && !namespace.isEmpty()) {
+            return namespace;
+        }
+        if (Objects.nonNull(properties)) {
+            return properties.getNamespace();
+        }
+        return null;
+    }
+
+    /**
+     * 拼接物理地址：{@code namespace[concat]topic[concat]tag}（对齐 base-mq
+     * {@code MQListener.namespaceTopicTags()}）。
+     *
+     * @param namespace 命名空间（可为 null）
+     * @param topic     主题
+     * @param tag       标签（可为 null）
+     * @param concat    拼接符
+     * @return 物理地址
+     */
+    default String resolveTopic(String namespace, String topic, String tag, String concat) {
+        String sep = Objects.isNull(concat) || concat.isEmpty() ? "." : concat;
+        StringBuilder sb = new StringBuilder();
+        if (Objects.nonNull(namespace) && !namespace.isEmpty()) {
+            sb.append(namespace).append(sep);
+        }
+        sb.append(Objects.nonNull(topic) ? topic : "DEFAULT");
+        if (Objects.nonNull(tag) && !tag.isEmpty()) {
+            sb.append(sep).append(tag);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 便捷重载：从 {@link MQEvent} + {@link MQProperties} 解析物理地址（生产者侧）。
+     */
+    default String resolveTopic(MQEvent event, MQProperties properties) {
+        return resolveTopic(namespace(event, properties), event.getTopic(), event.getTag(), concat(event, properties));
+    }
+
+    /**
+     * 便捷重载：从 {@link MQListener} + {@link MQProperties} 解析物理目的地（消费者侧，
+     * tag 取监听器声明的 tags 首个正向 tag，保持订阅定位一致）。
+     */
+    default String resolveTopic(MQListener listener, MQProperties properties) {
+        return resolveTopic(namespace(listener.getNamespace(), properties),
+                listener.getTopic(),
+                TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null),
+                concat(null, properties));
+    }
+
     /**
      * 反射调用异常解包（对齐 base-mq）。
      */
