@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
-        <artifactId>ddd4j-dependencies</artifactId>
+        <artifactId>ddd4j-mq</artifactId>
         <version>${revision}</version>
-        <relativePath>../../ddd4j-dependencies/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ddd4j-mq-spring</artifactId>
@@ -20,12 +20,6 @@
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-mq-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <!-- Spring 桥接层 -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-runtime-spring</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Spring Messaging 作为统一消息模型 -->

@@ -1,6 +1,7 @@
 package io.ddd4j.mq.activemq;
 
 import io.ddd4j.mq.BrokerType;
+import lombok.Data;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
 import java.util.Objects;
@@ -13,17 +14,24 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Data
 public class ActiveMQProperties {
 
     /**
      * Broker URL（例：{@code tcp://host:61616} 或 {@code failover:(tcp://...)}）。
      */
     private String brokerUrl = "tcp://localhost:61616";
-    /** 认证用户名 */
+    /**
+     * 认证用户名
+     */
     private String username;
-    /** 认证密码 */
+    /**
+     * 认证密码
+     */
     private String password;
-    /** 客户端 ID 前缀 */
+    /**
+     * 客户端 ID 前缀
+     */
     private String clientIdPrefix = "ddd4j-mq-";
     /**
      * 是否在注册时自动创建 queues / topics（Artemis 默认按需自动创建）。
@@ -34,68 +42,4 @@ public class ActiveMQProperties {
      */
     private boolean durable = true;
 
-    public String getBrokerUrl() {
-        return brokerUrl;
-    }
-
-    public void setBrokerUrl(String brokerUrl) {
-        this.brokerUrl = brokerUrl;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getClientIdPrefix() {
-        return clientIdPrefix;
-    }
-
-    public void setClientIdPrefix(String clientIdPrefix) {
-        this.clientIdPrefix = clientIdPrefix;
-    }
-
-    public boolean isAutoDeclare() {
-        return autoDeclare;
-    }
-
-    public void setAutoDeclare(boolean autoDeclare) {
-        this.autoDeclare = autoDeclare;
-    }
-
-    public boolean isDurable() {
-        return durable;
-    }
-
-    public void setDurable(boolean durable) {
-        this.durable = durable;
-    }
-
-    /**
-     * 创建并配置 ActiveMQ 连接工厂。
-     *
-     * @return 配置好的连接工厂实例
-     */
-    public ActiveMQConnectionFactory connectionFactory() {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(brokerUrl);
-        if (Objects.nonNull(username) && !io.ddd4j.kit.lang.StrKit.isBlank(username)) {
-            factory.setUser(username);
-        }
-        if (Objects.nonNull(password) && !io.ddd4j.kit.lang.StrKit.isBlank(password)) {
-            factory.setPassword(password);
-        }
-        factory.setClientID(Objects.requireNonNullElse(clientIdPrefix, "ddd4j-mq-"));
-        return factory;
-    }
 }

@@ -2,13 +2,16 @@ package io.ddd4j.mq.activemq;
 
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import jakarta.jms.*;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
+import java.lang.IllegalStateException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,11 +33,19 @@ import java.util.function.Consumer;
  */
 public class ActiveMQClient implements MQClient {
 
+    private final ActiveMQConnectionFactory connectionFactory;
     private final ActiveMQProperties properties;
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
 
+    public ActiveMQClient(ActiveMQConnectionFactory connectionFactory) {
+        this.connectionFactory = Objects.requireNonNull(connectionFactory, "ActiveMQ ConnectionFactory is required");
+        this.properties = new ActiveMQProperties();
+    }
+
     public ActiveMQClient(ActiveMQProperties properties) {
-        this.properties = Objects.requireNonNull(properties, "properties");
+        this.properties = Objects.requireNonNull(properties, "ActiveMQ Properties is required");
+        this.connectionFactory = this.getConnectionFactory();
+        logger().info("Init ActiveMQ client with {}", properties);
     }
 
     @Override
@@ -47,7 +58,7 @@ public class ActiveMQClient implements MQClient {
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
-            Session session = connection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Session session = getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
             return event -> publish(session, event, mqProperties);
         } catch (JMSException ex) {
             throw new java.lang.IllegalStateException("Init ActiveMQ producer failed", ex);
@@ -56,8 +67,8 @@ public class ActiveMQClient implements MQClient {
 
     private void publish(Session session, MQEvent event, MQProperties mqProperties) {
         try {
-            String physical = resolvePhysical(event.getNamespace(), event.getTopic(), event.getTag());
-            jakarta.jms.Destination target = createDestination(session, physical);
+            String physical = ActivemqKit.resolvePhysical(event.getNamespace(), event.getTopic(), event.getTag());
+            Destination target = ActivemqKit.createDestination(session, physical);
             try (MessageProducer producer = session.createProducer(target)) {
                 producer.setDeliveryMode(properties.isDurable() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
                 BytesMessage message = session.createBytesMessage();
@@ -84,11 +95,11 @@ public class ActiveMQClient implements MQClient {
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
-        Connection connection = connection();
+        Connection connection = getConnection();
         Session session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-        String physical = resolvePhysical(listener.getNamespace(), listener.getTopic(),
+        String physical = ActivemqKit.resolvePhysical(listener.getNamespace(), listener.getTopic(),
                 TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null));
-        jakarta.jms.Destination destination = createDestination(session, physical);
+        Destination destination = ActivemqKit.createDestination(session, physical);
         MessageConsumer consumer = session.createConsumer(destination);
         consumer.setMessageListener((Message message) -> handleMessage(session, message, listener));
         return true;
@@ -96,7 +107,7 @@ public class ActiveMQClient implements MQClient {
 
     private void handleMessage(Session session, Message message, MQListener listener) {
         try {
-            String tag = stringProperty(message, MessageHeaders.HEADER_DESTINATION_TAG);
+            String tag = ActivemqKit.stringProperty(message, MessageHeaders.HEADER_DESTINATION_TAG);
             if (!TagMatcher.match(tag, listener.getTags())) {
                 try {
                     message.acknowledge();
@@ -104,10 +115,10 @@ public class ActiveMQClient implements MQClient {
                 }
                 return;
             }
-            String payload = extractPayload(message);
+            String payload = ActivemqKit.extractPayload(message);
             MQEvent event = serialization().deserialize(payload, listener.payloadType());
-            Acknowledgment ack = new ActiveMQAcknowledgment(
-                    session, message, messageIdHash(message), messageIdOf(message), correlationIdOf(message));
+            Acknowledgment ack = new ActiveMQAcknowledgment(session, message,
+                    ActivemqKit.messageIdHash(message), ActivemqKit.messageIdOf(message), ActivemqKit.correlationIdOf(message));
             consume(listener, event, ack);
             if (!ack.isAcknowledged()) {
                 ack.ackSingle();
@@ -121,84 +132,37 @@ public class ActiveMQClient implements MQClient {
         }
     }
 
-    // ========================= JMS 工具 =========================
 
-    private static String resolvePhysical(String namespace, String topic, String tag) {
-        String base = io.ddd4j.kit.lang.StrKit.hasText(topic) ? topic : "ddd4j.default.topic";
-        if (io.ddd4j.kit.lang.StrKit.hasText(namespace)) {
-            base = namespace + "." + base;
-        }
-        return io.ddd4j.kit.lang.StrKit.hasText(tag) ? base + "." + tag : base;
-    }
-
-    private static jakarta.jms.Destination createDestination(Session session, String physical) throws JMSException {
-        if (physical.startsWith("queue:")) {
-            return session.createQueue(physical.substring("queue:".length()));
-        }
-        if (physical.startsWith("topic:")) {
-            return session.createTopic(physical.substring("topic:".length()));
-        }
-        return session.createTopic(physical);
-    }
-
-    private static String extractPayload(Message message) throws JMSException {
-        if (message instanceof BytesMessage bm) {
-            bm.reset();
-            byte[] buf = new byte[(int) bm.getBodyLength()];
-            bm.readBytes(buf);
-            return new String(buf, StandardCharsets.UTF_8);
-        }
-        if (message instanceof TextMessage tm) {
-            return tm.getText();
-        }
-        return "";
-    }
-
-    private static String stringProperty(Message message, String key) {
-        try {
-            return message.getStringProperty(key);
-        } catch (JMSException ignore) {
-            return null;
-        }
-    }
-
-    private static String messageIdOf(Message message) {
-        try {
-            return message.getJMSMessageID();
-        } catch (JMSException e) {
-            return null;
-        }
-    }
-
-    private static String correlationIdOf(Message message) {
-        try {
-            return message.getJMSCorrelationID();
-        } catch (JMSException e) {
-            return null;
-        }
-    }
-
-    private static long messageIdHash(Message message) {
-        try {
-            String id = message.getJMSMessageID();
-            return Objects.isNull(id) ? 0L : (long) id.hashCode();
-        } catch (JMSException e) {
-            return 0L;
-        }
-    }
-
-    private synchronized Connection connection() {
-        Connection c = connectionRef.get();
-        if (Objects.isNull(c)) {
+    private synchronized Connection getConnection() {
+        Connection connection = connectionRef.get();
+        if (Objects.isNull(connection) && Objects.nonNull(connectionFactory)) {
             try {
-                Connection nc = properties.connectionFactory().createConnection();
+                Connection nc = connectionFactory.createConnection();
                 nc.start();
                 connectionRef.set(nc);
-                c = nc;
+                connection = nc;
             } catch (JMSException ex) {
-                throw new java.lang.IllegalStateException("Open ActiveMQ connection failed", ex);
+                throw new IllegalStateException("Open ActiveMQ connection failed", ex);
             }
         }
-        return c;
+        return connection;
+    }
+
+
+    /**
+     * 创建并配置 ActiveMQ 连接工厂。
+     *
+     * @return 配置好的连接工厂实例
+     */
+    public ActiveMQConnectionFactory getConnectionFactory() {
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(properties.getBrokerUrl());
+        if (Objects.nonNull(properties.getUsername()) && !io.ddd4j.kit.lang.StrKit.isBlank(properties.getUsername())) {
+            factory.setUser(properties.getUsername());
+        }
+        if (Objects.nonNull(properties.getPassword()) && !io.ddd4j.kit.lang.StrKit.isBlank(properties.getPassword())) {
+            factory.setPassword(properties.getPassword());
+        }
+        factory.setClientID(Objects.requireNonNullElse(properties.getClientIdPrefix(), "ddd4j-mq-"));
+        return factory;
     }
 }

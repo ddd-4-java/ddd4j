@@ -41,6 +41,7 @@
         <module>ddd4j-mq-rocketmq</module>
         <module>ddd4j-mq-sqs</module>
         <module>ddd4j-mq-tdmq</module>
+        <module>ddd4j-mq-spring</module>
     </modules>
 
 </project>

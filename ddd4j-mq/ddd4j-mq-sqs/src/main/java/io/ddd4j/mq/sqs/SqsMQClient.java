@@ -40,13 +40,13 @@ import java.util.function.Consumer;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public class SqsClient implements MQClient {
+public class SqsMQClient implements MQClient {
 
     private final SqsProperties properties;
     private final List<ScheduledExecutorService> pollers = new CopyOnWriteArrayList<>();
     private software.amazon.awssdk.services.sqs.SqsClient client;
 
-    public SqsClient(SqsProperties properties) {
+    public SqsMQClient(SqsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 

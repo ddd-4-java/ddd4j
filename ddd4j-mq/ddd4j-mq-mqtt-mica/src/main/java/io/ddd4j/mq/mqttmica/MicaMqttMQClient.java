@@ -30,13 +30,31 @@ import java.util.function.Consumer;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public class MicaMqttClient implements MQClient {
+public class MicaMqttMQClient implements MQClient {
 
     private final MicaMqttProperties properties;
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
     private final AtomicLong idGen = new AtomicLong(1);
 
-    public MicaMqttClient(MicaMqttProperties properties) {
+    /**
+     * 构造 1：注入已初始化的原生 mica-mqtt 客户端（用于 runtime 集成自动注入）。
+     * 此时无需 {@link MicaMqttProperties}，{@link #initProducer}/{@link #initConsumer} 通过 {@link #client()} 复用该实例。
+     *
+     * @param client 原生 mica-mqtt 客户端
+     */
+    public MicaMqttMQClient(MqttClient client) {
+        this.properties = null;
+        if (Objects.nonNull(client)) {
+            this.clientRef.set(client);
+        }
+    }
+
+    /**
+     * 构造 2：传入配置，{@link #client()} 时 lazy 构造原生 mica-mqtt 客户端。
+     *
+     * @param properties mica-mqtt 配置
+     */
+    public MicaMqttMQClient(MicaMqttProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
@@ -49,7 +67,7 @@ public class MicaMqttClient implements MQClient {
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        MqttClient client = connection();
+        MqttClient client = client();
         return event -> publish(client, event);
     }
 
@@ -57,7 +75,7 @@ public class MicaMqttClient implements MQClient {
         try {
             String physical = resolvePhysical(event.getNamespace(), event.getTopic(), event.getTag());
             byte[] body = serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8);
-            client.publish(physical, body, properties.mqttQoS());
+            client.publish(physical, body, qos());
             logger().info("Publish mica-mqtt [{}]: {}", physical, serialization().serialize(event));
         } catch (Exception ex) {
             throw new IllegalStateException("Publish mica-mqtt event failed", ex);
@@ -68,9 +86,9 @@ public class MicaMqttClient implements MQClient {
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
-        MqttClient client = connection();
+        MqttClient client = client();
         String subscribeTopic = resolveSubscribeTopic(listener);
-        client.subscribe(subscribeTopic, properties.mqttQoS(), (ctx, topic, message, payload) -> {
+        client.subscribe(subscribeTopic, qos(), (ctx, topic, message, payload) -> {
             try {
                 handleMessage(topic, payload, listener);
             } catch (Exception ex) {
@@ -128,12 +146,20 @@ public class MicaMqttClient implements MQClient {
         return subscribeTopic;
     }
 
-    private synchronized MqttClient connection() {
+    /**
+     * QoS：注入原生客户端（无 properties）时取默认 QoS = QOS1。
+     */
+    private org.dromara.mica.mqtt.codec.MqttQoS qos() {
+        return Objects.isNull(properties) ? org.dromara.mica.mqtt.codec.MqttQoS.QOS1 : properties.mqttQoS();
+    }
+
+    private synchronized MqttClient client() {
         MqttClient c = clientRef.get();
-        if (Objects.isNull(c)) {
-            c = properties.client();
-            clientRef.set(c);
+        if (Objects.nonNull(c)) {
+            return c;
         }
+        c = properties.client();
+        clientRef.set(c);
         return c;
     }
 }

@@ -1,74 +1,84 @@
 package io.ddd4j.mq.spring.registry;
 
-import io.ddd4j.mq.consume.ConsumerEngine;
-import io.ddd4j.mq.consume.MQEventConsumer;
+import io.ddd4j.mq.MQClient;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.event.MQEventStorer;
-import io.ddd4j.mq.config.MQProperties;
 import io.ddd4j.mq.listener.MQListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
- * 应用就绪后扫描 {@link MQListener} 并通过 {@link MQEventConsumer} 订阅。
+ * 应用上下文就绪后驱动 {@link MQClient} 装配的桥接器（对标 base-mq {@code BaseMQConfig}）。
  *
- * <p>本类仅负责 Spring 容器的监听器扫描和消费者订阅，
- * 消费横切逻辑（反序列化 → 策略匹配 → 租户注入 → 持久化 → 反射调用）由 {@link ConsumerEngine} 统一驱动。
+ * <p>在 {@link ContextRefreshedEvent}（所有 Bean 初始化完成后）触发，把
+ * {@link MQListenerBeanPostProcessor} 收集的监听器列表连同配置/序列化器/持久化器
+ * 传给每个 {@link MQClient}：
+ * <ol>
+ *   <li>{@link MQClient#init} 内部按 {@code properties.broker == client.impl()} 短路，
+ *       只激活与配置匹配的 broker（装配层无需自行选择）</li>
+ *   <li>{@link MQClient#init} 注册 producer/consumer 到 {@code BaseContext}，
+ *       {@link MQListenerBeanPostProcessor} 扫描到的 {@code @MQEventListener} 方法在此被消费</li>
+ *   <li>{@link MQClient#start} 统一启动各 broker 的消费线程</li>
+ * </ol>
+ *
+ * <p>整体 try/catch 不中断应用启动（与 base-mq 行为一致），单个 broker 失败仅记录日志。
+ * 注意：仅处理根上下文事件，避免父子容器重复装配。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 @Slf4j
 @RequiredArgsConstructor
 public class MQListenerRegistrar {
 
     private final MQListenerBeanPostProcessor beanPostProcessor;
-    private final List<MQEventConsumer> consumers;
+    private final List<MQClient> mqClients;
     private final MQProperties properties;
     private final MQEventSerialization serialization;
     private final ObjectProvider<MQEventStorer<?>> storerProvider;
 
     /**
-     * 应用就绪时扫描监听器并订阅到当前 MQ 消费者。
+     * 上下文就绪后装配所有 {@link MQClient}。
+     *
+     * @param event Spring 上下文刷新完成事件
      */
-    @Order
     @EventListener
-    public void onApplicationReady(ContextRefreshedEvent event) {
+    public void onContextRefreshed(ContextRefreshedEvent event) {
+        // 仅处理根上下文，避免 MVC/WebFlux 等父子容器重复触发
         if (Objects.nonNull(event.getApplicationContext().getParent())) {
             return;
         }
-        List<MQListener> listeners = beanPostProcessor.getListeners();
-        if (listeners.isEmpty()) {
-            log.debug("No @MQEventListener definitions to subscribe");
+        if (Objects.isNull(mqClients) || mqClients.isEmpty()) {
+            log.debug("No MQClient bean found, MQ assembly skipped");
             return;
         }
-        if (Objects.isNull(consumers) || consumers.isEmpty()) {
-            log.warn("No MQEventConsumer bean found, {} listener(s) will not be subscribed", listeners.size());
+
+        List<MQListener> listeners = beanPostProcessor.getListeners();
+        if (!properties.isEnabled()) {
+            log.debug("ddd4j.mq.enabled=false, MQ assembly skipped");
             return;
         }
 
         @SuppressWarnings("rawtypes")
         MQEventStorer storer = storerProvider.getIfAvailable();
-        ConsumerEngine engine = new ConsumerEngine(serialization, properties, storer);
+        int total = listeners.size();
 
-        for (MQListener listener : listeners) {
-            MQEventConsumer.MQEventCallback callback = engine.callback(listener);
-            for (MQEventConsumer consumer : consumers) {
-                consumer.subscribe(listener, callback);
-                log.info("Subscribed MQ listener: bean={}, method={}, topic={}, group={}",
-                        listener.getBean() != null
-                                ? listener.getBean().getClass().getSimpleName()
-                                : "unknown",
-                        listener.getMethod().getName(),
-                        listener.getTopic(),
-                        listener.getGroup());
+        for (MQClient client : mqClients) {
+            try {
+                client.init(listeners, properties, serialization, storer);
+                client.start();
+            } catch (Exception ex) {
+                log.error("Initialize MQ client [{}] failed", client.impl(), ex);
             }
         }
+        log.info("ddd4j-mq assembly completed: {} listener(s) registered, {} client(s) available",
+                total, mqClients.size());
     }
 }

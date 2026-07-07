@@ -44,7 +44,7 @@ public class MQListener {
     /** 策略过滤列表，配合 {@link MQEvent#supports(List)} */
     private List<String> supports;
     /** namespace/topic/tag 拼接符，为空时由各 broker 决定默认值 */
-    private String concat;
+    private String separator;
 
     /**
      * 从注解与方法元数据构建监听器定义。
@@ -58,7 +58,7 @@ public class MQListener {
                 .topic(ann.topic())
                 .tags(ann.tags())
                 .supports(Arrays.asList(ann.supports()))
-                .concat(ann.separator())
+                .separator(ann.separator())
                 .build();
     }
 
@@ -82,10 +82,10 @@ public class MQListener {
     }
 
     /**
-     * 拼接 {@code namespace[concat]topic[concat]tags}（对齐 base-mq）。
+     * 拼接 {@code namespace[separator]topic[separator]tags}（对齐 base-mq）。
      */
     public String namespaceTopicTags() {
-        String sep = Objects.isNull(concat) || concat.isEmpty() ? "." : concat;
+        String sep = Objects.isNull(separator) || separator.isEmpty() ? "." : separator;
         String ns = Objects.isNull(namespace) ? "" : namespace;
         String tp = Objects.isNull(topic) ? "" : topic;
         String tg = Objects.isNull(tags) || tags.isEmpty() ? "" : sep + tags;
@@ -95,8 +95,8 @@ public class MQListener {
     /**
      * 带命名空间前缀的拼接便捷方法（对齐 base-mq）。
      */
-    public String namespace(String concat) {
-        String sep = Objects.isNull(concat) || concat.isEmpty() ? this.concat : concat;
+    public String namespace(String separator) {
+        String sep = Objects.isNull(separator) || separator.isEmpty() ? this.separator : separator;
         if (Objects.nonNull(namespace) && !namespace.isEmpty()) {
             return namespace + sep;
         }
@@ -106,8 +106,8 @@ public class MQListener {
     /**
      * 消费者组拼接（对齐 base-mq）。
      */
-    public String group(String concat) {
-        String sep = Objects.isNull(concat) || concat.isEmpty() ? this.concat : concat;
+    public String group(String separator) {
+        String sep = Objects.isNull(separator) || separator.isEmpty() ? this.separator : separator;
         if (Objects.nonNull(group) && !group.isEmpty()) {
             return group + sep;
         }
