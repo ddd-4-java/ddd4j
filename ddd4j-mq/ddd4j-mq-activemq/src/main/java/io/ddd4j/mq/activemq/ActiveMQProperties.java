@@ -1,7 +1,9 @@
 package io.ddd4j.mq.activemq;
 
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.MQProperties;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
 import java.util.Objects;
@@ -15,7 +17,8 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
-public class ActiveMQProperties {
+@EqualsAndHashCode(callSuper = true)
+public class ActiveMQProperties extends MQProperties {
 
     /**
      * Broker URL（例：{@code tcp://host:61616} 或 {@code failover:(tcp://...)}）。

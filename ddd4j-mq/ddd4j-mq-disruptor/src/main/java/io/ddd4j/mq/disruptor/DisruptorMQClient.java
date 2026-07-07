@@ -1,14 +1,10 @@
 package io.ddd4j.mq.disruptor;
 
-import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.BusySpinWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.WaitStrategy;
-import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.lmax.disruptor.util.DaemonThreadFactory;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
@@ -18,9 +14,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
@@ -30,8 +24,8 @@ import java.util.function.Consumer;
  * <p>主线只有 {@link #initProducer(MQProperties)} 与 {@link #initConsumer(MQListener, MQProperties)}，
  * 核心业务逻辑全部内联。RingBuffer 生命周期、RingBuffer 事件槽（{@link Event}）作为嵌套类保留在本文件内。
  *
- * <p>模块结构对齐其他 broker：{@code DisruptorMQClient} +
- * {@code DisruptorAcknowledgment} + {@code DisruptorMQProperties} 共 3 个文件。
+ * <p>消费者模型：单 {@link com.lmax.disruptor.EventHandler} 内部遍历所有已注册 listener（按 tag 过滤分发），
+ * 对齐 base-mq RocketClient 的「集中消费者 + 应用层 tag 过滤」风格，保留 {@link MQClient} 抽象约定。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -40,8 +34,13 @@ import java.util.function.Consumer;
 public class DisruptorMQClient implements MQClient {
 
     private final DisruptorMQProperties properties;
-    /** 路由 → 监听器列表（同一 topic+namespace+tag 的多个监听器都收到） */
-    private final Map<String, List<MQListener>> handlersByRoute = new ConcurrentHashMap<>();
+
+    /**
+     * 已注册监听器列表（写时复制，{@link #initConsumer} 时累加，
+     * {@link #onEvent} 在 RingBuffer 回调里遍历；无 routeKey 中间路由层）。
+     */
+    private final List<MQListener> listeners = new CopyOnWriteArrayList<>();
+
     private Disruptor<Event> disruptor;
 
     @Getter
@@ -51,8 +50,8 @@ public class DisruptorMQClient implements MQClient {
      * 双构造 1：传入配置，自建 RingBuffer 与 Disruptor。
      */
     public DisruptorMQClient(DisruptorMQProperties properties) {
-        this.properties = Objects.requireNonNull(properties, "properties");
-        startRingBuffer();
+        this.properties = Objects.requireNonNull(properties, "DisruptorMQ properties is required");
+        this.startRingBuffer();
     }
 
     /**
@@ -60,7 +59,7 @@ public class DisruptorMQClient implements MQClient {
      */
     public DisruptorMQClient(RingBuffer<Event> ringBuffer) {
         this.properties = new DisruptorMQProperties();
-        this.ringBuffer = Objects.requireNonNull(ringBuffer, "ringBuffer");
+        this.ringBuffer = Objects.requireNonNull(ringBuffer, "DisruptorMQ ringBuffer is required");
     }
 
     @Override
@@ -96,12 +95,8 @@ public class DisruptorMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         Objects.requireNonNull(listener, "listener");
-        String routeKey = resolveRouteKey(listener);
-        handlersByRoute
-                .computeIfAbsent(routeKey, key -> new CopyOnWriteArrayList<>())
-                .add(listener);
-        logger().info("Registered Disruptor consumer: routeKey={}, bean={}, method={}",
-                routeKey,
+        listeners.add(listener);
+        logger().info("Registered Disruptor consumer: bean={}, method={}",
                 listener.getMethod().getDeclaringClass().getSimpleName(),
                 listener.getMethod().getName());
         return true;
@@ -109,21 +104,17 @@ public class DisruptorMQClient implements MQClient {
 
     /**
      * RingBuffer 事件回调入口（{@link #startRingBuffer()} 注册到 Disruptor）。
+     * 遍历所有已注册 listener，按 tag 过滤后分发。
      */
     private void onEvent(Event event, long sequence, boolean endOfBatch) {
-        String routeKey = event.routeKey();
-        List<MQListener> handlers = handlersByRoute.get(routeKey);
-        if (handlers == null || handlers.isEmpty()) {
-            return;
-        }
-        for (MQListener listener : handlers) {
+        for (MQListener listener : listeners) {
             try {
                 if (!TagMatcher.match(event.tag, listener.getTags())) {
                     continue;
                 }
                 MQEvent mqEvent = serialization().deserialize(event.payload, listener.payloadType());
                 if (Objects.isNull(mqEvent)) {
-                    logger().warn("Disruptor consume [{}] failed: mqEvent is null", listener.namespaceTopicTags());
+                    log.warn("Disruptor consume [{}] failed: mqEvent is null", listener.namespaceTopicTags());
                     continue;
                 }
                 DisruptorAcknowledgment ack = new DisruptorAcknowledgment(event, ringBuffer, sequence);
@@ -132,20 +123,9 @@ public class DisruptorMQClient implements MQClient {
                     ack.ackSingle();
                 }
             } catch (Throwable ex) {
-                logger().error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
+                log.error("Consume MQ [{}] failed", listener.namespaceTopicTags(), ex);
             }
         }
-    }
-
-    /**
-     * 路由键：{@code namespace.topic[.tag]}（用 Event 实例拼接，避免类外暴露）。
-     */
-    private static String resolveRouteKey(MQListener listener) {
-        Event probe = new Event();
-        probe.namespace = listener.getNamespace();
-        probe.topic = listener.getTopic();
-        probe.tag = TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null);
-        return probe.routeKey();
     }
 
     @Override
@@ -159,7 +139,7 @@ public class DisruptorMQClient implements MQClient {
     public void shutdown() {
         if (disruptor != null) {
             disruptor.shutdown();
-            logger().info("DisruptorMQClient shutdown");
+            log.info("DisruptorMQClient shutdown");
         }
     }
 
@@ -168,13 +148,12 @@ public class DisruptorMQClient implements MQClient {
      */
     private void startRingBuffer() {
         int bufferSize = normalizeBufferSize(properties.getBufferSize());
-        WaitStrategy waitStrategy = resolveWaitStrategy(properties.getWaitStrategy());
-        Disruptor<Event> d = new Disruptor<>(Event::new, bufferSize,
-                DaemonThreadFactory.INSTANCE, ProducerType.MULTI, waitStrategy);
+        WaitStrategy waitStrategy = properties.getWaitStrategy().instance();
+        Disruptor<Event> d = new Disruptor<>(Event::new, bufferSize, DaemonThreadFactory.INSTANCE, ProducerType.MULTI, waitStrategy);
         d.handleEventsWith(this::onEvent);
         ringBuffer = d.start();
         this.disruptor = d;
-        logger().info("Disruptor RingBuffer started: bufferSize={}, waitStrategy={}",
+        log.info("Disruptor RingBuffer started: bufferSize={}, waitStrategy={}",
                 bufferSize, waitStrategy.getClass().getSimpleName());
     }
 
@@ -184,17 +163,6 @@ public class DisruptorMQClient implements MQClient {
             size <<= 1;
         }
         return size;
-    }
-
-    private static WaitStrategy resolveWaitStrategy(String name) {
-        if (!StrKit.hasText(name)) {
-            return new YieldingWaitStrategy();
-        }
-        return switch (name.trim().toLowerCase()) {
-            case "blocking" -> new BlockingWaitStrategy();
-            case "busyspin", "busy-spin" -> new BusySpinWaitStrategy();
-            default -> new YieldingWaitStrategy();
-        };
     }
 
     /**
@@ -222,7 +190,7 @@ public class DisruptorMQClient implements MQClient {
          */
         public String routeKey() {
             String base = (namespace == null ? "" : namespace) + "." + (topic == null ? "" : topic);
-            if (tag == null || StrKit.isBlank(tag) || "*".equals(tag)) {
+            if (tag == null || io.ddd4j.kit.lang.StrKit.isBlank(tag) || "*".equals(tag)) {
                 return base;
             }
             return base + "." + tag;
