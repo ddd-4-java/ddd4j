@@ -39,7 +39,7 @@ import io.ddd4j.kit.lang.BeanKit;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -360,7 +360,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     public boolean updateByKey(M model) {
         P persistenceObject = toPersistenceObject(model);
         String key = getKeyValue(persistenceObject);
-        if (Objects.isNull(key) || !StringUtils.hasLength(key)) {
+        if (Objects.isNull(key) || !StrKit.hasText(key)) {
             throw new IllegalArgumentException("当前entity实体业务key字段为null，无法适用当前方法更新！");
         }
         updateFill(persistenceObject);
@@ -368,7 +368,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     public M getByKey(String key) {
-        if (Objects.isNull(key) || !StringUtils.hasLength(key)) {
+        if (Objects.isNull(key) || !StrKit.hasText(key)) {
             log.warn("The key annotated by @BizKey must not blank");
             return null;
         }
@@ -467,15 +467,15 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     private void select(Query query, QueryWrapper<P> wrapper) {
-        if (Objects.nonNull(query.getSelect()) && StringUtils.hasLength(query.getSelect())) {
+        if (Objects.nonNull(query.getSelect()) && StrKit.hasText(query.getSelect())) {
             wrapper.select(query.getSelect().split(query.getSplit()));
         }
     }
 
     private void where(Query query, QueryWrapper<P> wrapper) {
-        if (Objects.nonNull(query.getKeyword()) && Objects.nonNull(query.getFields()) && StringUtils.hasLength(query.getFields())) {
+        if (Objects.nonNull(query.getKeyword()) && Objects.nonNull(query.getFields()) && StrKit.hasText(query.getFields())) {
             for (String field : query.getFields().split(query.getSplit())) {
-                if (StringUtils.hasLength(field)) {
+                if (StrKit.hasText(field)) {
                     if (Objects.isNull(query.getOrs())) {
                         query.setOrs(new HashMap<>());
                     }
@@ -527,11 +527,11 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
             getColumnByField(getFieldName(key, MAX_QUERY), column -> wrapper.lt(column, value));
         } else if (key.endsWith(NOT_IN_QUERY) && value instanceof Collection<?> collection && !collection.isEmpty()) {
             getColumnByField(getFieldName(key, NOT_IN_QUERY), column -> wrapper.notIn(column, distinct(collection)));
-        } else if (key.endsWith(NOT_IN_QUERY) && value instanceof String text && StringUtils.hasLength(text)) {
+        } else if (key.endsWith(NOT_IN_QUERY) && value instanceof String text && StrKit.hasText(text)) {
             getColumnByField(getFieldName(key, NOT_IN_QUERY), column -> wrapper.notIn(column, splitValues(query, text)));
         } else if (key.endsWith(IN_QUERY) && value instanceof Collection<?> collection && !collection.isEmpty()) {
             getColumnByField(getFieldName(key, IN_QUERY), column -> wrapper.in(column, distinct(collection)));
-        } else if (key.endsWith(IN_QUERY) && value instanceof String text && StringUtils.hasLength(text)) {
+        } else if (key.endsWith(IN_QUERY) && value instanceof String text && StrKit.hasText(text)) {
             getColumnByField(getFieldName(key, IN_QUERY), column -> wrapper.in(column, splitValues(query, text)));
         } else if (key.endsWith(LIKE_QUERY) && value instanceof CharSequence && isStringNotBlank(value)) {
             getColumnByField(getFieldName(key, LIKE_QUERY), column -> wrapper.like(column, value));
@@ -586,27 +586,27 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     private void groupBy(Query query, QueryWrapper<P> wrapper) {
-        if (Objects.nonNull(query) && Objects.nonNull(query.getGroupBy()) && StringUtils.hasLength(query.getGroupBy())) {
+        if (Objects.nonNull(query) && Objects.nonNull(query.getGroupBy()) && StrKit.hasText(query.getGroupBy())) {
             wrapper.groupBy(query.getGroupBy());
         }
     }
 
     private void having(Query query, QueryWrapper<P> wrapper) {
-        if (Objects.nonNull(query) && Objects.nonNull(query.getHaving()) && StringUtils.hasLength(query.getHaving())) {
+        if (Objects.nonNull(query) && Objects.nonNull(query.getHaving()) && StrKit.hasText(query.getHaving())) {
             wrapper.having(query.getHaving());
         }
     }
 
     private void orderBy(Query query, QueryWrapper<P> wrapper) {
         TableScheme scheme = tableScheme();
-        if (Objects.isNull(query.getOrderBys()) || !StringUtils.hasLength(query.getOrderBys())) {
+        if (Objects.isNull(query.getOrderBys()) || !StrKit.hasText(query.getOrderBys())) {
             if (Objects.nonNull(scheme.getDefaultOrderBy()) && scheme.getDefaultOrderBy().length > 0) {
                 query.setOrderBys(String.join(query.getSplit(), scheme.getDefaultOrderBy()));
             }
         }
         if (Objects.nonNull(query.getOrderBys())) {
             for (String orderBy : query.getOrderBys().split(query.getSplit())) {
-                if (Objects.nonNull(orderBy) && StringUtils.hasLength(orderBy)) {
+                if (Objects.nonNull(orderBy) && StrKit.hasText(orderBy)) {
                     String column = TableScheme.toUnderline(orderBy
                             .replace("_asc", "")
                             .replace("_ASC", "")
@@ -627,11 +627,11 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     private String getFieldName(String fieldName, String queryAction) {
         String replaced = replaceLast(fieldName, queryAction, "");
-        return Objects.nonNull(replaced) && StringUtils.hasLength(replaced) ? replaced.toLowerCase() : replaced;
+        return Objects.nonNull(replaced) && StrKit.hasText(replaced) ? replaced.toLowerCase() : replaced;
     }
 
     private static String replaceLast(String raw, String match, String replace) {
-        if (Objects.isNull(raw) || !StringUtils.hasLength(raw) || Objects.isNull(replace)) {
+        if (Objects.isNull(raw) || !StrKit.hasText(raw) || Objects.isNull(replace)) {
             return raw;
         }
         StringBuilder builder = new StringBuilder(raw);
@@ -649,7 +649,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     private List<String> splitValues(Query query, String value) {
         return Arrays.stream(value.split(query.getSplit()))
                 .distinct()
-                .filter(StringUtils::hasLength)
+                .filter(StrKit::hasText)
                 .collect(Collectors.toList());
     }
 
@@ -735,7 +735,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         }
         TableLogic tableLogic = field.getAnnotation(TableLogic.class);
         String defaultValue = tableLogic.value();
-        if (Objects.isNull(defaultValue) || !StringUtils.hasLength(defaultValue)) {
+        if (Objects.isNull(defaultValue) || !StrKit.hasText(defaultValue)) {
             if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
                 field.set(persistenceObject, false);
             } else if (field.getType().equals(Integer.class) || field.getType().equals(int.class)) {
@@ -856,7 +856,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         }
 
         protected static String toUnderline(String humpString) {
-            if (Objects.isNull(humpString) || !StringUtils.hasLength(humpString)) {
+            if (Objects.isNull(humpString) || !StrKit.hasText(humpString)) {
                 return humpString;
             }
             Matcher matcher = HUMP_PATTERN.matcher(humpString);
@@ -881,7 +881,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
         protected static String getColumn(Field field) {
             TableField tableField = field.getAnnotation(TableField.class);
-            return Objects.nonNull(tableField) && Objects.nonNull(tableField.value()) && StringUtils.hasLength(tableField.value())
+            return Objects.nonNull(tableField) && Objects.nonNull(tableField.value()) && StrKit.hasText(tableField.value())
                     ? tableField.value()
                     : TableScheme.toUnderline(field.getName());
         }

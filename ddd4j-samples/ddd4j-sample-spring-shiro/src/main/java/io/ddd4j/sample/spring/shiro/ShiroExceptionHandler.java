@@ -1,4 +1,4 @@
-package io.ddd4j.spring.subject.shiro;
+package io.ddd4j.sample.spring.shiro;
 
 import io.ddd4j.core.ApiRestResponse;
 import lombok.extern.slf4j.Slf4j;

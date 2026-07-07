@@ -1,4 +1,4 @@
-package io.ddd4j.spring.subject.satoken;
+package io.ddd4j.sample.spring.satoken;
 
 import cn.dev33.satoken.exception.SaTokenException;
 import io.ddd4j.core.ApiRestResponse;

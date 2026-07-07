@@ -12,9 +12,7 @@ import org.aspectj.lang.annotation.Pointcut;
  * {@code ddd4j-boot-spring-aspect}（Spring Boot starter）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @deprecated 自 2.0.x 起下移到 {@code ddd4j-boot-spring-aspect.AsyncAspect}
  */
-@Deprecated
 @Aspect
 public class AsyncAspect {
 

@@ -1,5 +1,7 @@
 package io.ddd4j.data.mybatis.typehandler;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeReference;
@@ -71,19 +73,19 @@ public abstract class BaseTypeHandler<T> extends org.apache.ibatis.type.BaseType
     @Override
     public T getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String str = rs.getString(columnName);
-        return Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str) ? null : this.parse(str);
+        return Objects.isNull(str) || !StrKit.hasText(str) ? null : this.parse(str);
     }
 
     @Override
     public T getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String str = rs.getString(columnIndex);
-        return Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str) ? null : this.parse(str);
+        return Objects.isNull(str) || !StrKit.hasText(str) ? null : this.parse(str);
     }
 
     @Override
     public T getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String str = cs.getString(columnIndex);
-        return Objects.isNull(str) || !org.springframework.util.StringUtils.hasLength(str) ? null : this.parse(str);
+        return Objects.isNull(str) || !StrKit.hasText(str) ? null : this.parse(str);
     }
 
 }

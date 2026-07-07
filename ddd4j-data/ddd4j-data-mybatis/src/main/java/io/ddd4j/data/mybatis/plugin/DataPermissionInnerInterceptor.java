@@ -15,6 +15,8 @@
  */
 package io.ddd4j.data.mybatis.plugin;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import net.sf.jsqlparser.JSQLParserException;
@@ -71,7 +73,7 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
         String originalSql = boundSql.getSql();
         try {
             String scopeCondition = provider.dataScopeCondition(ms.getId());
-            if (Objects.isNull(scopeCondition) || !org.springframework.util.StringUtils.hasLength(scopeCondition)) {
+            if (Objects.isNull(scopeCondition) || !StrKit.hasText(scopeCondition)) {
                 return;
             }
             Select select = (Select) CCJSqlParserUtil.parse(originalSql);
