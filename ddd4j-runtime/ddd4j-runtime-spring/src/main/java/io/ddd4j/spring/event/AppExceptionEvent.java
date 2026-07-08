@@ -1,8 +1,8 @@
-package io.ddd4j.core.ddd.event;
+package io.ddd4j.spring.event;
 
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import lombok.Getter;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -25,10 +25,7 @@ import java.util.Objects;
  * @since 2.0.x
  */
 @Getter
-public class ExceptionEvent implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class AppExceptionEvent extends ApplicationEvent implements Serializable {
 
     /** 请求来源（如 URL、方法名等上下文信息） */
     private final Object source;
@@ -43,7 +40,7 @@ public class ExceptionEvent implements Serializable {
      * @param payload 异常对象（不可为 null）
      * @throws NullPointerException payload 为 null
      */
-    public ExceptionEvent(Object source, Exception payload) {
+    public AppExceptionEvent(Object source, Exception payload) {
         this.source = source;
         this.payload = Objects.requireNonNull(payload, "payload must not be null");
     }

@@ -7,7 +7,7 @@
 package io.ddd4j.spring.web;
 
 import io.ddd4j.core.ApiRestResponse;
-import io.ddd4j.core.ddd.event.ExceptionEvent;
+import io.ddd4j.spring.event.AppExceptionEvent;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -53,16 +53,24 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     /** Spring 应用上下文 */
     @Getter
     private ApplicationContext context;
+
     /** 嵌套消息源（国际化） */
-    @Autowired(required = false)
     @Getter
-    private NestedMessageSource messageSource;
+    private final NestedMessageSource messageSource;
+    /** Dozer Bean 映射器 */
+    @Getter
+    private final Mapper beanMapper;
+
+    public BaseController(NestedMessageSource messageSource, Mapper beanMapper) {
+        this.messageSource = messageSource;
+        this.beanMapper = beanMapper;
+    }
 
     /**
      * 统一处理异常，并抛出异常事件方便进行统一的日志实现
      */
     protected void logException(Object source, Exception ex) {
-        getEventPublisher().publishEvent(new ExceptionEvent(source, ex));
+        getEventPublisher().publishEvent(new AppExceptionEvent(source, ex));
     }
 
     /**

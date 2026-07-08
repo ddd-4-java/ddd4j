@@ -2,6 +2,7 @@ package io.ddd4j.core.subject;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
+import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.kit.lang.FunctionKit;
 import io.ddd4j.kit.lang.JsonKit;
 

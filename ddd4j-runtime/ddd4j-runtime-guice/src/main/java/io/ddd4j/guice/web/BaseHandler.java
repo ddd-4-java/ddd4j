@@ -16,10 +16,9 @@
 package io.ddd4j.guice.web;
 
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.guice.util.WebKit;
+import io.ddd4j.spring.event.AppExceptionEvent;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +60,7 @@ public abstract class BaseHandler {
         try {
             com.google.common.eventbus.EventBus eventBus = GuiceContext.getInstance(com.google.common.eventbus.EventBus.class);
             if (Objects.nonNull(eventBus)) {
-                eventBus.post(new io.ddd4j.core.ddd.event.ExceptionEvent(ctx.url(), ex));
+                eventBus.post(new AppExceptionEvent(ctx.url(), ex));
             }
         } catch (Exception e) {
             log.warn("Failed to publish exception event", e);
