@@ -1,6 +1,6 @@
 package io.ddd4j.data.external.region;
 
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -60,7 +60,7 @@ public final class RegionCacheKeys {
         StringJoiner joiner = new StringJoiner(DELIMITER);
         joiner.add(REDIS_PREFIX);
         for (Object part : parts) {
-            if (Objects.nonNull(part) && StringUtils.hasText(part.toString())) {
+            if (Objects.nonNull(part) && StrKit.hasText(part.toString())) {
                 joiner.add(part.toString());
             }
         }

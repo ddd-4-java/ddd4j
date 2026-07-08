@@ -1,13 +1,15 @@
 package io.ddd4j.data.external.geo;
 
 import com.alibaba.fastjson2.JSONObject;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,26 +33,26 @@ public class GeoBaiduTemplate {
     /** 高精度IP定位请求地址模板 */
     private static String highacciploc = "https://api.map.baidu.com/highacciploc/v1?qcip=220.181.38.113&qterm=pc&ak=%s&coord=bd09ll";
 
-    /** REST 客户端 */
-    private final RestClient restClient;
+    /** HTTP 客户端 */
+    private final HttpClient httpClient;
     /** 百度地图AK密钥 */
     private final String ak;
 
     /**
      * 构造函数
      *
-     * @param restClient REST 客户端
+     * @param httpClient HTTP 客户端
      * @param ak         百度地图AK密钥
      */
-    public GeoBaiduTemplate(RestClient restClient, String ak) {
+    public GeoBaiduTemplate(HttpClient httpClient, String ak) {
         super();
-        this.restClient = restClient;
+        this.httpClient = httpClient;
         this.ak = ak;
     }
 
     public static void main(String[] args) throws IOException {
 
-        GeoBaiduTemplate template = new GeoBaiduTemplate(RestClient.create(), "");
+        GeoBaiduTemplate template = new GeoBaiduTemplate(HttpClient.newHttpClient(), "");
 
         Map<String, BigDecimal> mapLL = template.getLatAndLngByAddress("浙江省杭州市西湖区"); // lng：116.86380647644208  lat：38.297615350325717
         mapLL.get("lat");
@@ -92,14 +94,22 @@ public class GeoBaiduTemplate {
         String address = java.net.URLEncoder.encode(addr, StandardCharsets.UTF_8);
         String url = String.format(geocoder, address, this.ak);
         // {"message":"APP Referer校验失败","status":220}
-        ResponseEntity<String> response = restClient.get()
-                .uri(url)
-                .retrieve()
-                .toEntity(String.class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            String bodyString = response.getBody();
+        HttpResponse<String> response;
+        try {
+            response = httpClient.send(
+                    HttpRequest.newBuilder(URI.create(url))
+                            .header("Accept", "application/json")
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new IOException("调用百度API被中断", ie);
+        }
+        if (response.statusCode() >= 200 && response.statusCode() < 300) {
+            String bodyString = response.body();
             log.info(" Addr : {} >> Location : {} ", addr, bodyString);
-            if (StringUtils.hasText(bodyString)) {
+            if (StrKit.hasText(bodyString)) {
                 JSONObject jsonObject = JSONObject.parseObject(bodyString);
                 if (jsonObject.getInteger("status") != 0) {
                     throw new IOException(jsonObject.getString("message"));
@@ -107,7 +117,7 @@ public class GeoBaiduTemplate {
                 return Optional.of(jsonObject);
             }
         }
-        log.error("Addr Location Query Error. Response Code >> {}, Body >> {}", response.getStatusCode().value(), response.getBody());
+        log.error("Addr Location Query Error. Response Code >> {}, Body >> {}", response.statusCode(), response.body());
         return Optional.empty();
     }
 
@@ -147,14 +157,16 @@ public class GeoBaiduTemplate {
         }
         try {
             String url = String.format(geocoder2, this.ak, ip);
-            ResponseEntity<String> response = restClient.get()
-                    .uri(url)
-                    .retrieve()
-                    .toEntity(String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                String bodyString = response.getBody();
+            HttpResponse<String> response = httpClient.send(
+                    HttpRequest.newBuilder(URI.create(url))
+                            .header("Accept", "application/json")
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                String bodyString = response.body();
                 log.info(" IP : {} >> Location : {} ", ip, bodyString);
-                if (StringUtils.hasText(bodyString)) {
+                if (StrKit.hasText(bodyString)) {
                     JSONObject jsonObject = JSONObject.parseObject(bodyString);
                     if (jsonObject.getInteger("status") != 0) {
                         throw new IOException(jsonObject.getString("message"));
@@ -163,6 +175,9 @@ public class GeoBaiduTemplate {
                 }
             }
         } catch (Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             log.error("IP : {} >> Location Query Error. {}", ip, e.getMessage());
         }
         return Optional.empty();

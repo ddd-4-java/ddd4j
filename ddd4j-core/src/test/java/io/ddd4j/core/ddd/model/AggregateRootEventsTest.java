@@ -5,6 +5,8 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import org.fuin.ddd4j.core.EntityIdPath;
+import org.fuin.ddd4j.core.EntityType;
 import org.fuin.ddd4j.core.EventType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +47,8 @@ class AggregateRootEventsTest {
 
         assertThat(order.hasDomainEvents()).isTrue();
         assertThat(order.domainEvents()).hasSize(1);
-        assertThat(order.domainEvents().get(0)).isEqualTo("created");
+        assertThat(order.domainEvents().get(0)).isInstanceOf(TestEvent.class);
+        assertThat(((TestEvent) order.domainEvents().get(0)).getName()).isEqualTo("created");
     }
 
     @Test
@@ -105,8 +108,8 @@ class AggregateRootEventsTest {
         List<DomainEvent<?>> events = order.domainEvents();
 
         assertThat(events).hasSize(2);
-        assertThat(events.get(0).source()).isEqualTo("created");
-        assertThat(events.get(1).source()).isEqualTo("paid");
+        assertThat(((TestEvent) events.get(0)).getName()).isEqualTo("created");
+        assertThat(((TestEvent) events.get(1)).getName()).isEqualTo("paid");
     }
 
     @Test
@@ -159,14 +162,77 @@ class AggregateRootEventsTest {
         }
     }
 
-    static final class TestEvent extends DomainEvent<String> {
-        TestEvent(String source) {
-            super(source);
+    static final class TestEvent extends DomainEvent<OrderId> {
+
+        private final String name;
+
+        TestEvent(String name) {
+            super(new EntityIdPath(new OrderId(name)));
+            this.name = name;
+        }
+
+        String getName() {
+            return name;
         }
 
         @Override
         public EventType getEventType() {
             return null;
+        }
+    }
+
+    static final class OrderId implements org.fuin.ddd4j.core.AggregateRootId {
+
+        private static final EntityType TYPE = new OrderEntityType();
+
+        private final String value;
+
+        OrderId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + " " + value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof OrderId)) {
+                return false;
+            }
+            return value.equals(((OrderId) o).value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+    }
+
+    static final class OrderEntityType implements EntityType {
+
+        @Override
+        public String asString() {
+            return "Order";
         }
     }
 

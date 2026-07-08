@@ -48,14 +48,14 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 ### ✨ 主要特性
 
 - **框架无关**：核心契约层零 Spring/MyBatis/Servlet import，可同时被 Spring Boot / Quarkus / Javalin 复用
-- **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `DomainRepository`，并基于 fuinorg ddd-4-java 提供 ES 轨道
+- **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository` / `RichRepository`，并基于 fuinorg ddd-4-java 提供 ES 轨道
   `DddAggregateRoot`、`DddDomainEvent`、`DddEventStoreRepository`
 - **CQRS 命令查询分离**：基于 fuinorg cqrs-4-java，提供 Command/View/ProjectionPosition 等 SPI
 - **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
-- **三轨 DDD 模型**：兼容 `Model/Query` 快速 CRUD 轨道 + `AggregateRoot/DomainRepository` 普通充血模型轨道 + fuinorg
+- **三轨 DDD 模型**：兼容轻量 `PO/Query` 快速 CRUD 轨道 + `AggregateRoot/Repository` 普通充血模型轨道 + fuinorg
   CQRS/ES 轨道
-- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `DomainRepository` 与
-  `BaseRepository`（领域仓储与兼容数据仓储）
+- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `Repository` 与
+  `RichRepository`（领域仓储与充血查询仓储）
 - **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` 纯 Java SPI、`ddd4j-mq-spring` 桥接，以及 Kafka/RabbitMQ/RocketMQ/Redis
   Stream/NATS/Pulsar/ActiveMQ/MQTT/ONS/SQS/TDMQ/Disruptor 等实现
 - **三框架运行时绑定**：`ddd4j-runtime` 聚合 `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`，提供
@@ -80,7 +80,7 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 | `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                                                                            |
 | `ddd4j-dependencies` | 第三方依赖集中管理       | Spring 6.x / Jackson 2.22 / Reactor 等                                                                                                                 |
 | `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                                                            |
-| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `DomainRepository` `DomainObjectMapper` `Model` `Query` `Page` `R` `BaseRepository` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
+| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `Repository` `RichRepository` `DomainObjectMapper` `Query` `Page` `R` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
 | `ddd4j-kit`          | 工具箱             | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                                                                        |
 | `ddd4j-ddd-rules`    | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                                                                    |
 | `ddd4j-data`         | 数据层抽象           | MyBatis-Plus 充血模型仓储/兼容仓储实现 + Spring 桥接 + 加密/数据权限/外部服务/日志                                                                                              |
@@ -91,7 +91,7 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 | `ddd4j-runtime`      | 三框架运行时绑定        | `ddd4j-runtime-spring` `ddd4j-runtime-quarkus` `ddd4j-runtime-guice`                                                                                  |
 | `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                                            |
 | `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                                                                            |
-| `ddd4j-samples`      | 示例工程            | Auth 多实现 + 多登录 + Person CQRS/ES 示例                                                                                                                    |
+| `ddd4j-samples`      | 示例工程            | Spring / Quarkus / Javalin 三运行时 DDD、CQRS、Auth 示例矩阵                                                                                                      |
 
 **模块结构树**：
 
@@ -100,7 +100,7 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |----ddd4j-bom                          #BOM依赖管理，用于外部项目引用 ddd4j 模块版本管理
 |----ddd4j-dependencies                 #公共依赖，便于依赖组件版本控制
 |----ddd4j-annotation                   #注解层，DDD构造型注解+API注解，零框架依赖
-|----ddd4j-core                         #核心契约层，纯Java DDD基础抽象（AggregateRoot/DomainRepository/Model/Query/BaseRepository/DomainEvent/DddAggregateRoot等）
+|----ddd4j-core                         #核心契约层，纯Java DDD基础抽象（AggregateRoot/Repository/RichRepository/Query/DomainEvent/DddAggregateRoot等）
 |----ddd4j-kit                          #工具箱，继承式增强Hutool，提供Cache/Lang/Web工具
 |----ddd4j-ddd-rules                          #DDD架构规范检查（基于ArchUnit）
 |------ddd4j-ddd-rules-clean                  #Clean Architecture分层纪律规则
@@ -129,7 +129,6 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |------ddd4j-mq-tdmq                    #腾讯TDMQ实现
 |------ddd4j-mq-disruptor               #LMAX Disruptor本地MQ实现
 |----ddd4j-web                          #Web抽象聚合
-|------ddd4j-web-core                   #纯Java SPI：RequestInfo/SessionContext/IpUtils
 |------ddd4j-web-javalin                #Javalin Web适配
 |------ddd4j-web-quarkus                #Quarkus Web适配
 |------ddd4j-web-webmvc                 #Spring MVC实现：Controller/拦截器/全局异常处理
@@ -155,11 +154,19 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |------ddd4j-extension-validation       #参数校验增强组件
 |----ddd4j-parent                       #业务工程父POM，定义编译/打包/发布规则
 |----ddd4j-samples                      #示例工程
-|--------ddd4j-sample-auth-satoken      #Sa-Token集成示例，演示SubjectKit统一鉴权入口
-|--------ddd4j-sample-auth-security     #Spring Security集成示例
-|--------ddd4j-sample-auth-shiro        #Apache Shiro集成示例
-|--------ddd4j-sample-auth-multi-login  #多登录场景示例
-|--------ddd4j-sample-cqrs-person       #Person CQRS/ES示例
+|--------ddd4j-sample-spring            #Spring 普通 DDD 示例：Order 充血模型 + Goods 轻量 PO/Query
+|--------ddd4j-sample-quarkus           #Quarkus 普通 DDD 示例：同一业务模型的 CDI/JAX-RS 适配
+|--------ddd4j-sample-javalin           #Javalin 普通 DDD 示例：同一业务模型的 Guice/Javalin 适配
+|--------ddd4j-sample-spring-cqrs       #Spring CQRS 示例
+|--------ddd4j-sample-quarkus-cqrs      #Quarkus CQRS 示例
+|--------ddd4j-sample-javalin-cqrs      #Javalin CQRS 示例
+|--------ddd4j-sample-spring-satoken    #Spring + Sa-Token 鉴权示例
+|--------ddd4j-sample-spring-shiro      #Spring + Shiro 鉴权示例
+|--------ddd4j-sample-spring-security   #Spring + Spring Security 鉴权示例
+|--------ddd4j-sample-quarkus-satoken   #Quarkus + Sa-Token 鉴权示例
+|--------ddd4j-sample-quarkus-shiro     #Quarkus + Shiro 鉴权示例
+|--------ddd4j-sample-javalin-satoken   #Javalin + Sa-Token 鉴权示例
+|--------ddd4j-sample-javalin-shiro     #Javalin + Shiro 鉴权示例
 ```
 
 ### 📖 使用说明

@@ -465,7 +465,7 @@
                     框架）· esc-api（EventStore）
                 </text>
                 <text fill="#555" font-size="11" x="0" y="114">• 核心 SPI：DomainEventPublisher（3 框架）·
-                    MQBrokerAdapter（12 种 MQ）· Repository（多 ORM）· ArchUnit 编译期架构守护
+                    MQBrokerAdapter（13 个 MQ Broker/本地实现）· Repository（多 ORM）· ArchUnit 编译期架构守护
                 </text>
             </g>
         </g>
@@ -500,7 +500,7 @@
                                ▼
 ┌────────────────────────────────────────────────────────────────────┐
 │                  ddd4j 通用基础层（本次主题）                       │
-│  core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（12 种 MQ）  │
+│  core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（13 个 MQ）  │
 │  web · auth · monitor · kit · ddd-clean/cola（ArchUnit）         │
 └──────────────────────────────┬─────────────────────────────────────┘
                                │
@@ -608,7 +608,7 @@
     <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">ddd4j 核心竞争力</h2>
     <ul style="color:#555; line-height:1.8;">
         <li><strong>框架无关纯净契约</strong>：core 模块 contract/context/ddd 包零框架 import</li>
-        <li><strong>12 种 MQ 统一抽象</strong>：MQBrokerAdapter SPI 切换消息中间件零业务代码改动</li>
+        <li><strong>13 个 MQ Broker/本地实现统一抽象</strong>：MQBrokerAdapter SPI 切换消息中间件零业务代码改动</li>
         <li><strong>ArchUnit 编译期守护</strong>：CleanDDDLayerRules / ColaDDDLayerRules 注解驱动</li>
         <li><strong>双轨 DDD 模型</strong>：BaseEntity（快速）/ DddAggregateRoot（纯净 ES）</li>
         <li><strong>站在巨人肩膀上</strong>：直接复用 fuinorg ddd-4-java + cqrs-4-java + esc-api</li>

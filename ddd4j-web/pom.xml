@@ -12,7 +12,7 @@
 
     <artifactId>ddd4j-web</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j Web 抽象聚合：-core(纯 Java SPI) + webmvc/webflux/quarkus/javalin 框架实现。
+    <description>ddd4j Web 抽象聚合：webmvc/webflux/quarkus/javalin 四类框架实现。
     </description>
 
     <dependencies>

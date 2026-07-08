@@ -1,105 +1,69 @@
 # ddd4j 示例工程
 
-本目录放框架级、纯 Java 或最小运行时依赖的示例。Boot / Javalin / Quarkus 的框架接入示例分别放在各自仓库的 `*-samples` 下。
+本目录以当前 `ddd4j-samples/pom.xml` 为准，纳管 Spring、Quarkus、Javalin 三类运行时下的 DDD / CQRS / Auth 示例。历史的单点样例名不再作为文档口径或导航入口。
 
-## 示例清单
+## 示例矩阵
 
-| 示例                             | 方向           | 说明 |
-|--------------------------------|--------------|------|
-| `ddd4j-sample-rich-model`      | 普通充血模型      | `AggregateRoot` + `DomainRepository` + Model/PO 分离，领域模型零 ORM/框架依赖 |
-| `ddd4j-sample-cqrs-person`     | CQRS / ES    | 纯 Java Person CQRS 示例：命令写侧、事件流、读侧投影与序列化测试 |
-| `ddd4j-sample-auth-multi-login` | 多登录场景       | 手机号登录、第三方登录、登录成功/失败事件与 `SubjectKit` 用法 |
-| `ddd4j-sample-auth-satoken`    | Auth         | sa-token 集成示例（主推方案） |
-| `ddd4j-sample-auth-shiro`      | Auth         | Apache Shiro 集成示例（旧项目迁移参考） |
-| `ddd4j-sample-auth-security`   | Auth         | Spring Security 集成示例（旧项目迁移参考） |
+| 示例 | 方向 | 说明 |
+|------|------|------|
+| `ddd4j-sample-spring` | 普通 DDD | Order 充血聚合 + Goods 轻量 PO/Query，使用 Spring MVC |
+| `ddd4j-sample-quarkus` | 普通 DDD | 与 Spring 示例保持业务模型一致，使用 Quarkus CDI/JAX-RS |
+| `ddd4j-sample-javalin` | 普通 DDD | 与 Spring 示例保持业务模型一致，使用 Guice/Javalin |
+| `ddd4j-sample-spring-cqrs` | CQRS | Spring 运行时下的 Order/Goods 读写分离示例 |
+| `ddd4j-sample-quarkus-cqrs` | CQRS | Quarkus 运行时下的 Order/Goods 读写分离示例 |
+| `ddd4j-sample-javalin-cqrs` | CQRS | Javalin 运行时下的 Order/Goods 读写分离示例 |
+| `ddd4j-sample-spring-satoken` | Auth | Spring + Sa-Token 鉴权示例 |
+| `ddd4j-sample-spring-shiro` | Auth | Spring + Apache Shiro 鉴权示例 |
+| `ddd4j-sample-spring-security` | Auth | Spring + Spring Security 鉴权示例 |
+| `ddd4j-sample-quarkus-satoken` | Auth | Quarkus + Sa-Token 鉴权示例 |
+| `ddd4j-sample-quarkus-shiro` | Auth | Quarkus + Apache Shiro 鉴权示例 |
+| `ddd4j-sample-javalin-satoken` | Auth | Javalin + Sa-Token 鉴权示例 |
+| `ddd4j-sample-javalin-shiro` | Auth | Javalin + Apache Shiro 鉴权示例 |
 
-## 普通充血模型示例
+## 普通 DDD 示例
 
-`ddd4j-sample-rich-model` 是后续 Boot / Javalin / Quarkus rich-model 示例的共同领域基准：
+三个普通 DDD 示例使用同一组业务概念，重点不是复制 CRUD，而是对照三种运行时的差异边界：
 
-- 领域模型：`Order` 继承 `AggregateRoot<String>`，内部封装 `addLine`、`pay`、`ship` 等业务行为。
-- 值对象：`Money` 实现 `ValueObject`，负责金额和币种不变式。
-- 领域事件：`OrderCreatedEvent`、`OrderLineAddedEvent`、`OrderPaidEvent` 等在聚合行为内注册。
-- 仓储接口：`OrderRepository` 继承 `DomainRepository<Order, String>`，只描述聚合语义。
-- 基础设施：`InMemoryOrderRepository` 实现 `DomainObjectMapper<Order, OrderPO>`，演示 Model/PO 分离。
+| 业务轨道 | 示例对象 | 设计重点 |
+|----------|----------|----------|
+| 充血聚合 | `Order` / `OrderLine` / `Money` / `OrderRepository` | 聚合根封装状态机、不变量和领域事件，领域层不依赖具体 Web/DI/ORM |
+| 轻量 PO/Query | `Goods` / `GoodsQuery` / `GoodsRepository` | 简单 CRUD 场景保留轻量数据对象，查询能力通过 `Query` + `RichRepository` 承接 |
 
-验证命令：
-
-```bash
-mvn -pl ddd4j-samples/ddd4j-sample-rich-model -am test -DskipTests=false
-```
-
-## 核心演示：三框架业务代码零差异
-
-三个 auth 示例的 `AuthController` / `AuthConfig` 代码**完全一致**，只有 pom 依赖不同：
-
-```java
-// 三个示例完全相同的业务代码
-AuthPrincipal principal = new AuthPrincipal().setLoginId(userId).setUserId(userId);
-AuthRequest request = AuthRequest.of(userId).setTimeout(7200);
-request.setPrincipal(principal);
-String token = SubjectKit.login(request);       // 登录
-
-SubjectKit.hasPermission("user:add");            // 权限校验
-SubjectKit.hasRole("admin");                     // 角色校验
-SubjectKit.getPrincipal();                        // 获取当前用户
-SubjectKit.logout();                              // 登出
-```
-
-切换底层鉴权框架（sa-token ↔ shiro ↔ security）只需更换 pom 依赖，**业务代码零改动**。
-
-## 快速开始
-
-### sa-token 示例（主推）
+推荐先阅读：
 
 ```bash
-cd ddd4j-samples/ddd4j-sample-auth-satoken
-mvn spring-boot:run
-# 访问 http://localhost:8080/auth/login?userId=10001
+mvn -pl ddd4j-samples/ddd4j-sample-spring -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-quarkus -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-javalin -am test -DskipTests=false
 ```
 
-### Shiro 示例（旧项目迁移参考）
+## CQRS 示例
+
+CQRS 示例按运行时拆分，演示命令侧、查询侧、读模型和缓存的协作方式。当前样例名以运行时为前缀：
 
 ```bash
-cd ddd4j-samples/ddd4j-sample-auth-shiro
-mvn spring-boot:run
-# 访问 http://localhost:8081/auth/login?userId=10001
+mvn -pl ddd4j-samples/ddd4j-sample-spring-cqrs -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-quarkus-cqrs -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-javalin-cqrs -am test -DskipTests=false
 ```
 
-### Spring Security 示例（旧项目迁移参考）
+## Auth 示例
+
+Auth 示例覆盖不同运行时和不同鉴权实现。业务层应优先面向 ddd4j 的 `Subject`/`SubjectProvider`/`AuthRequest` 契约；具体 sa-token、Shiro、
+Spring Security 差异留在对应示例和适配层。
 
 ```bash
-cd ddd4j-samples/ddd4j-sample-auth-security
-mvn spring-boot:run
-# 访问 http://localhost:8082/auth/login?userId=10001
+mvn -pl ddd4j-samples/ddd4j-sample-spring-satoken -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-spring-shiro -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-spring-security -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-quarkus-satoken -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-quarkus-shiro -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-javalin-satoken -am test -DskipTests=false
+mvn -pl ddd4j-samples/ddd4j-sample-javalin-shiro -am test -DskipTests=false
 ```
 
-## 体验鉴权流程
+## 当前约束
 
-```bash
-# 登录（获取 Token）
-curl -X POST 'http://localhost:8080/auth/login?userId=10001'
-
-# 查看当前用户
-curl http://localhost:8080/auth/me
-
-# 权限校验（user:add 权限）
-curl 'http://localhost:8080/auth/check/permission?permission=user:add'
-# 返回：{"permission":"user:add","has":true}
-
-# 权限校验（无 user:update 权限）
-curl 'http://localhost:8080/auth/check/permission?permission=user:update'
-# 返回：{"permission":"user:update","has":false}
-
-# 角色校验（admin 角色）
-curl 'http://localhost:8080/auth/check/role?role=admin'
-# 返回：{"role":"admin","has":true}
-
-# 登出
-curl -X POST http://localhost:8080/auth/logout
-```
-
-## 迁移指南
-
-完整的 Shiro → sa-token、Spring Security → sa-token 迁移指南见：
-[`ddd4j-auth/docs/migration-guide.md`](../ddd4j-auth/docs/migration-guide.md)
+- 本目录的权威清单是 `ddd4j-samples/pom.xml` 的 `<modules>`，README 不应再引用未纳管目录。
+- Spring Boot 自动装配示例应放在外部 `ddd4j-boot` 仓库；本目录只演示 ddd4j 通用能力在不同运行时下的最小可运行方式。
+- Quarkus/Javalin 专属脚手架能力分别归外部 `ddd4j-quarkus`、`ddd4j-javalin`，本目录只保留可对照的业务样例。

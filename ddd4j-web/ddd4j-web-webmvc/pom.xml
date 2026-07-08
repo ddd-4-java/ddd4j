@@ -11,8 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-web-webmvc</artifactId>
-    <description>ddd4j Web - Spring MVC 实现：Controller/Interceptor/Config/WebSocket。从 ddd4j-web-core 迁入的 Spring
-        相关代码。
+    <description>ddd4j Web - Spring MVC 实现：Controller/Interceptor/Config/WebSocket。
     </description>
 
     <dependencies>

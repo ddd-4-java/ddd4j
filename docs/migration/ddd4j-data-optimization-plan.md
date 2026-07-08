@@ -64,7 +64,7 @@
 
 | 子模块           | Spring imports | 耦合点                                                                                                                                                    | 应迁移到                    |
 |---------------|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
-| **mybatis**   | 10 处           | `BaseRepositoryImpl`：`@Autowired`/`@Transactional`/`org.springframework.lang.NonNull`；`MybatisExceptionHandler`：`@ControllerAdvice`（依赖 ddd4j-web-core） | data-spring + boot-data |
+| **mybatis**   | 10 处           | `BaseRepositoryImpl`：`@Autowired`/`@Transactional`/`org.springframework.lang.NonNull`；`MybatisExceptionHandler`：`@ControllerAdvice`（Web 异常处理应属于 ddd4j-boot 或 ddd4j-web-webmvc） | data-spring + boot-data |
 | **crypto**    | 24 处           | `DefaultCryptoAutoConfiguration`：`@Configuration`+`@Bean`；`DecryptRequestBodyAdvice`/`EncryptResponseBodyAdvice`：依赖 `spring-webmvc`                    | boot-data               |
 | **external**  | —              | `ExternalAutoConfiguration`：`@Configuration`；依赖 `ip2region-spring-boot-starter`+`redistpl-plus-spring-boot-starter`                                    | boot-data               |
 | **logs**      | —              | `ApiLogAspectConfiguration`：`@Configuration`；`ApiOperationLogAspect`：`@Aspect`+`@Component`（缺 aspectj 依赖声明）                                            | boot-data               |
@@ -282,8 +282,8 @@ public abstract class BaseRepositoryImpl<MP, M, P, Q>
 
 **迁移**：
 
-- `MybatisExceptionHandler`（`@ControllerAdvice`，依赖 web-core）→ `ddd4j-boot/ddd4j-boot-data`（web 异常属于 boot 层）
-- mybatis pom 移除 `ddd4j-web-core` 依赖
+- `MybatisExceptionHandler`（`@ControllerAdvice`，WebMVC 异常处理）→ `ddd4j-boot/ddd4j-boot-data` 或 `ddd4j-web-webmvc`（web 异常不属于 mybatis 实现层）
+- mybatis pom 移除 WebMVC/WebFlux 等 Web 适配依赖
 - `@Transactional` 保留在方法上（Spring AOP 代理，无需改代码）
 - 移除 swagger-annotations / jakarta.validation 残留依赖（仅为 3 个迁移的 DTO/Param 服务）
 
@@ -294,8 +294,8 @@ public abstract class BaseRepositoryImpl<MP, M, P, Q>
 test -d ddd4j-data/ddd4j-data-spring
 # mybatis 无 @Autowired
 ! grep "@Autowired" ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/repository/impl/BaseRepositoryImpl.java
-# mybatis 不依赖 web-core
-! grep "ddd4j-web-core" ddd4j-data/ddd4j-data-mybatis/pom.xml
+# mybatis 不依赖 Web 适配模块
+! grep "ddd4j-web-webmvc" ddd4j-data/ddd4j-data-mybatis/pom.xml
 ```
 
 ---

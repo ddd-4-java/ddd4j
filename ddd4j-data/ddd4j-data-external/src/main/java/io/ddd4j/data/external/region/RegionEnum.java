@@ -1,6 +1,6 @@
 package io.ddd4j.data.external.region;
 
-import org.springframework.util.StringUtils;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.util.*;
 
@@ -96,7 +96,7 @@ public final class RegionEnum implements Comparable<RegionEnum> {
             return region;
         }
         for (RegionEnum value : values()) {
-            if (StringUtils.hasText(address.getCountry()) && address.getCountry().contains(value.getCname())) {
+            if (StrKit.hasText(address.getCountry()) && address.getCountry().contains(value.getCname())) {
                 return value;
             }
         }
@@ -108,7 +108,7 @@ public final class RegionEnum implements Comparable<RegionEnum> {
     }
 
     private static RegionEnum get(Map<String, RegionEnum> map, String key) {
-        if (!StringUtils.hasText(key)) {
+        if (!StrKit.hasText(key)) {
             return UK;
         }
         return map.getOrDefault(key.trim().toUpperCase(Locale.ROOT), UK);

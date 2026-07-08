@@ -253,8 +253,8 @@ ddd4j-sample-javalin/
 | [ddd4j-sample-quarkus](../ddd4j-sample-quarkus) | Quarkus 完整业务（CDI 启动期注入 SPI） |
 | [ddd4j-sample-javalin-satoken](../ddd4j-sample-javalin-satoken) | Javalin + Sa-Token 鉴权 |
 | [ddd4j-sample-javalin-shiro](../ddd4j-sample-javalin-shiro) | Javalin + Shiro 鉴权 |
-| [ddd4j-sample-rich-model](../ddd4j-sample-rich-model) | 纯 Java 充血模型参考（与本示例 order/ 同源） |
-| [ddd4j-sample-model](../ddd4j-sample-model) | 纯 Java 第三轨 Model/Query 参考（与本示例 goods/ 同源） |
+| [ddd4j-sample-spring-cqrs](../ddd4j-sample-spring-cqrs) | Spring CQRS 对照示例 |
+| [ddd4j-sample-javalin-cqrs](../ddd4j-sample-javalin-cqrs) | Javalin CQRS 对照示例 |
 
 ## 📄 相关文档
 

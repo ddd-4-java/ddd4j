@@ -61,12 +61,12 @@ ddd4j/                                                    # 平铺式纯 Java �
 │   │   ├── ddd4j-mq-nats                                # NATS JetStream 实现
 │   │   └── ddd4j-mq-disruptor                           # LMAX Disruptor 本地 MQ 实现
 │   │
-│   ├── ddd4j-web/                                       # Web 抽象（5 子模块：core/javalin/quarkus/webmvc/webflux）
-│   └── ddd4j-auth/                                      # 认证抽象（5 子模块：license/satoken/security/shiro/spring）
+│   ├── ddd4j-web/                                       # Web 抽象（4 子模块：javalin/quarkus/webmvc/webflux）
+│   └── ddd4j-auth/                                      # 认证抽象（satoken/security/shiro/spring）
 │
 ├── ddd4j-cache                                          # 缓存抽象及多实现
 ├── ddd4j-extensions                                     # 7 子模块（akka/excel/jackson/monitor/pf4j/qlexpress/validation）
-└── ddd4j-samples                                        # Auth 多实现、多登录、Person CQRS/ES 示例
+└── ddd4j-samples                                        # Spring/Quarkus/Javalin 三运行时 DDD、CQRS、Auth 示例矩阵
 ```
 
 ---

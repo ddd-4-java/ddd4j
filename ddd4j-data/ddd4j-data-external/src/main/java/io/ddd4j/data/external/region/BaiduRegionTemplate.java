@@ -7,14 +7,16 @@
 package io.ddd4j.data.external.region;
 
 import com.alibaba.fastjson2.JSONObject;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,8 +36,8 @@ public class BaiduRegionTemplate {
     private static final String GET_LOCATION_BY_IP_URL = "https://api.map.baidu.com/location/ip?ak=%s&ip=%s&coor=bd09ll";
     /** 百度地图AK密钥 */
     private final String ak;
-    /** REST 客户端 */
-    private final RestClient restClient;
+    /** HTTP 客户端 */
+    private final HttpClient httpClient;
     /** 缓存服务 */
     private RegionCache regionCache;
 
@@ -43,28 +45,28 @@ public class BaiduRegionTemplate {
      * 构造函数（无缓存）
      *
      * @param ak         百度地图AK密钥
-     * @param restClient REST 客户端
+     * @param httpClient HTTP 客户端
      */
-    public BaiduRegionTemplate(String ak, RestClient restClient) {
-        this(ak, restClient, RegionCache.none());
+    public BaiduRegionTemplate(String ak, HttpClient httpClient) {
+        this(ak, httpClient, RegionCache.none());
     }
 
     /**
      * 构造函数
      *
      * @param ak          百度地图AK密钥
-     * @param restClient  REST 客户端
+     * @param httpClient  HTTP 客户端
      * @param regionCache 缓存服务
      */
-    public BaiduRegionTemplate(String ak, RestClient restClient, RegionCache regionCache) {
+    public BaiduRegionTemplate(String ak, HttpClient httpClient, RegionCache regionCache) {
         this.ak = ak;
-        this.restClient = restClient;
+        this.httpClient = httpClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
     public static void main(String[] args) throws IOException {
 
-        BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", RestClient.create());
+        BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", HttpClient.newHttpClient());
 
         Optional<JSONObject> mapLL2 = template.getLocationByIp("183.128.136.82"); // lng：116.86380647644208  lat：38.297615350325717
         log.debug(mapLL2.get().toJSONString());
@@ -123,14 +125,16 @@ public class BaiduRegionTemplate {
         // 3、调用三方接口解析IP信息
         try {
             String url = String.format(GET_LOCATION_BY_IP_URL, this.ak, ip);
-            ResponseEntity<String> response = restClient.get()
-                    .uri(url)
-                    .retrieve()
-                    .toEntity(String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                String bodyString = response.getBody();
+            HttpResponse<String> response = httpClient.send(
+                    HttpRequest.newBuilder(URI.create(url))
+                            .header("Accept", "application/json")
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                String bodyString = response.body();
                 log.info(" IP : {} >> Location : {} ", ip, bodyString);
-                if (StringUtils.hasText(bodyString)) {
+                if (StrKit.hasText(bodyString)) {
                     JSONObject jsonObject = JSONObject.parseObject(bodyString);
                     if (jsonObject.getInteger("status") != 0) {
                         throw new IOException(jsonObject.getString("message"));
@@ -139,8 +143,11 @@ public class BaiduRegionTemplate {
                     return Optional.of(jsonObject);
                 }
             }
-            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", ip, response.getStatusCode().value(), response.getBody());
+            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", ip, response.statusCode(), response.body());
         } catch (Exception e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
             log.error("IP : {} >> Country/Region Parser Error：{}", ip, e.getMessage());
         }
         return Optional.empty();
@@ -158,7 +165,7 @@ public class BaiduRegionTemplate {
                     // CN|浙江省|杭州市|None|None|99|99
                     String address = regionData.getString("address");
 
-                    String[] addrArr = StringUtils.tokenizeToStringArray(address, "|");
+                    String[] addrArr = StrKit.tokenizeToStringArray(address, "|");
 
                     RegionEnum region = RegionEnum.getByCode2(addrArr[0]);
 
@@ -186,7 +193,7 @@ public class BaiduRegionTemplate {
                     // CN|浙江省|杭州市|None|None|99|99
                     String address = regionData.getString("address");
 
-                    String[] addrArr = StringUtils.tokenizeToStringArray(address, "|");
+                    String[] addrArr = StrKit.tokenizeToStringArray(address, "|");
 
                     RegionEnum region = RegionEnum.getByCode2(addrArr[0]);
 

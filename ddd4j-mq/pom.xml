@@ -12,9 +12,9 @@
 
     <artifactId>ddd4j-mq</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -disruptor(进程内高性能) + -nats(无外部服务依赖)。
-        ddd4j-mq-spring 是独立桥接模块(parent=ddd4j-dependencies)，仅服务于 ddd4j-boot-mq-* 下游。
-        其余 broker 实现已迁移至 ddd4j-boot/ddd4j-boot-mq 深度整合。
+    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -spring(Spring Messaging 桥接)
+        + 多 Broker/本地实现（ActiveMQ/Disruptor/Kafka/MQTT/NATS/ONS/Pulsar/RabbitMQ/Redis Stream/RocketMQ/SQS/TDMQ）。
+        Spring Boot 自动装配留在外部 ddd4j-boot，当前仓库直接纳管各 Broker adapter。
     </description>
 
     <dependencies>

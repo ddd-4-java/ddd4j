@@ -7,12 +7,14 @@
 package io.ddd4j.data.external.region;
 
 import com.alibaba.fastjson2.JSONObject;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -50,34 +52,34 @@ public class PconlineRegionTemplate {
         SPECIAL_PROVINCE_SET = Arrays.stream(SPECIAL_PROVINCE).collect(Collectors.toSet());
     }
 
-    /** REST 客户端 */
-    private final RestClient restClient;
+    /** HTTP 客户端 */
+    private final HttpClient httpClient;
     /** 缓存服务 */
     private RegionCache regionCache;
 
     /**
      * 构造函数（无缓存）
      *
-     * @param restClient REST 客户端
+     * @param httpClient HTTP 客户端
      */
-    public PconlineRegionTemplate(RestClient restClient) {
-        this(restClient, RegionCache.none());
+    public PconlineRegionTemplate(HttpClient httpClient) {
+        this(httpClient, RegionCache.none());
     }
 
     /**
      * 构造函数
      *
-     * @param restClient  REST 客户端
+     * @param httpClient  HTTP 客户端
      * @param regionCache 缓存服务
      */
-    public PconlineRegionTemplate(RestClient restClient, RegionCache regionCache) {
-        this.restClient = restClient;
+    public PconlineRegionTemplate(HttpClient httpClient, RegionCache regionCache) {
+        this.httpClient = httpClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
     public static void main(String[] args) throws IOException {
 
-        PconlineRegionTemplate template = new PconlineRegionTemplate(RestClient.create());
+        PconlineRegionTemplate template = new PconlineRegionTemplate(HttpClient.newHttpClient());
 
         Optional<JSONObject> mapLL2 = template.getLocationByIp("13.228.204.118"); // lng：116.86380647644208  lat：38.297615350325717
         mapLL2.ifPresent(location -> log.info("Location: {}", location.toJSONString()));
@@ -113,29 +115,31 @@ public class PconlineRegionTemplate {
         // 3、调用三方接口解析IP信息
         try {
 
-            Map<String, String> queryParams = new HashMap<>();
-            queryParams.put("json", "true");
-            queryParams.put("ip", ip);
-            //String url = String.format(GET_COUNTRY_BY_IP_URL, ip);
-            ResponseEntity<String> response = restClient.get()
-                    .uri(GET_COUNTRY_BY_IP_URL, queryParams)
-                    .retrieve()
-                    .toEntity(String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                String bodyString = response.getBody();
+            String url = String.format(GET_COUNTRY_BY_IP_URL, ip);
+            HttpResponse<String> response = httpClient.send(
+                    HttpRequest.newBuilder(URI.create(url))
+                            .header("Accept", "application/json")
+                            .GET()
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                String bodyString = response.body();
                 log.info(" IP : {} >> Location : {} ", ip, bodyString);
-                if (StringUtils.hasText(bodyString)) {
+                if (StrKit.hasText(bodyString)) {
                     JSONObject jsonObject = JSONObject.parseObject(bodyString);
                     String addr = jsonObject.getString("addr");
-                    if (StringUtils.hasText(addr)) {
+                    if (StrKit.hasText(addr)) {
                         regionCache.set(redisKey, bodyString, Duration.ofMinutes(30));
                         return Optional.of(jsonObject);
                     }
                 }
             }
-            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", response.getStatusCode().value(), response.getBody());
+            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", ip, response.statusCode(), response.body());
         } catch (Exception e) {
-            log.error("IP : {} >> Location Query Error：{}", e.getMessage());
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            log.error("IP : {} >> Location Query Error：{}", ip, e.getMessage());
         }
         return Optional.empty();
     }
@@ -242,7 +246,7 @@ public class PconlineRegionTemplate {
                 log.debug(" IP : {} >> Region : {} ", ip, regionData.toJSONString());
 
                 String proCode = regionData.getString("proCode");
-                if (!StringUtils.hasText(proCode) || SPECIAL_PROVINCE_SET.contains(proCode)) {
+                if (!StrKit.hasText(proCode) || SPECIAL_PROVINCE_SET.contains(proCode)) {
                     return false;
                 }
 

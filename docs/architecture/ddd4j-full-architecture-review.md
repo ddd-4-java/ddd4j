@@ -44,7 +44,7 @@
 | **多容器支持**      | 仅 Spring                           | Spring + Quarkus + Guice + Javalin                                                                 | ✅ 优于 v1.x |
 | **缓存**         | RedisKit                           | `ddd4j-cache`（Caffeine + Redis 多级）                                                                 | ✅ 优于 v1.x |
 | **扩展点**        | 单一 Hutool                          | akka / excel / jackson / monitor / pf4j / qlexpress / validation                                   | ✅ 优于 v1.x |
-| **示例工程**       | `ddd-demo`                         | `ddd4j-samples` × 5（auth 三实现、多登录、Person CQRS/ES）                                                   | 🟡 继续增强   |
+| **示例工程**       | `ddd-demo`                         | `ddd4j-samples` × 13（Spring/Quarkus/Javalin 三运行时 DDD、CQRS、Auth 示例矩阵）                              | 🟡 继续增强   |
 | **Quarkus 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
 | **Javalin 集成** | 无                                  | 完整模块结构 + 适配器                                                                                       | ✅ 优于 v1.x |
 | **Cloud 生态**   | 无                                  | 待定（仅有 ddd4j-boot 一站式）                                                                              | ❌ 缺口      |
@@ -188,7 +188,7 @@ public @interface ApplicationService { }
 | 依赖                    | 必要性          | 处理                      |
 |-----------------------|--------------|-------------------------|
 | `mybatis-plus`        | ❌ 污染源        | 移到 `ddd4j-data-mybatis` |
-| `jakarta.servlet-api` | ❌ 污染源        | 移到 `ddd4j-web-core`     |
+| `jakarta.servlet-api` | ❌ 污染源        | 仅保留在需要 Servlet 的 `ddd4j-web-webmvc` 等 Web 适配模块 |
 | `hibernate-validator` | ❌ 非核心        | 移除                      |
 | `hutool-all`          | ⚠️ 过重        | 用 hutool-core 替换        |
 | `bouncycastle`        | ❌ 加密无关       | 移除                      |
@@ -574,5 +574,5 @@ ddd4j-cloud/                                  ← 顶层聚合
 
 - 功能上：✅ 已覆盖
 - 性能上：✅ 优于 v1.x（Java 17 vs Java 8）
-- 可维护性上：✅ 优于 v1.x（DDD 架构守护 + CQRS 读侧 + 12 种 MQ）
+- 可维护性上：✅ 优于 v1.x（DDD 架构守护 + CQRS 读侧 + 13 个 MQ Broker/本地实现）
 - 框架灵活性上：✅ 大幅优于 v1.x（支持 Spring/Quarkus/Javalin 三框架）

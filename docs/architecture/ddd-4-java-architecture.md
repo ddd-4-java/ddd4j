@@ -299,7 +299,7 @@ public class PersonName {
 | 缺失                          | ddd4j 方案                                                      |
 |-----------------------------|---------------------------------------------------------------|
 | **没有进程内事件发布器**              | ✅ `DomainEventPublisher` SPI（三框架适配）                           |
-| **没有 MQ 集成**                | ✅ `MQEventPublisher` / `MQBrokerAdapter` SPI（12 种 MQ）         |
+| **没有 MQ 集成**                | ✅ `MQEventPublisher` / `MQBrokerAdapter` SPI（13 个 MQ Broker/本地实现） |
 | **没有 Web 适配**               | ✅ `BaseAggregateController` / `BaseClientAggregateController` |
 | **没有 CQRS 读侧**              | ⚠️ ddd4j 应参考 `cqrs-4-java` 补充                                 |
 | **没有 CommandHandler 自动注册**  | ⚠️ ddd4j 应补充                                                  |

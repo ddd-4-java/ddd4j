@@ -6,8 +6,8 @@
  */
 package io.ddd4j.data.external.region;
 
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -101,7 +101,7 @@ public class NestedRegionTemplate {
             // 2、优先从本地缓存获取数据
             String redisKey = RegionCacheKeys.ipRegion(ipAddress);
             String regionCode = regionCache.getString(redisKey);
-            if (StringUtils.hasText(regionCode)) {
+            if (StrKit.hasText(regionCode)) {
                 return RegionEnum.getByCode2(regionCode);
             }
             // 3、尝试使用ip2region的ip库进行IP解析
@@ -143,7 +143,7 @@ public class NestedRegionTemplate {
             // 2、优先从本地缓存获取数据
             String redisKey = RegionCacheKeys.ipLocation(ipAddress);
             String regionAddress = regionCache.getString(redisKey);
-            if (StringUtils.hasText(regionAddress)) {
+            if (StrKit.hasText(regionAddress)) {
                 return regionAddress;
             }
             // 3、尝试使用ip2region的ip库进行IP解析

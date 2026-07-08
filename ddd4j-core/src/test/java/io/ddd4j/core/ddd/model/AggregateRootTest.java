@@ -2,6 +2,8 @@ package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import org.fuin.ddd4j.core.EntityIdPath;
+import org.fuin.ddd4j.core.EventType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,7 +25,8 @@ class AggregateRootTest {
 
         assertEquals(1, events.size());
         assertFalse(aggregate.hasDomainEvents());
-        assertEquals("new-name", events.get(0).source());
+        assertTrue(events.get(0) instanceof TestDomainEvent);
+        assertEquals("new-name", ((TestDomainEvent) events.get(0)).getName());
     }
 
     @Test
@@ -55,10 +58,83 @@ class AggregateRootTest {
         }
     }
 
-    private static final class TestDomainEvent extends DomainEvent<String> {
+    private static final class TestDomainEvent extends DomainEvent<OrderId> {
 
-        private TestDomainEvent(String source) {
-            super(source);
+        private final String name;
+
+        private TestDomainEvent(String name) {
+            super(new EntityIdPath(new OrderId(name)));
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public EventType getEventType() {
+            return null;
+        }
+    }
+
+    private static final class OrderId implements org.fuin.ddd4j.core.AggregateRootId {
+
+        private static final org.fuin.ddd4j.core.EntityType TYPE = new TestEntityType("Order");
+
+        private final String value;
+
+        OrderId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public org.fuin.ddd4j.core.EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + " " + value;
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof OrderId)) {
+                return false;
+            }
+            return value.equals(((OrderId) o).value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+    }
+
+    private static final class TestEntityType implements org.fuin.ddd4j.core.EntityType {
+
+        private final String name;
+
+        TestEntityType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String asString() {
+            return name;
         }
     }
 }

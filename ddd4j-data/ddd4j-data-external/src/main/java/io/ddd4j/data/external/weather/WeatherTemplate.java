@@ -10,11 +10,13 @@ import com.alibaba.fastjson2.JSONObject;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClient;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -33,8 +35,8 @@ public class WeatherTemplate {
     /** 天气查询请求地址 */
     private final static String SOJSON_WEATHER_URL = "http://t.weather.sojson.com/api/weather/city/%s";
 
-    /** REST 客户端 */
-    private final RestClient restClient;
+    /** HTTP 客户端 */
+    private final HttpClient httpClient;
     /** 天气数据本地缓存（1 小时过期） */
     private final LoadingCache<String, Optional<JSONObject>> WEATHER_DATA_CACHES = Caffeine.newBuilder()
             // 设置写缓存后1个小时过期
@@ -53,19 +55,21 @@ public class WeatherTemplate {
                 @Override
                 public Optional<JSONObject> load(String city_code) throws Exception {
 
-                    ResponseEntity<String> response = restClient.get()
-                            .uri(String.format(SOJSON_WEATHER_URL, city_code))
-                            .retrieve()
-                            .toEntity(String.class);
-                    if (response.getStatusCode().is2xxSuccessful()) {
-                        String bodyString = response.getBody();
-                        if (StringUtils.hasText(bodyString)) {
+                    HttpResponse<String> response = httpClient.send(
+                            HttpRequest.newBuilder(URI.create(String.format(SOJSON_WEATHER_URL, city_code)))
+                                    .header("Accept", "application/json")
+                                    .GET()
+                                    .build(),
+                            HttpResponse.BodyHandlers.ofString());
+                    if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                        String bodyString = response.body();
+                        if (StrKit.hasText(bodyString)) {
                             log.info("city_code {} >> weather :  {}", city_code, bodyString);
                             JSONObject jsonObject = JSONObject.parseObject(bodyString);
                             return Optional.ofNullable(jsonObject);
                         }
                     }
-                    log.error("Weather Query Error. Response Code >> {}, Body >> {}", response.getStatusCode().value(), response.getBody());
+                    log.error("Weather Query Error. Response Code >> {}, Body >> {}", response.statusCode(), response.body());
                     return Optional.empty();
                 }
             });
@@ -73,10 +77,10 @@ public class WeatherTemplate {
     /**
      * 构造函数
      *
-     * @param restClient REST 客户端
+     * @param httpClient HTTP 客户端
      */
-    public WeatherTemplate(RestClient restClient) {
-        this.restClient = restClient;
+    public WeatherTemplate(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     /**

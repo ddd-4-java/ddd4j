@@ -195,7 +195,7 @@ public interface Repository<M, Q, P extends Serializable> {
 | `DddDomainEvent`                     | 继承 `AbstractDomainEvent`   | 兼容 Jackson 序列化                              |
 | `DddEventStoreRepository`            | 继承 `EventStoreRepository`  | 封装乐观锁冲突重试（最多 3 次）                           |
 | `DomainEventPublisher` (ddd4j 自创)    | —                          | 三框架运行时绑定（Spring/CDI/Guice）                  |
-| `MQEventPublisher` (ddd4j 自创)        | —                          | 12 种 MQ 统一抽象                                |
+| `MQEventPublisher` (ddd4j 自创)        | —                          | 13 个 MQ Broker/本地实现统一抽象                 |
 | `BaseAggregateController` (ddd4j 自创) | —                          | 通用 CRUD + 业务行为（disable/enable）              |
 | `CleanDDDLayerRules` (ddd4j 自创)      | —                          | ArchUnit 编译期架构守护                            |
 
@@ -239,7 +239,7 @@ public interface Repository<M, Q, P extends Serializable> {
 
 ddd4j-core 绝大部分文件（`api/`、`context/`、`ddd/`、`cqrs/`、`event/`、`util/`）零框架 import，可同时被 Spring / Quarkus / Javalin 复用。
 
-### 8.2 12 种 MQ 统一抽象
+### 8.2 13 个 MQ Broker/本地实现统一抽象
 
 `MQBrokerAdapter` SPI 让业务代码**完全无感**切换消息中间件——从 Kafka 切到 RabbitMQ 零业务代码改动。
 

@@ -10,11 +10,11 @@
 
 这是 ddd4j 在 Quarkus 框架下的**完整业务示例**，是所有 Quarkus 系列示例（auth/mq）的**业务基础**。
 
-**核心价值：与 ddd4j-sample-spring-rich-model 的业务代码完全一致，仅框架绑定代码不同**，证明 ddd4j 的"三框架业务代码零差异"设计。
+**核心价值：与 `ddd4j-sample-spring` 的业务模型保持一致，仅框架绑定代码不同**，证明 ddd4j 的"三框架业务代码零差异"设计。
 
-**双轨合一**：本示例同时整合 `ddd4j-sample-rich-model`（Order 充血模型）和 `ddd4j-sample-model`（Goods 第三轨）的核心业务，让一个示例演示 ddd4j 在 Quarkus 下的**两套建模范式**。
+**双轨合一**：本示例同时演示 Order 充血模型和 Goods 轻量 PO/Query 的核心业务，让一个示例展示 ddd4j 在 Quarkus 下的**两套建模范式**。
 
-| 维度 | ddd4j-sample-spring-rich-model | ddd4j-sample-quarkus（本示例） |
+| 维度 | ddd4j-sample-spring | ddd4j-sample-quarkus（本示例） |
 | --- | --- | --- |
 | 框架 | Spring Boot | Quarkus |
 | DI 容器 | ApplicationContext | CDI (Arc) |
