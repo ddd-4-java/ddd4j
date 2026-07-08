@@ -19,7 +19,6 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +50,6 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
 
     /** 领域事件发布器提供者 */
     private final ObjectProvider<DomainEventPublisher> domainEventPublisherProvider;
-    /** MQ 事件发布器提供者 */
-    private final ObjectProvider<MQEventPublisher> mqEventPublisherProvider;
     /** Subject 提供者 */
     private final ObjectProvider<SubjectProvider> subjectProviderProvider;
     /** 国际化提供者 */
@@ -60,11 +57,9 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
 
     public SpringContextBridge(
             ObjectProvider<DomainEventPublisher> domainEventPublisherProvider,
-            ObjectProvider<MQEventPublisher> mqEventPublisherProvider,
             ObjectProvider<SubjectProvider> subjectProviderProvider,
             ObjectProvider<I18nProvider> i18nProviderProvider) {
         this.domainEventPublisherProvider = domainEventPublisherProvider;
-        this.mqEventPublisherProvider = mqEventPublisherProvider;
         this.subjectProviderProvider = subjectProviderProvider;
         this.i18nProviderProvider = i18nProviderProvider;
     }
@@ -79,14 +74,6 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
             log.warn("No DomainEventPublisher bean found. DomainEvent.publish() will fail.");
         }
 
-        // MQEventPublisher（可选）
-        MQEventPublisher mqPublisher = mqEventPublisherProvider.getIfAvailable();
-        if (Objects.nonNull(mqPublisher)) {
-            BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, mqPublisher);
-        } else {
-            log.debug("No MQEventPublisher bean found. MQEvent.publish() will fail.");
-        }
-
         // SubjectProvider（可选）
         SubjectProvider subjectProvider = subjectProviderProvider.getIfAvailable();
         if (Objects.nonNull(subjectProvider)) {
@@ -99,7 +86,5 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
             BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider);
         }
 
-        log.info("Spring ddd4j SPI services initialized (DomainEventPublisher={}, MQEventPublisher={})",
-                Objects.nonNull(domainPublisher), Objects.nonNull(mqPublisher));
     }
 }
