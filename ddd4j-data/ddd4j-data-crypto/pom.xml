@@ -11,9 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-data-crypto</artifactId>
-    <description>ddd4j 数据层 - 加解密策略：CryptoStrategy/Provider/枚举/VO/注解（纯 Java，零 Spring Web 依赖）。Spring Boot
-        auto-config 迁移到 ddd4j-boot-data。
-    </description>
+    <description>ddd4j 数据层 - 加解密策略：CryptoStrategy/Provider/枚举/VO/注解（纯 Java，零 Spring Web 依赖）</description>
 
     <dependencies>
         <!-- For DDD4j -->
