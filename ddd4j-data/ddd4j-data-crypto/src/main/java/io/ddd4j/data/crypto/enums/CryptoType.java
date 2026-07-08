@@ -1,4 +1,4 @@
-package io.ddd4j.data.crypto.domain.enums;
+package io.ddd4j.data.crypto.enums;
 
 /**
  * 加密解密方式

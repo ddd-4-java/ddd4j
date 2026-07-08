@@ -4,8 +4,8 @@ import cn.hutool.crypto.digest.HmacAlgorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.exception.BizRuntimeException;
-import io.ddd4j.data.crypto.domain.enums.CryptoType;
-import io.ddd4j.data.crypto.domain.enums.SymmetricAlgorithmType;
+import io.ddd4j.data.crypto.enums.CryptoType;
+import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

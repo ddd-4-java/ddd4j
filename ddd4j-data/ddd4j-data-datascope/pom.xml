@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-data-datascope</artifactId>
-    <description>Ddd4j DataScope Component（数据权限，从 ddd4j-auth 迁入）</description>
+    <description>Ddd4j DataScope Component（数据权限）</description>
 
     <dependencies>
         <dependency>

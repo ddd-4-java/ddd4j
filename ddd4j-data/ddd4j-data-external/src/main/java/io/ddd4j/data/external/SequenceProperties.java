@@ -21,7 +21,7 @@ public class SequenceProperties {
     /**
      * 配置前缀
      */
-    public static final String PREFIX = "sequence";
+    public static final String PREFIX = "ddd4j.sequence";
 
     /**
      * 工作机器ID,数据范围为0~31，一共32个

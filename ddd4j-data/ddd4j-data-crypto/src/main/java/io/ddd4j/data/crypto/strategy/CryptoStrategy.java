@@ -1,8 +1,8 @@
 package io.ddd4j.data.crypto.strategy;
 
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import io.ddd4j.data.crypto.domain.enums.CryptoType;
-import io.ddd4j.data.crypto.domain.enums.SymmetricAlgorithmType;
+import io.ddd4j.data.crypto.enums.CryptoType;
+import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
 
 /**
  * 请求内容的传输机密性和完整性所需的加解密策略

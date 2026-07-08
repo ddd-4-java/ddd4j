@@ -20,7 +20,7 @@ public class ExternalProperties {
     /**
      * 配置前缀
      */
-    public static final String PREFIX = "external";
+    public static final String PREFIX = "ddd4j.external";
 
     /**
      * 百度地图AK密钥

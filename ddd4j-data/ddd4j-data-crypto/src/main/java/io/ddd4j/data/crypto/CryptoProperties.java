@@ -4,8 +4,8 @@ package io.ddd4j.data.crypto;
 import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import io.ddd4j.data.crypto.domain.enums.CryptoType;
-import io.ddd4j.data.crypto.domain.enums.SymmetricAlgorithmType;
+import io.ddd4j.data.crypto.enums.CryptoType;
+import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
 import lombok.Data;
 
 /**

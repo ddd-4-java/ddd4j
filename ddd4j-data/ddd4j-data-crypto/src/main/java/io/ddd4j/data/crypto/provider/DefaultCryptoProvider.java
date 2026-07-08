@@ -1,7 +1,7 @@
 package io.ddd4j.data.crypto.provider;
 
 import io.ddd4j.data.crypto.CryptoProperties;
-import io.ddd4j.data.crypto.domain.enums.CryptoType;
+import io.ddd4j.data.crypto.enums.CryptoType;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +23,7 @@ public class DefaultCryptoProvider implements CryptoProvider {
     /** 加解密策略映射表 */
     private final EnumMap<CryptoType, CryptoStrategy> enumMap = new EnumMap<>(CryptoType.class);
     /** 加密配置属性 */
-    private CryptoProperties cryptoProperties;
+    private final CryptoProperties cryptoProperties;
 
     /**
      * 构造函数

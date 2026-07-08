@@ -11,9 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-data-external</artifactId>
-    <description>ddd4j 数据层 - 外部服务：地理位置/天气/行政区划/序列号 Template 实现（Spring Web RestClient + 主仓抽象接口）。
-        Spring Boot auto-config 与 starter 适配迁移到 ddd4j-boot-data。
-    </description>
+    <description>ddd4j 数据层 - 外部服务：地理位置/天气/行政区划/序列号 Template 实现</description>
 
     <dependencies>
         <!-- For DDD4j -->

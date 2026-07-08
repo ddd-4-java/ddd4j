@@ -1,4 +1,4 @@
-package io.ddd4j.data.crypto.domain.enums;
+package io.ddd4j.data.crypto.enums;
 
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 
