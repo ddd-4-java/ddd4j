@@ -17,7 +17,7 @@ import java.util.*;
  * Lombok {@code @Builder} 以及 {@code @Accessors(chain = true)} 生成的链式访问器。
  *
  * <p>从旧 ddd4j {@code base-core/utils/BeanKit}（Spring {@code BeanUtils} 实现）
- * 重构为基于 Hutool {@link BeanUtil} 的实现，使 {@code ddd4j-data-mybatis} 等数据层
+ * 重构为基于 Hutool {@link BeanUtil} 的实现，使 {@code ddd4j-data-mybatisplus} 等数据层
  * 模块不再强依赖 Spring。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

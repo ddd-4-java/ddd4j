@@ -3,7 +3,7 @@ package io.ddd4j.sample.quarkus.goods.infrastructure;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.core.ddd.repository.RichRepository;
+import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.goods.domain.GoodsQuery;
@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 /**
  * 基于内存的商品仓储实现（第三轨：Model/Query 快速 CRUD 模式，Quarkus CDI 风格）。
  *
- * <p>使用 {@link ConcurrentHashMap} 存储商品，并通过实现 {@link RichRepository}
+ * <p>使用 {@link ConcurrentHashMap} 存储商品，并通过实现 {@link Repository}
  * 支持 {@link GoodsQuery} 的充血查询（{@code page()} / {@code list()} / {@code one()} / {@code count()}）。
  *
  * <p>特点：
  * <ul>
  *   <li>无 Model/PO 分离（与 rich-model 区别）：Goods 本身就是 PO，没有 OrderPO/OrderLinePO</li>
  *   <li>无 DomainObjectMapper：仓储直接操作 Goods，无映射开销</li>
- *   <li>实现 RichRepository：让 GoodsQuery 的充血查询方法可用</li>
+ *   <li>实现 Repository：让 GoodsQuery 的充血查询方法可用</li>
  *   <li>{@code @ApplicationScoped}：与 Quarkus CDI 容器生命周期一致</li>
  * </ul>
  *
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ApplicationScoped
-public class InMemoryGoodsRepository implements GoodsRepository, RichRepository<Goods, Long> {
+public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Goods, Long> {
 
     /** 内存存储：goodsId -> Goods 聚合根 */
     private final ConcurrentMap<Long, Goods> rows = new ConcurrentHashMap<>();
@@ -94,7 +94,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, RichRepository<
                 .collect(Collectors.toList());
     }
 
-    // ========================= RichRepository =========================
+    // ========================= Repository =========================
 
     @Override
     public Optional<Goods> findFirst() {

@@ -1,11 +1,11 @@
 package io.ddd4j.data.mybatis.typehandler;
 
 import io.ddd4j.kit.lang.StrKit;
-
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeReference;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 /**
- * 自定义类型处理器基类：varchar &lt;-&gt; T。
+ * 自定义类型处理器基类：varchar &lt;-&gt; T（零 MyBatis-Plus 依赖）。
  *
  * <p>子类只需实现 {@link #convert(Object)}（写库）和 {@link #parse(String)}（读库），
  * 通过反射自动推断泛型类型。
@@ -28,45 +28,29 @@ import java.util.Objects;
 public abstract class BaseTypeHandler<T> extends org.apache.ibatis.type.BaseTypeHandler<T> {
 
     /**
-     * 获取实际的泛型类型（通过反射推断）。
-     *
-     * @return 泛型类型
+     * 获取实际的泛型类型（通过纯 Java 反射推断，零 MyBatis-Plus 依赖）。
      */
     public Class<T> type() {
-        return (Class<T>) ReflectionKit.getSuperClassGenericType(this.getClass(), BaseTypeHandler.class, 0);
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType pt) {
+            Type actualType = pt.getActualTypeArguments()[0];
+            if (actualType instanceof Class<?> clazz) {
+                return (Class<T>) clazz;
+            }
+        }
+        throw new IllegalStateException("无法从 " + getClass().getName() + " 推断泛型类型");
     }
 
-    /**
-     * 获取实际的引用类型。
-     *
-     * @return TypeReference
-     */
     public TypeReference<T> typeReference() {
-        return new TypeReference<T>() {
-        };
+        return new TypeReference<T>() {};
     }
 
-    /**
-     * 把指定类型转换为字符串类型，对应写库。
-     *
-     * @param obj 待转换对象
-     * @return 字符串
-     */
     protected abstract String convert(T obj);
-
-    /**
-     * 把字符串类型解析成指定类型，对应读库。
-     *
-     * @param result 数据库读取的字符串
-     * @return 解析后的对象
-     */
     protected abstract T parse(String result);
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
-        if (Objects.isNull(parameter)) {
-            return;
-        }
+        if (Objects.isNull(parameter)) return;
         ps.setString(i, this.convert(parameter));
     }
 
@@ -87,5 +71,4 @@ public abstract class BaseTypeHandler<T> extends org.apache.ibatis.type.BaseType
         String str = cs.getString(columnIndex);
         return Objects.isNull(str) || !StrKit.hasText(str) ? null : this.parse(str);
     }
-
 }

@@ -5,7 +5,6 @@ import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.ddd.repository.RichRepository;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.io.Serializable;
@@ -101,9 +100,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     public <Q extends Query> boolean update(Q query) {
         query.with();
-        Repository<AggregateRoot<ID>, ?> repo = repository();
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<?, ?>) repo).update(this, query);
+        Repository repo = repository();
+        if (repo instanceof Repository) {
+            return ((Repository) repo).update(this, query);
         }
         throw new BizRuntimeException("Repository does not support update(query)");
     }
@@ -112,9 +111,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 充血聚合填充（从其他聚合补充数据）。
      */
     public <Q extends Query> void fill(Q query) {
-        Repository<AggregateRoot<ID>, ?> repo = repository();
-        if (repo instanceof RichRepository) {
-            ((RichRepository<?, ?>) repo).fill(query, this);
+        Repository repo = repository();
+        if (repo instanceof Repository) {
+            ((Repository) repo).fill(query, this);
         }
     }
 
@@ -147,8 +146,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     public static <Q extends Query> boolean delete(Q query) {
         query.with();
         Repository repo = RepositoryRegistry.repositoryForQuery(query.getClass());
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<?, ?>) repo).deleteByQuery(query);
+        if (repo instanceof Repository) {
+            return ((Repository) repo).deleteByQuery(query);
         }
         throw new BizRuntimeException("Repository for {} does not support delete(query)", query.getClass().getSimpleName());
     }
@@ -169,8 +168,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     public static <M extends AggregateRoot<?>> Optional<M> one(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<M, ?>) repo).findFirst();
+        if (repo instanceof Repository) {
+            return ((Repository) repo).findFirst();
         }
         throw new BizRuntimeException("Repository for {} does not support one()", modelClass.getSimpleName());
     }
@@ -180,8 +179,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     public static <M extends AggregateRoot<?>> List<M> list(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<M, ?>) repo).findAll();
+        if (repo instanceof Repository) {
+            return ((Repository) repo).findAll();
         }
         throw new BizRuntimeException("Repository for {} does not support list()", modelClass.getSimpleName());
     }
@@ -193,8 +192,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     Page<M> page(Class<M> modelClass, Q query) {
         query.with();
         Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<M, ?>) repo).page(query);
+        if (repo instanceof Repository) {
+            return ((Repository) repo).page(query);
         }
         throw new BizRuntimeException("Repository for {} does not support page()", modelClass.getSimpleName());
     }
@@ -205,8 +204,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     public static <Q extends Query> int count(Class<? extends AggregateRoot<?>> modelClass, Q query) {
         query.with();
         Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof RichRepository) {
-            return (int) ((RichRepository<?, ?>) repo).count(query);
+        if (repo instanceof Repository) {
+            return (int) ((Repository) repo).count(query);
         }
         throw new BizRuntimeException("Repository for {} does not support count()", modelClass.getSimpleName());
     }
@@ -270,8 +269,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     /**
      * 通过 {@link RepositoryRegistry} 查找当前聚合根类型的仓储实例。
      */
-    protected <M extends AggregateRoot<ID>> Repository<M, ?> repository() {
-        return RepositoryRegistry.repository((Class<M>) this.getClass());
+    @SuppressWarnings("rawtypes")
+    protected Repository repository() {
+        return RepositoryRegistry.repository(this.getClass());
     }
 
 }

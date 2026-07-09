@@ -1,7 +1,7 @@
 package io.ddd4j.sample.javalin.cqrs.goods.domain;
 
 import io.ddd4j.core.ddd.repository.Repository;
-import io.ddd4j.core.ddd.repository.RichRepository;
+import io.ddd4j.core.ddd.repository.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * <p>继承 ddd4j-core 的 {@link Repository} 接口，标识该仓储操作 {@link Goods} 聚合根。
  * 业务侧可扩展查询方法，例如 {@link #findByCode(String)}。
  *
- * <p>实现类（如 {@code InMemoryGoodsRepository}）应同时实现 {@link RichRepository}，
+ * <p>实现类（如 {@code InMemoryGoodsRepository}）应同时实现 {@link Repository}，
  * 让 {@link GoodsQuery} 的充血查询方法（{@code page()} / {@code list()} / {@code count()}）可用。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

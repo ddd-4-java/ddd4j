@@ -52,10 +52,10 @@ public final class RepositoryRegistry {
     /** key 前缀 */
     private static final String PREFIX = "ddd4j.repository.";
 
-    private static final Map<Class<?>, Repository<?, ?>> INSTANCES = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Repository> INSTANCES = new ConcurrentHashMap<>();
 
     /** Query 类型到仓储实例的轻量映射，支持 query.list()/page()/delete() 默认可用。 */
-    private static final Map<Class<?>, Repository<?, ?>> QUERY_INSTANCES = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Repository> QUERY_INSTANCES = new ConcurrentHashMap<>();
 
     private RepositoryRegistry() {
     }
@@ -79,8 +79,9 @@ public final class RepositoryRegistry {
      * @param repository 仓储实例
      * @param <M>        聚合根类型
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <M extends AggregateRoot<?>> void register(
-            Class<M> modelClass, Repository<M, ?> repository) {
+            Class<M> modelClass, Repository repository) {
         BaseContext.inject(key(modelClass), Repository.class, repository);
         INSTANCES.put(modelClass, repository);
     }
@@ -93,8 +94,9 @@ public final class RepositoryRegistry {
      * @param repository 仓储实例
      * @param <M>        聚合根类型
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <M extends AggregateRoot<?>> void register(
-            Class<M> modelClass, Class<? extends Query> queryClass, Repository<M, ?> repository) {
+            Class<M> modelClass, Class<? extends Query> queryClass, Repository repository) {
         register(modelClass, repository);
         BaseContext.inject(key(queryClass), Repository.class, repository);
         QUERY_INSTANCES.put(queryClass, repository);
@@ -114,27 +116,27 @@ public final class RepositoryRegistry {
      * @return 仓储实例
      * @throws BizRuntimeException 未找到匹配的仓储
      */
-    public static <M extends AggregateRoot<?>> Repository<M, ?> repository(Class<M> modelClass) {
+    public static <M extends AggregateRoot<?>> Repository repository(Class<M> modelClass) {
         String spiKey = key(modelClass);
 
         // 1. 线程级覆盖
-        Optional<Repository<M, ?>> threadScoped = ThreadContext.get(spiKey, Repository.class)
-                .map(r -> (Repository<M, ?>) r);
+        Optional<Repository> threadScoped = ThreadContext.get(spiKey, Repository.class)
+                .map(r -> (Repository) r);
         if (threadScoped.isPresent()) {
             return threadScoped.get();
         }
 
         // 2. 全局默认
-        Optional<Repository<M, ?>> globalScoped = BaseContext.get(spiKey, Repository.class)
-                .map(r -> (Repository<M, ?>) r);
+        Optional<Repository> globalScoped = BaseContext.get(spiKey, Repository.class)
+                .map(r -> (Repository) r);
         if (globalScoped.isPresent()) {
             return globalScoped.get();
         }
 
         // 3. 静态实例表（向后兼容）
-        Repository<?, ?> instance = INSTANCES.get(modelClass);
+        Repository instance = INSTANCES.get(modelClass);
         if (instance != null) {
-            return (Repository<M, ?>) instance;
+            return (Repository) instance;
         }
 
         throw new BizRuntimeException(
@@ -149,22 +151,22 @@ public final class RepositoryRegistry {
      * @param queryClass 查询对象类型
      * @return 仓储实例
      */
-    public static Repository<?, ?> repositoryForQuery(Class<? extends Query> queryClass) {
+    public static Repository repositoryForQuery(Class<? extends Query> queryClass) {
         String spiKey = key(queryClass);
 
-        Optional<Repository<?, ?>> threadScoped = ThreadContext.get(spiKey, Repository.class)
-                .map(r -> (Repository<?, ?>) r);
+        Optional<Repository> threadScoped = ThreadContext.get(spiKey, Repository.class)
+                .map(r -> (Repository) r);
         if (threadScoped.isPresent()) {
             return threadScoped.get();
         }
 
-        Optional<Repository<?, ?>> globalScoped = BaseContext.get(spiKey, Repository.class)
-                .map(r -> (Repository<?, ?>) r);
+        Optional<Repository> globalScoped = BaseContext.get(spiKey, Repository.class)
+                .map(r -> (Repository) r);
         if (globalScoped.isPresent()) {
             return globalScoped.get();
         }
 
-        Repository<?, ?> instance = QUERY_INSTANCES.get(queryClass);
+        Repository instance = QUERY_INSTANCES.get(queryClass);
         if (instance != null) {
             return instance;
         }

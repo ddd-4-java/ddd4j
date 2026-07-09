@@ -5,7 +5,7 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.ddd.repository.RichRepository;
+import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;
@@ -128,7 +128,7 @@ public interface AggregateController {
     default void removeByQuery(@PathVariable("model") String model,
                                @RequestBody Map<String, Object> body) {
         Query<?> query = query(model, body);
-        RichRepository richRepository = richRepository(model);
+        Repository richRepository = richRepository(model);
         richRepository.deleteByQuery(query);
     }
 
@@ -136,9 +136,9 @@ public interface AggregateController {
         return RepositoryRegistry.repository((Class) modelClass(model));
     }
 
-    private RichRepository richRepository(String model) {
+    private Repository richRepository(String model) {
         Repository repository = repository(model);
-        if (repository instanceof RichRepository richRepository) {
+        if (repository instanceof Repository richRepository) {
             return richRepository;
         }
         throw new BizRuntimeException("Repository for model {} does not support rich query", model);

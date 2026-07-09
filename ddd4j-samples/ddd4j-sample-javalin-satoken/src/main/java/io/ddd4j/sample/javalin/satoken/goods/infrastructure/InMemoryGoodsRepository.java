@@ -3,7 +3,7 @@ package io.ddd4j.sample.javalin.satoken.goods.infrastructure;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.core.ddd.repository.RichRepository;
+import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.goods.domain.Goods;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsQuery;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ApplicationScoped
-public class InMemoryGoodsRepository implements GoodsRepository, RichRepository<Goods, Long> {
+public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Goods, Long> {
 
     private final ConcurrentMap<Long, Goods> rows = new ConcurrentHashMap<>();
 
@@ -77,7 +77,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, RichRepository<
                 .collect(Collectors.toList());
     }
 
-    // ========================= RichRepository =========================
+    // ========================= Repository =========================
 
     @Override
     public Optional<Goods> findFirst() {

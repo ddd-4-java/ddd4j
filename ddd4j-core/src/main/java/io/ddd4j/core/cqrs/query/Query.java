@@ -2,231 +2,368 @@ package io.ddd4j.core.cqrs.query;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.core.api.Page;
-import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.ddd.repository.RichRepository;
+import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.core.util.LambdaKit;
+import io.ddd4j.core.util.SFunction;
 import io.ddd4j.kit.lang.CollKit;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
- * 基础查询对象（充血查询模型）。
- * <p>
- * PO 依赖该对象承载条件查询、分页、排序、聚合等通用读模型参数。
- * 充血查询方法（{@link #one()} / {@link #first()} / {@link #list()} / {@link #page()} /
- * {@link #count()} / {@link #exist()}）通过 {@link RepositoryRegistry} 查找仓储实例，
- * 彻底消除对 MyBatis 等 ORM 的静态注册表耦合。
+ * 充血查询模型（Lambda 类型安全条件构建 + 充血查询执行）。
  *
- * <h3>充血查询示例</h3>
+ * <p>业务方继承此类后，直接通过 Lambda 引用 PO 字段构建查询条件：
  * <pre>{@code
- * // 查询订单
- * OrderQuery query = new OrderQuery();
- * query.setStatus("PAID");
- * query.current(1).size(20);
+ * public class OrderQuery extends Query<Order> {
+ *     // 绑定仓储
+ *     protected Repository repository() {
+ *         return RepositoryRegistry.repository(Order.class);
+ *     }
+ * }
  *
- * Page<Order> page = query.page();      // ← 充血分页查询
- * List<Order> list = query.list();      // ← 充血列表查询
- * Order one = query.one();             // ← 充血单条查询
- * boolean exists = query.exist();       // ← 充血存在性查询
- * int count = query.count();           // ← 充血计数查询
- *
- * // 链式调用
+ * // 使用
  * Page<Order> page = new OrderQuery()
- *     .select("id", "total", "status")
+ *     .eq(OrderPO::getStatus, "PAID")
+ *     .like(OrderPO::getOrderNo, "2024")
+ *     .ge(OrderPO::getCreateTime, startTime)
+ *     .orderByDesc(OrderPO::getCreateTime)
  *     .current(1).size(20)
- *     .orderBy("createTime_DESC")
  *     .page();
  *
- * // 断言查询（查不到就抛异常）
- * Order order = query.one("order.not.found", orderId);  // ← 查不到抛 BizRuntimeException
- * query.exist("order.should.exist", orderId);            // ← 不存在抛异常
- * query.notExist("order.should.not.exist", orderId);     // ← 已存在抛异常
+ * List<Order> list = new OrderQuery()
+ *     .eq(OrderPO::getStatus, "ACTIVE")
+ *     .list();
  * }</pre>
  *
+ * <p>每个条件方法都有 {@code boolean condition} 重载，消除 if-else 样板：
+ * <pre>{@code
+ * query.eq(StrKit.isNotBlank(status), OrderPO::getStatus, status)
+ *      .like(StrKit.isNotBlank(keyword), OrderPO::getName, keyword);
+ * }</pre>
+ *
+ * <p>条件存储在 {@link #conditions} 列表中，由各 ORM 模块的 Repository 读取并转换为原生查询。
+ *
+ * @param <P> 聚合根类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @Data
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings({"unchecked", "rawtypes"})
-public abstract class Query<T> extends Page<T> {
+public abstract class Query<P> implements Serializable {
 
-    // ========================= 查询条件后缀常量 =========================
+    // ========================= 分页参数 =========================
 
-    public static final String NOT_QUERY = "Not";
-    public static final String NOT_IN_QUERY = "NotIn";
-    public static final String IN_QUERY = "In";
-    public static final String LIKE_QUERY = "Like";
-    public static final String LIKE_LEFT_QUERY = "LikeLeft";
-    public static final String LIKE_RIGHT_QUERY = "LikeRight";
-    public static final String NOT_LIKE_QUERY = "NotLike";
-    public static final String MIN_QUERY = "Min";
-    public static final String MAX_QUERY = "Max";
-    public static final String MIN_EQUALS_QUERY = "MinEq";
-    public static final String MAX_EQUALS_QUERY = "MaxEq";
-    public static final String START_QUERY = "Start";
-    public static final String END_QUERY = "End";
-    public static final String NULL_QUERY = "IsNull";
-    public static final String ORS_QUERY = "ors";
-    public static final String IN_JSON_QUERY = "InJson";
+    /** 当前页码（从 1 开始） */
+    protected long current = 1L;
+    /** 每页大小（-1 表示不分页） */
+    protected long size = 10L;
 
-    public static final List<String> EXCLUDE_FIELDS = Arrays.asList(
-            "select", "groupBy", "having", "orderBys", "fields",
-            "keyword", "ignoreTenantId", "fills", "ignoreCount");
+    // ========================= 查询控制 =========================
 
-    // ========================= 查询字段 =========================
-
-    protected String select;
-    protected String groupBy;
+    /** 原生 SQL HAVING（配合 GROUP BY 使用，聚合条件） */
     protected String having;
-    protected String orderBys;
-    protected Map<String, Object> ors;
-    protected String fields;
-    protected Object keyword;
+    /** 是否忽略租户隔离（跨租户管理操作时使用） */
     @ToString.Exclude
     @JsonIgnore
     private boolean ignoreTenantId = false;
+    /** 聚合填充字段（逗号分隔，查询后自动加载关联数据） */
     protected String fills;
+
+    /** Lambda 查询条件列表（WHERE 条件） */
     @ToString.Exclude
     @JsonIgnore
-    protected String split = ",";
+    protected transient List<LambdaCondition> conditions;
 
-    // ========================= 链式构建器 =========================
+    /** Lambda 排序条件列表 */
+    @ToString.Exclude
+    @JsonIgnore
+    protected transient List<LambdaCondition> orderByConditions;
 
-    public <Q extends Query> Q select(String... columns) {
-        if (columns != null) {
-            this.setSelect(String.join(split, columns));
+    /** Lambda 更新 SET 操作列表 */
+    @ToString.Exclude
+    @JsonIgnore
+    protected transient List<LambdaCondition> setOperations;
+
+    /** Lambda 查询字段（SELECT） */
+    @ToString.Exclude
+    @JsonIgnore
+    protected transient List<String> selectColumns;
+
+    /** Lambda 分组字段（GROUP BY） */
+    @ToString.Exclude
+    @JsonIgnore
+    protected transient List<String> groupByColumns;
+
+    // ========================= 条件构建 — 等于/不等于 =========================
+
+    public <Q extends Query<P>> Q eq(SFunction<?, ?> column, Object value) {
+        return eq(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q eq(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "=", value);
+    }
+
+    public <Q extends Query<P>> Q ne(SFunction<?, ?> column, Object value) {
+        return ne(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q ne(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "<>", value);
+    }
+
+    // ========================= 条件构建 — 模糊匹配 =========================
+
+    public <Q extends Query<P>> Q like(SFunction<?, ?> column, Object value) {
+        return like(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q like(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "LIKE", value);
+    }
+
+    public <Q extends Query<P>> Q likeLeft(SFunction<?, ?> column, Object value) {
+        return likeLeft(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q likeLeft(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "LIKE_LEFT", value);
+    }
+
+    public <Q extends Query<P>> Q likeRight(SFunction<?, ?> column, Object value) {
+        return likeRight(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q likeRight(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "LIKE_RIGHT", value);
+    }
+
+    public <Q extends Query<P>> Q notLike(SFunction<?, ?> column, Object value) {
+        return notLike(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q notLike(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "NOT_LIKE", value);
+    }
+
+    // ========================= 条件构建 — 大小比较 =========================
+
+    public <Q extends Query<P>> Q gt(SFunction<?, ?> column, Object value) {
+        return gt(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q gt(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, ">", value);
+    }
+
+    public <Q extends Query<P>> Q ge(SFunction<?, ?> column, Object value) {
+        return ge(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q ge(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, ">=", value);
+    }
+
+    public <Q extends Query<P>> Q lt(SFunction<?, ?> column, Object value) {
+        return lt(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q lt(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "<", value);
+    }
+
+    public <Q extends Query<P>> Q le(SFunction<?, ?> column, Object value) {
+        return le(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q le(boolean condition, SFunction<?, ?> column, Object value) {
+        return addCondition(condition, column, "<=", value);
+    }
+
+    /**
+     * 范围查询（BETWEEN 语义，展开为 ge + le）。
+     */
+    public <Q extends Query<P>> Q between(SFunction<?, ?> column, Object start, Object end) {
+        return between(true, column, start, end);
+    }
+
+    public <Q extends Query<P>> Q between(boolean condition, SFunction<?, ?> column, Object start, Object end) {
+        if (condition) {
+            if (start != null) {
+                addCondition(true, column, ">=", start);
+            }
+            if (end != null) {
+                addCondition(true, column, "<=", end);
+            }
+        }
+        return (Q) this;
+    }
+
+    // ========================= 条件构建 — IN/NOT IN =========================
+
+    public <Q extends Query<P>> Q in(SFunction<?, ?> column, Collection<?> values) {
+        return in(true, column, values);
+    }
+
+    public <Q extends Query<P>> Q in(boolean condition, SFunction<?, ?> column, Collection<?> values) {
+        return addCondition(condition && CollKit.isNotEmpty(values), column, "IN", values == null ? null : new ArrayList<>(values));
+    }
+
+    public <Q extends Query<P>> Q notIn(SFunction<?, ?> column, Collection<?> values) {
+        return notIn(true, column, values);
+    }
+
+    public <Q extends Query<P>> Q notIn(boolean condition, SFunction<?, ?> column, Collection<?> values) {
+        return addCondition(condition && CollKit.isNotEmpty(values), column, "NOT_IN", values == null ? null : new ArrayList<>(values));
+    }
+
+    // ========================= 条件构建 — NULL 判断 =========================
+
+    public <Q extends Query<P>> Q isNull(SFunction<?, ?> column) {
+        return isNull(true, column);
+    }
+
+    public <Q extends Query<P>> Q isNull(boolean condition, SFunction<?, ?> column) {
+        return addCondition(condition, column, "IS_NULL", null);
+    }
+
+    public <Q extends Query<P>> Q isNotNull(SFunction<?, ?> column) {
+        return isNotNull(true, column);
+    }
+
+    public <Q extends Query<P>> Q isNotNull(boolean condition, SFunction<?, ?> column) {
+        return addCondition(condition, column, "IS_NOT_NULL", null);
+    }
+
+    // ========================= 排序 =========================
+
+    public <Q extends Query<P>> Q orderByAsc(SFunction<?, ?> column) {
+        return orderByAsc(true, column);
+    }
+
+    public <Q extends Query<P>> Q orderByAsc(boolean condition, SFunction<?, ?> column) {
+        if (condition) {
+            addOrderBy(LambdaKit.resolve(column), "ASC");
+        }
+        return (Q) this;
+    }
+
+    public <Q extends Query<P>> Q orderByDesc(SFunction<?, ?> column) {
+        return orderByDesc(true, column);
+    }
+
+    public <Q extends Query<P>> Q orderByDesc(boolean condition, SFunction<?, ?> column) {
+        if (condition) {
+            addOrderBy(LambdaKit.resolve(column), "DESC");
+        }
+        return (Q) this;
+    }
+
+    // ========================= 更新 SET 操作 =========================
+
+    public <Q extends Query<P>> Q set(SFunction<?, ?> column, Object value) {
+        return set(true, column, value);
+    }
+
+    public <Q extends Query<P>> Q set(boolean condition, SFunction<?, ?> column, Object value) {
+        if (condition) {
+            addSetOperation(LambdaKit.resolve(column), "=", value);
+        }
+        return (Q) this;
+    }
+
+    public <Q extends Query<P>> Q setSql(String setSql) {
+        return setSql(true, setSql);
+    }
+
+    public <Q extends Query<P>> Q setSql(boolean condition, String setSql) {
+        if (condition && setSql != null && !setSql.isEmpty()) {
+            addSetOperation(setSql, "RAW", null);
+        }
+        return (Q) this;
+    }
+
+    // ========================= SELECT / GROUP BY（Lambda） =========================
+
+    @SafeVarargs
+    public final <Q extends Query<P>> Q select(SFunction<?, ?>... columns) {
+        return select(true, columns);
+    }
+
+    @SafeVarargs
+    public final <Q extends Query<P>> Q select(boolean condition, SFunction<?, ?>... columns) {
+        if (condition && columns != null && columns.length > 0) {
+            if (this.selectColumns == null) {
+                this.selectColumns = new ArrayList<>();
+            }
+            for (SFunction<?, ?> column : columns) {
+                this.selectColumns.add(LambdaKit.resolve(column));
+            }
+        }
+        return (Q) this;
+    }
+
+    @SafeVarargs
+    public final <Q extends Query<P>> Q groupBy(SFunction<?, ?>... columns) {
+        return groupBy(true, columns);
+    }
+
+    @SafeVarargs
+    public final <Q extends Query<P>> Q groupBy(boolean condition, SFunction<?, ?>... columns) {
+        if (condition && columns != null && columns.length > 0) {
+            if (this.groupByColumns == null) {
+                this.groupByColumns = new ArrayList<>();
+            }
+            for (SFunction<?, ?> column : columns) {
+                this.groupByColumns.add(LambdaKit.resolve(column));
+            }
         }
         return (Q) this;
     }
 
     /**
-     * 条件 select（模仿 MyBatis-Plus {@code select(boolean condition, ...)} 模式）。
-     * <p>
-     * 条件为 false 时跳过赋值，消除业务代码中的 if-else 样板。
-     *
-     * <pre>{@code
-     * query.select(StrKit.isNotBlank(fields), fields.split(","))
-     * }</pre>
-     *
-     * @param condition 执行条件
-     * @param columns   字段列表
+     * 原生 SQL HAVING（直接透传给 ORM，配合 GROUP BY 使用）。
      */
-    public <Q extends Query> Q select(boolean condition, String... columns) {
-        if (condition && columns != null) {
-            this.setSelect(String.join(split, columns));
-        }
-        return (Q) this;
-    }
-
-    public <Q extends Query> Q groupBy(String groupBy) {
-        this.setGroupBy(groupBy);
-        return (Q) this;
-    }
-
-    public <Q extends Query> Q groupBy(boolean condition, String groupBy) {
-        if (condition) {
-            this.setGroupBy(groupBy);
-        }
-        return (Q) this;
-    }
-
-    public <Q extends Query> Q having(String having) {
+    public <Q extends Query<P>> Q having(String having) {
         this.setHaving(having);
         return (Q) this;
     }
 
-    public <Q extends Query> Q current(long current) {
+    // ========================= 分页 / 隔离控制 =========================
+
+    public <Q extends Query<P>> Q current(long current) {
         this.setCurrent(current);
         return (Q) this;
     }
 
-    public <Q extends Query> Q size(long size) {
+    public <Q extends Query<P>> Q size(long size) {
         this.setSize(size);
         return (Q) this;
     }
 
-    /**
-     * 条件页大小（模仿 MyBatis-Plus {@code size(boolean condition, ...)} 模式）。
-     */
-    public <Q extends Query> Q size(boolean condition, long size) {
+    public <Q extends Query<P>> Q size(boolean condition, long size) {
         if (condition) {
             this.setSize(size);
         }
         return (Q) this;
     }
 
-    public <Q extends Query> Q orderBy(String... orderBys) {
-        if (orderBys != null) {
-            this.orderBys = String.join(split, orderBys);
-        }
-        return (Q) this;
-    }
-
-    /**
-     * 条件排序。
-     */
-    public <Q extends Query> Q orderBy(boolean condition, String... orderBys) {
-        if (condition && orderBys != null) {
-            this.orderBys = String.join(split, orderBys);
-        }
-        return (Q) this;
-    }
-
-    public <Q extends Query> Q ors(Object... ors) {
-        if (ors != null) {
-            if (ors.length % 2 != 0) {
-                throw new IllegalArgumentException("ors.length must not be singular");
-            }
-            Map<String, Object> orsMap = new HashMap<>();
-            for (int i = 0; i < ors.length - 1; i += 2) {
-                orsMap.put((String) ors[i], ors[i + 1]);
-            }
-            this.setOrs(orsMap);
-        }
-        return (Q) this;
-    }
-
-    /**
-     * 条件 or 查询。
-     */
-    public <Q extends Query> Q ors(boolean condition, Object... ors) {
-        if (condition) {
-            return ors(ors);
-        }
-        return (Q) this;
-    }
-
-    public <Q extends Query> Q keyword(String fields, Object keyword) {
-        this.setFields(fields);
-        this.setKeyword(keyword);
-        return (Q) this;
-    }
-
-    /**
-     * 条件关键字查询。
-     */
-    public <Q extends Query> Q keyword(boolean condition, String fields, Object keyword) {
-        if (condition) {
-            this.setFields(fields);
-            this.setKeyword(keyword);
-        }
-        return (Q) this;
-    }
-
-    public <Q extends Query> Q ignoreTenantId() {
+    public <Q extends Query<P>> Q ignoreTenantId() {
         this.ignoreTenantId = true;
         return (Q) this;
     }
 
-    public <Q extends Query> Q ignorePage() {
+    public <Q extends Query<P>> Q ignorePage() {
         this.setSize(-1);
         return (Q) this;
     }
@@ -238,12 +375,12 @@ public abstract class Query<T> extends Page<T> {
 
     // ========================= 聚合填充 =========================
 
-    public <Q extends Query> Q fills(String... fills) {
-        if (fills != null) {
+    public <Q extends Query<P>> Q fills(String... fills) {
+        if (fills != null && fills.length > 0) {
             if (this.fills != null) {
-                this.setFills(this.fills + split + String.join(split, fills));
+                this.setFills(this.fills + "," + String.join(",", fills));
             } else {
-                this.setFills(String.join(split, fills));
+                this.setFills(String.join(",", fills));
             }
         }
         return (Q) this;
@@ -253,23 +390,69 @@ public abstract class Query<T> extends Page<T> {
         if (this.fills == null || this.fills.isEmpty()) {
             return false;
         }
-        List<String> fills = Arrays.asList(this.fills.split(split));
-        return fills.contains(fill);
+        return Arrays.asList(this.fills.split(",")).contains(fill);
     }
 
-    /**
-     * 查询完成后执行聚合填充。
-     *
-     * @param models 查询结果
-     */
     public void doFills(List<? extends AggregateRoot<?>> models) {
         if (models == null || models.isEmpty()) {
             return;
         }
         Repository repo = repository();
-        if (repo instanceof RichRepository) {
-            ((RichRepository) repo).fill(this, models);
+        if (repo instanceof Repository) {
+            ((Repository) repo).fill(this, models);
         }
+    }
+
+    // ========================= 条件访问器（供 Repository 读取） =========================
+
+    @JsonIgnore
+    public boolean hasConditions() {
+        return conditions != null && !conditions.isEmpty();
+    }
+
+    @JsonIgnore
+    public boolean hasOrderBy() {
+        return orderByConditions != null && !orderByConditions.isEmpty();
+    }
+
+    @JsonIgnore
+    public boolean hasSet() {
+        return setOperations != null && !setOperations.isEmpty();
+    }
+
+    @JsonIgnore
+    public boolean hasSelect() {
+        return selectColumns != null && !selectColumns.isEmpty();
+    }
+
+    @JsonIgnore
+    public boolean hasGroupBy() {
+        return groupByColumns != null && !groupByColumns.isEmpty();
+    }
+
+    @JsonIgnore
+    public List<LambdaCondition> getWhereConditions() {
+        return conditions != null ? conditions : Collections.emptyList();
+    }
+
+    @JsonIgnore
+    public List<LambdaCondition> getOrderByConditions() {
+        return orderByConditions != null ? orderByConditions : Collections.emptyList();
+    }
+
+    @JsonIgnore
+    public List<LambdaCondition> getSetOperations() {
+        return setOperations != null ? setOperations : Collections.emptyList();
+    }
+
+    @JsonIgnore
+    public List<String> getSelectColumns() {
+        return selectColumns != null ? selectColumns : Collections.emptyList();
+    }
+
+    @JsonIgnore
+    public List<String> getGroupByColumns() {
+        return groupByColumns != null ? groupByColumns : Collections.emptyList();
     }
 
     // ========================= 分页计算 =========================
@@ -286,12 +469,11 @@ public abstract class Query<T> extends Page<T> {
 
     // ========================= 充血查询方法 =========================
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public <M extends AggregateRoot<?>> List<M> list() {
         this.with();
         Repository repo = repository();
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<M, ?>) repo).findList(this);
+        if (repo instanceof Repository) {
+            return ((Repository) repo).findList(this);
         }
         throw new BizRuntimeException("Repository for {} does not support list()", this.getClass().getSimpleName());
     }
@@ -307,8 +489,8 @@ public abstract class Query<T> extends Page<T> {
     public <M extends AggregateRoot<?>> Page<M> page() {
         this.with();
         Repository repo = repository();
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<M, ?>) repo).page(this);
+        if (repo instanceof Repository) {
+            return ((Repository) repo).page(this);
         }
         throw new BizRuntimeException("Repository for {} does not support page()", this.getClass().getSimpleName());
     }
@@ -324,29 +506,21 @@ public abstract class Query<T> extends Page<T> {
     public <M extends AggregateRoot<?>> M one() {
         this.with();
         Repository repo = repository();
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<M, ?>) repo).findFirst(this).orElse(null);
+        if (repo instanceof Repository) {
+            return (M) ((Repository) repo).findFirst(this).orElse(null);
         }
         throw new BizRuntimeException("Repository for {} does not support one()", this.getClass().getSimpleName());
     }
 
-    /**
-     * 获取单个（Optional 版本，模仿 MyBatis-Plus {@code oneOpt()} 模式）。
-     *
-     * @return Optional 包装的聚合根
-     */
     public <M extends AggregateRoot<?>> Optional<M> oneOpt() {
         this.with();
         Repository repo = repository();
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<M, ?>) repo).findFirst(this);
+        if (repo instanceof Repository) {
+            return ((Repository) repo).findFirst(this);
         }
         throw new BizRuntimeException("Repository for {} does not support oneOpt()", this.getClass().getSimpleName());
     }
 
-    /**
-     * 获取首个（Optional 版本）。
-     */
     public <M extends AggregateRoot<?>> Optional<M> firstOpt() {
         return oneOpt();
     }
@@ -370,15 +544,12 @@ public abstract class Query<T> extends Page<T> {
     public long count() {
         this.with();
         Repository repo = repository();
-        if (repo instanceof RichRepository) {
-            return ((RichRepository<?, ?>) repo).count(this);
+        if (repo instanceof Repository) {
+            return ((Repository) repo).count(this);
         }
         throw new BizRuntimeException("Repository for {} does not support count()", this.getClass().getSimpleName());
     }
 
-    /**
-     * 判断数据是否存在（模仿 MyBatis-Plus {@code ChainQuery.exists()} 模式）。
-     */
     public boolean exists() {
         return count() > 0;
     }
@@ -405,19 +576,18 @@ public abstract class Query<T> extends Page<T> {
 
     // ========================= Map 查询 =========================
 
-
     public List<Map<String, Object>> maps() {
         this.with();
         Repository repo = repository();
-        if (repo instanceof RichRepository) {
-            return ((RichRepository) repo).maps(this);
+        if (repo instanceof Repository) {
+            return ((Repository) repo).maps(this);
         }
         throw new BizRuntimeException("Repository for {} does not support maps()", this.getClass().getSimpleName());
     }
 
     public Map<String, Object> map() {
         List<Map<String, Object>> result = maps();
-        if (Objects.isNull(result)) {
+        if (Objects.isNull(result) || result.isEmpty()) {
             return Collections.emptyMap();
         }
         return result.get(0);
@@ -425,22 +595,33 @@ public abstract class Query<T> extends Page<T> {
 
     // ========================= 仓储查找 =========================
 
-    /**
-     * 通过 {@link RepositoryRegistry} 查找当前查询类型对应的仓储实例。
-     * <p>
-     * 子类应绑定到具体的聚合根类型：
-     * <pre>{@code
-     * public class OrderQuery extends Query {
-     *     &#64;Override
-     *     protected Repository<Order, ?> repository() {
-     *         return RepositoryRegistry.repository(Order.class);
-     *     }
-     * }
-     * }</pre>
-     *
-     * @return 仓储实例
-     */
     protected Repository repository() {
         return RepositoryRegistry.repositoryForQuery(this.getClass());
+    }
+
+    // ========================= 内部方法 =========================
+
+    private <Q extends Query<P>> Q addCondition(boolean condition, SFunction<?, ?> column, String operator, Object value) {
+        if (condition && value != null) {
+            if (this.conditions == null) {
+                this.conditions = new ArrayList<>();
+            }
+            this.conditions.add(new LambdaCondition(LambdaKit.resolve(column), operator, value));
+        }
+        return (Q) this;
+    }
+
+    private void addOrderBy(String property, String direction) {
+        if (this.orderByConditions == null) {
+            this.orderByConditions = new ArrayList<>();
+        }
+        this.orderByConditions.add(new LambdaCondition(property, direction, null));
+    }
+
+    private void addSetOperation(String property, String operator, Object value) {
+        if (this.setOperations == null) {
+            this.setOperations = new ArrayList<>();
+        }
+        this.setOperations.add(new LambdaCondition(property, operator, value));
     }
 }

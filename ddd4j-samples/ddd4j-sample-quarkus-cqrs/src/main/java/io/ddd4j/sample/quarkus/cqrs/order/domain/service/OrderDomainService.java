@@ -55,7 +55,7 @@ public class OrderDomainService {
      *
      * <p>本示例中 {@link OrderRepository} 接口未定义 {@code findAll}，
      * 故直接注入 {@link InMemoryOrderRepository}；真实项目可让
-     * {@code OrderRepository} 继承 {@code RichRepository} 以获得充血查询能力。
+     * {@code OrderRepository} 继承 {@code Repository} 以获得充血查询能力。
      *
      * @param buyerId 买家 ID
      * @return 被取消的订单数量

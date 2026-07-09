@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
  * <ul>
  *   <li><b>有 Model/PO 分离</b>：Order 不直接是 PO，避免充血聚合被 ORM 注解污染</li>
  *   <li><b>有 DomainObjectMapper</b>：仓储实现双接口完成映射</li>
- *   <li><b>不实现 RichRepository</b>：第二轨按"业务行为驱动"而非"条件查询驱动"</li>
+ *   <li><b>不实现 Repository</b>：第二轨按"业务行为驱动"而非"条件查询驱动"</li>
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

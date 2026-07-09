@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *     <ul>
  *       <li>轻量 PO 实体（{@code Goods} + {@code @DomainEntity}）</li>
  *       <li>充血查询对象（{@code GoodsQuery extends Query}）</li>
- *       <li>Goods 仓储（{@code InMemoryGoodsRepository} 实现 {@code RichRepository}）</li>
+ *       <li>Goods 仓储（{@code InMemoryGoodsRepository} 实现 {@code Repository}）</li>
  *       <li>Goods 应用服务（{@code GoodsApplicationService}）</li>
  *       <li>RepositoryRegistry 注册（{@code GoodsConfig}）</li>
  *     </ul>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,91 +10,65 @@
     </parent>
 
     <artifactId>ddd4j-data-mybatis</artifactId>
-    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。纯 MyBatis
-        实现（Spring 桥接在 ddd4j-data-spring，auto-config 在 ddd4j-boot-data）。数据
-        SPI（Repository/TypeHandlerRegistry）已收敛到 ddd4j-core。
-    </description>
+    <description>ddd4j 数据层 - MyBatis 官方实现（零 MyBatis-Plus 依赖）：纯 MyBatis 3.x 风格的 RichRepository 实现，
+        整合 mybatis-enhance（数据权限/国际化注解），适配 ddd4j-core 的 Repository SPI。
+        等保数据加密通过自定义加密拦截器 + ddd4j-data-crypto 实现。</description>
 
     <dependencies>
-        <!-- 核心契约 + 上下文（纯 Java） -->
+        <!-- ddd4j 核心契约 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- 工具箱（BeanKit/JsonKit，基于 Hutool，零 Spring 依赖） -->
+        <!-- ddd4j 工具箱 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- MyBatis Plus -->
+        <!-- 加解密策略 SPI -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus</artifactId>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-crypto</artifactId>
+            <version>${revision}</version>
         </dependency>
+        <!-- ddd4j 统一注解（orm: BizKey/OnCreate/OnUpdate/TenantId/SystemId/OrderBy） -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-extension</artifactId>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
         </dependency>
-        <!-- MyBatis Plus JSqlParser（PaginationInnerInterceptor / TenantLineInnerInterceptor 在此模块） -->
+        <!-- MyBatis 官方 -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-jsqlparser</artifactId>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
         </dependency>
-        <!-- JSqlParser（DataPermissionInnerInterceptor / MybatisTenantLineInnerInterceptor 需要） -->
+        <!-- mybatis-spring: 可选（Quarkus/Javalin 不需要） -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- mybatis-enhance-annotation（纯 Java 注解：权限/国际化） -->
+        <dependency>
+            <groupId>com.github.hiwepy</groupId>
+            <artifactId>mybatis-enhance-annotation</artifactId>
+        </dependency>
+        <!-- mybatis-enhance-core（拦截器框架、TypeHandler、SQL 工具） -->
+        <dependency>
+            <groupId>com.github.hiwepy</groupId>
+            <artifactId>mybatis-enhance-core</artifactId>
+        </dependency>
+        <!-- JSqlParser: SQL 解析/改写（租户拦截器/数据权限拦截器） -->
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
         </dependency>
-        <!-- FastJSON2（FastJsonTypeHandler / FastJsonArrayTypeHandler 需要） -->
+        <!-- FastJSON2: JSON TypeHandler 支持 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
-        </dependency>
-        <!-- Hutool -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-        <!-- Commons Lang3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.dozermapper</groupId>
-            <artifactId>dozer-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <!-- Swagger 注解（迁移的 Result/AbstractPaginationDTO 等需要） -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-        </dependency>
-        <!-- Validation（迁移的 AbstractPaginationDTO 等需要） -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        <!-- Jakarta Annotation（@Nonnull 等） -->
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Jackson TypeHandler（MyJacksonTypeHandler 需要） -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-jackson</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 

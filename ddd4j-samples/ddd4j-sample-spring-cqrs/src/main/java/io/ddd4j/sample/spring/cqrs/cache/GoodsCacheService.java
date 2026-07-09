@@ -45,7 +45,7 @@ public class GoodsCacheService {
     /**
      * 构造函数。
      *
-     * @param goodsRepository 内存商品仓储（实现 {@code RichRepository} 提供 findAll）
+     * @param goodsRepository 内存商品仓储（实现 {@code Repository} 提供 findAll）
      */
     @Autowired
     public GoodsCacheService(InMemoryGoodsRepository goodsRepository) {

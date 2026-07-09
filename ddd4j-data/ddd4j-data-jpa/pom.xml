@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-jpa</artifactId>
+    <description>ddd4j 数据层 - JPA 标准实现（跨容器 Repository 范式）：
+        基于 jakarta.persistence API，提供 JpaAggregateRepository 实现 RichRepository SPI，
+        整合充血 Query（AbstractJpaQuery）+ 字段加解密（JpaEncryptFieldListener）。
+        适用于 Spring/OpenJPA/EclipseLink/Quarkus-Hibernate 等任意 Jakarta EE 容器。</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- 加解密策略 SPI + @EncryptField 注解 + Ddd4jFieldCryptoHandler -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-mybatis</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- 加解密策略实现 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-crypto</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- JPA API -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
