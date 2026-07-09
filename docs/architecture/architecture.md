@@ -150,40 +150,94 @@ public interface MQBrokerAdapter {
 **13 个 MQ Broker/本地实现**：Kafka / RabbitMQ / RocketMQ / RedisStream / ActiveMQ / MQTT / MicaMQTT / Pulsar / NATS /
 ONS / SQS / TDMQ / Disruptor（进程内高性能）
 
-### 4.3 仓库抽象（BaseRepository / Repository）
+### 4.3 仓库抽象（Repository<M, P, ID>）
 
-```java
-// 纯 Java 契约
-public interface BaseRepository<M extends Model, Q extends Query> {
-    Map<Class<?>, Class<?>> REPOSITORY_MAPPINGS = new ConcurrentHashMap<>();
-    Map<Class<?>, BaseRepository<?, ?>> REPOSITORY_INSTANCES = new ConcurrentHashMap<>();
+ddd4j 将旧 `Repository`（基础 CRUD）和 `RichRepository`（充血查询）合并为**唯一仓储接口**，
+对齐 MyBatis-Plus `BaseMapper` 全部常用方法，用 `Query<P>`（Lambda 类型安全）替代 `Wrapper`。
 
-    boolean save(M model);
+#### 接口全貌
 
-    boolean update(M model); ...
-
-    Page<M> page(Q query);
-
-    List<M> list(Q query);
-
-    void fill(Q query, M model); // CQRS 读侧聚合
-}
-
-// fdd4j-core 抽象 SPI（纯 Java，零 ORM）
-public interface Repository<M, Q, P extends Serializable> {
-    Optional<M> findById(P id);
-
-    Optional<M> findOne(Q query);
-
-    List<M> findList(Q query);
-
-    M save(M entity);
-
-    M updateById(M entity);
-}
+```
+Repository<M, P, ID>  ← 唯一仓储接口
+├── 单条 CRUD:  findById / save / updateById / insertOrUpdate / delete / deleteById
+├── 批量操作:    findByIds / deleteByIds / saveBatch / updateBatchById / insertOrUpdateBatch
+├── 无条件查询:  findFirst / findAll / count / exists
+├── 条件查询:    findFirst(Query<P>) / findList(Query<P>) / page(Query<P>) / count(Query<P>) / maps(Query<P>) / exists(Query<P>)
+├── 条件操作:    update(M, Query<P>) / deleteByQuery(Query<P>)
+└── 聚合填充:    fill(Query<P>, M) / fill(Query<P>, List<M>)
 ```
 
-**多 ORM 实现**：MyBatis-Plus（ddd4j-data-mybatis）、Hibernate Panache（Quarkus）、JDBI（Javalin）
+#### 与 MyBatis-Plus BaseMapper 方法对照
+
+| BaseMapper | Repository | 说明 |
+|------------|-----------|------|
+| `selectById(id)` | `findById(ID)` | 按 ID 查询 |
+| `insert(T)` / `updateById(T)` | `save(M)` / `updateById(M)` | 插入 / 更新 |
+| `insertOrUpdate(T)` | `insertOrUpdate(M)` | 存在更新否插入 |
+| `deleteById(id)` / `deleteById(T)` | `deleteById(ID)` / `delete(M)` | 按 ID / 实体删除 |
+| `selectByIds(Collection)` | `findByIds(Collection<ID>)` | 批量查询 |
+| `deleteByIds(Collection)` | `deleteByIds(Collection<ID>)` | 批量删除 |
+| `insert(Collection)` | `saveBatch(Collection<M>)` | 批量插入 |
+| `updateById(Collection)` | `updateBatchById(Collection<M>)` | 批量更新 |
+| `selectOne(Wrapper)` | `findFirst(Query<P>)` | 条件查询单条 |
+| `selectList(Wrapper)` | `findList(Query<P>)` | 条件查询列表 |
+| `selectCount(Wrapper)` | `count(Query<P>)` | 条件计数 |
+| `selectPage(page, Wrapper)` | `page(Query<P>)` | 条件分页 |
+| `selectMaps(Wrapper)` | `maps(Query<P>)` | Map 列表 |
+| `exists(Wrapper)` | `exists(Query<P>)` | 条件存在判断 |
+| `update(T, Wrapper)` | `update(M, Query<P>)` | 条件更新 |
+| `delete(Wrapper)` | `deleteByQuery(Query<P>)` | 条件删除 |
+
+#### 充血查询调用链
+
+```
+// 业务层：Query 充血调用（Lambda 类型安全）
+query.eq(OrderPO::getStatus, "PAID")
+     .like(OrderPO::getOrderNo, "2024")
+     .ge(OrderPO::getCreateTime, startTime)
+     .orderByDesc(OrderPO::getCreateTime)
+     .current(1).size(20)
+     .page();                    // ← Query.page()
+
+// 核心层：Repository 接口
+Page<M> page(Query<P> query);   // ← Repository.page(Query<P>)
+
+// 实现层：三个 ORM 模块各自实现
+├── mybatisplus:  LambdaQueryWrapper → mapper.selectPage(mybatisPage, wrapper)
+├── mybatis:      SqlSession.selectList() + RowBounds 分页
+└── jpa:          CriteriaQuery → typedQuery.setFirstResult/setMaxResults
+```
+
+#### Query<T> Lambda 条件构建
+
+```java
+// 条件方法全部用 SFunction 引用 PO 字段，编译期类型安全
+query.eq(OrderPO::getStatus, "PAID")          // =
+     .ne(OrderPO::getAgentType, "BOTH")       // <>
+     .like(OrderPO::getOrderNo, "2024")       // LIKE '%2024%'
+     .gt(OrderPO::getAmount, 100)             // >
+     .ge(OrderPO::getCreateTime, startTime)   // >=
+     .between(OrderPO::getAmount, 100, 1000)  // BETWEEN
+     .in(OrderPO::getAgentType, List.of(...))  // IN
+     .isNull(OrderPO::getRemark)              // IS NULL
+     .orderByDesc(OrderPO::getCreateTime);    // ORDER BY ... DESC
+
+// 条件重载（消除 if-else 样板）
+query.eq(StrKit.isNotBlank(status), OrderPO::getStatus, status)
+     .like(StrKit.isNotBlank(keyword), OrderPO::getName, keyword);
+
+// 充血执行
+List<Order> list = query.list();
+Page<Order> page = query.page();
+Order one = query.one();
+long count = query.count();
+boolean exists = query.exists();
+```
+
+**多 ORM 实现**：
+- **mybatisplus**（`ddd4j-data-mybatisplus`）：`AbstractMybatisQuery` 内部持有 `LambdaQueryWrapper`，深度覆盖 MyBatis-Plus 全部 Lambda 语法
+- **mybatis**（`ddd4j-data-mybatis`）：`Query.getWhereConditions()` → `TableScheme` 列名映射 → `SqlSession` 原生查询
+- **JPA**（`ddd4j-data-jpa`）：`Query.getWhereConditions()` → `CriteriaBuilder` Predicate 构建
 
 ---
 

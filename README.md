@@ -48,14 +48,14 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 ### ✨ 主要特性
 
 - **框架无关**：核心契约层零 Spring/MyBatis/Servlet import，可同时被 Spring Boot / Quarkus / Javalin 复用
-- **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository` / `RichRepository`，并基于 fuinorg ddd-4-java 提供 ES 轨道
+- **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository<M, P, ID>`（统一仓储接口，对齐 MyBatis-Plus BaseMapper），并基于 fuinorg ddd-4-java 提供 ES 轨道
   `DddAggregateRoot`、`DddDomainEvent`、`DddEventStoreRepository`
 - **CQRS 命令查询分离**：基于 fuinorg cqrs-4-java，提供 Command/View/ProjectionPosition 等 SPI
 - **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
 - **三轨 DDD 模型**：兼容轻量 `PO/Query` 快速 CRUD 轨道 + `AggregateRoot/Repository` 普通充血模型轨道 + fuinorg
   CQRS/ES 轨道
-- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `Repository` 与
-  `RichRepository`（领域仓储与充血查询仓储）
+- **Lambda 充血查询**：`Query<T>` 支持 Lambda 类型安全条件构建（`eq`/`like`/`in`/`between`/`orderByDesc` 等），充血执行（`list()`/`page()`/`one()`/`count()`），三 ORM 模块各自实现
+- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `Repository<M, P, ID>`（统一领域仓储，对齐 BaseMapper）
 - **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` 纯 Java SPI、`ddd4j-mq-spring` 桥接，以及 Kafka/RabbitMQ/RocketMQ/Redis
   Stream/NATS/Pulsar/ActiveMQ/MQTT/ONS/SQS/TDMQ/Disruptor 等实现
 - **三框架运行时绑定**：`ddd4j-runtime` 聚合 `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`，提供
@@ -80,10 +80,10 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 | `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                                                                            |
 | `ddd4j-dependencies` | 第三方依赖集中管理       | Spring 6.x / Jackson 2.22 / Reactor 等                                                                                                                 |
 | `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                                                            |
-| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `Repository` `RichRepository` `DomainObjectMapper` `Query` `Page` `R` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
+| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `Repository<M,P,ID>` `Query<T>`（Lambda 充血查询）`Page` `R` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` `SFunction` `LambdaKit` |
 | `ddd4j-kit`          | 工具箱             | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                                                                        |
 | `ddd4j-ddd-rules`    | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                                                                    |
-| `ddd4j-data`         | 数据层抽象           | MyBatis-Plus 充血模型仓储/兼容仓储实现 + Spring 桥接 + 加密/数据权限/外部服务/日志                                                                                              |
+| `ddd4j-data`         | 数据层抽象           | 三 ORM 轨道：`ddd4j-data-mybatisplus`（LambdaQueryWrapper）/ `ddd4j-data-mybatis`（纯 MyBatis）/ `ddd4j-data-jpa`（Criteria）+ 加密/数据权限/外部服务/日志 |
 | `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + 多 Broker 实现                                                                                                       |
 | `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 实现                                                                                    |
 | `ddd4j-auth`         | 认证授权抽象          | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                                                                            |
@@ -100,14 +100,19 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |----ddd4j-bom                          #BOM依赖管理，用于外部项目引用 ddd4j 模块版本管理
 |----ddd4j-dependencies                 #公共依赖，便于依赖组件版本控制
 |----ddd4j-annotation                   #注解层，DDD构造型注解+API注解，零框架依赖
-|----ddd4j-core                         #核心契约层，纯Java DDD基础抽象（AggregateRoot/Repository/RichRepository/Query/DomainEvent/DddAggregateRoot等）
+|----ddd4j-core                         #核心契约层，纯Java DDD基础抽象（AggregateRoot/Repository<M,P,ID>/Query<T> Lambda充血查询/DomainEvent/DddAggregateRoot/SFunction/LambdaKit等）
 |----ddd4j-kit                          #工具箱，继承式增强Hutool，提供Cache/Lang/Web工具
 |----ddd4j-ddd-rules                          #DDD架构规范检查（基于ArchUnit）
 |------ddd4j-ddd-rules-clean                  #Clean Architecture分层纪律规则
 |------ddd4j-ddd-rules-cola                   #COLA菱形架构分层纪律规则
-|----ddd4j-data                         #数据抽象聚合
-|------ddd4j-data-mybatis               #MyBatis-Plus实现：MybatisAggregateRepository、BaseRepositoryImpl、TypeHandler、拦截器
-|------ddd4j-data-spring                #Spring桥接：RepositoryBean注册、静态注册表初始化
+|----ddd4j-data                         #数据抽象聚合（三ORM轨道）
+|------ddd4j-data-mybatisplus          #MyBatis-Plus实现：LambdaQueryWrapper深度整合/TableScheme/TypeHandler/拦截器
+|------ddd4j-data-mybatis               #纯MyBatis实现：SqlSession+TableScheme+LambdaCondition→SQL
+|------ddd4j-data-jpa                   #JPA实现：CriteriaBuilder+LambdaCondition→Predicate
+|------ddd4j-data-crypto                #加解密策略：CryptoStrategy/Provider/注解
+|------ddd4j-data-datascope             #数据权限组件
+|------ddd4j-data-external              #外部服务集成：地理位置/天气/行政区划/序列号
+|------ddd4j-data-logs                  #API操作日志：ApiOperationLogAspect+Provider
 |------ddd4j-data-crypto                #加解密策略：CryptoStrategy/Provider/注解
 |------ddd4j-data-datascope             #数据权限组件
 |------ddd4j-data-external              #外部服务集成：地理位置/天气/行政区划/序列号
@@ -268,7 +273,7 @@ import io.ddd4j.core.ddd.repository.Repository;
 
 import java.util.Optional;
 
-public interface OrderRepository extends Repository<Order, Long> {
+public interface OrderRepository extends Repository<Order, OrderPO, Long> {
 
     Optional<Order> findByOrderNo(String orderNo);
 }
@@ -316,6 +321,51 @@ public class MybatisOrderRepository extends MybatisAggregateRepository<Order, Or
 
 这条路径的约束是：`Order` 是 Model，`OrderPO` 是持久化对象；MyBatis-Plus 的 `Wrappers`、`ChainQuery`、
 `LambdaQueryChainWrapper`、`LambdaUpdateChainWrapper` 等只出现在基础设施仓储实现中，不进入领域模型。
+
+#### 3.5 Lambda 充血查询
+
+```java
+// 定义 Query（继承 AbstractMybatisQuery 获得 MyBatis-Plus Lambda 全覆盖）
+public class OrderQuery extends AbstractMybatisQuery<Order> {
+    @Override
+    protected Repository repository() {
+        return RepositoryRegistry.repository(Order.class);
+    }
+}
+
+// 业务层：Lambda 类型安全条件构建 + 充血执行
+Page<Order> page = new OrderQuery()
+    .eq(OrderPO::getStatus, "PAID")          // Lambda 引用 PO 字段
+    .like(OrderPO::getOrderNo, "2024")
+    .ge(OrderPO::getCreateTime, startTime)
+    .between(OrderPO::getAmount, 100, 1000)
+    .in(OrderPO::getAgentType, List.of("A", "B"))
+    .orderByDesc(OrderPO::getCreateTime)
+    .current(1).size(20)
+    .page();                                 // ← 充血分页查询
+
+List<Order> list = new OrderQuery()
+    .eq(OrderPO::getStatus, "ACTIVE")
+    .list();                                 // ← 充血列表查询
+
+// 条件重载（消除 if-else 样板）
+new OrderQuery()
+    .eq(StrKit.isNotBlank(status), OrderPO::getStatus, status)
+    .like(StrKit.isNotBlank(keyword), OrderPO::getOrderNo, keyword)
+    .list();
+```
+
+`Repository<M, P, ID>` 统一仓储接口对齐 MyBatis-Plus `BaseMapper` 全部常用方法：
+
+```
+Repository<M, P, ID>
+├── 单条 CRUD:    findById / save / updateById / insertOrUpdate / delete / deleteById
+├── 批量操作:      findByIds / deleteByIds / saveBatch / updateBatchById / insertOrUpdateBatch
+├── 无条件查询:    findFirst / findAll / count / exists
+├── 条件查询:      findFirst(Query<P>) / findList(Query<P>) / page(Query<P>) / count(Query<P>) / maps(Query<P>) / exists(Query<P>)
+├── 条件操作:      update(M, Query<P>) / deleteByQuery(Query<P>)
+└── 聚合填充:      fill(Query<P>, M) / fill(Query<P>, List<M>)
+```
 
 #### 4. 业务项目继承父 POM
 

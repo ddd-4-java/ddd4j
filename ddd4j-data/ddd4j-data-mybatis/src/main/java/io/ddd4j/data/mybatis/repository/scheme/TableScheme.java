@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@SuppressWarnings("unchecked")
 public class TableScheme implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     private static final Pattern CAMEL_CASE = Pattern.compile("([a-z])([A-Z])");
     private static final Map<Class<?>, TableScheme> CACHE = new ConcurrentHashMap<>();
 

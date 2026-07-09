@@ -14,6 +14,7 @@ import io.ddd4j.data.mybatis.query.AbstractMybatisQuery;
 import io.ddd4j.data.mybatis.repository.scheme.TableScheme;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.CollKit;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -45,11 +46,11 @@ import static io.ddd4j.core.cqrs.query.Query.*;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
+@Slf4j
+@SuppressWarnings("unchecked")
 public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, ID extends Serializable>
         implements Repository<M, P, ID>, DomainObjectMapper<M, P>, Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(MybatisAggregateRepository.class);
     private static final int DEFAULT_BATCH_SIZE = 100;
 
     protected final SqlSession sqlSession;

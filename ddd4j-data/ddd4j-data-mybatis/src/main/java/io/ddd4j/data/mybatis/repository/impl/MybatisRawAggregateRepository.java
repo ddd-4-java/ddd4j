@@ -47,6 +47,7 @@ import java.util.Optional;
  * @since 4.0.0
  */
 @Slf4j
+@SuppressWarnings("unchecked")
 public abstract class MybatisRawAggregateRepository<M extends AggregateRoot<?>, P, ID extends Serializable, Q extends Query>
         implements Repository<M, P, ID> {
 
@@ -80,7 +81,6 @@ public abstract class MybatisRawAggregateRepository<M extends AggregateRoot<?>, 
     /**
      * 获取 Mapper 实例（用 SqlSession 反射获取，业务方也可重写）。
      */
-    @SuppressWarnings("unchecked")
     protected <T> T getMapper() {
         return (T) sqlSession.getMapper(mapperClass);
     }
@@ -195,7 +195,6 @@ public abstract class MybatisRawAggregateRepository<M extends AggregateRoot<?>, 
         return io.ddd4j.kit.lang.BeanKit.copy(persistenceObject, modelClass);
     }
 
-    @SuppressWarnings("unchecked")
     protected P toPersistenceObject(M model) {
         return (P) io.ddd4j.kit.lang.BeanKit.copy(model, persistenceClass);
     }
