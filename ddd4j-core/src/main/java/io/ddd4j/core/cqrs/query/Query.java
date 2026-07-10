@@ -49,7 +49,7 @@ import java.util.*;
  *
  * <p>条件存储在 {@link #conditions} 列表中，由各 ORM 模块的 Repository 读取并转换为原生查询。
  *
- * @param <P> 聚合根类型
+ * @param <M> 聚合根类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
@@ -59,7 +59,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings({"unchecked", "rawtypes"})
-public abstract class Query<P> implements Serializable {
+public abstract class Query<M> implements Serializable {
 
     // ========================= 分页参数 =========================
 
@@ -106,98 +106,98 @@ public abstract class Query<P> implements Serializable {
 
     // ========================= 条件构建 — 等于/不等于 =========================
 
-    public <Q extends Query<P>> Q eq(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q eq(SFunction<?, ?> column, Object value) {
         return eq(true, column, value);
     }
 
-    public <Q extends Query<P>> Q eq(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q eq(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "=", value);
     }
 
-    public <Q extends Query<P>> Q ne(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ne(SFunction<?, ?> column, Object value) {
         return ne(true, column, value);
     }
 
-    public <Q extends Query<P>> Q ne(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ne(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "<>", value);
     }
 
     // ========================= 条件构建 — 模糊匹配 =========================
 
-    public <Q extends Query<P>> Q like(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q like(SFunction<?, ?> column, Object value) {
         return like(true, column, value);
     }
 
-    public <Q extends Query<P>> Q like(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q like(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "LIKE", value);
     }
 
-    public <Q extends Query<P>> Q likeLeft(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeLeft(SFunction<?, ?> column, Object value) {
         return likeLeft(true, column, value);
     }
 
-    public <Q extends Query<P>> Q likeLeft(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeLeft(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "LIKE_LEFT", value);
     }
 
-    public <Q extends Query<P>> Q likeRight(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeRight(SFunction<?, ?> column, Object value) {
         return likeRight(true, column, value);
     }
 
-    public <Q extends Query<P>> Q likeRight(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeRight(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "LIKE_RIGHT", value);
     }
 
-    public <Q extends Query<P>> Q notLike(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q notLike(SFunction<?, ?> column, Object value) {
         return notLike(true, column, value);
     }
 
-    public <Q extends Query<P>> Q notLike(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q notLike(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "NOT_LIKE", value);
     }
 
     // ========================= 条件构建 — 大小比较 =========================
 
-    public <Q extends Query<P>> Q gt(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q gt(SFunction<?, ?> column, Object value) {
         return gt(true, column, value);
     }
 
-    public <Q extends Query<P>> Q gt(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q gt(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, ">", value);
     }
 
-    public <Q extends Query<P>> Q ge(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ge(SFunction<?, ?> column, Object value) {
         return ge(true, column, value);
     }
 
-    public <Q extends Query<P>> Q ge(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ge(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, ">=", value);
     }
 
-    public <Q extends Query<P>> Q lt(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q lt(SFunction<?, ?> column, Object value) {
         return lt(true, column, value);
     }
 
-    public <Q extends Query<P>> Q lt(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q lt(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "<", value);
     }
 
-    public <Q extends Query<P>> Q le(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q le(SFunction<?, ?> column, Object value) {
         return le(true, column, value);
     }
 
-    public <Q extends Query<P>> Q le(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q le(boolean condition, SFunction<?, ?> column, Object value) {
         return addCondition(condition, column, "<=", value);
     }
 
     /**
      * 范围查询（BETWEEN 语义，展开为 ge + le）。
      */
-    public <Q extends Query<P>> Q between(SFunction<?, ?> column, Object start, Object end) {
+    public <Q extends Query<M>> Q between(SFunction<?, ?> column, Object start, Object end) {
         return between(true, column, start, end);
     }
 
-    public <Q extends Query<P>> Q between(boolean condition, SFunction<?, ?> column, Object start, Object end) {
+    public <Q extends Query<M>> Q between(boolean condition, SFunction<?, ?> column, Object start, Object end) {
         if (condition) {
             if (start != null) {
                 addCondition(true, column, ">=", start);
@@ -211,58 +211,58 @@ public abstract class Query<P> implements Serializable {
 
     // ========================= 条件构建 — IN/NOT IN =========================
 
-    public <Q extends Query<P>> Q in(SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q in(SFunction<?, ?> column, Collection<?> values) {
         return in(true, column, values);
     }
 
-    public <Q extends Query<P>> Q in(boolean condition, SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q in(boolean condition, SFunction<?, ?> column, Collection<?> values) {
         return addCondition(condition && CollKit.isNotEmpty(values), column, "IN", values == null ? null : new ArrayList<>(values));
     }
 
-    public <Q extends Query<P>> Q notIn(SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q notIn(SFunction<?, ?> column, Collection<?> values) {
         return notIn(true, column, values);
     }
 
-    public <Q extends Query<P>> Q notIn(boolean condition, SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q notIn(boolean condition, SFunction<?, ?> column, Collection<?> values) {
         return addCondition(condition && CollKit.isNotEmpty(values), column, "NOT_IN", values == null ? null : new ArrayList<>(values));
     }
 
     // ========================= 条件构建 — NULL 判断 =========================
 
-    public <Q extends Query<P>> Q isNull(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNull(SFunction<?, ?> column) {
         return isNull(true, column);
     }
 
-    public <Q extends Query<P>> Q isNull(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNull(boolean condition, SFunction<?, ?> column) {
         return addCondition(condition, column, "IS_NULL", null);
     }
 
-    public <Q extends Query<P>> Q isNotNull(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNotNull(SFunction<?, ?> column) {
         return isNotNull(true, column);
     }
 
-    public <Q extends Query<P>> Q isNotNull(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNotNull(boolean condition, SFunction<?, ?> column) {
         return addCondition(condition, column, "IS_NOT_NULL", null);
     }
 
     // ========================= 排序 =========================
 
-    public <Q extends Query<P>> Q orderByAsc(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByAsc(SFunction<?, ?> column) {
         return orderByAsc(true, column);
     }
 
-    public <Q extends Query<P>> Q orderByAsc(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByAsc(boolean condition, SFunction<?, ?> column) {
         if (condition) {
             addOrderBy(LambdaKit.resolve(column), "ASC");
         }
         return (Q) this;
     }
 
-    public <Q extends Query<P>> Q orderByDesc(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByDesc(SFunction<?, ?> column) {
         return orderByDesc(true, column);
     }
 
-    public <Q extends Query<P>> Q orderByDesc(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByDesc(boolean condition, SFunction<?, ?> column) {
         if (condition) {
             addOrderBy(LambdaKit.resolve(column), "DESC");
         }
@@ -271,22 +271,22 @@ public abstract class Query<P> implements Serializable {
 
     // ========================= 更新 SET 操作 =========================
 
-    public <Q extends Query<P>> Q set(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q set(SFunction<?, ?> column, Object value) {
         return set(true, column, value);
     }
 
-    public <Q extends Query<P>> Q set(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q set(boolean condition, SFunction<?, ?> column, Object value) {
         if (condition) {
             addSetOperation(LambdaKit.resolve(column), "=", value);
         }
         return (Q) this;
     }
 
-    public <Q extends Query<P>> Q setSql(String setSql) {
+    public <Q extends Query<M>> Q setSql(String setSql) {
         return setSql(true, setSql);
     }
 
-    public <Q extends Query<P>> Q setSql(boolean condition, String setSql) {
+    public <Q extends Query<M>> Q setSql(boolean condition, String setSql) {
         if (condition && setSql != null && !setSql.isEmpty()) {
             addSetOperation(setSql, "RAW", null);
         }
@@ -296,12 +296,12 @@ public abstract class Query<P> implements Serializable {
     // ========================= SELECT / GROUP BY（Lambda） =========================
 
     @SafeVarargs
-    public final <Q extends Query<P>> Q select(SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q select(SFunction<?, ?>... columns) {
         return select(true, columns);
     }
 
     @SafeVarargs
-    public final <Q extends Query<P>> Q select(boolean condition, SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q select(boolean condition, SFunction<?, ?>... columns) {
         if (condition && columns != null && columns.length > 0) {
             if (this.selectColumns == null) {
                 this.selectColumns = new ArrayList<>();
@@ -314,12 +314,12 @@ public abstract class Query<P> implements Serializable {
     }
 
     @SafeVarargs
-    public final <Q extends Query<P>> Q groupBy(SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q groupBy(SFunction<?, ?>... columns) {
         return groupBy(true, columns);
     }
 
     @SafeVarargs
-    public final <Q extends Query<P>> Q groupBy(boolean condition, SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q groupBy(boolean condition, SFunction<?, ?>... columns) {
         if (condition && columns != null && columns.length > 0) {
             if (this.groupByColumns == null) {
                 this.groupByColumns = new ArrayList<>();
@@ -334,36 +334,36 @@ public abstract class Query<P> implements Serializable {
     /**
      * 原生 SQL HAVING（直接透传给 ORM，配合 GROUP BY 使用）。
      */
-    public <Q extends Query<P>> Q having(String having) {
+    public <Q extends Query<M>> Q having(String having) {
         this.setHaving(having);
         return (Q) this;
     }
 
     // ========================= 分页 / 隔离控制 =========================
 
-    public <Q extends Query<P>> Q current(long current) {
+    public <Q extends Query<M>> Q current(long current) {
         this.setCurrent(current);
         return (Q) this;
     }
 
-    public <Q extends Query<P>> Q size(long size) {
+    public <Q extends Query<M>> Q size(long size) {
         this.setSize(size);
         return (Q) this;
     }
 
-    public <Q extends Query<P>> Q size(boolean condition, long size) {
+    public <Q extends Query<M>> Q size(boolean condition, long size) {
         if (condition) {
             this.setSize(size);
         }
         return (Q) this;
     }
 
-    public <Q extends Query<P>> Q ignoreTenantId() {
+    public <Q extends Query<M>> Q ignoreTenantId() {
         this.ignoreTenantId = true;
         return (Q) this;
     }
 
-    public <Q extends Query<P>> Q ignorePage() {
+    public <Q extends Query<M>> Q ignorePage() {
         this.setSize(-1);
         return (Q) this;
     }
@@ -375,7 +375,7 @@ public abstract class Query<P> implements Serializable {
 
     // ========================= 聚合填充 =========================
 
-    public <Q extends Query<P>> Q fills(String... fills) {
+    public <Q extends Query<M>> Q fills(String... fills) {
         if (fills != null && fills.length > 0) {
             if (this.fills != null) {
                 this.setFills(this.fills + "," + String.join(",", fills));
@@ -397,7 +397,7 @@ public abstract class Query<P> implements Serializable {
         if (models == null || models.isEmpty()) {
             return;
         }
-        Repository repo = repository();
+        Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
             ((Repository) repo).fill(this, models);
         }
@@ -471,7 +471,7 @@ public abstract class Query<P> implements Serializable {
 
     public <M extends AggregateRoot<?>> List<M> list() {
         this.with();
-        Repository repo = repository();
+        Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
             return ((Repository) repo).findList(this);
         }
@@ -488,7 +488,7 @@ public abstract class Query<P> implements Serializable {
 
     public <M extends AggregateRoot<?>> Page<M> page() {
         this.with();
-        Repository repo = repository();
+        Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
             return ((Repository) repo).page(this);
         }
@@ -505,7 +505,7 @@ public abstract class Query<P> implements Serializable {
 
     public <M extends AggregateRoot<?>> M one() {
         this.with();
-        Repository repo = repository();
+        Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
             return (M) ((Repository) repo).findFirst(this).orElse(null);
         }
@@ -514,7 +514,7 @@ public abstract class Query<P> implements Serializable {
 
     public <M extends AggregateRoot<?>> Optional<M> oneOpt() {
         this.with();
-        Repository repo = repository();
+        Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
             return ((Repository) repo).findFirst(this);
         }
@@ -543,7 +543,7 @@ public abstract class Query<P> implements Serializable {
 
     public long count() {
         this.with();
-        Repository repo = repository();
+        Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
             return ((Repository) repo).count(this);
         }
@@ -578,9 +578,9 @@ public abstract class Query<P> implements Serializable {
 
     public List<Map<String, Object>> maps() {
         this.with();
-        Repository repo = repository();
-        if (repo instanceof Repository) {
-            return ((Repository) repo).maps(this);
+        Repository<?, ?> repo = repository();
+        if (repo != null) {
+            return repo.maps(this);
         }
         throw new BizRuntimeException("Repository for {} does not support maps()", this.getClass().getSimpleName());
     }
@@ -601,7 +601,7 @@ public abstract class Query<P> implements Serializable {
 
     // ========================= 内部方法 =========================
 
-    private <Q extends Query<P>> Q addCondition(boolean condition, SFunction<?, ?> column, String operator, Object value) {
+    private <Q extends Query<M>> Q addCondition(boolean condition, SFunction<?, ?> column, String operator, Object value) {
         if (condition && value != null) {
             if (this.conditions == null) {
                 this.conditions = new ArrayList<>();
