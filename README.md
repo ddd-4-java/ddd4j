@@ -48,14 +48,17 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 ### ✨ 主要特性
 
 - **框架无关**：核心契约层零 Spring/MyBatis/Servlet import，可同时被 Spring Boot / Quarkus / Javalin 复用
-- **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository<M, P, ID>`（统一仓储接口，对齐 MyBatis-Plus BaseMapper），并基于 fuinorg ddd-4-java 提供 ES 轨道
+- **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository<M, P, ID>`（统一仓储接口，对齐 MyBatis-Plus
+  BaseMapper），并基于 fuinorg ddd-4-java 提供 ES 轨道
   `DddAggregateRoot`、`DddDomainEvent`、`DddEventStoreRepository`
 - **CQRS 命令查询分离**：基于 fuinorg cqrs-4-java，提供 Command/View/ProjectionPosition 等 SPI
 - **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
 - **三轨 DDD 模型**：兼容轻量 `PO/Query` 快速 CRUD 轨道 + `AggregateRoot/Repository` 普通充血模型轨道 + fuinorg
   CQRS/ES 轨道
-- **Lambda 充血查询**：`Query<T>` 支持 Lambda 类型安全条件构建（`eq`/`like`/`in`/`between`/`orderByDesc` 等），充血执行（`list()`/`page()`/`one()`/`count()`），三 ORM 模块各自实现
-- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `Repository<M, P, ID>`（统一领域仓储，对齐 BaseMapper）
+- **Lambda 充血查询**：`Query<T>` 支持 Lambda 类型安全条件构建（`eq`/`like`/`in`/`between`/`orderByDesc` 等），充血执行（
+  `list()`/`page()`/`one()`/`count()`），三 ORM 模块各自实现
+- **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `Repository<M, P, ID>`（统一领域仓储，对齐
+  BaseMapper）
 - **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` 纯 Java SPI、`ddd4j-mq-spring` 桥接，以及 Kafka/RabbitMQ/RocketMQ/Redis
   Stream/NATS/Pulsar/ActiveMQ/MQTT/ONS/SQS/TDMQ/Disruptor 等实现
 - **三框架运行时绑定**：`ddd4j-runtime` 聚合 `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`，提供
@@ -75,23 +78,23 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 
 **Maven 模块架构**：
 
-| 模块                   | 角色              | 关键产物                                                                                                                                                  |
-|----------------------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                                                                            |
-| `ddd4j-dependencies` | 第三方依赖集中管理       | Spring 6.x / Jackson 2.22 / Reactor 等                                                                                                                 |
-| `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                                                            |
+| 模块                   | 角色              | 关键产物                                                                                                                                             |
+|----------------------|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                                                                       |
+| `ddd4j-dependencies` | 第三方依赖集中管理       | Spring 6.x / Jackson 2.22 / Reactor 等                                                                                                            |
+| `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                                                       |
 | `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `Repository<M,P,ID>` `Query<T>`（Lambda 充血查询）`Page` `R` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` `SFunction` `LambdaKit` |
-| `ddd4j-kit`          | 工具箱             | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                                                                        |
-| `ddd4j-ddd-rules`    | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                                                                    |
-| `ddd4j-data`         | 数据层抽象           | 三 ORM 轨道：`ddd4j-data-mybatisplus`（LambdaQueryWrapper）/ `ddd4j-data-mybatis`（纯 MyBatis）/ `ddd4j-data-jpa`（Criteria）+ 加密/数据权限/外部服务/日志 |
-| `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + 多 Broker 实现                                                                                                       |
-| `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 实现                                                                                    |
-| `ddd4j-auth`         | 认证授权抽象          | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                                                                            |
-| `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                                            |
-| `ddd4j-runtime`      | 三框架运行时绑定        | `ddd4j-runtime-spring` `ddd4j-runtime-quarkus` `ddd4j-runtime-guice`                                                                                  |
-| `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                                            |
-| `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                                                                            |
-| `ddd4j-samples`      | 示例工程            | Spring / Quarkus / Javalin 三运行时 DDD、CQRS、Auth 示例矩阵                                                                                                      |
+| `ddd4j-kit`          | 工具箱             | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                                                                   |
+| `ddd4j-ddd-rules`    | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                                                               |
+| `ddd4j-data`         | 数据层抽象           | 三 ORM 轨道：`ddd4j-data-mybatisplus`（LambdaQueryWrapper）/ `ddd4j-data-mybatis`（纯 MyBatis）/ `ddd4j-data-jpa`（Criteria）+ 加密/数据权限/外部服务/日志              |
+| `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + 多 Broker 实现                                                                                                  |
+| `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 实现                                                                               |
+| `ddd4j-auth`         | 认证授权抽象          | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                                                                       |
+| `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                                       |
+| `ddd4j-runtime`      | 三框架运行时绑定        | `ddd4j-runtime-spring` `ddd4j-runtime-quarkus` `ddd4j-runtime-guice`                                                                             |
+| `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                                       |
+| `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                                                                       |
+| `ddd4j-samples`      | 示例工程            | Spring / Quarkus / Javalin 三运行时 DDD、CQRS、Auth 示例矩阵                                                                                               |
 
 **模块结构树**：
 

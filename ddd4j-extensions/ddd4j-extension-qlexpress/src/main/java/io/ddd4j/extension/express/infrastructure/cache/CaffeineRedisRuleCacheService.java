@@ -23,11 +23,17 @@ import java.util.Objects;
 @Slf4j
 public class CaffeineRedisRuleCacheService implements RuleCacheService {
 
-    /** 缓存业务标识 */
+    /**
+     * 缓存业务标识
+     */
     private static final String CACHE_BIZ = "rule_engine";
-    /** 本地缓存最大条目数 */
+    /**
+     * 本地缓存最大条目数
+     */
     private static final long LOCAL_CACHE_MAX_SIZE = 1000;
-    /** 本地缓存过期时间（分钟） */
+    /**
+     * 本地缓存过期时间（分钟）
+     */
     private static final long LOCAL_CACHE_EXPIRE_MINUTES = 5;
 
     static {

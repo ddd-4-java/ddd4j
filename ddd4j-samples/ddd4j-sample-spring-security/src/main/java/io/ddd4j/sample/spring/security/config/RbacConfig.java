@@ -2,12 +2,7 @@ package io.ddd4j.sample.spring.security.config;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
-import io.ddd4j.sample.spring.security.rbac.InMemoryPermissionRepository;
-import io.ddd4j.sample.spring.security.rbac.InMemoryRoleRepository;
-import io.ddd4j.sample.spring.security.rbac.InMemoryUserRepository;
-import io.ddd4j.sample.spring.security.rbac.Permission;
-import io.ddd4j.sample.spring.security.rbac.Role;
-import io.ddd4j.sample.spring.security.rbac.User;
+import io.ddd4j.sample.spring.security.rbac.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,7 @@
 package io.ddd4j.mq;
 
 import io.ddd4j.kit.lang.StrKit;
+
 import java.util.Locale;
 
 /**

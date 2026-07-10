@@ -9,23 +9,17 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-
-import io.ddd4j.data.mybatis.query.AbstractMybatisQuery;
 import io.ddd4j.data.mybatis.repository.scheme.TableScheme;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.CollKit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static io.ddd4j.core.cqrs.query.Query.*;
 
 /**
  * 原生 MyBatis 轨道的 Repository 实现（零 MyBatis-Plus 依赖）。

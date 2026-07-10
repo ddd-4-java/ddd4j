@@ -15,11 +15,10 @@
  */
 package io.ddd4j.data.mybatis.plugins.inner;
 
-import io.ddd4j.data.mybatis.plugins.DataScopeProvider;
-import io.ddd4j.kit.lang.StrKit;
-
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
+import io.ddd4j.data.mybatis.plugins.DataScopeProvider;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
@@ -33,8 +32,6 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.util.Objects;

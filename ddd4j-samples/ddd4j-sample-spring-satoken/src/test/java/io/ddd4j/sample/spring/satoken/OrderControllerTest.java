@@ -1,6 +1,5 @@
 package io.ddd4j.sample.spring.satoken;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.spring.satoken.order.web.dto.AddOrderLineRequest;
 import io.ddd4j.sample.spring.satoken.order.web.dto.CreateOrderRequest;
@@ -32,8 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Order 业务流 - Sa-Token")
 class OrderControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private String createOrder(String orderNo) throws Exception {
         MvcResult r = mockMvc.perform(post("/orders")

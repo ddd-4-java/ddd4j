@@ -14,13 +14,21 @@ import java.util.List;
 @Data
 // @ConfigurationProperties(prefix = "base-web")
 public class BaseWebProperties {
-    /** 日志拦截配置 */
+    /**
+     * 日志拦截配置
+     */
     private Log log = new Log();
-    /** MVC 响应配置 */
+    /**
+     * MVC 响应配置
+     */
     private Mvc mvc = new Mvc();
-    /** Bearer 认证配置 */
+    /**
+     * Bearer 认证配置
+     */
     private Auth auth = new Auth();
-    /** WebSocket 配置 */
+    /**
+     * WebSocket 配置
+     */
     private Ws ws = new Ws();
 
     /**
@@ -28,9 +36,13 @@ public class BaseWebProperties {
      */
     @Data
     public static class Log {
-        /** 日志拦截包含路径 */
+        /**
+         * 日志拦截包含路径
+         */
         private String includes = "/**";
-        /** 日志拦截不包含路径 */
+        /**
+         * 日志拦截不包含路径
+         */
         private String excludes = "/error";
     }
 
@@ -39,7 +51,9 @@ public class BaseWebProperties {
      */
     @Data
     public static class Mvc {
-        /** 是否启用 R 响应包装 */
+        /**
+         * 是否启用 R 响应包装
+         */
         private Boolean enableRResponse = true;
     }
 
@@ -48,7 +62,9 @@ public class BaseWebProperties {
      */
     @Data
     public static class Auth {
-        /** Bearer 访问令牌列表 */
+        /**
+         * Bearer 访问令牌列表
+         */
         private List<String> bearerTokens = new ArrayList<>();
     }
 
@@ -57,7 +73,9 @@ public class BaseWebProperties {
      */
     @Data
     public static class Ws {
-        /** 断线重连时间（单位：分钟） */
+        /**
+         * 断线重连时间（单位：分钟）
+         */
         private Integer reconnectTime = 5;
     }
 

@@ -1,6 +1,7 @@
 # ddd4j-sample-quarkus
 
-> ddd4j 在 **Quarkus** 框架下的**完整 DDD/CQRS 业务示例**：演示充血聚合、值对象、领域事件、仓储、应用服务、CQRS 查询、缓存、MQ 事件发布的端到端装配。
+> ddd4j 在 **Quarkus** 框架下的**完整 DDD/CQRS 业务示例**：演示充血聚合、值对象、领域事件、仓储、应用服务、CQRS 查询、缓存、MQ
+> 事件发布的端到端装配。
 >
 > **本示例同时演示 ddd4j 的双轨业务**：
 > - **第二轨（充血模型）**：Order 聚合根 + OrderRepository + OrderEvent
@@ -12,35 +13,36 @@
 
 **核心价值：与 `ddd4j-sample-spring` 的业务模型保持一致，仅框架绑定代码不同**，证明 ddd4j 的"三框架业务代码零差异"设计。
 
-**双轨合一**：本示例同时演示 Order 充血模型和 Goods 轻量 PO/Query 的核心业务，让一个示例展示 ddd4j 在 Quarkus 下的**两套建模范式**。
+**双轨合一**：本示例同时演示 Order 充血模型和 Goods 轻量 PO/Query 的核心业务，让一个示例展示 ddd4j 在 Quarkus 下的**两套建模范式
+**。
 
-| 维度 | ddd4j-sample-spring | ddd4j-sample-quarkus（本示例） |
-| --- | --- | --- |
-| 框架 | Spring Boot | Quarkus |
-| DI 容器 | ApplicationContext | CDI (Arc) |
-| SPI 注入 | `@Bean` 扫描 | `@Observes StartupEvent` |
-| HTTP 框架 | Spring MVC | Quarkus REST（JAX-RS） |
-| 领域事件监听 | `@EventListener` | CDI `@Observes` |
-| **领域模型代码** | **完全相同** | **完全相同** |
+| 维度         | ddd4j-sample-spring | ddd4j-sample-quarkus（本示例） |
+|------------|---------------------|---------------------------|
+| 框架         | Spring Boot         | Quarkus                   |
+| DI 容器      | ApplicationContext  | CDI (Arc)                 |
+| SPI 注入     | `@Bean` 扫描          | `@Observes StartupEvent`  |
+| HTTP 框架    | Spring MVC          | Quarkus REST（JAX-RS）      |
+| 领域事件监听     | `@EventListener`    | CDI `@Observes`           |
+| **领域模型代码** | **完全相同**            | **完全相同**                  |
 
 ## 演示的 ddd4j 核心能力
 
-| 能力 | 实现类 | 说明 |
-| --- | --- | --- |
-| 充血聚合根 | `Order`（第二轨） | 继承 `AggregateRoot`，封装状态机与业务规则 |
-| 值对象 | `Money` | 实现 `ValueObject`，不可变金额计算 |
-| 实体 | `OrderLine` | 实现 `Entity`，聚合内的订单行 |
-| 领域事件 | `OrderCreatedEvent` 等 | 继承 `DomainEvent`，聚合行为自动注册 |
-| 仓储模式 | `OrderRepository` / `GoodsRepository` | 继承 `Repository`，接口与实现分离 |
-| 应用服务 | `OrderApplicationService` / `GoodsApplicationService` | `@ApplicationScoped`，编排用例 |
-| 领域服务 | `OrderDomainService` | 跨聚合根规则、SPI 演示 |
-| **Model/Query 充血查询** | `GoodsQuery extends Query<Goods>` | 第三轨：通过 Query 充血方法（`page()`/`list()`/`count()`）直接查询仓储 |
-| **RepositoryRegistry** | `GoodsConfig.onStart` | 启动期注册 `Goods` 仓储到 ddd4j 全局上下文，让 `Query` 充血查询能正确找到仓储 |
-| CQRS 查询 | `OrderQueryResource` / `GoodsQueryResource` | 命令端/查询端分离（Order 缓存优先，Goods 充血查询优先） |
-| 缓存 | `OrderCacheService` | 基于 `CacheKit`（Caffeine 本地缓存） |
-| MQ 事件发布 | `NoOpMQEventPublisher` | 实现 `MQEventPublisher` SPI |
-| 领域事件监听 | `OrderEventListener` | CDI `@Observes` 监听领域事件 |
-| CDI 启动绑定 | `Ddd4jSampleConfig` / `GoodsConfig` | `@Observes StartupEvent` 校验 SPI 注入 + 注册 Goods 仓储 |
+| 能力                     | 实现类                                                   | 说明                                                   |
+|------------------------|-------------------------------------------------------|------------------------------------------------------|
+| 充血聚合根                  | `Order`（第二轨）                                          | 继承 `AggregateRoot`，封装状态机与业务规则                        |
+| 值对象                    | `Money`                                               | 实现 `ValueObject`，不可变金额计算                             |
+| 实体                     | `OrderLine`                                           | 实现 `Entity`，聚合内的订单行                                  |
+| 领域事件                   | `OrderCreatedEvent` 等                                 | 继承 `DomainEvent`，聚合行为自动注册                            |
+| 仓储模式                   | `OrderRepository` / `GoodsRepository`                 | 继承 `Repository`，接口与实现分离                              |
+| 应用服务                   | `OrderApplicationService` / `GoodsApplicationService` | `@ApplicationScoped`，编排用例                            |
+| 领域服务                   | `OrderDomainService`                                  | 跨聚合根规则、SPI 演示                                        |
+| **Model/Query 充血查询**   | `GoodsQuery extends Query<Goods>`                     | 第三轨：通过 Query 充血方法（`page()`/`list()`/`count()`）直接查询仓储 |
+| **RepositoryRegistry** | `GoodsConfig.onStart`                                 | 启动期注册 `Goods` 仓储到 ddd4j 全局上下文，让 `Query` 充血查询能正确找到仓储  |
+| CQRS 查询                | `OrderQueryResource` / `GoodsQueryResource`           | 命令端/查询端分离（Order 缓存优先，Goods 充血查询优先）                   |
+| 缓存                     | `OrderCacheService`                                   | 基于 `CacheKit`（Caffeine 本地缓存）                         |
+| MQ 事件发布                | `NoOpMQEventPublisher`                                | 实现 `MQEventPublisher` SPI                            |
+| 领域事件监听                 | `OrderEventListener`                                  | CDI `@Observes` 监听领域事件                               |
+| CDI 启动绑定               | `Ddd4jSampleConfig` / `GoodsConfig`                   | `@Observes StartupEvent` 校验 SPI 注入 + 注册 Goods 仓储     |
 
 ## 项目结构
 
@@ -143,43 +145,43 @@ mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus quarkus:dev
 
 #### 命令端（OrderResource — `/orders`，第二轨充血模型）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| POST | `/orders` | 创建草稿订单 |
-| POST | `/orders/{id}/lines` | 添加订单行 |
-| POST | `/orders/{id}:pay` | 支付订单 |
-| POST | `/orders/{id}:ship` | 发货订单 |
-| POST | `/orders/{id}:cancel` | 取消订单 |
-| POST | `/orders/cancel-all` | 批量取消买家草稿订单 |
-| GET | `/orders/{id}` | 按 ID 查询订单 |
-| GET | `/orders/orderNo/{orderNo}` | 按订单编号查询 |
+| 方法   | 路径                          | 说明         |
+|------|-----------------------------|------------|
+| POST | `/orders`                   | 创建草稿订单     |
+| POST | `/orders/{id}/lines`        | 添加订单行      |
+| POST | `/orders/{id}:pay`          | 支付订单       |
+| POST | `/orders/{id}:ship`         | 发货订单       |
+| POST | `/orders/{id}:cancel`       | 取消订单       |
+| POST | `/orders/cancel-all`        | 批量取消买家草稿订单 |
+| GET  | `/orders/{id}`              | 按 ID 查询订单  |
+| GET  | `/orders/orderNo/{orderNo}` | 按订单编号查询    |
 
 #### 查询端（OrderQueryResource — `/query/orders`）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| GET | `/query/orders/{id}` | 按 ID 查询（缓存优先） |
-| GET | `/query/orders?status=DRAFT` | 按状态查询列表 |
-| GET | `/query/orders/count` | 统计订单数量 |
+| 方法  | 路径                           | 说明            |
+|-----|------------------------------|---------------|
+| GET | `/query/orders/{id}`         | 按 ID 查询（缓存优先） |
+| GET | `/query/orders?status=DRAFT` | 按状态查询列表       |
+| GET | `/query/orders/count`        | 统计订单数量        |
 
 #### 命令端（GoodsResource — `/goods`，第三轨 Model/Query）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| POST | `/goods` | 创建商品（自动分配 ID） |
-| PUT | `/goods/{id}` | 更新商品名称 / 价格 |
-| PUT | `/goods/{id}/status?status=ON_SALE` | 调整商品状态 |
-| DELETE | `/goods/{id}` | 软删除商品 |
-| GET | `/goods/{id}` | 按 ID 查询商品 |
-| GET | `/goods/by-code?code=SKU-001` | 按编码查询商品 |
+| 方法     | 路径                                  | 说明            |
+|--------|-------------------------------------|---------------|
+| POST   | `/goods`                            | 创建商品（自动分配 ID） |
+| PUT    | `/goods/{id}`                       | 更新商品名称 / 价格   |
+| PUT    | `/goods/{id}/status?status=ON_SALE` | 调整商品状态        |
+| DELETE | `/goods/{id}`                       | 软删除商品         |
+| GET    | `/goods/{id}`                       | 按 ID 查询商品     |
+| GET    | `/goods/by-code?code=SKU-001`       | 按编码查询商品       |
 
 #### 查询端（GoodsQueryResource — `/query/goods`，充血 Query）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
+| 方法  | 路径                                             | 说明                        |
+|-----|------------------------------------------------|---------------------------|
 | GET | `/query/goods/page?code=SKU&current=1&size=10` | 充血分页查询（GoodsQuery.page()） |
-| GET | `/query/goods/list?status=ON_SALE` | 充血列表查询（GoodsQuery.list()） |
-| GET | `/query/goods/count?nameLike=iPhone` | 充血计数（GoodsQuery.count()） |
+| GET | `/query/goods/list?status=ON_SALE`             | 充血列表查询（GoodsQuery.list()） |
+| GET | `/query/goods/count?nameLike=iPhone`           | 充血计数（GoodsQuery.count()）  |
 
 ### 端点示例
 
@@ -312,18 +314,18 @@ mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus test
 
 本示例同时承载 ddd4j 的两套建模范式。下表逐项对比两者的实现差异：
 
-| 维度 | Order（第二轨 充血模型） | Goods（第三轨 Model/Query） |
-| --- | --- | --- |
-| 业务场景 | 状态机、规则、事件密集（订单生命周期） | 轻量 CRUD、无复杂业务规则（商品主数据） |
-| 领域对象 | `Order extends AggregateRoot<String>` | `Goods extends AggregateRoot<Long>` |
-| 状态机 | `Order.draft / pay / ship / cancel` 全部下沉到聚合方法 | 服务层直接 set 状态字段，聚合内无业务方法 |
-| 业务校验 | 聚合构造器 + `assertDraft()` 等内部断言 | 应用服务 `validateCode / validateName / validatePrice` 集中校验 |
-| 领域事件 | `OrderCreatedEvent / OrderPaidEvent / ...` 自动 registerEvent | 不发布任何领域事件 |
-| 仓储 | `OrderRepository` + `InMemoryOrderRepository`（普通 `Repository`） | `GoodsRepository` + `InMemoryGoodsRepository implements RichRepository`（富查询） |
-| 仓储注册 | 框架 CDI 启动后即可直接 `@Inject` 使用 | 需 `GoodsConfig.onStart` 调用 `RepositoryRegistry.register(Goods.class, GoodsQuery.class, repo)`，让 `Query` 充血查询能找到仓储 |
-| 查询模型 | 单独 `OrderQueryResource`（CQRS 缓存优先） | `GoodsQuery extends Query<Goods>`，充血方法 `page() / list() / count()` 直接出结果 |
-| 缓存 | `OrderCacheService`（基于 `CacheKit`） | 无缓存（简单查询无需缓存） |
-| 应用服务编排 | `repository.findById(id).get().pay()` —— 状态变更走聚合方法 | `goods.setName(x); goods.setPrice(y); repository.save(goods)` —— 状态变更走服务 |
+| 维度     | Order（第二轨 充血模型）                                                | Goods（第三轨 Model/Query）                                                                                            |
+|--------|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
+| 业务场景   | 状态机、规则、事件密集（订单生命周期）                                            | 轻量 CRUD、无复杂业务规则（商品主数据）                                                                                            |
+| 领域对象   | `Order extends AggregateRoot<String>`                          | `Goods extends AggregateRoot<Long>`                                                                               |
+| 状态机    | `Order.draft / pay / ship / cancel` 全部下沉到聚合方法                  | 服务层直接 set 状态字段，聚合内无业务方法                                                                                           |
+| 业务校验   | 聚合构造器 + `assertDraft()` 等内部断言                                  | 应用服务 `validateCode / validateName / validatePrice` 集中校验                                                           |
+| 领域事件   | `OrderCreatedEvent / OrderPaidEvent / ...` 自动 registerEvent    | 不发布任何领域事件                                                                                                         |
+| 仓储     | `OrderRepository` + `InMemoryOrderRepository`（普通 `Repository`） | `GoodsRepository` + `InMemoryGoodsRepository implements RichRepository`（富查询）                                      |
+| 仓储注册   | 框架 CDI 启动后即可直接 `@Inject` 使用                                    | 需 `GoodsConfig.onStart` 调用 `RepositoryRegistry.register(Goods.class, GoodsQuery.class, repo)`，让 `Query` 充血查询能找到仓储 |
+| 查询模型   | 单独 `OrderQueryResource`（CQRS 缓存优先）                             | `GoodsQuery extends Query<Goods>`，充血方法 `page() / list() / count()` 直接出结果                                          |
+| 缓存     | `OrderCacheService`（基于 `CacheKit`）                             | 无缓存（简单查询无需缓存）                                                                                                     |
+| 应用服务编排 | `repository.findById(id).get().pay()` —— 状态变更走聚合方法             | `goods.setName(x); goods.setPrice(y); repository.save(goods)` —— 状态变更走服务                                          |
 
 **关键代码对比**
 
@@ -367,7 +369,8 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 **何时选择哪一轨？**
 
-- **第二轨（充血模型）**：业务规则复杂、有状态机、需要发布领域事件、聚合内有多实体协作（如订单的订单行）。**值得为充血付出的复杂度**。
+- **第二轨（充血模型）**：业务规则复杂、有状态机、需要发布领域事件、聚合内有多实体协作（如订单的订单行）。**值得为充血付出的复杂度
+  **。
 - **第三轨（Model/Query）**：业务以 CRUD 为主、无状态机、无领域事件、追求开发效率（如后台管理类业务）。**轻量是优势**。
 
 > 本示例把两轨放在同一个 Quarkus 应用中，证明它们可以共存且互不干扰。
@@ -412,29 +415,29 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 ## Quarkus 框架适配要点
 
-| 适配点 | Spring 版 | Quarkus 版 |
-| --- | --- | --- |
-| Bean 声明 | `@Service` / `@Component` | `@ApplicationScoped` |
-| 构造器注入 | `@Autowired`（可省略） | `@Inject` |
-| 领域事件监听 | `@EventListener` | `@Observes` |
-| 启动事件 | `@PostConstruct` / `ApplicationReadyEvent` | `@Observes StartupEvent` |
-| 配置属性 | `@Value` / `@ConfigurationProperties` | `@ConfigProperty` |
-| Web 资源基类 | `TenantAwareController` | `TenantAwareResource` |
-| 请求注解 | `@GetMapping` / `@PostMapping` | `@GET` / `@POST` / `@Path` |
-| 测试 | `@SpringBootTest` | `@QuarkusTest` |
+| 适配点      | Spring 版                                   | Quarkus 版                  |
+|----------|--------------------------------------------|----------------------------|
+| Bean 声明  | `@Service` / `@Component`                  | `@ApplicationScoped`       |
+| 构造器注入    | `@Autowired`（可省略）                          | `@Inject`                  |
+| 领域事件监听   | `@EventListener`                           | `@Observes`                |
+| 启动事件     | `@PostConstruct` / `ApplicationReadyEvent` | `@Observes StartupEvent`   |
+| 配置属性     | `@Value` / `@ConfigurationProperties`      | `@ConfigProperty`          |
+| Web 资源基类 | `TenantAwareController`                    | `TenantAwareResource`      |
+| 请求注解     | `@GetMapping` / `@PostMapping`             | `@GET` / `@POST` / `@Path` |
+| 测试       | `@SpringBootTest`                          | `@QuarkusTest`             |
 
 ## 依赖说明
 
-| 依赖 | 说明 |
-| --- | --- |
-| `ddd4j-core` | 纯 Java 业务契约：聚合根、值对象、领域事件、SPI |
-| `ddd4j-annotation` | DDD 构造型注解 |
-| `ddd4j-kit` | 工具包：StrKit、JsonKit |
-| `ddd4j-runtime-quarkus` | Quarkus CDI 启动期 SPI 自动注入 |
-| `ddd4j-web-quarkus` | TenantAwareResource、JAX-RS 异常映射 |
-| `ddd4j-cache` | 缓存能力：CacheKit、Caffeine 本地缓存 |
-| `ddd4j-mq-core` | MQ 核心契约：MQEvent、MQEventPublisher（纯 Java） |
-| `quarkus-rest` | Quarkus RESTEasy Reactive（JAX-RS） |
+| 依赖                      | 说明                                       |
+|-------------------------|------------------------------------------|
+| `ddd4j-core`            | 纯 Java 业务契约：聚合根、值对象、领域事件、SPI             |
+| `ddd4j-annotation`      | DDD 构造型注解                                |
+| `ddd4j-kit`             | 工具包：StrKit、JsonKit                       |
+| `ddd4j-runtime-quarkus` | Quarkus CDI 启动期 SPI 自动注入                 |
+| `ddd4j-web-quarkus`     | TenantAwareResource、JAX-RS 异常映射          |
+| `ddd4j-cache`           | 缓存能力：CacheKit、Caffeine 本地缓存              |
+| `ddd4j-mq-core`         | MQ 核心契约：MQEvent、MQEventPublisher（纯 Java） |
+| `quarkus-rest`          | Quarkus RESTEasy Reactive（JAX-RS）        |
 
 > **注意**：`ddd4j-mq-disruptor` 依赖 `spring-context`，在 Quarkus CDI 下不适用。
 > 真实项目可引入 Quarkus 兼容的 MQ 实现（如 SmallRye Reactive Messaging + Kafka）。
@@ -450,12 +453,12 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 ## 版本说明
 
-| 组件 | 版本 |
-| --- | --- |
-| Quarkus Platform BOM | 3.15.1 |
-| ddd4j | `${revision}`（与父工程一致） |
-| JDK | 17+ |
-| Maven Surefire / Failsafe | 3.2.5 |
+| 组件                        | 版本                    |
+|---------------------------|-----------------------|
+| Quarkus Platform BOM      | 3.15.1                |
+| ddd4j                     | `${revision}`（与父工程一致） |
+| JDK                       | 17+                   |
+| Maven Surefire / Failsafe | 3.2.5                 |
 
 ## 参考
 

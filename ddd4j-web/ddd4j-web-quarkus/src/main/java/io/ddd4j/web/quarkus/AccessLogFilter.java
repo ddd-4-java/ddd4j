@@ -22,7 +22,9 @@ import java.io.IOException;
 @Slf4j(topic = "access")
 public class AccessLogFilter implements ContainerRequestFilter {
 
-    /** Vert.x HTTP 服务端请求（由 JAX-RS 注入） */
+    /**
+     * Vert.x HTTP 服务端请求（由 JAX-RS 注入）
+     */
     @Context
     HttpServerRequest request;
 

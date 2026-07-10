@@ -17,10 +17,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -114,10 +111,10 @@ class GoodsControllerTest {
     void create_duplicateCode_fails() throws Exception {
         String code = "DUP-" + UUID.randomUUID();
         mockMvc.perform(post("/api/goods")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new CreateGoodsRequest(code, "First",
-                                new BigDecimal("10.00"), 1))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CreateGoodsRequest(code, "First",
+                                        new BigDecimal("10.00"), 1))))
                 .andExpect(status().isOk());
 
         mockMvc.perform(post("/api/goods")
@@ -150,9 +147,9 @@ class GoodsControllerTest {
         createGoods("FCH-" + UUID.randomUUID(), "Item", 1, new BigDecimal("10.00"));
         // 再创建一个已知 code
         mockMvc.perform(post("/api/goods")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new CreateGoodsRequest(code, "FC", new BigDecimal("20.00"), 2))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CreateGoodsRequest(code, "FC", new BigDecimal("20.00"), 2))))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/goods/by-code").param("code", code))
@@ -289,10 +286,10 @@ class GoodsControllerTest {
     void list_byCode() throws Exception {
         String code = "LBC-" + UUID.randomUUID();
         mockMvc.perform(post("/api/goods")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new CreateGoodsRequest(code, "X",
-                                new BigDecimal("10.00"), 1))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CreateGoodsRequest(code, "X",
+                                        new BigDecimal("10.00"), 1))))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/goods/list").param("code", code))

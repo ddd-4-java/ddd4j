@@ -1,11 +1,12 @@
 package io.ddd4j.data.mybatis.query;
 
 import io.ddd4j.core.cqrs.query.Query;
-import io.ddd4j.core.ddd.model.AggregateRoot;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 原生 MyBatis 轨道的充血 Query 基类（零 MyBatis-Plus 依赖）。
@@ -44,10 +45,14 @@ public abstract class AbstractMybatisQuery<T> extends Query<T> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 手动构建的 SQL 条件列表 */
+    /**
+     * 手动构建的 SQL 条件列表
+     */
     private transient List<SqlCondition> sqlConditions;
 
-    /** 手动设置的 ORDER BY */
+    /**
+     * 手动设置的 ORDER BY
+     */
     private transient String manualOrderBy;
 
     // ========================= 条件构建入口 =========================

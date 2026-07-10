@@ -18,13 +18,19 @@ import java.util.Map;
 @Data
 public class LocalResourceProperteis {
 
-    /** 本地存储路径 */
+    /**
+     * 本地存储路径
+     */
     private String localStorage;
 
-    /** 本地静态资源映射是否是相对于 localStorage 的地址 */
+    /**
+     * 本地静态资源映射是否是相对于 localStorage 的地址
+     */
     private boolean localRelative;
 
-    /** 本地静态资源映射（key：访问路径，value：实际路径） */
+    /**
+     * 本地静态资源映射（key：访问路径，value：实际路径）
+     */
     private Map<String, String> localLocations = new HashMap<>();
 
 }

@@ -1,11 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.goods;
 
 import io.ddd4j.sample.quarkus.cqrs.goods.application.GoodsApplicationService;
-import io.ddd4j.sample.quarkus.cqrs.goods.domain.Goods;
-import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsId;
-import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsQuery;
-import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsRepository;
-import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsStatus;
+import io.ddd4j.sample.quarkus.cqrs.goods.domain.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
@@ -18,9 +14,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 /**
  * 商品 CQRS 集成测试。

@@ -4,9 +4,6 @@ import io.ddd4j.mq.BrokerType;
 import io.ddd4j.mq.MQProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-
-import java.util.Objects;
 
 /**
  * ActiveMQ Artemis 适配器配置（纯 Java，零 Spring 依赖）。

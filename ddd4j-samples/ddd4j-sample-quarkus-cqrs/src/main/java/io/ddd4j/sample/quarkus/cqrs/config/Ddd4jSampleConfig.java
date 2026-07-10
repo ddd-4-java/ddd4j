@@ -51,7 +51,9 @@ import java.util.Optional;
 @ApplicationScoped
 public class Ddd4jSampleConfig {
 
-    /** 4 个核心 SPI Bean 引用（启动期注入） */
+    /**
+     * 4 个核心 SPI Bean 引用（启动期注入）
+     */
     @Inject
     Instance<DomainEventPublisher> domainEventPublisher;
 

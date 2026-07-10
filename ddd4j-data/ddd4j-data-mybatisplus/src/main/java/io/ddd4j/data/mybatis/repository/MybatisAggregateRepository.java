@@ -1,9 +1,7 @@
 package io.ddd4j.data.mybatis.repository;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -17,7 +15,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -25,13 +22,8 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.repository.AbstractRepository;
 import com.baomidou.mybatisplus.extension.repository.IRepository;
-import io.ddd4j.annotation.orm.BizKey;
-import io.ddd4j.annotation.orm.DomainField;
-import io.ddd4j.annotation.orm.OnCreate;
-import io.ddd4j.annotation.orm.OnUpdate;
-import io.ddd4j.annotation.orm.OrderBy;
-import io.ddd4j.annotation.orm.SystemId;
-import io.ddd4j.annotation.orm.TenantId;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import io.ddd4j.annotation.orm.*;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
@@ -46,34 +38,19 @@ import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.StrKit;
-import lombok.Data;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.ibatis.binding.MapperMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import cn.hutool.core.collection.CollUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.time.format.DateTimeFormatter;
 
 /**
  * MyBatis-Plus 仓储抽象基类（PO↔Domain 映射 + 充血查询 + 自动填充）。
@@ -160,6 +137,21 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         this.registerToRepositoryRegistry();
     }
 
+    private static String toUnderline(String camel) {
+        if (camel == null || camel.isEmpty()) {
+            return camel;
+        }
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < camel.length(); i++) {
+            char c = camel.charAt(i);
+            if (i > 0 && Character.isUpperCase(c)) {
+                buf.append('_');
+            }
+            buf.append(Character.toLowerCase(c));
+        }
+        return buf.toString();
+    }
+
     /**
      * 解析聚合根类型（泛型参数 M，索引 0 — 在子类 BaseRepositoryImpl 中索引变为 1）。
      */
@@ -189,7 +181,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             // PO 元数据（auto-fill、bizKey、tenantId、tableLogic 等，委托给 MP TableInfoHelper）
             this.tableInfo = TableInfoHelper.getTableInfo(persistenceObjectClass);
             // 充血查询 Domain→PO 字段映射元数据（缓存于 DomainModelHelper，零框架依赖）
-            this.domainModelInfo = DomainModelHelper.getModelInfo(modelClass, persistenceObjectClass, poProperty -> {
+            this.domainModelInfo = DomainModelHelper.getModelInfo(modelClass, poProperty -> {
                 if (tableInfo != null) {
                     for (TableFieldInfo tfi : tableInfo.getFieldList()) {
                         if (tfi.getProperty().equals(poProperty)) {
@@ -224,10 +216,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         } else if (Objects.nonNull(mc)) {
             RepositoryRegistry.register(mc, this);
         }
-    }
-
-    public MP getMapper() {
-        return getBaseMapper();
     }
 
     /**
@@ -277,23 +265,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return toUnderline(property);
     }
 
-    private static String toUnderline(String camel) {
-        if (camel == null || camel.isEmpty()) {
-            return camel;
-        }
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < camel.length(); i++) {
-            char c = camel.charAt(i);
-            if (i > 0 && Character.isUpperCase(c)) {
-                buf.append('_');
-            }
-            buf.append(Character.toLowerCase(c));
-        }
-        return buf.toString();
-    }
-
-    public void setMapper(BaseMapper<P> mapper) {
-        this.mapper = Objects.requireNonNull(mapper, "mapper must not be null");
+    public void setMapper(MP mapper) {
+        this.baseMapper = Objects.requireNonNull(mapper, "mapper must not be null");
     }
 
     // ========================= MyBatis-Plus 原生 Wrapper API（CQRS 查询优势） =========================
@@ -339,7 +312,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * }</pre>
      *
      * @return LambdaQueryWrapper（注意：Lambda 模式不自动注入租户/系统条件，
-     *         如需隔离请在链式调用中手动追加 {@code .eq(Entity::getTenantId, ThreadContext.get(...))}）
+     * 如需隔离请在链式调用中手动追加 {@code .eq(Entity::getTenantId, ThreadContext.get(...))}）
      */
     public LambdaQueryWrapper<P> lambdaQueryWrapper() {
         return Wrappers.lambdaQuery(persistenceObjectClass());
@@ -525,9 +498,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
         return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), (Class<?>) this.getMapperClass(), this.log, entityList, batchSize,
                 (sqlSession, entity) -> {
-                    Object idVal = tableInfoLocal.getKeyProperty() == null ? null : null;
+                    Object idVal = tableInfoLocal.getKeyProperty() == null ? null : tableInfoLocal.getKeyProperty();
                     try {
-                        java.lang.reflect.Field keyField = entity.getClass().getDeclaredField(keyProperty);
+                        Field keyField = entity.getClass().getDeclaredField(keyProperty);
                         keyField.setAccessible(true);
                         idVal = keyField.get(entity);
                     } catch (Exception ignored) {

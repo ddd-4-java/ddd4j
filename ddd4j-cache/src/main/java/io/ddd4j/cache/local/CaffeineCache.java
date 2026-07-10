@@ -2,15 +2,10 @@ package io.ddd4j.cache.local;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import io.ddd4j.core.cache.AtomicCache;
-import io.ddd4j.core.cache.CacheConfig;
-import io.ddd4j.core.cache.CacheStats;
-import io.ddd4j.core.cache.CASOperation;
-import io.ddd4j.core.cache.CasCache;
+import io.ddd4j.core.cache.*;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -344,8 +339,15 @@ public class CaffeineCache<K, V> implements CasCache<K, V>, AtomicCache<K, V> {
         // Caffeine 的 asMap().compute 是 JVM 内原子回调，天然等价于 CASOperation
         return cache.asMap().compute(key, (k, current) -> {
             io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
-                @Override public String key() { return String.valueOf(k); }
-                @Override public V value() { return current; }
+                @Override
+                public String key() {
+                    return String.valueOf(k);
+                }
+
+                @Override
+                public V value() {
+                    return current;
+                }
             };
             try {
                 V newValue = operation.apply(resp);

@@ -7,14 +7,7 @@ import io.ddd4j.sample.spring.shiro.rbac.domain.model.User;
 import io.ddd4j.sample.spring.shiro.rbac.domain.repository.PermissionRepository;
 import io.ddd4j.sample.spring.shiro.rbac.domain.repository.RoleRepository;
 import io.ddd4j.sample.spring.shiro.rbac.domain.repository.UserRepository;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -45,9 +38,9 @@ public class AuthorizationController {
     private final PermissionRepository permissionRepository;
 
     public AuthorizationController(RbacService rbacService,
-                                    UserRepository userRepository,
-                                    RoleRepository roleRepository,
-                                    PermissionRepository permissionRepository) {
+                                   UserRepository userRepository,
+                                   RoleRepository roleRepository,
+                                   PermissionRepository permissionRepository) {
         this.rbacService = rbacService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -169,7 +162,7 @@ public class AuthorizationController {
      */
     @PostMapping("/roles/{id}/permissions")
     public Map<String, Object> assignPermissionsToRole(@PathVariable("id") String id,
-                                                        @RequestBody AssignPermissionsRequest req) {
+                                                       @RequestBody AssignPermissionsRequest req) {
         Role role = rbacService.assignPermissionsToRole(id, new HashSet<>(req.permissionIds()));
         return Map.of("success", true, "roleId", role.id(), "permissionIds", role.getPermissionIds());
     }
@@ -250,7 +243,8 @@ public class AuthorizationController {
     public record AssignPermissionsRequest(List<String> permissionIds) {
     }
 
-    public record CreatePermissionRequest(String permissionId, String permissionCode, String permissionName, String module) {
+    public record CreatePermissionRequest(String permissionId, String permissionCode, String permissionName,
+                                          String module) {
     }
 
     public record UpdatePermissionRequest(String permissionName, String module, Permission.Status status) {

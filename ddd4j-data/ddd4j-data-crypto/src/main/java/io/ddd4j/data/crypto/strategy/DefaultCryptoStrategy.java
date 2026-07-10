@@ -26,7 +26,9 @@ import java.util.Objects;
 @Slf4j
 public class DefaultCryptoStrategy implements CryptoStrategy {
 
-    /** JSON 对象映射器 */
+    /**
+     * JSON 对象映射器
+     */
     @Getter
     private ObjectMapper objectMapper;
 

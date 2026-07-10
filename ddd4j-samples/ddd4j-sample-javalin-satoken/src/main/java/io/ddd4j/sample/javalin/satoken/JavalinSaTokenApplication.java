@@ -43,7 +43,9 @@ import io.javalin.apibuilder.ApiBuilder;
  */
 public class JavalinSaTokenApplication {
 
-    /** Javalin 监听端口 */
+    /**
+     * Javalin 监听端口
+     */
     public static final int PORT = 8085;
 
     public static void main(String[] args) {

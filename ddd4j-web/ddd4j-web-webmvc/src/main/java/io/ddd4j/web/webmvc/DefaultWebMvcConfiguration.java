@@ -6,8 +6,8 @@
  */
 package io.ddd4j.web.webmvc.webmvc;
 
-import io.ddd4j.core.constant.Constants;
 import io.ddd4j.core.ProfileManager;
+import io.ddd4j.core.constant.Constants;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.biz.context.NestedMessageSource;

@@ -19,7 +19,9 @@ import java.util.Optional;
 @Slf4j
 public class GuiceSubjectProvider implements SubjectProvider {
 
-    /** Guice 注入器 */
+    /**
+     * Guice 注入器
+     */
     @Inject
     private Injector injector;
 

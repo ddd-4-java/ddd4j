@@ -2,9 +2,9 @@ package io.ddd4j.core.cqrs.query;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.core.api.Page;
-import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.ddd.repository.Repository;
+import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.util.LambdaKit;
 import io.ddd4j.core.util.SFunction;
@@ -59,50 +59,65 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings({"unchecked", "rawtypes"})
-public abstract class Query<M> implements Serializable {
+public abstract class Query<M extends AggregateRoot<?>> implements Serializable {
 
     // ========================= 分页参数 =========================
 
-    /** 当前页码（从 1 开始） */
+    /**
+     * 当前页码（从 1 开始）
+     */
     protected long current = 1L;
-    /** 每页大小（-1 表示不分页） */
+    /**
+     * 每页大小（-1 表示不分页）
+     */
     protected long size = 10L;
 
     // ========================= 查询控制 =========================
 
-    /** 原生 SQL HAVING（配合 GROUP BY 使用，聚合条件） */
+    /**
+     * 原生 SQL HAVING（配合 GROUP BY 使用，聚合条件）
+     */
     protected String having;
-    /** 是否忽略租户隔离（跨租户管理操作时使用） */
-    @ToString.Exclude
-    @JsonIgnore
-    private boolean ignoreTenantId = false;
-    /** 聚合填充字段（逗号分隔，查询后自动加载关联数据） */
+    /**
+     * 聚合填充字段（逗号分隔，查询后自动加载关联数据）
+     */
     protected String fills;
-
-    /** Lambda 查询条件列表（WHERE 条件） */
+    /**
+     * Lambda 查询条件列表（WHERE 条件）
+     */
     @ToString.Exclude
     @JsonIgnore
     protected transient List<LambdaCondition> conditions;
-
-    /** Lambda 排序条件列表 */
+    /**
+     * Lambda 排序条件列表
+     */
     @ToString.Exclude
     @JsonIgnore
     protected transient List<LambdaCondition> orderByConditions;
-
-    /** Lambda 更新 SET 操作列表 */
+    /**
+     * Lambda 更新 SET 操作列表
+     */
     @ToString.Exclude
     @JsonIgnore
     protected transient List<LambdaCondition> setOperations;
-
-    /** Lambda 查询字段（SELECT） */
+    /**
+     * Lambda 查询字段（SELECT）
+     */
     @ToString.Exclude
     @JsonIgnore
     protected transient List<String> selectColumns;
-
-    /** Lambda 分组字段（GROUP BY） */
+    /**
+     * Lambda 分组字段（GROUP BY）
+     */
     @ToString.Exclude
     @JsonIgnore
     protected transient List<String> groupByColumns;
+    /**
+     * 是否忽略租户隔离（跨租户管理操作时使用）
+     */
+    @ToString.Exclude
+    @JsonIgnore
+    private boolean ignoreTenantId = false;
 
     // ========================= 条件构建 — 等于/不等于 =========================
 
@@ -469,7 +484,7 @@ public abstract class Query<M> implements Serializable {
 
     // ========================= 充血查询方法 =========================
 
-    public <M extends AggregateRoot<?>> List<M> list() {
+    public List<M> list() {
         this.with();
         Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
@@ -478,7 +493,7 @@ public abstract class Query<M> implements Serializable {
         throw new BizRuntimeException("Repository for {} does not support list()", this.getClass().getSimpleName());
     }
 
-    public <M extends AggregateRoot<?>> List<M> list(String ifEmpty, Object... params) {
+    public List<M> list(String ifEmpty, Object... params) {
         List<M> list = list();
         if (list == null || list.isEmpty()) {
             throw new BizRuntimeException(ifEmpty, params);
@@ -486,7 +501,7 @@ public abstract class Query<M> implements Serializable {
         return list;
     }
 
-    public <M extends AggregateRoot<?>> Page<M> page() {
+    public Page<M> page() {
         this.with();
         Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
@@ -495,7 +510,7 @@ public abstract class Query<M> implements Serializable {
         throw new BizRuntimeException("Repository for {} does not support page()", this.getClass().getSimpleName());
     }
 
-    public <M extends AggregateRoot<?>> Page<M> page(String ifEmpty, Object... params) {
+    public Page<M> page(String ifEmpty, Object... params) {
         Page<M> p = page();
         if (p == null || p.isEmpty()) {
             throw new BizRuntimeException(ifEmpty, params);
@@ -503,7 +518,7 @@ public abstract class Query<M> implements Serializable {
         return p;
     }
 
-    public <M extends AggregateRoot<?>> M one() {
+    public M one() {
         this.with();
         Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
@@ -512,7 +527,7 @@ public abstract class Query<M> implements Serializable {
         throw new BizRuntimeException("Repository for {} does not support one()", this.getClass().getSimpleName());
     }
 
-    public <M extends AggregateRoot<?>> Optional<M> oneOpt() {
+    public Optional<M> oneOpt() {
         this.with();
         Repository<?, ?> repo = repository();
         if (repo instanceof Repository) {
@@ -521,11 +536,11 @@ public abstract class Query<M> implements Serializable {
         throw new BizRuntimeException("Repository for {} does not support oneOpt()", this.getClass().getSimpleName());
     }
 
-    public <M extends AggregateRoot<?>> Optional<M> firstOpt() {
+    public Optional<M> firstOpt() {
         return oneOpt();
     }
 
-    public <M extends AggregateRoot<?>> M one(String ifNull, Object... params) {
+    public M one(String ifNull, Object... params) {
         M one = one();
         if (one == null) {
             throw new BizRuntimeException(ifNull, params);
@@ -533,18 +548,18 @@ public abstract class Query<M> implements Serializable {
         return one;
     }
 
-    public <M extends AggregateRoot<?>> M first() {
+    public M first() {
         return one();
     }
 
-    public <M extends AggregateRoot<?>> M first(String ifNull, Object... params) {
+    public M first(String ifNull, Object... params) {
         return one(ifNull, params);
     }
 
     public long count() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             return ((Repository) repo).count(this);
         }
         throw new BizRuntimeException("Repository for {} does not support count()", this.getClass().getSimpleName());
@@ -580,7 +595,7 @@ public abstract class Query<M> implements Serializable {
         this.with();
         Repository<?, ?> repo = repository();
         if (repo != null) {
-            return repo.maps(this);
+            return repo.maps((Query) this);
         }
         throw new BizRuntimeException("Repository for {} does not support maps()", this.getClass().getSimpleName());
     }
@@ -595,7 +610,7 @@ public abstract class Query<M> implements Serializable {
 
     // ========================= 仓储查找 =========================
 
-    protected Repository repository() {
+    public Repository repository() {
         return RepositoryRegistry.repositoryForQuery(this.getClass());
     }
 

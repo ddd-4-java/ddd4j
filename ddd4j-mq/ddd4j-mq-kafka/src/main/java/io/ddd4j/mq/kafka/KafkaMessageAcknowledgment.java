@@ -25,9 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class KafkaMessageAcknowledgment implements Acknowledgment {
 
-    /** Header 键：Kafka Consumer 实例（用于 unwrap）。 */
+    /**
+     * Header 键：Kafka Consumer 实例（用于 unwrap）。
+     */
     public static final String HEADER_KAFKA_CONSUMER = "ddd4j.kafka.consumer";
-    /** Header 键：Kafka ConsumerRecord 实例（用于 unwrap）。 */
+    /**
+     * Header 键：Kafka ConsumerRecord 实例（用于 unwrap）。
+     */
     public static final String HEADER_KAFKA_RECORD = "ddd4j.kafka.record";
 
     private final Consumer<?, ?> consumer;

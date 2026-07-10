@@ -25,7 +25,9 @@ public class SqlExplainInterceptor implements Interceptor {
 
     private static final Logger log = LoggerFactory.getLogger(SqlExplainInterceptor.class);
 
-    /** 长 SQL 阈值（字符数），默认 2000 */
+    /**
+     * 长 SQL 阈值（字符数），默认 2000
+     */
     private int longSqlThreshold = 2000;
 
     private SqlSlowLogger slowLogger;

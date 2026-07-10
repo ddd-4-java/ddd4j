@@ -45,18 +45,26 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : rabbitMQClient ###")
 public class RabbitMQClient implements MQClient {
 
-    /** 已注入或懒构造的 RabbitMQ connection */
+    /**
+     * 已注入或懒构造的 RabbitMQ connection
+     */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
-    /** 懒构造使用的配置（构造方法 2 传入） */
+    /**
+     * 懒构造使用的配置（构造方法 2 传入）
+     */
     private final RabbitMQProperties properties;
 
-    /** 构造方法 1：注入原生 connection（runtime 自动装配用）。 */
+    /**
+     * 构造方法 1：注入原生 connection（runtime 自动装配用）。
+     */
     public RabbitMQClient(Connection connection) {
         this.connectionRef.set(Objects.requireNonNull(connection, "RabbitMQ Connection is required"));
         this.properties = null;
     }
 
-    /** 构造方法 2：自行根据 properties 构造 connection（lazy）。 */
+    /**
+     * 构造方法 2：自行根据 properties 构造 connection（lazy）。
+     */
     public RabbitMQClient(RabbitMQProperties properties) {
         this.connectionRef.set(null);
         this.properties = Objects.requireNonNull(properties, "RabbitMQ Properties is required");

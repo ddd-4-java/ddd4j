@@ -1,7 +1,6 @@
 package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.model.AggregateRoot;
 import org.fuin.ddd4j.core.EntityIdPath;
 import org.fuin.ddd4j.core.EventType;
 import org.junit.jupiter.api.Test;

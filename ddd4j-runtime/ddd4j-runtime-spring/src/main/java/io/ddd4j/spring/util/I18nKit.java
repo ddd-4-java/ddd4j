@@ -1,7 +1,7 @@
 package io.ddd4j.spring.util;
 
-import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.biz.context.NestedMessageSource;

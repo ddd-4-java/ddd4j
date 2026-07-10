@@ -1,8 +1,8 @@
 package io.ddd4j.mq.rabbitmq;
 
 import com.rabbitmq.client.Channel;
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.message.Acknowledgment;
 
 import java.io.IOException;
 import java.util.Objects;

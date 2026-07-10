@@ -1,8 +1,8 @@
 package io.ddd4j.mq.ons;
 
 import com.aliyun.openservices.ons.api.Message;
-import com.aliyun.openservices.ons.api.Producer;
 import com.aliyun.openservices.ons.api.ONSFactory;
+import com.aliyun.openservices.ons.api.Producer;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;

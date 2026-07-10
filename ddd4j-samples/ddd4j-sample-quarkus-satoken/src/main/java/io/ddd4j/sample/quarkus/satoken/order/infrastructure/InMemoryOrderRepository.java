@@ -29,48 +29,6 @@ public class InMemoryOrderRepository implements OrderRepository {
 
     private final ConcurrentMap<String, OrderRow> rows = new ConcurrentHashMap<>();
 
-    @Override
-    public Optional<Order> findById(String id) {
-        if (StrKit.isBlank(id)) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(rows.get(id)).map(InMemoryOrderRepository::toModel);
-    }
-
-    @Override
-    public Optional<Order> findByOrderNo(String orderNo) {
-        if (StrKit.isBlank(orderNo)) {
-            return Optional.empty();
-        }
-        return rows.values().stream()
-                .filter(row -> Objects.equals(orderNo, row.orderNo))
-                .findFirst()
-                .map(InMemoryOrderRepository::toModel);
-    }
-
-    @Override
-    public List<Order> findAll() {
-        return rows.values().stream()
-                .map(InMemoryOrderRepository::toModel)
-                .toList();
-    }
-
-    @Override
-    public Order save(Order aggregate) {
-        Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.id(), toRow(aggregate));
-        return aggregate;
-    }
-
-    @Override
-    public void deleteById(String id) {
-        if (StrKit.isNotBlank(id)) {
-            rows.remove(id);
-        }
-    }
-
-    // ============================ 模型与行转换 ============================
-
     private static OrderRow toRow(Order order) {
         OrderRow row = new OrderRow();
         row.id = order.id();
@@ -101,7 +59,51 @@ public class InMemoryOrderRepository implements OrderRepository {
                 OrderStatus.valueOf(row.status), lines);
     }
 
-    /** 订单内部持久化行。 */
+    @Override
+    public Optional<Order> findById(String id) {
+        if (StrKit.isBlank(id)) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(rows.get(id)).map(InMemoryOrderRepository::toModel);
+    }
+
+    @Override
+    public Optional<Order> findByOrderNo(String orderNo) {
+        if (StrKit.isBlank(orderNo)) {
+            return Optional.empty();
+        }
+        return rows.values().stream()
+                .filter(row -> Objects.equals(orderNo, row.orderNo))
+                .findFirst()
+                .map(InMemoryOrderRepository::toModel);
+    }
+
+    @Override
+    public List<Order> findAll() {
+        return rows.values().stream()
+                .map(InMemoryOrderRepository::toModel)
+                .toList();
+    }
+
+    // ============================ 模型与行转换 ============================
+
+    @Override
+    public Order save(Order aggregate) {
+        Objects.requireNonNull(aggregate, "aggregate must not be null");
+        rows.put(aggregate.id(), toRow(aggregate));
+        return aggregate;
+    }
+
+    @Override
+    public void deleteById(String id) {
+        if (StrKit.isNotBlank(id)) {
+            rows.remove(id);
+        }
+    }
+
+    /**
+     * 订单内部持久化行。
+     */
     static class OrderRow {
 
         String id;
@@ -112,7 +114,9 @@ public class InMemoryOrderRepository implements OrderRepository {
         List<OrderLineRow> lines;
     }
 
-    /** 订单行内部持久化行。 */
+    /**
+     * 订单行内部持久化行。
+     */
     static class OrderLineRow {
 
         String id;

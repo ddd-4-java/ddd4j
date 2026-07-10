@@ -19,9 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public final class I18nHelper {
 
-    /** 国际化资源文件前缀 */
+    /**
+     * 国际化资源文件前缀
+     */
     private static final String BUNDLE_PREFIX = "i18n/message";
-    /** 国际化 ResourceBundle 缓存（key=语言标签） */
+    /**
+     * 国际化 ResourceBundle 缓存（key=语言标签）
+     */
     private static final Map<String, ResourceBundle> CACHE = new ConcurrentHashMap<>();
     @Getter
     /** 默认语言（zh） */

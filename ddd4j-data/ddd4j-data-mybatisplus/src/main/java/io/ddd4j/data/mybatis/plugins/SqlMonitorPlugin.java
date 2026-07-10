@@ -1,8 +1,8 @@
 package io.ddd4j.data.mybatis.plugins;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;

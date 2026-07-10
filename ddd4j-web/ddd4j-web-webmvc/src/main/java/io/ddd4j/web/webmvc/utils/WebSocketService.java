@@ -29,19 +29,23 @@ import java.util.function.Supplier;
 @Slf4j(topic = "### BASE-WEB : WebSocketService ###")
 public class WebSocketService {
 
-    /** 会话缓存（clientId -> WebSocketSession） */
+    /**
+     * 会话缓存（clientId -> WebSocketSession）
+     */
     private static final Map<String, WebSocketSession> SESSIONS = new ConcurrentHashMap<>();
-    /** 连接管理器缓存（clientId -> WebSocketConnectionManager） */
+    /**
+     * 连接管理器缓存（clientId -> WebSocketConnectionManager）
+     */
     private static final Map<String, WebSocketConnectionManager> MANAGERS = new ConcurrentHashMap<>();
 
     /**
      * 建立 WebSocket 连接。
      *
-     * @param clientId       客户端标识
-     * @param url            连接地址
-     * @param onMessage      消息接收回调
-     * @param onConnected    连接成功回调
-     * @param sendHeartbeat  心跳发送逻辑（返回 true 表示需要自动重连）
+     * @param clientId      客户端标识
+     * @param url           连接地址
+     * @param onMessage     消息接收回调
+     * @param onConnected   连接成功回调
+     * @param sendHeartbeat 心跳发送逻辑（返回 true 表示需要自动重连）
      */
     @SneakyThrows
     public void connect(String clientId, String url, Consumer<String> onMessage, Consumer<String> onConnected, Supplier<Boolean> sendHeartbeat) {

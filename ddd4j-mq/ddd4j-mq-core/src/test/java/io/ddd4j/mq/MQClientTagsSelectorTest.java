@@ -1,6 +1,5 @@
 package io.ddd4j.mq;
 
-import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import org.junit.jupiter.api.Test;

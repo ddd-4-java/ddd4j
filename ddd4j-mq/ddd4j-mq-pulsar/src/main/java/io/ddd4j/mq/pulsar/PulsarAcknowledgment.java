@@ -20,27 +20,43 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class PulsarAcknowledgment implements Acknowledgment {
 
-    /** Header 键：Pulsar 消费者 */
+    /**
+     * Header 键：Pulsar 消费者
+     */
     public static final String HEADER_PULSAR_CONSUMER = "ddd4j.pulsar.consumer";
-    /** Header 键：Pulsar 消息 */
+    /**
+     * Header 键：Pulsar 消息
+     */
     public static final String HEADER_PULSAR_MESSAGE = "ddd4j.pulsar.message";
-    /** Header 键：Pulsar 消息 ID */
+    /**
+     * Header 键：Pulsar 消息 ID
+     */
     public static final String HEADER_PULSAR_MESSAGE_ID = "ddd4j.pulsar.messageId";
 
-    /** Pulsar 消费者实例 */
+    /**
+     * Pulsar 消费者实例
+     */
     private final Consumer<?> consumer;
-    /** Pulsar 消息实例 */
+    /**
+     * Pulsar 消息实例
+     */
     private final Message<?> message;
-    /** 消息 ID */
+    /**
+     * 消息 ID
+     */
     private final String messageId;
-    /** 关联 ID */
+    /**
+     * 关联 ID
+     */
     private final String correlationId;
-    /** 投递 ID */
+    /**
+     * 投递 ID
+     */
     private final long deliveryId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     public PulsarAcknowledgment(Consumer<?> consumer, Message<?> message,
-                                       String messageId, String correlationId) {
+                                String messageId, String correlationId) {
         this.consumer = consumer;
         this.message = message;
         this.messageId = messageId;

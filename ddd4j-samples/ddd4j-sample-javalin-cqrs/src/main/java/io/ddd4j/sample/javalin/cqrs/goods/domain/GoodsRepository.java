@@ -1,7 +1,6 @@
 package io.ddd4j.sample.javalin.cqrs.goods.domain;
 
 import io.ddd4j.core.ddd.repository.Repository;
-import io.ddd4j.core.ddd.repository.Repository;
 
 import java.util.List;
 import java.util.Optional;

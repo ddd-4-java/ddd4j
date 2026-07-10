@@ -4,11 +4,7 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.sample.quarkus.cqrs.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.quarkus.cqrs.order.application.CreateOrderCommand;
 import io.ddd4j.sample.quarkus.cqrs.order.application.OrderApplicationService;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.quarkus.cqrs.order.domain.event.*;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.OrderStatus;
 import io.quarkus.test.junit.QuarkusTest;
@@ -16,9 +12,6 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,14 +46,18 @@ class OrderEventTest {
 
     // ========== SPI / Bean 注入验证 ==========
 
+    private static org.hamcrest.Matcher<String> equalTo(String value) {
+        return org.hamcrest.CoreMatchers.equalTo(value);
+    }
+
+    // ========== 领域事件触发与监听 ==========
+
     @Test
     void shouldInjectEventListenerAndObserver() {
         assertThat(listener).isNotNull();
         assertThat(observer).isNotNull();
         assertThat(domainEventPublisher).isNotNull();
     }
-
-    // ========== 领域事件触发与监听 ==========
 
     @Test
     void shouldFireCreatedEventOnDraft() {
@@ -106,6 +103,8 @@ class OrderEventTest {
                 .anyMatch(e -> e instanceof OrderShippedEvent);
     }
 
+    // ========== CDI 监听器可观察性 ==========
+
     @Test
     void shouldFireCancelledEventOnCancel() {
         Order draft = applicationService.createDraft(
@@ -114,8 +113,6 @@ class OrderEventTest {
         assertThat(cancelled.domainEvents())
                 .anyMatch(e -> e instanceof OrderCancelledEvent);
     }
-
-    // ========== CDI 监听器可观察性 ==========
 
     @Test
     void shouldReceiveOrderCreatedEventThroughCdiObserver() {
@@ -145,13 +142,13 @@ class OrderEventTest {
         assertThat(domainEventPublisher).isNotNull();
     }
 
+    // ========== 业务流程集成 ==========
+
     @Test
     void shouldReceiveOrderLineAddedEventThroughCdiObserver() {
         domainEventPublisher.publish(new OrderLineAddedEvent("OBS-5"));
         assertThat(domainEventPublisher).isNotNull();
     }
-
-    // ========== 业务流程集成 ==========
 
     @Test
     void shouldTriggerAllLifecycleEvents() {
@@ -179,6 +176,8 @@ class OrderEventTest {
         assertThat(draft.status()).isEqualTo(OrderStatus.CANCELLED);
     }
 
+    // ========== REST + 事件链路 ==========
+
     @Test
     void shouldAcknowledgeMultiplePublishes() {
         // 验证同一 publisher 可多次发布且无状态丢失
@@ -187,8 +186,6 @@ class OrderEventTest {
         }
         assertThat(domainEventPublisher).isNotNull();
     }
-
-    // ========== REST + 事件链路 ==========
 
     @Test
     void shouldTriggerEventsEndToEndViaRest() {
@@ -225,9 +222,5 @@ class OrderEventTest {
         given()
                 .when().post("/orders/{id}:ship", draft.id())
                 .then().statusCode(200).body("code", is(0));
-    }
-
-    private static org.hamcrest.Matcher<String> equalTo(String value) {
-        return org.hamcrest.CoreMatchers.equalTo(value);
     }
 }

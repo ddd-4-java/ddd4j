@@ -13,7 +13,8 @@ ddd4j SubjectKit 统一鉴权入口在 Javalin 框架下的 Apache Shiro 适配�
 
 本示例演示了 **ddd4j-auth 抽象层**的核心优势：
 
-- **业务代码零改动**：本示例的 `AuthService` / `AuthController` 与 `spring-shiro` / `quarkus-shiro` / `javalin-satoken` 等其他 6 个示例**完全一致**
+- **业务代码零改动**：本示例的 `AuthService` / `AuthController` 与 `spring-shiro` / `quarkus-shiro` / `javalin-satoken`
+  等其他 6 个示例**完全一致**
 - **切换底层鉴权框架只需改 pom.xml**：从 Sa-Token 切换到 Shiro，只需替换 2 个依赖，业务代码不动
 - **框架无关的鉴权契约**：业务代码统一通过 `SubjectKit` 调用，不直接依赖 sa-token / shiro / security API
 
@@ -21,8 +22,8 @@ ddd4j SubjectKit 统一鉴权入口在 Javalin 框架下的 Apache Shiro 适配�
 
 ## 📦 模块对应
 
-| 框架    | 鉴权适配模块      | 运行时桥接模块      | 鉴权框架      |
-|---------|------------------|--------------------|--------------|
+| 框架      | 鉴权适配模块             | 运行时桥接模块               | 鉴权框架         |
+|---------|--------------------|-----------------------|--------------|
 | Javalin | `ddd4j-auth-shiro` | `ddd4j-runtime-guice` | Apache Shiro |
 
 > Javalin 本身**没有 DI 容器**，所以 `ddd4j-runtime-guice` 同时承担两件事：
@@ -78,14 +79,14 @@ curl 'http://localhost:7000/auth/status'
 
 ## 🆚 与 Sa-Token 版对比（`ddd4j-sample-javalin-satoken`）
 
-| 文件         | Sa-Token 版                                 | Shiro 版（本示例）                                    | 差异           |
-|--------------|---------------------------------------------|--------------------------------------------------------|----------------|
-| `pom.xml`    | `ddd4j-auth-satoken` + 不需要 shiro-core  | `ddd4j-auth-shiro` + `shiro-core 2.0.6`              | 依赖替换       |
-| 启动类       | `JavalinSaTokenApplication`（端口 8085）   | `JavalinShiroApplication`（端口 7000）               | 启动端口 + 引导 Shiro |
-| `AuthConfig` | 无                                          | 新增（`AuthConfig.initShiro()` 引导 SecurityManager） | Shiro 特有步骤 |
-| `AuthService` | **完全一致**                                | **完全一致**                                          | 0 改动         |
-| `AuthController` | **完全一致**                              | **完全一致**                                          | 0 改动         |
-| `AuthModule`   | **完全一致**                              | **完全一致**                                          | 0 改动         |
+| 文件               | Sa-Token 版                            | Shiro 版（本示例）                                    | 差异              |
+|------------------|---------------------------------------|-------------------------------------------------|-----------------|
+| `pom.xml`        | `ddd4j-auth-satoken` + 不需要 shiro-core | `ddd4j-auth-shiro` + `shiro-core 2.0.6`         | 依赖替换            |
+| 启动类              | `JavalinSaTokenApplication`（端口 8085）  | `JavalinShiroApplication`（端口 7000）              | 启动端口 + 引导 Shiro |
+| `AuthConfig`     | 无                                     | 新增（`AuthConfig.initShiro()` 引导 SecurityManager） | Shiro 特有步骤      |
+| `AuthService`    | **完全一致**                              | **完全一致**                                        | 0 改动            |
+| `AuthController` | **完全一致**                              | **完全一致**                                        | 0 改动            |
+| `AuthModule`     | **完全一致**                              | **完全一致**                                        | 0 改动            |
 
 > 业务代码（`AuthService` / `AuthController` / `AuthModule` 中的 `SubjectDataProvider`）与 Sa-Token 版**逐字符一致**。
 > 唯一多出的代码是 `AuthConfig.initShiro()`，仅与 Shiro SecurityManager 引导有关，**业务逻辑零侵入**。
@@ -117,12 +118,12 @@ public class AuthService {
 
 ## 🔄 切换鉴权框架
 
-| 切换目标           | pom.xml 变化                                   |
-|--------------------|-----------------------------------------------|
-| Sa-Token → Shiro   | 替换 `ddd4j-auth-{sa-token,shiro}` + 添加 `shiro-core` |
-| Shiro → Security   | 替换 `ddd4j-auth-{shiro,security}`             |
-| Spring → Quarkus   | `ddd4j-runtime-{spring,quarkus}`               |
-| Quarkus → Javalin  | `ddd4j-runtime-{quarkus,guice}`                |
+| 切换目标              | pom.xml 变化                                         |
+|-------------------|----------------------------------------------------|
+| Sa-Token → Shiro  | 替换 `ddd4j-auth-{sa-token,shiro}` + 添加 `shiro-core` |
+| Shiro → Security  | 替换 `ddd4j-auth-{shiro,security}`                   |
+| Spring → Quarkus  | `ddd4j-runtime-{spring,quarkus}`                   |
+| Quarkus → Javalin | `ddd4j-runtime-{quarkus,guice}`                    |
 
 业务代码（`AuthController`、`AuthService`、`AuthModule` 中的数据源部分）**无需任何修改**。
 
@@ -184,6 +185,7 @@ ddd4j-sample-javalin-shiro/
 ### 🛒 业务能力（Order + Goods）
 
 **Order（充血模型轨）**
+
 - `POST /orders`                — 创建草稿订单
 - `GET  /orders/{id}`           — 查询订单
 - `GET  /orders/by-order-no?orderNo=xxx` — 按订单号查询
@@ -194,6 +196,7 @@ ddd4j-sample-javalin-shiro/
 - `GET  /orders/{id}/discount`  — 预览折扣（领域服务）
 
 **Goods（Model/Query 轨）**
+
 - `POST /api/goods`                          — 创建商品
 - `PUT  /api/goods/{id}`                     — 更新商品
 - `PUT  /api/goods/{id}/status?status=ON_SALE` — 调整状态
@@ -205,6 +208,7 @@ ddd4j-sample-javalin-shiro/
 - `GET  /api/goods/count?...`               — 计数（充血）
 
 **curl 示例**
+
 ```bash
 # 1) 创建商品
 curl -X POST 'http://localhost:7000/api/goods' \
@@ -240,11 +244,11 @@ curl 'http://localhost:7000/api/goods/page?current=1&size=10&status=ON_SALE&orde
 
 ## 🔗 相关示例
 
-| 框架    | Sa-Token                                            | Shiro                                                | Security                                          |
-|---------|-----------------------------------------------------|------------------------------------------------------|---------------------------------------------------|
-| Spring  | `ddd4j-sample-spring-satoken`                       | `ddd4j-sample-spring-shiro`                          | `ddd4j-sample-spring-security`                    |
-| Quarkus | `ddd4j-sample-quarkus-satoken`                      | `ddd4j-sample-quarkus-shiro`                         | （待补充）                                        |
-| Javalin | `ddd4j-sample-javalin-satoken`                      | `ddd4j-sample-javalin-shiro`（本示例）               | （待补充）                                        |
+| 框架      | Sa-Token                       | Shiro                             | Security                       |
+|---------|--------------------------------|-----------------------------------|--------------------------------|
+| Spring  | `ddd4j-sample-spring-satoken`  | `ddd4j-sample-spring-shiro`       | `ddd4j-sample-spring-security` |
+| Quarkus | `ddd4j-sample-quarkus-satoken` | `ddd4j-sample-quarkus-shiro`      | （待补充）                          |
+| Javalin | `ddd4j-sample-javalin-satoken` | `ddd4j-sample-javalin-shiro`（本示例） | （待补充）                          |
 
 ---
 

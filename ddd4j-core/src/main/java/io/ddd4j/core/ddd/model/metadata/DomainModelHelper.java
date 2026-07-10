@@ -1,8 +1,6 @@
 package io.ddd4j.core.ddd.model.metadata;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,14 +52,12 @@ public final class DomainModelHelper {
      * 获取 Domain Model 的元数据（带缓存）。
      *
      * @param modelClass                Domain Model 类型
-     * @param poClass                   对应的 PO 类型（用于未来扩展，参数签名保留）
      * @param poProperty2ColumnProvider PO 字段名 → DB 列名 的 provider（基础设施层实现）
      * @param <M>                       Domain Model 泛型
      * @return DomainModelInfo 缓存实例
      */
     @SuppressWarnings("unchecked")
     public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass,
-                                                      Class<?> poClass,
                                                       Function<String, String> poProperty2ColumnProvider) {
         if (modelClass == null || modelClass.isPrimitive() || modelClass.isInterface()) {
             return null;
@@ -76,7 +72,7 @@ public final class DomainModelHelper {
                 return (DomainModelInfo<M>) info;
             }
             if (log.isDebugEnabled()) {
-                log.debug("init DomainModelInfo for class {} (po={})", modelClass.getName(), poClass);
+                log.debug("init DomainModelInfo for class {}", modelClass.getName());
             }
             info = new DomainModelInfo<>(modelClass, poProperty2ColumnProvider);
             MODEL_INFO_CACHE.put(modelClass, info);
@@ -88,7 +84,7 @@ public final class DomainModelHelper {
      * 仅用 Domain Model 构建（PO provider 不传，列名全部走 fallback）。
      */
     public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass) {
-        return getModelInfo(modelClass, null, null);
+        return getModelInfo(modelClass, null);
     }
 
     /**

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.RequestInterceptor;
 import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.web.webmvc.ws.BaseWebSocketServer;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
 import io.ddd4j.web.webmvc.core.GlobalResponseRAdvice;
 import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;
@@ -12,6 +11,7 @@ import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
 import io.ddd4j.web.webmvc.interceptor.FeignHeaderInterceptor;
 import io.ddd4j.web.webmvc.utils.LocalDateTimeFormatter;
 import io.ddd4j.web.webmvc.utils.LocalTimeFormatter;
+import io.ddd4j.web.webmvc.ws.BaseWebSocketServer;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +40,17 @@ import java.util.Objects;
 // @EnableConfigurationProperties(BaseWebProperties.class)
 @RequiredArgsConstructor
 public class BaseWebConfig implements WebMvcConfigurer {
-    /** 基础 Web 拦截器列表 */
+    /**
+     * 基础 Web 拦截器列表
+     */
     final List<BaseWebInterceptor> baseWebInterceptors;
-    /** 核心基础配置属性 */
+    /**
+     * 核心基础配置属性
+     */
     final BaseCoreProperties baseCoreProperties;
-    /** WebSocket 服务端列表 */
+    /**
+     * WebSocket 服务端列表
+     */
     final List<BaseWebSocketServer> baseWebSocketServers;
 
     /**

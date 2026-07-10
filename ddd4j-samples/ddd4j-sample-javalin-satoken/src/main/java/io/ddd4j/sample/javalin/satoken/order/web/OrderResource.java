@@ -121,7 +121,9 @@ public class OrderResource {
         };
     }
 
-    /** 折扣预览响应。 */
+    /**
+     * 折扣预览响应。
+     */
     public record DiscountView(String amount, String currency) {
     }
 }

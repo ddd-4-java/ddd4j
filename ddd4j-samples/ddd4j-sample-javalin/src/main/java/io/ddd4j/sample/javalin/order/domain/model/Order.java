@@ -2,11 +2,7 @@ package io.ddd4j.sample.javalin.order.domain.model;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.sample.javalin.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.javalin.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.javalin.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.javalin.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.javalin.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.javalin.order.domain.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +34,10 @@ public class Order extends AggregateRoot<String> {
      */
     private final String buyerId;
     /**
+     * 订单行列表
+     */
+    private final List<OrderLine> lines = new ArrayList<>();
+    /**
      * 买家名称
      */
     private String buyerName;
@@ -45,10 +45,6 @@ public class Order extends AggregateRoot<String> {
      * 订单状态
      */
     private OrderStatus status;
-    /**
-     * 订单行列表
-     */
-    private final List<OrderLine> lines = new ArrayList<>();
 
     public Order(String id, String orderNo, String buyerId, String buyerName, OrderStatus status, List<OrderLine> lines) {
         if (StrKit.isBlank(id)) {
@@ -142,8 +138,8 @@ public class Order extends AggregateRoot<String> {
      *
      * @param goodsId   商品 ID
      * @param goodsName 商品名称
-     * @param quantity    数量
-     * @param unitPrice   单价
+     * @param quantity  数量
+     * @param unitPrice 单价
      */
     public void addLine(String goodsId, String goodsName, int quantity, Money unitPrice) {
         assertDraft();

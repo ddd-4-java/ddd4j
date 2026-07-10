@@ -57,10 +57,16 @@ public class PulsarMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    private static String messageIdString(MessageId id) {
+        return Objects.isNull(id) ? null : id.toString();
+    }
+
     @Override
     public String impl() {
         return "pulsar";
     }
+
+    // ========================= 生产者 =========================
 
     /**
      * 仿照 {@code KafkaMQClient}：根据 {@link io.ddd4j.mq.MQProperties#getPartitionKeyStrategy()}
@@ -90,8 +96,6 @@ public class PulsarMQClient implements MQClient {
             case CUSTOM -> MQClient.super.partitionKey(event);  // 占位：子类应自己覆写
         };
     }
-
-    // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -132,6 +136,8 @@ public class PulsarMQClient implements MQClient {
         }
     }
 
+    // ========================= 消费者 =========================
+
     private Producer<byte[]> producer(String topic) throws Exception {
         return producers.computeIfAbsent(topic, t -> {
             try {
@@ -144,8 +150,6 @@ public class PulsarMQClient implements MQClient {
             }
         });
     }
-
-    // ========================= 消费者 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -204,10 +208,6 @@ public class PulsarMQClient implements MQClient {
                 .subscribe();
         consumers.add(consumer);
         return true;
-    }
-
-    private static String messageIdString(MessageId id) {
-        return Objects.isNull(id) ? null : id.toString();
     }
 
     @Override

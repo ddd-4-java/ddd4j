@@ -3,10 +3,10 @@ package io.ddd4j.cache.memcached;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
-import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 import net.rubyeye.xmemcached.MemcachedClient;
@@ -149,7 +149,11 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
     @SuppressWarnings("unchecked")
     private V deserialize(String json) {
         if (StrKit.isBlank(json)) return null;
-        try { return objectMapper.readValue(json, valueType); } catch (Exception e) { return null; }
+        try {
+            return objectMapper.readValue(json, valueType);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // ==================== CAS SPI 实现（基于 xmemcached 原生 cas 版本号）====================
@@ -173,9 +177,20 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
             // 2. 构造 ddd4j GetsResponse（version 仅 memcached 有真实值）
             io.ddd4j.core.cache.GetsResponse<V> response =
                     new io.ddd4j.core.cache.GetsResponse<>() {
-                        @Override public String key() { return cachedKey; }
-                        @Override public V value() { return currentValue; }
-                        @Override public long version() { return currentCas; }
+                        @Override
+                        public String key() {
+                            return cachedKey;
+                        }
+
+                        @Override
+                        public V value() {
+                            return currentValue;
+                        }
+
+                        @Override
+                        public long version() {
+                            return currentCas;
+                        }
                     };
 
             // 3. 回调计算新值

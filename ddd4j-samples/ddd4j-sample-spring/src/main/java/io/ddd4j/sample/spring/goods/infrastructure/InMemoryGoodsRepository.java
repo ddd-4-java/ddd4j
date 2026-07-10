@@ -12,11 +12,7 @@ import io.ddd4j.sample.spring.goods.domain.GoodsStatus;
 import io.ddd4j.spring.annotation.DomainRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -189,7 +185,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
      * 匹配单个商品是否满足查询条件。
      *
      * @param goods 商品
-     * @param query   查询条件
+     * @param query 查询条件
      * @return true 表示命中
      */
     private boolean matches(Goods goods, GoodsQuery query) {

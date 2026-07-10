@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.annotation.api.RawResponse;
 import io.ddd4j.core.api.IR;
-import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.api.R;
+import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.web.webmvc.config.BaseWebProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +28,15 @@ import java.util.Objects;
  */
 @RestControllerAdvice
 public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
-    /** MVC ObjectMapper */
+    /**
+     * MVC ObjectMapper
+     */
     @Autowired
     @Qualifier("mvcObjectMapper")
     ObjectMapper objectMapper;
-    /** Web 基础配置属性 */
+    /**
+     * Web 基础配置属性
+     */
     @Autowired
     BaseWebProperties baseWebProperties;
 
@@ -45,8 +49,8 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object data, MethodParameter returnType, MediaType mediaType,
-                                   Class<? extends HttpMessageConverter<?>> aClass,
-                                   ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
+                                  Class<? extends HttpMessageConverter<?>> aClass,
+                                  ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
         if (Objects.isNull(data) || returnType.getParameterType().isAssignableFrom(void.class)) {
             return R.ok();
         }

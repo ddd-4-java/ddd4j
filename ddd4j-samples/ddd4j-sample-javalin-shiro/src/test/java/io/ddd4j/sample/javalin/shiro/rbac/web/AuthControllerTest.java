@@ -2,11 +2,7 @@ package io.ddd4j.sample.javalin.shiro.rbac.web;
 
 import io.ddd4j.sample.javalin.shiro.TestSupport;
 import io.javalin.Javalin;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,9 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 鉴权 / RBAC 集成测试（Javalin + Guice + Apache Shiro，random port）。
@@ -51,22 +45,22 @@ class AuthControllerTest {
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> postForm(String token, String path, String formBody) throws Exception {
         return httpClient.send(authReq(token, path)
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(formBody)).build(),
+                        .header("Content-Type", "application/x-www-form-urlencoded")
+                        .POST(HttpRequest.BodyPublishers.ofString(formBody)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> postForm(String path, String formBody) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(formBody)).build(),
+                        .header("Content-Type", "application/x-www-form-urlencoded")
+                        .POST(HttpRequest.BodyPublishers.ofString(formBody)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
@@ -80,7 +74,9 @@ class AuthControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
-    /** Shiro 登录返回 token（token 就是 sessionId 字符串）。 */
+    /**
+     * Shiro 登录返回 token（token 就是 sessionId 字符串）。
+     */
     private String login(String loginId, String password) throws Exception {
         HttpResponse<String> r = postJson("/auth/login",
                 "{\"loginId\":\"" + loginId + "\",\"password\":\"" + password + "\"}");
@@ -106,8 +102,8 @@ class AuthControllerTest {
 
     private HttpResponse<String> authPost(String token, String path, String body) throws Exception {
         return httpClient.send(authReq(token, path)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
@@ -290,9 +286,9 @@ class AuthControllerTest {
     void updateUser_asAdmin_shouldReturnOk() throws Exception {
         String token = login("admin", "admin123");
         HttpResponse<String> r = httpClient.send(authReq(token, "/auth/users/admin")
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(
-                        "{\"displayName\":\"Updated\",\"password\":null}")).build(),
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(
+                                "{\"displayName\":\"Updated\",\"password\":null}")).build(),
                 HttpResponse.BodyHandlers.ofString());
         assertEquals(200, r.statusCode());
     }
@@ -326,9 +322,9 @@ class AuthControllerTest {
     void updateRole_asAdmin_shouldReturnOk() throws Exception {
         String token = login("admin", "admin123");
         HttpResponse<String> r = httpClient.send(authReq(token, "/auth/roles/user")
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(
-                        "{\"name\":\"RenamedUser\",\"permissions\":[\"user:list\"]}")).build(),
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(
+                                "{\"name\":\"RenamedUser\",\"permissions\":[\"user:list\"]}")).build(),
                 HttpResponse.BodyHandlers.ofString());
         assertEquals(200, r.statusCode());
     }

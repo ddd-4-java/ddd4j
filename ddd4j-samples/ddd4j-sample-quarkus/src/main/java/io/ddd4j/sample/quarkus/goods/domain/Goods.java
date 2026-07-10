@@ -74,7 +74,7 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
      * 全参构造器。
      */
     public Goods(Long id, String code, String name, BigDecimal price, Integer stock,
-                   GoodsStatus status, LocalDateTime createTime, LocalDateTime updateTime) {
+                 GoodsStatus status, LocalDateTime createTime, LocalDateTime updateTime) {
         this.id = id;
         this.code = code;
         this.name = name;

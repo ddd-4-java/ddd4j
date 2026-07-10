@@ -11,16 +11,18 @@ import io.ddd4j.kit.lang.IdKit;
  */
 public class GlobalSequence {
 
-    /** 雪花算法 ID 生成器 */
+    /**
+     * 雪花算法 ID 生成器
+     */
     private final Snowflake snowflake;
 
     /**
      * 构造函数
      *
-     * @param workerId           工作机器 ID，范围 0~31
-     * @param dataCenterId       数据中心 ID，范围 0~255
-     * @param useSystemClock     是否使用 SystemClock 获取当前时间戳
-     * @param timeOffset         允许时间回拨的毫秒量
+     * @param workerId            工作机器 ID，范围 0~31
+     * @param dataCenterId        数据中心 ID，范围 0~255
+     * @param useSystemClock      是否使用 SystemClock 获取当前时间戳
+     * @param timeOffset          允许时间回拨的毫秒量
      * @param randomSequenceLimit 随机序列号上限
      */
     public GlobalSequence(long workerId, long dataCenterId, boolean useSystemClock,

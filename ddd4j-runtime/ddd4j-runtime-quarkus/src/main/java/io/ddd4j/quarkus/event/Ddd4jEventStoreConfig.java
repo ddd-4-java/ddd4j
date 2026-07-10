@@ -26,7 +26,9 @@ import java.util.concurrent.Executors;
 @ApplicationScoped
 public class Ddd4jEventStoreConfig {
 
-    /** EventStore 类型配置 */
+    /**
+     * EventStore 类型配置
+     */
     @Inject
     @ConfigProperty(name = "ddd4j.ddd.event-store.type", defaultValue = "mem")
     String eventStoreType;

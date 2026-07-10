@@ -2,6 +2,16 @@ package io.ddd4j.sample.javalin.shiro.config;
 
 import com.google.inject.AbstractModule;
 import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.sample.javalin.shiro.goods.application.GoodsApplicationService;
+import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsRepository;
+import io.ddd4j.sample.javalin.shiro.goods.infrastructure.InMemoryGoodsRepository;
+import io.ddd4j.sample.javalin.shiro.goods.web.GoodsQueryResource;
+import io.ddd4j.sample.javalin.shiro.goods.web.GoodsResource;
+import io.ddd4j.sample.javalin.shiro.order.application.OrderApplicationService;
+import io.ddd4j.sample.javalin.shiro.order.domain.repository.OrderRepository;
+import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
+import io.ddd4j.sample.javalin.shiro.order.infrastructure.InMemoryOrderRepository;
+import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
 import io.ddd4j.sample.javalin.shiro.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthenticationController;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController;
@@ -9,16 +19,6 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryPermissionRepositor
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryRoleRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
-import io.ddd4j.sample.javalin.shiro.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.shiro.order.domain.repository.OrderRepository;
-import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.shiro.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
-import io.ddd4j.sample.javalin.shiro.goods.application.GoodsApplicationService;
-import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsRepository;
-import io.ddd4j.sample.javalin.shiro.goods.infrastructure.InMemoryGoodsRepository;
-import io.ddd4j.sample.javalin.shiro.goods.web.GoodsQueryResource;
-import io.ddd4j.sample.javalin.shiro.goods.web.GoodsResource;
 
 import java.util.Objects;
 

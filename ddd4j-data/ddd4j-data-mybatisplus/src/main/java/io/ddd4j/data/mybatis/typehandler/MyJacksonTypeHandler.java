@@ -29,7 +29,9 @@ import java.util.TimeZone;
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class MyJacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
 
-    /** Jackson ObjectMapper 实例（静态共享，已配置时区/日期/忽略 null） */
+    /**
+     * Jackson ObjectMapper 实例（静态共享，已配置时区/日期/忽略 null）
+     */
     private static final ObjectMapper OBJECT_MAPPER;
 
     static {

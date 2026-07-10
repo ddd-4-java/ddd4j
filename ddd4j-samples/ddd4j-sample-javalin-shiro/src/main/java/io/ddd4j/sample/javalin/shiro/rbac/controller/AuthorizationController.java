@@ -44,6 +44,34 @@ public class AuthorizationController {
     // ============================ User CRUD ============================
 
     /**
+     * 数组 → Set 转换（保留顺序）。
+     */
+    private static Set<String> toSet(String[] arr) {
+        if (arr == null) {
+            return new LinkedHashSet<>();
+        }
+        Set<String> set = new LinkedHashSet<>();
+        for (String s : arr) {
+            set.add(s);
+        }
+        return set;
+    }
+
+    private static UserView toUserView(User user) {
+        return new UserView(user.loginId(), user.displayName(),
+                new LinkedHashSet<>(user.roles()),
+                new LinkedHashSet<>(user.permissions()));
+    }
+
+    private static RoleView toRoleView(Role role) {
+        return new RoleView(role.code(), role.name(), new LinkedHashSet<>(role.permissions()));
+    }
+
+    private static PermissionView toPermissionView(Permission permission) {
+        return new PermissionView(permission.code(), permission.description());
+    }
+
+    /**
      * GET /auth/users —— 查询用户列表（需要 user:list 权限）。
      */
     public void listUsers(Context ctx) {
@@ -54,6 +82,8 @@ public class AuthorizationController {
         Collection<User> users = rbacService.listUsers();
         ctx.json(R.ok(users.stream().map(AuthorizationController::toUserView).toList()));
     }
+
+    // ============================ Role CRUD ============================
 
     /**
      * GET /auth/users/{id} —— 查询单个用户。
@@ -117,7 +147,7 @@ public class AuthorizationController {
         ctx.json(R.ok("user deleted", Map.of("loginId", loginId)));
     }
 
-    // ============================ Role CRUD ============================
+    // ============================ Permission CRUD ============================
 
     /**
      * GET /auth/roles —— 查询角色列表（需要 role:list 权限）。
@@ -157,6 +187,8 @@ public class AuthorizationController {
         ctx.json(R.ok("role updated", toRoleView(role)));
     }
 
+    // ============================ 私有工具方法 ============================
+
     /**
      * DELETE /auth/roles/{code} —— 删除角色（需要 admin 角色）。
      */
@@ -168,8 +200,6 @@ public class AuthorizationController {
         rbacService.deleteRole(code);
         ctx.json(R.ok("role deleted", Map.of("code", code)));
     }
-
-    // ============================ Permission CRUD ============================
 
     /**
      * GET /auth/permissions —— 查询权限列表（需要 permission:list 权限）。
@@ -207,8 +237,6 @@ public class AuthorizationController {
         ctx.json(R.ok("permission deleted", Map.of("code", code)));
     }
 
-    // ============================ 私有工具方法 ============================
-
     /**
      * 校验当前会话是否为 admin 角色，否则直接返回 403 响应。
      */
@@ -218,34 +246,6 @@ public class AuthorizationController {
             return false;
         }
         return true;
-    }
-
-    /**
-     * 数组 → Set 转换（保留顺序）。
-     */
-    private static Set<String> toSet(String[] arr) {
-        if (arr == null) {
-            return new LinkedHashSet<>();
-        }
-        Set<String> set = new LinkedHashSet<>();
-        for (String s : arr) {
-            set.add(s);
-        }
-        return set;
-    }
-
-    private static UserView toUserView(User user) {
-        return new UserView(user.loginId(), user.displayName(),
-                new LinkedHashSet<>(user.roles()),
-                new LinkedHashSet<>(user.permissions()));
-    }
-
-    private static RoleView toRoleView(Role role) {
-        return new RoleView(role.code(), role.name(), new LinkedHashSet<>(role.permissions()));
-    }
-
-    private static PermissionView toPermissionView(Permission permission) {
-        return new PermissionView(permission.code(), permission.description());
     }
 
     // ============================ DTO 视图对象 ============================

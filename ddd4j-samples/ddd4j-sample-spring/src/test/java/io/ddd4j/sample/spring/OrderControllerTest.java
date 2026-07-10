@@ -42,7 +42,9 @@ class OrderControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    /** 创建一个草稿订单并返回其订单 ID。 */
+    /**
+     * 创建一个草稿订单并返回其订单 ID。
+     */
     private String createDraft(String orderNo, String buyerId, String buyerName) throws Exception {
         MvcResult result = mockMvc.perform(post("/orders")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +59,9 @@ class OrderControllerTest {
         return body.path("data").path("id").asText();
     }
 
-    /** 为订单添加一个订单行。 */
+    /**
+     * 为订单添加一个订单行。
+     */
     private void addLine(String orderId, String goodsId, String goodsName, int qty, BigDecimal price) throws Exception {
         mockMvc.perform(post("/orders/" + orderId + "/lines")
                         .contentType(MediaType.APPLICATION_JSON)

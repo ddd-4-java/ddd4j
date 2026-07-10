@@ -1,11 +1,7 @@
 package io.ddd4j.sample.javalin.cqrs.event;
 
 import io.ddd4j.core.cqrs.readmodel.TypedEventHandler;
-import io.ddd4j.sample.javalin.cqrs.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.javalin.cqrs.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.javalin.cqrs.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.javalin.cqrs.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.javalin.cqrs.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.javalin.cqrs.order.domain.event.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -37,47 +33,102 @@ public class OrderEventListener {
         return list;
     }
 
-    /** OrderCreated 事件处理器 */
+    /**
+     * OrderCreated 事件处理器
+     */
     class OrderCreatedHandler implements TypedEventHandler<OrderCreatedEvent> {
-        @Override public String getEventType() { return "OrderCreated"; }
-        @Override public Class<OrderCreatedEvent> getEventClass() { return OrderCreatedEvent.class; }
-        @Override public void handle(OrderCreatedEvent event) {
+        @Override
+        public String getEventType() {
+            return "OrderCreated";
+        }
+
+        @Override
+        public Class<OrderCreatedEvent> getEventClass() {
+            return OrderCreatedEvent.class;
+        }
+
+        @Override
+        public void handle(OrderCreatedEvent event) {
             log.info("[OrderEventListener] 订单已创建: orderId={}", event.source());
         }
     }
 
-    /** OrderLineAdded 事件处理器 */
+    /**
+     * OrderLineAdded 事件处理器
+     */
     class OrderLineAddedHandler implements TypedEventHandler<OrderLineAddedEvent> {
-        @Override public String getEventType() { return "OrderLineAdded"; }
-        @Override public Class<OrderLineAddedEvent> getEventClass() { return OrderLineAddedEvent.class; }
-        @Override public void handle(OrderLineAddedEvent event) {
+        @Override
+        public String getEventType() {
+            return "OrderLineAdded";
+        }
+
+        @Override
+        public Class<OrderLineAddedEvent> getEventClass() {
+            return OrderLineAddedEvent.class;
+        }
+
+        @Override
+        public void handle(OrderLineAddedEvent event) {
             log.info("[OrderEventListener] 订单行已添加: orderId={}", event.source());
         }
     }
 
-    /** OrderPaid 事件处理器 */
+    /**
+     * OrderPaid 事件处理器
+     */
     class OrderPaidHandler implements TypedEventHandler<OrderPaidEvent> {
-        @Override public String getEventType() { return "OrderPaid"; }
-        @Override public Class<OrderPaidEvent> getEventClass() { return OrderPaidEvent.class; }
-        @Override public void handle(OrderPaidEvent event) {
+        @Override
+        public String getEventType() {
+            return "OrderPaid";
+        }
+
+        @Override
+        public Class<OrderPaidEvent> getEventClass() {
+            return OrderPaidEvent.class;
+        }
+
+        @Override
+        public void handle(OrderPaidEvent event) {
             log.info("[OrderEventListener] 订单已支付: orderId={}", event.source());
         }
     }
 
-    /** OrderShipped 事件处理器 */
+    /**
+     * OrderShipped 事件处理器
+     */
     class OrderShippedHandler implements TypedEventHandler<OrderShippedEvent> {
-        @Override public String getEventType() { return "OrderShipped"; }
-        @Override public Class<OrderShippedEvent> getEventClass() { return OrderShippedEvent.class; }
-        @Override public void handle(OrderShippedEvent event) {
+        @Override
+        public String getEventType() {
+            return "OrderShipped";
+        }
+
+        @Override
+        public Class<OrderShippedEvent> getEventClass() {
+            return OrderShippedEvent.class;
+        }
+
+        @Override
+        public void handle(OrderShippedEvent event) {
             log.info("[OrderEventListener] 订单已发货: orderId={}", event.source());
         }
     }
 
-    /** OrderCancelled 事件处理器 */
+    /**
+     * OrderCancelled 事件处理器
+     */
     class OrderCancelledHandler implements TypedEventHandler<OrderCancelledEvent> {
-        @Override public String getEventType() { return "OrderCancelled"; }
-        @Override public Class<OrderCancelledEvent> getEventClass() { return OrderCancelledEvent.class; }
-        @Override public void handle(OrderCancelledEvent event) {
+        @Override
+        public String getEventType() {
+            return "OrderCancelled";
+        }
+
+        @Override
+        public Class<OrderCancelledEvent> getEventClass() {
+            return OrderCancelledEvent.class;
+        }
+
+        @Override
+        public void handle(OrderCancelledEvent event) {
             log.info("[OrderEventListener] 订单已取消: orderId={}", event.source());
         }
     }

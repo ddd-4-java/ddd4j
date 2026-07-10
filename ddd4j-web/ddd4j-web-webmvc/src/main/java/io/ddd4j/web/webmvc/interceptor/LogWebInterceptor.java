@@ -20,9 +20,13 @@ import java.time.LocalDateTime;
  */
 @Slf4j
 public class LogWebInterceptor extends BaseWebInterceptor {
-    /** 请求开始时间（线程本地） */
+    /**
+     * 请求开始时间（线程本地）
+     */
     final ThreadLocal<LocalDateTime> beginTime = new ThreadLocal<>();
-    /** Web 基础配置属性 */
+    /**
+     * Web 基础配置属性
+     */
     @Autowired
     BaseWebProperties baseWebProperties;
 

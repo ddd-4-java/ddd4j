@@ -58,10 +58,10 @@ public abstract class MybatisRawAggregateRepository<M extends AggregateRoot<?>, 
     protected final Class<Q> queryClass;
 
     protected MybatisRawAggregateRepository(SqlSession sqlSession,
-                                          Class<?> mapperClass,
-                                          Class<M> modelClass,
-                                          Class<P> persistenceClass,
-                                          Class<Q> queryClass) {
+                                            Class<?> mapperClass,
+                                            Class<M> modelClass,
+                                            Class<P> persistenceClass,
+                                            Class<Q> queryClass) {
         this.sqlSession = sqlSession;
         this.mapperClass = mapperClass;
         this.modelClass = modelClass;
@@ -92,9 +92,9 @@ public abstract class MybatisRawAggregateRepository<M extends AggregateRoot<?>, 
         try {
             // 约定：mapper 中有 findByIdPo(ID) 方法
             Object po = sqlSession.selectOne(
-                mapperClass.getName() + ".findByIdPo", id);
+                    mapperClass.getName() + ".findByIdPo", id);
             return po == null ? Optional.empty()
-                              : Optional.ofNullable(toModel((P) po));
+                    : Optional.ofNullable(toModel((P) po));
         } catch (Exception e) {
             // 业务方应确保 mapper 中有 findByIdPo
             log.warn("findById({}) failed: {}", id, e.getMessage());
@@ -127,9 +127,9 @@ public abstract class MybatisRawAggregateRepository<M extends AggregateRoot<?>, 
     public Optional<M> findFirst() {
         try {
             Object po = sqlSession.selectOne(
-                mapperClass.getName() + ".findFirstPo");
+                    mapperClass.getName() + ".findFirstPo");
             return po == null ? Optional.empty()
-                              : Optional.ofNullable(toModel((P) po));
+                    : Optional.ofNullable(toModel((P) po));
         } catch (Exception e) {
             log.warn("findFirst failed: {}", e.getMessage());
             return Optional.empty();
@@ -153,7 +153,7 @@ public abstract class MybatisRawAggregateRepository<M extends AggregateRoot<?>, 
         int page = (int) Math.max(0, query.getCurrent() - 1);
         int size = (int) query.getSize();
         List<P> list = sqlSession.selectList(
-            mapperClass.getName() + ".findPage", null, new RowBounds(page * size, size));
+                mapperClass.getName() + ".findPage", null, new RowBounds(page * size, size));
         List<M> models = list.stream().map(this::toModel).collect(java.util.stream.Collectors.toList());
         return io.ddd4j.core.api.Page.succeed(models, count(), query.getCurrent(), size);
     }

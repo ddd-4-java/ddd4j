@@ -7,8 +7,6 @@ import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-
-import io.ddd4j.data.jpa.query.AbstractJpaQuery;
 import io.ddd4j.kit.lang.BeanKit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -19,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static io.ddd4j.core.cqrs.query.Query.*;
 
 /**
  * JPA 轨道 Repository 实现（标准 JPA Criteria API）。
@@ -89,9 +85,9 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
     @Override
     public Optional<M> findFirst() {
         return Optional.ofNullable(
-            em.createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
-              .setMaxResults(1)
-              .getSingleResultOrNull()
+                em.createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
+                        .setMaxResults(1)
+                        .getSingleResultOrNull()
         ).map(this::toModel);
     }
 

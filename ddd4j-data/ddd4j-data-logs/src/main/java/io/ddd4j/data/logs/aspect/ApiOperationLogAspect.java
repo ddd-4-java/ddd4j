@@ -29,18 +29,24 @@ import java.util.Objects;
 @Slf4j
 public class ApiOperationLogAspect {
 
-    /** 请求 ID 参数名 */
+    /**
+     * 请求 ID 参数名
+     */
     public static final String REQUEST_ID_KEY = "requestId";
-    /** 雪花算法 ID 生成器 */
+    /**
+     * 雪花算法 ID 生成器
+     */
     private final Snowflake snowflake;
-    /** 操作日志提供者 */
+    /**
+     * 操作日志提供者
+     */
     private final ApiOperationLogProvider logProvider;
 
     /**
      * 构造方法装配。
      *
-     * @param snowflake    雪花算法 ID 生成器
-     * @param logProvider  操作日志提供者
+     * @param snowflake   雪花算法 ID 生成器
+     * @param logProvider 操作日志提供者
      */
     public ApiOperationLogAspect(Snowflake snowflake, ApiOperationLogProvider logProvider) {
         this.snowflake = snowflake;

@@ -14,15 +14,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link ProjectionRunner} 单元测试。
@@ -48,6 +41,55 @@ class ProjectionRunnerTest {
     @BeforeEach
     void setUp() {
         runner = new ProjectionRunner<>(projectionService, chunkReader);
+    }
+
+    /**
+     * 真实可记录的 view 实现：记录被 handle 的事件，便于断言交互契约。
+     */
+    static class TestView implements ProjectionView<String> {
+
+        final String name;
+        final String streamId;
+        final int chunkSize;
+        final List<String> eventTypes;
+        final List<String> handled = new java.util.ArrayList<>();
+
+        TestView(String name, String streamId, int chunkSize, List<String> eventTypes) {
+            this.name = name;
+            this.streamId = streamId;
+            this.chunkSize = chunkSize;
+            this.eventTypes = eventTypes;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getStreamId() {
+            return streamId != null ? streamId : name;
+        }
+
+        @Override
+        public String getCron() {
+            return "0/5 * * * * ?";
+        }
+
+        @Override
+        public int getChunkSize() {
+            return chunkSize;
+        }
+
+        @Override
+        public Collection<String> getEventTypes() {
+            return eventTypes;
+        }
+
+        @Override
+        public void handleEvents(Collection<String> events) {
+            handled.addAll(events);
+        }
     }
 
     @Nested
@@ -355,55 +397,6 @@ class ProjectionRunnerTest {
 
             assertThat(view.handled).containsExactly("e1");
             verify(projectionService).updateProjectionPosition("person-list", 1L);
-        }
-    }
-
-    /**
-     * 真实可记录的 view 实现：记录被 handle 的事件，便于断言交互契约。
-     */
-    static class TestView implements ProjectionView<String> {
-
-        final String name;
-        final String streamId;
-        final int chunkSize;
-        final List<String> eventTypes;
-        final List<String> handled = new java.util.ArrayList<>();
-
-        TestView(String name, String streamId, int chunkSize, List<String> eventTypes) {
-            this.name = name;
-            this.streamId = streamId;
-            this.chunkSize = chunkSize;
-            this.eventTypes = eventTypes;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getStreamId() {
-            return streamId != null ? streamId : name;
-        }
-
-        @Override
-        public String getCron() {
-            return "0/5 * * * * ?";
-        }
-
-        @Override
-        public int getChunkSize() {
-            return chunkSize;
-        }
-
-        @Override
-        public Collection<String> getEventTypes() {
-            return eventTypes;
-        }
-
-        @Override
-        public void handleEvents(Collection<String> events) {
-            handled.addAll(events);
         }
     }
 }

@@ -3,35 +3,37 @@
 ddd4j + Spring Boot **完整 DDD/CQRS 示例工程**，演示 ddd4j 的所有核心能力。
 
 本示例**同时演示双轨 DDD 业务**：
+
 - **第二轨（充血模型）**：`order` 子模块 - `Order` 聚合根完整业务方法（addLine/pay/ship/cancel）
 - **第三轨（Model/Query 轻量 PO）**：`goods` 子模块 - `Goods` PO 实体 + `GoodsQuery` 充血查询
 
 ## 演示内容
 
-| 能力 | 实现 | 轨 |
-|------|------|-----|
-| **充血聚合** | `Order` 继承 `AggregateRoot`，封装 draft/addLine/pay/ship/cancel 完整业务行为 | 第二轨 |
-| **值对象** | `Money` 实现 `ValueObject`（record），add/multiply/discount，币种不变式 | 第二轨 |
-| **领域事件** | `OrderCreatedEvent` 等继承 `DomainEvent`，聚合内部 `registerEvent` 注册 | 第二轨 |
-| **仓储** | `OrderRepository` 接口（`@DomainRepository`）+ `InMemoryOrderRepository` 实现 | 第二轨 |
-| **领域服务** | `OrderDomainService`（`@DomainService`），演示跨聚合的折扣计算 | 第二轨 |
-| **应用服务** | `OrderApplicationService`（`@ApplicationService`），编排用例 + 事务边界 | 第二轨 |
-| **CQRS 查询** | `OrderQueryService`（读侧）+ `OrderQueryController`（独立查询端点） | 第二轨 |
-| **PO 实体** | `Goods`（`@DomainEntity(aggregateRoot = true)`），`@Data` 轻量 PO 形态 | 第三轨 |
-| **充血查询** | `GoodsQuery` 继承 `Query`，自带 `page()` / `list()` / `count()` 能力 | 第三轨 |
-| **Goods 仓储** | `GoodsRepository` 接口（`@DomainRepository`）+ `InMemoryGoodsRepository`（实现 `RichRepository`） | 第三轨 |
-| **Goods 应用服务** | `GoodsApplicationService`（`@ApplicationService`），轻量 CRUD 编排 | 第三轨 |
-| **RepositoryRegistry 注册** | `GoodsConfig` 启动期将仓储注册到 ddd4j 全局上下文 | 第三轨 |
-| **缓存** | `OrderCacheService` 使用 `CacheKit` 缓存门面（Caffeine 本地缓存） | 第二轨 |
-| **MQ 事件** | `@MQEventListener` 注解 + `ddd4j-mq-disruptor` 本地 RingBuffer MQ | 第二轨 |
-| **Spring 事件桥接** | `SpringDomainEventPublisher` 自动桥接 ddd4j `DomainEvent` → Spring `@EventListener` | 第二轨 |
-| **统一响应** | `R<T>` 响应包装 + `GlobalRestExceptionAdvice` 全局异常处理 | 双轨 |
+| 能力                        | 实现                                                                                        | 轨   |
+|---------------------------|-------------------------------------------------------------------------------------------|-----|
+| **充血聚合**                  | `Order` 继承 `AggregateRoot`，封装 draft/addLine/pay/ship/cancel 完整业务行为                        | 第二轨 |
+| **值对象**                   | `Money` 实现 `ValueObject`（record），add/multiply/discount，币种不变式                              | 第二轨 |
+| **领域事件**                  | `OrderCreatedEvent` 等继承 `DomainEvent`，聚合内部 `registerEvent` 注册                             | 第二轨 |
+| **仓储**                    | `OrderRepository` 接口（`@DomainRepository`）+ `InMemoryOrderRepository` 实现                   | 第二轨 |
+| **领域服务**                  | `OrderDomainService`（`@DomainService`），演示跨聚合的折扣计算                                         | 第二轨 |
+| **应用服务**                  | `OrderApplicationService`（`@ApplicationService`），编排用例 + 事务边界                              | 第二轨 |
+| **CQRS 查询**               | `OrderQueryService`（读侧）+ `OrderQueryController`（独立查询端点）                                   | 第二轨 |
+| **PO 实体**                 | `Goods`（`@DomainEntity(aggregateRoot = true)`），`@Data` 轻量 PO 形态                           | 第三轨 |
+| **充血查询**                  | `GoodsQuery` 继承 `Query`，自带 `page()` / `list()` / `count()` 能力                             | 第三轨 |
+| **Goods 仓储**              | `GoodsRepository` 接口（`@DomainRepository`）+ `InMemoryGoodsRepository`（实现 `RichRepository`） | 第三轨 |
+| **Goods 应用服务**            | `GoodsApplicationService`（`@ApplicationService`），轻量 CRUD 编排                               | 第三轨 |
+| **RepositoryRegistry 注册** | `GoodsConfig` 启动期将仓储注册到 ddd4j 全局上下文                                                       | 第三轨 |
+| **缓存**                    | `OrderCacheService` 使用 `CacheKit` 缓存门面（Caffeine 本地缓存）                                     | 第二轨 |
+| **MQ 事件**                 | `@MQEventListener` 注解 + `ddd4j-mq-disruptor` 本地 RingBuffer MQ                             | 第二轨 |
+| **Spring 事件桥接**           | `SpringDomainEventPublisher` 自动桥接 ddd4j `DomainEvent` → Spring `@EventListener`           | 第二轨 |
+| **统一响应**                  | `R<T>` 响应包装 + `GlobalRestExceptionAdvice` 全局异常处理                                          | 双轨  |
 
 ## 技术栈
 
 - **ddd4j-core**：聚合根、值对象、实体、领域事件、仓储、查询
 - **ddd4j-annotation**：DDD 注解契约
-- **ddd4j-runtime-spring**：Spring 运行时绑定（SPI 自动注入、`@DomainService` / `@ApplicationService` / `@DomainRepository`）
+- **ddd4j-runtime-spring**：Spring 运行时绑定（SPI 自动注入、`@DomainService` / `@ApplicationService` /
+  `@DomainRepository`）
 - **ddd4j-web-webmvc**：`R<T>` 响应包装、`GlobalRestExceptionAdvice` 全局异常处理
 - **ddd4j-cache**：`CacheKit` 缓存门面（Caffeine 本地缓存）
 - **ddd4j-mq-core** + **ddd4j-mq-spring**：MQ 契约、`@MQEventListener` 自动注册
@@ -239,17 +241,17 @@ curl "http://localhost:8080/api/goods/count?status=ON_SALE"
 
 ## 双轨 DDD 对比（Order vs Goods）
 
-| 维度 | 第二轨：Order（充血模型） | 第三轨：Goods（轻量 PO） |
-|------|------------------------|--------------------------|
-| **模型形态** | 充血聚合根（继承 `AggregateRoot`） | 普通 PO 实体（`@Data` + `AggregateRoot`） |
-| **业务方法** | `addLine()` / `pay()` / `ship()` / `cancel()` | 无（仅有 getter/setter） |
-| **状态机** | 聚合内不变量 + 状态断言 | 服务层校验 |
-| **业务规则** | 沉淀在聚合方法内 | 在 `GoodsApplicationService` 内 |
-| **领域事件** | 通过 `registerEvent()` 在聚合方法内发布 | 无（保持轻量） |
-| **持久化映射** | 仓储内置 `OrderRow` / `OrderLineRow` PO 映射 | 仓储直接以 `Goods` 作为持久化结构（零映射） |
-| **查询方式** | `OrderQueryService` 自定义分页逻辑 | `GoodsQuery` 继承 `Query`，自带 `page()` / `list()` / `count()` |
-| **适用场景** | 业务复杂、状态机多、有跨字段不变量 | 简单 CRUD、状态少、无复杂业务规则 |
-| **代码量** | 较多（充血方法 + 事件 + 不变量） | 极少（只描述数据） |
+| 维度        | 第二轨：Order（充血模型）                               | 第三轨：Goods（轻量 PO）                                           |
+|-----------|-----------------------------------------------|------------------------------------------------------------|
+| **模型形态**  | 充血聚合根（继承 `AggregateRoot`）                     | 普通 PO 实体（`@Data` + `AggregateRoot`）                        |
+| **业务方法**  | `addLine()` / `pay()` / `ship()` / `cancel()` | 无（仅有 getter/setter）                                        |
+| **状态机**   | 聚合内不变量 + 状态断言                                 | 服务层校验                                                      |
+| **业务规则**  | 沉淀在聚合方法内                                      | 在 `GoodsApplicationService` 内                              |
+| **领域事件**  | 通过 `registerEvent()` 在聚合方法内发布                 | 无（保持轻量）                                                    |
+| **持久化映射** | 仓储内置 `OrderRow` / `OrderLineRow` PO 映射        | 仓储直接以 `Goods` 作为持久化结构（零映射）                                 |
+| **查询方式**  | `OrderQueryService` 自定义分页逻辑                   | `GoodsQuery` 继承 `Query`，自带 `page()` / `list()` / `count()` |
+| **适用场景**  | 业务复杂、状态机多、有跨字段不变量                             | 简单 CRUD、状态少、无复杂业务规则                                        |
+| **代码量**   | 较多（充血方法 + 事件 + 不变量）                           | 极少（只描述数据）                                                  |
 
 **经验法则**：核心业务用第二轨（充血），周边数据/字典用第三轨（Model/Query）。
 两轨可在同一 Spring Boot 应用中并存，互不干扰。
@@ -279,6 +281,7 @@ MQEvent.publish()
 ### ddd4j-runtime-spring 自动 SPI 绑定
 
 Spring Boot 启动时，`ddd4j-runtime-spring` 模块自动：
+
 1. 将 `SpringDomainEventPublisher` 注册到 ddd4j SPI 上下文
 2. 扫描 `@DomainService` / `@ApplicationService` / `@DomainRepository` 注解的类
 3. 注入对应的 Spring Bean
@@ -286,6 +289,7 @@ Spring Boot 启动时，`ddd4j-runtime-spring` 模块自动：
 ### ddd4j-web-webmvc 的 R<T> 响应包装
 
 控制器方法返回 `R<T>`，由 `GlobalResponseRAdvice` 自动包装为标准响应格式：
+
 ```json
 {
   "code": 200,

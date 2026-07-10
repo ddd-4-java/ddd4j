@@ -13,7 +13,9 @@
 
     <artifactId>ddd4j-sample-spring</artifactId>
     <packaging>jar</packaging>
-    <description>ddd4j + Spring Boot 完整 DDD/CQRS 示例：充血聚合、值对象、领域事件、仓储、应用服务、CQRS 查询、缓存、MQ 事件发布。</description>
+    <description>ddd4j + Spring Boot 完整 DDD/CQRS 示例：充血聚合、值对象、领域事件、仓储、应用服务、CQRS 查询、缓存、MQ
+        事件发布。
+    </description>
 
     <properties>
         <spring-boot.version>3.5.6</spring-boot.version>

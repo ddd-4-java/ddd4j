@@ -2,13 +2,7 @@ package io.ddd4j.auth.security.subject;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
-import io.ddd4j.core.exception.AccountDisabledException;
-import io.ddd4j.core.exception.AccountExpiredException;
-import io.ddd4j.core.exception.BadCredentialsException;
-import io.ddd4j.core.exception.CredentialsExpiredException;
-import io.ddd4j.core.exception.NotLoggedInException;
-import io.ddd4j.core.exception.SessionExpiredException;
-import io.ddd4j.core.exception.UnknownAccountException;
+import io.ddd4j.core.exception.*;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
 import org.springframework.security.authentication.DisabledException;

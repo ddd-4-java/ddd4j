@@ -9,13 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 业务服务：统一封装登录、登出、当前用户、用户/角色/权限 CRUD 等业务逻辑。
@@ -38,6 +32,11 @@ public class RbacService {
     InMemoryPermissionRepository permissionRepository;
 
     // ============ 认证 ============
+
+    private static WebApplicationException forbidden(String reason) {
+        return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
+                .entity(R.fail(403, reason)).build());
+    }
 
     /**
      * 登录：根据用户名 + 密码校验，构造 AuthPrincipal 并调用 {@link SubjectKit#login(AuthRequest)}。
@@ -111,14 +110,14 @@ public class RbacService {
         return SubjectKit.hasRole(role);
     }
 
+    // ============ 用户 CRUD ============
+
     /**
      * 登录状态：调用 {@link SubjectKit#isLogin()}。
      */
     public boolean isLogin() {
         return SubjectKit.isLogin();
     }
-
-    // ============ 用户 CRUD ============
 
     public List<User> listUsers() {
         return userRepository.findAll();
@@ -167,11 +166,11 @@ public class RbacService {
         return userRepository.addRole(userId, roleCode);
     }
 
+    // ============ 角色 CRUD ============
+
     public User revokeRole(String userId, String roleCode) {
         return userRepository.removeRole(userId, roleCode);
     }
-
-    // ============ 角色 CRUD ============
 
     public List<Role> listRoles() {
         return roleRepository.findAll();
@@ -216,11 +215,11 @@ public class RbacService {
         return roleRepository.addPermission(roleCode, permissionCode);
     }
 
+    // ============ 权限 CRUD ============
+
     public Role revokePermission(String roleCode, String permissionCode) {
         return roleRepository.removePermission(roleCode, permissionCode);
     }
-
-    // ============ 权限 CRUD ============
 
     public List<Permission> listPermissions() {
         return permissionRepository.findAll();
@@ -252,11 +251,11 @@ public class RbacService {
         return permissionRepository.save(existing);
     }
 
+    // ============ 工具方法 ============
+
     public boolean deletePermission(String code) {
         return permissionRepository.deleteByCode(code);
     }
-
-    // ============ 工具方法 ============
 
     private List<AuthPrincipal.RolePair> buildRolePairs(Set<String> roleCodes) {
         if (roleCodes == null || roleCodes.isEmpty()) {
@@ -274,6 +273,8 @@ public class RbacService {
         return pairs;
     }
 
+    // ============ Shiro 鉴权封装（手工调用，等价于 Sa-Token 注解） ============
+
     private Set<String> aggregatePermissions(Set<String> roleCodes) {
         if (roleCodes == null || roleCodes.isEmpty()) {
             return Set.of();
@@ -289,8 +290,6 @@ public class RbacService {
         }
         return aggregated;
     }
-
-    // ============ Shiro 鉴权封装（手工调用，等价于 Sa-Token 注解） ============
 
     /**
      * 要求当前请求已登录，否则抛出 401。
@@ -333,11 +332,6 @@ public class RbacService {
         if (!SubjectKit.hasPermission(permission)) {
             throw forbidden("permission required: " + permission);
         }
-    }
-
-    private static WebApplicationException forbidden(String reason) {
-        return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                .entity(R.fail(403, reason)).build());
     }
 
 }

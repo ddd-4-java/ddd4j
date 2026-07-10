@@ -11,10 +11,7 @@ import io.javalin.apibuilder.EndpointGroup;
 
 import java.util.Objects;
 
-import static io.javalin.apibuilder.ApiBuilder.delete;
-import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.post;
-import static io.javalin.apibuilder.ApiBuilder.put;
+import static io.javalin.apibuilder.ApiBuilder.*;
 
 /**
  * 商品 REST 资源（Javalin 适配，写侧）。

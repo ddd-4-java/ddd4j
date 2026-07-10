@@ -7,13 +7,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryPermissionRepositor
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryRoleRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 业务服务：用户 / 角色 / 权限 CRUD + 派生计算。
@@ -42,6 +36,13 @@ public class RbacService {
     }
 
     // ============================ User CRUD ============================
+
+    /**
+     * 复制权限集合（不可变）。
+     */
+    public static Set<String> copyPerms(Set<String> perms) {
+        return perms == null ? Collections.emptySet() : Collections.unmodifiableSet(new HashSet<>(perms));
+    }
 
     /**
      * 创建用户。
@@ -96,14 +97,14 @@ public class RbacService {
                 .orElseThrow(() -> new NoSuchElementException("user not found: " + loginId));
     }
 
+    // ============================ Role CRUD ============================
+
     /**
      * 列出全部用户。
      */
     public Collection<User> listUsers() {
         return userRepository.findAll();
     }
-
-    // ============================ Role CRUD ============================
 
     /**
      * 创建角色。
@@ -152,14 +153,14 @@ public class RbacService {
                 .orElseThrow(() -> new NoSuchElementException("role not found: " + code));
     }
 
+    // ============================ Permission CRUD ============================
+
     /**
      * 列出全部角色。
      */
     public Collection<Role> listRoles() {
         return roleRepository.findAll();
     }
-
-    // ============================ Permission CRUD ============================
 
     /**
      * 创建权限。
@@ -195,14 +196,14 @@ public class RbacService {
                 .orElseThrow(() -> new NoSuchElementException("permission not found: " + code));
     }
 
+    // ============================ 派生计算 ============================
+
     /**
      * 列出全部权限。
      */
     public Collection<Permission> listPermissions() {
         return permissionRepository.findAll();
     }
-
-    // ============================ 派生计算 ============================
 
     /**
      * 派生用户的最终权限码集合：用户直接权限 ∪ 角色持有的权限。
@@ -239,13 +240,6 @@ public class RbacService {
             throw new IllegalArgumentException("invalid credentials");
         }
         return user;
-    }
-
-    /**
-     * 复制权限集合（不可变）。
-     */
-    public static Set<String> copyPerms(Set<String> perms) {
-        return perms == null ? Collections.emptySet() : Collections.unmodifiableSet(new HashSet<>(perms));
     }
 
 }

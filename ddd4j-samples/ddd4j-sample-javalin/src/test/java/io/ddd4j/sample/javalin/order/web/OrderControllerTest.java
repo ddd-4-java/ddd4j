@@ -33,7 +33,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -87,19 +86,29 @@ class OrderControllerTest {
         }
     }
 
+    private static String extractId(String body) {
+        int idx = body.indexOf("\"id\":\"");
+        if (idx < 0) {
+            throw new IllegalStateException("response has no id: " + body);
+        }
+        int start = idx + 6;
+        int end = body.indexOf("\"", start);
+        return body.substring(start, end);
+    }
+
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
+
+    // ---------- 1) createDraft ----------
 
     private HttpResponse<String> get(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
-
-    // ---------- 1) createDraft ----------
 
     @Test
     void createOrder_shouldReturn201() throws Exception {
@@ -159,13 +168,13 @@ class OrderControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // ---------- 2) addLine ----------
+
     @Test
     void createOrder_thenGetUnknownOrderNo_shouldReturn4xx() throws Exception {
         HttpResponse<String> resp = get("/api/orders/by-no?orderNo=missing");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 2) addLine ----------
 
     @Test
     void addLine_shouldIncreaseLineCountAndTotal() throws Exception {
@@ -194,14 +203,14 @@ class OrderControllerTest {
         assertTrue(resp.body().contains("\"lineCount\":2"));
     }
 
+    // ---------- 3) pay ----------
+
     @Test
     void addLine_toUnknownOrder_shouldReturn4xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/orders/nope/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"x\",\"quantity\":1,\"unitPrice\":1.00}");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 3) pay ----------
 
     @Test
     void pay_orderWithoutLines_shouldReturn4xxOr5xx() throws Exception {
@@ -224,13 +233,13 @@ class OrderControllerTest {
         assertTrue(pay.body().contains("\"status\":\"PAID\""));
     }
 
+    // ---------- 4) ship ----------
+
     @Test
     void pay_unknownOrder_shouldReturn4xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/orders/no-such-order/pay", "");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 4) ship ----------
 
     @Test
     void ship_paidOrder_shouldBeShipped() throws Exception {
@@ -254,13 +263,13 @@ class OrderControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // ---------- 5) cancel ----------
+
     @Test
     void ship_unknownOrder_shouldReturn4xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/orders/no-such-order/ship", "");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 5) cancel ----------
 
     @Test
     void cancel_draftOrder_shouldBeCancelled() throws Exception {
@@ -298,13 +307,13 @@ class OrderControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // ---------- 6) 查询 ----------
+
     @Test
     void cancel_unknownOrder_shouldReturn4xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/orders/no-such-order/cancel", "");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 6) 查询 ----------
 
     @Test
     void getById_returnsOrderResponseShape() throws Exception {
@@ -374,6 +383,8 @@ class OrderControllerTest {
         assertTrue(second.statusCode() >= 400);
     }
 
+    // =========================== 辅助 ===========================
+
     @Test
     void addLine_thenCancel_shouldFailToAddLine() throws Exception {
         HttpResponse<String> create = postJson("/api/orders",
@@ -384,18 +395,6 @@ class OrderControllerTest {
                 "{\"goodsId\":\"G\",\"goodsName\":\"X\",\"quantity\":1,\"unitPrice\":1.00}");
         // 已 CANCELLED 状态不允许 addLine
         assertTrue(resp.statusCode() >= 400);
-    }
-
-    // =========================== 辅助 ===========================
-
-    private static String extractId(String body) {
-        int idx = body.indexOf("\"id\":\"");
-        if (idx < 0) {
-            throw new IllegalStateException("response has no id: " + body);
-        }
-        int start = idx + 6;
-        int end = body.indexOf("\"", start);
-        return body.substring(start, end);
     }
 
     // =========================== 测试 SPI ===========================

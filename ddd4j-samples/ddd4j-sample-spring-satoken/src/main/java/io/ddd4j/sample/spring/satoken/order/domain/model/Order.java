@@ -2,11 +2,7 @@ package io.ddd4j.sample.spring.satoken.order.domain.model;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.sample.spring.satoken.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.spring.satoken.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.spring.satoken.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.spring.satoken.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.spring.satoken.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.spring.satoken.order.domain.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +33,30 @@ public class Order extends AggregateRoot<String> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 订单 ID */
+    /**
+     * 订单 ID
+     */
     private final String id;
-    /** 订单编号 */
+    /**
+     * 订单编号
+     */
     private final String orderNo;
-    /** 买家 ID */
+    /**
+     * 买家 ID
+     */
     private final String buyerId;
-    /** 买家名称 */
-    private String buyerName;
-    /** 订单状态 */
-    private OrderStatus status;
-    /** 订单行列表 */
+    /**
+     * 订单行列表
+     */
     private final List<OrderLine> lines = new ArrayList<>();
+    /**
+     * 买家名称
+     */
+    private String buyerName;
+    /**
+     * 订单状态
+     */
+    private OrderStatus status;
 
     /**
      * 构造函数。
@@ -156,8 +164,8 @@ public class Order extends AggregateRoot<String> {
      *
      * @param goodsId   商品 ID
      * @param goodsName 商品名称
-     * @param quantity    数量
-     * @param unitPrice   单价
+     * @param quantity  数量
+     * @param unitPrice 单价
      */
     public void addLine(String goodsId, String goodsName, int quantity, Money unitPrice) {
         assertDraft();

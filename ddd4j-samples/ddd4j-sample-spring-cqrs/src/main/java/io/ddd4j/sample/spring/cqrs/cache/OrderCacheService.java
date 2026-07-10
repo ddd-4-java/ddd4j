@@ -1,7 +1,6 @@
 package io.ddd4j.sample.spring.cqrs.cache;
 
 import io.ddd4j.cache.CacheKit;
-import io.ddd4j.sample.spring.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.spring.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.spring.cqrs.order.domain.model.OrderStatus;
 import io.ddd4j.sample.spring.cqrs.order.domain.repository.OrderRepository;
@@ -34,12 +33,18 @@ import java.util.Objects;
 @Service
 public class OrderCacheService {
 
-    /** 缓存域：订单统计 */
+    /**
+     * 缓存域：订单统计
+     */
     public static final String BIZ_ORDER_STATS = "order-stats";
-    /** 缓存域：买家订单计数 */
+    /**
+     * 缓存域：买家订单计数
+     */
     public static final String BIZ_BUYER_ORDER_COUNT = "buyer-order-count";
 
-    /** 统计缓存 key */
+    /**
+     * 统计缓存 key
+     */
     private static final String STATS_KEY = "all-stats";
 
     private final OrderRepository orderRepository;

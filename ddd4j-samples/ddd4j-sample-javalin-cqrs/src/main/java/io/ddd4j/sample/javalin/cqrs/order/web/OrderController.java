@@ -43,6 +43,20 @@ public class OrderController {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
+    private static OrderResponse toResponse(Order order) {
+        Money total = order.totalAmount();
+        return new OrderResponse(
+                order.id(),
+                order.orderNo(),
+                order.buyerId(),
+                order.buyerName(),
+                order.status().name(),
+                total,
+                order.lines().size());
+    }
+
+    // ========================= 响应 / 请求 DTO =========================
+
     /**
      * 以 {@link EndpointGroup} 形式暴露本控制器的全部路由。
      *
@@ -107,8 +121,6 @@ public class OrderController {
         });
     }
 
-    // ========================= 响应 / 请求 DTO =========================
-
     /**
      * 订单响应（避免将充血领域模型直接序列化，保留聚合内字段语义）。
      */
@@ -128,23 +140,11 @@ public class OrderController {
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
     }
 
+    // ========================= 映射 =========================
+
     /**
      * 添加订单行请求。
      */
     public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
-    }
-
-    // ========================= 映射 =========================
-
-    private static OrderResponse toResponse(Order order) {
-        Money total = order.totalAmount();
-        return new OrderResponse(
-                order.id(),
-                order.orderNo(),
-                order.buyerId(),
-                order.buyerName(),
-                order.status().name(),
-                total,
-                order.lines().size());
     }
 }

@@ -29,11 +29,11 @@ import java.util.function.Consumer;
 public class TdmqMQClient implements MQClient {
 
     private final TdmqProperties properties;
-    private BrokerPublisher brokerPublisher;
-    private BrokerSubscriber brokerSubscriber;
     private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
     private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers =
             new java.util.concurrent.ConcurrentHashMap<>();
+    private BrokerPublisher brokerPublisher;
+    private BrokerSubscriber brokerSubscriber;
 
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
@@ -181,11 +181,11 @@ public class TdmqMQClient implements MQClient {
         /**
          * 发布消息。
          *
-         * @param topic        物理 topic（含 namespace 前缀）
-         * @param tag          tag，可为 null
-         * @param tenantId     租户 ID
-         * @param key          业务 Key
-         * @param payload      序列化字节流
+         * @param topic    物理 topic（含 namespace 前缀）
+         * @param tag      tag，可为 null
+         * @param tenantId 租户 ID
+         * @param key      业务 Key
+         * @param payload  序列化字节流
          */
         void publish(String topic, String tag, String tenantId, String key, byte[] payload);
     }
@@ -199,14 +199,14 @@ public class TdmqMQClient implements MQClient {
         /**
          * 订阅。
          *
-         * @param topic           物理 topic
-         * @param tagExpression   tag 表达式
-         * @param group           订阅组
-         * @param messageHandler  消息处理器（messageId, correlationId, payload, ackCallback）
+         * @param topic          物理 topic
+         * @param tagExpression  tag 表达式
+         * @param group          订阅组
+         * @param messageHandler 消息处理器（messageId, correlationId, payload, ackCallback）
          * @return 订阅句柄
          */
         Subscription subscribe(String topic, String tagExpression, String group,
-                              MessageHandler messageHandler);
+                               MessageHandler messageHandler);
     }
 
     /**

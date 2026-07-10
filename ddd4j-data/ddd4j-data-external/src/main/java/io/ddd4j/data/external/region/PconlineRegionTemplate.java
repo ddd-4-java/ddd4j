@@ -31,17 +31,29 @@ import java.util.stream.Stream;
 @Slf4j
 public class PconlineRegionTemplate {
 
-    /** 太平洋网络 IP 查询地址 */
+    /**
+     * 太平洋网络 IP 查询地址
+     */
     private static final String GET_COUNTRY_BY_IP_URL = "https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=%s";
-    /** 特殊行政区划代码：810000 香港，820000 澳门 ，710000 台湾，999999 国外 */
+    /**
+     * 特殊行政区划代码：810000 香港，820000 澳门 ，710000 台湾，999999 国外
+     */
     private static final String[] SPECIAL_PROVINCE = new String[]{"810000", "820000", "710000", "999999"};
-    /** 中国 */
+    /**
+     * 中国
+     */
     private static final String CHINA = "中国";
-    /** 特殊地区名称 */
+    /**
+     * 特殊地区名称
+     */
     private static final String[] SPECIAL_REGION = new String[]{"香港", "澳门", "台湾"};
-    /** 特殊地区枚举映射 */
+    /**
+     * 特殊地区枚举映射
+     */
     private static Map<String, RegionEnum> SPECIAL_REGION_MAP;
-    /** 特殊行政区划代码集合 */
+    /**
+     * 特殊行政区划代码集合
+     */
     private static Set<String> SPECIAL_PROVINCE_SET;
 
     static {
@@ -52,9 +64,13 @@ public class PconlineRegionTemplate {
         SPECIAL_PROVINCE_SET = Arrays.stream(SPECIAL_PROVINCE).collect(Collectors.toSet());
     }
 
-    /** HTTP 客户端 */
+    /**
+     * HTTP 客户端
+     */
     private final HttpClient httpClient;
-    /** 缓存服务 */
+    /**
+     * 缓存服务
+     */
     private RegionCache regionCache;
 
     /**

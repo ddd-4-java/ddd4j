@@ -51,19 +51,27 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class DddContextInitializer {
 
-    /** 领域事件发布器实例 */
+    /**
+     * 领域事件发布器实例
+     */
     @Inject
     Instance<DomainEventPublisher> domainEventPublisher;
 
-    /** MQ 事件发布器实例 */
+    /**
+     * MQ 事件发布器实例
+     */
     @Inject
     Instance<MQEventPublisher> mqEventPublisher;
 
-    /** Subject 提供者实例 */
+    /**
+     * Subject 提供者实例
+     */
     @Inject
     Instance<SubjectProvider> subjectProvider;
 
-    /** 国际化提供者实例 */
+    /**
+     * 国际化提供者实例
+     */
     @Inject
     Instance<I18nProvider> i18nProvider;
 

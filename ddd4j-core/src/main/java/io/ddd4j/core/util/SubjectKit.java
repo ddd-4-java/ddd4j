@@ -1,11 +1,13 @@
 package io.ddd4j.core.util;
 
-import java.util.Objects;
-
-
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
-import io.ddd4j.core.subject.*;
+import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.subject.SubjectStrategy;
+
+import java.util.Objects;
 
 /**
  * 鉴权静态门面 + 全局注册中心（对齐 Sa-Token 的 {@code StpUtil} + {@code SaManager}）。

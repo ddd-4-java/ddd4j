@@ -9,12 +9,7 @@ import io.ddd4j.core.subject.Subject;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 基于 {@link CacheKit} 的内存版 {@link Subject} 实现（单进程、非持久化）。
@@ -31,14 +26,13 @@ import java.util.UUID;
 @SuppressWarnings("unchecked")
 public class InMemorySubject implements Subject {
 
-    private static final long PERMANENT_DISABLE = -1L;
-    private static final long NO_EXPIRE_SECONDS = 0L;
     public static final String PRINCIPALS_BY_TOKEN_CACHE = "ddd4j:subject:principals-by-token";
     public static final String PRINCIPALS_BY_LOGIN_ID_CACHE = "ddd4j:subject:principals-by-login-id";
     public static final String TOKEN_BY_LOGIN_ID_CACHE = "ddd4j:subject:token-by-login-id";
     public static final String DISABLED_UNTIL_CACHE = "ddd4j:subject:disabled-until";
     public static final String CURRENT_TOKEN_CACHE = "ddd4j:subject:current-token";
-
+    private static final long PERMANENT_DISABLE = -1L;
+    private static final long NO_EXPIRE_SECONDS = 0L;
     private final java.util.function.Consumer<Object> eventPublisher;
 
     /**

@@ -22,8 +22,29 @@ import java.util.concurrent.ConcurrentMap;
 @Repository
 public class InMemoryUserRepository implements UserRepository {
 
-    /** 用户 ID -> 用户行 */
+    /**
+     * 用户 ID -> 用户行
+     */
     private final ConcurrentMap<String, UserRow> rows = new ConcurrentHashMap<>();
+
+    private static UserRow toRow(User user) {
+        UserRow row = new UserRow();
+        row.userId = user.id();
+        row.username = user.getUsername();
+        row.password = user.getPassword();
+        row.realName = user.getRealName();
+        row.status = user.getStatus().name();
+        row.roleIds = new ArrayList<>(user.getRoleIds());
+        return row;
+    }
+
+    private static User toModel(UserRow row) {
+        User user = new User(row.userId, row.username, row.password, row.realName, User.Status.valueOf(row.status));
+        if (row.roleIds != null && !row.roleIds.isEmpty()) {
+            user.assignRoles(new java.util.HashSet<>(row.roleIds));
+        }
+        return user;
+    }
 
     @Override
     public Optional<User> findById(String id) {
@@ -59,6 +80,8 @@ public class InMemoryUserRepository implements UserRepository {
                 .toList();
     }
 
+    // ============================ 模型与行转换 ============================
+
     @Override
     public User save(User aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -71,27 +94,6 @@ public class InMemoryUserRepository implements UserRepository {
         if (StrKit.isNotBlank(id)) {
             rows.remove(id);
         }
-    }
-
-    // ============================ 模型与行转换 ============================
-
-    private static UserRow toRow(User user) {
-        UserRow row = new UserRow();
-        row.userId = user.id();
-        row.username = user.getUsername();
-        row.password = user.getPassword();
-        row.realName = user.getRealName();
-        row.status = user.getStatus().name();
-        row.roleIds = new ArrayList<>(user.getRoleIds());
-        return row;
-    }
-
-    private static User toModel(UserRow row) {
-        User user = new User(row.userId, row.username, row.password, row.realName, User.Status.valueOf(row.status));
-        if (row.roleIds != null && !row.roleIds.isEmpty()) {
-            user.assignRoles(new java.util.HashSet<>(row.roleIds));
-        }
-        return user;
     }
 
     /**

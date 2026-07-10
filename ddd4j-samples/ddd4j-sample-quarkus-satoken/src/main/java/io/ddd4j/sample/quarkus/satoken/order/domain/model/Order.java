@@ -2,11 +2,7 @@ package io.ddd4j.sample.quarkus.satoken.order.domain.model;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.sample.quarkus.satoken.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.quarkus.satoken.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.quarkus.satoken.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.quarkus.satoken.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.quarkus.satoken.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.quarkus.satoken.order.domain.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +24,9 @@ public class Order extends AggregateRoot<String> {
     private final String id;
     private final String orderNo;
     private final String buyerId;
+    private final List<OrderLine> lines = new ArrayList<>();
     private String buyerName;
     private OrderStatus status;
-    private final List<OrderLine> lines = new ArrayList<>();
 
     public Order(String id, String orderNo, String buyerId, String buyerName, OrderStatus status, List<OrderLine> lines) {
         if (StrKit.isBlank(id)) {

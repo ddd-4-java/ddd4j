@@ -18,11 +18,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseable {
 
-    /** 运行状态标志 */
+    /**
+     * 运行状态标志
+     */
     private final AtomicBoolean running = new AtomicBoolean(false);
-    /** 已调度的视图任务句柄集 */
+    /**
+     * 已调度的视图任务句柄集
+     */
     private final ConcurrentMap<String, ScheduledFuture<?>> handles = new ConcurrentHashMap<>();
-    /** 调度线程池执行器 */
+    /**
+     * 调度线程池执行器
+     */
     private ScheduledExecutorService executor;
 
     @Override

@@ -10,13 +10,7 @@ import io.ddd4j.sample.quarkus.shiro.order.web.dto.AddOrderLineRequest;
 import io.ddd4j.sample.quarkus.shiro.order.web.dto.CreateOrderRequest;
 import io.ddd4j.sample.quarkus.shiro.order.web.dto.OrderResponse;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
@@ -121,7 +115,9 @@ public class OrderResource {
         return R.ok(new DiscountView(discounted.amount().toPlainString(), discounted.currency()));
     }
 
-    /** 折扣预览响应。 */
+    /**
+     * 折扣预览响应。
+     */
     public record DiscountView(String amount, String currency) {
     }
 }

@@ -9,12 +9,20 @@ package io.ddd4j.sample.javalin.satoken.order.domain.model;
  */
 public enum OrderStatus {
 
-    /** 草稿（可添加订单行、修改） */
+    /**
+     * 草稿（可添加订单行、修改）
+     */
     DRAFT,
-    /** 已支付（可发货） */
+    /**
+     * 已支付（可发货）
+     */
     PAID,
-    /** 已发货（终态） */
+    /**
+     * 已发货（终态）
+     */
     SHIPPED,
-    /** 已取消（终态） */
+    /**
+     * 已取消（终态）
+     */
     CANCELLED
 }

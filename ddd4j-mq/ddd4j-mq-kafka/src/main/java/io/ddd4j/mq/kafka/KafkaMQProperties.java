@@ -25,12 +25,18 @@ import java.util.Properties;
 @EqualsAndHashCode(callSuper = true)
 public class KafkaMQProperties extends MQProperties {
 
-    /** 默认分区数（自动创建 topic）。 */
+    /**
+     * 默认分区数（自动创建 topic）。
+     */
     public static final int DEFAULT_TOPIC_PARTITIONS = 3;
-    /** 默认副本数。 */
+    /**
+     * 默认副本数。
+     */
     public static final short DEFAULT_TOPIC_REPLICATION = 1;
 
-    /** Kafka broker bootstrap servers（独立于父类 server 以遵循 Kafka 命名约定）。 */
+    /**
+     * Kafka broker bootstrap servers（独立于父类 server 以遵循 Kafka 命名约定）。
+     */
     private String bootstrapServers = "localhost:9092";
     private String clientId = "ddd4j-mq-kafka";
     private String groupIdPrefix = "ddd4j";
@@ -42,10 +48,14 @@ public class KafkaMQProperties extends MQProperties {
      */
     private boolean autoCreateTopics = true;
 
-    /** 自动创建 topic 时的分区数（仅当 autoCreateTopics=true 生效）。 */
+    /**
+     * 自动创建 topic 时的分区数（仅当 autoCreateTopics=true 生效）。
+     */
     private int defaultTopicPartitions = DEFAULT_TOPIC_PARTITIONS;
 
-    /** 自动创建 topic 时的副本数（仅当 autoCreateTopics=true 生效，生产集群建议 ≥3）。 */
+    /**
+     * 自动创建 topic 时的副本数（仅当 autoCreateTopics=true 生效，生产集群建议 ≥3）。
+     */
     private short defaultTopicReplication = DEFAULT_TOPIC_REPLICATION;
 
     /**

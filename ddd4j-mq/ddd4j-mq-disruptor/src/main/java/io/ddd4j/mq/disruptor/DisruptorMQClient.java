@@ -71,12 +71,22 @@ public class DisruptorMQClient implements MQClient {
         this.ringBuffer = Objects.requireNonNull(ringBuffer, "DisruptorMQ ringBuffer is required");
     }
 
+    private static int normalizeBufferSize(int requested) {
+        int size = 1;
+        while (size < requested && size < (1 << 20)) {
+            size <<= 1;
+        }
+        return size;
+    }
+
+    // ========================= 生产者 =========================
+
     @Override
     public String impl() {
         return "disruptor";
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -98,8 +108,6 @@ public class DisruptorMQClient implements MQClient {
             log.info("Publish MQ [{}]: {}", topic, payload);
         };
     }
-
-    // ========================= 消费者 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) {
@@ -172,14 +180,6 @@ public class DisruptorMQClient implements MQClient {
         this.disruptor = d;
         log.info("Disruptor RingBuffer started: bufferSize={}, waitStrategy={}",
                 bufferSize, waitStrategy.getClass().getSimpleName());
-    }
-
-    private static int normalizeBufferSize(int requested) {
-        int size = 1;
-        while (size < requested && size < (1 << 20)) {
-            size <<= 1;
-        }
-        return size;
     }
 
     /**

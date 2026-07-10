@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.ddd4j.core.cqrs.query.Query;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -61,7 +60,9 @@ public abstract class AbstractMybatisQuery<T> extends Query<T> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 内部持有的 LambdaQueryWrapper（延迟初始化） */
+    /**
+     * 内部持有的 LambdaQueryWrapper（延迟初始化）
+     */
     @SuppressWarnings("rawtypes")
     private transient LambdaQueryWrapper lambdaQueryWrapper;
 

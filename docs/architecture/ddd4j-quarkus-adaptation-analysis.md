@@ -29,20 +29,20 @@ ddd4j (通用基础层)
 
 ### 1.2 核心契约层 (ddd4j-core) 关键接口
 
-| 接口/类                           | 包路径                             | 职责                                      |
-|--------------------------------|---------------------------------|-----------------------------------------|
-| `DddAggregateRoot<ID>`         | `io.ddd4j.core.ddd.aggregate`   | 聚合根基类（继承 fuinorg AbstractAggregateRoot） |
-| `DddDomainEvent<ID>`           | `io.ddd4j.core.ddd.event`       | 领域事件基类                                  |
-| `DddCommandExecutor<CMD>`      | `io.ddd4j.core.ddd.command`     | 命令执行器基类                                 |
-| `DddView`                      | `io.ddd4j.core.ddd.query`       | 查询视图基类                                  |
+| 接口/类                           | 包路径                            | 职责                                      |
+|--------------------------------|--------------------------------|-----------------------------------------|
+| `DddAggregateRoot<ID>`         | `io.ddd4j.core.ddd.aggregate`  | 聚合根基类（继承 fuinorg AbstractAggregateRoot） |
+| `DddDomainEvent<ID>`           | `io.ddd4j.core.ddd.event`      | 领域事件基类                                  |
+| `DddCommandExecutor<CMD>`      | `io.ddd4j.core.ddd.command`    | 命令执行器基类                                 |
+| `DddView`                      | `io.ddd4j.core.ddd.query`      | 查询视图基类                                  |
 | `ViewManager`                  | `io.ddd4j.core.cqrs.readmodel` | 视图管理器 SPI（纯 Java）                       |
 | `ProjectionPosition`           | `io.ddd4j.core.cqrs.readmodel` | 投影位置 SPI                                |
 | `ProjectionPositionRepository` | `io.ddd4j.core.cqrs.readmodel` | 投影位置仓储 SPI                              |
-| `DomainEventPublisher`         | `io.ddd4j.core.ddd.event`       | 领域事件发布者 SPI                             |
-| `Repository`                   | `io.ddd4j.core.ddd.repository`  | 纯 Java 仓储接口                             |
-| `RichRepository`               | `io.ddd4j.core.ddd.repository`  | 富查询仓储 SPI                               |
-| `SubjectProvider`              | `io.ddd4j.core.subject`         | 认证主体提供者 SPI                             |
-| `I18nProvider`                 | `io.ddd4j.core.context`         | 国际化提供者 SPI                              |
+| `DomainEventPublisher`         | `io.ddd4j.core.ddd.event`      | 领域事件发布者 SPI                             |
+| `Repository`                   | `io.ddd4j.core.ddd.repository` | 纯 Java 仓储接口                             |
+| `RichRepository`               | `io.ddd4j.core.ddd.repository` | 富查询仓储 SPI                               |
+| `SubjectProvider`              | `io.ddd4j.core.subject`        | 认证主体提供者 SPI                             |
+| `I18nProvider`                 | `io.ddd4j.core.context`        | 国际化提供者 SPI                              |
 
 ### 1.3 三框架 SPI 适配模式
 

@@ -48,25 +48,6 @@ public final class TestSupport {
     private TestSupport() {
     }
 
-    private static final class NoopDomainEventPublisher implements DomainEventPublisher {
-        @Override
-        public <T> void publish(io.ddd4j.core.ddd.event.DomainEvent<T> event) {
-        }
-    }
-
-    private static final class NoopMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(MQEvent event) {
-        }
-    }
-
-    private static final class NoopI18nProvider implements I18nProvider {
-        @Override
-        public String getMessage(String key, Object... args) {
-            return key;
-        }
-    }
-
     public static Javalin start() {
         // 0) 注入 SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
@@ -206,5 +187,24 @@ public final class TestSupport {
 
         app.start(0);
         return app;
+    }
+
+    private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        @Override
+        public <T> void publish(io.ddd4j.core.ddd.event.DomainEvent<T> event) {
+        }
+    }
+
+    private static final class NoopMQEventPublisher implements MQEventPublisher {
+        @Override
+        public void publish(MQEvent event) {
+        }
+    }
+
+    private static final class NoopI18nProvider implements I18nProvider {
+        @Override
+        public String getMessage(String key, Object... args) {
+            return key;
+        }
     }
 }

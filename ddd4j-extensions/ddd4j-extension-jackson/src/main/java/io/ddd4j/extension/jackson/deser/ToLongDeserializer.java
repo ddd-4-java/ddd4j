@@ -1,7 +1,6 @@
 package io.ddd4j.extension.jackson.deser;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import io.ddd4j.kit.lang.StrKit;

@@ -3,17 +3,15 @@ package io.ddd4j.cache.lettuce;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
-import io.ddd4j.core.cache.CASOperation;
 import io.lettuce.core.ScriptOutputType;
 import io.lettuce.core.api.sync.RedisCommands;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -39,6 +37,14 @@ import java.util.function.Function;
  */
 public class LettuceCache<V> implements Cache<String, V> {
 
+    private static final String LUA_CAS =
+            "local cur = redis.call('GET', KEYS[1]) " +
+                    "if cur == ARGV[1] then " +
+                    "  redis.call('SET', KEYS[1], ARGV[2]) " +
+                    "  if tonumber(ARGV[3]) > 0 then redis.call('EXPIRE', KEYS[1], ARGV[3]) end " +
+                    "  return 1 " +
+                    "end " +
+                    "return 0";
     private final RedisCommands<String, String> commands;
     private final Duration expireDuration;
     private final Class<V> valueType;
@@ -140,21 +146,12 @@ public class LettuceCache<V> implements Cache<String, V> {
         return -1;
     }
 
+    // ==================== CAS SPI 实现（基于 Redis Lua 脚本原子操作）====================
+
     @Override
     public CacheStats stats() {
         return null;
     }
-
-    // ==================== CAS SPI 实现（基于 Redis Lua 脚本原子操作）====================
-
-    private static final String LUA_CAS =
-            "local cur = redis.call('GET', KEYS[1]) " +
-            "if cur == ARGV[1] then " +
-            "  redis.call('SET', KEYS[1], ARGV[2]) " +
-            "  if tonumber(ARGV[3]) > 0 then redis.call('EXPIRE', KEYS[1], ARGV[3]) end " +
-            "  return 1 " +
-            "end " +
-            "return 0";
 
     @Override
     public V compareAndSet(String key, long expireSeconds, CASOperation<V, V> operation) {
@@ -164,8 +161,15 @@ public class LettuceCache<V> implements Cache<String, V> {
             String currentJson = commands.get(cachedKey);
             V currentValue = deserialize(currentJson);
             io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
-                @Override public String key() { return cachedKey; }
-                @Override public V value() { return currentValue; }
+                @Override
+                public String key() {
+                    return cachedKey;
+                }
+
+                @Override
+                public V value() {
+                    return currentValue;
+                }
             };
             V newValue;
             try {
@@ -203,11 +207,19 @@ public class LettuceCache<V> implements Cache<String, V> {
         if (value instanceof String) {
             return (String) value;
         }
-        try { return objectMapper.writeValueAsString(value); } catch (Exception e) { return ""; }
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     private V deserialize(String json) {
         if (json == null || json.isEmpty()) return null;
-        try { return objectMapper.readValue(json, valueType); } catch (Exception e) { return null; }
+        try {
+            return objectMapper.readValue(json, valueType);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

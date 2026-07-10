@@ -2,11 +2,7 @@ package io.ddd4j.sample.spring.security.goods.domain;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.spring.annotation.DomainEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

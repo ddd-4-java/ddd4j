@@ -2,11 +2,7 @@ package io.ddd4j.sample.javalin.goods.application;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
-import io.ddd4j.sample.javalin.goods.domain.Goods;
-import io.ddd4j.sample.javalin.goods.domain.GoodsId;
-import io.ddd4j.sample.javalin.goods.domain.GoodsQuery;
-import io.ddd4j.sample.javalin.goods.domain.GoodsRepository;
-import io.ddd4j.sample.javalin.goods.domain.GoodsStatus;
+import io.ddd4j.sample.javalin.goods.domain.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,6 +29,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class GoodsApplicationService {
 
+    /**
+     * 内存模式下的 ID 生成器（实际生产应使用雪花算法等）
+     */
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
     private final GoodsRepository repository;
 
     public GoodsApplicationService(GoodsRepository repository) {
@@ -145,6 +145,8 @@ public class GoodsApplicationService {
         return query.list();
     }
 
+    // ========================= 私有校验方法 =========================
+
     /**
      * 充血查询：按条件统计。
      */
@@ -152,8 +154,6 @@ public class GoodsApplicationService {
         Objects.requireNonNull(query, "query must not be null");
         return query.count();
     }
-
-    // ========================= 私有校验方法 =========================
 
     private void validateCode(String code) {
         if (Objects.isNull(code) || code.isBlank()) {
@@ -179,7 +179,4 @@ public class GoodsApplicationService {
     private Long nextId() {
         return ID_GENERATOR.incrementAndGet();
     }
-
-    /** 内存模式下的 ID 生成器（实际生产应使用雪花算法等） */
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
 }

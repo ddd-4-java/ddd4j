@@ -16,11 +16,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Permission {
 
-    /** 权限编码（业务主键，如 {@code user:list} / {@code order:pay}）。 */
+    /**
+     * 权限编码（业务主键，如 {@code user:list} / {@code order:pay}）。
+     */
     private String code;
-    /** 显示名。 */
+    /**
+     * 显示名。
+     */
     private String displayName;
-    /** 描述。 */
+    /**
+     * 描述。
+     */
     private String description;
 
 }

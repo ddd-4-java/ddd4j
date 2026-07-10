@@ -1,10 +1,6 @@
 package io.ddd4j.sample.quarkus.cqrs.event;
 
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.quarkus.cqrs.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.quarkus.cqrs.order.domain.event.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import lombok.extern.slf4j.Slf4j;

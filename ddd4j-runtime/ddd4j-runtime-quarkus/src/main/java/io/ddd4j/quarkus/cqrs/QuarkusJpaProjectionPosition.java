@@ -34,12 +34,16 @@ public class QuarkusJpaProjectionPosition extends PanacheEntityBase
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 事件流 ID */
+    /**
+     * 事件流 ID
+     */
     @Id
     @Column(name = "STREAM_ID", nullable = false, length = 250, updatable = false)
     public String streamId;
 
-    /** 下一条待处理的事件序号 */
+    /**
+     * 下一条待处理的事件序号
+     */
     @Column(name = "NEXT_EVENT_NUMBER", nullable = false, updatable = true)
     public long nextEventNumber;
 

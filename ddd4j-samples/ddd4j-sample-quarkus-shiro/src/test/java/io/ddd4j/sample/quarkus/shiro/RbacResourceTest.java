@@ -8,9 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 /**
@@ -29,6 +27,26 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 class RbacResourceTest {
 
     // ========== 登录 / 认证 ==========
+
+    private static String loginAs(String username, String password) {
+        Map<String, String> body = new HashMap<>();
+        body.put("username", username);
+        body.put("password", password);
+        return given().contentType("application/json").body(body)
+                .when().post("/auth/login")
+                .then().statusCode(200)
+                .extract().path("token");
+    }
+
+    private static Map<String, Object> createUserBody(String id, String username, String displayName, Object role) {
+        Map<String, Object> newUser = new HashMap<>();
+        newUser.put("id", id);
+        newUser.put("username", username);
+        newUser.put("displayName", displayName);
+        newUser.put("password", "123456");
+        newUser.put("roleCodes", role);
+        return newUser;
+    }
 
     @Test
     void shouldLoginSuccessfullyAsAdmin() {
@@ -99,6 +117,8 @@ class RbacResourceTest {
                 .body("data.login", is(false));
     }
 
+    // ========== 鉴权（3 种鉴权方式） ==========
+
     @Test
     void shouldReturnNotAuthenticatedWhenNotLogin() {
         given().when().get("/auth/me")
@@ -110,8 +130,6 @@ class RbacResourceTest {
         given().when().get("/admin/users")
                 .then().statusCode(401);
     }
-
-    // ========== 鉴权（3 种鉴权方式） ==========
 
     @Test
     void shouldAccessMeWhenLoggedIn() {
@@ -191,6 +209,8 @@ class RbacResourceTest {
                 .body("data.has", is(false));
     }
 
+    // ========== 业务侧鉴权：3 种鉴权组合 ==========
+
     @Test
     void shouldDenyAccessToCheckPermissionWithoutLogin() {
         given().when().get("/auth/check/permission?permission=anything")
@@ -202,8 +222,6 @@ class RbacResourceTest {
         given().when().get("/auth/check/role?role=anything")
                 .then().statusCode(401);
     }
-
-    // ========== 业务侧鉴权：3 种鉴权组合 ==========
 
     @Test
     void shouldListUsersAsAdminViaAuthEndpoint() {
@@ -252,6 +270,8 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
+    // ========== 用户 CRUD ==========
+
     @Test
     void shouldDenyDeleteUserAsRegularUser() {
         String token = loginAs("user", "123456");
@@ -265,8 +285,6 @@ class RbacResourceTest {
         given().when().get("/auth/users")
                 .then().statusCode(401);
     }
-
-    // ========== 用户 CRUD ==========
 
     @Test
     void shouldCreateUserAsAdmin() {
@@ -331,6 +349,8 @@ class RbacResourceTest {
                 .body("data", is(true));
     }
 
+    // ========== 角色 / 权限 CRUD ==========
+
     @Test
     void shouldAssignRoleToUserAsAdmin() {
         String token = loginAs("admin", "123456");
@@ -363,8 +383,6 @@ class RbacResourceTest {
                 .then()
                 .statusCode(200);
     }
-
-    // ========== 角色 / 权限 CRUD ==========
 
     @Test
     void shouldListRolesAsAuthenticatedUser() {
@@ -550,6 +568,8 @@ class RbacResourceTest {
                 .then().statusCode(403);
     }
 
+    // ============ 工具方法 ============
+
     @Test
     void shouldDenyAssignRoleForRegularUser() {
         String token = loginAs("user", "123456");
@@ -565,27 +585,5 @@ class RbacResourceTest {
                 .when().post("/auth/logout")
                 .then().statusCode(200)
                 .body("data.success", is(true));
-    }
-
-    // ============ 工具方法 ============
-
-    private static String loginAs(String username, String password) {
-        Map<String, String> body = new HashMap<>();
-        body.put("username", username);
-        body.put("password", password);
-        return given().contentType("application/json").body(body)
-                .when().post("/auth/login")
-                .then().statusCode(200)
-                .extract().path("token");
-    }
-
-    private static Map<String, Object> createUserBody(String id, String username, String displayName, Object role) {
-        Map<String, Object> newUser = new HashMap<>();
-        newUser.put("id", id);
-        newUser.put("username", username);
-        newUser.put("displayName", displayName);
-        newUser.put("password", "123456");
-        newUser.put("roleCodes", role);
-        return newUser;
     }
 }

@@ -10,29 +10,51 @@ import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
  */
 public enum SymmetricAlgorithmType {
 
-    /** AES 对称加密算法 */
+    /**
+     * AES 对称加密算法
+     */
     AES(SymmetricAlgorithm.AES.name()),
-    /** ARCFOUR 对称加密算法 */
+    /**
+     * ARCFOUR 对称加密算法
+     */
     ARCFOUR(SymmetricAlgorithm.ARCFOUR.name()),
-    /** Blowfish 对称加密算法 */
+    /**
+     * Blowfish 对称加密算法
+     */
     Blowfish(SymmetricAlgorithm.Blowfish.name()),
-    /** DES 对称加密算法 */
+    /**
+     * DES 对称加密算法
+     */
     DES(SymmetricAlgorithm.DES.name()),
-    /** DESede 对称加密算法（三重 DES） */
+    /**
+     * DESede 对称加密算法（三重 DES）
+     */
     DESede(SymmetricAlgorithm.DESede.name()),
-    /** RC2 对称加密算法 */
+    /**
+     * RC2 对称加密算法
+     */
     RC2(SymmetricAlgorithm.RC2.name()),
-    /** PBEWithMD5AndDES 对称加密算法 */
+    /**
+     * PBEWithMD5AndDES 对称加密算法
+     */
     PBEWithMD5AndDES(SymmetricAlgorithm.PBEWithMD5AndDES.name()),
-    /** PBEWithSHA1AndDESede 对称加密算法 */
+    /**
+     * PBEWithSHA1AndDESede 对称加密算法
+     */
     PBEWithSHA1AndDESede(SymmetricAlgorithm.PBEWithSHA1AndDESede.name()),
-    /** PBEWithSHA1AndRC2_40 对称加密算法 */
+    /**
+     * PBEWithSHA1AndRC2_40 对称加密算法
+     */
     PBEWithSHA1AndRC2_40(SymmetricAlgorithm.PBEWithSHA1AndRC2_40.name()),
 
-    /** 国密 SM4 对称加密算法 */
+    /**
+     * 国密 SM4 对称加密算法
+     */
     SM4("SM4");
 
-    /** 算法名称 */
+    /**
+     * 算法名称
+     */
     private String name;
 
     /**

@@ -12,10 +12,7 @@ import io.javalin.http.Context;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import static io.javalin.apibuilder.ApiBuilder.delete;
-import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.post;
-import static io.javalin.apibuilder.ApiBuilder.put;
+import static io.javalin.apibuilder.ApiBuilder.*;
 
 /**
  * 商品 REST 控制器（第三轨：Model/Query 快速 CRUD 模式）。
@@ -46,6 +43,38 @@ public class GoodsController {
 
     public GoodsController(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
+    }
+
+    /**
+     * 从 Javalin Context 手动绑定 {@link GoodsQuery}（Javalin 7.x 不支持自动绑定 query 字段到 JavaBean）。
+     */
+    private static GoodsQuery bindQuery(Context ctx) {
+        GoodsQuery query = new GoodsQuery();
+        if (ctx.queryParam("code") != null) {
+            query.setCode(ctx.queryParam("code"));
+        }
+        if (ctx.queryParam("nameLike") != null) {
+            query.setNameLike(ctx.queryParam("nameLike"));
+        }
+        if (ctx.queryParam("status") != null) {
+            query.setStatus(GoodsStatus.valueOf(ctx.queryParam("status")));
+        }
+        if (ctx.queryParam("priceMin") != null) {
+            query.setPriceMin(new BigDecimal(ctx.queryParam("priceMin")));
+        }
+        if (ctx.queryParam("priceMax") != null) {
+            query.setPriceMax(new BigDecimal(ctx.queryParam("priceMax")));
+        }
+        if (ctx.queryParam("current") != null) {
+            query.setCurrent(Long.parseLong(ctx.queryParam("current")));
+        }
+        if (ctx.queryParam("size") != null) {
+            query.setSize(Long.parseLong(ctx.queryParam("size")));
+        }
+        if (ctx.queryParam("orderBys") != null) {
+            query.setOrderBys(ctx.queryParam("orderBys"));
+        }
+        return query;
     }
 
     /**
@@ -114,38 +143,6 @@ public class GoodsController {
             GoodsQuery query = bindQuery(ctx);
             ctx.json(R.ok(applicationService.countQuery(query)));
         });
-    }
-
-    /**
-     * 从 Javalin Context 手动绑定 {@link GoodsQuery}（Javalin 7.x 不支持自动绑定 query 字段到 JavaBean）。
-     */
-    private static GoodsQuery bindQuery(Context ctx) {
-        GoodsQuery query = new GoodsQuery();
-        if (ctx.queryParam("code") != null) {
-            query.setCode(ctx.queryParam("code"));
-        }
-        if (ctx.queryParam("nameLike") != null) {
-            query.setNameLike(ctx.queryParam("nameLike"));
-        }
-        if (ctx.queryParam("status") != null) {
-            query.setStatus(GoodsStatus.valueOf(ctx.queryParam("status")));
-        }
-        if (ctx.queryParam("priceMin") != null) {
-            query.setPriceMin(new BigDecimal(ctx.queryParam("priceMin")));
-        }
-        if (ctx.queryParam("priceMax") != null) {
-            query.setPriceMax(new BigDecimal(ctx.queryParam("priceMax")));
-        }
-        if (ctx.queryParam("current") != null) {
-            query.setCurrent(Long.parseLong(ctx.queryParam("current")));
-        }
-        if (ctx.queryParam("size") != null) {
-            query.setSize(Long.parseLong(ctx.queryParam("size")));
-        }
-        if (ctx.queryParam("orderBys") != null) {
-            query.setOrderBys(ctx.queryParam("orderBys"));
-        }
-        return query;
     }
 
     // ========================= 请求 DTO（轻量 record） =========================

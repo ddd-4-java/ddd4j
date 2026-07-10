@@ -1,7 +1,6 @@
 package io.ddd4j.data.mybatis.repository.scheme;
 
 import io.ddd4j.annotation.orm.*;
-import io.ddd4j.kit.lang.StrKit;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.io.Serializable;
@@ -9,7 +8,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +43,14 @@ public class TableScheme implements Serializable {
     // ========================= 元数据 =========================
 
     private final Class<?> poClass;
+    /**
+     * fieldName(小写) → columnName
+     */
+    private final Map<String, String> field2Column = new LinkedHashMap<>();
+    /**
+     * columnName → fieldName
+     */
+    private final Map<String, String> column2Field = new LinkedHashMap<>();
     private String tableName;
     private Field idField;
     private String idColumn;
@@ -53,11 +63,6 @@ public class TableScheme implements Serializable {
     private List<Field> onCreateFields = new ArrayList<>();
     private List<Field> onUpdateFields = new ArrayList<>();
     private String defaultOrderBy;
-
-    /** fieldName(小写) → columnName */
-    private final Map<String, String> field2Column = new LinkedHashMap<>();
-    /** columnName → fieldName */
-    private final Map<String, String> column2Field = new LinkedHashMap<>();
 
     // ========================= 构造 =========================
 
@@ -74,6 +79,79 @@ public class TableScheme implements Serializable {
     }
 
     // ========================= 构建 =========================
+
+    private static String toUnderline(String camelCase) {
+        Matcher matcher = CAMEL_CASE.matcher(camelCase);
+        return matcher.replaceAll("$1_$2").toLowerCase();
+    }
+
+    // ========================= 表名解析 =========================
+
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            fields.addAll(FieldUtils.getAllFieldsList(current));
+            current = current.getSuperclass();
+        }
+        return fields;
+    }
+
+    // ========================= 列名解析 =========================
+
+    @SuppressWarnings("unchecked")
+    private static <A extends java.lang.annotation.Annotation> A findAnnotation(Class<?> clazz, Class<A> annotationType) {
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            A ann = current.getAnnotation(annotationType);
+            if (ann != null) {
+                return ann;
+            }
+            current = current.getSuperclass();
+        }
+        return null;
+    }
+
+    private static Field findField(Class<?> clazz, String fieldName) {
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            try {
+                Field field = current.getDeclaredField(fieldName);
+                field.setAccessible(true);
+                return field;
+            } catch (NoSuchFieldException ignored) {
+            }
+            current = current.getSuperclass();
+        }
+        return null;
+    }
+
+    // ========================= 自动填充 =========================
+
+    private static void setFieldValue(Object obj, Field field, Object value) {
+        try {
+            field.setAccessible(true);
+            // 类型兼容：String ← String
+            if (field.getType() == String.class && value != null) {
+                field.set(obj, value.toString());
+            } else {
+                field.set(obj, value);
+            }
+        } catch (IllegalAccessException ignored) {
+        }
+    }
+
+    private static Object now(Class<?> type) {
+        if (type == LocalDateTime.class) {
+            return LocalDateTime.now();
+        }
+        if (type == LocalDate.class) {
+            return LocalDate.now();
+        }
+        return null;
+    }
+
+    // ========================= 字段/列名查询 =========================
 
     private void build() {
         // 表名：优先 @TableName，否则类名驼峰转下划线
@@ -136,8 +214,6 @@ public class TableScheme implements Serializable {
         }
     }
 
-    // ========================= 表名解析 =========================
-
     private String resolveTableName() {
         // 优先读取 MyBatis-Plus 的 @TableName（如果存在）
         try {
@@ -158,8 +234,6 @@ public class TableScheme implements Serializable {
         simpleName = simpleName.replaceAll("(?i)(PO|DO|Entity)$", "");
         return toUnderline(simpleName);
     }
-
-    // ========================= 列名解析 =========================
 
     private String resolveColumnName(Field field) {
         // 优先读取 MyBatis-Plus 的 @TableField（如果存在）
@@ -207,8 +281,6 @@ public class TableScheme implements Serializable {
         return "id".equals(field.getName());
     }
 
-    // ========================= 自动填充 =========================
-
     /**
      * INSERT 前自动填充（tenantId / systemId / onCreate / 逻辑删除默认值）。
      */
@@ -248,7 +320,7 @@ public class TableScheme implements Serializable {
         }
     }
 
-    // ========================= 字段/列名查询 =========================
+    // ========================= Getter =========================
 
     /**
      * 字段名是否存在于 PO 中（不区分大小写）。
@@ -306,92 +378,77 @@ public class TableScheme implements Serializable {
         return field != null ? getFieldValue(po, field) : null;
     }
 
-    // ========================= Getter =========================
+    public Class<?> getPoClass() {
+        return poClass;
+    }
 
-    public Class<?> getPoClass() { return poClass; }
-    public String getTableName() { return tableName; }
-    public Field getIdField() { return idField; }
-    public String getIdColumn() { return idColumn; }
-    public Field getBizKeyField() { return bizKeyField; }
-    public String getBizKeyColumn() { return bizKeyColumn; }
-    public Field getTenantIdField() { return tenantIdField; }
-    public String getTenantIdColumn() { return tenantIdColumn; }
-    public Field getSystemIdField() { return systemIdField; }
-    public String getSystemIdColumn() { return systemIdColumn; }
-    public List<Field> getOnCreateFields() { return onCreateFields; }
-    public List<Field> getOnUpdateFields() { return onUpdateFields; }
-    public String getDefaultOrderBy() { return defaultOrderBy; }
-    public Map<String, String> getField2Column() { return field2Column; }
-    public Map<String, String> getColumn2Field() { return column2Field; }
+    public String getTableName() {
+        return tableName;
+    }
 
-    public boolean hasBizKey() { return bizKeyField != null; }
-    public boolean hasTenantId() { return tenantIdField != null; }
-    public boolean hasSystemId() { return systemIdField != null; }
+    public Field getIdField() {
+        return idField;
+    }
+
+    public String getIdColumn() {
+        return idColumn;
+    }
+
+    public Field getBizKeyField() {
+        return bizKeyField;
+    }
+
+    public String getBizKeyColumn() {
+        return bizKeyColumn;
+    }
+
+    public Field getTenantIdField() {
+        return tenantIdField;
+    }
+
+    public String getTenantIdColumn() {
+        return tenantIdColumn;
+    }
+
+    public Field getSystemIdField() {
+        return systemIdField;
+    }
+
+    public String getSystemIdColumn() {
+        return systemIdColumn;
+    }
+
+    public List<Field> getOnCreateFields() {
+        return onCreateFields;
+    }
+
+    public List<Field> getOnUpdateFields() {
+        return onUpdateFields;
+    }
 
     // ========================= 工具方法 =========================
 
-    private static String toUnderline(String camelCase) {
-        Matcher matcher = CAMEL_CASE.matcher(camelCase);
-        return matcher.replaceAll("$1_$2").toLowerCase();
+    public String getDefaultOrderBy() {
+        return defaultOrderBy;
     }
 
-    private static List<Field> getAllFields(Class<?> clazz) {
-        List<Field> fields = new ArrayList<>();
-        Class<?> current = clazz;
-        while (current != null && current != Object.class) {
-            fields.addAll(FieldUtils.getAllFieldsList(current));
-            current = current.getSuperclass();
-        }
-        return fields;
+    public Map<String, String> getField2Column() {
+        return field2Column;
     }
 
-    @SuppressWarnings("unchecked")
-    private static <A extends java.lang.annotation.Annotation> A findAnnotation(Class<?> clazz, Class<A> annotationType) {
-        Class<?> current = clazz;
-        while (current != null && current != Object.class) {
-            A ann = current.getAnnotation(annotationType);
-            if (ann != null) {
-                return ann;
-            }
-            current = current.getSuperclass();
-        }
-        return null;
+    public Map<String, String> getColumn2Field() {
+        return column2Field;
     }
 
-    private static Field findField(Class<?> clazz, String fieldName) {
-        Class<?> current = clazz;
-        while (current != null && current != Object.class) {
-            try {
-                Field field = current.getDeclaredField(fieldName);
-                field.setAccessible(true);
-                return field;
-            } catch (NoSuchFieldException ignored) {
-            }
-            current = current.getSuperclass();
-        }
-        return null;
+    public boolean hasBizKey() {
+        return bizKeyField != null;
     }
 
-    private static void setFieldValue(Object obj, Field field, Object value) {
-        try {
-            field.setAccessible(true);
-            // 类型兼容：String ← String
-            if (field.getType() == String.class && value != null) {
-                field.set(obj, value.toString());
-            } else {
-                field.set(obj, value);
-            }
-        } catch (IllegalAccessException ignored) {
-        }
+    public boolean hasTenantId() {
+        return tenantIdField != null;
     }
 
-    private static Object now(Class<?> type) {
-        if (type == LocalDateTime.class) {
-            return LocalDateTime.now();
-        }
-        if (type == LocalDate.class) {
-            return LocalDate.now();
-        }
-        return null;
+    public boolean hasSystemId() {
+        return systemIdField != null;
     }
 }

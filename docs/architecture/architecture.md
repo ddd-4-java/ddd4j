@@ -169,24 +169,24 @@ Repository<M, P, ID>  ← 唯一仓储接口
 
 #### 与 MyBatis-Plus BaseMapper 方法对照
 
-| BaseMapper | Repository | 说明 |
-|------------|-----------|------|
-| `selectById(id)` | `findById(ID)` | 按 ID 查询 |
-| `insert(T)` / `updateById(T)` | `save(M)` / `updateById(M)` | 插入 / 更新 |
-| `insertOrUpdate(T)` | `insertOrUpdate(M)` | 存在更新否插入 |
-| `deleteById(id)` / `deleteById(T)` | `deleteById(ID)` / `delete(M)` | 按 ID / 实体删除 |
-| `selectByIds(Collection)` | `findByIds(Collection<ID>)` | 批量查询 |
-| `deleteByIds(Collection)` | `deleteByIds(Collection<ID>)` | 批量删除 |
-| `insert(Collection)` | `saveBatch(Collection<M>)` | 批量插入 |
-| `updateById(Collection)` | `updateBatchById(Collection<M>)` | 批量更新 |
-| `selectOne(Wrapper)` | `findFirst(Query<P>)` | 条件查询单条 |
-| `selectList(Wrapper)` | `findList(Query<P>)` | 条件查询列表 |
-| `selectCount(Wrapper)` | `count(Query<P>)` | 条件计数 |
-| `selectPage(page, Wrapper)` | `page(Query<P>)` | 条件分页 |
-| `selectMaps(Wrapper)` | `maps(Query<P>)` | Map 列表 |
-| `exists(Wrapper)` | `exists(Query<P>)` | 条件存在判断 |
-| `update(T, Wrapper)` | `update(M, Query<P>)` | 条件更新 |
-| `delete(Wrapper)` | `deleteByQuery(Query<P>)` | 条件删除 |
+| BaseMapper                         | Repository                       | 说明          |
+|------------------------------------|----------------------------------|-------------|
+| `selectById(id)`                   | `findById(ID)`                   | 按 ID 查询     |
+| `insert(T)` / `updateById(T)`      | `save(M)` / `updateById(M)`      | 插入 / 更新     |
+| `insertOrUpdate(T)`                | `insertOrUpdate(M)`              | 存在更新否插入     |
+| `deleteById(id)` / `deleteById(T)` | `deleteById(ID)` / `delete(M)`   | 按 ID / 实体删除 |
+| `selectByIds(Collection)`          | `findByIds(Collection<ID>)`      | 批量查询        |
+| `deleteByIds(Collection)`          | `deleteByIds(Collection<ID>)`    | 批量删除        |
+| `insert(Collection)`               | `saveBatch(Collection<M>)`       | 批量插入        |
+| `updateById(Collection)`           | `updateBatchById(Collection<M>)` | 批量更新        |
+| `selectOne(Wrapper)`               | `findFirst(Query<P>)`            | 条件查询单条      |
+| `selectList(Wrapper)`              | `findList(Query<P>)`             | 条件查询列表      |
+| `selectCount(Wrapper)`             | `count(Query<P>)`                | 条件计数        |
+| `selectPage(page, Wrapper)`        | `page(Query<P>)`                 | 条件分页        |
+| `selectMaps(Wrapper)`              | `maps(Query<P>)`                 | Map 列表      |
+| `exists(Wrapper)`                  | `exists(Query<P>)`               | 条件存在判断      |
+| `update(T, Wrapper)`               | `update(M, Query<P>)`            | 条件更新        |
+| `delete(Wrapper)`                  | `deleteByQuery(Query<P>)`        | 条件删除        |
 
 #### 充血查询调用链
 
@@ -235,7 +235,9 @@ boolean exists = query.exists();
 ```
 
 **多 ORM 实现**：
-- **mybatisplus**（`ddd4j-data-mybatisplus`）：`AbstractMybatisQuery` 内部持有 `LambdaQueryWrapper`，深度覆盖 MyBatis-Plus 全部 Lambda 语法
+
+- **mybatisplus**（`ddd4j-data-mybatisplus`）：`AbstractMybatisQuery` 内部持有 `LambdaQueryWrapper`，深度覆盖 MyBatis-Plus
+  全部 Lambda 语法
 - **mybatis**（`ddd4j-data-mybatis`）：`Query.getWhereConditions()` → `TableScheme` 列名映射 → `SqlSession` 原生查询
 - **JPA**（`ddd4j-data-jpa`）：`Query.getWhereConditions()` → `CriteriaBuilder` Predicate 构建
 
@@ -249,7 +251,7 @@ boolean exists = query.exists();
 | `DddDomainEvent`                     | 继承 `AbstractDomainEvent`   | 兼容 Jackson 序列化                              |
 | `DddEventStoreRepository`            | 继承 `EventStoreRepository`  | 封装乐观锁冲突重试（最多 3 次）                           |
 | `DomainEventPublisher` (ddd4j 自创)    | —                          | 三框架运行时绑定（Spring/CDI/Guice）                  |
-| `MQEventPublisher` (ddd4j 自创)        | —                          | 13 个 MQ Broker/本地实现统一抽象                 |
+| `MQEventPublisher` (ddd4j 自创)        | —                          | 13 个 MQ Broker/本地实现统一抽象                     |
 | `BaseAggregateController` (ddd4j 自创) | —                          | 通用 CRUD + 业务行为（disable/enable）              |
 | `CleanDDDLayerRules` (ddd4j 自创)      | —                          | ArchUnit 编译期架构守护                            |
 
@@ -291,7 +293,8 @@ boolean exists = query.exists();
 
 ### 8.1 框架无关的纯净契约层
 
-ddd4j-core 绝大部分文件（`api/`、`context/`、`ddd/`、`cqrs/`、`event/`、`util/`）零框架 import，可同时被 Spring / Quarkus / Javalin 复用。
+ddd4j-core 绝大部分文件（`api/`、`context/`、`ddd/`、`cqrs/`、`event/`、`util/`）零框架 import，可同时被 Spring / Quarkus /
+Javalin 复用。
 
 ### 8.2 13 个 MQ Broker/本地实现统一抽象
 

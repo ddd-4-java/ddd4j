@@ -19,17 +19,29 @@ import java.util.Set;
 @AllArgsConstructor
 public class User {
 
-    /** 用户 ID（业务主键）。 */
+    /**
+     * 用户 ID（业务主键）。
+     */
     private String id;
-    /** 登录名（唯一）。 */
+    /**
+     * 登录名（唯一）。
+     */
     private String username;
-    /** 显示名。 */
+    /**
+     * 显示名。
+     */
     private String displayName;
-    /** 密码（演示用明文）。 */
+    /**
+     * 密码（演示用明文）。
+     */
     private String password;
-    /** 已绑定的角色编码集合。 */
+    /**
+     * 已绑定的角色编码集合。
+     */
     private Set<String> roleCodes = new HashSet<>();
-    /** 是否禁用。 */
+    /**
+     * 是否禁用。
+     */
     private boolean disabled;
 
 }

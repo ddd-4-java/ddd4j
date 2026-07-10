@@ -18,10 +18,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,7 +40,9 @@ class GoodsControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    /** 创建商品并返回其 ID。 */
+    /**
+     * 创建商品并返回其 ID。
+     */
     private Long createGoods(String code, String name, String price, int stock) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/goods")
                         .contentType(MediaType.APPLICATION_JSON)

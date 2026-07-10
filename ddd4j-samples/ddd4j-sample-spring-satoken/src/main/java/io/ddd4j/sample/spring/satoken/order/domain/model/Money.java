@@ -19,7 +19,6 @@ import java.util.Objects;
  *
  * @param amount   金额数值
  * @param currency 货币代码（如 CNY、USD）
- *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public record Money(BigDecimal amount, String currency) implements ValueObject {

@@ -71,12 +71,12 @@ DomainEventPublisher publisher = Contexts.injectOrThrow(
 把 SPI 注入到 `BaseContext` 这件事，本质上就是 4 行 `BaseContext.inject(...)` 调用。
 任何基于 Javalin 的工程都可以在自己的 main 方法里完成，没有必要、也不应该有专门模块。
 
-| 框架 | 是否有 DI 容器 | 是否有 ddd4j runtime 模块 | SPI 注入方式 |
-|------|----------------|--------------------------|-------------|
-| Spring | 有（`ApplicationContext`） | 有（`ddd4j-runtime-spring`） | 容器启动期扫描 `@Bean` 注入 |
-| Quarkus | 有（CDI） | 有（`ddd4j-runtime-quarkus`） | CDI Observer 启动期注入 |
-| Guice | 有（`Injector`） | 有（`ddd4j-runtime-guice`） | `Ddd4jGuiceModule#configure` 注入 |
-| **Javalin** | **无** | **无** | **业务方在 main 里手动 `BaseContext.inject`** |
+| 框架          | 是否有 DI 容器               | 是否有 ddd4j runtime 模块       | SPI 注入方式                               |
+|-------------|-------------------------|----------------------------|----------------------------------------|
+| Spring      | 有（`ApplicationContext`） | 有（`ddd4j-runtime-spring`）  | 容器启动期扫描 `@Bean` 注入                     |
+| Quarkus     | 有（CDI）                  | 有（`ddd4j-runtime-quarkus`） | CDI Observer 启动期注入                     |
+| Guice       | 有（`Injector`）           | 有（`ddd4j-runtime-guice`）   | `Ddd4jGuiceModule#configure` 注入        |
+| **Javalin** | **无**                   | **无**                      | **业务方在 main 里手动 `BaseContext.inject`** |
 
 Spring / Quarkus / Guice 需要独立 runtime 模块，因为它们要在容器启动期**反射拿 SPI Bean**；
 Javalin 不存在容器抽象，所以也省掉了这一层。
@@ -85,29 +85,29 @@ Javalin 不存在容器抽象，所以也省掉了这一层。
 
 ### 第二轨：Order 充血模型（`/api/orders`）
 
-| HTTP | 路径 | 用途 |
-|------|------|------|
-| `POST` | `/api/orders` | 创建草稿订单 |
-| `POST` | `/api/orders/{id}/lines` | 添加订单行 |
-| `POST` | `/api/orders/{id}/pay` | 支付订单 |
-| `POST` | `/api/orders/{id}/ship` | 发货订单 |
-| `POST` | `/api/orders/{id}/cancel` | 取消订单 |
-| `GET`  | `/api/orders/{id}` | 按 ID 查询 |
+| HTTP   | 路径                              | 用途      |
+|--------|---------------------------------|---------|
+| `POST` | `/api/orders`                   | 创建草稿订单  |
+| `POST` | `/api/orders/{id}/lines`        | 添加订单行   |
+| `POST` | `/api/orders/{id}/pay`          | 支付订单    |
+| `POST` | `/api/orders/{id}/ship`         | 发货订单    |
+| `POST` | `/api/orders/{id}/cancel`       | 取消订单    |
+| `GET`  | `/api/orders/{id}`              | 按 ID 查询 |
 | `GET`  | `/api/orders/by-no?orderNo=xxx` | 按订单编号查询 |
 
 ### 第三轨：Goods Model/Query（`/api/goods`）
 
-| HTTP | 路径 | 用途 |
-|------|------|------|
-| `POST`   | `/api/goods` | 创建商品 |
-| `PUT`    | `/api/goods/{id}` | 更新商品 |
-| `PUT`    | `/api/goods/{id}/status?status=ON_SALE` | 调整商品状态 |
-| `DELETE` | `/api/goods/{id}` | 软删除商品 |
-| `GET`    | `/api/goods/{id}` | 按 ID 查询 |
-| `GET`    | `/api/goods/by-code?code=SKU-001` | 按编码查询 |
-| `GET`    | `/api/goods/page?current=1&size=10&nameLike=iPhone` | 充血分页查询 |
-| `GET`    | `/api/goods/list?status=ON_SALE` | 充血列表查询 |
-| `GET`    | `/api/goods/count?status=ON_SALE` | 充血计数 |
+| HTTP     | 路径                                                  | 用途      |
+|----------|-----------------------------------------------------|---------|
+| `POST`   | `/api/goods`                                        | 创建商品    |
+| `PUT`    | `/api/goods/{id}`                                   | 更新商品    |
+| `PUT`    | `/api/goods/{id}/status?status=ON_SALE`             | 调整商品状态  |
+| `DELETE` | `/api/goods/{id}`                                   | 软删除商品   |
+| `GET`    | `/api/goods/{id}`                                   | 按 ID 查询 |
+| `GET`    | `/api/goods/by-code?code=SKU-001`                   | 按编码查询   |
+| `GET`    | `/api/goods/page?current=1&size=10&nameLike=iPhone` | 充血分页查询  |
+| `GET`    | `/api/goods/list?status=ON_SALE`                    | 充血列表查询  |
+| `GET`    | `/api/goods/count?status=ON_SALE`                   | 充血计数    |
 
 ## 🧪 curl 示例
 
@@ -183,16 +183,16 @@ curl "http://localhost:7000/api/goods/count?status=ON_SALE"
 
 ## 🚄 双轨对比
 
-| 维度 | 第二轨：Order | 第三轨：Goods |
-|------|---------------|-----------------|
-| 聚合根 | `Order extends AggregateRoot` 充血方法 | `Goods extends AggregateRoot` 纯 PO |
-| 状态机 | DRAFT → PAID → SHIPPED / CANCELLED | 无（status 字段由服务设置） |
-| 业务不变量 | 在 `addLine`/`pay`/`ship`/`cancel` 内校验 | 在 `GoodsApplicationService` 内校验 |
-| 领域事件 | 5 个 `DomainEvent`（OrderCreated/LineAdded/Paid/Shipped/Cancelled） | 无 |
-| Model/PO 分离 | 有：`Order` ↔ `OrderPO`/`OrderLinePO` | 无：Goods 本身就是 PO |
-| 仓储 | 普通 `Repository` | `RichRepository`（支持充血查询） |
-| 查询方式 | 按 ID / 按业务键 | `GoodsQuery#page()/#list()/#count()/#one()` |
-| 适用场景 | 业务规则复杂、状态迁移多 | 简单 CRUD、读多写少 |
+| 维度          | 第二轨：Order                                                        | 第三轨：Goods                                   |
+|-------------|------------------------------------------------------------------|---------------------------------------------|
+| 聚合根         | `Order extends AggregateRoot` 充血方法                               | `Goods extends AggregateRoot` 纯 PO          |
+| 状态机         | DRAFT → PAID → SHIPPED / CANCELLED                               | 无（status 字段由服务设置）                           |
+| 业务不变量       | 在 `addLine`/`pay`/`ship`/`cancel` 内校验                            | 在 `GoodsApplicationService` 内校验             |
+| 领域事件        | 5 个 `DomainEvent`（OrderCreated/LineAdded/Paid/Shipped/Cancelled） | 无                                           |
+| Model/PO 分离 | 有：`Order` ↔ `OrderPO`/`OrderLinePO`                              | 无：Goods 本身就是 PO                             |
+| 仓储          | 普通 `Repository`                                                  | `RichRepository`（支持充血查询）                    |
+| 查询方式        | 按 ID / 按业务键                                                      | `GoodsQuery#page()/#list()/#count()/#one()` |
+| 适用场景        | 业务规则复杂、状态迁移多                                                     | 简单 CRUD、读多写少                                |
 
 ## 📁 项目结构
 
@@ -240,6 +240,7 @@ ddd4j-sample-javalin/
 
 4 个 SPI 文件位于 `spi/` 包下，均为**示例实现**（NoOp / Anonymous），
 真实业务应替换为：
+
 - `DomainEventPublisher` → Guava EventBus / Reactor Sinks / Akka Actor
 - `MQEventPublisher` → ddd4j-mq-kafka / ddd4j-mq-rabbitmq 等
 - `SubjectProvider` → ddd4j-auth-javalin（与 Sa-Token/Shiro 集成）
@@ -247,14 +248,14 @@ ddd4j-sample-javalin/
 
 ## 🔗 相关示例
 
-| 示例 | 演示内容 |
-|------|---------|
-| [ddd4j-sample-spring](../ddd4j-sample-spring) | Spring Boot 完整业务（含 DDD/CQRS/Cache/MQ） |
-| [ddd4j-sample-quarkus](../ddd4j-sample-quarkus) | Quarkus 完整业务（CDI 启动期注入 SPI） |
-| [ddd4j-sample-javalin-satoken](../ddd4j-sample-javalin-satoken) | Javalin + Sa-Token 鉴权 |
-| [ddd4j-sample-javalin-shiro](../ddd4j-sample-javalin-shiro) | Javalin + Shiro 鉴权 |
-| [ddd4j-sample-spring-cqrs](../ddd4j-sample-spring-cqrs) | Spring CQRS 对照示例 |
-| [ddd4j-sample-javalin-cqrs](../ddd4j-sample-javalin-cqrs) | Javalin CQRS 对照示例 |
+| 示例                                                              | 演示内容                                  |
+|-----------------------------------------------------------------|---------------------------------------|
+| [ddd4j-sample-spring](../ddd4j-sample-spring)                   | Spring Boot 完整业务（含 DDD/CQRS/Cache/MQ） |
+| [ddd4j-sample-quarkus](../ddd4j-sample-quarkus)                 | Quarkus 完整业务（CDI 启动期注入 SPI）           |
+| [ddd4j-sample-javalin-satoken](../ddd4j-sample-javalin-satoken) | Javalin + Sa-Token 鉴权                 |
+| [ddd4j-sample-javalin-shiro](../ddd4j-sample-javalin-shiro)     | Javalin + Shiro 鉴权                    |
+| [ddd4j-sample-spring-cqrs](../ddd4j-sample-spring-cqrs)         | Spring CQRS 对照示例                      |
+| [ddd4j-sample-javalin-cqrs](../ddd4j-sample-javalin-cqrs)       | Javalin CQRS 对照示例                     |
 
 ## 📄 相关文档
 

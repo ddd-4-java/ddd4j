@@ -1,6 +1,5 @@
 package io.ddd4j.core.cqrs.readmodel;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link DefaultProjectionService} 单元测试。
@@ -133,7 +129,7 @@ class DefaultProjectionServiceTest {
 
         @Test
         void updateProjectionPosition_nextEventNumber为零_应允许(@Mock ProjectionPositionRepository repo,
-                                                            @Mock ProjectionPosition current) {
+                                                                 @Mock ProjectionPosition current) {
             ProjectionPosition zeroed = new DefaultProjectionPosition("person-list", 0);
             when(current.withNextEventNumber(0L)).thenReturn(zeroed);
             when(repo.findByStreamId("person-list")).thenReturn(Optional.of(current));

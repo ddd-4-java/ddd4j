@@ -49,9 +49,13 @@ public enum ProvinceEnum {
 
     ;
 
-    /** 行政区划代码 */
+    /**
+     * 行政区划代码
+     */
     private String code;
-    /** 单位名称 */
+    /**
+     * 单位名称
+     */
     private String cname;
 
     /**

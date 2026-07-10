@@ -1,8 +1,7 @@
 package io.ddd4j.data.mybatis.typehandler;
 
-import io.ddd4j.kit.lang.StrKit;
-
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import io.ddd4j.kit.lang.StrKit;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeReference;
 

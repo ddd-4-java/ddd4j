@@ -80,7 +80,7 @@ public class GoodsQueryResource {
     }
 
     private GoodsQuery buildQuery(Long current, Long size, String code, String nameLike, String status,
-                                    BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
+                                  BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
         GoodsQuery query = new GoodsQuery();
         if (current != null) {
             query.setCurrent(current);

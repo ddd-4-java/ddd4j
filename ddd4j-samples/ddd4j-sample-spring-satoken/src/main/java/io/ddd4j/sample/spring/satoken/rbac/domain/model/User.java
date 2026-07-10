@@ -22,20 +22,34 @@ public class User extends AggregateRoot<String> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 用户 ID */
+    /**
+     * 用户 ID
+     */
     private final String userId;
-    /** 用户名（登录账号） */
+    /**
+     * 用户名（登录账号）
+     */
     private final String username;
-    /** 密码（演示用明文，生产应使用哈希） */
-    private String password;
-    /** 真实姓名 */
-    private String realName;
-    /** 状态 */
-    private Status status;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private final Instant createdAt;
-    /** 用户的角色 ID 集合 */
+    /**
+     * 用户的角色 ID 集合
+     */
     private final Set<String> roleIds = new HashSet<>();
+    /**
+     * 密码（演示用明文，生产应使用哈希）
+     */
+    private String password;
+    /**
+     * 真实姓名
+     */
+    private String realName;
+    /**
+     * 状态
+     */
+    private Status status;
 
     public User(String userId, String username, String password, String realName, Status status) {
         if (StrKit.isBlank(userId)) {

@@ -42,10 +42,12 @@ public abstract class BaseTypeHandler<T> extends org.apache.ibatis.type.BaseType
     }
 
     public TypeReference<T> typeReference() {
-        return new TypeReference<T>() {};
+        return new TypeReference<T>() {
+        };
     }
 
     protected abstract String convert(T obj);
+
     protected abstract T parse(String result);
 
     @Override

@@ -10,12 +10,12 @@
 
 本示例在 **Quarkus 3.15 LTS** 上同时演示两个业务轨道 + CQRS 读写分离：
 
-| 轨道 | 业务包 | 风格 |
-| --- | --- | --- |
-| **第二轨**（充血模型） | `order/` | `Order` 聚合根 + 5 个领域事件 + `OrderApplicationService`（`@ApplicationScoped`） |
-| **第三轨**（Model/Query） | `goods/` | `Goods` PO + `RichRepository` + `GoodsQuery`（`@ApplicationScoped`） |
-| **CQRS 增强** | `cache/` + 读侧 Resource | `CacheKit` 缓存读侧统计 |
-| **CDI 事件桥接** | `event/` | `@Observes Order*Event` 同步监听 |
+| 轨道                   | 业务包                    | 风格                                                                      |
+|----------------------|------------------------|-------------------------------------------------------------------------|
+| **第二轨**（充血模型）        | `order/`               | `Order` 聚合根 + 5 个领域事件 + `OrderApplicationService`（`@ApplicationScoped`） |
+| **第三轨**（Model/Query） | `goods/`               | `Goods` PO + `RichRepository` + `GoodsQuery`（`@ApplicationScoped`）      |
+| **CQRS 增强**          | `cache/` + 读侧 Resource | `CacheKit` 缓存读侧统计                                                       |
+| **CDI 事件桥接**         | `event/`               | `@Observes Order*Event` 同步监听                                            |
 
 ---
 
@@ -122,43 +122,43 @@ ddd4j-sample-quarkus-cqrs/
 
 ### 4.1 Order 命令侧（写）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST`   | `/api/orders`             | 创建草稿订单 |
-| `POST`   | `/api/orders/{id}/lines`  | 添加订单行 |
-| `POST`   | `/api/orders/{id}/pay`    | 支付订单 |
-| `POST`   | `/api/orders/{id}/ship`   | 发货订单 |
-| `POST`   | `/api/orders/{id}/cancel` | 取消订单 |
+| 方法     | 路径                        | 说明     |
+|--------|---------------------------|--------|
+| `POST` | `/api/orders`             | 创建草稿订单 |
+| `POST` | `/api/orders/{id}/lines`  | 添加订单行  |
+| `POST` | `/api/orders/{id}/pay`    | 支付订单   |
+| `POST` | `/api/orders/{id}/ship`   | 发货订单   |
+| `POST` | `/api/orders/{id}/cancel` | 取消订单   |
 
 ### 4.2 Order 查询侧（读）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/api/orders/{id}` | 按 ID 查询 |
-| `GET` | `/api/orders/by-no` | 按订单编号查询 |
-| `GET` | `/api/orders` | 列出全部订单 |
-| `GET` | `/api/orders/query/stats` | **CQRS 缓存读**：订单统计 |
+| 方法    | 路径                                        | 说明                 |
+|-------|-------------------------------------------|--------------------|
+| `GET` | `/api/orders/{id}`                        | 按 ID 查询            |
+| `GET` | `/api/orders/by-no`                       | 按订单编号查询            |
+| `GET` | `/api/orders`                             | 列出全部订单             |
+| `GET` | `/api/orders/query/stats`                 | **CQRS 缓存读**：订单统计  |
 | `GET` | `/api/orders/query/buyer/{buyerId}/count` | **CQRS 缓存读**：买家订单数 |
-| `GET` | `/api/orders/query/detail/{id}` | **CQRS 缓存读**：订单详情 |
+| `GET` | `/api/orders/query/detail/{id}`           | **CQRS 缓存读**：订单详情  |
 
 ### 4.3 Goods 命令侧（写）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST`   | `/api/goods`             | 创建商品 |
-| `PUT`    | `/api/goods/{id}`        | 更新商品 |
+| 方法       | 路径                       | 说明     |
+|----------|--------------------------|--------|
+| `POST`   | `/api/goods`             | 创建商品   |
+| `PUT`    | `/api/goods/{id}`        | 更新商品   |
 | `PUT`    | `/api/goods/{id}/status` | 调整商品状态 |
-| `DELETE` | `/api/goods/{id}`        | 软删除商品 |
+| `DELETE` | `/api/goods/{id}`        | 软删除商品  |
 
 ### 4.4 Goods 查询侧（读）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/api/goods/{id}` | 按 ID 查询 |
-| `GET` | `/api/goods/by-code` | 按编码查询 |
-| `GET` | `/api/goods/page` | 充血分页查询 |
-| `GET` | `/api/goods/list` | 充血列表查询 |
-| `GET` | `/api/goods/count` | 充血计数 |
+| 方法    | 路径                      | 说明                |
+|-------|-------------------------|-------------------|
+| `GET` | `/api/goods/{id}`       | 按 ID 查询           |
+| `GET` | `/api/goods/by-code`    | 按编码查询             |
+| `GET` | `/api/goods/page`       | 充血分页查询            |
+| `GET` | `/api/goods/list`       | 充血列表查询            |
+| `GET` | `/api/goods/count`      | 充血计数              |
 | `GET` | `/api/goods/query/list` | **CQRS 缓存读**：商品列表 |
 | `GET` | `/api/goods/query/{id}` | **CQRS 缓存读**：商品详情 |
 
@@ -218,28 +218,28 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 ## 6. 关键依赖
 
-| 依赖 | 作用 |
-| --- | --- |
-| `ddd4j-core` | CQRS/ES 抽象（AggregateRoot / Repository / DomainEvent） |
-| `ddd4j-annotation` | 构造型注解 |
-| `ddd4j-kit` | 工具包（StrKit / CollKit） |
-| `ddd4j-runtime-quarkus` | 启动期自动注入 4 个核心 SPI（DddContextInitializer） |
-| `ddd4j-web-quarkus` | TenantAwareResource、DefaultExceptionHandler |
-| `ddd4j-cache` | CacheKit 缓存门面 |
-| `quarkus-rest` | Quarkus 3.x REST 实现 |
-| `quarkus-arc` | CDI 容器 |
-| `jackson-databind` | 值对象 / 事件的 JSON 序列化 |
+| 依赖                      | 作用                                                   |
+|-------------------------|------------------------------------------------------|
+| `ddd4j-core`            | CQRS/ES 抽象（AggregateRoot / Repository / DomainEvent） |
+| `ddd4j-annotation`      | 构造型注解                                                |
+| `ddd4j-kit`             | 工具包（StrKit / CollKit）                                |
+| `ddd4j-runtime-quarkus` | 启动期自动注入 4 个核心 SPI（DddContextInitializer）             |
+| `ddd4j-web-quarkus`     | TenantAwareResource、DefaultExceptionHandler          |
+| `ddd4j-cache`           | CacheKit 缓存门面                                        |
+| `quarkus-rest`          | Quarkus 3.x REST 实现                                  |
+| `quarkus-arc`           | CDI 容器                                               |
+| `jackson-databind`      | 值对象 / 事件的 JSON 序列化                                   |
 
 ---
 
 ## 7. 生产化建议
 
-| 示例组件 | 生产建议 |
-| --- | --- |
-| `InMemoryOrderRepository` | JDBI / MyBatis-Plus / Hibernate |
-| `InMemoryGoodsRepository` | 同上 |
-| `OrderCacheService` / `GoodsCacheService` | 替换为 Caffeine / Redis / Redisson 后端 |
-| `@Observes OrderEvent` | 改为 `@ObservesAsync`（需 quarkus-vertx） |
+| 示例组件                                      | 生产建议                                 |
+|-------------------------------------------|--------------------------------------|
+| `InMemoryOrderRepository`                 | JDBI / MyBatis-Plus / Hibernate      |
+| `InMemoryGoodsRepository`                 | 同上                                   |
+| `OrderCacheService` / `GoodsCacheService` | 替换为 Caffeine / Redis / Redisson 后端   |
+| `@Observes OrderEvent`                    | 改为 `@ObservesAsync`（需 quarkus-vertx） |
 
 ---
 

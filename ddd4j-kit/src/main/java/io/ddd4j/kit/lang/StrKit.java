@@ -15,30 +15,24 @@ import java.util.*;
 @UtilityClass
 public class StrKit extends StrUtil {
 
+    public static final char unknowChar = '*';
     private static final String FOLDER_SEPARATOR = "/";
-
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
-
     private static final String TOP_PATH = "..";
-
     private static final String CURRENT_PATH = ".";
-
     private static final char EXTENSION_SEPARATOR = '.';
-
+    private static final int[] allChineseScope = {1601, 1637, 1833, 2078,
+            2274, 2302, 2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730,
+            3858, 4027, 4086, 4390, 4558, 4684, 4925, 5249, 5600,
+            Integer.MAX_VALUE};
+    private static final char[] allEnglishLetter = {'A', 'B', 'C', 'D', 'E',
+            'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+            'T', 'W', 'X', 'Y', 'Z', unknowChar};
     /*
      * Any number of these characters are considered delimiters between
      * multiple context config paths in a single String value.
      */
     public static String CONFIG_LOCATION_DELIMITERS = ",; \t\n";
-
-    private static final int[] allChineseScope = { 1601, 1637, 1833, 2078,
-            2274, 2302, 2433, 2594, 2787, 3106, 3212, 3472, 3635, 3722, 3730,
-            3858, 4027, 4086, 4390, 4558, 4684, 4925, 5249, 5600,
-            Integer.MAX_VALUE };
-    public static final char unknowChar = '*';
-    private static final char[] allEnglishLetter = { 'A', 'B', 'C', 'D', 'E',
-            'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-            'T', 'W', 'X', 'Y', 'Z', unknowChar };
 
     /*
      * 字串是否为空
@@ -500,8 +494,7 @@ public class StrKit extends StrUtil {
         StringBuilder sb = new StringBuilder(str.length());
         if (capitalize) {
             sb.append(Character.toUpperCase(str.charAt(0)));
-        }
-        else {
+        } else {
             sb.append(Character.toLowerCase(str.charAt(0)));
         }
         sb.append(str.substring(1));
@@ -581,8 +574,7 @@ public class StrKit extends StrUtil {
                 newPath += FOLDER_SEPARATOR;
             }
             return newPath + relativePath;
-        }
-        else {
+        } else {
             return relativePath;
         }
     }
@@ -611,8 +603,7 @@ public class StrKit extends StrUtil {
             prefix = pathToUse.substring(0, prefixIndex + 1);
             if (prefix.contains("/")) {
                 prefix = "";
-            }
-            else {
+            } else {
                 pathToUse = pathToUse.substring(prefixIndex + 1);
             }
         }
@@ -629,17 +620,14 @@ public class StrKit extends StrUtil {
             String element = pathArray[i];
             if (CURRENT_PATH.equals(element)) {
                 // Points to current directory - drop it.
-            }
-            else if (TOP_PATH.equals(element)) {
+            } else if (TOP_PATH.equals(element)) {
                 // Registering top path found.
                 tops++;
-            }
-            else {
+            } else {
                 if (tops > 0) {
                     // Merging path element with element corresponding to top path.
                     tops--;
-                }
-                else {
+                } else {
                     // Normal path element found.
                     pathElements.add(0, element);
                 }
@@ -743,7 +731,7 @@ public class StrKit extends StrUtil {
      */
     public static String[] addStringToArray(String[] array, String str) {
         if (ObjectUtils.isEmpty(array)) {
-            return new String[] {str};
+            return new String[]{str};
         }
         String[] newArr = new String[array.length + 1];
         System.arraycopy(array, 0, newArr, 0, array.length);
@@ -1028,15 +1016,14 @@ public class StrKit extends StrUtil {
             return new String[0];
         }
         if (delimiter == null) {
-            return new String[] {str};
+            return new String[]{str};
         }
         List<String> result = new ArrayList<String>();
         if ("".equals(delimiter)) {
             for (int i = 0; i < str.length(); i++) {
                 result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
             }
-        }
-        else {
+        } else {
             int pos = 0;
             int delPos;
             while ((delPos = str.indexOf(delimiter, pos)) != -1) {
@@ -1278,7 +1265,7 @@ public class StrKit extends StrUtil {
             }
         }
         if (ret.size() == 0) {
-            return new String[] { src };
+            return new String[]{src};
         }
         // ret.add(new String(bytes, curPoint, src.length() - curPoint));
         String[] retStr = new String[ret.size()];
@@ -1307,12 +1294,12 @@ public class StrKit extends StrUtil {
         }
         String beforeDelimiter = toSplit.substring(0, offset);
         String afterDelimiter = toSplit.substring(offset + delimiter.length());
-        return new String[] {beforeDelimiter, afterDelimiter};
+        return new String[]{beforeDelimiter, afterDelimiter};
     }
 
     public static String[] splits(String toSplit, String regex) {
         if (!hasLength(toSplit) || !hasLength(regex)) {
-            return new String[] {};
+            return new String[]{};
         }
         return toSplit.split(regex);
     }
@@ -1388,10 +1375,10 @@ public class StrKit extends StrUtil {
         final int maxNum = 37;
         int i; // 生成的随机数
         int count = 0; // 生成的密码的长度
-        char[] str = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+        char[] str = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
                 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
                 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8',
-                '9', '_' };
+                '9', '_'};
         StringBuilder pwd = new StringBuilder("");
         Random r = new Random();
         while (count < pwd_len) {

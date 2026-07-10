@@ -1,7 +1,7 @@
 package io.ddd4j.mq.spring.registry;
 
-import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.listener.MQListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

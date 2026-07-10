@@ -2,11 +2,7 @@ package io.ddd4j.sample.javalin.satoken.goods.web;
 
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -48,46 +44,6 @@ class GoodsResourceTest {
         }
     }
 
-    /**
-     * 每个测试前重启 Javalin 并清空 sa-token 全局状态，避免上一测试遗留的 token/session 干扰。
-     */
-    @BeforeEach
-    void resetServerState() {
-        app.stop();
-        app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
-    }
-
-    private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
-    }
-
-    private HttpResponse<String> putJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
-    }
-
-    private HttpResponse<String> put(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .PUT(HttpRequest.BodyPublishers.noBody()).build(),
-                HttpResponse.BodyHandlers.ofString());
-    }
-
-    private HttpResponse<String> delete(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
-                HttpResponse.BodyHandlers.ofString());
-    }
-
-    private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
-                HttpResponse.BodyHandlers.ofString());
-    }
-
     private static String extractId(String body) {
         // body: {"code":0,"message":"ok","data":{"id":123,...}}
         int idx = body.indexOf("\"id\":");
@@ -103,6 +59,46 @@ class GoodsResourceTest {
             end++;
         }
         return body.substring(start, end);
+    }
+
+    /**
+     * 每个测试前重启 Javalin 并清空 sa-token 全局状态，避免上一测试遗留的 token/session 干扰。
+     */
+    @BeforeEach
+    void resetServerState() {
+        app.stop();
+        app = TestSupport.start();
+        baseUrl = "http://localhost:" + app.port();
+    }
+
+    private HttpResponse<String> postJson(String path, String body) throws Exception {
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> putJson(String path, String body) throws Exception {
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
+                HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> put(String path) throws Exception {
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+                        .PUT(HttpRequest.BodyPublishers.noBody()).build(),
+                HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> delete(String path) throws Exception {
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
+                HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> get(String path) throws Exception {
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
+                HttpResponse.BodyHandlers.ofString());
     }
 
     // =================== 1) create ====================

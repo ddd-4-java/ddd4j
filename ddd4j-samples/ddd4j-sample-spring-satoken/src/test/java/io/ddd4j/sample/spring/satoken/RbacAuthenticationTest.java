@@ -10,9 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,10 +26,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("鉴权测试 - Sa-Token")
 class RbacAuthenticationTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    /** 登录并返回 token。 */
+    private static org.hamcrest.Matcher<Integer> forbiddenOrUnauthorized() {
+        return org.hamcrest.Matchers.anyOf(
+                org.hamcrest.Matchers.is(403),
+                org.hamcrest.Matchers.is(401));
+    }
+
+    private static org.hamcrest.Matcher<Integer> unauthorizedOrForbidden() {
+        return forbiddenOrUnauthorized();
+    }
+
+    /**
+     * 登录并返回 token。
+     */
     private String login(String username, String password) {
         try {
             MvcResult result = mockMvc.perform(post("/auth/login")
@@ -45,11 +57,19 @@ class RbacAuthenticationTest {
         }
     }
 
-    private String adminToken() { return login("admin", "123456"); }
-    private String userToken() { return login("user", "123456"); }
-    private String managerToken() { return login("manager", "123456"); }
+    private String adminToken() {
+        return login("admin", "123456");
+    }
 
     // ============================ 1) 登录鉴权 ============================
+
+    private String userToken() {
+        return login("user", "123456");
+    }
+
+    private String managerToken() {
+        return login("manager", "123456");
+    }
 
     @Test
     @DisplayName("登录 - 合法凭证 → success=true + token")
@@ -118,6 +138,8 @@ class RbacAuthenticationTest {
                 .andExpect(jsonPath("$.userId").value("10001"));
     }
 
+    // ============================ 2) 角色鉴权 ============================
+
     @Test
     @DisplayName("/auth/status - 查询当前登录状态")
     void status_returnsLoginFlag() throws Exception {
@@ -135,8 +157,6 @@ class RbacAuthenticationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.kicked").value("10002"));
     }
-
-    // ============================ 2) 角色鉴权 ============================
 
     @Test
     @DisplayName("编程式角色检查 - admin 拥有 admin 角色 → has=true")
@@ -189,6 +209,8 @@ class RbacAuthenticationTest {
                 .andExpect(status().is(forbiddenOrUnauthorized()));
     }
 
+    // ============================ 3) 权限鉴权 ============================
+
     @Test
     @DisplayName("/auth/manager - manager 用户可访问")
     void managerEndpoint_managerUser_succeeds() throws Exception {
@@ -204,8 +226,6 @@ class RbacAuthenticationTest {
         mockMvc.perform(get("/auth/manager").header("ddd4j-token", token))
                 .andExpect(status().is(forbiddenOrUnauthorized()));
     }
-
-    // ============================ 3) 权限鉴权 ============================
 
     @Test
     @DisplayName("编程式权限检查 - admin 拥有 user:list 权限 → has=true")
@@ -249,6 +269,8 @@ class RbacAuthenticationTest {
                 .andExpect(status().isOk());
     }
 
+    // ============================ 4) 组合鉴权 ============================
+
     @Test
     @DisplayName("/auth/orders/{id}/pay - 有 order:pay 权限 → 200")
     void payOrder_withPermission_succeeds() throws Exception {
@@ -266,7 +288,7 @@ class RbacAuthenticationTest {
                 .andExpect(status().is(forbiddenOrUnauthorized()));
     }
 
-    // ============================ 4) 组合鉴权 ============================
+    // ============================ 辅助 ============================
 
     @Test
     @DisplayName("DELETE /auth/users/{id} - admin + user:delete → 200")
@@ -283,17 +305,5 @@ class RbacAuthenticationTest {
         String token = userToken();
         mockMvc.perform(delete("/auth/users/99999").header("ddd4j-token", token))
                 .andExpect(status().is(forbiddenOrUnauthorized()));
-    }
-
-    // ============================ 辅助 ============================
-
-    private static org.hamcrest.Matcher<Integer> forbiddenOrUnauthorized() {
-        return org.hamcrest.Matchers.anyOf(
-                org.hamcrest.Matchers.is(403),
-                org.hamcrest.Matchers.is(401));
-    }
-
-    private static org.hamcrest.Matcher<Integer> unauthorizedOrForbidden() {
-        return forbiddenOrUnauthorized();
     }
 }

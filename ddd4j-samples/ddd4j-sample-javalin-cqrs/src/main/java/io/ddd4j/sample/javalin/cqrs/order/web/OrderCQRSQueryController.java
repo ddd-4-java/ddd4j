@@ -4,7 +4,6 @@ import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.cache.OrderCacheService;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
-import io.javalin.apibuilder.EndpointGroup;
 
 import java.util.Map;
 import java.util.Objects;

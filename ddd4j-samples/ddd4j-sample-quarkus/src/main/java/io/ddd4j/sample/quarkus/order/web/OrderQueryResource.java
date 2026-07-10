@@ -7,16 +7,11 @@ import io.ddd4j.sample.quarkus.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.quarkus.order.infrastructure.InMemoryOrderRepository;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 订单 CQRS 查询端点：演示读写分离的查询侧设计。

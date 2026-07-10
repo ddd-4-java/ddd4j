@@ -6,13 +6,14 @@ ddd4j SubjectKit 统一鉴权入口在 Spring Boot 框架下的 Spring Security 
 
 ### 🎯 三轨合一展示
 
-| 轨道 | 模块 | 框架 | 入口 |
-|------|------|------|------|
-| **一轨**：Auth 鉴权 | `AuthController / AuthService` | Spring Security (SubjectKit) | `POST /auth/login` |
-| **二轨**：充血模型 | `Order 聚合 + OrderApplicationService` | Spring + ddd4j | `POST /orders` |
-| **三轨**：Model/Query | `Goods PO + GoodsQuery` | Spring + ddd4j | `POST /api/goods` |
+| 轨道                 | 模块                                   | 框架                           | 入口                 |
+|--------------------|--------------------------------------|------------------------------|--------------------|
+| **一轨**：Auth 鉴权     | `AuthController / AuthService`       | Spring Security (SubjectKit) | `POST /auth/login` |
+| **二轨**：充血模型        | `Order 聚合 + OrderApplicationService` | Spring + ddd4j               | `POST /orders`     |
+| **三轨**：Model/Query | `Goods PO + GoodsQuery`              | Spring + ddd4j               | `POST /api/goods`  |
 
-> 🎯 业务代码（`AuthService`、`OrderApplicationService`、`Order`、`GoodsApplicationService`、`Goods`）在三个 Spring Auth 示例（satoken / shiro / security）中**逐字符一致**。
+> 🎯 业务代码（`AuthService`、`OrderApplicationService`、`Order`、`GoodsApplicationService`、`Goods`）在三个 Spring Auth
+> 示例（satoken / shiro / security）中**逐字符一致**。
 
 ### 🎯 核心价值
 
@@ -24,13 +25,14 @@ ddd4j SubjectKit 统一鉴权入口在 Spring Boot 框架下的 Spring Security 
 
 ### 📦 模块对应
 
-| 框架 | 鉴权适配模块 | 桥接模块 |
-|------|-------------|---------|
+| 框架          | 鉴权适配模块              | 桥接模块              |
+|-------------|---------------------|-------------------|
 | Spring Boot | ddd4j-auth-security | ddd4j-auth-spring |
 
 ### 🚀 快速开始
 
 **启动命令**：
+
 ```bash
 mvn spring-boot:run    # Spring Boot
 ```
@@ -38,6 +40,7 @@ mvn spring-boot:run    # Spring Boot
 **端口**：8080
 
 **测试登录**：
+
 ```bash
 # 登录获取 Token
 curl -X POST 'http://localhost:8080/auth/login?userId=10001'
@@ -64,6 +67,7 @@ curl -X POST http://localhost:8080/auth/logout
 ```
 
 **测试 Order 充血业务（第二轨）**：
+
 ```bash
 # 1. 创建订单
 curl -X POST http://localhost:8080/orders \
@@ -98,6 +102,7 @@ curl http://localhost:8080/orders/{orderId}/discount
 ```
 
 **测试 Goods CRUD（第三轨）**：
+
 ```bash
 # 1. 创建商品
 curl -X POST http://localhost:8080/api/goods \
@@ -147,17 +152,18 @@ public class AuthService {
 ```
 
 **关键点**：
+
 - 本类**与其他 6 个示例完全一致**（证明切换框架业务代码零改动）
 - 仅导入语句依赖 ddd4j-core（不依赖具体的 sa-token/shiro/security API）
 
 ### 🔄 切换鉴权框架
 
-| 切换目标 | pom.xml 变化 |
-|---------|-------------|
-| Sa-Token → Shiro | 替换 ddd4j-auth-{sa-token,shiro} |
-| Shiro → Security | 替换 ddd4j-auth-{shiro,security} |
-| Spring → Quarkus | ddd4j-runtime-{spring,quarkus} |
-| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice} |
+| 切换目标              | pom.xml 变化                     |
+|-------------------|--------------------------------|
+| Sa-Token → Shiro  | 替换 ddd4j-auth-{sa-token,shiro} |
+| Shiro → Security  | 替换 ddd4j-auth-{shiro,security} |
+| Spring → Quarkus  | ddd4j-runtime-{spring,quarkus} |
+| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice}  |
 
 业务代码（`AuthController`、`AuthService`）**无需任何修改**。
 

@@ -1,7 +1,7 @@
 package io.ddd4j.core.util;
 
-import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.BaseContext;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;

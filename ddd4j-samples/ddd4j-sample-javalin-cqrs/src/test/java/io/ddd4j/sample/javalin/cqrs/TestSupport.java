@@ -38,36 +38,6 @@ public final class TestSupport {
     private TestSupport() {
     }
 
-    private static final class NoopDomainEventPublisher implements DomainEventPublisher {
-        @Override
-        public <T> void publish(DomainEvent<T> event) {
-        }
-
-        @Override
-        public <T> void publishAll(Collection<DomainEvent<T>> events) {
-        }
-    }
-
-    private static final class NoopMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(MQEvent event) {
-        }
-    }
-
-    private static final class NoopI18nProvider implements I18nProvider {
-        @Override
-        public String getMessage(String key, Object... args) {
-            return key;
-        }
-    }
-
-    private static final class NoopSubjectProvider implements SubjectProvider {
-        @Override
-        public io.ddd4j.core.subject.Subject getSubject() {
-            return null;
-        }
-    }
-
     public static Javalin start() {
         // 1. SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
@@ -123,5 +93,35 @@ public final class TestSupport {
         });
         app.start(0);
         return app;
+    }
+
+    private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        @Override
+        public <T> void publish(DomainEvent<T> event) {
+        }
+
+        @Override
+        public <T> void publishAll(Collection<DomainEvent<T>> events) {
+        }
+    }
+
+    private static final class NoopMQEventPublisher implements MQEventPublisher {
+        @Override
+        public void publish(MQEvent event) {
+        }
+    }
+
+    private static final class NoopI18nProvider implements I18nProvider {
+        @Override
+        public String getMessage(String key, Object... args) {
+            return key;
+        }
+    }
+
+    private static final class NoopSubjectProvider implements SubjectProvider {
+        @Override
+        public io.ddd4j.core.subject.Subject getSubject() {
+            return null;
+        }
     }
 }

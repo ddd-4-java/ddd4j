@@ -18,7 +18,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class GuiceInMemoryProjectionPositionRepository implements ProjectionPositionRepository {
 
-    /** 投影位置内存存储 */
+    /**
+     * 投影位置内存存储
+     */
     private final ConcurrentMap<String, ProjectionPosition> store = new ConcurrentHashMap<>();
 
     @Override

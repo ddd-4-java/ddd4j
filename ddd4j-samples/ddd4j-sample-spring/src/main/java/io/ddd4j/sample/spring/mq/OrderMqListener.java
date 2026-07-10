@@ -1,7 +1,7 @@
 package io.ddd4j.sample.spring.mq;
 
-import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.annotation.MQEventListener;
+import io.ddd4j.mq.event.MQEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -1,15 +1,6 @@
 package io.ddd4j.web.javalin.handler;
 
-import io.ddd4j.core.exception.AccountDisabledException;
-import io.ddd4j.core.exception.AccountLockedException;
-import io.ddd4j.core.exception.AuthenticationException;
-import io.ddd4j.core.exception.AuthorizationException;
-import io.ddd4j.core.exception.BadCredentialsException;
-import io.ddd4j.core.exception.NotLoggedInException;
-import io.ddd4j.core.exception.SessionExpiredException;
-import io.ddd4j.core.exception.TokenExpiredException;
-import io.ddd4j.core.exception.TokenInvalidException;
-import io.ddd4j.core.exception.UnknownAccountException;
+import io.ddd4j.core.exception.*;
 import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;

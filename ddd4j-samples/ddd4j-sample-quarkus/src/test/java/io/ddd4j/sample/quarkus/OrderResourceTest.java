@@ -6,8 +6,8 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.sample.quarkus.order.application.CreateOrderCommand;
 import io.ddd4j.sample.quarkus.order.application.AddOrderLineCommand;
+import io.ddd4j.sample.quarkus.order.application.CreateOrderCommand;
 import io.ddd4j.sample.quarkus.order.application.OrderApplicationService;
 import io.ddd4j.sample.quarkus.order.cache.OrderCacheService;
 import io.ddd4j.sample.quarkus.order.domain.model.Order;
@@ -25,9 +25,7 @@ import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 /**
  * 订单资源 Quarkus 集成测试（完整覆盖）。

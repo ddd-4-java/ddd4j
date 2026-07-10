@@ -102,7 +102,7 @@ class EventChunkReaderContractTest {
 
         @Override
         public EventChunk<String> read(String streamId, long fromEventNumber, int chunkSize,
-                                      Collection<String> eventTypes) {
+                                       Collection<String> eventTypes) {
             List<String> picked = new java.util.ArrayList<>();
             long last = fromEventNumber - 1;
             int remaining = chunkSize;

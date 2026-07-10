@@ -22,7 +22,9 @@ import java.util.Objects;
 @ApplicationScoped
 public class CdiDomainEventPublisher implements DomainEventPublisher {
 
-    /** CDI 事件总线 */
+    /**
+     * CDI 事件总线
+     */
     @Inject
     Event<Object> event;
 

@@ -56,21 +56,33 @@ import java.util.Objects;
  */
 public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
-    /** 日期时间格式 */
+    /**
+     * 日期时间格式
+     */
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    /** 日期格式 */
+    /**
+     * 日期格式
+     */
     private static final String DATE_PATTERN = "yyyy-MM-dd";
-    /** 时间格式 */
+    /**
+     * 时间格式
+     */
     private static final String TIME_PATTERN = "HH:mm:ss";
 
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
     private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
 
-    /** 语言切换拦截器 */
+    /**
+     * 语言切换拦截器
+     */
     private LocaleChangeInterceptor localeChangeInterceptor;
-    /** MDC 日志拦截器 */
+    /**
+     * MDC 日志拦截器
+     */
     private MdcInterceptor mdcInterceptor;
-    /** 本地资源配置 */
+    /**
+     * 本地资源配置
+     */
     private LocalResourceProperteis localResourceProperteis;
 
     public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,

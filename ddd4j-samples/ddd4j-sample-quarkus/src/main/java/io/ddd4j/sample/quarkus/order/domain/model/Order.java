@@ -29,18 +29,30 @@ public class Order extends AggregateRoot<String> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 订单 ID */
+    /**
+     * 订单 ID
+     */
     private final String id;
-    /** 订单编号 */
+    /**
+     * 订单编号
+     */
     private final String orderNo;
-    /** 买家 ID */
+    /**
+     * 买家 ID
+     */
     private final String buyerId;
-    /** 买家名称 */
-    private String buyerName;
-    /** 订单状态 */
-    private OrderStatus status;
-    /** 订单行列表（聚合内的实体集合） */
+    /**
+     * 订单行列表（聚合内的实体集合）
+     */
     private final List<OrderLine> lines = new ArrayList<>();
+    /**
+     * 买家名称
+     */
+    private String buyerName;
+    /**
+     * 订单状态
+     */
+    private OrderStatus status;
 
     public Order(String id, String orderNo, String buyerId, String buyerName, OrderStatus status, List<OrderLine> lines) {
         if (StrKit.isBlank(id)) {
@@ -134,8 +146,8 @@ public class Order extends AggregateRoot<String> {
      *
      * @param goodsId   商品 ID
      * @param goodsName 商品名称
-     * @param quantity    数量
-     * @param unitPrice   单价
+     * @param quantity  数量
+     * @param unitPrice 单价
      */
     public void addLine(String goodsId, String goodsName, int quantity, Money unitPrice) {
         assertDraft();

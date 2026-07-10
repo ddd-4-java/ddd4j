@@ -1,11 +1,7 @@
 package io.ddd4j.sample.quarkus.shiro.goods.domain;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

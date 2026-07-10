@@ -1,17 +1,11 @@
 package io.ddd4j.data.jpa;
 
-import io.ddd4j.core.contract.Page;
-import io.quarkus.panache.common.Parameters;
-import io.quarkus.panache.common.Sort;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.MappedSuperclass;
 import org.hibernate.annotations.GenericGenerator;
 import org.jboss.logging.Logger;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Quarkus Panache 多租户实体基类（固定主键版）：使用租户 ID + 雪花 ID 的复合主键（{@link TenantAwareId}），

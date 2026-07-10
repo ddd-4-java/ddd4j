@@ -1,8 +1,8 @@
 package io.ddd4j.cache.local;
 
 import com.google.common.cache.CacheBuilder;
-import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CASOperation;
+import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
 
@@ -113,8 +113,15 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         for (int attempt = 0; attempt < 16; attempt++) {
             V current = cache.getIfPresent(key);
             io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
-                @Override public String key() { return String.valueOf(key); }
-                @Override public V value() { return current; }
+                @Override
+                public String key() {
+                    return String.valueOf(key);
+                }
+
+                @Override
+                public V value() {
+                    return current;
+                }
             };
             V newValue;
             try {

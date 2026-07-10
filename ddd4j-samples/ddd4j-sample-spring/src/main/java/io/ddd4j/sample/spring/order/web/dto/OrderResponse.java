@@ -10,15 +10,14 @@ import java.util.List;
 /**
  * 订单 REST 响应。
  *
- * @param id           订单 ID
- * @param orderNo      订单编号
- * @param buyerId      买家 ID
- * @param buyerName    买家名称
- * @param status       订单状态
- * @param totalAmount  总金额数值
- * @param currency     货币代码
- * @param lines        订单行列表
- *
+ * @param id          订单 ID
+ * @param orderNo     订单编号
+ * @param buyerId     买家 ID
+ * @param buyerName   买家名称
+ * @param status      订单状态
+ * @param totalAmount 总金额数值
+ * @param currency    货币代码
+ * @param lines       订单行列表
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,

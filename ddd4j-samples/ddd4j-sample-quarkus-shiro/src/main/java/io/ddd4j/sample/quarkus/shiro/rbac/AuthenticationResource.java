@@ -2,14 +2,7 @@ package io.ddd4j.sample.quarkus.shiro.rbac;
 
 import io.ddd4j.core.api.R;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.HashMap;
@@ -35,7 +28,7 @@ import java.util.Map;
  * <p>与 Sa-Token 示例完全对齐：相同 URL、相同请求/响应体、相同鉴权语义。
  * 唯一区别是 Shiro 版本通过 {@link RbacService} 显式调用鉴权方法
  * （Apache Shiro 在 Quarkus 中无开箱即用的方法级注解集成，
- *  需要 AOP / 拦截器 / 自定义 AuthzHandler 才能像 Sa-Token 注解一样工作）。
+ * 需要 AOP / 拦截器 / 自定义 AuthzHandler 才能像 Sa-Token 注解一样工作）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

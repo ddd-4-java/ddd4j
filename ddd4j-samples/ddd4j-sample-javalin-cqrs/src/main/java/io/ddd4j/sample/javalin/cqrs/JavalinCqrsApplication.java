@@ -59,7 +59,9 @@ import io.javalin.Javalin;
  */
 public class JavalinCqrsApplication {
 
-    /** 默认 HTTP 端口 */
+    /**
+     * 默认 HTTP 端口
+     */
     public static final int DEFAULT_PORT = 7001;
 
     private JavalinCqrsApplication() {

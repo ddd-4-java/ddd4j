@@ -8,11 +8,7 @@ import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 充血聚合根基类（ddd4j 唯一推荐）。
@@ -68,6 +64,91 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     // ========================= 充血持久化（实例方法） =========================
 
     /**
+     * 批量保存。
+     */
+    public static <M extends AggregateRoot<?>> boolean save(List<M> models) {
+        if (models == null || models.isEmpty()) {
+            return false;
+        }
+        Repository repo = RepositoryRegistry.repository(models.get(0).getClass());
+        for (AggregateRoot m : models) {
+            repo.save(m);
+        }
+        return true;
+    }
+
+    /**
+     * 批量更新。
+     */
+    public static <M extends AggregateRoot<?>> boolean update(List<M> models) {
+        return save(models);
+    }
+
+    /**
+     * 按查询条件删除。
+     */
+    public static <Q extends Query> boolean delete(Q query) {
+        query.with();
+        Repository repo = RepositoryRegistry.repositoryForQuery(query.getClass());
+        return ((Repository) repo).deleteByQuery(query);
+    }
+
+    /**
+     * 按 ID 查找。
+     */
+    public static <M extends AggregateRoot<?>, ID extends Serializable>
+    Optional<M> get(Class<M> modelClass, ID id) {
+        Repository repo = RepositoryRegistry.repository(modelClass);
+        return repo.findById(id);
+    }
+
+    /**
+     * 查找第一个。
+     */
+    public static <M extends AggregateRoot<?>> Optional<M> one(Class<M> modelClass) {
+        Repository repo = RepositoryRegistry.repository(modelClass);
+        return ((Repository) repo).findFirst();
+    }
+
+    /**
+     * 列出全部。
+     */
+    public static <M extends AggregateRoot<?>> List<M> list(Class<M> modelClass) {
+        Repository repo = RepositoryRegistry.repository(modelClass);
+        return ((Repository) repo).findAll();
+    }
+
+    // ========================= 充血持久化（静态批量） =========================
+
+    /**
+     * 分页查询。
+     */
+    public static <M extends AggregateRoot<?>, Q extends Query>
+    Page<M> page(Class<M> modelClass, Q query) {
+        query.with();
+        Repository repo = RepositoryRegistry.repository(modelClass);
+        return ((Repository) repo).page(query);
+    }
+
+    /**
+     * 计数。
+     */
+    public static <Q extends Query> int count(Class<? extends AggregateRoot<?>> modelClass, Q query) {
+        query.with();
+        Repository repo = RepositoryRegistry.repository(modelClass);
+        return (int) ((Repository) repo).count(query);
+    }
+
+    /**
+     * 是否存在。
+     */
+    public static <Q extends Query> boolean exist(Class<? extends AggregateRoot<?>> modelClass, Q query) {
+        return count(modelClass, query) > 0;
+    }
+
+    // ========================= 充血查询（静态） =========================
+
+    /**
      * 充血保存。
      */
     public <M extends AggregateRoot<ID>> M save() {
@@ -101,7 +182,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     public <Q extends Query> boolean update(Q query) {
         query.with();
         Repository repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             return ((Repository) repo).update(this, query);
         }
         throw new BizRuntimeException("Repository does not support update(query)");
@@ -112,109 +193,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     public <Q extends Query> void fill(Q query) {
         Repository repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             ((Repository) repo).fill(query, this);
         }
-    }
-
-    // ========================= 充血持久化（静态批量） =========================
-
-    /**
-     * 批量保存。
-     */
-    public static <M extends AggregateRoot<?>> boolean save(List<M> models) {
-        if (models == null || models.isEmpty()) {
-            return false;
-        }
-        Repository repo = RepositoryRegistry.repository(models.get(0).getClass());
-        for (AggregateRoot m : models) {
-            repo.save(m);
-        }
-        return true;
-    }
-
-    /**
-     * 批量更新。
-     */
-    public static <M extends AggregateRoot<?>> boolean update(List<M> models) {
-        return save(models);
-    }
-
-    /**
-     * 按查询条件删除。
-     */
-    public static <Q extends Query> boolean delete(Q query) {
-        query.with();
-        Repository repo = RepositoryRegistry.repositoryForQuery(query.getClass());
-        if (repo instanceof Repository) {
-            return ((Repository) repo).deleteByQuery(query);
-        }
-        throw new BizRuntimeException("Repository for {} does not support delete(query)", query.getClass().getSimpleName());
-    }
-
-    // ========================= 充血查询（静态） =========================
-
-    /**
-     * 按 ID 查找。
-     */
-    public static <M extends AggregateRoot<?>, ID extends Serializable>
-    Optional<M> get(Class<M> modelClass, ID id) {
-        Repository repo = RepositoryRegistry.repository(modelClass);
-        return repo.findById(id);
-    }
-
-    /**
-     * 查找第一个。
-     */
-    public static <M extends AggregateRoot<?>> Optional<M> one(Class<M> modelClass) {
-        Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof Repository) {
-            return ((Repository) repo).findFirst();
-        }
-        throw new BizRuntimeException("Repository for {} does not support one()", modelClass.getSimpleName());
-    }
-
-    /**
-     * 列出全部。
-     */
-    public static <M extends AggregateRoot<?>> List<M> list(Class<M> modelClass) {
-        Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof Repository) {
-            return ((Repository) repo).findAll();
-        }
-        throw new BizRuntimeException("Repository for {} does not support list()", modelClass.getSimpleName());
-    }
-
-    /**
-     * 分页查询。
-     */
-    public static <M extends AggregateRoot<?>, Q extends Query>
-    Page<M> page(Class<M> modelClass, Q query) {
-        query.with();
-        Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof Repository) {
-            return ((Repository) repo).page(query);
-        }
-        throw new BizRuntimeException("Repository for {} does not support page()", modelClass.getSimpleName());
-    }
-
-    /**
-     * 计数。
-     */
-    public static <Q extends Query> int count(Class<? extends AggregateRoot<?>> modelClass, Q query) {
-        query.with();
-        Repository repo = RepositoryRegistry.repository(modelClass);
-        if (repo instanceof Repository) {
-            return (int) ((Repository) repo).count(query);
-        }
-        throw new BizRuntimeException("Repository for {} does not support count()", modelClass.getSimpleName());
-    }
-
-    /**
-     * 是否存在。
-     */
-    public static <Q extends Query> boolean exist(Class<? extends AggregateRoot<?>> modelClass, Q query) {
-        return count(modelClass, query) > 0;
     }
 
     // ========================= 事件管理 =========================

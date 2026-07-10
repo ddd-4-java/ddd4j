@@ -5,11 +5,7 @@ import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 订单缓存服务（CQRS 读侧增强 - Javalin）。
@@ -28,11 +24,17 @@ import java.util.Optional;
 @Slf4j
 public class OrderCacheService {
 
-    /** 缓存域：订单统计 */
+    /**
+     * 缓存域：订单统计
+     */
     public static final String BIZ_ORDER_STATS = "javalin-cqrs-order-stats";
-    /** 缓存域：买家订单计数 */
+    /**
+     * 缓存域：买家订单计数
+     */
     public static final String BIZ_BUYER_ORDER_COUNT = "javalin-cqrs-buyer-order-count";
-    /** 缓存域：订单详情 */
+    /**
+     * 缓存域：订单详情
+     */
     public static final String BIZ_ORDER_DETAIL = "javalin-cqrs-order-detail";
 
     private static final String STATS_KEY = "all-stats";

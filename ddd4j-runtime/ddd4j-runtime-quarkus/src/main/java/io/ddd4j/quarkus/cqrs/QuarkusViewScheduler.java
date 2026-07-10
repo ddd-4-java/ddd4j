@@ -21,10 +21,14 @@ import java.util.UUID;
 @ApplicationScoped
 public class QuarkusViewScheduler implements ViewScheduler {
 
-    /** Quartz JobDataMap 中任务标识的键名 */
+    /**
+     * Quartz JobDataMap 中任务标识的键名
+     */
     static final String TASK_KEY = "ddd4j.task";
 
-    /** Quartz 调度器 */
+    /**
+     * Quartz 调度器
+     */
     @Inject
     Scheduler scheduler;
 

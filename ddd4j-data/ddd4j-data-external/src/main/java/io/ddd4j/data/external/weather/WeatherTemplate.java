@@ -15,8 +15,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 免费天气查询模板
@@ -30,12 +28,18 @@ import java.util.Optional;
 @Slf4j
 public class WeatherTemplate {
 
-    /** 天气查询请求地址 */
+    /**
+     * 天气查询请求地址
+     */
     private final static String SOJSON_WEATHER_URL = "http://t.weather.sojson.com/api/weather/city/%s";
 
-    /** 缓存业务标识 */
+    /**
+     * 缓存业务标识
+     */
     private static final String CACHE_BIZ = "weather";
-    /** 缓存过期时间（1 小时） */
+    /**
+     * 缓存过期时间（1 小时）
+     */
     private static final long CACHE_EXPIRE_SECONDS = 3600L;
 
     static {
@@ -49,7 +53,9 @@ public class WeatherTemplate {
         );
     }
 
-    /** HTTP 客户端 */
+    /**
+     * HTTP 客户端
+     */
     private final HttpClient httpClient;
 
     /**

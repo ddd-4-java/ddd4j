@@ -3,7 +3,10 @@ package io.ddd4j.data.jpa.query;
 import io.ddd4j.core.cqrs.query.Query;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * JPA 轨道的充血 Query 基类（标准 JPA Criteria API）。
@@ -40,10 +43,14 @@ public abstract class AbstractJpaQuery<T> extends Query<T> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 手动构建的条件列表 */
+    /**
+     * 手动构建的条件列表
+     */
     private transient List<JpaCondition> jpaConditions;
 
-    /** 手动设置的 ORDER BY */
+    /**
+     * 手动设置的 ORDER BY
+     */
     private transient String manualOrderBy;
 
     // ========================= 条件构建入口 =========================

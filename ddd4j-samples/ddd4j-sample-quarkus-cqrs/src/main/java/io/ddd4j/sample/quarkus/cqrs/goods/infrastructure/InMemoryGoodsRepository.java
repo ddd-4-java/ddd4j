@@ -11,11 +11,7 @@ import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsRepository;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsStatus;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -43,7 +39,9 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Goods, Long> {
 
-    /** 内存存储：goodsId -> Goods 聚合根 */
+    /**
+     * 内存存储：goodsId -> Goods 聚合根
+     */
     private final ConcurrentMap<Long, Goods> rows = new ConcurrentHashMap<>();
 
     // ========================= GoodsRepository =========================

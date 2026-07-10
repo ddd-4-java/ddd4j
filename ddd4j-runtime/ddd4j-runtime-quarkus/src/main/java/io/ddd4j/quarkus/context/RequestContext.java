@@ -15,9 +15,13 @@ import lombok.Setter;
 @RequestScoped
 public class RequestContext {
 
-    /** 租户 ID */
+    /**
+     * 租户 ID
+     */
     private String tenantId;
 
-    /** 用户 ID */
+    /**
+     * 用户 ID
+     */
     private String userId;
 }

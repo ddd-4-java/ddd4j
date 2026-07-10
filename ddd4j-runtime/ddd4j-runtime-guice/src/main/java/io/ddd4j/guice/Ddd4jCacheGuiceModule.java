@@ -21,14 +21,22 @@ import java.util.function.Function;
 @Slf4j
 public class Ddd4jCacheGuiceModule extends AbstractModule {
 
-    /** 本地缓存注册表（业务标识 → 过期秒数） */
+    /**
+     * 本地缓存注册表（业务标识 → 过期秒数）
+     */
     private final Map<String, Long> localCaches = new LinkedHashMap<>();
-    /** 本地缓存构建器注册表（业务标识 → 自定义构建器） */
+    /**
+     * 本地缓存构建器注册表（业务标识 → 自定义构建器）
+     */
     private final Map<String, Function<CacheConfig.Builder, CacheConfig.Builder>> localCacheBuilders =
             new LinkedHashMap<>();
-    /** 外部缓存注册表（业务标识 → 缓存实例） */
+    /**
+     * 外部缓存注册表（业务标识 → 缓存实例）
+     */
     private final Map<String, Cache<? super String, ?>> externalCaches = new LinkedHashMap<>();
-    /** 默认本地缓存类型 */
+    /**
+     * 默认本地缓存类型
+     */
     private CacheKit.LocalCacheType defaultType = CacheKit.LocalCacheType.CAFFEINE;
 
     /**

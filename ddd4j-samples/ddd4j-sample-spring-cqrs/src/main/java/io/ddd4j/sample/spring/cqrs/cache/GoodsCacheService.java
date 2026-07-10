@@ -3,7 +3,6 @@ package io.ddd4j.sample.spring.cqrs.cache;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.sample.spring.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.spring.cqrs.goods.domain.GoodsId;
-import io.ddd4j.sample.spring.cqrs.goods.domain.GoodsQuery;
 import io.ddd4j.sample.spring.cqrs.goods.infrastructure.InMemoryGoodsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +31,18 @@ import java.util.Objects;
 @Service
 public class GoodsCacheService {
 
-    /** 缓存域：商品详情 */
+    /**
+     * 缓存域：商品详情
+     */
     public static final String BIZ_GOODS_DETAIL = "goods-detail";
-    /** 缓存域：商品列表快照 */
+    /**
+     * 缓存域：商品列表快照
+     */
     public static final String BIZ_GOODS_LIST = "goods-list";
 
-    /** 全部商品列表的固定 key */
+    /**
+     * 全部商品列表的固定 key
+     */
     private static final String LIST_ALL_KEY = "all";
 
     private final InMemoryGoodsRepository goodsRepository;

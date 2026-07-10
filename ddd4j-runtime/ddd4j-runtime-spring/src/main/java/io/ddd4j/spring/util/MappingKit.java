@@ -19,7 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @UtilityClass
 public final class MappingKit {
-    /** 源类型到目标类型的映射注册表 */
+    /**
+     * 源类型到目标类型的映射注册表
+     */
     private final Map<Class, Class> BEAN_MAPPINGS = new ConcurrentHashMap<>();
 
     /**

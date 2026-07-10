@@ -33,9 +33,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("RBAC 集成 - Shiro")
 class AuthIntegrationTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private RbacService rbacService;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private RbacService rbacService;
 
     private Optional<String> login(String username, String password) {
         try {
@@ -65,19 +68,27 @@ class AuthIntegrationTest {
 
     @Test
     @DisplayName("登录 admin")
-    void login_admin_success() { assertThat(login("admin", "123456")).isPresent(); }
+    void login_admin_success() {
+        assertThat(login("admin", "123456")).isPresent();
+    }
 
     @Test
     @DisplayName("登录 user")
-    void login_user_success() { assertThat(login("user", "123456")).isPresent(); }
+    void login_user_success() {
+        assertThat(login("user", "123456")).isPresent();
+    }
 
     @Test
     @DisplayName("登录 disabled → 失败")
-    void login_disabled_fails() { assertThat(login("disabled", "123456")).isEmpty(); }
+    void login_disabled_fails() {
+        assertThat(login("disabled", "123456")).isEmpty();
+    }
 
     @Test
     @DisplayName("登录错误密码 → 失败")
-    void login_wrongPassword_fails() { assertThat(login("admin", "wrong")).isEmpty(); }
+    void login_wrongPassword_fails() {
+        assertThat(login("admin", "wrong")).isEmpty();
+    }
 
     @Test
     @DisplayName("admin 用户拥有所有权限")

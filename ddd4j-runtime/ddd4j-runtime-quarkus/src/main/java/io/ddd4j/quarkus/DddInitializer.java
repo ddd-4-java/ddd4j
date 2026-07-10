@@ -20,11 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class DddInitializer {
 
-    /** 国际化提供者 */
+    /**
+     * 国际化提供者
+     */
     @Inject
     I18nProvider i18nProvider;
 
-    /** Subject 提供者 */
+    /**
+     * Subject 提供者
+     */
     @Inject
     SubjectProvider subjectProvider;
 

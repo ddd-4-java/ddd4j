@@ -6,11 +6,7 @@ import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsId;
 import io.ddd4j.sample.javalin.cqrs.goods.infrastructure.InMemoryGoodsRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 商品缓存服务（CQRS 读侧增强 - Javalin）。
@@ -20,9 +16,13 @@ import java.util.Objects;
 @Slf4j
 public class GoodsCacheService {
 
-    /** 缓存域：商品详情 */
+    /**
+     * 缓存域：商品详情
+     */
     public static final String BIZ_GOODS_DETAIL = "javalin-cqrs-goods-detail";
-    /** 缓存域：商品列表 */
+    /**
+     * 缓存域：商品列表
+     */
     public static final String BIZ_GOODS_LIST = "javalin-cqrs-goods-list";
 
     private static final String LIST_ALL_KEY = "all";

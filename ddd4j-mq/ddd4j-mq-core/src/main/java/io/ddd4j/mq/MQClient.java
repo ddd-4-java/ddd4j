@@ -5,20 +5,16 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.annotation.MQEventListener;
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.event.MQEventStorer;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -45,10 +41,32 @@ import java.util.function.Consumer;
  */
 public interface MQClient extends AutoCloseable {
 
-    /** {@link BaseContext} key：MQ 序列化器 */
+    /**
+     * {@link BaseContext} key：MQ 序列化器
+     */
     String MQ_SERIALIZATION = MQEvent.MQ_EVENT_PUBLISHER + ".serialization";
-    /** {@link BaseContext} key：MQ 事件持久化器 */
+    /**
+     * {@link BaseContext} key：MQ 事件持久化器
+     */
     String MQ_STORER = MQEvent.MQ_EVENT_PUBLISHER + ".storer";
+
+    /**
+     * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
+     */
+    private static String escape(String s) {
+        return s.replace("'", "''");
+    }
+
+    /**
+     * 反射调用异常解包（对齐 base-mq）。
+     */
+    private static Throwable unwrap(Exception ex) {
+        Throwable cause = ex.getCause();
+        if (Objects.nonNull(cause) && Objects.nonNull(cause.getCause())) {
+            return cause.getCause();
+        }
+        return Objects.nonNull(cause) ? cause : ex;
+    }
 
     /**
      * @return MQ 实现标识（如 {@code "kafka"} / {@code "rocket"} / {@code "rabbit"} / {@code "redis"} / {@code "redisStream"}）
@@ -202,6 +220,8 @@ public interface MQClient extends AutoCloseable {
         }
     }
 
+    // ========================= 物理地址拼接（生产者和消费者侧共享）=========================
+
     /**
      * 便捷重载：无 Acknowledgment 的消费（ack 能力由 broker 内部处理，如 RocketMQ 返回值语义）。
      */
@@ -215,8 +235,6 @@ public interface MQClient extends AutoCloseable {
     default Logger logger() {
         return LoggerFactory.getLogger("### DDD4J-MQ : " + impl() + "Client ###");
     }
-
-    // ========================= 物理地址拼接（生产者和消费者侧共享）=========================
 
     /**
      * 解析最终的拼接符（concat）。
@@ -357,19 +375,6 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * Partition/路由策略枚举（broker 可读取此枚举决定 partitionKey 取值）。
-     *
-     * <p>NONE：不设 key（轮询路由，性能最佳但无顺序保证）。
-     * <p>TAG：按 event.tag（同 tag 顺序）。
-     * <p>TENANT：按 event.tenantId（同租户顺序）。
-     * <p>TAG_TENANT：按 tag+tenant 复合 key（推荐，最常用）。
-     * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
-     */
-    enum PartitionKeyStrategy {
-        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
-    }
-
-    /**
      * tag 消息头的 key（producer 写入 + consumer 读取 + selector 引用）统一用同一个常量。
      *
      * <p>默认 {@code "ddd4jTag"}（无 {@code .}，保证是合法 SQL-92 identifier，
@@ -468,13 +473,6 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
-     */
-    private static String escape(String s) {
-        return s.replace("'", "''");
-    }
-
-    /**
      * 是否在 broker 端做 tag 过滤（不是所有 broker 都支持，返回 false 时调用方应 fallback 应用层）。
      *
      * <p>默认 true 表示「我会用 tagsToSelector 传给 broker」。子 broker 可覆写返回 false 强制应用层过滤
@@ -485,13 +483,15 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 反射调用异常解包（对齐 base-mq）。
+     * Partition/路由策略枚举（broker 可读取此枚举决定 partitionKey 取值）。
+     *
+     * <p>NONE：不设 key（轮询路由，性能最佳但无顺序保证）。
+     * <p>TAG：按 event.tag（同 tag 顺序）。
+     * <p>TENANT：按 event.tenantId（同租户顺序）。
+     * <p>TAG_TENANT：按 tag+tenant 复合 key（推荐，最常用）。
+     * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
      */
-    private static Throwable unwrap(Exception ex) {
-        Throwable cause = ex.getCause();
-        if (Objects.nonNull(cause) && Objects.nonNull(cause.getCause())) {
-            return cause.getCause();
-        }
-        return Objects.nonNull(cause) ? cause : ex;
+    enum PartitionKeyStrategy {
+        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
     }
 }

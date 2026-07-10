@@ -14,24 +14,36 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>MQTT 没有原生 broker-side ack（仅 QoS 1/2 协议层的 PUBACK/PUBCOMP）；
  * Paho 客户端在 QoS &gt; 0 时收到消息需要 {@link org.eclipse.paho.client.mqttv3.IMqttDeliveryToken#waitForCompletion(long)} 确认。
  * 这里把 {@code ack()} 映射为标记已处理，{@code nack(requeue=true)} 映射为发布一条重发消息
- *（业务侧需自行实现 DLQ 策略）。
+ * （业务侧需自行实现 DLQ 策略）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class MqttAcknowledgment implements Acknowledgment {
 
-    /** Header 键：MQTT 消息体 */
+    /**
+     * Header 键：MQTT 消息体
+     */
     public static final String HEADER_MQTT_MESSAGE = "ddd4j.mqtt.message";
-    /** Header 键：MQTT 主题 */
+    /**
+     * Header 键：MQTT 主题
+     */
     public static final String HEADER_MQTT_TOPIC = "ddd4j.mqtt.topic";
 
-    /** Paho MQTT 消息实例 */
+    /**
+     * Paho MQTT 消息实例
+     */
     private final MqttMessage message;
-    /** MQTT 主题 */
+    /**
+     * MQTT 主题
+     */
     private final String topic;
-    /** 消息 ID */
+    /**
+     * 消息 ID
+     */
     private final int messageId;
-    /** 确认状态标记 */
+    /**
+     * 确认状态标记
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     public MqttAcknowledgment(MqttMessage message, String topic) {

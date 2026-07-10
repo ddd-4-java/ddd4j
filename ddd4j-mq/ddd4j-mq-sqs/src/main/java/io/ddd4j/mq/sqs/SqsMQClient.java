@@ -57,6 +57,20 @@ public class SqsMQClient implements MQClient {
         this.properties = new SqsProperties();
     }
 
+    private static MessageAttributeValue attrValue(String value) {
+        return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
+    }
+
+    private static String attr(Message message, String key) {
+        if (Objects.isNull(message.messageAttributes())) {
+            return null;
+        }
+        var v = message.messageAttributes().get(key);
+        return Objects.isNull(v) ? null : v.stringValue();
+    }
+
+    // ========================= 生产者 =========================
+
     @Override
     public String impl() {
         return "sqs";
@@ -64,14 +78,14 @@ public class SqsMQClient implements MQClient {
 
     /**
      * SQS 无原生 tag selector 机制，tag 过滤只能在应用层用 {@link TagMatcher#match} 完成
-     *（不匹配的消息直接 {@code deleteMessage} 丢弃，避免无限重投）。故覆写返回 false。
+     * （不匹配的消息直接 {@code deleteMessage} 丢弃，避免无限重投）。故覆写返回 false。
      */
     @Override
     public boolean supportsBrokerTagFilter() {
         return false;
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -105,12 +119,6 @@ public class SqsMQClient implements MQClient {
             }
         };
     }
-
-    private static MessageAttributeValue attrValue(String value) {
-        return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
-    }
-
-    // ========================= 消费者 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -200,14 +208,6 @@ public class SqsMQClient implements MQClient {
             } catch (Exception ignore) {
             }
         }
-    }
-
-    private static String attr(Message message, String key) {
-        if (Objects.isNull(message.messageAttributes())) {
-            return null;
-        }
-        var v = message.messageAttributes().get(key);
-        return Objects.isNull(v) ? null : v.stringValue();
     }
 
     @Override

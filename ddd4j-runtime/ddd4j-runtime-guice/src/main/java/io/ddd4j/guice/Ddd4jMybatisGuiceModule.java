@@ -35,11 +35,17 @@ import java.util.Set;
 @Slf4j
 public class Ddd4jMybatisGuiceModule extends AbstractModule {
 
-    /** 数据源 */
+    /**
+     * 数据源
+     */
     private final DataSource dataSource;
-    /** 注册的 Mapper 接口集 */
+    /**
+     * 注册的 Mapper 接口集
+     */
     private final Set<Class<?>> mapperInterfaces = new LinkedHashSet<>();
-    /** Repository 实现类到 Mapper 接口的映射 */
+    /**
+     * Repository 实现类到 Mapper 接口的映射
+     */
     private final Map<Class<?>, Class<?>> repositoryToMapper = new LinkedHashMap<>();
 
     /**
@@ -65,7 +71,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
     /**
      * 绑定 Repository 实现与 Mapper 接口的对应关系。
      *
-     * @param repositoryImpl Repository 实现类
+     * @param repositoryImpl  Repository 实现类
      * @param mapperInterface Mapper 接口类
      * @return 当前模块（链式调用）
      */

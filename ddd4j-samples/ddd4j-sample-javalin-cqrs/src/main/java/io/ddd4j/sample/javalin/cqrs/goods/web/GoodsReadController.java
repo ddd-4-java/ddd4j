@@ -4,10 +4,7 @@ import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.cache.GoodsCacheService;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsRepository;
-import io.javalin.apibuilder.EndpointGroup;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static io.javalin.apibuilder.ApiBuilder.get;

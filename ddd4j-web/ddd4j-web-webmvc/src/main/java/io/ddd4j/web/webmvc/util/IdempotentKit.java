@@ -34,7 +34,9 @@ import java.util.stream.Stream;
 @Slf4j
 public class IdempotentKit {
 
-    /** SpEL 表达式解析器 */
+    /**
+     * SpEL 表达式解析器
+     */
     protected static final ExpressionParser expressionParser = new SpelExpressionParser();
 
     /**

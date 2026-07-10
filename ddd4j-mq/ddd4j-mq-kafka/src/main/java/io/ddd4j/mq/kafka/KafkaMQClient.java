@@ -11,12 +11,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.clients.producer.*;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -44,11 +39,16 @@ import java.util.function.Consumer;
 @Slf4j(topic = "### DDD4J-MQ : KafkaMQClient ###")
 public class KafkaMQClient implements MQClient {
 
-    /** KafkaMQProperties 用于懒构造 */
+    /**
+     * KafkaMQProperties 用于懒构造
+     */
     private final KafkaMQProperties properties;
-    /** 已注入或懒构造的 Kafka producer */
+    /**
+     * 已注入或懒构造的 Kafka producer
+     */
     private Producer<String, String> producer;
     private Callback callback;
+
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      */
@@ -147,31 +147,6 @@ public class KafkaMQClient implements MQClient {
         }
     }
 
-    /**
-     * 异步发送回调（统一收口，不阻塞 producer.send()）。
-     */
-    public static final class SendCallback implements Callback {
-
-        private final String topic;
-        private final String payload;
-
-        SendCallback(String topic, String payload) {
-            this.topic = topic;
-            this.payload = payload;
-        }
-
-        @Override
-        public void onCompletion(RecordMetadata metadata, Exception exception) {
-            if (exception != null) {
-                log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
-            } else if (log.isDebugEnabled()) {
-                log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());
-            }
-        }
-    }
-
-    // ========================= 消费者 =========================
-
     @Override
     public boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
         if (Objects.isNull(properties)) {
@@ -217,6 +192,8 @@ public class KafkaMQClient implements MQClient {
         return true;
     }
 
+    // ========================= 消费者 =========================
+
     /**
      * 构造 consumer group.id（兜底）。
      */
@@ -224,5 +201,28 @@ public class KafkaMQClient implements MQClient {
         return Objects.nonNull(listener.getGroup()) && !listener.getGroup().isEmpty()
                 ? listener.getGroup()
                 : "ddd4j-" + listener.getMethod().getName();
+    }
+
+    /**
+     * 异步发送回调（统一收口，不阻塞 producer.send()）。
+     */
+    public static final class SendCallback implements Callback {
+
+        private final String topic;
+        private final String payload;
+
+        SendCallback(String topic, String payload) {
+            this.topic = topic;
+            this.payload = payload;
+        }
+
+        @Override
+        public void onCompletion(RecordMetadata metadata, Exception exception) {
+            if (exception != null) {
+                log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
+            } else if (log.isDebugEnabled()) {
+                log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());
+            }
+        }
     }
 }

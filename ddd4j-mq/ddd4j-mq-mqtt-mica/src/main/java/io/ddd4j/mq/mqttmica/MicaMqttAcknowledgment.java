@@ -16,18 +16,30 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MicaMqttAcknowledgment implements Acknowledgment {
 
-    /** Header 键：mica-mqtt 消息 ID */
+    /**
+     * Header 键：mica-mqtt 消息 ID
+     */
     public static final String HEADER_MICA_MESSAGE_ID = "ddd4j.mica.messageId";
-    /** Header 键：mica-mqtt 主题 */
+    /**
+     * Header 键：mica-mqtt 主题
+     */
     public static final String HEADER_MICA_TOPIC = "ddd4j.mica.topic";
 
-    /** mica-mqtt 消息 ID */
+    /**
+     * mica-mqtt 消息 ID
+     */
     private final long messageId;
-    /** mica-mqtt 主题 */
+    /**
+     * mica-mqtt 主题
+     */
     private final String topic;
-    /** 关联 ID */
+    /**
+     * 关联 ID
+     */
     private final String correlationId;
-    /** 确认状态标记 */
+    /**
+     * 确认状态标记
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**

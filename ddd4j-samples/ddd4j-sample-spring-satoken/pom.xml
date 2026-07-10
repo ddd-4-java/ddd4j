@@ -12,7 +12,9 @@
 
     <artifactId>ddd4j-sample-spring-satoken</artifactId>
     <packaging>jar</packaging>
-    <description>Spring Boot + Sa-Token 鉴权示例：演示 SubjectKit 统一鉴权入口 + 完整 DDD Order + Product CRUD（三轨合一）</description>
+    <description>Spring Boot + Sa-Token 鉴权示例：演示 SubjectKit 统一鉴权入口 + 完整 DDD Order + Product
+        CRUD（三轨合一）
+    </description>
 
     <properties>
         <spring-boot.version>3.5.6</spring-boot.version>

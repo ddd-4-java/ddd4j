@@ -14,13 +14,14 @@ ddd4j SubjectKit 统一鉴权入口在 Quarkus 框架下的 Shiro 适配示例�
 
 ### 📦 模块对应
 
-| 框架 | 鉴权适配模块 | 桥接模块 |
-|------|-------------|---------|
+| 框架      | 鉴权适配模块           | 桥接模块               |
+|---------|------------------|--------------------|
 | Quarkus | ddd4j-auth-shiro | ddd4j-auth-quarkus |
 
 ### 🚀 快速开始
 
 **启动命令**：
+
 ```bash
 mvn quarkus:dev         # Quarkus
 ```
@@ -28,6 +29,7 @@ mvn quarkus:dev         # Quarkus
 **端口**：8080
 
 **测试登录**：
+
 ```bash
 # 登录获取 Token
 curl -X POST 'http://localhost:8080/auth/login?userId=10001'
@@ -65,17 +67,18 @@ public class AuthService {
 ```
 
 **关键点**：
+
 - 本类**与其他 6 个示例完全一致**（证明切换框架业务代码零改动）
 - 仅导入语句依赖 ddd4j-core（不依赖具体的 sa-token/shiro/security API）
 
 ### 🔄 切换鉴权框架
 
-| 切换目标 | pom.xml 变化 |
-|---------|-------------|
-| Sa-Token → Shiro | 替换 ddd4j-auth-{sa-token,shiro} |
-| Shiro → Security | 替换 ddd4j-auth-{shiro,security} |
-| Spring → Quarkus | ddd4j-runtime-{spring,quarkus} |
-| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice} |
+| 切换目标              | pom.xml 变化                     |
+|-------------------|--------------------------------|
+| Sa-Token → Shiro  | 替换 ddd4j-auth-{sa-token,shiro} |
+| Shiro → Security  | 替换 ddd4j-auth-{shiro,security} |
+| Spring → Quarkus  | ddd4j-runtime-{spring,quarkus} |
+| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice}  |
 
 业务代码（`AuthController`、`AuthService`）**无需任何修改**。
 
@@ -128,6 +131,7 @@ ddd4j-sample-quarkus-shiro/
 ### 🛒 业务能力（Order + Goods）
 
 **Order（充血模型轨）**
+
 - `POST /orders`                — 创建草稿订单
 - `GET  /orders/{id}`           — 查询订单
 - `GET  /orders/by-order-no?orderNo=xxx` — 按订单号查询
@@ -138,6 +142,7 @@ ddd4j-sample-quarkus-shiro/
 - `GET  /orders/{id}/discount`  — 预览折扣（领域服务）
 
 **Goods（Model/Query 轨）**
+
 - `POST /api/goods`                          — 创建商品
 - `PUT  /api/goods/{id}`                     — 更新商品
 - `PUT  /api/goods/{id}/status?status=ON_SALE` — 调整状态
@@ -149,6 +154,7 @@ ddd4j-sample-quarkus-shiro/
 - `GET  /api/goods/count?...`               — 计数（充血）
 
 **curl 示例**
+
 ```bash
 # 1) 创建商品
 curl -X POST 'http://localhost:8084/api/goods' \

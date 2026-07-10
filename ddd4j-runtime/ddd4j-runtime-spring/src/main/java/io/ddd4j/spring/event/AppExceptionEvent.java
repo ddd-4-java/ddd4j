@@ -27,10 +27,14 @@ import java.util.Objects;
 @Getter
 public class AppExceptionEvent extends ApplicationEvent implements Serializable {
 
-    /** 请求来源（如 URL、方法名等上下文信息） */
+    /**
+     * 请求来源（如 URL、方法名等上下文信息）
+     */
     private final Object source;
 
-    /** 异常载荷 */
+    /**
+     * 异常载荷
+     */
     private final Exception payload;
 
     /**

@@ -5,11 +5,7 @@ import io.ddd4j.sample.spring.shiro.rbac.domain.model.Role;
 import io.ddd4j.sample.spring.shiro.rbac.domain.repository.RoleRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -22,6 +18,25 @@ import java.util.concurrent.ConcurrentMap;
 public class InMemoryRoleRepository implements RoleRepository {
 
     private final ConcurrentMap<String, RoleRow> rows = new ConcurrentHashMap<>();
+
+    private static RoleRow toRow(Role role) {
+        RoleRow row = new RoleRow();
+        row.roleId = role.id();
+        row.roleCode = role.getRoleCode();
+        row.roleName = role.getRoleName();
+        row.description = role.getDescription();
+        row.status = role.getStatus().name();
+        row.permissionIds = new ArrayList<>(role.getPermissionIds());
+        return row;
+    }
+
+    private static Role toModel(RoleRow row) {
+        Role role = new Role(row.roleId, row.roleCode, row.roleName, row.description, Role.Status.valueOf(row.status));
+        if (row.permissionIds != null && !row.permissionIds.isEmpty()) {
+            role.assignPermissions(new HashSet<>(row.permissionIds));
+        }
+        return role;
+    }
 
     @Override
     public Optional<Role> findById(String id) {
@@ -61,25 +76,6 @@ public class InMemoryRoleRepository implements RoleRepository {
         if (StrKit.isNotBlank(id)) {
             rows.remove(id);
         }
-    }
-
-    private static RoleRow toRow(Role role) {
-        RoleRow row = new RoleRow();
-        row.roleId = role.id();
-        row.roleCode = role.getRoleCode();
-        row.roleName = role.getRoleName();
-        row.description = role.getDescription();
-        row.status = role.getStatus().name();
-        row.permissionIds = new ArrayList<>(role.getPermissionIds());
-        return row;
-    }
-
-    private static Role toModel(RoleRow row) {
-        Role role = new Role(row.roleId, row.roleCode, row.roleName, row.description, Role.Status.valueOf(row.status));
-        if (row.permissionIds != null && !row.permissionIds.isEmpty()) {
-            role.assignPermissions(new HashSet<>(row.permissionIds));
-        }
-        return role;
     }
 
     /**

@@ -30,36 +30,45 @@ import io.ddd4j.core.context.ThreadContext;
  */
 public final class SpiKeys {
 
-    private SpiKeys() {
-    }
-
-    /** SPI 根命名空间前缀 */
+    /**
+     * SPI 根命名空间前缀
+     */
     public static final String PREFIX = "ddd4j.spi.";
-
-    // ========== 事件相关 SPI ==========
-
-    /** MQ 事件发布者 SPI key，对应 {@code io.ddd4j.mq.event.MQEventPublisher} */
+    /**
+     * MQ 事件发布者 SPI key，对应 {@code io.ddd4j.mq.event.MQEventPublisher}
+     */
     public static final String MQ_EVENT_PUBLISHER = PREFIX + "mq.MQEventPublisher";
 
-    /** 进程内领域事件发布者 SPI key，对应 {@code io.ddd4j.core.ddd.event.DomainEventPublisher} */
+    // ========== 事件相关 SPI ==========
+    /**
+     * 进程内领域事件发布者 SPI key，对应 {@code io.ddd4j.core.ddd.event.DomainEventPublisher}
+     */
     public static final String DOMAIN_EVENT_PUBLISHER = PREFIX + "domain.DomainEventPublisher";
-
-    /** 认证主体提供者 SPI key，对应 {@code io.ddd4j.core.subject.SubjectProvider} */
+    /**
+     * 认证主体提供者 SPI key，对应 {@code io.ddd4j.core.subject.SubjectProvider}
+     */
     public static final String SUBJECT_PROVIDER = PREFIX + "security.SubjectProvider";
-
-    /** 国际化提供者 SPI key，对应 {@code io.ddd4j.core.i18n.I18nProvider} */
+    /**
+     * 国际化提供者 SPI key，对应 {@code io.ddd4j.core.i18n.I18nProvider}
+     */
     public static final String I18N_PROVIDER = PREFIX + "i18n.I18nProvider";
-
-    // ========== CQRS 相关 SPI（预留） ==========
-
-    /** 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.cqrs.query.CommandExecutorRegistry} */
+    /**
+     * 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.cqrs.query.CommandExecutorRegistry}
+     */
     public static final String COMMAND_EXECUTOR_REGISTRY = PREFIX + "cqrs.CommandExecutorRegistry";
 
-    /** 投影位置持久化 SPI key，对应 {@code io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository} */
+    // ========== CQRS 相关 SPI（预留） ==========
+    /**
+     * 投影位置持久化 SPI key，对应 {@code io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository}
+     */
     public static final String PROJECTION_POSITION_REPOSITORY = PREFIX + "cqrs.ProjectionPositionRepository";
+    /**
+     * 仓储注册表 SPI key，对应 {@code io.ddd4j.core.ddd.repository.Repository}（替代旧静态实例表）
+     */
+    public static final String REPOSITORY_REGISTRY = PREFIX + "data.RepositoryRegistry";
 
     // ========== 数据相关 SPI ==========
 
-    /** 仓储注册表 SPI key，对应 {@code io.ddd4j.core.ddd.repository.Repository}（替代旧静态实例表） */
-    public static final String REPOSITORY_REGISTRY = PREFIX + "data.RepositoryRegistry";
+    private SpiKeys() {
+    }
 }

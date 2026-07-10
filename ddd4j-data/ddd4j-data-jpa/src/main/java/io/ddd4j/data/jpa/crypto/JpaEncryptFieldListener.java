@@ -3,13 +3,12 @@ package io.ddd4j.data.jpa.crypto;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.data.mybatis.crypto.Ddd4jFieldCryptoHandler;
 import io.ddd4j.data.mybatis.crypto.EncryptField;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 /**
  * JPA 实体监听器：对 {@link EncryptField} 标注字段自动加解密。

@@ -5,15 +5,7 @@ import io.ddd4j.sample.spring.security.goods.application.GoodsApplicationService
 import io.ddd4j.sample.spring.security.goods.domain.Goods;
 import io.ddd4j.sample.spring.security.goods.domain.GoodsId;
 import io.ddd4j.sample.spring.security.goods.domain.GoodsStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
@@ -91,11 +83,15 @@ public class GoodsController {
         return R.ok(applicationService.getByCode(code));
     }
 
-    /** 创建商品请求。 */
+    /**
+     * 创建商品请求。
+     */
     public record CreateGoodsRequest(String code, String name, BigDecimal price, Integer stock) {
     }
 
-    /** 更新商品请求。 */
+    /**
+     * 更新商品请求。
+     */
     public record UpdateGoodsRequest(String name, BigDecimal price) {
     }
 }

@@ -1,12 +1,6 @@
 package io.ddd4j.mq.activemq.util;
 
-import io.ddd4j.mq.message.MessageHeaders;
-import jakarta.jms.BytesMessage;
-import jakarta.jms.Destination;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.Session;
-import jakarta.jms.TextMessage;
+import jakarta.jms.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;

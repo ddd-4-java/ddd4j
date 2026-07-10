@@ -1,7 +1,7 @@
 package io.ddd4j.mq.activemq;
 
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.message.Acknowledgment;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
@@ -20,22 +20,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ActiveMQAcknowledgment implements Acknowledgment {
 
-    /** Header 键：ActiveMQ JMS Session */
+    /**
+     * Header 键：ActiveMQ JMS Session
+     */
     public static final String HEADER_AMQ_SESSION = "ddd4j.activemq.session";
-    /** Header 键：ActiveMQ JMS Message */
+    /**
+     * Header 键：ActiveMQ JMS Message
+     */
     public static final String HEADER_AMQ_MESSAGE = "ddd4j.activemq.message";
-    /** Header 键：ActiveMQ 投递 ID */
+    /**
+     * Header 键：ActiveMQ 投递 ID
+     */
     public static final String HEADER_AMQ_DELIVERY_ID = "ddd4j.activemq.deliveryId";
 
-    /** JMS Session 实例 */
+    /**
+     * JMS Session 实例
+     */
     private final Session session;
-    /** JMS 消息实例 */
+    /**
+     * JMS 消息实例
+     */
     private final Message message;
-    /** 投递 ID */
+    /**
+     * 投递 ID
+     */
     private final long deliveryId;
-    /** 消息 ID */
+    /**
+     * 消息 ID
+     */
     private final String messageId;
-    /** 关联 ID */
+    /**
+     * 关联 ID
+     */
     private final String correlationId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
@@ -49,7 +65,7 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
      * @param correlationId 关联 ID
      */
     public ActiveMQAcknowledgment(Session session, Message message,
-                                         long deliveryId, String messageId, String correlationId) {
+                                  long deliveryId, String messageId, String correlationId) {
         this.session = session;
         this.message = message;
         this.deliveryId = deliveryId;
@@ -145,7 +161,7 @@ public class ActiveMQAcknowledgment implements Acknowledgment {
      *
      * @param op 要执行的 IO 操作
      * @throws UnsupportedOperationException 如果消息已被确认
-     * @throws IllegalStateException            如果确认操作失败
+     * @throws IllegalStateException         如果确认操作失败
      */
     private void runOnce(IoOperation op) {
         if (!acknowledged.compareAndSet(false, true)) {

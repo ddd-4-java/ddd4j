@@ -49,12 +49,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public final class RepositoryRegistry {
 
-    /** key 前缀 */
+    /**
+     * key 前缀
+     */
     private static final String PREFIX = "ddd4j.repository.";
 
     private static final Map<Class<?>, Repository> INSTANCES = new ConcurrentHashMap<>();
 
-    /** Query 类型到仓储实例的轻量映射，支持 query.list()/page()/delete() 默认可用。 */
+    /**
+     * Query 类型到仓储实例的轻量映射，支持 query.list()/page()/delete() 默认可用。
+     */
     private static final Map<Class<?>, Repository> QUERY_INSTANCES = new ConcurrentHashMap<>();
 
     private RepositoryRegistry() {

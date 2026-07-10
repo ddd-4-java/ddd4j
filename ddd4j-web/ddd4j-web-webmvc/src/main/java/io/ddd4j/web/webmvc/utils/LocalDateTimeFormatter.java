@@ -13,7 +13,9 @@ import java.util.Locale;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class LocalDateTimeFormatter implements Formatter<LocalDateTime> {
-    /** 日期时间格式化器 */
+    /**
+     * 日期时间格式化器
+     */
     public final DateTimeFormatter FORMATTER;
 
     /**

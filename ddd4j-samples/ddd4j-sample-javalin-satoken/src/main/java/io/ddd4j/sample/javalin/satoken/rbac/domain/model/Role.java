@@ -22,20 +22,34 @@ public class Role extends AggregateRoot<String> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 角色 ID */
+    /**
+     * 角色 ID
+     */
     private final String roleId;
-    /** 角色编码（如 {@code admin}） */
+    /**
+     * 角色编码（如 {@code admin}）
+     */
     private final String roleCode;
-    /** 角色名称 */
-    private String roleName;
-    /** 角色描述 */
-    private String description;
-    /** 状态 */
-    private Status status;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private final Instant createdAt;
-    /** 角色包含的权限 ID 集合 */
+    /**
+     * 角色包含的权限 ID 集合
+     */
     private final Set<String> permissionIds = new HashSet<>();
+    /**
+     * 角色名称
+     */
+    private String roleName;
+    /**
+     * 角色描述
+     */
+    private String description;
+    /**
+     * 状态
+     */
+    private Status status;
 
     public Role(String roleId, String roleCode, String roleName, String description, Status status) {
         if (StrKit.isBlank(roleId)) {

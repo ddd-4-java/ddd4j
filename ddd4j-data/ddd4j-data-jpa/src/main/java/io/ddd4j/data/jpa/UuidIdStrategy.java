@@ -2,8 +2,6 @@ package io.ddd4j.data.jpa;
 
 import io.ddd4j.kit.lang.IdKit;
 
-import java.io.Serializable;
-
 /**
  * UUID 字符串 ID 策略：生成 32 位无横线 UUID。
  *

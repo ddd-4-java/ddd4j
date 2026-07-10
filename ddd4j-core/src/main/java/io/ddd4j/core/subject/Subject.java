@@ -256,7 +256,7 @@ public interface Subject {
     /**
      * 检查设备是否为指定用户的受信任设备。
      *
-     * @param userId  用户 ID
+     * @param userId   用户 ID
      * @param deviceId 设备标识
      * @return 受信任时 {@code true}
      */

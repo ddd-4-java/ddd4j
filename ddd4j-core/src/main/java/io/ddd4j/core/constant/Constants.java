@@ -19,25 +19,45 @@ import org.slf4j.MarkerFactory;
  */
 public class Constants {
 
-    /** 请求结果状态：成功 */
+    /**
+     * 请求结果状态：成功
+     */
     public static final String RT_SUCCESS = "success";
-    /** 请求结果状态：失败 */
+    /**
+     * 请求结果状态：失败
+     */
     public static final String RT_FAIL = "fail";
-    /** 请求结果状态：错误 */
+    /**
+     * 请求结果状态：错误
+     */
     public static final String RT_ERROR = "error";
-    /** 主题参数名称 */
+    /**
+     * 主题参数名称
+     */
     public static final String THEME_PARAM_NAME = "theme";
-    /** 主题参数默认值 */
+    /**
+     * 主题参数默认值
+     */
     public static final String THEME_PARAM_DEFAULT = "default";
-    /** 主题资源类路径 */
+    /**
+     * 主题资源类路径
+     */
     public static final String THEME_SOURCE_CLASSPATH = "classpath:/static/assets/css/themes/";
-    /** 语言参数名称 */
+    /**
+     * 语言参数名称
+     */
     public static final String LANG_PARAM_NAME = "lang";
-    /** 访问日志 Marker */
+    /**
+     * 访问日志 Marker
+     */
     public static Marker accessMarker = MarkerFactory.getMarker("io.hiwepy.access");
-    /** 授权日志 Marker */
+    /**
+     * 授权日志 Marker
+     */
     public static Marker authzMarker = MarkerFactory.getMarker("io.hiwepy.authz");
-    /** 业务日志 Marker */
+    /**
+     * 业务日志 Marker
+     */
     public static Marker bizMarker = MarkerFactory.getMarker("io.hiwepy.biz");
 
 }

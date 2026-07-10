@@ -46,11 +46,11 @@ public class DefaultJacksonAutoConfiguration {
     /**
      * 使用指定配置项构造。
      *
-     * @param defaultNullArraySerializer     数组/集合 null 序列化为 {@code []}
-     * @param defaultNullNumberSerializer    数值 null 序列化为 {@code 0}
-     * @param defaultNullStringSerializer    字符串 null 序列化为 {@code ""}
-     * @param defaultNullDateSerializer      日期 null 序列化为 {@code ""}
-     * @param defaultNullBooleanSerializer   布尔 null 序列化为 {@code false}
+     * @param defaultNullArraySerializer      数组/集合 null 序列化为 {@code []}
+     * @param defaultNullNumberSerializer     数值 null 序列化为 {@code 0}
+     * @param defaultNullStringSerializer     字符串 null 序列化为 {@code ""}
+     * @param defaultNullDateSerializer       日期 null 序列化为 {@code ""}
+     * @param defaultNullBooleanSerializer    布尔 null 序列化为 {@code false}
      * @param defaultNullJsonObjectSerializer 对象/Map null 序列化为 {@code {}}
      */
     public DefaultJacksonAutoConfiguration(boolean defaultNullArraySerializer,

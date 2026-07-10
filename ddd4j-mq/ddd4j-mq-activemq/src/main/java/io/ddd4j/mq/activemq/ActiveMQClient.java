@@ -58,12 +58,29 @@ public class ActiveMQClient implements MQClient {
         log.info("Init ActiveMQ client with {}", properties);
     }
 
+    /**
+     * 从 properties 自建 ActiveMQConnectionFactory（构造 2 用）。
+     */
+    private static ActiveMQConnectionFactory buildFactory(ActiveMQProperties properties) {
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(properties.getBrokerUrl());
+        if (Objects.nonNull(properties.getUsername()) && StrKit.isNotBlank(properties.getUsername())) {
+            factory.setUser(properties.getUsername());
+        }
+        if (Objects.nonNull(properties.getPassword()) && StrKit.isNotBlank(properties.getPassword())) {
+            factory.setPassword(properties.getPassword());
+        }
+        factory.setClientID(Objects.requireNonNullElse(properties.getClientIdPrefix(), "ddd4j-mq-"));
+        return factory;
+    }
+
+    // ========================= 生产者 =========================
+
     @Override
     public String impl() {
         return "activemq";
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -101,7 +118,7 @@ public class ActiveMQClient implements MQClient {
         }
     }
 
-    // ========================= 消费者 =========================
+    // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -138,8 +155,6 @@ public class ActiveMQClient implements MQClient {
         return true;
     }
 
-    // ========================= 连接管理（双构造共享的最小辅助）=========================
-
     private synchronized Connection getConnection() {
         Connection connection = connectionRef.get();
         if (Objects.isNull(connection)) {
@@ -154,20 +169,5 @@ public class ActiveMQClient implements MQClient {
         }
         log.info("Get ActiveMQ connection: {}", connection);
         return connection;
-    }
-
-    /**
-     * 从 properties 自建 ActiveMQConnectionFactory（构造 2 用）。
-     */
-    private static ActiveMQConnectionFactory buildFactory(ActiveMQProperties properties) {
-        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(properties.getBrokerUrl());
-        if (Objects.nonNull(properties.getUsername()) && StrKit.isNotBlank(properties.getUsername())) {
-            factory.setUser(properties.getUsername());
-        }
-        if (Objects.nonNull(properties.getPassword()) && StrKit.isNotBlank(properties.getPassword())) {
-            factory.setPassword(properties.getPassword());
-        }
-        factory.setClientID(Objects.requireNonNullElse(properties.getClientIdPrefix(), "ddd4j-mq-"));
-        return factory;
     }
 }

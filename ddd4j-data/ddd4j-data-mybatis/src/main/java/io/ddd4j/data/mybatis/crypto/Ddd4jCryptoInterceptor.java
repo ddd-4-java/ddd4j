@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
  * @since 4.0.0
  */
 @Intercepts({
-    @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})
 })
 public class Ddd4jCryptoInterceptor implements Interceptor {
 

@@ -352,8 +352,15 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             V currentValue = deserialize(currentJson);
 
             io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
-                @Override public String key() { return cachedKey; }
-                @Override public V value() { return currentValue; }
+                @Override
+                public String key() {
+                    return cachedKey;
+                }
+
+                @Override
+                public V value() {
+                    return currentValue;
+                }
             };
             V newValue;
             try {
@@ -395,11 +402,19 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
     private String serialize(V value) {
         if (value == null) return null;
         if (value instanceof String) return (String) value;
-        try { return objectMapper.writeValueAsString(value); } catch (Exception e) { return null; }
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private V deserialize(String json) {
         if (json == null || json.isEmpty()) return null;
-        try { return objectMapper.readValue(json, valueType); } catch (Exception e) { return null; }
+        try {
+            return objectMapper.readValue(json, valueType);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

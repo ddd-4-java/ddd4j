@@ -1,4 +1,5 @@
 package io.ddd4j.core.api;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

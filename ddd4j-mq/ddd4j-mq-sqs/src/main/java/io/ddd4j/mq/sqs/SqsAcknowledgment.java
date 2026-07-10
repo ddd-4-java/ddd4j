@@ -20,26 +20,46 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SqsAcknowledgment implements Acknowledgment {
 
-    /** Header 键：SQS 客户端 */
+    /**
+     * Header 键：SQS 客户端
+     */
     public static final String HEADER_SQS_CLIENT = "ddd4j.sqs.client";
-    /** Header 键：SQS 消息体 */
+    /**
+     * Header 键：SQS 消息体
+     */
     public static final String HEADER_SQS_MESSAGE = "ddd4j.sqs.message";
-    /** Header 键：SQS 队列 URL */
+    /**
+     * Header 键：SQS 队列 URL
+     */
     public static final String HEADER_SQS_QUEUE_URL = "ddd4j.sqs.queueUrl";
 
-    /** AWS SQS 客户端实例 */
+    /**
+     * AWS SQS 客户端实例
+     */
     private final SqsClient client;
-    /** SQS 消息实例 */
+    /**
+     * SQS 消息实例
+     */
     private final Message message;
-    /** 队列 URL */
+    /**
+     * 队列 URL
+     */
     private final String queueUrl;
-    /** 消息 ID */
+    /**
+     * 消息 ID
+     */
     private final String messageId;
-    /** 消息回执句柄 */
+    /**
+     * 消息回执句柄
+     */
     private final String receiptHandle;
-    /** 确认状态标记 */
+    /**
+     * 确认状态标记
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
-    /** nack 时是否允许重新入队 */
+    /**
+     * nack 时是否允许重新入队
+     */
     private final boolean requeueOnNack;
 
     /**

@@ -7,11 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Spring 领域事件基类（继承 ApplicationEvent）
@@ -23,11 +19,15 @@ import java.util.Date;
 @Slf4j
 public abstract class SpringDomainEvent<T> extends ApplicationEvent {
 
-    /** 事件支持的策略键集合（策略模式） */
+    /**
+     * 事件支持的策略键集合（策略模式）
+     */
     @Setter
     @Getter
     private Set<String> supportKeys;
-    /** 事件处理结果 */
+    /**
+     * 事件处理结果
+     */
     @Setter
     private Object result;
 

@@ -17,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NoOpCryptoStrategy implements CryptoStrategy {
 
-    /** JSON 对象映射器 */
+    /**
+     * JSON 对象映射器
+     */
     @Getter
     private ObjectMapper objectMapper;
 

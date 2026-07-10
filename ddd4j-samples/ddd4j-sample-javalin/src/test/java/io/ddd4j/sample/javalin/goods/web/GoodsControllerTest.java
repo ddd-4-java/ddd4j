@@ -31,7 +31,6 @@ import java.time.Duration;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -80,17 +79,34 @@ class GoodsControllerTest {
         }
     }
 
+    private static String extractId(String body) {
+        int idx = body.indexOf("\"id\":");
+        if (idx < 0) {
+            throw new IllegalStateException("no id in body: " + body);
+        }
+        int start = idx + 5;
+        // skip whitespace
+        while (start < body.length() && body.charAt(start) == ' ') {
+            start++;
+        }
+        int end = start;
+        while (end < body.length() && (Character.isDigit(body.charAt(end)) || body.charAt(end) == '-')) {
+            end++;
+        }
+        return body.substring(start, end);
+    }
+
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
@@ -104,12 +120,12 @@ class GoodsControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
+    // ---------- 1) create ----------
+
     private HttpResponse<String> get(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
     }
-
-    // ---------- 1) create ----------
 
     @Test
     void createGoods_shouldReturn201() throws Exception {
@@ -142,14 +158,14 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // ---------- 2) update ----------
+
     @Test
     void createGoods_negativeStock_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = postJson("/api/goods",
                 "{\"code\":\"SKU-NS\",\"name\":\"x\",\"price\":1.00,\"stock\":-1}");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 2) update ----------
 
     @Test
     void updateGoods_shouldChangeNameAndPrice() throws Exception {
@@ -171,6 +187,11 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // ---------- 3) changeStatus ----------
+    // 注：GoodsController 的 /api/goods/{id}/status 使用 queryParamAsClass(GoodsStatus.class)，
+    // Javalin 没有内置 enum 转换器，所有命中该路由的请求都会返回 500 (MissingConverterException)。
+    // 这是预存在的业务代码 bug（不允许修改业务代码），以下测试断言当前行为。
+
     @Test
     void updateGoods_deletedGoods_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -181,11 +202,6 @@ class GoodsControllerTest {
                 "{\"name\":\"x\",\"price\":1.00}");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 3) changeStatus ----------
-    // 注：GoodsController 的 /api/goods/{id}/status 使用 queryParamAsClass(GoodsStatus.class)，
-    // Javalin 没有内置 enum 转换器，所有命中该路由的请求都会返回 500 (MissingConverterException)。
-    // 这是预存在的业务代码 bug（不允许修改业务代码），以下测试断言当前行为。
 
     @Test
     void changeStatus_toOnSale_shouldReturn200() throws Exception {
@@ -217,13 +233,13 @@ class GoodsControllerTest {
                 "expected MissingConverterException (500) for enum query param, actual=" + resp.statusCode());
     }
 
+    // ---------- 4) delete ----------
+
     @Test
     void changeStatus_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = put("/api/goods/999999999/status?status=ON_SALE");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 4) delete ----------
 
     @Test
     void deleteGoods_shouldReturn200() throws Exception {
@@ -240,6 +256,8 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // ---------- 5) getById ----------
+
     @Test
     void deleteGoods_thenGetByCode_shouldReturnDeletedStatus() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -251,8 +269,6 @@ class GoodsControllerTest {
                 "expected /by-code shadowed by /{id} (>=400), actual=" + resp.statusCode());
     }
 
-    // ---------- 5) getById ----------
-
     @Test
     void getById_shouldReturnGoods() throws Exception {
         HttpResponse<String> create = postJson("/api/goods",
@@ -263,15 +279,15 @@ class GoodsControllerTest {
         assertTrue(resp.body().contains("\"code\":\"SKU-GID\""));
     }
 
+    // ---------- 6) getByCode ----------
+    // 注：/api/goods/{id} 在 /api/goods/by-code 之前注册，导致 /by-code 被 /{id} 拦截并返回 400。
+    // 这是预存在的路由顺序问题（不允许修改业务代码），以下测试断言当前行为。
+
     @Test
     void getById_unknownId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/999999999");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 6) getByCode ----------
-    // 注：/api/goods/{id} 在 /api/goods/by-code 之前注册，导致 /by-code 被 /{id} 拦截并返回 400。
-    // 这是预存在的路由顺序问题（不允许修改业务代码），以下测试断言当前行为。
 
     @Test
     void getByCode_shouldReturnGoods() throws Exception {
@@ -287,16 +303,16 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400 || resp.statusCode() == 200);
     }
 
+    // ---------- 7) page / list / count 充血查询 ----------
+    // 注：GoodsController 中 /api/goods/{id} 在 /api/goods/page|list|count 之前注册，
+    // 因此这些路由会被 /{id} 捕获并返回 400（pathParamAsClass Long 转换失败）。
+    // 这是预存在的路由顺序问题（不允许修改业务代码），以下测试断言当前行为。
+
     @Test
     void getByCode_unknownCode_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/by-code?code=missing");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 7) page / list / count 充血查询 ----------
-    // 注：GoodsController 中 /api/goods/{id} 在 /api/goods/page|list|count 之前注册，
-    // 因此这些路由会被 /{id} 捕获并返回 400（pathParamAsClass Long 转换失败）。
-    // 这是预存在的路由顺序问题（不允许修改业务代码），以下测试断言当前行为。
 
     @Test
     void pageQuery_defaultPage_shouldReturnOk() throws Exception {
@@ -361,13 +377,13 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // ---------- 综合 ----------
+
     @Test
     void countQuery_byStatus_shouldReturnOk() throws Exception {
         HttpResponse<String> resp = get("/api/goods/count?status=DRAFT");
         assertTrue(resp.statusCode() >= 400);
     }
-
-    // ---------- 综合 ----------
 
     @Test
     void fullCrudLifecycle() throws Exception {
@@ -444,29 +460,12 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400);
     }
 
+    // =========================== 辅助 ===========================
+
     @Test
     void pageQuery_invalidStatusEnum_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/page?status=BAD&current=1&size=10");
         assertTrue(resp.statusCode() >= 400 || resp.statusCode() == 200);
-    }
-
-    // =========================== 辅助 ===========================
-
-    private static String extractId(String body) {
-        int idx = body.indexOf("\"id\":");
-        if (idx < 0) {
-            throw new IllegalStateException("no id in body: " + body);
-        }
-        int start = idx + 5;
-        // skip whitespace
-        while (start < body.length() && body.charAt(start) == ' ') {
-            start++;
-        }
-        int end = start;
-        while (end < body.length() && (Character.isDigit(body.charAt(end)) || body.charAt(end) == '-')) {
-            end++;
-        }
-        return body.substring(start, end);
     }
 
     private static class NoOpDomainEventPublisher implements DomainEventPublisher {

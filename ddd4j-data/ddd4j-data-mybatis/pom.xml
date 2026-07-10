@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+>
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
@@ -12,7 +12,8 @@
     <artifactId>ddd4j-data-mybatis</artifactId>
     <description>ddd4j 数据层 - MyBatis 官方实现（零 MyBatis-Plus 依赖）：纯 MyBatis 3.x 风格的 RichRepository 实现，
         整合 mybatis-enhance（数据权限/国际化注解），适配 ddd4j-core 的 Repository SPI。
-        等保数据加密通过自定义加密拦截器 + ddd4j-data-crypto 实现。</description>
+        等保数据加密通过自定义加密拦截器 + ddd4j-data-crypto 实现。
+    </description>
 
     <dependencies>
         <!-- ddd4j 核心契约 -->

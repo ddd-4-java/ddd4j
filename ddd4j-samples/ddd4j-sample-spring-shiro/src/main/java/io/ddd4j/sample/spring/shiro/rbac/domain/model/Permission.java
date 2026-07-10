@@ -20,18 +20,30 @@ public class Permission extends AggregateRoot<String> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 权限 ID（与 permissionCode 一致，简化示例） */
+    /**
+     * 权限 ID（与 permissionCode 一致，简化示例）
+     */
     private final String permissionId;
-    /** 权限编码（如 {@code user:add}） */
+    /**
+     * 权限编码（如 {@code user:add}）
+     */
     private final String permissionCode;
-    /** 权限名称 */
-    private String permissionName;
-    /** 所属模块（用于权限分组） */
-    private String module;
-    /** 状态 */
-    private Status status;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private final Instant createdAt;
+    /**
+     * 权限名称
+     */
+    private String permissionName;
+    /**
+     * 所属模块（用于权限分组）
+     */
+    private String module;
+    /**
+     * 状态
+     */
+    private Status status;
 
     public Permission(String permissionId, String permissionCode, String permissionName, String module, Status status) {
         if (StrKit.isBlank(permissionId)) {

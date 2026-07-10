@@ -8,7 +8,9 @@ CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,0
 
 ## 一句话结论
 
-当前 `ddd4j` 主线已经从早期偏 Spring Boot 的结构，收敛成一个框架无关的 DDD 基础库：`ddd4j-core` 持有 DDD/CQRS/Auth/Cache/MQ 等核心契约，`ddd4j-runtime-*` 负责 Spring、Quarkus、Guice 容器绑定，`ddd4j-web`、`ddd4j-data`、`ddd4j-mq`、`ddd4j-auth`、`ddd4j-cache` 按能力聚合，`ddd4j-boot` 深度自动装配则留在外部 Boot 仓库。
+当前 `ddd4j` 主线已经从早期偏 Spring Boot 的结构，收敛成一个框架无关的 DDD 基础库：`ddd4j-core` 持有
+DDD/CQRS/Auth/Cache/MQ 等核心契约，`ddd4j-runtime-*` 负责 Spring、Quarkus、Guice 容器绑定，`ddd4j-web`、`ddd4j-data`、
+`ddd4j-mq`、`ddd4j-auth`、`ddd4j-cache` 按能力聚合，`ddd4j-boot` 深度自动装配则留在外部 Boot 仓库。
 
 ## 根模块结构
 
@@ -21,7 +23,8 @@ CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,0
 - 跨领域扩展：`ddd4j-extensions`
 - 发布与样例：`ddd4j-parent`、`ddd4j-bom`、`ddd4j-dependencies`、`ddd4j-samples`
 
-这个结构的关键变化是：能力模块不再混入 Boot 自动装配职责，Spring Boot 自动配置和深度整合应继续归到 `workspace-ddd4j-boot/ddd4j-boot` 侧。
+这个结构的关键变化是：能力模块不再混入 Boot 自动装配职责，Spring Boot 自动配置和深度整合应继续归到
+`workspace-ddd4j-boot/ddd4j-boot` 侧。
 
 ## 核心契约层
 
@@ -33,7 +36,8 @@ CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,0
 - `io.ddd4j.core.cqrs.command.Command`：CQRS 命令标记接口，运行时侧由 Quarkus/Spring/Guice 的 CommandBus 适配。
 - `io.ddd4j.core.cqrs.readmodel.TypedEventHandler`：读模型事件处理器，样例中的 CQRS 事件分发依赖它。
 
-数据 SPI 的收敛方向也已经写进 `ddd4j-data/pom.xml`：`Repository/TypeHandlerRegistry` 这类基础契约应在 `ddd4j-core`，数据模块只保留 MyBatis、Spring、crypto、external、logs、datascope 等能力实现。
+数据 SPI 的收敛方向也已经写进 `ddd4j-data/pom.xml`：`Repository/TypeHandlerRegistry` 这类基础契约应在 `ddd4j-core`
+，数据模块只保留 MyBatis、Spring、crypto、external、logs、datascope 等能力实现。
 
 ## DDD 架构规则
 
@@ -49,7 +53,8 @@ CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,0
 - `@DomainRepository` 必须在 `infrastructure` 或 `infras` 包。
 - `domain` 包不得依赖 `web/controller/adapter`、`infrastructure/infras`、Spring/MyBatis 等框架。
 
-`CleanArchitectureChecker` 在目录层面要求 `domain/application/adapter/infrastructure` 四层，并尝试用 ArchUnit 做类依赖检查。这个模块适合后续作为业务项目架构守护测试的入口。
+`CleanArchitectureChecker` 在目录层面要求 `domain/application/adapter/infrastructure` 四层，并尝试用 ArchUnit
+做类依赖检查。这个模块适合后续作为业务项目架构守护测试的入口。
 
 ## 运行时绑定
 
@@ -65,7 +70,8 @@ CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,0
 - Quarkus：`CdiDomainEventPublisher` 通过 CDI `Event<Object>.fire` 发布。
 - Guice/Javalin：`GuiceDomainEventPublisher` 通过 Guava `EventBus.post` 发布。
 
-Guice 侧还有一个重要入口 `DddAnnotationModule`：它用 ClassGraph 扫描 `@DomainService`、`@ApplicationService` 等 DDD 注解，按 Singleton 规则绑定到 Guice 容器。这是 Javalin 方向收敛后的主要运行时胶水层。
+Guice 侧还有一个重要入口 `DddAnnotationModule`：它用 ClassGraph 扫描 `@DomainService`、`@ApplicationService` 等 DDD 注解，按
+Singleton 规则绑定到 Guice 容器。这是 Javalin 方向收敛后的主要运行时胶水层。
 
 ## Web 能力
 
@@ -76,7 +82,9 @@ Guice 侧还有一个重要入口 `DddAnnotationModule`：它用 ClassGraph 扫�
 - `ddd4j-web-webflux`
 - `ddd4j-web-webmvc`
 
-`QuarkusAggregateController` 提供通用聚合 REST 骨架，包括 `page/getById/create/update/delete/disable/enable` 等方法，并把具体业务动作留给 `listPage/detail/save/modify/remove/doDisable/doEnable`。WebMVC/WebFlux 侧则有各自的错误处理、国际化资源解析和控制器抽象。
+`QuarkusAggregateController` 提供通用聚合 REST 骨架，包括 `page/getById/create/update/delete/disable/enable`
+等方法，并把具体业务动作留给 `listPage/detail/save/modify/remove/doDisable/doEnable`。WebMVC/WebFlux
+侧则有各自的错误处理、国际化资源解析和控制器抽象。
 
 ## MQ 最新重构
 
@@ -84,9 +92,12 @@ Guice 侧还有一个重要入口 `DddAnnotationModule`：它用 ClassGraph 扫�
 
 - `MQClient` 是 broker 实现的统一 SPI，定义 `impl/init/initProducer/initConsumer/start/close/consume`。
 - `MQClient.init` 会按 `MQProperties.enabled` 和 `properties.broker == impl()` 决定是否初始化当前 broker。
-- 生产者通过 `BaseContext` 注册到 `MQEvent.MQ_EVENT_PUBLISHER`，现在是 `Map<String, Consumer<MQEvent>>`，key 为 `impl()`，支持多 broker 共存。
-- 消费时 `MQClient.consume` 会先按 `event.supports(listener.supports())` 过滤，再设置租户上下文，必要时通过 `MQEventStorer` 持久化，最后反射调用监听方法。
-- `MQEvent` 带 `namespace/topic/tag/concat/tenantId/broker`，发布入口支持指定 topic、tag、tenantId，并最终按 broker 找到对应 producer。
+- 生产者通过 `BaseContext` 注册到 `MQEvent.MQ_EVENT_PUBLISHER`，现在是 `Map<String, Consumer<MQEvent>>`，key 为 `impl()`
+  ，支持多 broker 共存。
+- 消费时 `MQClient.consume` 会先按 `event.supports(listener.supports())` 过滤，再设置租户上下文，必要时通过
+  `MQEventStorer` 持久化，最后反射调用监听方法。
+- `MQEvent` 带 `namespace/topic/tag/concat/tenantId/broker`，发布入口支持指定 topic、tag、tenantId，并最终按 broker 找到对应
+  producer。
 
 当前工作树还有未提交改动，涉及：
 
@@ -95,7 +106,8 @@ Guice 侧还有一个重要入口 `DddAnnotationModule`：它用 ClassGraph 扫�
 - `ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQEventPublisher.java`
 - 以及 Akka、Jackson、Monitor、Validation 等扩展模块的 POM 和实现调整。
 
-注意：`TypeHandlerRegistry.java` 和 `ActiveMQEventPublisher.java` 当前存在 staged add + unstaged delete 的状态，后续提交前需要明确是保留新文件，还是完成删除/迁移。
+注意：`TypeHandlerRegistry.java` 和 `ActiveMQEventPublisher.java` 当前存在 staged add + unstaged delete
+的状态，后续提交前需要明确是保留新文件，还是完成删除/迁移。
 
 ## 数据、认证、缓存
 
@@ -114,9 +126,11 @@ Guice 侧还有一个重要入口 `DddAnnotationModule`：它用 ClassGraph 扫�
 - `ddd4j-auth-security`
 - `ddd4j-auth-shiro`
 
-Auth 的 `Subject/SubjectKit/SubjectProvider/AuthRequest/SubjectDataProvider/SubjectStrategy` 契约位于 `ddd4j-core`，具体运行环境桥接通过 `ddd4j-runtime-*` 提供。
+Auth 的 `Subject/SubjectKit/SubjectProvider/AuthRequest/SubjectDataProvider/SubjectStrategy` 契约位于 `ddd4j-core`
+，具体运行环境桥接通过 `ddd4j-runtime-*` 提供。
 
-`ddd4j-cache` 现在是单 jar、多后端可选依赖模式，缓存 SPI 在 `ddd4j-core/cache`，实现包括 Caffeine、Guava、Hutool、Jedis、Lettuce、Redisson、Memcached、JetCache，其中外部客户端大多是 optional。
+`ddd4j-cache` 现在是单 jar、多后端可选依赖模式，缓存 SPI 在 `ddd4j-core/cache`，实现包括
+Caffeine、Guava、Hutool、Jedis、Lettuce、Redisson、Memcached、JetCache，其中外部客户端大多是 optional。
 
 ## 扩展与样例
 

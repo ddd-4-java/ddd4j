@@ -19,6 +19,21 @@ public class InMemoryPermissionRepository implements PermissionRepository {
 
     private final ConcurrentMap<String, PermissionRow> rows = new ConcurrentHashMap<>();
 
+    private static PermissionRow toRow(Permission permission) {
+        PermissionRow row = new PermissionRow();
+        row.permissionId = permission.id();
+        row.permissionCode = permission.getPermissionCode();
+        row.permissionName = permission.getPermissionName();
+        row.module = permission.getModule();
+        row.status = permission.getStatus().name();
+        return row;
+    }
+
+    private static Permission toModel(PermissionRow row) {
+        return new Permission(row.permissionId, row.permissionCode, row.permissionName, row.module,
+                Permission.Status.valueOf(row.status));
+    }
+
     @Override
     public Optional<Permission> findById(String id) {
         if (StrKit.isBlank(id)) {
@@ -68,21 +83,6 @@ public class InMemoryPermissionRepository implements PermissionRepository {
         if (StrKit.isNotBlank(id)) {
             rows.remove(id);
         }
-    }
-
-    private static PermissionRow toRow(Permission permission) {
-        PermissionRow row = new PermissionRow();
-        row.permissionId = permission.id();
-        row.permissionCode = permission.getPermissionCode();
-        row.permissionName = permission.getPermissionName();
-        row.module = permission.getModule();
-        row.status = permission.getStatus().name();
-        return row;
-    }
-
-    private static Permission toModel(PermissionRow row) {
-        return new Permission(row.permissionId, row.permissionCode, row.permissionName, row.module,
-                Permission.Status.valueOf(row.status));
     }
 
     /**

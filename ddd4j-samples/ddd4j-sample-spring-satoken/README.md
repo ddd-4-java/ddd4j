@@ -6,14 +6,15 @@ ddd4j SubjectKit 统一鉴权入口在 Spring Boot 框架下的 Sa-Token 适配�
 
 ### 🎯 三轨合一展示
 
-| 轨道 | 模块 | 框架 | 入口 |
-|------|------|------|------|
-| **一轨**：RBAC 授权管理 | `AuthorizationController` | ddd4j + Spring MVC | `POST /admin/users` |
-| **一轨**：RBAC 鉴权操作 | `AuthenticationController` | Sa-Token 注解式鉴权 | `POST /auth/login` |
-| **二轨**：充血业务 | `Order 聚合 + OrderApplicationService` | Spring + ddd4j | `POST /orders` |
-| **三轨**：CRUD 业务 | `Goods PO + GoodsQuery` | Spring + ddd4j | `POST /api/goods` |
+| 轨道               | 模块                                   | 框架                 | 入口                  |
+|------------------|--------------------------------------|--------------------|---------------------|
+| **一轨**：RBAC 授权管理 | `AuthorizationController`            | ddd4j + Spring MVC | `POST /admin/users` |
+| **一轨**：RBAC 鉴权操作 | `AuthenticationController`           | Sa-Token 注解式鉴权     | `POST /auth/login`  |
+| **二轨**：充血业务      | `Order 聚合 + OrderApplicationService` | Spring + ddd4j     | `POST /orders`      |
+| **三轨**：CRUD 业务   | `Goods PO + GoodsQuery`              | Spring + ddd4j     | `POST /api/goods`   |
 
-> 🎯 业务代码（`RbacService` / `AuthorizationController` / `AuthenticationController` / `Order` / `Goods`）在三个 Spring Auth 示例（satoken / shiro / security）中**逐字符一致**。
+> 🎯 业务代码（`RbacService` / `AuthorizationController` / `AuthenticationController` / `Order` / `Goods`）在三个 Spring
+> Auth 示例（satoken / shiro / security）中**逐字符一致**。
 > 仅认证框架配置（`RbacConfig` 中注册的 `SubjectDataProvider`）和启动类不同。
 
 ### 🎯 RBAC 核心价值
@@ -29,40 +30,41 @@ ddd4j SubjectKit 统一鉴权入口在 Spring Boot 框架下的 Sa-Token 适配�
 
 #### 用户（3 个）
 
-| 用户名 | 密码 | 用户 ID | 角色 | 状态 |
-|--------|------|---------|------|------|
-| `admin` | `123456` | 10001 | admin | ENABLED |
-| `user` | `123456` | 10002 | user | ENABLED |
-| `disabled` | `123456` | 10003 | user | DISABLED |
+| 用户名        | 密码       | 用户 ID | 角色    | 状态       |
+|------------|----------|-------|-------|----------|
+| `admin`    | `123456` | 10001 | admin | ENABLED  |
+| `user`     | `123456` | 10002 | user  | ENABLED  |
+| `disabled` | `123456` | 10003 | user  | DISABLED |
 
 #### 角色（3 个）
 
-| 角色编码 | 角色名 | 包含权限 |
-|---------|--------|---------|
-| `admin` | 超级管理员 | user:add, user:delete, user:list, role:add, goods:view, order:pay（全部 6 个） |
-| `user` | 普通用户 | user:list, goods:view |
-| `manager` | 业务管理员 | user:list, goods:view, order:pay |
+| 角色编码      | 角色名   | 包含权限                                                                      |
+|-----------|-------|---------------------------------------------------------------------------|
+| `admin`   | 超级管理员 | user:add, user:delete, user:list, role:add, goods:view, order:pay（全部 6 个） |
+| `user`    | 普通用户  | user:list, goods:view                                                     |
+| `manager` | 业务管理员 | user:list, goods:view, order:pay                                          |
 
 #### 权限（6 个）
 
-| 权限编码 | 权限名 | 模块 |
-|---------|--------|------|
-| `user:add` | 新增用户 | user |
-| `user:delete` | 删除用户 | user |
-| `user:list` | 查询用户 | user |
-| `role:add` | 新增角色 | role |
-| `goods:view` | 查看商品 | goods |
-| `order:pay` | 订单支付 | order |
+| 权限编码          | 权限名  | 模块    |
+|---------------|------|-------|
+| `user:add`    | 新增用户 | user  |
+| `user:delete` | 删除用户 | user  |
+| `user:list`   | 查询用户 | user  |
+| `role:add`    | 新增角色 | role  |
+| `goods:view`  | 查看商品 | goods |
+| `order:pay`   | 订单支付 | order |
 
 ### 📦 模块对应
 
-| 框架 | 鉴权适配模块 | 桥接模块 |
-|------|-------------|---------|
+| 框架          | 鉴权适配模块              | 桥接模块              |
+|-------------|---------------------|-------------------|
 | Spring Boot | ddd4j-auth-sa-token | ddd4j-auth-spring |
 
 ### 🚀 快速开始
 
 **启动命令**：
+
 ```bash
 mvn spring-boot:run    # Spring Boot
 ```
@@ -324,6 +326,7 @@ public class RbacService implements SubjectDataProvider {
 ```
 
 **关键点**：
+
 - 本类**与其他 6 个 RBAC 示例完全一致**（切换框架业务代码零改动）
 - 同时实现 `SubjectDataProvider`，由 `RbacConfig` 注册为 `SubjectKit.setDataProvider`
 - 仅依赖 ddd4j-core，不依赖 sa-token/shiro/security API
@@ -355,12 +358,12 @@ public class AuthenticationController {
 
 ### 🔄 切换鉴权框架
 
-| 切换目标 | pom.xml 变化 |
-|---------|-------------|
-| Sa-Token → Shiro | 替换 ddd4j-auth-{sa-token,shiro} |
-| Shiro → Security | 替换 ddd4j-auth-{shiro,security} |
-| Spring → Quarkus | ddd4j-runtime-{spring,quarkus} |
-| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice} |
+| 切换目标              | pom.xml 变化                     |
+|-------------------|--------------------------------|
+| Sa-Token → Shiro  | 替换 ddd4j-auth-{sa-token,shiro} |
+| Shiro → Security  | 替换 ddd4j-auth-{shiro,security} |
+| Spring → Quarkus  | ddd4j-runtime-{spring,quarkus} |
+| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice}  |
 
 业务代码（`RbacService` / `AuthorizationController` / `AuthenticationController`）**无需任何修改**。
 

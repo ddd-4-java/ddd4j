@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.Getter;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.biz.context.NestedMessageSource;
 import org.springframework.context.*;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -44,22 +43,31 @@ import org.springframework.util.StringValueResolver;
 })
 public class BaseController implements ApplicationEventPublisherAware, ApplicationContextAware, EmbeddedValueResolverAware {
 
-    /** 嵌入式值解析器 */
-    @Getter
-    private StringValueResolver valueResolver;
-    /** 应用事件发布器 */
-    @Getter
-    private ApplicationEventPublisher eventPublisher;
-    /** Spring 应用上下文 */
-    @Getter
-    private ApplicationContext context;
-
-    /** 嵌套消息源（国际化） */
+    /**
+     * 嵌套消息源（国际化）
+     */
     @Getter
     private final NestedMessageSource messageSource;
-    /** Dozer Bean 映射器 */
+    /**
+     * Dozer Bean 映射器
+     */
     @Getter
     private final Mapper beanMapper;
+    /**
+     * 嵌入式值解析器
+     */
+    @Getter
+    private StringValueResolver valueResolver;
+    /**
+     * 应用事件发布器
+     */
+    @Getter
+    private ApplicationEventPublisher eventPublisher;
+    /**
+     * Spring 应用上下文
+     */
+    @Getter
+    private ApplicationContext context;
 
     public BaseController(NestedMessageSource messageSource, Mapper beanMapper) {
         this.messageSource = messageSource;

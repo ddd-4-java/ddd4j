@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class QuarkusJpaProjectionService {
 
-    /** 投影位置仓储实例 */
+    /**
+     * 投影位置仓储实例
+     */
     @Inject
     Instance<ProjectionPositionRepository> projectionPositionRepository;
 

@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.shiro.goods.web;
 
-import io.ddd4j.core.api.Page;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.shiro.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;

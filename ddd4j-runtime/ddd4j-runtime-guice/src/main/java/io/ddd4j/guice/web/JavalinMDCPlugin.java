@@ -42,13 +42,21 @@ import java.util.UUID;
 @Slf4j
 public class JavalinMDCPlugin implements Handler {
 
-    /** MDC 请求 ID 键 */
+    /**
+     * MDC 请求 ID 键
+     */
     public static final String MDC_REQUEST_ID = "requestId";
-    /** MDC 请求 URL 键 */
+    /**
+     * MDC 请求 URL 键
+     */
     public static final String MDC_REQUEST_URL = "requestURL";
-    /** MDC 远程地址键 */
+    /**
+     * MDC 远程地址键
+     */
     public static final String MDC_REMOTE_ADDR = "remoteAddr";
-    /** MDC 请求方法键 */
+    /**
+     * MDC 请求方法键
+     */
     public static final String MDC_METHOD = "method";
 
     /**

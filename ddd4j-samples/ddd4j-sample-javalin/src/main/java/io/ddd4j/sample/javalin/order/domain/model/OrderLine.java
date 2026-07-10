@@ -60,8 +60,8 @@ public final class OrderLine implements Entity<String> {
      *
      * @param goodsId   商品 ID
      * @param goodsName 商品名称
-     * @param quantity    数量
-     * @param unitPrice   单价
+     * @param quantity  数量
+     * @param unitPrice 单价
      * @return 订单行实例
      */
     public static OrderLine create(String goodsId, String goodsName, int quantity, Money unitPrice) {

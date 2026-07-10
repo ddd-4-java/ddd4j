@@ -1,6 +1,5 @@
 package io.ddd4j.mq.util;
 
-import io.ddd4j.mq.util.TagMatcher;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

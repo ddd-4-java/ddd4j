@@ -4,24 +4,18 @@ import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaCookieConfig;
 import cn.dev33.satoken.exception.DisableServiceException;
 import cn.dev33.satoken.exception.NotLoginException;
-import cn.dev33.satoken.exception.NotPermissionException;
-import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import io.ddd4j.auth.satoken.util.StpKit;
-import io.ddd4j.core.auth.session.AuthCookieConfig;
 import io.ddd4j.core.auth.AuthLogoutMode;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
+import io.ddd4j.core.auth.session.AuthCookieConfig;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.exception.AccountDisabledException;
 import io.ddd4j.core.exception.NotLoggedInException;
-import io.ddd4j.core.exception.PermissionDeniedException;
-import io.ddd4j.core.exception.RoleDeniedException;
-import io.ddd4j.core.exception.SessionExpiredException;
-import io.ddd4j.core.exception.TokenExpiredException;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
 
@@ -47,6 +41,47 @@ public class SaTokenSubject implements Subject {
     public static final String PRINCIPAL_KEY = "principal";
 
     /**
+     * 框架无关枚举映射：{@link AuthLogoutMode} -> sa-token 的 {@code SaLogoutMode}。
+     * <p>sa-token 1.42 并不暴露 {@code ReplacedLoginExitMode}/{@code ReplacedRange} 枚举类，
+     * 这两个字段我们仍写入 {@link AuthSessionConfig}，但具体生效需要在更新版 sa-token 下补全。
+     */
+    private static cn.dev33.satoken.stp.parameter.enums.SaLogoutMode toSaLogoutMode(AuthLogoutMode mode) {
+        if (mode == null) {
+            return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.LOGOUT;
+        }
+        switch (mode) {
+            case KICKOUT:
+                return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.KICKOUT;
+            case REPLACED:
+                return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.REPLACED;
+            default:
+                return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.LOGOUT;
+        }
+    }
+
+    // ==================== 身份与会话读取 ====================
+
+    private static SaCookieConfig toSaCookieConfig(AuthCookieConfig auth) {
+        SaCookieConfig sa = new SaCookieConfig();
+        if (Objects.nonNull(auth.getDomain())) {
+            sa.setDomain(auth.getDomain());
+        }
+        if (Objects.nonNull(auth.getPath())) {
+            sa.setPath(auth.getPath());
+        }
+        if (Objects.nonNull(auth.isSecure())) {
+            sa.setSecure(auth.isSecure());
+        }
+        if (Objects.nonNull(auth.isHttpOnly())) {
+            sa.setHttpOnly(auth.isHttpOnly());
+        }
+        if (Objects.nonNull(auth.getSameSite())) {
+            sa.setSameSite(auth.getSameSite());
+        }
+        return sa;
+    }
+
+    /**
      * 根据账号体系返回对应的 StpLogic（对齐多账号体系）。
      *
      * @param realm 账号体系标识，null/空返回默认
@@ -59,8 +94,6 @@ public class SaTokenSubject implements Subject {
         return SaManager.getStpLogic(realm, true);
     }
 
-    // ==================== 身份与会话读取 ====================
-
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         if (!StpUtil.isLogin()) {
@@ -72,6 +105,8 @@ public class SaTokenSubject implements Subject {
         }
         return (T) session.get(PRINCIPAL_KEY);
     }
+
+    // ==================== 会话生命周期（委托 StpUtil）====================
 
     @Override
     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
@@ -90,8 +125,6 @@ public class SaTokenSubject implements Subject {
         }
         return getPrincipalByLoginId(loginId);
     }
-
-    // ==================== 会话生命周期（委托 StpUtil）====================
 
     @Override
     public String login(AuthRequest request) {
@@ -152,45 +185,6 @@ public class SaTokenSubject implements Subject {
             session.set(PRINCIPAL_KEY, request.getPrincipal());
         }
         return token;
-    }
-
-    /**
-     * 框架无关枚举映射：{@link AuthLogoutMode} -> sa-token 的 {@code SaLogoutMode}。
-     * <p>sa-token 1.42 并不暴露 {@code ReplacedLoginExitMode}/{@code ReplacedRange} 枚举类，
-     * 这两个字段我们仍写入 {@link AuthSessionConfig}，但具体生效需要在更新版 sa-token 下补全。
-     */
-    private static cn.dev33.satoken.stp.parameter.enums.SaLogoutMode toSaLogoutMode(AuthLogoutMode mode) {
-        if (mode == null) {
-            return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.LOGOUT;
-        }
-        switch (mode) {
-            case KICKOUT:
-                return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.KICKOUT;
-            case REPLACED:
-                return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.REPLACED;
-            default:
-                return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.LOGOUT;
-        }
-    }
-
-    private static SaCookieConfig toSaCookieConfig(AuthCookieConfig auth) {
-        SaCookieConfig sa = new SaCookieConfig();
-        if (Objects.nonNull(auth.getDomain())) {
-            sa.setDomain(auth.getDomain());
-        }
-        if (Objects.nonNull(auth.getPath())) {
-            sa.setPath(auth.getPath());
-        }
-        if (Objects.nonNull(auth.isSecure())) {
-            sa.setSecure(auth.isSecure());
-        }
-        if (Objects.nonNull(auth.isHttpOnly())) {
-            sa.setHttpOnly(auth.isHttpOnly());
-        }
-        if (Objects.nonNull(auth.getSameSite())) {
-            sa.setSameSite(auth.getSameSite());
-        }
-        return sa;
     }
 
     @Override

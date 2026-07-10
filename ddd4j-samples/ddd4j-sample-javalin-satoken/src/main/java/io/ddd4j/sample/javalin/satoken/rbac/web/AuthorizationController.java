@@ -7,16 +7,9 @@ import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
 import io.javalin.apibuilder.EndpointGroup;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-import static io.javalin.apibuilder.ApiBuilder.delete;
-import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.post;
-import static io.javalin.apibuilder.ApiBuilder.put;
+import static io.javalin.apibuilder.ApiBuilder.*;
 
 /**
  * 授权管理控制器：用户 / 角色 / 权限的 CRUD。
@@ -188,7 +181,8 @@ public class AuthorizationController {
     public record AssignPermissionsRequest(List<String> permissionIds) {
     }
 
-    public record CreatePermissionRequest(String permissionId, String permissionCode, String permissionName, String module) {
+    public record CreatePermissionRequest(String permissionId, String permissionCode, String permissionName,
+                                          String module) {
     }
 
     public record UpdatePermissionRequest(String permissionName, String module, Permission.Status status) {

@@ -2,11 +2,7 @@ package io.ddd4j.sample.javalin.satoken.rbac.web;
 
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,9 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 鉴权 / RBAC 集成测试（Javalin + Guice + Sa-Token，random port）。
@@ -41,7 +35,7 @@ class AuthControllerTest {
     private static HttpClient httpClient;
     private static String baseUrl;
 
-@BeforeAll
+    @BeforeAll
     void startServer() {
         app = TestSupport.start();
         baseUrl = "http://localhost:" + app.port();
@@ -69,15 +63,15 @@ class AuthControllerTest {
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> putJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
@@ -91,7 +85,9 @@ class AuthControllerTest {
                 HttpResponse.BodyHandlers.ofString());
     }
 
-    /** 登录并返回 token（每个测试用独立会话）。 */
+    /**
+     * 登录并返回 token（每个测试用独立会话）。
+     */
     private String login(String username, String password) throws Exception {
         HttpResponse<String> r = postJson("/auth/login",
                 "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
@@ -106,7 +102,9 @@ class AuthControllerTest {
         return r.body().substring(start, end);
     }
 
-    /** 登出（避免多 token 在全局 SaToken 状态中残留）。 */
+    /**
+     * 登出（避免多 token 在全局 SaToken 状态中残留）。
+     */
     private void logout(String token) throws Exception {
         authPost(token, "/auth/logout", "");
     }
@@ -123,8 +121,8 @@ class AuthControllerTest {
 
     private HttpResponse<String> authPost(String token, String path, String body) throws Exception {
         return httpClient.send(authReq(token, path)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 

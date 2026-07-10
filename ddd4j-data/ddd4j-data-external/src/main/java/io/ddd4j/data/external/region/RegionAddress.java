@@ -13,15 +13,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegionAddress {
 
-    /** 国家 */
+    /**
+     * 国家
+     */
     private String country;
-    /** 省份 */
+    /**
+     * 省份
+     */
     private String province;
-    /** 城市 */
+    /**
+     * 城市
+     */
     private String city;
-    /** 区域 */
+    /**
+     * 区域
+     */
     private String area;
-    /** 互联网服务提供商 */
+    /**
+     * 互联网服务提供商
+     */
     private String isp;
 
     /**

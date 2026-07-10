@@ -18,15 +18,25 @@ public final class OrderLine implements Entity<String> {
 
     private static final long serialVersionUID = 1L;
 
-    /** 订单行 ID */
+    /**
+     * 订单行 ID
+     */
     private final String id;
-    /** 商品 ID */
+    /**
+     * 商品 ID
+     */
     private final String goodsId;
-    /** 商品名称 */
+    /**
+     * 商品名称
+     */
     private final String goodsName;
-    /** 单价 */
+    /**
+     * 单价
+     */
     private final Money unitPrice;
-    /** 数量 */
+    /**
+     * 数量
+     */
     private int quantity;
 
     public OrderLine(String goodsId, String goodsName, int quantity, Money unitPrice) {

@@ -24,9 +24,13 @@ public class GuiceProjectionPosition implements ProjectionPosition, Serializable
     @Serial
     private static final long serialVersionUID = 1L;
 
-    /** 事件流 ID */
+    /**
+     * 事件流 ID
+     */
     private String streamId;
-    /** 下一条待处理的事件序号 */
+    /**
+     * 下一条待处理的事件序号
+     */
     private long nextEventNumber;
 
     @Override

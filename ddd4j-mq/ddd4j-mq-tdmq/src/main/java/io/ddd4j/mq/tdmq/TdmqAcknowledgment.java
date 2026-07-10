@@ -26,9 +26,9 @@ public final class TdmqAcknowledgment implements Acknowledgment {
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     public TdmqAcknowledgment(String messageId,
-                                     String correlationId,
-                                     long deliveryTag,
-                                     java.util.function.Consumer<Boolean> ackCallback) {
+                              String correlationId,
+                              long deliveryTag,
+                              java.util.function.Consumer<Boolean> ackCallback) {
         this.messageId = messageId;
         this.correlationId = correlationId;
         this.deliveryTag = deliveryTag;

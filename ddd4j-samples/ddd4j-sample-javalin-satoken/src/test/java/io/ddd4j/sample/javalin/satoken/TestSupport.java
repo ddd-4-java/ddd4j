@@ -58,27 +58,6 @@ public final class TestSupport {
 
     // ============================ 测试用 SPI 实现 ============================
 
-    private static final class NoopDomainEventPublisher implements DomainEventPublisher {
-        @Override
-        public <T> void publish(io.ddd4j.core.ddd.event.DomainEvent<T> event) {
-            // noop：测试不需要真实发布领域事件
-        }
-    }
-
-    private static final class NoopMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(MQEvent event) {
-            // noop：测试不需要真实发布 MQ 事件
-        }
-    }
-
-    private static final class NoopI18nProvider implements I18nProvider {
-        @Override
-        public String getMessage(String key, Object... args) {
-            return key;
-        }
-    }
-
     /**
      * 启动 Javalin 应用：注册 RBAC 种子数据 + Goods/Order 仓储 + SubjectKit SPI + 路由。
      *
@@ -167,5 +146,26 @@ public final class TestSupport {
                 bind(OrderRepository.class).to(InMemoryOrderRepository.class);
             }
         });
+    }
+
+    private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        @Override
+        public <T> void publish(io.ddd4j.core.ddd.event.DomainEvent<T> event) {
+            // noop：测试不需要真实发布领域事件
+        }
+    }
+
+    private static final class NoopMQEventPublisher implements MQEventPublisher {
+        @Override
+        public void publish(MQEvent event) {
+            // noop：测试不需要真实发布 MQ 事件
+        }
+    }
+
+    private static final class NoopI18nProvider implements I18nProvider {
+        @Override
+        public String getMessage(String key, Object... args) {
+            return key;
+        }
     }
 }

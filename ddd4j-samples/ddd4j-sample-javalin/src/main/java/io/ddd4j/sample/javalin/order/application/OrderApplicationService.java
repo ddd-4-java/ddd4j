@@ -131,12 +131,13 @@ public class OrderApplicationService {
     /**
      * 添加订单行命令。
      *
-     * @param orderId     订单 ID
+     * @param orderId   订单 ID
      * @param goodsId   商品 ID
      * @param goodsName 商品名称
-     * @param quantity    购买数量
-     * @param unitPrice   单价
+     * @param quantity  购买数量
+     * @param unitPrice 单价
      */
-    public record AddOrderLineCommand(String orderId, String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
+    public record AddOrderLineCommand(String orderId, String goodsId, String goodsName, int quantity,
+                                      BigDecimal unitPrice) {
     }
 }

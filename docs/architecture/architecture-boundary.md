@@ -57,20 +57,20 @@
 
 ## 三、ddd4j 通用基础层**应当**包含的内容
 
-| 内容类型                     | 示例                                                                                                                                          | 路径                                                                                                         |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| 纯 Java 注解                | `@DomainEntity` / `@DomainService` / `@CreateEvent` / `@UpdateEvent` / `@DeleteEvent`                                                       | `ddd4j-annotation`                                                                                         |
-| DDD 纯 Java 契约接口          | `DomainEventPublisher` / `Repository` / `RichRepository` / `EventSourcingRepository`                                                        | `ddd4j-core/src/main/java/io/ddd4j/core/ddd/`                                                              |
-| MQ 与技术事件契约              | `MQEvent` / `MQEventPublisher` / `TypeHandlerRegistry`                                                                                       | `ddd4j-core/src/main/java/io/ddd4j/core/event/`                                                            |
-| API 响应与分页模型             | `Page` / `R` / `IR` / `ResultCode`                                                                                                           | `ddd4j-core/src/main/java/io/ddd4j/core/api/`                                                              |
-| DDD 战术构建块                | `AggregateRoot` / `DomainEvent` / `DddDomainEvent` / `DomainObjectMapper`                                                                    | `ddd4j-core/src/main/java/io/ddd4j/core/ddd/`                                                              |
-| CQRS 读侧 SPI              | `ProjectionPosition` / `ProjectionPositionRepository` / `ViewManager` / `ViewScheduler`                                                     | `ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/`                                                   |
-| ArchUnit 规则集             | `CleanDDDLayerRules` / `ColaDDDLayerRules` / `Ddd4jBoundaryTest`                                                                            | `ddd4j-ddd-rules/`                                                                                         |
-| 工具类（无框架依赖）               | `MappingKit` / `JsonKit` / `IpKit`（纯 Java 解析部分）                                                                                             | `ddd4j-kit/src/main/java/`                                                                                 |
-| 框架无关注解                   | `@DddTransactional`                                                                                                                         | `ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/annotation/`                                       |
-| SPI 默认实现（带 `@Component`） | `SpringDomainEventPublisher` / `SpringI18nProvider` / `SpringSubjectProvider`                                                               | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                                        |
-| 框架上下文门面                  | `SpringContext`                                                                                                                             | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/context/`                                |
-| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / 下游 Javalin ViewManager                                                                   | `ddd4j-runtime/ddd4j-runtime-spring/cqrs/` / `ddd4j-runtime/ddd4j-runtime-quarkus/cqrs/` / `ddd4j-javalin` |
+| 内容类型                     | 示例                                                                                      | 路径                                                                                                         |
+|--------------------------|-----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| 纯 Java 注解                | `@DomainEntity` / `@DomainService` / `@CreateEvent` / `@UpdateEvent` / `@DeleteEvent`   | `ddd4j-annotation`                                                                                         |
+| DDD 纯 Java 契约接口          | `DomainEventPublisher` / `Repository` / `RichRepository` / `EventSourcingRepository`    | `ddd4j-core/src/main/java/io/ddd4j/core/ddd/`                                                              |
+| MQ 与技术事件契约               | `MQEvent` / `MQEventPublisher` / `TypeHandlerRegistry`                                  | `ddd4j-core/src/main/java/io/ddd4j/core/event/`                                                            |
+| API 响应与分页模型              | `Page` / `R` / `IR` / `ResultCode`                                                      | `ddd4j-core/src/main/java/io/ddd4j/core/api/`                                                              |
+| DDD 战术构建块                | `AggregateRoot` / `DomainEvent` / `DddDomainEvent` / `DomainObjectMapper`               | `ddd4j-core/src/main/java/io/ddd4j/core/ddd/`                                                              |
+| CQRS 读侧 SPI              | `ProjectionPosition` / `ProjectionPositionRepository` / `ViewManager` / `ViewScheduler` | `ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/`                                                   |
+| ArchUnit 规则集             | `CleanDDDLayerRules` / `ColaDDDLayerRules` / `Ddd4jBoundaryTest`                        | `ddd4j-ddd-rules/`                                                                                         |
+| 工具类（无框架依赖）               | `MappingKit` / `JsonKit` / `IpKit`（纯 Java 解析部分）                                         | `ddd4j-kit/src/main/java/`                                                                                 |
+| 框架无关注解                   | `@DddTransactional`                                                                     | `ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/annotation/`                                       |
+| SPI 默认实现（带 `@Component`） | `SpringDomainEventPublisher` / `SpringI18nProvider` / `SpringSubjectProvider`           | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`                                        |
+| 框架上下文门面                  | `SpringContext`                                                                         | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/context/`                                |
+| 框架 CQRS 适配               | `SpringJpaViewManager` / `QuarkusJpaViewManager` / 下游 Javalin ViewManager               | `ddd4j-runtime/ddd4j-runtime-spring/cqrs/` / `ddd4j-runtime/ddd4j-runtime-quarkus/cqrs/` / `ddd4j-javalin` |
 
 ---
 
@@ -83,7 +83,7 @@
 | 1 | 删除重复类                        | `ddd4j-runtime/ddd4j-runtime-spring/config/BaseCoreConfig.java`                                                                                                                                       | ✅ 已删除 |
 | 2 | 删除重复类                        | `ddd4j-runtime/ddd4j-runtime-spring/util/HttpStatus.java`                                                                                                                                             | ✅ 已删除 |
 | 3 | 删除重复造轮子                      | `ddd4j-runtime/ddd4j-runtime-spring/properties/BasePropertySourcePostProcessor.java` + `BasePropertySource.java` + `SpringPropertySourcePostProcessor.java`                                           | ✅ 已删除 |
-| 4 | 删除三方重复                       | 旧 Web core 内的 `IpUtils` 已删除，通用 IP 能力收敛到 kit/web 工具或具体 Web 适配层                                                                                                                              | ✅ 已删除 |
+| 4 | 删除三方重复                       | 旧 Web core 内的 `IpUtils` 已删除，通用 IP 能力收敛到 kit/web 工具或具体 Web 适配层                                                                                                                                         | ✅ 已删除 |
 | 5 | 拆分 Kit                       | `ddd4j-kit/web/IpKit.java` 移除 Servlet 部分，新增 `parseRemoteAddr(...)` 纯 Java 方法                                                                                                                          | ✅ 已完成 |
 | 6 | 修复 MyBatis 污染                | `BaseRepositoryImpl` 移除 `@Transactional(rollbackFor=...)` + `@NonNull`，引入 `@DddTransactional` 注解                                                                                                      | ✅ 已完成 |
 | 7 | 标记自动装配下移                     | `DddAutoConfiguration` + `DddClassPathBeanDefinitionScanner` 加 `@Deprecated` 注释，标注下移到 `ddd4j-boot-ddd`                                                                                                | ✅ 已完成 |
@@ -92,10 +92,10 @@
 
 ### 4.2 P1 已补齐（2 项完成）
 
-| #  | 操作             | 文件                                                                                                                     | 状态           |
-|----|----------------|------------------------------------------------------------------------------------------------------------------------|--------------|
+| #  | 操作             | 文件                                                                                                                    | 状态           |
+|----|----------------|-----------------------------------------------------------------------------------------------------------------------|--------------|
 | 10 | 新增 CQRS 读侧 SPI | `ddd4j-core/cqrs/readmodel/`: `ProjectionPosition` + `ProjectionPositionRepository` + `ViewManager` + `ViewScheduler` | ✅ 已完成（4 个接口） |
-| 11 | 新增事件处理器注解      | `ddd4j-annotation/cqrs/`: `@CreateEvent` + `@UpdateEvent` + `@DeleteEvent`                                             | ✅ 已完成（3 个注解） |
+| 11 | 新增事件处理器注解      | `ddd4j-annotation/cqrs/`: `@CreateEvent` + `@UpdateEvent` + `@DeleteEvent`                                            | ✅ 已完成（3 个注解） |
 
 ### 4.3 三框架 CQRS 适配完整实现（3 项完成）
 

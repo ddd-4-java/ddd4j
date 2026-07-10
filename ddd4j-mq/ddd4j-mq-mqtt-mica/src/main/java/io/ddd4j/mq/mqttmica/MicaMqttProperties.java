@@ -22,21 +22,37 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class MicaMqttProperties extends MQProperties {
 
-    /** MQTT 服务器 IP */
+    /**
+     * MQTT 服务器 IP
+     */
     private String serverIp = "127.0.0.1";
-    /** MQTT 服务器端口 */
+    /**
+     * MQTT 服务器端口
+     */
     private int port = 1883;
-    /** 客户端 ID 前缀 */
+    /**
+     * 客户端 ID 前缀
+     */
     private String clientIdPrefix = "ddd4j-mica-";
-    /** 是否使用 SSL 连接 */
+    /**
+     * 是否使用 SSL 连接
+     */
     private boolean useSsl = false;
-    /** 默认 QoS 级别 */
+    /**
+     * 默认 QoS 级别
+     */
     private int qos = 1;
-    /** 心跳保活秒数 */
+    /**
+     * 心跳保活秒数
+     */
     private int keepAliveSeconds = 30;
-    /** 读取缓冲区大小（字节） */
+    /**
+     * 读取缓冲区大小（字节）
+     */
     private int readBufferSize = 8 * 1024;
-    /** 最大未完成消息数 */
+    /**
+     * 最大未完成消息数
+     */
     private int maxInflight = 100;
 
     public String newClientId() {

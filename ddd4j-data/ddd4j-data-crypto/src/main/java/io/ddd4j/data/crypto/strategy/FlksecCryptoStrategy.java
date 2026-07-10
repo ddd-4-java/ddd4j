@@ -29,13 +29,21 @@ import java.util.Objects;
 @Slf4j
 public class FlksecCryptoStrategy implements CryptoStrategy {
 
-    /** JSON 对象映射器 */
+    /**
+     * JSON 对象映射器
+     */
     private final ObjectMapper objectMapper;
-    /** HTTP 客户端 */
+    /**
+     * HTTP 客户端
+     */
     private final HttpClient httpClient;
-    /** 远程服务地址 */
+    /**
+     * 远程服务地址
+     */
     private final String address;
-    /** 远程服务端口 */
+    /**
+     * 远程服务端口
+     */
     private final String port;
 
     /**
@@ -211,19 +219,27 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class EncryptResponse {
 
-        /** 200:成功 */
+        /**
+         * 200:成功
+         */
         @JsonProperty("code")
         private int code;
 
-        /** 成功或失败的提示信息 */
+        /**
+         * 成功或失败的提示信息
+         */
         @JsonProperty("msg")
         private String msg;
 
-        /** 分段加密时使用 */
+        /**
+         * 分段加密时使用
+         */
         @JsonProperty("iv")
         private String iv;
 
-        /** 加密后的数据 */
+        /**
+         * 加密后的数据
+         */
         @JsonProperty("data")
         private String data;
     }
@@ -235,19 +251,27 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class DecryptResponse {
 
-        /** 200:成功 */
+        /**
+         * 200:成功
+         */
         @JsonProperty("code")
         private int code;
 
-        /** 成功或失败的提示信息 */
+        /**
+         * 成功或失败的提示信息
+         */
         @JsonProperty("msg")
         private String msg;
 
-        /** 分段加密时使用 */
+        /**
+         * 分段加密时使用
+         */
         @JsonProperty("iv")
         private String iv;
 
-        /** 解密后的数据 */
+        /**
+         * 解密后的数据
+         */
         @JsonProperty("data")
         private String data;
     }
@@ -259,15 +283,21 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class SignResponse {
 
-        /** 200:成功 */
+        /**
+         * 200:成功
+         */
         @JsonProperty("code")
         private int code;
 
-        /** 成功或失败的提示信息 */
+        /**
+         * 成功或失败的提示信息
+         */
         @JsonProperty("msg")
         private String msg;
 
-        /** 签名后的数据 */
+        /**
+         * 签名后的数据
+         */
         @JsonProperty("data")
         private String data;
     }

@@ -1,10 +1,6 @@
 package io.ddd4j.sample.spring.event;
 
-import io.ddd4j.sample.spring.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.spring.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.spring.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.spring.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.spring.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.spring.order.domain.event.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

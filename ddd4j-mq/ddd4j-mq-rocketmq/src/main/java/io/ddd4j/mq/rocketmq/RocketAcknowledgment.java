@@ -1,7 +1,7 @@
 package io.ddd4j.mq.rocketmq;
 
-import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.message.Acknowledgment;
 import org.apache.rocketmq.common.message.MessageExt;
 
 import java.util.Objects;

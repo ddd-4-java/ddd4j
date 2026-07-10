@@ -28,10 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class QuarkusCommandBus {
 
-    /** 命令类型到执行器的路由映射 */
+    /**
+     * 命令类型到执行器的路由映射
+     */
     private final Map<Class<? extends Command>, CommandExecutor<?>> executorMap = new ConcurrentHashMap<>();
 
-    /** CDI 命令执行器实例集 */
+    /**
+     * CDI 命令执行器实例集
+     */
     @Inject
     Instance<CommandExecutor<?>> executors;
 

@@ -32,13 +32,21 @@ import java.util.Optional;
 @Slf4j
 public class BaiduRegionTemplate {
 
-    /** IP定位请求地址 */
+    /**
+     * IP定位请求地址
+     */
     private static final String GET_LOCATION_BY_IP_URL = "https://api.map.baidu.com/location/ip?ak=%s&ip=%s&coor=bd09ll";
-    /** 百度地图AK密钥 */
+    /**
+     * 百度地图AK密钥
+     */
     private final String ak;
-    /** HTTP 客户端 */
+    /**
+     * HTTP 客户端
+     */
     private final HttpClient httpClient;
-    /** 缓存服务 */
+    /**
+     * 缓存服务
+     */
     private RegionCache regionCache;
 
     /**

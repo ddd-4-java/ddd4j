@@ -5,11 +5,7 @@ import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 统一的领域仓储接口（对齐 MyBatis-Plus {@code BaseMapper} 全部常用方法）。
@@ -175,6 +171,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件查找第一个（对应 {@code selectOne(Wrapper)}）。
+     *
      * @param query 查询条件
      * @return 查询结果
      */
@@ -184,6 +181,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件查询列表（对应 {@code selectList(Wrapper)}）。
+     *
      * @param query 查询条件
      * @return 查询结果
      */
@@ -193,6 +191,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件分页查询（对应 {@code selectPage(page, Wrapper)}）。
+     *
      * @param query 查询条件
      * @return 查询结果
      */
@@ -202,6 +201,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件计数（对应 {@code selectCount(Wrapper)}）。
+     *
      * @param query 查询条件
      * @return 查询结果
      */
@@ -211,6 +211,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件查询是否存在（对应 {@code exists(Wrapper)}）。
+     *
      * @param query 查询条件
      * @return 查询结果
      */
@@ -220,6 +221,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件查询 Map 列表（对应 {@code selectMaps(Wrapper)}）。
+     *
      * @param query 查询条件
      * @return 查询结果
      */

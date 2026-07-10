@@ -6,7 +6,6 @@ import io.ddd4j.sample.quarkus.cqrs.order.domain.model.OrderStatus;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.repository.OrderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +25,9 @@ import java.util.concurrent.ConcurrentMap;
 @ApplicationScoped
 public class InMemoryOrderRepository implements OrderRepository {
 
-    /** 内存存储：orderId -> Order 聚合根 */
+    /**
+     * 内存存储：orderId -> Order 聚合根
+     */
     private final ConcurrentMap<String, Order> rows = new ConcurrentHashMap<>();
 
     @Override

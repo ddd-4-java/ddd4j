@@ -2,11 +2,7 @@ package io.ddd4j.sample.javalin.shiro.goods.application;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
-import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
-import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsId;
-import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsQuery;
-import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsRepository;
-import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsStatus;
+import io.ddd4j.sample.javalin.shiro.goods.domain.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -24,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @ApplicationScoped
 public class GoodsApplicationService {
 
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
     private final GoodsRepository repository;
 
     @Inject
@@ -110,12 +107,12 @@ public class GoodsApplicationService {
         return query.list();
     }
 
+    // ========================= 私有校验方法 =========================
+
     public long countQuery(GoodsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
         return query.count();
     }
-
-    // ========================= 私有校验方法 =========================
 
     private void validateCode(String code) {
         if (Objects.isNull(code) || code.isBlank()) {
@@ -138,6 +135,4 @@ public class GoodsApplicationService {
     private Long nextId() {
         return ID_GENERATOR.incrementAndGet();
     }
-
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
 }

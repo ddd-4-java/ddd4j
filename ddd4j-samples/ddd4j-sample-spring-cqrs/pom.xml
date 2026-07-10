@@ -13,7 +13,9 @@
 
     <artifactId>ddd4j-sample-spring-cqrs</artifactId>
     <packaging>jar</packaging>
-    <description>ddd4j + Spring Boot Order/Goods CQRS 示例：双业务（Order 充血 + Goods 第三轨）、命令/查询分离、CQRS 缓存读侧、领域事件 + Spring 事件桥接、MQ 事件发布。</description>
+    <description>ddd4j + Spring Boot Order/Goods CQRS 示例：双业务（Order 充血 + Goods 第三轨）、命令/查询分离、CQRS
+        缓存读侧、领域事件 + Spring 事件桥接、MQ 事件发布。
+    </description>
 
     <properties>
         <spring-boot.version>3.5.6</spring-boot.version>

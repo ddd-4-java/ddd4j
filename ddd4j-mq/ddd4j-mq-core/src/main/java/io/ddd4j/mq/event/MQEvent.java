@@ -49,33 +49,38 @@ import java.util.function.Consumer;
 @SuppressWarnings("unchecked")
 public class MQEvent implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     /**
      * {@link BaseContext} key：MQ 事件发布者 Map（{@code Map<String, Consumer<MQEvent>>}）。
      * key = {@link MQClient#impl()} 返回值（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}），
      * value = {@link MQClient#initProducer(MQProperties)} 返回的发布函数。
      */
     public static final String MQ_EVENT_PUBLISHER = "MQEventPublisher";
-
     /**
      * {@link BaseContext} key：MQ 配置（{@link MQProperties}），
      * 用于获取 defaultTopic / namespace / broker 默认值。
      */
     public static final String MQ_PROPERTIES = "MQProperties";
-
-    /** 消息 ID，默认当前时间戳 */
+    @Serial
+    private static final long serialVersionUID = 1L;
+    /**
+     * 消息 ID，默认当前时间戳
+     */
     protected String msgId;
-    /** 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定 */
-    private String namespace;
-    /** 主题，配置 {@code ddd4j.mq.default-topic} 后无须每次指定 */
+    /**
+     * 主题，配置 {@code ddd4j.mq.default-topic} 后无须每次指定
+     */
     protected String topic;
-    /** 标签，只支持单个标签，多标签需要分开发送 */
+    /**
+     * 标签，只支持单个标签，多标签需要分开发送
+     */
     protected String tag;
-    /** namespace/topic/tag 拼接符，为空时由各 broker 实现决定默认值 */
+    /**
+     * namespace/topic/tag 拼接符，为空时由各 broker 实现决定默认值
+     */
     protected String concat;
-    /** 租户 ID，默认从线程上下文获取（外部 JSON 常用 tenant_id） */
+    /**
+     * 租户 ID，默认从线程上下文获取（外部 JSON 常用 tenant_id）
+     */
     @JsonAlias("tenant_id")
     protected String tenantId;
     /**
@@ -83,6 +88,10 @@ public class MQEvent implements Serializable {
      * <p>为空时走全局默认 broker（{@link MQProperties#getBroker()} 配置）。
      */
     protected String broker;
+    /**
+     * 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定
+     */
+    private String namespace;
 
     /**
      * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。

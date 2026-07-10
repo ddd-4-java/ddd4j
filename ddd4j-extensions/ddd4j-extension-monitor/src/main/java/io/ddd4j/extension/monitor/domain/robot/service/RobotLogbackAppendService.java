@@ -76,6 +76,16 @@ public class RobotLogbackAppendService {
     }
 
     /**
+     * 判断集合是否非空（替代 {@code org.springframework.util.CollectionUtils.isEmpty}）。
+     *
+     * @param collection 待判断的集合
+     * @return 集合为 null 或空时返回 false，否则返回 true
+     */
+    private static boolean isNotEmpty(java.util.Collection<?> collection) {
+        return collection != null && !collection.isEmpty();
+    }
+
+    /**
      * 初始化日志告警 Appender，等价于原先 {@code @PostConstruct} 的行为。
      */
     public void init() {
@@ -232,7 +242,6 @@ public class RobotLogbackAppendService {
         return null;
     }
 
-
     // 排除 关键 信息的告警
     private EvaluatorFilter<ILoggingEvent> ignores() {
         BaseMonitorProperties.Log.Config config = baseMonitorProperties.getLog().getConfig();
@@ -250,17 +259,6 @@ public class RobotLogbackAppendService {
         }
         return null;
     }
-
-    /**
-     * 判断集合是否非空（替代 {@code org.springframework.util.CollectionUtils.isEmpty}）。
-     *
-     * @param collection 待判断的集合
-     * @return 集合为 null 或空时返回 false，否则返回 true
-     */
-    private static boolean isNotEmpty(java.util.Collection<?> collection) {
-        return collection != null && !collection.isEmpty();
-    }
-
 
     /**
      * 构建表达式过滤器。

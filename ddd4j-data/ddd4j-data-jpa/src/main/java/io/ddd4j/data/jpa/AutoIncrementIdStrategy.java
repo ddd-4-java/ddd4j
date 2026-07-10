@@ -1,7 +1,5 @@
 package io.ddd4j.data.jpa;
 
-import java.io.Serializable;
-
 /**
  * 数据库自增 ID 策略：生成时返回 {@code null}，由数据库在 insert 时填充主键。
  *

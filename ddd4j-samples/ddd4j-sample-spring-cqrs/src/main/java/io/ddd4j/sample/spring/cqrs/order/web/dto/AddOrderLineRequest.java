@@ -7,9 +7,8 @@ import java.math.BigDecimal;
  *
  * @param goodsId   商品 ID
  * @param goodsName 商品名称
- * @param quantity    数量
- * @param unitPrice   单价
- *
+ * @param quantity  数量
+ * @param unitPrice 单价
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {

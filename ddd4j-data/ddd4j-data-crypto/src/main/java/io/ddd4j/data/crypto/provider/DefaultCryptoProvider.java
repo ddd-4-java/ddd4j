@@ -20,9 +20,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DefaultCryptoProvider implements CryptoProvider {
 
-    /** 加解密策略映射表 */
+    /**
+     * 加解密策略映射表
+     */
     private final EnumMap<CryptoType, CryptoStrategy> enumMap = new EnumMap<>(CryptoType.class);
-    /** 加密配置属性 */
+    /**
+     * 加密配置属性
+     */
     private final CryptoProperties cryptoProperties;
 
     /**
@@ -59,7 +63,7 @@ public class DefaultCryptoProvider implements CryptoProvider {
     /**
      * 字段解密
      *
-     * @param value 待解密的字符串
+     * @param value  待解密的字符串
      * @param rtType 返回值类型
      * @param <T>    字段类型
      * @return 解密后的字段值

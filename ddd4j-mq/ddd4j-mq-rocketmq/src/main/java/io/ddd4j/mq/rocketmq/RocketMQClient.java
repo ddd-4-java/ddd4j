@@ -17,10 +17,8 @@ import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
-import org.apache.rocketmq.common.message.MessageQueue;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -50,46 +48,67 @@ import java.util.stream.Collectors;
 @Slf4j(topic = "### DDD4J-MQ : rocketMQClient ###")
 public class RocketMQClient implements MQClient {
 
-    /** 已注入或懒构造的 RocketMQ producer */
-    private volatile DefaultMQProducer producer;
-    /** 懒构造使用的配置（构造方法 2 传入） */
+    /**
+     * 按 partition key 哈希选 MessageQueue（同 key 必进同 queue）。
+     */
+    private static final MessageQueueSelector SELECTOR_BY_KEY = (mqs, msg, arg) -> {
+        String key = Objects.toString(arg, "");
+        int index = Math.abs(key.hashCode()) % mqs.size();
+        return mqs.get(index);
+    };
+    /**
+     * 懒构造使用的配置（构造方法 2 传入）
+     */
     private final RocketMQProperties properties;
+    /**
+     * 已注入或懒构造的 RocketMQ producer
+     */
+    private volatile DefaultMQProducer producer;
+    /**
+     * 异步发送回调（可为 null，则用内置兜底）。
+     */
+    private SendCallback callback;
 
-    /** 构造方法 1：注入原生 producer（runtime 自动装配用）。 */
+    /**
+     * 构造方法 1：注入原生 producer（runtime 自动装配用）。
+     */
     public RocketMQClient(DefaultMQProducer producer) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
         this.properties = null;
     }
 
-    /** 构造方法 1'：注入原生 producer + 异步发送回调。 */
+    /**
+     * 构造方法 1'：注入原生 producer + 异步发送回调。
+     */
     public RocketMQClient(DefaultMQProducer producer, SendCallback callback) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
         this.properties = null;
         this.callback = callback;
     }
 
-    /** 构造方法 2：自行根据 properties 构造 producer（lazy）。 */
+    /**
+     * 构造方法 2：自行根据 properties 构造 producer（lazy）。
+     */
     public RocketMQClient(RocketMQProperties properties) {
         this.producer = null;
         this.properties = Objects.requireNonNull(properties, "RocketMQ Properties is required");
     }
 
-    /** 构造方法 2'：自行根据 properties 构造 producer + 异步发送回调（lazy）。 */
+    /**
+     * 构造方法 2'：自行根据 properties 构造 producer + 异步发送回调（lazy）。
+     */
     public RocketMQClient(RocketMQProperties properties, SendCallback callback) {
         this.producer = null;
         this.properties = Objects.requireNonNull(properties, "RocketMQ Properties is required");
         this.callback = callback;
     }
 
-    /** 异步发送回调（可为 null，则用内置兜底）。 */
-    private SendCallback callback;
+    // ========================= 生产者 =========================
 
     @Override
     public String impl() {
         return "rocket";
     }
-
-    // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -165,43 +184,6 @@ public class RocketMQClient implements MQClient {
         };
     }
 
-    /**
-     * 按 partition key 哈希选 MessageQueue（同 key 必进同 queue）。
-     */
-    private static final MessageQueueSelector SELECTOR_BY_KEY = (mqs, msg, arg) -> {
-        String key = Objects.toString(arg, "");
-        int index = Math.abs(key.hashCode()) % mqs.size();
-        return mqs.get(index);
-    };
-
-    /**
-     * 异步发送回调（统一收口，不阻塞 producer.send()）。
-     */
-    public static final class SendLogCallback implements SendCallback {
-
-        private final String topic;
-        private final String payload;
-
-        SendLogCallback(String topic, String payload) {
-            this.topic = topic;
-            this.payload = payload;
-        }
-
-        @Override
-        public void onSuccess(org.apache.rocketmq.client.producer.SendResult sendResult) {
-            if (log.isDebugEnabled()) {
-                log.debug("RocketMQ send success: topic={}, msgId={}", topic, sendResult.getMsgId());
-            }
-        }
-
-        @Override
-        public void onException(Throwable e) {
-            log.error("RocketMQ send failed: topic={}, payload={}", topic, payload, e);
-        }
-    }
-
-    // ========================= 消费者 =========================
-
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         DefaultMQPushConsumer consumer;
@@ -265,5 +247,33 @@ public class RocketMQClient implements MQClient {
         log.info("Listen MQ [{}]: topic={}, tags={}", impl(), topic, subscription);
         consumer.start();
         return true;
+    }
+
+    // ========================= 消费者 =========================
+
+    /**
+     * 异步发送回调（统一收口，不阻塞 producer.send()）。
+     */
+    public static final class SendLogCallback implements SendCallback {
+
+        private final String topic;
+        private final String payload;
+
+        SendLogCallback(String topic, String payload) {
+            this.topic = topic;
+            this.payload = payload;
+        }
+
+        @Override
+        public void onSuccess(org.apache.rocketmq.client.producer.SendResult sendResult) {
+            if (log.isDebugEnabled()) {
+                log.debug("RocketMQ send success: topic={}, msgId={}", topic, sendResult.getMsgId());
+            }
+        }
+
+        @Override
+        public void onException(Throwable e) {
+            log.error("RocketMQ send failed: topic={}, payload={}", topic, payload, e);
+        }
     }
 }

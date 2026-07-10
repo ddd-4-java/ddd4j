@@ -11,12 +11,12 @@
 Javalin 本身**没有 DI 容器**，所以本示例在 `main` 中手动 new 出所有 Bean 并通过
 `EndpointGroup` 注册路由；同时演示两个业务轨道 + CQRS 读写分离：
 
-| 轨道 | 业务包 | 风格 |
-| --- | --- | --- |
-| **第二轨**（充血模型） | `order/` | `Order` 聚合根 + 5 个领域事件 + `OrderApplicationService`（手动 new） |
-| **第三轨**（Model/Query） | `goods/` | `Goods` PO + `RichRepository` + `GoodsQuery`（手动 new） |
-| **CQRS 增强** | `cache/` + 读侧 Controller | `CacheKit` 缓存读侧统计 |
-| **进程内事件总线** | `event/` | `TypedEventDispatcher` 路由 `Order*Event` 到 `OrderEventListener` |
+| 轨道                   | 业务包                      | 风格                                                             |
+|----------------------|--------------------------|----------------------------------------------------------------|
+| **第二轨**（充血模型）        | `order/`                 | `Order` 聚合根 + 5 个领域事件 + `OrderApplicationService`（手动 new）      |
+| **第三轨**（Model/Query） | `goods/`                 | `Goods` PO + `RichRepository` + `GoodsQuery`（手动 new）           |
+| **CQRS 增强**          | `cache/` + 读侧 Controller | `CacheKit` 缓存读侧统计                                              |
+| **进程内事件总线**          | `event/`                 | `TypedEventDispatcher` 路由 `Order*Event` 到 `OrderEventListener` |
 
 ### Javalin 平台的 SPI 注入
 
@@ -31,12 +31,12 @@ BaseContext.inject(SpiKeys.I18N_PROVIDER,             I18nProvider.class,       
 
 之后业务代码通过 `Contexts.injectOrThrow(KEY, type)` 按需查找，**零框架耦合**。
 
-| 框架 | DI 容器 | ddd4j runtime 模块 | SPI 注入方式 |
-| --- | --- | --- | --- |
-| Spring | ✅ | `ddd4j-runtime-spring` | 容器启动期扫描 `@Bean` 注入 BaseContext |
-| Quarkus | ✅ (CDI) | `ddd4j-runtime-quarkus` | CDI Observer 启动期注入 BaseContext |
-| Guice | ✅ | `ddd4j-runtime-guice` | `Ddd4jGuiceModule#configure` 注入 BaseContext |
-| **Javalin** | ❌ | **无**（业务方手动注入） | `main` 里调用 `bootstrap()` |
+| 框架          | DI 容器   | ddd4j runtime 模块        | SPI 注入方式                                    |
+|-------------|---------|-------------------------|---------------------------------------------|
+| Spring      | ✅       | `ddd4j-runtime-spring`  | 容器启动期扫描 `@Bean` 注入 BaseContext              |
+| Quarkus     | ✅ (CDI) | `ddd4j-runtime-quarkus` | CDI Observer 启动期注入 BaseContext              |
+| Guice       | ✅       | `ddd4j-runtime-guice`   | `Ddd4jGuiceModule#configure` 注入 BaseContext |
+| **Javalin** | ❌       | **无**（业务方手动注入）          | `main` 里调用 `bootstrap()`                    |
 
 ---
 
@@ -132,45 +132,45 @@ ddd4j-sample-javalin-cqrs/
 
 ### 4.1 Order 命令侧（写）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST`   | `/api/orders`             | 创建草稿订单 |
-| `POST`   | `/api/orders/{id}/lines`  | 添加订单行 |
-| `POST`   | `/api/orders/{id}/pay`    | 支付订单 |
-| `POST`   | `/api/orders/{id}/ship`   | 发货订单 |
-| `POST`   | `/api/orders/{id}/cancel` | 取消订单 |
+| 方法     | 路径                        | 说明     |
+|--------|---------------------------|--------|
+| `POST` | `/api/orders`             | 创建草稿订单 |
+| `POST` | `/api/orders/{id}/lines`  | 添加订单行  |
+| `POST` | `/api/orders/{id}/pay`    | 支付订单   |
+| `POST` | `/api/orders/{id}/ship`   | 发货订单   |
+| `POST` | `/api/orders/{id}/cancel` | 取消订单   |
 
 ### 4.2 Order 查询侧（读）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/api/orders/{id}` | 按 ID 查询 |
-| `GET` | `/api/orders/by-no` | 按订单编号查询 |
-| `GET` | `/api/orders/query/list` | 分页占位 |
-| `GET` | `/api/orders/query/stats` | **CQRS 缓存读**：订单统计 |
+| 方法    | 路径                                        | 说明                 |
+|-------|-------------------------------------------|--------------------|
+| `GET` | `/api/orders/{id}`                        | 按 ID 查询            |
+| `GET` | `/api/orders/by-no`                       | 按订单编号查询            |
+| `GET` | `/api/orders/query/list`                  | 分页占位               |
+| `GET` | `/api/orders/query/stats`                 | **CQRS 缓存读**：订单统计  |
 | `GET` | `/api/orders/query/buyer/{buyerId}/count` | **CQRS 缓存读**：买家订单数 |
-| `GET` | `/api/orders/query/detail/{id}` | **CQRS 缓存读**：订单详情 |
+| `GET` | `/api/orders/query/detail/{id}`           | **CQRS 缓存读**：订单详情  |
 
 ### 4.3 Goods 命令侧（写）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST`   | `/api/goods`             | 创建商品 |
-| `PUT`    | `/api/goods/{id}`        | 更新商品 |
+| 方法       | 路径                       | 说明     |
+|----------|--------------------------|--------|
+| `POST`   | `/api/goods`             | 创建商品   |
+| `PUT`    | `/api/goods/{id}`        | 更新商品   |
 | `PUT`    | `/api/goods/{id}/status` | 调整商品状态 |
-| `DELETE` | `/api/goods/{id}`        | 软删除商品 |
+| `DELETE` | `/api/goods/{id}`        | 软删除商品  |
 
 ### 4.4 Goods 查询侧（读）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/api/goods/{id}` | 按 ID 查询 |
-| `GET` | `/api/goods/by-code` | 按编码查询 |
-| `GET` | `/api/goods/page` | 充血分页查询 |
-| `GET` | `/api/goods/list` | 充血列表查询 |
-| `GET` | `/api/goods/count` | 充血计数 |
-| `GET` | `/api/goods/query/list` | **CQRS 缓存读**：商品列表 |
-| `GET` | `/api/goods/query/{id}` | **CQRS 缓存读**：商品详情 |
+| 方法    | 路径                           | 说明                 |
+|-------|------------------------------|--------------------|
+| `GET` | `/api/goods/{id}`            | 按 ID 查询            |
+| `GET` | `/api/goods/by-code`         | 按编码查询              |
+| `GET` | `/api/goods/page`            | 充血分页查询             |
+| `GET` | `/api/goods/list`            | 充血列表查询             |
+| `GET` | `/api/goods/count`           | 充血计数               |
+| `GET` | `/api/goods/query/list`      | **CQRS 缓存读**：商品列表  |
+| `GET` | `/api/goods/query/{id}`      | **CQRS 缓存读**：商品详情  |
 | `GET` | `/api/goods/query/by-status` | **CQRS 缓存读**：按状态查询 |
 
 ---
@@ -232,14 +232,14 @@ mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-javalin-cqrs test
 
 本示例所有组件都是 In-Memory 版本。生产环境替换点：
 
-| 示例实现 | 生产替换 |
-| --- | --- |
-| `InMemoryOrderRepository` | MyBatis-Plus / JDBI / Hibernate |
-| `InMemoryGoodsRepository` | 同上 |
+| 示例实现                                      | 生产替换                                                     |
+|-------------------------------------------|----------------------------------------------------------|
+| `InMemoryOrderRepository`                 | MyBatis-Plus / JDBI / Hibernate                          |
+| `InMemoryGoodsRepository`                 | 同上                                                       |
 | `OrderCacheService` / `GoodsCacheService` | 替换为 Caffeine / Redis / Redisson 后端（业务代码通过 `CacheKit` 解耦） |
-| `NoOpDomainEventPublisher` | Guava EventBus / Reactor Sinks / Akka Actor |
-| `NoOpMQEventPublisher` | Kafka / RabbitMQ / RocketMQ 适配 |
-| `AnonymousSubjectProvider` | sa-token / shiro / spring-security 适配 |
+| `NoOpDomainEventPublisher`                | Guava EventBus / Reactor Sinks / Akka Actor              |
+| `NoOpMQEventPublisher`                    | Kafka / RabbitMQ / RocketMQ 适配                           |
+| `AnonymousSubjectProvider`                | sa-token / shiro / spring-security 适配                    |
 
 业务代码（`order/domain/`、`goods/domain/`、`application/`）**完全不需要修改**。
 

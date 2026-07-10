@@ -4,7 +4,6 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -21,7 +20,9 @@ import java.util.Objects;
 @Component
 public class SpringDomainEventPublisher implements DomainEventPublisher {
 
-    /** Spring 应用事件发布器 */
+    /**
+     * Spring 应用事件发布器
+     */
     private final ApplicationEventPublisher publisher;
 
     public SpringDomainEventPublisher(ApplicationEventPublisher publisher) {

@@ -25,7 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @ApplicationScoped
 public class QuarkusJpaViewManager implements ViewManager {
 
-    /** 运行状态标志 */
+    /**
+     * 运行状态标志
+     */
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     void onStart(@Observes Startup event) {

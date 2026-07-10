@@ -22,11 +22,17 @@ import java.util.Objects;
 @Slf4j
 public class NestedRegionTemplate {
 
-    /** 缓存服务 */
+    /**
+     * 缓存服务
+     */
     private RegionCache regionCache;
-    /** IP2Region 解析模板 */
+    /**
+     * IP2Region 解析模板
+     */
     private IpRegionTemplate ipRegionTemplate;
-    /** 太平洋网络 IP 解析模板 */
+    /**
+     * 太平洋网络 IP 解析模板
+     */
     private PconlineRegionTemplate pconlineRegionTemplate;
 
     /**

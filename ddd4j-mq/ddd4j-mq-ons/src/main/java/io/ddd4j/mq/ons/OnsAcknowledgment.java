@@ -19,24 +19,42 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class OnsAcknowledgment implements Acknowledgment {
 
-    /** Header 键：ONS 消息体 */
+    /**
+     * Header 键：ONS 消息体
+     */
     public static final String HEADER_ONS_MESSAGE = "ddd4j.ons.message";
-    /** Header 键：ONS 消费上下文 */
+    /**
+     * Header 键：ONS 消费上下文
+     */
     public static final String HEADER_ONS_CONTEXT = "ddd4j.ons.context";
 
-    /** ONS 消费上下文 */
+    /**
+     * ONS 消费上下文
+     */
     private final ConsumeContext context;
-    /** ONS 消息实例 */
+    /**
+     * ONS 消息实例
+     */
     private final Message message;
-    /** 消息 ID */
+    /**
+     * 消息 ID
+     */
     private final String messageId;
-    /** 消息 Key */
+    /**
+     * 消息 Key
+     */
     private final String key;
-    /** 消息偏移量 */
+    /**
+     * 消息偏移量
+     */
     private final long offset;
-    /** 确认状态标记 */
+    /**
+     * 确认状态标记
+     */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
-    /** 确认动作（提交/稍后重试） */
+    /**
+     * 确认动作（提交/稍后重试）
+     */
     private volatile Action action = Action.CommitMessage;
 
     /**

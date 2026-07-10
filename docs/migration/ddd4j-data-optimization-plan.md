@@ -62,13 +62,13 @@
 
 ### 2.3 Spring/Web 耦合现状（逐项核实）
 
-| 子模块           | Spring imports | 耦合点                                                                                                                                                    | 应迁移到                    |
-|---------------|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
+| 子模块           | Spring imports | 耦合点                                                                                                                                                                            | 应迁移到                    |
+|---------------|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
 | **mybatis**   | 10 处           | `BaseRepositoryImpl`：`@Autowired`/`@Transactional`/`org.springframework.lang.NonNull`；`MybatisExceptionHandler`：`@ControllerAdvice`（Web 异常处理应属于 ddd4j-boot 或 ddd4j-web-webmvc） | data-spring + boot-data |
-| **crypto**    | 24 处           | `DefaultCryptoAutoConfiguration`：`@Configuration`+`@Bean`；`DecryptRequestBodyAdvice`/`EncryptResponseBodyAdvice`：依赖 `spring-webmvc`                    | boot-data               |
-| **external**  | —              | `ExternalAutoConfiguration`：`@Configuration`；依赖 `ip2region-spring-boot-starter`+`redistpl-plus-spring-boot-starter`                                    | boot-data               |
-| **logs**      | —              | `ApiLogAspectConfiguration`：`@Configuration`；`ApiOperationLogAspect`：`@Aspect`+`@Component`（缺 aspectj 依赖声明）                                            | boot-data               |
-| **datascope** | —              | `DataScopeAutoConfiguration`：`@Configuration`；依赖 `spring-biz`                                                                                          | boot-data               |
+| **crypto**    | 24 处           | `DefaultCryptoAutoConfiguration`：`@Configuration`+`@Bean`；`DecryptRequestBodyAdvice`/`EncryptResponseBodyAdvice`：依赖 `spring-webmvc`                                            | boot-data               |
+| **external**  | —              | `ExternalAutoConfiguration`：`@Configuration`；依赖 `ip2region-spring-boot-starter`+`redistpl-plus-spring-boot-starter`                                                            | boot-data               |
+| **logs**      | —              | `ApiLogAspectConfiguration`：`@Configuration`；`ApiOperationLogAspect`：`@Aspect`+`@Component`（缺 aspectj 依赖声明）                                                                    | boot-data               |
+| **datascope** | —              | `DataScopeAutoConfiguration`：`@Configuration`；依赖 `spring-biz`                                                                                                                  | boot-data               |
 
 ### 2.4 SPI 对齐现状（逐项核实）
 
@@ -282,7 +282,8 @@ public abstract class BaseRepositoryImpl<MP, M, P, Q>
 
 **迁移**：
 
-- `MybatisExceptionHandler`（`@ControllerAdvice`，WebMVC 异常处理）→ `ddd4j-boot/ddd4j-boot-data` 或 `ddd4j-web-webmvc`（web 异常不属于 mybatis 实现层）
+- `MybatisExceptionHandler`（`@ControllerAdvice`，WebMVC 异常处理）→ `ddd4j-boot/ddd4j-boot-data` 或 `ddd4j-web-webmvc`（web
+  异常不属于 mybatis 实现层）
 - mybatis pom 移除 WebMVC/WebFlux 等 Web 适配依赖
 - `@Transactional` 保留在方法上（Spring AOP 代理，无需改代码）
 - 移除 swagger-annotations / jakarta.validation 残留依赖（仅为 3 个迁移的 DTO/Param 服务）

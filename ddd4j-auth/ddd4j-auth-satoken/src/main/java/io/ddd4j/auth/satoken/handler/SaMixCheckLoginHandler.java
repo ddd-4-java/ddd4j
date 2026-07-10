@@ -9,10 +9,10 @@ import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.date.DateTime;
-import io.ddd4j.core.constant.AuthConstants;
 import io.ddd4j.auth.satoken.SaTempToken;
 import io.ddd4j.auth.satoken.annotation.SaMixCheckLogin;
 import io.ddd4j.auth.satoken.util.SaTempKit;
+import io.ddd4j.core.constant.AuthConstants;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.HashMap;

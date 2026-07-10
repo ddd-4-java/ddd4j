@@ -31,21 +31,37 @@ import java.util.Objects;
 @SuppressWarnings("unchecked")
 public class MQListener {
 
-    /** 目标 Bean */
+    /**
+     * 目标 Bean
+     */
     private Object bean;
-    /** 监听方法 */
+    /**
+     * 监听方法
+     */
     private Method method;
-    /** 消费者组，默认 {@code ${应用名}_${方法名}} */
+    /**
+     * 消费者组，默认 {@code ${应用名}_${方法名}}
+     */
     private String group;
-    /** 命名空间，默认全局 namespace */
+    /**
+     * 命名空间，默认全局 namespace
+     */
     private String namespace;
-    /** 主题 */
+    /**
+     * 主题
+     */
     private String topic;
-    /** 标签表达式（支持 {@code *} / {@code A || B} / {@code * -C}） */
+    /**
+     * 标签表达式（支持 {@code *} / {@code A || B} / {@code * -C}）
+     */
     private String tags;
-    /** 策略过滤列表，配合 {@link MQEvent#supports(List)} */
+    /**
+     * 策略过滤列表，配合 {@link MQEvent#supports(List)}
+     */
     private List<String> supports;
-    /** namespace/topic/tag 拼接符，为空时由各 broker 决定默认值 */
+    /**
+     * namespace/topic/tag 拼接符，为空时由各 broker 决定默认值
+     */
     private String separator;
 
     /**

@@ -1,10 +1,6 @@
 package io.ddd4j.mq.disruptor.util;
 
-import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.BusySpinWaitStrategy;
-import com.lmax.disruptor.SleepingWaitStrategy;
-import com.lmax.disruptor.WaitStrategy;
-import com.lmax.disruptor.YieldingWaitStrategy;
+import com.lmax.disruptor.*;
 
 /**
  * LMAX Disruptor 等待策略枚举。
@@ -25,28 +21,36 @@ import com.lmax.disruptor.YieldingWaitStrategy;
  */
 public enum WaitStrategys {
 
-    /** 最低 CPU 消耗，适合各种部署环境。 */
+    /**
+     * 最低 CPU 消耗，适合各种部署环境。
+     */
     blocking {
         @Override
         public WaitStrategy instance() {
             return new BlockingWaitStrategy();
         }
     },
-    /** 对生产者线程影响最小，适合异步日志类场景。 */
+    /**
+     * 对生产者线程影响最小，适合异步日志类场景。
+     */
     sleeping {
         @Override
         public WaitStrategy instance() {
             return new SleepingWaitStrategy();
         }
     },
-    /** 低延迟、CPU 消耗中等（推荐默认）。 */
+    /**
+     * 低延迟、CPU 消耗中等（推荐默认）。
+     */
     yielding {
         @Override
         public WaitStrategy instance() {
             return new YieldingWaitStrategy();
         }
     },
-    /** 性能最高，CPU 消耗最大，建议消费者线程数 < 物理核数时使用。 */
+    /**
+     * 性能最高，CPU 消耗最大，建议消费者线程数 < 物理核数时使用。
+     */
     busy_spin {
         @Override
         public WaitStrategy instance() {

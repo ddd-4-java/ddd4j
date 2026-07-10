@@ -1,9 +1,9 @@
 package io.ddd4j.core.ddd.event;
 
-import io.ddd4j.core.context.Contexts;
-import io.ddd4j.core.constant.SpiKeys;
-import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.context.Contexts;
+import io.ddd4j.core.context.ThreadContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,9 @@ import org.fuin.ddd4j.jackson.AbstractDomainEvent;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 领域事件基类（纯 Java，零 Spring 依赖）。
@@ -91,8 +93,8 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
     /**
      * 构造领域事件（带因果关联）。
      *
-     * @param entityIdPath   从聚合根到事件源的路径
-     * @param respondTo 导致本事件的前置事件
+     * @param entityIdPath 从聚合根到事件源的路径
+     * @param respondTo    导致本事件的前置事件
      */
     protected DomainEvent(EntityIdPath entityIdPath, org.fuin.ddd4j.core.Event respondTo) {
         super(entityIdPath, respondTo);

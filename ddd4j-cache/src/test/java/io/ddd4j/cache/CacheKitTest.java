@@ -1,7 +1,6 @@
 package io.ddd4j.cache;
 
 import io.ddd4j.cache.CacheKit.LocalCacheType;
-import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

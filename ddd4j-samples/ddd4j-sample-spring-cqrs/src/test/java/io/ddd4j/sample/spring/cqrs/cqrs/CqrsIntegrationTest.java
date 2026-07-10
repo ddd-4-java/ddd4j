@@ -19,9 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -245,10 +243,10 @@ class CqrsIntegrationTest {
     void goodsCqrs_byCode_returns() throws Exception {
         String code = "BCC-" + UUID.randomUUID();
         mockMvc.perform(post("/api/goods")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new CreateGoodsRequest(code, "X",
-                                new BigDecimal("10.00"), 1))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new CreateGoodsRequest(code, "X",
+                                        new BigDecimal("10.00"), 1))))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/goods/query/by-code/{code}", code))

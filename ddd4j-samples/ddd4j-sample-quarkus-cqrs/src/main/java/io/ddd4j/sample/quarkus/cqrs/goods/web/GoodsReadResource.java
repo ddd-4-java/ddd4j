@@ -1,19 +1,13 @@
 package io.ddd4j.sample.quarkus.cqrs.goods.web;
 
 import io.ddd4j.sample.quarkus.cqrs.cache.GoodsCacheService;
-import io.ddd4j.sample.quarkus.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsRepository;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.util.List;
 import java.util.Map;
 
 /**

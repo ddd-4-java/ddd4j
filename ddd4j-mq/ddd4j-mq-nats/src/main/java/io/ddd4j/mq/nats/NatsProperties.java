@@ -23,11 +23,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class NatsProperties extends MQProperties {
 
-    /** NATS 服务器地址列表（逗号分隔，如 {@code nats://host1:4222,nats://host2:4222}） */
+    /**
+     * NATS 服务器地址列表（逗号分隔，如 {@code nats://host1:4222,nats://host2:4222}）
+     */
     private String servers = "nats://localhost:4222";
-    /** 客户端名称 */
+    /**
+     * 客户端名称
+     */
     private String connectionName = "ddd4j-nats";
-    /** 连接超时（毫秒） */
+    /**
+     * 连接超时（毫秒）
+     */
     private long connectTimeoutMillis = 2000L;
 
     /**

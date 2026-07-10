@@ -18,7 +18,6 @@ import java.util.List;
  * @param totalAmount 总金额数值
  * @param currency    货币代码
  * @param lines       订单行列表
- *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,

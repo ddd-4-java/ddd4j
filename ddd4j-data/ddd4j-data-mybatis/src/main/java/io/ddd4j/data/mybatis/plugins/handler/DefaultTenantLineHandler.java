@@ -1,9 +1,5 @@
 package io.ddd4j.data.mybatis.plugins.handler;
 
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.NullValue;
-import net.sf.jsqlparser.expression.StringValue;
-
 /**
  * 默认租户处理器（零 MyBatis-Plus 依赖）。
  *

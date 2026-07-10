@@ -7,12 +7,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -50,7 +45,7 @@ public class DomainModelInfo<M> {
     /**
      * 构造 DomainModelInfo（PO 字段→列名通过 provider 提供）。
      *
-     * @param modelType                Domain Model 类型
+     * @param modelType                 Domain Model 类型
      * @param poProperty2ColumnProvider PO property → DB column 映射的 provider（如 MP TableInfo 的 property→column 索引）
      */
     public DomainModelInfo(Class<M> modelType, Function<String, String> poProperty2ColumnProvider) {

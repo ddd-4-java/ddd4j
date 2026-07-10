@@ -2,11 +2,7 @@ package io.ddd4j.sample.javalin.cqrs.order.web;
 
 import io.ddd4j.sample.javalin.cqrs.TestSupport;
 import io.javalin.Javalin;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,9 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * OrderController 集成测试（Javalin + CQRS，random port）。
@@ -46,6 +40,16 @@ class OrderControllerTest {
         }
     }
 
+    private static String extractId(String body) {
+        int idx = body.indexOf("\"id\":\"");
+        if (idx < 0) {
+            throw new IllegalStateException("no id in body: " + body);
+        }
+        int start = idx + 6;
+        int end = body.indexOf('"', start);
+        return body.substring(start, end);
+    }
+
     @BeforeEach
     void resetServerState() {
         app.stop();
@@ -55,24 +59,14 @@ class OrderControllerTest {
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> get(String path) throws Exception {
         return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
-    }
-
-    private static String extractId(String body) {
-        int idx = body.indexOf("\"id\":\"");
-        if (idx < 0) {
-            throw new IllegalStateException("no id in body: " + body);
-        }
-        int start = idx + 6;
-        int end = body.indexOf('"', start);
-        return body.substring(start, end);
     }
 
     // =================== 1) createDraft ====================

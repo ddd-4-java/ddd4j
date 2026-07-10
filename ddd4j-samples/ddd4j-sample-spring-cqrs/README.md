@@ -8,20 +8,20 @@
 
 本示例同时演示 ddd4j 框架在 Spring Boot 平台上的 **两个业务轨道 + CQRS 读写分离 + 缓存增强**：
 
-| 轨道 | 业务包 | 风格 | 关键产物 |
-| --- | --- | --- | --- |
-| **第二轨**（充血模型） | `order/` | `Order` 聚合根 + 5 个领域事件 + `OrderApplicationService` | `OrderController` / `OrderQueryController` / `OrderCQRSQueryController` |
-| **第三轨**（Model/Query） | `goods/` | `Goods` PO + `RichRepository` + `GoodsQuery` 充血查询 | `GoodsController` / `GoodsQueryController` / `GoodsReadController` |
-| **CQRS 增强** | `cache/` + 读侧 Controller | `CacheKit` 缓存读侧统计 | `OrderCacheService` / `GoodsCacheService` |
-| **Spring 事件桥接** | `event/` | `@EventListener` 监听领域事件 | `OrderEventListener` |
+| 轨道                   | 业务包                      | 风格                                                | 关键产物                                                                    |
+|----------------------|--------------------------|---------------------------------------------------|-------------------------------------------------------------------------|
+| **第二轨**（充血模型）        | `order/`                 | `Order` 聚合根 + 5 个领域事件 + `OrderApplicationService` | `OrderController` / `OrderQueryController` / `OrderCQRSQueryController` |
+| **第三轨**（Model/Query） | `goods/`                 | `Goods` PO + `RichRepository` + `GoodsQuery` 充血查询 | `GoodsController` / `GoodsQueryController` / `GoodsReadController`      |
+| **CQRS 增强**          | `cache/` + 读侧 Controller | `CacheKit` 缓存读侧统计                                 | `OrderCacheService` / `GoodsCacheService`                               |
+| **Spring 事件桥接**      | `event/`                 | `@EventListener` 监听领域事件                           | `OrderEventListener`                                                    |
 
 ## 与其他示例的关系
 
-| 示例 | 关系 |
-| --- | --- |
-| [`ddd4j-sample-spring`](../ddd4j-sample-spring) | 同框架 **非 CQRS** 版本（双轨业务 + 缓存，但无命令/查询分离） |
-| [`ddd4j-sample-javalin-cqrs`](../ddd4j-sample-javalin-cqrs) | 同 CQRS 思路在 **Javalin** 平台的手动 DI 绑定 |
-| [`ddd4j-sample-quarkus-cqrs`](../ddd4j-sample-quarkus-cqrs) | 同 CQRS 思路在 **Quarkus** 平台的 CDI 绑定 |
+| 示例                                                          | 关系                                     |
+|-------------------------------------------------------------|----------------------------------------|
+| [`ddd4j-sample-spring`](../ddd4j-sample-spring)             | 同框架 **非 CQRS** 版本（双轨业务 + 缓存，但无命令/查询分离） |
+| [`ddd4j-sample-javalin-cqrs`](../ddd4j-sample-javalin-cqrs) | 同 CQRS 思路在 **Javalin** 平台的手动 DI 绑定     |
+| [`ddd4j-sample-quarkus-cqrs`](../ddd4j-sample-quarkus-cqrs) | 同 CQRS 思路在 **Quarkus** 平台的 CDI 绑定      |
 
 ---
 
@@ -138,10 +138,12 @@ io.ddd4j.sample.spring.cqrs.cache/
 ```
 
 `OrderCacheService` 缓存域：
+
 - `order-stats`：订单状态分布统计
 - `buyer-order-count`：买家订单计数
 
 `GoodsCacheService` 缓存域：
+
 - `goods-detail`：商品详情
 - `goods-list`：商品列表查询结果
 
@@ -158,45 +160,45 @@ io.ddd4j.sample.spring.cqrs.event/
 
 ### 3.1 Order 命令侧（写）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST`   | `/api/orders`               | 创建草稿订单 |
-| `POST`   | `/api/orders/{id}/lines`    | 添加订单行 |
-| `POST`   | `/api/orders/{id}/pay`      | 支付订单 |
-| `POST`   | `/api/orders/{id}/ship`     | 发货订单 |
-| `POST`   | `/api/orders/{id}/cancel`   | 取消订单 |
+| 方法     | 路径                        | 说明     |
+|--------|---------------------------|--------|
+| `POST` | `/api/orders`             | 创建草稿订单 |
+| `POST` | `/api/orders/{id}/lines`  | 添加订单行  |
+| `POST` | `/api/orders/{id}/pay`    | 支付订单   |
+| `POST` | `/api/orders/{id}/ship`   | 发货订单   |
+| `POST` | `/api/orders/{id}/cancel` | 取消订单   |
 
 ### 3.2 Order 查询侧（读）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/api/orders/{id}` | 按 ID 查询 |
-| `GET` | `/api/orders/by-no` | 按订单编号查询 |
-| `GET` | `/api/orders` | 列出全部订单 |
-| `GET` | `/api/orders/query/stats` | **CQRS 缓存读**：订单统计 |
+| 方法    | 路径                                        | 说明                 |
+|-------|-------------------------------------------|--------------------|
+| `GET` | `/api/orders/{id}`                        | 按 ID 查询            |
+| `GET` | `/api/orders/by-no`                       | 按订单编号查询            |
+| `GET` | `/api/orders`                             | 列出全部订单             |
+| `GET` | `/api/orders/query/stats`                 | **CQRS 缓存读**：订单统计  |
 | `GET` | `/api/orders/query/buyer/{buyerId}/count` | **CQRS 缓存读**：买家订单数 |
-| `GET` | `/api/orders/query/detail/{id}` | **CQRS 缓存读**：订单详情 |
+| `GET` | `/api/orders/query/detail/{id}`           | **CQRS 缓存读**：订单详情  |
 
 ### 3.3 Goods 命令侧（写）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `POST`   | `/api/goods`             | 创建商品 |
-| `PUT`    | `/api/goods/{id}`        | 更新商品 |
+| 方法       | 路径                       | 说明     |
+|----------|--------------------------|--------|
+| `POST`   | `/api/goods`             | 创建商品   |
+| `PUT`    | `/api/goods/{id}`        | 更新商品   |
 | `PUT`    | `/api/goods/{id}/status` | 调整商品状态 |
-| `DELETE` | `/api/goods/{id}`        | 软删除商品 |
+| `DELETE` | `/api/goods/{id}`        | 软删除商品  |
 
 ### 3.4 Goods 查询侧（读）
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| `GET` | `/api/goods/{id}` | 按 ID 查询 |
-| `GET` | `/api/goods/by-code` | 按编码查询 |
-| `GET` | `/api/goods/page` | 充血分页查询 |
-| `GET` | `/api/goods/list` | 充血列表查询 |
-| `GET` | `/api/goods/count` | 充血计数 |
-| `GET` | `/api/goods/query/list` | **CQRS 缓存读**：商品列表 |
-| `GET` | `/api/goods/query/{id}` | **CQRS 缓存读**：商品详情 |
+| 方法    | 路径                           | 说明                 |
+|-------|------------------------------|--------------------|
+| `GET` | `/api/goods/{id}`            | 按 ID 查询            |
+| `GET` | `/api/goods/by-code`         | 按编码查询              |
+| `GET` | `/api/goods/page`            | 充血分页查询             |
+| `GET` | `/api/goods/list`            | 充血列表查询             |
+| `GET` | `/api/goods/count`           | 充血计数               |
+| `GET` | `/api/goods/query/list`      | **CQRS 缓存读**：商品列表  |
+| `GET` | `/api/goods/query/{id}`      | **CQRS 缓存读**：商品详情  |
 | `GET` | `/api/goods/query/by-status` | **CQRS 缓存读**：按状态查询 |
 
 ---
@@ -269,8 +271,8 @@ java -jar target/ddd4j-sample-spring-cqrs-*.jar
    Spring 注解只在跨边界类（应用服务、仓储、控制器、缓存服务）上。
 2. **双轨业务**：第二轨（Order 充血聚合） + 第三轨（Goods Model/Query CRUD） 并存。
 3. **CQRS 命令/查询分离**：
-   - Order：`OrderController`（写）vs `OrderCQRSQueryController`（缓存读）
-   - Goods：`GoodsController`（写）vs `GoodsReadController`（缓存读）
+    - Order：`OrderController`（写）vs `OrderCQRSQueryController`（缓存读）
+    - Goods：`GoodsController`（写）vs `GoodsReadController`（缓存读）
 4. **CacheKit 缓存读侧**：`OrderCacheService` / `GoodsCacheService` 用 `CacheKit.get/put/invalidate` 实现缓存优先读，
    写操作完成后调用 `evictOnWrite` / `invalidate` 失效缓存。
 5. **Spring 事件桥接**：`OrderEventListener` 通过 `@EventListener` 监听 ddd4j 领域事件，

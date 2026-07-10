@@ -3,11 +3,7 @@ package io.ddd4j.sample.quarkus.goods;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.sample.quarkus.goods.application.GoodsApplicationService;
-import io.ddd4j.sample.quarkus.goods.domain.Goods;
-import io.ddd4j.sample.quarkus.goods.domain.GoodsId;
-import io.ddd4j.sample.quarkus.goods.domain.GoodsQuery;
-import io.ddd4j.sample.quarkus.goods.domain.GoodsRepository;
-import io.ddd4j.sample.quarkus.goods.domain.GoodsStatus;
+import io.ddd4j.sample.quarkus.goods.domain.*;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
@@ -20,9 +16,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 /**
  * 商品资源 Quarkus 集成测试（第三轨：Model/Query 快速 CRUD 模式）。

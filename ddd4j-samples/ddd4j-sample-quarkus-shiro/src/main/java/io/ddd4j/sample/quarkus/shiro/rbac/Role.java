@@ -19,13 +19,21 @@ import java.util.Set;
 @AllArgsConstructor
 public class Role {
 
-    /** 角色编码（业务主键，如 {@code admin} / {@code user}）。 */
+    /**
+     * 角色编码（业务主键，如 {@code admin} / {@code user}）。
+     */
     private String code;
-    /** 显示名。 */
+    /**
+     * 显示名。
+     */
     private String displayName;
-    /** 描述。 */
+    /**
+     * 描述。
+     */
     private String description;
-    /** 角色拥有的权限编码集合。 */
+    /**
+     * 角色拥有的权限编码集合。
+     */
     private Set<String> permissionCodes = new HashSet<>();
 
 }

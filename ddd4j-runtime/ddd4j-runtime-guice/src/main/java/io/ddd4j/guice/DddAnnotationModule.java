@@ -36,9 +36,13 @@ public class DddAnnotationModule extends AbstractModule {
             "io.ddd4j.guice.annotation.ddd.DomainConverter"
     };
 
-    /** 待扫描的基础包路径 */
+    /**
+     * 待扫描的基础包路径
+     */
     private final String[] basePackages;
-    /** 是否启用 ClassGraph 自动扫描 */
+    /**
+     * 是否启用 ClassGraph 自动扫描
+     */
     private final boolean enableClassGraph;
 
     /**

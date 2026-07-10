@@ -20,11 +20,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
 
-    /** Quartz 调度器 */
+    /**
+     * Quartz 调度器
+     */
     private final Scheduler scheduler;
-    /** 调度标识 */
+    /**
+     * 调度标识
+     */
     private final String identity;
-    /** 活跃状态标志 */
+    /**
+     * 活跃状态标志
+     */
     private final AtomicBoolean active = new AtomicBoolean(true);
 
     QuartzViewScheduleHandle(Scheduler scheduler, String identity) {

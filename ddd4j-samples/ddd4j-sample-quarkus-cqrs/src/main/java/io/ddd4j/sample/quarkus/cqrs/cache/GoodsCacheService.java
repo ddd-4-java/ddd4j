@@ -8,11 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 商品缓存服务（CQRS 读侧增强 - Quarkus）。
@@ -29,12 +25,18 @@ import java.util.Objects;
 @ApplicationScoped
 public class GoodsCacheService {
 
-    /** 缓存域：商品详情 */
+    /**
+     * 缓存域：商品详情
+     */
     public static final String BIZ_GOODS_DETAIL = "quarkus-cqrs-goods-detail";
-    /** 缓存域：商品列表 */
+    /**
+     * 缓存域：商品列表
+     */
     public static final String BIZ_GOODS_LIST = "quarkus-cqrs-goods-list";
 
-    /** 全部商品列表固定 key */
+    /**
+     * 全部商品列表固定 key
+     */
     private static final String LIST_ALL_KEY = "all";
 
     private final InMemoryGoodsRepository goodsRepository;

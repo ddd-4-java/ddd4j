@@ -2,15 +2,7 @@ package io.ddd4j.sample.quarkus.shiro.rbac;
 
 import io.ddd4j.core.api.R;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -60,6 +52,19 @@ public class AuthorizationResource {
 
     // ============ User CRUD ============
 
+    /**
+     * 静态工具：抛出 401/403 响应。
+     */
+    static WebApplicationException unauthorized() {
+        return new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
+                .entity(R.fail(401, "unauthenticated")).build());
+    }
+
+    static WebApplicationException forbidden(String reason) {
+        return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
+                .entity(R.fail(403, reason)).build());
+    }
+
     @GET
     @Path("/users")
     public R<List<User>> listUsers() {
@@ -99,6 +104,8 @@ public class AuthorizationResource {
         return R.ok("user deleted", rbacService.deleteUser(id));
     }
 
+    // ============ Role CRUD ============
+
     @POST
     @Path("/users/{id}/roles/{code}")
     public R<User> assignRole(@PathParam("id") String id, @PathParam("code") String code) {
@@ -114,8 +121,6 @@ public class AuthorizationResource {
         rbacService.requireRole("admin");
         return R.ok("role revoked", rbacService.revokeRole(id, code));
     }
-
-    // ============ Role CRUD ============
 
     @GET
     @Path("/roles")
@@ -155,6 +160,8 @@ public class AuthorizationResource {
         return R.ok("role deleted", rbacService.deleteRole(code));
     }
 
+    // ============ Permission CRUD ============
+
     @POST
     @Path("/roles/{code}/permissions/{pcode}")
     public R<Role> grantPermission(@PathParam("code") String code, @PathParam("pcode") String pcode) {
@@ -170,8 +177,6 @@ public class AuthorizationResource {
         rbacService.requireRole("admin");
         return R.ok("permission revoked", rbacService.revokePermission(code, pcode));
     }
-
-    // ============ Permission CRUD ============
 
     @GET
     @Path("/permissions")
@@ -194,19 +199,6 @@ public class AuthorizationResource {
         rbacService.requireLogin();
         rbacService.requireRole("admin");
         return R.ok("permission deleted", rbacService.deletePermission(code));
-    }
-
-    /**
-     * 静态工具：抛出 401/403 响应。
-     */
-    static WebApplicationException unauthorized() {
-        return new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                .entity(R.fail(401, "unauthenticated")).build());
-    }
-
-    static WebApplicationException forbidden(String reason) {
-        return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                .entity(R.fail(403, reason)).build());
     }
 
 }
