@@ -45,13 +45,12 @@ import java.util.Optional;
  * </table>
  *
  * @param <M>  聚合根类型
- * @param <P>  持久化对象类型（PO）
  * @param <ID> 聚合根标识类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
 @SuppressWarnings("unchecked")
-public interface Repository<M extends AggregateRoot<?>, P, ID extends Serializable> {
+public interface Repository<M extends AggregateRoot<?>, ID extends Serializable> {
 
     // ========================= 单条 CRUD =========================
 
@@ -172,47 +171,59 @@ public interface Repository<M extends AggregateRoot<?>, P, ID extends Serializab
         return count() > 0;
     }
 
-    // ========================= 条件查询（基于 Query<P>） =========================
+    // ========================= 条件查询（基于 Query<M>） =========================
 
     /**
      * 按条件查找第一个（对应 {@code selectOne(Wrapper)}）。
+     * @param query 查询条件
+     * @return 查询结果
      */
-    default Optional<M> findFirst(Query<P> query) {
+    default Optional<M> findFirst(Query<M> query) {
         throw new UnsupportedOperationException("findFirst(query) is not supported by this repository");
     }
 
     /**
      * 按条件查询列表（对应 {@code selectList(Wrapper)}）。
+     * @param query 查询条件
+     * @return 查询结果
      */
-    default List<M> findList(Query<P> query) {
+    default List<M> findList(Query<M> query) {
         throw new UnsupportedOperationException("findList(query) is not supported by this repository");
     }
 
     /**
      * 按条件分页查询（对应 {@code selectPage(page, Wrapper)}）。
+     * @param query 查询条件
+     * @return 查询结果
      */
-    default Page<M> page(Query<P> query) {
+    default Page<M> page(Query<M> query) {
         throw new UnsupportedOperationException("page(query) is not supported by this repository");
     }
 
     /**
      * 按条件计数（对应 {@code selectCount(Wrapper)}）。
+     * @param query 查询条件
+     * @return 查询结果
      */
-    default long count(Query<P> query) {
+    default long count(Query<M> query) {
         return findList(query).size();
     }
 
     /**
      * 按条件查询是否存在（对应 {@code exists(Wrapper)}）。
+     * @param query 查询条件
+     * @return 查询结果
      */
-    default boolean exists(Query<P> query) {
+    default boolean exists(Query<M> query) {
         return count(query) > 0;
     }
 
     /**
      * 按条件查询 Map 列表（对应 {@code selectMaps(Wrapper)}）。
+     * @param query 查询条件
+     * @return 查询结果
      */
-    default List<Map<String, Object>> maps(Query<P> query) {
+    default List<Map<String, Object>> maps(Query<M> query) {
         throw new UnsupportedOperationException("maps(query) is not supported by this repository");
     }
 
@@ -221,14 +232,14 @@ public interface Repository<M extends AggregateRoot<?>, P, ID extends Serializab
     /**
      * 按条件更新（对应 {@code update(T, Wrapper)}）。
      */
-    default boolean update(AggregateRoot<?> aggregate, Query<P> query) {
+    default boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         throw new UnsupportedOperationException("update(aggregate, query) is not supported by this repository");
     }
 
     /**
      * 按条件删除（对应 {@code delete(Wrapper)}）。
      */
-    default boolean deleteByQuery(Query<P> query) {
+    default boolean deleteByQuery(Query<M> query) {
         throw new UnsupportedOperationException("deleteByQuery(query) is not supported by this repository");
     }
 
@@ -237,14 +248,14 @@ public interface Repository<M extends AggregateRoot<?>, P, ID extends Serializab
     /**
      * 数据聚合填充（从其他聚合补充数据到当前聚合根）。
      */
-    default void fill(Query<P> query, AggregateRoot<?> model) {
+    default void fill(Query<M> query, AggregateRoot<?> model) {
         // 默认空实现，业务方按需覆盖
     }
 
     /**
      * 数据批量聚合填充。
      */
-    default void fill(Query<P> query, List<M> models) {
+    default void fill(Query<M> query, List<M> models) {
         for (M model : models) {
             fill(query, model);
         }

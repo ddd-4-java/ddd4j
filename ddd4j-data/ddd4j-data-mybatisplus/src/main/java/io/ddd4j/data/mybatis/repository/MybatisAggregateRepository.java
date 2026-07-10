@@ -4,135 +4,292 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.ChainUpdate;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import io.ddd4j.core.constant.ContextConstants;
-import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.api.Page;
-import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.core.ddd.model.DomainObjectMapper;
-import io.ddd4j.core.cqrs.query.LambdaCondition;
-import io.ddd4j.core.cqrs.query.Query;
-import io.ddd4j.core.ddd.repository.Repository;
-import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-
-import io.ddd4j.core.util.MappingKit;
+import com.baomidou.mybatisplus.extension.repository.AbstractRepository;
+import com.baomidou.mybatisplus.extension.repository.IRepository;
 import io.ddd4j.annotation.orm.BizKey;
+import io.ddd4j.annotation.orm.DomainField;
 import io.ddd4j.annotation.orm.OnCreate;
 import io.ddd4j.annotation.orm.OnUpdate;
 import io.ddd4j.annotation.orm.OrderBy;
 import io.ddd4j.annotation.orm.SystemId;
 import io.ddd4j.annotation.orm.TenantId;
-
+import io.ddd4j.core.api.Page;
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.core.cqrs.query.LambdaCondition;
+import io.ddd4j.core.cqrs.query.Query;
+import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.ddd.model.DomainObjectMapper;
+import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
+import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
+import io.ddd4j.core.ddd.repository.Repository;
+import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.kit.lang.StrKit;
+import lombok.Data;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.ddd4j.kit.lang.StrKit;
+import cn.hutool.core.collection.CollUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.time.format.DateTimeFormatter;
 
 /**
- * MyBatis-Plus repository base for rich aggregate roots.
+ * MyBatis-Plus 仓储抽象基类（PO↔Domain 映射 + 充血查询 + 自动填充）。
  *
- * <p>该类吸收旧 ddd4j {@code BaseRepositoryImpl} 的 Query 后缀条件、租户、
- * BizKey、fill、分页和保存后回填语义，但只暴露 {@link Repository} SPI。
- * MyBatis-Plus 仍限定在基础设施层，聚合根不感知 ORM。</p>
+ * <h3>类继承链</h3>
+ * <pre>{@code
+ * MybatisAggregateRepository<MP, M, P, Q, ID>
+ *   └─ extends AbstractRepository<MP, P>             // mybatis-plus-extension（无 Spring 依赖）
+ *   └─ implements DomainObjectMapper<M, P>            // PO↔Domain 映射
+ *   └─ implements Repository<M, ID>                   // ddd4j 聚合根仓储（含充血查询方法）
+ * }</pre>
  *
- * @param <M>  aggregate root type
+ * <h3>充血查询与 COLA 合规</h3>
+ * <p>充血查询对象 {@link Query}{@code <M>} 绑定<b>聚合根类型</b>（不是 PO），
+ * 因此 Domain 层（如 ddd4j-boot-sample-layered 的 {@code UserQuery}）无需 import PO 类。
+ * 字段引用 {@code User::getStatus} 由基础设施层（本类）翻译为 PO 列名
+ * （{@code userPO.status}），翻译逻辑通过 {@code DomainModelHelper} 缓存的
+ * {@link DomainModelInfo} 完成（{@code @DomainField} 注解 + 默认约定）。
+ *
+ * <h3>充血查询链路注册（父类构造器完成）</h3>
+ * <p>本类在 3 个构造器中调用 {@link #registerToRepositoryRegistry()}，
+ * 让所有继承本类的仓储自动注册到 {@link RepositoryRegistry}，
+ * 实现 {@code new XxxQuery().list()} 充血查询零配置。
+ *
+ * <h3>为什么不直接继承 ServiceImpl</h3>
+ * <p>{@code ServiceImpl.updateBatchById(Collection<T>)} 返回 {@code boolean}，
+ * ddd4j {@code Repository.batchUpdateById(Collection<M>)} 返回 {@code int}，
+ * 同时实现两者将触发 JLS §8.4.8.3 重复方法错误。
+ *
+ * @param <MP> MyBatis-Plus Mapper interface (extends {@code BaseMapper<P>})
+ * @param <M>  aggregate root type（<b>领域模型，不是 PO</b>）
  * @param <P>  persistence object type, usually named {@code *PO}
+ * @param <Q>  query object type (extends {@link Query}{@code <M>}) — <b>充血查询反向索引 key</b>
  * @param <ID> aggregate identity type
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-@Slf4j
-public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, ID extends Serializable>
-        implements Repository<M, P, ID>, DomainObjectMapper<M, P>, Serializable {
+@SuppressWarnings("unchecked")
+public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
+        extends AbstractRepository<MP, P>
+        implements DomainObjectMapper<M, P>, Repository<M, ID> {
 
-    private BaseMapper<P> mapper;
+    /**
+     * 应用层日志（slf4j），与父类 {@link AbstractRepository#log}（ibatis-logging）共存。
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisAggregateRepository.class);
+
+    /**
+     * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@link #setBaseMapper} 或构造器手动注入）。
+     * 对应 MyBatis-Plus {@code CrudRepository.@Autowired M baseMapper} 的非 Spring 版本。
+     */
+    @Setter
+    protected MP baseMapper;
+
     private Class<M> modelClass;
     private Class<P> persistenceObjectClass;
-    private TableScheme tableScheme;
+    private Class<? extends Query<M>> queryClass;
+
+    /**
+     * Domain Model 元数据（充血查询翻译：Domain 字段名 → PO 列名）。
+     * 由 {@link DomainModelHelper} 缓存。
+     */
+    private DomainModelInfo<M> domainModelInfo;
+
+    /**
+     * PO 元数据（auto-fill、bizKey、tenantId、tableLogic 等），委托 MP {@code TableInfoHelper}。
+     */
+    private TableInfo tableInfo;
 
     protected MybatisAggregateRepository() {
+        this.configureTypes(resolveModelClass(), resolvePersistenceObjectClass(), resolveQueryClass());
+        this.registerToRepositoryRegistry();
     }
 
-    protected MybatisAggregateRepository(BaseMapper<P> mapper) {
-        configureTypes(resolveModelClass(), resolvePersistenceObjectClass(), null);
-        setMapper(mapper);
+    protected MybatisAggregateRepository(MP baseMapper) {
+        this.configureTypes(resolveModelClass(), resolvePersistenceObjectClass(), resolveQueryClass());
+        this.setBaseMapper(baseMapper);
+        this.registerToRepositoryRegistry();
     }
 
-    protected MybatisAggregateRepository(BaseMapper<P> mapper, Class<M> modelClass, Class<P> persistenceObjectClass) {
-        configureTypes(modelClass, persistenceObjectClass, null);
-        setMapper(mapper);
+    protected MybatisAggregateRepository(MP baseMapper, Class<M> modelClass, Class<P> persistenceObjectClass) {
+        this.configureTypes(modelClass, persistenceObjectClass, null);
+        this.setBaseMapper(baseMapper);
+        this.registerToRepositoryRegistry();
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<M> resolveModelClass() {
+    /**
+     * 解析聚合根类型（泛型参数 M，索引 0 — 在子类 BaseRepositoryImpl 中索引变为 1）。
+     */
+    protected Class<M> resolveModelClass() {
         return (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 0);
     }
 
-    @SuppressWarnings("unchecked")
-    private Class<P> resolvePersistenceObjectClass() {
+    /**
+     * 解析持久化对象类型（泛型参数 P，索引 1 — 在子类 BaseRepositoryImpl 中索引变为 2）。
+     */
+    protected Class<P> resolvePersistenceObjectClass() {
         return (Class<P>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 1);
     }
 
-    protected final void configureTypes(Class<M> modelClass, Class<P> persistenceObjectClass, Class<? extends Query> queryClass) {
+    /**
+     * 解析查询对象类型（泛型参数 Q，索引 2 — 在子类 BaseRepositoryImpl 中索引变为 3）。
+     */
+    protected Class<? extends Query<M>> resolveQueryClass() {
+        return (Class<? extends Query<M>>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 2);
+    }
+
+    protected final void configureTypes(Class<M> modelClass, Class<P> persistenceObjectClass, Class<? extends Query<M>> queryClass) {
         this.modelClass = modelClass;
         this.persistenceObjectClass = persistenceObjectClass;
+        this.queryClass = queryClass;
         if (Objects.nonNull(modelClass) && Objects.nonNull(persistenceObjectClass)) {
-            this.tableScheme = TableScheme.build(persistenceObjectClass);
+            // PO 元数据（auto-fill、bizKey、tenantId、tableLogic 等，委托给 MP TableInfoHelper）
+            this.tableInfo = TableInfoHelper.getTableInfo(persistenceObjectClass);
+            // 充血查询 Domain→PO 字段映射元数据（缓存于 DomainModelHelper，零框架依赖）
+            this.domainModelInfo = DomainModelHelper.getModelInfo(modelClass, persistenceObjectClass, poProperty -> {
+                if (tableInfo != null) {
+                    for (TableFieldInfo tfi : tableInfo.getFieldList()) {
+                        if (tfi.getProperty().equals(poProperty)) {
+                            return tfi.getColumn();
+                        }
+                    }
+                }
+                return null;
+            });
             MappingKit.map("MODEL_PO", modelClass, persistenceObjectClass);
             MappingKit.map("MODEL_PO", persistenceObjectClass, modelClass);
             if (Objects.nonNull(queryClass)) {
                 MappingKit.map("MODEL_QUERY", modelClass, queryClass);
                 MappingKit.map("MODEL_QUERY", queryClass, modelClass);
             }
-            String modelClassName = modelClass.getSimpleName().toLowerCase().substring(0, 1) + modelClass.getSimpleName().substring(1);
+            String modelClassName = modelClass.getSimpleName().toLowerCase().charAt(0) + modelClass.getSimpleName().substring(1);
             MappingKit.map("MODEL_NAME", modelClassName, modelClass);
-        }
-        if (Objects.nonNull(modelClass) && Objects.nonNull(queryClass)) {
-            RepositoryRegistry.register(modelClass, queryClass, this);
-        } else if (Objects.nonNull(modelClass)) {
-            RepositoryRegistry.register(modelClass, this);
         }
     }
 
-    public BaseMapper<P> getMapper() {
-        return mapper();
+    /**
+     * 注册本仓储到 {@link RepositoryRegistry}（充血查询反向索引）。
+     *
+     * <p>充血查询链路：{@code new XxxQuery().list()} → {@link Query#repository()} →
+     * {@link RepositoryRegistry#repositoryForQuery(Class)} → 通过 {@code Q.class} 找到本仓储。
+     */
+    protected void registerToRepositoryRegistry() {
+        Class<M> mc = resolveModelClass();
+        Class<? extends Query<M>> qc = resolveQueryClass();
+        if (Objects.nonNull(mc) && Objects.nonNull(qc)) {
+            RepositoryRegistry.register(mc, qc, this);
+        } else if (Objects.nonNull(mc)) {
+            RepositoryRegistry.register(mc, this);
+        }
+    }
+
+    public MP getMapper() {
+        return getBaseMapper();
+    }
+
+    /**
+     * {@link IRepository} 抽象方法实现 —— 返回当前仓储持有的 MyBatis-Plus Mapper。
+     */
+    @Override
+    public MP getBaseMapper() {
+        if (this.baseMapper == null) {
+            throw new IllegalStateException(
+                    "baseMapper must not be null — call setBaseMapper() or pass mapper to constructor");
+        }
+        return this.baseMapper;
+    }
+
+    /**
+     * Domain Model 元数据访问器（充血查询翻译：Domain 字段 → PO 列名）。
+     * 缓存于 {@link DomainModelHelper}。
+     */
+    protected DomainModelInfo<M> domainModelInfo() {
+        return Objects.requireNonNull(domainModelInfo, "domainModelInfo must not be null");
+    }
+
+    /**
+     * PO 元数据访问器（委托 MP {@code TableInfoHelper}），用于 auto-fill、bizKey、tenantId、tableLogic 等。
+     */
+    protected TableInfo tableInfo() {
+        return Objects.requireNonNull(tableInfo, "tableInfo must not be null");
+    }
+
+    /**
+     * 充血查询字段翻译：Domain 字段名 → PO 数据库列名。
+     *
+     * <p>翻译优先级链：
+     * <ol>
+     *   <li>查 {@link DomainModelInfo}（{@code @DomainField} 注解 + 默认约定）→ 用列名</li>
+     *   <li>fallback：直接驼峰转下划线（保持向后兼容）</li>
+     * </ol>
+     */
+    protected String translateProperty(String property) {
+        if (Objects.isNull(property) || property.isEmpty()) {
+            return property;
+        }
+        String column = domainModelInfo().getPoColumn(property);
+        if (column != null) {
+            return column;
+        }
+        return toUnderline(property);
+    }
+
+    private static String toUnderline(String camel) {
+        if (camel == null || camel.isEmpty()) {
+            return camel;
+        }
+        StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < camel.length(); i++) {
+            char c = camel.charAt(i);
+            if (i > 0 && Character.isUpperCase(c)) {
+                buf.append('_');
+            }
+            buf.append(Character.toLowerCase(c));
+        }
+        return buf.toString();
     }
 
     public void setMapper(BaseMapper<P> mapper) {
@@ -154,7 +311,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      *     .ge("create_time", startTime)
      *     .orderByDesc("create_time")
      *     .last("LIMIT 10")
-     *     .getEntityList(mapper());
+     *     .getEntityList(getBaseMapper());
      * }</pre>
      *
      * @return 已注入租户/系统条件的 QueryWrapper
@@ -184,7 +341,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      * @return LambdaQueryWrapper（注意：Lambda 模式不自动注入租户/系统条件，
      *         如需隔离请在链式调用中手动追加 {@code .eq(Entity::getTenantId, ThreadContext.get(...))}）
      */
-    public LambdaQueryWrapper<P> lambdaQuery() {
+    public LambdaQueryWrapper<P> lambdaQueryWrapper() {
         return Wrappers.lambdaQuery(persistenceObjectClass());
     }
 
@@ -200,7 +357,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      *
      * @return LambdaUpdateWrapper
      */
-    public LambdaUpdateWrapper<P> lambdaUpdate() {
+    public LambdaUpdateWrapper<P> lambdaUpdateWrapper() {
         return Wrappers.lambdaUpdate(persistenceObjectClass());
     }
 
@@ -231,7 +388,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      * @return QueryChainWrapper（绑定到当前 mapper，链式调用末尾自动执行 SQL）
      */
     public QueryChainWrapper<P> queryChain() {
-        return new QueryChainWrapper<>(mapper());
+        return new QueryChainWrapper<>(getBaseMapper());
     }
 
     /**
@@ -244,7 +401,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      * @return LambdaQueryChainWrapper（绑定到当前 mapper）
      */
     public LambdaQueryChainWrapper<P> lambdaQueryChain() {
-        return new LambdaQueryChainWrapper<>(mapper());
+        return new LambdaQueryChainWrapper<>(getBaseMapper());
     }
 
     /**
@@ -260,7 +417,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      * @return UpdateChainWrapper（绑定到当前 mapper，链式调用末尾自动执行 UPDATE）
      */
     public UpdateChainWrapper<P> updateChain() {
-        return new UpdateChainWrapper<>(mapper());
+        return new UpdateChainWrapper<>(getBaseMapper());
     }
 
     /**
@@ -276,13 +433,9 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      * @return LambdaUpdateChainWrapper（绑定到当前 mapper）
      */
     public LambdaUpdateChainWrapper<P> lambdaUpdateChain() {
-        return new LambdaUpdateChainWrapper<>(mapper());
+        return new LambdaUpdateChainWrapper<>(getBaseMapper());
     }
 
-
-    protected BaseMapper<P> mapper() {
-        return Objects.requireNonNull(mapper, "mapper must not be null");
-    }
 
     protected Class<M> modelClass() {
         return Objects.requireNonNull(modelClass, "modelClass must not be null");
@@ -292,8 +445,121 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         return Objects.requireNonNull(persistenceObjectClass, "persistenceObjectClass must not be null");
     }
 
-    protected TableScheme tableScheme() {
-        return Objects.requireNonNull(tableScheme, "tableScheme must not be null");
+    // ========================= IRepository 抽象方法实现（替代 CrudRepository 父类，去 Spring 依赖） =========================
+
+    /**
+     * IRepository 抽象方法：单条 insert or update。
+     */
+    @Override
+    public boolean saveOrUpdate(P entity) {
+        return getBaseMapper().insertOrUpdate(entity);
+    }
+
+    /**
+     * IRepository 抽象方法：{@link Wrapper} 查询单条（throwEx 决定抛异常还是返回 null）。
+     */
+    @Override
+    public P getOne(Wrapper<P> queryWrapper, boolean throwEx) {
+        return getBaseMapper().selectOne(queryWrapper, throwEx);
+    }
+
+    /**
+     * IRepository 抽象方法：{@link Wrapper} 查询单条（Optional 形式）。
+     */
+    @Override
+    public Optional<P> getOneOpt(Wrapper<P> queryWrapper, boolean throwEx) {
+        return Optional.ofNullable(getBaseMapper().selectOne(queryWrapper, throwEx));
+    }
+
+    /**
+     * IRepository 抽象方法：{@link Wrapper} 查询单条 Map。
+     */
+    @Override
+    public Map<String, Object> getMap(Wrapper<P> queryWrapper) {
+        return SqlHelper.getObject(this.log, getBaseMapper().selectMaps(queryWrapper));
+    }
+
+    /**
+     * IRepository 抽象方法：{@link Wrapper} 查询单条对象（带转换函数）。
+     */
+    @Override
+    public <V> V getObj(Wrapper<P> queryWrapper, Function<? super Object, V> mapper) {
+        List<V> list = listObjs(queryWrapper, mapper);
+        return SqlHelper.getObject(this.log, list);
+    }
+
+    /**
+     * IRepository 抽象方法：按 ID 删除（支持自动填充）。
+     */
+    @Override
+    public boolean removeById(Serializable id, boolean useFill) {
+        return SqlHelper.retBool(getBaseMapper().deleteById(id, useFill));
+    }
+
+    // ========================= CrudRepository 批量方法（PO 维度，无 Spring 依赖） =========================
+
+    /**
+     * 批量插入（对应 MyBatis-Plus {@code CrudRepository.saveBatch}，去 Spring 版本）。
+     * <p>JdbcBatch 执行 INSERT_ONE，事务由 {@code @Transactional} 在子类或调用方控制。
+     */
+    @Override
+    public boolean saveBatch(Collection<P> entityList, int batchSize) {
+        String sqlStatement = getSqlStatement(SqlMethod.INSERT_ONE);
+        return executeBatch(entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+    }
+
+    /**
+     * 批量保存或更新（PO 维度）。
+     */
+    @Override
+    public boolean saveOrUpdateBatch(Collection<P> entityList, int batchSize) {
+        TableInfo tableInfoLocal = tableInfo();
+        if (tableInfoLocal == null) {
+            throw new IllegalArgumentException(
+                    "error: can not execute. because can not find cache of TableInfo for entity " + this.getEntityClass());
+        }
+        String keyProperty = tableInfoLocal.getKeyProperty();
+        if (!StringUtils.isNotEmpty(keyProperty)) {
+            throw new IllegalArgumentException(
+                    "error: can not execute. because can not find column for id from entity " + this.getEntityClass());
+        }
+        return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), (Class<?>) this.getMapperClass(), this.log, entityList, batchSize,
+                (sqlSession, entity) -> {
+                    Object idVal = tableInfoLocal.getKeyProperty() == null ? null : null;
+                    try {
+                        java.lang.reflect.Field keyField = entity.getClass().getDeclaredField(keyProperty);
+                        keyField.setAccessible(true);
+                        idVal = keyField.get(entity);
+                    } catch (Exception ignored) {
+                    }
+                    return StringUtils.isEmpty((String) idVal)
+                            || CollUtil.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
+                },
+                (sqlSession, entity) -> {
+                    MapperMethod.ParamMap<P> param = new MapperMethod.ParamMap<>();
+                    param.put(Constants.ENTITY, entity);
+                    sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
+                });
+    }
+
+    /**
+     * 批量按 ID 更新（PO 维度）。
+     */
+    @Override
+    public boolean updateBatchById(Collection<P> entityList, int batchSize) {
+        String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
+        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
+            MapperMethod.ParamMap<P> param = new MapperMethod.ParamMap<>();
+            param.put(Constants.ENTITY, entity);
+            sqlSession.update(sqlStatement, param);
+        });
+    }
+
+    /**
+     * 获取 mapperStatementId（CrudRepository.getSqlStatement 的非 Spring 版本）。
+     */
+    protected String getSqlStatement(SqlMethod sqlMethod) {
+        return SqlHelper.getSqlStatement(this.getMapperClass(), sqlMethod);
     }
 
     @Override
@@ -301,7 +567,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         if (Objects.isNull(id)) {
             return Optional.empty();
         }
-        P persistenceObject = mapper().selectById(id);
+        P persistenceObject = getBaseMapper().selectById(id);
         if (Objects.isNull(persistenceObject)) {
             return Optional.empty();
         }
@@ -310,7 +576,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     @Override
     public boolean existsById(ID id) {
-        return Objects.nonNull(id) && Objects.nonNull(mapper().selectById(id));
+        return Objects.nonNull(id) && Objects.nonNull(getBaseMapper().selectById(id));
     }
 
     @Override
@@ -319,10 +585,10 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         P persistenceObject = toPersistenceObject(aggregate);
         if (shouldInsert(aggregate)) {
             insertFill(persistenceObject);
-            mapper().insert(persistenceObject);
+            getBaseMapper().insert(persistenceObject);
         } else {
             updateFill(persistenceObject);
-            mapper().updateById(persistenceObject);
+            getBaseMapper().updateById(persistenceObject);
         }
         BeanKit.copy(persistenceObject, aggregate);
         return aggregate;
@@ -339,7 +605,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     @Override
     public void deleteById(ID id) {
         if (Objects.nonNull(id)) {
-            mapper().deleteById(id);
+            getBaseMapper().deleteById(id);
         }
     }
 
@@ -347,19 +613,19 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         if (Objects.isNull(id)) {
             return false;
         }
-        return SqlHelper.retBool(mapper().deleteById(id));
+        return SqlHelper.retBool(getBaseMapper().deleteById(id));
     }
 
     protected boolean shouldInsert(M aggregate) {
         Serializable id = aggregate.id();
-        return Objects.isNull(id) || Objects.isNull(mapper().selectById(id));
+        return Objects.isNull(id) || Objects.isNull(getBaseMapper().selectById(id));
     }
 
     @Override
     public Optional<M> findFirst() {
         QueryWrapper<P> wrapper = getDefaultWrapper(false);
         wrapper.last("LIMIT 1");
-        List<P> persistenceObjects = mapper().selectList(wrapper);
+        List<P> persistenceObjects = getBaseMapper().selectList(wrapper);
         if (persistenceObjects.isEmpty()) {
             return Optional.empty();
         }
@@ -368,20 +634,20 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     @Override
     public List<M> findAll() {
-        return convert(mapper().selectList(getDefaultWrapper(false)));
+        return convert(getBaseMapper().selectList(getDefaultWrapper(false)));
     }
 
     @Override
     public long count() {
-        Long count = mapper().selectCount(getDefaultWrapper(false));
+        Long count = getBaseMapper().selectCount(getDefaultWrapper(false));
         return Objects.nonNull(count) ? count : 0L;
     }
 
     @Override
-    public Page<M> page(Query<P> query) {
+    public Page<M> page(Query<M> query) {
         QueryWrapper<P> wrapper = getBaseWrapper(query);
         if (query.getSize() < 0) {
-            List<M> records = convert(mapper().selectList(wrapper));
+            List<M> records = convert(getBaseMapper().selectList(wrapper));
             Page<M> page = Page.succeed(records, records.size(), 1, records.size());
             fillIfNecessary(query, records);
             return page;
@@ -390,7 +656,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         long current = query.getCurrent() < 1 ? 1 : query.getCurrent();
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<P> mybatisPage =
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(current, query.getSize());
-        IPage<P> result = mapper().selectPage(mybatisPage, wrapper);
+        IPage<P> result = getBaseMapper().selectPage(mybatisPage, wrapper);
         List<M> records = convert(result.getRecords());
         Page<M> page = Page.succeed(records, result.getTotal(), query.getCurrent(), query.getSize());
         fillIfNecessary(query, records);
@@ -399,7 +665,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     @Override
     public long count(Query query) {
-        Long count = mapper().selectCount(getBaseWrapper(query));
+        Long count = getBaseMapper().selectCount(getBaseWrapper(query));
         return Objects.nonNull(count) ? count : 0L;
     }
 
@@ -407,7 +673,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     public Optional<M> findFirst(Query query) {
         QueryWrapper<P> wrapper = getBaseWrapper(query);
         wrapper.last("LIMIT 1");
-        List<P> persistenceObjects = mapper().selectList(wrapper);
+        List<P> persistenceObjects = getBaseMapper().selectList(wrapper);
         if (persistenceObjects.isEmpty()) {
             return Optional.empty();
         }
@@ -418,22 +684,22 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     @Override
     public List<M> findList(Query query) {
-        List<M> models = convert(mapper().selectList(getBaseWrapper(query)));
+        List<M> models = convert(getBaseMapper().selectList(getBaseWrapper(query)));
         fillIfNecessary(query, models);
         return models;
     }
 
     @Override
     public List<Map<String, Object>> maps(Query query) {
-        return mapper().selectMaps(getBaseWrapper(query));
+        return getBaseMapper().selectMaps(getBaseWrapper(query));
     }
 
     @Override
-    public boolean update(AggregateRoot<?> aggregate, Query<P> query) {
+    public boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
         P persistenceObject = toPersistenceObject(modelClass().cast(aggregate));
         updateFill(persistenceObject);
-        boolean updated = SqlHelper.retBool(mapper().update(persistenceObject, getBaseWrapper(query)));
+        boolean updated = SqlHelper.retBool(getBaseMapper().update(persistenceObject, getBaseWrapper(query)));
         if (updated) {
             copyUpdatedPersistenceObject(persistenceObject, aggregate);
         }
@@ -442,7 +708,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     @Override
     public boolean deleteByQuery(Query query) {
-        return SqlHelper.retBool(mapper().delete(getBaseWrapper(query)));
+        return SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)));
     }
 
     public boolean delete(Query query) {
@@ -476,7 +742,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
             throw new IllegalArgumentException("当前entity实体业务key字段为null，无法适用当前方法更新！");
         }
         updateFill(persistenceObject);
-        return SqlHelper.retBool(mapper().update(persistenceObject, getKeyWrapper(key)));
+        return SqlHelper.retBool(getBaseMapper().update(persistenceObject, getKeyWrapper(key)));
     }
 
     public M getByKey(String key) {
@@ -484,7 +750,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
             log.warn("The key annotated by @BizKey must not blank");
             return null;
         }
-        P persistenceObject = mapper().selectOne(getKeyWrapper(key));
+        P persistenceObject = getBaseMapper().selectOne(getKeyWrapper(key));
         return Objects.nonNull(persistenceObject) ? toModel(persistenceObject) : null;
     }
 
@@ -495,18 +761,18 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         if (keys.size() >= 100) {
             throw new IllegalArgumentException("批量查询的业务key不能大于100");
         }
-        return convert(mapper().selectList(getKeyWrapper(keys)));
+        return convert(getBaseMapper().selectList(getKeyWrapper(keys)));
     }
 
     @Override
-    public void fill(Query<P> query, AggregateRoot<?> model) {
+    public void fill(Query<M> query, AggregateRoot<?> model) {
         if (modelClass().isInstance(model)) {
             fill(query, List.of(modelClass().cast(model)));
         }
     }
 
     @Override
-    public void fill(Query<P> query, List<M> models) {
+    public void fill(Query<M> query, List<M> models) {
     }
 
     @Override
@@ -534,22 +800,24 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     protected QueryWrapper<P> getDefaultWrapper(boolean ignoreTenantId) {
         QueryWrapper<P> wrapper = new QueryWrapper<>();
-        TableScheme scheme = tableScheme();
+        TableInfo ti = tableInfo();
         if (!ignoreTenantId) {
             String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
-            if (Objects.nonNull(scheme.getTenantId()) && Objects.nonNull(tenantId)) {
-                wrapper.eq(TableScheme.getColumn(scheme.getTenantId()), tenantId);
+            TableFieldInfo tenantField = findFieldInfoByAnnotation(ti, TenantId.class);
+            if (Objects.nonNull(tenantField) && Objects.nonNull(tenantId)) {
+                wrapper.eq(tenantField.getColumn(), tenantId);
             }
         }
         String systemId = ThreadContext.get(ContextConstants.SYSTEM_ID);
-        if (Objects.nonNull(scheme.getSystemId()) && Objects.nonNull(systemId)) {
-            wrapper.eq(TableScheme.getColumn(scheme.getSystemId()), systemId);
+        TableFieldInfo systemField = findFieldInfoByAnnotation(ti, SystemId.class);
+        if (Objects.nonNull(systemField) && Objects.nonNull(systemId)) {
+            wrapper.eq(systemField.getColumn(), systemId);
         }
         return wrapper;
     }
 
     @SuppressWarnings("unchecked")
-    protected QueryWrapper<P> getBaseWrapper(Query query) {
+    protected QueryWrapper<P> getBaseWrapper(Query<M> query) {
         // AbstractMybatisQuery 直接持有 LambdaQueryWrapper，深度整合 MyBatis-Plus
         if (query instanceof io.ddd4j.data.mybatis.query.AbstractMybatisQuery<?> amq && amq.hasManualWrapper()) {
             // 直接使用 AbstractMybatisQuery 内部的 LambdaQueryWrapper
@@ -574,12 +842,10 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
      * 将 Query.getWhereConditions() 转换为 MyBatis-Plus QueryWrapper 条件。
      */
     @SuppressWarnings("unchecked")
-    private void applyConditions(QueryWrapper<P> wrapper, Query query) {
+    private void applyConditions(QueryWrapper<P> wrapper, Query<M> query) {
         for (Object obj : query.getWhereConditions()) {
             LambdaCondition condition = (LambdaCondition) obj;
-            String column = tableScheme().containsField(condition.property())
-                    ? tableScheme().getField(condition.property())
-                    : TableScheme.toUnderline(condition.property());
+            String column = translateProperty(condition.property());
             switch (condition.operator()) {
                 case "=" -> wrapper.eq(column, condition.value());
                 case "<>" -> wrapper.ne(column, condition.value());
@@ -602,61 +868,83 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     /**
      * 将 Query.getOrderByConditions() 转换为 QueryWrapper 排序。
      */
-    private void applyOrderBy(Query<P> query, QueryWrapper<P> wrapper) {
+    private void applyOrderBy(Query<M> query, QueryWrapper<P> wrapper) {
         for (Object obj : query.getOrderByConditions()) {
             LambdaCondition orderBy = (LambdaCondition) obj;
-            String column = tableScheme().containsField(orderBy.property())
-                    ? tableScheme().getField(orderBy.property())
-                    : TableScheme.toUnderline(orderBy.property());
+            String column = translateProperty(orderBy.property());
             wrapper.orderBy(true, "ASC".equals(orderBy.operator()), column);
         }
     }
 
     protected QueryWrapper<P> getKeyWrapper(Serializable key) {
-        TableScheme scheme = tableScheme();
-        if (Objects.isNull(scheme.getBizKeyField())) {
+        TableInfo ti = tableInfo();
+        TableFieldInfo bizKeyField = findFieldInfoByAnnotation(ti, BizKey.class);
+        if (Objects.isNull(bizKeyField)) {
             throw new IllegalArgumentException("当前entity实体没找到业务key字段，请在entity实体中使用@BizKey注解标记对应的字段！");
         }
         QueryWrapper<P> wrapper = getDefaultWrapper(false);
-        wrapper.eq(TableScheme.getColumn(scheme.getBizKeyField()), key);
+        wrapper.eq(bizKeyField.getColumn(), key);
         return wrapper;
     }
 
     protected QueryWrapper<P> getKeyWrapper(List<Serializable> keys) {
-        TableScheme scheme = tableScheme();
-        if (Objects.isNull(scheme.getBizKeyField())) {
+        TableInfo ti = tableInfo();
+        TableFieldInfo bizKeyField = findFieldInfoByAnnotation(ti, BizKey.class);
+        if (Objects.isNull(bizKeyField)) {
             throw new IllegalArgumentException("当前entity实体没找到业务key字段，请在entity实体中使用@BizKey注解标记对应的字段！");
         }
         QueryWrapper<P> wrapper = getDefaultWrapper(false);
-        wrapper.in(TableScheme.getColumn(scheme.getBizKeyField()), keys);
+        wrapper.in(bizKeyField.getColumn(), keys);
         return wrapper;
     }
 
-    private void applySelect(Query<P> query, QueryWrapper<P> wrapper) {
+    /**
+     * 在 TableInfo.fieldList 中查找标注了指定注解的字段。
+     */
+    private TableFieldInfo findFieldInfoByAnnotation(TableInfo ti, Class<? extends java.lang.annotation.Annotation> annotationType) {
+        if (ti == null) return null;
+        for (TableFieldInfo tfi : ti.getFieldList()) {
+            if (tfi.getField() != null && tfi.getField().isAnnotationPresent(annotationType)) {
+                return tfi;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 在 TableInfo.fieldList 中查找指定 PO 字段（反射）。
+     */
+    private Field findFieldByProperty(TableInfo ti, Class<? extends java.lang.annotation.Annotation> annotationType) {
+        if (ti == null) return null;
+        for (TableFieldInfo tfi : ti.getFieldList()) {
+            if (tfi.getField() != null && tfi.getField().isAnnotationPresent(annotationType)) {
+                return tfi.getField();
+            }
+        }
+        return null;
+    }
+
+    private void applySelect(Query<M> query, QueryWrapper<P> wrapper) {
         if (query.hasSelect()) {
             for (Object obj : query.getSelectColumns()) {
                 String property = String.valueOf(obj);
-                String column = tableScheme().containsField(property)
-                        ? tableScheme().getField(property)
-                        : TableScheme.toUnderline(property);
+                String column = translateProperty(property);
                 wrapper.select(column);
             }
         }
     }
 
-    private void applyGroupBy(Query<P> query, QueryWrapper<P> wrapper) {
+    private void applyGroupBy(Query<M> query, QueryWrapper<P> wrapper) {
         if (query.hasGroupBy()) {
             for (Object obj : query.getGroupByColumns()) {
                 String property = String.valueOf(obj);
-                String column = tableScheme().containsField(property)
-                        ? tableScheme().getField(property)
-                        : TableScheme.toUnderline(property);
+                String column = translateProperty(property);
                 wrapper.groupBy(column);
             }
         }
     }
 
-    private void having(Query<P> query, QueryWrapper<P> wrapper) {
+    private void having(Query<M> query, QueryWrapper<P> wrapper) {
         if (Objects.nonNull(query) && Objects.nonNull(query.getHaving()) && StrKit.hasText(query.getHaving())) {
             wrapper.having(query.getHaving());
         }
@@ -664,29 +952,46 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     protected String getKeyValue(P persistenceObject) {
         try {
-            Object value = tableScheme().getBizKeyField().get(persistenceObject);
+            TableFieldInfo bizKeyField = findFieldInfoByAnnotation(tableInfo(), BizKey.class);
+            if (bizKeyField == null || bizKeyField.getField() == null) {
+                return null;
+            }
+            Field keyField = bizKeyField.getField();
+            keyField.setAccessible(true);
+            Object value = keyField.get(persistenceObject);
             return Objects.nonNull(value) ? value.toString() : null;
         } catch (IllegalAccessException | IllegalArgumentException exception) {
-            log.error("获取当前实体对象的key值出现错误！", exception);
+            LOGGER.error("获取当前实体对象的key值出现错误！", exception);
             throw new IllegalArgumentException("获取当前实体对象的key值出现错误!");
         }
     }
 
     private void copyUpdatedPersistenceObject(P persistenceObject, AggregateRoot<?> aggregate) {
-        TableScheme scheme = tableScheme();
-        if (Objects.isNull(scheme.getId())) {
+        TableInfo ti = tableInfo();
+        if (Objects.isNull(ti.getKeyProperty())) {
             return;
         }
-        Serializable id = TableScheme.findFieldValue(persistenceObject, scheme.getId());
-        if (Objects.nonNull(id)) {
-            P updated = mapper().selectById(id);
-            if (Objects.nonNull(updated)) {
-                BeanKit.copy(updated, aggregate);
+        Field idField;
+        try {
+            idField = persistenceObjectClass().getDeclaredField(ti.getKeyProperty());
+            idField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            return;
+        }
+        try {
+            Serializable id = (Serializable) idField.get(persistenceObject);
+            if (Objects.nonNull(id)) {
+                P updated = getBaseMapper().selectById(id);
+                if (Objects.nonNull(updated)) {
+                    BeanKit.copy(updated, aggregate);
+                }
             }
+        } catch (IllegalAccessException e) {
+            // ignore
         }
     }
 
-    private void fillIfNecessary(Query<P> query, List<M> models) {
+    private void fillIfNecessary(Query<M> query, List<M> models) {
         if (Objects.nonNull(models) && !models.isEmpty()) {
             fill(query, models);
         }
@@ -694,25 +999,30 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
     private void insertFill(P persistenceObject) {
         try {
-            TableScheme scheme = tableScheme();
-            fillContextValue(scheme.getTenantId(), persistenceObject, ThreadContext.get(ContextConstants.TENANT_ID));
-            fillContextValue(scheme.getSystemId(), persistenceObject, ThreadContext.get(ContextConstants.SYSTEM_ID));
+            TableInfo ti = tableInfo();
+            fillContextValue(findFieldByProperty(ti, TenantId.class), persistenceObject, ThreadContext.get(ContextConstants.TENANT_ID));
+            fillContextValue(findFieldByProperty(ti, SystemId.class), persistenceObject, ThreadContext.get(ContextConstants.SYSTEM_ID));
             fillLogicDeleteValue(persistenceObject);
-            for (Field field : scheme.getOnCreateFields()) {
-                fillDateField(field, persistenceObject);
+            // @OnCreate fields: 通过反射 PO 字段（保留原有 ddd4j 语义）
+            for (Field field : FieldUtils.getAllFieldsList(persistenceObjectClass())) {
+                if (field.isAnnotationPresent(OnCreate.class)) {
+                    fillDateField(field, persistenceObject);
+                }
             }
         } catch (IllegalAccessException ignored) {
-            log.debug("Ignore insert fill failure: {}", ignored.getMessage());
+            LOGGER.debug("Ignore insert fill failure: {}", ignored.getMessage());
         }
     }
 
     private void updateFill(P persistenceObject) {
         try {
-            for (Field field : tableScheme().getOnUpdateFields()) {
-                fillDateField(field, persistenceObject);
+            for (Field field : FieldUtils.getAllFieldsList(persistenceObjectClass())) {
+                if (field.isAnnotationPresent(OnUpdate.class)) {
+                    fillDateField(field, persistenceObject);
+                }
             }
         } catch (IllegalAccessException ignored) {
-            log.debug("Ignore update fill failure: {}", ignored.getMessage());
+            LOGGER.debug("Ignore update fill failure: {}", ignored.getMessage());
         }
     }
 
@@ -730,11 +1040,19 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     private void fillLogicDeleteValue(P persistenceObject) throws IllegalAccessException {
-        Field field = tableScheme().getTableLogic();
-        if (Objects.isNull(field)) {
+        TableInfo ti = tableInfo();
+        if (Objects.isNull(ti) || !ti.isWithLogicDelete()) {
             return;
         }
+        TableFieldInfo logicField = ti.getLogicDeleteFieldInfo();
+        if (Objects.isNull(logicField) || Objects.isNull(logicField.getField())) {
+            return;
+        }
+        Field field = logicField.getField();
         TableLogic tableLogic = field.getAnnotation(TableLogic.class);
+        if (Objects.isNull(tableLogic)) {
+            return;
+        }
         String defaultValue = tableLogic.value();
         if (Objects.isNull(defaultValue) || !StrKit.hasText(defaultValue)) {
             if (field.getType().equals(Boolean.class) || field.getType().equals(boolean.class)) {
@@ -757,157 +1075,4 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         }
     }
 
-    public static class TableScheme {
-
-        private static final Pattern HUMP_PATTERN = Pattern.compile("[A-Z]");
-
-        private String tableName;
-        private Field bizKeyField;
-        private Map<String, String> field2Column;
-        private Field id;
-        private Field tenantId;
-        private Field systemId;
-        private Field tableLogic;
-        private List<Field> onCreateFields = new ArrayList<>();
-        private List<Field> onUpdateFields = new ArrayList<>();
-        private String[] defaultOrderBy;
-
-        public String getTableName() {
-            return tableName;
-        }
-
-        public void setTableName(String tableName) {
-            this.tableName = tableName;
-        }
-
-        public Field getBizKeyField() {
-            return bizKeyField;
-        }
-
-        public Field getId() {
-            return id;
-        }
-
-        public Field getTenantId() {
-            return tenantId;
-        }
-
-        public Field getSystemId() {
-            return systemId;
-        }
-
-        public Field getTableLogic() {
-            return tableLogic;
-        }
-
-        public List<Field> getOnCreateFields() {
-            return onCreateFields;
-        }
-
-        public List<Field> getOnUpdateFields() {
-            return onUpdateFields;
-        }
-
-        public String[] getDefaultOrderBy() {
-            return defaultOrderBy;
-        }
-
-        public void setDefaultOrderBy(String[] defaultOrderBy) {
-            this.defaultOrderBy = defaultOrderBy;
-        }
-
-        protected static String toUnderline(String humpString) {
-            if (Objects.isNull(humpString) || !StrKit.hasText(humpString)) {
-                return humpString;
-            }
-            Matcher matcher = HUMP_PATTERN.matcher(humpString);
-            StringBuffer buffer = new StringBuffer();
-            while (matcher.find()) {
-                matcher.appendReplacement(buffer, "_" + matcher.group(0).toLowerCase());
-            }
-            matcher.appendTail(buffer);
-            return buffer.toString();
-        }
-
-        protected static <T> T findFieldValue(Object object, Field field) {
-            try {
-                if (!field.canAccess(object)) {
-                    field.setAccessible(true);
-                }
-                return (T) field.get(object);
-            } catch (IllegalAccessException exception) {
-                throw new IllegalStateException("Unable to read field: " + field.getName(), exception);
-            }
-        }
-
-        protected static String getColumn(Field field) {
-            TableField tableField = field.getAnnotation(TableField.class);
-            return Objects.nonNull(tableField) && Objects.nonNull(tableField.value()) && StrKit.hasText(tableField.value())
-                    ? tableField.value()
-                    : TableScheme.toUnderline(field.getName());
-        }
-
-        protected static TableScheme build(Class<?> persistenceObjectClass) {
-            if (Objects.isNull(persistenceObjectClass)) {
-                return null;
-            }
-            TableName table = persistenceObjectClass.getAnnotation(TableName.class);
-            if (Objects.isNull(table)) {
-                throw new IllegalArgumentException("PO class must annotated with @TableName(\"table_name\")");
-            }
-            TableScheme scheme = new TableScheme();
-            scheme.setTableName(table.value());
-            List<Field> fields = FieldUtils.getAllFieldsList(persistenceObjectClass)
-                    .stream()
-                    .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                    .collect(Collectors.toList());
-            scheme.field2Column = new HashMap<>(fields.size());
-            for (Field field : fields) {
-                field.setAccessible(true);
-                String fieldName = field.getName();
-                scheme.field2Column.put(fieldName.toLowerCase(), getColumn(field));
-                if (Objects.nonNull(field.getAnnotation(BizKey.class))) {
-                    scheme.bizKeyField = field;
-                }
-                if (field.isAnnotationPresent(TableId.class)) {
-                    scheme.id = field;
-                }
-                if (field.isAnnotationPresent(TenantId.class)) {
-                    scheme.tenantId = field;
-                }
-                if (field.isAnnotationPresent(SystemId.class)) {
-                    scheme.systemId = field;
-                }
-                if (field.isAnnotationPresent(TableLogic.class)) {
-                    scheme.tableLogic = field;
-                }
-                if (field.isAnnotationPresent(OnCreate.class)) {
-                    scheme.onCreateFields.add(field);
-                }
-                if (field.isAnnotationPresent(OnUpdate.class)) {
-                    scheme.onUpdateFields.add(field);
-                }
-            }
-            OrderBy orderBy = persistenceObjectClass.getAnnotation(OrderBy.class);
-            if (Objects.isNull(orderBy) && Objects.nonNull(persistenceObjectClass.getSuperclass())) {
-                orderBy = persistenceObjectClass.getSuperclass().getAnnotation(OrderBy.class);
-            }
-            if (Objects.nonNull(orderBy) && Objects.nonNull(orderBy.value()) && orderBy.value().length != 0) {
-                scheme.setDefaultOrderBy(orderBy.value());
-            }
-            return scheme;
-        }
-
-        protected boolean containsField(String field) {
-            return Objects.nonNull(field2Column) && Objects.nonNull(field) && field2Column.containsKey(field.toLowerCase());
-        }
-
-        protected String getField(String field) {
-            return field2Column.get(field.toLowerCase());
-        }
-
-        protected boolean containsColumn(String column) {
-            return Objects.nonNull(field2Column) && Objects.nonNull(column) && field2Column.containsValue(column.toLowerCase());
-        }
-    }
 }
