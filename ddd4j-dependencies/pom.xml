@@ -437,7 +437,6 @@
         <qlexpress.version>4.1.2</qlexpress.version>
         <quartz.version>2.5.2</quartz.version>
         <quarkus-bom.version>3.37.0</quarkus-bom.version>
-        <quarkus-langchain4j.version>1.12.0</quarkus-langchain4j.version>
         <quarkus-smallrye-reactive-messaging.version>3.15.5</quarkus-smallrye-reactive-messaging.version>
         <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
         <r2dbc-spi.version>1.0.0.RELEASE</r2dbc-spi.version>
@@ -1049,14 +1048,6 @@
                 <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-bom</artifactId>
                 <version>${quarkus-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.quarkiverse.langchain4j/quarkus-langchain4j-bom -->
-            <dependency>
-                <groupId>io.quarkiverse.langchain4j</groupId>
-                <artifactId>quarkus-langchain4j-bom</artifactId>
-                <version>${quarkus-langchain4j.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
