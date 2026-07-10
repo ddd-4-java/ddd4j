@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.ddd4j.core.cqrs.query.Query;
+import io.ddd4j.core.ddd.model.AggregateRoot;
 
 import java.util.Collection;
 
@@ -52,13 +53,12 @@ import java.util.Collection;
  *     .update();
  * }</pre>
  *
- * @param <T> 聚合根类型
+ * @param <M> 聚合根类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 4.0.0
+ * @since 2.0.x
  */
-public abstract class AbstractMybatisQuery<T> extends Query<T> {
-
-    private static final long serialVersionUID = 1L;
+@SuppressWarnings("unchecked")
+public abstract class AbstractMybatisQuery<M extends AggregateRoot<?>> extends Query<M> {
 
     /**
      * 内部持有的 LambdaQueryWrapper（延迟初始化）
@@ -69,17 +69,8 @@ public abstract class AbstractMybatisQuery<T> extends Query<T> {
     // ========================= Wrapper 获取入口 =========================
 
     /**
-     * 获取 MyBatis-Plus 原生 {@link LambdaQueryWrapper}，供 Repository 使用。
-     */
-    @SuppressWarnings("unchecked")
-    public <P> LambdaQueryWrapper<P> getLambdaQueryWrapper() {
-        return (LambdaQueryWrapper<P>) lambdaQueryWrapper;
-    }
-
-    /**
      * 初始化/获取 {@link LambdaQueryWrapper}（延迟初始化）。
      */
-    @SuppressWarnings("unchecked")
     protected <P> LambdaQueryWrapper<P> lambdaQueryWrapper() {
         if (lambdaQueryWrapper == null) {
             lambdaQueryWrapper = Wrappers.lambdaQuery();
@@ -91,8 +82,7 @@ public abstract class AbstractMybatisQuery<T> extends Query<T> {
      * 初始化 {@link QueryWrapper}（字符串字段名风格）。
      */
     protected <P> QueryWrapper<P> queryWrapper() {
-        QueryWrapper<P> wrapper = new QueryWrapper<>();
-        return wrapper;
+        return new QueryWrapper<>();
     }
 
     /**
