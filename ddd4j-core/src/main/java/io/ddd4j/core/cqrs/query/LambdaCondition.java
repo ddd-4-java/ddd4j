@@ -1,5 +1,7 @@
 package io.ddd4j.core.cqrs.query;
 
+import io.ddd4j.kit.text.StrPool;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -30,17 +32,17 @@ public record LambdaCondition(PropertyRef propertyRef, String operator, Object v
      * 排序条件构造器。
      */
     public static LambdaCondition asc(PropertyRef property) {
-        return new LambdaCondition(property, "ASC", null);
+        return new LambdaCondition(property, StrPool.ASC, null);
     }
 
     public static LambdaCondition desc(PropertyRef property) {
-        return new LambdaCondition(property, "DESC", null);
+        return new LambdaCondition(property, StrPool.DESC, null);
     }
 
     /**
      * 是否为排序条件。
      */
     public boolean isOrderBy() {
-        return "ASC".equals(operator) || "DESC".equals(operator);
+        return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
     }
 }

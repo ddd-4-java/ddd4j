@@ -424,7 +424,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
             return;
         }
         Repository<?, ?> repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             ((Repository) repo).fill(this, models);
         }
     }
@@ -498,7 +498,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public List<M> list() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             return ((Repository) repo).findList(this);
         }
         throw new BizRuntimeException("Repository for {} does not support list()", this.getClass().getSimpleName());
@@ -515,7 +515,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public Page<M> page() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             return ((Repository) repo).page(this);
         }
         throw new BizRuntimeException("Repository for {} does not support page()", this.getClass().getSimpleName());
@@ -532,7 +532,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public M one() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             return (M) ((Repository) repo).findFirst(this).orElse(null);
         }
         throw new BizRuntimeException("Repository for {} does not support one()", this.getClass().getSimpleName());
@@ -541,7 +541,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public Optional<M> oneOpt() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo instanceof Repository) {
+        if (repo != null) {
             return ((Repository) repo).findFirst(this);
         }
         throw new BizRuntimeException("Repository for {} does not support oneOpt()", this.getClass().getSimpleName());
