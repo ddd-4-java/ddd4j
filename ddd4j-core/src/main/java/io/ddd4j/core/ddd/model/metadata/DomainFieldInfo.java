@@ -1,5 +1,7 @@
 package io.ddd4j.core.ddd.model.metadata;
 
+import lombok.Data;
+
 import java.lang.reflect.Field;
 
 /**
@@ -19,6 +21,7 @@ import java.lang.reflect.Field;
  * @author wandl
  * @since 2.0.x
  */
+@Data
 public class DomainFieldInfo {
 
     private final Field field;
@@ -31,18 +34,4 @@ public class DomainFieldInfo {
         this.poColumn = poColumn;
     }
 
-    public Field getField() {
-        return field;
-    }
-
-    public String getProperty() {
-        return property;
-    }
-
-    /**
-     * 对应的 PO 数据库列名（可能为 null，表示需要 fallback）。
-     */
-    public String getPoColumn() {
-        return poColumn;
-    }
 }
