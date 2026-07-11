@@ -195,8 +195,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <skip>true</skip>
-                        <skipTests>true</skipTests>
+                        <skipTests>${skipTests}</skipTests>
                         <argLine>-Xmx1024M -XX:MetaspaceSize=256M -XX:MaxMetaspaceSize=256M</argLine>
                         <includes>
                             <include>**/*Test.java</include>

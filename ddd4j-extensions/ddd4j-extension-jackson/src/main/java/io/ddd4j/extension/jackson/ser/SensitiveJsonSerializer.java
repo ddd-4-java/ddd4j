@@ -25,20 +25,34 @@ public class SensitiveJsonSerializer extends JsonSerializer<String> implements C
     /**
      * 脱敏策略，由注解 {@link Sensitive#strategy()} 动态设置
      */
-    private SensitiveStrategy strategy;
+    private final SensitiveStrategy strategy;
+
+    public SensitiveJsonSerializer() {
+        this(null);
+    }
+
+    private SensitiveJsonSerializer(SensitiveStrategy strategy) {
+        this.strategy = strategy;
+    }
 
     @Override
     public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeString(strategy.desensitizer().apply(value));
+        if (Objects.isNull(strategy)) {
+            gen.writeString(value);
+            return;
+        }
+        gen.writeString(strategy.mask(value));
     }
 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
 
+        if (Objects.isNull(property)) {
+            return this;
+        }
         Sensitive annotation = property.getAnnotation(Sensitive.class);
         if (Objects.nonNull(annotation) && Objects.equals(String.class, property.getType().getRawClass())) {
-            this.strategy = annotation.strategy();
-            return this;
+            return new SensitiveJsonSerializer(annotation.strategy());
         }
         return prov.findValueSerializer(property.getType(), property);
 

@@ -2,13 +2,17 @@ package io.ddd4j.guice;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
+import com.baomidou.mybatisplus.enhance.interceptor.MybatisPlusEnhanceInterceptor;
+import com.baomidou.mybatisplus.enhance.interceptor.inner.InsertIgnoreInnerInterceptor;
+import com.baomidou.mybatisplus.enhance.interceptor.inner.SqlObservationInnerInterceptor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import io.ddd4j.data.mybatis.adapter.Ddd4jAggregateFillInnerInterceptor;
+import io.ddd4j.data.mybatis.adapter.Ddd4jSqlObservationListener;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
@@ -120,8 +124,11 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
             }
         }
 
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        MybatisPlusEnhanceInterceptor interceptor = new MybatisPlusEnhanceInterceptor();
+        interceptor.addInnerInterceptor(new InsertIgnoreInnerInterceptor());
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        interceptor.addInnerInterceptor(new Ddd4jAggregateFillInnerInterceptor());
+        interceptor.addInnerInterceptor(new SqlObservationInnerInterceptor(new Ddd4jSqlObservationListener()));
         configuration.addInterceptor(interceptor);
         configuration.setEnvironment(new Environment("ddd4j-runtime-guice", new JdbcTransactionFactory(), dataSource));
 

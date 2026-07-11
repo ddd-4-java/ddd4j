@@ -51,7 +51,7 @@
         </dependency>
         <!-- MyBatis Plus Enhance（字段加解密/数据签名/数据脱敏/国际化拦截器） -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.github.hiwepy</groupId>
             <artifactId>mybatis-plus-enhance</artifactId>
         </dependency>
         <!-- JSqlParser（DataPermissionInnerInterceptor / MybatisTenantLineInnerInterceptor 需要） -->

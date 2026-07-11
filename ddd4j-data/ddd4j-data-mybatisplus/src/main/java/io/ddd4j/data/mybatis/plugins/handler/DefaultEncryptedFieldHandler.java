@@ -21,11 +21,9 @@ import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
 
     private final CryptoStrategy cryptoStrategy;
-    private final ObjectMapper objectMapper;
 
-    public DefaultEncryptedFieldHandler(CryptoStrategy cryptoStrategy, ObjectMapper objectMapper) {
+    public DefaultEncryptedFieldHandler(CryptoStrategy cryptoStrategy) {
         this.cryptoStrategy = cryptoStrategy;
-        this.objectMapper = objectMapper;
     }
 
     @Override
