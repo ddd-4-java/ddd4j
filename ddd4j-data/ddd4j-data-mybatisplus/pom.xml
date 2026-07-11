@@ -35,10 +35,10 @@
             <artifactId>ddd4j-data-crypto</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- MyBatis Plus -->
+        <!-- MyBatis-Plus 核心 API：不使用会传递 mybatis-plus-spring 的聚合包 mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus</artifactId>
+            <artifactId>mybatis-plus-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -53,60 +53,41 @@
         <dependency>
             <groupId>io.github.hiwepy</groupId>
             <artifactId>mybatis-plus-enhance</artifactId>
+            <exclusions>
+                <!-- 本模块必须保持 Spring 无关；只使用 enhance 的纯 MyBatis-Plus 能力 -->
+                <exclusion>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus-spring</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- JSqlParser（DataPermissionInnerInterceptor / MybatisTenantLineInnerInterceptor 需要） -->
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
         </dependency>
-        <!-- FastJSON2（FastJsonTypeHandler / FastJsonArrayTypeHandler 需要） -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-        </dependency>
-        <!-- Hutool -->
+        <!-- Hutool：仅声明源码直接使用的模块 -->
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
+            <artifactId>hutool-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-crypto</artifactId>
         </dependency>
         <!-- Commons Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.github.dozermapper</groupId>
-            <artifactId>dozer-core</artifactId>
-        </dependency>
+        <!-- DefaultEncryptedFieldHandler 直接使用 ObjectMapper -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <!-- Swagger 注解（迁移的 Result/AbstractPaginationDTO 等需要） -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-        </dependency>
-        <!-- Validation（迁移的 AbstractPaginationDTO 等需要） -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        <!-- Jakarta Annotation（@Nonnull 等） -->
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Jackson TypeHandler（MyJacksonTypeHandler 需要） -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-jackson</artifactId>
-            <version>${revision}</version>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- ======== Test ======== -->
         <dependency>
@@ -128,6 +109,33 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>ban-spring-dependencies</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <excludes>
+                                        <exclude>org.springframework:*</exclude>
+                                        <exclude>org.springframework.*:*</exclude>
+                                        <exclude>org.mybatis:mybatis-spring</exclude>
+                                        <exclude>com.baomidou:mybatis-plus-spring</exclude>
+                                    </excludes>
+                                    <message>ddd4j-data-mybatisplus 必须保持 Spring 无关，请使用独立的 Spring 适配模块。</message>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
