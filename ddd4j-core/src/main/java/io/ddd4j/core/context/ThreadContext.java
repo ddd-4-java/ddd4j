@@ -10,8 +10,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 本地线程上下文：一个本地线程容器
- * 应用可以扩展继承此类，实现如租户上下文等功能
+ * 可透传的线程上下文容器。
+ *
+ * <p>上下文通过 {@link TransmittableThreadLocal} 在线程池任务间透传。透传时会复制资源 Map，
+ * 避免父线程和异步任务共享同一个可变容器；Map 中的业务对象保持引用语义，不进行深拷贝。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -26,7 +28,13 @@ public class ThreadContext {
     /**
      * 线程变量池
      */
-    private static final ThreadLocal<Map<Object, Object>> THREAD_LOCAL_POOL = new TransmittableThreadLocal<>();
+    private static final TransmittableThreadLocal<Map<Object, Object>> THREAD_LOCAL_POOL =
+            new TransmittableThreadLocal<>() {
+                @Override
+                public Map<Object, Object> copy(Map<Object, Object> parentValue) {
+                    return copyResources(parentValue);
+                }
+            };
 
     // ========================= Object Key API =========================
 
@@ -47,12 +55,7 @@ public class ThreadContext {
      * @param newResources the resources to replace the existing resources.
      */
     public static void setResources(Map<Object, Object> newResources) {
-        if (Objects.isNull(newResources)) {
-            return;
-        }
-        ensureResourcesInitialized();
-        THREAD_LOCAL_POOL.get().clear();
-        THREAD_LOCAL_POOL.get().putAll(newResources);
+        replaceResources(newResources);
     }
 
     /**
@@ -106,6 +109,9 @@ public class ThreadContext {
     public static Object remove(Object key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
         Object value = Objects.nonNull(map) ? map.remove(key) : null;
+        if (Objects.nonNull(map) && map.isEmpty()) {
+            clear();
+        }
         if (Objects.nonNull(value) && log.isTraceEnabled()) {
             log.trace("Removed value of type [{}] for key [{}] from thread [{}]",
                     value.getClass().getName(), key, Thread.currentThread().getName());
@@ -143,15 +149,15 @@ public class ThreadContext {
     /**
      * 获取当前线程绑定的全部键值对。
      */
-    public Map<Object, Object> getValues() {
-        return THREAD_LOCAL_POOL.get();
+    public static Map<Object, Object> getValues() {
+        return getResources();
     }
 
     /**
      * 设置当前线程绑定的全部键值对。
      */
-    public void setValues(Map<Object, Object> values) {
-        THREAD_LOCAL_POOL.set(values);
+    public static void setValues(Map<Object, Object> values) {
+        setResources(values);
     }
 
     /**
@@ -181,12 +187,7 @@ public class ThreadContext {
         if (value instanceof String && io.ddd4j.kit.lang.StrKit.isEmpty(((String) value))) {
             return;
         }
-        Map<Object, Object> map = THREAD_LOCAL_POOL.get();
-        if (Objects.isNull(map)) {
-            map = new ConcurrentHashMap<>(4);
-        }
-        map.put(key, value);
-        THREAD_LOCAL_POOL.set(map);
+        put(key, value);
     }
 
     /**
@@ -195,7 +196,7 @@ public class ThreadContext {
      * @param key 键
      * @return true 表示包含
      */
-    public boolean contains(String key) {
+    public static boolean contains(String key) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
         return Objects.nonNull(map) && map.containsKey(key);
     }
@@ -232,13 +233,13 @@ public class ThreadContext {
      * @param <T>  服务类型
      * @return 包装的服务实例 Optional，未找到或类型不匹配返回 {@link Optional#empty()}
      */
-    public <T> Optional<T> get(String key, Class<T> type) {
+    public static <T> Optional<T> get(String key, Class<T> type) {
         Map<Object, Object> map = THREAD_LOCAL_POOL.get();
-        if (map == null) {
+        if (Objects.isNull(map)) {
             return Optional.empty();
         }
         Object value = map.get(key);
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return Optional.empty();
         }
         if (!type.isInstance(value)) {
@@ -257,8 +258,8 @@ public class ThreadContext {
      * @param value 服务实例
      * @param <T>   服务类型
      */
-    public <T> void inject(String key, Class<T> type, T value) {
-        if (key == null || value == null) {
+    public static <T> void inject(String key, Class<T> type, T value) {
+        if (Objects.isNull(key) || Objects.isNull(value)) {
             throw new IllegalArgumentException("SPI key and service cannot be null");
         }
         if (!type.isInstance(value)) {
@@ -304,6 +305,29 @@ public class ThreadContext {
     // ========================= Lifecycle =========================
 
     /**
+     * 创建可自动恢复的上下文作用域。
+     *
+     * <p>作用域内可使用现有 API 修改上下文，关闭后恢复进入作用域前的资源快照。</p>
+     *
+     * @return 上下文作用域
+     */
+    public static Scope open() {
+        return new Scope(snapshotResources());
+    }
+
+    /**
+     * 使用指定资源创建可自动恢复的上下文作用域。
+     *
+     * @param resources 当前作用域使用的资源；为 null 或空 Map 时清空当前上下文
+     * @return 上下文作用域
+     */
+    public static Scope open(Map<Object, Object> resources) {
+        Map<Object, Object> previousResources = snapshotResources();
+        replaceResources(resources);
+        return new Scope(previousResources);
+    }
+
+    /**
      * Removes the underlying ThreadLocal from the thread.
      * This method is meant to be the final 'clean up' operation that is called at the end of thread execution.
      */
@@ -311,9 +335,44 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.remove();
     }
 
+    public static final class Scope implements AutoCloseable {
+
+        private final Map<Object, Object> previousResources;
+        private boolean closed;
+
+        private Scope(Map<Object, Object> previousResources) {
+            this.previousResources = previousResources;
+        }
+
+        @Override
+        public void close() {
+            if (closed) {
+                return;
+            }
+            replaceResources(previousResources);
+            closed = true;
+        }
+    }
+
     private static void ensureResourcesInitialized() {
         if (Objects.isNull(THREAD_LOCAL_POOL.get())) {
             THREAD_LOCAL_POOL.set(new ConcurrentHashMap<>(4));
         }
+    }
+
+    private static Map<Object, Object> snapshotResources() {
+        return copyResources(THREAD_LOCAL_POOL.get());
+    }
+
+    private static Map<Object, Object> copyResources(Map<Object, Object> resources) {
+        return Objects.isNull(resources) ? null : new ConcurrentHashMap<>(resources);
+    }
+
+    private static void replaceResources(Map<Object, Object> resources) {
+        if (Objects.isNull(resources) || resources.isEmpty()) {
+            clear();
+            return;
+        }
+        THREAD_LOCAL_POOL.set(copyResources(resources));
     }
 }
