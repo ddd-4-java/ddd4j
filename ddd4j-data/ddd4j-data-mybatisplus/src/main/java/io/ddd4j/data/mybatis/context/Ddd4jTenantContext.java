@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.mybatis.adapter;
+package io.ddd4j.data.mybatis.context;
 
 import com.baomidou.mybatisplus.enhance.tenant.TenantContext;
 import io.ddd4j.core.constant.ContextConstants;

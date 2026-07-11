@@ -1,4 +1,4 @@
-package io.ddd4j.data.mybatis.adapter;
+package io.ddd4j.data.mybatis.plugins.observation;
 
 import com.baomidou.mybatisplus.enhance.observation.SqlObservation;
 import com.baomidou.mybatisplus.enhance.observation.SqlObservationListener;

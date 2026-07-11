@@ -3,6 +3,7 @@ package io.ddd4j.data.mybatis.adapter;
 import com.baomidou.mybatisplus.enhance.observation.SqlObservation;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.data.mybatis.plugins.observation.Ddd4jSqlObservationListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

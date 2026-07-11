@@ -1,4 +1,4 @@
-package io.ddd4j.data.mybatis.adapter;
+package io.ddd4j.data.mybatis.plugins.inner;
 
 import com.baomidou.mybatisplus.enhance.interceptor.inner.EnhanceInnerInterceptor;
 import io.ddd4j.core.api.Page;

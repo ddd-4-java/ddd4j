@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.enhance.tenant.TenantContext;
 import com.baomidou.mybatisplus.enhance.tenant.DefaultTenantLineHandler;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
 import net.sf.jsqlparser.expression.StringValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

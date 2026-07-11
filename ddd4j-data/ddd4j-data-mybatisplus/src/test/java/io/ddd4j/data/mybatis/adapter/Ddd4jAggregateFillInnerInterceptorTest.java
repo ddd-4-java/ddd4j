@@ -2,6 +2,7 @@ package io.ddd4j.data.mybatis.adapter;
 
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.data.mybatis.plugins.inner.Ddd4jAggregateFillInnerInterceptor;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
