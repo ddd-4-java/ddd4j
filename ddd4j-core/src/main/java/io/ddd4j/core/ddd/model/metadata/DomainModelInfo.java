@@ -59,7 +59,9 @@ public class DomainModelInfo<M> {
                 : p -> null;
 
         for (Field field : FieldUtils.getAllFieldsList(modelType)) {
-            if (Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())
+                    || Modifier.isTransient(field.getModifiers())
+                    || field.isSynthetic()) {
                 continue;
             }
             field.setAccessible(true);

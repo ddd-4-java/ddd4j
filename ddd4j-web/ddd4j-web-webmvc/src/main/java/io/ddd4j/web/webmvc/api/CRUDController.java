@@ -27,7 +27,7 @@ import java.util.Objects;
 @Deprecated
 @Slf4j(topic = "### BASE-WEB : CRUDController ###")
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class CRUDController<M extends AggregateRoot<?>, Q extends Query<?>> {
+public class CRUDController<M extends AggregateRoot<?>, Q extends Query<M>> {
 
     protected Repository<M, Serializable> repository;
 

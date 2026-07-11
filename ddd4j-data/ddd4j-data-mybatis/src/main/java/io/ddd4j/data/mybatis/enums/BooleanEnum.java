@@ -23,9 +23,7 @@ public enum BooleanEnum {
 
     public static BooleanEnum valueOf(int value) {
         for (BooleanEnum booleanEnum : BooleanEnum.values()) {
-            if (booleanEnum.isIs() && 1 == value) {
-                return booleanEnum;
-            } else if (!booleanEnum.isIs() && 0 == value) {
+            if (booleanEnum.getValue() == value) {
                 return booleanEnum;
             }
         }

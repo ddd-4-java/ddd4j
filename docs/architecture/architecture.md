@@ -236,8 +236,8 @@ boolean exists = query.exists();
 
 **多 ORM 实现**：
 
-- **mybatisplus**（`ddd4j-data-mybatisplus`）：`AbstractMybatisQuery` 内部持有 `LambdaQueryWrapper`，深度覆盖 MyBatis-Plus
-  全部 Lambda 语法
+- **mybatisplus**（`ddd4j-data-mybatisplus`）：Repository 将核心 `Query` 条件编译为 MyBatis-Plus `QueryWrapper`，
+  ORM Wrapper 不进入领域 Query
 - **mybatis**（`ddd4j-data-mybatis`）：`Query.getWhereConditions()` → `TableScheme` 列名映射 → `SqlSession` 原生查询
 - **JPA**（`ddd4j-data-jpa`）：`Query.getWhereConditions()` → `CriteriaBuilder` Predicate 构建
 

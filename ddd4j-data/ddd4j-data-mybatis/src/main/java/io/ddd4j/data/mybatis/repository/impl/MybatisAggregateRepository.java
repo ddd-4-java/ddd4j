@@ -7,6 +7,8 @@ import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
+import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
+import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.data.mybatis.repository.scheme.TableScheme;
@@ -43,7 +45,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @SuppressWarnings("unchecked")
 public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, ID extends Serializable>
-        implements Repository<M, P, ID>, DomainObjectMapper<M, P>, Serializable {
+        implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
     private static final int DEFAULT_BATCH_SIZE = 100;
 
@@ -51,12 +53,16 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     protected final Class<M> modelClass;
     protected final Class<P> persistenceClass;
     protected final TableScheme tableScheme;
+    protected final DomainModelInfo<M> domainModelInfo;
 
     protected MybatisAggregateRepository(SqlSession sqlSession, Class<M> modelClass, Class<P> persistenceClass) {
         this.sqlSession = Objects.requireNonNull(sqlSession, "sqlSession must not be null");
         this.modelClass = Objects.requireNonNull(modelClass, "modelClass must not be null");
         this.persistenceClass = Objects.requireNonNull(persistenceClass, "persistenceClass must not be null");
         this.tableScheme = TableScheme.of(persistenceClass);
+        this.domainModelInfo = Objects.requireNonNull(
+                DomainModelHelper.getModelInfo(modelClass, persistenceClass, tableScheme::getColumnSafely),
+                "domainModelInfo must not be null");
         RepositoryRegistry.register(modelClass, this);
     }
 
@@ -105,7 +111,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     @Override
-    public Page<M> page(Query<P> query) {
+    public Page<M> page(Query<M> query) {
         Map<String, Object> params = buildQueryParams(query);
         List<P> list = sqlSession.selectList(mapperNamespace() + ".findByQuery", params,
                 new RowBounds((int) ((query.getCurrent() - 1) * query.getSize()), (int) query.getSize()));
@@ -115,14 +121,14 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     @Override
-    public long count(Query<P> query) {
+    public long count(Query<M> query) {
         Map<String, Object> params = buildQueryParams(query);
         Long result = sqlSession.selectOne(mapperNamespace() + ".countByQuery", params);
         return result != null ? result : 0L;
     }
 
     @Override
-    public Optional<M> findFirst(Query<P> query) {
+    public Optional<M> findFirst(Query<M> query) {
         Map<String, Object> params = buildQueryParams(query);
         List<P> list = sqlSession.selectList(mapperNamespace() + ".findByQuery", params,
                 new RowBounds(0, 1));
@@ -130,14 +136,14 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     @Override
-    public List<M> findList(Query<P> query) {
+    public List<M> findList(Query<M> query) {
         Map<String, Object> params = buildQueryParams(query);
         List<P> list = sqlSession.selectList(mapperNamespace() + ".findByQuery", params);
         return list.stream().map(this::toModel).collect(Collectors.toList());
     }
 
     @Override
-    public boolean update(AggregateRoot<?> aggregate, Query<P> query) {
+    public boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         P po = toPersistenceObject((M) aggregate);
         tableScheme.updateFill(po);
         Map<String, Object> params = buildQueryParams(query);
@@ -146,13 +152,13 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     }
 
     @Override
-    public boolean deleteByQuery(Query<P> query) {
+    public boolean deleteByQuery(Query<M> query) {
         Map<String, Object> params = buildQueryParams(query);
         return sqlSession.delete(mapperNamespace() + ".deleteByQuery", params) > 0;
     }
 
     @Override
-    public void fill(Query<P> query, AggregateRoot<?> model) {
+    public void fill(Query<M> query, AggregateRoot<?> model) {
         // 默认空实现，业务方可覆盖
     }
 
@@ -294,7 +300,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
     /**
      * 构建查询参数 Map（Lambda 条件 + 租户/系统隔离）。
      */
-    protected Map<String, Object> buildQueryParams(Query<P> query) {
+    protected Map<String, Object> buildQueryParams(Query<M> query) {
         Map<String, Object> params = new HashMap<>();
 
         // 租户隔离
@@ -318,10 +324,7 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
             List<LambdaCondition> conditions = query.getWhereConditions();
             List<Map<String, Object>> condList = new ArrayList<>();
             for (LambdaCondition condition : conditions) {
-                String column = tableScheme.getColumnSafely(condition.property());
-                if (column == null) {
-                    column = condition.property();
-                }
+                String column = translateProperty(condition);
                 Map<String, Object> cond = new HashMap<>();
                 cond.put("column", column);
                 cond.put("operator", condition.operator());
@@ -333,7 +336,14 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
 
         // Lambda 排序
         if (query.hasOrderBy()) {
-            params.put("_lambdaOrderBy", query.getOrderByConditions());
+            List<Map<String, Object>> orderList = new ArrayList<>();
+            for (LambdaCondition order : query.getOrderByConditions()) {
+                Map<String, Object> orderItem = new HashMap<>();
+                orderItem.put("column", translateProperty(order));
+                orderItem.put("direction", order.operator());
+                orderList.add(orderItem);
+            }
+            params.put("_lambdaOrderBy", orderList);
         }
 
         // 默认排序（当未指定排序时，使用 PO 上 @OrderBy 注解的默认排序）
@@ -348,6 +358,18 @@ public abstract class MybatisAggregateRepository<M extends AggregateRoot<?>, P, 
         }
 
         return params;
+    }
+
+    private String translateProperty(LambdaCondition condition) {
+        condition.propertyRef().requireCompatible(modelClass, persistenceClass);
+        String column = condition.propertyRef().isPersistence()
+                ? tableScheme.getColumnSafely(condition.property())
+                : domainModelInfo.getPoColumn(condition.property());
+        if (Objects.isNull(column)) {
+            throw new IllegalArgumentException("Query property " + condition.property() + " from "
+                    + condition.propertyRef().space() + " does not map to " + persistenceClass.getName());
+        }
+        return column;
     }
 
     /**

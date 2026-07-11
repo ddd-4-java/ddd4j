@@ -24,7 +24,6 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
@@ -97,7 +96,6 @@ public class Ddd4jGuiceModule extends AbstractModule {
      * 启动期将 Guice 管理的 SPI 实现注入到 ddd4j 上下文（替代旧的 DomainEvent.registerPublisher 静态注册）：
      * <ul>
      *   <li>{@link DomainEventPublisher} → {@link SpiKeys#DOMAIN_EVENT_PUBLISHER}</li>
-     *   <li>{@link MQEventPublisher}（如可用） → {@link SpiKeys#MQ_EVENT_PUBLISHER}</li>
      *   <li>{@link SubjectProvider} → {@link SpiKeys#SUBJECT_PROVIDER}</li>
      *   <li>{@link I18nProvider} → {@link SpiKeys#I18N_PROVIDER}</li>
      * </ul>
@@ -114,14 +112,6 @@ public class Ddd4jGuiceModule extends AbstractModule {
                     injector.getInstance(SubjectProvider.class));
             BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class,
                     injector.getInstance(I18nProvider.class));
-
-            // MQEventPublisher 可选注入（仅当业务方引入 ddd4j-mq-* 模块时才存在）
-            try {
-                MQEventPublisher mqPublisher = injector.getInstance(MQEventPublisher.class);
-                BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, mqPublisher);
-            } catch (Exception e) {
-                log.debug("MQEventPublisher not provided, MQEvent publishing will be unavailable");
-            }
 
             log.info("GuiceContext and ddd4j SPI services initialized");
         }

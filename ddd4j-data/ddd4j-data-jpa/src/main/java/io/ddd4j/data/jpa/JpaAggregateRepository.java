@@ -3,297 +3,312 @@ package io.ddd4j.data.jpa;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
+import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.kit.lang.BeanKit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * JPA 轨道 Repository 实现（标准 JPA Criteria API）。
+ * 标准 Jakarta Persistence 聚合仓储适配器。
  *
- * <p>基于 ddd4j-core 的 {@link Repository} SPI，
- * 使用 Jakarta Persistence API（EntityManager + CriteriaBuilder）实现充血查询。
- * 支持字段后缀自动映射 + 手动 Criteria 条件构建。
- *
- * <h3>使用方式</h3>
- * <pre>{@code
- * @ApplicationScoped
- * public class OrderRepository extends JpaAggregateRepository<Order, OrderPO, Long> {
- *     public OrderRepository(EntityManager em) { super(em, Order.class, OrderPO.class); }
- * }
- * }</pre>
+ * <p>业务 Query 只引用领域模型属性，本适配器将 ORM 无关的
+ * {@link LambdaCondition} 编译为 JPA Criteria。实现只依赖 Jakarta
+ * Persistence API，不依赖 Hibernate、Spring Data 或 Quarkus Panache。
  *
  * @param <M>  聚合根类型
- * @param <P>  持久化对象类型（@Entity PO）
+ * @param <P>  JPA 持久化对象类型
  * @param <ID> 聚合根标识类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
+@Slf4j
 public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID extends Serializable>
-        implements Repository<M, P, ID>, DomainObjectMapper<M, P>, Serializable {
+        implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(JpaAggregateRepository.class);
 
-    protected final EntityManager em;
+    protected final EntityManager entityManager;
     protected final Class<M> modelClass;
     protected final Class<P> persistenceClass;
 
-    protected JpaAggregateRepository(EntityManager em, Class<M> modelClass, Class<P> persistenceClass) {
-        this.em = Objects.requireNonNull(em, "entityManager must not be null");
+    protected JpaAggregateRepository(EntityManager entityManager, Class<M> modelClass, Class<P> persistenceClass) {
+        this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
         this.modelClass = Objects.requireNonNull(modelClass, "modelClass must not be null");
         this.persistenceClass = Objects.requireNonNull(persistenceClass, "persistenceClass must not be null");
         RepositoryRegistry.register(modelClass, this);
     }
 
-    // ========================= Repository 实现 =========================
-
     @Override
     public Optional<M> findById(ID id) {
-        return Optional.ofNullable(em.find(persistenceClass, id)).map(this::toModel);
+        if (Objects.isNull(id)) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(entityManager.find(persistenceClass, id)).map(this::toModel);
     }
 
     @Override
     public M save(M aggregate) {
-        P po = toPersistenceObject(aggregate);
-        if (em.contains(po)) {
-            em.merge(po);
-        } else {
-            em.persist(po);
-        }
-        return aggregate;
+        Objects.requireNonNull(aggregate, "aggregate must not be null");
+        P managed = entityManager.merge(toPersistenceObject(aggregate));
+        return toModel(managed);
     }
 
     @Override
     public void deleteById(ID id) {
-        P po = em.find(persistenceClass, id);
-        if (po != null) {
-            em.remove(po);
+        if (Objects.isNull(id)) {
+            return;
+        }
+        P persistenceObject = entityManager.find(persistenceClass, id);
+        if (Objects.nonNull(persistenceObject)) {
+            entityManager.remove(persistenceObject);
         }
     }
 
     @Override
     public Optional<M> findFirst() {
-        return Optional.ofNullable(
-                em.createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
+        return Optional.ofNullable(entityManager
+                        .createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
                         .setMaxResults(1)
-                        .getSingleResultOrNull()
-        ).map(this::toModel);
+                        .getSingleResultOrNull())
+                .map(this::toModel);
     }
 
     @Override
     public List<M> findAll() {
-        return em.createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
-                .getResultList()
-                .stream()
-                .map(this::toModel)
-                .collect(Collectors.toList());
+        return convert(entityManager
+                .createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
+                .getResultList());
     }
 
     @Override
     public long count() {
-        return em.createQuery("SELECT COUNT(p) FROM " + persistenceClass.getSimpleName() + " p", Long.class)
+        Long result = entityManager
+                .createQuery("SELECT COUNT(p) FROM " + persistenceClass.getSimpleName() + " p", Long.class)
                 .getSingleResult();
+        return Objects.nonNull(result) ? result : 0L;
     }
 
     @Override
-    public Page<M> page(Query<P> query) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<P> cq = cb.createQuery(persistenceClass);
-        Root<P> root = cq.from(persistenceClass);
+    public Page<M> page(Query<M> query) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<P> criteriaQuery = criteriaBuilder.createQuery(persistenceClass);
+        Root<P> root = criteriaQuery.from(persistenceClass);
+        applyWhere(criteriaQuery, buildPredicates(criteriaBuilder, root, query));
+        applyOrder(criteriaQuery, criteriaBuilder, root, query);
 
-        // 构建 WHERE 条件
-        buildPredicates(cb, root, query);
-
-        // 排序
-
-        // 查询列表
-        TypedQuery<P> typedQuery = em.createQuery(cq);
-        int page = (int) Math.max(0, query.getCurrent() - 1);
-        int size = (int) query.getSize();
-        typedQuery.setFirstResult(page * size);
-        typedQuery.setMaxResults(size);
-        List<M> list = typedQuery.getResultList().stream().map(this::toModel).collect(Collectors.toList());
-
-        // 查询总数
-        long total = count(query);
-
-        return Page.succeed(list, total, query.getCurrent(), size);
-    }
-
-    @Override
-    public long count(Query query) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<P> root = cq.from(persistenceClass);
-        cq.select(cb.count(root));
-        buildPredicates(cb, root, query);
-        return em.createQuery(cq).getSingleResult();
-    }
-
-    @Override
-    public Optional<M> findFirst(Query query) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<P> cq = cb.createQuery(persistenceClass);
-        Root<P> root = cq.from(persistenceClass);
-        buildPredicates(cb, root, query);
-        TypedQuery<P> typedQuery = em.createQuery(cq).setMaxResults(1);
-        return Optional.ofNullable(typedQuery.getSingleResultOrNull()).map(this::toModel);
-    }
-
-    @Override
-    public List<M> findList(Query query) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<P> cq = cb.createQuery(persistenceClass);
-        Root<P> root = cq.from(persistenceClass);
-        buildPredicates(cb, root, query);
-        return em.createQuery(cq).getResultList().stream().map(this::toModel).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Map<String, Object>> maps(Query query) {
-        // JPA 不直接支持 Map 查询，使用原生 SQL
-        return em.createNativeQuery("SELECT * FROM " + persistenceClass.getSimpleName())
-                .setMaxResults(500)
-                .getResultList()
-                .stream()
-                .map(o -> {
-                    Object[] row = (Object[]) o;
-                    Map<String, Object> m = new HashMap<>();
-                    for (int i = 0; i < row.length; i++) m.put("col_" + i, row[i]);
-                    return m;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean update(AggregateRoot<?> aggregate, Query query) {
-        try {
-            save((M) aggregate);
-            return true;
-        } catch (Exception e) {
-            log.error("JPA update failed: {}", e.getMessage());
-            return false;
+        TypedQuery<P> typedQuery = entityManager.createQuery(criteriaQuery);
+        long current = Math.max(1L, query.getCurrent());
+        if (query.getSize() >= 0L) {
+            int size = Math.toIntExact(query.getSize());
+            typedQuery.setFirstResult(Math.toIntExact((current - 1L) * query.getSize()));
+            typedQuery.setMaxResults(size);
         }
+        List<M> records = convert(typedQuery.getResultList());
+        return Page.succeed(records, count(query), current, query.getSize());
     }
 
     @Override
-    public boolean deleteByQuery(Query query) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaDelete<P> cd = cb.createCriteriaDelete(persistenceClass);
-        Root<P> root = cd.from(persistenceClass);
-        buildPredicates(cb, root, query);
-        return em.createQuery(cd).executeUpdate() > 0;
+    public long count(Query<M> query) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<P> root = criteriaQuery.from(persistenceClass);
+        criteriaQuery.select(criteriaBuilder.count(root));
+        applyWhere(criteriaQuery, buildPredicates(criteriaBuilder, root, query));
+        Long result = entityManager.createQuery(criteriaQuery).getSingleResult();
+        return Objects.nonNull(result) ? result : 0L;
     }
 
     @Override
-    public void fill(Query<P> query, AggregateRoot<?> model) {
-        // 业务方按需覆盖
+    public Optional<M> findFirst(Query<M> query) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<P> criteriaQuery = criteriaBuilder.createQuery(persistenceClass);
+        Root<P> root = criteriaQuery.from(persistenceClass);
+        applyWhere(criteriaQuery, buildPredicates(criteriaBuilder, root, query));
+        applyOrder(criteriaQuery, criteriaBuilder, root, query);
+        return Optional.ofNullable(entityManager.createQuery(criteriaQuery)
+                        .setMaxResults(1)
+                        .getSingleResultOrNull())
+                .map(this::toModel);
     }
 
-    // ========================= 条件构建 =========================
+    @Override
+    public List<M> findList(Query<M> query) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<P> criteriaQuery = criteriaBuilder.createQuery(persistenceClass);
+        Root<P> root = criteriaQuery.from(persistenceClass);
+        applyWhere(criteriaQuery, buildPredicates(criteriaBuilder, root, query));
+        applyOrder(criteriaQuery, criteriaBuilder, root, query);
+        return convert(entityManager.createQuery(criteriaQuery).getResultList());
+    }
+
+    @Override
+    public List<Map<String, Object>> maps(Query<M> query) {
+        throw new UnsupportedOperationException(
+                "JPA aggregate repository does not expose untyped map queries; use a typed CQRS projection");
+    }
+
+    @Override
+    public boolean deleteByQuery(Query<M> query) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<P> criteriaDelete = criteriaBuilder.createCriteriaDelete(persistenceClass);
+        Root<P> root = criteriaDelete.from(persistenceClass);
+        List<Predicate> predicates = buildPredicates(criteriaBuilder, root, query);
+        if (predicates.isEmpty()) {
+            throw new IllegalArgumentException("Refusing to delete without query predicates");
+        }
+        criteriaDelete.where(predicates.toArray(Predicate[]::new));
+        return entityManager.createQuery(criteriaDelete).executeUpdate() > 0;
+    }
+
+    @Override
+    public void fill(Query<M> query, AggregateRoot<?> model) {
+        // 业务仓储按需覆盖
+    }
 
     /**
-     * 构建 JPA Criteria WHERE 条件（Lambda 条件 + 租户隔离）。
+     * 将领域属性名映射为 JPA 持久化属性名。
+     *
+     * <p>默认同名；当 Domain 与 PO 命名不同时由具体仓储覆盖。本方法返回
+     * JPA property，而不是数据库 column。
      */
-    @SuppressWarnings("unchecked")
-    protected void buildPredicates(CriteriaBuilder cb, Root<P> root, Query query) {
+    protected String persistenceProperty(String domainProperty) {
+        return domainProperty;
+    }
+
+    /**
+     * 根据 Query 属性空间选择领域映射或 PO 直接属性，并校验类型边界。
+     */
+    protected String persistenceProperty(LambdaCondition condition) {
+        Objects.requireNonNull(condition, "condition must not be null");
+        condition.propertyRef().requireCompatible(modelClass, persistenceClass);
+        if (condition.propertyRef().isPersistence()) {
+            return condition.property();
+        }
+        return persistenceProperty(condition.property());
+    }
+
+    protected List<Predicate> buildPredicates(CriteriaBuilder criteriaBuilder, Root<P> root, Query<M> query) {
         List<Predicate> predicates = new ArrayList<>();
-
-        // 租户隔离
-        String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
-        if (tenantId != null && !query.isIgnoreTenantId()) {
-            try {
-                predicates.add(cb.equal(root.get("tenantId"), tenantId));
-            } catch (Exception ignored) {
-            }
+        if (!query.isIgnoreTenantId()) {
+            addContextPredicate(criteriaBuilder, root, predicates, "tenantId",
+                    ThreadContext.get(ContextConstants.TENANT_ID));
         }
+        addContextPredicate(criteriaBuilder, root, predicates, "systemId",
+                ThreadContext.get(ContextConstants.SYSTEM_ID));
 
-        // Query 中直接定义的 Lambda 条件
-        for (Object obj : query.getWhereConditions()) {
-            io.ddd4j.core.cqrs.query.LambdaCondition condition = (io.ddd4j.core.cqrs.query.LambdaCondition) obj;
-            buildLambdaPredicate(cb, root, predicates, condition);
+        for (LambdaCondition condition : query.getWhereConditions()) {
+            buildPredicate(criteriaBuilder, root, predicates, condition);
         }
+        return predicates;
+    }
 
-        // Lambda 排序
-        if (query.hasOrderBy()) {
-            List<Order> orders = new ArrayList<>();
-            for (Object obj : query.getOrderByConditions()) {
-                io.ddd4j.core.cqrs.query.LambdaCondition orderBy = (io.ddd4j.core.cqrs.query.LambdaCondition) obj;
-                if ("ASC".equals(orderBy.operator())) {
-                    orders.add(cb.asc(root.get(orderBy.property())));
-                } else {
-                    orders.add(cb.desc(root.get(orderBy.property())));
-                }
-            }
-            try {
-                ((CriteriaQuery<?>) root.getParent()).orderBy(orders);
-            } catch (ClassCastException ignored) {
-            }
+    private void addContextPredicate(CriteriaBuilder criteriaBuilder, Root<P> root,
+                                     List<Predicate> predicates, String property, String value) {
+        if (Objects.isNull(value)) {
+            return;
         }
-
-        if (!predicates.isEmpty()) {
-            try {
-                ((CriteriaQuery<?>) root.getParent()).where(predicates.toArray(new Predicate[0]));
-            } catch (ClassCastException e) {
-                // CriteriaDelete
-            }
+        try {
+            predicates.add(criteriaBuilder.equal(root.get(property), value));
+        } catch (IllegalArgumentException exception) {
+            log.debug("Persistence type {} has no {} property", persistenceClass.getName(), property);
         }
     }
 
-    /**
-     * 将 ddd4j LambdaCondition 转换为 JPA Criteria Predicate。
-     */
-    @SuppressWarnings("unchecked")
-    private void buildLambdaPredicate(CriteriaBuilder cb, Root<P> root, List<Predicate> predicates,
-                                      io.ddd4j.core.cqrs.query.LambdaCondition condition) {
-        String property = condition.property();
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void buildPredicate(CriteriaBuilder criteriaBuilder, Root<P> root,
+                                List<Predicate> predicates, LambdaCondition condition) {
+        String property = persistenceProperty(condition);
         switch (condition.operator()) {
-            case "=" -> predicates.add(cb.equal(root.get(property), condition.value()));
-            case "<>" -> predicates.add(cb.notEqual(root.get(property), condition.value()));
-            case ">" -> predicates.add(cb.greaterThan(root.get(property), (Comparable) condition.value()));
-            case ">=" -> predicates.add(cb.greaterThanOrEqualTo(root.get(property), (Comparable) condition.value()));
-            case "<" -> predicates.add(cb.lessThan(root.get(property), (Comparable) condition.value()));
-            case "<=" -> predicates.add(cb.lessThanOrEqualTo(root.get(property), (Comparable) condition.value()));
-            case "LIKE" -> predicates.add(cb.like(root.get(property), "%" + condition.value() + "%"));
-            case "LIKE_LEFT" -> predicates.add(cb.like(root.get(property), condition.value() + "%"));
-            case "LIKE_RIGHT" -> predicates.add(cb.like(root.get(property), "%" + condition.value()));
-            case "NOT_LIKE" -> predicates.add(cb.notLike(root.get(property), "%" + condition.value() + "%"));
+            case "=" -> predicates.add(criteriaBuilder.equal(root.get(property), condition.value()));
+            case "<>" -> predicates.add(criteriaBuilder.notEqual(root.get(property), condition.value()));
+            case ">" -> predicates.add(criteriaBuilder.greaterThan(root.get(property), (Comparable) condition.value()));
+            case ">=" -> predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(property), (Comparable) condition.value()));
+            case "<" -> predicates.add(criteriaBuilder.lessThan(root.get(property), (Comparable) condition.value()));
+            case "<=" -> predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(property), (Comparable) condition.value()));
+            case "LIKE" -> predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value() + "%"));
+            case "LIKE_LEFT" -> predicates.add(criteriaBuilder.like(root.get(property), condition.value() + "%"));
+            case "LIKE_RIGHT" -> predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value()));
+            case "NOT_LIKE" -> predicates.add(criteriaBuilder.notLike(root.get(property), "%" + condition.value() + "%"));
             case "IN" -> predicates.add(root.get(property).in(toCollection(condition.value())));
             case "NOT_IN" -> predicates.add(root.get(property).in(toCollection(condition.value())).not());
-            case "IS_NULL" -> predicates.add(cb.isNull(root.get(property)));
-            case "IS_NOT_NULL" -> predicates.add(cb.isNotNull(root.get(property)));
+            case "IS_NULL" -> predicates.add(criteriaBuilder.isNull(root.get(property)));
+            case "IS_NOT_NULL" -> predicates.add(criteriaBuilder.isNotNull(root.get(property)));
+            default -> throw new IllegalArgumentException("Unsupported query operator: " + condition.operator());
+        }
+    }
+
+    private void applyOrder(CriteriaQuery<P> criteriaQuery, CriteriaBuilder criteriaBuilder,
+                            Root<P> root, Query<M> query) {
+        List<Order> orders = new ArrayList<>();
+        for (LambdaCondition condition : query.getOrderByConditions()) {
+            String property = persistenceProperty(condition);
+            if (Objects.equals("ASC", condition.operator())) {
+                orders.add(criteriaBuilder.asc(root.get(property)));
+            } else {
+                orders.add(criteriaBuilder.desc(root.get(property)));
+            }
+        }
+        if (!orders.isEmpty()) {
+            criteriaQuery.orderBy(orders);
+        }
+    }
+
+    private void applyWhere(CriteriaQuery<?> criteriaQuery, List<Predicate> predicates) {
+        if (!predicates.isEmpty()) {
+            criteriaQuery.where(predicates.toArray(Predicate[]::new));
         }
     }
 
     private Collection<?> toCollection(Object value) {
-        if (value instanceof Collection<?> col) return col;
-        if (value instanceof String str && !str.isEmpty()) return Arrays.asList(str.split(","));
+        if (value instanceof Collection<?> collection) {
+            return collection;
+        }
+        if (value instanceof String string && !string.isEmpty()) {
+            return Arrays.asList(string.split(","));
+        }
         return Collections.emptyList();
     }
 
-    // ========================= DomainObjectMapper 实现 =========================
-
     @Override
     public M toModel(P persistenceObject) {
-        if (persistenceObject == null) return null;
+        if (Objects.isNull(persistenceObject)) {
+            return null;
+        }
         return BeanKit.copy(persistenceObject, modelClass);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public P toPersistenceObject(M model) {
-        if (model == null) return null;
+        if (Objects.isNull(model)) {
+            return null;
+        }
         return BeanKit.copy(model, persistenceClass);
+    }
+
+    private List<M> convert(List<P> persistenceObjects) {
+        return persistenceObjects.stream().map(this::toModel).collect(Collectors.toList());
     }
 }

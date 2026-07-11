@@ -5,8 +5,8 @@ import com.google.inject.Inject;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
+import org.fuin.ddd4j.core.EntityId;
 
-import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -31,7 +31,7 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
     }
 
     @Override
-    public <T> void publish(DomainEvent<T> event) {
+    public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {
             log.warn("Attempted to publish null domain event");
             return;
@@ -40,14 +40,4 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
         eventBus.post(event);
     }
 
-    @Override
-    public <T> void publishAll(Collection<DomainEvent<T>> events) {
-        if (Objects.isNull(events) || events.isEmpty()) {
-            return;
-        }
-        log.debug("Publishing {} domain events", events.size());
-        for (DomainEvent<T> event : events) {
-            publish(event);
-        }
-    }
 }

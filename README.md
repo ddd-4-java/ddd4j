@@ -328,33 +328,37 @@ public class MybatisOrderRepository extends MybatisAggregateRepository<Order, Or
 #### 3.5 Lambda 充血查询
 
 ```java
-// 定义 Query（继承 AbstractMybatisQuery 获得 MyBatis-Plus Lambda 全覆盖）
-public class OrderQuery extends AbstractMybatisQuery<Order> {
+// 定义 ORM 无关的充血 Query
+public class OrderQuery extends Query<Order> {
     @Override
-    protected Repository repository() {
+    public Repository repository() {
         return RepositoryRegistry.repository(Order.class);
     }
 }
 
-// 业务层：Lambda 类型安全条件构建 + 充血执行
+// 业务层默认使用领域模型属性
 Page<Order> page = new OrderQuery()
-    .eq(OrderPO::getStatus, "PAID")          // Lambda 引用 PO 字段
-    .like(OrderPO::getOrderNo, "2024")
-    .ge(OrderPO::getCreateTime, startTime)
-    .between(OrderPO::getAmount, 100, 1000)
-    .in(OrderPO::getAgentType, List.of("A", "B"))
+    .eq(Order::getStatus, "PAID")
+    .like(Order::getOrderNo, "2024")
+    .ge(Order::getCreateTime, startTime)
+    .page();
+
+// 基础设施层必须显式进入 PO 属性作用域
+Page<Order> persistencePage = new OrderQuery()
+    .withPO(OrderPO.class)
+    .eq(OrderPO::getStatus, "PAID")
     .orderByDesc(OrderPO::getCreateTime)
     .current(1).size(20)
-    .page();                                 // ← 充血分页查询
+    .page();
 
 List<Order> list = new OrderQuery()
-    .eq(OrderPO::getStatus, "ACTIVE")
-    .list();                                 // ← 充血列表查询
+    .eq(Order::getStatus, "ACTIVE")
+    .list();
 
 // 条件重载（消除 if-else 样板）
 new OrderQuery()
-    .eq(StrKit.isNotBlank(status), OrderPO::getStatus, status)
-    .like(StrKit.isNotBlank(keyword), OrderPO::getOrderNo, keyword)
+    .eq(StrKit.isNotBlank(status), Order::getStatus, status)
+    .like(StrKit.isNotBlank(keyword), Order::getOrderNo, keyword)
     .list();
 ```
 
@@ -365,9 +369,9 @@ Repository<M, P, ID>
 ├── 单条 CRUD:    findById / save / updateById / insertOrUpdate / delete / deleteById
 ├── 批量操作:      findByIds / deleteByIds / saveBatch / updateBatchById / insertOrUpdateBatch
 ├── 无条件查询:    findFirst / findAll / count / exists
-├── 条件查询:      findFirst(Query<P>) / findList(Query<P>) / page(Query<P>) / count(Query<P>) / maps(Query<P>) / exists(Query<P>)
-├── 条件操作:      update(M, Query<P>) / deleteByQuery(Query<P>)
-└── 聚合填充:      fill(Query<P>, M) / fill(Query<P>, List<M>)
+├── 条件查询:      findFirst(Query<M>) / findList(Query<M>) / page(Query<M>) / count(Query<M>) / maps(Query<M>) / exists(Query<M>)
+├── 条件操作:      update(M, Query<M>) / deleteByQuery(Query<M>)
+└── 聚合填充:      fill(Query<M>, M) / fill(Query<M>, List<M>)
 ```
 
 #### 4. 业务项目继承父 POM

@@ -5,8 +5,8 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.fuin.ddd4j.core.EntityId;
 
-import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -32,23 +32,12 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
     }
 
     @Override
-    public <T> void publish(DomainEvent<T> event) {
+    public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {
             log.warn("Attempted to publish null domain event");
             return;
         }
-        log.debug("Publishing domain event: {}, source: {}", event.getClass().getSimpleName(), event.source());
+        log.debug("Publishing domain event: {}", event.getClass().getSimpleName());
         publisher.publishEvent(event);
-    }
-
-    @Override
-    public <T> void publishAll(Collection<DomainEvent<T>> events) {
-        if (Objects.isNull(events) || events.isEmpty()) {
-            return;
-        }
-        log.debug("Publishing {} domain events", events.size());
-        for (DomainEvent<T> event : events) {
-            publish(event);
-        }
     }
 }

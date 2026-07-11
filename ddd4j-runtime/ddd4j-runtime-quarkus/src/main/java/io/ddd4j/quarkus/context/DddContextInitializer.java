@@ -19,7 +19,6 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.quarkus.runtime.StartupEvent;
@@ -58,12 +57,6 @@ public class DddContextInitializer {
     Instance<DomainEventPublisher> domainEventPublisher;
 
     /**
-     * MQ 事件发布器实例
-     */
-    @Inject
-    Instance<MQEventPublisher> mqEventPublisher;
-
-    /**
      * Subject 提供者实例
      */
     @Inject
@@ -87,14 +80,6 @@ public class DddContextInitializer {
         } else {
             BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                     domainEventPublisher.get());
-        }
-
-        // MQEventPublisher（可选）
-        if (!mqEventPublisher.isUnsatisfied()) {
-            BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class,
-                    mqEventPublisher.get());
-        } else {
-            log.debug("No MQEventPublisher bean found. MQEvent.publish() will fail.");
         }
 
         // SubjectProvider（可选）

@@ -11,11 +11,11 @@ import java.util.function.Function;
  *
  * <p>使用示例：
  * <pre>{@code
- * SFunction<UserPO, String> getter = UserPO::getName;
+ * SFunction<User, String> getter = User::getName;
  * String property = LambdaKit.resolve(getter); // → "name"
  * }</pre>
  *
- * @param <T> 输入类型（通常是 PO 类）
+ * @param <T> 输入类型（Query 中为领域模型类型）
  * @param <R> 返回类型（字段类型）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x

@@ -58,7 +58,6 @@ public class Ddd4jMQPropertiesConfiguration {
         properties.setProducerGroup(environment.getProperty(PREFIX + "producer-group", "DEFAULT"));
         properties.setDefaultTopic(environment.getProperty(PREFIX + "default-topic", "DEFAULT"));
         properties.setExchange(environment.getProperty(PREFIX + "exchange", ""));
-        properties.setConcat(environment.getProperty(PREFIX + "concat"));
         return properties;
     }
 

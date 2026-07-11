@@ -6,6 +6,7 @@
  */
 package io.ddd4j.spring.web;
 
+import com.github.dozermapper.core.Mapper;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.spring.event.AppExceptionEvent;
 import io.swagger.v3.oas.annotations.media.Content;

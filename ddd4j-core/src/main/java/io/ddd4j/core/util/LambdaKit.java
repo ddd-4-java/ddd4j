@@ -3,6 +3,7 @@ package io.ddd4j.core.util;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * Lambda 表达式工具类（从方法引用中解析属性名）。
@@ -54,6 +55,26 @@ public final class LambdaKit {
     }
 
     /**
+     * 从方法引用中解析实现类型。
+     *
+     * @param func 方法引用
+     * @param <T>  对象类型
+     * @return 实现类型
+     */
+    public static <T> Class<?> resolveType(SFunction<T, ?> func) {
+        Objects.requireNonNull(func, "func must not be null");
+        String className = resolveClass(func);
+        try {
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = Objects.nonNull(contextClassLoader)
+                    ? contextClassLoader : LambdaKit.class.getClassLoader();
+            return Class.forName(className, false, classLoader);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalArgumentException("无法加载 Lambda 实现类型: " + className, exception);
+        }
+    }
+
+    /**
      * 提取 SerializedLambda。
      */
     public static SerializedLambda extractLambda(Serializable func) {
@@ -84,7 +105,7 @@ public final class LambdaKit {
      * @return 属性名
      */
     public static String methodToProperty(String methodName) {
-        if (methodName == null || methodName.isEmpty()) {
+        if (Objects.isNull(methodName) || methodName.isEmpty()) {
             return methodName;
         }
         // getXxx → xxx

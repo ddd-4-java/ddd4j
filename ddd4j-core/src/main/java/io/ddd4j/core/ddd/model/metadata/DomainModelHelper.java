@@ -1,8 +1,10 @@
 package io.ddd4j.core.ddd.model.metadata;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -41,9 +43,10 @@ import java.util.function.Function;
  * @since 2.0.x
  */
 @Slf4j
+@SuppressWarnings("unchecked")
 public final class DomainModelHelper {
 
-    private static final Map<Class<?>, DomainModelInfo<?>> MODEL_INFO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<ModelMappingKey, DomainModelInfo<?>> MODEL_INFO_CACHE = new ConcurrentHashMap<>();
 
     private DomainModelHelper() {
     }
@@ -56,26 +59,45 @@ public final class DomainModelHelper {
      * @param <M>                       Domain Model 泛型
      * @return DomainModelInfo 缓存实例
      */
-    @SuppressWarnings("unchecked")
     public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass,
                                                       Function<String, String> poProperty2ColumnProvider) {
-        if (modelClass == null || modelClass.isPrimitive() || modelClass.isInterface()) {
+        return getModelInfo(modelClass, modelClass, poProperty2ColumnProvider);
+    }
+
+    /**
+     * 获取指定持久化映射上下文的 Domain Model 元数据。
+     *
+     * <p>缓存键同时包含领域模型和持久化类型，避免同一领域模型映射到多个
+     * PO 或 ORM 适配器时由第一次初始化结果污染后续映射。
+     *
+     * @param modelClass                Domain Model 类型
+     * @param persistenceType           持久化对象或映射上下文类型
+     * @param poProperty2ColumnProvider PO 字段名到数据库列名的映射
+     * @param <M>                       Domain Model 泛型
+     * @return DomainModelInfo 缓存实例
+     */
+    public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass,
+                                                      Class<?> persistenceType,
+                                                      Function<String, String> poProperty2ColumnProvider) {
+        if (Objects.isNull(modelClass) || modelClass.isPrimitive() || modelClass.isInterface()) {
             return null;
         }
-        DomainModelInfo<?> info = MODEL_INFO_CACHE.get(modelClass);
-        if (info != null) {
+        Class<?> mappingType = Objects.requireNonNull(persistenceType, "persistenceType must not be null");
+        ModelMappingKey key = new ModelMappingKey(modelClass, mappingType);
+        DomainModelInfo<?> info = MODEL_INFO_CACHE.get(key);
+        if (Objects.nonNull(info)) {
             return (DomainModelInfo<M>) info;
         }
         synchronized (DomainModelHelper.class) {
-            info = MODEL_INFO_CACHE.get(modelClass);
-            if (info != null) {
+            info = MODEL_INFO_CACHE.get(key);
+            if (Objects.nonNull(info)) {
                 return (DomainModelInfo<M>) info;
             }
             if (log.isDebugEnabled()) {
                 log.debug("init DomainModelInfo for class {}", modelClass.getName());
             }
             info = new DomainModelInfo<>(modelClass, poProperty2ColumnProvider);
-            MODEL_INFO_CACHE.put(modelClass, info);
+            MODEL_INFO_CACHE.put(key, info);
             return (DomainModelInfo<M>) info;
         }
     }
@@ -91,7 +113,7 @@ public final class DomainModelHelper {
      * 移除 Domain Model 缓存（用于测试或热加载）。
      */
     public static void remove(Class<?> modelClass) {
-        MODEL_INFO_CACHE.remove(modelClass);
+        MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType(), modelClass));
     }
 
     /**
@@ -99,5 +121,8 @@ public final class DomainModelHelper {
      */
     public static void clear() {
         MODEL_INFO_CACHE.clear();
+    }
+
+    private record ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
     }
 }

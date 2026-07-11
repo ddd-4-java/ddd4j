@@ -132,11 +132,7 @@ public interface AggregateController {
     }
 
     private Repository richRepository(String model) {
-        Repository repository = repository(model);
-        if (repository instanceof Repository richRepository) {
-            return richRepository;
-        }
-        throw new BizRuntimeException("Repository for model {} does not support rich query", model);
+        return repository(model);
     }
 
     private Query<?> query(String model, Map<String, Object> source) {

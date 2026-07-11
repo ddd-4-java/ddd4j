@@ -2,6 +2,7 @@ package io.ddd4j.spring.event;
 
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import lombok.Getter;
+import org.springframework.context.ApplicationEvent;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -45,6 +46,7 @@ public class AppExceptionEvent extends ApplicationEvent implements Serializable 
      * @throws NullPointerException payload 为 null
      */
     public AppExceptionEvent(Object source, Exception payload) {
+        super(Objects.nonNull(source) ? source : Objects.requireNonNull(payload, "payload must not be null"));
         this.source = source;
         this.payload = Objects.requireNonNull(payload, "payload must not be null");
     }

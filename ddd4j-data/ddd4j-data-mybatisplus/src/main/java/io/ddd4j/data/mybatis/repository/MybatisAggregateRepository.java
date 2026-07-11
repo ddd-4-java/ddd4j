@@ -2,6 +2,7 @@ package io.ddd4j.data.mybatis.repository;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -42,6 +43,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +140,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     private static String toUnderline(String camel) {
-        if (camel == null || camel.isEmpty()) {
+        if (Objects.isNull(camel) || camel.isEmpty()) {
             return camel;
         }
         StringBuilder buf = new StringBuilder();
@@ -179,10 +181,10 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         this.queryClass = queryClass;
         if (Objects.nonNull(modelClass) && Objects.nonNull(persistenceObjectClass)) {
             // PO 元数据（auto-fill、bizKey、tenantId、tableLogic 等，委托给 MP TableInfoHelper）
-            this.tableInfo = TableInfoHelper.getTableInfo(persistenceObjectClass);
+            this.tableInfo = resolveTableInfo(persistenceObjectClass);
             // 充血查询 Domain→PO 字段映射元数据（缓存于 DomainModelHelper，零框架依赖）
-            this.domainModelInfo = DomainModelHelper.getModelInfo(modelClass, poProperty -> {
-                if (tableInfo != null) {
+            this.domainModelInfo = DomainModelHelper.getModelInfo(modelClass, persistenceObjectClass, poProperty -> {
+                if (Objects.nonNull(tableInfo)) {
                     for (TableFieldInfo tfi : tableInfo.getFieldList()) {
                         if (tfi.getProperty().equals(poProperty)) {
                             return tfi.getColumn();
@@ -200,6 +202,25 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             String modelClassName = modelClass.getSimpleName().toLowerCase().charAt(0) + modelClass.getSimpleName().substring(1);
             MappingKit.map("MODEL_NAME", modelClassName, modelClass);
         }
+    }
+
+    /**
+     * 获取或初始化 PO 元数据。
+     *
+     * <p>Spring/Quarkus 的 Mapper 扫描通常会提前初始化 {@link TableInfo}；
+     * 手动构造 Repository 或在轻量运行时中使用时没有该前置步骤，因此这里
+     * 以独立 MyBatis 配置完成兜底初始化。之后接入真实 Configuration 时，
+     * MyBatis-Plus 会按其自身规则重新绑定元数据。
+     */
+    private TableInfo resolveTableInfo(Class<P> type) {
+        TableInfo resolved = TableInfoHelper.getTableInfo(type);
+        if (Objects.nonNull(resolved)) {
+            return resolved;
+        }
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        MapperBuilderAssistant assistant = new MapperBuilderAssistant(configuration, type.getName());
+        assistant.setCurrentNamespace(type.getName());
+        return TableInfoHelper.initTableInfo(assistant, type);
     }
 
     /**
@@ -263,6 +284,31 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             return column;
         }
         return toUnderline(property);
+    }
+
+    /**
+     * 按属性空间翻译查询条件，并校验 Query 绑定的 Domain/PO 类型。
+     */
+    protected String translateProperty(LambdaCondition condition) {
+        Objects.requireNonNull(condition, "condition must not be null");
+        condition.propertyRef().requireCompatible(modelClass(), persistenceObjectClass());
+        if (condition.propertyRef().isPersistence()) {
+            return persistenceColumn(condition.property());
+        }
+        return translateProperty(condition.property());
+    }
+
+    private String persistenceColumn(String property) {
+        TableInfo persistenceTableInfo = tableInfo();
+        if (Objects.equals(property, persistenceTableInfo.getKeyProperty())) {
+            return persistenceTableInfo.getKeyColumn();
+        }
+        return persistenceTableInfo.getFieldList().stream()
+                .filter(fieldInfo -> Objects.equals(property, fieldInfo.getProperty()))
+                .map(TableFieldInfo::getColumn)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Persistence property " + property
+                        + " does not exist on " + persistenceObjectClass().getName()));
     }
 
     public void setMapper(MP mapper) {
@@ -791,17 +837,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     @SuppressWarnings("unchecked")
     protected QueryWrapper<P> getBaseWrapper(Query<M> query) {
-        // AbstractMybatisQuery 直接持有 LambdaQueryWrapper，深度整合 MyBatis-Plus
-        if (query instanceof io.ddd4j.data.mybatis.query.AbstractMybatisQuery<?> amq && amq.hasManualWrapper()) {
-            // 直接使用 AbstractMybatisQuery 内部的 LambdaQueryWrapper
-            LambdaQueryWrapper<P> lambdaWrapper = amq.getLambdaQueryWrapper();
-            QueryWrapper<P> baseWrapper = getDefaultWrapper(query.isIgnoreTenantId());
-            // 将 Lambda 条件合并到 baseWrapper（保留租户/系统隔离）
-            baseWrapper.and(w -> lambdaWrapper.getCustomSqlSegment());
-            having(query, baseWrapper);
-            return baseWrapper;
-        }
-        // 非 AbstractMybatisQuery：从 Query 通用条件转换
         QueryWrapper<P> wrapper = getDefaultWrapper(query.isIgnoreTenantId());
         applyConditions(wrapper, query);
         applySelect(query, wrapper);
@@ -818,7 +853,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     private void applyConditions(QueryWrapper<P> wrapper, Query<M> query) {
         for (Object obj : query.getWhereConditions()) {
             LambdaCondition condition = (LambdaCondition) obj;
-            String column = translateProperty(condition.property());
+            String column = translateProperty(condition);
             switch (condition.operator()) {
                 case "=" -> wrapper.eq(column, condition.value());
                 case "<>" -> wrapper.ne(column, condition.value());
@@ -844,7 +879,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     private void applyOrderBy(Query<M> query, QueryWrapper<P> wrapper) {
         for (Object obj : query.getOrderByConditions()) {
             LambdaCondition orderBy = (LambdaCondition) obj;
-            String column = translateProperty(orderBy.property());
+            String column = translateProperty(orderBy);
             wrapper.orderBy(true, "ASC".equals(orderBy.operator()), column);
         }
     }

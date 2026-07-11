@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * 充血查询模型（Lambda 类型安全条件构建 + 充血查询执行）。
  *
- * <p>业务方继承此类后，直接通过 Lambda 引用 PO 字段构建查询条件：
+ * <p>业务方继承此类后，直接通过 Lambda 引用领域模型字段构建查询条件：
  * <pre>{@code
  * public class OrderQuery extends Query<Order> {
  *     // 绑定仓储
@@ -29,22 +29,30 @@ import java.util.*;
  *
  * // 使用
  * Page<Order> page = new OrderQuery()
- *     .eq(OrderPO::getStatus, "PAID")
- *     .like(OrderPO::getOrderNo, "2024")
- *     .ge(OrderPO::getCreateTime, startTime)
- *     .orderByDesc(OrderPO::getCreateTime)
+ *     .paid()
+ *     .orderNoContains("2024")
+ *     .createdFrom(startTime)
+ *     .newestFirst()
  *     .current(1).size(20)
  *     .page();
  *
  * List<Order> list = new OrderQuery()
- *     .eq(OrderPO::getStatus, "ACTIVE")
+ *     .eq(Order::getStatus, "ACTIVE")
  *     .list();
+ *
+ * // 基础设施层需要直接使用 PO 属性时，必须显式进入类型安全作用域
+ * Page<Order> persistencePage = new OrderQuery()
+ *     .withPO(OrderPO.class)
+ *     .eq(OrderPO::getStatus, "PAID")
+ *     .orderByDesc(OrderPO::getCreateTime)
+ *     .current(1).size(20)
+ *     .page();
  * }</pre>
  *
  * <p>每个条件方法都有 {@code boolean condition} 重载，消除 if-else 样板：
  * <pre>{@code
- * query.eq(StrKit.isNotBlank(status), OrderPO::getStatus, status)
- *      .like(StrKit.isNotBlank(keyword), OrderPO::getName, keyword);
+ * query.eq(StrKit.isNotBlank(status), Order::getStatus, status)
+ *      .like(StrKit.isNotBlank(keyword), Order::getName, keyword);
  * }</pre>
  *
  * <p>条件存储在 {@link #conditions} 列表中，由各 ORM 模块的 Repository 读取并转换为原生查询。
@@ -121,98 +129,98 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     // ========================= 条件构建 — 等于/不等于 =========================
 
-    public <Q extends Query<M>> Q eq(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q eq(SFunction<M, ?> column, Object value) {
         return eq(true, column, value);
     }
 
-    public <Q extends Query<M>> Q eq(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q eq(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "=", value);
     }
 
-    public <Q extends Query<M>> Q ne(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ne(SFunction<M, ?> column, Object value) {
         return ne(true, column, value);
     }
 
-    public <Q extends Query<M>> Q ne(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ne(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "<>", value);
     }
 
     // ========================= 条件构建 — 模糊匹配 =========================
 
-    public <Q extends Query<M>> Q like(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q like(SFunction<M, ?> column, Object value) {
         return like(true, column, value);
     }
 
-    public <Q extends Query<M>> Q like(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q like(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "LIKE", value);
     }
 
-    public <Q extends Query<M>> Q likeLeft(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeLeft(SFunction<M, ?> column, Object value) {
         return likeLeft(true, column, value);
     }
 
-    public <Q extends Query<M>> Q likeLeft(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeLeft(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "LIKE_LEFT", value);
     }
 
-    public <Q extends Query<M>> Q likeRight(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeRight(SFunction<M, ?> column, Object value) {
         return likeRight(true, column, value);
     }
 
-    public <Q extends Query<M>> Q likeRight(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q likeRight(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "LIKE_RIGHT", value);
     }
 
-    public <Q extends Query<M>> Q notLike(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q notLike(SFunction<M, ?> column, Object value) {
         return notLike(true, column, value);
     }
 
-    public <Q extends Query<M>> Q notLike(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q notLike(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "NOT_LIKE", value);
     }
 
     // ========================= 条件构建 — 大小比较 =========================
 
-    public <Q extends Query<M>> Q gt(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q gt(SFunction<M, ?> column, Object value) {
         return gt(true, column, value);
     }
 
-    public <Q extends Query<M>> Q gt(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q gt(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, ">", value);
     }
 
-    public <Q extends Query<M>> Q ge(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ge(SFunction<M, ?> column, Object value) {
         return ge(true, column, value);
     }
 
-    public <Q extends Query<M>> Q ge(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q ge(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, ">=", value);
     }
 
-    public <Q extends Query<M>> Q lt(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q lt(SFunction<M, ?> column, Object value) {
         return lt(true, column, value);
     }
 
-    public <Q extends Query<M>> Q lt(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q lt(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "<", value);
     }
 
-    public <Q extends Query<M>> Q le(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q le(SFunction<M, ?> column, Object value) {
         return le(true, column, value);
     }
 
-    public <Q extends Query<M>> Q le(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q le(boolean condition, SFunction<M, ?> column, Object value) {
         return addCondition(condition, column, "<=", value);
     }
 
     /**
      * 范围查询（BETWEEN 语义，展开为 ge + le）。
      */
-    public <Q extends Query<M>> Q between(SFunction<?, ?> column, Object start, Object end) {
+    public <Q extends Query<M>> Q between(SFunction<M, ?> column, Object start, Object end) {
         return between(true, column, start, end);
     }
 
-    public <Q extends Query<M>> Q between(boolean condition, SFunction<?, ?> column, Object start, Object end) {
+    public <Q extends Query<M>> Q between(boolean condition, SFunction<M, ?> column, Object start, Object end) {
         if (condition) {
             if (start != null) {
                 addCondition(true, column, ">=", start);
@@ -226,84 +234,73 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     // ========================= 条件构建 — IN/NOT IN =========================
 
-    public <Q extends Query<M>> Q in(SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q in(SFunction<M, ?> column, Collection<?> values) {
         return in(true, column, values);
     }
 
-    public <Q extends Query<M>> Q in(boolean condition, SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q in(boolean condition, SFunction<M, ?> column, Collection<?> values) {
         return addCondition(condition && CollKit.isNotEmpty(values), column, "IN", values == null ? null : new ArrayList<>(values));
     }
 
-    public <Q extends Query<M>> Q notIn(SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q notIn(SFunction<M, ?> column, Collection<?> values) {
         return notIn(true, column, values);
     }
 
-    public <Q extends Query<M>> Q notIn(boolean condition, SFunction<?, ?> column, Collection<?> values) {
+    public <Q extends Query<M>> Q notIn(boolean condition, SFunction<M, ?> column, Collection<?> values) {
         return addCondition(condition && CollKit.isNotEmpty(values), column, "NOT_IN", values == null ? null : new ArrayList<>(values));
     }
 
     // ========================= 条件构建 — NULL 判断 =========================
 
-    public <Q extends Query<M>> Q isNull(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNull(SFunction<M, ?> column) {
         return isNull(true, column);
     }
 
-    public <Q extends Query<M>> Q isNull(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNull(boolean condition, SFunction<M, ?> column) {
         return addCondition(condition, column, "IS_NULL", null);
     }
 
-    public <Q extends Query<M>> Q isNotNull(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNotNull(SFunction<M, ?> column) {
         return isNotNull(true, column);
     }
 
-    public <Q extends Query<M>> Q isNotNull(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q isNotNull(boolean condition, SFunction<M, ?> column) {
         return addCondition(condition, column, "IS_NOT_NULL", null);
     }
 
     // ========================= 排序 =========================
 
-    public <Q extends Query<M>> Q orderByAsc(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByAsc(SFunction<M, ?> column) {
         return orderByAsc(true, column);
     }
 
-    public <Q extends Query<M>> Q orderByAsc(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByAsc(boolean condition, SFunction<M, ?> column) {
         if (condition) {
-            addOrderBy(LambdaKit.resolve(column), "ASC");
+            addOrderBy(PropertyRef.domain(column), "ASC");
         }
         return (Q) this;
     }
 
-    public <Q extends Query<M>> Q orderByDesc(SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByDesc(SFunction<M, ?> column) {
         return orderByDesc(true, column);
     }
 
-    public <Q extends Query<M>> Q orderByDesc(boolean condition, SFunction<?, ?> column) {
+    public <Q extends Query<M>> Q orderByDesc(boolean condition, SFunction<M, ?> column) {
         if (condition) {
-            addOrderBy(LambdaKit.resolve(column), "DESC");
+            addOrderBy(PropertyRef.domain(column), "DESC");
         }
         return (Q) this;
     }
 
     // ========================= 更新 SET 操作 =========================
 
-    public <Q extends Query<M>> Q set(SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q set(SFunction<M, ?> column, Object value) {
         return set(true, column, value);
     }
 
-    public <Q extends Query<M>> Q set(boolean condition, SFunction<?, ?> column, Object value) {
+    public <Q extends Query<M>> Q set(boolean condition, SFunction<M, ?> column, Object value) {
         if (condition) {
-            addSetOperation(LambdaKit.resolve(column), "=", value);
-        }
-        return (Q) this;
-    }
-
-    public <Q extends Query<M>> Q setSql(String setSql) {
-        return setSql(true, setSql);
-    }
-
-    public <Q extends Query<M>> Q setSql(boolean condition, String setSql) {
-        if (condition && setSql != null && !setSql.isEmpty()) {
-            addSetOperation(setSql, "RAW", null);
+            addSetOperation(PropertyRef.domain(column), "=", value);
         }
         return (Q) this;
     }
@@ -311,17 +308,17 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     // ========================= SELECT / GROUP BY（Lambda） =========================
 
     @SafeVarargs
-    public final <Q extends Query<M>> Q select(SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q select(SFunction<M, ?>... columns) {
         return select(true, columns);
     }
 
     @SafeVarargs
-    public final <Q extends Query<M>> Q select(boolean condition, SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q select(boolean condition, SFunction<M, ?>... columns) {
         if (condition && columns != null && columns.length > 0) {
             if (this.selectColumns == null) {
                 this.selectColumns = new ArrayList<>();
             }
-            for (SFunction<?, ?> column : columns) {
+            for (SFunction<M, ?> column : columns) {
                 this.selectColumns.add(LambdaKit.resolve(column));
             }
         }
@@ -329,17 +326,17 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     }
 
     @SafeVarargs
-    public final <Q extends Query<M>> Q groupBy(SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q groupBy(SFunction<M, ?>... columns) {
         return groupBy(true, columns);
     }
 
     @SafeVarargs
-    public final <Q extends Query<M>> Q groupBy(boolean condition, SFunction<?, ?>... columns) {
+    public final <Q extends Query<M>> Q groupBy(boolean condition, SFunction<M, ?>... columns) {
         if (condition && columns != null && columns.length > 0) {
             if (this.groupByColumns == null) {
                 this.groupByColumns = new ArrayList<>();
             }
-            for (SFunction<?, ?> column : columns) {
+            for (SFunction<M, ?> column : columns) {
                 this.groupByColumns.add(LambdaKit.resolve(column));
             }
         }
@@ -381,6 +378,20 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public <Q extends Query<M>> Q ignorePage() {
         this.setSize(-1);
         return (Q) this;
+    }
+
+    /**
+     * 进入显式 PO 属性作用域。
+     *
+     * <p>这是基础设施层的受控逃生口。默认查询仍应使用领域语义方法或领域属性；
+     * PO 类型必须显式传入，以保证 Java 链式调用能够正确推断属性方法引用类型。
+     *
+     * @param persistenceType 当前 Repository 使用的持久化对象类型
+     * @param <P>             持久化对象类型
+     * @return PO 查询作用域
+     */
+    public <P> PersistenceQueryScope<M, P> withPO(Class<P> persistenceType) {
+        return new PersistenceQueryScope<>(this, persistenceType);
     }
 
     // ========================= 查询前钩子 =========================
@@ -616,27 +627,33 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     // ========================= 内部方法 =========================
 
-    private <Q extends Query<M>> Q addCondition(boolean condition, SFunction<?, ?> column, String operator, Object value) {
-        if (condition && value != null) {
-            if (this.conditions == null) {
+    private <Q extends Query<M>> Q addCondition(boolean condition, SFunction<M, ?> column, String operator, Object value) {
+        return addCondition(condition, PropertyRef.domain(column), operator, value);
+    }
+
+    <Q extends Query<M>> Q addCondition(boolean condition, PropertyRef propertyRef, String operator, Object value) {
+        boolean valueOptional = Objects.equals("IS_NULL", operator) || Objects.equals("IS_NOT_NULL", operator);
+        if (condition && (Objects.nonNull(value) || valueOptional)) {
+            if (Objects.isNull(this.conditions)) {
                 this.conditions = new ArrayList<>();
             }
-            this.conditions.add(new LambdaCondition(LambdaKit.resolve(column), operator, value));
+            this.conditions.add(new LambdaCondition(propertyRef, operator, value));
         }
         return (Q) this;
     }
 
-    private void addOrderBy(String property, String direction) {
-        if (this.orderByConditions == null) {
+    void addOrderBy(PropertyRef property, String direction) {
+        if (Objects.isNull(this.orderByConditions)) {
             this.orderByConditions = new ArrayList<>();
         }
         this.orderByConditions.add(new LambdaCondition(property, direction, null));
     }
 
-    private void addSetOperation(String property, String operator, Object value) {
-        if (this.setOperations == null) {
+    private void addSetOperation(PropertyRef property, String operator, Object value) {
+        if (Objects.isNull(this.setOperations)) {
             this.setOperations = new ArrayList<>();
         }
         this.setOperations.add(new LambdaCondition(property, operator, value));
     }
+
 }
