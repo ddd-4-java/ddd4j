@@ -47,9 +47,6 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEvent<ID> implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     /**
      * 默认主题（可通过系统属性 {@code ddd4j.mq.default-topic} 覆盖）。
      */

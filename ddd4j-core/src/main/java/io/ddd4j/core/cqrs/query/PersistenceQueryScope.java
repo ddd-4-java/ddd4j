@@ -4,9 +4,10 @@ import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.util.SFunction;
 import io.ddd4j.kit.lang.CollKit;
+import io.ddd4j.kit.text.StrPool;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,79 +34,79 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
     }
 
     public PersistenceQueryScope<M, P> eq(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "=", value);
+        return condition(true, property, StrPool.EQUALS, value);
     }
 
     public PersistenceQueryScope<M, P> eq(boolean condition, SFunction<P, ?> property, Object value) {
-        return condition(condition, property, "=", value);
+        return condition(condition, property, StrPool.EQUALS, value);
     }
 
     public PersistenceQueryScope<M, P> ne(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "<>", value);
+        return condition(true, property, StrPool.NOT_EQUALS, value);
     }
 
     public PersistenceQueryScope<M, P> like(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "LIKE", value);
+        return condition(true, property, StrPool.LIKE, value);
     }
 
     public PersistenceQueryScope<M, P> likeLeft(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "LIKE_LEFT", value);
+        return condition(true, property, StrPool.LIKE_LEFT, value);
     }
 
     public PersistenceQueryScope<M, P> likeRight(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "LIKE_RIGHT", value);
+        return condition(true, property, StrPool.LIKE_RIGHT, value);
     }
 
     public PersistenceQueryScope<M, P> notLike(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "NOT_LIKE", value);
+        return condition(true, property, StrPool.NOT_LIKE, value);
     }
 
     public PersistenceQueryScope<M, P> gt(SFunction<P, ?> property, Object value) {
-        return condition(true, property, ">", value);
+        return condition(true, property, StrPool.GT, value);
     }
 
     public PersistenceQueryScope<M, P> ge(SFunction<P, ?> property, Object value) {
-        return condition(true, property, ">=", value);
+        return condition(true, property, StrPool.GE, value);
     }
 
     public PersistenceQueryScope<M, P> lt(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "<", value);
+        return condition(true, property, StrPool.LT, value);
     }
 
     public PersistenceQueryScope<M, P> le(SFunction<P, ?> property, Object value) {
-        return condition(true, property, "<=", value);
+        return condition(true, property, StrPool.LE, value);
     }
 
     public PersistenceQueryScope<M, P> between(SFunction<P, ?> property, Object start, Object end) {
-        condition(Objects.nonNull(start), property, ">=", start);
-        return condition(Objects.nonNull(end), property, "<=", end);
+        condition(Objects.nonNull(start), property, StrPool.GE, start);
+        return condition(Objects.nonNull(end), property, StrPool.LE, end);
     }
 
     public PersistenceQueryScope<M, P> in(SFunction<P, ?> property, Collection<?> values) {
-        return condition(CollKit.isNotEmpty(values), property, "IN",
+        return condition(CollKit.isNotEmpty(values), property, StrPool.IN,
                 Objects.isNull(values) ? null : new ArrayList<>(values));
     }
 
     public PersistenceQueryScope<M, P> notIn(SFunction<P, ?> property, Collection<?> values) {
-        return condition(CollKit.isNotEmpty(values), property, "NOT_IN",
+        return condition(CollKit.isNotEmpty(values), property, StrPool.NOT_IN,
                 Objects.isNull(values) ? null : new ArrayList<>(values));
     }
 
     public PersistenceQueryScope<M, P> isNull(SFunction<P, ?> property) {
-        return condition(true, property, "IS_NULL", null);
+        return condition(true, property, StrPool.IS_NULL, null);
     }
 
     public PersistenceQueryScope<M, P> isNotNull(SFunction<P, ?> property) {
-        return condition(true, property, "IS_NOT_NULL", null);
+        return condition(true, property, StrPool.IS_NOT_NULL, null);
     }
 
     public PersistenceQueryScope<M, P> orderByAsc(SFunction<P, ?> property) {
-        query.addOrderBy(reference(property), "ASC");
+        query.addOrderBy(reference(property), StrPool.ASC);
         return this;
     }
 
     public PersistenceQueryScope<M, P> orderByDesc(SFunction<P, ?> property) {
-        query.addOrderBy(reference(property), "DESC");
+        query.addOrderBy(reference(property), StrPool.DESC);
         return this;
     }
 
