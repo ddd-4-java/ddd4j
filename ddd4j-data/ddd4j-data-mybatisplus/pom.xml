@@ -49,21 +49,15 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
         </dependency>
-        <!-- MyBatis Plus Enhance（字段加解密/数据签名/数据脱敏/国际化拦截器） -->
+        <!-- MyBatis-Plus Enhance Core（增强拦截器链、生命周期、参数工具） -->
         <dependency>
             <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-plus-enhance</artifactId>
-            <exclusions>
-                <!-- 本模块必须保持 Spring 无关；只使用 enhance 的纯 MyBatis-Plus 能力 -->
-                <exclusion>
-                    <groupId>com.baomidou</groupId>
-                    <artifactId>mybatis-plus</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.baomidou</groupId>
-                    <artifactId>mybatis-plus-spring</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>mybatis-plus-enhance-core</artifactId>
+        </dependency>
+        <!-- MyBatis-Plus Enhance Extension（加解密/签名/租户/数据范围/国际化/SQL 观测） -->
+        <dependency>
+            <groupId>io.github.hiwepy</groupId>
+            <artifactId>mybatis-plus-enhance-extension</artifactId>
         </dependency>
         <!-- JSqlParser（DataPermissionInnerInterceptor / MybatisTenantLineInnerInterceptor 需要） -->
         <dependency>
