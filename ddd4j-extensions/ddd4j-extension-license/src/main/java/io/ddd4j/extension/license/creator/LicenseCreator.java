@@ -10,6 +10,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.prefs.Preferences;
+import java.util.Date;
 
 /**
  * License生成类 -- 用于license生成
@@ -37,12 +38,25 @@ public class LicenseCreator {
 
     /**
      * 生成License证书
+     *
+     * @return true 表示生成成功
+     * @throws IllegalStateException 当 {@code param} 或必填项为空时抛出
      */
     public boolean generateLicense() {
+        Objects.requireNonNull(param, "LicenseCreatorParam 不能为空");
+        if (Objects.isNull(param.getSubject()) || Objects.isNull(param.getPrivateKeysStorePath())
+                || Objects.isNull(param.getLicensePath())) {
+            throw new IllegalStateException("生成证书缺少必填参数: subject / privateKeysStorePath / licensePath");
+        }
+        if (Objects.isNull(param.getExpiryTime())) {
+            param.setExpiryTime(new Date(System.currentTimeMillis() + 365L * 24L * 60L * 60L * 1000L));
+            log.warn("未指定 expiryTime，默认设为 1 年后");
+        }
         try {
             LicenseManager licenseManager = new CustomLicenseManager(initLicenseParam());
             LicenseContent licenseContent = initLicenseContent();
             licenseManager.store(licenseContent, new File(param.getLicensePath()));
+            log.info("License 证书生成成功: path={}, subject={}", param.getLicensePath(), param.getSubject());
             return true;
         } catch (Exception e) {
             log.error(MessageFormat.format("证书生成失败：{0}", param), e);

@@ -22,6 +22,6 @@ public class Ddd4jSqlObservationSink implements SqlObservationSink {
         }
         ThreadContext.set(ContextConstants.PREPARING_SQL, observation.sql());
         ThreadContext.set(ContextConstants.SQL_PARAMS, observation.sortedParams());
-        ThreadContext.set(ContextConstants.LAST_SQL_SPENDS, observation.elapsedMs());
+        ThreadContext.set(ContextConstants.LAST_SQL_SPENDS, observation.elapsedMillis());
     }
 }

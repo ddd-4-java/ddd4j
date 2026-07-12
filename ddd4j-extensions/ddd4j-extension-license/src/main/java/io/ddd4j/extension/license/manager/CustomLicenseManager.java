@@ -96,7 +96,14 @@ public class CustomLicenseManager extends LicenseManager {
 
 
     /**
-     * 复写 validate 方法，用于增加我们额外的校验信息
+     * 复写 validate 方法，用于增加我们额外的校验信息。
+     *
+     * <p>校验顺序：
+     * <ol>
+     *   <li>父类 {@code validate}（subject、有效期等标准校验）；</li>
+     *   <li>若证书声明了 {@link LicenseExtraModel}（IP/MAC/SN），与当前运行环境比对。</li>
+     * </ol>
+     * 向后兼容：extra 为 null 或所有约束字段为 null 时，跳过扩展校验。
      *
      * @throws LicenseContentException 如果自定义校验失败
      */
@@ -105,8 +112,89 @@ public class CustomLicenseManager extends LicenseManager {
         //1. 首先调用父类的validate方法
         super.validate(content);
         //2. 然后校验自定义的License参数，去校验我们的license信息
-        LicenseExtraModel expectedCheckModel = (LicenseExtraModel) content.getExtra();
-        // 做我们自定义的校验
+        Object extra = content.getExtra();
+        if (!(extra instanceof LicenseExtraModel)) {
+            // 无扩展校验信息，直接通过（兼容旧证书）
+            return;
+        }
+        LicenseExtraModel expected = (LicenseExtraModel) extra;
+        if (!expected.hasAnyConstraint()) {
+            return;
+        }
+        // 做我们自定义的校验：IP / MAC / SN
+        if (Objects.nonNull(expected.getIp())) {
+            String actualIp = currentIp();
+            if (!Objects.equals(expected.getIp(), actualIp)) {
+                throw new LicenseContentException(
+                        "IP 校验失败: 期望=" + expected.getIp() + ", 实际=" + actualIp);
+            }
+        }
+        if (Objects.nonNull(expected.getMac())) {
+            String actualMac = currentMac();
+            if (!Objects.equals(expected.getMac(), actualMac)) {
+                throw new LicenseContentException(
+                        "MAC 校验失败: 期望=" + expected.getMac() + ", 实际=" + actualMac);
+            }
+        }
+        if (Objects.nonNull(expected.getSn())) {
+            String actualSn = currentSn();
+            if (!Objects.equals(expected.getSn(), actualSn)) {
+                throw new LicenseContentException(
+                        "SN 校验失败: 期望=" + expected.getSn() + ", 实际=" + actualSn);
+            }
+        }
+    }
+
+    /**
+     * 获取当前机器首选 IP（非回环）。
+     *
+     * <p>简化实现：取首个非回环 IPv4。失败返回 null（调用方会因不匹配而拒绝）。
+     */
+    private String currentIp() {
+        try {
+            return java.net.InetAddress.getLocalHost().getHostAddress();
+        } catch (Exception e) {
+            log.warn("获取本机 IP 失败", e);
+            return null;
+        }
+    }
+
+    /**
+     * 获取当前机器首选 MAC 地址。
+     *
+     * <p>简化实现：取首个非回环网卡的硬件地址。失败返回 null。
+     */
+    private String currentMac() {
+        try {
+            java.util.Enumeration<java.net.NetworkInterface> nics = java.net.NetworkInterface.getNetworkInterfaces();
+            while (nics.hasMoreElements()) {
+                java.net.NetworkInterface nic = nics.nextElement();
+                if (nic.isLoopback() || !nic.isUp()) {
+                    continue;
+                }
+                byte[] mac = nic.getHardwareAddress();
+                if (Objects.isNull(mac) || mac.length == 0) {
+                    continue;
+                }
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < mac.length; i++) {
+                    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? ":" : ""));
+                }
+                return sb.toString();
+            }
+        } catch (Exception e) {
+            log.warn("获取本机 MAC 失败", e);
+        }
+        return null;
+    }
+
+    /**
+     * 获取当前机器 SN 序列号。
+     *
+     * <p>简化实现：使用 OS name + user.name 拼装的稳定标识。生产可替换为读取真实硬件 SN。
+     */
+    private String currentSn() {
+        return System.getProperty("os.name") + ":" + System.getProperty("user.name");
     }
 
 
