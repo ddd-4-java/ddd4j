@@ -1,12 +1,51 @@
 package io.ddd4j.extension.license;
 
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
- * 自定义需要校验的License参数，可以增加一些额外需要校验的参数，比如项目信息，ip地址信息等等，待完善
+ * License 附加校验信息模型。
+ *
+ * <p>承载除 TrueLicense 标准字段（subject/有效期等）之外的自定义校验维度，
+ * 例如允许部署的服务器 IP、MAC 地址、硬件 SN 码等，用于实现"机器绑定"。
+ *
+ * <p>向后兼容：所有字段默认为 null，{@code CustomLicenseManager.validate} 中
+ * 仅对非 null 字段做比对，null 字段视为不限制，因此旧证书（extra 为 null）仍可校验通过。
+ *
+ * <p>实现 {@code Serializable}，便于随 {@link LicenseInfo} 一同进入 CacheKit 远程缓存。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public class LicenseExtraModel {
+@Data
+public class LicenseExtraModel implements Serializable {
 
-    // 这里可以添加一些往外的自定义信息，比如我们可以增加项目验证，客户电脑sn码的验证等等
+    private static final long serialVersionUID = 1L;
 
+    /**
+     * 允许部署的 IP 地址（精确匹配），为 null 表示不校验
+     */
+    private String ip;
+    /**
+     * 允许部署的 MAC 地址，为 null 表示不校验
+     */
+    private String mac;
+    /**
+     * 允许部署的服务器 SN 码，为 null 表示不校验
+     */
+    private String sn;
+    /**
+     * 备注 / 项目信息等业务自定义内容
+     */
+    private String remark;
+
+    /**
+     * 判断是否声明了任何校验维度（全 null 表示无附加约束）。
+     *
+     * @return true 表示存在至少一个非 null 的校验字段
+     */
+    public boolean hasAnyConstraint() {
+        return Objects.nonNull(ip) || Objects.nonNull(mac) || Objects.nonNull(sn);
+    }
 }

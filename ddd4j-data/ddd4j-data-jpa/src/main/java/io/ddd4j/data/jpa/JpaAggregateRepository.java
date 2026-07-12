@@ -18,6 +18,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.Tuple;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -85,6 +86,63 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         if (Objects.nonNull(persistenceObject)) {
             entityManager.remove(persistenceObject);
         }
+    }
+
+    @Override
+    public List<M> findByIds(Collection<ID> ids) {
+        if (Objects.isNull(ids) || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<P> cq = cb.createQuery(persistenceClass);
+        Root<P> root = cq.from(persistenceClass);
+        cq.where(root.<ID>get("id").in(ids));
+        return convert(entityManager.createQuery(cq).getResultList());
+    }
+
+    @Override
+    public List<M> saveBatch(Collection<M> aggregates) {
+        if (Objects.isNull(aggregates) || aggregates.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<M> result = new ArrayList<>(aggregates.size());
+        for (M aggregate : aggregates) {
+            P managed = entityManager.merge(toPersistenceObject(aggregate));
+            result.add(toModel(managed));
+        }
+        entityManager.flush();
+        return result;
+    }
+
+    @Override
+    public int updateBatchById(Collection<M> aggregates) {
+        if (Objects.isNull(aggregates) || aggregates.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        for (M aggregate : aggregates) {
+            entityManager.merge(toPersistenceObject(aggregate));
+            count++;
+        }
+        entityManager.flush();
+        return count;
+    }
+
+    @Override
+    public int insertOrUpdateBatch(Collection<M> aggregates) {
+        return updateBatchById(aggregates);
+    }
+
+    @Override
+    public int deleteByIds(Collection<ID> ids) {
+        if (Objects.isNull(ids) || ids.isEmpty()) {
+            return 0;
+        }
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaDelete<P> cd = cb.createCriteriaDelete(persistenceClass);
+        Root<P> root = cd.from(persistenceClass);
+        cd.where(root.<ID>get("id").in(ids));
+        return entityManager.createQuery(cd).executeUpdate();
     }
 
     @Override
@@ -165,9 +223,30 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> maps(Query<M> query) {
-        throw new UnsupportedOperationException(
-                "JPA aggregate repository does not expose untyped map queries; use a typed CQRS projection");
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        Root<P> root = cq.from(persistenceClass);
+        cq.multiselect(root.get("id").alias("id"), root.get("tenantId").alias("tenantId"));
+        applyWhere(cq, buildPredicates(cb, root, query));
+        applyOrderTuple(cq, cb, root, query);
+        TypedQuery<Tuple> typedQuery = entityManager.createQuery(cq);
+        long current = Math.max(1L, query.getCurrent());
+        if (query.getSize() >= 0L) {
+            int size = Math.toIntExact(query.getSize());
+            typedQuery.setFirstResult(Math.toIntExact((current - 1L) * query.getSize()));
+            typedQuery.setMaxResults(size);
+        }
+        return typedQuery.getResultList().stream()
+                .map(tuple -> {
+                    Map<String, Object> map = new java.util.LinkedHashMap<>();
+                    for (jakarta.persistence.TupleElement<?> element : tuple.getElements()) {
+                        map.put(element.getAlias(), tuple.get(element));
+                    }
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -262,6 +341,23 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
 
     private void applyOrder(CriteriaQuery<P> criteriaQuery, CriteriaBuilder criteriaBuilder,
                             Root<P> root, Query<M> query) {
+        List<Order> orders = new ArrayList<>();
+        for (LambdaCondition condition : query.getOrderByConditions()) {
+            String property = persistenceProperty(condition);
+            if (Objects.equals("ASC", condition.operator())) {
+                orders.add(criteriaBuilder.asc(root.get(property)));
+            } else {
+                orders.add(criteriaBuilder.desc(root.get(property)));
+            }
+        }
+        if (!orders.isEmpty()) {
+            criteriaQuery.orderBy(orders);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void applyOrderTuple(CriteriaQuery<Tuple> criteriaQuery, CriteriaBuilder criteriaBuilder,
+                                 Root<P> root, Query<M> query) {
         List<Order> orders = new ArrayList<>();
         for (LambdaCondition condition : query.getOrderByConditions()) {
             String property = persistenceProperty(condition);
