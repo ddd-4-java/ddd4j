@@ -38,6 +38,16 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
+        <!-- commons-lang3：JpaEncryptFieldListener 用 FieldUtils 反射扫描字段 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- slf4j-api：日志门面 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <!-- ======== Test ======== -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
