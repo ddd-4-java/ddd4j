@@ -45,31 +45,20 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
         </dependency>
-        <!-- mybatis-spring: 可选（Quarkus/Javalin 不需要） -->
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- mybatis-enhance-annotation（纯 Java 注解：权限/国际化） -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.github.hiwepy</groupId>
             <artifactId>mybatis-enhance-annotation</artifactId>
         </dependency>
         <!-- mybatis-enhance-core（拦截器框架、TypeHandler、SQL 工具） -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.github.hiwepy</groupId>
             <artifactId>mybatis-enhance-core</artifactId>
         </dependency>
         <!-- JSqlParser: SQL 解析/改写（租户拦截器/数据权限拦截器） -->
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-        </dependency>
-        <!-- FastJSON2: JSON TypeHandler 支持 -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
         </dependency>
         <!-- ======== Test ======== -->
         <dependency>
@@ -91,6 +80,32 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>ban-spring-dependencies</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <excludes>
+                                        <exclude>org.springframework:*</exclude>
+                                        <exclude>org.springframework.*:*</exclude>
+                                        <exclude>org.mybatis:mybatis-spring</exclude>
+                                    </excludes>
+                                    <message>ddd4j-data-mybatis 必须保持 Spring 无关，Spring 集成应由独立适配模块提供。</message>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

@@ -1,19 +1,19 @@
 package io.ddd4j.data.mybatis.plugins.observation;
 
 import com.baomidou.mybatisplus.enhance.observation.SqlObservation;
-import com.baomidou.mybatisplus.enhance.observation.SqlObservationListener;
+import com.baomidou.mybatisplus.enhance.observation.SqlObservationSink;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 
 import java.util.Objects;
 
 /**
- * Stores generic SQL observations in the ddd4j request ThreadContext.
+ * 将 MyBatis-Plus Enhance 的 SQL 观测结果写入 ddd4j 请求上下文。
  */
-public class Ddd4jSqlObservationListener implements SqlObservationListener {
+public class Ddd4jSqlObservationSink implements SqlObservationSink {
 
     @Override
-    public void onCompleted(SqlObservation observation) {
+    public void accept(SqlObservation observation) {
         if (Objects.isNull(observation)) {
             return;
         }
@@ -23,5 +23,4 @@ public class Ddd4jSqlObservationListener implements SqlObservationListener {
         }
         ThreadContext.set(ContextConstants.LAST_SQL_SPENDS, observation.getElapsedMillis());
     }
-
 }

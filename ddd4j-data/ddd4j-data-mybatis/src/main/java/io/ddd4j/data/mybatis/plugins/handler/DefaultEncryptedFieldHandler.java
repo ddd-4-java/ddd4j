@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * ddd4j 加密字段处理器（桥接 ddd4j-data-crypto 的 CryptoStrategy）。
  *
  * <p>将 ddd4j-data-crypto 的 {@link CryptoStrategy} 桥接为加密字段处理逻辑，
- * 配合 {@link io.ddd4j.data.mybatis.crypto.EncryptField} 注解使用。
+ * 配合 {@link io.ddd4j.data.crypto.annotation.EncryptField} 注解使用。
  *
  * <p>满足等保数据加密要求：SM4 对称加密 + SM3 摘要签名。
  *

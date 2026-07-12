@@ -12,7 +12,6 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.ddd4j.data.mybatis.plugins.inner.Ddd4jAggregateFillInnerInterceptor;
-import io.ddd4j.data.mybatis.plugins.observation.Ddd4jSqlObservationListener;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
@@ -128,7 +127,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         interceptor.addInnerInterceptor(new InsertIgnoreInnerInterceptor());
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         interceptor.addInnerInterceptor(new Ddd4jAggregateFillInnerInterceptor());
-        interceptor.addInnerInterceptor(new SqlObservationInnerInterceptor(new Ddd4jSqlObservationListener()));
+        interceptor.addInnerInterceptor(new SqlObservationInnerInterceptor());
         configuration.addInterceptor(interceptor);
         configuration.setEnvironment(new Environment("ddd4j-runtime-guice", new JdbcTransactionFactory(), dataSource));
 

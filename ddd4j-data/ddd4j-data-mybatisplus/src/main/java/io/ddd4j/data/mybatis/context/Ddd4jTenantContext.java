@@ -15,7 +15,7 @@
  */
 package io.ddd4j.data.mybatis.context;
 
-import com.baomidou.mybatisplus.enhance.tenant.TenantContext;
+import com.baomidou.mybatisplus.enhance.context.TenantContext;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 

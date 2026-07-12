@@ -1,7 +1,7 @@
 package io.ddd4j.data.mybatis.adapter;
 
-import com.baomidou.mybatisplus.enhance.tenant.TenantContext;
-import com.baomidou.mybatisplus.enhance.tenant.DefaultTenantLineHandler;
+import com.baomidou.mybatisplus.enhance.context.TenantContext;
+import com.baomidou.mybatisplus.enhance.plugins.handler.DefaultTenantLineHandler;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;

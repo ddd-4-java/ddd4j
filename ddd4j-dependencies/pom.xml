@@ -352,7 +352,7 @@
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
         <mybatis-plus-enhance.version>1.0.x.20260630-SNAPSHOT</mybatis-plus-enhance.version>
-        <mybatis-enhance.version>1.0.0-SNAPSHOT</mybatis-enhance.version>
+        <mybatis-enhance.version>1.0.x.20260630-SNAPSHOT</mybatis-enhance.version>
         <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
         <mybatis-r2dbc.version>3.1.1.RELEASE</mybatis-r2dbc.version>
         <mybatis-spring.version>3.0.5</mybatis-spring.version>
@@ -5582,12 +5582,12 @@
             </dependency>
             <!-- mybatis-enhance: 纯 MyBatis 增强（注解/核心/扩展） -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.hiwepy</groupId>
                 <artifactId>mybatis-enhance-annotation</artifactId>
                 <version>${mybatis-enhance.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.hiwepy</groupId>
                 <artifactId>mybatis-enhance-core</artifactId>
                 <version>${mybatis-enhance.version}</version>
             </dependency>

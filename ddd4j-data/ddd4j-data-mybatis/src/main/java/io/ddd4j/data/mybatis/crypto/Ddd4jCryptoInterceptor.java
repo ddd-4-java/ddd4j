@@ -1,5 +1,7 @@
 package io.ddd4j.data.mybatis.crypto;
 
+import io.ddd4j.data.crypto.annotation.EncryptField;
+import io.ddd4j.data.crypto.handler.Ddd4jFieldCryptoHandler;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;

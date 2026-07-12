@@ -1,8 +1,8 @@
 package io.ddd4j.data.jpa.crypto;
 
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
-import io.ddd4j.data.mybatis.crypto.Ddd4jFieldCryptoHandler;
-import io.ddd4j.data.mybatis.crypto.EncryptField;
+import io.ddd4j.data.crypto.annotation.EncryptField;
+import io.ddd4j.data.crypto.handler.Ddd4jFieldCryptoHandler;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import org.slf4j.Logger;
