@@ -24,7 +24,7 @@ class Ddd4jSqlObservationSinkTest {
         List<String> params = List.of("PAID", "2024");
 
         new Ddd4jSqlObservationSink().accept(
-                new SqlObservation("SELECT * FROM orders", params, 8L));
+                new SqlObservation("io.ddd4j.data.mybatis.OrderMapper.listPaid", "SELECT * FROM orders", params, 8_000_000L, null));
 
         assertThat(ThreadContext.<Object>get(ContextConstants.PREPARING_SQL))
                 .isEqualTo("SELECT * FROM orders");

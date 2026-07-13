@@ -353,7 +353,7 @@
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
         <mybatis-plus-enhance.version>2.0.x.20260630-SNAPSHOT</mybatis-plus-enhance.version>
-        <mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</mybatis-enhance.version>
+        <mybatis-enhance.version>3.0.x.20260630-SNAPSHOT</mybatis-enhance.version>
         <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
         <mybatis-r2dbc.version>3.1.1.RELEASE</mybatis-r2dbc.version>
         <mybatis-spring.version>3.0.5</mybatis-spring.version>

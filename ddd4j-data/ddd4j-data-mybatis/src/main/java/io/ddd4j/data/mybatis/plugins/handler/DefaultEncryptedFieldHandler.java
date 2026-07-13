@@ -4,7 +4,7 @@ import cn.hutool.crypto.digest.HmacAlgorithm;
 import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.mybatis.enhance.crypto.handler.EncryptedFieldHandler;
+import org.apache.ibatis.enhance.crypto.handler.EncryptedFieldHandler;
 
 import java.util.Objects;
 
