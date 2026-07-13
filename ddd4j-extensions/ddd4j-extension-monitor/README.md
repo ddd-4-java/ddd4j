@@ -13,7 +13,6 @@ ddd4j 框架的**监控告警**工具库：钉钉 / 企业微信 / 飞书 群机
 - ✅ **纯 Java 工具库**：不依赖 Spring / Quarkus / Javalin 任何容器框架，上层框架完成装配。
 - ✅ **模块化通道**：钉钉 / 企业微信两条独立通道，互不污染。
 - ✅ **启动期通告**：读取 `git.properties` 自动广播版本号给机器人。
-- ✅ **健康检查端点**：纯 Java `HealthEndpoint`，可适配任意 HTTP 框架。
 
 ---
 
@@ -106,12 +105,7 @@ config.applicationStartReporter(sender, props.getLog().getApp().getName()).init(
 
 ### 3.4 健康检查端点
 
-```java
-HealthEndpoint endpoint = new HealthEndpoint();
-String status = endpoint.health();   // => "ok"
-```
-
-由上层 Web 框架（Spring / Quarkus / Javalin）暴露为 HTTP 端点。
+本版本未提供统一健康检查端点（移除了原 `HealthEndpoint` 类）—— 由上层 Web 框架（Spring Actuator / Quarkus Health / 自实现）按需暴露。
 
 ---
 
@@ -119,36 +113,33 @@ String status = endpoint.health();   // => "ok"
 
 ```
 io.ddd4j.extension.monitor
-├── core/                 # 门面与契约
-│   ├── Monitor.java       # ofDingTalk / ofWeCom / startupReporter
-│   └── Sender.java        # 通道 SPI（markdownAt、renderMessage）
-├── channel/              # 各消息通道
-│   ├── dingtalk/          # 钉钉（was dingding）
+├── Monitor.java         # 门面入口：ofDingTalk / ofWeCom / ofFeishu / startupReporter
+├── Sender.java          # 通道 SPI（send、sendMarkdown、renderMessage）
+├── channel/             # 各消息通道
+│   ├── dingtalk/         # 钉钉（was dingding）
 │   │   ├── DingTalkClient.java
 │   │   ├── DingTalkProperties.java
 │   │   └── DingTalkRobotSender.java
-│   ├── wecom/             # 企业微信（was qiwei）
+│   ├── wecom/            # 企业微信（was qiwei）
 │   │   ├── WeComClient.java
 │   │   ├── WeComProperties.java
 │   │   └── WeComRobotSender.java
-│   └── feishu/            # 飞书（v2.x 新增）
+│   └── feishu/           # 飞书（v2.x 新增）
 │       ├── FeishuClient.java
 │       ├── FeishuProperties.java
 │       └── FeishuRobotSender.java
-├── message/              # 通用协议 DTO
+├── message/             # 通用协议 DTO
 │   ├── At.java
 │   ├── CodeVersion.java
 │   ├── Markdown.java
-│   ├── Message.java       # 顶层 at/text/markdown 包装
+│   ├── Message.java      # 顶层 at/text/markdown 包装
 │   └── Text.java
 ├── runtime/
 │   └── ApplicationStartReporter.java
 ├── config/
 │   ├── BaseMonitorConfig.java
 │   └── BaseMonitorProperties.java
-├── endpoint/
-│   └── HealthEndpoint.java
-└── （util/IpUtils 已删除，改用 io.ddd4j.kit.web.IpKit）
+└── （util/IpUtils 已删除，改用 io.ddd4j.kit.web.IpKit；HealthEndpoint 也已下线）
 ```
 
 ### 4.1 Markdown 消息协议层字段说明
@@ -201,7 +192,6 @@ v2.x 的 `Markdown` 保留了这两套字段并由工厂方法**一并填充**�
 
   ┌──────────────────────────────────────────────────────────┐
   │   runtime/ApplicationStartReporter （git.properties）    │
-  │   endpoint/HealthEndpoint                                │
   └──────────────────────────────────────────────────────────┘
                 │
                 ▼
@@ -216,8 +206,8 @@ v2.x 的 `Markdown` 保留了这两套字段并由工厂方法**一并填充**�
 
 | v1.x 旧路径 | v2.x 新路径 |
 | --- | --- |
-| `io.ddd4j.extension.monitor.api.*` | `io.ddd4j.extension.monitor.endpoint.*` |
-| `io.ddd4j.extension.monitor.application.service.*` | `io.ddd4j.extension.monitor.core.*`（`Sender`）/ `io.ddd4j.extension.monitor.runtime.*`（`ApplicationStartReporter`） |
+| `io.ddd4j.extension.monitor.api.*` | _已删除_（健康检查端点由上层 Web 框架提供） |
+| `io.ddd4j.extension.monitor.application.service.*` | `io.ddd4j.extension.monitor.*` 顶层包（`Sender` + `Monitor`）/ `io.ddd4j.extension.monitor.runtime.*`（`ApplicationStartReporter`） |
 | `io.ddd4j.extension.monitor.domain.*` | `io.ddd4j.extension.monitor.channel.*` / `io.ddd4j.extension.monitor.message.*` |
 | `io.ddd4j.extension.monitor.infras.*` | `io.ddd4j.extension.monitor.config.*` / `io.ddd4j.extension.monitor.util.*`（已删，迁移到 `IpKit`） |
 | `io.ddd4j.extension.monitor.domain.dingding.service.DingDingService` | `io.ddd4j.extension.monitor.channel.dingtalk.DingTalkClient` |
