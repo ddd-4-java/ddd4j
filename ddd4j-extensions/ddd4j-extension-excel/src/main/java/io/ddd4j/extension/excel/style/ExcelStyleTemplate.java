@@ -6,7 +6,8 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 /**
  * Excel 预设样式模板。
  *
- * <p>每种模板封装一组 {@link StylePreset}（表头底色、内容对齐、是否斑马线等），
+ * <p>每个枚举值封装一组样式预设（{@link #headerColor()} 表头底色、
+ * {@link #contentAlign()} 内容对齐、{@link #zebraRow()} 是否斑马线），
  * 由 {@link DefaultCellStyleStrategy} 读取后翻译为 easyexcel 样式对象。
  *
  * <p>新增模板只需追加枚举值并填写预设即可。
