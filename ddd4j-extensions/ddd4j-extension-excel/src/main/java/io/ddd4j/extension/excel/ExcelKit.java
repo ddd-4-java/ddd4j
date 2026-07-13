@@ -7,16 +7,13 @@ import io.ddd4j.extension.excel.export.WriteOptions;
 import io.ddd4j.extension.excel.fill.ExcelFiller;
 import io.ddd4j.extension.excel.importer.ExcelImporter;
 import io.ddd4j.extension.excel.importer.ImportResult;
-import io.ddd4j.extension.excel.web.ExcelHttpKit;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 /**
- * ddd4j-excel 顶层门面（统一对外入口）。
+ * ddd4j-excel 顶层门面（统一对外入口，纯 Java，无 Spring 依赖）。
  *
  * <p>把"阿里 EasyExcel 的链式构建"翻译成意图明确的命名，业务侧不再出现
  * {@code .registerWriteHandler(...)} 这种细节。直接复用 easyexcel 原生注解
@@ -27,30 +24,29 @@ import java.util.Map;
  * // 1. 一行导出
  * byte[] bytes = ExcelKit.export(OrderVO.class, orderService.listAll());
  *
- * // 2. Web 下载
- * ExcelKit.download(response, "订单.xlsx", OrderVO.class, orderService.listAll());
- *
- * // 3. 导入 + 错误回传
+ * // 2. 导入 + 错误回传
  * ImportResult<OrderVO> result = ExcelKit.importExcel(
  *     file.getInputStream(), OrderVO.class,
  *     new BatchReadListener<>(1000, orderService::saveBatch)
  * );
  *
- * // 4. 模板填充
+ * // 3. 模板填充
  * byte[] filled = ExcelKit.fill(
  *     getClass().getResourceAsStream("/templates/contract.xlsx"),
  *     Map.of("contractNo", "HT-001")
  * );
  *
- * // 5. 自定义样式
+ * // 4. 自定义样式
  * byte[] bytes = ExcelKit.export(OrderVO.class, data,
  *     WriteOptions.defaults()
- *         .setFreezeHeader(true)
- *         .setAlternatingRow(true)
- *         .setStyleTemplate(ExcelStyleTemplate.FINANCE)
  *         .addHandler(new CommentWriteHandler())
  * );
  * }</pre>
+ *
+ * <h3>Web 下载/上传</h3>
+ * <p>本类为纯 Java，不依赖 Servlet/Spring；HTTP 场景的下载（{@code HttpServletResponse}）
+ * 与上传（{@code MultipartFile}）请使用 {@code ddd4j-boot-extension-excel} 模块的
+ * {@code io.ddd4j.boot.excel.web.ExcelHttpKit}。
  *
  * <h3>容量建议</h3>
  * <ul>
@@ -235,65 +231,5 @@ public final class ExcelKit {
      */
     public static byte[] fillComposite(InputStream template, Map<String, Object> vars, List<?> list) {
         return ExcelFiller.fillComposite(template, vars, list);
-    }
-
-    // ───────────────────── Web 快捷 ─────────────────────
-
-    /**
-     * Web 下载：导出 → 字节 → Response（一行调用）。
-     *
-     * @param response HTTP 响应
-     * @param filename 文件名
-     * @param head     表头类
-     * @param data     数据
-     */
-    public static void download(HttpServletResponse response, String filename,
-                                Class<?> head, List<?> data) {
-        byte[] bytes = export(head, data);
-        ExcelHttpKit.download(response, filename, bytes);
-    }
-
-    /**
-     * Web 下载：直接写字节到 Response。
-     *
-     * @param response HTTP 响应
-     * @param filename 文件名
-     * @param bytes    xlsx 字节
-     */
-    public static void download(HttpServletResponse response, String filename, byte[] bytes) {
-        ExcelHttpKit.download(response, filename, bytes);
-    }
-
-    /**
-     * Web 上传：解析 MultipartFile 为导入结果（默认 ErrorCollectingReadListener）。
-     *
-     * @param file 上传文件
-     * @param head 表头类
-     * @param <T>  数据类型
-     * @return 导入结果
-     */
-    public static <T> ImportResult<T> upload(MultipartFile file, Class<T> head) {
-        try (InputStream in = file.getInputStream()) {
-            return importExcel(in, head);
-        } catch (Exception e) {
-            return ImportResult.empty();
-        }
-    }
-
-    /**
-     * Web 上传：用自定义 listener 解析 MultipartFile。
-     *
-     * @param file     上传文件
-     * @param head     表头类
-     * @param listener 监听器
-     * @param <T>      数据类型
-     * @return 导入结果
-     */
-    public static <T> ImportResult<T> upload(MultipartFile file, Class<T> head, ReadListener<T> listener) {
-        try (InputStream in = file.getInputStream()) {
-            return importExcel(in, head, listener);
-        } catch (Exception e) {
-            return ImportResult.empty();
-        }
     }
 }
