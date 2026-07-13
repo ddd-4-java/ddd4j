@@ -1,6 +1,6 @@
 package io.ddd4j.extension.monitor.channel.wecom;
 
-import io.ddd4j.extension.monitor.core.Sender;
+import io.ddd4j.extension.monitor.Sender;
 
 /**
  * 企业微信群机器人 {@link Sender} 适配器。was {@code QiWeiRobotSender}。

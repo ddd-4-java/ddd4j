@@ -1,6 +1,6 @@
 package io.ddd4j.extension.monitor.runtime;
 
-import io.ddd4j.extension.monitor.core.Sender;
+import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.extension.monitor.message.CodeVersion;
 import io.ddd4j.kit.lang.StrKit;
 import jakarta.annotation.PostConstruct;

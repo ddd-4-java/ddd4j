@@ -6,8 +6,8 @@ import io.ddd4j.extension.monitor.channel.feishu.FeishuClient;
 import io.ddd4j.extension.monitor.channel.feishu.FeishuRobotSender;
 import io.ddd4j.extension.monitor.channel.wecom.WeComClient;
 import io.ddd4j.extension.monitor.channel.wecom.WeComRobotSender;
-import io.ddd4j.extension.monitor.core.Monitor;
-import io.ddd4j.extension.monitor.core.Sender;
+import io.ddd4j.extension.monitor.Monitor;
+import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.extension.monitor.runtime.ApplicationStartReporter;
 import org.junit.jupiter.api.Test;
 

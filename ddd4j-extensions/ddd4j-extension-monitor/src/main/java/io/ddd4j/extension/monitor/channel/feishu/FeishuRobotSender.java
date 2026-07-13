@@ -1,6 +1,6 @@
 package io.ddd4j.extension.monitor.channel.feishu;
 
-import io.ddd4j.extension.monitor.core.Sender;
+import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.kit.lang.JsonKit;
 import lombok.Data;
 import lombok.NoArgsConstructor;

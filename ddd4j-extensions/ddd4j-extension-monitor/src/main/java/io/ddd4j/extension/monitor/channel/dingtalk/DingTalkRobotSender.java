@@ -1,6 +1,6 @@
 package io.ddd4j.extension.monitor.channel.dingtalk;
 
-import io.ddd4j.extension.monitor.core.Sender;
+import io.ddd4j.extension.monitor.Sender;
 import lombok.Getter;
 
 /**

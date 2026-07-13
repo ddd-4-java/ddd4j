@@ -1,6 +1,6 @@
 package io.ddd4j.extension.monitor.config;
 
-import io.ddd4j.extension.monitor.core.Sender;
+import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.extension.monitor.channel.dingtalk.DingTalkRobotSender;
 import io.ddd4j.extension.monitor.channel.feishu.FeishuRobotSender;
 import io.ddd4j.extension.monitor.channel.wecom.WeComRobotSender;
