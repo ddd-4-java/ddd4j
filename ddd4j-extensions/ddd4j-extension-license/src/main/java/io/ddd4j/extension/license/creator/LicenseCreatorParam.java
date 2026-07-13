@@ -14,14 +14,6 @@ import java.util.Date;
 @Data
 public class LicenseCreatorParam implements Serializable {
 
-    private static final long serialVersionUID = -7793154252684580872L;
-
-    /**
-     * 证书subject（与校验时的subject对应）
-     */
-    /**
-     * 证书subject
-     */
     /**
      * 证书subject（与校验时的subject对应）
      */

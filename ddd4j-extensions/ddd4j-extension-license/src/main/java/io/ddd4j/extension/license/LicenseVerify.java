@@ -2,12 +2,14 @@ package io.ddd4j.extension.license;
 
 import de.schlichtherle.license.*;
 import io.ddd4j.extension.license.manager.CustomLicenseManager;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 
@@ -53,15 +55,19 @@ public class LicenseVerify {
     /**
      * License 管理器，用于证书的安装、校验和卸载操作
      */
-    private LicenseManager licenseManager;
+    private volatile CustomLicenseManager licenseManager;
     /**
      * 标识证书是否安装成功
      */
-    private boolean installSuccess;
+    private volatile boolean installSuccess;
     /**
      * 验证结果缓存 TTL（秒）
      */
     private long cacheTtlSeconds = LicenseCache.DEFAULT_TTL_SECONDS;
+    /**
+     * 隔离同 subject、不同证书路径或公钥上下文的缓存。
+     */
+    private final String cacheKey;
 
     /**
      * 构造函数。
@@ -73,11 +79,17 @@ public class LicenseVerify {
      * @param publicKeysStorePath 密钥库存储路径
      */
     public LicenseVerify(String subject, String publicAlias, String storePass, String licensePath, String publicKeysStorePath) {
+        requireText(subject, "subject");
+        requireText(publicAlias, "publicAlias");
+        requireText(storePass, "storePass");
+        requireText(licensePath, "licensePath");
+        requireText(publicKeysStorePath, "publicKeysStorePath");
         this.subject = subject;
         this.publicAlias = publicAlias;
         this.storePass = storePass;
         this.licensePath = licensePath;
         this.publicKeysStorePath = publicKeysStorePath;
+        this.cacheKey = buildCacheKey();
     }
 
     /**
@@ -101,7 +113,9 @@ public class LicenseVerify {
      *
      * <p>安装成功后会用证书内容预填缓存，使得首次 {@link #verify()} 即可命中。
      */
-    public void installLicense() {
+    public synchronized void installLicense() {
+        CustomLicenseManager previousManager = licenseManager;
+        boolean previousInstallSuccess = installSuccess;
         try {
             LicenseCache.init(cacheTtlSeconds);
 
@@ -117,28 +131,29 @@ public class LicenseVerify {
 
             LicenseParam licenseParam = new DefaultLicenseParam(subject, preferences, publicStoreParam, cipherParam);
 
-            licenseManager = new CustomLicenseManager(licenseParam);
-            licenseManager.uninstall();
-            LicenseContent licenseContent = licenseManager.install(new File(licensePath));
+            CustomLicenseManager candidateManager = new CustomLicenseManager(licenseParam);
+            LicenseContent licenseContent = candidateManager.install(new File(licensePath));
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            licenseManager = candidateManager;
             installSuccess = true;
             log.info("------------------------------- 证书安装成功 -------------------------------");
             log.info(MessageFormat.format("证书有效期：{0} - {1}",
                     format.format(licenseContent.getNotBefore()), format.format(licenseContent.getNotAfter())));
 
             // 预填缓存，首次 verify 即可命中
-            LicenseCache.put(subject, LicenseInfo.from(licenseContent));
+            LicenseCache.put(cacheKey, LicenseInfo.from(licenseContent));
         } catch (Exception e) {
-            installSuccess = false;
+            licenseManager = previousManager;
+            installSuccess = previousInstallSuccess;
             log.error("------------------------------- 证书安装失败 -------------------------------");
-            log.error(e.getMessage(), e);
+            log.error("License 安装失败: subject={}, path={}, msg={}", subject, licensePath, e.getMessage(), e);
         }
     }
 
     /**
      * 卸载证书，同时清空缓存。
      */
-    public void unInstallLicense() {
+    public synchronized void unInstallLicense() {
         if (installSuccess) {
             try {
                 licenseManager.uninstall();
@@ -146,9 +161,9 @@ public class LicenseVerify {
                 // ignore
             }
         }
-        if (Objects.nonNull(subject)) {
-            LicenseCache.invalidate(subject);
-        }
+        installSuccess = false;
+        licenseManager = null;
+        LicenseCache.invalidate(cacheKey);
     }
 
     /**
@@ -164,34 +179,53 @@ public class LicenseVerify {
      * @return true 表示校验通过
      */
     public boolean verify() {
+        return verifyResult().isValid();
+    }
+
+    /**
+     * 校验证书并返回结构化结果，便于网关、健康检查和审计日志使用。
+     *
+     * @return 验证结果
+     */
+    public synchronized LicenseVerificationResult verifyResult() {
         if (!installSuccess || Objects.isNull(licenseManager)) {
             log.warn("证书未安装成功，校验失败");
-            return false;
+            return LicenseVerificationResult.failure(
+                    LicenseVerificationResult.Status.NOT_INSTALLED, "证书未安装成功");
         }
 
         // 1. 先查缓存
-        LicenseInfo cached = LicenseCache.get(subject);
+        LicenseInfo cached = LicenseCache.get(cacheKey);
         if (Objects.nonNull(cached)) {
             if (cached.isValidNow()) {
-                return true;
+                try {
+                    licenseManager.validateExtra(cached.getExtra());
+                    return LicenseVerificationResult.success(cached);
+                } catch (LicenseContentException e) {
+                    LicenseCache.invalidate(cacheKey);
+                    log.warn("License 运行环境校验失败: subject={}, msg={}", subject, e.getMessage());
+                    return LicenseVerificationResult.failure(
+                            LicenseVerificationResult.Status.ENVIRONMENT_MISMATCH, e.getMessage());
+                }
             }
             // 缓存命中但已过期，失效后重验
             log.info("缓存中的证书已过期，失效缓存并重新校验: subject={}", subject);
-            LicenseCache.invalidate(subject);
+            LicenseCache.invalidate(cacheKey);
         }
 
         // 2. 走 TrueLicense 验签
         try {
             LicenseContent licenseContent = licenseManager.verify();
-            LicenseInfo info = LicenseInfo.from(licenseContent);
+                LicenseInfo info = LicenseInfo.from(licenseContent);
             if (Objects.nonNull(info)) {
-                LicenseCache.put(subject, info);
+                LicenseCache.put(cacheKey, info);
             }
-            return true;
+            return LicenseVerificationResult.success(info);
         } catch (Exception e) {
             log.warn("License 校验失败: subject={}, msg={}", subject, e.getMessage());
-            LicenseCache.invalidate(subject);
-            return false;
+            LicenseCache.invalidate(cacheKey);
+            return LicenseVerificationResult.failure(
+                    LicenseVerificationResult.Status.INVALID, e.getMessage());
         }
     }
 
@@ -201,6 +235,23 @@ public class LicenseVerify {
      * @return 缓存中的 {@link LicenseInfo}；缓存未命中返回 null
      */
     public LicenseInfo getLicenseInfo() {
-        return LicenseCache.get(subject);
+        return LicenseCache.get(cacheKey);
+    }
+
+    public boolean isCached() {
+        return LicenseCache.exists(cacheKey);
+    }
+
+    private String buildCacheKey() {
+        String normalizedLicensePath = Paths.get(licensePath).toAbsolutePath().normalize().toString();
+        String normalizedKeyStorePath = Paths.get(publicKeysStorePath).toAbsolutePath().normalize().toString();
+        return subject + ":" + Integer.toHexString(
+                Objects.hash(publicAlias, normalizedLicensePath, normalizedKeyStorePath));
+    }
+
+    private static void requireText(String value, String field) {
+        if (Objects.isNull(value) || StrKit.isEmpty(value.trim())) {
+            throw new IllegalArgumentException(field + " 不能为空");
+        }
     }
 }

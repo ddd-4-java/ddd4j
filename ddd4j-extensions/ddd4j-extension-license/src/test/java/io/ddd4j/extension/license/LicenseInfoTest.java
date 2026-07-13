@@ -90,6 +90,9 @@ class LicenseInfoTest {
                 .notAfter(new Date(now.getTime() + 86_400_000L))
                 .build();
         assertThat(active.isValidNow()).isTrue();
+
+        LicenseInfo boundary = LicenseInfo.builder().notAfter(now).build();
+        assertThat(boundary.isValidAt(now)).isFalse();
     }
 
     @Test

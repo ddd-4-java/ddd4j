@@ -105,7 +105,7 @@ class LicenseKitTest {
         assertThat(info.isValidNow()).isTrue();
 
         // 6. 缓存确实存在
-        assertThat(LicenseCache.exists(SUBJECT)).isTrue();
+        assertThat(verifier.isCached()).isTrue();
 
         // 7. 再次 verify 走缓存（不重新验签）
         assertThat(verifier.verify()).isTrue();
@@ -120,6 +120,8 @@ class LicenseKitTest {
         LicenseKit verifier = LicenseKit.of(SUBJECT, PUBLIC_ALIAS, STORE_PASS, licensePath, publicKeysStorePath);
         // 未安装直接 verify
         assertThat(verifier.verify()).isFalse();
+        assertThat(verifier.verifyResult().getStatus())
+                .isEqualTo(LicenseVerificationResult.Status.NOT_INSTALLED);
         assertThat(verifier.isInstalled()).isFalse();
     }
 

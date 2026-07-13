@@ -3,8 +3,6 @@ package io.ddd4j.extension.license;
 import io.ddd4j.cache.CacheKit;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Objects;
-
 /**
  * License 缓存常量与缓存域的懒注册工具。
  *
@@ -44,12 +42,13 @@ public final class LicenseCache {
      *
      * @param ttlSeconds 缓存过期时间（秒）
      */
-    public static void init(long ttlSeconds) {
+    public static synchronized void init(long ttlSeconds) {
         if (CacheKit.getCacheNames().contains(BIZ_LICENSE)) {
             return;
         }
-        CacheKit.build(BIZ_LICENSE, ttlSeconds > 0 ? ttlSeconds : DEFAULT_TTL_SECONDS);
-        log.info("License 缓存域已注册: biz={}, ttl={}s", BIZ_LICENSE, ttlSeconds);
+        long effectiveTtlSeconds = ttlSeconds > 0 ? ttlSeconds : DEFAULT_TTL_SECONDS;
+        CacheKit.build(BIZ_LICENSE, effectiveTtlSeconds);
+        log.info("License 缓存域已注册: biz={}, ttl={}s", BIZ_LICENSE, effectiveTtlSeconds);
     }
 
     /**
@@ -114,7 +113,7 @@ public final class LicenseCache {
      * 确保缓存域已注册；未注册时以默认 TTL 懒注册。
      */
     private static void ensureRegistered() {
-        if (!Objects.requireNonNull(CacheKit.getCacheNames()).contains(BIZ_LICENSE)) {
+        if (!CacheKit.getCacheNames().contains(BIZ_LICENSE)) {
             init(DEFAULT_TTL_SECONDS);
         }
     }

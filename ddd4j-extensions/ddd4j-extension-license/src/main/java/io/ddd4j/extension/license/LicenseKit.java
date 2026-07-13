@@ -161,10 +161,19 @@ public class LicenseKit {
      * @return true 表示校验通过
      */
     public boolean verify() {
+        return verifyResult().isValid();
+    }
+
+    /**
+     * 返回结构化验证结果，用于接口响应、健康检查和审计。
+     *
+     * @return 验证结果
+     */
+    public LicenseVerificationResult verifyResult() {
         if (!properties.isEnabled()) {
-            return true;
+            return LicenseVerificationResult.disabled();
         }
-        return verify.verify();
+        return verify.verifyResult();
     }
 
     /**
@@ -188,6 +197,10 @@ public class LicenseKit {
      */
     public boolean isInstalled() {
         return verify.isInstallSuccess();
+    }
+
+    public boolean isCached() {
+        return verify.isCached();
     }
 
     /**

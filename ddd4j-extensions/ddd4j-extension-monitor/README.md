@@ -75,8 +75,8 @@ Monitor.startupReporter(sender, "my-app").init();
 ### 3.3 基于 Properties 配置（与 Spring / Quarkus 集成）
 
 ```yaml
-monitor:
-  log:
+ddd4j:
+  monitor:
     enable: true
     rateLimiterPermitsPerSecond: 0.5
     dingtalk:
@@ -98,7 +98,7 @@ monitor:
 
 ```java
 // 装配层（Spring / Quarkus / Javalin 各自的模块）
-BaseMonitorProperties props = ...;        // @ConfigurationProperties(prefix = "monitor")
+BaseMonitorProperties props = ...;        // @ConfigurationProperties(prefix = "ddd4j.monitor")
 BaseMonitorConfig config = new BaseMonitorConfig();
 DingTalkRobotSender sender = config.dingTalkRobotSender(props);
 config.applicationStartReporter(sender, props.getLog().getApp().getName()).init();

@@ -81,10 +81,21 @@ public class LicenseInfo implements Serializable {
      * @return true 表示仍在有效期内
      */
     public boolean isValidNow() {
-        Date now = new Date();
+        return isValidAt(new Date());
+    }
+
+    /**
+     * 判断证书在指定时间点是否有效，便于业务时钟控制与测试。
+     *
+     * @param instant 待判断时间
+     * @return true 表示证书有效
+     */
+    public boolean isValidAt(Date instant) {
+        Objects.requireNonNull(instant, "instant 不能为空");
+        Date now = new Date(instant.getTime());
         if (Objects.nonNull(notBefore) && now.before(notBefore)) {
             return false;
         }
-        return Objects.isNull(notAfter) || !now.after(notAfter);
+        return Objects.isNull(notAfter) || now.before(notAfter);
     }
 }

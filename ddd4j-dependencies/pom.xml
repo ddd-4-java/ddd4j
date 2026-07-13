@@ -170,6 +170,7 @@
         <fastjson.version>2.0.62</fastjson.version>
         <fastjson2.version>2.0.62</fastjson2.version>
         <feign.version>13.13</feign.version>
+        <feshu-oapi.version>2.8.4</feshu-oapi.version>
         <findbugs-annotations.version>3.0.1u2</findbugs-annotations.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
         <flyway.version>11.19.0</flyway.version>
@@ -3063,6 +3064,12 @@
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-slf4j</artifactId>
                 <version>${feign.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.larksuite.oapi/oapi-sdk -->
+            <dependency>
+                <groupId>com.larksuite.oapi</groupId>
+                <artifactId>oapi-sdk</artifactId>
+                <version>${feshu-oapi.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.jhlabs/filters -->
             <dependency>

@@ -1,5 +1,6 @@
 package io.ddd4j.extension.license.keystore;
 
+import io.ddd4j.kit.lang.StrKit;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +9,11 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * License 公私钥库生成器。
@@ -34,6 +37,8 @@ import java.util.Objects;
 @Slf4j
 public class LicenseKeyStoreGenerator {
 
+    private static final long KEYTOOL_TIMEOUT_SECONDS = 60L;
+
     /**
      * 生成公私钥库对并落盘。
      *
@@ -49,8 +54,7 @@ public class LicenseKeyStoreGenerator {
      * @throws Exception 生成失败时抛出
      */
     public GenerateResult generate(LicenseKeyStoreParam param) throws Exception {
-        Objects.requireNonNull(param.getPrivateKeysStorePath(), "privateKeysStorePath 不能为空");
-        Objects.requireNonNull(param.getPublicKeysStorePath(), "publicKeysStorePath 不能为空");
+        validateParam(param);
 
         ensureParentDir(param.getPrivateKeysStorePath());
         ensureParentDir(param.getPublicKeysStorePath());
@@ -137,12 +141,58 @@ public class LicenseKeyStoreGenerator {
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.redirectErrorStream(true);
         Process process = pb.start();
-        String output = new String(process.getInputStream().readAllBytes());
-        int code = process.waitFor();
+        if (!process.waitFor(KEYTOOL_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+            process.destroyForcibly();
+            throw new IllegalStateException("keytool 执行超时: " + redactedCommand(command));
+        }
+        String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        int code = process.exitValue();
         if (code != 0) {
             throw new IllegalStateException("keytool 执行失败 (code=" + code + "): " + output
-                    + "\n命令: " + String.join(" ", command));
+                    + "\n命令: " + redactedCommand(command));
         }
+    }
+
+    private void validateParam(LicenseKeyStoreParam param) {
+        Objects.requireNonNull(param, "LicenseKeyStoreParam 不能为空");
+        requireText(param.getPrivateAlias(), "privateAlias");
+        requireText(param.getPublicAlias(), "publicAlias");
+        requireText(param.getStorePass(), "storePass");
+        requireText(param.getKeyPass(), "keyPass");
+        requireText(param.getPrivateKeysStorePath(), "privateKeysStorePath");
+        requireText(param.getPublicKeysStorePath(), "publicKeysStorePath");
+        if (param.getStorePass().length() < 6 || param.getKeyPass().length() < 6) {
+            throw new IllegalArgumentException("JKS 密码长度不能少于 6 位");
+        }
+        Path privatePath = Paths.get(param.getPrivateKeysStorePath()).toAbsolutePath().normalize();
+        Path publicPath = Paths.get(param.getPublicKeysStorePath()).toAbsolutePath().normalize();
+        if (Objects.equals(privatePath, publicPath)) {
+            throw new IllegalArgumentException("公钥库与私钥库不能使用同一路径");
+        }
+        if (Files.exists(privatePath) || Files.exists(publicPath)) {
+            throw new IllegalStateException("目标密钥库已存在，禁止覆盖: "
+                    + (Files.exists(privatePath) ? privatePath : publicPath));
+        }
+        if (param.getValidityDays() <= 0 || param.getKeySize() <= 0) {
+            throw new IllegalArgumentException("validityDays 与 keySize 必须大于 0");
+        }
+    }
+
+    private void requireText(String value, String field) {
+        if (Objects.isNull(value) || StrKit.isEmpty(value.trim())) {
+            throw new IllegalArgumentException(field + " 不能为空");
+        }
+    }
+
+    private String redactedCommand(List<String> command) {
+        List<String> redacted = new ArrayList<>(command);
+        for (int index = 0; index < redacted.size() - 1; index++) {
+            String argument = redacted.get(index);
+            if (Objects.equals("-storepass", argument) || Objects.equals("-keypass", argument)) {
+                redacted.set(index + 1, "******");
+            }
+        }
+        return String.join(" ", redacted);
     }
 
     /**
