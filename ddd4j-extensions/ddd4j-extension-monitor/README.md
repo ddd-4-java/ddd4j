@@ -35,8 +35,8 @@ ddd4j 框架的**监控告警**工具库：钉钉 / 企业微信 / 飞书 群机
 ### 3.1 直接使用门面（推荐）
 
 ```java
-import io.ddd4j.extension.monitor.core.Monitor;
-import io.ddd4j.extension.monitor.core.Sender;
+import io.ddd4j.extension.monitor.Monitor;
+import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.extension.monitor.channel.dingtalk.DingTalkRobotSender;
 import io.ddd4j.extension.monitor.channel.feishu.FeishuRobotSender;
 import io.ddd4j.extension.monitor.channel.wecom.WeComRobotSender;
@@ -225,7 +225,7 @@ v2.x 的 `Markdown` 保留了这两套字段并由工厂方法**一并填充**�
 | `QiWeiRobot`（嵌套类） | **`WeComRobot`** |
 | `Sender`（v1 interface，已存在） | `core/Sender`（v2 移到 `core/`，契约不变） |
 | `CodeVersionService` | `ApplicationStartReporter` |
-| `HealthController` | `HealthEndpoint` |
+| `HealthController` | _已删除_（健康检查由上层 Web 框架提供） |
 | `AtVO / TextVO / MarkDownVO / MsgVO / CodeVersionVO` | `At / Text / Markdown / Message / CodeVersion` |
 | `IpUtils.getLocalAddress()` | `io.ddd4j.kit.web.IpKit.getLocalAddress()` |
 
