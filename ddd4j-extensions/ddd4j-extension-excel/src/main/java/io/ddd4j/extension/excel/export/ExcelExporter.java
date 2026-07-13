@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-final class ExcelExporter {
+public final class ExcelExporter {
 
     private ExcelExporter() {
     }
@@ -49,7 +49,7 @@ final class ExcelExporter {
      * @param data 数据
      * @return xlsx 字节数组
      */
-    static byte[] export(Class<?> head, List<?> data) {
+    public static byte[] export(Class<?> head, List<?> data) {
         return export(head, data, WriteOptions.defaults());
     }
 
@@ -61,7 +61,7 @@ final class ExcelExporter {
      * @param options 选项
      * @return xlsx 字节数组
      */
-    static byte[] export(Class<?> head, List<?> data, WriteOptions options) {
+    public static byte[] export(Class<?> head, List<?> data, WriteOptions options) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             ExcelWriterBuilder builder = EasyExcel.write(out, head);
             applyStyleHandlers(builder, options);
@@ -82,7 +82,7 @@ final class ExcelExporter {
      * @param options 共享样式选项
      * @return xlsx 字节数组
      */
-    static byte[] exportMultiSheet(Map<String, Class<?>> headMap,
+    public static byte[] exportMultiSheet(Map<String, Class<?>> headMap,
                                    Map<String, List<?>> dataMap,
                                    WriteOptions options) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -106,7 +106,7 @@ final class ExcelExporter {
      * @param message 错误消息
      * @return xlsx 字节数组
      */
-    static byte[] exportError(String message) {
+    public static byte[] exportError(String message) {
         List<List<String>> head = new ArrayList<>();
         head.add(Collections.singletonList("文档生成失败"));
         List<List<Object>> content = new ArrayList<>();
@@ -134,7 +134,7 @@ final class ExcelExporter {
      * @param head 表头类
      * @return xlsx 字节数组
      */
-    static byte[] exportEmptyTemplate(Class<?> head) {
+    public static byte[] exportEmptyTemplate(Class<?> head) {
         return export(head, Collections.emptyList(), WriteOptions.defaults());
     }
 
@@ -144,7 +144,7 @@ final class ExcelExporter {
      * @param throwable 异常
      * @return xlsx 字节数组
      */
-    static byte[] exportError(Throwable throwable) {
+    public static byte[] exportError(Throwable throwable) {
         return exportError(ExceptionUtils.getRootCauseMessage(throwable));
     }
 

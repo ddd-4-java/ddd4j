@@ -23,6 +23,7 @@
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
         </dependency>
         <!-- For Apache Commons: ExceptionUtils / StringUtils -->
         <dependency>
@@ -35,6 +36,12 @@
             <artifactId>commons-io</artifactId>
         </dependency>
 
+        <!-- For Spring Web: MultipartFile（ExcelHttpKit.upload） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
         <!-- For Test: AssertJ -->
         <dependency>
             <groupId>org.assertj</groupId>
@@ -45,11 +52,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

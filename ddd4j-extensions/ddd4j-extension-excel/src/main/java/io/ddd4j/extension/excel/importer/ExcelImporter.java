@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-final class ExcelImporter {
+public final class ExcelImporter {
 
     private ExcelImporter() {
     }
@@ -34,7 +34,7 @@ final class ExcelImporter {
      * @param <T>      数据类型
      * @return 导入结果（含 listener 内部收集的数据与错误）
      */
-    static <T> ImportResult<T> importExcel(InputStream in, Class<T> head, ReadListener<T> listener) {
+    public static <T> ImportResult<T> importExcel(InputStream in, Class<T> head, ReadListener<T> listener) {
         try {
             EasyExcel.read(in, head, listener).sheet().doRead();
         } catch (Exception e) {
@@ -55,7 +55,7 @@ final class ExcelImporter {
      * @param <T>  数据类型
      * @return 导入结果
      */
-    static <T> ImportResult<T> importExcel(InputStream in, Class<T> head) {
+    public static <T> ImportResult<T> importExcel(InputStream in, Class<T> head) {
         ErrorCollectingReadListener<T> listener = new ErrorCollectingReadListener<>();
         return importExcel(in, head, listener);
     }
@@ -72,7 +72,7 @@ final class ExcelImporter {
      * @param <T>  数据类型
      * @return 全部数据
      */
-    static <T> List<T> readAll(InputStream in, Class<T> head) {
+    public static <T> List<T> readAll(InputStream in, Class<T> head) {
         try {
             return EasyExcel.read(in).head(head).sheet().doReadSync();
         } catch (Exception e) {
