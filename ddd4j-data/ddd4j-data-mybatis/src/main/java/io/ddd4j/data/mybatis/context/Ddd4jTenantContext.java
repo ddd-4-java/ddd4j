@@ -15,9 +15,9 @@
  */
 package io.ddd4j.data.mybatis.context;
 
-import org.apache.ibatis.enhance.context.TenantContext;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
+import org.apache.ibatis.enhance.context.TenantContext;
 
 import java.util.Objects;
 
@@ -33,22 +33,22 @@ import java.util.Objects;
  */
 public class Ddd4jTenantContext extends TenantContext {
 
-	@Override
-	public void setCurrentTenantId(Object tenantId) {
-		if (Objects.isNull(tenantId)) {
-			clear();
-			return;
-		}
-		ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
-	}
+    @Override
+    public Object getCurrentTenantId() {
+        return ThreadContext.get(ContextConstants.TENANT_ID);
+    }
 
-	@Override
-	public Object getCurrentTenantId() {
-		return ThreadContext.get(ContextConstants.TENANT_ID);
-	}
+    @Override
+    public void setCurrentTenantId(Object tenantId) {
+        if (Objects.isNull(tenantId)) {
+            clear();
+            return;
+        }
+        ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
+    }
 
-	@Override
-	public void clear() {
-		ThreadContext.remove(ContextConstants.TENANT_ID);
-	}
+    @Override
+    public void clear() {
+        ThreadContext.remove(ContextConstants.TENANT_ID);
+    }
 }

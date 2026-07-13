@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
 >
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -109,7 +109,8 @@
                                         <exclude>org.springframework.*:*</exclude>
                                         <exclude>org.mybatis:mybatis-spring</exclude>
                                     </excludes>
-                                    <message>ddd4j-data-mybatis 必须保持 Spring 无关，Spring 集成应由独立适配模块提供。</message>
+                                    <message>ddd4j-data-mybatis 必须保持 Spring 无关，Spring 集成应由独立适配模块提供。
+                                    </message>
                                 </bannedDependencies>
                             </rules>
                         </configuration>

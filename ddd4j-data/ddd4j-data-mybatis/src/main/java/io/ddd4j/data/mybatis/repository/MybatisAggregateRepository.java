@@ -12,6 +12,8 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.kit.lang.BeanKit;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -39,22 +41,17 @@ import java.util.*;
  * @since 4.0.0
  */
 @Slf4j
-@SuppressWarnings("unchecked")
-public abstract class MybatisAggregateRepository<
-        MP extends EnhanceMapper<P>,
-        M extends AggregateRoot<?>,
-        P,
-        Q extends Query<M>,
-        ID extends Serializable>
+@SuppressWarnings({"rawtypes", "unchecked"})
+public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
         implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    protected MP baseMapper;
     protected final Class<M> modelClass;
     protected final Class<P> persistenceClass;
     protected final Class<? extends Query<M>> queryClass;
     protected final DomainModelInfo<M> domainModelInfo;
+    @Getter
+    @Setter
+    protected MP baseMapper;
 
     // ========================= 构造器 =========================
 
@@ -86,14 +83,6 @@ public abstract class MybatisAggregateRepository<
         } else if (modelClass != null) {
             RepositoryRegistry.register(modelClass, this);
         }
-    }
-
-    public void setBaseMapper(MP baseMapper) {
-        this.baseMapper = baseMapper;
-    }
-
-    public MP getBaseMapper() {
-        return baseMapper;
     }
 
     // ========================= Repository SPI 实现 =========================
@@ -438,7 +427,6 @@ public abstract class MybatisAggregateRepository<
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private boolean matchesConditions(M model, Query<M> query) {
         for (LambdaCondition condition : query.getWhereConditions()) {
             String property = condition.property();
@@ -453,29 +441,41 @@ public abstract class MybatisAggregateRepository<
             String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
             if (Objects.nonNull(tenantId)) {
                 Object actualTenant = getPropertyValue(model, "tenantId");
-                if (!Objects.equals(tenantId, actualTenant)) {
-                    return false;
-                }
+                return Objects.equals(tenantId, actualTenant);
             }
         }
         return true;
     }
 
-    @SuppressWarnings("rawtypes")
     private boolean matchesOperator(Object actual, Object expected, String operator) {
         switch (operator) {
-            case "=" -> { return Objects.equals(actual, expected); }
-            case "<>" -> { return !Objects.equals(actual, expected); }
-            case "IS_NULL" -> { return Objects.isNull(actual); }
-            case "IS_NOT_NULL" -> { return Objects.nonNull(actual); }
-            case "LIKE" -> { return Objects.nonNull(actual) && actual.toString().contains(String.valueOf(expected)); }
-            case "IN" -> { return toCollection(expected).contains(actual); }
-            case "NOT_IN" -> { return !toCollection(expected).contains(actual); }
-            default -> { return true; }
+            case "=" -> {
+                return Objects.equals(actual, expected);
+            }
+            case "<>" -> {
+                return !Objects.equals(actual, expected);
+            }
+            case "IS_NULL" -> {
+                return Objects.isNull(actual);
+            }
+            case "IS_NOT_NULL" -> {
+                return Objects.nonNull(actual);
+            }
+            case "LIKE" -> {
+                return Objects.nonNull(actual) && actual.toString().contains(String.valueOf(expected));
+            }
+            case "IN" -> {
+                return toCollection(expected).contains(actual);
+            }
+            case "NOT_IN" -> {
+                return !toCollection(expected).contains(actual);
+            }
+            default -> {
+                return true;
+            }
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private int applySort(M a, M b, Query<M> query) {
         for (LambdaCondition condition : query.getOrderByConditions()) {
             Object va = getPropertyValue(a, condition.property());
@@ -488,7 +488,6 @@ public abstract class MybatisAggregateRepository<
         return 0;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private int compareValues(Object a, Object b) {
         if (Objects.isNull(a) && Objects.isNull(b)) return 0;
         if (Objects.isNull(a)) return -1;
@@ -533,7 +532,6 @@ public abstract class MybatisAggregateRepository<
     /**
      * 反射解析泛型参数的实际类型。
      */
-    @SuppressWarnings("unchecked")
     private <C> Class<C> resolveClassArg(int index) {
         Class<?> current = getClass();
         while (current != null && current != MybatisAggregateRepository.class) {
