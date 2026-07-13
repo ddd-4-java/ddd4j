@@ -1,9 +1,9 @@
 package io.ddd4j.extension.excel.importer;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.listener.ReadListener;
 import io.ddd4j.core.exception.BizRuntimeException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,9 @@ import java.util.List;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public final class ExcelImporter {
+
 
     private ExcelImporter() {
     }
@@ -73,16 +75,15 @@ public final class ExcelImporter {
      * @return 全部数据
      */
     public static <T> List<T> readAll(InputStream in, Class<T> head) {
-        try {
-            return EasyExcel.read(in).head(head).sheet().doReadSync();
-        } catch (Exception e) {
-            throw new BizRuntimeException(500, "excel.import.readall.failed", e);
-        } finally {
+        try (in) {
             try {
-                in.close();
-            } catch (IOException ignored) {
-                // ignore
+                return EasyExcel.read(in).head(head).sheet().doReadSync();
+            } catch (Exception e) {
+                throw new BizRuntimeException(500, "excel.import.readall.failed", e);
             }
+        } catch (IOException ex) {
+            log.error("excel.import.readall.failed", ex);
         }
+        return List.of();
     }
 }

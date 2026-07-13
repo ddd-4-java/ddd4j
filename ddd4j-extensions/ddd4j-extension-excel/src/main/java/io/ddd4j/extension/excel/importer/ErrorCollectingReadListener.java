@@ -69,8 +69,7 @@ public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
             try {
                 rowValidator.accept(data);
             } catch (Exception e) {
-                errors.add(ImportError.ofValidation(
-                        context.getCurrentRowNum(), e.getMessage()));
+                errors.add(ImportError.ofValidation(context.readRowHolder().getRowIndex(), e.getMessage()));
                 return;
             }
         }
@@ -85,7 +84,7 @@ public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
     @Override
     public void onException(Exception exception, AnalysisContext context) {
         // 关键：不抛出，转为 ImportError 收集
-        long rowNo = context.getCurrentRowNum();
+        long rowNo = context.readRowHolder().getRowIndex();
         errors.add(ImportError.of(rowNo, exception));
     }
 

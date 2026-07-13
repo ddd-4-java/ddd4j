@@ -64,15 +64,13 @@ public class BatchReadListener<T> implements ReadListener<T> {
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         flush();
-        log.debug("BatchReadListener finished, sheet={}",
-                context.readSheetHolder().getSheetName());
+        log.debug("BatchReadListener finished, sheet={}", context.readSheetHolder().getSheetName());
     }
 
     @Override
     public void onException(Exception exception, AnalysisContext context) {
         // 单行失败不影响整批；记录日志后继续。如需精细错误收集，请使用 ErrorCollectingReadListener
-        log.warn("Row {} parse failed, skipped: {}",
-                context.getCurrentRowNum(), exception.getMessage());
+        log.warn("Row {} parse failed, skipped: {}", context.readRowHolder().getRowIndex(), exception.getMessage());
     }
 
     private void flush() {
