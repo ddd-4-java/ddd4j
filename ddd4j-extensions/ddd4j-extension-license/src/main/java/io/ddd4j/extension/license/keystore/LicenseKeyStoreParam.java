@@ -36,15 +36,18 @@ public class LicenseKeyStoreParam {
     @Builder.Default
     private String keyPass = "a123456";
     /**
-     * 密钥算法（默认 RSA）
+     * 密钥算法（默认 DSA）。
+     *
+     * <p>TrueLicense 内部硬编码使用 {@code SHA1withDSA} 签名引擎，因此必须生成 DSA 密钥对
+     * 才能与验签流程匹配。若改用 RSA 需同时重写 TrueLicense 的签名引擎，成本较高。
      */
     @Builder.Default
-    private String keyAlgorithm = "RSA";
+    private String keyAlgorithm = "DSA";
     /**
-     * 密钥长度（默认 2048）
+     * 密钥长度（默认 1024，DSA 在 keytool 中的常见长度）
      */
     @Builder.Default
-    private int keySize = 2048;
+    private int keySize = 1024;
     /**
      * 证书颁发者 / 持有者 X.500 标识名
      */
