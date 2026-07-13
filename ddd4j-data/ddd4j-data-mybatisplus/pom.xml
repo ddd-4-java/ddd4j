@@ -35,6 +35,10 @@
             <artifactId>ddd4j-data-crypto</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.hiwepy</groupId>
+            <artifactId>mybatis-enhance-typehandler</artifactId>
+        </dependency>
         <!-- MyBatis-Plus 核心 API：不使用会传递 mybatis-plus-spring 的聚合包 mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
