@@ -184,6 +184,8 @@
                         <source>${java.version}</source>
                         <!-- 目标平台编译版本 -->
                         <target>${java.version}</target>
+                        <!-- JDK 23+ 默认不再自动执行类路径中的注解处理器。 -->
+                        <proc>full</proc>
                         <!-- 字符集编码 -->
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <!-- -->

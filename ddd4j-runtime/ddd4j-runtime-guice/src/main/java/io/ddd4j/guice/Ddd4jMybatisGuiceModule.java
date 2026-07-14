@@ -2,9 +2,9 @@ package io.ddd4j.guice;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
-import com.baomidou.mybatisplus.enhance.interceptor.MybatisPlusEnhanceInterceptor;
-import com.baomidou.mybatisplus.enhance.interceptor.inner.InsertIgnoreInnerInterceptor;
-import com.baomidou.mybatisplus.enhance.interceptor.inner.SqlObservationInnerInterceptor;
+import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
+import com.baomidou.mybatisplus.enhance.plugins.inner.InsertIgnoreInnerInterceptor;
+import com.baomidou.mybatisplus.enhance.plugins.inner.SqlObservationInnerInterceptor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.google.inject.AbstractModule;

@@ -2,9 +2,12 @@ package io.ddd4j.sample.quarkus.spi;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import org.fuin.ddd4j.core.EntityId;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * 进程内领域事件发布者：No-Op 示例实现（仅打印）。
@@ -22,19 +25,20 @@ import java.util.Collection;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ApplicationScoped
+@Slf4j
 public class NoOpDomainEventPublisher implements DomainEventPublisher {
 
     @Override
-    public <T> void publish(DomainEvent<T> event) {
-        if (event == null) {
+    public <ID extends EntityId> void publish(DomainEvent<ID> event) {
+        if (Objects.isNull(event)) {
             return;
         }
-        System.out.println("[DomainEvent] " + event.getClass().getSimpleName() + " -> " + event.source());
+        log.info("[DomainEvent] {} -> {}", event.getClass().getSimpleName(), event.source());
     }
 
     @Override
-    public <T> void publishAll(Collection<DomainEvent<T>> events) {
-        if (events != null) {
+    public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
+        if (Objects.nonNull(events)) {
             events.forEach(this::publish);
         }
     }

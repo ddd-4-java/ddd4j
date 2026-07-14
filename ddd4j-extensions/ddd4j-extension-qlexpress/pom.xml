@@ -11,24 +11,36 @@
     </parent>
 
     <artifactId>ddd4j-extension-qlexpress</artifactId>
-    <description>Ddd4j QL-Express Component</description>
+        <description>ddd4j QLExpress 4 通用执行、函数注册与安全选项工具组件</description>
 
     <dependencies>
-        <!-- QLExpress -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>qlexpress4</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-        </dependency>
-        <!-- For Cache -->
-        <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-cache</artifactId>
+            <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

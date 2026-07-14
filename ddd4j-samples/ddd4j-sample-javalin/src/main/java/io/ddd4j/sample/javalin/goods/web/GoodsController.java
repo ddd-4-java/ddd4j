@@ -1,6 +1,8 @@
 package io.ddd4j.sample.javalin.goods.web;
 
 import io.ddd4j.core.api.R;
+import io.ddd4j.core.util.SFunction;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;
 import io.ddd4j.sample.javalin.goods.domain.GoodsId;
@@ -71,10 +73,35 @@ public class GoodsController {
         if (ctx.queryParam("size") != null) {
             query.setSize(Long.parseLong(ctx.queryParam("size")));
         }
-        if (ctx.queryParam("orderBys") != null) {
-            query.setOrderBys(ctx.queryParam("orderBys"));
+        String orderBys = ctx.queryParam("orderBys");
+        if (StrKit.isNotBlank(orderBys)) {
+            for (String orderBy : orderBys.split(",")) {
+                addOrderBy(query, orderBy);
+            }
         }
         return query;
+    }
+
+    private static void addOrderBy(GoodsQuery query, String orderBy) {
+        String[] tokens = orderBy.trim().split("_");
+        if (tokens.length != 2) {
+            return;
+        }
+        SFunction<Goods, ?> property = switch (tokens[0]) {
+            case "id" -> Goods::id;
+            case "createTime" -> Goods::getCreateTime;
+            case "updateTime" -> Goods::getUpdateTime;
+            case "price" -> Goods::getPrice;
+            default -> null;
+        };
+        if (Objects.isNull(property)) {
+            return;
+        }
+        if ("DESC".equalsIgnoreCase(tokens[1])) {
+            query.orderByDesc(property);
+            return;
+        }
+        query.orderByAsc(property);
     }
 
     /**

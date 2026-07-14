@@ -63,6 +63,16 @@
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-cache</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Quarkus 运行时绑定：CDI 启动期自动注入 4 个核心 SPI 到 BaseContext -->
         <dependency>

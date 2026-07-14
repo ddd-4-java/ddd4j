@@ -2,7 +2,6 @@ package io.ddd4j.sample.quarkus.cqrs.config;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.sample.quarkus.cqrs.cache.GoodsCacheService;
@@ -20,7 +19,7 @@ import java.util.Optional;
  * ddd4j Quarkus 示例启动配置 Bean。
  *
  * <p>虽然 ddd4j-runtime-quarkus 已经提供了
- * {@link io.ddd4j.quarkus.context.DddContextInitializer} 自动注入 4 个核心 SPI，
+ * {@link io.ddd4j.quarkus.context.DddContextInitializer} 自动注入核心 SPI，
  * 本配置类演示：
  * <ol>
  *   <li>如何在 Quarkus 启动期拿到 SPI Bean 引用（用于运行时校验与日志）</li>
@@ -32,7 +31,6 @@ import java.util.Optional;
  * <p>应用启动后日志中会输出类似：
  * <pre>
  * [Ddd4jSampleConfig] DomainEventPublisher = NoOpDomainEventPublisher
- * [Ddd4jSampleConfig] MQEventPublisher       = NoOpMQEventPublisher
  * [Ddd4jSampleConfig] SubjectProvider        = AnonymousSubjectProvider
  * [Ddd4jSampleConfig] I18nProvider           = DefaultI18nProvider
  * </pre>
@@ -52,13 +50,10 @@ import java.util.Optional;
 public class Ddd4jSampleConfig {
 
     /**
-     * 4 个核心 SPI Bean 引用（启动期注入）
+     * 核心 SPI Bean 引用（启动期注入）
      */
     @Inject
     Instance<DomainEventPublisher> domainEventPublisher;
-
-    @Inject
-    Instance<MQEventPublisher> mqEventPublisher;
 
     @Inject
     Instance<SubjectProvider> subjectProvider;
@@ -67,7 +62,7 @@ public class Ddd4jSampleConfig {
     Instance<I18nProvider> i18nProvider;
 
     /**
-     * Quarkus 启动完成后回调：校验 4 个核心 SPI 是否成功注入，并打印日志。
+     * Quarkus 启动完成后回调：校验核心 SPI 是否成功注入，并打印日志。
      *
      * <p>{@code StartupEvent} 是 Quarkus 的标准启动信号，
      * ddd4j-runtime-quarkus 的 {@code DddContextInitializer} 也订阅同一事件，
@@ -79,7 +74,6 @@ public class Ddd4jSampleConfig {
         log.info("[Ddd4jSampleConfig] Quarkus started, verifying ddd4j SPI services...");
 
         logSPI("DomainEventPublisher", domainEventPublisher);
-        logSPI("MQEventPublisher", mqEventPublisher);
         logSPI("SubjectProvider", subjectProvider);
         logSPI("I18nProvider", i18nProvider);
 

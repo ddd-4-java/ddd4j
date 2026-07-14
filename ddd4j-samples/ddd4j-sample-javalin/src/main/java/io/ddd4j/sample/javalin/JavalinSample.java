@@ -4,14 +4,13 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.sample.javalin.spi.AnonymousSubjectProvider;
 import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
 import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
-import io.ddd4j.sample.javalin.spi.NoOpMQEventPublisher;
 import io.javalin.Javalin;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ddd4j 在 Javalin 框架下的最小启动示例。
@@ -38,19 +37,18 @@ import io.javalin.Javalin;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.0
  */
+@Slf4j
 public class JavalinSample {
 
     public static void main(String[] args) {
 
-        // 1. 业务方自己准备 4 个 SPI 实例（这里用 sample 内的 NoOp 示例实现）
+        // 1. 业务方准备核心 SPI 实例（这里用 sample 内的 NoOp 示例实现）
         DomainEventPublisher domainEventPublisher = new NoOpDomainEventPublisher();
-        MQEventPublisher mqEventPublisher = new NoOpMQEventPublisher();
         SubjectProvider subjectProvider = new AnonymousSubjectProvider();
         I18nProvider i18nProvider = new DefaultI18nProvider();
 
         // 2. 启动前一次性把 SPI 注入到 JVM 级 BaseContext（Javalin 无 DI 容器，全局 Map 是最简实现）
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, domainEventPublisher);
-        BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, mqEventPublisher);
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider);
         BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider);
 
@@ -61,9 +59,9 @@ public class JavalinSample {
         // 示例：演示 SPI 查找（线程级 → 全局级）
         DomainEventPublisher publisher = Contexts.getOrThrow(
                 SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
-        System.out.println("[Bootstrap] DomainEventPublisher = " + publisher.getClass().getSimpleName());
+        log.info("[Bootstrap] DomainEventPublisher = {}", publisher.getClass().getSimpleName());
 
         app.start(7000);
-        System.out.println("Javalin started on http://localhost:7000");
+        log.info("Javalin started on http://localhost:7000");
     }
 }

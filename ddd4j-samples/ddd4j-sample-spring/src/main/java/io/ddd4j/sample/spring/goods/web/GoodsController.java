@@ -112,7 +112,7 @@ public class GoodsController {
     @DeleteMapping("/{id}")
     public R<Void> delete(@PathVariable Long id) {
         applicationService.delete(GoodsId.of(id));
-        return R.ok("goods deleted");
+        return R.ok();
     }
 
     /**

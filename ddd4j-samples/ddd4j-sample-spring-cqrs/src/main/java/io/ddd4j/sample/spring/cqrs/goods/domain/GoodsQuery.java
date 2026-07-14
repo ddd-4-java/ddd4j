@@ -83,7 +83,7 @@ public class GoodsQuery extends Query<Goods> {
      * @return {@link Goods} 聚合根的仓储实例
      */
     @Override
-    protected Repository repository() {
+    public Repository<Goods, Long> repository() {
         return RepositoryRegistry.repository(Goods.class);
     }
 }

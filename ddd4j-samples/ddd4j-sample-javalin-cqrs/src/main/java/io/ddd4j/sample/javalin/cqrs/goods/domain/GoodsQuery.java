@@ -3,6 +3,7 @@ package io.ddd4j.sample.javalin.cqrs.goods.domain;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -74,6 +75,36 @@ public class GoodsQuery extends Query<Goods> {
      */
     private BigDecimal priceMax;
 
+    public GoodsQuery setOrderBys(String orderBys) {
+        if (StrKit.isBlank(orderBys)) {
+            return this;
+        }
+        for (String orderBy : orderBys.split(",")) {
+            String[] tokens = orderBy.trim().split("_");
+            if (tokens.length != 2) {
+                continue;
+            }
+            boolean desc = "DESC".equalsIgnoreCase(tokens[1]);
+            switch (tokens[0]) {
+                case "id" -> applyOrder(desc, Goods::id);
+                case "createTime" -> applyOrder(desc, Goods::getCreateTime);
+                case "updateTime" -> applyOrder(desc, Goods::getUpdateTime);
+                case "price" -> applyOrder(desc, Goods::getPrice);
+                default -> {
+                }
+            }
+        }
+        return this;
+    }
+
+    private void applyOrder(boolean desc, io.ddd4j.core.util.SFunction<Goods, ?> property) {
+        if (desc) {
+            orderByDesc(property);
+            return;
+        }
+        orderByAsc(property);
+    }
+
     /**
      * 绑定到 {@link Goods} 聚合根的仓储实例。
      * <p>
@@ -83,7 +114,7 @@ public class GoodsQuery extends Query<Goods> {
      * @return {@link Goods} 聚合根的仓储实例
      */
     @Override
-    protected Repository repository() {
+    public Repository<Goods, Long> repository() {
         return RepositoryRegistry.repository(Goods.class);
     }
 }

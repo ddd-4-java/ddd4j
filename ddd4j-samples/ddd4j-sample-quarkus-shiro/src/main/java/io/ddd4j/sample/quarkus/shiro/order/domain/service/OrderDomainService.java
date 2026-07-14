@@ -3,6 +3,7 @@ package io.ddd4j.sample.quarkus.shiro.order.domain.service;
 import io.ddd4j.sample.quarkus.shiro.order.domain.model.Money;
 import io.ddd4j.sample.quarkus.shiro.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.shiro.order.domain.repository.OrderRepository;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@ApplicationScoped
 public class OrderDomainService {
 
     private final OrderRepository orderRepository;

@@ -140,17 +140,6 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
-                    <!-- OrderMqListener.java 引用已发布的 ddd4j-mq-core jar 中缺失的 MQEventListener 注解。
-                         本示例只是演示用法，本机编译时跳过以下文件以避免阻塞测试构建：
-                         - OrderMqListener.java  (MQEventListener 注解未发布到 jar)
-                         - OrderCacheService.java (CacheKit.remove(String,String) 方法签名不匹配)
-                         - GoodsController.java (R.ok 类型推断与新框架签名冲突)
-                         -->
-                    <excludes>
-                        <exclude>**/OrderMqListener.java</exclude>
-                        <exclude>**/OrderCacheService.java</exclude>
-                        <exclude>**/GoodsController.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <!-- Spring Boot 可执行 JAR -->
@@ -173,10 +162,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                    <skipTests>false</skipTests>
-                </configuration>
             </plugin>
         </plugins>
     </build>

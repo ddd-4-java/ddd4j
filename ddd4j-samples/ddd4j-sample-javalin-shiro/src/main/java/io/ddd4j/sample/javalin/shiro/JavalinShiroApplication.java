@@ -9,7 +9,6 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -31,6 +30,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Javalin + Guice + Apache Shiro + RBAC 鉴权 + DDD 业务示例启动类。
@@ -56,6 +56,7 @@ import io.javalin.apibuilder.ApiBuilder;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class JavalinShiroApplication {
 
     /**
@@ -89,9 +90,6 @@ public class JavalinShiroApplication {
 
         DomainEventPublisher domainEventPublisher = new NoOpDomainEventPublisher();
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, domainEventPublisher);
-
-        MQEventPublisher mqEventPublisher = new NoOpMQEventPublisher();
-        BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, mqEventPublisher);
 
         I18nProvider i18nProvider = new DefaultI18nProvider();
         BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider);
@@ -165,34 +163,27 @@ public class JavalinShiroApplication {
         });
 
         app.start(PORT);
-        System.out.println("Javalin + Shiro + RBAC 鉴权 + DDD 业务示例启动于 http://localhost:" + PORT);
-        System.out.println("  Authentication：/auth/login, /auth/me, /auth/check/permission ...");
-        System.out.println("  Authorization (RBAC)：/auth/users, /auth/roles, /auth/permissions ...");
-        System.out.println("  Order 业务：/orders, /orders/{id}, /orders/{id}/pay ...");
-        System.out.println("  Goods 业务：/api/goodss, /api/goodss/page, /api/goodss/list ...");
-        System.out.println("  业务鉴权示范：POST /auth/orders/{id}/pay 需要 order:pay 权限");
+        log.info("Javalin + Shiro + RBAC 鉴权 + DDD 业务示例启动于 http://localhost:{}", PORT);
     }
 
     // ==================== 示例 SPI 实现（仅本示例使用） ====================
 
     private static class NoOpDomainEventPublisher implements DomainEventPublisher {
         @Override
-        public <T> void publish(io.ddd4j.core.ddd.event.DomainEvent<T> event) {
-            System.out.println("[DomainEvent] " + event.getClass().getSimpleName());
+        public <ID extends org.fuin.ddd4j.core.EntityId> void publish(
+                io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
+            if (java.util.Objects.isNull(event)) {
+                return;
+            }
+            log.info("[DomainEvent] {}", event.getClass().getSimpleName());
         }
 
         @Override
-        public <T> void publishAll(java.util.Collection<io.ddd4j.core.ddd.event.DomainEvent<T>> events) {
-            if (events != null) {
+        public <ID extends org.fuin.ddd4j.core.EntityId> void publishAll(
+                java.util.Collection<io.ddd4j.core.ddd.event.DomainEvent<ID>> events) {
+            if (java.util.Objects.nonNull(events)) {
                 events.forEach(this::publish);
             }
-        }
-    }
-
-    private static class NoOpMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(io.ddd4j.core.event.MQEvent event) {
-            System.out.println("[MQEvent] " + event.getClass().getSimpleName());
         }
     }
 

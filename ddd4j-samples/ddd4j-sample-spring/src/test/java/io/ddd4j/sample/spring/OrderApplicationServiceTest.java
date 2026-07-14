@@ -14,12 +14,14 @@ import io.ddd4j.sample.spring.order.domain.model.OrderStatus;
 import io.ddd4j.sample.spring.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.spring.order.domain.service.OrderDomainService;
 import io.ddd4j.sample.spring.order.infrastructure.InMemoryOrderRepository;
+import org.fuin.ddd4j.core.EntityId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -197,13 +199,13 @@ class OrderApplicationServiceTest {
     static class NoOpDomainEventPublisher implements DomainEventPublisher {
 
         @Override
-        public <T> void publish(DomainEvent<T> event) {
+        public <ID extends EntityId> void publish(DomainEvent<ID> event) {
             // no-op for unit tests
         }
 
         @Override
-        public <T> void publishAll(Collection<DomainEvent<T>> events) {
-            if (events != null) {
+        public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
+            if (Objects.nonNull(events)) {
                 events.forEach(this::publish);
             }
         }

@@ -118,7 +118,7 @@ public class OrderCacheService {
      * 清除订单统计缓存（在订单状态变更后调用）。
      */
     public void evictOrderStats() {
-        CacheKit.remove(BIZ_ORDER_STATS, STATS_KEY);
+        CacheKit.invalidate(BIZ_ORDER_STATS, STATS_KEY);
         log.debug("Evicted ORDER_STATS cache");
     }
 
@@ -128,7 +128,7 @@ public class OrderCacheService {
      * @param buyerId 买家 ID
      */
     public void evictBuyerOrderCount(String buyerId) {
-        CacheKit.remove(BIZ_BUYER_ORDER_COUNT, "buyer:" + buyerId);
+        CacheKit.invalidate(BIZ_BUYER_ORDER_COUNT, "buyer:" + buyerId);
         log.debug("Evicted BUYER_ORDER_COUNT cache for buyerId={}", buyerId);
     }
 }

@@ -1,6 +1,6 @@
 package io.ddd4j.data.mybatis.plugins.inner;
 
-import com.baomidou.mybatisplus.enhance.interceptor.inner.EnhanceInnerInterceptor;
+import com.baomidou.mybatisplus.enhance.plugins.inner.EnhanceInnerInterceptor;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -26,16 +26,16 @@ import java.util.Objects;
 public class Ddd4jAggregateFillInnerInterceptor implements EnhanceInnerInterceptor {
 
     @Override
-    public void afterQuery(Executor executor,
-                           MappedStatement mappedStatement,
-                           Object parameter,
-                           RowBounds rowBounds,
-                           ResultHandler<?> resultHandler,
-                           BoundSql boundSql,
-                           List<Object> results) throws SQLException {
+    public List<Object> afterQuery(Executor executor,
+                                   MappedStatement mappedStatement,
+                                   Object parameter,
+                                   RowBounds rowBounds,
+                                   ResultHandler<?> resultHandler,
+                                   BoundSql boundSql,
+                                   List<Object> results) throws SQLException {
         Query query = this.findQuery(parameter);
         if (Objects.isNull(query) || Objects.isNull(results) || results.isEmpty()) {
-            return;
+            return results;
         }
         List<AggregateRoot<?>> aggregates = new ArrayList<>();
         for (Object result : results) {
@@ -44,6 +44,7 @@ public class Ddd4jAggregateFillInnerInterceptor implements EnhanceInnerIntercept
         if (!aggregates.isEmpty()) {
             query.doFills(aggregates);
         }
+        return results;
     }
 
     private Query<?> findQuery(Object parameter) {

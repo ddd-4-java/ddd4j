@@ -1,6 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.goods.infrastructure;
 
 import io.ddd4j.core.api.Page;
+import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.Repository;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ApplicationScoped
-public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Goods, Long> {
+public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Long> {
 
     /**
      * 内存存储：goodsId -> Goods 聚合根
@@ -105,7 +106,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     }
 
     @Override
-    public Page<Goods> page(Query query) {
+    public Page<Goods> page(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         List<Goods> filtered = filter(query);
         long total = filtered.size();
@@ -122,25 +123,25 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     }
 
     @Override
-    public long count(Query query) {
+    public long count(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query).size();
     }
 
     @Override
-    public Optional<Goods> findFirst(Query query) {
+    public Optional<Goods> findFirst(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query).stream().findFirst().map(this::copy);
     }
 
     @Override
-    public List<Goods> findList(Query query) {
+    public List<Goods> findList(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         return filter(query);
     }
 
     @Override
-    public boolean update(AggregateRoot<?> aggregate, Query query) {
+    public boolean update(AggregateRoot<?> aggregate, Query<Goods> query) {
         // 内存实现：单条更新走 save，按条件更新简化为 find + save
         if (Objects.nonNull(aggregate) && aggregate instanceof Goods) {
             save((Goods) aggregate);
@@ -150,7 +151,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     }
 
     @Override
-    public boolean deleteByQuery(Query query) {
+    public boolean deleteByQuery(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         List<Goods> matched = filter(query);
         matched.forEach(p -> rows.remove(p.id()));
@@ -158,7 +159,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     }
 
     @Override
-    public void fill(Query query, AggregateRoot<?> model) {
+    public void fill(Query<Goods> query, AggregateRoot<?> model) {
         // 内存实现无关联聚合，no-op
     }
 
@@ -170,7 +171,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
      * 演示 ddd4j Query 的充血过滤：业务侧只需定义查询字段，
      * 仓储实现根据字段值进行匹配。
      */
-    private List<Goods> filter(Query query) {
+    private List<Goods> filter(Query<Goods> query) {
         GoodsQuery productQuery = (query instanceof GoodsQuery) ? (GoodsQuery) query : new GoodsQuery();
         return rows.values().stream()
                 .filter(p -> matches(p, productQuery))
@@ -202,21 +203,15 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     }
 
     private Comparator<Goods> orderBy(GoodsQuery query) {
-        String orderBys = query.getOrderBys();
-        if (StrKit.isBlank(orderBys)) {
+        List<LambdaCondition> orderByConditions = query.getOrderByConditions();
+        if (orderByConditions.isEmpty()) {
             // 默认按 id 升序
             return Comparator.comparing(Goods::id);
         }
-        // 简化支持 createTime_DESC / id_ASC 等
-        String[] parts = orderBys.split(",");
         Comparator<Goods> comparator = null;
-        for (String part : parts) {
-            String[] tokens = part.trim().split("_");
-            if (tokens.length != 2) {
-                continue;
-            }
-            String field = tokens[0];
-            boolean desc = "DESC".equalsIgnoreCase(tokens[1]);
+        for (LambdaCondition orderBy : orderByConditions) {
+            String field = orderBy.property();
+            boolean desc = "DESC".equalsIgnoreCase(orderBy.operator());
             Comparator<Goods> current = switch (field) {
                 case "id" -> Comparator.comparing(Goods::id);
                 case "createTime" -> Comparator.comparing(Goods::getCreateTime,

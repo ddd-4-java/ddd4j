@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.fuin.ddd4j.core.EntityId;
 import org.fuin.ddd4j.core.EntityIdPath;
+import org.fuin.ddd4j.core.EventType;
 import org.fuin.ddd4j.jackson.AbstractDomainEvent;
 
 import java.io.Serial;
@@ -47,6 +48,13 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEvent<ID> implements Serializable {
 
+    private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<>() {
+        @Override
+        protected EventType computeValue(Class<?> type) {
+            return new EventType(type.getSimpleName());
+        }
+    };
+
     /**
      * 默认主题（可通过系统属性 {@code ddd4j.mq.default-topic} 覆盖）。
      */
@@ -79,6 +87,18 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
     }
 
     /**
+     * 使用字符串实体标识构造领域事件。
+     *
+     * <p>适用于尚未定义专用实体标识值对象的轻量业务；复杂领域应优先传入
+     * {@link EntityIdPath}，保留完整聚合路径语义。</p>
+     *
+     * @param entityId 非空字符串实体标识
+     */
+    protected DomainEvent(String entityId) {
+        this(new EntityIdPath(new StringEntityId(entityId)));
+    }
+
+    /**
      * 构造领域事件。
      *
      * @param entityIdPath 从聚合根到事件源的路径
@@ -95,6 +115,25 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      */
     protected DomainEvent(EntityIdPath entityIdPath, org.fuin.ddd4j.core.Event respondTo) {
         super(entityIdPath, respondTo);
+    }
+
+    /**
+     * 获取面向业务日志和兼容监听器的字符串事件源。
+     *
+     * @return 当前事件实体标识的字符串形式
+     */
+    public String source() {
+        return getEntityId().asString();
+    }
+
+    /**
+     * 默认以事件类简单名称作为稳定事件类型。
+     *
+     * @return 事件类型
+     */
+    @Override
+    public EventType getEventType() {
+        return EVENT_TYPES.get(getClass());
     }
 
     /**

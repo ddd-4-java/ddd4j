@@ -6,7 +6,6 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.sample.javalin.cqrs.cache.GoodsCacheService;
@@ -25,8 +24,8 @@ import io.ddd4j.sample.javalin.cqrs.order.web.OrderController;
 import io.ddd4j.sample.javalin.cqrs.spi.AnonymousSubjectProvider;
 import io.ddd4j.sample.javalin.cqrs.spi.DefaultI18nProvider;
 import io.ddd4j.sample.javalin.cqrs.spi.NoOpDomainEventPublisher;
-import io.ddd4j.sample.javalin.cqrs.spi.NoOpMQEventPublisher;
 import io.javalin.Javalin;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * ddd4j Javalin 平台的 Order/Goods CQRS 启动入口。
@@ -57,6 +56,7 @@ import io.javalin.Javalin;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class JavalinCqrsApplication {
 
     /**
@@ -75,9 +75,8 @@ public class JavalinCqrsApplication {
     public static void main(String[] args) {
         int port = parsePort(args);
 
-        // 1. 注入 4 个核心 SPI
+        // 1. 注入核心 SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoOpDomainEventPublisher());
-        BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, new NoOpMQEventPublisher());
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new AnonymousSubjectProvider());
         BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
 
@@ -120,15 +119,10 @@ public class JavalinCqrsApplication {
 
         DomainEventPublisher publisher = Contexts.getOrThrow(
                 SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
-        System.out.println("[Bootstrap] DomainEventPublisher ready: " + publisher.getClass().getSimpleName());
+        log.info("[Bootstrap] DomainEventPublisher ready: {}", publisher.getClass().getSimpleName());
 
         app.start(port);
-        System.out.println("Javalin (CQRS) started on http://localhost:" + port);
-        System.out.println("Try:");
-        System.out.println("  curl -X POST http://localhost:" + port + "/api/orders -H 'Content-Type: application/json' -d '{\"orderNo\":\"O-001\",\"buyerId\":\"u1\",\"buyerName\":\"Alice\"}'");
-        System.out.println("  curl http://localhost:" + port + "/api/orders/query/stats");
-        System.out.println("  curl -X POST http://localhost:" + port + "/api/goods -H 'Content-Type: application/json' -d '{\"code\":\"SKU-001\",\"name\":\"iPhone\",\"price\":5999.0,\"stock\":10}'");
-        System.out.println("  curl http://localhost:" + port + "/api/goods/query/list");
+        log.info("Javalin (CQRS) started on http://localhost:{}", port);
     }
 
     /**
@@ -147,8 +141,8 @@ public class JavalinCqrsApplication {
                 builder -> builder.maximumSize(20000).expireAfterWriteSeconds(600).initialCapacity(256).recordStats(true));
         CacheKit.build(GoodsCacheService.BIZ_GOODS_LIST,
                 builder -> builder.maximumSize(2000).expireAfterWriteSeconds(120).initialCapacity(128).recordStats(true));
-        System.out.println("[Bootstrap] CacheKit initialized with " + CacheKit.getCacheNames().size() + " domains: "
-                + CacheKit.getCacheNames());
+        log.info("[Bootstrap] CacheKit initialized with {} domains: {}",
+                CacheKit.getCacheNames().size(), CacheKit.getCacheNames());
     }
 
     private static int parsePort(String[] args) {

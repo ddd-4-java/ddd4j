@@ -51,7 +51,7 @@ public class GoodsQuery extends Query<Goods> {
     private BigDecimal priceMax;
 
     @Override
-    protected Repository repository() {
+    public Repository<Goods, Long> repository() {
         return RepositoryRegistry.repository(Goods.class);
     }
 }
