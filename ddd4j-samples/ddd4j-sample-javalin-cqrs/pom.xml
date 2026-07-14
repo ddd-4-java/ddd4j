@@ -21,16 +21,19 @@
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
         </dependency>
         <!-- ddd4j 注解层：构造型注解 + API 注解（提供 BaseAnnotation 的元注解支持） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
         </dependency>
         <!-- ddd4j 工具库：StrKit / CollKit -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
         </dependency>
         <!-- ddd4j 缓存层：CacheKit（CQRS 读侧缓存增强） -->
         <dependency>

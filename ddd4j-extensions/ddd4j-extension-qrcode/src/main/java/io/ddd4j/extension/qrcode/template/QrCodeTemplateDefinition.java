@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import io.github.hiwepy.zxing.frame.QrCodeFrame;
 import lombok.Getter;
 
+import java.util.Objects;
+
 /** Named reusable outer-frame template. */
 @Getter
 public final class QrCodeTemplateDefinition {
@@ -17,6 +19,6 @@ public final class QrCodeTemplateDefinition {
             throw new IllegalArgumentException("template id must not be blank");
         }
         this.id = id;
-        this.frame = java.util.Objects.requireNonNull(frame, "frame must not be null");
+        this.frame = Objects.requireNonNull(frame, "frame must not be null");
     }
 }

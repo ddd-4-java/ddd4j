@@ -45,11 +45,11 @@ class OrderResourceTest {
 
     @Test
     void runtimeRegistersCoreSpis() {
-        assertThat(Contexts.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class))
+        assertThat(Contexts.get(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class))
                 .contains(domainEventPublisher);
-        assertThat(Contexts.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class))
+        assertThat(Contexts.get(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class))
                 .contains(subjectProvider);
-        assertThat(Contexts.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class))
+        assertThat(Contexts.get(SpiKeys.I18N_PROVIDER, I18nProvider.class))
                 .contains(i18nProvider);
     }
 

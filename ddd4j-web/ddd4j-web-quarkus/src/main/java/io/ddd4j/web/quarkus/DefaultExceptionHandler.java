@@ -3,6 +3,7 @@ package io.ddd4j.web.quarkus;
 import io.ddd4j.web.core.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -21,6 +22,9 @@ public class DefaultExceptionHandler implements ExceptionMapper<Exception> {
         if (error.status() >= 500) {
             log.error("Unhandled Quarkus request failure", exception);
         }
-        return Response.status(error.status()).entity(error.toResponse()).build();
+        return Response.status(error.status())
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(error.toResponse())
+                .build();
     }
 }

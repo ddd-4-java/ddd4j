@@ -7923,6 +7923,14 @@
                 <artifactId>velocity-engine-scripting</artifactId>
                 <version>${velocity.version}</version>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.vertx/vertx-stack-depchain -->
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-stack-depchain</artifactId>
+                <version>${vertx.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.edu.hfut.dmic.webcollector/WebCollector -->
             <dependency>
                 <groupId>cn.edu.hfut.dmic.webcollector</groupId>

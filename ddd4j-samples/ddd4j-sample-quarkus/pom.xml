@@ -24,6 +24,7 @@
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <!-- 编译器参数：跳过 Jakarta XML Binding 等可选依赖的版本检查 -->
         <quarkus.package.type>fast-jar</quarkus.package.type>
+        <quarkus.bootstrap.workspace-discovery>false</quarkus.bootstrap.workspace-discovery>
         <surefire-plugin.version>3.2.5</surefire-plugin.version>
         <failsafe-plugin.version>3.2.5</failsafe-plugin.version>
     </properties>
@@ -97,7 +98,7 @@
         <!-- REST（Quarkus 3.x 推荐使用 quarkus-rest，原 resteasy-reactive 已合并） -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest</artifactId>
+            <artifactId>quarkus-rest-jackson</artifactId>
         </dependency>
 
         <!-- CDI / Arc（Quarkus 默认包含，显式声明更清晰） -->

@@ -79,6 +79,9 @@ public class Ddd4jQuarkusWebFilter implements ContainerRequestFilter, ContainerR
     }
 
     private String clientIp() {
+        if (Objects.isNull(request)) {
+            return null;
+        }
         String forwarded = request.getHeader(WebHeaders.FORWARDED_FOR);
         if (StrKit.isNotBlank(forwarded)) {
             return forwarded.split(",", 2)[0].trim();
