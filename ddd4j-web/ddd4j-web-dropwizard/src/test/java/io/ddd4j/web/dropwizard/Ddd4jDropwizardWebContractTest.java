@@ -21,6 +21,7 @@ import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
 import io.ddd4j.web.testkit.WebContractResponse;
+import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -33,16 +34,18 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(DropwizardExtensionsSupport.class)
 class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
 
     private static final Ddd4jDropwizardRequestFilter REQUEST_FILTER = new Ddd4jDropwizardRequestFilter(
@@ -51,12 +54,12 @@ class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
                     WebAccessPolicy.requiredExcept(path -> !WebContractPaths.PROTECTED.equals(path))),
             new WebIdempotencyLifecycle(new CacheIdempotencyGuard("dropwizard-contract")));
 
-    @RegisterExtension
     static final ResourceExtension RESOURCES = ResourceExtension.builder()
             .addResource(new ContractResource())
             .addProvider(REQUEST_FILTER)
             .addProvider(new Ddd4jDropwizardResponseFilter())
             .addProvider(new Ddd4jDropwizardExceptionMapper(new DefaultWebExceptionTranslator()))
+            .addProvider(new Ddd4jDropwizardIllegalStateExceptionMapper())
             .build();
 
     private final WebContractClient contractClient = new DropwizardContractClient();
@@ -94,7 +97,7 @@ class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             jakarta.ws.rs.client.Invocation.Builder builder = RESOURCES.target(path).request();
             headers.forEach(builder::header);
-            Response response = body == null
+            Response response = Objects.isNull(body)
                     ? builder.method(method)
                     : builder.method(method, Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
             try (response) {

@@ -195,7 +195,8 @@ class WebCoreContractTest {
             session.complete(true);
         }
 
-        assertThat(ThreadContext.get(WebContextScope.REQUEST_ID)).isNull();
+        String requestId = ThreadContext.get(WebContextScope.REQUEST_ID);
+        assertThat(requestId).isNull();
         assertThatThrownBy(() -> idempotencyLifecycle.open(context, "request-key"))
                 .isInstanceOf(WebStatusException.class)
                 .extracting("status").isEqualTo(409);

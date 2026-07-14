@@ -35,6 +35,8 @@ public final class Ddd4jDropwizardWebBundle<C extends Configuration> implements 
                 configurationResolver.apply(configuration), "web configuration must not be null");
         environment.jersey().register(new Ddd4jDropwizardRequestFilter(webConfiguration));
         environment.jersey().register(new Ddd4jDropwizardResponseFilter());
-        environment.jersey().register(new Ddd4jDropwizardExceptionMapper());
+        Ddd4jDropwizardExceptionMapper exceptionMapper = new Ddd4jDropwizardExceptionMapper();
+        environment.jersey().register(exceptionMapper);
+        environment.jersey().register(new Ddd4jDropwizardIllegalStateExceptionMapper(exceptionMapper));
     }
 }
