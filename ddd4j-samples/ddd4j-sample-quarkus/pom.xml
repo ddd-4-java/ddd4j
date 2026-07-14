@@ -42,6 +42,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-sample-order-application</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- ================= ddd4j 核心依赖 ================= -->
         <!-- 纯 Java 业务契约：BaseContext、Contexts、SPI 接口、聚合根基类 -->
         <dependency>

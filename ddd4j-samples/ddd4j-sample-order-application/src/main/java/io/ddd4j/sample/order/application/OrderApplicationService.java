@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -84,7 +85,7 @@ public class OrderApplicationService {
     public OrderReadModel findByOrderNo(String orderNo) {
         return repository.findByOrderNo(orderNo)
                 .map(this::toReadModel)
-                .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderNo));
+                .orElseThrow(() -> new NoSuchElementException("order not found: " + orderNo));
     }
 
     public List<OrderReadModel> query(OrderQuery query) {
@@ -93,7 +94,7 @@ public class OrderApplicationService {
 
     private Order load(String orderId) {
         return repository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
+                .orElseThrow(() -> new NoSuchElementException("order not found: " + orderId));
     }
 
     private void persist(Order order) {

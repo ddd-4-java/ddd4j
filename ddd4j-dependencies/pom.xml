@@ -276,7 +276,6 @@
         <javamelody.version>2.8.0</javamelody.version>
         <jave.version>3.5.0</jave.version>
         <javers.version>7.11.4</javers.version>
-        <micronaut.version>4.10.17</micronaut.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jbig2-imageio.version>3.0.5</jbig2-imageio.version>
         <jcaptcha.version>2.0-alpha-1</jcaptcha.version>
@@ -382,6 +381,7 @@
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
         <micrometer.version>1.16.1</micrometer.version>
         <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
+        <micronaut.version>4.10.17</micronaut.version>
         <minio.version>8.6.0</minio.version>
         <nacos.client.version>3.2.2</nacos.client.version>
         <neethi.version>3.2.2</neethi.version>
@@ -934,6 +934,16 @@
             </dependency>
             <dependency>
                 <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-commons</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-launcher</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
@@ -990,6 +1000,14 @@
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-tracing-bom</artifactId>
                 <version>${micrometer-tracing.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://repo1.maven.org/maven2/io/micronaut/platform/micronaut-platform -->
+            <dependency>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>${micronaut.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

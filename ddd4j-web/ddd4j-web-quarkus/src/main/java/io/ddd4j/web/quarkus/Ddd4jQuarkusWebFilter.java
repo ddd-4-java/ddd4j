@@ -36,6 +36,9 @@ public class Ddd4jQuarkusWebFilter implements ContainerRequestFilter, ContainerR
     @ConfigProperty(name = "ddd4j.quarkus.web.bearer-required", defaultValue = "false")
     boolean bearerRequired;
 
+    @ConfigProperty(name = "ddd4j.quarkus.web.protected-path-prefix", defaultValue = "/")
+    String protectedPathPrefix;
+
     @Override
     public void filter(ContainerRequestContext requestContext) {
         String requestId = requestContext.getHeaderString(WebHeaders.REQUEST_ID);
@@ -52,7 +55,7 @@ public class Ddd4jQuarkusWebFilter implements ContainerRequestFilter, ContainerR
         requestContext.setProperty(SCOPE_PROPERTY, scope);
         requestContext.setProperty(WebHeaders.REQUEST_ID, requestId);
         try {
-            if (bearerRequired && !isPublicPath(path)) {
+            if (bearerRequired && path.startsWith(protectedPathPrefix) && !isPublicPath(path)) {
                 ThreadContext.bind(authenticator.authenticateSubject(context.authorization()).subject());
             }
         } catch (RuntimeException exception) {

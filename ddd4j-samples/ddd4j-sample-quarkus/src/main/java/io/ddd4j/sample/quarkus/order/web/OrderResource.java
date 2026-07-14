@@ -1,164 +1,121 @@
 package io.ddd4j.sample.quarkus.order.web;
 
-import io.ddd4j.sample.quarkus.order.application.AddOrderLineCommand;
-import io.ddd4j.sample.quarkus.order.application.CreateOrderCommand;
-import io.ddd4j.sample.quarkus.order.application.OrderApplicationService;
-import io.ddd4j.sample.quarkus.order.domain.model.Order;
-import io.ddd4j.sample.quarkus.order.domain.repository.OrderRepository;
-import io.ddd4j.sample.quarkus.order.domain.service.OrderDomainService;
-import io.ddd4j.web.quarkus.TenantAwareResource;
+import io.ddd4j.core.api.R;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.order.application.AddOrderLineCommand;
+import io.ddd4j.sample.order.application.CreateOrderCommand;
+import io.ddd4j.sample.order.application.OrderApplicationService;
+import io.ddd4j.sample.order.application.OrderReadModel;
+import io.ddd4j.sample.order.domain.Money;
+import io.ddd4j.sample.order.domain.Order;
+import io.ddd4j.sample.order.domain.OrderQuery;
+import io.ddd4j.sample.order.domain.OrderStatus;
+import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebStatusException;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
-/**
- * 订单 JAX-RS 资源：演示 ddd4j-web-quarkus 的资源基类与 Quarkus REST 集成。
- *
- * <p>继承 {@link TenantAwareResource}，可直接调用 {@code getTenantId()} /
- * {@code getLang()} / {@code ok(data)} / {@code fail(msg)} 等辅助方法，
- * 同时复用 ddd4j 的统一响应包装 {@link io.ddd4j.core.api.R}。
- *
- * <h3>端点</h3>
- * <ul>
- *   <li>{@code GET    /orders/{id}}          - 查询订单</li>
- *   <li>{@code GET    /orders/orderNo/{no}}  - 按订单编号查询</li>
- *   <li>{@code POST   /orders}               - 创建草稿订单</li>
- *   <li>{@code POST   /orders/{id}/lines}    - 添加订单行</li>
- *   <li>{@code POST   /orders/{id}:pay}      - 支付订单</li>
- *   <li>{@code POST   /orders/{id}:ship}     - 发货订单</li>
- *   <li>{@code POST   /orders/{id}:cancel}   - 取消订单</li>
- *   <li>{@code POST   /orders/cancel-all}    - 批量取消买家草稿订单</li>
- * </ul>
- *
- * <h3>设计原则</h3>
- * <p>Resource 层只做协议适配（HTTP ↔ 应用服务入参 / 响应），不包含业务规则。
- * 所有业务方法都委托给 {@link OrderApplicationService} 与 {@link OrderDomainService}。
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
-@Path("/orders")
+/** JAX-RS translation layer for the shared Order application. */
+@Path("/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class OrderResource extends TenantAwareResource {
+public class OrderResource {
 
     private final OrderApplicationService applicationService;
-    private final OrderDomainService domainService;
-    private final OrderRepository repository;
 
     @Inject
-    public OrderResource(OrderApplicationService applicationService,
-                         OrderDomainService domainService,
-                         OrderRepository repository) {
-        this.applicationService = applicationService;
-        this.domainService = domainService;
-        this.repository = repository;
+    public OrderResource(OrderApplicationService applicationService) {
+        this.applicationService = Objects.requireNonNull(applicationService,
+                "applicationService must not be null");
     }
 
-    /**
-     * 按 ID 查询订单。
-     *
-     * @param id 订单 ID
-     * @return 订单聚合（不存在返回 404）
-     */
-    @GET
-    @Path("/{id}")
-    public Response getById(@PathParam("id") String id) {
-        Optional<Order> order = repository.findById(id);
-        return order.map(this::ok)
-                .orElseGet(() -> notFound("order not found: " + id));
-    }
-
-    /**
-     * 按订单编号查询订单。
-     */
-    @GET
-    @Path("/orderNo/{orderNo}")
-    public Response getByOrderNo(@PathParam("orderNo") String orderNo) {
-        return repository.findByOrderNo(orderNo)
-                .map(this::ok)
-                .orElseGet(() -> notFound("order not found by orderNo: " + orderNo));
-    }
-
-    /**
-     * 创建草稿订单。
-     */
     @POST
     public Response create(CreateOrderRequest request) {
-        Order order = applicationService.createDraft(
-                new CreateOrderCommand(request.orderNo(), request.buyerId(), request.buyerName()));
-        return ok(order);
+        Order order = applicationService.create(new CreateOrderCommand(
+                request.orderNo(), request.buyerId(), request.buyerName()));
+        return Response.status(Response.Status.CREATED).entity(R.ok(toResponse(order))).build();
     }
 
-    /**
-     * 添加订单行。
-     */
+    @GET
+    @Path("/by-no")
+    public R<OrderReadModel> findByOrderNo(@QueryParam("orderNo") String orderNo) {
+        return R.ok(applicationService.findByOrderNo(orderNo));
+    }
+
+    @GET
+    public R<List<OrderReadModel>> query(@QueryParam("buyerId") String buyerId,
+                                         @QueryParam("status") String status,
+                                         @QueryParam("page") Integer page,
+                                         @QueryParam("size") Integer size) {
+        OrderStatus orderStatus = StrKit.isBlank(status)
+                ? null : OrderStatus.valueOf(status.toUpperCase(Locale.ROOT));
+        return R.ok(applicationService.query(new OrderQuery(buyerId, orderStatus,
+                Objects.isNull(page) ? 1 : page, Objects.isNull(size) ? 20 : size)));
+    }
+
+    @GET
+    @Path("/{id}")
+    public R<OrderReadModel> find(@PathParam("id") String id) {
+        return R.ok(applicationService.find(id));
+    }
+
     @POST
     @Path("/{id}/lines")
-    public Response addLine(@PathParam("id") String id, AddLineRequest request) {
-        Order order = applicationService.addLine(
-                new AddOrderLineCommand(id, request.goodsId(), request.goodsName(),
-                        request.quantity(), request.unitPrice()));
-        return ok(order);
+    public R<OrderResponse> addLine(@PathParam("id") String id, AddOrderLineRequest request) {
+        Order order = applicationService.addLine(new AddOrderLineCommand(id,
+                request.goodsId(), request.goodsName(), request.quantity(), request.unitPrice()));
+        return R.ok(toResponse(order));
     }
 
-    /**
-     * 支付订单。
-     */
     @POST
-    @Path("/{id}:pay")
-    public Response pay(@PathParam("id") String id) {
-        return ok(applicationService.pay(id));
+    @Path("/{id}/pay")
+    public R<OrderResponse> pay(@PathParam("id") String id,
+                                @HeaderParam(WebHeaders.IDEMPOTENCY_KEY) String idempotencyKey) {
+        if (StrKit.isBlank(idempotencyKey)) {
+            throw new WebStatusException(400, "Idempotency-Key is required");
+        }
+        return R.ok(toResponse(applicationService.pay(id, idempotencyKey)));
     }
 
-    /**
-     * 发货订单。
-     */
     @POST
-    @Path("/{id}:ship")
-    public Response ship(@PathParam("id") String id) {
-        return ok(applicationService.ship(id));
+    @Path("/{id}/ship")
+    public R<OrderResponse> ship(@PathParam("id") String id) {
+        return R.ok(toResponse(applicationService.ship(id)));
     }
 
-    /**
-     * 取消订单。
-     */
     @POST
-    @Path("/{id}:cancel")
-    public Response cancel(@PathParam("id") String id) {
-        return ok(applicationService.cancel(id));
+    @Path("/{id}/cancel")
+    public R<OrderResponse> cancel(@PathParam("id") String id) {
+        return R.ok(toResponse(applicationService.cancel(id)));
     }
 
-    /**
-     * 批量取消买家草稿订单（演示领域服务与 SPI）。
-     */
-    @POST
-    @Path("/cancel-all")
-    public Response cancelAllDrafts(CancelAllRequest request) {
-        int cancelled = domainService.cancelAllDraftsOf(request.buyerId());
-        return ok(cancelled);
+    private static OrderResponse toResponse(Order order) {
+        Money total = order.totalAmount();
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
+                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
-    // ========== 请求 DTO（record） ==========
-
-    /**
-     * 创建订单请求。
-     */
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
     }
 
-    /**
-     * 添加订单行请求。
-     */
-    public record AddLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
+    public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
     }
 
-    /**
-     * 批量取消请求。
-     */
-    public record CancelAllRequest(String buyerId) {
+    public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,
+                                OrderStatus status, BigDecimal totalAmount, String currency, int lineCount) {
     }
 }

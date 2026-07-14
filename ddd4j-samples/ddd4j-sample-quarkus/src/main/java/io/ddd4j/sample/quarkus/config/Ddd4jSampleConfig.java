@@ -3,10 +3,13 @@ package io.ddd4j.sample.quarkus.config;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.sample.order.application.OrderApplicationService;
+import io.ddd4j.sample.quarkus.order.infrastructure.QuarkusOrderAdapters;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +31,7 @@ import java.util.Optional;
  * <p>应用启动后日志中会输出类似：
  * <pre>
  * [Ddd4jSampleConfig] DomainEventPublisher = NoOpDomainEventPublisher
- * [Ddd4jSampleConfig] SubjectProvider        = AnonymousSubjectProvider
+ * [Ddd4jSampleConfig] SubjectProvider        = SampleSubjectProvider
  * [Ddd4jSampleConfig] I18nProvider           = DefaultI18nProvider
  * </pre>
  *
@@ -45,6 +48,12 @@ import java.util.Optional;
 @Slf4j
 @ApplicationScoped
 public class Ddd4jSampleConfig {
+
+    @Produces
+    @ApplicationScoped
+    OrderApplicationService orderApplicationService(QuarkusOrderAdapters adapters) {
+        return new OrderApplicationService(adapters, adapters, adapters, adapters);
+    }
 
     /**
      * 核心 SPI Bean 引用（启动期注入）
