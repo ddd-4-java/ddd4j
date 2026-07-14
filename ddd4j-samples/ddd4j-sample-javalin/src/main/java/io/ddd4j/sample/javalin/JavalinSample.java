@@ -55,9 +55,9 @@ public final class JavalinSample {
             Javalin app = Javalin.create(config -> {
                 config.startup.showJavalinBanner = false;
                 config.jsonMapper(new JavalinJackson());
+                new Ddd4jJavalinWeb().configure(config);
                 config.routes.apiBuilder(controller::routes);
             });
-            new Ddd4jJavalinWeb().install(app);
             app.start(port);
             return new JavalinApplication(app, token, spiScope);
         } catch (RuntimeException exception) {

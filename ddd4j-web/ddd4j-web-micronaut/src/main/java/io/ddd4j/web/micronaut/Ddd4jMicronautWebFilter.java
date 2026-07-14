@@ -1,78 +1,114 @@
 package io.ddd4j.web.micronaut;
 
-import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.WebContextScope;
+import io.ddd4j.web.core.CacheIdempotencyGuard;
+import io.ddd4j.web.core.ClientIpResolver;
+import io.ddd4j.web.core.PathWebAccessPolicy;
+import io.ddd4j.web.core.RequestIdGenerator;
 import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestData;
+import io.ddd4j.web.core.WebRequestLifecycle;
+import io.micronaut.core.propagation.MutablePropagatedContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.Filter;
-import io.micronaut.http.filter.HttpServerFilter;
-import io.micronaut.http.filter.ServerFilterChain;
+import io.micronaut.http.annotation.RequestFilter;
+import io.micronaut.http.annotation.ServerFilter;
+import io.micronaut.http.filter.FilterContinuation;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
+import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
+import java.net.InetSocketAddress;
 import java.util.Locale;
-import java.util.UUID;
-import java.util.function.Predicate;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Micronaut 请求上下文与 Bearer Subject 适配器。
+ * Micronaut 4 Filter Method 请求上下文、Bearer Subject 与幂等适配器。
  */
-@Filter("/**")
-public final class Ddd4jMicronautWebFilter implements HttpServerFilter {
+@ServerFilter(ServerFilter.MATCH_ALL_PATTERN)
+public final class Ddd4jMicronautWebFilter {
 
-    private final BearerSubjectAuthenticator authenticator;
-    private final Predicate<String> publicPath;
+    private final WebRequestContextFactory contextFactory;
+    private final WebRequestLifecycle requestLifecycle;
+    private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
 
-    public Ddd4jMicronautWebFilter() {
-        this(new BearerSubjectAuthenticator(), Ddd4jMicronautWebFilter::isPublicPath);
+    @Inject
+    public Ddd4jMicronautWebFilter(Ddd4jMicronautWebConfiguration configuration) {
+        Ddd4jMicronautWebConfiguration config = Objects.requireNonNull(configuration,
+                "configuration must not be null");
+        ClientIpResolver clientIpResolver = config.isTrustForwardedHeaders()
+                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
+        this.contextFactory = new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
+        this.requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
+        this.idempotencyLifecycle = config.isIdempotencyEnabled()
+                ? Optional.of(new WebIdempotencyLifecycle(
+                        new CacheIdempotencyGuard(config.getIdempotencyCacheName()), config.getIdempotencyTtl()))
+                : Optional.empty();
     }
 
-    public Ddd4jMicronautWebFilter(BearerSubjectAuthenticator authenticator, Predicate<String> publicPath) {
-        this.authenticator = authenticator;
-        this.publicPath = publicPath;
+    public Ddd4jMicronautWebFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
+                                   WebIdempotencyLifecycle idempotencyLifecycle) {
+        this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
+        this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
+        this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
     }
 
-    @Override
-    public Publisher<MutableHttpResponse<?>> doFilter(HttpRequest<?> request, ServerFilterChain chain) {
-        return Flux.defer(() -> {
-            String requestId = requestId(request);
-            return Flux.using(
-                    () -> WebContextScope.open(toContext(request, requestId)),
-                    scope -> proceed(request, chain, requestId),
-                    WebContextScope::close);
+    @RequestFilter
+    @ExecuteOn(TaskExecutors.BLOCKING)
+    public Publisher<MutableHttpResponse<?>> filter(HttpRequest<?> request,
+                                                     FilterContinuation<Publisher<MutableHttpResponse<?>>> continuation,
+                                                     MutablePropagatedContext propagatedContext) {
+        WebRequestContext requestContext = createContext(request);
+        Optional<BearerSubjectAuthenticator.Authentication> authentication = requestLifecycle
+                .authenticate(requestContext);
+        propagatedContext.add(new Ddd4jMicronautContext(requestContext,
+                authentication.map(BearerSubjectAuthenticator.Authentication::subject)));
+        Optional<WebIdempotencyLifecycle.Scope> idempotencyScope = idempotencyLifecycle.flatMap(lifecycle ->
+                lifecycle.open(requestContext, request.getHeaders().get(WebHeaders.IDEMPOTENCY_KEY)));
+        return Flux.from(continuation.proceed())
+                .doOnNext(response -> {
+                    addResponseHeaders(response, requestContext);
+                    closeIdempotency(idempotencyScope, response.getStatus().getCode() < 400);
+                })
+                .doOnError(throwable -> closeIdempotency(idempotencyScope, false))
+                .doOnCancel(() -> closeIdempotency(idempotencyScope, false));
+    }
+
+    private WebRequestContext createContext(HttpRequest<?> request) {
+        InetSocketAddress remoteAddress = request.getRemoteAddress();
+        String remoteHost = Objects.nonNull(remoteAddress.getAddress())
+                ? remoteAddress.getAddress().getHostAddress() : remoteAddress.getHostString();
+        return contextFactory.create(new WebRequestData(
+                request.getHeaders().get(WebHeaders.REQUEST_ID),
+                request.getHeaders().get(WebHeaders.TRACE_ID),
+                request.getHeaders().get(WebHeaders.TENANT_ID),
+                request.getHeaders().get(WebHeaders.AUTHORIZATION),
+                request.getLocale().orElse(Locale.getDefault()),
+                request.getHeaders().get(WebHeaders.FORWARDED_FOR),
+                request.getHeaders().get("X-Real-IP"),
+                remoteHost,
+                request.getMethodName(),
+                request.getPath()));
+    }
+
+    private void addResponseHeaders(MutableHttpResponse<?> response, WebRequestContext context) {
+        response.header(WebHeaders.REQUEST_ID, context.requestId());
+        response.header(WebHeaders.TRACE_ID, context.traceId());
+    }
+
+    private void closeIdempotency(Optional<WebIdempotencyLifecycle.Scope> scope, boolean successful) {
+        scope.ifPresent(idempotencyScope -> {
+            if (successful) {
+                idempotencyScope.complete();
+            }
+            idempotencyScope.close();
         });
-    }
-
-    private Publisher<MutableHttpResponse<?>> proceed(HttpRequest<?> request, ServerFilterChain chain, String requestId) {
-        if (!publicPath.test(request.getPath())) {
-            ThreadContext.bind(authenticator.authenticateSubject(
-                    request.getHeaders().get(WebHeaders.AUTHORIZATION)).subject());
-        }
-        return Flux.from(chain.proceed(request))
-                .doOnNext(response -> response.header(WebHeaders.REQUEST_ID, requestId));
-    }
-
-    private WebRequestContext toContext(HttpRequest<?> request, String requestId) {
-        String forwardedFor = request.getHeaders().get(WebHeaders.FORWARDED_FOR);
-        String clientIp = StrKit.isBlank(forwardedFor)
-                ? request.getRemoteAddress().getAddress().getHostAddress()
-                : forwardedFor.split(",", 2)[0].trim();
-        Locale locale = request.getLocale().orElse(Locale.getDefault());
-        return new WebRequestContext(requestId, request.getHeaders().get(WebHeaders.TRACE_ID),
-                request.getHeaders().get(WebHeaders.TENANT_ID), request.getHeaders().get(WebHeaders.AUTHORIZATION),
-                locale, clientIp, request.getMethodName(), request.getPath());
-    }
-
-    private String requestId(HttpRequest<?> request) {
-        String requestId = request.getHeaders().get(WebHeaders.REQUEST_ID);
-        return StrKit.isBlank(requestId) ? UUID.randomUUID().toString() : requestId;
-    }
-
-    private static boolean isPublicPath(String path) {
-        return "/health".equals(path) || "/health/readiness".equals(path) || "/health/liveness".equals(path);
     }
 }

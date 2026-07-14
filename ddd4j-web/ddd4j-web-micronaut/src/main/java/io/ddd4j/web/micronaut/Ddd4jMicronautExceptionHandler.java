@@ -6,8 +6,11 @@ import io.ddd4j.web.core.WebExceptionTranslator;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
  * Micronaut 全局异常到 ddd4j R 响应的映射。
@@ -16,7 +19,16 @@ import lombok.extern.slf4j.Slf4j;
 @Singleton
 public final class Ddd4jMicronautExceptionHandler implements ExceptionHandler<Throwable, HttpResponse<?>> {
 
-    private final WebExceptionTranslator translator = new DefaultWebExceptionTranslator();
+    private final WebExceptionTranslator translator;
+
+    @Inject
+    public Ddd4jMicronautExceptionHandler() {
+        this(new DefaultWebExceptionTranslator());
+    }
+
+    public Ddd4jMicronautExceptionHandler(WebExceptionTranslator translator) {
+        this.translator = Objects.requireNonNull(translator, "translator must not be null");
+    }
 
     @Override
     public HttpResponse<?> handle(HttpRequest request, Throwable exception) {

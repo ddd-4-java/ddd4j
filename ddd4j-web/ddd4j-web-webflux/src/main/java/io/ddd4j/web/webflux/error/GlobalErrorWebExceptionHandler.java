@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatusCode;
@@ -21,12 +22,14 @@ import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * WebFlux 全局错误 Web 处理器（纯 Spring Framework {@link WebExceptionHandler}，不依赖 Boot {@code AbstractErrorWebExceptionHandler}）。
  */
 @Component
 @Order(-2)
+@Slf4j
 public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
 
     private final GlobalErrorAttributes errorAttributes;
@@ -39,9 +42,10 @@ public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
      */
     public GlobalErrorWebExceptionHandler(GlobalErrorAttributes errorAttributes, ObjectMapper objectMapper,
                                           WebExceptionTranslator exceptionTranslator) {
-        this.errorAttributes = errorAttributes;
-        this.objectMapper = objectMapper;
-        this.exceptionTranslator = exceptionTranslator;
+        this.errorAttributes = Objects.requireNonNull(errorAttributes, "errorAttributes must not be null");
+        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
+        this.exceptionTranslator = Objects.requireNonNull(exceptionTranslator,
+                "exceptionTranslator must not be null");
     }
 
     /**
@@ -56,6 +60,9 @@ public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
 
         errorAttributes.storeError(exchange, ex);
         WebError error = exceptionTranslator.translate(ex);
+        if (error.status() >= 500) {
+            log.error("Unhandled WebFlux request failure", ex);
+        }
 
         response.setStatusCode(HttpStatusCode.valueOf(error.status()));
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
@@ -64,7 +71,9 @@ public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
         try {
             bodyBytes = objectMapper.writeValueAsBytes(error.toResponse());
         } catch (JsonProcessingException jsonEx) {
-            bodyBytes = ("{\"data\":\"INTERNAL SERVER ERROR\"}").getBytes(StandardCharsets.UTF_8);
+            log.error("Unable to serialize WebFlux error response", jsonEx);
+            bodyBytes = ("{\"code\":500,\"msg\":\"Internal Server Error\",\"data\":null}")
+                    .getBytes(StandardCharsets.UTF_8);
         }
 
         DataBuffer buffer = response.bufferFactory().wrap(bodyBytes);

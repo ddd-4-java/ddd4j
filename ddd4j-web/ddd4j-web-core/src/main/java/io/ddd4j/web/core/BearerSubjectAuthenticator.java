@@ -7,6 +7,7 @@ import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 将标准 Bearer Token 委托给当前运行时注册的 Subject SPI。
@@ -30,6 +31,14 @@ public final class BearerSubjectAuthenticator {
     public Authentication authenticateSubject(String authorization) {
         String token = tokenResolver.resolve(authorization)
                 .orElseThrow(() -> new WebStatusException(401, "Bearer token is required"));
+        return authenticateToken(token);
+    }
+
+    public Optional<Authentication> authenticateOptional(String authorization) {
+        return tokenResolver.resolve(authorization).map(this::authenticateToken);
+    }
+
+    private Authentication authenticateToken(String token) {
         SubjectProvider provider = Contexts.get(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class)
                 .orElseThrow(() -> new WebStatusException(401, "Subject provider is unavailable"));
         Subject subject = provider.getSubject();

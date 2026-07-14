@@ -4,11 +4,22 @@
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-package io.ddd4j.web.webmvc.webmvc;
+package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.ProfileManager;
 import io.ddd4j.core.constant.Constants;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.CacheIdempotencyGuard;
+import io.ddd4j.web.core.ClientIpResolver;
+import io.ddd4j.web.core.PathWebAccessPolicy;
+import io.ddd4j.web.core.RequestIdGenerator;
+import io.ddd4j.web.core.AuthenticationMode;
+import io.ddd4j.web.core.WebAccessPolicy;
+import io.ddd4j.web.core.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.WebExceptionTranslator;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestLifecycle;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.biz.context.NestedMessageSource;
@@ -24,6 +35,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.util.Locale;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -98,8 +110,47 @@ public class DefaultWebMvcConfiguration {
     }
 
     @Bean
-    public Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor(BearerSubjectAuthenticator authenticator) {
-        return new Ddd4jWebMvcInterceptor(authenticator);
+    public WebExceptionTranslator webExceptionTranslator() {
+        return new DefaultWebExceptionTranslator();
+    }
+
+    @Bean
+    public Ddd4jWebMvcExceptionHandler ddd4jWebMvcExceptionHandler(WebExceptionTranslator exceptionTranslator) {
+        return new Ddd4jWebMvcExceptionHandler(exceptionTranslator);
+    }
+
+    @Bean
+    public WebAccessPolicy webAccessPolicy(Environment environment) {
+        String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
+                new String[]{"/health", "/health/readiness", "/health/liveness", "/assets/**", "/webjars/**"});
+        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+    }
+
+    @Bean
+    public WebRequestContextFactory webRequestContextFactory(Environment environment) {
+        boolean trustForwardedHeaders = environment.getProperty("ddd4j.web.trust-forwarded-headers",
+                Boolean.class, false);
+        ClientIpResolver clientIpResolver = trustForwardedHeaders
+                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
+        return new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
+    }
+
+    @Bean
+    public WebRequestLifecycle webRequestLifecycle(BearerSubjectAuthenticator authenticator,
+                                                   WebAccessPolicy accessPolicy) {
+        return new WebRequestLifecycle(authenticator, accessPolicy);
+    }
+
+    @Bean
+    public WebIdempotencyLifecycle webIdempotencyLifecycle() {
+        return new WebIdempotencyLifecycle(new CacheIdempotencyGuard());
+    }
+
+    @Bean
+    public Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor(WebRequestContextFactory contextFactory,
+                                                         WebRequestLifecycle requestLifecycle,
+                                                         WebIdempotencyLifecycle idempotencyLifecycle) {
+        return new Ddd4jWebMvcInterceptor(contextFactory, requestLifecycle, idempotencyLifecycle);
     }
 
     /**

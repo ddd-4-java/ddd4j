@@ -15,10 +15,10 @@ public class Ddd4jWebFluxContext {
     static final Class<Subject> SUBJECT_KEY = Subject.class;
 
     public Mono<WebRequestContext> currentRequest() {
-        return Mono.deferContextual(context -> Mono.just(context.get(REQUEST_CONTEXT_KEY)));
+        return Mono.deferContextual(context -> Mono.justOrEmpty(context.getOrEmpty(REQUEST_CONTEXT_KEY)));
     }
 
     public Mono<Subject> currentSubject() {
-        return Mono.deferContextual(context -> Mono.just(context.get(SUBJECT_KEY)));
+        return Mono.deferContextual(context -> Mono.justOrEmpty(context.getOrEmpty(SUBJECT_KEY)));
     }
 }

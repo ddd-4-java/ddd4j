@@ -1,78 +1,93 @@
 package io.ddd4j.web.vertx;
 
-import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.kit.lang.JsonKit;
-import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.web.core.AuthenticationMode;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.DefaultWebExceptionTranslator;
-import io.ddd4j.web.core.WebContextScope;
+import io.ddd4j.web.core.PathWebAccessPolicy;
 import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
 import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestData;
+import io.ddd4j.web.core.WebRequestLifecycle;
 import io.vertx.core.Handler;
-import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.function.Predicate;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
- * Vert.x Router 的标准 ddd4j handler 链。
+ * Vert.x Router 的标准请求上下文、认证、幂等和异常处理链。
  */
 @Slf4j
 public final class Ddd4jVertxWeb {
 
-    private static final String SCOPE_KEY = Ddd4jVertxWeb.class.getName() + ".scope";
+    private static final String STATE_KEY = Ddd4jVertxWeb.class.getName() + ".state";
 
-    private final BearerSubjectAuthenticator authenticator;
-    private final WebExceptionTranslator translator;
-    private final Predicate<String> publicPath;
+    private final WebRequestContextFactory contextFactory;
+    private final WebRequestLifecycle requestLifecycle;
+    private final WebExceptionTranslator exceptionTranslator;
+    private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
+    private final Function<Object, String> jsonEncoder;
 
     public Ddd4jVertxWeb() {
-        this(new BearerSubjectAuthenticator(), new DefaultWebExceptionTranslator(), Ddd4jVertxWeb::isPublicPath);
+        this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness"),
+                                AuthenticationMode.REQUIRED)),
+                new DefaultWebExceptionTranslator(), null, Json::encode);
     }
 
-    public Ddd4jVertxWeb(BearerSubjectAuthenticator authenticator, WebExceptionTranslator translator,
-                         Predicate<String> publicPath) {
-        this.authenticator = authenticator;
-        this.translator = translator;
-        this.publicPath = publicPath;
+    public Ddd4jVertxWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
+                         WebExceptionTranslator exceptionTranslator,
+                         WebIdempotencyLifecycle idempotencyLifecycle,
+                         Function<Object, String> jsonEncoder) {
+        this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
+        this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
+        this.exceptionTranslator = Objects.requireNonNull(exceptionTranslator,
+                "exceptionTranslator must not be null");
+        this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
+        this.jsonEncoder = Objects.requireNonNull(jsonEncoder, "jsonEncoder must not be null");
     }
 
     public void install(Router router) {
-        Objects.requireNonNull(router, "router must not be null");
-        router.route().handler(contextHandler());
-        router.route().handler(authenticationHandler());
-        router.route().failureHandler(failureHandler());
+        Router target = Objects.requireNonNull(router, "router must not be null");
+        target.route().handler(contextHandler());
+        target.route().handler(authenticationHandler());
+        target.route().failureHandler(failureHandler());
     }
 
     public Handler<RoutingContext> contextHandler() {
         return routingContext -> {
-            String requestId = headerOrGenerated(routingContext, WebHeaders.REQUEST_ID);
-            WebContextScope scope = WebContextScope.open(toContext(routingContext, requestId));
-            routingContext.put(SCOPE_KEY, scope);
-            routingContext.response().putHeader(WebHeaders.REQUEST_ID, requestId);
-            routingContext.addEndHandler(ignored -> closeScope(routingContext));
+            WebRequestContext requestContext = createContext(routingContext);
+            routingContext.put(STATE_KEY, new RequestState());
+            Ddd4jVertxContext.bindRequest(routingContext, requestContext);
+            routingContext.response().putHeader(WebHeaders.REQUEST_ID, requestContext.requestId());
+            routingContext.response().putHeader(WebHeaders.TRACE_ID, requestContext.traceId());
+            routingContext.addEndHandler(ignored -> finish(routingContext));
             routingContext.next();
         };
     }
 
     public Handler<RoutingContext> authenticationHandler() {
         return routingContext -> {
-            try {
-                if (!publicPath.test(routingContext.normalizedPath())) {
-                    ThreadContext.bind(authenticator.authenticateSubject(
-                            routingContext.request().getHeader(WebHeaders.AUTHORIZATION)).subject());
-                }
-                routingContext.next();
-            } catch (RuntimeException exception) {
-                routingContext.fail(exception);
-            }
+            WebRequestContext requestContext = Ddd4jVertxContext.request(routingContext).orElseThrow();
+            routingContext.vertx().executeBlocking(() -> authenticate(routingContext, requestContext))
+                    .onSuccess(result -> {
+                        result.authentication().ifPresent(authentication ->
+                                Ddd4jVertxContext.bindSubject(routingContext, authentication.subject()));
+                        RequestState state = routingContext.get(STATE_KEY);
+                        result.idempotencyScope().ifPresent(state::idempotencyScope);
+                        routingContext.next();
+                    })
+                    .onFailure(routingContext::fail);
         };
     }
 
@@ -81,47 +96,86 @@ public final class Ddd4jVertxWeb {
             Throwable failure = Objects.nonNull(routingContext.failure())
                     ? routingContext.failure()
                     : new IllegalStateException("HTTP request failed with status " + routingContext.statusCode());
-            WebError error = translator.translate(failure);
+            RequestState state = routingContext.get(STATE_KEY);
+            if (Objects.nonNull(state)) {
+                state.failed();
+            }
+            WebError error = exceptionTranslator.translate(failure);
             if (error.status() >= 500) {
-                log.error("Unhandled HTTP request failure: {} {}", routingContext.request().method(),
+                log.error("Unhandled Vert.x request failure: {} {}", routingContext.request().method(),
                         routingContext.normalizedPath(), failure);
             }
             if (!routingContext.response().ended()) {
                 routingContext.response().setStatusCode(error.status())
-                        .putHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .end(JsonKit.toJson(error.toResponse()));
+                        .putHeader("Content-Type", "application/json")
+                        .end(jsonEncoder.apply(error.toResponse()));
             }
-            closeScope(routingContext);
         };
     }
 
-    private WebRequestContext toContext(RoutingContext context, String requestId) {
-        String forwardedFor = context.request().getHeader(WebHeaders.FORWARDED_FOR);
-        String clientIp = StrKit.isBlank(forwardedFor)
-                ? context.request().remoteAddress().host()
-                : forwardedFor.split(",", 2)[0].trim();
+    private AuthenticationResult authenticate(RoutingContext routingContext, WebRequestContext requestContext) {
+        Optional<BearerSubjectAuthenticator.Authentication> authentication = requestLifecycle
+                .authenticate(requestContext);
+        Optional<WebIdempotencyLifecycle.Scope> idempotencyScope = idempotencyLifecycle.flatMap(lifecycle ->
+                lifecycle.open(requestContext,
+                        routingContext.request().getHeader(WebHeaders.IDEMPOTENCY_KEY)));
+        return new AuthenticationResult(authentication, idempotencyScope);
+    }
+
+    private WebRequestContext createContext(RoutingContext context) {
         Locale locale = Objects.isNull(context.preferredLanguage())
-                ? Locale.getDefault()
-                : Locale.forLanguageTag(context.preferredLanguage().tag());
-        return new WebRequestContext(requestId, context.request().getHeader(WebHeaders.TRACE_ID),
-                context.request().getHeader(WebHeaders.TENANT_ID), context.request().getHeader(WebHeaders.AUTHORIZATION),
-                locale, clientIp, context.request().method().name(), context.normalizedPath());
+                ? Locale.getDefault() : Locale.forLanguageTag(context.preferredLanguage().tag());
+        return contextFactory.create(new WebRequestData(
+                context.request().getHeader(WebHeaders.REQUEST_ID),
+                context.request().getHeader(WebHeaders.TRACE_ID),
+                context.request().getHeader(WebHeaders.TENANT_ID),
+                context.request().getHeader(WebHeaders.AUTHORIZATION),
+                locale,
+                context.request().getHeader(WebHeaders.FORWARDED_FOR),
+                context.request().getHeader("X-Real-IP"),
+                context.request().remoteAddress().host(),
+                context.request().method().name(),
+                context.normalizedPath()));
     }
 
-    private String headerOrGenerated(RoutingContext context, String header) {
-        String value = context.request().getHeader(header);
-        return StrKit.isBlank(value) ? UUID.randomUUID().toString() : value;
-    }
-
-    private void closeScope(RoutingContext context) {
-        WebContextScope scope = context.get(SCOPE_KEY);
-        if (Objects.nonNull(scope)) {
-            scope.close();
-            context.remove(SCOPE_KEY);
+    private void finish(RoutingContext context) {
+        RequestState state = context.remove(STATE_KEY);
+        if (Objects.isNull(state)) {
+            return;
         }
+        boolean successful = !state.failed && context.response().getStatusCode() < 400;
+        context.vertx().executeBlocking(() -> {
+            state.close(successful);
+            return null;
+        }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
     }
 
-    private static boolean isPublicPath(String path) {
-        return "/health".equals(path) || "/health/readiness".equals(path) || "/health/liveness".equals(path);
+    private record AuthenticationResult(
+            Optional<BearerSubjectAuthenticator.Authentication> authentication,
+            Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
+    }
+
+    private static final class RequestState {
+
+        private WebIdempotencyLifecycle.Scope idempotencyScope;
+        private boolean failed;
+
+        private void idempotencyScope(WebIdempotencyLifecycle.Scope scope) {
+            this.idempotencyScope = scope;
+        }
+
+        private void failed() {
+            failed = true;
+        }
+
+        private void close(boolean successful) {
+            if (Objects.isNull(idempotencyScope)) {
+                return;
+            }
+            if (successful) {
+                idempotencyScope.complete();
+            }
+            idempotencyScope.close();
+        }
     }
 }

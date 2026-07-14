@@ -8,8 +8,17 @@ package io.ddd4j.web.webflux;
 
 import io.ddd4j.core.ProfileManager;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.AuthenticationMode;
+import io.ddd4j.web.core.CacheIdempotencyGuard;
+import io.ddd4j.web.core.ClientIpResolver;
 import io.ddd4j.web.core.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.PathWebAccessPolicy;
+import io.ddd4j.web.core.RequestIdGenerator;
+import io.ddd4j.web.core.WebAccessPolicy;
 import io.ddd4j.web.core.WebExceptionTranslator;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestLifecycle;
 import io.ddd4j.web.webflux.config.LocalResourceProperteis;
 import org.springframework.biz.web.server.ReactiveRequestContextFilter;
 import org.springframework.biz.web.server.i18n.XHeaderLocaleContextResolver;
@@ -19,6 +28,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
 import java.util.Locale;
+import java.util.List;
 import java.util.TimeZone;
 
 @Configuration(proxyBeanMethods = false)
@@ -54,8 +64,37 @@ public class DefaultWebFluxConfiguration {
     }
 
     @Bean
-    public Ddd4jWebFluxFilter ddd4jWebFluxFilter(BearerSubjectAuthenticator authenticator) {
-        return new Ddd4jWebFluxFilter(authenticator);
+    public WebAccessPolicy webAccessPolicy(Environment environment) {
+        String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
+                new String[]{"/health", "/health/readiness", "/health/liveness", "/assets/**", "/webjars/**"});
+        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+    }
+
+    @Bean
+    public WebRequestContextFactory webRequestContextFactory(Environment environment) {
+        boolean trustForwardedHeaders = environment.getProperty("ddd4j.web.trust-forwarded-headers",
+                Boolean.class, false);
+        ClientIpResolver clientIpResolver = trustForwardedHeaders
+                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
+        return new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
+    }
+
+    @Bean
+    public WebRequestLifecycle webRequestLifecycle(BearerSubjectAuthenticator authenticator,
+                                                   WebAccessPolicy accessPolicy) {
+        return new WebRequestLifecycle(authenticator, accessPolicy);
+    }
+
+    @Bean
+    public WebIdempotencyLifecycle webIdempotencyLifecycle() {
+        return new WebIdempotencyLifecycle(new CacheIdempotencyGuard());
+    }
+
+    @Bean
+    public Ddd4jWebFluxFilter ddd4jWebFluxFilter(WebRequestContextFactory contextFactory,
+                                                 WebRequestLifecycle requestLifecycle,
+                                                 WebIdempotencyLifecycle idempotencyLifecycle) {
+        return new Ddd4jWebFluxFilter(contextFactory, requestLifecycle, idempotencyLifecycle);
     }
 
     @Bean

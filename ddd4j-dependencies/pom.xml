@@ -382,6 +382,8 @@
         <micrometer.version>1.16.1</micrometer.version>
         <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
         <micronaut.version>4.10.17</micronaut.version>
+        <!-- Micronaut Platform 4.10.17 管理的核心组件版本，供 javac 注解处理器使用。 -->
+        <micronaut.core.version>4.10.26</micronaut.core.version>
         <minio.version>8.6.0</minio.version>
         <nacos.client.version>3.2.2</nacos.client.version>
         <neethi.version>3.2.2</neethi.version>

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -108,6 +109,77 @@ class WebCoreContractTest {
                 .isInstanceOf(WebStatusException.class)
                 .extracting("status")
                 .isEqualTo(401);
+    }
+
+    @Test
+    void shouldApplyRequiredOptionalAndDisabledAuthenticationModes() {
+        Subject subject = mock(Subject.class);
+        AuthPrincipal principal = new AuthPrincipal().setUserId("user-1");
+        when(subject.verify("valid-token")).thenReturn(principal);
+        BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
+        BearerSubjectAuthenticator authenticator = new BearerSubjectAuthenticator();
+        WebRequestContext context = requestContext(null);
+
+        Optional<BearerSubjectAuthenticator.Authentication> disabled = new WebRequestLifecycle(authenticator,
+                WebAccessPolicy.disabled()).authenticate(context);
+        Optional<BearerSubjectAuthenticator.Authentication> optional = new WebRequestLifecycle(authenticator,
+                WebAccessPolicy.optional()).authenticate(context);
+
+        assertThat(disabled).isEmpty();
+        assertThat(optional).isEmpty();
+        assertThatThrownBy(() -> new WebRequestLifecycle(authenticator, WebAccessPolicy.required())
+                .authenticate(context)).isInstanceOf(WebStatusException.class)
+                .extracting("status").isEqualTo(401);
+
+        WebRequestContext authenticatedContext = requestContext("Bearer valid-token");
+        assertThat(new WebRequestLifecycle(authenticator, WebAccessPolicy.optional())
+                .authenticate(authenticatedContext)).get().extracting(authentication -> authentication.principal())
+                .isSameAs(principal);
+    }
+
+    @Test
+    void shouldCreateNormalizedRequestContextWithTrustedProxyPolicy() {
+        WebRequestContextFactory factory = new WebRequestContextFactory(() -> "generated-request",
+                ClientIpResolver.trustedProxy());
+
+        WebRequestContext context = factory.create(new WebRequestData(" ", null, "tenant-a", null,
+                Locale.CHINA, "203.0.113.10, 10.0.0.1", "10.0.0.2", "127.0.0.1", "post", "/orders"));
+
+        assertThat(context.requestId()).isEqualTo("generated-request");
+        assertThat(context.traceId()).isEqualTo("generated-request");
+        assertThat(context.clientIp()).isEqualTo("203.0.113.10");
+        assertThat(context.method()).isEqualTo("POST");
+    }
+
+    @Test
+    void shouldIgnoreForwardedHeadersUnlessProxyIsTrusted() {
+        ClientIpResolver resolver = ClientIpResolver.remoteAddressOnly();
+
+        assertThat(resolver.resolve("203.0.113.10", "203.0.113.11", "127.0.0.1"))
+                .isEqualTo("127.0.0.1");
+    }
+
+    @Test
+    void shouldCompleteOrReleaseWebIdempotencyScope() {
+        CacheIdempotencyGuard guard = new CacheIdempotencyGuard("web-lifecycle-test");
+        WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
+        WebRequestContext context = requestContext(null);
+
+        WebIdempotencyLifecycle.Scope released = lifecycle.open(context, "release-key").orElseThrow();
+        released.close();
+        assertThat(lifecycle.open(context, "release-key")).isPresent();
+
+        WebIdempotencyLifecycle.Scope completed = lifecycle.open(context, "complete-key").orElseThrow();
+        completed.complete();
+        completed.close();
+        assertThatThrownBy(() -> lifecycle.open(context, "complete-key"))
+                .isInstanceOf(WebStatusException.class)
+                .extracting("status").isEqualTo(409);
+    }
+
+    private WebRequestContext requestContext(String authorization) {
+        return new WebRequestContext("request-1", "trace-1", "tenant-a", authorization,
+                Locale.CHINA, "127.0.0.1", "GET", "/orders");
     }
 
     private SubjectProvider provider(Subject subject) {

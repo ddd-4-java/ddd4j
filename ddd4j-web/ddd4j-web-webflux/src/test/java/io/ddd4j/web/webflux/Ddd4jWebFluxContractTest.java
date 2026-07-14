@@ -23,7 +23,8 @@ class Ddd4jWebFluxContractTest {
 
     @Test
     void shouldPropagateRequestThroughReactorContext() {
-        Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(new BearerSubjectAuthenticator());
+        Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(new BearerSubjectAuthenticator(),
+                path -> "/health".equals(path));
         MockServerWebExchange exchange = MockServerWebExchange.from(
                 MockServerHttpRequest.get("/health").header(WebHeaders.TENANT_ID, "tenant-a"));
         CompletableFuture<WebRequestContext> captured = new CompletableFuture<>();

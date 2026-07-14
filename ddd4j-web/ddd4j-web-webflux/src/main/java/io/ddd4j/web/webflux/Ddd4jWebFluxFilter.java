@@ -1,39 +1,60 @@
 package io.ddd4j.web.webflux;
 
-import io.ddd4j.core.subject.Subject;
+import io.ddd4j.web.core.BearerSubjectAuthenticator.Authentication;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.WebAccessPolicy;
 import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestData;
+import io.ddd4j.web.core.WebRequestLifecycle;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * 使用 Reactor Context 传播请求状态，避免用 ThreadLocal 模拟响应式上下文。
+ * 使用 Reactor Context 传播请求状态，并将同步 Subject/Cache SPI 调度到阻塞工作线程。
  */
 public final class Ddd4jWebFluxFilter implements WebFilter {
 
-    private final BearerSubjectAuthenticator authenticator;
-    private final Predicate<String> publicPath;
+    private final WebRequestContextFactory contextFactory;
+    private final WebRequestLifecycle requestLifecycle;
+    private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
+    private final Scheduler blockingScheduler;
 
     public Ddd4jWebFluxFilter(BearerSubjectAuthenticator authenticator) {
-        this(authenticator, Ddd4jWebFluxFilter::isPublicPath);
+        this(new WebRequestContextFactory(), new WebRequestLifecycle(authenticator, WebAccessPolicy.required()), null);
     }
 
     public Ddd4jWebFluxFilter(BearerSubjectAuthenticator authenticator, Predicate<String> publicPath) {
-        this.authenticator = Objects.requireNonNull(authenticator, "authenticator must not be null");
-        this.publicPath = Objects.requireNonNull(publicPath, "publicPath must not be null");
+        this(new WebRequestContextFactory(), new WebRequestLifecycle(authenticator,
+                WebAccessPolicy.requiredExcept(publicPath)), null);
+    }
+
+    public Ddd4jWebFluxFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
+                              WebIdempotencyLifecycle idempotencyLifecycle) {
+        this(contextFactory, requestLifecycle, idempotencyLifecycle, Schedulers.boundedElastic());
+    }
+
+    public Ddd4jWebFluxFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
+                              WebIdempotencyLifecycle idempotencyLifecycle, Scheduler blockingScheduler) {
+        this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
+        this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
+        this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
+        this.blockingScheduler = Objects.requireNonNull(blockingScheduler, "blockingScheduler must not be null");
     }
 
     @Override
@@ -41,26 +62,66 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         return Mono.defer(() -> {
             WebRequestContext requestContext = createContext(exchange);
             exchange.getResponse().getHeaders().set(WebHeaders.REQUEST_ID, requestContext.requestId());
-            Mono<Void> invocation = chain.filter(exchange)
-                    .contextWrite(context -> context.put(Ddd4jWebFluxContext.REQUEST_CONTEXT_KEY, requestContext));
-            if (publicPath.test(requestContext.path())) {
-                return invocation;
-            }
-            Subject subject = authenticator.authenticateSubject(requestContext.authorization()).subject();
-            return invocation.contextWrite(context -> context.put(Ddd4jWebFluxContext.SUBJECT_KEY, subject));
+            exchange.getResponse().getHeaders().set(WebHeaders.TRACE_ID, requestContext.traceId());
+            Mono<Optional<Authentication>> authentication = Mono.fromCallable(
+                    () -> requestLifecycle.authenticate(requestContext)).subscribeOn(blockingScheduler);
+            Mono<Optional<WebIdempotencyLifecycle.Scope>> idempotency = Mono.fromCallable(
+                    () -> openIdempotency(requestContext, exchange)).subscribeOn(blockingScheduler);
+            return authentication.flatMap(result -> idempotency.flatMap(scope -> invoke(exchange, chain,
+                    requestContext, result, scope)));
         });
+    }
+
+    private Mono<Void> invoke(ServerWebExchange exchange, WebFilterChain chain, WebRequestContext requestContext,
+                              Optional<Authentication> authentication,
+                              Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
+        Mono<Void> invocation = chain.filter(exchange)
+                .contextWrite(context -> context.put(Ddd4jWebFluxContext.REQUEST_CONTEXT_KEY, requestContext));
+        if (authentication.isPresent()) {
+            invocation = invocation.contextWrite(context -> context.put(Ddd4jWebFluxContext.SUBJECT_KEY,
+                    authentication.orElseThrow().subject()));
+        }
+        if (idempotencyScope.isEmpty()) {
+            return invocation;
+        }
+        WebIdempotencyLifecycle.Scope scope = idempotencyScope.orElseThrow();
+        Mono<Void> scopedInvocation = invocation;
+        return Mono.usingWhen(Mono.just(scope), ignored -> scopedInvocation,
+                ignored -> complete(scope),
+                (ignored, throwable) -> release(scope),
+                ignored -> release(scope));
+    }
+
+    private Optional<WebIdempotencyLifecycle.Scope> openIdempotency(WebRequestContext context,
+                                                                     ServerWebExchange exchange) {
+        return idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(context,
+                exchange.getRequest().getHeaders().getFirst(WebHeaders.IDEMPOTENCY_KEY)));
+    }
+
+    private Mono<Void> complete(WebIdempotencyLifecycle.Scope scope) {
+        return Mono.fromRunnable(() -> {
+            scope.complete();
+            scope.close();
+        }).subscribeOn(blockingScheduler).then();
+    }
+
+    private Mono<Void> release(WebIdempotencyLifecycle.Scope scope) {
+        return Mono.fromRunnable(scope::close).subscribeOn(blockingScheduler).then();
     }
 
     private WebRequestContext createContext(ServerWebExchange exchange) {
         HttpHeaders headers = exchange.getRequest().getHeaders();
-        String requestId = headers.getFirst(WebHeaders.REQUEST_ID);
-        if (!StringUtils.hasText(requestId)) {
-            requestId = UUID.randomUUID().toString();
-        }
-        return new WebRequestContext(requestId, headers.getFirst(WebHeaders.TRACE_ID),
-                headers.getFirst(WebHeaders.TENANT_ID), headers.getFirst(WebHeaders.AUTHORIZATION),
-                resolveLocale(headers), resolveClientIp(exchange), exchange.getRequest().getMethod().name(),
-                exchange.getRequest().getPath().value());
+        return contextFactory.create(new WebRequestData(
+                headers.getFirst(WebHeaders.REQUEST_ID),
+                headers.getFirst(WebHeaders.TRACE_ID),
+                headers.getFirst(WebHeaders.TENANT_ID),
+                headers.getFirst(WebHeaders.AUTHORIZATION),
+                resolveLocale(headers),
+                headers.getFirst(WebHeaders.FORWARDED_FOR),
+                headers.getFirst("X-Real-IP"),
+                remoteAddress(exchange),
+                exchange.getRequest().getMethod().name(),
+                exchange.getRequest().getPath().value()));
     }
 
     private Locale resolveLocale(HttpHeaders headers) {
@@ -68,17 +129,12 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         return CollectionUtils.isEmpty(locales) ? Locale.getDefault() : locales.get(0);
     }
 
-    private String resolveClientIp(ServerWebExchange exchange) {
-        String forwarded = exchange.getRequest().getHeaders().getFirst(WebHeaders.FORWARDED_FOR);
-        if (StringUtils.hasText(forwarded)) {
-            return forwarded.split(",", 2)[0].trim();
-        }
+    private String remoteAddress(ServerWebExchange exchange) {
         InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
-        return Objects.nonNull(remoteAddress) ? remoteAddress.getAddress().getHostAddress() : "";
-    }
-
-    private static boolean isPublicPath(String path) {
-        return "/health".equals(path) || "/health/readiness".equals(path) || "/health/liveness".equals(path)
-                || path.startsWith("/assets/") || path.startsWith("/webjars/");
+        if (Objects.isNull(remoteAddress)) {
+            return null;
+        }
+        return Objects.nonNull(remoteAddress.getAddress())
+                ? remoteAddress.getAddress().getHostAddress() : remoteAddress.getHostString();
     }
 }

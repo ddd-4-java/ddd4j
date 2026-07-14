@@ -1,4 +1,4 @@
-package io.ddd4j.web.webmvc.webmvc;
+package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.constant.XHeaders;
 import io.ddd4j.kit.web.IpKit;

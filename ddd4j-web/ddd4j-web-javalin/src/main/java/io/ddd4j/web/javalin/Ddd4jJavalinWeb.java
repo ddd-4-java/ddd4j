@@ -2,89 +2,115 @@ package io.ddd4j.web.javalin;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.web.core.AuthenticationMode;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.PathWebAccessPolicy;
 import io.ddd4j.web.core.WebContextScope;
 import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
 import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.WebRequestContext;
-import io.ddd4j.web.javalin.util.WebKit;
-import io.javalin.Javalin;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestData;
+import io.ddd4j.web.core.WebRequestLifecycle;
+import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.function.Predicate;
+import java.util.Optional;
 
 /**
- * 为 Javalin 安装统一请求上下文、Bearer Subject、异常与清理处理链。
+ * 在 Javalin 创建阶段安装统一请求上下文、Bearer Subject、异常与幂等处理链。
  */
 @Slf4j
 public final class Ddd4jJavalinWeb {
 
-    private static final String SCOPE_ATTRIBUTE = Ddd4jJavalinWeb.class.getName() + ".scope";
+    private static final String STATE_ATTRIBUTE = Ddd4jJavalinWeb.class.getName() + ".state";
 
-    private final BearerSubjectAuthenticator authenticator;
-    private final WebExceptionTranslator translator;
-    private final Predicate<String> publicPath;
+    private final WebRequestContextFactory contextFactory;
+    private final WebRequestLifecycle requestLifecycle;
+    private final WebExceptionTranslator exceptionTranslator;
+    private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
 
     public Ddd4jJavalinWeb() {
-        this(new BearerSubjectAuthenticator(), new DefaultWebExceptionTranslator(), Ddd4jJavalinWeb::isPublicPath);
+        this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness"),
+                                AuthenticationMode.REQUIRED)),
+                new DefaultWebExceptionTranslator(), null);
     }
 
-    public Ddd4jJavalinWeb(BearerSubjectAuthenticator authenticator, WebExceptionTranslator translator,
-                           Predicate<String> publicPath) {
-        this.authenticator = Objects.requireNonNull(authenticator, "authenticator must not be null");
-        this.translator = Objects.requireNonNull(translator, "translator must not be null");
-        this.publicPath = Objects.requireNonNull(publicPath, "publicPath must not be null");
+    public Ddd4jJavalinWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
+                           WebExceptionTranslator exceptionTranslator,
+                           WebIdempotencyLifecycle idempotencyLifecycle) {
+        this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
+        this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
+        this.exceptionTranslator = Objects.requireNonNull(exceptionTranslator,
+                "exceptionTranslator must not be null");
+        this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
     }
 
-    public void install(Javalin app) {
-        Objects.requireNonNull(app, "app must not be null");
-        app.unsafe.routes.before(this::openContext);
-        app.unsafe.routes.after(this::closeContext);
-        app.unsafe.routes.exception(Exception.class, this::handleException);
+    public void configure(JavalinConfig config) {
+        JavalinConfig javalinConfig = Objects.requireNonNull(config, "config must not be null");
+        javalinConfig.routes.before(this::openContext);
+        javalinConfig.routes.after(this::completeContext);
+        javalinConfig.routes.exception(Exception.class, this::handleException);
     }
 
     private void openContext(Context context) {
-        String requestId = context.header(WebHeaders.REQUEST_ID);
-        if (StrKit.isBlank(requestId)) {
-            requestId = UUID.randomUUID().toString();
-        }
-        WebRequestContext requestContext = new WebRequestContext(requestId, context.header(WebHeaders.TRACE_ID),
-                context.header(WebHeaders.TENANT_ID), context.header(WebHeaders.AUTHORIZATION), resolveLocale(context),
-                WebKit.getClientIp(context), context.method().name(), context.path());
-        context.attribute(SCOPE_ATTRIBUTE, WebContextScope.open(requestContext));
-        context.header(WebHeaders.REQUEST_ID, requestId);
+        WebRequestContext requestContext = createContext(context);
+        RequestState state = new RequestState(WebContextScope.open(requestContext));
+        context.attribute(STATE_ATTRIBUTE, state);
+        context.header(WebHeaders.REQUEST_ID, requestContext.requestId());
+        context.header(WebHeaders.TRACE_ID, requestContext.traceId());
         try {
-            if (!publicPath.test(context.path())) {
-                ThreadContext.bind(authenticator.authenticateSubject(
-                        context.header(WebHeaders.AUTHORIZATION)).subject());
-            }
+            requestLifecycle.authenticate(requestContext)
+                    .ifPresent(authentication -> ThreadContext.bind(authentication.subject()));
+            idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(requestContext,
+                    context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(state::idempotencyScope);
         } catch (RuntimeException exception) {
-            closeContext(context);
+            closeContext(context, false);
             throw exception;
         }
     }
 
-    private void closeContext(Context context) {
-        WebContextScope scope = context.attribute(SCOPE_ATTRIBUTE);
-        if (Objects.nonNull(scope)) {
-            scope.close();
-            context.attribute(SCOPE_ATTRIBUTE, null);
-        }
+    private void completeContext(Context context) {
+        closeContext(context, context.statusCode() < 400);
     }
 
     private void handleException(Exception exception, Context context) {
-        WebError error = translator.translate(exception);
+        WebError error = exceptionTranslator.translate(exception);
         if (error.status() >= 500) {
             log.error("Unhandled Javalin request failure: {} {}", context.method(), context.path(), exception);
         }
         context.status(error.status()).json(error.toResponse());
-        closeContext(context);
+        closeContext(context, false);
+    }
+
+    private WebRequestContext createContext(Context context) {
+        return contextFactory.create(new WebRequestData(
+                context.header(WebHeaders.REQUEST_ID),
+                context.header(WebHeaders.TRACE_ID),
+                context.header(WebHeaders.TENANT_ID),
+                context.header(WebHeaders.AUTHORIZATION),
+                resolveLocale(context),
+                context.header(WebHeaders.FORWARDED_FOR),
+                context.header("X-Real-IP"),
+                context.req().getRemoteAddr(),
+                context.method().name(),
+                context.path()));
+    }
+
+    private void closeContext(Context context, boolean successful) {
+        RequestState state = context.attribute(STATE_ATTRIBUTE);
+        if (Objects.nonNull(state)) {
+            state.close(successful);
+            context.attribute(STATE_ATTRIBUTE, null);
+        }
     }
 
     private Locale resolveLocale(Context context) {
@@ -92,7 +118,27 @@ public final class Ddd4jJavalinWeb {
         return StrKit.isBlank(language) ? Locale.getDefault() : Locale.forLanguageTag(language.split(",", 2)[0]);
     }
 
-    private static boolean isPublicPath(String path) {
-        return "/health".equals(path) || "/health/readiness".equals(path) || "/health/liveness".equals(path);
+    private static final class RequestState {
+
+        private final WebContextScope contextScope;
+        private WebIdempotencyLifecycle.Scope idempotencyScope;
+
+        private RequestState(WebContextScope contextScope) {
+            this.contextScope = contextScope;
+        }
+
+        private void idempotencyScope(WebIdempotencyLifecycle.Scope scope) {
+            this.idempotencyScope = scope;
+        }
+
+        private void close(boolean successful) {
+            if (Objects.nonNull(idempotencyScope)) {
+                if (successful) {
+                    idempotencyScope.complete();
+                }
+                idempotencyScope.close();
+            }
+            contextScope.close();
+        }
     }
 }

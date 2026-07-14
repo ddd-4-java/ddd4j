@@ -4,7 +4,6 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.WebContextScope;
 import io.ddd4j.web.core.WebHeaders;
-import io.ddd4j.web.webmvc.webmvc.Ddd4jWebMvcInterceptor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,7 +22,8 @@ class Ddd4jWebMvcInterceptorTest {
 
     @Test
     void shouldBindAndClearPublicRequestContext() throws Exception {
-        Ddd4jWebMvcInterceptor interceptor = new Ddd4jWebMvcInterceptor(new BearerSubjectAuthenticator());
+        Ddd4jWebMvcInterceptor interceptor = new Ddd4jWebMvcInterceptor(new BearerSubjectAuthenticator(),
+                path -> "/health".equals(path));
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/health");
         MockHttpServletResponse response = new MockHttpServletResponse();
 

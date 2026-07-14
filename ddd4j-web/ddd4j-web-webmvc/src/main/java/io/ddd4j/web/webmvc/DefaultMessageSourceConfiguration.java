@@ -4,7 +4,7 @@
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-package io.ddd4j.web.webmvc.webmvc;
+package io.ddd4j.web.webmvc;
 
 import io.ddd4j.spring.properties.BasePropertySourcePostProcessor;
 import io.ddd4j.web.webmvc.config.MessageSourceConfigurationProperties;
