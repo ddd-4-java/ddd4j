@@ -34,6 +34,9 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
                 || cause instanceof IllegalArgumentException) {
             return error(BAD_REQUEST, cause);
         }
+        if (cause instanceof IllegalStateException) {
+            return error(CONFLICT, cause);
+        }
         if (cause instanceof NoSuchElementException) {
             return error(NOT_FOUND, cause);
         }

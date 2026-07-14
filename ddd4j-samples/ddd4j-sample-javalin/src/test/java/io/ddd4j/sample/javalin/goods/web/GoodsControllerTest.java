@@ -2,20 +2,16 @@ package io.ddd4j.sample.javalin.goods.web;
 
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;
 import io.ddd4j.sample.javalin.goods.infrastructure.InMemoryGoodsRepository;
-import io.ddd4j.sample.javalin.order.domain.model.Order;
-import io.ddd4j.sample.javalin.order.infrastructure.InMemoryOrderRepository;
 import io.ddd4j.sample.javalin.spi.AnonymousSubjectProvider;
 import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
+import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import org.junit.jupiter.api.AfterAll;
@@ -28,7 +24,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,13 +46,11 @@ class GoodsControllerTest {
     @BeforeAll
     static void startApp() {
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoOpDomainEventPublisher());
-        BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, new NoOpMQEventPublisher());
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new AnonymousSubjectProvider());
         BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
 
         InMemoryGoodsRepository goodsRepository = new InMemoryGoodsRepository();
         RepositoryRegistry.register(Goods.class, goodsRepository);
-        RepositoryRegistry.register(Order.class, new InMemoryOrderRepository());
 
         GoodsApplicationService goodsService = new GoodsApplicationService(goodsRepository);
         GoodsController goodsController = new GoodsController(goodsService);
@@ -468,19 +461,4 @@ class GoodsControllerTest {
         assertTrue(resp.statusCode() >= 400 || resp.statusCode() == 200);
     }
 
-    private static class NoOpDomainEventPublisher implements DomainEventPublisher {
-        @Override
-        public <T> void publish(DomainEvent<T> event) {
-        }
-
-        @Override
-        public <T> void publishAll(Collection<DomainEvent<T>> events) {
-        }
-    }
-
-    private static class NoOpMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(MQEvent event) {
-        }
-    }
 }

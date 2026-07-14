@@ -120,7 +120,7 @@ public final class JavalinOrderAdapters
     }
 
     @Override
-    public void complete(String key, String resultId) {
+    public void complete(String key, Object result) {
         idempotencyKeys.computeIfPresent(key, (ignored, expiresAt) -> Instant.MAX);
     }
 

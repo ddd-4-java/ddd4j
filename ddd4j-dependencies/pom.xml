@@ -152,9 +152,9 @@
         <dozer-extra-converters.version>7.0.x.20241003.RELEASE</dozer-extra-converters.version>
         <druid.version>1.2.28</druid.version>
         <druid-metrics.version>1.0.2.RELEASE</druid-metrics.version>
+        <dropwizard-bom.version>5.0.2</dropwizard-bom.version>
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
-        <dropwizard.version>5.0.2</dropwizard.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <disruptor.version>4.0.0</disruptor.version>
@@ -224,7 +224,7 @@
         <hibernate-validator.version>8.0.4.Final</hibernate-validator.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hikaricp.version>7.1.0</hikaricp.version>
-        <helidon.version>3.2.18</helidon.version>
+        <helidon-bom.version>3.2.18</helidon-bom.version>
         <h2.version>2.4.240</h2.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hsqldb.version>2.7.4</hsqldb.version>
@@ -285,7 +285,7 @@
         <jdbi.version>3.45.4</jdbi.version>
         <jersey.version>3.1.11</jersey.version>
         <jetty-reactive-httpclient.version>4.1.4</jetty-reactive-httpclient.version>
-        <jetty.version>12.1.5</jetty.version>
+        <jetty.version>12.1.8</jetty.version>
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
         <jedis.version>7.5.2</jedis.version>
         <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
@@ -783,6 +783,21 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Jetty must precede Hadoop because Maven keeps the first imported version on conflicts. -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
@@ -882,22 +897,6 @@
                 <groupId>org.glassfish.jersey</groupId>
                 <artifactId>jersey-bom</artifactId>
                 <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-bom -->
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.ee10/jetty-ee10-bom -->
-            <dependency>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-bom</artifactId>
-                <version>${jetty.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -2893,6 +2892,14 @@
                 <artifactId>dropwizard-metrics-influxdb</artifactId>
                 <version>${dropwizard-metrics-influxdb.version}</version>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.dropwizard/dropwizard-bom -->
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-bom</artifactId>
+                <version>${dropwizard-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alibaba/druid -->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -3792,6 +3799,14 @@
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
                 <version>${hikaricp.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.helidon/helidon-bom -->
+            <dependency>
+                <groupId>io.helidon</groupId>
+                <artifactId>helidon-bom</artifactId>
+                <version>${helidon-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.hive/hive-exec -->
             <dependency>

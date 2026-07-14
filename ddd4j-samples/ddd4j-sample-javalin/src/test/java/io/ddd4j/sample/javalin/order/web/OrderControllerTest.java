@@ -34,7 +34,9 @@ class OrderControllerTest {
 
     @AfterAll
     static void stop() {
-        application.close();
+        if (Objects.nonNull(application)) {
+            application.close();
+        }
     }
 
     @Test
