@@ -1,7 +1,6 @@
 package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -15,7 +14,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * Quarkus Hibernate Panache 投影位置实体。
+ * Quarkus 标准 JPA 投影位置实体。
  *
  * <p>对应数据库表 {@code QUARKUS_QRY_PROJECTION_POS}。
  *
@@ -28,8 +27,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuarkusJpaProjectionPosition extends PanacheEntityBase
-        implements ProjectionPosition, Serializable {
+public class QuarkusJpaProjectionPosition implements ProjectionPosition, Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

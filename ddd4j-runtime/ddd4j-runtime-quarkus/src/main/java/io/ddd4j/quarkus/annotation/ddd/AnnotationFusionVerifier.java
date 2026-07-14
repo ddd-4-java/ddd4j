@@ -2,6 +2,7 @@ package io.ddd4j.quarkus.annotation.ddd;
 
 import io.ddd4j.annotation.ddd.DDDAnnotation;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Stereotype;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -22,16 +23,16 @@ public final class AnnotationFusionVerifier {
         int passed = 0;
         int failed = 0;
 
-        passed += verify("DomainService", DomainService.class);
-        passed += verify("DomainRepository", DomainRepository.class);
-        passed += verify("ApplicationService", ApplicationService.class);
-        passed += verify("QueryService", QueryService.class);
-        passed += verify("CommandExecutor", CommandExecutor.class);
-        passed += verify("DomainEntity", DomainEntity.class);
-        passed += verify("DomainValueObject", DomainValueObject.class);
-        passed += verify("DomainGateway", DomainGateway.class);
-        passed += verify("DomainAssembler", DomainAssembler.class);
-        passed += verify("DomainConverter", DomainConverter.class);
+        passed += verifyStereotype("DomainService", DomainService.class);
+        passed += verifyStereotype("DomainRepository", DomainRepository.class);
+        passed += verifyStereotype("ApplicationService", ApplicationService.class);
+        passed += verifyStereotype("QueryService", QueryService.class);
+        passed += verifyStereotype("CommandExecutor", CommandExecutor.class);
+        passed += verifyModel("DomainEntity", DomainEntity.class);
+        passed += verifyModel("DomainValueObject", DomainValueObject.class);
+        passed += verifyStereotype("DomainGateway", DomainGateway.class);
+        passed += verifyStereotype("DomainAssembler", DomainAssembler.class);
+        passed += verifyStereotype("DomainConverter", DomainConverter.class);
 
         log.info("");
         log.info("--- @DomainEvent 不下沉验证 ---");
@@ -57,7 +58,8 @@ public final class AnnotationFusionVerifier {
         log.info("全部验证通过，ddd4j-runtime-quarkus 注解收敛完成");
     }
 
-    private static int verify(String name, Class<? extends java.lang.annotation.Annotation> annotationType) {
+    private static int verifyStereotype(String name,
+                                        Class<? extends java.lang.annotation.Annotation> annotationType) {
         DDDAnnotation dddAnnotation = annotationType.getAnnotation(DDDAnnotation.class);
         if (Objects.isNull(dddAnnotation)) {
             log.error("FAIL {}: 缺少 @DDDAnnotation 元注解", name);
@@ -70,7 +72,25 @@ public final class AnnotationFusionVerifier {
             log.error("FAIL {}: 缺少 @ApplicationScoped 元注解", name);
             return 0;
         }
+        if (Objects.isNull(annotationType.getAnnotation(Stereotype.class))) {
+            log.error("FAIL {}: 缺少 @Stereotype 元注解", name);
+            return 0;
+        }
         log.info("PASS {}: 已融合 @ApplicationScoped", name);
+        return 1;
+    }
+
+    private static int verifyModel(String name,
+                                   Class<? extends java.lang.annotation.Annotation> annotationType) {
+        if (Objects.isNull(annotationType.getAnnotation(DDDAnnotation.class))) {
+            log.error("FAIL {}: 缺少 @DDDAnnotation 元注解", name);
+            return 0;
+        }
+        if (Objects.nonNull(annotationType.getAnnotation(ApplicationScoped.class))) {
+            log.error("FAIL {}: 领域模型不应绑定 @ApplicationScoped", name);
+            return 0;
+        }
+        log.info("PASS {}: 保持非 CDI 领域模型语义", name);
         return 1;
     }
 }

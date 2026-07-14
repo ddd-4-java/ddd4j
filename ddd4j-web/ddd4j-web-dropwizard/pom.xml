@@ -11,6 +11,7 @@
     </parent>
     <artifactId>ddd4j-web-dropwizard</artifactId>
     <description>ddd4j Web - Dropwizard Jersey 适配。</description>
+
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -26,14 +27,6 @@
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
+
 </project>

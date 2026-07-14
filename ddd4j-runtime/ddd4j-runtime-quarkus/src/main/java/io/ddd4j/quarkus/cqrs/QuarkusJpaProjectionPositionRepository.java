@@ -2,16 +2,18 @@ package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Quarkus Panache 投影位置仓储（{@link ProjectionPositionRepository} SPI 实现）。
+ * Quarkus 标准 JPA 投影位置仓储（{@link ProjectionPositionRepository} SPI 实现）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -20,35 +22,58 @@ import java.util.Optional;
 public class QuarkusJpaProjectionPositionRepository implements ProjectionPositionRepository {
 
     @Inject
-    PanacheRepositoryBase<QuarkusJpaProjectionPosition, String> panacheRepo;
+    Instance<EntityManager> entityManagers;
 
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
-        return Optional.ofNullable(panacheRepo.findById(streamId)).map(p -> (ProjectionPosition) p);
+        return Optional.ofNullable(manager().find(QuarkusJpaProjectionPosition.class, streamId))
+                .map(position -> (ProjectionPosition) position);
     }
 
     @Override
     public List<ProjectionPosition> findAll() {
-        return panacheRepo.listAll().stream().map(p -> (ProjectionPosition) p).toList();
+        return manager().createQuery("select p from QuarkusJpaProjectionPosition p",
+                        QuarkusJpaProjectionPosition.class)
+                .getResultList().stream()
+                .map(position -> (ProjectionPosition) position)
+                .toList();
     }
 
     @Override
     @Transactional
     public ProjectionPosition save(ProjectionPosition position) {
         QuarkusJpaProjectionPosition entity = (QuarkusJpaProjectionPosition) position;
-        panacheRepo.persist(entity);
-        return entity;
+        QuarkusJpaProjectionPosition current = manager().find(QuarkusJpaProjectionPosition.class, entity.streamId);
+        if (Objects.isNull(current)) {
+            manager().persist(entity);
+            return entity;
+        }
+        return manager().merge(entity);
     }
 
     @Override
     @Transactional
     public void deleteByStreamId(String streamId) {
-        panacheRepo.deleteById(streamId);
+        QuarkusJpaProjectionPosition entity = manager().find(QuarkusJpaProjectionPosition.class, streamId);
+        if (Objects.nonNull(entity)) {
+            manager().remove(entity);
+        }
     }
 
     @Override
     @Transactional
     public void resetToZero(String streamId) {
-        panacheRepo.update("nextEventNumber = 0 where streamId = ?1", streamId);
+        manager().createQuery("update QuarkusJpaProjectionPosition p set p.nextEventNumber = 0 "
+                        + "where p.streamId = :streamId")
+                .setParameter("streamId", streamId)
+                .executeUpdate();
+    }
+
+    private EntityManager manager() {
+        if (entityManagers.isUnsatisfied() || entityManagers.isAmbiguous()) {
+            throw new IllegalStateException("No unique EntityManager is available. Add a Quarkus ORM extension "
+                    + "before using the JPA projection repository.");
+        }
+        return entityManagers.get();
     }
 }
