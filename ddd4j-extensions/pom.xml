@@ -17,13 +17,10 @@
     </description>
 
     <modules>
-        <!-- 跨领域扩展（excel/jackson/license/monitor/pf4j/qlexpress/validation） -->
+        <!-- ddd4j 深度集成扩展；Jackson、PF4J、Validation 已迁移为独立技术组件。 -->
         <module>ddd4j-extension-excel</module>
-        <module>ddd4j-extension-jackson</module>
         <module>ddd4j-extension-license</module>
-        <module>ddd4j-extension-pf4j</module>
         <module>ddd4j-extension-qlexpress</module>
-        <module>ddd4j-extension-validation</module>
         <module>ddd4j-extension-monitor</module>
     </modules>
 

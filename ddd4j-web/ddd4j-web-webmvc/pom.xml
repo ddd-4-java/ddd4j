@@ -85,9 +85,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-jackson</artifactId>
-            <version>${revision}</version>
+            <groupId>io.github.hiwepy</groupId>
+            <artifactId>jackson-extension</artifactId>
             <optional>true</optional>
         </dependency>
         <!-- Guava (used by GlobalExceptionHandler, LocalResourceProperteis) -->
@@ -95,7 +94,7 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-        <!-- PF4J Spring HTTP 扩展点（从 ddd4j-extension-pf4j 迁入的 ServletRequestExtensionPoint /
+        <!-- PF4J Spring HTTP 扩展点（从 io.github.hiwepy:pf4j-extension 迁入的 ServletRequestExtensionPoint /
              ServletResponseExtensionPoint 强依赖 spring-web，置于本模块） -->
         <dependency>
             <groupId>org.pf4j</groupId>

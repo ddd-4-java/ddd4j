@@ -20,7 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import io.ddd4j.extension.jackson.ser.MyBeanSerializerModifier;
+import io.github.hiwepy.jackson.ser.MyBeanSerializerModifier;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;

@@ -27,9 +27,8 @@
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-jackson</artifactId>
-            <version>${revision}</version>
+            <groupId>io.github.hiwepy</groupId>
+            <artifactId>jackson-extension</artifactId>
         </dependency>
         <!-- For Crypto -->
         <dependency>

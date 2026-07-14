@@ -248,6 +248,7 @@
         <istio-client.version>1.7.7.1</istio-client.version>
         <jackson-annotations.version>2.22</jackson-annotations.version>
         <jackson.version>2.22.0</jackson.version>
+        <jackson-extension.version>2.0.x.20260630-SNAPSHOT</jackson-extension.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
@@ -256,6 +257,7 @@
         <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version>
         <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
         <jakarta-validation.version>3.1.1</jakarta-validation.version>
+        <validation-api-extension.version>2.0.x.20260630-SNAPSHOT</validation-api-extension.version>
         <jakarta-websocket.version>2.2.0</jakarta-websocket.version>
         <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
         <jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
@@ -416,6 +418,7 @@
         <persistence-api.version>1.0.2</persistence-api.version>
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
         <pf4j.version>3.15.0</pf4j.version>
+        <pf4j-extension.version>2.0.x.20260630-SNAPSHOT</pf4j-extension.version>
         <pf4j-update.version>2.3.0</pf4j-update.version>
         <pf4j-spring.version>0.10.0</pf4j-spring.version>
         <picocli.version>4.7.7</picocli.version>
@@ -846,6 +849,12 @@
                 <version>${jackson-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Source: https://github.com/hiwepy/jackson-extension (2.0.x branch) -->
+            <dependency>
+                <groupId>io.github.hiwepy</groupId>
+                <artifactId>jackson-extension</artifactId>
+                <version>${jackson-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-bom -->
             <dependency>
@@ -4289,6 +4298,12 @@
                 <artifactId>jakarta.validation-api</artifactId>
                 <version>${jakarta-validation.version}</version>
             </dependency>
+            <!-- Source: https://github.com/hiwepy/validation-api-extension (2.0.x branch) -->
+            <dependency>
+                <groupId>io.github.hiwepy</groupId>
+                <artifactId>validation-api-extension</artifactId>
+                <version>${validation-api-extension.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api -->
             <dependency>
                 <groupId>jakarta.websocket</groupId>
@@ -6395,6 +6410,12 @@
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j</artifactId>
                 <version>${pf4j.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/hiwepy/pf4j-extension (2.0.x branch) -->
+            <dependency>
+                <groupId>io.github.hiwepy</groupId>
+                <artifactId>pf4j-extension</artifactId>
+                <version>${pf4j-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pf4j/pf4j-spring -->
             <dependency>

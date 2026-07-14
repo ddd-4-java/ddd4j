@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * 参数签名扩展点（Spring Web 适配）。
  *
- * <p>从 ddd4j-extension-pf4j 迁入至 ddd4j-web-webmvc 模块，
+ * <p>从 io.github.hiwepy:pf4j-extension 迁入至 ddd4j-web-webmvc 模块，
  * 因为它使用 Servlet API，属于 Web 适配层职责。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

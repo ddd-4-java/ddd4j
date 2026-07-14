@@ -138,12 +138,13 @@ Caffeine、Guava、Hutool、Jedis、Lettuce、Redisson、Memcached、JetCache，
 
 - `ddd4j-extension-akka`
 - `ddd4j-extension-excel`
-- `ddd4j-extension-jackson`
 - `ddd4j-extension-license`
-- `ddd4j-extension-pf4j`
 - `ddd4j-extension-qlexpress`
-- `ddd4j-extension-validation`
 - `ddd4j-extension-monitor`
+
+Jackson、PF4J、Jakarta Validation 的通用增强已迁移为
+`io.github.hiwepy:jackson-extension`、`io.github.hiwepy:pf4j-extension` 和
+`io.github.hiwepy:validation-api-extension`，ddd4j 仅保留消费关系。
 
 `ddd4j-samples` 是理解主线设计的最佳业务入口，覆盖：
 
@@ -177,4 +178,3 @@ codegraph query "MQEvent MQClient MQListener MQEventSerialization MQEventStorer"
 codegraph explore "MQClient MQEvent ActiveMQEventPublisher TypeHandlerRegistry"
 codegraph explore "ApplicationService DomainService DddAnnotationModule CleanArchitectureChecker CleanDDDLayerRules"
 ```
-

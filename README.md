@@ -154,12 +154,9 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |----ddd4j-extensions                   #跨领域扩展
 |------ddd4j-extension-akka             #Akka Actor系统组件
 |------ddd4j-extension-excel            #Excel导入导出组件
-|------ddd4j-extension-jackson          #Jackson序列化增强组件
 |------ddd4j-extension-license          #软件授权组件
 |------ddd4j-extension-monitor          #监控告警：钉钉/企微机器人+日志告警
-|------ddd4j-extension-pf4j             #PF4J插件化组件
 |------ddd4j-extension-qlexpress        #QLExpress规则引擎组件
-|------ddd4j-extension-validation       #参数校验增强组件
 |----ddd4j-parent                       #业务工程父POM，定义编译/打包/发布规则
 |----ddd4j-samples                      #示例工程
 |--------ddd4j-sample-spring            #Spring 普通 DDD 示例：Order 充血模型 + Goods 轻量 PO/Query
