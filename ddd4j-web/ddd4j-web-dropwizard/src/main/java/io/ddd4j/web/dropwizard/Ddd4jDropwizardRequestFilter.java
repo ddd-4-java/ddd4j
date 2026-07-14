@@ -1,79 +1,99 @@
 package io.ddd4j.web.dropwizard;
 
-import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.WebContextScope;
+import io.ddd4j.web.core.CacheIdempotencyGuard;
+import io.ddd4j.web.core.ClientIpResolver;
+import io.ddd4j.web.core.PathWebAccessPolicy;
+import io.ddd4j.web.core.RequestIdGenerator;
+import io.ddd4j.web.core.SynchronousWebRequestSession;
 import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestData;
+import io.ddd4j.web.core.WebRequestLifecycle;
 import jakarta.annotation.Priority;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.Context;
 
+import java.net.InetSocketAddress;
 import java.util.Locale;
-import java.util.UUID;
-import java.util.function.Predicate;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Dropwizard Jersey 请求上下文与 Bearer Subject 过滤器。
+ * Dropwizard Jersey 请求上下文、Bearer Subject 与幂等过滤器。
  */
 @Priority(Priorities.AUTHENTICATION)
 public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilter {
 
-    static final String SCOPE_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".scope";
-    static final String REQUEST_ID_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".requestId";
+    static final String SESSION_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".session";
+    static final String CONTEXT_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".context";
 
-    private final BearerSubjectAuthenticator authenticator;
-    private final Predicate<String> publicPath;
+    private final WebRequestContextFactory contextFactory;
+    private final WebRequestLifecycle requestLifecycle;
+    private final WebIdempotencyLifecycle idempotencyLifecycle;
+
+    @Context
+    private HttpServletRequest servletRequest;
 
     public Ddd4jDropwizardRequestFilter() {
-        this(new BearerSubjectAuthenticator(), Ddd4jDropwizardRequestFilter::isPublicPath);
+        this(new Ddd4jDropwizardWebConfiguration());
     }
 
-    public Ddd4jDropwizardRequestFilter(BearerSubjectAuthenticator authenticator, Predicate<String> publicPath) {
-        this.authenticator = authenticator;
-        this.publicPath = publicPath;
+    public Ddd4jDropwizardRequestFilter(Ddd4jDropwizardWebConfiguration configuration) {
+        Ddd4jDropwizardWebConfiguration config = Objects.requireNonNull(configuration,
+                "configuration must not be null");
+        ClientIpResolver clientIpResolver = config.isTrustForwardedHeaders()
+                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
+        this.contextFactory = new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
+        this.requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
+        this.idempotencyLifecycle = config.isIdempotencyEnabled()
+                ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
+                        config.getIdempotencyTtl()) : null;
+    }
+
+    public Ddd4jDropwizardRequestFilter(WebRequestContextFactory contextFactory,
+                                        WebRequestLifecycle requestLifecycle,
+                                        WebIdempotencyLifecycle idempotencyLifecycle) {
+        this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
+        this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
+        this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
     @Override
     public void filter(ContainerRequestContext request) {
-        String path = "/" + request.getUriInfo().getPath();
-        String requestId = request.getHeaderString(WebHeaders.REQUEST_ID);
-        if (StrKit.isBlank(requestId)) {
-            requestId = UUID.randomUUID().toString();
-        }
-        Locale locale = request.getLanguage();
-        WebRequestContext context = new WebRequestContext(requestId, request.getHeaderString(WebHeaders.TRACE_ID),
-                request.getHeaderString(WebHeaders.TENANT_ID), request.getHeaderString(WebHeaders.AUTHORIZATION), locale,
-                clientIp(request), request.getMethod(), path);
-        request.setProperty(SCOPE_PROPERTY, WebContextScope.open(context));
-        request.setProperty(REQUEST_ID_PROPERTY, requestId);
-        try {
-            if (!publicPath.test(path)) {
-                ThreadContext.bind(authenticator.authenticateSubject(
-                        request.getHeaderString(WebHeaders.AUTHORIZATION)).subject());
-            }
-        } catch (RuntimeException exception) {
-            closeScope(request);
-            throw exception;
-        }
+        WebRequestContext context = createContext(request);
+        SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
+                idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
+        request.setProperty(CONTEXT_PROPERTY, context);
+        request.setProperty(SESSION_PROPERTY, session);
     }
 
-    private void closeScope(ContainerRequestContext request) {
-        Object scope = request.getProperty(SCOPE_PROPERTY);
-        if (scope instanceof WebContextScope contextScope) {
-            contextScope.close();
-            request.removeProperty(SCOPE_PROPERTY);
+    private WebRequestContext createContext(ContainerRequestContext request) {
+        return contextFactory.create(new WebRequestData(
+                request.getHeaderString(WebHeaders.REQUEST_ID),
+                request.getHeaderString(WebHeaders.TRACE_ID),
+                request.getHeaderString(WebHeaders.TENANT_ID),
+                request.getHeaderString(WebHeaders.AUTHORIZATION),
+                Optional.ofNullable(request.getLanguage()).orElse(Locale.getDefault()),
+                request.getHeaderString(WebHeaders.FORWARDED_FOR),
+                request.getHeaderString("X-Real-IP"),
+                remoteAddress(),
+                request.getMethod(),
+                request.getUriInfo().getRequestUri().getPath()));
+    }
+
+    private String remoteAddress() {
+        if (Objects.isNull(servletRequest)) {
+            return null;
         }
-    }
-
-    private String clientIp(ContainerRequestContext request) {
-        String forwardedFor = request.getHeaderString(WebHeaders.FORWARDED_FOR);
-        return StrKit.isBlank(forwardedFor) ? null : forwardedFor.split(",", 2)[0].trim();
-    }
-
-    private static boolean isPublicPath(String path) {
-        return "/health".equals(path) || path.startsWith("/healthcheck");
+        String address = servletRequest.getRemoteAddr();
+        int port = servletRequest.getRemotePort();
+        return Objects.nonNull(address) ? new InetSocketAddress(address, port).getHostString() : null;
     }
 }

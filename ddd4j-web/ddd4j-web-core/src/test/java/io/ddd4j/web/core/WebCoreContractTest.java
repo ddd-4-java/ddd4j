@@ -177,6 +177,30 @@ class WebCoreContractTest {
                 .extracting("status").isEqualTo(409);
     }
 
+    @Test
+    void shouldCompleteSynchronousRequestSessionAndRestoreContext() {
+        Subject subject = mock(Subject.class);
+        AuthPrincipal principal = new AuthPrincipal().setUserId("user-1");
+        when(subject.verify("valid-token")).thenReturn(principal);
+        BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
+        WebRequestContext context = requestContext("Bearer valid-token");
+        WebRequestLifecycle requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                WebAccessPolicy.required());
+        WebIdempotencyLifecycle idempotencyLifecycle = new WebIdempotencyLifecycle(
+                new CacheIdempotencyGuard("web-session-test"));
+
+        try (SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
+                idempotencyLifecycle, "request-key")) {
+            assertThat(session.requestContext()).isEqualTo(context);
+            session.complete(true);
+        }
+
+        assertThat(ThreadContext.get(WebContextScope.REQUEST_ID)).isNull();
+        assertThatThrownBy(() -> idempotencyLifecycle.open(context, "request-key"))
+                .isInstanceOf(WebStatusException.class)
+                .extracting("status").isEqualTo(409);
+    }
+
     private WebRequestContext requestContext(String authorization) {
         return new WebRequestContext("request-1", "trace-1", "tenant-a", authorization,
                 Locale.CHINA, "127.0.0.1", "GET", "/orders");

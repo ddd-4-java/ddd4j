@@ -3,6 +3,7 @@ package io.ddd4j.web.micronaut;
 import io.ddd4j.web.core.AuthenticationMode;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -19,7 +20,9 @@ public class Ddd4jMicronautWebConfiguration {
     private List<String> publicPaths = new ArrayList<>(List.of(
             "/health", "/health/readiness", "/health/liveness"));
     private AuthenticationMode defaultAuthenticationMode = AuthenticationMode.REQUIRED;
+    @Setter
     private boolean trustForwardedHeaders;
+    @Setter
     private boolean idempotencyEnabled = true;
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
@@ -32,14 +35,6 @@ public class Ddd4jMicronautWebConfiguration {
     public void setDefaultAuthenticationMode(AuthenticationMode defaultAuthenticationMode) {
         this.defaultAuthenticationMode = Objects.requireNonNull(defaultAuthenticationMode,
                 "defaultAuthenticationMode must not be null");
-    }
-
-    public void setTrustForwardedHeaders(boolean trustForwardedHeaders) {
-        this.trustForwardedHeaders = trustForwardedHeaders;
-    }
-
-    public void setIdempotencyEnabled(boolean idempotencyEnabled) {
-        this.idempotencyEnabled = idempotencyEnabled;
     }
 
     public void setIdempotencyCacheName(String idempotencyCacheName) {

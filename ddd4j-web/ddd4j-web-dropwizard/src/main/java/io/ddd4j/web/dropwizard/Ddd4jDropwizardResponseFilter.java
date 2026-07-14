@@ -1,27 +1,29 @@
 package io.ddd4j.web.dropwizard;
 
-import io.ddd4j.web.core.WebContextScope;
+import io.ddd4j.web.core.SynchronousWebRequestSession;
 import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebRequestContext;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 
-import java.util.Objects;
-
 /**
- * 回传 requestId 并关闭 Dropwizard 请求上下文。
+ * 回传请求标识，并按响应状态提交或释放幂等请求会话。
  */
 public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
-        Object requestId = request.getProperty(Ddd4jDropwizardRequestFilter.REQUEST_ID_PROPERTY);
-        if (Objects.nonNull(requestId)) {
-            response.getHeaders().putSingle(WebHeaders.REQUEST_ID, requestId);
+        Object contextValue = request.getProperty(Ddd4jDropwizardRequestFilter.CONTEXT_PROPERTY);
+        if (contextValue instanceof WebRequestContext context) {
+            response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
+            response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
         }
-        Object scope = request.getProperty(Ddd4jDropwizardRequestFilter.SCOPE_PROPERTY);
-        if (scope instanceof WebContextScope contextScope) {
-            contextScope.close();
+        Object sessionValue = request.getProperty(Ddd4jDropwizardRequestFilter.SESSION_PROPERTY);
+        if (sessionValue instanceof SynchronousWebRequestSession session) {
+            session.complete(response.getStatus() < 400);
         }
+        request.removeProperty(Ddd4jDropwizardRequestFilter.CONTEXT_PROPERTY);
+        request.removeProperty(Ddd4jDropwizardRequestFilter.SESSION_PROPERTY);
     }
 }
