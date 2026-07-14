@@ -11,8 +11,8 @@ import io.ddd4j.extension.qrcode.command.DecodeQrCodeCommand;
 import io.ddd4j.extension.qrcode.command.GenerateQrCodeCommand;
 import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
 import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
-import io.github.hiwepy.zxing.model.QrCodeDecodeRequest;
-import io.github.hiwepy.zxing.model.QrCodeRequest;
+import com.google.zxing.model.QrCodeDecodeRequest;
+import com.google.zxing.model.QrCodeRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

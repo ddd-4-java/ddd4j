@@ -95,6 +95,12 @@
         <dependency>
             <groupId>org.fuin.esc</groupId>
             <artifactId>esc-mem</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Jandex（JandexEntityIdFactory 需要） -->
         <dependency>

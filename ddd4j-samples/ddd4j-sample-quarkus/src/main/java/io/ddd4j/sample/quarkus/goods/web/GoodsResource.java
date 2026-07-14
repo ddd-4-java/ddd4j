@@ -1,17 +1,21 @@
 package io.ddd4j.sample.quarkus.goods.web;
 
 import io.ddd4j.core.api.R;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.goods.domain.GoodsId;
 import io.ddd4j.sample.quarkus.goods.domain.GoodsStatus;
 import io.ddd4j.sample.quarkus.goods.web.dto.CreateGoodsRequest;
+import io.ddd4j.sample.quarkus.goods.web.dto.GoodsResponse;
 import io.ddd4j.sample.quarkus.goods.web.dto.UpdateGoodsRequest;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.Locale;
 
 /**
  * 商品 JAX-RS 资源（第三轨：Model/Query 命令端）。
@@ -41,7 +45,6 @@ import jakarta.ws.rs.core.Response;
  */
 @Path("/goods")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class GoodsResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
@@ -63,10 +66,11 @@ public class GoodsResource extends TenantAwareResource {
      * @return 创建的商品
      */
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response create(CreateGoodsRequest request) {
         Goods product = applicationService.create(
                 request.code(), request.name(), request.price(), request.stock());
-        return ok(product);
+        return ok(GoodsResponse.from(product));
     }
 
     /**
@@ -83,10 +87,11 @@ public class GoodsResource extends TenantAwareResource {
      */
     @PUT
     @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Long id, UpdateGoodsRequest request) {
         Goods product = applicationService.update(
                 GoodsId.of(id), request.name(), request.price());
-        return ok(product);
+        return ok(GoodsResponse.from(product));
     }
 
     /**
@@ -102,9 +107,9 @@ public class GoodsResource extends TenantAwareResource {
      */
     @PUT
     @Path("/{id}/status")
-    public Response changeStatus(@PathParam("id") Long id, @QueryParam("status") GoodsStatus status) {
-        Goods product = applicationService.changeStatus(GoodsId.of(id), status);
-        return ok(product);
+    public Response changeStatus(@PathParam("id") Long id, @QueryParam("status") String status) {
+        Goods product = applicationService.changeStatus(GoodsId.of(id), parseStatus(status));
+        return ok(GoodsResponse.from(product));
     }
 
     /**
@@ -129,7 +134,7 @@ public class GoodsResource extends TenantAwareResource {
     @GET
     @Path("/{id}")
     public Response getById(@PathParam("id") Long id) {
-        return ok(applicationService.getById(GoodsId.of(id)));
+        return ok(GoodsResponse.from(applicationService.getById(GoodsId.of(id))));
     }
 
     /**
@@ -141,6 +146,13 @@ public class GoodsResource extends TenantAwareResource {
     @GET
     @Path("/by-code")
     public Response getByCode(@QueryParam("code") String code) {
-        return ok(applicationService.getByCode(code));
+        return ok(GoodsResponse.from(applicationService.getByCode(code)));
+    }
+
+    private GoodsStatus parseStatus(String status) {
+        if (StrKit.isBlank(status)) {
+            throw new IllegalArgumentException("status must not be blank");
+        }
+        return GoodsStatus.valueOf(status.toUpperCase(Locale.ROOT));
     }
 }

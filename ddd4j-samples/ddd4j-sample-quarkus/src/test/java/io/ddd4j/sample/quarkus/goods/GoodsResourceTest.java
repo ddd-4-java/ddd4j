@@ -355,7 +355,8 @@ class GoodsResourceTest {
         given()
                 .when().put("/goods/{id}/status?status=UNKNOWN_STATE", created.id())
                 .then()
-                .statusCode(500);
+                .statusCode(400)
+                .body("code", equalTo(400));
     }
 
     @Test

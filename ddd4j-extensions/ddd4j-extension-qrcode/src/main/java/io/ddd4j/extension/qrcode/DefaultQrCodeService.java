@@ -20,11 +20,11 @@ import io.ddd4j.extension.qrcode.command.DecodeQrCodeCommand;
 import io.ddd4j.extension.qrcode.command.GenerateQrCodeCommand;
 import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
 import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
-import io.github.hiwepy.zxing.QrCodeDecoder;
-import io.github.hiwepy.zxing.QrCodeEncoder;
-import io.github.hiwepy.zxing.QrCodes;
-import io.github.hiwepy.zxing.exception.QrCodeErrorCode;
-import io.github.hiwepy.zxing.exception.QrCodeException;
+import com.google.zxing.QrCodeDecoder;
+import com.google.zxing.QrCodeEncoder;
+import com.google.zxing.QrCodes;
+import com.google.zxing.exception.QrCodeErrorCode;
+import com.google.zxing.exception.QrCodeException;
 
 /** Default QR code service with bounded, order-preserving batch execution. */
 public class DefaultQrCodeService implements QrCodeService, AutoCloseable {

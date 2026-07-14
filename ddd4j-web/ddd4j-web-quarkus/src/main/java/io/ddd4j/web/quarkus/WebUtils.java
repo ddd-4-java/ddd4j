@@ -1,21 +1,14 @@
 package io.ddd4j.web.quarkus;
 
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import io.ddd4j.kit.lang.StrKit;
 import io.vertx.core.http.HttpServerRequest;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.StreamingOutput;
 
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Quarkus Web 层通用工具：从 Vert.x 请求解析语言/租户/用户，Excel 流式导出响应构建。
+ * Quarkus Web 层通用工具：从 Vert.x 请求解析语言、租户和用户上下文。
  * <p>
  * 对标 ddd4j-web 的 {@code WebUtils}（Spring 拦截器方案），Quarkus 轨道采用 Vert.x HttpServerRequest 方案。
  * </p>
@@ -23,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class WebUtils {
-
-    private static final DateTimeFormatter RPT_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     private static final Map<String, String> LANG_MAP = new ConcurrentHashMap<>();
 
@@ -121,30 +112,6 @@ public class WebUtils {
             // 找不到资源时返回原始 key
         }
         return Objects.isNull(parameters) || parameters.length == 0 ? pattern : MessageFormat.format(pattern, parameters);
-    }
-
-    /**
-     * 将数据列表导出为 Excel 流式下载响应（Content-Disposition 附件、国际化表头）。
-     *
-     * @param lang      语言，用于表头国际化
-     * @param sheetName 表名称文案 key（经 i18n）
-     * @param dataList  行数据
-     * @param head      Excel 表头/行类型
-     * @return HTTP 响应，body 为 xlsx 流
-     */
-    public static <T> Response excel(String lang, String sheetName, List<T> dataList, Class<T> head) {
-        StreamingOutput stream = outputStream -> {
-            EasyExcel.write(outputStream, head)
-                    .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-                    .sheet(i18n(lang, sheetName))
-                    .doWrite(dataList);
-        };
-        String fileName = LocalDateTime.now().format(RPT_FORMAT) + ".xlsx";
-        return Response.ok(stream)
-                .header("Access-Control-Expose-Headers", "Content-Disposition")
-                .header(HttpHeaders.CONTENT_TYPE, "application/vnd.ms-excel;charset=utf-8")
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
-                .build();
     }
 
     private static Locale resolveLocale(String lang) {

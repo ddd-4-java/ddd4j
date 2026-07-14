@@ -455,7 +455,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 | 组件                        | 版本                    |
 |---------------------------|-----------------------|
-| Quarkus Platform BOM      | 3.15.1                |
+| Quarkus Platform BOM      | 3.37.0                |
 | ddd4j                     | `${revision}`（与父工程一致） |
 | JDK                       | 17+                   |
 | Maven Surefire / Failsafe | 3.2.5                 |

@@ -16,7 +16,7 @@
     <description>Quarkus + Sa-Token 鉴权示例：演示 CDI 容器下 SubjectKit 统一鉴权入口</description>
 
     <properties>
-        <quarkus.platform.version>3.15.1</quarkus.platform.version>
+        <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <surefire-plugin.version>3.2.5</surefire-plugin.version>
@@ -82,7 +82,7 @@
         <!-- ================= 测试依赖 ================= -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
+            <artifactId>quarkus-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

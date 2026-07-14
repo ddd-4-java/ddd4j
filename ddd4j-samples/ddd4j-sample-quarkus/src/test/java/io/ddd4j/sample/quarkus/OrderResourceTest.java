@@ -66,7 +66,9 @@ class OrderResourceTest {
         assertThat(paid.status().name()).isEqualTo("PAID");
         assertThat(repeated.status().name()).isEqualTo("PAID");
         assertThat(applicationService.find(order.id()).totalAmount()).isEqualByComparingTo("39.80");
-        assertThat(adapters.pending(20)).hasSize(3);
+        assertThat(adapters.pending(20))
+                .filteredOn(message -> message.aggregateId().equals(order.id()))
+                .hasSize(3);
     }
 
     @Test

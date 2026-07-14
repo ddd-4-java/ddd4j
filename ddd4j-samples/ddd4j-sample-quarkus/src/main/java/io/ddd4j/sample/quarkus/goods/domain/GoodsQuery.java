@@ -3,6 +3,8 @@ package io.ddd4j.sample.quarkus.goods.domain;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.core.util.SFunction;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
 
@@ -69,6 +71,43 @@ public class GoodsQuery extends Query<Goods> {
      * 最高价格（小于等于）。
      */
     private BigDecimal priceMax;
+
+    /**
+     * Applies comma-separated, whitelisted sort expressions such as {@code price_DESC}.
+     */
+    public GoodsQuery setOrderBys(String orderBys) {
+        if (StrKit.isBlank(orderBys)) {
+            return this;
+        }
+        for (String orderBy : orderBys.split(",")) {
+            applyOrderBy(orderBy);
+        }
+        return this;
+    }
+
+    private void applyOrderBy(String orderBy) {
+        String[] tokens = orderBy.trim().split("_");
+        if (tokens.length != 2) {
+            return;
+        }
+        boolean descending = "DESC".equalsIgnoreCase(tokens[1]);
+        switch (tokens[0]) {
+            case "id" -> applyOrder(descending, Goods::id);
+            case "createTime" -> applyOrder(descending, Goods::getCreateTime);
+            case "updateTime" -> applyOrder(descending, Goods::getUpdateTime);
+            case "price" -> applyOrder(descending, Goods::getPrice);
+            default -> {
+            }
+        }
+    }
+
+    private void applyOrder(boolean descending, SFunction<Goods, ?> property) {
+        if (descending) {
+            orderByDesc(property);
+            return;
+        }
+        orderByAsc(property);
+    }
 
     /**
      * 绑定到 {@link Goods} 聚合根的仓储实例。

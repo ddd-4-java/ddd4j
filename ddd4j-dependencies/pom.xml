@@ -443,8 +443,7 @@
         <qiniu-java-sdk.version>7.19.0</qiniu-java-sdk.version>
         <qlexpress.version>4.1.2</qlexpress.version>
         <quartz.version>2.5.2</quartz.version>
-        <quarkus-bom.version>3.37.0</quarkus-bom.version>
-        <quarkus-smallrye-reactive-messaging.version>3.15.5</quarkus-smallrye-reactive-messaging.version>
+        <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
         <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
         <r2dbc-spi.version>1.0.0.RELEASE</r2dbc-spi.version>
         <r2dbc-mariadb.version>1.4.1</r2dbc-mariadb.version>
@@ -633,7 +632,7 @@
         <neo4j-java-driver.version>5.28.10</neo4j-java-driver.version>
         <pooled-jms.version>3.1.8</pooled-jms.version>
         <querydsl.version>5.1.0</querydsl.version>
-        <rest-assured.version>5.5.6</rest-assured.version>
+        <rest-assured.version>6.0.0</rest-assured.version>
         <saaj-impl.version>3.0.4</saaj-impl.version>
         <sendgrid.version>4.10.3</sendgrid.version>
         <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
@@ -671,7 +670,7 @@
         <maven-nexus-m2settings-plugin.version>1.7.0</maven-nexus-m2settings-plugin.version>
         <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
         <maven-properties-plugin.version>1.3.0</maven-properties-plugin.version>
-        <maven-quarkus-plugin.version>3.63.3</maven-quarkus-plugin.version>
+        <maven-quarkus-plugin.version>${quarkus.version}</maven-quarkus-plugin.version>
         <maven-rpm-plugin.version>2.3.0</maven-rpm-plugin.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <maven-sonar-plugin.version>4.0.1.6619</maven-sonar-plugin.version>
@@ -1106,6 +1105,27 @@
                 <version>${rest-assured.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Keep RestAssured modules aligned even when an earlier framework BOM imports an older release. -->
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured-common</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>json-path</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>xml-path</artifactId>
+                <version>${rest-assured.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.rsocket/rsocket-bom -->
             <dependency>

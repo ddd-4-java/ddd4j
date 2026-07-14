@@ -2,6 +2,7 @@ package io.ddd4j.quarkus.event;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
@@ -19,6 +20,7 @@ import java.util.Objects;
  * @since 2.0.x
  */
 @Slf4j
+@DefaultBean
 @ApplicationScoped
 public class CdiDomainEventPublisher implements DomainEventPublisher {
 

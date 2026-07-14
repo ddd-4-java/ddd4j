@@ -1,6 +1,6 @@
 package io.ddd4j.extension.qrcode.command;
 
-import io.github.hiwepy.zxing.model.QrCodeDecodeRequest;
+import com.google.zxing.model.QrCodeDecodeRequest;
 import lombok.Builder;
 import lombok.Getter;
 

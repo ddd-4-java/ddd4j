@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-web-quarkus</artifactId>
-    <description>ddd4j Web - Quarkus 实现：JAX-RS 资源基类、异常映射、请求日志、Excel 导出、响应构建。</description>
+    <description>ddd4j Web - Quarkus 实现：JAX-RS 资源基类、异常映射、请求日志与响应构建。</description>
 
     <dependencies>
         <dependency>
@@ -28,4 +28,21 @@
             <artifactId>quarkus-rest</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.smallrye</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+                <version>${jandex-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jandex</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

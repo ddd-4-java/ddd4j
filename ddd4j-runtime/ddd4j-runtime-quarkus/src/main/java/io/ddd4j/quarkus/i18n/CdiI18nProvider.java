@@ -1,6 +1,7 @@
 package io.ddd4j.quarkus.i18n;
 
 import io.ddd4j.core.i18n.I18nProvider;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.Locale;
@@ -16,6 +17,7 @@ import java.util.ResourceBundle;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@DefaultBean
 @ApplicationScoped
 public class CdiI18nProvider implements I18nProvider {
 

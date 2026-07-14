@@ -4,8 +4,11 @@ import io.ddd4j.core.api.Page;
 import io.ddd4j.sample.quarkus.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.goods.domain.GoodsQuery;
+import io.ddd4j.sample.quarkus.goods.web.dto.GoodsQueryParameters;
+import io.ddd4j.sample.quarkus.goods.web.dto.GoodsResponse;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -65,12 +68,9 @@ public class GoodsQueryResource extends TenantAwareResource {
      */
     @GET
     @Path("/page")
-    public Response page(GoodsQuery query) {
-        if (query == null) {
-            query = new GoodsQuery();
-        }
-        Page<Goods> page = applicationService.pageQuery(query);
-        return ok(page);
+    public Response page(@BeanParam GoodsQueryParameters parameters) {
+        Page<Goods> page = applicationService.pageQuery(parameters.toQuery());
+        return ok(transfer(page, GoodsResponse::from));
     }
 
     /**
@@ -85,11 +85,10 @@ public class GoodsQueryResource extends TenantAwareResource {
      */
     @GET
     @Path("/list")
-    public Response list(GoodsQuery query) {
-        if (query == null) {
-            query = new GoodsQuery();
-        }
-        List<Goods> products = applicationService.listQuery(query);
+    public Response list(@BeanParam GoodsQueryParameters parameters) {
+        List<GoodsResponse> products = applicationService.listQuery(parameters.toQuery()).stream()
+                .map(GoodsResponse::from)
+                .toList();
         return ok(products);
     }
 
@@ -105,11 +104,8 @@ public class GoodsQueryResource extends TenantAwareResource {
      */
     @GET
     @Path("/count")
-    public Response count(GoodsQuery query) {
-        if (query == null) {
-            query = new GoodsQuery();
-        }
-        long count = applicationService.countQuery(query);
+    public Response count(@BeanParam GoodsQueryParameters parameters) {
+        long count = applicationService.countQuery(parameters.toQuery());
         return ok(count);
     }
 }

@@ -2,6 +2,7 @@ package io.ddd4j.quarkus.subject;
 
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2.0.x
  */
 @Slf4j
+@DefaultBean
 @ApplicationScoped
 public class CdiSubjectProvider implements SubjectProvider {
 

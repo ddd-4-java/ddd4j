@@ -2,9 +2,9 @@ package io.ddd4j.extension.qrcode.template;
 
 import org.junit.jupiter.api.Test;
 
-import io.github.hiwepy.zxing.frame.QrCodeBlockElement;
-import io.github.hiwepy.zxing.frame.QrCodeFrame;
-import io.github.hiwepy.zxing.frame.QrCodeTextElement;
+import com.google.zxing.frame.QrCodeBlockElement;
+import com.google.zxing.frame.QrCodeFrame;
+import com.google.zxing.frame.QrCodeTextElement;
 
 import java.util.Collections;
 

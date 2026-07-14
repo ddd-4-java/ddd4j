@@ -1,10 +1,10 @@
 package io.ddd4j.extension.qrcode.template;
 
-import io.github.hiwepy.zxing.frame.QrCodeBlockElement;
-import io.github.hiwepy.zxing.frame.QrCodeFrame;
-import io.github.hiwepy.zxing.frame.QrCodeFrameElement;
-import io.github.hiwepy.zxing.frame.QrCodeImageElement;
-import io.github.hiwepy.zxing.frame.QrCodeTextElement;
+import com.google.zxing.frame.QrCodeBlockElement;
+import com.google.zxing.frame.QrCodeFrame;
+import com.google.zxing.frame.QrCodeFrameElement;
+import com.google.zxing.frame.QrCodeImageElement;
+import com.google.zxing.frame.QrCodeTextElement;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;

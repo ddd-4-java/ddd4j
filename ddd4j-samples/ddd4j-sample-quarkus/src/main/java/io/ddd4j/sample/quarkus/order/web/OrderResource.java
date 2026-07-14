@@ -32,7 +32,6 @@ import java.util.Objects;
 /** JAX-RS translation layer for the shared Order application. */
 @Path("/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class OrderResource {
 
     private final OrderApplicationService applicationService;
@@ -44,6 +43,7 @@ public class OrderResource {
     }
 
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response create(CreateOrderRequest request) {
         Order order = applicationService.create(new CreateOrderCommand(
                 request.orderNo(), request.buyerId(), request.buyerName()));
@@ -75,6 +75,7 @@ public class OrderResource {
 
     @POST
     @Path("/{id}/lines")
+    @Consumes(MediaType.APPLICATION_JSON)
     public R<OrderResponse> addLine(@PathParam("id") String id, AddOrderLineRequest request) {
         Order order = applicationService.addLine(new AddOrderLineCommand(id,
                 request.goodsId(), request.goodsName(), request.quantity(), request.unitPrice()));
