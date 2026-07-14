@@ -1,0 +1,55 @@
+package io.ddd4j.web.helidon;
+
+import io.ddd4j.web.core.AuthenticationMode;
+import lombok.Getter;
+import lombok.Setter;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+/**
+ * Helidon MP Web 配置，统一使用 {@code ddd4j.web.*} 配置命名空间。
+ */
+@Getter
+@Setter
+public class Ddd4jHelidonWebConfiguration {
+
+    private static final String PREFIX = "ddd4j.web.";
+
+    private List<String> publicPaths = new ArrayList<>(List.of(
+            "/health", "/health/**", "/metrics", "/openapi/**"));
+    private AuthenticationMode defaultAuthenticationMode = AuthenticationMode.REQUIRED;
+    private boolean trustForwardedHeaders;
+    private boolean idempotencyEnabled = true;
+    private String idempotencyCacheName = "ddd4j-web-idempotency";
+    private Duration idempotencyTtl = Duration.ofMinutes(5);
+
+    public static Ddd4jHelidonWebConfiguration load() {
+        return from(ConfigProvider.getConfig());
+    }
+
+    public static Ddd4jHelidonWebConfiguration from(Config config) {
+        Config source = Objects.requireNonNull(config, "config must not be null");
+        Ddd4jHelidonWebConfiguration configuration = new Ddd4jHelidonWebConfiguration();
+        source.getOptionalValues(PREFIX + "public-paths", String.class)
+                .ifPresent(values -> configuration.setPublicPaths(new ArrayList<>(values)));
+        source.getOptionalValue(PREFIX + "authentication-mode", String.class)
+                .map(value -> AuthenticationMode.valueOf(value.toUpperCase(Locale.ROOT)))
+                .ifPresent(configuration::setDefaultAuthenticationMode);
+        source.getOptionalValue(PREFIX + "trust-forwarded-headers", Boolean.class)
+                .ifPresent(configuration::setTrustForwardedHeaders);
+        source.getOptionalValue(PREFIX + "idempotency.enabled", Boolean.class)
+                .ifPresent(configuration::setIdempotencyEnabled);
+        source.getOptionalValue(PREFIX + "idempotency.cache-name", String.class)
+                .ifPresent(configuration::setIdempotencyCacheName);
+        source.getOptionalValue(PREFIX + "idempotency.ttl", String.class)
+                .map(Duration::parse)
+                .ifPresent(configuration::setIdempotencyTtl);
+        return configuration;
+    }
+}
