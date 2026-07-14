@@ -7,6 +7,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * ID 生成工具类（基于 Hutool IdUtil，整合自定义 Snowflake 能力）
@@ -50,6 +52,7 @@ import java.net.InetAddress;
 public class IdKit extends IdUtil {
 
     private static byte LAST_IP = 0;
+    private static final Map<SnowflakeOptions, Snowflake> CUSTOM_SNOWFLAKES = new ConcurrentHashMap<>();
 
     /**
      * 获取单例的Twitter的Snowflake 算法生成器对象<br>
@@ -154,7 +157,8 @@ public class IdKit extends IdUtil {
      * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock, long timeOffset) {
-        return Singleton.get(Snowflake.class, workerId, dataCenterId, isUseSystemClock, timeOffset);
+        SnowflakeOptions options = new SnowflakeOptions(workerId, dataCenterId, isUseSystemClock, timeOffset, 0L);
+        return CUSTOM_SNOWFLAKES.computeIfAbsent(options, IdKit::newSnowflake);
     }
 
     /**
@@ -183,7 +187,18 @@ public class IdKit extends IdUtil {
      * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock, long timeOffset, long randomSequenceLimit) {
-        return Singleton.get(Snowflake.class, workerId, dataCenterId, isUseSystemClock, timeOffset, randomSequenceLimit);
+        SnowflakeOptions options = new SnowflakeOptions(
+                workerId, dataCenterId, isUseSystemClock, timeOffset, randomSequenceLimit);
+        return CUSTOM_SNOWFLAKES.computeIfAbsent(options, IdKit::newSnowflake);
+    }
+
+    private static Snowflake newSnowflake(SnowflakeOptions options) {
+        return new Snowflake(null, options.workerId(), options.dataCenterId(), options.useSystemClock(),
+                options.timeOffset(), options.randomSequenceLimit());
+    }
+
+    private record SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
+                                    long timeOffset, long randomSequenceLimit) {
     }
 
     /**

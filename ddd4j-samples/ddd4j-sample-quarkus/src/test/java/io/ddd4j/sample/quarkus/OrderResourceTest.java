@@ -3,7 +3,7 @@ package io.ddd4j.sample.quarkus;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.event.MQEventPublisher;
+import io.ddd4j.mq.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.sample.quarkus.order.application.AddOrderLineCommand;

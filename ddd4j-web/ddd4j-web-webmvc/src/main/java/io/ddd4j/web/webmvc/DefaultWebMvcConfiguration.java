@@ -8,6 +8,7 @@ package io.ddd4j.web.webmvc.webmvc;
 
 import io.ddd4j.core.ProfileManager;
 import io.ddd4j.core.constant.Constants;
+import io.ddd4j.web.core.BearerSubjectAuthenticator;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.biz.context.NestedMessageSource;
@@ -20,7 +21,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.util.Locale;
@@ -31,7 +31,6 @@ import java.util.TimeZone;
  * <p>装配 Profile 管理器、请求上下文过滤器、国际化解析器、验证器及自定义配置器。</p>
  */
 @Configuration(proxyBeanMethods = false)
-@EnableWebMvc
 public class DefaultWebMvcConfiguration {
 
     /**
@@ -93,12 +92,14 @@ public class DefaultWebMvcConfiguration {
         return factoryBean;
     }
 
-    /**
-     * MDC 日志拦截器。
-     */
     @Bean
-    public MdcInterceptor mdcInterceptor() {
-        return new MdcInterceptor();
+    public BearerSubjectAuthenticator bearerSubjectAuthenticator() {
+        return new BearerSubjectAuthenticator();
+    }
+
+    @Bean
+    public Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor(BearerSubjectAuthenticator authenticator) {
+        return new Ddd4jWebMvcInterceptor(authenticator);
     }
 
     /**
@@ -107,8 +108,8 @@ public class DefaultWebMvcConfiguration {
     @Bean
     public DefaultWebMvcConfigurer defaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
                                                            LocaleChangeInterceptor localeChangeInterceptor,
-                                                           MdcInterceptor mdcInterceptor) {
-        return new DefaultWebMvcConfigurer(localResourceProperteis, localeChangeInterceptor, mdcInterceptor);
+                                                           Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor) {
+        return new DefaultWebMvcConfigurer(localResourceProperteis, localeChangeInterceptor, ddd4jWebMvcInterceptor);
     }
 
 }

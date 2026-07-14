@@ -14,6 +14,11 @@
     <description>Ddd4j WebFlux Component</description>
 
     <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-web-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- For Ddd4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -62,13 +67,13 @@
             <artifactId>hutool-all</artifactId>
         </dependency>
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

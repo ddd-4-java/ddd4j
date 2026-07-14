@@ -7,21 +7,21 @@
 package io.ddd4j.web.webflux;
 
 import io.ddd4j.core.ProfileManager;
+import io.ddd4j.web.core.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.WebExceptionTranslator;
 import io.ddd4j.web.webflux.config.LocalResourceProperteis;
-import io.ddd4j.web.webflux.error.GlobalExceptionHandler;
 import org.springframework.biz.web.server.ReactiveRequestContextFilter;
 import org.springframework.biz.web.server.i18n.XHeaderLocaleContextResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
 import java.util.Locale;
 import java.util.TimeZone;
 
 @Configuration(proxyBeanMethods = false)
-@EnableWebFlux
 public class DefaultWebFluxConfiguration {
 
     @Bean
@@ -44,8 +44,18 @@ public class DefaultWebFluxConfiguration {
     }
 
     @Bean
-    public GlobalExceptionHandler defaultExceptionHandler() {
-        return new GlobalExceptionHandler();
+    public BearerSubjectAuthenticator bearerSubjectAuthenticator() {
+        return new BearerSubjectAuthenticator();
+    }
+
+    @Bean
+    public WebExceptionTranslator webExceptionTranslator() {
+        return new DefaultWebExceptionTranslator();
+    }
+
+    @Bean
+    public Ddd4jWebFluxFilter ddd4jWebFluxFilter(BearerSubjectAuthenticator authenticator) {
+        return new Ddd4jWebFluxFilter(authenticator);
     }
 
     @Bean

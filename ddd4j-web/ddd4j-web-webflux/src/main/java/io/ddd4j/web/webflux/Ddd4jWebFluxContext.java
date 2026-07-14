@@ -1,0 +1,24 @@
+package io.ddd4j.web.webflux;
+
+import io.ddd4j.core.subject.Subject;
+import io.ddd4j.web.core.WebRequestContext;
+import lombok.experimental.UtilityClass;
+import reactor.core.publisher.Mono;
+
+/**
+ * 从 Reactor Context 读取 ddd4j 请求级状态。
+ */
+@UtilityClass
+public class Ddd4jWebFluxContext {
+
+    static final Class<WebRequestContext> REQUEST_CONTEXT_KEY = WebRequestContext.class;
+    static final Class<Subject> SUBJECT_KEY = Subject.class;
+
+    public Mono<WebRequestContext> currentRequest() {
+        return Mono.deferContextual(context -> Mono.just(context.get(REQUEST_CONTEXT_KEY)));
+    }
+
+    public Mono<Subject> currentSubject() {
+        return Mono.deferContextual(context -> Mono.just(context.get(SUBJECT_KEY)));
+    }
+}

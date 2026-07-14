@@ -130,6 +130,11 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-qrcode</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-extension-license</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -227,8 +232,33 @@
                 <artifactId>ddd4j-runtime-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-micronaut</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-vertx</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-helidon</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-dropwizard</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!-- Ddd4j Web Extensions -->
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-web-webflux</artifactId>
@@ -242,6 +272,31 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-web-webmvc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-javalin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-micronaut</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-vertx</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-helidon</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-dropwizard</artifactId>
                 <version>${revision}</version>
             </dependency>
 

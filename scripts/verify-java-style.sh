@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHECKSTYLE_CONFIG="${ROOT_DIR}/tools/checkstyle/need-braces-checkstyle.xml"
@@ -24,6 +24,7 @@ fi
 TMP_MATCHES="$(mktemp)"
 TMP_DIR="$(mktemp -d)"
 TMP_POM="${TMP_DIR}/pom.xml"
+FAILED=0
 cleanup() {
   rm -f "${TMP_MATCHES}"
   rm -rf "${TMP_DIR}"
@@ -35,10 +36,11 @@ run_guard() {
   local pattern="$2"
   shift 2
 
-  if rg -n --pcre2 "${pattern}" "${JAVA_FILES[@]}" > "${TMP_MATCHES}"; then
+  if rg -n --pcre2 "${pattern}" "$@" "${JAVA_FILES[@]}" > "${TMP_MATCHES}"; then
     echo "[FAIL] ${description}"
     cat "${TMP_MATCHES}"
-    return 1
+    FAILED=1
+    return 0
   fi
 
   echo "[PASS] ${description}"
@@ -67,11 +69,18 @@ cat > "${TMP_POM}" <<EOF
 </project>
 EOF
 
-mvn -q -f "${TMP_POM}" org.apache.maven.plugins:maven-checkstyle-plugin:3.6.0:check \
+if ! ./mvnw -q -f "${TMP_POM}" org.apache.maven.plugins:maven-checkstyle-plugin:3.6.0:check \
   -Dcheckstyle.config.location="${CHECKSTYLE_CONFIG}" \
   -Dcheckstyle.includes='**/src/main/java/**/*.java,**/src/test/java/**/*.java' \
   -Dcheckstyle.excludes='**/target/**,**/.idea/**' \
   -Dcheckstyle.sourceDirectories="${ROOT_DIR}" \
-  -Dcheckstyle.failOnViolation=true
+  -Dcheckstyle.failOnViolation=true; then
+  FAILED=1
+fi
+
+if [[ "${FAILED}" -ne 0 ]]; then
+  echo "Java style verification failed."
+  exit 1
+fi
 
 echo "Java style verification passed."

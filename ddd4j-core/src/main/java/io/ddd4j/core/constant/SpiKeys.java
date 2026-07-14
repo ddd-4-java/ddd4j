@@ -56,6 +56,10 @@ public final class SpiKeys {
      * 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.cqrs.query.CommandExecutorRegistry}
      */
     public static final String COMMAND_EXECUTOR_REGISTRY = PREFIX + "cqrs.CommandExecutorRegistry";
+    /**
+     * CQRS 命令总线 SPI key，对应 {@code io.ddd4j.core.cqrs.command.CommandBus}
+     */
+    public static final String COMMAND_BUS = PREFIX + "cqrs.CommandBus";
 
     // ========== CQRS 相关 SPI（预留） ==========
     /**

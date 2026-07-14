@@ -2,18 +2,12 @@ package io.ddd4j.guice.annotation.ddd;
 
 import com.google.inject.Singleton;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
-import io.ddd4j.guice.annotation.web.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.Objects;
 
 /**
- * 独立验证器：验证 ddd4j-runtime-guice 内聚的 11 个 DDD 注解
- * 与 Guice @Singleton 元注解融合 + 7 个 web/ 路由参数注解。
+ * 独立验证器：验证 ddd4j-runtime-guice 内聚的 DDD 注解与 Guice @Singleton 元注解融合。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -52,16 +46,6 @@ public final class AnnotationFusionVerifier {
         }
 
         log.info("");
-        log.info("=== Web 路由参数注解验证 ===");
-        passed += verifyWebAnnotation("PathParam", PathParam.class);
-        passed += verifyWebAnnotation("QueryParam", QueryParam.class);
-        passed += verifyWebAnnotation("FormParam", FormParam.class);
-        passed += verifyWebAnnotation("HeaderParam", HeaderParam.class);
-        passed += verifyWebAnnotation("CookieParam", CookieParam.class);
-        passed += verifyWebAnnotation("BodyParam", BodyParam.class);
-        passed += verifyWebAnnotation("Context", Context.class);
-
-        log.info("");
         log.info("=== 业务代码使用模式验证 ===");
         java.lang.annotation.Annotation domainServiceOnBiz = BusinessDomainService.class.getAnnotation(DomainService.class);
         if (Objects.isNull(domainServiceOnBiz)) {
@@ -87,7 +71,7 @@ public final class AnnotationFusionVerifier {
 
         if (failed > 0) {
             log.error("VERIFICATION FAILED");
-            System.exit(1);
+            throw new IllegalStateException("ddd4j-runtime-guice annotation verification failed");
         } else {
             log.info("ALL PASSED! ddd4j-runtime-guice 注解收敛符合架构设计");
         }
@@ -111,23 +95,6 @@ public final class AnnotationFusionVerifier {
         return 1;
     }
 
-    private static int verifyWebAnnotation(
-            String name,
-            Class<? extends java.lang.annotation.Annotation> annotation) {
-        Target target = annotation.getAnnotation(Target.class);
-        if (Objects.isNull(target) || target.value().length == 0
-                || target.value()[0] != ElementType.PARAMETER) {
-            log.error("FAIL {}: @Target 必须为 PARAMETER", name);
-            return 0;
-        }
-        Retention retention = annotation.getAnnotation(Retention.class);
-        if (Objects.isNull(retention) || retention.value() != RetentionPolicy.RUNTIME) {
-            log.error("FAIL {}: @Retention 必须为 RUNTIME", name);
-            return 0;
-        }
-        log.info("PASS {}: @Target PARAMETER + @Retention RUNTIME", name);
-        return 1;
-    }
 }
 
 @DomainService

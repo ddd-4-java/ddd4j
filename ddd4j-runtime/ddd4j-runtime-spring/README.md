@@ -409,9 +409,9 @@ Quarkus/Javalin 项目结构相同**——这是 ddd4j 框架无关设计的核�
 
 | 序号 | 改进                                                                                                          |
 |----|-------------------------------------------------------------------------------------------------------------|
-| 4  | 新增 `@EnableDdd4j` 注解（替代手动 `@Import`）                                                                        |
-| 5  | 新增 `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`，自动装配 `BaseCoreConfig` |
-| 6  | `DddAutoConfiguration` 加 `@ConditionalOnClass` / `@ConditionalOnProperty` 守卫                                |
+| 4  | 新增纯 Spring `@EnableDdd4j` 注解（替代业务侧重复 `@Import`）                                                            |
+| 5  | Spring Boot 自动装配、条件 Bean 与配置元数据统一由外部 `ddd4j-boot` 提供                                                   |
+| 6  | Runtime 配置仅使用 Spring Framework 条件与生命周期，不引入 Boot API                                                       |
 | 7  | `SpringContext` 改为"配置优先 + 栈跟踪降级"，移除反射开销                                                                     |
 | 8  | 补齐 `ddd4j-annotation` 缺失的 `@DomainGateway` / `@QueryService`                                                |
 
@@ -420,9 +420,9 @@ Quarkus/Javalin 项目结构相同**——这是 ddd4j 框架无关设计的核�
 | 序号 | 改进                                                                       |
 |----|--------------------------------------------------------------------------|
 | 9  | 补充单元测试（SpringContextTest / SpringDomainEventPublisherTest 等 6 个）         |
-| 10 | `BaseController` 简化为只保留 `ApplicationContextAware` + `MessageSourceAware` |
-| 11 | 添加从 Spring Boot 2.x 迁移指南                                                 |
-| 12 | `ddd4j-samples` 提供 Spring Boot 完整示例（Person 聚合根）                          |
+| 10 | Web 类型统一归属 `ddd4j-web-webmvc` / `ddd4j-web-webflux`                    |
+| 11 | Spring Boot 2.x/3.x 迁移指南统一放在外部 `ddd4j-boot`                         |
+| 12 | Boot 完整业务样例统一放在外部 `ddd4j-boot-samples`                            |
 
 ---
 

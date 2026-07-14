@@ -9,11 +9,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.util.StringUtils;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 public class WebFluxKit {
@@ -67,19 +66,21 @@ public class WebFluxKit {
     /**
      * 从 Flux<DataBuffer> 中获取请求体字符串。
      */
-    public static String resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
+    public static Mono<String> resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
         if (serverHttpRequest.getHeaders().getContentLength() == 0) {
-            return org.apache.commons.lang3.StringUtils.EMPTY;
+            return Mono.just(org.apache.commons.lang3.StringUtils.EMPTY);
         }
-        Flux<DataBuffer> body = serverHttpRequest.getBody();
-        AtomicReference<String> bodyRef = new AtomicReference<>();
-        body.subscribe(buffer -> {
-            byte[] bytes = new byte[buffer.readableByteCount()];
-            buffer.read(bytes);
-            DataBufferUtils.release(buffer);
-            bodyRef.set(new String(bytes, StandardCharsets.UTF_8));
-        });
-        return bodyRef.get();
+        return DataBufferUtils.join(serverHttpRequest.getBody())
+                .map(buffer -> {
+                    try {
+                        byte[] bytes = new byte[buffer.readableByteCount()];
+                        buffer.read(bytes);
+                        return new String(bytes, StandardCharsets.UTF_8);
+                    } finally {
+                        DataBufferUtils.release(buffer);
+                    }
+                })
+                .defaultIfEmpty(org.apache.commons.lang3.StringUtils.EMPTY);
     }
 
     /**

@@ -15,6 +15,11 @@
     <description>ddd4j 框架无关的核心架构示例（DDD/CQRS/Cache + Auth 鉴权矩阵）</description>
 
     <modules>
+        <!-- 跨运行时共享的生产型订单业务内核 -->
+        <module>ddd4j-sample-order-domain</module>
+        <module>ddd4j-sample-order-application</module>
+        <module>ddd4j-sample-order-testkit</module>
+
         <!-- 核心 DDD 示例：每框架一个，演示 Order 充血模型 + Goods 第三轨 + Cache + MQ -->
         <module>ddd4j-sample-spring</module>
         <module>ddd4j-sample-quarkus</module>

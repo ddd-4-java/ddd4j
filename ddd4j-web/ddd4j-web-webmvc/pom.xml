@@ -15,6 +15,11 @@
     </description>
 
     <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-web-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- Spring 桥接层 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -34,6 +39,10 @@
         <dependency>
             <groupId>com.github.hiwepy</groupId>
             <artifactId>spring-biz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-core</artifactId>
         </dependency>
         <!-- Spring WebSocket（可选） -->
         <dependency>
@@ -84,11 +93,6 @@
             <artifactId>swagger-annotations-jakarta</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>jackson-extension</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- Guava (used by GlobalExceptionHandler, LocalResourceProperteis) -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -100,6 +104,11 @@
             <groupId>org.pf4j</groupId>
             <artifactId>pf4j</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

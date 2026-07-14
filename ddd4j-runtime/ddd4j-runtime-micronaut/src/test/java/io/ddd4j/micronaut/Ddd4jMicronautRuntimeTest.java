@@ -1,0 +1,17 @@
+package io.ddd4j.micronaut;
+
+import io.ddd4j.runtime.testkit.AbstractRuntimeContractTest;
+import io.ddd4j.runtime.testkit.RuntimeContract;
+import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
+import io.ddd4j.runtime.testkit.RuntimeFixtures;
+
+class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
+
+    @Override
+    protected RuntimeContract createRuntime() {
+        RuntimeFixtures fixtures = new RuntimeFixtures();
+        Ddd4jMicronautRuntime runtime = new Ddd4jMicronautRuntime(fixtures.publisher(), fixtures.subjectProvider(),
+                fixtures.i18nProvider(), fixtures.commandBus());
+        return new RuntimeContractAdapter(runtime::start, runtime::close, fixtures.services());
+    }
+}

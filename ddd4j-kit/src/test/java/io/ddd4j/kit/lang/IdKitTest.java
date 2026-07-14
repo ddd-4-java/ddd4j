@@ -1,5 +1,6 @@
 package io.ddd4j.kit.lang;
 
+import cn.hutool.core.lang.Snowflake;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -115,6 +116,24 @@ class IdKitTest {
                 WORKER_ID, DATA_CENTER_ID, threadCount, idsPerThread, allIds.size(), sampleIds);
         assertEquals(threadCount * idsPerThread, allIds.size(),
                 "并发生成的 ID 应全部唯一，实际唯一数: " + allIds.size());
+    }
+
+    @Test
+    void getSnowflake_withTimeOffset_shouldCreateReusableGenerator() {
+        Snowflake first = IdKit.getSnowflake(1L, 1L, true, 5L);
+        Snowflake second = IdKit.getSnowflake(1L, 1L, true, 5L);
+
+        assertSame(first, second);
+        assertNotEquals(first.nextId(), first.nextId());
+    }
+
+    @Test
+    void getSnowflake_withRandomSequenceLimit_shouldCreateReusableGenerator() {
+        Snowflake first = IdKit.getSnowflake(2L, 2L, false, 5L, 16L);
+        Snowflake second = IdKit.getSnowflake(2L, 2L, false, 5L, 16L);
+
+        assertSame(first, second);
+        assertNotEquals(first.nextId(), first.nextId());
     }
 
     @Test

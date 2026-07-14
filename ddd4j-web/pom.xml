@@ -12,8 +12,7 @@
 
     <artifactId>ddd4j-web</artifactId>
     <packaging>pom</packaging>
-    <description>ddd4j Web 抽象聚合：webmvc/webflux/quarkus/javalin 四类框架实现。
-    </description>
+    <description>ddd4j Web 抽象聚合：统一 Web 语义、契约测试与多框架适配。</description>
 
     <dependencies>
         <!-- Test -->
@@ -30,8 +29,14 @@
     </dependencies>
 
     <modules>
+        <module>ddd4j-web-core</module>
+        <module>ddd4j-web-testkit</module>
         <module>ddd4j-web-javalin</module>
         <module>ddd4j-web-quarkus</module>
+        <module>ddd4j-web-micronaut</module>
+        <module>ddd4j-web-vertx</module>
+        <module>ddd4j-web-helidon</module>
+        <module>ddd4j-web-dropwizard</module>
         <module>ddd4j-web-webflux</module>
         <module>ddd4j-web-webmvc</module>
     </modules>

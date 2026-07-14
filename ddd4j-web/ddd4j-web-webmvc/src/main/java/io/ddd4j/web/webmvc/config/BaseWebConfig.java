@@ -1,14 +1,12 @@
 package io.ddd4j.web.webmvc.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.RequestInterceptor;
 import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
 import io.ddd4j.web.webmvc.core.GlobalResponseRAdvice;
 import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;
 import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
-import io.ddd4j.web.webmvc.interceptor.FeignHeaderInterceptor;
 import io.ddd4j.web.webmvc.utils.LocalDateTimeFormatter;
 import io.ddd4j.web.webmvc.utils.LocalTimeFormatter;
 import io.ddd4j.web.webmvc.ws.BaseWebSocketServer;
@@ -22,8 +20,6 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.socket.client.WebSocketClient;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -52,15 +48,6 @@ public class BaseWebConfig implements WebMvcConfigurer {
      * WebSocket 服务端列表
      */
     final List<BaseWebSocketServer> baseWebSocketServers;
-
-    /**
-     * Feign 请求头拦截器。
-     */
-    @Bean
-    public RequestInterceptor feignHeaderInterceptor() {
-        log.debug("Loading feignHeaderInterceptor");
-        return new FeignHeaderInterceptor();
-    }
 
     /**
      * 注册格式化器（日期、日期时间、时间）。
@@ -131,14 +118,6 @@ public class BaseWebConfig implements WebMvcConfigurer {
         } else {
             log.warn("baseWebInterceptors is empty!");
         }
-    }
-
-    /**
-     * WebSocket 客户端。
-     */
-    @Bean
-    public WebSocketClient webSocketClient() {
-        return new StandardWebSocketClient();
     }
 
     @PostConstruct

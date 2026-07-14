@@ -12,22 +12,33 @@
     </parent>
 
     <artifactId>ddd4j-sample-javalin</artifactId>
-    <description>Javalin 框架启动示例：展示如何将 ddd4j SPI 注入到 Javalin 容器。</description>
+    <description>Javalin 生产型 Order 示例：共享 DDD/CQRS 内核、Web 语义、Outbox 与 Bearer 接线。</description>
 
     <dependencies>
-        <!-- Javalin 是无 DI 框架，sample 不需要 ddd4j-runtime-*（那是 Spring/Quarkus/Guice 的反射注入） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
+            <artifactId>ddd4j-sample-order-application</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>io.javalin</groupId>
-            <artifactId>javalin</artifactId>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-web-javalin</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-cache</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

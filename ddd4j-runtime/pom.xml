@@ -12,12 +12,17 @@
 
     <artifactId>ddd4j-runtime</artifactId>
     <packaging>pom</packaging>
-    <description>Ddd4j 运行时绑定聚合：Spring / Quarkus / Guice 容器下的核心 SPI 实现。</description>
+    <description>Ddd4j 运行时绑定聚合：核心 SPI 的容器接线与共享契约测试。</description>
 
     <modules>
+        <module>ddd4j-runtime-testkit</module>
         <module>ddd4j-runtime-spring</module>
         <module>ddd4j-runtime-quarkus</module>
         <module>ddd4j-runtime-guice</module>
+        <module>ddd4j-runtime-micronaut</module>
+        <module>ddd4j-runtime-vertx</module>
+        <module>ddd4j-runtime-helidon</module>
+        <module>ddd4j-runtime-dropwizard</module>
     </modules>
 
 </project>

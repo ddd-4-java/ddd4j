@@ -20,7 +20,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import io.github.hiwepy.jackson.ser.MyBeanSerializerModifier;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
@@ -79,7 +78,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
     /**
      * MDC 日志拦截器
      */
-    private MdcInterceptor mdcInterceptor;
+    private Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor;
     /**
      * 本地资源配置
      */
@@ -87,11 +86,11 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
     public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
                                    LocaleChangeInterceptor localeChangeInterceptor,
-                                   MdcInterceptor mdcInterceptor) {
+                                   Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor) {
         super();
         this.localResourceProperteis = localResourceProperteis;
         this.localeChangeInterceptor = localeChangeInterceptor;
-        this.mdcInterceptor = mdcInterceptor;
+        this.ddd4jWebMvcInterceptor = ddd4jWebMvcInterceptor;
     }
 
     @Override
@@ -149,9 +148,6 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
                 .failOnUnknownProperties(false)
                 .featuresToEnable(MapperFeature.USE_GETTERS_AS_SETTERS, MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS).build();
 
-        /** 为objectMapper注册一个带有SerializerModifier的Factory */
-        objectMapper.setSerializerFactory(objectMapper.getSerializerFactory().withSerializerModifier(new MyBeanSerializerModifier()));
-
         //SerializerProvider serializerProvider = objectMapper.getSerializerProvider();
         //serializerProvider.setNullValueSerializer(NullObjectJsonSerializer.INSTANCE);
         MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter(objectMapper);
@@ -176,7 +172,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(mdcInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE);
+        registry.addInterceptor(ddd4jWebMvcInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE);
         registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE + 1);
     }
 
