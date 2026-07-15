@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Provider
-public final class Ddd4jHelidonExceptionMapper implements ExceptionMapper<Throwable> {
+public final class Ddd4jHelidonExceptionMapper implements ExceptionMapper<RuntimeException> {
 
     private final WebExceptionTranslator translator;
 
@@ -31,7 +31,7 @@ public final class Ddd4jHelidonExceptionMapper implements ExceptionMapper<Throwa
     }
 
     @Override
-    public Response toResponse(Throwable exception) {
+    public Response toResponse(RuntimeException exception) {
         WebError error = translate(exception);
         if (error.status() >= 500) {
             log.error("Unhandled Helidon HTTP request failure", exception);

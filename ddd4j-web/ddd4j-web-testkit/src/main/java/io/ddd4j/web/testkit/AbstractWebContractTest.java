@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public abstract class AbstractWebContractTest {
 
     private static final String VALID_BEARER = "Bearer contract-valid-token";
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     protected abstract WebContractClient client();
 
@@ -104,6 +104,6 @@ public abstract class AbstractWebContractTest {
     }
 
     private JsonNode body(WebContractResponse response) throws Exception {
-        return objectMapper.readTree(response.body());
+        return OBJECT_MAPPER.readTree(response.body());
     }
 }

@@ -600,9 +600,8 @@
         <zip4j.version>2.11.6</zip4j.version>
         <zipkin2.version>3.5.1</zipkin2.version>
         <zipkin-reporter.version>3.5.1</zipkin-reporter.version>
-        <zxing-extension.version>1.0.x.20260630-SNAPSHOT</zxing-extension.version>
         <zxing.version>3.5.4</zxing.version>
-
+        <zxing-extension.version>2.0.x.20260630-SNAPSHOT</zxing-extension.version>
         <angus-mail.version>2.0.5</angus-mail.version>
         <awaitility.version>4.2.2</awaitility.version>
         <cache2k.version>2.6.1.Final</cache2k.version>

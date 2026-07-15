@@ -1,103 +1,109 @@
 package io.ddd4j.web.quarkus;
 
-import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.WebContextScope;
+import io.ddd4j.web.core.CacheIdempotencyGuard;
+import io.ddd4j.web.core.ClientIpResolver;
+import io.ddd4j.web.core.RequestIdGenerator;
+import io.ddd4j.web.core.SynchronousWebRequestSession;
 import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.WebRequestContext;
-import io.vertx.core.http.HttpServerRequest;
-import jakarta.annotation.Priority;
+import io.ddd4j.web.core.WebRequestContextFactory;
+import io.ddd4j.web.core.WebRequestData;
+import io.ddd4j.web.core.WebRequestLifecycle;
+import io.vertx.ext.web.RoutingContext;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.ext.Provider;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.resteasy.reactive.server.ServerRequestFilter;
+import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.Optional;
 
-/** Opens the shared Web context and optionally authenticates a standard Bearer token. */
-@Provider
-@Priority(Priorities.AUTHENTICATION)
-public class Ddd4jQuarkusWebFilter implements ContainerRequestFilter, ContainerResponseFilter {
+/**
+ * Quarkus REST 同步请求上下文、Bearer Subject 与幂等过滤器。
+ */
+public class Ddd4jQuarkusWebFilter {
 
-    private static final String SCOPE_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".scope";
+    static final String SESSION_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".session";
+    static final String CONTEXT_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".context";
 
-    private final BearerSubjectAuthenticator authenticator = new BearerSubjectAuthenticator();
+    private final WebRequestContextFactory contextFactory;
+    private final WebRequestLifecycle requestLifecycle;
+    private final WebIdempotencyLifecycle idempotencyLifecycle;
 
-    @Context
-    HttpServerRequest request;
+    @Inject
+    RoutingContext routingContext;
 
-    @ConfigProperty(name = "ddd4j.quarkus.web.bearer-required", defaultValue = "false")
-    boolean bearerRequired;
-
-    @ConfigProperty(name = "ddd4j.quarkus.web.protected-path-prefix", defaultValue = "/")
-    String protectedPathPrefix;
-
-    @Override
-    public void filter(ContainerRequestContext requestContext) {
-        String requestId = requestContext.getHeaderString(WebHeaders.REQUEST_ID);
-        if (StrKit.isBlank(requestId)) {
-            requestId = UUID.randomUUID().toString();
-        }
-        String path = requestContext.getUriInfo().getRequestUri().getPath();
-        WebRequestContext context = new WebRequestContext(requestId,
-                requestContext.getHeaderString(WebHeaders.TRACE_ID),
-                requestContext.getHeaderString(WebHeaders.TENANT_ID),
-                requestContext.getHeaderString(WebHeaders.AUTHORIZATION), resolveLocale(requestContext),
-                clientIp(), requestContext.getMethod(), path);
-        WebContextScope scope = WebContextScope.open(context);
-        requestContext.setProperty(SCOPE_PROPERTY, scope);
-        requestContext.setProperty(WebHeaders.REQUEST_ID, requestId);
-        try {
-            if (bearerRequired && path.startsWith(protectedPathPrefix) && !isPublicPath(path)) {
-                ThreadContext.bind(authenticator.authenticateSubject(context.authorization()).subject());
-            }
-        } catch (RuntimeException exception) {
-            scope.close();
-            requestContext.removeProperty(SCOPE_PROPERTY);
-            throw exception;
-        }
+    public Ddd4jQuarkusWebFilter() {
+        this(Ddd4jQuarkusWebConfiguration.load());
     }
 
-    @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-        Object requestId = requestContext.getProperty(WebHeaders.REQUEST_ID);
-        if (Objects.nonNull(requestId)) {
-            responseContext.getHeaders().putSingle(WebHeaders.REQUEST_ID, requestId);
+    public Ddd4jQuarkusWebFilter(Ddd4jQuarkusWebConfiguration configuration) {
+        Ddd4jQuarkusWebConfiguration config = Objects.requireNonNull(configuration,
+                "configuration must not be null");
+        ClientIpResolver clientIpResolver = config.isTrustForwardedHeaders()
+                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
+        this.contextFactory = new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
+        this.requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(), config.accessPolicy());
+        this.idempotencyLifecycle = config.isIdempotencyEnabled()
+                ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
+                        config.getIdempotencyTtl()) : null;
+    }
+
+    Ddd4jQuarkusWebFilter(WebRequestContextFactory contextFactory,
+                          WebRequestLifecycle requestLifecycle,
+                          WebIdempotencyLifecycle idempotencyLifecycle) {
+        this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
+        this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
+        this.idempotencyLifecycle = idempotencyLifecycle;
+    }
+
+    @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
+    public void request(ContainerRequestContext request) {
+        WebRequestContext context = createContext(request);
+        SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
+                idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
+        request.setProperty(CONTEXT_PROPERTY, context);
+        request.setProperty(SESSION_PROPERTY, session);
+    }
+
+    @ServerResponseFilter(priority = Priorities.USER)
+    public void response(ContainerRequestContext request, ContainerResponseContext response) {
+        Object contextValue = request.getProperty(CONTEXT_PROPERTY);
+        if (contextValue instanceof WebRequestContext context) {
+            response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
+            response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
         }
-        closeScope(requestContext);
+        Object sessionValue = request.getProperty(SESSION_PROPERTY);
+        if (sessionValue instanceof SynchronousWebRequestSession session) {
+            session.complete(response.getStatus() < 400);
+        }
+        request.removeProperty(CONTEXT_PROPERTY);
+        request.removeProperty(SESSION_PROPERTY);
     }
 
-    private Locale resolveLocale(ContainerRequestContext context) {
-        return Objects.nonNull(context.getLanguage()) ? context.getLanguage() : Locale.getDefault();
+    private WebRequestContext createContext(ContainerRequestContext request) {
+        return contextFactory.create(new WebRequestData(
+                request.getHeaderString(WebHeaders.REQUEST_ID),
+                request.getHeaderString(WebHeaders.TRACE_ID),
+                request.getHeaderString(WebHeaders.TENANT_ID),
+                request.getHeaderString(WebHeaders.AUTHORIZATION),
+                Optional.ofNullable(request.getLanguage()).orElse(Locale.getDefault()),
+                request.getHeaderString(WebHeaders.FORWARDED_FOR),
+                request.getHeaderString("X-Real-IP"),
+                remoteAddress(),
+                request.getMethod(),
+                request.getUriInfo().getRequestUri().getPath()));
     }
 
-    private String clientIp() {
-        if (Objects.isNull(request)) {
+    private String remoteAddress() {
+        if (Objects.isNull(routingContext) || Objects.isNull(routingContext.request().remoteAddress())) {
             return null;
         }
-        String forwarded = request.getHeader(WebHeaders.FORWARDED_FOR);
-        if (StrKit.isNotBlank(forwarded)) {
-            return forwarded.split(",", 2)[0].trim();
-        }
-        return Objects.nonNull(request.remoteAddress()) ? request.remoteAddress().hostAddress() : null;
-    }
-
-    private void closeScope(ContainerRequestContext requestContext) {
-        Object value = requestContext.getProperty(SCOPE_PROPERTY);
-        if (value instanceof WebContextScope scope) {
-            scope.close();
-            requestContext.removeProperty(SCOPE_PROPERTY);
-        }
-    }
-
-    private boolean isPublicPath(String path) {
-        return "/health".equals(path) || path.startsWith("/q/health");
+        return routingContext.request().remoteAddress().hostAddress();
     }
 }

@@ -2,9 +2,16 @@ package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.*;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 import java.util.UUID;
 
@@ -30,10 +37,11 @@ public class QuarkusViewScheduler implements ViewScheduler {
      * Quartz 调度器
      */
     @Inject
-    Scheduler scheduler;
+    Instance<Scheduler> schedulers;
 
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+        Scheduler scheduler = scheduler();
         String identity = viewName + "-" + UUID.randomUUID();
         try {
             JobDetail job = JobBuilder.newJob(RunnableJob.class)
@@ -54,5 +62,15 @@ public class QuarkusViewScheduler implements ViewScheduler {
         } catch (SchedulerException ex) {
             throw new IllegalStateException("Failed to schedule view '" + viewName + "' with cron '" + cron + "'", ex);
         }
+    }
+
+    private Scheduler scheduler() {
+        if (schedulers.isUnsatisfied()) {
+            throw new IllegalStateException("Quartz Scheduler is unavailable; add the quarkus-quartz extension");
+        }
+        if (schedulers.isAmbiguous()) {
+            throw new IllegalStateException("Multiple Quartz Scheduler beans are available");
+        }
+        return schedulers.get();
     }
 }
