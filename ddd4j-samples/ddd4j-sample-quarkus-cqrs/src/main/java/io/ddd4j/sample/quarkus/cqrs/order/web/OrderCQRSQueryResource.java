@@ -1,6 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
 import io.ddd4j.sample.quarkus.cqrs.cache.OrderCacheService;
+import io.ddd4j.sample.quarkus.cqrs.order.web.dto.OrderResponse;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -78,6 +79,7 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
     @Path("/detail/{id}")
     public Response detail(@PathParam("id") String id) {
         return orderCacheService.getOrderDetail(id)
+                .map(OrderResponse::from)
                 .map(this::ok)
                 .orElseGet(() -> notFound("order not found: " + id));
     }

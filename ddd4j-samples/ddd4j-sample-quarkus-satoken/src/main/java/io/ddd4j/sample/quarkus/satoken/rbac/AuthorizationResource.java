@@ -43,7 +43,6 @@ import java.util.List;
  */
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class AuthorizationResource {
 
     @Inject
@@ -68,6 +67,7 @@ public class AuthorizationResource {
 
     @POST
     @Path("/users")
+    @Consumes(MediaType.APPLICATION_JSON)
     @SaCheckRole("admin")
     public R<User> createUser(User user) {
         return R.ok("user created", rbacService.createUser(user));
@@ -75,6 +75,7 @@ public class AuthorizationResource {
 
     @PUT
     @Path("/users/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @SaCheckRole("admin")
     public R<User> updateUser(@PathParam("id") String id, User patch) {
         return R.ok("user updated", rbacService.updateUser(id, patch));
@@ -120,6 +121,7 @@ public class AuthorizationResource {
 
     @POST
     @Path("/roles")
+    @Consumes(MediaType.APPLICATION_JSON)
     @SaCheckRole("admin")
     public R<Role> createRole(Role role) {
         return R.ok("role created", rbacService.createRole(role));
@@ -127,6 +129,7 @@ public class AuthorizationResource {
 
     @PUT
     @Path("/roles/{code}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @SaCheckRole("admin")
     public R<Role> updateRole(@PathParam("code") String code, Role patch) {
         return R.ok("role updated", rbacService.updateRole(code, patch));
@@ -164,6 +167,7 @@ public class AuthorizationResource {
 
     @POST
     @Path("/permissions")
+    @Consumes(MediaType.APPLICATION_JSON)
     @SaCheckRole("admin")
     public R<Permission> createPermission(Permission permission) {
         return R.ok("permission created", rbacService.createPermission(permission));

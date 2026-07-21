@@ -4,6 +4,7 @@ import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.spring.shiro.rbac.domain.model.Role;
 import io.ddd4j.sample.spring.shiro.rbac.domain.model.User;
+import io.ddd4j.sample.spring.shiro.rbac.domain.repository.PermissionRepository;
 import io.ddd4j.sample.spring.shiro.rbac.domain.repository.RoleRepository;
 import io.ddd4j.sample.spring.shiro.rbac.domain.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -47,14 +48,17 @@ public class AuthConfig {
     private final SubjectDataProvider subjectDataProvider;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
     @Autowired
     public AuthConfig(SubjectDataProvider subjectDataProvider,
                       UserRepository userRepository,
-                      RoleRepository roleRepository) {
+                      RoleRepository roleRepository,
+                      PermissionRepository permissionRepository) {
         this.subjectDataProvider = subjectDataProvider;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
     }
 
     /**
@@ -107,8 +111,8 @@ public class AuthConfig {
                         }
                         roles.add(role.getRoleCode());
                         for (String permissionId : role.getPermissionIds()) {
-                            // 权限 ID 即权限 Code（简化示例）
-                            permissions.add(permissionId);
+                            permissionRepository.findById(permissionId)
+                                    .ifPresent(permission -> permissions.add(permission.getPermissionCode()));
                         }
                     }
                 }

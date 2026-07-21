@@ -1,6 +1,8 @@
 package io.ddd4j.sample.quarkus.satoken.config;
 
+import io.ddd4j.auth.satoken.subject.SaTokenSubject;
 import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
@@ -18,6 +20,15 @@ import java.util.List;
  */
 @ApplicationScoped
 public class AuthConfig {
+
+    /**
+     * 将纯 Java Sa-Token Subject 暴露给 Quarkus 的 CDI SubjectProvider。
+     */
+    @Produces
+    @Singleton
+    public Subject subject() {
+        return new SaTokenSubject();
+    }
 
     /**
      * 注册权限数据源。

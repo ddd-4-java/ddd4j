@@ -57,4 +57,8 @@ public class InMemoryPermissionRepository {
         return store.size();
     }
 
+    public void clear() {
+        store.clear();
+    }
+
 }

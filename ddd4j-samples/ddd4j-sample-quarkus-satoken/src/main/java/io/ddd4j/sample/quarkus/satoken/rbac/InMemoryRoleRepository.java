@@ -90,4 +90,11 @@ public class InMemoryRoleRepository {
         return new HashSet<>(store.keySet());
     }
 
+    /**
+     * 清空内存数据，供可重复的样例测试重建金标数据。
+     */
+    public void clear() {
+        store.clear();
+    }
+
 }

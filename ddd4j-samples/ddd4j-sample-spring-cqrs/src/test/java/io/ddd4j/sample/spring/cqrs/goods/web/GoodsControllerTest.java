@@ -184,7 +184,7 @@ class GoodsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(
                                 new UpdateGoodsRequest(null, new BigDecimal("999.00")))))
-                .andExpect(jsonPath("$.data.price").value("999.00"));
+                .andExpect(jsonPath("$.data.price").value(999.0));
     }
 
     @Test

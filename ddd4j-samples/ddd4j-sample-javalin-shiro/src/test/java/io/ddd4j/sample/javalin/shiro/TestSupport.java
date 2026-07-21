@@ -4,8 +4,6 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -35,6 +33,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.fuin.ddd4j.core.EntityId;
 
 /**
  * 测试基础设施：手动构造 Shiro SecurityManager + Javalin 应用。
@@ -51,7 +50,6 @@ public final class TestSupport {
     public static Javalin start() {
         // 0) 注入 SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
-        BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, new NoopMQEventPublisher());
         BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, new NoopI18nProvider());
 
         // 1) 手动构造 RBAC + Shiro SecurityManager
@@ -191,13 +189,7 @@ public final class TestSupport {
 
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
         @Override
-        public <T> void publish(io.ddd4j.core.ddd.event.DomainEvent<T> event) {
-        }
-    }
-
-    private static final class NoopMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(MQEvent event) {
+        public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
         }
     }
 

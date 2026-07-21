@@ -93,7 +93,8 @@ class AuthIntegrationTest {
     @DisplayName("/auth/status - 已登录返回 login=true")
     void status_authenticated() throws Exception {
         login("admin", "admin123");
-        mockMvc.perform(get("/auth/status"))
+        mockMvc.perform(get("/auth/status")
+                        .header("Authorization", basic("admin", "admin123")))
                 .andExpect(jsonPath("$.login").value(true));
     }
 
@@ -101,7 +102,8 @@ class AuthIntegrationTest {
     @DisplayName("/auth/me - 当前用户")
     void me_authenticated() throws Exception {
         login("admin", "admin123");
-        mockMvc.perform(get("/auth/me"))
+        mockMvc.perform(get("/auth/me")
+                        .header("Authorization", basic("admin", "admin123")))
                 .andExpect(jsonPath("$.authenticated").value(true))
                 .andExpect(jsonPath("$.loginId").value("10001"));
     }
@@ -124,7 +126,9 @@ class AuthIntegrationTest {
     @DisplayName("/auth/check/permission - 已登录 admin 有 user:list")
     void checkPermission_admin_hasUserList() throws Exception {
         login("admin", "admin123");
-        mockMvc.perform(get("/auth/check/permission").param("permission", "user:list"))
+        mockMvc.perform(get("/auth/check/permission")
+                        .header("Authorization", basic("admin", "admin123"))
+                        .param("permission", "user:list"))
                 .andExpect(jsonPath("$.has").value(true));
     }
 
@@ -132,7 +136,9 @@ class AuthIntegrationTest {
     @DisplayName("/auth/check/role - 已登录 admin 有 admin 角色")
     void checkRole_admin_hasAdmin() throws Exception {
         login("admin", "admin123");
-        mockMvc.perform(get("/auth/check/role").param("role", "admin"))
+        mockMvc.perform(get("/auth/check/role")
+                        .header("Authorization", basic("admin", "admin123"))
+                        .param("role", "admin"))
                 .andExpect(jsonPath("$.has").value(true));
     }
 
@@ -140,7 +146,9 @@ class AuthIntegrationTest {
     @DisplayName("/auth/check/role - alice 没有 admin 角色")
     void checkRole_alice_hasNoAdmin() throws Exception {
         login("alice", "alice123");
-        mockMvc.perform(get("/auth/check/role").param("role", "admin"))
+        mockMvc.perform(get("/auth/check/role")
+                        .header("Authorization", basic("alice", "alice123"))
+                        .param("role", "admin"))
                 .andExpect(jsonPath("$.has").value(false));
     }
 
@@ -148,7 +156,8 @@ class AuthIntegrationTest {
     @DisplayName("业务鉴权 - alice 无 order:pay → 403")
     void payOrder_alice_forbidden() throws Exception {
         login("alice", "alice123");
-        mockMvc.perform(post("/auth/orders/123/pay"))
+        mockMvc.perform(post("/auth/orders/123/pay")
+                        .header("Authorization", basic("alice", "alice123")))
                 .andExpect(status().isForbidden());
     }
 
@@ -156,7 +165,8 @@ class AuthIntegrationTest {
     @DisplayName("业务鉴权 - admin 有 order:pay → 成功")
     void payOrder_admin_succeeds() throws Exception {
         login("admin", "admin123");
-        mockMvc.perform(post("/auth/orders/123/pay"))
+        mockMvc.perform(post("/auth/orders/123/pay")
+                        .header("Authorization", basic("admin", "admin123")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("paid"));
     }

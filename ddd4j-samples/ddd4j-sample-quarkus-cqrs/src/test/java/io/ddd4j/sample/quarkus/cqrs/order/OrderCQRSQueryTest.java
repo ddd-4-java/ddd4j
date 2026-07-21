@@ -138,7 +138,7 @@ class OrderCQRSQueryTest {
                 new CreateOrderCommand("ORDER-CQRS-REST-5", "BUYER-REST-5", "Z"));
         applicationService.addLine(new AddOrderLineCommand(
                 draft.id(), "S", "Z", 1, new BigDecimal("10")));
-        given()
+        given().urlEncodingEnabled(false)
                 .when().post("/orders/{id}:pay", draft.id())
                 .then()
                 .statusCode(200)
@@ -152,7 +152,7 @@ class OrderCQRSQueryTest {
         applicationService.addLine(new AddOrderLineCommand(
                 draft.id(), "S", "S", 1, new BigDecimal("10")));
         applicationService.pay(draft.id());
-        given()
+        given().urlEncodingEnabled(false)
                 .when().post("/orders/{id}:ship", draft.id())
                 .then()
                 .statusCode(200)
@@ -163,7 +163,7 @@ class OrderCQRSQueryTest {
     void shouldCancelOrderViaCommandRest() {
         Order draft = applicationService.createDraft(
                 new CreateOrderCommand("ORDER-CQRS-REST-7", "BUYER-REST-7", "C"));
-        given()
+        given().urlEncodingEnabled(false)
                 .when().post("/orders/{id}:cancel", draft.id())
                 .then()
                 .statusCode(200)

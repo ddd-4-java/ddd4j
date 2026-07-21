@@ -146,10 +146,20 @@ class RbacAuthorizationTest {
     @Test
     @DisplayName("admin 撤销用户角色")
     void revokeRole_admin() throws Exception {
-        // 10002 (alice) 已绑定 user 角色
-        mockMvc.perform(delete("/auth/users/10002/roles/user")
+        String username = "rr-" + UUID.randomUUID();
+        String body = mockMvc.perform(post("/auth/users")
+                        .header("Authorization", basic("admin", "admin123"))
+                        .param("username", username)
+                        .param("password", "pwd123"))
+                .andReturn().getResponse().getContentAsString();
+        String id = objectMapper.readTree(body).path("id").asText();
+        mockMvc.perform(put("/auth/users/" + id + "/roles/user")
                         .header("Authorization", basic("admin", "admin123")))
-                .andExpect(jsonPath("$.username").value("alice"));
+                .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/auth/users/" + id + "/roles/user")
+                        .header("Authorization", basic("admin", "admin123")))
+                .andExpect(jsonPath("$.username").value(username));
     }
 
     @Test

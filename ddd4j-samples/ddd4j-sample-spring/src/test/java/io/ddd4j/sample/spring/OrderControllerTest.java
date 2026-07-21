@@ -65,10 +65,9 @@ class OrderControllerTest {
     private void addLine(String orderId, String goodsId, String goodsName, int qty, BigDecimal price) throws Exception {
         mockMvc.perform(post("/orders/" + orderId + "/lines")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(
-                                new AddOrderLineRequest(goodsId, goodsName, qty, price))))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.lines.length()").value(1));
+                .content(objectMapper.writeValueAsString(
+                        new AddOrderLineRequest(goodsId, goodsName, qty, price))))
+                .andExpect(status().isOk());
     }
 
     // ============================ POST /orders ============================

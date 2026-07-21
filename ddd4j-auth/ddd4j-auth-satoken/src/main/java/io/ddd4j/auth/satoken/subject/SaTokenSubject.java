@@ -469,17 +469,20 @@ public class SaTokenSubject implements Subject {
 
     @Override
     public Object getUserId() {
-        return StpKit.getUserId();
+        AuthPrincipal principal = getPrincipal();
+        return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 
     @Override
     public Object getOrgId() {
-        return StpKit.getOrgId();
+        AuthPrincipal principal = getPrincipal();
+        return Objects.nonNull(principal) ? principal.getOrgId() : null;
     }
 
     @Override
     public Object getRoleId() {
-        return StpKit.getRoleId();
+        AuthPrincipal principal = getPrincipal();
+        return Objects.nonNull(principal) ? principal.getRoleId() : null;
     }
 
     @Override

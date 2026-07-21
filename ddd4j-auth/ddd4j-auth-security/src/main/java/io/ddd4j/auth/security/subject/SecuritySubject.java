@@ -5,6 +5,7 @@ import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.exception.*;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,10 +63,29 @@ public class SecuritySubject implements Subject {
     @Override
     public <T extends AuthPrincipal> T getPrincipal() {
         Authentication auth = getAuthentication();
-        if (Objects.isNull(auth)) {
+        if (Objects.isNull(auth) || auth instanceof AnonymousAuthenticationToken || !auth.isAuthenticated()) {
             return null;
         }
-        return castPrincipal(auth.getPrincipal());
+        T principal = castPrincipal(auth.getPrincipal());
+        if (Objects.nonNull(principal)) {
+            return principal;
+        }
+        if (auth.getPrincipal() instanceof AuthUserDetails userDetails) {
+            return (T) userDetails.getAuthPrincipal();
+        }
+        List<AuthPrincipal.RolePair> roles = new ArrayList<>();
+        auth.getAuthorities().stream()
+                .map(authority -> authority.getAuthority())
+                .filter(authority -> authority.startsWith("ROLE_"))
+                .map(authority -> authority.substring("ROLE_".length()))
+                .forEach(role -> roles.add(new AuthPrincipal.RolePair().setRoleCode(role)));
+        AuthPrincipal adapted = new AuthPrincipal()
+                .setLoginId(auth.getName())
+                .setUserId(auth.getName())
+                .setUserCode(auth.getName())
+                .setRoleCode(roles.isEmpty() ? null : roles.get(0).getRoleCode())
+                .setRoles(roles);
+        return (T) adapted;
     }
 
     @Override
@@ -91,7 +112,8 @@ public class SecuritySubject implements Subject {
         Object credentials = Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : "";
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : request.getLoginId(),
-                credentials
+                credentials,
+                List.of()
         );
         auth.setDetails(request.getExtra());
         try {
@@ -371,7 +393,9 @@ public class SecuritySubject implements Subject {
     @Override
     public boolean isAuthenticated() {
         Authentication auth = getAuthentication();
-        return Objects.nonNull(auth) && auth.isAuthenticated();
+        return Objects.nonNull(auth)
+                && !(auth instanceof AnonymousAuthenticationToken)
+                && auth.isAuthenticated();
     }
 
     @Override
@@ -399,7 +423,7 @@ public class SecuritySubject implements Subject {
     @Override
     public Object getLoginId() {
         Authentication auth = getAuthentication();
-        if (Objects.isNull(auth)) {
+        if (Objects.isNull(auth) || auth instanceof AnonymousAuthenticationToken) {
             return null;
         }
         return auth.getName();

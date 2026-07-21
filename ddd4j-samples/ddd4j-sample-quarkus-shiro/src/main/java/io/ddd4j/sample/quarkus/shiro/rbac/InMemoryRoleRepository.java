@@ -90,4 +90,8 @@ public class InMemoryRoleRepository {
         return new HashSet<>(store.keySet());
     }
 
+    public void clear() {
+        store.clear();
+    }
+
 }

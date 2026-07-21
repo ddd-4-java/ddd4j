@@ -1,11 +1,15 @@
 package io.ddd4j.sample.quarkus.shiro;
 
+import io.ddd4j.sample.quarkus.shiro.rbac.RbacConfig;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
@@ -26,6 +30,14 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 @QuarkusTest
 class RbacResourceTest {
 
+    @Inject
+    RbacConfig rbacConfig;
+
+    @BeforeEach
+    void resetRbacData() {
+        rbacConfig.reset();
+    }
+
     // ========== 登录 / 认证 ==========
 
     private static String loginAs(String username, String password) {
@@ -44,7 +56,7 @@ class RbacResourceTest {
         newUser.put("username", username);
         newUser.put("displayName", displayName);
         newUser.put("password", "123456");
-        newUser.put("roleCodes", role);
+        newUser.put("roleCodes", role instanceof String roleCode ? new HashSet<>(Set.of(roleCode)) : role);
         return newUser;
     }
 

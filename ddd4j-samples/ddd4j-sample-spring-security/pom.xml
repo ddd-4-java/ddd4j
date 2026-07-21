@@ -68,6 +68,11 @@
             <artifactId>ddd4j-runtime-spring</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-web-webmvc</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
         <!-- Spring Boot Web + Security -->
         <dependency>

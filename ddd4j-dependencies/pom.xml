@@ -41,6 +41,8 @@
         <!-- ArchUnit：分层约束验证（ddd4j-ddd-rules 模块用） -->
         <archunit.version>1.4.2</archunit.version>
         <artemis.version>2.44.0</artemis.version>
+        <!-- ASM：统一 Jetty/Quarkus 测试类路径，避免旧版 Handle 覆盖新版 API -->
+        <asm.version>9.10.1</asm.version>
         <asmsupport.version>0.4.3</asmsupport.version>
         <aspectj.version>1.9.25.1</aspectj.version>
         <assertj.version>3.27.7</assertj.version>
@@ -1434,6 +1436,12 @@
                 <groupId>com.tngtech.archunit</groupId>
                 <artifactId>archunit-junit5</artifactId>
                 <version>${archunit.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.ow2.asm/asm -->
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.wensiqun/asmsupport-client -->
             <dependency>

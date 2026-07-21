@@ -1,5 +1,7 @@
 package io.ddd4j.sample.spring.security.config;
 
+import io.ddd4j.auth.security.subject.AuthUserDetails;
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.sample.spring.security.rbac.InMemoryRoleRepository;
 import io.ddd4j.sample.spring.security.rbac.InMemoryUserRepository;
 import io.ddd4j.sample.spring.security.rbac.Role;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Spring Security 配置：HTTP 安全 + UserDetailsService + 启用方法级注解权限。
@@ -52,19 +55,23 @@ public class SecurityConfig {
             // 角色：ROLE_xxx（Spring Security 默认前缀）
             List<SimpleGrantedAuthority> authorities = roleRepository.findAll().stream()
                     .filter(r -> user.getRoleCodes().contains(r.getCode()))
-                    .map(Role::getCode)
-                    .map(code -> new SimpleGrantedAuthority("ROLE_" + code))
+                    .flatMap(role -> Stream.concat(
+                            Stream.of(new SimpleGrantedAuthority("ROLE_" + role.getCode())),
+                            role.getPermissionCodes().stream().map(SimpleGrantedAuthority::new)))
                     .toList();
             // 权限：直接放入 authorities，Spring Security 的 hasAuthority() 会匹配
             // （合并角色+权限，统一作为 authorities）
-            return new org.springframework.security.core.userdetails.User(
+            AuthPrincipal principal = new AuthPrincipal()
+                    .setLoginId(user.getId())
+                    .setUserId(user.getId())
+                    .setUserCode(user.getUsername())
+                    .setRoleCode(user.getRoleCodes().stream().findFirst().orElse(null));
+            return new AuthUserDetails(
                     user.getUsername(),
                     user.getPassword(),
                     user.isEnabled(),
-                    true,
-                    true,
-                    true,
-                    authorities
+                    authorities,
+                    principal
             );
         };
     }

@@ -34,7 +34,6 @@ import java.util.Map;
  */
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
 
     @Inject
@@ -47,8 +46,15 @@ public class AuthenticationResource {
      */
     @POST
     @Path("/login")
-    public R<Map<String, Object>> login(LoginRequest request) {
-        return R.ok("login success", rbacService.login(request.username(), request.password()));
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Map<String, Object> login(LoginRequest request) {
+        Map<String, Object> data = rbacService.login(request.username(), request.password());
+        Map<String, Object> response = new HashMap<>();
+        response.put("code", 0);
+        response.put("msg", "login success");
+        response.put("token", data.get("token"));
+        response.put("data", data);
+        return response;
     }
 
     /**
@@ -141,7 +147,8 @@ public class AuthenticationResource {
     public R<Boolean> businessDeleteUser(@PathParam("id") String id) {
         rbacService.requireLogin();
         rbacService.requireRoleAndPermission("admin", "user:delete");
-        return R.ok("user deleted", rbacService.deleteUser(id));
+        rbacService.deleteUser(id);
+        return R.ok("user deleted", true);
     }
 
     /**

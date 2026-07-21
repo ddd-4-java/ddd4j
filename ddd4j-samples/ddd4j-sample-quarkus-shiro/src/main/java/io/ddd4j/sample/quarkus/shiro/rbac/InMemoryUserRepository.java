@@ -116,4 +116,8 @@ public class InMemoryUserRepository {
         return store.values();
     }
 
+    public void clear() {
+        store.clear();
+    }
+
 }

@@ -2,6 +2,8 @@ package io.ddd4j.sample.spring.shiro.config;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.auth.shiro.subject.ShiroSubjectProvider;
 import io.ddd4j.sample.spring.shiro.rbac.domain.model.Permission;
 import io.ddd4j.sample.spring.shiro.rbac.domain.model.Role;
 import io.ddd4j.sample.spring.shiro.rbac.domain.model.User;
@@ -11,6 +13,7 @@ import io.ddd4j.sample.spring.shiro.rbac.domain.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.HashSet;
 import java.util.List;
@@ -90,9 +93,13 @@ public class RbacConfig {
         User disabled = new User("10003", "disabled", "123456", "李四（已禁用）", User.Status.DISABLED);
         disabled.assignRoles(new HashSet<>(List.of("R002")));
 
+        User manager = new User("10004", "manager", "123456", "业务管理员", User.Status.ENABLED);
+        manager.assignRoles(new HashSet<>(List.of("R003")));
+
         userRepository.save(admin);
         userRepository.save(user);
         userRepository.save(disabled);
+        userRepository.save(manager);
     }
 
     /**
@@ -101,6 +108,7 @@ public class RbacConfig {
      * <p>关键演示：业务实现 SubjectDataProvider，框架不感知具体数据来源。
      */
     @Bean
+    @Primary
     public SubjectDataProvider subjectDataProvider() {
         return new SubjectDataProvider() {
 
@@ -152,6 +160,14 @@ public class RbacConfig {
                         .orElse(false);
             }
         };
+    }
+
+    /**
+     * 将 Shiro 的 Subject 适配器显式交给 SpringContextBridge 管理。
+     */
+    @Bean
+    public SubjectProvider subjectProvider() {
+        return new ShiroSubjectProvider();
     }
 
 }

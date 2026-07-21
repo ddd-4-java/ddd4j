@@ -6,8 +6,6 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.sample.javalin.cqrs.cache.GoodsCacheService;
@@ -25,6 +23,7 @@ import io.ddd4j.sample.javalin.cqrs.order.web.OrderCQRSQueryController;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderController;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
+import org.fuin.ddd4j.core.EntityId;
 
 import java.util.Collection;
 
@@ -41,7 +40,6 @@ public final class TestSupport {
     public static Javalin start() {
         // 1. SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
-        BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, new NoopMQEventPublisher());
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new NoopSubjectProvider());
         BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, new NoopI18nProvider());
 
@@ -97,17 +95,11 @@ public final class TestSupport {
 
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
         @Override
-        public <T> void publish(DomainEvent<T> event) {
+        public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         }
 
         @Override
-        public <T> void publishAll(Collection<DomainEvent<T>> events) {
-        }
-    }
-
-    private static final class NoopMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(MQEvent event) {
+        public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         }
     }
 

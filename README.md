@@ -1,5 +1,7 @@
 # Ddd4j — 框架无关的 DDD/CQRS/ES 通用基础层
 
+> Rust 语义移植与 82 项兼容矩阵见 [ddd4r 迁移入口](./docs/DDD4R_MIGRATION.md)。
+
 **Ddd4j** 是一个**不与任何具体容器框架强绑定**的 DDD 项目脚手架，为 [ddd4j-boot](https://github.com/hiwepy/ddd4j-boot)
 （Spring Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/hiwepy/ddd4j-javalin)
 以及 Micronaut、Vert.x、Helidon、Dropwizard 等运行时提供**同一套纯净的、可复用的领域层基础**。

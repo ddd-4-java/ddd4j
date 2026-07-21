@@ -24,6 +24,7 @@ import io.vertx.ext.web.Router;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -132,14 +133,21 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
                 headers.forEach(builder::header);
                 HttpRequest.BodyPublisher publisher = Objects.isNull(body)
                         ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(),
-                        HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response = send(builder.method(method, publisher).build());
                 return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
                 throw new IllegalStateException("Vert.x contract request interrupted", exception);
             } catch (Exception exception) {
                 throw new IllegalStateException("Vert.x contract request failed", exception);
+            }
+        }
+
+        private HttpResponse<String> send(HttpRequest request) throws IOException, InterruptedException {
+            try {
+                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException firstFailure) {
+                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             }
         }
     }

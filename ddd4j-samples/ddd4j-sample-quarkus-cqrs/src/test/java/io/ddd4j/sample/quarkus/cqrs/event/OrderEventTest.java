@@ -159,12 +159,8 @@ class OrderEventTest {
         applicationService.pay(draft.id());
         applicationService.ship(draft.id());
 
-        Order finalOrder = applicationService.pay(draft.id());
-        // 第二次支付触发 IllegalStateException，这里跳过；改为 cancel
-
-        // 验证已经历 Created -> Paid -> Shipped
-        Order shipped = applicationService.ship(draft.id());
-        assertThat(shipped.status()).isEqualTo(OrderStatus.SHIPPED);
+        // 验证已经历 Created -> Paid -> Shipped，避免重复执行非幂等状态转换。
+        assertThat(draft.status()).isEqualTo(OrderStatus.SHIPPED);
     }
 
     @Test
@@ -204,7 +200,7 @@ class OrderEventTest {
     void shouldTriggerCancelEventViaRest() {
         Order draft = applicationService.createDraft(
                 new CreateOrderCommand("REST-EV-2", "BUYER-REST-EV-2", "Z"));
-        given()
+        given().urlEncodingEnabled(false)
                 .when().post("/orders/{id}:cancel", draft.id())
                 .then().statusCode(200)
                 .body("data.status", equalTo("CANCELLED"));
@@ -216,10 +212,10 @@ class OrderEventTest {
                 new CreateOrderCommand("REST-EV-3", "BUYER-REST-EV-3", "Z"));
         applicationService.addLine(new AddOrderLineCommand(
                 draft.id(), "S", "I", 1, new BigDecimal("1")));
-        given()
+        given().urlEncodingEnabled(false)
                 .when().post("/orders/{id}:pay", draft.id())
                 .then().statusCode(200).body("code", is(0));
-        given()
+        given().urlEncodingEnabled(false)
                 .when().post("/orders/{id}:ship", draft.id())
                 .then().statusCode(200).body("code", is(0));
     }

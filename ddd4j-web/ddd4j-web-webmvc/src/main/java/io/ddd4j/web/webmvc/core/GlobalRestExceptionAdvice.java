@@ -79,7 +79,7 @@ public class GlobalRestExceptionAdvice {
     @ExceptionHandler({BizRuntimeException.class})
     public R<String> serviceException(HttpServletRequest request, BizRuntimeException e) {
         log.warn("服务异常：", e);
-        return R.fail(e.getCode(), e.getMessage());
+        return R.fail(e.getMessage());
     }
 
     /**

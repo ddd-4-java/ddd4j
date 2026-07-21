@@ -20,7 +20,9 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.util.SubjectKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationListener;
@@ -57,6 +59,10 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
      */
     private final ObjectProvider<SubjectProvider> subjectProviderProvider;
     /**
+     * 权限数据提供者
+     */
+    private final ObjectProvider<SubjectDataProvider> subjectDataProviderProvider;
+    /**
      * 国际化提供者
      */
     private final ObjectProvider<I18nProvider> i18nProviderProvider;
@@ -64,9 +70,11 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
     public SpringContextBridge(
             ObjectProvider<DomainEventPublisher> domainEventPublisherProvider,
             ObjectProvider<SubjectProvider> subjectProviderProvider,
+            ObjectProvider<SubjectDataProvider> subjectDataProviderProvider,
             ObjectProvider<I18nProvider> i18nProviderProvider) {
         this.domainEventPublisherProvider = domainEventPublisherProvider;
         this.subjectProviderProvider = subjectProviderProvider;
+        this.subjectDataProviderProvider = subjectDataProviderProvider;
         this.i18nProviderProvider = i18nProviderProvider;
     }
 
@@ -84,6 +92,15 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         SubjectProvider subjectProvider = subjectProviderProvider.getIfAvailable();
         if (Objects.nonNull(subjectProvider)) {
             BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider);
+            // SubjectKit is the legacy-compatible static facade used by the auth adapters.
+            // Keep it synchronized with the context registry until the facade itself is
+            // migrated to Contexts lookup.
+            SubjectKit.register(subjectProvider);
+        }
+
+        SubjectDataProvider subjectDataProvider = subjectDataProviderProvider.getIfAvailable();
+        if (Objects.nonNull(subjectDataProvider)) {
+            SubjectKit.setDataProvider(subjectDataProvider);
         }
 
         // I18nProvider（可选）

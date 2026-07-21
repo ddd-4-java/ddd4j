@@ -1,6 +1,9 @@
 package io.ddd4j.sample.quarkus.satoken;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.ddd4j.sample.quarkus.satoken.rbac.RbacConfig;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -25,6 +28,14 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
  */
 @QuarkusTest
 class RbacResourceTest {
+
+    @Inject
+    RbacConfig rbacConfig;
+
+    @BeforeEach
+    void resetRbacData() {
+        rbacConfig.reset();
+    }
 
     // ========== 登录 / 认证 ==========
 

@@ -75,6 +75,18 @@ public class OrderController {
     }
 
     /**
+     * 按订单编号查询订单。
+     *
+     * @param orderNo 订单编号
+     * @return R 响应
+     */
+    @GetMapping("/by-no")
+    public R<OrderResponse> findByOrderNo(@RequestParam String orderNo) {
+        Order order = orderApplicationService.findByOrderNo(orderNo);
+        return R.ok(OrderResponse.from(order));
+    }
+
+    /**
      * 添加订单行。
      *
      * @param id      订单 ID

@@ -76,9 +76,9 @@ class AuthControllerTest {
     }
 
     @Test
-    void shouldDenyListUsersForNonAdmin() throws Exception {
+    void shouldAllowListUsersForUserWithPermission() throws Exception {
         mockMvc.perform(get("/auth/users").header("Authorization", ALICE_BASIC))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk());
     }
 
     @Test

@@ -5,11 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ControllerAdvice
 @ResponseBody
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j(topic = "### DDD4J-AUTH : SecurityExceptionHandler ###")
 public class SecurityExceptionHandler {
 
@@ -54,7 +60,12 @@ public class SecurityExceptionHandler {
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ApiRestResponse<String>> accessDeniedException(AccessDeniedException ex) {
         log.warn("Spring Security 授权异常：{}", ex.getMessage());
-        return new ResponseEntity<>(ApiRestResponse.of(403, "无权限访问"), HttpStatus.FORBIDDEN);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean unauthenticated = authentication == null
+                || authentication instanceof AnonymousAuthenticationToken
+                || !authentication.isAuthenticated();
+        HttpStatus status = unauthenticated ? HttpStatus.UNAUTHORIZED : HttpStatus.FORBIDDEN;
+        return new ResponseEntity<>(ApiRestResponse.of(status.value(), "无权限访问"), status);
     }
 
 }

@@ -5,6 +5,7 @@ import io.ddd4j.sample.quarkus.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.OrderStatus;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.quarkus.cqrs.order.infrastructure.InMemoryOrderRepository;
+import io.ddd4j.sample.quarkus.cqrs.order.web.dto.OrderResponse;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -59,6 +60,7 @@ public class OrderQueryResource extends TenantAwareResource {
     @Path("/{id}")
     public Response getById(@PathParam("id") String id) {
         return cacheService.getOrder(id)
+                .map(OrderResponse::from)
                 .map(this::ok)
                 .orElseGet(() -> notFound("order not found: " + id));
     }
@@ -83,7 +85,7 @@ public class OrderQueryResource extends TenantAwareResource {
         } else {
             orders = inMemory.findAll();
         }
-        return ok(orders);
+        return ok(orders.stream().map(OrderResponse::from).toList());
     }
 
     /**

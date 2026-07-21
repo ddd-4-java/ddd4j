@@ -44,7 +44,6 @@ import java.util.List;
  */
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class AuthorizationResource {
 
     @Inject
@@ -82,6 +81,7 @@ public class AuthorizationResource {
 
     @POST
     @Path("/users")
+    @Consumes(MediaType.APPLICATION_JSON)
     public R<User> createUser(User user) {
         rbacService.requireLogin();
         rbacService.requireRole("admin");
@@ -90,6 +90,7 @@ public class AuthorizationResource {
 
     @PUT
     @Path("/users/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public R<User> updateUser(@PathParam("id") String id, User patch) {
         rbacService.requireLogin();
         rbacService.requireRole("admin");
@@ -138,6 +139,7 @@ public class AuthorizationResource {
 
     @POST
     @Path("/roles")
+    @Consumes(MediaType.APPLICATION_JSON)
     public R<Role> createRole(Role role) {
         rbacService.requireLogin();
         rbacService.requireRole("admin");
@@ -146,6 +148,7 @@ public class AuthorizationResource {
 
     @PUT
     @Path("/roles/{code}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public R<Role> updateRole(@PathParam("code") String code, Role patch) {
         rbacService.requireLogin();
         rbacService.requireRole("admin");
@@ -187,6 +190,7 @@ public class AuthorizationResource {
 
     @POST
     @Path("/permissions")
+    @Consumes(MediaType.APPLICATION_JSON)
     public R<Permission> createPermission(Permission permission) {
         rbacService.requireLogin();
         rbacService.requireRole("admin");

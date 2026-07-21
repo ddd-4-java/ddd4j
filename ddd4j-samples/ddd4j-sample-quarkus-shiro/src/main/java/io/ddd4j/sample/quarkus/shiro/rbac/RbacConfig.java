@@ -44,6 +44,17 @@ public class RbacConfig {
      * 应用启动时初始化演示数据。
      */
     void onStart(@Observes StartupEvent event) {
+        reset();
+    }
+
+    /**
+     * 重建样例的确定性 RBAC 金标数据。
+     */
+    public synchronized void reset() {
+        userRepository.clear();
+        roleRepository.clear();
+        permissionRepository.clear();
+
         // 1. 权限
         permissionRepository.save(new Permission("user:list", "用户列表", "查询用户列表"));
         permissionRepository.save(new Permission("user:add", "新增用户", "新增用户"));

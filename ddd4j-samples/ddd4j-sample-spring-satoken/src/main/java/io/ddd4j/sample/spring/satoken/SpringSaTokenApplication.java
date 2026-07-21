@@ -1,8 +1,12 @@
 package io.ddd4j.sample.spring.satoken;
 
+import io.ddd4j.spring.context.SpringContextBridge;
+import io.ddd4j.spring.event.SpringDomainEventPublisher;
+import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 /**
  * Spring Boot + Sa-Token 鉴权示例启动类。
@@ -18,6 +22,7 @@ import org.springframework.context.annotation.ComponentScan;
         "io.ddd4j.sample.spring.satoken",
         "io.ddd4j.core.ddd.repository"
 })
+@Import({SpringContextBridge.class, SpringDomainEventPublisher.class, GlobalRestExceptionAdvice.class})
 public class SpringSaTokenApplication {
 
     public static void main(String[] args) {

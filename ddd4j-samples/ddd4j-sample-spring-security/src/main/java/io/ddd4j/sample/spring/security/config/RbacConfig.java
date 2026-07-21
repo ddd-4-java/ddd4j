@@ -2,12 +2,17 @@ package io.ddd4j.sample.spring.security.config;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.auth.security.subject.SecuritySubjectProvider;
 import io.ddd4j.sample.spring.security.rbac.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -57,20 +62,21 @@ public class RbacConfig {
 
         // 角色
         Role admin = new Role("admin", "管理员", "拥有所有权限");
-        admin.setPermissionCodes(Set.of("user:list", "user:add", "user:delete", "order:pay", "order:list"));
+        admin.setPermissionCodes(new HashSet<>(Set.of(
+                "user:list", "user:add", "user:delete", "order:pay", "order:list")));
         roleRepository.save(admin);
 
         Role user = new Role("user", "普通用户", "仅查询用户列表与订单");
-        user.setPermissionCodes(Set.of("user:list", "order:list"));
+        user.setPermissionCodes(new HashSet<>(Set.of("user:list", "order:list")));
         roleRepository.save(user);
 
         // 用户
         User adminUser = new User("10001", "admin", "admin123");
-        adminUser.setRoleCodes(Set.of("admin"));
+        adminUser.setRoleCodes(new HashSet<>(Set.of("admin")));
         userRepository.save(adminUser);
 
         User alice = new User("10002", "alice", "alice123");
-        alice.setRoleCodes(Set.of("user"));
+        alice.setRoleCodes(new HashSet<>(Set.of("user")));
         userRepository.save(alice);
     }
 
@@ -81,12 +87,13 @@ public class RbacConfig {
      * 用于 ddd4j SubjectKit 的统一鉴权入口。
      */
     @Bean
+    @Primary
     public SubjectDataProvider subjectDataProvider() {
         return new SubjectDataProvider() {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
-                User user = userRepository.findById(String.valueOf(principal.getLoginId())).orElse(null);
-                if (user == null) {
+                User user = resolveUser(principal);
+                if (Objects.isNull(user)) {
                     return List.of();
                 }
                 return roleRepository.findAll().stream()
@@ -98,13 +105,28 @@ public class RbacConfig {
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
-                User user = userRepository.findById(String.valueOf(principal.getLoginId())).orElse(null);
-                if (user == null) {
+                User user = resolveUser(principal);
+                if (Objects.isNull(user)) {
                     return List.of();
                 }
                 return List.copyOf(user.getRoleCodes());
             }
+
+            private User resolveUser(AuthPrincipal principal) {
+                String loginId = String.valueOf(principal.getLoginId());
+                return userRepository.findById(loginId)
+                        .or(() -> userRepository.findByUsername(loginId))
+                        .orElse(null);
+            }
         };
+    }
+
+    /**
+     * 将 Spring Security 的 Subject 适配器显式交给 SpringContextBridge 管理。
+     */
+    @Bean
+    public SubjectProvider subjectProvider() {
+        return new SecuritySubjectProvider();
     }
 
 }

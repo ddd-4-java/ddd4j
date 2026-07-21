@@ -6,6 +6,7 @@ import io.ddd4j.sample.quarkus.cqrs.order.application.OrderApplicationService;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.service.OrderDomainService;
+import io.ddd4j.sample.quarkus.cqrs.order.web.dto.OrderResponse;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -42,7 +43,6 @@ import java.util.Optional;
  */
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class OrderResource extends TenantAwareResource {
 
     private final OrderApplicationService applicationService;
@@ -68,7 +68,8 @@ public class OrderResource extends TenantAwareResource {
     @Path("/{id}")
     public Response getById(@PathParam("id") String id) {
         Optional<Order> order = repository.findById(id);
-        return order.map(this::ok)
+        return order.map(OrderResponse::from)
+                .map(this::ok)
                 .orElseGet(() -> notFound("order not found: " + id));
     }
 
@@ -79,6 +80,7 @@ public class OrderResource extends TenantAwareResource {
     @Path("/orderNo/{orderNo}")
     public Response getByOrderNo(@PathParam("orderNo") String orderNo) {
         return repository.findByOrderNo(orderNo)
+                .map(OrderResponse::from)
                 .map(this::ok)
                 .orElseGet(() -> notFound("order not found by orderNo: " + orderNo));
     }
@@ -87,10 +89,11 @@ public class OrderResource extends TenantAwareResource {
      * 创建草稿订单。
      */
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response create(CreateOrderRequest request) {
         Order order = applicationService.createDraft(
                 new CreateOrderCommand(request.orderNo(), request.buyerId(), request.buyerName()));
-        return ok(order);
+        return ok(OrderResponse.from(order));
     }
 
     /**
@@ -98,11 +101,12 @@ public class OrderResource extends TenantAwareResource {
      */
     @POST
     @Path("/{id}/lines")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response addLine(@PathParam("id") String id, AddLineRequest request) {
         Order order = applicationService.addLine(
                 new AddOrderLineCommand(id, request.goodsId(), request.goodsName(),
                         request.quantity(), request.unitPrice()));
-        return ok(order);
+        return ok(OrderResponse.from(order));
     }
 
     /**
@@ -111,7 +115,7 @@ public class OrderResource extends TenantAwareResource {
     @POST
     @Path("/{id}:pay")
     public Response pay(@PathParam("id") String id) {
-        return ok(applicationService.pay(id));
+        return ok(OrderResponse.from(applicationService.pay(id)));
     }
 
     /**
@@ -120,7 +124,7 @@ public class OrderResource extends TenantAwareResource {
     @POST
     @Path("/{id}:ship")
     public Response ship(@PathParam("id") String id) {
-        return ok(applicationService.ship(id));
+        return ok(OrderResponse.from(applicationService.ship(id)));
     }
 
     /**
@@ -129,7 +133,7 @@ public class OrderResource extends TenantAwareResource {
     @POST
     @Path("/{id}:cancel")
     public Response cancel(@PathParam("id") String id) {
-        return ok(applicationService.cancel(id));
+        return ok(OrderResponse.from(applicationService.cancel(id)));
     }
 
     /**
@@ -137,6 +141,7 @@ public class OrderResource extends TenantAwareResource {
      */
     @POST
     @Path("/cancel-all")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response cancelAllDrafts(CancelAllRequest request) {
         int cancelled = domainService.cancelAllDraftsOf(request.buyerId());
         return ok(cancelled);

@@ -81,6 +81,7 @@ public class RbacService implements SubjectDataProvider {
         // 登录：调用 SubjectKit 统一入口（sa-token/shiro/security 各自实现）
         AuthRequest request = AuthRequest.of(user.getUserId()).setTimeout(7200);
         request.setPrincipal(principal);
+        request.extra("credential", password);
         return SubjectKit.login(request);
     }
 

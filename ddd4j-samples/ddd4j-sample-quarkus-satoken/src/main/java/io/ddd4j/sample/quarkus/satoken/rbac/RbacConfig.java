@@ -2,6 +2,7 @@ package io.ddd4j.sample.quarkus.satoken.rbac;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.core.util.SubjectKit;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -44,6 +45,17 @@ public class RbacConfig {
      * 应用启动时初始化演示数据。
      */
     void onStart(@Observes StartupEvent event) {
+        reset();
+    }
+
+    /**
+     * 重建样例的确定性 RBAC 金标数据。
+     */
+    public synchronized void reset() {
+        userRepository.clear();
+        roleRepository.clear();
+        permissionRepository.clear();
+
         // 1. 权限
         permissionRepository.save(new Permission("user:list", "用户列表", "查询用户列表"));
         permissionRepository.save(new Permission("user:add", "新增用户", "新增用户"));
@@ -68,6 +80,8 @@ public class RbacConfig {
                 new HashSet<>(Set.of("user")), false));
         userRepository.save(new User("u-disabled", "disabled", "已禁用用户", "123456",
                 new HashSet<>(Set.of("user")), true));
+
+        SubjectKit.setDataProvider(subjectDataProvider());
     }
 
     /**

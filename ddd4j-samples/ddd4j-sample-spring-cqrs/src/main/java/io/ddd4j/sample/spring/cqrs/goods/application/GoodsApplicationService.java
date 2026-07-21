@@ -98,10 +98,14 @@ public class GoodsApplicationService {
         if (GoodsStatus.DELETED.equals(goods.getStatus())) {
             throw new BizRuntimeException("goods.deleted", "deleted goods cannot be updated");
         }
-        validateName(name);
-        validatePrice(price);
-        goods.setName(name);
-        goods.setPrice(price);
+        if (Objects.nonNull(name)) {
+            validateName(name);
+            goods.setName(name);
+        }
+        if (Objects.nonNull(price)) {
+            validatePrice(price);
+            goods.setPrice(price);
+        }
         goods.setUpdateTime(LocalDateTime.now());
         log.info("Updated goods: id={}, newName={}, newPrice={}", goods.id(), goods.getName(), goods.getPrice());
         return repository.save(goods);

@@ -1,7 +1,11 @@
 package io.ddd4j.sample.spring.cqrs;
 
+import io.ddd4j.spring.context.SpringContextBridge;
+import io.ddd4j.spring.event.SpringDomainEventPublisher;
+import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 
 /**
  * ddd4j + Spring Boot Order/Goods CQRS 示例启动类。
@@ -57,6 +61,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @SpringBootApplication
+@Import({SpringContextBridge.class, SpringDomainEventPublisher.class, GlobalRestExceptionAdvice.class})
 public class SpringCqrsApplication {
 
     public static void main(String[] args) {

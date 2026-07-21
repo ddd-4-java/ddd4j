@@ -41,7 +41,6 @@ import jakarta.ws.rs.core.Response;
  */
 @Path("/goods")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class GoodsResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
@@ -63,6 +62,7 @@ public class GoodsResource extends TenantAwareResource {
      * @return 创建的商品
      */
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response create(CreateGoodsRequest request) {
         Goods product = applicationService.create(
                 request.code(), request.name(), request.price(), request.stock());
@@ -83,6 +83,7 @@ public class GoodsResource extends TenantAwareResource {
      */
     @PUT
     @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Long id, UpdateGoodsRequest request) {
         Goods product = applicationService.update(
                 GoodsId.of(id), request.name(), request.price());

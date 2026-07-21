@@ -328,11 +328,12 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         Subject subject = SecurityUtils.getSubject();
         AuthSessionConfig cfg = Objects.nonNull(request.getSessionConfig()) ? request.getSessionConfig() : new AuthSessionConfig();
 
-        // 1. 把通用密码字段塞到 AuthRequest.extra（业务方在 Realm 内可以拿到）
+        // 1. 从 AuthRequest.extra 读取已经由业务层验证的凭证。
         // 2. 构造 Shiro AuthenticationToken：默认走 UsernamePasswordToken 形式
         //    （业务侧可在 ShiroSubject 上扩展 login 重载以支持其他 Token 类型）
-        String credential = Objects.nonNull(request.getPrincipal())
-                ? String.valueOf(request.getPrincipal()) : "";
+        Object credentialValue = Objects.nonNull(request.getExtra())
+                ? request.getExtra().get("credential") : null;
+        String credential = Objects.nonNull(credentialValue) ? String.valueOf(credentialValue) : "";
         AuthenticationToken token = new UsernamePasswordToken(
                 String.valueOf(request.getLoginId()),
                 credential
