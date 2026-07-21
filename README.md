@@ -1,9 +1,8 @@
 # Ddd4j — 框架无关的 DDD/CQRS/ES 通用基础层
 
 **Ddd4j** 是一个**不与任何具体容器框架强绑定**的 DDD 项目脚手架，为 [ddd4j-boot](https://github.com/hiwepy/ddd4j-boot)
-（Spring
-Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/hiwepy/ddd4j-javalin)
-三种容器框架提供**同一套纯净的、可复用的领域层基础**。
+（Spring Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/hiwepy/ddd4j-javalin)
+以及 Micronaut、Vert.x、Helidon、Dropwizard 等运行时提供**同一套纯净的、可复用的领域层基础**。
 
 基于轻量级 [ddd-4-java](https://github.com/fuinorg/ddd-4-java) 和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java)
 库实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing），遵循 **Eric Evans** 和 **Vaughn Vernon** 的 DDD
@@ -61,8 +60,8 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
   BaseMapper）
 - **MQ 统一抽象**：当前仓库保留 `ddd4j-mq-core` 纯 Java SPI、`ddd4j-mq-spring` 桥接，以及 Kafka/RabbitMQ/RocketMQ/Redis
   Stream/NATS/Pulsar/ActiveMQ/MQTT/ONS/SQS/TDMQ/Disruptor 等实现
-- **三框架运行时绑定**：`ddd4j-runtime` 聚合 `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`，提供
-  SPI 的框架实现，Web 侧由 `ddd4j-web-*` 模块承载
+- **多框架运行时绑定**：`ddd4j-runtime` 聚合 Spring、Quarkus、Guice、Micronaut、Vert.x、Helidon、Dropwizard
+  运行时及统一 Testkit，Web 侧由对应的 `ddd4j-web-*` 模块承载
 - **ArchUnit 编译期守护**：9 条架构边界规则，CI 阶段强制执行分层纪律
 - **COLA / Clean Architecture 支持**：注解驱动的架构规范检查
 
@@ -72,7 +71,8 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 - **[CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)**：命令查询职责分离核心概念
 - **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
 - **[架构边界规范](./docs/architecture/architecture-boundary.md)**：ddd4j 与各框架项目的职责铁律
-- **[架构全景](./docs/architecture/architecture.md)**：模块全景、SPI 设计、三框架运行时绑定对照
+- **[架构全景（历史基线）](./docs/architecture/architecture.md)**：早期模块全景、SPI 设计与三框架运行时基线
+- **[当前源码架构导览](./docs/architecture/current-source-architecture.md)**：基于 CodeGraph 的模块边界、核心调用链、Mermaid 架构图与设计风险
 
 ### 🏗️ 项目架构
 
@@ -88,10 +88,10 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 | `ddd4j-ddd-rules`    | DDD 架构规范检查      | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                                                               |
 | `ddd4j-data`         | 数据层抽象           | 三 ORM 轨道：`ddd4j-data-mybatisplus`（LambdaQueryWrapper）/ `ddd4j-data-mybatis`（纯 MyBatis）/ `ddd4j-data-jpa`（Criteria）+ 加密/数据权限/外部服务/日志              |
 | `ddd4j-mq`           | 消息队列抽象          | `MQBrokerAdapter` SPI + Spring 桥接 + 多 Broker 实现                                                                                                  |
-| `ddd4j-web`          | Web 层抽象         | `RequestInfo` `SessionContext` + Javalin/Quarkus/WebMVC/WebFlux 实现                                                                               |
+| `ddd4j-web`          | Web 层抽象         | WebMVC / WebFlux / Javalin / Quarkus / Vert.x / Micronaut / Helidon / Dropwizard 适配                                                            |
 | `ddd4j-auth`         | 认证授权抽象          | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                                                                       |
 | `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                                       |
-| `ddd4j-runtime`      | 三框架运行时绑定        | `ddd4j-runtime-spring` `ddd4j-runtime-quarkus` `ddd4j-runtime-guice`                                                                             |
+| `ddd4j-runtime`      | 多框架运行时绑定        | Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit                                                                  |
 | `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                                       |
 | `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                                                                       |
 | `ddd4j-samples`      | 示例工程            | Spring / Quarkus / Javalin 三运行时 DDD、CQRS、Auth 示例矩阵                                                                                               |
@@ -141,6 +141,10 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |------ddd4j-web-quarkus                #Quarkus Web适配
 |------ddd4j-web-webmvc                 #Spring MVC实现：Controller/拦截器/全局异常处理
 |------ddd4j-web-webflux                #Spring WebFlux实现：响应式Controller/ErrorAttributes
+|------ddd4j-web-vertx                  #Vert.x Web适配
+|------ddd4j-web-micronaut              #Micronaut Web适配
+|------ddd4j-web-helidon                #Helidon Web适配
+|------ddd4j-web-dropwizard             #Dropwizard Web适配
 |----ddd4j-auth                         #认证/授权抽象聚合（Subject 契约定义在 ddd4j-core）
 |------ddd4j-auth-spring                #Spring桥接：SubjectRegistrar
 |------ddd4j-auth-satoken               #Sa-Token实现
@@ -151,6 +155,11 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 |------ddd4j-runtime-spring              #Spring运行时绑定：DomainEventPublisher/I18nProvider/SubjectProvider
 |------ddd4j-runtime-quarkus             #Quarkus CDI运行时绑定：核心SPI/CQRS/EventStore适配
 |------ddd4j-runtime-guice               #Guice运行时绑定：Guava EventBus实现
+|------ddd4j-runtime-micronaut           #Micronaut运行时绑定
+|------ddd4j-runtime-vertx               #Vert.x运行时绑定
+|------ddd4j-runtime-helidon             #Helidon运行时绑定
+|------ddd4j-runtime-dropwizard          #Dropwizard运行时绑定
+|------ddd4j-runtime-testkit             #跨运行时契约测试工具
 |----ddd4j-extensions                   #跨领域扩展
 |------ddd4j-extension-akka             #Akka Actor系统组件
 |------ddd4j-extension-excel            #Excel导入导出组件
@@ -221,13 +230,17 @@ Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-java
 </dependencies>
 ```
 
-#### 2. 三框架运行时绑定方式
+#### 2. 多框架运行时绑定方式
 
 | 框架          | 运行时绑定                   | DI 容器                | 事件发布                    | Web 框架               |
 |-------------|-------------------------|----------------------|-------------------------|----------------------|
 | Spring Boot | `ddd4j-runtime-spring`  | `ApplicationContext` | `AppCtx.publishEvent()` | Spring MVC / WebFlux |
 | Quarkus     | `ddd4j-runtime-quarkus` | Arc (CDI)            | `Event<T>.fire()`       | RESTEasy / JAX-RS    |
 | Javalin     | `ddd4j-runtime-guice`   | Guice Injector       | `EventBus.post()`       | Javalin              |
+| Micronaut   | `ddd4j-runtime-micronaut` | Micronaut Context  | `publishEvent()`        | Micronaut HTTP       |
+| Vert.x      | `ddd4j-runtime-vertx`   | 显式 Runtime          | Vert.x EventBus         | Vert.x Web           |
+| Helidon     | `ddd4j-runtime-helidon` | CDI / BeanManager     | CDI Event               | Helidon WebServer    |
+| Dropwizard  | `ddd4j-runtime-dropwizard` | 显式 Bundle         | Listener 集合            | Jersey               |
 
 #### 3. 普通充血模型与 PO 分离
 
@@ -430,7 +443,8 @@ order-service/
 
 | 文档                                                          | 说明                     |
 |-------------------------------------------------------------|------------------------|
-| [架构全景](./docs/architecture/architecture.md)                 | 模块全景、SPI 设计、三框架运行时绑定对照 |
+| [架构全景（历史基线）](./docs/architecture/architecture.md)       | 早期模块全景、SPI 设计与三框架基线     |
+| [当前源码架构导览](./docs/architecture/current-source-architecture.md) | CodeGraph 调用链、Mermaid 图和当前设计边界 |
 | [架构边界规范](./docs/architecture/architecture-boundary.md)      | ddd4j 与各框架项目的职责铁律      |
 | [DDD 思维导图](./docs/ddd/DDD%20思维导图.md)                        | DDD 战略+战术设计知识体系        |
 | [CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)                      | CQRS 核心概念              |

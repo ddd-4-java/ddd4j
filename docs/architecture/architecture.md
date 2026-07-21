@@ -1,5 +1,8 @@
 # Ddd4j 架构与最终定位（架构师视角）
 
+> **当前源码入口**：本文包含历史架构分析和设计背景；需要查看与当前源码同步的模块边界、调用链和 Mermaid 图时，请优先阅读
+> [`current-source-architecture.md`](./current-source-architecture.md)。
+
 > 本文档综合 `codegraph` 索引（823 文件 / 13,671 节点 / 23,360 边）与全部架构剖析文档，形成 ddd4j 项目的**最终架构定位**与*
 *模块全景**。
 > 配套 SVG 架构图见：`ddd4j_architecture.html`

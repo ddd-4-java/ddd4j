@@ -197,5 +197,5 @@ curl 'http://localhost:8083/api/goods/page?current=1&size=10&status=ON_SALE&orde
 ### 📄 相关文档
 
 - [ddd4j 主项目](https://github.com/hiwepy/ddd4j)
-- [ddd4j-auth 模块文档](https://github.com/hiwepy/ddd4j/tree/main/ddd4j-auth)
-- [SubjectKit API 文档](https://github.com/hiwepy/ddd4j/blob/main/ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
+- [ddd4j-auth 模块文档](https://github.com/ddd-4-java/ddd4j/tree/feature/2.0.x/ddd4j-auth)
+- [SubjectKit API 文档](https://github.com/ddd-4-java/ddd4j/blob/feature/2.0.x/ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)

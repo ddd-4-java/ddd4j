@@ -1,5 +1,8 @@
 # ddd4j 最新内容 CodeGraph 导览
 
+> **历史快照**：本文记录 2026-07-08 的 CodeGraph 分析结果。当前可维护版本已经整合到
+> [`docs/architecture/current-source-architecture.md`](./docs/architecture/current-source-architecture.md)，后续请以该文档和当前源码为准。
+
 分析时间：2026-07-08  
 分析目录：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`  
 CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,055` 条边。  

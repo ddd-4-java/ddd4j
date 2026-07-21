@@ -10,8 +10,6 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.event.MQEvent;
-import io.ddd4j.core.event.MQEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectStrategy;
 import io.ddd4j.core.util.SubjectKit;
@@ -40,6 +38,7 @@ import io.ddd4j.sample.javalin.satoken.rbac.web.AuthorizationController;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
 import io.javalin.json.JavalinJackson;
+import org.fuin.ddd4j.core.EntityId;
 
 /**
  * 测试基础设施：手动创建 Guice 注入器并启动 Javalin。
@@ -64,9 +63,8 @@ public final class TestSupport {
      * @return 已启动的 Javalin 实例（绑定端口随机）
      */
     public static Javalin start() {
-        // 0) 注入 4 个核心 SPI（订单领域事件发布、MQ 事件、i18n）
+        // 0) 注入测试需要的核心 SPI（领域事件发布、i18n）
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
-        BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, new NoopMQEventPublisher());
         BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, new NoopI18nProvider());
 
         // 1) 手动构造所有组件（不依赖 Guice 自动注入）
@@ -150,15 +148,8 @@ public final class TestSupport {
 
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
         @Override
-        public <T> void publish(io.ddd4j.core.ddd.event.DomainEvent<T> event) {
+        public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
             // noop：测试不需要真实发布领域事件
-        }
-    }
-
-    private static final class NoopMQEventPublisher implements MQEventPublisher {
-        @Override
-        public void publish(MQEvent event) {
-            // noop：测试不需要真实发布 MQ 事件
         }
     }
 
