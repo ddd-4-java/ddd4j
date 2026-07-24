@@ -11,6 +11,7 @@ import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
 import io.ddd4j.web.core.WebHeaders;
 import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebOtelSupport;
 import io.ddd4j.web.core.WebRequestContext;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestData;
@@ -19,18 +20,23 @@ import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * 在 Javalin 创建阶段安装统一请求上下文、Bearer Subject、异常与幂等处理链。
+ *
+ * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
 @Slf4j
 public final class Ddd4jJavalinWeb {
 
     private static final String STATE_ATTRIBUTE = Ddd4jJavalinWeb.class.getName() + ".state";
+    private static final String OTEL_SPAN_ATTR = Ddd4jJavalinWeb.class.getName() + ".otelSpan";
 
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
@@ -62,6 +68,13 @@ public final class Ddd4jJavalinWeb {
     }
 
     private void openContext(Context context) {
+        // OTel: 提取上游 TraceContext 并开启 SERVER span
+        Map<String, String> headers = extractHeaders(context);
+        Object span = WebOtelSupport.startServerSpan(
+                context.method().name(), context.path(), headers);
+        context.attribute(OTEL_SPAN_ATTR, span);
+        WebOtelSupport.activate(span);
+
         WebRequestContext requestContext = createContext(context);
         RequestState state = new RequestState(WebContextScope.open(requestContext));
         context.attribute(STATE_ATTRIBUTE, state);
@@ -73,12 +86,18 @@ public final class Ddd4jJavalinWeb {
             idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(requestContext,
                     context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(state::idempotencyScope);
         } catch (RuntimeException exception) {
+            WebOtelSupport.recordError(span, exception);
             closeContext(context, false);
             throw exception;
         }
     }
 
     private void completeContext(Context context) {
+        // OTel: 结束 span
+        Object span = context.attribute(OTEL_SPAN_ATTR);
+        if (span != null) {
+            WebOtelSupport.endServerSpan(span, context.statusCode());
+        }
         closeContext(context, context.statusCode() < 400);
     }
 
@@ -87,8 +106,24 @@ public final class Ddd4jJavalinWeb {
         if (error.status() >= 500) {
             log.error("Unhandled Javalin request failure: {} {}", context.method(), context.path(), exception);
         }
+        // OTel: 记录异常
+        Object span = context.attribute(OTEL_SPAN_ATTR);
+        if (span != null) {
+            WebOtelSupport.recordError(span, exception);
+            WebOtelSupport.endServerSpan(span, error.status());
+        }
         context.status(error.status()).json(error.toResponse());
         closeContext(context, false);
+    }
+
+    private static Map<String, String> extractHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        context.headerMap().forEach((k, v) -> {
+            if (v != null) {
+                headers.put(k, v);
+            }
+        });
+        return headers;
     }
 
     private WebRequestContext createContext(Context context) {

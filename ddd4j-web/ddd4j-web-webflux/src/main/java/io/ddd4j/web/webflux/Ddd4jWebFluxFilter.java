@@ -1,10 +1,11 @@
 package io.ddd4j.web.webflux;
 
-import io.ddd4j.web.core.BearerSubjectAuthenticator.Authentication;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.BearerSubjectAuthenticator.Authentication;
 import io.ddd4j.web.core.WebAccessPolicy;
 import io.ddd4j.web.core.WebHeaders;
 import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebOtelSupport;
 import io.ddd4j.web.core.WebRequestContext;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestData;
@@ -19,16 +20,22 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
  * 使用 Reactor Context 传播请求状态，并将同步 Subject/Cache SPI 调度到阻塞工作线程。
+ *
+ * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
 public final class Ddd4jWebFluxFilter implements WebFilter {
+
+    private static final String OTEL_SPAN_KEY = Ddd4jWebFluxFilter.class.getName() + ".otelSpan";
 
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
@@ -59,6 +66,16 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        // OTel: 提取上游 TraceContext 并开启 SERVER span
+        Map<String, String> headers = extractHeaders(exchange);
+        Object span = WebOtelSupport.startServerSpan(
+                exchange.getRequest().getMethod().name(),
+                exchange.getRequest().getPath().value(),
+                headers);
+        exchange.getAttributes().put(OTEL_SPAN_KEY, span);
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        exchange.getAttributes().put(OTEL_SPAN_KEY + ".scope", scope);
+
         return Mono.defer(() -> {
             WebRequestContext requestContext = createContext(exchange);
             exchange.getResponse().getHeaders().set(WebHeaders.REQUEST_ID, requestContext.requestId());
@@ -67,9 +84,34 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                     () -> requestLifecycle.authenticate(requestContext)).subscribeOn(blockingScheduler);
             Mono<Optional<WebIdempotencyLifecycle.Scope>> idempotency = Mono.fromCallable(
                     () -> openIdempotency(requestContext, exchange)).subscribeOn(blockingScheduler);
-            return authentication.flatMap(result -> idempotency.flatMap(scope -> invoke(exchange, chain,
-                    requestContext, result, scope)));
+            return authentication.flatMap(result -> idempotency.flatMap(idem -> invoke(exchange, chain,
+                    requestContext, result, idem)));
+        }).doFinally(signalType -> {
+            // OTel: 结束 span
+            Object s = exchange.getAttributes().remove(OTEL_SPAN_KEY);
+            if (s != null) {
+                int status = exchange.getResponse().getStatusCode() != null
+                        ? exchange.getResponse().getStatusCode().value() : 200;
+                WebOtelSupport.endServerSpan(s, status);
+            }
+            Object sc = exchange.getAttributes().remove(OTEL_SPAN_KEY + ".scope");
+            if (sc instanceof AutoCloseable) {
+                try {
+                    ((AutoCloseable) sc).close();
+                } catch (Throwable ignored) {
+                }
+            }
         });
+    }
+
+    private static Map<String, String> extractHeaders(ServerWebExchange exchange) {
+        Map<String, String> headers = new HashMap<>();
+        exchange.getRequest().getHeaders().forEach((k, v) -> {
+            if (v != null && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
     }
 
     private Mono<Void> invoke(ServerWebExchange exchange, WebFilterChain chain, WebRequestContext requestContext,

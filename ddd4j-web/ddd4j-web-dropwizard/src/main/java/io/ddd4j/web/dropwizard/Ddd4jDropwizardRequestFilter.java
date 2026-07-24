@@ -8,6 +8,7 @@ import io.ddd4j.web.core.RequestIdGenerator;
 import io.ddd4j.web.core.SynchronousWebRequestSession;
 import io.ddd4j.web.core.WebHeaders;
 import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebOtelSupport;
 import io.ddd4j.web.core.WebRequestContext;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestData;
@@ -20,18 +21,24 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Context;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Dropwizard Jersey 请求上下文、Bearer Subject 与幂等过滤器。
+ *
+ * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
 @Priority(Priorities.AUTHENTICATION)
 public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilter {
 
     static final String SESSION_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".session";
     static final String CONTEXT_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".context";
+    static final String OTEL_SPAN_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".otelSpan";
+    static final String OTEL_SCOPE_PROPERTY = Ddd4jDropwizardRequestFilter.class.getName() + ".otelScope";
 
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
@@ -67,11 +74,35 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
 
     @Override
     public void filter(ContainerRequestContext request) {
-        WebRequestContext context = createContext(request);
-        SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
-                idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
-        request.setProperty(CONTEXT_PROPERTY, context);
-        request.setProperty(SESSION_PROPERTY, session);
+        // OTel: 提取上游 TraceContext 并开启 SERVER span
+        Object span = WebOtelSupport.startServerSpan(
+                request.getMethod(),
+                request.getUriInfo().getRequestUri().getPath(),
+                extractRequestHeaders(request));
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        request.setProperty(OTEL_SPAN_PROPERTY, span);
+        request.setProperty(OTEL_SCOPE_PROPERTY, scope);
+
+        try {
+            WebRequestContext context = createContext(request);
+            SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
+                    idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
+            request.setProperty(CONTEXT_PROPERTY, context);
+            request.setProperty(SESSION_PROPERTY, session);
+        } catch (RuntimeException exception) {
+            WebOtelSupport.recordError(span, exception);
+            throw exception;
+        }
+    }
+
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        request.getHeaders().forEach((k, v) -> {
+            if (v != null && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
     }
 
     private WebRequestContext createContext(ContainerRequestContext request) {

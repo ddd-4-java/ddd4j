@@ -8,6 +8,7 @@ import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
 import io.ddd4j.web.core.WebHeaders;
 import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebOtelSupport;
 import io.ddd4j.web.core.WebRequestContext;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestData;
@@ -18,19 +19,24 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Vert.x Router 的标准请求上下文、认证、幂等和异常处理链。
+ *
+ * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
 @Slf4j
 public final class Ddd4jVertxWeb {
 
     private static final String STATE_KEY = Ddd4jVertxWeb.class.getName() + ".state";
+    private static final String OTEL_SPAN_KEY = Ddd4jVertxWeb.class.getName() + ".otelSpan";
 
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
@@ -66,6 +72,15 @@ public final class Ddd4jVertxWeb {
 
     public Handler<RoutingContext> contextHandler() {
         return routingContext -> {
+            // OTel: 提取上游 TraceContext 并开启 SERVER span
+            Map<String, String> headers = extractHeaders(routingContext);
+            Object span = WebOtelSupport.startServerSpan(
+                    routingContext.request().method().name(),
+                    routingContext.normalizedPath(),
+                    headers);
+            routingContext.put(OTEL_SPAN_KEY, span);
+            WebOtelSupport.activate(span);
+
             WebRequestContext requestContext = createContext(routingContext);
             routingContext.put(STATE_KEY, new RequestState());
             Ddd4jVertxContext.bindRequest(routingContext, requestContext);
@@ -105,12 +120,30 @@ public final class Ddd4jVertxWeb {
                 log.error("Unhandled Vert.x request failure: {} {}", routingContext.request().method(),
                         routingContext.normalizedPath(), failure);
             }
+            // OTel: 记录异常
+            Object span = routingContext.get(OTEL_SPAN_KEY);
+            if (span != null) {
+                WebOtelSupport.recordError(span, failure);
+                WebOtelSupport.endServerSpan(span, error.status());
+            }
             if (!routingContext.response().ended()) {
                 routingContext.response().setStatusCode(error.status())
                         .putHeader("Content-Type", "application/json")
                         .end(jsonEncoder.apply(error.toResponse()));
             }
         };
+    }
+
+    private static Map<String, String> extractHeaders(RoutingContext context) {
+        Map<String, String> headers = new HashMap<>();
+        context.request().headers().forEach(entry -> {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (key != null && value != null) {
+                headers.put(key, value);
+            }
+        });
+        return headers;
     }
 
     private AuthenticationResult authenticate(RoutingContext routingContext, WebRequestContext requestContext) {
@@ -148,6 +181,17 @@ public final class Ddd4jVertxWeb {
             state.close(successful);
             return null;
         }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
+
+        // OTel: 结束 span
+        Object span = context.remove(OTEL_SPAN_KEY);
+        if (span != null) {
+            int status = context.response().getStatusCode() > 0
+                    ? context.response().getStatusCode() : 200;
+            if (state.failed) {
+                WebOtelSupport.recordError(span, new RuntimeException("request failed"));
+            }
+            WebOtelSupport.endServerSpan(span, status);
+        }
     }
 
     private record AuthenticationResult(

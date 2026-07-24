@@ -1,12 +1,14 @@
 package io.ddd4j.web.micronaut;
 
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.BearerSubjectAuthenticator.Authentication;
 import io.ddd4j.web.core.CacheIdempotencyGuard;
 import io.ddd4j.web.core.ClientIpResolver;
 import io.ddd4j.web.core.PathWebAccessPolicy;
 import io.ddd4j.web.core.RequestIdGenerator;
 import io.ddd4j.web.core.WebHeaders;
 import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebOtelSupport;
 import io.ddd4j.web.core.WebRequestContext;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestData;
@@ -24,12 +26,16 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Micronaut 4 Filter Method 请求上下文、Bearer Subject 与幂等适配器。
+ *
+ * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
 @ServerFilter(ServerFilter.MATCH_ALL_PATTERN)
 public final class Ddd4jMicronautWebFilter {
@@ -65,20 +71,45 @@ public final class Ddd4jMicronautWebFilter {
     public Publisher<MutableHttpResponse<?>> filter(HttpRequest<?> request,
                                                      FilterContinuation<Publisher<MutableHttpResponse<?>>> continuation,
                                                      MutablePropagatedContext propagatedContext) {
+        // OTel: 提取上游 TraceContext 并开启 SERVER span
+        Map<String, String> headers = extractRequestHeaders(request);
+        Object span = WebOtelSupport.startServerSpan(
+                request.getMethodName(), request.getPath(), headers);
+        WebOtelSupport.activate(span);
+
         WebRequestContext requestContext = createContext(request);
-        Optional<BearerSubjectAuthenticator.Authentication> authentication = requestLifecycle
-                .authenticate(requestContext);
+        Optional<Authentication> authentication = requestLifecycle.authenticate(requestContext);
         propagatedContext.add(new Ddd4jMicronautContext(requestContext,
-                authentication.map(BearerSubjectAuthenticator.Authentication::subject)));
+                authentication.map(Authentication::subject)));
         Optional<WebIdempotencyLifecycle.Scope> idempotencyScope = idempotencyLifecycle.flatMap(lifecycle ->
                 lifecycle.open(requestContext, request.getHeaders().get(WebHeaders.IDEMPOTENCY_KEY)));
         return Flux.from(continuation.proceed())
                 .doOnNext(response -> {
                     addResponseHeaders(response, requestContext);
                     closeIdempotency(idempotencyScope, response.getStatus().getCode() < 400);
+                    // OTel: 结束 span
+                    WebOtelSupport.endServerSpan(span, response.getStatus().getCode());
                 })
-                .doOnError(throwable -> closeIdempotency(idempotencyScope, false))
-                .doOnCancel(() -> closeIdempotency(idempotencyScope, false));
+                .doOnError(throwable -> {
+                    WebOtelSupport.recordError(span, throwable);
+                    WebOtelSupport.endServerSpan(span, 500);
+                    closeIdempotency(idempotencyScope, false);
+                })
+                .doOnCancel(() -> {
+                    WebOtelSupport.recordError(span, new RuntimeException("cancelled"));
+                    WebOtelSupport.endServerSpan(span, 500);
+                    closeIdempotency(idempotencyScope, false);
+                });
+    }
+
+    private static Map<String, String> extractRequestHeaders(HttpRequest<?> request) {
+        Map<String, String> headers = new HashMap<>();
+        request.getHeaders().forEach((k, v) -> {
+            if (v != null && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
     }
 
     private WebRequestContext createContext(HttpRequest<?> request) {

@@ -1,12 +1,12 @@
 package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.extension.otel.WebOtelIntegration;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.WebAccessPolicy;
 import io.ddd4j.web.core.WebContextScope;
 import io.ddd4j.web.core.WebHeaders;
 import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebOtelSupport;
 import io.ddd4j.web.core.WebRequestContext;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestData;
@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -24,14 +25,13 @@ import java.util.function.Predicate;
 /**
  * Spring WebMVC 的统一请求上下文、Bearer Subject 与幂等生命周期拦截器。
  *
- * <p>同时集成 OTel 分布式追踪：在 preHandle 开启 SERVER span，
- * 在 afterCompletion 结束 span 并记录 HTTP 状态码。
+ * <p>同时集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用
+ * WebOtelIntegration（OTel 集成可选，无依赖时不生效）。
  */
 public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
 
     private static final String STATE_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".state";
     private static final String OTEL_SPAN_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".otelSpan";
-    private static final String OTEL_SCOPE_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".otelScope";
 
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
@@ -57,15 +57,14 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
         Map<String, String> headers = extractHeaders(request);
-        Object span = WebOtelIntegration.startServerSpan(
-                request.getMethod(),
-                request.getRequestURI(),
-                headers);
-        try (AutoCloseable scope = WebOtelIntegration.activate(toSpan(span))) {
-            request.setAttribute(OTEL_SCOPE_ATTRIBUTE, scope);
-            request.setAttribute(OTEL_SPAN_ATTRIBUTE, span);
+        Object span = WebOtelSupport.startServerSpan(request.getMethod(), request.getRequestURI(), headers);
+        request.setAttribute(OTEL_SPAN_ATTRIBUTE, span);
+        // 激活 span 为当前 Context
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        try {
+            // 存储 scope 到 request attribute 以便 afterCompletion 关闭
+            request.setAttribute(OTEL_SPAN_ATTRIBUTE + ".scope", scope);
         } catch (Throwable ignored) {
-            // 静默失败
         }
 
         WebRequestContext requestContext = createContext(request);
@@ -80,8 +79,7 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
                     request.getHeader(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(state::idempotencyScope);
             return true;
         } catch (RuntimeException exception) {
-            // OTel: 记录异常
-            WebOtelIntegration.recordError(toSpan(span), exception);
+            WebOtelSupport.recordError(span, exception);
             state.close(false);
             request.removeAttribute(STATE_ATTRIBUTE);
             throw exception;
@@ -101,24 +99,25 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         Object span = request.getAttribute(OTEL_SPAN_ATTRIBUTE);
         if (span != null) {
             if (exception != null) {
-                WebOtelIntegration.recordError(toSpan(span), exception);
+                WebOtelSupport.recordError(span, exception);
             }
-            WebOtelIntegration.endServerSpan(toSpan(span), response.getStatus());
+            WebOtelSupport.endServerSpan(span, response.getStatus());
             request.removeAttribute(OTEL_SPAN_ATTRIBUTE);
         }
-        Object scope = request.getAttribute(OTEL_SCOPE_ATTRIBUTE);
+        // OTel: 关闭 scope
+        Object scope = request.getAttribute(OTEL_SPAN_ATTRIBUTE + ".scope");
         if (scope instanceof AutoCloseable) {
             try {
                 ((AutoCloseable) scope).close();
             } catch (Throwable ignored) {
             }
-            request.removeAttribute(OTEL_SCOPE_ATTRIBUTE);
+            request.removeAttribute(OTEL_SPAN_ATTRIBUTE + ".scope");
         }
     }
 
     private static Map<String, String> extractHeaders(HttpServletRequest request) {
         Map<String, String> headers = new HashMap<>();
-        java.util.Enumeration<String> names = request.getHeaderNames();
+        Enumeration<String> names = request.getHeaderNames();
         if (names != null) {
             while (names.hasMoreElements()) {
                 String name = names.nextElement();
@@ -129,13 +128,6 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
             }
         }
         return headers;
-    }
-
-    private static io.opentelemetry.api.trace.Span toSpan(Object obj) {
-        if (obj instanceof io.opentelemetry.api.trace.Span) {
-            return (io.opentelemetry.api.trace.Span) obj;
-        }
-        return io.opentelemetry.api.trace.Span.getInvalid();
     }
 
     private WebRequestContext createContext(HttpServletRequest request) {
