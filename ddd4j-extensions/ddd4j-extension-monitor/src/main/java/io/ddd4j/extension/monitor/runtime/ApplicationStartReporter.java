@@ -50,7 +50,7 @@ public class ApplicationStartReporter {
     public void init() {
         Properties p = new Properties();
         try (InputStream in = this.getClass().getClassLoader().getResourceAsStream("git.properties")) {
-            if (in == null) {
+            if (Objects.isNull(in)) {
                 log.debug("未找到 git.properties，跳过启动通知");
                 return;
             }

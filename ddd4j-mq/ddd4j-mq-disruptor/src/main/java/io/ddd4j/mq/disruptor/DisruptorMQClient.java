@@ -187,7 +187,7 @@ public class DisruptorMQClient implements MQClient {
      */
     @Override
     public void close() {
-        if (disruptor != null) {
+        if (Objects.nonNull(disruptor)) {
             disruptor.shutdown();
             log.info("DisruptorMQClient shutdown");
         }

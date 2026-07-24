@@ -1,5 +1,6 @@
 package io.ddd4j.mq.redisstream;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
@@ -14,6 +15,7 @@ import redis.clients.jedis.resps.StreamEntry;
 import redis.clients.jedis.resps.StreamGroupInfo;
 
 import java.util.*;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -82,14 +84,14 @@ public class RedisStreamMQClient implements MQClient {
      * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
      */
     private UnifiedJedis jedis() {
-        if (injectedJedis != null) {
+        if (Objects.nonNull(injectedJedis)) {
             return injectedJedis;
         }
         UnifiedJedis j = lazyJedis;
-        if (j == null) {
+        if (Objects.isNull(j)) {
             synchronized (this) {
                 j = lazyJedis;
-                if (j == null) {
+                if (Objects.isNull(j)) {
                     j = properties.newJedis();
                     lazyJedis = j;
                 }
@@ -155,7 +157,7 @@ public class RedisStreamMQClient implements MQClient {
         List<String> topics = new ArrayList<>();
         String mainTopic = resolveTopic(listener, properties);
         topics.add(mainTopic);
-        if (listener.getTags() != null && !listener.getTags().isEmpty()) {
+        if (StrKit.isNotEmpty(listener.getTags())) {
             Set<String> tags = TagMatcher.findIncludes(listener.getTags());
             for (String tag : tags) {
                 String t = resolveTopic(namespace(listener.getNamespace(), properties),
@@ -202,7 +204,7 @@ public class RedisStreamMQClient implements MQClient {
                             listener.getMethod().getName(),
                             XReadGroupParams.xReadGroupParams().count(10).block(1000),
                             streamKeys);
-                    if (messages == null || messages.isEmpty()) {
+                    if (Objects.isNull(messages) || messages.isEmpty()) {
                         // 没有消息，短暂休眠，避免CPU占用过高
                         TimeUnit.MILLISECONDS.sleep(1000);
                         continue;
@@ -217,7 +219,7 @@ public class RedisStreamMQClient implements MQClient {
                                 continue;
                             }
                             MQEvent mqEvent = serialization().deserialize(payload, listener.payloadType());
-                            if (mqEvent == null) {
+                            if (Objects.isNull(mqEvent)) {
                                 jedis.xack(entry.getKey(), listener.getGroup(), streamEntry.getID());
                                 log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                                 continue;

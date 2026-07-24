@@ -3,12 +3,12 @@ package io.ddd4j.data.jpa.crypto;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.data.crypto.annotation.EncryptField;
 import io.ddd4j.data.crypto.handler.Ddd4jFieldCryptoHandler;
+import io.ddd4j.kit.lang.StrKit;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -38,9 +38,8 @@ import java.util.ServiceLoader;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
+@Slf4j
 public class JpaEncryptFieldListener {
-
-    private static final Logger log = LoggerFactory.getLogger(JpaEncryptFieldListener.class);
 
     /**
      * 延迟初始化的加解密 Handler（ServiceLoader 发现 CryptoStrategy 后构建）。
@@ -78,14 +77,14 @@ public class JpaEncryptFieldListener {
     }
 
     private void encryptFields(Object entity) {
-        if (fieldCryptoHandler == null) {
+        if (Objects.isNull(fieldCryptoHandler)) {
             return;
         }
         for (Field field : getEncryptFields(entity.getClass())) {
             try {
                 field.setAccessible(true);
                 Object value = field.get(entity);
-                if (value instanceof String str && !str.isEmpty()) {
+                if (value instanceof String str && StrKit.isNotEmpty(str)) {
                     String encrypted = fieldCryptoHandler.encrypt(str);
                     field.set(entity, encrypted);
                     log.debug("Encrypted field {}: {} -> {}", field.getName(), str, encrypted);
@@ -97,14 +96,14 @@ public class JpaEncryptFieldListener {
     }
 
     private void decryptFields(Object entity) {
-        if (fieldCryptoHandler == null) {
+        if (Objects.isNull(fieldCryptoHandler)) {
             return;
         }
         for (Field field : getEncryptFields(entity.getClass())) {
             try {
                 field.setAccessible(true);
                 Object value = field.get(entity);
-                if (value instanceof String str && !str.isEmpty()) {
+                if (value instanceof String str && StrKit.isNotEmpty(str)) {
                     String decrypted = fieldCryptoHandler.decrypt(str);
                     field.set(entity, decrypted);
                     log.debug("Decrypted field {}: {} -> {}", field.getName(), str, decrypted);
@@ -126,7 +125,7 @@ public class JpaEncryptFieldListener {
      */
     private List<Field> getEncryptFields(Class<?> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
-                .filter(f -> f.getAnnotation(EncryptField.class) != null)
+                .filter(field -> Objects.nonNull(field.getAnnotation(EncryptField.class)))
                 .toList();
     }
 
@@ -139,9 +138,9 @@ public class JpaEncryptFieldListener {
      * @return 加解密 Handler；未配置 {@link CryptoStrategy} 时返回 {@code null}
      */
     private static Ddd4jFieldCryptoHandler resolveHandler() {
-        if (cachedHandler == null) {
+        if (Objects.isNull(cachedHandler)) {
             synchronized (JpaEncryptFieldListener.class) {
-                if (cachedHandler == null) {
+                if (Objects.isNull(cachedHandler)) {
                     ServiceLoader<CryptoStrategy> loader = ServiceLoader.load(CryptoStrategy.class);
                     CryptoStrategy strategy = null;
                     for (CryptoStrategy candidate : loader) {
@@ -150,7 +149,7 @@ public class JpaEncryptFieldListener {
                         break;
                     }
                     cachedHandler = Objects.nonNull(strategy) ? new Ddd4jFieldCryptoHandler(strategy) : null;
-                    if (cachedHandler == null) {
+                    if (Objects.isNull(cachedHandler)) {
                         log.warn("No CryptoStrategy found via ServiceLoader; @EncryptField will be skipped. " +
                                 "Register a CryptoStrategy implementation in META-INF/services/ to enable encryption.");
                     }

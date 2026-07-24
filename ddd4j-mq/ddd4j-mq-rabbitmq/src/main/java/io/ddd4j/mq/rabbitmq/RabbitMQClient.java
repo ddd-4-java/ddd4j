@@ -4,6 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
@@ -114,7 +115,7 @@ public class RabbitMQClient implements MQClient {
         // 主订阅由 resolveTopic 取首个正向 tag 拼出。
         List<String> routingKeys = new ArrayList<>();
         routingKeys.add(subscribeRoutingKey);
-        if (listener.getTags() != null && !listener.getTags().isEmpty()) {
+        if (StrKit.isNotEmpty(listener.getTags())) {
             Set<String> tags = TagMatcher.findIncludes(listener.getTags());
             for (String tag : tags) {
                 String rk = resolveTopic(namespace(listener.getNamespace(), mqProperties),
@@ -145,7 +146,7 @@ public class RabbitMQClient implements MQClient {
                 }
                 return;
             }
-            if (event == null) {
+            if (Objects.isNull(event)) {
                 log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                 if (!mqProperties.isAutoAck()) {
                     try {

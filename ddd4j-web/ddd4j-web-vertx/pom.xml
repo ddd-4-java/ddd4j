@@ -27,6 +27,13 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-extension-otel</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-testkit</artifactId>

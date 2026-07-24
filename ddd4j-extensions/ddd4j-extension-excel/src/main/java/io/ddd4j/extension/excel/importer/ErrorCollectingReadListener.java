@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -65,7 +66,7 @@ public class ErrorCollectingReadListener<T> extends AnalysisEventListener<T> {
 
     @Override
     public void invoke(T data, AnalysisContext context) {
-        if (rowValidator != null) {
+        if (Objects.nonNull(rowValidator)) {
             try {
                 rowValidator.accept(data);
             } catch (Exception e) {

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,7 +44,7 @@ class WeComClientTest {
 
     @AfterEach
     void stopServer() {
-        if (server != null) {
+        if (Objects.nonNull(server)) {
             server.stop(0);
         }
     }

@@ -83,6 +83,7 @@
         <checker-framework.version>3.55.1</checker-framework.version>
         <classgraph.version>4.8.184</classgraph.version>
         <classmate.version>1.7.1</classmate.version>
+        <clickhouse.version>0.9.8</clickhouse.version>
         <cola.version>5.0.0</cola.version>
         <commons-attributes.version>2.2</commons-attributes.version>
         <commons-attributes-api.version>2.2</commons-attributes-api.version>
@@ -146,6 +147,7 @@
         <cxf-rt-javassist.version>4.0.x.20241003.RELEASE</cxf-rt-javassist.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
+        <debezium.version>3.6.0.Final</debezium.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
         <derby.version>10.17.1.0</derby.version>
         <derby-locale.version>${derby.version}</derby-locale.version>
@@ -186,6 +188,8 @@
         <feshu-oapi.version>2.8.4</feshu-oapi.version>
         <findbugs-annotations.version>3.0.1u2</findbugs-annotations.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
+        <flink-cdc.version>3.6.0-2.2</flink-cdc.version>
+        <flink.version>2.2.1</flink.version>
         <flowable.version>7.2.0</flowable.version>
         <flyway.version>11.19.0</flyway.version>
         <forest.version>1.8.1</forest.version>
@@ -248,9 +252,11 @@
         <httpcore.version>4.4.16</httpcore.version>
         <httpcore5.version>5.3.6</httpcore5.version>
         <httputils.version>1.0.0.RELEASE</httputils.version>
+        <hudi.version>1.2.0</hudi.version>
         <hutool.version>5.8.46</hutool.version>
         <hystrix.version>1.5.18</hystrix.version>
         <i4jruntime.version>5.0.6</i4jruntime.version>
+        <iceberg.version>1.11.0</iceberg.version>
         <icu4j.version>78.3</icu4j.version>
         <imageio.version>3.13.1</imageio.version>
         <imagej.version>2.16.0</imagej.version>
@@ -260,16 +266,13 @@
         <influxdb-java.version>2.25</influxdb-java.version>
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <jackson.version>2.22.0</jackson.version>
         <jackson-annotations.version>2.22</jackson-annotations.version>
-        <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jackson-extension.version>2.0.x.20260630-SNAPSHOT</jackson-extension.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
         <jakarta.el-api.version>6.0.1</jakarta.el-api.version>
         <jakarta-inject.version>2.0.1</jakarta-inject.version>
-        <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
         <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
         <jakarta-json.version>2.1.3</jakarta-json.version>
         <jakarta-json-bind.version>3.0.1</jakarta-json-bind.version>
@@ -349,6 +352,7 @@
         <jxl.version>2.6.12</jxl.version>
         <kafka.version>4.3.1</kafka.version>
         <kaptcha.version>0.0.9</kaptcha.version>
+        <keycloak.version>26.0.11</keycloak.version>
         <kingbase8.version>8.6.0</kingbase8.version>
         <kisso.version>3.9.5</kisso.version>
         <knife4j.version>4.5.0</knife4j.version>
@@ -369,13 +373,11 @@
         <lock4j.version>2.2.7</lock4j.version>
         <log4j2.version>2.24.3</log4j2.version>
         <logback.version>1.5.36</logback.version>
-        <lombok.version>1.18.46</lombok.version>
         <lz4-java.version>1.8.1</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
-        <maven.version>3.6.3</maven.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
@@ -384,6 +386,7 @@
         <micronaut.version>4.10.17</micronaut.version>
         <!-- Micronaut Platform 4.10.17 管理的核心组件版本，供 javac 注解处理器使用。 -->
         <micronaut.core.version>4.10.26</micronaut.core.version>
+        <milvus.version>3.0.4</milvus.version>
         <minio.version>8.6.0</minio.version>
         <mockito.version>5.23.0</mockito.version>
         <mongo-java-driver.version>3.12.14</mongo-java-driver.version>
@@ -428,6 +431,7 @@
         <okhttp-extension.version>2.0.x-SNAPSHOT</okhttp-extension.version>
         <okhttp-metrics.version>2.0.x-SNAPSHOT</okhttp-metrics.version>
         <ons-client.version>2.0.11.Final</ons-client.version>
+        <opensearch.version>3.9.0</opensearch.version>
         <opentelemetry.version>1.57.0</opentelemetry.version>
         <opentest4j.version>1.3.0</opentest4j.version>
         <opentracing.version>0.33.0</opentracing.version>
@@ -445,6 +449,7 @@
         <pagehelper.version>6.1.1</pagehelper.version>
         <paho-mqttv3.version>1.2.5</paho-mqttv3.version>
         <paho-mqttv5.version>1.2.5</paho-mqttv5.version>
+        <paimon.version>1.4.2</paimon.version>
         <paymentwall-sdk.version>2.0.4</paymentwall-sdk.version>
         <paypal-checkout-sdk.version>2.0.0</paypal-checkout-sdk.version>
         <paypal-payouts-sdk.version>1.1.1</paypal-payouts-sdk.version>
@@ -457,6 +462,7 @@
         <pf4j-extension.version>2.0.x.20260630-SNAPSHOT</pf4j-extension.version>
         <pf4j-spring.version>0.10.0</pf4j-spring.version>
         <pf4j-update.version>2.3.0</pf4j-update.version>
+        <pgvector.version>0.1.6</pgvector.version>
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <png-encoder.version>1.5</png-encoder.version>
@@ -490,7 +496,6 @@
         <rabbit-amqp-client.version>5.32.0</rabbit-amqp-client.version>
         <rabbit-stream-client.version>0.24.0</rabbit-stream-client.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
-        <reactor-bom.version>2025.0.6</reactor-bom.version>
         <redisson.version>3.52.0</redisson.version>
         <reflections.version>0.10.2</reflections.version>
         <resilience4j.version>2.4.0</resilience4j.version>
@@ -524,9 +529,11 @@
         <scribejava.version>8.3.3</scribejava.version>
         <scribejava-apis-ext.version>1.0.1.RELEASE</scribejava-apis-ext.version>
         <seata.version>2.0.0</seata.version>
+        <seatunnel.version>2.3.13</seatunnel.version>
         <selenium.version>4.39.0</selenium.version>
         <selenium-htmlunit.version>${selenium.version}</selenium-htmlunit.version>
         <sendgrid.version>4.10.3</sendgrid.version>
+        <sentinel.version>1.8.10</sentinel.version>
         <sequoiadb-driver.version>5.10</sequoiadb-driver.version>
         <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
         <sfntly.version>1.0.0</sfntly.version>
@@ -554,10 +561,10 @@
         <snmp4j-agent.version>3.9.1</snmp4j-agent.version>
         <soapui-template.version>1.0.2.RELEASE</soapui-template.version>
         <socket-io.version>2.1.2</socket-io.version>
+        <spark.version>4.2.0</spark.version>
         <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
-        <spring-framework.version>6.2.19</spring-framework.version>
         <spring-initializr.version>0.24.0</spring-initializr.version>
         <spring-javassist.version>6.1.x.20250712-SNAPSHOT</spring-javassist.version>
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
@@ -605,6 +612,7 @@
         <unirest-java.version>4.10.0</unirest-java.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
         <validation-api-extension.version>2.0.x.20260630-SNAPSHOT</validation-api-extension.version>
+        <vault-java-driver.version>6.2.2</vault-java-driver.version>
         <velocity.version>2.4.1</velocity.version>
         <vertx.version>5.1.5</vertx.version>
         <webcollector.version>2.74-alpha</webcollector.version>
@@ -658,9 +666,7 @@
         <maven-docker-plugin.version>0.48.1</maven-docker-plugin.version>
         <maven-exec-plugin.version>3.6.3</maven-exec-plugin.version>
         <maven-findbugs-plugin.version>3.0.5</maven-findbugs-plugin.version>
-        <maven-flatten-plugin.version>1.7.3</maven-flatten-plugin.version>
         <maven-git-commit-id-plugin.version>4.9.10</maven-git-commit-id-plugin.version>
-        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-gwt-plugin.version>2.10.0</maven-gwt-plugin.version>
         <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
         <maven-jarsigner-plugin.version>3.1.0</maven-jarsigner-plugin.version>
@@ -8223,6 +8229,122 @@
                 <groupId>com.github.luben</groupId>
                 <artifactId>zstd-jni</artifactId>
                 <version>${zstd-jni.version}</version>
+            </dependency>
+
+            <!-- Framework-neutral ecosystem catalog: managed versions only, no runtime auto-configuration. -->
+            <dependency>
+                <groupId>io.debezium</groupId>
+                <artifactId>debezium-bom</artifactId>
+                <version>${debezium.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.iceberg</groupId>
+                <artifactId>iceberg-bom</artifactId>
+                <version>${iceberg.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-core</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-runtime</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-streaming-java</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-clients</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-cdc-common</artifactId>
+                <version>${flink-cdc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-core_2.13</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
+                <artifactId>spark-sql_2.13</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hudi</groupId>
+                <artifactId>hudi-common</artifactId>
+                <version>${hudi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hudi</groupId>
+                <artifactId>hudi-spark4.0-bundle_2.13</artifactId>
+                <version>${hudi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.paimon</groupId>
+                <artifactId>paimon-bundle</artifactId>
+                <version>${paimon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.paimon</groupId>
+                <artifactId>paimon-flink-2.2</artifactId>
+                <version>${paimon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.seatunnel</groupId>
+                <artifactId>seatunnel-api</artifactId>
+                <version>${seatunnel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.seatunnel</groupId>
+                <artifactId>seatunnel-engine-core</artifactId>
+                <version>${seatunnel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch.client</groupId>
+                <artifactId>opensearch-java</artifactId>
+                <version>${opensearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>${clickhouse.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-core</artifactId>
+                <version>${sentinel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-admin-client</artifactId>
+                <version>${keycloak.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jopenlibs</groupId>
+                <artifactId>vault-java-driver</artifactId>
+                <version>${vault-java-driver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pgvector</groupId>
+                <artifactId>pgvector</artifactId>
+                <version>${pgvector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.milvus</groupId>
+                <artifactId>milvus-sdk-java</artifactId>
+                <version>${milvus.version}</version>
             </dependency>
         </dependencies>
 

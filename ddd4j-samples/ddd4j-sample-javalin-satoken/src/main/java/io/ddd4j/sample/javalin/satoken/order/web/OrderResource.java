@@ -21,7 +21,7 @@ import static io.javalin.apibuilder.ApiBuilder.post;
  * 订单 REST 资源（Javalin 适配）。
  *
  * <p>通过 {@link EndpointGroup} 暴露路由注册入口，调用方在 Javalin 启动时通过
- * {@code javalinConfig.routes.apiBuilder(() -> orderResource.routes())} 注册。
+ * {@code javalinConfig.routes.apiBuilder(orderResource.routes())} 注册。
  *
  * <h3>REST 端点</h3>
  * <ul>
@@ -90,17 +90,17 @@ public class OrderResource {
                 ctx.json(R.ok("order cancelled", OrderResponse.from(order)));
             });
 
-            // GET /orders/{id}
-            get("/orders/{id}", ctx -> {
-                String id = ctx.pathParam("id");
-                Order order = orderApplicationService.findById(id);
-                ctx.json(R.ok(OrderResponse.from(order)));
-            });
-
             // GET /orders/by-order-no?orderNo=xxx
             get("/orders/by-order-no", ctx -> {
                 String orderNo = ctx.queryParam("orderNo");
                 Order order = orderApplicationService.findByOrderNo(orderNo);
+                ctx.json(R.ok(OrderResponse.from(order)));
+            });
+
+            // GET /orders/{id}
+            get("/orders/{id}", ctx -> {
+                String id = ctx.pathParam("id");
+                Order order = orderApplicationService.findById(id);
                 ctx.json(R.ok(OrderResponse.from(order)));
             });
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import lombok.Data;
@@ -151,12 +152,12 @@ public class MQEvent implements Serializable {
 
         // 按优先级查找目标 broker
         String targetBroker = getBroker();
-        if (Objects.isNull(targetBroker) || targetBroker.isEmpty()) {
+        if (StrKit.isEmpty(targetBroker)) {
             MQProperties props = BaseContext.get(MQ_PROPERTIES);
             targetBroker = Objects.nonNull(props) ? props.getBroker() : null;
         }
         Consumer<MQEvent> publisher = null;
-        if (Objects.nonNull(targetBroker) && !targetBroker.isEmpty() && !"none".equalsIgnoreCase(targetBroker)) {
+        if (StrKit.isNotEmpty(targetBroker) && !"none".equalsIgnoreCase(targetBroker)) {
             publisher = publishers.get(targetBroker);
         }
         if (Objects.isNull(publisher) && publishers.size() == 1) {

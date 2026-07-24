@@ -1,5 +1,6 @@
 package io.ddd4j.mq.rocketmq;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
@@ -117,14 +118,13 @@ public class RocketMQClient implements MQClient {
                 DefaultMQProducer p;
                 String username = this.properties.getUsername();
                 String password = this.properties.getPassword();
-                if (Objects.nonNull(username) && !username.isEmpty()
-                        && Objects.nonNull(password) && !password.isEmpty()) {
+                if (StrKit.isNotEmpty(username) && StrKit.isNotEmpty(password)) {
                     p = new DefaultMQProducer(this.properties.getProducerGroup(),
                             new AclClientRPCHook(new SessionCredentials(username, password)));
                 } else {
                     p = new DefaultMQProducer(this.properties.getProducerGroup());
                 }
-                if (Objects.nonNull(this.properties.getNameServer()) && !this.properties.getNameServer().isEmpty()) {
+                if (StrKit.isNotEmpty(this.properties.getNameServer())) {
                     p.setNamesrvAddr(this.properties.getNameServer());
                 }
                 p.start();
@@ -135,7 +135,7 @@ public class RocketMQClient implements MQClient {
             return event -> {
                 String payload = serialization().serialize(event);
                 String topic = resolveTopic(event, mqProperties);
-                String tag = event.getTag() == null ? "" : event.getTag();
+                String tag = Objects.isNull(event.getTag()) ? "" : event.getTag();
                 try {
                     Message msg = new Message(event.getTopic(), tag, payload.getBytes(StandardCharsets.UTF_8));
                     // tag header 与 broker 端 selector property name 一致（无 .，合法标识符）
@@ -146,7 +146,7 @@ public class RocketMQClient implements MQClient {
                         msg.putUserProperty("ddd4jTenantId", event.getTenantId());
                     }
                     String key = partitionKey(event);
-                    if (Objects.isNull(key) || key.isEmpty()) {
+                    if (StrKit.isEmpty(key)) {
                         finalProducer.send(msg, Objects.nonNull(callback) ? callback : new SendLogCallback(topic, payload));
                     } else {
                         // 同 key 进同 queue：MessageQueueSelector 按 key 哈希选 queue，保证顺序
@@ -172,13 +172,13 @@ public class RocketMQClient implements MQClient {
      */
     @Override
     public String partitionKey(MQEvent event) {
-        if (properties == null) {
+        if (Objects.isNull(properties)) {
             return MQClient.super.partitionKey(event);  // 双构造 1：注入 producer 时走父类默认
         }
         return switch (properties.getPartitionKeyStrategy()) {
             case NONE -> null;
-            case TAG -> event != null ? event.getTag() : null;
-            case TENANT -> event != null ? event.getTenantId() : null;
+            case TAG -> Objects.nonNull(event) ? event.getTag() : null;
+            case TENANT -> Objects.nonNull(event) ? event.getTenantId() : null;
             case TAG_TENANT -> MQClient.super.partitionKey(event);
             case CUSTOM -> MQClient.super.partitionKey(event);  // 占位：子类应自己覆写
         };
@@ -191,11 +191,10 @@ public class RocketMQClient implements MQClient {
             consumer = this.properties.newConsumer(listener.getGroup());
             String username = this.properties.getUsername();
             String password = this.properties.getPassword();
-            if (Objects.nonNull(username) && !username.isEmpty()
-                    && Objects.nonNull(password) && !password.isEmpty()) {
+            if (StrKit.isNotEmpty(username) && StrKit.isNotEmpty(password)) {
                 consumer = new DefaultMQPushConsumer(listener.getGroup(),
                         new AclClientRPCHook(new SessionCredentials(username, password)));
-                if (Objects.nonNull(this.properties.getNameServer()) && !this.properties.getNameServer().isEmpty()) {
+                if (StrKit.isNotEmpty(this.properties.getNameServer())) {
                     consumer.setNamesrvAddr(this.properties.getNameServer());
                 }
             }
@@ -219,7 +218,7 @@ public class RocketMQClient implements MQClient {
                     log.error("Consume MQ [{}] deserialize failed: {}", listener.getRouteExpression(this.defaultConcat()), payload, ex);
                     return ConsumeConcurrentlyStatus.RECONSUME_LATER;
                 }
-                if (event == null) {
+                if (Objects.isNull(event)) {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                     continue;
                 }

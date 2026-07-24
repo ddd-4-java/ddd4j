@@ -64,10 +64,10 @@ public class AuthModule extends AbstractModule {
     @Override
     protected void configure() {
         // ========================= RBAC 模块 =========================
-        RbacService effectiveService = rbacService != null
+        RbacService effectiveService = Objects.nonNull(rbacService)
                 ? rbacService
                 : new RbacService(userRepository, roleRepository, permissionRepository);
-        if (rbacService == null) {
+        if (Objects.isNull(rbacService)) {
             // 测试 / 独立场景：构造 RbacService 并初始化种子数据
             RbacConfig.initSeedData(effectiveService);
         }

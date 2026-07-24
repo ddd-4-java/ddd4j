@@ -50,28 +50,28 @@ public class GoodsController {
      */
     private static GoodsQuery bindQuery(Context ctx) {
         GoodsQuery query = new GoodsQuery();
-        if (ctx.queryParam("code") != null) {
+        if (Objects.nonNull(ctx.queryParam("code"))) {
             query.setCode(ctx.queryParam("code"));
         }
-        if (ctx.queryParam("nameLike") != null) {
+        if (Objects.nonNull(ctx.queryParam("nameLike"))) {
             query.setNameLike(ctx.queryParam("nameLike"));
         }
-        if (ctx.queryParam("status") != null) {
+        if (Objects.nonNull(ctx.queryParam("status"))) {
             query.setStatus(GoodsStatus.valueOf(ctx.queryParam("status")));
         }
-        if (ctx.queryParam("priceMin") != null) {
+        if (Objects.nonNull(ctx.queryParam("priceMin"))) {
             query.setPriceMin(new BigDecimal(ctx.queryParam("priceMin")));
         }
-        if (ctx.queryParam("priceMax") != null) {
+        if (Objects.nonNull(ctx.queryParam("priceMax"))) {
             query.setPriceMax(new BigDecimal(ctx.queryParam("priceMax")));
         }
-        if (ctx.queryParam("current") != null) {
+        if (Objects.nonNull(ctx.queryParam("current"))) {
             query.setCurrent(Long.parseLong(ctx.queryParam("current")));
         }
-        if (ctx.queryParam("size") != null) {
+        if (Objects.nonNull(ctx.queryParam("size"))) {
             query.setSize(Long.parseLong(ctx.queryParam("size")));
         }
-        if (ctx.queryParam("orderBys") != null) {
+        if (Objects.nonNull(ctx.queryParam("orderBys"))) {
             query.setOrderBys(ctx.queryParam("orderBys"));
         }
         return query;

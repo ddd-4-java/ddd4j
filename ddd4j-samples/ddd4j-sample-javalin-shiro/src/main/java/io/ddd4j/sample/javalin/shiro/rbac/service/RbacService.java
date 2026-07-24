@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.rbac.service;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Permission;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
@@ -41,7 +43,7 @@ public class RbacService {
      * 复制权限集合（不可变）。
      */
     public static Set<String> copyPerms(Set<String> perms) {
-        return perms == null ? Collections.emptySet() : Collections.unmodifiableSet(new HashSet<>(perms));
+        return Objects.isNull(perms) ? Collections.emptySet() : Collections.unmodifiableSet(new HashSet<>(perms));
     }
 
     /**
@@ -73,10 +75,10 @@ public class RbacService {
         validateRoleCodes(roleCodes);
         User updated = new User(
                 existing.loginId(),
-                password != null ? password : existing.password(),
-                displayName != null ? displayName : existing.displayName(),
-                roleCodes != null ? roleCodes : existing.roles(),
-                permissions != null ? permissions : existing.permissions());
+                Objects.nonNull(password) ? password : existing.password(),
+                Objects.nonNull(displayName) ? displayName : existing.displayName(),
+                Objects.nonNull(roleCodes) ? roleCodes : existing.roles(),
+                Objects.nonNull(permissions) ? permissions : existing.permissions());
         return userRepository.save(updated);
     }
 
@@ -131,8 +133,8 @@ public class RbacService {
                 .orElseThrow(() -> new NoSuchElementException("role not found: " + code));
         Role updated = new Role(
                 existing.code(),
-                name != null ? name : existing.name(),
-                permissionCodes != null ? permissionCodes : existing.permissions());
+                Objects.nonNull(name) ? name : existing.name(),
+                Objects.nonNull(permissionCodes) ? permissionCodes : existing.permissions());
         return roleRepository.save(updated);
     }
 
@@ -220,7 +222,7 @@ public class RbacService {
      * 校验角色编码全部存在。
      */
     private void validateRoleCodes(Set<String> roleCodes) {
-        if (roleCodes == null) {
+        if (Objects.isNull(roleCodes)) {
             return;
         }
         for (String code : roleCodes) {

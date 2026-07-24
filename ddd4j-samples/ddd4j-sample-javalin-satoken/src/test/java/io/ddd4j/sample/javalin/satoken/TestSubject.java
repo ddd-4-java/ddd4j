@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.satoken;
 
+import java.util.Objects;
+
 import io.ddd4j.auth.satoken.subject.SaTokenSubject;
 
 /**
@@ -16,6 +18,6 @@ public class TestSubject extends SaTokenSubject {
     public Object getUserId() {
         // 回退到 Subject 接口默认实现：从 principal.getUserId() 取值
         var principal = getPrincipal();
-        return principal != null ? principal.getUserId() : null;
+        return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 }

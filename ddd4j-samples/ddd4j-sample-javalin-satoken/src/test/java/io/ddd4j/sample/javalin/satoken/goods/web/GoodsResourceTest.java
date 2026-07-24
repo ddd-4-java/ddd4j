@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.satoken.goods.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -16,15 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * GoodsResource + GoodsQueryResource 集成测试（Javalin + Guice + Sa-Token，random port）。
  *
- * <p>注：GoodsResource 和 GoodsQueryResource 在 ApiBuilder.path("api/goodss", ...) 下，
- * 内部路径以 /api/goods 开头，因此完整路径是 /api/goodss/api/goods/*。
+ * <p>GoodsResource 和 GoodsQueryResource 共同提供 {@code /api/goods/*} 路由。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GoodsResourceTest {
 
-    private static final String PREFIX = "/api/goodss/api/goods";
+    private static final String PREFIX = "/api/goods";
 
     private static Javalin app;
     private static HttpClient httpClient;
@@ -39,7 +40,7 @@ class GoodsResourceTest {
 
     @AfterAll
     static void stopApp() {
-        if (app != null) {
+        if (Objects.nonNull(app)) {
             app.stop();
         }
     }
@@ -231,101 +232,96 @@ class GoodsResourceTest {
     // =================== 6) getByCode ====================
 
     @Test
-    void getByCode_shadowedByIdRoute() throws Exception {
-        // 注：GoodsResource 中 /api/goods/{id} 在 /api/goods/by-code 之前注册，
-        // 因此 /by-code 被 /{id} 拦截（Long.parseLong 失败 → 400）。
-        // 这是预存在的路由顺序问题（不允许修改业务代码）。
+    void getByCode_shouldReturnGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-BC1\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
         HttpResponse<String> r = get(PREFIX + "/by-code?code=SKU-BC1");
-        assertTrue(r.statusCode() >= 400,
-                "expected /by-code shadowed by /{id} (>=400), actual=" + r.statusCode());
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("SKU-BC1"));
     }
 
     // =================== 7) pageQuery / listQuery / countQuery (在 queryResource 中) ========
 
-    /**
-     * 注：{@code /api/goods/page|list|count} 等查询路径被 {@code /api/goods/{id}} 拦截
-     * （GoodsResource 中按 id 路由先注册），导致 Long.parseLong("page"/"list"/"count") 抛异常 → 500。
-     * 这是预存在的路由顺序问题（不允许修改业务代码）。
-     */
     @Test
-    void pageQuery_defaultPage_shadowedByIdRoute() throws Exception {
+    void pageQuery_defaultPage_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?current=1&size=10");
-        assertTrue(r.statusCode() >= 500,
-                "expected /page shadowed by /{id} (>=500), actual=" + r.statusCode());
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void pageQuery_byStatus_shadowedByIdRoute() throws Exception {
+    void pageQuery_byStatus_shouldReturnMatchingGoods() throws Exception {
         HttpResponse<String> create = postJson(PREFIX,
                 "{\"code\":\"SKU-PS1\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
         String id = extractId(create.body());
         put(PREFIX + "/" + id + "/status?status=ON_SALE");
 
         HttpResponse<String> r = get(PREFIX + "/page?status=ON_SALE&current=1&size=10");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("SKU-PS1"));
     }
 
     @Test
-    void pageQuery_byPriceRange_shadowedByIdRoute() throws Exception {
+    void pageQuery_byPriceRange_shouldReturnMatchingGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-PR1\",\"name\":\"x\",\"price\":50.00,\"stock\":1}");
         HttpResponse<String> r = get(PREFIX + "/page?priceMin=10&priceMax=100&current=1&size=10");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("SKU-PR1"));
     }
 
     @Test
-    void pageQuery_byNameLike_shadowedByIdRoute() throws Exception {
+    void pageQuery_byNameLike_shouldReturnMatchingGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-NL1\",\"name\":\"iPhoneX\",\"price\":1.00,\"stock\":1}");
         HttpResponse<String> r = get(PREFIX + "/page?nameLike=iPhone&current=1&size=10");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("SKU-NL1"));
     }
 
     @Test
-    void pageQuery_byCode_shadowedByIdRoute() throws Exception {
+    void pageQuery_byCode_shouldReturnMatchingGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-EX1\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
         HttpResponse<String> r = get(PREFIX + "/page?code=SKU-EX1&current=1&size=10");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("SKU-EX1"));
     }
 
     @Test
-    void pageQuery_withPagination_shadowedByIdRoute() throws Exception {
+    void pageQuery_withPagination_shouldReturn200() throws Exception {
         for (int i = 0; i < 15; i++) {
             postJson(PREFIX, "{\"code\":\"SKU-PG" + i + "\",\"name\":\"P\",\"price\":1.00,\"stock\":1}");
         }
         HttpResponse<String> p1 = get(PREFIX + "/page?current=1&size=5");
-        assertTrue(p1.statusCode() >= 500);
+        assertEquals(200, p1.statusCode());
         HttpResponse<String> p3 = get(PREFIX + "/page?current=3&size=5");
-        assertTrue(p3.statusCode() >= 500);
+        assertEquals(200, p3.statusCode());
     }
 
     @Test
-    void pageQuery_withOrderBys_shadowedByIdRoute() throws Exception {
+    void pageQuery_withOrderBys_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?orderBys=price_DESC&current=1&size=10");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void listQuery_shadowedByIdRoute() throws Exception {
+    void listQuery_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/list");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void listQuery_byStatus_shadowedByIdRoute() throws Exception {
+    void listQuery_byStatus_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/list?status=ON_SALE");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void countQuery_shadowedByIdRoute() throws Exception {
+    void countQuery_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/count");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void countQuery_byStatus_shadowedByIdRoute() throws Exception {
+    void countQuery_byStatus_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/count?status=DRAFT");
-        assertTrue(r.statusCode() >= 500);
+        assertEquals(200, r.statusCode());
     }
 
     // =================== 综合 ====================

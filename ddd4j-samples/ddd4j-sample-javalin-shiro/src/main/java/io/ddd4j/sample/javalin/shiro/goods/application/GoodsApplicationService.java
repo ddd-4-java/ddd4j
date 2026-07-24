@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.goods.application;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.sample.javalin.shiro.goods.domain.*;
@@ -115,13 +117,13 @@ public class GoodsApplicationService {
     }
 
     private void validateCode(String code) {
-        if (Objects.isNull(code) || code.isBlank()) {
+        if (Objects.isNull(code) || StrKit.isBlank(code)) {
             throw new BizRuntimeException("goods.code.invalid", "code must not be blank");
         }
     }
 
     private void validateName(String name) {
-        if (Objects.isNull(name) || name.isBlank()) {
+        if (Objects.isNull(name) || StrKit.isBlank(name)) {
             throw new BizRuntimeException("goods.name.invalid", "name must not be blank");
         }
     }

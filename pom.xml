@@ -46,9 +46,7 @@
         <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
         <spring-integration.version>6.5.10</spring-integration.version>
-        <spring-kafka.version>3.3.5</spring-kafka.version>
         <spring-ldap.version>3.2.12</spring-ldap.version>
-        <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <spring-restdocs.version>3.0.3</spring-restdocs.version>
         <spring-retry.version>2.0.11</spring-retry.version>
         <spring-security.version>6.4.6</spring-security.version>

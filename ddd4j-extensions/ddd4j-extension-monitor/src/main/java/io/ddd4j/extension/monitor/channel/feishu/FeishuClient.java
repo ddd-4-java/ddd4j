@@ -1,6 +1,7 @@
 package io.ddd4j.extension.monitor.channel.feishu;
 
 import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Mac;
@@ -102,7 +103,7 @@ public class FeishuClient {
      * 拼接完整 URL：若设置了签名密钥，则追加 query；否则原样返回。
      */
     private String buildUrl() throws Exception {
-        if (secret == null || secret.isEmpty()) {
+        if (StrKit.isEmpty(secret)) {
             return webhookUrl;
         }
         long timestamp = System.currentTimeMillis() / 1000L;

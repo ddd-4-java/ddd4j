@@ -1,9 +1,12 @@
 package io.ddd4j.sample.javalin.satoken.rbac.application;
 
+import java.util.Objects;
+
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
@@ -128,13 +131,13 @@ public class RbacService implements SubjectDataProvider {
     public User updateUser(String userId, String realName, String password, User.Status status) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("user not found: " + userId));
-        if (realName != null) {
+        if (Objects.nonNull(realName)) {
             user.rename(realName);
         }
-        if (password != null && !password.isEmpty()) {
+        if (StrKit.isNotEmpty(password)) {
             user.changePassword(password);
         }
-        if (status != null) {
+        if (Objects.nonNull(status)) {
             if (status == User.Status.ENABLED) {
                 user.enable();
             } else {
@@ -179,12 +182,12 @@ public class RbacService implements SubjectDataProvider {
     public Set<String> listPermissionCodesOfUser(String userId) {
         Set<String> perms = new LinkedHashSet<>();
         User user = userRepository.findById(userId).orElse(null);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             return perms;
         }
         for (String roleId : user.getRoleIds()) {
             Role role = roleRepository.findById(roleId).orElse(null);
-            if (role == null) {
+            if (Objects.isNull(role)) {
                 continue;
             }
             for (String permissionId : role.getPermissionIds()) {
@@ -213,7 +216,7 @@ public class RbacService implements SubjectDataProvider {
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() -> new IllegalArgumentException("role not found: " + roleId));
         role.rename(roleName, description);
-        if (status != null) {
+        if (Objects.nonNull(status)) {
             if (status == Role.Status.ENABLED) {
                 role.enable();
             } else {
@@ -271,7 +274,7 @@ public class RbacService implements SubjectDataProvider {
         Permission permission = permissionRepository.findById(permissionId)
                 .orElseThrow(() -> new IllegalArgumentException("permission not found: " + permissionId));
         permission.rename(permissionName, module);
-        if (status != null) {
+        if (Objects.nonNull(status)) {
             if (status == Permission.Status.ENABLED) {
                 permission.enable();
             } else {
@@ -305,7 +308,7 @@ public class RbacService implements SubjectDataProvider {
     public List<String> getPermissionList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");
         Object userId = principal.getUserId();
-        if (userId == null) {
+        if (Objects.isNull(userId)) {
             return List.of();
         }
         return new ArrayList<>(listPermissionCodesOfUser(String.valueOf(userId)));
@@ -315,7 +318,7 @@ public class RbacService implements SubjectDataProvider {
     public List<String> getRoleList(AuthPrincipal principal) {
         Objects.requireNonNull(principal, "principal must not be null");
         Object userId = principal.getUserId();
-        if (userId == null) {
+        if (Objects.isNull(userId)) {
             return List.of();
         }
         return new ArrayList<>(listRoleCodesOfUser(String.valueOf(userId)));

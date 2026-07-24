@@ -78,17 +78,22 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-jpa</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-logs</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-mybatisplus</artifactId>
+                <artifactId>ddd4j-data-mybatis</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-spring</artifactId>
+                <artifactId>ddd4j-data-mybatisplus</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -136,6 +141,11 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-extension-license</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-monitor</artifactId>
                 <version>${revision}</version>
             </dependency>
 

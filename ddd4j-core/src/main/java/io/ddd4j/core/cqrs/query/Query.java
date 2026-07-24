@@ -9,6 +9,7 @@ import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.util.LambdaKit;
 import io.ddd4j.core.util.SFunction;
 import io.ddd4j.kit.lang.CollKit;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -222,10 +223,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     public <Q extends Query<M>> Q between(boolean condition, SFunction<M, ?> column, Object start, Object end) {
         if (condition) {
-            if (start != null) {
+            if (Objects.nonNull(start)) {
                 addCondition(true, column, ">=", start);
             }
-            if (end != null) {
+            if (Objects.nonNull(end)) {
                 addCondition(true, column, "<=", end);
             }
         }
@@ -239,7 +240,8 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     }
 
     public <Q extends Query<M>> Q in(boolean condition, SFunction<M, ?> column, Collection<?> values) {
-        return addCondition(condition && CollKit.isNotEmpty(values), column, "IN", values == null ? null : new ArrayList<>(values));
+        return addCondition(condition && CollKit.isNotEmpty(values), column, "IN",
+                Objects.isNull(values) ? null : new ArrayList<>(values));
     }
 
     public <Q extends Query<M>> Q notIn(SFunction<M, ?> column, Collection<?> values) {
@@ -247,7 +249,8 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     }
 
     public <Q extends Query<M>> Q notIn(boolean condition, SFunction<M, ?> column, Collection<?> values) {
-        return addCondition(condition && CollKit.isNotEmpty(values), column, "NOT_IN", values == null ? null : new ArrayList<>(values));
+        return addCondition(condition && CollKit.isNotEmpty(values), column, "NOT_IN",
+                Objects.isNull(values) ? null : new ArrayList<>(values));
     }
 
     // ========================= 条件构建 — NULL 判断 =========================
@@ -314,8 +317,8 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     @SafeVarargs
     public final <Q extends Query<M>> Q select(boolean condition, SFunction<M, ?>... columns) {
-        if (condition && columns != null && columns.length > 0) {
-            if (this.selectColumns == null) {
+        if (condition && Objects.nonNull(columns) && columns.length > 0) {
+            if (Objects.isNull(this.selectColumns)) {
                 this.selectColumns = new ArrayList<>();
             }
             for (SFunction<M, ?> column : columns) {
@@ -332,8 +335,8 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     @SafeVarargs
     public final <Q extends Query<M>> Q groupBy(boolean condition, SFunction<M, ?>... columns) {
-        if (condition && columns != null && columns.length > 0) {
-            if (this.groupByColumns == null) {
+        if (condition && Objects.nonNull(columns) && columns.length > 0) {
+            if (Objects.isNull(this.groupByColumns)) {
                 this.groupByColumns = new ArrayList<>();
             }
             for (SFunction<M, ?> column : columns) {
@@ -402,8 +405,8 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     // ========================= 聚合填充 =========================
 
     public <Q extends Query<M>> Q fills(String... fills) {
-        if (fills != null && fills.length > 0) {
-            if (this.fills != null) {
+        if (Objects.nonNull(fills) && fills.length > 0) {
+            if (Objects.nonNull(this.fills)) {
                 this.setFills(this.fills + "," + String.join(",", fills));
             } else {
                 this.setFills(String.join(",", fills));
@@ -413,18 +416,18 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     }
 
     public Boolean fill(String fill) {
-        if (this.fills == null || this.fills.isEmpty()) {
+        if (StrKit.isEmpty(this.fills)) {
             return false;
         }
         return Arrays.asList(this.fills.split(",")).contains(fill);
     }
 
     public void doFills(List<? extends AggregateRoot<?>> models) {
-        if (models == null || models.isEmpty()) {
+        if (CollKit.isEmpty(models)) {
             return;
         }
         Repository<?, ?> repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             ((Repository) repo).fill(this, models);
         }
     }
@@ -433,52 +436,52 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     @JsonIgnore
     public boolean hasConditions() {
-        return conditions != null && !conditions.isEmpty();
+        return CollKit.isNotEmpty(conditions);
     }
 
     @JsonIgnore
     public boolean hasOrderBy() {
-        return orderByConditions != null && !orderByConditions.isEmpty();
+        return CollKit.isNotEmpty(orderByConditions);
     }
 
     @JsonIgnore
     public boolean hasSet() {
-        return setOperations != null && !setOperations.isEmpty();
+        return CollKit.isNotEmpty(setOperations);
     }
 
     @JsonIgnore
     public boolean hasSelect() {
-        return selectColumns != null && !selectColumns.isEmpty();
+        return CollKit.isNotEmpty(selectColumns);
     }
 
     @JsonIgnore
     public boolean hasGroupBy() {
-        return groupByColumns != null && !groupByColumns.isEmpty();
+        return CollKit.isNotEmpty(groupByColumns);
     }
 
     @JsonIgnore
     public List<LambdaCondition> getWhereConditions() {
-        return conditions != null ? conditions : Collections.emptyList();
+        return Objects.nonNull(conditions) ? conditions : Collections.emptyList();
     }
 
     @JsonIgnore
     public List<LambdaCondition> getOrderByConditions() {
-        return orderByConditions != null ? orderByConditions : Collections.emptyList();
+        return Objects.nonNull(orderByConditions) ? orderByConditions : Collections.emptyList();
     }
 
     @JsonIgnore
     public List<LambdaCondition> getSetOperations() {
-        return setOperations != null ? setOperations : Collections.emptyList();
+        return Objects.nonNull(setOperations) ? setOperations : Collections.emptyList();
     }
 
     @JsonIgnore
     public List<String> getSelectColumns() {
-        return selectColumns != null ? selectColumns : Collections.emptyList();
+        return Objects.nonNull(selectColumns) ? selectColumns : Collections.emptyList();
     }
 
     @JsonIgnore
     public List<String> getGroupByColumns() {
-        return groupByColumns != null ? groupByColumns : Collections.emptyList();
+        return Objects.nonNull(groupByColumns) ? groupByColumns : Collections.emptyList();
     }
 
     // ========================= 分页计算 =========================
@@ -498,7 +501,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public List<M> list() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             return ((Repository) repo).findList(this);
         }
         throw new BizRuntimeException("Repository for {} does not support list()", this.getClass().getSimpleName());
@@ -506,7 +509,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     public List<M> list(String ifEmpty, Object... params) {
         List<M> list = list();
-        if (list == null || list.isEmpty()) {
+        if (CollKit.isEmpty(list)) {
             throw new BizRuntimeException(ifEmpty, params);
         }
         return list;
@@ -515,7 +518,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public Page<M> page() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             return ((Repository) repo).page(this);
         }
         throw new BizRuntimeException("Repository for {} does not support page()", this.getClass().getSimpleName());
@@ -523,7 +526,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     public Page<M> page(String ifEmpty, Object... params) {
         Page<M> p = page();
-        if (p == null || p.isEmpty()) {
+        if (Objects.isNull(p) || p.isEmpty()) {
             throw new BizRuntimeException(ifEmpty, params);
         }
         return p;
@@ -532,7 +535,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public M one() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             return (M) ((Repository) repo).findFirst(this).orElse(null);
         }
         throw new BizRuntimeException("Repository for {} does not support one()", this.getClass().getSimpleName());
@@ -541,7 +544,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public Optional<M> oneOpt() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             return ((Repository) repo).findFirst(this);
         }
         throw new BizRuntimeException("Repository for {} does not support oneOpt()", this.getClass().getSimpleName());
@@ -553,7 +556,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     public M one(String ifNull, Object... params) {
         M one = one();
-        if (one == null) {
+        if (Objects.isNull(one)) {
             throw new BizRuntimeException(ifNull, params);
         }
         return one;
@@ -570,7 +573,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public long count() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             return ((Repository) repo).count(this);
         }
         throw new BizRuntimeException("Repository for {} does not support count()", this.getClass().getSimpleName());
@@ -605,7 +608,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     public List<Map<String, Object>> maps() {
         this.with();
         Repository<?, ?> repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             return repo.maps((Query) this);
         }
         throw new BizRuntimeException("Repository for {} does not support maps()", this.getClass().getSimpleName());

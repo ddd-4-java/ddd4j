@@ -10,6 +10,7 @@ import io.ddd4j.core.ddd.model.DomainObjectMapper;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.kit.lang.StrKit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -382,7 +383,7 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         if (value instanceof Collection<?> collection) {
             return collection;
         }
-        if (value instanceof String string && !string.isEmpty()) {
+        if (value instanceof String string && StrKit.isNotEmpty(string)) {
             return Arrays.asList(string.split(","));
         }
         return Collections.emptyList();

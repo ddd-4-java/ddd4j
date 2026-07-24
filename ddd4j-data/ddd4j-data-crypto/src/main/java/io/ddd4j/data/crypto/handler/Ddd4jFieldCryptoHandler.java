@@ -1,6 +1,7 @@
 package io.ddd4j.data.crypto.handler;
 
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class Ddd4jFieldCryptoHandler {
     }
 
     public <T> T decrypt(T value) {
-        if (!(value instanceof String encrypted) || encrypted.isEmpty()) {
+        if (!(value instanceof String encrypted) || StrKit.isEmpty(encrypted)) {
             return value;
         }
         try {

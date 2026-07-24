@@ -3,6 +3,7 @@ package io.ddd4j.data.mybatis.plugins.handler;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.enhance.crypto.handler.EncryptedFieldHandler;
 
@@ -39,7 +40,7 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
 
     @Override
     public <T> T decrypt(String value, Class<T> rtType) {
-        if (Objects.isNull(value) || value.isEmpty()) {
+        if (StrKit.isEmpty(value)) {
             return null;
         }
         return cryptoStrategy.decrypt(value, SymmetricAlgorithmType.SM4, null, null, null, null, false, rtType);

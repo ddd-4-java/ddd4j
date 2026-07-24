@@ -6,9 +6,11 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * {@link LocalDate} 与 Excel 字符串互转的默认转换器。
@@ -71,7 +73,7 @@ public class LocalDateConverter implements Converter<LocalDate> {
     public LocalDate convertToJavaData(ReadCellData<?> cellData,
                                        ExcelContentProperty contentProperty,
                                        GlobalConfiguration globalConfiguration) {
-        if (cellData == null || cellData.getStringValue() == null || cellData.getStringValue().isEmpty()) {
+        if (Objects.isNull(cellData) || StrKit.isEmpty(cellData.getStringValue())) {
             return null;
         }
         return LocalDate.parse(cellData.getStringValue(), formatter);
@@ -81,7 +83,7 @@ public class LocalDateConverter implements Converter<LocalDate> {
     public WriteCellData<?> convertToExcelData(LocalDate value,
                                                ExcelContentProperty contentProperty,
                                                GlobalConfiguration globalConfiguration) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return new WriteCellData<>("");
         }
         return new WriteCellData<>(value.format(formatter));

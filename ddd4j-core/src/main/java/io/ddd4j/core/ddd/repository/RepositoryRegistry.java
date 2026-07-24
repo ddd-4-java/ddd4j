@@ -7,6 +7,7 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -139,7 +140,7 @@ public final class RepositoryRegistry {
 
         // 3. 静态实例表（向后兼容）
         Repository instance = INSTANCES.get(modelClass);
-        if (instance != null) {
+        if (Objects.nonNull(instance)) {
             return (Repository) instance;
         }
 
@@ -171,7 +172,7 @@ public final class RepositoryRegistry {
         }
 
         Repository instance = QUERY_INSTANCES.get(queryClass);
-        if (instance != null) {
+        if (Objects.nonNull(instance)) {
             return instance;
         }
 

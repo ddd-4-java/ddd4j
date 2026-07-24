@@ -67,7 +67,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 批量保存。
      */
     public static <M extends AggregateRoot<?>> boolean save(List<M> models) {
-        if (models == null || models.isEmpty()) {
+        if (Objects.isNull(models) || models.isEmpty()) {
             return false;
         }
         Repository repo = RepositoryRegistry.repository(models.get(0).getClass());
@@ -182,7 +182,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     public <Q extends Query> boolean update(Q query) {
         query.with();
         Repository repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             return ((Repository) repo).update(this, query);
         }
         throw new BizRuntimeException("Repository does not support update(query)");
@@ -193,7 +193,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     public <Q extends Query> void fill(Q query) {
         Repository repo = repository();
-        if (repo != null) {
+        if (Objects.nonNull(repo)) {
             ((Repository) repo).fill(query, this);
         }
     }

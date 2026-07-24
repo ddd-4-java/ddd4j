@@ -11,6 +11,8 @@ import io.ddd4j.core.CustomApiCode;
 import io.ddd4j.core.util.I18nKit;
 import lombok.Getter;
 
+import java.util.Objects;
+
 /**
  * 业务受检异常（ddd4j 核心异常基类）。
  * <p>
@@ -49,7 +51,7 @@ public class BizCheckedException extends Exception {
     }
 
     public BizCheckedException(Integer code, String i18nCode, Object[] args, String message) {
-        super(I18nKit.get(i18nCode, args != null ? args : new Object[]{message}));
+        super(I18nKit.get(i18nCode, Objects.nonNull(args) ? args : new Object[]{message}));
         this.code = code;
         this.i18nCode = i18nCode;
         this.args = args;

@@ -1,5 +1,6 @@
 package io.ddd4j.mq.rocketmq;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,7 +41,7 @@ public class RocketMQProperties extends MQProperties {
      */
     public DefaultMQProducer newProducer() {
         DefaultMQProducer producer = new DefaultMQProducer(getProducerGroup());
-        if (nameServer != null && !nameServer.isEmpty()) {
+        if (StrKit.isNotEmpty(nameServer)) {
             producer.setNamesrvAddr(nameServer);
         }
         return producer;
@@ -51,7 +52,7 @@ public class RocketMQProperties extends MQProperties {
      */
     public DefaultMQPushConsumer newConsumer(String group) {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);
-        if (nameServer != null && !nameServer.isEmpty()) {
+        if (StrKit.isNotEmpty(nameServer)) {
             consumer.setNamesrvAddr(nameServer);
         }
         return consumer;

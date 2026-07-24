@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -68,7 +69,7 @@ class ProjectionRunnerTest {
 
         @Override
         public String getStreamId() {
-            return streamId != null ? streamId : name;
+            return Objects.nonNull(streamId) ? streamId : name;
         }
 
         @Override

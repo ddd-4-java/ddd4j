@@ -253,7 +253,7 @@ public class TdmqMQClient implements MQClient {
             if (Objects.isNull(entries) || entries.isEmpty()) {
                 return;
             }
-            String messageId = key.isEmpty() ? java.util.UUID.randomUUID().toString() : key;
+            String messageId = StrKit.isEmpty(key) ? java.util.UUID.randomUUID().toString() : key;
             for (Consumer<DeliveredMessage> entry : entries) {
                 entry.accept(new DeliveredMessage(
                         messageId,

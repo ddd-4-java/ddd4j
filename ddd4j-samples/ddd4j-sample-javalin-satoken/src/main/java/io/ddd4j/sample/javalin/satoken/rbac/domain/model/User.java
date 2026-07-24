@@ -103,7 +103,7 @@ public class User extends AggregateRoot<String> {
      * 分配角色（替换）。
      */
     public void assignRoles(Set<String> newRoleIds) {
-        if (newRoleIds != null) {
+        if (Objects.nonNull(newRoleIds)) {
             this.roleIds.clear();
             this.roleIds.addAll(newRoleIds);
         }

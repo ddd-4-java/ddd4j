@@ -73,7 +73,7 @@ public class Role extends AggregateRoot<String> {
         if (StrKit.isNotBlank(roleName)) {
             this.roleName = roleName;
         }
-        if (description != null) {
+        if (Objects.nonNull(description)) {
             this.description = description;
         }
     }
@@ -96,7 +96,7 @@ public class Role extends AggregateRoot<String> {
      * 分配权限给角色。
      */
     public void assignPermissions(Set<String> newPermissionIds) {
-        if (newPermissionIds != null) {
+        if (Objects.nonNull(newPermissionIds)) {
             this.permissionIds.clear();
             this.permissionIds.addAll(newPermissionIds);
         }

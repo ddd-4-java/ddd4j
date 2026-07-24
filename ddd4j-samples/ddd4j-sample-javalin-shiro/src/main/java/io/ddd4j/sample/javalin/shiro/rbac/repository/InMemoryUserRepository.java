@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.rbac.repository;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 
 import java.util.Collection;
@@ -41,7 +43,7 @@ public class InMemoryUserRepository {
      * 按 loginId 删除用户。
      */
     public boolean deleteByLoginId(String loginId) {
-        return store.remove(loginId) != null;
+        return Objects.nonNull(store.remove(loginId));
     }
 
     /**

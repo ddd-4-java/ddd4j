@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Excel 模板填充 facade。
@@ -83,7 +84,7 @@ public final class ExcelFiller {
              InputStream tpl = toNonClosingStream(template);
              ExcelWriter writer = EasyExcel.write(out).withTemplate(tpl).build()) {
             WriteSheet sheet = EasyExcel.writerSheet().build();
-            if (fillConfig == null) {
+            if (Objects.isNull(fillConfig)) {
                 writer.fill(list, sheet);
             } else {
                 writer.fill(list, fillConfig, sheet);

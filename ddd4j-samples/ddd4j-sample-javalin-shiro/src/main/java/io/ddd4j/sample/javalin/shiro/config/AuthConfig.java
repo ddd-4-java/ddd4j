@@ -14,6 +14,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -31,6 +32,7 @@ import java.util.Set;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public final class AuthConfig {
 
     private AuthConfig() {
@@ -58,7 +60,7 @@ public final class AuthConfig {
         // 3. 注册到全局
         SecurityUtils.setSecurityManager(securityManager);
 
-        System.out.println("[Shiro] SecurityManager initialized with RBAC realm: " + realm.getName());
+        log.info("Shiro SecurityManager initialized with RBAC realm: {}", realm.getName());
     }
 
     /**

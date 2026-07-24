@@ -40,18 +40,19 @@ import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -95,10 +96,16 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         extends AbstractRepository<MP, P>
         implements DomainObjectMapper<M, P>, Repository<M, ID> {
 
-    /**
-     * 应用层日志（slf4j），与父类 {@link AbstractRepository#log}（ibatis-logging）共存。
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisAggregateRepository.class);
+    @Slf4j
+    private static final class ApplicationLog {
+
+        private ApplicationLog() {
+        }
+
+        private static Logger logger() {
+            return log;
+        }
+    }
 
     /**
      * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@link #setBaseMapper} 或构造器手动注入）。
@@ -140,7 +147,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     private static String toUnderline(String camel) {
-        if (Objects.isNull(camel) || camel.isEmpty()) {
+        if (StrKit.isEmpty(camel)) {
             return camel;
         }
         StringBuilder buf = new StringBuilder();
@@ -244,7 +251,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      */
     @Override
     public MP getBaseMapper() {
-        if (this.baseMapper == null) {
+        if (Objects.isNull(this.baseMapper)) {
             throw new IllegalStateException(
                     "baseMapper must not be null — call setBaseMapper() or pass mapper to constructor");
         }
@@ -276,11 +283,11 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * </ol>
      */
     protected String translateProperty(String property) {
-        if (Objects.isNull(property) || property.isEmpty()) {
+        if (StrKit.isEmpty(property)) {
             return property;
         }
         String column = domainModelInfo().getPoColumn(property);
-        if (column != null) {
+        if (Objects.nonNull(column)) {
             return column;
         }
         return toUnderline(property);
@@ -533,7 +540,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     @Override
     public boolean saveOrUpdateBatch(Collection<P> entityList, int batchSize) {
         TableInfo tableInfoLocal = tableInfo();
-        if (tableInfoLocal == null) {
+        if (Objects.isNull(tableInfoLocal)) {
             throw new IllegalArgumentException(
                     "error: can not execute. because can not find cache of TableInfo for entity " + this.getEntityClass());
         }
@@ -544,7 +551,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
         return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), (Class<?>) this.getMapperClass(), this.log, entityList, batchSize,
                 (sqlSession, entity) -> {
-                    Object idVal = tableInfoLocal.getKeyProperty() == null ? null : tableInfoLocal.getKeyProperty();
+                    Object idVal = Objects.isNull(tableInfoLocal.getKeyProperty()) ? null : tableInfoLocal.getKeyProperty();
                     try {
                         Field keyField = entity.getClass().getDeclaredField(keyProperty);
                         keyField.setAccessible(true);
@@ -910,9 +917,11 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * 在 TableInfo.fieldList 中查找标注了指定注解的字段。
      */
     private TableFieldInfo findFieldInfoByAnnotation(TableInfo ti, Class<? extends java.lang.annotation.Annotation> annotationType) {
-        if (ti == null) return null;
+        if (Objects.isNull(ti)) {
+            return null;
+        }
         for (TableFieldInfo tfi : ti.getFieldList()) {
-            if (tfi.getField() != null && tfi.getField().isAnnotationPresent(annotationType)) {
+            if (Objects.nonNull(tfi.getField()) && tfi.getField().isAnnotationPresent(annotationType)) {
                 return tfi;
             }
         }
@@ -923,9 +932,11 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * 在 TableInfo.fieldList 中查找指定 PO 字段（反射）。
      */
     private Field findFieldByProperty(TableInfo ti, Class<? extends java.lang.annotation.Annotation> annotationType) {
-        if (ti == null) return null;
+        if (Objects.isNull(ti)) {
+            return null;
+        }
         for (TableFieldInfo tfi : ti.getFieldList()) {
-            if (tfi.getField() != null && tfi.getField().isAnnotationPresent(annotationType)) {
+            if (Objects.nonNull(tfi.getField()) && tfi.getField().isAnnotationPresent(annotationType)) {
                 return tfi.getField();
             }
         }
@@ -961,7 +972,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     protected String getKeyValue(P persistenceObject) {
         try {
             TableFieldInfo bizKeyField = findFieldInfoByAnnotation(tableInfo(), BizKey.class);
-            if (bizKeyField == null || bizKeyField.getField() == null) {
+            if (Objects.isNull(bizKeyField) || Objects.isNull(bizKeyField.getField())) {
                 return null;
             }
             Field keyField = bizKeyField.getField();
@@ -969,7 +980,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             Object value = keyField.get(persistenceObject);
             return Objects.nonNull(value) ? value.toString() : null;
         } catch (IllegalAccessException | IllegalArgumentException exception) {
-            LOGGER.error("获取当前实体对象的key值出现错误！", exception);
+            ApplicationLog.logger().error("获取当前实体对象的key值出现错误！", exception);
             throw new IllegalArgumentException("获取当前实体对象的key值出现错误!");
         }
     }
@@ -1018,7 +1029,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
                 }
             }
         } catch (IllegalAccessException ignored) {
-            LOGGER.debug("Ignore insert fill failure: {}", ignored.getMessage());
+            ApplicationLog.logger().debug("Ignore insert fill failure: {}", ignored.getMessage());
         }
     }
 
@@ -1030,7 +1041,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
                 }
             }
         } catch (IllegalAccessException ignored) {
-            LOGGER.debug("Ignore update fill failure: {}", ignored.getMessage());
+            ApplicationLog.logger().debug("Ignore update fill failure: {}", ignored.getMessage());
         }
     }
 

@@ -8,7 +8,7 @@ package io.ddd4j.core.cache;
  * // 分布式计数器（所有后端通用）
  * cache.compareAndSet("counter", 60, current -> {
  *     Long v = current.value();
- *     return (v == null ? 0L : v) + 1;
+ *     return (v instanceof Long value ? value : 0L) + 1;
  * });
  * }</pre>
  *

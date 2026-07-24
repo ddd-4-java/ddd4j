@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
+import java.util.Objects;
+
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.util.SubjectKit;
@@ -47,7 +49,7 @@ public class AuthorizationController {
      * 数组 → Set 转换（保留顺序）。
      */
     private static Set<String> toSet(String[] arr) {
-        if (arr == null) {
+        if (Objects.isNull(arr)) {
             return new LinkedHashSet<>();
         }
         Set<String> set = new LinkedHashSet<>();
@@ -128,8 +130,8 @@ public class AuthorizationController {
                 loginId,
                 req.displayName(),
                 req.password(),
-                req.roles() != null ? toSet(req.roles()) : null,
-                req.permissions() != null ? toSet(req.permissions()) : null);
+                Objects.nonNull(req.roles()) ? toSet(req.roles()) : null,
+                Objects.nonNull(req.permissions()) ? toSet(req.permissions()) : null);
         ctx.json(R.ok("user updated", toUserView(user)));
     }
 
@@ -183,7 +185,7 @@ public class AuthorizationController {
         String code = ctx.pathParam("code");
         UpdateRoleRequest req = ctx.bodyAsClass(UpdateRoleRequest.class);
         Role role = rbacService.updateRole(code, req.name(),
-                req.permissions() != null ? toSet(req.permissions()) : null);
+                Objects.nonNull(req.permissions()) ? toSet(req.permissions()) : null);
         ctx.json(R.ok("role updated", toRoleView(role)));
     }
 

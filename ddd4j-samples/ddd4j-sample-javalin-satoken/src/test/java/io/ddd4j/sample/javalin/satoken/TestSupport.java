@@ -43,12 +43,8 @@ import org.fuin.ddd4j.core.EntityId;
 /**
  * 测试基础设施：手动创建 Guice 注入器并启动 Javalin。
  *
- * <p>注：{@link AuthModule} 中的部分类（{@link OrderResource} / {@link OrderDomainService} /
- * {@link GoodsResource} / {@link GoodsQueryResource} / {@link AuthenticationController} /
- * {@link AuthorizationController}）的构造函数缺少 {@code @Inject} 注解，
- * Guice 会报 MISSING_CONSTRUCTOR 错误。这是预存在的业务代码 bug（不允许修改业务代码），
- * 因此测试侧不直接使用 {@code Guice.createInjector(new AuthModule())}，而是改用
- * 本类提供的 {@link TestModule}，所有控制器/资源都用 {@code toInstance} 绑定到手动构造的实例。
+ * <p>测试侧直接构造资源和服务，使 HTTP 集成测试聚焦于路由、认证和领域行为，
+ * 避免把 Guice 容器生命周期混入每个测试用例。
  */
 public final class TestSupport {
 
@@ -98,9 +94,6 @@ public final class TestSupport {
         AuthorizationController authzController = new AuthorizationController(rbacService);
 
         // 6) 启动 Javalin
-        // 注：JavalinSaTokenApplication 中的 routes() 调用存在预存在的业务 bug（routes() 返回 EndpointGroup
-        // 而非直接调用 addEndpoints()），因此测试侧必须显式调用 addEndpoints() 或把 EndpointGroup
-        // 直接传给 ApiBuilder.path() 才能让路由生效。
         Javalin app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
             cfg.jsonMapper(new JavalinJackson());
@@ -116,11 +109,9 @@ public final class TestSupport {
             cfg.routes.apiBuilder(() -> {
                 authController.routes().addEndpoints();
                 ApiBuilder.path("rbac", authzController.routes());
-                ApiBuilder.path("orders", orderResource.routes());
-                ApiBuilder.path("api/goodss", () -> {
-                    goodsResource.routes().addEndpoints();
-                    goodsQueryResource.routes().addEndpoints();
-                });
+                orderResource.routes().addEndpoints();
+                goodsQueryResource.routes().addEndpoints();
+                goodsResource.routes().addEndpoints();
             });
         });
         app.start(0);

@@ -7,6 +7,7 @@ import io.ddd4j.web.core.RequestIdGenerator;
 import io.ddd4j.web.core.SynchronousWebRequestSession;
 import io.ddd4j.web.core.WebHeaders;
 import io.ddd4j.web.core.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.WebOtelSupport;
 import io.ddd4j.web.core.WebRequestContext;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestData;
@@ -19,17 +20,24 @@ import jakarta.ws.rs.container.ContainerResponseContext;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Quarkus REST 同步请求上下文、Bearer Subject 与幂等过滤器。
+ *
+ * <p>同时集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用
+ * WebOtelIntegration（OTel 集成可选，无依赖时不生效）。
  */
 public class Ddd4jQuarkusWebFilter {
 
     static final String SESSION_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".session";
     static final String CONTEXT_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".context";
+    static final String OTEL_SPAN_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelSpan";
+    static final String OTEL_SCOPE_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelScope";
 
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
@@ -64,11 +72,25 @@ public class Ddd4jQuarkusWebFilter {
 
     @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
     public void request(ContainerRequestContext request) {
-        WebRequestContext context = createContext(request);
-        SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
-                idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
-        request.setProperty(CONTEXT_PROPERTY, context);
-        request.setProperty(SESSION_PROPERTY, session);
+        // OTel: 启动 SERVER span
+        Object span = WebOtelSupport.startServerSpan(
+                request.getMethod(),
+                request.getUriInfo().getRequestUri().getPath(),
+                extractRequestHeaders(request));
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        request.setProperty(OTEL_SPAN_PROPERTY, span);
+        request.setProperty(OTEL_SCOPE_PROPERTY, scope);
+
+        try {
+            WebRequestContext context = createContext(request);
+            SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
+                    idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
+            request.setProperty(CONTEXT_PROPERTY, context);
+            request.setProperty(SESSION_PROPERTY, session);
+        } catch (RuntimeException exception) {
+            WebOtelSupport.recordError(span, exception);
+            throw exception;
+        }
     }
 
     @ServerResponseFilter(priority = Priorities.USER)
@@ -79,11 +101,37 @@ public class Ddd4jQuarkusWebFilter {
             response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
         }
         Object sessionValue = request.getProperty(SESSION_PROPERTY);
+        boolean successful = response.getStatus() < 400;
         if (sessionValue instanceof SynchronousWebRequestSession session) {
-            session.complete(response.getStatus() < 400);
+            session.complete(successful);
+        }
+        // OTel: 结束 span
+        Object span = request.getProperty(OTEL_SPAN_PROPERTY);
+        if (span != null) {
+            WebOtelSupport.endServerSpan(span, response.getStatus());
+            request.removeProperty(OTEL_SPAN_PROPERTY);
+        }
+        Object scope = request.getProperty(OTEL_SCOPE_PROPERTY);
+        if (scope instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) scope).close();
+            } catch (Throwable ignored) {
+            }
+            request.removeProperty(OTEL_SCOPE_PROPERTY);
         }
         request.removeProperty(CONTEXT_PROPERTY);
         request.removeProperty(SESSION_PROPERTY);
+    }
+
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        for (var entry : request.getHeaders().entrySet()) {
+            String value = request.getHeaderString(entry.getKey());
+            if (value != null) {
+                headers.put(entry.getKey(), value);
+            }
+        }
+        return headers;
     }
 
     private WebRequestContext createContext(ContainerRequestContext request) {

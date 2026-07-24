@@ -6,6 +6,8 @@ import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
+import java.util.Objects;
+
 /**
  * 斑马线（隔行变色）策略。
  *
@@ -50,7 +52,7 @@ public class AlternatingRowStyleStrategy implements CellWriteHandler {
             return;
         }
         // relativeRowIndex 在内容区域从 0 开始；偶数行加底色
-        int relativeRowIndex = context.getRelativeRowIndex() == null ? -1 : context.getRelativeRowIndex();
+        int relativeRowIndex = Objects.isNull(context.getRelativeRowIndex()) ? -1 : context.getRelativeRowIndex();
         if (relativeRowIndex >= 0 && relativeRowIndex % 2 == 0) {
             WriteCellStyle.merge(zebraStyle, context.getFirstCellData().getOrCreateStyle());
         }

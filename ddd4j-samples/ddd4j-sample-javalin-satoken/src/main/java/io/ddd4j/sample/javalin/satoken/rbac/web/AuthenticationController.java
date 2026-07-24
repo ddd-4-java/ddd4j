@@ -51,7 +51,7 @@ public class AuthenticationController {
             post("/auth/login", ctx -> {
                 LoginRequest req = ctx.bodyAsClass(LoginRequest.class);
                 String token = rbacService.login(req.username(), req.password());
-                if (token == null) {
+                if (Objects.isNull(token)) {
                     ctx.status(401).json(R.fail(401, "invalid credentials or user disabled"));
                     return;
                 }

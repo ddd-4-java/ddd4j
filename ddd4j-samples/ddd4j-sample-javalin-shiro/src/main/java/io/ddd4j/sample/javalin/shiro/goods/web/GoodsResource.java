@@ -60,16 +60,16 @@ public class GoodsResource {
                 ctx.json(R.ok());
             });
 
-            // GET /api/goods/{id} —— 按 ID 查询
-            get("/api/goods/{id}", ctx -> {
-                Long id = Long.parseLong(ctx.pathParam("id"));
-                ctx.json(R.ok(applicationService.getById(GoodsId.of(id))));
-            });
-
             // GET /api/goods/by-code?code=xxx —— 按编码查询
             get("/api/goods/by-code", ctx -> {
                 String code = ctx.queryParam("code");
                 ctx.json(R.ok(applicationService.getByCode(code)));
+            });
+
+            // GET /api/goods/{id} —— 按 ID 查询
+            get("/api/goods/{id}", ctx -> {
+                Long id = Long.parseLong(ctx.pathParam("id"));
+                ctx.json(R.ok(applicationService.getById(GoodsId.of(id))));
             });
         };
     }

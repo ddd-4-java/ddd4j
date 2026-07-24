@@ -6,11 +6,13 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Objects;
 
 /**
  * {@link BigDecimal} 与 Excel 字符串互转的金额转换器。
@@ -71,11 +73,11 @@ public class BigDecimalStringConverter implements Converter<BigDecimal> {
     public BigDecimal convertToJavaData(ReadCellData<?> cellData,
                                         ExcelContentProperty contentProperty,
                                         GlobalConfiguration globalConfiguration) {
-        if (cellData == null) {
+        if (Objects.isNull(cellData)) {
             return null;
         }
         String raw = cellData.getStringValue();
-        if (raw == null || raw.trim().isEmpty()) {
+        if (StrKit.isBlank(raw)) {
             return null;
         }
         try {
@@ -99,7 +101,7 @@ public class BigDecimalStringConverter implements Converter<BigDecimal> {
     public WriteCellData<?> convertToExcelData(BigDecimal value,
                                                ExcelContentProperty contentProperty,
                                                GlobalConfiguration globalConfiguration) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return new WriteCellData<>("");
         }
         return new WriteCellData<>(formatHolder.get().format(value));

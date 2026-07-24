@@ -17,6 +17,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +55,7 @@ class FeishuClientTest {
 
     @AfterEach
     void stopServer() {
-        if (server != null) {
+        if (Objects.nonNull(server)) {
             server.stop(0);
         }
     }
@@ -114,7 +115,7 @@ class FeishuClientTest {
 
     private static Map<String, String> parseQuery(String query) {
         Map<String, String> out = new HashMap<>();
-        if (query == null) {
+        if (Objects.isNull(query)) {
             return out;
         }
         for (String pair : query.split("&")) {

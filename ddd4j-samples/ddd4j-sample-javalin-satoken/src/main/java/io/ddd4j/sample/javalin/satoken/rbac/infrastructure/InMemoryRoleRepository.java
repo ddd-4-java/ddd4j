@@ -1,5 +1,8 @@
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
+import java.util.Objects;
+
+import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.RoleRepository;
@@ -30,7 +33,7 @@ public class InMemoryRoleRepository implements RoleRepository {
 
     private static Role toModel(RoleRow row) {
         Role role = new Role(row.roleId, row.roleCode, row.roleName, row.description, Role.Status.valueOf(row.status));
-        if (row.permissionIds != null && !row.permissionIds.isEmpty()) {
+        if (CollKit.isNotEmpty(row.permissionIds)) {
             role.assignPermissions(new HashSet<>(row.permissionIds));
         }
         return role;

@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro;
 
+import java.util.Objects;
+
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
@@ -100,24 +102,24 @@ public final class TestSupport {
             cfg.routes.before(ctx -> {
                 ThreadContext.remove();
                 String token = ctx.header("Authorization");
-                if (token != null && token.startsWith("Bearer ")) {
+                if (Objects.nonNull(token) && token.startsWith("Bearer ")) {
                     String sessionId = token.substring("Bearer ".length()).trim();
                     try {
                         org.apache.shiro.session.mgt.SessionKey key =
                                 new org.apache.shiro.session.mgt.DefaultSessionKey(sessionId);
                         org.apache.shiro.session.Session session =
                                 SecurityUtils.getSecurityManager().getSession(key);
-                        if (session != null) {
+                        if (Objects.nonNull(session)) {
                             Object user = session.getAttribute("user");
                             org.apache.shiro.subject.PrincipalCollection principals =
-                                    user != null
+                                    Objects.nonNull(user)
                                             ? new org.apache.shiro.subject.SimplePrincipalCollection(user, "rbacRealm")
                                             : null;
                             org.apache.shiro.subject.Subject shiroSubject =
                                     new org.apache.shiro.subject.Subject.Builder(SecurityUtils.getSecurityManager())
                                             .session(session)
                                             .principals(principals)
-                                            .authenticated(principals != null)
+                                            .authenticated(Objects.nonNull(principals))
                                             .sessionCreationEnabled(false)
                                             .buildSubject();
                             ThreadContext.bind(shiroSubject);
@@ -164,11 +166,9 @@ public final class TestSupport {
                             "byUser", String.valueOf(SubjectKit.getLoginId()))));
                 });
 
-                ApiBuilder.path("orders", orderResource.routes());
-                ApiBuilder.path("api/goodss", () -> {
-                    goodsResource.routes().addEndpoints();
-                    goodsQueryResource.routes().addEndpoints();
-                });
+                orderResource.routes().addEndpoints();
+                goodsQueryResource.routes().addEndpoints();
+                goodsResource.routes().addEndpoints();
             });
         });
 
@@ -176,7 +176,7 @@ public final class TestSupport {
         ThreadContext.remove();
         try {
             SecurityManager sm = SecurityUtils.getSecurityManager();
-            if (sm != null) {
+            if (Objects.nonNull(sm)) {
                 // 清理：unbind security manager 不需要；只清理线程 Subject
                 ThreadContext.remove();
             }

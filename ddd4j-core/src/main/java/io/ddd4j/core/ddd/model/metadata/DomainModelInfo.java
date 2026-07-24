@@ -54,7 +54,7 @@ public class DomainModelInfo<M> {
     }
 
     private void build(Function<String, String> poProperty2ColumnProvider) {
-        Function<String, String> provider = poProperty2ColumnProvider != null
+        Function<String, String> provider = Objects.nonNull(poProperty2ColumnProvider)
                 ? poProperty2ColumnProvider
                 : p -> null;
 
@@ -85,7 +85,7 @@ public class DomainModelInfo<M> {
      */
     private String resolvePoColumn(Field field, Function<String, String> provider) {
         DomainField annotation = field.getAnnotation(DomainField.class);
-        if (annotation != null) {
+        if (Objects.nonNull(annotation)) {
             // 优先级 1：直接声明 column
             if (StrKit.hasText(annotation.column())) {
                 return annotation.column();
@@ -93,7 +93,7 @@ public class DomainModelInfo<M> {
             // 优先级 2：通过 poField 查找
             if (StrKit.hasText(annotation.poField())) {
                 String col = provider.apply(annotation.poField());
-                if (col != null) {
+                if (Objects.nonNull(col)) {
                     return col;
                 }
             }
@@ -110,7 +110,7 @@ public class DomainModelInfo<M> {
      * 通过 Domain 字段名查找 {@link DomainFieldInfo}（精确匹配）。
      */
     public DomainFieldInfo findField(String property) {
-        if (property == null) {
+        if (Objects.isNull(property)) {
             return null;
         }
         return property2Field.get(property);
@@ -124,6 +124,6 @@ public class DomainModelInfo<M> {
      */
     public String getPoColumn(String property) {
         DomainFieldInfo info = findField(property);
-        return info != null ? info.getPoColumn() : null;
+        return Objects.nonNull(info) ? info.getPoColumn() : null;
     }
 }

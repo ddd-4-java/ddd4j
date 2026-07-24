@@ -1,5 +1,7 @@
 package io.ddd4j.mq.activemq.util;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import jakarta.jms.*;
 
 import java.nio.charset.StandardCharsets;
@@ -104,6 +106,6 @@ public final class ActivemqKit {
     }
 
     private static boolean hasText(String s) {
-        return Objects.nonNull(s) && !s.isEmpty();
+        return StrKit.isNotEmpty(s);
     }
 }

@@ -23,6 +23,7 @@ import io.ddd4j.sample.javalin.satoken.rbac.web.AuthenticationController;
 import io.ddd4j.sample.javalin.satoken.rbac.web.AuthorizationController;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Javalin + Guice + Sa-Token + RBAC 鉴权 + DDD 业务示例启动类。
@@ -41,6 +42,7 @@ import io.javalin.apibuilder.ApiBuilder;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class JavalinSaTokenApplication {
 
     /**
@@ -83,31 +85,27 @@ public class JavalinSaTokenApplication {
             javalinConfig.startup.showJavalinBanner = false;
             javalinConfig.routes.apiBuilder(() -> {
                 // ========== Authentication 路由（/auth/*） ==========
-                authController.routes();
+                authController.routes().addEndpoints();
 
                 // ========== Authorization 路由（/rbac/admin/*，RBAC 管理） ==========
-                ApiBuilder.path("rbac", () -> authzController.routes());
+                ApiBuilder.path("rbac", authzController.routes());
 
                 // ========== Order 路由（EndpointGroup） ==========
-                ApiBuilder.path("orders", () -> orderResource.routes());
+                orderResource.routes().addEndpoints();
 
                 // ========== Goods 路由（写侧 + 读侧） ==========
-                ApiBuilder.path("api/goodss", () -> {
-                    goodsResource.routes();
-                    goodsQueryResource.routes();
-                });
+                goodsQueryResource.routes().addEndpoints();
+                goodsResource.routes().addEndpoints();
             });
         });
 
         app.start(PORT);
-        System.out.println("Javalin + Sa-Token + RBAC 鉴权 + DDD 业务示例启动于 http://localhost:" + PORT);
-        System.out.println("  Authentication：/auth/login, /auth/me, /auth/admin, /auth/users ...");
-        System.out.println("  Authorization (RBAC)：/rbac/admin/users, /rbac/admin/roles, /rbac/admin/permissions ...");
-        System.out.println("  Order 业务：/orders, /orders/{id}, /orders/{id}/pay ...");
-        System.out.println("  Goods 业务：/api/goodss, /api/goodss/page, /api/goodss/list ...");
-        System.out.println("  业务鉴权示范：GET /auth/users 需要 user:list 权限");
-        System.out.println("  业务鉴权示范：POST /auth/orders/{id}/pay 需要 order:pay 权限");
-        System.out.println("  组合鉴权示范：DELETE /auth/users/{id} 需要 admin 角色 + user:delete 权限");
+        log.info("Javalin + Sa-Token + RBAC + DDD sample started at http://localhost:{}", PORT);
+        log.info("Authentication endpoints: /auth/login, /auth/me, /auth/admin, /auth/users");
+        log.info("Authorization endpoints: /rbac/admin/users, /rbac/admin/roles, /rbac/admin/permissions");
+        log.info("Order endpoints: /orders, /orders/{id}, /orders/{id}/pay");
+        log.info("Goods endpoints: /api/goods, /api/goods/page, /api/goods/list");
+        log.info("Authorization examples: GET /auth/users, POST /auth/orders/{id}/pay, DELETE /auth/users/{id}");
     }
 
 }

@@ -6,6 +6,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.Objects;
 
 /**
  * 字符串工具类
@@ -41,9 +42,9 @@ public class StrKit extends StrUtil {
      * @return
      */
     public static boolean isEmpty(String str) {
-        if (str == null) {
+        if (Objects.isNull(str)) {
             return true;
-        } else if (str.isEmpty()) {
+        } else if (str.length() == 0) {
             return true;
         } else if ("NULL".equalsIgnoreCase(str)) {
             return true;
@@ -66,7 +67,7 @@ public class StrKit extends StrUtil {
      * @return
      */
     public static boolean isNull(String str) {
-        return str == null || str.trim().isEmpty();
+        return Objects.isNull(str) || str.trim().length() == 0;
     }
 
     //---------------------------------------------------------------------
@@ -85,7 +86,7 @@ public class StrKit extends StrUtil {
      * @since 3.2.1
      */
     public static boolean isEmpty(Object str) {
-        return (str == null || "".equals(str));
+        return (Objects.isNull(str) || "".equals(str));
     }
 
     /*
@@ -102,7 +103,7 @@ public class StrKit extends StrUtil {
      * @see #hasText(String)
      */
     public static boolean hasLength(CharSequence str) {
-        return (str != null && !str.isEmpty());
+        return (Objects.nonNull(str) && str.length() > 0);
     }
 
     /*
@@ -308,7 +309,7 @@ public class StrKit extends StrUtil {
      * @see java.lang.String#startsWith
      */
     public static boolean startsWithIgnoreCase(String str, String prefix) {
-        if (str == null || prefix == null) {
+        if (Objects.isNull(str) || Objects.isNull(prefix)) {
             return false;
         }
         if (str.startsWith(prefix)) {
@@ -330,7 +331,7 @@ public class StrKit extends StrUtil {
      * @see java.lang.String#endsWith
      */
     public static boolean endsWithIgnoreCase(String str, String suffix) {
-        if (str == null || suffix == null) {
+        if (Objects.isNull(str) || Objects.isNull(suffix)) {
             return false;
         }
         if (str.endsWith(suffix)) {
@@ -368,7 +369,7 @@ public class StrKit extends StrUtil {
      * @param sub string to search for. Return 0 if this is null.
      */
     public static int countOccurrencesOf(String str, String sub) {
-        if (str == null || sub == null || str.isEmpty() || sub.isEmpty()) {
+        if (Objects.isNull(str) || Objects.isNull(sub) || str.length() == 0 || sub.length() == 0) {
             return 0;
         }
         int count = 0;
@@ -390,7 +391,7 @@ public class StrKit extends StrUtil {
      * @return a String with the replacements
      */
     public static String replace(String inString, String oldPattern, String newPattern) {
-        if (!hasLength(inString) || !hasLength(oldPattern) || newPattern == null) {
+        if (!hasLength(inString) || !hasLength(oldPattern) || Objects.isNull(newPattern)) {
             return inString;
         }
         StringBuilder sb = new StringBuilder();
@@ -488,7 +489,7 @@ public class StrKit extends StrUtil {
     }
 
     private static String changeFirstCharacterCase(String str, boolean capitalize) {
-        if (str == null || str.length() == 0) {
+        if (Objects.isNull(str) || str.length() == 0) {
             return str;
         }
         StringBuilder sb = new StringBuilder(str.length());
@@ -508,7 +509,7 @@ public class StrKit extends StrUtil {
      * @return the extracted filename, or {@code null} if none
      */
     public static String getFilename(String path) {
-        if (path == null) {
+        if (Objects.isNull(path)) {
             return null;
         }
         int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
@@ -522,7 +523,7 @@ public class StrKit extends StrUtil {
      * @return the extracted filename extension, or {@code null} if none
      */
     public static String getFilenameExtension(String path) {
-        if (path == null) {
+        if (Objects.isNull(path)) {
             return null;
         }
         int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
@@ -544,7 +545,7 @@ public class StrKit extends StrUtil {
      * or {@code null} if none
      */
     public static String stripFilenameExtension(String path) {
-        if (path == null) {
+        if (Objects.isNull(path)) {
             return null;
         }
         int extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
@@ -588,7 +589,7 @@ public class StrKit extends StrUtil {
      * @return the normalized path
      */
     public static String cleanPath(String path) {
-        if (path == null) {
+        if (Objects.isNull(path)) {
             return null;
         }
         String pathToUse = replace(path, WINDOWS_FOLDER_SEPARATOR, FOLDER_SEPARATOR);
@@ -808,7 +809,7 @@ public class StrKit extends StrUtil {
      * Collection was {@code null})
      */
     public static String[] toStringArray(Collection<String> collection) {
-        if (collection == null) {
+        if (Objects.isNull(collection)) {
             return null;
         }
         return collection.toArray(new String[collection.size()]);
@@ -822,7 +823,7 @@ public class StrKit extends StrUtil {
      * Enumeration was {@code null})
      */
     public static String[] toStringArray(Enumeration<String> enumeration) {
-        if (enumeration == null) {
+        if (Objects.isNull(enumeration)) {
             return null;
         }
         List<String> list = Collections.list(enumeration);
@@ -842,7 +843,7 @@ public class StrKit extends StrUtil {
         String[] result = new String[array.length];
         for (int i = 0; i < array.length; i++) {
             String element = array[i];
-            result[i] = (element != null ? element.trim() : null);
+            result[i] = (Objects.nonNull(element) ? element.trim() : null);
         }
         return result;
     }
@@ -901,11 +902,11 @@ public class StrKit extends StrUtil {
         }
         Properties result = new Properties();
         for (String element : array) {
-            if (charsToDelete != null) {
+            if (Objects.nonNull(charsToDelete)) {
                 element = deleteAny(element, charsToDelete);
             }
             String[] splittedElement = split(element, delimiter);
-            if (splittedElement == null) {
+            if (Objects.isNull(splittedElement)) {
                 continue;
             }
             result.setProperty(splittedElement[0].trim(), splittedElement[1].trim());
@@ -966,7 +967,7 @@ public class StrKit extends StrUtil {
     public static String[] tokenizeToStringArray(
             String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
 
-        if (str == null) {
+        if (Objects.isNull(str)) {
             return null;
         }
         StringTokenizer st = new StringTokenizer(str, delimiters);
@@ -1012,10 +1013,10 @@ public class StrKit extends StrUtil {
      * @see #tokenizeToStringArray
      */
     public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
-        if (str == null) {
+        if (Objects.isNull(str)) {
             return new String[0];
         }
-        if (delimiter == null) {
+        if (Objects.isNull(delimiter)) {
             return new String[]{str};
         }
         List<String> result = new ArrayList<String>();
@@ -1226,10 +1227,6 @@ public class StrKit extends StrUtil {
             }
             gbkIndex = bytes[0] * 100 + bytes[1];
             for (int i = 0; i < allEnglishLetter.length; i++) {
-                if (i == 22) {
-                    // System.out.println(allEnglishLetter.length
-                    // +" "+allChineseScope.length);
-                }
                 if (gbkIndex >= allChineseScope[i]
                         && gbkIndex < allChineseScope[i + 1]) {
                     result = allEnglishLetter[i];
@@ -1251,7 +1248,7 @@ public class StrKit extends StrUtil {
      * @return
      */
     public static String[] split(String src, char letter) {
-        if (src == null) {
+        if (Objects.isNull(src)) {
             return new String[0];
         }
         List<String> ret = new ArrayList<String>();
@@ -1325,7 +1322,7 @@ public class StrKit extends StrUtil {
      * @return
      */
     public static String addQuotation(String str) {
-        if (str == null) {
+        if (Objects.isNull(str)) {
             return null;
         }
         String newStr = "";
@@ -1399,7 +1396,7 @@ public class StrKit extends StrUtil {
      * @return 传入NULL,返回空"".
      */
     public static String killNull(String str) {
-        if (str == null) {
+        if (Objects.isNull(str)) {
             return "";
         }
         return str;
@@ -1415,7 +1412,7 @@ public class StrKit extends StrUtil {
      * @return
      */
     public static String parentheses(String source) {
-        return (source != null ? "(" + source + ")" : null);
+        return (Objects.nonNull(source) ? "(" + source + ")" : null);
     }
 
     /*
@@ -1428,11 +1425,11 @@ public class StrKit extends StrUtil {
      * @return
      */
     public static String brackets(String source) {
-        return (source != null ? "[" + source + "]" : null);
+        return (Objects.nonNull(source) ? "[" + source + "]" : null);
     }
 
     public static String ditto(String source) {
-        return (source != null ? "\"" + source + "\"" : null);
+        return (Objects.nonNull(source) ? "\"" + source + "\"" : null);
     }
 
     /*
@@ -1444,7 +1441,7 @@ public class StrKit extends StrUtil {
      *         <code>null<code> if the input was <code>null</code>
      */
     public static String quote(String str) {
-        return (str != null ? "'" + str + "'" : null);
+        return (Objects.nonNull(str) ? "'" + str + "'" : null);
     }
 
     /*
@@ -1494,7 +1491,7 @@ public class StrKit extends StrUtil {
      * @version: 2010-12-15 下午09:06:02
      */
     public static String trimToAlphaString(String string) {
-        if (string == null || string.isEmpty()) {
+        if (Objects.isNull(string) || string.length() == 0) {
             return "";
         }
         return string.replaceAll("[^\\w]", "");
@@ -1513,7 +1510,7 @@ public class StrKit extends StrUtil {
      * @version: 2010-12-15 下午09:06:31
      */
     public static String[] trimToAlphaStrings(String string) {
-        if (string == null || string.isEmpty()) {
+        if (Objects.isNull(string) || string.length() == 0) {
             return new String[0];
         }
         char[] chars = string.replaceAll("[^\\w]", "").toCharArray();
@@ -1525,7 +1522,7 @@ public class StrKit extends StrUtil {
     }
 
     public static String trimToString(String str) {
-        if (str == null || str.trim().isEmpty()) {
+        if (Objects.isNull(str) || str.trim().length() == 0) {
             return null;
         } else {
             return str.trim();

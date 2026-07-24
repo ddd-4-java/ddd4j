@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.rbac.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.shiro.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -31,7 +33,7 @@ class AuthControllerTest {
 
     @AfterAll
     void stopServer() {
-        if (app != null) {
+        if (Objects.nonNull(app)) {
             app.stop();
         }
     }

@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Objects;
+
 /**
  * Spring Security 异常处理器（Spring Web 专属）。
  *
@@ -61,7 +63,7 @@ public class SecurityExceptionHandler {
     public ResponseEntity<ApiRestResponse<String>> accessDeniedException(AccessDeniedException ex) {
         log.warn("Spring Security 授权异常：{}", ex.getMessage());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        boolean unauthenticated = authentication == null
+        boolean unauthenticated = Objects.isNull(authentication)
                 || authentication instanceof AnonymousAuthenticationToken
                 || !authentication.isAuthenticated();
         HttpStatus status = unauthenticated ? HttpStatus.UNAUTHORIZED : HttpStatus.FORBIDDEN;

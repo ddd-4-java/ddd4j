@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -44,7 +46,7 @@ class AuthControllerTest {
 
     @AfterAll
     void stopServer() {
-        if (app != null) {
+        if (Objects.nonNull(app)) {
             app.stop();
         }
     }

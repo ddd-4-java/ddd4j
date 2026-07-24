@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.satoken.order.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -14,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * OrderResource 集成测试（Javalin + Guice + Sa-Token，random port）。
- *
- * <p>注：本 sample 的路由在 ApiBuilder.path("orders", ...) 下，OrderResource 内部又使用 /orders 前缀，
- * 所以完整路径是 /orders/orders/*。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -36,7 +35,7 @@ class OrderResourceTest {
 
     @AfterAll
     static void stopApp() {
-        if (app != null) {
+        if (Objects.nonNull(app)) {
             app.stop();
         }
     }
@@ -78,7 +77,7 @@ class OrderResourceTest {
 
     @Test
     void createOrder_shouldReturn201() throws Exception {
-        HttpResponse<String> r = postJson("/orders/orders",
+        HttpResponse<String> r = postJson("/orders",
                 "{\"orderNo\":\"O-001\",\"buyerId\":\"u1\",\"buyerName\":\"Alice\"}");
         assertEquals(201, r.statusCode());
         assertNotNull(extractId(r.body()));
@@ -86,40 +85,37 @@ class OrderResourceTest {
 
     @Test
     void createOrder_thenGetById_shouldReturnSameOrder() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-002\",\"buyerId\":\"u2\",\"buyerName\":\"Bob\"}");
         String id = extractId(create.body());
-        HttpResponse<String> r = get("/orders/orders/" + id);
+        HttpResponse<String> r = get("/orders/" + id);
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"orderNo\":\"O-002\""));
     }
 
     @Test
     void getById_unknownId_shouldReturn4xxOr5xx() throws Exception {
-        HttpResponse<String> r = get("/orders/orders/does-not-exist");
+        HttpResponse<String> r = get("/orders/does-not-exist");
         assertTrue(r.statusCode() >= 400);
     }
 
     @Test
-    void getByOrderNo_shadowedByIdRoute() throws Exception {
-        // 注：OrderResource 中 /orders/{id} 在 /orders/by-order-no 之前注册，
-        // 因此 GET /orders/by-order-no 被 /{id} 拦截并 500。
-        // 这是预存在的路由顺序问题（不允许修改业务代码）。
-        postJson("/orders/orders",
+    void getByOrderNo_shouldReturnOrder() throws Exception {
+        postJson("/orders",
                 "{\"orderNo\":\"O-SHADOW\",\"buyerId\":\"u\",\"buyerName\":\"X\"}");
-        HttpResponse<String> r = get("/orders/orders/by-order-no?orderNo=O-SHADOW");
-        assertTrue(r.statusCode() >= 400,
-                "expected /by-order-no shadowed by /{id} (>=400), actual=" + r.statusCode());
+        HttpResponse<String> r = get("/orders/by-order-no?orderNo=O-SHADOW");
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("\"orderNo\":\"O-SHADOW\""));
     }
 
     // =================== 2) addLine ====================
 
     @Test
     void addLine_shouldIncreaseLineCount() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-010\",\"buyerId\":\"b1\",\"buyerName\":\"Eve\"}");
         String id = extractId(create.body());
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/lines",
+        HttpResponse<String> r = postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"iPhone\",\"quantity\":2,\"unitPrice\":5999.00}");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"lines\":["));
@@ -128,12 +124,12 @@ class OrderResourceTest {
 
     @Test
     void addLine_multipleLines_shouldAccumulate() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-011\",\"buyerId\":\"b2\",\"buyerName\":\"Frank\"}");
         String id = extractId(create.body());
-        postJson("/orders/orders/" + id + "/lines",
+        postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"iPhone\",\"quantity\":1,\"unitPrice\":100.00}");
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/lines",
+        HttpResponse<String> r = postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G2\",\"goodsName\":\"iPad\",\"quantity\":2,\"unitPrice\":200.00}");
         assertEquals(200, r.statusCode());
         // response contains a lines array with the two goodsIds
@@ -143,7 +139,7 @@ class OrderResourceTest {
 
     @Test
     void addLine_toUnknownOrder_shouldReturn4xxOr5xx() throws Exception {
-        HttpResponse<String> r = postJson("/orders/orders/no-such/lines",
+        HttpResponse<String> r = postJson("/orders/no-such/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"x\",\"quantity\":1,\"unitPrice\":1.00}");
         assertTrue(r.statusCode() >= 400);
     }
@@ -152,28 +148,28 @@ class OrderResourceTest {
 
     @Test
     void pay_orderWithoutLines_shouldReturn4xxOr5xx() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-020\",\"buyerId\":\"b3\",\"buyerName\":\"Grace\"}");
         String id = extractId(create.body());
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/pay", "");
+        HttpResponse<String> r = postJson("/orders/" + id + "/pay", "");
         assertTrue(r.statusCode() >= 400);
     }
 
     @Test
     void pay_orderWithLines_shouldBePaid() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-021\",\"buyerId\":\"b4\",\"buyerName\":\"Heidi\"}");
         String id = extractId(create.body());
-        postJson("/orders/orders/" + id + "/lines",
+        postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"x\",\"quantity\":1,\"unitPrice\":10.00}");
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/pay", "");
+        HttpResponse<String> r = postJson("/orders/" + id + "/pay", "");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"status\":\"PAID\""));
     }
 
     @Test
     void pay_unknownOrder_shouldReturn4xx() throws Exception {
-        HttpResponse<String> r = postJson("/orders/orders/no-such-order/pay", "");
+        HttpResponse<String> r = postJson("/orders/no-such-order/pay", "");
         assertTrue(r.statusCode() >= 400);
     }
 
@@ -181,29 +177,29 @@ class OrderResourceTest {
 
     @Test
     void ship_paidOrder_shouldBeShipped() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-030\",\"buyerId\":\"b5\",\"buyerName\":\"Ivan\"}");
         String id = extractId(create.body());
-        postJson("/orders/orders/" + id + "/lines",
+        postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"x\",\"quantity\":1,\"unitPrice\":5.00}");
-        postJson("/orders/orders/" + id + "/pay", "");
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/ship", "");
+        postJson("/orders/" + id + "/pay", "");
+        HttpResponse<String> r = postJson("/orders/" + id + "/ship", "");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"status\":\"SHIPPED\""));
     }
 
     @Test
     void ship_draftOrder_shouldReturn4xxOr5xx() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-031\",\"buyerId\":\"b6\",\"buyerName\":\"Judy\"}");
         String id = extractId(create.body());
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/ship", "");
+        HttpResponse<String> r = postJson("/orders/" + id + "/ship", "");
         assertTrue(r.statusCode() >= 400);
     }
 
     @Test
     void ship_unknownOrder_shouldReturn4xx() throws Exception {
-        HttpResponse<String> r = postJson("/orders/orders/no-such-order/ship", "");
+        HttpResponse<String> r = postJson("/orders/no-such-order/ship", "");
         assertTrue(r.statusCode() >= 400);
     }
 
@@ -211,43 +207,43 @@ class OrderResourceTest {
 
     @Test
     void cancel_draftOrder_shouldBeCancelled() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-040\",\"buyerId\":\"b7\",\"buyerName\":\"Kim\"}");
         String id = extractId(create.body());
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/cancel", "");
+        HttpResponse<String> r = postJson("/orders/" + id + "/cancel", "");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"status\":\"CANCELLED\""));
     }
 
     @Test
     void cancel_paidOrder_shouldBeCancelled() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-041\",\"buyerId\":\"b8\",\"buyerName\":\"Leo\"}");
         String id = extractId(create.body());
-        postJson("/orders/orders/" + id + "/lines",
+        postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"x\",\"quantity\":1,\"unitPrice\":1.00}");
-        postJson("/orders/orders/" + id + "/pay", "");
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/cancel", "");
+        postJson("/orders/" + id + "/pay", "");
+        HttpResponse<String> r = postJson("/orders/" + id + "/cancel", "");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"status\":\"CANCELLED\""));
     }
 
     @Test
     void cancel_shippedOrder_shouldReturn4xxOr5xx() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-042\",\"buyerId\":\"b9\",\"buyerName\":\"Mike\"}");
         String id = extractId(create.body());
-        postJson("/orders/orders/" + id + "/lines",
+        postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"x\",\"quantity\":1,\"unitPrice\":1.00}");
-        postJson("/orders/orders/" + id + "/pay", "");
-        postJson("/orders/orders/" + id + "/ship", "");
-        HttpResponse<String> r = postJson("/orders/orders/" + id + "/cancel", "");
+        postJson("/orders/" + id + "/pay", "");
+        postJson("/orders/" + id + "/ship", "");
+        HttpResponse<String> r = postJson("/orders/" + id + "/cancel", "");
         assertTrue(r.statusCode() >= 400);
     }
 
     @Test
     void cancel_unknownOrder_shouldReturn4xx() throws Exception {
-        HttpResponse<String> r = postJson("/orders/orders/no-such-order/cancel", "");
+        HttpResponse<String> r = postJson("/orders/no-such-order/cancel", "");
         assertTrue(r.statusCode() >= 400);
     }
 
@@ -255,35 +251,35 @@ class OrderResourceTest {
 
     @Test
     void listAll_shouldReturnOk() throws Exception {
-        HttpResponse<String> r = get("/orders/orders");
+        HttpResponse<String> r = get("/orders");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().startsWith("{"));
     }
 
     @Test
     void discount_unknownId_shouldReturn4xxOr5xx() throws Exception {
-        HttpResponse<String> r = get("/orders/orders/no-such-id/discount");
+        HttpResponse<String> r = get("/orders/no-such-id/discount");
         assertTrue(r.statusCode() >= 400);
     }
 
     @Test
     void discount_validId_shouldReturnOk() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-DISC\",\"buyerId\":\"b\",\"buyerName\":\"D\"}");
         String id = extractId(create.body());
-        postJson("/orders/orders/" + id + "/lines",
+        postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"x\",\"quantity\":1,\"unitPrice\":100.00}");
-        HttpResponse<String> r = get("/orders/orders/" + id + "/discount");
+        HttpResponse<String> r = get("/orders/" + id + "/discount");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"data\""));
     }
 
     @Test
     void getById_returnsResponseShape() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-050\",\"buyerId\":\"b10\",\"buyerName\":\"Nina\"}");
         String id = extractId(create.body());
-        HttpResponse<String> r = get("/orders/orders/" + id);
+        HttpResponse<String> r = get("/orders/" + id);
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"id\""));
         assertTrue(r.body().contains("\"orderNo\""));
@@ -296,19 +292,19 @@ class OrderResourceTest {
 
     @Test
     void fullLifecycle_createAddPayShip() throws Exception {
-        HttpResponse<String> create = postJson("/orders/orders",
+        HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-100\",\"buyerId\":\"bf\",\"buyerName\":\"Olivia\"}");
         String id = extractId(create.body());
 
-        HttpResponse<String> line = postJson("/orders/orders/" + id + "/lines",
+        HttpResponse<String> line = postJson("/orders/" + id + "/lines",
                 "{\"goodsId\":\"G1\",\"goodsName\":\"Book\",\"quantity\":3,\"unitPrice\":50.00}");
         assertEquals(200, line.statusCode());
 
-        HttpResponse<String> pay = postJson("/orders/orders/" + id + "/pay", "");
+        HttpResponse<String> pay = postJson("/orders/" + id + "/pay", "");
         assertEquals(200, pay.statusCode());
         assertTrue(pay.body().contains("\"status\":\"PAID\""));
 
-        HttpResponse<String> ship = postJson("/orders/orders/" + id + "/ship", "");
+        HttpResponse<String> ship = postJson("/orders/" + id + "/ship", "");
         assertEquals(200, ship.statusCode());
         assertTrue(ship.body().contains("\"status\":\"SHIPPED\""));
     }
@@ -316,7 +312,7 @@ class OrderResourceTest {
     @Test
     void multipleCreates_allShouldSucceed() throws Exception {
         for (int i = 0; i < 5; i++) {
-            HttpResponse<String> r = postJson("/orders/orders",
+            HttpResponse<String> r = postJson("/orders",
                     "{\"orderNo\":\"O-M" + i + "\",\"buyerId\":\"b\",\"buyerName\":\"M\"}");
             assertEquals(201, r.statusCode());
         }
@@ -325,10 +321,10 @@ class OrderResourceTest {
     @Test
     void listAll_multipleOrders_shouldReturnArrayOfOrders() throws Exception {
         for (int i = 0; i < 3; i++) {
-            postJson("/orders/orders",
+            postJson("/orders",
                     "{\"orderNo\":\"O-L" + i + "\",\"buyerId\":\"b\",\"buyerName\":\"L\"}");
         }
-        HttpResponse<String> r = get("/orders/orders");
+        HttpResponse<String> r = get("/orders");
         assertEquals(200, r.statusCode());
         assertTrue(r.body().contains("\"data\""));
     }

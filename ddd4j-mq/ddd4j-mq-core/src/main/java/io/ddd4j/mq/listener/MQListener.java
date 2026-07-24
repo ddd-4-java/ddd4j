@@ -3,6 +3,7 @@ package io.ddd4j.mq.listener;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -120,15 +121,15 @@ public class MQListener {
      * @param separator 拼接符（由 {@link io.ddd4j.mq.MQClient#defaultConcat()} 传入，确保 listener 与 event 同规则）
      */
     public String getRouteExpression(String separator) {
-        String sep = Objects.isNull(separator) || separator.isEmpty() ? "." : separator;
+        String sep = StrKit.isEmpty(separator) ? "." : separator;
         String ns = Objects.isNull(namespace) ? "" : namespace;
         String tp = Objects.isNull(topic) ? "" : topic;
         String base = ns + sep + tp;
-        if (Objects.isNull(tags) || tags.isEmpty() || "*".equals(tags.trim())) {
+        if (StrKit.isEmpty(tags) || "*".equals(tags.trim())) {
             return base;
         }
         String firstTag = TagMatcher.findIncludes(tags).stream().findFirst().orElse(null);
-        if (Objects.isNull(firstTag) || firstTag.isEmpty()) {
+        if (StrKit.isEmpty(firstTag)) {
             return base;
         }
         return base + sep + firstTag;

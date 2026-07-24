@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Excel 导出选项（声明式参数聚合）。
@@ -81,7 +82,7 @@ public class WriteOptions {
      * @return this
      */
     public WriteOptions addHandler(WriteHandler handler) {
-        if (handler != null) {
+        if (Objects.nonNull(handler)) {
             this.extraHandlers.add(handler);
         }
         return this;

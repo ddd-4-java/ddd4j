@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.cqrs;
 
+import java.util.Objects;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
@@ -146,13 +148,13 @@ public class JavalinCqrsApplication {
     }
 
     private static int parsePort(String[] args) {
-        if (args == null || args.length == 0) {
+        if (Objects.isNull(args) || args.length == 0) {
             return DEFAULT_PORT;
         }
         try {
             return Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            System.err.println("[Bootstrap] invalid port arg, fallback to " + DEFAULT_PORT);
+        } catch (NumberFormatException exception) {
+            log.warn("[Bootstrap] invalid port arg, fallback to {}", DEFAULT_PORT, exception);
             return DEFAULT_PORT;
         }
     }

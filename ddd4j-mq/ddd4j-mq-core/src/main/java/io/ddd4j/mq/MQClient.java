@@ -11,10 +11,11 @@ import io.ddd4j.mq.event.MQEventStorer;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -233,7 +234,7 @@ public interface MQClient extends AutoCloseable {
      * 日志器（各实现可覆写自定义 topic）。
      */
     default Logger logger() {
-        return LoggerFactory.getLogger("### DDD4J-MQ : " + impl() + "Client ###");
+        return LogHolder.logger();
     }
 
     /**
@@ -247,7 +248,7 @@ public interface MQClient extends AutoCloseable {
      * @return 三段式拼接符
      */
     default String concat(MQEvent event) {
-        if (Objects.nonNull(event) && Objects.nonNull(event.getConcat()) && !event.getConcat().isEmpty()) {
+        if (Objects.nonNull(event) && StrKit.isNotEmpty(event.getConcat())) {
             return event.getConcat();
         }
         return defaultConcat();
@@ -273,7 +274,7 @@ public interface MQClient extends AutoCloseable {
      * @return 命名空间，可为 null
      */
     default String namespace(MQEvent event, MQProperties properties) {
-        if (Objects.nonNull(event) && Objects.nonNull(event.getNamespace()) && !event.getNamespace().isEmpty()) {
+        if (Objects.nonNull(event) && StrKit.isNotEmpty(event.getNamespace())) {
             return event.getNamespace();
         }
         return namespace((String) null, properties);
@@ -287,7 +288,7 @@ public interface MQClient extends AutoCloseable {
      * @return 命名空间，可为 null
      */
     default String namespace(String namespace, MQProperties properties) {
-        if (Objects.nonNull(namespace) && !namespace.isEmpty()) {
+        if (StrKit.isNotEmpty(namespace)) {
             return namespace;
         }
         if (Objects.nonNull(properties)) {
@@ -307,13 +308,13 @@ public interface MQClient extends AutoCloseable {
      * @return 物理地址
      */
     default String resolveTopic(String namespace, String topic, String tag, String concat) {
-        String sep = Objects.isNull(concat) || concat.isEmpty() ? "." : concat;
+        String sep = StrKit.isEmpty(concat) ? "." : concat;
         StringBuilder sb = new StringBuilder();
-        if (Objects.nonNull(namespace) && !namespace.isEmpty()) {
+        if (StrKit.isNotEmpty(namespace)) {
             sb.append(namespace).append(sep);
         }
         sb.append(Objects.nonNull(topic) ? topic : "DEFAULT");
-        if (Objects.nonNull(tag) && !tag.isEmpty()) {
+        if (StrKit.isNotEmpty(tag)) {
             sb.append(sep).append(tag);
         }
         return sb.toString();
@@ -363,15 +364,15 @@ public interface MQClient extends AutoCloseable {
      * @return 路由 key，{@code null} 表示不设 key（broker 自由路由）
      */
     default String partitionKey(MQEvent event) {
-        if (event == null) {
+        if (Objects.isNull(event)) {
             return null;
         }
         String tag = event.getTag();
         String tenant = event.getTenantId();
-        if (tag != null && tenant != null) {
+        if (Objects.nonNull(tag) && Objects.nonNull(tenant)) {
             return tag + "|" + tenant;
         }
-        return tag != null ? tag : tenant;
+        return Objects.nonNull(tag) ? tag : tenant;
     }
 
     /**
@@ -409,7 +410,7 @@ public interface MQClient extends AutoCloseable {
      * @return JMS selector 字符串，{@code null} 表示不过滤（由调用方决定是用 broker 还是 fallback 应用层）
      */
     default String tagsToSelector(String tags) {
-        if (Objects.isNull(tags) || tags.trim().isEmpty()) {
+        if (StrKit.isBlank(tags)) {
             return null;
         }
         // 解析 includes/excludes（与 TagMatcher 语义对齐：* 是通配符，不是字面量）
@@ -419,7 +420,7 @@ public interface MQClient extends AutoCloseable {
         for (String token : StrKit.isBlank(tags) ? new String[0]
                 : tags.replace("||", " ").trim().split("\\s+")) {
             String t = token.trim();
-            if (t.isEmpty() || "||".equals(t)) {
+            if (StrKit.isEmpty(t) || "||".equals(t)) {
                 continue;
             }
             if ("*".equals(t)) {
@@ -480,6 +481,20 @@ public interface MQClient extends AutoCloseable {
      */
     default boolean supportsBrokerTagFilter() {
         return true;
+    }
+
+    /**
+     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
+     */
+    @Slf4j(topic = "### DDD4J-MQ ###")
+    final class LogHolder {
+
+        private LogHolder() {
+        }
+
+        private static Logger logger() {
+            return log;
+        }
     }
 
     /**

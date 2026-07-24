@@ -7,6 +7,7 @@ import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
 import io.ddd4j.core.cache.CacheStats;
+import io.ddd4j.kit.lang.StrKit;
 import io.lettuce.core.ScriptOutputType;
 import io.lettuce.core.api.sync.RedisCommands;
 
@@ -174,7 +175,7 @@ public class LettuceCache<V> implements Cache<String, V> {
             V newValue;
             try {
                 newValue = operation.apply(resp);
-                if (newValue == null) {
+                if (Objects.isNull(newValue)) {
                     return null;
                 }
             } catch (Exception e) {
@@ -183,7 +184,7 @@ public class LettuceCache<V> implements Cache<String, V> {
             String newJson = serialize(newValue);
             String result = commands.eval(LUA_CAS, ScriptOutputType.INTEGER,
                     new String[]{cachedKey},
-                    currentJson == null ? "" : currentJson, newJson, String.valueOf(expireSeconds));
+                    Objects.isNull(currentJson) ? "" : currentJson, newJson, String.valueOf(expireSeconds));
             if ("1".equals(result)) {
                 return newValue;
             }
@@ -194,14 +195,14 @@ public class LettuceCache<V> implements Cache<String, V> {
     @Override
     public boolean compareAndSet(String key, V expectedOldValue, V newValue) {
         String cachedKey = key(key);
-        String expectedJson = expectedOldValue == null ? "" : serialize(expectedOldValue);
+        String expectedJson = Objects.isNull(expectedOldValue) ? "" : serialize(expectedOldValue);
         String newJson = serialize(newValue);
         String result = commands.eval(LUA_CAS, ScriptOutputType.INTEGER, new String[]{cachedKey}, expectedJson, newJson, "0");
         return "1".equals(result);
     }
 
     private String serialize(V value) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return "";
         }
         if (value instanceof String) {
@@ -215,7 +216,9 @@ public class LettuceCache<V> implements Cache<String, V> {
     }
 
     private V deserialize(String json) {
-        if (json == null || json.isEmpty()) return null;
+        if (StrKit.isEmpty(json)) {
+            return null;
+        }
         try {
             return objectMapper.readValue(json, valueType);
         } catch (Exception e) {

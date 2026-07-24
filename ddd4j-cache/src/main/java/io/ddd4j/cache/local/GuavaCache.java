@@ -126,14 +126,14 @@ public class GuavaCache<K, V> implements Cache<K, V> {
             V newValue;
             try {
                 newValue = operation.apply(resp);
-                if (newValue == null) {
+                if (Objects.isNull(newValue)) {
                     return null;
                 }
             } catch (Exception e) {
                 return null;
             }
-            if (current == null) {
-                if (map.putIfAbsent(key, newValue) == null) {
+            if (Objects.isNull(current)) {
+                if (Objects.isNull(map.putIfAbsent(key, newValue))) {
                     return newValue;
                 }
                 continue;
@@ -148,8 +148,8 @@ public class GuavaCache<K, V> implements Cache<K, V> {
     @Override
     public boolean compareAndSet(K key, V expectedOldValue, V newValue) {
         ConcurrentMap<K, V> map = cache.asMap();
-        if (expectedOldValue == null) {
-            return map.putIfAbsent(key, newValue) == null;
+        if (Objects.isNull(expectedOldValue)) {
+            return Objects.isNull(map.putIfAbsent(key, newValue));
         }
         return map.replace(key, expectedOldValue, newValue);
     }

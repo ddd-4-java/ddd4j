@@ -12,6 +12,7 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Objects;
 
 /**
  * 原生 MyBatis 轨道的聚合仓储基类（五泛型，对齐 mybatisplus 模块）。
@@ -78,9 +80,9 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
     }
 
     private void registerToRegistry() {
-        if (modelClass != null && queryClass != null) {
+        if (Objects.nonNull(modelClass) && Objects.nonNull(queryClass)) {
             RepositoryRegistry.register(modelClass, queryClass, this);
-        } else if (modelClass != null) {
+        } else if (Objects.nonNull(modelClass)) {
             RepositoryRegistry.register(modelClass, this);
         }
     }
@@ -362,16 +364,16 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
     private void fillField(P po, Field field) {
         try {
             field.setAccessible(true);
-            if (field.getType() == LocalDateTime.class && field.get(po) == null) {
+            if (field.getType() == LocalDateTime.class && Objects.isNull(field.get(po))) {
                 field.set(po, LocalDateTime.now());
             } else if (field.isAnnotationPresent(io.ddd4j.annotation.orm.TenantId.class)) {
                 String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
-                if (Objects.nonNull(tenantId) && field.get(po) == null) {
+                if (Objects.nonNull(tenantId) && Objects.isNull(field.get(po))) {
                     setContextValue(po, field, tenantId);
                 }
             } else if (field.isAnnotationPresent(io.ddd4j.annotation.orm.SystemId.class)) {
                 String systemId = ThreadContext.get(ContextConstants.SYSTEM_ID);
-                if (Objects.nonNull(systemId) && field.get(po) == null) {
+                if (Objects.nonNull(systemId) && Objects.isNull(field.get(po))) {
                     setContextValue(po, field, systemId);
                 }
             }
@@ -524,8 +526,12 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
     }
 
     private Collection<?> toCollection(Object value) {
-        if (value instanceof Collection<?> collection) return collection;
-        if (value instanceof String str && !str.isEmpty()) return Arrays.asList(str.split(","));
+        if (value instanceof Collection<?> collection) {
+            return collection;
+        }
+        if (value instanceof String str && StrKit.isNotEmpty(str)) {
+            return Arrays.asList(str.split(","));
+        }
         return Collections.emptyList();
     }
 
@@ -534,7 +540,7 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
      */
     private <C> Class<C> resolveClassArg(int index) {
         Class<?> current = getClass();
-        while (current != null && current != MybatisAggregateRepository.class) {
+        while (Objects.nonNull(current) && current != MybatisAggregateRepository.class) {
             Type superclass = current.getGenericSuperclass();
             if (superclass instanceof ParameterizedType pt) {
                 Type[] args = pt.getActualTypeArguments();

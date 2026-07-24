@@ -1,5 +1,6 @@
 package io.ddd4j.mq.redisstream;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
@@ -11,6 +12,7 @@ import redis.clients.jedis.UnifiedJedis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -77,14 +79,14 @@ public class RedisMQClient implements MQClient {
      * 获取当前实例使用的 Jedis 客户端（注入优先，否则 lazy 构造）。
      */
     private UnifiedJedis jedis() {
-        if (injectedJedis != null) {
+        if (Objects.nonNull(injectedJedis)) {
             return injectedJedis;
         }
         UnifiedJedis j = lazyJedis;
-        if (j == null) {
+        if (Objects.isNull(j)) {
             synchronized (this) {
                 j = lazyJedis;
-                if (j == null) {
+                if (Objects.isNull(j)) {
                     j = properties.newJedis();
                     lazyJedis = j;
                 }
@@ -144,7 +146,7 @@ public class RedisMQClient implements MQClient {
         List<String> channels = new ArrayList<>();
         String mainChannel = resolveTopic(listener, properties);
         channels.add(mainChannel);
-        if (listener.getTags() != null && !listener.getTags().isEmpty()) {
+        if (StrKit.isNotEmpty(listener.getTags())) {
             Set<String> tags = TagMatcher.findIncludes(listener.getTags());
             for (String tag : tags) {
                 String c = resolveTopic(namespace(listener.getNamespace(), properties),
@@ -170,7 +172,7 @@ public class RedisMQClient implements MQClient {
                             log.warn("Consume MQ [{}] failed: deserialize error", listener.getRouteExpression(RedisMQClient.this.defaultConcat()), ex);
                             return;
                         }
-                        if (mqEvent == null) {
+                        if (Objects.isNull(mqEvent)) {
                             log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(RedisMQClient.this.defaultConcat()));
                             return;
                         }

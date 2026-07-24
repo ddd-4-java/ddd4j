@@ -1,5 +1,6 @@
 package io.ddd4j.extension.monitor.message;
 
+import io.ddd4j.kit.lang.CollKit;
 import lombok.Data;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class Message {
         Message m = new Message();
         m.setMsgtype("markdown");
         m.setMarkdown(new Markdown(title, text, text));
-        m.setAt(atMobiles == null || atMobiles.isEmpty() ? At.none() : At.ofMobiles(atMobiles));
+        m.setAt(CollKit.isEmpty(atMobiles) ? At.none() : At.ofMobiles(atMobiles));
         return m;
     }
 

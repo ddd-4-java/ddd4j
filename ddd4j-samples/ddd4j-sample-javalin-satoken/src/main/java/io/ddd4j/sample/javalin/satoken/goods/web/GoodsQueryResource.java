@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.satoken.goods.web;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.satoken.goods.domain.Goods;
@@ -31,10 +33,10 @@ public class GoodsQueryResource {
             // GET /api/goods/page
             get("/api/goods/page", ctx -> {
                 GoodsQuery query = buildQuery(ctx);
-                if (ctx.queryParam("current") != null) {
+                if (Objects.nonNull(ctx.queryParam("current"))) {
                     query.setCurrent(Long.parseLong(ctx.queryParam("current")));
                 }
-                if (ctx.queryParam("size") != null) {
+                if (Objects.nonNull(ctx.queryParam("size"))) {
                     query.setSize(Long.parseLong(ctx.queryParam("size")));
                 }
                 ctx.json(R.ok(applicationService.pageQuery(query)));
@@ -60,15 +62,15 @@ public class GoodsQueryResource {
         query.setCode(ctx.queryParam("code"));
         query.setNameLike(ctx.queryParam("nameLike"));
         String status = ctx.queryParam("status");
-        if (status != null && !status.isBlank()) {
+        if (Objects.nonNull(status) && StrKit.isNotBlank(status)) {
             query.setStatus(GoodsStatus.valueOf(status.toUpperCase()));
         }
         String priceMin = ctx.queryParam("priceMin");
-        if (priceMin != null && !priceMin.isBlank()) {
+        if (Objects.nonNull(priceMin) && StrKit.isNotBlank(priceMin)) {
             query.setPriceMin(new BigDecimal(priceMin));
         }
         String priceMax = ctx.queryParam("priceMax");
-        if (priceMax != null && !priceMax.isBlank()) {
+        if (Objects.nonNull(priceMax) && StrKit.isNotBlank(priceMax)) {
             query.setPriceMax(new BigDecimal(priceMax));
         }
         query.setOrderBys(ctx.queryParam("orderBys"));

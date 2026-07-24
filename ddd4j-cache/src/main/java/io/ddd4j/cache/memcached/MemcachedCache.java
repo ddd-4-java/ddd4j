@@ -148,7 +148,9 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
 
     @SuppressWarnings("unchecked")
     private V deserialize(String json) {
-        if (StrKit.isBlank(json)) return null;
+        if (StrKit.isBlank(json)) {
+            return null;
+        }
         try {
             return objectMapper.readValue(json, valueType);
         } catch (Exception e) {
@@ -171,8 +173,8 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
             } catch (Exception e) {
                 return null;
             }
-            long currentCas = current == null ? 0L : current.getCas();
-            V currentValue = current == null ? null : deserialize((String) current.getValue());
+            long currentCas = Objects.isNull(current) ? 0L : current.getCas();
+            V currentValue = Objects.isNull(current) ? null : deserialize((String) current.getValue());
 
             // 2. 构造 ddd4j GetsResponse（version 仅 memcached 有真实值）
             io.ddd4j.core.cache.GetsResponse<V> response =
@@ -197,7 +199,9 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
             V newValue;
             try {
                 newValue = operation.apply(response);
-                if (newValue == null) return null;
+                if (Objects.isNull(newValue)) {
+                    return null;
+                }
             } catch (Exception e) {
                 return null;
             }
@@ -244,9 +248,9 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         String cachedKey = serializeKey(key);
         try {
             net.rubyeye.xmemcached.GetsResponse<V> current = memcachedClient.gets(cachedKey);
-            if (current == null) {
+            if (Objects.isNull(current)) {
                 // key 不存在：expectedOldValue 为 null 时等价于 add
-                if (expectedOldValue == null) {
+                if (Objects.isNull(expectedOldValue)) {
                     String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
                     return memcachedClient.add(cachedKey, expireSeconds, newJson);
                 }
@@ -254,10 +258,10 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
             }
             V currentValue = deserialize((String) current.getValue());
             // 值比较（注意：序列化后的 JSON 字符串比较，而非对象 equals）
-            String expectedJson = expectedOldValue == null ? null
+            String expectedJson = Objects.isNull(expectedOldValue) ? null
                     : (expectedOldValue instanceof String ? (String) expectedOldValue : objectMapper.writeValueAsString(expectedOldValue));
             String currentJson = (String) current.getValue();
-            if (java.util.Objects.equals(expectedJson, currentJson)) {
+            if (Objects.equals(expectedJson, currentJson)) {
                 String newJson = (newValue instanceof String) ? (String) newValue : objectMapper.writeValueAsString(newValue);
                 return memcachedClient.cas(cachedKey, 0, newJson, current.getCas());
             }

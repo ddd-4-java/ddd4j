@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
 
 /**
  * 免费天气查询模板
@@ -76,12 +77,12 @@ public class WeatherTemplate {
     public JSONObject getWeather(String cityCode) {
         // 先查缓存
         JSONObject cached = CacheKit.get(CACHE_BIZ, cityCode);
-        if (cached != null) {
+        if (Objects.nonNull(cached)) {
             return cached;
         }
         // 缓存未命中，查询远程接口
         JSONObject weather = fetchWeather(cityCode);
-        if (weather != null) {
+        if (Objects.nonNull(weather)) {
             CacheKit.put(CACHE_BIZ, cityCode, weather);
         }
         return weather;

@@ -116,6 +116,19 @@
             <version>${revision}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-extension-otel</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- OTel 集成（运行时可选，编译时必需） -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-extension-otel</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>

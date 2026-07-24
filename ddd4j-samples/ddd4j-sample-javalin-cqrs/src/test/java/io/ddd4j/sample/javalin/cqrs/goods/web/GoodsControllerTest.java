@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.cqrs.goods.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.cqrs.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -37,7 +39,7 @@ class GoodsControllerTest {
 
     @AfterAll
     static void stopApp() {
-        if (app != null) {
+        if (Objects.nonNull(app)) {
             app.stop();
         }
     }

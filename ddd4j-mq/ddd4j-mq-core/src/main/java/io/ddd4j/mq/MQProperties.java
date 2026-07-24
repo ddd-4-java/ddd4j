@@ -1,5 +1,7 @@
 package io.ddd4j.mq;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import lombok.Data;
 
 import java.util.Objects;
@@ -98,7 +100,7 @@ public class MQProperties {
      * @return {@code namespace + sep}（namespace 为空时返回空串）
      */
     public String namespace(String sep) {
-        if (Objects.nonNull(namespace) && !namespace.isEmpty()) {
+        if (StrKit.isNotEmpty(namespace)) {
             return namespace + sep;
         }
         return "";

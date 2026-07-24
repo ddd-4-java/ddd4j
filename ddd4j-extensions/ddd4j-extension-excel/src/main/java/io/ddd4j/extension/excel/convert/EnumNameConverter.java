@@ -6,9 +6,11 @@ import com.alibaba.excel.metadata.GlobalConfiguration;
 import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.metadata.property.ExcelContentProperty;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,7 +45,7 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
      * @param enumType 枚举类型（不可为 null）
      */
     protected EnumNameConverter(Class<E> enumType) {
-        if (enumType == null) {
+        if (Objects.isNull(enumType)) {
             throw new IllegalArgumentException("enumType must not be null");
         }
         this.enumType = enumType;
@@ -65,7 +67,7 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
     public E convertToJavaData(ReadCellData<?> cellData,
                                ExcelContentProperty contentProperty,
                                GlobalConfiguration globalConfiguration) {
-        if (cellData == null || cellData.getStringValue() == null || cellData.getStringValue().isEmpty()) {
+        if (Objects.isNull(cellData) || StrKit.isEmpty(cellData.getStringValue())) {
             return null;
         }
         return convertFromLabel(cellData.getStringValue());
@@ -75,7 +77,7 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
     public WriteCellData<?> convertToExcelData(E value,
                                                ExcelContentProperty contentProperty,
                                                GlobalConfiguration globalConfiguration) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return new WriteCellData<>("");
         }
         return new WriteCellData<>(convertToExcelDataLabel(value));
@@ -99,7 +101,7 @@ public class EnumNameConverter<E extends Enum<E>> implements Converter<E> {
      */
     protected E convertFromLabel(String label) {
         E v = nameIndex.get(label);
-        if (v == null) {
+        if (Objects.isNull(v)) {
             throw new IllegalArgumentException(
                     "Unknown enum value '" + label + "' for " + enumType.getName());
         }

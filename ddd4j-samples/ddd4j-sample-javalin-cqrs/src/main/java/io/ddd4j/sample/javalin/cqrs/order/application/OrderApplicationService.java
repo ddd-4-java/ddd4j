@@ -46,7 +46,7 @@ public class OrderApplicationService {
         Objects.requireNonNull(command, "command must not be null");
         Order order = repository.findById(command.orderId())
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + command.orderId()));
-        Money unitPrice = command.unitPrice() == null
+        Money unitPrice = Objects.isNull(command.unitPrice())
                 ? Money.zero("CNY")
                 : Money.cny(command.unitPrice());
         order.addLine(command.goodsId(), command.goodsName(), command.quantity(), unitPrice);

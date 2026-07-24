@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.goods.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.shiro.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -16,13 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * GoodsResource + GoodsQueryResource 集成测试（Javalin + Guice + Apache Shiro，random port）。
  *
- * <p>注：GoodsResource 和 GoodsQueryResource 在 ApiBuilder.path("api/goodss", ...) 下，
- * 内部路径以 /api/goods 开头，因此完整路径是 /api/goodss/api/goods/*。
+ * <p>GoodsResource 和 GoodsQueryResource 共同提供 {@code /api/goods/*} 路由。
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GoodsResourceTest {
 
-    private static final String PREFIX = "/api/goodss/api/goods";
+    private static final String PREFIX = "/api/goods";
 
     private static Javalin app;
     private static HttpClient httpClient;
@@ -37,7 +38,7 @@ class GoodsResourceTest {
 
     @AfterAll
     static void stopApp() {
-        if (app != null) {
+        if (Objects.nonNull(app)) {
             app.stop();
         }
     }
@@ -266,8 +267,8 @@ class GoodsResourceTest {
     void getByCode_validCode_shouldReturnOk() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-040\",\"name\":\"X\",\"price\":1.00,\"stock\":1}");
         HttpResponse<String> r = get(PREFIX + "/by-code?code=SKU-040");
-        // 路由阴影：/by-code 被 /{id} 拦截 → 500
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("SKU-040"));
     }
 
     @Test
@@ -277,51 +278,49 @@ class GoodsResourceTest {
     }
 
     // =================== 6) 充血查询（page/list/count）====================
-    // 注意：路由表存在阴影问题，page/list/count 走 /{id} 路径产生 NumberFormatException → 500。
-    // 这是预存在的业务 bug，不在测试范围。
 
     @Test
-    void pageQuery_shouldReturn200Or500() throws Exception {
+    void pageQuery_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?current=1&size=10");
-        // 预存在路由阴影 bug：/page 被 /{id} 拦截
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void pageQuery_withCode_shouldReturn200Or500() throws Exception {
+    void pageQuery_withCode_shouldReturnMatchingGoods() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-PQ\",\"name\":\"X\",\"price\":1.00,\"stock\":1}");
         HttpResponse<String> r = get(PREFIX + "/page?code=SKU-PQ");
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("SKU-PQ"));
     }
 
     @Test
-    void pageQuery_withOrderBys_shouldReturn200Or500() throws Exception {
+    void pageQuery_withOrderBys_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?orderBys=price_DESC&current=1&size=10");
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void listQuery_shouldReturn200Or500() throws Exception {
+    void listQuery_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/list");
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void listQuery_byStatus_shouldReturn200Or500() throws Exception {
+    void listQuery_byStatus_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/list?status=ON_SALE");
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void countQuery_shouldReturn200Or500() throws Exception {
+    void countQuery_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/count");
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
     }
 
     @Test
-    void countQuery_byStatus_shouldReturn200Or500() throws Exception {
+    void countQuery_byStatus_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/count?status=DRAFT");
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
     }
 
     // =================== 7) 综合 ====================
@@ -357,8 +356,8 @@ class GoodsResourceTest {
     void getByCode_responseShape() throws Exception {
         postJson(PREFIX, "{\"code\":\"SKU-SH\",\"name\":\"Shape\",\"price\":10.00,\"stock\":1}");
         HttpResponse<String> r = get(PREFIX + "/by-code?code=SKU-SH");
-        // 路由阴影：/by-code 被 /{id} 拦截 → 500
-        assertTrue(r.statusCode() == 200 || r.statusCode() == 500);
+        assertEquals(200, r.statusCode());
+        assertTrue(r.body().contains("\"data\""));
     }
 
     @Test

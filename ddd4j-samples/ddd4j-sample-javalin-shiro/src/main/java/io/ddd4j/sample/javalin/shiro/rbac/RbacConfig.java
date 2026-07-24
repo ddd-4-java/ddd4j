@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.rbac;
 
+import java.util.Objects;
+
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
@@ -74,11 +76,11 @@ public final class RbacConfig {
         return new SubjectDataProvider() {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
-                if (principal == null) {
+                if (Objects.isNull(principal)) {
                     return List.of();
                 }
                 Object loginId = principal.getLoginId();
-                if (loginId == null) {
+                if (Objects.isNull(loginId)) {
                     return List.of();
                 }
                 return userRepository.findByLoginId(String.valueOf(loginId))
@@ -88,11 +90,11 @@ public final class RbacConfig {
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
-                if (principal == null) {
+                if (Objects.isNull(principal)) {
                     return List.of();
                 }
                 Object loginId = principal.getLoginId();
-                if (loginId == null) {
+                if (Objects.isNull(loginId)) {
                     return List.of();
                 }
                 return userRepository.findByLoginId(String.valueOf(loginId))

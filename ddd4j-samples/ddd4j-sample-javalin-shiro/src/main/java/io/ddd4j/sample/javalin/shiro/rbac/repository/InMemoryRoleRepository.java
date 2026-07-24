@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro.rbac.repository;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
 
 import java.util.Collection;
@@ -41,7 +43,7 @@ public class InMemoryRoleRepository {
      * 删除角色。
      */
     public boolean deleteByCode(String code) {
-        return store.remove(code) != null;
+        return Objects.nonNull(store.remove(code));
     }
 
     /**

@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.goods.web;
 
+import java.util.Objects;
+
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
@@ -67,7 +69,7 @@ class GoodsControllerTest {
 
     @AfterAll
     static void stopApp() {
-        if (app != null) {
+        if (Objects.nonNull(app)) {
             app.stop();
         }
     }

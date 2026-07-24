@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.goods.infrastructure;
 
+import java.util.Objects;
+
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;
@@ -211,15 +213,15 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
                         Comparator.nullsLast(Comparator.naturalOrder()));
                 default -> null;
             };
-            if (current == null) {
+            if (Objects.isNull(current)) {
                 continue;
             }
             if (desc) {
                 current = current.reversed();
             }
-            comparator = (comparator == null) ? current : comparator.thenComparing(current);
+            comparator = (Objects.isNull(comparator)) ? current : comparator.thenComparing(current);
         }
-        return comparator != null ? comparator : Comparator.comparing(Goods::id);
+        return Objects.nonNull(comparator) ? comparator : Comparator.comparing(Goods::id);
     }
 
     /**

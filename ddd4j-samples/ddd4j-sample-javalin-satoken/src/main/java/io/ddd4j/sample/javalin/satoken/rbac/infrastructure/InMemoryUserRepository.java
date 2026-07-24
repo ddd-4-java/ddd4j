@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
+import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.UserRepository;
@@ -38,7 +39,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     private static User toModel(UserRow row) {
         User user = new User(row.userId, row.username, row.password, row.realName, User.Status.valueOf(row.status));
-        if (row.roleIds != null && !row.roleIds.isEmpty()) {
+        if (CollKit.isNotEmpty(row.roleIds)) {
             user.assignRoles(new java.util.HashSet<>(row.roleIds));
         }
         return user;

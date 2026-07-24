@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.shiro;
 
+import java.util.Objects;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -152,13 +154,11 @@ public class JavalinShiroApplication {
                 });
 
                 // Order 路由（通过 EndpointGroup 暴露）
-                ApiBuilder.path("orders", () -> orderResource.routes());
+                orderResource.routes().addEndpoints();
 
                 // Goods 路由（写侧 + 读侧合并到 /api/goods 命名空间）
-                ApiBuilder.path("api/goodss", () -> {
-                    goodsResource.routes();
-                    goodsQueryResource.routes();
-                });
+                goodsQueryResource.routes().addEndpoints();
+                goodsResource.routes().addEndpoints();
             });
         });
 
@@ -172,7 +172,7 @@ public class JavalinShiroApplication {
         @Override
         public <ID extends org.fuin.ddd4j.core.EntityId> void publish(
                 io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
-            if (java.util.Objects.isNull(event)) {
+            if (Objects.isNull(event)) {
                 return;
             }
             log.info("[DomainEvent] {}", event.getClass().getSimpleName());
@@ -181,7 +181,7 @@ public class JavalinShiroApplication {
         @Override
         public <ID extends org.fuin.ddd4j.core.EntityId> void publishAll(
                 java.util.Collection<io.ddd4j.core.ddd.event.DomainEvent<ID>> events) {
-            if (java.util.Objects.nonNull(events)) {
+            if (Objects.nonNull(events)) {
                 events.forEach(this::publish);
             }
         }

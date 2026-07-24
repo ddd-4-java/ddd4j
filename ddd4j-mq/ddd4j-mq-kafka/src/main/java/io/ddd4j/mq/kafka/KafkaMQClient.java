@@ -1,5 +1,6 @@
 package io.ddd4j.mq.kafka;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
@@ -111,13 +112,13 @@ public class KafkaMQClient implements MQClient {
      */
     @Override
     public String partitionKey(MQEvent event) {
-        if (properties == null) {
+        if (Objects.isNull(properties)) {
             return MQClient.super.partitionKey(event);  // 双构造 1：注入 producer 时走父类默认
         }
         return switch (properties.getPartitionKeyStrategy()) {
             case NONE -> null;
-            case TAG -> event != null ? event.getTag() : null;
-            case TENANT -> event != null ? event.getTenantId() : null;
+            case TAG -> Objects.nonNull(event) ? event.getTag() : null;
+            case TENANT -> Objects.nonNull(event) ? event.getTenantId() : null;
             case TAG_TENANT -> MQClient.super.partitionKey(event);
             case CUSTOM -> MQClient.super.partitionKey(event);  // 占位：子类应自己覆写
         };
@@ -166,7 +167,7 @@ public class KafkaMQClient implements MQClient {
                 for (ConsumerRecord<String, String> record : records) {
                     String payload = record.value();
                     MQEvent mqEvent = serialization().deserialize(payload, mqListener.payloadType());
-                    if (mqEvent == null) {
+                    if (Objects.isNull(mqEvent)) {
                         consumer.commitSync();
                         log.warn("Consume MQ [{}] failed: the mqEvent is null", mqListener.getRouteExpression(this.defaultConcat()));
                         continue;
@@ -198,7 +199,7 @@ public class KafkaMQClient implements MQClient {
      * 构造 consumer group.id（兜底）。
      */
     private String buildGroupId(MQListener listener) {
-        return Objects.nonNull(listener.getGroup()) && !listener.getGroup().isEmpty()
+        return StrKit.isNotEmpty(listener.getGroup())
                 ? listener.getGroup()
                 : "ddd4j-" + listener.getMethod().getName();
     }
@@ -218,7 +219,7 @@ public class KafkaMQClient implements MQClient {
 
         @Override
         public void onCompletion(RecordMetadata metadata, Exception exception) {
-            if (exception != null) {
+            if (Objects.nonNull(exception)) {
                 log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
             } else if (log.isDebugEnabled()) {
                 log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Map;
 
 /**
@@ -67,7 +68,7 @@ public final class ExcelExporter {
             applyStyleHandlers(builder, options);
 
             ExcelWriterSheetBuilder sheetBuilder = builder.sheet(options.getSheetName());
-            sheetBuilder.doWrite(data == null ? Collections.emptyList() : data);
+            sheetBuilder.doWrite(Objects.isNull(data) ? Collections.emptyList() : data);
             return out.toByteArray();
         } catch (IOException e) {
             throw new BizRuntimeException(500, "excel.export.failed", e);
@@ -90,9 +91,9 @@ public final class ExcelExporter {
             for (Map.Entry<String, Class<?>> entry : headMap.entrySet()) {
                 String sheetName = entry.getKey();
                 Class<?> head = entry.getValue();
-                List<?> data = dataMap == null ? null : dataMap.get(sheetName);
+                List<?> data = Objects.isNull(dataMap) ? null : dataMap.get(sheetName);
                 WriteSheet sheet = EasyExcel.writerSheet(sheetName).head(head).build();
-                writer.write(data == null ? Collections.emptyList() : data, sheet);
+                writer.write(Objects.isNull(data) ? Collections.emptyList() : data, sheet);
             }
             return out.toByteArray();
         } catch (IOException e) {

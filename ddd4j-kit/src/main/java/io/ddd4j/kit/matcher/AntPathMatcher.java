@@ -99,7 +99,7 @@ public class AntPathMatcher implements PathMatcher {
      * <p>Default is "/", as in Ant.
      */
     public void setPathSeparator(String pathSeparator) {
-        this.pathSeparator = (pathSeparator != null ? pathSeparator : DEFAULT_PATH_SEPARATOR);
+        this.pathSeparator = (Objects.nonNull(pathSeparator) ? pathSeparator : DEFAULT_PATH_SEPARATOR);
         this.pathSeparatorPatternCache = new PathSeparatorPatternCache(this.pathSeparator);
     }
 
@@ -147,7 +147,7 @@ public class AntPathMatcher implements PathMatcher {
 
     @Override
     public boolean isPattern(String path) {
-        if (path == null) {
+        if (Objects.isNull(path)) {
             return false;
         }
         boolean uriVar = false;
@@ -189,7 +189,7 @@ public class AntPathMatcher implements PathMatcher {
     protected boolean doMatch(String pattern, String path, boolean fullMatch,
                               Map<String, String> uriTemplateVariables) {
 
-        if (path == null || path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
+        if (Objects.isNull(path) || path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
             return false;
         }
 
@@ -379,19 +379,19 @@ public class AntPathMatcher implements PathMatcher {
     protected String[] tokenizePattern(String pattern) {
         String[] tokenized = null;
         Boolean cachePatterns = this.cachePatterns;
-        if (cachePatterns == null || cachePatterns) {
+        if (Objects.isNull(cachePatterns) || cachePatterns) {
             tokenized = this.tokenizedPatternCache.get(pattern);
         }
-        if (tokenized == null) {
+        if (Objects.isNull(tokenized)) {
             tokenized = tokenizePath(pattern);
-            if (cachePatterns == null && this.tokenizedPatternCache.size() >= CACHE_TURNOFF_THRESHOLD) {
+            if (Objects.isNull(cachePatterns) && this.tokenizedPatternCache.size() >= CACHE_TURNOFF_THRESHOLD) {
                 // Try to adapt to the runtime situation that we're encountering:
                 // There are obviously too many different patterns coming in here...
                 // So let's turn off the cache since the patterns are unlikely to be reoccurring.
                 deactivatePatternCache();
                 return tokenized;
             }
-            if (cachePatterns == null || cachePatterns) {
+            if (Objects.isNull(cachePatterns) || cachePatterns) {
                 this.tokenizedPatternCache.put(pattern, tokenized);
             }
         }
@@ -438,19 +438,19 @@ public class AntPathMatcher implements PathMatcher {
     protected AntPathStringMatcher getStringMatcher(String pattern) {
         AntPathStringMatcher matcher = null;
         Boolean cachePatterns = this.cachePatterns;
-        if (cachePatterns == null || cachePatterns) {
+        if (Objects.isNull(cachePatterns) || cachePatterns) {
             matcher = this.stringMatcherCache.get(pattern);
         }
-        if (matcher == null) {
+        if (Objects.isNull(matcher)) {
             matcher = new AntPathStringMatcher(pattern, this.pathSeparator, this.caseSensitive);
-            if (cachePatterns == null && this.stringMatcherCache.size() >= CACHE_TURNOFF_THRESHOLD) {
+            if (Objects.isNull(cachePatterns) && this.stringMatcherCache.size() >= CACHE_TURNOFF_THRESHOLD) {
                 // Try to adapt to the runtime situation that we're encountering:
                 // There are obviously too many different patterns coming in here...
                 // So let's turn off the cache since the patterns are unlikely to be reoccurring.
                 deactivatePatternCache();
                 return matcher;
             }
-            if (cachePatterns == null || cachePatterns) {
+            if (Objects.isNull(cachePatterns) || cachePatterns) {
                 this.stringMatcherCache.put(pattern, matcher);
             }
         }
@@ -700,10 +700,10 @@ public class AntPathMatcher implements PathMatcher {
         public boolean matchStrings(String str, Map<String, String> uriTemplateVariables) {
             if (this.exactMatch) {
                 return this.caseSensitive ? this.rawPattern.equals(str) : this.rawPattern.equalsIgnoreCase(str);
-            } else if (this.pattern != null) {
+            } else if (Objects.nonNull(this.pattern)) {
                 Matcher matcher = this.pattern.matcher(str);
                 if (matcher.matches()) {
-                    if (uriTemplateVariables != null) {
+                    if (Objects.nonNull(uriTemplateVariables)) {
                         if (this.variableNames.size() != matcher.groupCount()) {
                             throw new IllegalArgumentException("The number of capturing groups in the pattern segment " +
                                     this.pattern + " does not match the number of URI template variables it defines, " +
@@ -843,19 +843,19 @@ public class AntPathMatcher implements PathMatcher {
 
             PatternInfo(String pattern, String pathSeparator) {
                 this.pattern = pattern;
-                if (this.pattern != null) {
+                if (Objects.nonNull(this.pattern)) {
                     initCounters();
                     this.catchAllPattern = this.pattern.equals(pathSeparator + "**");
                     this.prefixPattern = !this.catchAllPattern && this.pattern.endsWith(pathSeparator + "**");
                 }
                 if (this.uriVars == 0) {
-                    this.length = (this.pattern != null ? this.pattern.length() : 0);
+                    this.length = (Objects.nonNull(this.pattern) ? this.pattern.length() : 0);
                 }
             }
 
             protected void initCounters() {
                 int pos = 0;
-                if (this.pattern != null) {
+                if (Objects.nonNull(this.pattern)) {
                     while (pos < this.pattern.length()) {
                         if (this.pattern.charAt(pos) == '{') {
                             this.uriVars++;
@@ -890,7 +890,7 @@ public class AntPathMatcher implements PathMatcher {
             }
 
             public boolean isLeastSpecific() {
-                return (this.pattern == null || this.catchAllPattern);
+                return (Objects.isNull(this.pattern) || this.catchAllPattern);
             }
 
             public boolean isPrefixPattern() {
@@ -905,8 +905,8 @@ public class AntPathMatcher implements PathMatcher {
              * Returns the length of the given pattern, where template variables are considered to be 1 long.
              */
             public int getLength() {
-                if (this.length == null) {
-                    this.length = (this.pattern != null ?
+                if (Objects.isNull(this.length)) {
+                    this.length = (Objects.nonNull(this.pattern) ?
                             VARIABLE_PATTERN.matcher(this.pattern).replaceAll("#").length() : 0);
                 }
                 return this.length;

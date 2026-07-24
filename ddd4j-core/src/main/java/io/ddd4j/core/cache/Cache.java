@@ -190,7 +190,7 @@ public interface Cache<K, V> {
      * <p>典型用法（分布式计数器）：
      * <pre>{@code
      * cache.compareAndSet("counter", 60, current -> {
-     *     return (current.value() == null ? 0L : current.value()) + 1;
+     *     return (current.value() instanceof Long value ? value : 0L) + 1;
      * });
      * }</pre>
      *

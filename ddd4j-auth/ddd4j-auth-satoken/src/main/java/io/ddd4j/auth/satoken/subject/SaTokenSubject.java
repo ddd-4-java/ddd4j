@@ -46,7 +46,7 @@ public class SaTokenSubject implements Subject {
      * 这两个字段我们仍写入 {@link AuthSessionConfig}，但具体生效需要在更新版 sa-token 下补全。
      */
     private static cn.dev33.satoken.stp.parameter.enums.SaLogoutMode toSaLogoutMode(AuthLogoutMode mode) {
-        if (mode == null) {
+        if (Objects.isNull(mode)) {
             return cn.dev33.satoken.stp.parameter.enums.SaLogoutMode.LOGOUT;
         }
         switch (mode) {

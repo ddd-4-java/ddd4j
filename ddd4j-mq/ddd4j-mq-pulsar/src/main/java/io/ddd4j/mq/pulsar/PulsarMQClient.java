@@ -85,13 +85,13 @@ public class PulsarMQClient implements MQClient {
      */
     @Override
     public String partitionKey(MQEvent event) {
-        if (properties == null) {
+        if (Objects.isNull(properties)) {
             return MQClient.super.partitionKey(event);  // 双构造 2：注入 client 时走父类默认
         }
         return switch (properties.getPartitionKeyStrategy()) {
             case NONE -> null;
-            case TAG -> event != null ? event.getTag() : null;
-            case TENANT -> event != null ? event.getTenantId() : null;
+            case TAG -> Objects.nonNull(event) ? event.getTag() : null;
+            case TENANT -> Objects.nonNull(event) ? event.getTenantId() : null;
             case TAG_TENANT -> MQClient.super.partitionKey(event);
             case CUSTOM -> MQClient.super.partitionKey(event);  // 占位：子类应自己覆写
         };
