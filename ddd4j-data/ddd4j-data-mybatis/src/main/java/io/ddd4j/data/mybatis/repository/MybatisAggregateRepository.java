@@ -111,11 +111,40 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return toModel(po);
     }
 
+    /**
+     * 仅按主键更新（不插入），对齐 {@code BaseMapper.updateById}。
+     */
+    @Override
+    public M updateById(M aggregate) {
+        Objects.requireNonNull(aggregate, "aggregate must not be null");
+        P po = toPersistenceObject(aggregate);
+        updateFill(po);
+        baseMapper.updateById(po);
+        return toModel(po);
+    }
+
+    /**
+     * 主键存在则更新，否则插入（与 {@link #save(Object)} 同为 upsert 语义）。
+     */
+    @Override
+    public M insertOrUpdate(M aggregate) {
+        return save(aggregate);
+    }
+
+    /**
+     * 按标识删除。
+     *
+     * <p><b>注意</b>：本模块基于 mybatis-enhance，其 {@code EnhanceMapper} 不提供
+     * {@code deleteById} 能力（仅有 insert/updateById/select 系列）。
+     * 旧实现以 {@code selectById} 占位，产生"假删除"（静默成功但不删数据），
+     * 现改为显式抛出不支持异常；需要删除能力的业务请在 Mapper 接口上
+     * 自行声明 {@code @Delete} 方法，或使用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块。
+     */
     @Override
     public void deleteById(ID id) {
-        if (Objects.nonNull(id)) {
-            baseMapper.selectById(id);
-        }
+        throw new UnsupportedOperationException(
+                "EnhanceMapper 不提供 deleteById 能力，请在业务 Mapper 上自行声明删除方法，"
+                        + "或改用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块");
     }
 
     @Override
@@ -126,20 +155,16 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
         return convert(baseMapper.selectBatchIds((Collection<? extends Serializable>) ids));
     }
 
+    /**
+     * 按标识批量删除。
+     *
+     * <p>与 {@link #deleteById(Serializable)} 相同，EnhanceMapper 无删除能力，显式抛出不支持异常。
+     */
     @Override
     public int deleteByIds(Collection<ID> ids) {
-        if (Objects.isNull(ids) || ids.isEmpty()) {
-            return 0;
-        }
-        int count = 0;
-        for (ID id : ids) {
-            P po = baseMapper.selectById(id);
-            if (Objects.nonNull(po)) {
-                baseMapper.updateById(po);
-                count++;
-            }
-        }
-        return count;
+        throw new UnsupportedOperationException(
+                "EnhanceMapper 不提供 deleteByIds 能力，请在业务 Mapper 上自行声明删除方法，"
+                        + "或改用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块");
     }
 
     @Override

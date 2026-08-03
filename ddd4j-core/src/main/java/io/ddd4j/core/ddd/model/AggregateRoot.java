@@ -78,10 +78,17 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 批量更新。
+     * 批量更新（仅更新，不插入；逐条委托 {@link Repository#updateById(Object)}）。
      */
     public static <M extends AggregateRoot<?>> boolean update(List<M> models) {
-        return save(models);
+        if (Objects.isNull(models) || models.isEmpty()) {
+            return false;
+        }
+        Repository repo = RepositoryRegistry.repository(models.get(0).getClass());
+        for (AggregateRoot m : models) {
+            repo.updateById(m);
+        }
+        return true;
     }
 
     /**
@@ -156,17 +163,17 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 充血更新。
+     * 充血更新（仅按主键更新，不插入；委托 {@link Repository#updateById(Object)}）。
      */
     public <M extends AggregateRoot<ID>> M update() {
-        return (M) repository().save(this);
+        return (M) repository().updateById(this);
     }
 
     /**
-     * 充血保存或更新。
+     * 充血保存或更新（主键存在则更新，否则插入；委托 {@link Repository#insertOrUpdate(Object)}）。
      */
     public <M extends AggregateRoot<ID>> M saveOrUpdate() {
-        return (M) repository().save(this);
+        return (M) repository().insertOrUpdate(this);
     }
 
     /**

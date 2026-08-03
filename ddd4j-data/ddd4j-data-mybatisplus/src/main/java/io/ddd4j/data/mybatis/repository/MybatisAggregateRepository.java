@@ -620,12 +620,33 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return aggregate;
     }
 
-    public M update(M aggregate) {
+    /**
+     * 仅按主键更新（不插入），对齐 {@code BaseMapper.updateById}。
+     */
+    @Override
+    public M updateById(M aggregate) {
+        Objects.requireNonNull(aggregate, "aggregate must not be null");
+        P persistenceObject = toPersistenceObject(aggregate);
+        updateFill(persistenceObject);
+        getBaseMapper().updateById(persistenceObject);
+        BeanKit.copy(persistenceObject, aggregate);
+        return aggregate;
+    }
+
+    /**
+     * 主键存在则更新，否则插入（与 {@link #save(Object)} 同为 upsert 语义）。
+     */
+    @Override
+    public M insertOrUpdate(M aggregate) {
         return save(aggregate);
     }
 
+    public M update(M aggregate) {
+        return updateById(aggregate);
+    }
+
     public M saveOrUpdate(M aggregate) {
-        return save(aggregate);
+        return insertOrUpdate(aggregate);
     }
 
     @Override
