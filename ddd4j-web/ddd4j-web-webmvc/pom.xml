@@ -26,6 +26,11 @@
             <artifactId>ddd4j-runtime-spring</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-runtime-support</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- Spring WebMVC -->
         <dependency>
             <groupId>org.springframework</groupId>

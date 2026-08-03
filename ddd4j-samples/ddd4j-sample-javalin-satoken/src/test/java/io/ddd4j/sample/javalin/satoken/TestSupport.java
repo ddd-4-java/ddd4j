@@ -9,6 +9,7 @@ import com.google.inject.Injector;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectStrategy;
@@ -38,7 +39,6 @@ import io.ddd4j.sample.javalin.satoken.rbac.web.AuthorizationController;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
 import io.javalin.json.JavalinJackson;
-import org.fuin.ddd4j.core.EntityId;
 
 /**
  * 测试基础设施：手动创建 Guice 注入器并启动 Javalin。

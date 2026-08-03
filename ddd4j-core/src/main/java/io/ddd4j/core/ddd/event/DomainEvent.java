@@ -4,16 +4,16 @@ import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.kit.lang.StrKit;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.fuin.ddd4j.core.EntityId;
-import org.fuin.ddd4j.core.EntityIdPath;
-import org.fuin.ddd4j.core.EventType;
-import org.fuin.ddd4j.jackson.AbstractDomainEvent;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -24,8 +24,8 @@ import java.util.Set;
  * <p>融合了进程内事件和事件溯源（ES）两条轨道：
  * <ul>
  *   <li><b>进程内事件</b> —— 通过 {@link #publish()} 发布到 {@link DomainEventPublisher}，
- *       支持 {@link #tenantIn(String...)} 租户过滤和 {@link #supports(Object...)} 策略过滤</li>
- *   <li><b>事件溯源（ES）</b> —— 继承 fuinorg {@link AbstractDomainEvent}，
+ *       支持 {@link #tenantIn(String...)} 租户过滤和 {@link #supports(String...)} 策略过滤</li>
+ *   <li><b>事件溯源（ES）</b> —— 使用 ddd4j 的纯 Java 元数据模型，
  *       包含 {@code eventId} / {@code entityIdPath} / {@code aggregateVersion} /
  *       {@code correlationId} / {@code causationId} 完整元数据，可序列化持久化到 EventStore</li>
  * </ul>
@@ -40,13 +40,16 @@ import java.util.Set;
  * new OrderCreatedEvent(orderId, amount).publish();
  * }</pre>
  *
- * @param <ID> 聚合根标识类型（必须是 fuinorg {@link org.fuin.ddd4j.core.AggregateRootId} 子类型）
+ * @param <ID> 聚合根标识类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
 @Slf4j
 @SuppressWarnings("unchecked")
-public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEvent<ID> implements Serializable {
+public abstract class DomainEvent<ID extends EntityId> implements Event, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<>() {
         @Override
@@ -79,11 +82,30 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
     @Setter
     private Object result;
 
+    @JsonProperty("event-id")
+    private EventId eventId;
+
+    @JsonProperty("event-timestamp")
+    private ZonedDateTime eventTimestamp;
+
+    @JsonProperty("correlation-id")
+    private EventId correlationId;
+
+    @JsonProperty("causation-id")
+    private EventId causationId;
+
+    @JsonProperty("entity-id-path")
+    private EntityIdPath entityIdPath;
+
+    @JsonProperty("aggregate-version")
+    private AggregateVersion aggregateVersion;
+
     /**
      * 默认构造器（Jackson 反序列化 + 事件回放时使用，子类必须保留无参构造）。
      */
     protected DomainEvent() {
-        super();
+        this.eventId = new EventId();
+        this.eventTimestamp = ZonedDateTime.now();
     }
 
     /**
@@ -104,7 +126,8 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * @param entityIdPath 从聚合根到事件源的路径
      */
     protected DomainEvent(EntityIdPath entityIdPath) {
-        super(entityIdPath);
+        this();
+        this.entityIdPath = Objects.requireNonNull(entityIdPath, "entityIdPath must not be null");
     }
 
     /**
@@ -113,8 +136,12 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * @param entityIdPath 从聚合根到事件源的路径
      * @param respondTo    导致本事件的前置事件
      */
-    protected DomainEvent(EntityIdPath entityIdPath, org.fuin.ddd4j.core.Event respondTo) {
-        super(entityIdPath, respondTo);
+    protected DomainEvent(EntityIdPath entityIdPath, Event respondTo) {
+        this(entityIdPath);
+        Event causingEvent = Objects.requireNonNull(respondTo, "respondTo must not be null");
+        this.correlationId = Objects.nonNull(causingEvent.getCorrelationId())
+                ? causingEvent.getCorrelationId() : causingEvent.getEventId();
+        this.causationId = causingEvent.getEventId();
     }
 
     /**
@@ -132,8 +159,102 @@ public abstract class DomainEvent<ID extends EntityId> extends AbstractDomainEve
      * @return 事件类型
      */
     @Override
+    @JsonProperty("event-type")
     public EventType getEventType() {
         return EVENT_TYPES.get(getClass());
+    }
+
+    /**
+     * 返回事件标识。
+     *
+     * @return 事件标识
+     */
+    @Override
+    @JsonIgnore
+    public EventId getEventId() {
+        return eventId;
+    }
+
+    /**
+     * 返回事件创建时间。
+     *
+     * @return 创建时间
+     */
+    @Override
+    @JsonIgnore
+    public ZonedDateTime getEventTimestamp() {
+        return eventTimestamp;
+    }
+
+    /**
+     * 返回关联事件标识。
+     *
+     * @return 关联事件标识；没有时返回 {@code null}
+     */
+    @Override
+    @JsonIgnore
+    public EventId getCorrelationId() {
+        return correlationId;
+    }
+
+    /**
+     * 返回因果事件标识。
+     *
+     * @return 因果事件标识；没有时返回 {@code null}
+     */
+    @Override
+    @JsonIgnore
+    public EventId getCausationId() {
+        return causationId;
+    }
+
+    /**
+     * 返回事件源的完整实体标识路径。
+     *
+     * @return 实体标识路径
+     */
+    @JsonIgnore
+    public EntityIdPath getEntityIdPath() {
+        return entityIdPath;
+    }
+
+    /**
+     * 返回事件源实体标识。
+     *
+     * @return 事件源实体标识
+     */
+    @JsonIgnore
+    public ID getEntityId() {
+        return entityIdPath.last();
+    }
+
+    /**
+     * 返回聚合版本。
+     *
+     * @return 聚合版本；未设置时返回 {@code null}
+     */
+    @JsonIgnore
+    public AggregateVersion getAggregateVersion() {
+        return aggregateVersion;
+    }
+
+    /**
+     * 返回聚合版本整数。
+     *
+     * @return 聚合版本；未设置时返回 {@code null}
+     */
+    @JsonIgnore
+    public Integer getAggregateVersionInteger() {
+        return Objects.nonNull(aggregateVersion) ? aggregateVersion.asInt() : null;
+    }
+
+    /**
+     * 为事件回放设置聚合版本。
+     *
+     * @param aggregateVersion 聚合版本
+     */
+    public void setAggregateVersion(AggregateVersion aggregateVersion) {
+        this.aggregateVersion = aggregateVersion;
     }
 
     /**

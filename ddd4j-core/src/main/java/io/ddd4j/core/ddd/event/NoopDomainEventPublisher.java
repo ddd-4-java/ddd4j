@@ -1,7 +1,5 @@
 package io.ddd4j.core.ddd.event;
 
-import org.fuin.ddd4j.core.EntityId;
-
 import java.util.Collection;
 
 /**

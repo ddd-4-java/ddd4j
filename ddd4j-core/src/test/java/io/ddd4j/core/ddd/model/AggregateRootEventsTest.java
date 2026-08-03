@@ -3,11 +3,11 @@ package io.ddd4j.core.ddd.model;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import org.fuin.ddd4j.core.EntityIdPath;
-import org.fuin.ddd4j.core.EntityType;
-import org.fuin.ddd4j.core.EventType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -175,13 +175,9 @@ class AggregateRootEventsTest {
             return name;
         }
 
-        @Override
-        public EventType getEventType() {
-            return null;
-        }
     }
 
-    static final class OrderId implements org.fuin.ddd4j.core.AggregateRootId {
+    static final class OrderId implements AggregateRootId {
 
         private static final EntityType TYPE = new OrderEntityType();
 

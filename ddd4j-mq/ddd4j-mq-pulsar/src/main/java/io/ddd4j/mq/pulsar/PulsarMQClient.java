@@ -61,6 +61,17 @@ public class PulsarMQClient implements MQClient {
         return Objects.isNull(id) ? null : id.toString();
     }
 
+    /**
+     * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 Pulsar 投递 ID。
+     */
+    static String messageId(Message<?> message) {
+        String messageId = message.getProperty(MessageHeaders.HEADER_MESSAGE_ID);
+        if (Objects.isNull(messageId)) {
+            messageId = message.getProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+        }
+        return Objects.nonNull(messageId) ? messageId : messageIdString(message.getMessageId());
+    }
+
     @Override
     public String impl() {
         return "pulsar";
@@ -170,13 +181,7 @@ public class PulsarMQClient implements MQClient {
                             ((org.apache.pulsar.client.api.Consumer) c).acknowledge(msg);
                             return;
                         }
-                        String messageId = msg.getProperty(MessageHeaders.HEADER_MESSAGE_ID);
-                        if (Objects.isNull(messageId)) {
-                            messageId = msg.getProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
-                        }
-                        if (Objects.isNull(messageId)) {
-                            messageId = messageIdString(msg.getMessageId());
-                        }
+                        String messageId = messageId(msg);
                         String payload = new String(msg.getValue(), StandardCharsets.UTF_8);
                         MQEvent event = serialization().deserialize(payload, listener.payloadType());
                         if (Objects.isNull(event)) {

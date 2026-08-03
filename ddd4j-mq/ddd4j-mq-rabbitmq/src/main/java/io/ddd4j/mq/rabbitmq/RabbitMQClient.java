@@ -1,6 +1,7 @@
 package io.ddd4j.mq.rabbitmq;
 
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -169,14 +171,7 @@ public class RabbitMQClient implements MQClient {
                 }
                 return;
             }
-            String messageId = delivery.getProperties().getMessageId();
-            if (Objects.isNull(messageId) && Objects.nonNull(delivery.getProperties().getHeaders())) {
-                Object headerValue = delivery.getProperties().getHeaders().get(MessageHeaders.HEADER_MESSAGE_ID);
-                if (Objects.isNull(headerValue)) {
-                    headerValue = delivery.getProperties().getHeaders().get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
-                }
-                messageId = Objects.nonNull(headerValue) ? headerValue.toString() : null;
-            }
+            String messageId = messageId(delivery.getProperties());
             if (Objects.nonNull(messageId)) {
                 event.setMsgId(messageId);
             }
@@ -201,7 +196,7 @@ public class RabbitMQClient implements MQClient {
                         serialization().serialize(event), e);
                 if (!mqProperties.isAutoAck() && !ack.isAcknowledged()) {
                     try {
-                        channel.basicAck(deliveryTag, false);
+                        channel.basicNack(deliveryTag, false, true);
                     } catch (IOException ignore) {
                     }
                 }
@@ -220,6 +215,23 @@ public class RabbitMQClient implements MQClient {
             }
         });
         return true;
+    }
+
+    /**
+     * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 AMQP 原生 messageId。
+     */
+    static String messageId(AMQP.BasicProperties properties) {
+        Map<String, Object> headers = properties.getHeaders();
+        if (Objects.nonNull(headers)) {
+            Object headerValue = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
+            if (Objects.isNull(headerValue)) {
+                headerValue = headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+            }
+            if (Objects.nonNull(headerValue)) {
+                return headerValue.toString();
+            }
+        }
+        return properties.getMessageId();
     }
 
     // ========================= 连接管理（双构造共享的最小辅助）=========================

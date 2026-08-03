@@ -57,6 +57,11 @@ public final class MqDeliveryMetrics {
         recordOutbox(broker, OUTCOME_DEAD);
     }
 
+    /** 记录一条发送或确认失败、最终状态尚未确定的 Outbox 消息。 */
+    public static void outboxFailed(String broker) {
+        recordOutbox(broker, OUTCOME_FAILED);
+    }
+
     /** 记录一条成功处理的 Inbox 消息。 */
     public static void inboxProcessed(String broker) {
         recordInbox(broker, OUTCOME_PROCESSED);

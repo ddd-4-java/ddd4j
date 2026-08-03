@@ -61,12 +61,20 @@ public class SqsMQClient implements MQClient {
         return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
     }
 
-    private static String attr(Message message, String key) {
+    static String attr(Message message, String key) {
         if (Objects.isNull(message.messageAttributes())) {
             return null;
         }
         var v = message.messageAttributes().get(key);
         return Objects.isNull(v) ? null : v.stringValue();
+    }
+
+    static String messageId(Message message) {
+        String messageId = attr(message, MessageHeaders.HEADER_MESSAGE_ID);
+        if (Objects.isNull(messageId)) {
+            messageId = attr(message, MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+        }
+        return messageId;
     }
 
     // ========================= 生产者 =========================
@@ -178,10 +186,7 @@ public class SqsMQClient implements MQClient {
             if (Objects.nonNull(tenantId)) {
                 event.setTenantId(tenantId);
             }
-            String msgId = attr(message, MessageHeaders.HEADER_MESSAGE_ID);
-            if (Objects.isNull(msgId)) {
-                msgId = attr(message, MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
-            }
+            String msgId = messageId(message);
             if (Objects.nonNull(msgId)) {
                 event.setMsgId(msgId);
             }

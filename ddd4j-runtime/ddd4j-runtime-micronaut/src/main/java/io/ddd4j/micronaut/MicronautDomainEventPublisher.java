@@ -2,10 +2,9 @@ package io.ddd4j.micronaut;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import lombok.extern.slf4j.Slf4j;
-import org.fuin.ddd4j.core.EntityId;
-
 import java.util.Objects;
 
 /**

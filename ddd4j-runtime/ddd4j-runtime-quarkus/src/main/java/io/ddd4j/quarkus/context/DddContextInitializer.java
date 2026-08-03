@@ -22,11 +22,13 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.quarkus.Ddd4jQuarkusRuntime;
+import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,7 +77,19 @@ public class DddContextInitializer {
     Instance<CommandBus> commandBus;
     @Inject
     Instance<ReadinessContributor> readinessContributors;
+    private final RuntimeReadinessRegistry readinessRegistry = new RuntimeReadinessRegistry();
     private Ddd4jQuarkusRuntime runtime;
+
+    /**
+     * 将同一个运行时 Registry 暴露给 SmallRye Health，避免健康检查与 SPI 生命周期使用不同实例。
+     *
+     * @return Quarkus 应用的就绪检查注册表
+     */
+    @Produces
+    @ApplicationScoped
+    RuntimeReadinessRegistry runtimeReadinessRegistry() {
+        return readinessRegistry;
+    }
 
     /**
      * 应用启动完成后注入 SPI 服务到上下文。
@@ -91,8 +105,9 @@ public class DddContextInitializer {
             log.warn("Ddd4j Quarkus runtime requires unique DomainEventPublisher, SubjectProvider, I18nProvider and CommandBus beans");
             return;
         }
+        readinessRegistry.registerAll(readinessContributors.stream().toList());
         runtime = new Ddd4jQuarkusRuntime(domainEventPublisher.get(), subjectProvider.get(), i18nProvider.get(),
-                commandBus.get(), readinessContributors.stream().toList());
+                commandBus.get(), readinessRegistry);
         runtime.start();
 
         log.info("Quarkus ddd4j SPI services initialized");

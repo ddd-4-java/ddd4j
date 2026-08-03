@@ -170,7 +170,7 @@ public class JavalinShiroApplication {
 
     private static class NoOpDomainEventPublisher implements DomainEventPublisher {
         @Override
-        public <ID extends org.fuin.ddd4j.core.EntityId> void publish(
+        public <ID extends io.ddd4j.core.ddd.event.EntityId> void publish(
                 io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
             if (Objects.isNull(event)) {
                 return;
@@ -179,7 +179,7 @@ public class JavalinShiroApplication {
         }
 
         @Override
-        public <ID extends org.fuin.ddd4j.core.EntityId> void publishAll(
+        public <ID extends io.ddd4j.core.ddd.event.EntityId> void publishAll(
                 java.util.Collection<io.ddd4j.core.ddd.event.DomainEvent<ID>> events) {
             if (Objects.nonNull(events)) {
                 events.forEach(this::publish);

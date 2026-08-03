@@ -5,6 +5,7 @@ import java.util.Objects;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectDataProvider;
@@ -35,7 +36,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import org.fuin.ddd4j.core.EntityId;
 
 /**
  * 测试基础设施：手动构造 Shiro SecurityManager + Javalin 应用。

@@ -46,12 +46,13 @@ public final class VertxOrderRoutes {
         OrderApplicationService service = Objects.requireNonNull(applicationService,
                 "applicationService must not be null");
         Router router = Router.router(actualVertx);
+        // Vert.x requires body parsing to be the first global handler.
+        router.route().handler(BodyHandler.create());
         new Ddd4jVertxWeb(new WebRequestContextFactory(),
                 new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/api/auth/**"),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode).install(router);
-        router.route().handler(BodyHandler.create());
         router.get("/health").handler(context -> respond(context, 200, R.ok("UP")));
         router.post("/api/auth/tokens/:userId").handler(context -> execute(context, () -> {
             Subject subject = SubjectKit.getSubject();
@@ -93,8 +94,13 @@ public final class VertxOrderRoutes {
 
     private static <T> void execute(RoutingContext context, Callable<T> operation, int status) {
         Ddd4jVertxContext.executeBlocking(context, operation)
-                .onSuccess(response -> respond(context, status, response))
-                .onFailure(context::fail);
+                .onComplete(result -> context.vertx().runOnContext(ignored -> {
+                    if (result.failed()) {
+                        context.fail(result.cause());
+                        return;
+                    }
+                    respond(context, status, result.result());
+                }));
     }
 
     private static void respond(RoutingContext context, int status, Object response) {

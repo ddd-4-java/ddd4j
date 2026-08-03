@@ -1,0 +1,3 @@
+# Maven coordinate<TAB>reason
+# Accepted only when the aggregate SBOM proves the component is absent from release artifacts.
+javax.annotation:javax.annotation-api:1.3.2	Maven Enforcer plugin provided dependency

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -38,7 +39,7 @@ class VertxOrderRoutesTest {
         OrderApplicationService applicationService = new OrderApplicationService(adapters, adapters, adapters,
                 adapters, adapters);
         server = await(vertx.createHttpServer()
-                .requestHandler(VertxOrderRoutes.router(vertx, applicationService)).listen(0));
+                .requestHandler(VertxOrderRoutes.router(vertx, applicationService)).listen(0, "127.0.0.1"));
     }
 
     @AfterEach
@@ -75,6 +76,7 @@ class VertxOrderRoutesTest {
         assertThat(missingKey.statusCode()).withFailMessage(missingKey.body()).isEqualTo(400);
 
         HttpRequest payment = HttpRequest.newBuilder(URI.create(baseUrl + "/api/orders/" + orderId + "/pay"))
+                .timeout(Duration.ofSeconds(10))
                 .header("Authorization", "Bearer " + token)
                 .header("Idempotency-Key", "vertx-payment-001")
                 .POST(HttpRequest.BodyPublishers.noBody())
@@ -95,7 +97,8 @@ class VertxOrderRoutesTest {
 
     private HttpResponse<String> request(HttpClient client, String baseUrl, String method, String path, String token,
                                          String body) throws Exception {
-        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path));
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .timeout(Duration.ofSeconds(10));
         if (Objects.nonNull(token)) {
             builder.header("Authorization", "Bearer " + token);
         }

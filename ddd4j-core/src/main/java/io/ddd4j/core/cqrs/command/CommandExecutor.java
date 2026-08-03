@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * CQRS 命令执行器接口（写侧入口）。
  * <p>
- * 取代 {@code io.ddd4j.core.ddd.command.DddCommandExecutor}，移除对 fuinorg 的依赖。
+ * 取代旧命令执行器实现，保持 ddd4j-core 的纯 Java 边界。
  *
  * <h3>执行器契约</h3>
  * <ul>

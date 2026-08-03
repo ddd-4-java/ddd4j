@@ -29,6 +29,13 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
     public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus,
                                Collection<? extends ReadinessContributor> readinessContributors) {
+        this(publisher, subjectProvider, i18nProvider, commandBus,
+                new RuntimeReadinessRegistry(readinessContributors));
+    }
+
+    public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
+                               I18nProvider i18nProvider, CommandBus commandBus,
+                               RuntimeReadinessRegistry readinessRegistry) {
         registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                         Objects.requireNonNull(publisher, "publisher must not be null"))
@@ -38,7 +45,8 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
                         Objects.requireNonNull(i18nProvider, "i18nProvider must not be null"))
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class,
                         Objects.requireNonNull(commandBus, "commandBus must not be null"));
-        readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
+        this.readinessRegistry = Objects.requireNonNull(readinessRegistry,
+                "readinessRegistry must not be null");
     }
 
     public void start() {

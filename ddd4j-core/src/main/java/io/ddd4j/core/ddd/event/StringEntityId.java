@@ -1,9 +1,7 @@
 package io.ddd4j.core.ddd.event;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.kit.lang.StrKit;
-import org.fuin.ddd4j.core.EntityId;
-import org.fuin.ddd4j.core.EntityType;
-import org.fuin.ddd4j.core.StringBasedEntityType;
 
 import java.io.Serial;
 import java.util.Objects;
@@ -19,7 +17,7 @@ public final class StringEntityId implements EntityId {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final EntityType TYPE = new StringBasedEntityType("String");
+    private static final EntityType TYPE = new StringEntityType("String");
 
     private final String value;
 
@@ -41,6 +39,7 @@ public final class StringEntityId implements EntityId {
     }
 
     @Override
+    @JsonValue
     public String asString() {
         return value;
     }

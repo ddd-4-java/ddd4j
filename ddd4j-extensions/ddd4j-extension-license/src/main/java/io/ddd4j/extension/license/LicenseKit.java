@@ -12,7 +12,7 @@ import java.util.Objects;
  * License 统一管理门面。
  *
  * <p>聚合签发（{@link LicenseCreator}）、校验（{@link LicenseVerify}）、缓存（{@link LicenseCache}）三段，
- * 对外提供完整的 License 生命周期 API。是业务代码与底层 TrueLicense / CacheKit 之间的唯一入口。
+ * 对外提供完整的 License 生命周期 API。是业务代码与底层签名校验 / CacheKit 之间的唯一入口。
  *
  * <h3>两种使用模式</h3>
  * <ol>
@@ -156,7 +156,7 @@ public class LicenseKit {
      * 运行期校验证书是否有效。
      *
      * <p>当 {@link LicenseProperties#isEnabled()} 为 false 时恒返回 true（旁路）。
-     * 否则先查 {@link LicenseCache}，命中且未过期直接通过；未命中走 TrueLicense 验签并回填缓存。
+     * 否则先查 {@link LicenseCache}，命中且未过期直接通过；未命中重新验签并回填缓存。
      *
      * @return true 表示校验通过
      */

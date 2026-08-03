@@ -14,11 +14,6 @@
     <description>Ddd4j License Component（软件授权）</description>
 
     <dependencies>
-        <!-- For TrueLicense -->
-        <dependency>
-            <groupId>de.schlichtherle.truelicense</groupId>
-            <artifactId>truelicense-core</artifactId>
-        </dependency>
         <!-- ddd4j 缓存门面：License 验证结果缓存 -->
         <dependency>
             <groupId>io.ddd4j</groupId>

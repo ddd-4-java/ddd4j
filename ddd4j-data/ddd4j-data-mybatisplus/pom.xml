@@ -67,6 +67,13 @@
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
+            <exclusions>
+                <!-- JSqlParser 将仅用于其基准测试的 JMH 声明为 compile；ddd4j 运行时不需要它。 -->
+                <exclusion>
+                    <groupId>org.openjdk.jmh</groupId>
+                    <artifactId>jmh-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Hutool：仅声明源码直接使用的模块 -->
         <dependency>

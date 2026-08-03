@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * <li>{@code {spring:[a-z]+}} matches the regexp {@code [a-z]+} as a path variable named "spring"</li>
  * </ul>
  *
- * <h3>Examples</h3>
+ * <h2>Examples</h2>
  * <ul>
  * <li>{@code com/t?st.jsp} &mdash; matches {@code com/test.jsp} but also
  * {@code com/tast.jsp} or {@code com/txst.jsp}</li>
@@ -511,6 +511,7 @@ public class AntPathMatcher implements PathMatcher {
      * an {@code IllegalArgumentException} will be thrown.
      * <h4>Examples</h4>
      * <table border="1">
+     * <caption>Pattern combination examples</caption>
      * <tr><th>Pattern 1</th><th>Pattern 2</th><th>Result</th></tr>
      * <tr><td>{@code null}</td><td>{@code null}</td><td>&nbsp;</td></tr>
      * <tr><td>/hotels</td><td>{@code null}</td><td>/hotels</td></tr>

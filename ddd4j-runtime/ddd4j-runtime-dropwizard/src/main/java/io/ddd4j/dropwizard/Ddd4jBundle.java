@@ -63,7 +63,10 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
                 ? subjectProvider
                 : new InMemorySubjectProvider(new InMemorySubject(publisher::publish));
         CommandBus commandBus = new DefaultCommandBus(executors);
-        environment.lifecycle().manage(new Ddd4jDropwizardRuntime(
-                publisher, effectiveSubject, i18nProvider, commandBus, readinessContributors));
+        Ddd4jDropwizardRuntime runtime = new Ddd4jDropwizardRuntime(
+                publisher, effectiveSubject, i18nProvider, commandBus, readinessContributors);
+        environment.healthChecks().register("ddd4j-readiness",
+                new Ddd4jDropwizardReadinessHealthCheck(runtime.readiness()));
+        environment.lifecycle().manage(runtime);
     }
 }

@@ -3,6 +3,7 @@ package io.ddd4j.spring.cqrs;
 import io.ddd4j.annotation.cqrs.CreateEvent;
 import io.ddd4j.annotation.cqrs.DeleteEvent;
 import io.ddd4j.annotation.cqrs.UpdateEvent;
+import io.ddd4j.core.cqrs.query.View;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
@@ -46,9 +47,9 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
 
     @Override
     public void afterSingletonsInstantiated() {
-        Map<String, org.fuin.cqrs4j.core.View> viewBeans = applicationContext.getBeansOfType(org.fuin.cqrs4j.core.View.class);
+        Map<String, View> viewBeans = applicationContext.getBeansOfType(View.class);
 
-        for (org.fuin.cqrs4j.core.View view : viewBeans.values()) {
+        for (View view : viewBeans.values()) {
             registerHandlers(view.getClass());
         }
         log.info("CQRS event handler registry initialized: {} event types registered", handlerTable.size());

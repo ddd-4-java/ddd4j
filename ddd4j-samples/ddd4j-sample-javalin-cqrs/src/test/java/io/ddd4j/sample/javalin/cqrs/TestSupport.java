@@ -5,6 +5,7 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -23,7 +24,6 @@ import io.ddd4j.sample.javalin.cqrs.order.web.OrderCQRSQueryController;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderController;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
-import org.fuin.ddd4j.core.EntityId;
 
 import java.util.Collection;
 

@@ -122,25 +122,6 @@ public class R<T> implements IR {
         return target;
     }
 
-    /**
-     * 从 fuinorg {@code Result<T>} 转换为 {@code R<T>}。
-     *
-     * @param result fuinorg Result
-     * @param <T>    数据类型
-     * @return ddd4j R 实例
-     */
-    public static <T> R<T> fromResult(org.fuin.cqrs4j.core.Result<T> result) {
-        if (Objects.isNull(result)) {
-            return fail();
-        }
-        Serializable code = Objects.nonNull(result.getCode()) ? result.getCode() : ResultCode.FAIL.getCode();
-        String msg = Objects.nonNull(result.getMessage()) ? result.getMessage() : ResultCode.FAIL.getDesc();
-        if (result.getType() == org.fuin.cqrs4j.core.ResultType.OK) {
-            return ok(msg, result.getData());
-        }
-        return new R<>(code, msg, result.getData());
-    }
-
     public Boolean isOk() {
         return Objects.equals(this.getCode(), ResultCode.OK.getCode()) || Objects.equals(this.getCode(), ResultCode.SUCCESS.getCode());
     }
@@ -149,45 +130,4 @@ public class R<T> implements IR {
         return !isOk() || Objects.isNull(data);
     }
 
-    /**
-     * 转换为 fuinorg {@code Result<T>} 适配对象。
-     * <p>需要 classpath 中有 {@code cqrs-4-java-core}（可选依赖）。
-     *
-     * @return fuinorg Result 适配实例
-     * @see org.fuin.cqrs4j.core.Result
-     */
-    public org.fuin.cqrs4j.core.Result<T> toResult() {
-        return new DddResultAdapter<>(this);
-    }
-
-    /**
-     * fuinorg Result 适配器（内部类）。
-     */
-    private static class DddResultAdapter<T> implements org.fuin.cqrs4j.core.Result<T> {
-        private final R<T> r;
-
-        DddResultAdapter(R<T> r) {
-            this.r = r;
-        }
-
-        @Override
-        public org.fuin.cqrs4j.core.ResultType getType() {
-            return r.isOk() ? org.fuin.cqrs4j.core.ResultType.OK : org.fuin.cqrs4j.core.ResultType.ERROR;
-        }
-
-        @Override
-        public String getCode() {
-            return Objects.nonNull(r.getCode()) ? r.getCode().toString() : null;
-        }
-
-        @Override
-        public String getMessage() {
-            return r.getMsg();
-        }
-
-        @Override
-        public T getData() {
-            return r.getData();
-        }
-    }
 }

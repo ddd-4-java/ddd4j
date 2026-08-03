@@ -7,8 +7,8 @@ import java.util.Collection;
  * <p>
  * 取代以下两个历史接口：
  * <ul>
- *   <li>{@code io.ddd4j.core.ddd.query.DddView}（fuinorg 标记接口）</li>
- *   <li>{@code io.ddd4j.core.ddd.query.DddJpaView}（fuinorg JPA 抽象）</li>
+ *   <li>原有的轻量查询标记接口</li>
+ *   <li>原有的 JPA 查询抽象</li>
  *   <li>{@code io.ddd4j.core.cqrs.readmodel.ProjectionView}（ddd4j 框架无关投影）</li>
  * </ul>
  *

@@ -11,6 +11,7 @@ import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
+import io.ddd4j.auth.satoken.config.Ddd4jStpLogicJwtForSimple;
 import io.ddd4j.auth.satoken.util.StpKit;
 import io.ddd4j.core.auth.AuthLogoutMode;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -22,6 +23,7 @@ import io.ddd4j.core.exception.NotLoggedInException;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.kit.lang.StrKit;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +39,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public class SaTokenSubject implements Subject {
 
     /**
@@ -123,11 +126,7 @@ public class SaTokenSubject implements Subject {
 
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
-        Object loginId = resolveVerifiedLoginId(tokenValue);
-        if (Objects.isNull(loginId)) {
-            return null;
-        }
-        return getPrincipalByLoginId(loginId);
+        return verify(tokenValue);
     }
 
     @Override
@@ -214,11 +213,17 @@ public class SaTokenSubject implements Subject {
 
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
-        Object loginId = resolveVerifiedLoginId(token);
-        if (Objects.isNull(loginId)) {
+        try {
+            Object loginId = resolveVerifiedLoginId(token);
+            if (Objects.isNull(loginId)) {
+                return null;
+            }
+            return getPrincipalByLoginId(loginId);
+        } catch (RuntimeException exception) {
+            // 认证依赖不可用时必须拒绝，而不是从当前线程主体回退。
+            log.warn("Sa-Token verification failed closed: {}", exception.getClass().getSimpleName());
             return null;
         }
-        return getPrincipalByLoginId(loginId);
     }
 
     /**
@@ -240,6 +245,10 @@ public class SaTokenSubject implements Subject {
         }
         StpLogic logic = StpUtil.stpLogic;
         if (logic instanceof StpLogicJwtForSimple jwtLogic) {
+            // JWT Simple 必须经过 ddd4j 配置器，以固定 issuer/audience 与撤销语义。
+            if (!(jwtLogic instanceof Ddd4jStpLogicJwtForSimple)) {
+                return null;
+            }
             Object jwtLoginId = jwtLoginId(token, jwtLogic);
             if (Objects.isNull(jwtLoginId)) {
                 return null;
@@ -256,10 +265,13 @@ public class SaTokenSubject implements Subject {
 
     private Object jwtLoginId(String token, StpLogicJwtForSimple logic) {
         try {
+            if (logic instanceof Ddd4jStpLogicJwtForSimple secureLogic && !secureLogic.hasExpectedClaims(token)) {
+                return null;
+            }
             // JWT Simple 的有效期由 Sa-Token 服务端映射管理，不能误用会要求 eff 声明的 getPayloads(...).
             return SaJwtUtil.getPayloadsNotCheck(token, logic.getLoginType(), logic.jwtSecretKey())
                     .get(SaJwtUtil.LOGIN_ID);
-        } catch (SaJwtException e) {
+        } catch (SaJwtException | IllegalArgumentException exception) {
             return null;
         }
     }

@@ -26,6 +26,12 @@
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- Reliable delivery observer SPI; mq-core remains independent from OTel. -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-mq-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- Ddd4j data-datascope (DataScopeProvider) -->
         <dependency>
             <groupId>io.ddd4j</groupId>

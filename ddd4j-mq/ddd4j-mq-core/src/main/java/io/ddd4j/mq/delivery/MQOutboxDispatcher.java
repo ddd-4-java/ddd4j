@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 /**
  * Outbox 可靠投递协调器。
@@ -20,11 +20,26 @@ public final class MQOutboxDispatcher {
     private final MQOutboxStore store;
     private final MQOutboxSender sender;
     private final MQDeliveryPolicy policy;
+    private final MQDeliveryObserver observer;
 
     public MQOutboxDispatcher(MQOutboxStore store, MQOutboxSender sender, MQDeliveryPolicy policy) {
+        this(store, sender, policy, NoopMQDeliveryObserver.INSTANCE);
+    }
+
+    /**
+     * 创建带投递结果观察器的调度器。
+     *
+     * @param store Outbox 持久化端口
+     * @param sender Broker 发送端口
+     * @param policy 投递策略
+     * @param observer 旁路观测实现
+     */
+    public MQOutboxDispatcher(MQOutboxStore store, MQOutboxSender sender, MQDeliveryPolicy policy,
+                              MQDeliveryObserver observer) {
         this.store = Objects.requireNonNull(store, "store must not be null");
         this.sender = Objects.requireNonNull(sender, "sender must not be null");
         this.policy = Objects.requireNonNull(policy, "policy must not be null");
+        this.observer = Objects.requireNonNull(observer, "observer must not be null");
     }
 
     /**
@@ -53,21 +68,41 @@ public final class MQOutboxDispatcher {
                 sender.send(record);
                 if (store.markPublished(record.messageId(), leaseOwner, now)) {
                     published++;
+                    notifyObserver(deliveryObserver -> deliveryObserver.onOutboxPublished(record));
                 } else {
                     confirmationLost++;
                     log.warn("Outbox message {} was sent but its lease confirmation was lost", record.messageId());
+                    notifyObserver(deliveryObserver -> deliveryObserver.onOutboxFailed(record));
                 }
             } catch (RuntimeException exception) {
-                if (store.reschedule(record.messageId(), leaseOwner, now, exception.getMessage(), policy)) {
-                    if (policy.exhausted(record.attempts())) {
-                        dead++;
+                try {
+                    if (store.reschedule(record.messageId(), leaseOwner, now, exception.getMessage(), policy)) {
+                        if (policy.exhausted(record.attempts())) {
+                            dead++;
+                            notifyObserver(deliveryObserver -> deliveryObserver.onOutboxDead(record));
+                        } else {
+                            rescheduled++;
+                            notifyObserver(deliveryObserver -> deliveryObserver.onOutboxRetry(record));
+                        }
                     } else {
-                        rescheduled++;
+                        notifyObserver(deliveryObserver -> deliveryObserver.onOutboxFailed(record));
                     }
+                } catch (RuntimeException storeException) {
+                    notifyObserver(deliveryObserver -> deliveryObserver.onOutboxFailed(record));
+                    log.warn("Outbox message {} delivery state update failed", record.messageId(), storeException);
+                    throw storeException;
                 }
                 log.warn("Outbox message {} delivery failed", record.messageId(), exception);
             }
         }
         return new MQOutboxDispatchResult(claimed.size(), published, rescheduled, dead, confirmationLost);
+    }
+
+    private void notifyObserver(Consumer<MQDeliveryObserver> action) {
+        try {
+            action.accept(observer);
+        } catch (RuntimeException exception) {
+            log.warn("MQ delivery observer failed and was ignored", exception);
+        }
     }
 }

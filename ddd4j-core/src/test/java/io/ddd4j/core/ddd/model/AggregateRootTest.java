@@ -1,8 +1,9 @@
 package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
-import org.fuin.ddd4j.core.EntityIdPath;
-import org.fuin.ddd4j.core.EventType;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.EntityType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -70,15 +71,11 @@ class AggregateRootTest {
             return name;
         }
 
-        @Override
-        public EventType getEventType() {
-            return null;
-        }
     }
 
-    private static final class OrderId implements org.fuin.ddd4j.core.AggregateRootId {
+    private static final class OrderId implements AggregateRootId {
 
-        private static final org.fuin.ddd4j.core.EntityType TYPE = new TestEntityType("Order");
+        private static final EntityType TYPE = new TestEntityType("Order");
 
         private final String value;
 
@@ -87,7 +84,7 @@ class AggregateRootTest {
         }
 
         @Override
-        public org.fuin.ddd4j.core.EntityType getType() {
+        public EntityType getType() {
             return TYPE;
         }
 
@@ -123,7 +120,7 @@ class AggregateRootTest {
         }
     }
 
-    private static final class TestEntityType implements org.fuin.ddd4j.core.EntityType {
+    private static final class TestEntityType implements EntityType {
 
         private final String name;
 

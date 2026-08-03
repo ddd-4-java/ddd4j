@@ -21,6 +21,11 @@
             <version>${revision}</version>
         </dependency>
         <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-runtime-support</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
             <groupId>io.javalin</groupId>
             <artifactId>javalin</artifactId>
         </dependency>

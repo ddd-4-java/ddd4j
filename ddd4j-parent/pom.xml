@@ -46,8 +46,8 @@
         <docker.registry.host>registry.ddd4j.io</docker.registry.host>
         <!-- Docker 登录用户名 -->
         <docker.registry.username>ddd4j</docker.registry.username>
-        <!-- Docker 登录密码（$ 需要转义为 $$） -->
-        <docker.registry.password>$$L3fhAhD9e9#nDYV</docker.registry.password>
+        <!-- Docker 登录凭证只能由受保护 CI 环境变量注入，禁止存放在源码。 -->
+        <docker.registry.password>${env.DDD4J_DOCKER_REGISTRY_PASSWORD}</docker.registry.password>
         <!-- buildx builder 名称（与 Jenkins 保持一致） -->
         <docker.buildx.builder.name>ddd4j-builder</docker.buildx.builder.name>
         <!-- buildkit 镜像（与 Jenkins 保持一致） -->
@@ -515,7 +515,7 @@
                         <nodeAuditAnalyzerEnabled>false</nodeAuditAnalyzerEnabled>
                         <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                         <!-- 获取 NVD API 密钥： 访问 https://nvd.nist.gov/developers/request-an-api-key -->
-                        <nvdApiKey>3b8d0853-cc28-4b91-bfe2-a01c65870443</nvdApiKey>
+                        <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                         <format>HTML</format>
                         <outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
                     </configuration>

@@ -2,6 +2,7 @@ package io.ddd4j.sample.dropwizard;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
@@ -34,6 +35,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardOrderResourceTest {
 
+    private static final String IDEMPOTENCY_CACHE_NAME = "ddd4j-web-idempotency";
+    private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
+
     private static final InMemorySubjectProvider SUBJECT_PROVIDER = new InMemorySubjectProvider(
             new InMemorySubject(event -> {
             }));
@@ -55,12 +59,14 @@ class DropwizardOrderResourceTest {
 
     @BeforeAll
     static void startRuntime() {
+        CacheKit.build(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
         RUNTIME.start();
     }
 
     @AfterAll
     static void closeRuntime() {
         RUNTIME.close();
+        CacheKit.unregister(IDEMPOTENCY_CACHE_NAME);
     }
 
     @Test

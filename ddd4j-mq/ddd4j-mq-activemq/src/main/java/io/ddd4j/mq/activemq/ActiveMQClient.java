@@ -136,13 +136,7 @@ public class ActiveMQClient implements MQClient {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
                     return;
                 }
-                String messageId = message.getStringProperty(MessageHeaders.HEADER_MESSAGE_ID);
-                if (Objects.isNull(messageId)) {
-                    messageId = message.getStringProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
-                }
-                if (Objects.isNull(messageId)) {
-                    messageId = ActivemqKit.messageIdOf(message);
-                }
+                String messageId = messageId(message);
                 if (Objects.nonNull(messageId)) {
                     event.setMsgId(messageId);
                 }
@@ -180,5 +174,16 @@ public class ActiveMQClient implements MQClient {
         }
         log.info("Get ActiveMQ connection: {}", connection);
         return connection;
+    }
+
+    /**
+     * 优先读取 ddd4j 标准消息 ID，兼容升级期旧键并最终回退到 JMS 原生 ID。
+     */
+    static String messageId(Message message) throws JMSException {
+        String messageId = message.getStringProperty(MessageHeaders.HEADER_MESSAGE_ID);
+        if (Objects.isNull(messageId)) {
+            messageId = message.getStringProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+        }
+        return Objects.nonNull(messageId) ? messageId : ActivemqKit.messageIdOf(message);
     }
 }

@@ -31,6 +31,13 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
     public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus,
                                Collection<? extends ReadinessContributor> readinessContributors) {
+        this(publisher, subjectProvider, i18nProvider, commandBus,
+                new RuntimeReadinessRegistry(readinessContributors));
+    }
+
+    public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
+                               I18nProvider i18nProvider, CommandBus commandBus,
+                               RuntimeReadinessRegistry readinessRegistry) {
         this.registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                         Objects.requireNonNull(publisher, "publisher must not be null"))
@@ -41,7 +48,8 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class,
                         Objects.requireNonNull(commandBus, "commandBus must not be null"));
         this.subjectRegistration = new SubjectKitRegistrationScope(subjectProvider);
-        this.readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
+        this.readinessRegistry = Objects.requireNonNull(readinessRegistry,
+                "readinessRegistry must not be null");
     }
 
     public void start() {

@@ -50,7 +50,7 @@ class MicronautOrderControllerTest {
                     .POST(HttpRequest.BodyPublishers.noBody())
                     .build();
             HttpResponse<String> successfulPayment = client.send(payRequest, HttpResponse.BodyHandlers.ofString());
-            assertThat(successfulPayment.statusCode()).isEqualTo(200);
+            assertThat(successfulPayment.statusCode()).withFailMessage(successfulPayment.body()).isEqualTo(200);
             assertThat(objectMapper.readTree(successfulPayment.body()).path("data").path("status").asText())
                     .isEqualTo("PAID");
         }

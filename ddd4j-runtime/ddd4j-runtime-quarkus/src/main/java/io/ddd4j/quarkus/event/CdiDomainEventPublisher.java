@@ -2,13 +2,12 @@ package io.ddd4j.quarkus.event;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.fuin.ddd4j.core.EntityId;
-
 import java.util.Objects;
 
 /**

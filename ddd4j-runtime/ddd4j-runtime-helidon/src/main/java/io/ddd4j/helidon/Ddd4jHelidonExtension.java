@@ -9,6 +9,9 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
@@ -29,7 +32,15 @@ import java.util.Set;
 @Slf4j
 public final class Ddd4jHelidonExtension implements Extension {
 
+    private final RuntimeReadinessRegistry readinessRegistry = new RuntimeReadinessRegistry();
     private Ddd4jHelidonRuntime runtime;
+
+    void registerReadinessRegistry(@Observes AfterBeanDiscovery event) {
+        event.addBean()
+                .addType(RuntimeReadinessRegistry.class)
+                .scope(ApplicationScoped.class)
+                .createWith(context -> readinessRegistry);
+    }
 
     void start(@Observes AfterDeploymentValidation event, BeanManager beanManager) {
         HelidonDomainEventPublisher publisher = new HelidonDomainEventPublisher(beanManager);
@@ -45,8 +56,9 @@ public final class Ddd4jHelidonExtension implements Extension {
         if (Objects.isNull(commandBus)) {
             commandBus = new DefaultCommandBus(commandExecutors(beanManager));
         }
-        runtime = new Ddd4jHelidonRuntime(publisher, subjectProvider, i18nProvider, commandBus);
-        runtime.readiness().registerAll(readinessContributors(beanManager));
+        readinessRegistry.registerAll(readinessContributors(beanManager));
+        runtime = new Ddd4jHelidonRuntime(publisher, subjectProvider, i18nProvider, commandBus,
+                readinessRegistry);
         runtime.start();
         log.info("ddd4j Helidon runtime initialized");
     }

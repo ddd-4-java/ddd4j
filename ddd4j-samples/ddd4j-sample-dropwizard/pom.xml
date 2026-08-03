@@ -54,6 +54,11 @@
             <version>${revision}</version>
         </dependency>
         <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-cache</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
         </dependency>

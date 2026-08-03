@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * CQRS 读侧"创建"事件处理器。
  *
- * <p>标注于 {@link io.ddd4j.core.cqrs.query.query.DddView} 子类的方法，标识该方法处理"实体被创建"类型的事件。
+ * <p>标注于 CQRS 读侧投影的方法，标识该方法处理"实体被创建"类型的事件。
  *
  * <p>典型用法：
  * <pre>{@code
@@ -23,8 +23,7 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * <p>由各框架适配层（{@code ddd4j-runtime-spring} / {@code ddd4j-runtime-quarkus}）的
- * {@code SpringEventHandlerRegistry} / {@code QuarkusEventHandlerRegistry} 在运行时反射装配到
- * {@link io.ddd4j.core.cqrs.query.event.DddEventDispatcher} 路由表。
+ * {@code SpringEventHandlerRegistry} / {@code QuarkusEventHandlerRegistry} 在运行时反射装配事件路由表。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -35,7 +34,7 @@ import java.lang.annotation.Target;
 public @interface CreateEvent {
 
     /**
-     * 事件类型（{@link org.fuin.ddd4j.core.Event} 子类）。
+     * 要处理的事件类型。
      */
     Class<?> value();
 }

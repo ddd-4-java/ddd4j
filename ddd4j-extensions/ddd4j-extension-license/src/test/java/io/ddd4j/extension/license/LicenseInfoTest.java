@@ -1,6 +1,5 @@
 package io.ddd4j.extension.license;
 
-import de.schlichtherle.license.LicenseContent;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -47,27 +46,6 @@ class LicenseInfoTest {
             assertThat(roundtrip.getExtra()).isNotNull();
             assertThat(roundtrip.getExtra().getIp()).isEqualTo("10.0.0.1");
         }
-    }
-
-    @Test
-    void shouldMapFromLicenseContent() {
-        LicenseContent content = new LicenseContent();
-        content.setSubject("from-content");
-        content.setConsumerType("user");
-        content.setConsumerAmount(1);
-        content.setNotBefore(new Date());
-        content.setNotAfter(new Date(System.currentTimeMillis() + 86_400_000L));
-
-        LicenseInfo info = LicenseInfo.from(content);
-
-        assertThat(info).isNotNull();
-        assertThat(info.getSubject()).isEqualTo("from-content");
-        assertThat(info.getExtra()).isNull();
-    }
-
-    @Test
-    void shouldReturnNullFromNullContent() {
-        assertThat(LicenseInfo.from(null)).isNull();
     }
 
     @Test

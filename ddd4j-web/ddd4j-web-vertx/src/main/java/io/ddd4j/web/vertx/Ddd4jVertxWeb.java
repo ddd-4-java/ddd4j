@@ -1,9 +1,12 @@
 package io.ddd4j.web.vertx;
 
+import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.AuthenticationMode;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.PathWebAccessPolicy;
+import io.ddd4j.web.core.ReadinessEndpoint;
+import io.ddd4j.web.core.ReadinessResponse;
 import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
 import io.ddd4j.web.core.WebHeaders;
@@ -43,24 +46,51 @@ public final class Ddd4jVertxWeb {
     private final WebExceptionTranslator exceptionTranslator;
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
     private final Function<Object, String> jsonEncoder;
+    private final ReadinessEndpoint readinessEndpoint;
 
     public Ddd4jVertxWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
-                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness"),
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
+                                        ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
-                new DefaultWebExceptionTranslator(), null, Json::encode);
+                new DefaultWebExceptionTranslator(), null, Json::encode, new RuntimeReadinessRegistry());
+    }
+
+    /**
+     * 使用应用 Runtime 的 registry 安装标准 readiness 端点。
+     *
+     * @param readinessRegistry 应用 Runtime 管理的就绪状态注册表
+     */
+    public Ddd4jVertxWeb(RuntimeReadinessRegistry readinessRegistry) {
+        this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
+                                        ReadinessEndpoint.PATH),
+                                AuthenticationMode.REQUIRED)),
+                new DefaultWebExceptionTranslator(), null, Json::encode, readinessRegistry);
     }
 
     public Ddd4jVertxWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                          WebExceptionTranslator exceptionTranslator,
                          WebIdempotencyLifecycle idempotencyLifecycle,
                          Function<Object, String> jsonEncoder) {
+        this(contextFactory, requestLifecycle, exceptionTranslator, idempotencyLifecycle, jsonEncoder,
+                new RuntimeReadinessRegistry());
+    }
+
+    public Ddd4jVertxWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
+                         WebExceptionTranslator exceptionTranslator,
+                         WebIdempotencyLifecycle idempotencyLifecycle,
+                         Function<Object, String> jsonEncoder,
+                         RuntimeReadinessRegistry readinessRegistry) {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
         this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
         this.exceptionTranslator = Objects.requireNonNull(exceptionTranslator,
                 "exceptionTranslator must not be null");
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
         this.jsonEncoder = Objects.requireNonNull(jsonEncoder, "jsonEncoder must not be null");
+        RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
+                "readinessRegistry must not be null");
+        this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
     public void install(Router router) {
@@ -68,6 +98,14 @@ public final class Ddd4jVertxWeb {
         target.route().handler(contextHandler());
         target.route().handler(authenticationHandler());
         target.route().failureHandler(failureHandler());
+        target.get(ReadinessEndpoint.PATH).handler(this::readiness);
+    }
+
+    private void readiness(RoutingContext context) {
+        ReadinessResponse response = readinessEndpoint.readiness();
+        context.response().setStatusCode(response.httpStatus())
+                .putHeader("Content-Type", "application/json")
+                .end(jsonEncoder.apply(response));
     }
 
     public Handler<RoutingContext> contextHandler() {
@@ -95,14 +133,18 @@ public final class Ddd4jVertxWeb {
         return routingContext -> {
             WebRequestContext requestContext = Ddd4jVertxContext.request(routingContext).orElseThrow();
             routingContext.vertx().executeBlocking(() -> authenticate(routingContext, requestContext))
-                    .onSuccess(result -> {
-                        result.authentication().ifPresent(authentication ->
+                    .onComplete(result -> routingContext.vertx().runOnContext(ignored -> {
+                        if (result.failed()) {
+                            routingContext.fail(result.cause());
+                            return;
+                        }
+                        AuthenticationResult authenticationResult = result.result();
+                        authenticationResult.authentication().ifPresent(authentication ->
                                 Ddd4jVertxContext.bindSubject(routingContext, authentication.subject()));
                         RequestState state = routingContext.get(STATE_KEY);
-                        result.idempotencyScope().ifPresent(state::idempotencyScope);
+                        authenticationResult.idempotencyScope().ifPresent(state::idempotencyScope);
                         routingContext.next();
-                    })
-                    .onFailure(routingContext::fail);
+                    }));
         };
     }
 

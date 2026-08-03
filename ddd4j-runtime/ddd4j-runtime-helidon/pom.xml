@@ -40,6 +40,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>io.helidon.microprofile.health</groupId>
+            <artifactId>helidon-microprofile-health</artifactId>
+        </dependency>
         <!--
             Helidon MP 3 的 Jersey/Weld 集成仍依赖 CDI 3 的 @New 类型。
             显式作为运行时适配器的传递依赖，隔离根目录中 Quarkus 的 CDI 4 管理。

@@ -2,9 +2,8 @@ package io.ddd4j.dropwizard;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import lombok.extern.slf4j.Slf4j;
-import org.fuin.ddd4j.core.EntityId;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;

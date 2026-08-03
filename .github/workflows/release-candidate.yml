@@ -1,0 +1,114 @@
+name: Release candidate evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_baseline_version:
+        description: Published non-SNAPSHOT 2.0.x API baseline version
+        required: true
+        type: string
+      evidence_run_id:
+        description: Run ID that archived the fixed-runner performance and protected-cloud MQ reports
+        required: true
+        type: string
+      performance_artifact_name:
+        description: Artifact containing one performance JSON report
+        required: true
+        default: ddd4j-performance
+        type: string
+      cloud_mq_artifact_name:
+        description: Artifact containing one ONS/TDMQ cloud RC JSON report
+        required: true
+        default: ddd4j-cloud-mq-rc
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
+  NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+jobs:
+  release-candidate:
+    name: Java 17 release candidate evidence
+    runs-on: ubuntu-latest
+    environment: release-candidate
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Require protected NVD credentials
+        run: |
+          if [[ -z "${NVD_API_KEY}" ]]; then
+            echo "NVD_API_KEY is required for release-candidate CVE evidence." >&2
+            exit 1
+          fi
+      - name: Verify source, architecture and license gates
+        run: |
+          DDD4J_REQUIRE_CLEAN_WORKTREE=true ./scripts/verify-release-worktree.sh
+          ./scripts/check-bom-alignment.sh
+          ./scripts/verify-java-style.sh
+          ./scripts/verify-architecture.sh
+          ./scripts/generate-sbom.sh
+          ./scripts/generate-license-report.sh
+          ./scripts/verify-license-policy.sh
+      - name: Run Java 17 unit and contract suite
+        run: ./mvnw -B -ntp clean test -DskipITs
+      - name: Run Testcontainers integration suite
+        run: >-
+          ./mvnw -B -ntp
+          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis
+          -am test
+      - name: Generate CVE report
+        env:
+          DDD4J_ENABLE_CVE_SCAN: 'true'
+        run: ./scripts/scan-cve.sh
+      - name: Verify binary API compatibility
+        env:
+          DDD4J_API_BASELINE_VERSION: ${{ inputs.api_baseline_version }}
+        run: ./scripts/verify-api-compatibility.sh
+      - name: Download fixed-runner performance evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.evidence_run_id }}
+          name: ${{ inputs.performance_artifact_name }}
+          path: target/release-candidate-evidence/performance
+      - name: Verify performance evidence
+        run: |
+          report_path="$(find target/release-candidate-evidence/performance -type f -name '*.json' -print -quit)"
+          if [[ -z "${report_path}" ]]; then
+            echo "Performance artifact does not contain a JSON report." >&2
+            exit 1
+          fi
+          DDD4J_PERFORMANCE_REPORT="${report_path}" ./scripts/verify-performance-report.sh
+      - name: Download protected cloud MQ evidence
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.evidence_run_id }}
+          name: ${{ inputs.cloud_mq_artifact_name }}
+          path: target/release-candidate-evidence/cloud-mq
+      - name: Verify ONS and TDMQ cloud evidence
+        run: |
+          report_path="$(find target/release-candidate-evidence/cloud-mq -type f -name '*.json' -print -quit)"
+          if [[ -z "${report_path}" ]]; then
+            echo "Cloud MQ artifact does not contain a JSON report." >&2
+            exit 1
+          fi
+          DDD4J_CLOUD_MQ_RC_REPORT="${report_path}" ./scripts/verify-cloud-mq-rc-evidence.sh
+      - name: Verify generated artifacts did not modify the release candidate
+        run: DDD4J_REQUIRE_CLEAN_WORKTREE=true ./scripts/verify-release-worktree.sh
+      - name: Archive release-candidate evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: ${{ always() }}
+        with:
+          name: ddd4j-release-candidate-evidence
+          path: target/release-quality
+          if-no-files-found: error
+          retention-days: 90

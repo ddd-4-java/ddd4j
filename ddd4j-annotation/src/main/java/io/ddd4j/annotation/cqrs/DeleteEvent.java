@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * CQRS 读侧"删除"事件处理器。
  *
- * <p>标注于 {@link io.ddd4j.core.cqrs.query.query.DddView} 子类的方法，标识该方法处理"实体被删除"类型的事件。
+ * <p>标注于 CQRS 读侧投影的方法，标识该方法处理"实体被删除"类型的事件。
  *
  * <p>典型用法：
  * <pre>{@code
@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 public @interface DeleteEvent {
 
     /**
-     * 事件类型（{@link org.fuin.ddd4j.core.Event} 子类）。
+     * 要处理的事件类型。
      */
     Class<?> value();
 }

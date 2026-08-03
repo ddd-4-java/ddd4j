@@ -13,6 +13,7 @@ import io.ddd4j.web.core.CacheIdempotencyGuard;
 import io.ddd4j.web.core.ClientIpResolver;
 import io.ddd4j.web.core.PathWebAccessPolicy;
 import io.ddd4j.web.core.RequestIdGenerator;
+import io.ddd4j.web.core.ReadinessEndpoint;
 import io.ddd4j.web.core.AuthenticationMode;
 import io.ddd4j.web.core.WebAccessPolicy;
 import io.ddd4j.web.core.DefaultWebExceptionTranslator;
@@ -21,6 +22,7 @@ import io.ddd4j.web.core.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.WebRequestContextFactory;
 import io.ddd4j.web.core.WebRequestLifecycle;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
+import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.biz.context.NestedMessageSource;
 import org.springframework.biz.web.servlet.i18n.XHeaderLocaleResolver;
@@ -122,7 +124,8 @@ public class DefaultWebMvcConfiguration {
     @Bean
     public WebAccessPolicy webAccessPolicy(Environment environment) {
         String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
-                new String[]{"/health", "/health/readiness", "/health/liveness", "/assets/**", "/webjars/**"});
+                new String[]{"/health", "/health/readiness", "/health/liveness", ReadinessEndpoint.PATH,
+                        "/assets/**", "/webjars/**"});
         return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
     }
 
@@ -151,6 +154,15 @@ public class DefaultWebMvcConfiguration {
                                                          WebRequestLifecycle requestLifecycle,
                                                          WebIdempotencyLifecycle idempotencyLifecycle) {
         return new Ddd4jWebMvcInterceptor(contextFactory, requestLifecycle, idempotencyLifecycle);
+    }
+
+    /**
+     * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
+     */
+    @Bean
+    public Ddd4jWebMvcReadinessController ddd4jWebMvcReadinessController(
+            RuntimeReadinessRegistry readinessRegistry) {
+        return new Ddd4jWebMvcReadinessController(readinessRegistry);
     }
 
     /**

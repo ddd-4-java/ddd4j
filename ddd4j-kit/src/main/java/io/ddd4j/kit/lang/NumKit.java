@@ -63,7 +63,7 @@ public class NumKit extends NumberUtil {
      *
      * @param v1 BigDecimal1
      * @param v2 BigDecimal2
-     * @return v1 > v2 return 1  v1 = v2 return 0 v1 < v2 return -1
+     * @return {@code 1} when v1 is greater than v2, {@code 0} when equal, otherwise {@code -1}
      */
     public int isGreaterOne(BigDecimal v1, BigDecimal v2) {
         return v1.compareTo(v2);
@@ -163,7 +163,7 @@ public class NumKit extends NumberUtil {
     }
 
     /**
-     * v1 < v2
+     * v1 &lt; v2
      *
      * @param v1 v1
      * @param v2 v2

@@ -2,10 +2,13 @@ package io.ddd4j.web.javalin;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.AuthenticationMode;
 import io.ddd4j.web.core.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.PathWebAccessPolicy;
+import io.ddd4j.web.core.ReadinessEndpoint;
+import io.ddd4j.web.core.ReadinessResponse;
 import io.ddd4j.web.core.WebContextScope;
 import io.ddd4j.web.core.WebError;
 import io.ddd4j.web.core.WebExceptionTranslator;
@@ -42,22 +45,48 @@ public final class Ddd4jJavalinWeb {
     private final WebRequestLifecycle requestLifecycle;
     private final WebExceptionTranslator exceptionTranslator;
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
+    private final ReadinessEndpoint readinessEndpoint;
 
     public Ddd4jJavalinWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
-                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness"),
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
+                                        ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
-                new DefaultWebExceptionTranslator(), null);
+                new DefaultWebExceptionTranslator(), null, new RuntimeReadinessRegistry());
+    }
+
+    /**
+     * 使用应用 Runtime 的 registry 注册标准 readiness 端点。
+     *
+     * @param readinessRegistry 应用 Runtime 管理的就绪状态注册表
+     */
+    public Ddd4jJavalinWeb(RuntimeReadinessRegistry readinessRegistry) {
+        this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
+                                        ReadinessEndpoint.PATH),
+                                AuthenticationMode.REQUIRED)),
+                new DefaultWebExceptionTranslator(), null, readinessRegistry);
     }
 
     public Ddd4jJavalinWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                            WebExceptionTranslator exceptionTranslator,
                            WebIdempotencyLifecycle idempotencyLifecycle) {
+        this(contextFactory, requestLifecycle, exceptionTranslator, idempotencyLifecycle,
+                new RuntimeReadinessRegistry());
+    }
+
+    public Ddd4jJavalinWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
+                           WebExceptionTranslator exceptionTranslator,
+                           WebIdempotencyLifecycle idempotencyLifecycle,
+                           RuntimeReadinessRegistry readinessRegistry) {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
         this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
         this.exceptionTranslator = Objects.requireNonNull(exceptionTranslator,
                 "exceptionTranslator must not be null");
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
+        RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
+                "readinessRegistry must not be null");
+        this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
     public void configure(JavalinConfig config) {
@@ -65,6 +94,12 @@ public final class Ddd4jJavalinWeb {
         javalinConfig.routes.before(this::openContext);
         javalinConfig.routes.after(this::completeContext);
         javalinConfig.routes.exception(Exception.class, this::handleException);
+        javalinConfig.routes.get(ReadinessEndpoint.PATH, this::readiness);
+    }
+
+    private void readiness(Context context) {
+        ReadinessResponse response = readinessEndpoint.readiness();
+        context.status(response.httpStatus()).json(response);
     }
 
     private void openContext(Context context) {

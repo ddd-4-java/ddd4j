@@ -3,7 +3,7 @@ package io.ddd4j.core.context;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import org.fuin.ddd4j.core.EntityId;
+import io.ddd4j.core.ddd.event.EntityId;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

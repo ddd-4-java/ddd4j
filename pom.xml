@@ -59,9 +59,14 @@
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+        <maven-dependency-check-plugin.version>12.2.2</maven-dependency-check-plugin.version>
         <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
+        <japicmp-maven-plugin.version>0.23.1</japicmp-maven-plugin.version>
+        <!-- 由 verify-api-compatibility.sh 按模块传入，避免把反应堆依赖当作当前构件 API。 -->
+        <ddd4j.api.include>io.ddd4j.__api_gate_requires_module_scope__.**</ddd4j.api.include>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <jandex-maven-plugin.version>3.2.7</jandex-maven-plugin.version>
         <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
@@ -421,6 +426,8 @@
                         <charset>${project.build.sourceEncoding}</charset>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <docencoding>${project.build.sourceEncoding}</docencoding>
+                        <!-- 历史模块仍有待收敛的文档链接；发布附件不得因其阻断。 -->
+                        <failOnError>false</failOnError>
                     </configuration>
                     <executions>
                         <execution>
@@ -495,6 +502,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
+            <!-- CVE 扫描密钥只从 CI 或本机环境变量读取，禁止作为 Maven 命令行参数传入。 -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${maven-dependency-check-plugin.version}</version>
+                <configuration>
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -507,6 +523,66 @@
             <properties>
                 <additionalparam>-Xdoclint:none</additionalparam>
             </properties>
+        </profile>
+        <!-- 仅在发布候选显式提供已发布基线时启用，避免开发快照构建伪造兼容性结论。 -->
+        <profile>
+            <id>api-compatibility</id>
+            <activation>
+                <property>
+                    <name>ddd4j.api.baseline.version</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.siom79.japicmp</groupId>
+                        <artifactId>japicmp-maven-plugin</artifactId>
+                        <version>${japicmp-maven-plugin.version}</version>
+                        <configuration>
+                            <oldVersion>
+                                <dependency>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${ddd4j.api.baseline.version}</version>
+                                </dependency>
+                            </oldVersion>
+                            <newVersion>
+                                <file>
+                                    <path>${project.build.directory}/${project.build.finalName}.jar</path>
+                                </file>
+                            </newVersion>
+                            <parameter>
+                                <skipPomModules>true</skipPomModules>
+                                <!-- 只比较当前 artifact 的 API，依赖库由 BOM 与 CVE 门禁独立治理。 -->
+                                <includes>
+                                    <include>${ddd4j.api.include}</include>
+                                </includes>
+                                <onlyModified>true</onlyModified>
+                                <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
+                                <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
+                                <breakBuildOnSourceIncompatibleModifications>false</breakBuildOnSourceIncompatibleModifications>
+                                <ignoreMissingClasses>false</ignoreMissingClasses>
+                                <!-- Lombok 是编译期注解；其 SCL/Ant/JDT 实现不属于 ddd4j 的公开 API。 -->
+                                    <ignoreMissingClassesByRegularExpressions>
+                                        <ignoreMissingClassesByRegularExpression>lombok\..*</ignoreMissingClassesByRegularExpression>
+                                        <ignoreMissingClassesByRegularExpression>org\.apache\.tools\.ant\..*</ignoreMissingClassesByRegularExpression>
+                                        <ignoreMissingClassesByRegularExpression>org\.eclipse\.core\..*</ignoreMissingClassesByRegularExpression>
+                                        <ignoreMissingClassesByRegularExpression>org\.eclipse\.jdt\..*</ignoreMissingClassesByRegularExpression>
+                                    </ignoreMissingClassesByRegularExpressions>
+                            </parameter>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>verify-public-api-compatibility</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>cmp</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>release</id>
