@@ -32,6 +32,10 @@ import java.util.function.Consumer;
  *    环境隔离  业务分类  细分标签
  * </pre>
  *
+ * <p>Disruptor 是进程内 RingBuffer，不存在可跨进程传输的 protocol header；稳定消息 ID 由
+ * {@link MQEvent#getMsgId()} 同时保留在 payload 与 {@link DisruptorEvent} 字段中，不伪造
+ * {@code ddd4j-message-id} metadata。
+ *
  * <p>主线只有 {@link #initProducer(MQProperties)} 与 {@link #initConsumer(MQListener, MQProperties)}，
  * 核心业务逻辑全部内联。消费者模型：单 {@link com.lmax.disruptor.EventHandler} 内部遍历所有已注册 listener
  * （按 tag 过滤分发），对齐 base-mq RocketClient 的「集中消费者 + 应用层 tag 过滤」风格。

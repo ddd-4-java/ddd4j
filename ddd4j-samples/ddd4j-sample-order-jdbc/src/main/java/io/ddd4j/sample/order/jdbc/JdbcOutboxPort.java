@@ -36,7 +36,8 @@ public final class JdbcOutboxPort implements OutboxPort {
     public void append(List<OutboxMessage> messages) {
         Objects.requireNonNull(messages, "messages must not be null");
         String sql = "INSERT INTO sample_order_outbox "
-                + "(id, aggregate_id, event_type, payload, occurred_at, status, attempts) VALUES (?, ?, ?, ?::jsonb, ?, 'PENDING', 0)";
+                + "(id, aggregate_id, event_type, payload, occurred_at, status, available_at, attempts) "
+                + "VALUES (?, ?, ?, ?::jsonb, ?, 'PENDING', ?, 0)";
         try (PreparedStatement statement = transaction.connection().prepareStatement(sql)) {
             for (OutboxMessage message : messages) {
                 statement.setString(1, message.id());
@@ -44,6 +45,7 @@ public final class JdbcOutboxPort implements OutboxPort {
                 statement.setString(3, message.eventType());
                 statement.setString(4, objectMapper.writeValueAsString(message.payload()));
                 statement.setTimestamp(5, Timestamp.from(message.occurredAt()));
+                statement.setTimestamp(6, Timestamp.from(message.occurredAt()));
                 statement.addBatch();
             }
             statement.executeBatch();

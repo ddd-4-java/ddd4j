@@ -13,10 +13,10 @@ class Ddd4jVertxRuntimeTest extends AbstractRuntimeContractTest {
         RuntimeFixtures fixtures = new RuntimeFixtures();
         Vertx vertx = Vertx.vertx();
         Ddd4jVertxRuntime runtime = new Ddd4jVertxRuntime(vertx, fixtures.publisher(), fixtures.subjectProvider(),
-                fixtures.i18nProvider(), fixtures.commandBus());
+                fixtures.i18nProvider(), fixtures.commandBus(), fixtures.readinessContributors());
         return new RuntimeContractAdapter(runtime::start, () -> {
             runtime.close();
             vertx.close().toCompletionStage().toCompletableFuture().join();
-        }, fixtures.services());
+        }, fixtures.services(), () -> runtime.readiness().readiness());
     }
 }

@@ -9,12 +9,14 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -87,7 +89,18 @@ public class RabbitMQClient implements MQClient {
                 String payload = serialization().serialize(event);
                 String topic = resolveTopic(event, mqProperties);
                 try {
-                    channel.basicPublish(exchange, topic, null, payload.getBytes(StandardCharsets.UTF_8));
+                    Map<String, Object> headers = new HashMap<>();
+                    if (Objects.nonNull(event.getMsgId())) {
+                        headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    }
+                    if (Objects.nonNull(event.getTenantId())) {
+                        headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                    }
+                    AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
+                            .messageId(event.getMsgId())
+                            .headers(headers)
+                            .build();
+                    channel.basicPublish(exchange, topic, properties, payload.getBytes(StandardCharsets.UTF_8));
                     log.info("Publish MQ [{}]: {}", topic, payload);
                 } catch (Exception e) {
                     log.error("Publish MQ [{}]: {} failed!", topic, payload, e);
@@ -155,6 +168,17 @@ public class RabbitMQClient implements MQClient {
                     }
                 }
                 return;
+            }
+            String messageId = delivery.getProperties().getMessageId();
+            if (Objects.isNull(messageId) && Objects.nonNull(delivery.getProperties().getHeaders())) {
+                Object headerValue = delivery.getProperties().getHeaders().get(MessageHeaders.HEADER_MESSAGE_ID);
+                if (Objects.isNull(headerValue)) {
+                    headerValue = delivery.getProperties().getHeaders().get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+                }
+                messageId = Objects.nonNull(headerValue) ? headerValue.toString() : null;
+            }
+            if (Objects.nonNull(messageId)) {
+                event.setMsgId(messageId);
             }
             // 应用层 tag 过滤（RabbitMQ topic exchange 模式与 ddd4j 表达式不兼容，broker 端不可用）
             if (!TagMatcher.match(event.getTag(), listener.getTags())) {

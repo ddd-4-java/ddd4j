@@ -1,11 +1,14 @@
 package io.ddd4j.mq.nats;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import io.nats.client.*;
+import io.nats.client.impl.Headers;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -74,12 +77,13 @@ public class NatsMQClient implements MQClient {
             String subject = resolveTopic(event, mqProperties);
             try {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
+                Headers headers = messageHeaders(event);
                 // JetStream 优先，失败回落 core NATS（如未启用 JetStream）
                 try {
                     JetStream jetStream = conn.jetStream();
-                    jetStream.publish(subject, body);
+                    jetStream.publish(subject, headers, body);
                 } catch (IOException | JetStreamApiException ex) {
-                    conn.publish(subject, body);
+                    conn.publish(subject, headers, body);
                 }
             } catch (Exception ex) {
                 log.error("Publish NATS [{}]: {} failed!", subject, payload, ex);
@@ -122,6 +126,7 @@ public class NatsMQClient implements MQClient {
                 log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
                 return;
             }
+            restoreMessageId(event, messageId(natsMessage.getHeaders()));
             // 应用层 tag 过滤（tag 取 subject 末段）
             String tag = null;
             String subject = natsMessage.getSubject();
@@ -158,5 +163,29 @@ public class NatsMQClient implements MQClient {
             connectionRef.set(c);
         }
         return c;
+    }
+
+    static Headers messageHeaders(MQEvent event) {
+        Headers headers = new Headers();
+        if (StrKit.isNotEmpty(event.getMsgId())) {
+            headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+        }
+        return headers;
+    }
+
+    static String messageId(Headers headers) {
+        if (Objects.isNull(headers)) {
+            return null;
+        }
+        String messageId = headers.getFirst(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : headers.getFirst(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+    }
+
+    private static void restoreMessageId(MQEvent event, String messageId) {
+        if (StrKit.isNotEmpty(messageId)) {
+            event.setMsgId(messageId);
+        }
     }
 }

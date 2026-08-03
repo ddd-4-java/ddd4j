@@ -6,6 +6,7 @@ import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.Acknowledgment;
+import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.StreamEntryID;
@@ -133,6 +134,9 @@ public class RedisStreamMQClient implements MQClient {
                         streamKey = resolveTopic(mqEvent, properties);
                         Map<String, String> fields = new HashMap<>();
                         fields.put("payload", payload);
+                        if (StrKit.isNotEmpty(mqEvent.getMsgId())) {
+                            fields.put(MessageHeaders.HEADER_MESSAGE_ID, mqEvent.getMsgId());
+                        }
                         if (Objects.nonNull(mqEvent.getTag())) {
                             // tag header 走 tagHeaderKey()（与 selector/consumer 读对齐）
                             fields.put(tagHeaderKey(), mqEvent.getTag());
@@ -224,6 +228,10 @@ public class RedisStreamMQClient implements MQClient {
                                 log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                                 continue;
                             }
+                            String messageId = messageId(streamEntry.getFields());
+                            if (StrKit.isNotEmpty(messageId)) {
+                                mqEvent.setMsgId(messageId);
+                            }
                             Acknowledgment ack = new RedisStreamAcknowledgment(
                                     jedis, entry.getKey(), listener.getGroup(), streamEntry.getID(),
                                     mqEvent.getMsgId(), mqEvent.getMsgId());
@@ -254,6 +262,13 @@ public class RedisStreamMQClient implements MQClient {
         });
 
         return true;
+    }
+
+    static String messageId(Map<String, String> fields) {
+        String messageId = fields.get(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : fields.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
 }

@@ -1,5 +1,6 @@
 package io.ddd4j.web.vertx;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
@@ -45,6 +46,7 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
 
     @BeforeEach
     void setUp() {
+        CacheKit.build("vertx-contract", 300L);
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
@@ -72,6 +74,7 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
             vertx.close().toCompletionStage().toCompletableFuture().join();
         }
         BaseContext.clear();
+        CacheKit.unregister("vertx-contract");
     }
 
     @Override

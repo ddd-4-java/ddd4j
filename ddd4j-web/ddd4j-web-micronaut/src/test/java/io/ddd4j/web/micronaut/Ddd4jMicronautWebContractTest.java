@@ -1,5 +1,6 @@
 package io.ddd4j.web.micronaut;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
@@ -41,6 +42,7 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
     @BeforeEach
     void setUp() {
+        CacheKit.build("micronaut-contract", 300L);
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
 
@@ -66,6 +68,7 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
         }
         ThreadContext.clear();
         BaseContext.clear();
+        CacheKit.unregister("micronaut-contract");
     }
 
     @Override

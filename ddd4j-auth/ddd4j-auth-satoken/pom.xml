@@ -36,6 +36,11 @@
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-apikey</artifactId>
         </dependency>
+        <!-- Sa-Token JWT Simple mode: signed token with server-side revocation support -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-jwt</artifactId>
+        </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>

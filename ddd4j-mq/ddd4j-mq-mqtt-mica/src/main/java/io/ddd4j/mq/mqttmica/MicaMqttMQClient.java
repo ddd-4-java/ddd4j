@@ -1,14 +1,17 @@
 package io.ddd4j.mq.mqttmica;
 
 import io.ddd4j.kit.lang.IdKit;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.core.client.MqttClient;
+import org.dromara.mica.mqtt.codec.message.MqttPublishMessage;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -80,7 +83,11 @@ public class MicaMqttMQClient implements MQClient {
             String topic = resolveTopic(event, mqProperties);
             try {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
-                client.publish(topic, body, qos());
+                client.publish(topic, body, qos(), builder -> builder.properties(mqttProperties -> {
+                    if (StrKit.isNotEmpty(event.getMsgId())) {
+                        mqttProperties.addUserProperty(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    }
+                }));
             } catch (Exception ex) {
                 log.error("Publish mica-mqtt [{}]: {} failed!", topic, payload, ex);
                 throw new IllegalStateException("Publish mica-mqtt event failed", ex);
@@ -106,7 +113,11 @@ public class MicaMqttMQClient implements MQClient {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
                     return;
                 }
-                // 应用层 tag 过滤（tag 取 topic 末段，mica payload 不带 user property）
+                String messageId = messageId(message);
+                if (StrKit.isNotEmpty(messageId)) {
+                    event.setMsgId(messageId);
+                }
+                // 应用层 tag 过滤（tag 取 topic 末段）。
                 String tag = null;
                 int lastSlash = arrivedTopic.lastIndexOf('/');
                 if (lastSlash >= 0) {
@@ -115,8 +126,8 @@ public class MicaMqttMQClient implements MQClient {
                 if (!TagMatcher.match(tag, listener.getTags())) {
                     return;
                 }
-                long messageId = IdKit.getSnowflakeNextId();
-                MicaMqttAcknowledgment ack = new MicaMqttAcknowledgment(messageId, arrivedTopic, null);
+                long deliveryMessageId = IdKit.getSnowflakeNextId();
+                MicaMqttAcknowledgment ack = new MicaMqttAcknowledgment(deliveryMessageId, arrivedTopic, null);
                 consume(listener, event, ack);
                 if (!ack.isAcknowledged()) {
                     ack.ackSingle();
@@ -145,5 +156,12 @@ public class MicaMqttMQClient implements MQClient {
         c = properties.client();
         clientRef.set(c);
         return c;
+    }
+
+    static String messageId(MqttPublishMessage message) {
+        String messageId = message.getProperties().getUserPropertiesMap().get(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : message.getProperties().getUserPropertiesMap().get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 }

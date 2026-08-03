@@ -5,8 +5,12 @@ import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -15,9 +19,16 @@ import java.util.Objects;
 public final class Ddd4jQuarkusRuntime implements AutoCloseable {
 
     private final SpiRegistrationScope registrations;
+    private final RuntimeReadinessRegistry readinessRegistry;
 
     public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus) {
+        this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
+    }
+
+    public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
+                               I18nProvider i18nProvider, CommandBus commandBus,
+                               Collection<? extends ReadinessContributor> readinessContributors) {
         registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                         Objects.requireNonNull(publisher, "publisher must not be null"))
@@ -27,10 +38,15 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
                         Objects.requireNonNull(i18nProvider, "i18nProvider must not be null"))
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class,
                         Objects.requireNonNull(commandBus, "commandBus must not be null"));
+        readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
     }
 
     public void start() {
         registrations.start();
+    }
+
+    public RuntimeReadinessRegistry readiness() {
+        return readinessRegistry;
     }
 
     @Override

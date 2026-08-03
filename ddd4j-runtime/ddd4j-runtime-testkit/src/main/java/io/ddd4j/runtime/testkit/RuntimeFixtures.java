@@ -8,6 +8,8 @@ import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.health.ReadinessResult;
 import io.ddd4j.core.subject.SubjectProvider;
 import org.fuin.ddd4j.core.EntityId;
 
@@ -44,6 +46,10 @@ public final class RuntimeFixtures {
 
     public CommandBus commandBus() {
         return commandBus;
+    }
+
+    public List<ReadinessContributor> readinessContributors() {
+        return List.of(() -> ReadinessResult.ready("runtime-fixture"));
     }
 
     public Map<String, Class<?>> services() {

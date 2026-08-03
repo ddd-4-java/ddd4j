@@ -105,6 +105,7 @@ public class ActiveMQClient implements MQClient {
                     }
                     if (Objects.nonNull(mqEvent.getMsgId())) {
                         message.setJMSMessageID(mqEvent.getMsgId());
+                        message.setStringProperty(MessageHeaders.HEADER_MESSAGE_ID, mqEvent.getMsgId());
                     }
                     producer.send(message);
                 } catch (JMSException ex) {
@@ -134,6 +135,16 @@ public class ActiveMQClient implements MQClient {
                 if (Objects.isNull(event)) {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
                     return;
+                }
+                String messageId = message.getStringProperty(MessageHeaders.HEADER_MESSAGE_ID);
+                if (Objects.isNull(messageId)) {
+                    messageId = message.getStringProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+                }
+                if (Objects.isNull(messageId)) {
+                    messageId = ActivemqKit.messageIdOf(message);
+                }
+                if (Objects.nonNull(messageId)) {
+                    event.setMsgId(messageId);
                 }
                 ActiveMQAcknowledgment ack = new ActiveMQAcknowledgment(
                         session, message,

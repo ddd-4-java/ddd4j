@@ -16,6 +16,7 @@ import java.util.Objects;
 
 /**
  * 应用上下文就绪后驱动 {@link MQClient} 装配的桥接器（对标 base-mq {@code BaseMQConfig}）。
+ * 本模块不承载 broker 消息，不负责读写 {@code ddd4j-message-id}；该职责属于实际 MQ adapter。
  *
  * <p>在 {@link ContextRefreshedEvent}（所有 Bean 初始化完成后）触发，把
  * {@link MQListenerBeanPostProcessor} 收集的监听器列表连同配置/序列化器/持久化器

@@ -4,6 +4,9 @@ import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaCookieConfig;
 import cn.dev33.satoken.exception.DisableServiceException;
 import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.jwt.SaJwtUtil;
+import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
+import cn.dev33.satoken.jwt.exception.SaJwtException;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
@@ -18,6 +21,7 @@ import io.ddd4j.core.exception.AccountDisabledException;
 import io.ddd4j.core.exception.NotLoggedInException;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.util.List;
 import java.util.Objects;
@@ -119,7 +123,7 @@ public class SaTokenSubject implements Subject {
 
     @Override
     public <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue) {
-        Object loginId = StpUtil.getLoginIdByToken(tokenValue);
+        Object loginId = resolveVerifiedLoginId(tokenValue);
         if (Objects.isNull(loginId)) {
             return null;
         }
@@ -210,11 +214,54 @@ public class SaTokenSubject implements Subject {
 
     @Override
     public <T extends AuthPrincipal> T verify(String token) {
-        Object loginId = StpUtil.getLoginIdByToken(token);
+        Object loginId = resolveVerifiedLoginId(token);
         if (Objects.isNull(loginId)) {
             return null;
         }
         return getPrincipalByLoginId(loginId);
+    }
+
+    /**
+     * 解析并验证凭证对应的登录账号。
+     *
+     * <p>普通 Session 模式由 Sa-Token 的 token-to-loginId 映射完成有效性与撤销校验。JWT Simple
+     * 模式额外通过 {@link SaJwtUtil} 校验签名和账号体系，再检查服务端映射。Sa-Token 1.45 的 JWT
+     * Simple 模式不把过期时间写入 JWT，而是由该映射的 TTL 负责过期和撤销，因此两项校验都不可省略。
+     *
+     * <p>无状态 JWT 不在此实现的支持范围：它不保存 {@link AuthPrincipal}，而 {@link Subject}
+     * 必须返回完整主体。应用如需无状态 JWT，应提供可按 loginId 加载主体的 Subject 实现。
+     *
+     * @param token 请求携带的原始 token
+     * @return 已验证的登录账号 ID；校验失败或凭证为空时返回 {@code null}
+     */
+    private Object resolveVerifiedLoginId(String token) {
+        if (StrKit.isBlank(token)) {
+            return null;
+        }
+        StpLogic logic = StpUtil.stpLogic;
+        if (logic instanceof StpLogicJwtForSimple jwtLogic) {
+            Object jwtLoginId = jwtLoginId(token, jwtLogic);
+            if (Objects.isNull(jwtLoginId)) {
+                return null;
+            }
+            Object sessionLoginId = jwtLogic.getLoginIdByToken(token);
+            if (Objects.isNull(sessionLoginId)
+                    || !Objects.equals(String.valueOf(jwtLoginId), String.valueOf(sessionLoginId))) {
+                return null;
+            }
+            return sessionLoginId;
+        }
+        return logic.getLoginIdByToken(token);
+    }
+
+    private Object jwtLoginId(String token, StpLogicJwtForSimple logic) {
+        try {
+            // JWT Simple 的有效期由 Sa-Token 服务端映射管理，不能误用会要求 eff 声明的 getPayloads(...).
+            return SaJwtUtil.getPayloadsNotCheck(token, logic.getLoginType(), logic.jwtSecretKey())
+                    .get(SaJwtUtil.LOGIN_ID);
+        } catch (SaJwtException e) {
+            return null;
+        }
     }
 
     // ==================== 权限与角色（委托 SubjectDataProvider 数据源 SPI）====================

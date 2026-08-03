@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "${ROOT_DIR}"
+./mvnw -B -ntp -pl ddd4j-ddd-rules/ddd4j-ddd-rules-clean,ddd4j-ddd-rules/ddd4j-ddd-rules-cola -am test -DskipITs
+echo "[PASS] DDD architecture self-tests"

@@ -10,6 +10,9 @@ on:
 permissions:
   contents: read
 
+env:
+  DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
+
 jobs:
   unit-and-contract:
     name: Java 17 unit and contract
@@ -25,8 +28,55 @@ jobs:
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
         run: ./scripts/verify-java-style.sh
+      - name: Verify release worktree state
+        env:
+          DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
+        run: ./scripts/verify-release-worktree.sh
+      - name: Verify DDD architecture rules
+        run: ./scripts/verify-architecture.sh
       - name: Run unit and adapter contracts
         run: ./mvnw -B clean test -DskipITs
+      - name: Verify build did not write generated files to source control
+        env:
+          DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
+        run: ./scripts/verify-release-worktree.sh
+
+  supply-chain-reports:
+    name: SBOM and license reports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Generate CycloneDX SBOM
+        run: ./scripts/generate-sbom.sh
+      - name: Generate third-party license inventory
+        run: ./scripts/generate-license-report.sh
+      - name: Verify reports did not write generated files to source control
+        env:
+          DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
+        run: ./scripts/verify-release-worktree.sh
+      - name: Run opt-in CVE report
+        if: ${{ secrets.NVD_API_KEY != '' }}
+        env:
+          DDD4J_ENABLE_CVE_SCAN: 'true'
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: ./scripts/scan-cve.sh
+      - name: Record CVE scan prerequisite
+        if: ${{ secrets.NVD_API_KEY == '' }}
+        run: >-
+          echo "CVE scan not run: repository secret NVD_API_KEY is not configured."
+      - name: Archive release quality reports
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: ${{ always() }}
+        with:
+          name: release-quality-reports
+          path: target/release-quality
+          if-no-files-found: error
+          retention-days: 14
 
   infrastructure-integration:
     name: Testcontainers infrastructure integration

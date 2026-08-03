@@ -26,10 +26,6 @@
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>jackson-extension</artifactId>
-        </dependency>
         <!-- For Crypto -->
         <dependency>
             <groupId>cn.hutool</groupId>

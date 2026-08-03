@@ -1,5 +1,7 @@
 package io.ddd4j.runtime.testkit;
 
+import io.ddd4j.core.health.ReadinessReport;
+
 import java.util.Map;
 
 /**
@@ -10,6 +12,8 @@ public interface RuntimeContract extends AutoCloseable {
     void start();
 
     Map<String, Class<?>> services();
+
+    ReadinessReport readiness();
 
     @Override
     void close();

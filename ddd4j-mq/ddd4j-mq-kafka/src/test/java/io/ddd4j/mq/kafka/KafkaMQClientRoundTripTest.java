@@ -80,6 +80,7 @@ class KafkaMQClientRoundTripTest {
         assertThat(received.orderId).isEqualTo("o-12345");
         assertThat(received.amount).isEqualTo(9900L);
         assertThat(received.getTenantId()).isEqualTo("t-100");
+        assertThat(received.getMsgId()).isEqualTo(event.getMsgId());
     }
 
     /**

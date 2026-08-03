@@ -1,5 +1,7 @@
 package io.ddd4j.mq.message;
 
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+
 /**
  * 标准 Header Keys（纯 Java，零 Spring 依赖）。
  *
@@ -21,7 +23,14 @@ public final class MessageHeaders {
     /**
      * 消息 ID
      */
-    public static final String HEADER_MESSAGE_ID = "ddd4j.message.id";
+    public static final String HEADER_MESSAGE_ID = MQDeliveryHeaders.MESSAGE_ID;
+
+    /**
+     * 2.0.x 早期版本写入的消息 ID Header。
+     *
+     * <p>消费者在升级窗口内可读取该键，但新的生产者不得再写入它。
+     */
+    public static final String LEGACY_HEADER_MESSAGE_ID = "ddd4j.message.id";
 
     /**
      * 关联 ID

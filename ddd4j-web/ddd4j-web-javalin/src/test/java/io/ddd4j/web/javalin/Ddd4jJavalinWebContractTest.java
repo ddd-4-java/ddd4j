@@ -1,5 +1,6 @@
 package io.ddd4j.web.javalin;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.ContextConstants;
@@ -45,6 +46,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
     @BeforeEach
     void setUp() {
+        CacheKit.build("javalin-contract", 300L);
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
@@ -70,6 +72,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         }
         ThreadContext.clear();
         BaseContext.clear();
+        CacheKit.unregister("javalin-contract");
     }
 
     @Override

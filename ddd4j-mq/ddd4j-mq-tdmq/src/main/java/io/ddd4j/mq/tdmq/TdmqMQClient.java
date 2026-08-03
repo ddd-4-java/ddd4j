@@ -20,6 +20,8 @@ import java.util.function.Consumer;
  *
  * <p>由于 ddd4j-mq-tdmq 不直接依赖腾讯云官方 SDK（保持无依赖、零 Spring），
  * 实际的 publish/subscribe 由业务侧通过 {@link BrokerPublisher} / {@link BrokerSubscriber} 注入。
+ * 该 SPI 当前没有 metadata 参数，稳定消息 ID 只保留在序列化的 {@link MQEvent} payload；不得把
+ * 供应商的 transport message id 冒充为 {@code ddd4j-message-id}。
  * 当未注入时，{@link TdmqMQClient} 提供"内存总线"实现，仅供本地联调/测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

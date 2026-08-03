@@ -1,5 +1,6 @@
 package io.ddd4j.web.helidon;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.ContextConstants;
@@ -58,6 +59,7 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
 
     @BeforeEach
     void setUp() {
+        CacheKit.build("helidon-contract", 300L);
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
@@ -67,6 +69,7 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
     void tearDown() {
         ThreadContext.clear();
         BaseContext.clear();
+        CacheKit.unregister("helidon-contract");
     }
 
     @Override

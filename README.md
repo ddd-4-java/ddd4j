@@ -75,6 +75,7 @@
 - **[架构边界规范](./docs/architecture/architecture-boundary.md)**：ddd4j 与各框架项目的职责铁律
 - **[架构全景（历史基线）](./docs/architecture/architecture.md)**：早期模块全景、SPI 设计与三框架运行时基线
 - **[当前源码架构导览](./docs/architecture/current-source-architecture.md)**：基于 CodeGraph 的模块边界、核心调用链、Mermaid 架构图与设计风险
+- **[2.0.x 发布质量门禁](./docs/production-release-quality.md)**：Java 17 验证、SBOM、许可证与可选 CVE 报告说明
 
 ### 🏗️ 项目架构
 

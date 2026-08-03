@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -142,7 +143,7 @@ public class MQEvent implements Serializable {
         }
         setTag(tag);
         setTenantId(Objects.nonNull(tenantId) ? tenantId : ThreadContext.get(ContextConstants.TENANT_ID));
-        setMsgId(Objects.isNull(getMsgId()) ? String.valueOf(System.currentTimeMillis()) : getMsgId());
+        setMsgId(Objects.isNull(getMsgId()) ? UUID.randomUUID().toString() : getMsgId());
 
         Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQ_EVENT_PUBLISHER);
         if (Objects.isNull(publishers) || publishers.isEmpty()) {

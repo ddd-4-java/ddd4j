@@ -81,6 +81,9 @@ public class OnsMQClient implements MQClient {
                     Message msg = new Message(topic, tag, event.getMsgId(),
                             serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8));
                     msg.setKey(event.getMsgId());
+                    if (StrKit.isNotEmpty(event.getMsgId())) {
+                        msg.putUserProperties(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    }
                     if (Objects.nonNull(event.getTenantId())) {
                         msg.putUserProperties(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
                     }
@@ -125,7 +128,10 @@ public class OnsMQClient implements MQClient {
                 if (Objects.nonNull(msg.getTag())) {
                     event.setTag(msg.getTag());
                 }
-                if (Objects.nonNull(msg.getMsgID())) {
+                String messageId = messageId(msg);
+                if (StrKit.isNotEmpty(messageId)) {
+                    event.setMsgId(messageId);
+                } else if (StrKit.isEmpty(event.getMsgId()) && StrKit.isNotEmpty(msg.getMsgID())) {
                     event.setMsgId(msg.getMsgID());
                 }
                 OnsAcknowledgment ack = new OnsAcknowledgment(ctx, msg);
@@ -174,5 +180,12 @@ public class OnsMQClient implements MQClient {
             }
             producerStarted = false;
         }
+    }
+
+    static String messageId(Message message) {
+        String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 }

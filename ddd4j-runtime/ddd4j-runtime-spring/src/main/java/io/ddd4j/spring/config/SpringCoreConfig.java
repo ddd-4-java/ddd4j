@@ -1,6 +1,9 @@
 package io.ddd4j.spring.config;
 
+import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 import io.ddd4j.spring.context.SpringContext;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.biz.context.SpringContextAwareContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +23,12 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration(proxyBeanMethods = false)
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class SpringCoreConfig {
+
+    @Bean
+    public RuntimeReadinessRegistry runtimeReadinessRegistry(
+            ObjectProvider<ReadinessContributor> readinessContributors) {
+        return new RuntimeReadinessRegistry(readinessContributors.orderedStream().toList());
+    }
 
     @Bean
     public SpringContext springContext() {

@@ -170,7 +170,13 @@ public class PulsarMQClient implements MQClient {
                             ((org.apache.pulsar.client.api.Consumer) c).acknowledge(msg);
                             return;
                         }
-                        String messageId = messageIdString(msg.getMessageId());
+                        String messageId = msg.getProperty(MessageHeaders.HEADER_MESSAGE_ID);
+                        if (Objects.isNull(messageId)) {
+                            messageId = msg.getProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+                        }
+                        if (Objects.isNull(messageId)) {
+                            messageId = messageIdString(msg.getMessageId());
+                        }
                         String payload = new String(msg.getValue(), StandardCharsets.UTF_8);
                         MQEvent event = serialization().deserialize(payload, listener.payloadType());
                         if (Objects.isNull(event)) {

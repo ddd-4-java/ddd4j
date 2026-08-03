@@ -13,6 +13,7 @@ class GuiceRuntimeContractTest extends AbstractRuntimeContractTest {
     protected RuntimeContract createRuntime() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());
         Ddd4jGuiceRuntime runtime = injector.getInstance(Ddd4jGuiceRuntime.class);
-        return new RuntimeContractAdapter(runtime::start, runtime::close, new RuntimeFixtures().services());
+        return new RuntimeContractAdapter(runtime::start, runtime::close, new RuntimeFixtures().services(),
+                () -> runtime.readiness().readiness());
     }
 }

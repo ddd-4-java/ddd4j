@@ -105,11 +105,6 @@
             </dependency>
             <dependency>
                 <groupId>io.github.hiwepy</groupId>
-                <artifactId>jackson-extension</artifactId>
-                <version>${jackson-extension.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
                 <artifactId>pf4j-extension-core</artifactId>
                 <version>${pf4j-extension.version}</version>
             </dependency>

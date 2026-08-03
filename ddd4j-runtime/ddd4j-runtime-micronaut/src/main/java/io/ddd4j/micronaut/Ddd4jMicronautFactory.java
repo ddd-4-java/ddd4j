@@ -7,6 +7,7 @@ import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Factory;
@@ -49,9 +50,10 @@ public class Ddd4jMicronautFactory {
     @Singleton
     @Context
     Ddd4jMicronautRuntime runtime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                                  I18nProvider i18nProvider, CommandBus commandBus) {
+                                  I18nProvider i18nProvider, CommandBus commandBus,
+                                  Collection<ReadinessContributor> readinessContributors) {
         Ddd4jMicronautRuntime runtime = new Ddd4jMicronautRuntime(publisher, subjectProvider,
-                i18nProvider, commandBus);
+                i18nProvider, commandBus, readinessContributors);
         runtime.start();
         return runtime;
     }

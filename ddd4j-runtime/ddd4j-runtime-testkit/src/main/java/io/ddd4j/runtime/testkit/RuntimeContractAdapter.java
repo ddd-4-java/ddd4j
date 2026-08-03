@@ -1,7 +1,10 @@
 package io.ddd4j.runtime.testkit;
 
+import io.ddd4j.core.health.ReadinessReport;
+
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * 将框架运行时的启动和关闭动作适配为共享契约。
@@ -11,11 +14,14 @@ public final class RuntimeContractAdapter implements RuntimeContract {
     private final Runnable starter;
     private final Runnable closer;
     private final Map<String, Class<?>> services;
+    private final Supplier<ReadinessReport> readinessSupplier;
 
-    public RuntimeContractAdapter(Runnable starter, Runnable closer, Map<String, Class<?>> services) {
+    public RuntimeContractAdapter(Runnable starter, Runnable closer, Map<String, Class<?>> services,
+                                  Supplier<ReadinessReport> readinessSupplier) {
         this.starter = Objects.requireNonNull(starter, "starter must not be null");
         this.closer = Objects.requireNonNull(closer, "closer must not be null");
         this.services = Map.copyOf(Objects.requireNonNull(services, "services must not be null"));
+        this.readinessSupplier = Objects.requireNonNull(readinessSupplier, "readinessSupplier must not be null");
     }
 
     @Override
@@ -26,6 +32,11 @@ public final class RuntimeContractAdapter implements RuntimeContract {
     @Override
     public Map<String, Class<?>> services() {
         return services;
+    }
+
+    @Override
+    public ReadinessReport readiness() {
+        return readinessSupplier.get();
     }
 
     @Override

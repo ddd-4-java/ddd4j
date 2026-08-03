@@ -179,6 +179,9 @@ public class SqsMQClient implements MQClient {
                 event.setTenantId(tenantId);
             }
             String msgId = attr(message, MessageHeaders.HEADER_MESSAGE_ID);
+            if (Objects.isNull(msgId)) {
+                msgId = attr(message, MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+            }
             if (Objects.nonNull(msgId)) {
                 event.setMsgId(msgId);
             }

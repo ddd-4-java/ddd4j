@@ -7,6 +7,7 @@ import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.event.Observes;
@@ -45,6 +46,7 @@ public final class Ddd4jHelidonExtension implements Extension {
             commandBus = new DefaultCommandBus(commandExecutors(beanManager));
         }
         runtime = new Ddd4jHelidonRuntime(publisher, subjectProvider, i18nProvider, commandBus);
+        runtime.readiness().registerAll(readinessContributors(beanManager));
         runtime.start();
         log.info("ddd4j Helidon runtime initialized");
     }
@@ -62,6 +64,14 @@ public final class Ddd4jHelidonExtension implements Extension {
             executors.add(executor);
         }
         return executors;
+    }
+
+    private List<ReadinessContributor> readinessContributors(BeanManager beanManager) {
+        List<ReadinessContributor> contributors = new ArrayList<>();
+        for (Bean<?> bean : beanManager.getBeans(ReadinessContributor.class)) {
+            contributors.add(reference(beanManager, bean, ReadinessContributor.class));
+        }
+        return contributors;
     }
 
     private <T> T bean(BeanManager beanManager, Class<T> type) {

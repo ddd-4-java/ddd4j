@@ -1,5 +1,6 @@
 package io.ddd4j.web.quarkus;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
@@ -37,6 +38,7 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
 
     @BeforeEach
     void setUp() {
+        CacheKit.build("quarkus-contract", 300L);
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
@@ -46,6 +48,7 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
     void tearDown() {
         ThreadContext.clear();
         BaseContext.clear();
+        CacheKit.unregister("quarkus-contract");
     }
 
     @Override

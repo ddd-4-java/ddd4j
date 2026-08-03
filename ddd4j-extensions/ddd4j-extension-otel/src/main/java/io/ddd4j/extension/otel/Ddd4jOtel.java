@@ -9,6 +9,7 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
+import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 
@@ -37,6 +38,11 @@ public final class Ddd4jOtel {
     public static final String TRACER_NAME = "io.ddd4j";
 
     /**
+     * OTel Meter 名称。与 tracer 保持一致，便于按组件名统一筛选。
+     */
+    public static final String METER_NAME = TRACER_NAME;
+
+    /**
      * 标准属性键。
      */
     public static final AttributeKey<String> ATTR_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
@@ -59,6 +65,7 @@ public final class Ddd4jOtel {
     public static final AttributeKey<String> ATTR_DB_STATEMENT = AttributeKey.stringKey("db.statement");
 
     private static final AtomicReference<Tracer> TRACER_CACHE = new AtomicReference<>();
+    private static final AtomicReference<Meter> METER_CACHE = new AtomicReference<>();
     private static volatile boolean available = false;
 
     private Ddd4jOtel() {
@@ -87,6 +94,29 @@ public final class Ddd4jOtel {
         } catch (Throwable t) {
             available = false;
             return io.opentelemetry.api.OpenTelemetry.noop().getTracer(TRACER_NAME);
+        }
+    }
+
+    /**
+     * 获取或懒加载 Meter。
+     *
+     * <p>扩展只声明指标语义和记录点；导出器、Collector 及部署配置由应用负责提供。
+     *
+     * @return OpenTelemetry Meter（未配置 OTel 时为 noop Meter）
+     */
+    public static Meter meter() {
+        Meter cached = METER_CACHE.get();
+        if (Objects.nonNull(cached)) {
+            return cached;
+        }
+        try {
+            Meter meter = GlobalOpenTelemetry.get().getMeter(METER_NAME);
+            METER_CACHE.compareAndSet(null, meter);
+            return METER_CACHE.get();
+        } catch (Throwable t) {
+            Meter meter = OpenTelemetry.noop().getMeter(METER_NAME);
+            METER_CACHE.compareAndSet(null, meter);
+            return METER_CACHE.get();
         }
     }
 

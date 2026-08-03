@@ -18,6 +18,7 @@ final class OpenTelemetrySdkSetter {
 
     static void set(OpenTelemetry instance) {
         try {
+            GlobalOpenTelemetry.resetForTest();
             GlobalOpenTelemetry.set(instance);
         } catch (Throwable t) {
             // 旧版本 API 失败时不需要做其他事情（noop 模式生效）

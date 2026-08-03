@@ -5,6 +5,7 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -14,6 +15,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.*;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
@@ -98,6 +100,10 @@ public class KafkaMQClient implements MQClient {
             String topic = resolveTopic(mqEvent, mqProperties);
             String key = partitionKey(mqEvent);
             ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, payload);
+            if (Objects.nonNull(mqEvent.getMsgId())) {
+                record.headers().add(MessageHeaders.HEADER_MESSAGE_ID,
+                        mqEvent.getMsgId().getBytes(StandardCharsets.UTF_8));
+            }
             // 异步 send 回调（非阻塞发布、统一 ack/nack 收口）
             producer1.send(record, Objects.nonNull(callback) ? callback : new SendCallback(topic, payload));
             log.info("Publish MQ [{}]: {}", topic, payload);

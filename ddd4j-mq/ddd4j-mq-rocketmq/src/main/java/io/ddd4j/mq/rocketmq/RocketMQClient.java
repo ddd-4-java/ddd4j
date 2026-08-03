@@ -5,6 +5,7 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
@@ -145,6 +146,9 @@ public class RocketMQClient implements MQClient {
                     if (Objects.nonNull(event.getTenantId())) {
                         msg.putUserProperty("ddd4jTenantId", event.getTenantId());
                     }
+                    if (StrKit.isNotEmpty(event.getMsgId())) {
+                        msg.putUserProperty(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    }
                     String key = partitionKey(event);
                     if (StrKit.isEmpty(key)) {
                         finalProducer.send(msg, Objects.nonNull(callback) ? callback : new SendLogCallback(topic, payload));
@@ -222,6 +226,12 @@ public class RocketMQClient implements MQClient {
                     log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(this.defaultConcat()));
                     continue;
                 }
+                String messageId = messageId(messageExt);
+                if (StrKit.isNotEmpty(messageId)) {
+                    event.setMsgId(messageId);
+                } else if (StrKit.isEmpty(event.getMsgId()) && StrKit.isNotEmpty(messageExt.getMsgId())) {
+                    event.setMsgId(messageExt.getMsgId());
+                }
                 // 若 subscribe 没做精确过滤（含 excludes/通配），在应用层再用 TagMatcher 兜底
                 if (includes.isEmpty() && !TagMatcher.match(event.getTag(), listener.getTags())) {
                     continue;
@@ -274,5 +284,12 @@ public class RocketMQClient implements MQClient {
         public void onException(Throwable e) {
             log.error("RocketMQ send failed: topic={}, payload={}", topic, payload, e);
         }
+    }
+
+    static String messageId(MessageExt message) {
+        String messageId = message.getUserProperty(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : message.getUserProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 }

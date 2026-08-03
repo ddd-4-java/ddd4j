@@ -51,6 +51,9 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
     @Override
     public String messageId() {
         String header = header(MessageHeaders.HEADER_MESSAGE_ID);
+        if (Objects.isNull(header)) {
+            header = header(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+        }
         return Objects.isNull(header) ? record.topic() + "-" + record.partition() + "-" + record.offset() : header;
     }
 

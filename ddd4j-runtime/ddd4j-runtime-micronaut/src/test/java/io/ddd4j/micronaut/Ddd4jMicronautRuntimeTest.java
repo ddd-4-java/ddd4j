@@ -11,7 +11,8 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();
         Ddd4jMicronautRuntime runtime = new Ddd4jMicronautRuntime(fixtures.publisher(), fixtures.subjectProvider(),
-                fixtures.i18nProvider(), fixtures.commandBus());
-        return new RuntimeContractAdapter(runtime::start, runtime::close, fixtures.services());
+                fixtures.i18nProvider(), fixtures.commandBus(), fixtures.readinessContributors());
+        return new RuntimeContractAdapter(runtime::start, runtime::close, fixtures.services(),
+                () -> runtime.readiness().readiness());
     }
 }

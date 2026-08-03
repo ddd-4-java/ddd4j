@@ -19,6 +19,7 @@ import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.quarkus.Ddd4jQuarkusRuntime;
 import io.quarkus.runtime.ShutdownEvent;
@@ -72,6 +73,8 @@ public class DddContextInitializer {
     Instance<I18nProvider> i18nProvider;
     @Inject
     Instance<CommandBus> commandBus;
+    @Inject
+    Instance<ReadinessContributor> readinessContributors;
     private Ddd4jQuarkusRuntime runtime;
 
     /**
@@ -89,7 +92,7 @@ public class DddContextInitializer {
             return;
         }
         runtime = new Ddd4jQuarkusRuntime(domainEventPublisher.get(), subjectProvider.get(), i18nProvider.get(),
-                commandBus.get());
+                commandBus.get(), readinessContributors.stream().toList());
         runtime.start();
 
         log.info("Quarkus ddd4j SPI services initialized");

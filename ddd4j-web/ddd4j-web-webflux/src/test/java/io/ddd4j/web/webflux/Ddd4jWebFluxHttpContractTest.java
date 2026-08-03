@@ -1,6 +1,7 @@
 package io.ddd4j.web.webflux;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
@@ -57,6 +58,7 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     @BeforeEach
     void setUp() {
+        CacheKit.build("webflux-contract", 300L);
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
@@ -71,6 +73,7 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
             applicationContext.close();
         }
         BaseContext.clear();
+        CacheKit.unregister("webflux-contract");
     }
 
     @Override

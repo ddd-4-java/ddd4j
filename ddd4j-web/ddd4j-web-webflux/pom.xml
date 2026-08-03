@@ -25,10 +25,6 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>jackson-extension</artifactId>
-        </dependency>
         <!-- For Webjars -->
         <dependency>
             <groupId>org.webjars</groupId>

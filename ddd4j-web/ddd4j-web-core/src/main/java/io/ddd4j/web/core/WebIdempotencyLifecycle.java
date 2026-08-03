@@ -34,11 +34,12 @@ public final class WebIdempotencyLifecycle {
         }
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
         String storageKey = storageKey(requestContext, idempotencyKey.trim());
-        if (!guard.acquire(storageKey, ttl)) {
+        Optional<IdempotencyLease> lease = guard.acquireLease(storageKey, ttl);
+        if (lease.isEmpty()) {
             throw new WebStatusException(DefaultWebExceptionTranslator.CONFLICT,
                     "Duplicate idempotent request");
         }
-        return Optional.of(new Scope(guard, storageKey));
+        return Optional.of(new Scope(guard, lease.orElseThrow()));
     }
 
     private String storageKey(WebRequestContext context, String idempotencyKey) {
@@ -53,20 +54,20 @@ public final class WebIdempotencyLifecycle {
     public static final class Scope implements AutoCloseable {
 
         private final IdempotencyGuard guard;
-        private final String key;
+        private final IdempotencyLease lease;
         private boolean completed;
         private boolean closed;
 
-        private Scope(IdempotencyGuard guard, String key) {
+        private Scope(IdempotencyGuard guard, IdempotencyLease lease) {
             this.guard = guard;
-            this.key = key;
+            this.lease = lease;
         }
 
         public void complete() {
             if (closed || completed) {
                 return;
             }
-            guard.complete(key);
+            guard.complete(lease);
             completed = true;
         }
 
@@ -76,7 +77,7 @@ public final class WebIdempotencyLifecycle {
                 return;
             }
             if (!completed) {
-                guard.release(key);
+                guard.release(lease);
             }
             closed = true;
         }

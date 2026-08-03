@@ -2,6 +2,8 @@ package io.ddd4j.sample.order.jdbc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redis.testcontainers.RedisContainer;
+import io.ddd4j.mq.delivery.MQDeliveryPolicy;
+import io.ddd4j.mq.delivery.MQOutboxRecord;
 import io.ddd4j.sample.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.order.application.CreateOrderCommand;
 import io.ddd4j.sample.order.application.OrderApplicationService;
@@ -38,6 +40,7 @@ import redis.clients.jedis.JedisPooled;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -122,6 +125,42 @@ class OrderInfrastructureRoundTripTest {
             assertThat(records.records(TOPIC))
                     .anySatisfy(record -> assertThat(record.value()).contains("OrderPaidEvent"));
         }
+    }
+
+    @Test
+    void shouldClaimConfirmRescheduleAndReplayReliableOutboxRecords() {
+        JdbcOrderTransactionPort transaction = new JdbcOrderTransactionPort(dataSource);
+        JdbcMQOutboxStore store = new JdbcMQOutboxStore(transaction);
+        MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
+        Instant now = Instant.now();
+        String publishedId = "lease-published-" + UUID.randomUUID();
+        String failedId = "lease-failed-" + UUID.randomUUID();
+
+        transaction.execute(() -> {
+            store.append(MQOutboxRecord.pending(publishedId, "orders.created", "{}", Map.of(), now));
+            store.append(MQOutboxRecord.pending(failedId, "orders.created", "{}", Map.of(), now));
+        });
+
+        List<MQOutboxRecord> claimed = store.claim("test-instance", now.plusSeconds(1), 10, policy);
+        assertThat(claimed).extracting(MQOutboxRecord::messageId).contains(publishedId, failedId);
+        assertThat(store.markPublished(publishedId, "test-instance", now.plusSeconds(2))).isTrue();
+        assertThat(store.reschedule(failedId, "test-instance", now.plusSeconds(2), "broker unavailable", policy)).isTrue();
+
+        assertThat(store.replay(failedId, now.plusSeconds(3))).isFalse();
+
+        for (int attempt = 2; attempt <= policy.maxAttempts(); attempt++) {
+            Instant attemptTime = now.plusSeconds(attempt * 1_000L);
+            List<MQOutboxRecord> retry = store.claim("test-instance", attemptTime, 10, policy);
+            MQOutboxRecord record = retry.stream()
+                    .filter(candidate -> candidate.messageId().equals(failedId))
+                    .findFirst()
+                    .orElseThrow();
+            assertThat(record.attempts()).isEqualTo(attempt);
+            assertThat(store.reschedule(failedId, "test-instance", attemptTime,
+                    "broker unavailable", policy)).isTrue();
+        }
+
+        assertThat(store.replay(failedId, now.plusSeconds(2000))).isTrue();
     }
 
     private Map<String, Object> producerProperties() {

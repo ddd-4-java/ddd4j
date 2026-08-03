@@ -30,6 +30,8 @@ public abstract class AbstractRuntimeContractTest {
         runtime.start();
         runtime.start();
 
+        assertThat(runtime.readiness().ready()).isTrue();
+
         for (Map.Entry<String, Class<?>> service : runtime.services().entrySet()) {
             assertThat(BaseContext.get(service.getKey(), service.getValue())).isPresent();
             assertRequestOverride(service.getKey(), service.getValue());

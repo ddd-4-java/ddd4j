@@ -85,14 +85,8 @@ public class MqttMQClient implements MQClient {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
                 MqttMessage msg = new MqttMessage(body);
                 msg.setQos(qos());
-                // Paho v3 不支持 user property，tag 已通过 resolveTopic 拼入物理 topic 末段，
-                // 消费侧按 topic 末段解析（见 readTag）。
-                if (Objects.nonNull(event.getMsgId())) {
-                    try {
-                        msg.setId(Integer.parseInt(event.getMsgId().hashCode() + ""));
-                    } catch (Exception ignore) {
-                    }
-                }
+                // Paho MQTT v3 没有 user properties；业务稳定 ID 仅保留在 MQEvent payload，
+                // MQTT packet id 是短生命周期协议序号，不能作为 ddd4j-message-id 写入或回读。
                 client.publish(topic, msg);
             } catch (Exception ex) {
                 log.error("Publish MQTT [{}]: {} failed!", topic, payload, ex);

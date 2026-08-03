@@ -267,7 +267,6 @@
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
         <jackson-annotations.version>2.22</jackson-annotations.version>
-        <jackson-extension.version>2.0.x.20260630-SNAPSHOT</jackson-extension.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
@@ -878,12 +877,6 @@
                 <version>${jackson-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <!-- Source: https://github.com/hiwepy/jackson-extension (2.0.x branch) -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>jackson-extension</artifactId>
-                <version>${jackson-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-bom -->
             <dependency>

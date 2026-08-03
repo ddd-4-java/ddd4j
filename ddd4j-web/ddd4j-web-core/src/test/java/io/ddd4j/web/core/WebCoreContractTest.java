@@ -1,5 +1,6 @@
 package io.ddd4j.web.core;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
@@ -26,6 +27,9 @@ class WebCoreContractTest {
     void clearContext() {
         ThreadContext.clear();
         BaseContext.clear();
+        CacheKit.unregister("web-core-test");
+        CacheKit.unregister("web-lifecycle-test");
+        CacheKit.unregister("web-session-test");
     }
 
     @Test
@@ -69,7 +73,7 @@ class WebCoreContractTest {
 
     @Test
     void shouldGuardIdempotentExecution() {
-        CacheIdempotencyGuard guard = new CacheIdempotencyGuard("web-core-test");
+        CacheIdempotencyGuard guard = newGuard("web-core-test");
 
         assertThat(guard.acquire("payment-1", Duration.ofMinutes(1))).isTrue();
         assertThat(guard.acquire("payment-1", Duration.ofMinutes(1))).isFalse();
@@ -77,6 +81,29 @@ class WebCoreContractTest {
         assertThat(guard.acquire("payment-1", Duration.ofMinutes(1))).isTrue();
         guard.complete("payment-1");
         assertThat(guard.acquire("payment-1", Duration.ofMinutes(1))).isFalse();
+    }
+
+    @Test
+    void shouldRejectUnregisteredIdempotencyCache() {
+        CacheIdempotencyGuard guard = new CacheIdempotencyGuard("missing-idempotency-cache");
+
+        assertThatThrownBy(() -> guard.acquire("payment-1", Duration.ofMinutes(1)))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("must be explicitly registered");
+    }
+
+    @Test
+    void shouldNotReleaseLeaseOwnedByLaterRequest() {
+        CacheIdempotencyGuard guard = newGuard("web-core-test");
+        IdempotencyLease expiredLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).orElseThrow();
+        CacheKit.invalidate("web-core-test", "payment-lease");
+        IdempotencyLease activeLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).orElseThrow();
+
+        guard.release(expiredLease);
+
+        assertThat(guard.acquireLease("payment-lease", Duration.ofMinutes(1))).isEmpty();
+        guard.release(activeLease);
+        assertThat(guard.acquireLease("payment-lease", Duration.ofMinutes(1))).isPresent();
     }
 
     @Test
@@ -161,7 +188,7 @@ class WebCoreContractTest {
 
     @Test
     void shouldCompleteOrReleaseWebIdempotencyScope() {
-        CacheIdempotencyGuard guard = new CacheIdempotencyGuard("web-lifecycle-test");
+        CacheIdempotencyGuard guard = newGuard("web-lifecycle-test");
         WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
         WebRequestContext context = requestContext(null);
 
@@ -187,7 +214,7 @@ class WebCoreContractTest {
         WebRequestLifecycle requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                 WebAccessPolicy.required());
         WebIdempotencyLifecycle idempotencyLifecycle = new WebIdempotencyLifecycle(
-                new CacheIdempotencyGuard("web-session-test"));
+                newGuard("web-session-test"));
 
         try (SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
                 idempotencyLifecycle, "request-key")) {
@@ -214,5 +241,10 @@ class WebCoreContractTest {
                 return subject;
             }
         };
+    }
+
+    private CacheIdempotencyGuard newGuard(String cacheName) {
+        CacheKit.build(cacheName, 300L);
+        return new CacheIdempotencyGuard(cacheName);
     }
 }

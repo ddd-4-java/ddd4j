@@ -39,7 +39,8 @@ import java.util.function.Consumer;
  *
  * <p>Channel 通过 {@link MQClient#resolveTopic(MQEvent, MQProperties)} /
  * {@link MQClient#resolveTopic(MQListener, MQProperties)} 解析；默认拼接符 {@code :}（Redis 命名习惯）。
- * Redis pubsub 无 broker 端 tag 过滤，走应用层 {@link TagMatcher#match}。
+ * Redis pubsub 无 broker 端 tag 过滤，走应用层 {@link TagMatcher#match}。它也没有可与 payload
+ * 一起传递的 per-message metadata，因此稳定消息 ID 只保留在 {@link MQEvent} payload 中。
  *
  * <p>注：构造方法 1 接收 {@link UnifiedJedis} 而非旧版 {@code Jedis}——Jedis 7.x 已将
  * {@code Jedis} 与 {@code UnifiedJedis} 拆为兄弟接口，标准 Jedis 7.x 客户端（{@code JedisPooled} 等）均注入此类型。
