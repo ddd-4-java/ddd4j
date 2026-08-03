@@ -12,8 +12,8 @@
 
     <artifactId>ddd4j-data-mybatisplus</artifactId>
     <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。
-        集成 mybatis-plus-enhance（字段加解密/数据签名/数据脱敏/国际化），将 ddd4j-data-crypto 的
-        CryptoStrategy 桥接为 enhance 的 EncryptedFieldHandler，实现 @EncryptedField 注解驱动的透明加解密。
+        通过 ddd4j 自有字段加密、租户、观测 SPI 对接 MyBatis-Plus 官方扩展点，
+        将 ddd4j-data-crypto 的 CryptoStrategy 桥接为透明字段加解密能力。
     </description>
 
     <dependencies>
@@ -35,10 +35,6 @@
             <artifactId>ddd4j-data-crypto</artifactId>
             <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-enhance-typehandler</artifactId>
-        </dependency>
         <!-- MyBatis-Plus 核心 API：不使用会传递 mybatis-plus-spring 的聚合包 mybatis-plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -52,16 +48,6 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
-        </dependency>
-        <!-- MyBatis-Plus Enhance Core（增强拦截器链、生命周期、参数工具） -->
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-plus-enhance-core</artifactId>
-        </dependency>
-        <!-- MyBatis-Plus Enhance Extension（加解密/签名/租户/数据范围/国际化/SQL 观测） -->
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-plus-enhance-extension</artifactId>
         </dependency>
         <!-- JSqlParser（DataPermissionInnerInterceptor / MybatisTenantLineInnerInterceptor 需要） -->
         <dependency>

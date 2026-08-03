@@ -24,10 +24,6 @@
             <artifactId>disruptor</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>disruptor-extension</artifactId>
-        </dependency>
-        <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
         </dependency>

@@ -1,7 +1,7 @@
 package io.ddd4j.data.mybatis.repository.impl;
 
 import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
-import org.apache.ibatis.enhance.mapper.EnhanceMapper;
+import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 
 /**
  * 业务方入口基类（对齐 mybatisplus 模块的 BaseRepositoryImpl）。
@@ -13,7 +13,7 @@ import org.apache.ibatis.enhance.mapper.EnhanceMapper;
  * }
  * }</pre>
  *
- * @param <MP> Mapper 类型（须继承 {@link EnhanceMapper}）
+ * @param <MP> Mapper 类型（须继承 {@link Ddd4jMapper}）
  * @param <M>  聚合根类型
  * @param <P>  持久化对象类型
  * @param <Q>  充血查询类型
@@ -22,7 +22,7 @@ import org.apache.ibatis.enhance.mapper.EnhanceMapper;
  * @since 4.0.0
  */
 public abstract class BaseRepositoryImpl<
-        MP extends EnhanceMapper<P>,
+        MP extends Ddd4jMapper<P>,
         M extends io.ddd4j.core.ddd.model.AggregateRoot<?>,
         P,
         Q extends io.ddd4j.core.cqrs.query.Query<M>,

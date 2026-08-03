@@ -2,13 +2,11 @@ package io.ddd4j.data.mybatis.adapter;
 
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
-import org.apache.ibatis.enhance.spi.SqlObservation;
-import org.apache.ibatis.enhance.spi.SqlObservationSink;
 
 import java.util.Objects;
 
 /**
- * 将 mybatis-enhance 的 SQL 观测结果写入 ddd4j 请求上下文。
+ * 将原生 MyBatis SQL 观测结果写入 ddd4j 请求上下文。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x

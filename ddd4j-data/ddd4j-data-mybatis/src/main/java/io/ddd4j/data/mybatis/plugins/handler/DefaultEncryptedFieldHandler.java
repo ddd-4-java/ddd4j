@@ -5,14 +5,13 @@ import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.enhance.crypto.handler.EncryptedFieldHandler;
 
 import java.util.Objects;
 
 /**
  * ddd4j 加密字段处理器（桥接 ddd4j-data-crypto 的 CryptoStrategy）。
  *
- * <p>将 ddd4j-data-crypto 的 {@link CryptoStrategy} 桥接为 mybatis-enhance 的
+ * <p>将 ddd4j-data-crypto 的 {@link CryptoStrategy} 桥接为 ddd4j 的
  * {@link EncryptedFieldHandler}，配合 {@code @EncryptedField} / {@code @EncryptedTable} 注解，
  * 由 {@code DataEncryptionInterceptor} / {@code DataDecryptionInterceptor} 驱动透明加解密。</p>
  *

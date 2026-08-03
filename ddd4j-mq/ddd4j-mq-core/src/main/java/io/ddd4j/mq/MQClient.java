@@ -342,7 +342,7 @@ public interface MQClient extends AutoCloseable {
      * Listener 端的物理路由键（{@code namespace.topic[.tag]}），
      * 用 {@link #defaultConcat()} 拼接，确保与 producer 端 {@link #resolveTopic(MQEvent, MQProperties)} 同规则。
      *
-     * <p>对齐 disruptor-extension {@code DisruptorEvent.getRouteExpression()}。
+     * <p>对齐 ddd4j Disruptor 事件的 {@code DisruptorEvent.getRouteExpression()}。
      *
      * @param listener 监听器定义
      * @return 物理路由键

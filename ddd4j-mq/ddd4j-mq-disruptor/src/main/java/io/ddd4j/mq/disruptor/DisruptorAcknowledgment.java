@@ -1,7 +1,6 @@
 package io.ddd4j.mq.disruptor;
 
 import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.event.DisruptorEvent;
 import io.ddd4j.mq.BrokerType;
 import io.ddd4j.mq.message.Acknowledgment;
 
@@ -22,7 +21,7 @@ public class DisruptorAcknowledgment implements Acknowledgment {
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
     /**
-     * @param event       当前事件（disruptor-extension 的 DisruptorEvent）
+     * @param event       当前 ddd4j Disruptor 事件
      * @param ringBuffer  RingBuffer（requeue 用）
      * @param deliveryTag 投递序号
      */

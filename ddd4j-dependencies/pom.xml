@@ -154,7 +154,6 @@
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
         <disruptor.version>4.0.0</disruptor.version>
-        <disruptor-extension.version>2.0.x.20260630-SNAPSHOT</disruptor-extension.version>
         <docker-client.version>8.16.0</docker-client.version>
         <docker-java.version>3.7.1</docker-java.version>
         <docx4j.version>11.5.14</docx4j.version>
@@ -387,7 +386,6 @@
         <mybatis.version>3.5.19</mybatis.version>
         <mybatis-caffeine.version>1.2.1</mybatis-caffeine.version>
         <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
-        <mybatis-enhance.version>2.0.x.20260630-SNAPSHOT</mybatis-enhance.version>
         <mybatis-freemarker.version>1.3.1</mybatis-freemarker.version>
         <mybatis-generator.version>1.4.2</mybatis-generator.version>
         <mybatis-hazelcast.version>1.4.0</mybatis-hazelcast.version>
@@ -397,7 +395,6 @@
         <mybatis-migrations.version>3.5.0</mybatis-migrations.version>
         <mybatis-oscache.version>1.0.2</mybatis-oscache.version>
         <mybatis-plus.version>3.5.16</mybatis-plus.version>
-        <mybatis-plus-enhance.version>2.0.x.20260630-SNAPSHOT</mybatis-plus-enhance.version>
         <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
@@ -420,8 +417,6 @@
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
         <okhttp.version>4.12.0</okhttp.version>
-        <okhttp-extension.version>2.0.x-SNAPSHOT</okhttp-extension.version>
-        <okhttp-metrics.version>2.0.x-SNAPSHOT</okhttp-metrics.version>
         <ons-client.version>2.0.11.Final</ons-client.version>
         <opensearch.version>3.9.0</opensearch.version>
         <opentelemetry.version>1.57.0</opentelemetry.version>
@@ -451,7 +446,6 @@
         <perf4j.version>0.9.16</perf4j.version>
         <persistence-api.version>1.0.2</persistence-api.version>
         <pf4j.version>3.15.0</pf4j.version>
-        <pf4j-extension.version>2.0.x.20260630-SNAPSHOT</pf4j-extension.version>
         <pf4j-spring.version>0.10.0</pf4j-spring.version>
         <pf4j-update.version>2.3.0</pf4j-update.version>
         <pgvector.version>0.1.6</pgvector.version>
@@ -558,7 +552,6 @@
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
         <spring-initializr.version>0.24.0</spring-initializr.version>
-        <spring-javassist.version>6.1.x.20250712-SNAPSHOT</spring-javassist.version>
         <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
         <spring-kafka.version>3.3.16</spring-kafka.version>
         <spring-plugin.version>3.0.0</spring-plugin.version>
@@ -603,7 +596,6 @@
         <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
         <unirest-java.version>4.10.0</unirest-java.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
-        <validation-api-extension.version>2.0.x.20260630-SNAPSHOT</validation-api-extension.version>
         <vault-java-driver.version>6.2.2</vault-java-driver.version>
         <velocity.version>2.4.1</velocity.version>
         <vertx.version>5.1.5</vertx.version>
@@ -642,7 +634,6 @@
         <zookeeper.version>3.9.5</zookeeper.version>
         <zstd-jni.version>1.5.7-11</zstd-jni.version>
         <zxing.version>3.5.4</zxing.version>
-        <zxing-extension.version>2.0.x.20260630-SNAPSHOT</zxing-extension.version>
 
         <!-- Maven Plugin versions -->
         <maven-alibaba-plugin.version>1.1.9</maven-alibaba-plugin.version>
@@ -2299,12 +2290,6 @@
                 <artifactId>core</artifactId>
                 <version>${zxing.version}</version>
             </dependency>
-            <!-- Framework-neutral QR code generation and decoding extension -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>zxing-extension</artifactId>
-                <version>${zxing-extension.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.qcloud/cos_api -->
             <dependency>
                 <groupId>com.qcloud</groupId>
@@ -2736,12 +2721,6 @@
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
                 <version>${disruptor.version}</version>
-            </dependency>
-            <!-- https://github.com/hiwepy/disruptor-extension -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>disruptor-extension</artifactId>
-                <version>${disruptor-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.aliyun/dm20151123 -->
             <dependency>
@@ -4277,12 +4256,6 @@
                 <artifactId>jakarta.validation-api</artifactId>
                 <version>${jakarta-validation.version}</version>
             </dependency>
-            <!-- Source: https://github.com/hiwepy/validation-api-extension (2.0.x branch) -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>validation-api-extension</artifactId>
-                <version>${validation-api-extension.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api -->
             <dependency>
                 <groupId>jakarta.websocket</groupId>
@@ -5557,32 +5530,6 @@
                 <artifactId>mybatis-oscache</artifactId>
                 <version>${mybatis-oscache.version}</version>
             </dependency>
-            <!-- mybatis-enhance: 纯 MyBatis 增强（注解/核心/扩展/TypeHandler/Spring） -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-enhance-annotation</artifactId>
-                <version>${mybatis-enhance.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-enhance-core</artifactId>
-                <version>${mybatis-enhance.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-enhance-extension</artifactId>
-                <version>${mybatis-enhance.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-enhance-typehandler</artifactId>
-                <version>${mybatis-enhance.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-enhance-spring</artifactId>
-                <version>${mybatis-enhance.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -5600,22 +5547,6 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-core</artifactId>
                 <version>${mybatis-plus.version}</version>
-            </dependency>
-            <!-- mybatis-plus-enhance 子模块（可在需要精细控制时单独引用，替代聚合包） -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-plus-enhance-core</artifactId>
-                <version>${mybatis-plus-enhance.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-plus-enhance-extension</artifactId>
-                <version>${mybatis-plus-enhance.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>mybatis-plus-enhance-spring</artifactId>
-                <version>${mybatis-plus-enhance.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-extension -->
             <dependency>
@@ -6150,18 +6081,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Source: https://github.com/hiwepy/okhttp3-extension (2.0.x 分支) -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>okhttp3-extension</artifactId>
-                <version>${okhttp-extension.version}</version>
-            </dependency>
-            <!-- Source: https://github.com/hiwepy/okhttp3-metrics-prometheus (2.0.x 分支) -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>okhttp3-metrics-prometheus</artifactId>
-                <version>${okhttp-metrics.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.oracle.database.r2dbc/oracle-r2dbc -->
             <dependency>
                 <groupId>com.oracle.database.r2dbc</groupId>
@@ -6365,22 +6284,6 @@
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j</artifactId>
                 <version>${pf4j.version}</version>
-            </dependency>
-            <!-- Source: https://github.com/hiwepy/pf4j-extension (feature/2.0.x branch) -->
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>pf4j-extension-core</artifactId>
-                <version>${pf4j-extension.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>pf4j-extension-spring</artifactId>
-                <version>${pf4j-extension.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.hiwepy</groupId>
-                <artifactId>pf4j-extension-update</artifactId>
-                <version>${pf4j-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pf4j/pf4j-spring -->
             <dependency>
@@ -7341,12 +7244,6 @@
                 <groupId>org.springframework.integration</groupId>
                 <artifactId>spring-integration-mqtt</artifactId>
                 <version>${spring-integration.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/spring-javassist -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>spring-javassist</artifactId>
-                <version>${spring-javassist.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-jms -->
             <dependency>

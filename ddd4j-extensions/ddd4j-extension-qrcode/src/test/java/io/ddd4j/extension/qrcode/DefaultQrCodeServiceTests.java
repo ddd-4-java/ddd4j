@@ -11,8 +11,8 @@ import io.ddd4j.extension.qrcode.command.DecodeQrCodeCommand;
 import io.ddd4j.extension.qrcode.command.GenerateQrCodeCommand;
 import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
 import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
-import com.google.zxing.model.QrCodeDecodeRequest;
-import com.google.zxing.model.QrCodeRequest;
+import io.ddd4j.extension.qrcode.model.QrCodeDecodeRequest;
+import io.ddd4j.extension.qrcode.model.QrCodeRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,12 +24,12 @@ class DefaultQrCodeServiceTests {
             QrCodeArtifact artifact = service.generate(GenerateQrCodeCommand.builder()
                     .correlationId("correlation-1")
                     .templateId("plain")
-                    .request(QrCodeRequest.builder("ddd4j-qrcode").build())
+                    .request(QrCodeRequest.builder().content("ddd4j-qrcode").build())
                     .build());
 
             QrCodeScanResult scan = service.decode(DecodeQrCodeCommand.builder()
                     .correlationId("correlation-2")
-                    .request(QrCodeDecodeRequest.from(artifact.getOutput().getBytes()).build())
+                    .request(QrCodeDecodeRequest.from(artifact.getOutput().getBytes()))
                     .build());
 
             assertThat(artifact.getCorrelationId()).isEqualTo("correlation-1");
@@ -45,7 +45,7 @@ class DefaultQrCodeServiceTests {
             for (int index = 0; index < 100; index++) {
                 GenerateQrCodeCommand command = index == 50 ? null : GenerateQrCodeCommand.builder()
                         .correlationId("correlation-" + index)
-                        .request(QrCodeRequest.builder("item-" + index).build())
+                        .request(QrCodeRequest.builder().content("item-" + index).build())
                         .build();
                 items.add(QrCodeBatchItem.builder().itemId("item-" + index).command(command).build());
             }

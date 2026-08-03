@@ -11,6 +11,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
 
 import io.ddd4j.extension.qrcode.batch.QrCodeBatchItem;
@@ -18,32 +24,33 @@ import io.ddd4j.extension.qrcode.batch.QrCodeBatchItemResult;
 import io.ddd4j.extension.qrcode.batch.QrCodeBatchResult;
 import io.ddd4j.extension.qrcode.command.DecodeQrCodeCommand;
 import io.ddd4j.extension.qrcode.command.GenerateQrCodeCommand;
+import io.ddd4j.extension.qrcode.model.QrCodeDecodeResult;
+import io.ddd4j.extension.qrcode.model.QrCodeOutput;
 import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
 import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
-import com.google.zxing.QrCodeDecoder;
-import com.google.zxing.QrCodeEncoder;
-import com.google.zxing.QrCodes;
-import com.google.zxing.exception.QrCodeErrorCode;
-import com.google.zxing.exception.QrCodeException;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 /** Default QR code service with bounded, order-preserving batch execution. */
 public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
 
     public static final int DEFAULT_MAX_BATCH_SIZE = 100;
 
-    private final QrCodeEncoder encoder;
-    private final QrCodeDecoder decoder;
     private final ExecutorService executorService;
     private final int maxBatchSize;
 
     public DefaultQrCodeService() {
-        this(QrCodes.encoder(), QrCodes.decoder(), Math.min(Runtime.getRuntime().availableProcessors(), 8),
-                DEFAULT_MAX_BATCH_SIZE);
+        this(Math.min(Runtime.getRuntime().availableProcessors(), 8), DEFAULT_MAX_BATCH_SIZE);
     }
 
-    public DefaultQrCodeService(QrCodeEncoder encoder, QrCodeDecoder decoder, int concurrency, int maxBatchSize) {
-        this.encoder = Objects.requireNonNull(encoder, "encoder must not be null");
-        this.decoder = Objects.requireNonNull(decoder, "decoder must not be null");
+    public DefaultQrCodeService(int concurrency, int maxBatchSize) {
         if (concurrency <= 0 || maxBatchSize <= 0) {
             throw new IllegalArgumentException("concurrency and maxBatchSize must be positive");
         }
@@ -58,7 +65,7 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
         return QrCodeArtifact.builder()
                 .correlationId(command.getCorrelationId())
                 .templateId(command.getTemplateId())
-                .output(encoder.encode(command.getRequest()))
+                .output(encode(command.getRequest()))
                 .build();
     }
 
@@ -66,7 +73,7 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
     public QrCodeScanResult decode(DecodeQrCodeCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         Objects.requireNonNull(command.getRequest(), "command.request must not be null");
-        return new QrCodeScanResult(command.getCorrelationId(), decoder.decode(command.getRequest()));
+        return new QrCodeScanResult(command.getCorrelationId(), decode(command.getRequest().getBytes()));
     }
 
     @Override
@@ -85,14 +92,11 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
                 results.add(futures.get(index).get());
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
-                results.add(failure(items.get(index), QrCodeErrorCode.QRCODE_RENDER_FAILED.name(),
+                results.add(failure(items.get(index), "QRCODE_RENDER_FAILED",
                         "Batch execution was interrupted"));
             } catch (ExecutionException ex) {
                 Throwable cause = ex.getCause();
-                String errorCode = cause instanceof QrCodeException
-                        ? ((QrCodeException) cause).getErrorCode().name()
-                        : QrCodeErrorCode.QRCODE_RENDER_FAILED.name();
-                results.add(failure(items.get(index), errorCode, cause.getMessage()));
+                results.add(failure(items.get(index), "QRCODE_RENDER_FAILED", cause.getMessage()));
             }
         }
         return new QrCodeBatchResult(results);
@@ -119,6 +123,31 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
                 .errorCode(errorCode)
                 .errorMessage(errorMessage)
                 .build();
+    }
+
+    private QrCodeOutput encode(io.ddd4j.extension.qrcode.model.QrCodeRequest request) {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            BitMatrix matrix = new QRCodeWriter().encode(request.getContent(), BarcodeFormat.QR_CODE,
+                    request.getWidth(), request.getHeight());
+            MatrixToImageWriter.writeToStream(matrix, "PNG", output);
+            return new QrCodeOutput(output.toByteArray());
+        } catch (Exception exception) {
+            throw new IllegalStateException("QR code encoding failed", exception);
+        }
+    }
+
+    private List<QrCodeDecodeResult> decode(byte[] bytes) {
+        try {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+            if (Objects.isNull(image)) {
+                throw new IllegalArgumentException("bytes do not contain an image");
+            }
+            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
+            Result result = new MultiFormatReader().decode(bitmap);
+            return List.of(new QrCodeDecodeResult(result.getText()));
+        } catch (Exception exception) {
+            throw new IllegalStateException("QR code decoding failed", exception);
+        }
     }
 
     private ThreadFactory daemonThreadFactory() {

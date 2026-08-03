@@ -4,7 +4,6 @@ import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import com.lmax.disruptor.event.DisruptorEvent;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
@@ -22,10 +21,10 @@ import java.util.function.Consumer;
 /**
  * LMAX Disruptor（进程内 MQ）客户端实现（纯 Java，零 Spring 依赖）。
  *
- * <p>复用 disruptor-extension 的 {@link DisruptorEvent} 作为 RingBuffer 事件类型，
- * 与 ddd4j-boot-starter 的 {@code disruptor-extension} 模块共享事件模型。
+ * <p>使用 ddd4j 自己的 {@link DisruptorEvent} 作为 RingBuffer 事件类型，
+ * 以确保本地消息能力可由公开仓库独立构建。
  *
- * <h3>路由模型（与 disruptor-extension 对齐）</h3>
+ * <h3>路由模型</h3>
  * <pre>
  *   namespace.topic.tag
  *   └───┬───┘ └─┬─┘ └┬┘
@@ -126,7 +125,7 @@ public class DisruptorMQClient implements MQClient {
     /**
      * RingBuffer 事件回调入口（{@link #start()} 注册到 Disruptor）。
      *
-     * <p>匹配流程（统一遵循 disruptor-extension 的 {@code namespace.topic[.tag]} 路由模型）：
+     * <p>匹配流程（统一遵循 {@code namespace.topic[.tag]} 路由模型）：
      * <ol>
      *   <li>route key 精确匹配：event 的 routeExpression vs listener 的 routeExpression</li>
      *   <li>{@link TagMatcher} 二次过滤（应对 listener.tags 表达式如 {@code "paid || shipped"}）</li>

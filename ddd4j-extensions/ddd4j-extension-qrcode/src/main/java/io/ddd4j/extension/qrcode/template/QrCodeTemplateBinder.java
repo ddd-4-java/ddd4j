@@ -1,10 +1,5 @@
 package io.ddd4j.extension.qrcode.template;
 
-import com.google.zxing.frame.QrCodeBlockElement;
-import com.google.zxing.frame.QrCodeFrame;
-import com.google.zxing.frame.QrCodeFrameElement;
-import com.google.zxing.frame.QrCodeImageElement;
-import com.google.zxing.frame.QrCodeTextElement;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -60,7 +55,7 @@ public class QrCodeTemplateBinder {
         String bound = template;
         for (Map.Entry<String, ?> variable : variables.entrySet()) {
             String placeholder = "${" + variable.getKey() + "}";
-            bound = StringUtils.replace(bound, placeholder,
+            bound = bound.replace(placeholder,
                     Objects.isNull(variable.getValue()) ? StringUtils.EMPTY : String.valueOf(variable.getValue()));
         }
         return bound;

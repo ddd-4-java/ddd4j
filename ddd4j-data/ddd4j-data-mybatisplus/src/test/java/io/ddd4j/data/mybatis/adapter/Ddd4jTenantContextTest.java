@@ -1,11 +1,8 @@
 package io.ddd4j.data.mybatis.adapter;
 
-import com.baomidou.mybatisplus.enhance.context.TenantContext;
-import com.baomidou.mybatisplus.enhance.tenant.DefaultTenantLineHandler;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.data.mybatis.context.Ddd4jTenantContext;
-import net.sf.jsqlparser.expression.StringValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +23,6 @@ class Ddd4jTenantContextTest {
 		ThreadContext.set(ContextConstants.TENANT_ID, "tenant-a");
 
 		assertEquals("tenant-a", context.getCurrentTenantId());
-		assertEquals(new StringValue("tenant-a"), new DefaultTenantLineHandler(context).getTenantId());
 	}
 
 	@Test
@@ -42,7 +38,7 @@ class Ddd4jTenantContextTest {
 	void shouldRestoreDdd4jTenantAfterNestedScope() {
 		context.setCurrentTenantId("tenant-a");
 
-		try (TenantContext.Scope ignored = context.open("tenant-b")) {
+        try (Ddd4jTenantContext.Scope ignored = context.open("tenant-b")) {
 			assertEquals("tenant-b", context.getCurrentTenantId());
 		}
 

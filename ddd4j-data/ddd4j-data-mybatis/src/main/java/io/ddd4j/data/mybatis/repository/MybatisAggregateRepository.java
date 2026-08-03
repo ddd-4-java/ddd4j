@@ -18,7 +18,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.ibatis.enhance.mapper.EnhanceMapper;
+import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -31,10 +31,10 @@ import java.util.Objects;
 /**
  * 原生 MyBatis 轨道的聚合仓储基类（五泛型，对齐 mybatisplus 模块）。
  *
- * <p>通过 {@link EnhanceMapper} 提供基础 CRUD，结合 ddd4j-core 的充血 {@link Query} 翻译
+ * <p>通过 {@link Ddd4jMapper} 提供基础 CRUD，结合 ddd4j-core 的充血 {@link Query} 翻译
  * 和租户/系统隔离，适配 {@link Repository} SPI。不依赖 MyBatis-Plus。</p>
  *
- * @param <MP> Mapper 类型（须继承 {@link EnhanceMapper}）
+ * @param <MP> Mapper 类型（须继承 {@link Ddd4jMapper} 并提供 SQL 映射）
  * @param <M>  聚合根类型
  * @param <P>  持久化对象类型
  * @param <Q>  充血查询类型
@@ -44,7 +44,7 @@ import java.util.Objects;
  */
 @Slf4j
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
+public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
         implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
     protected final Class<M> modelClass;
@@ -134,16 +134,13 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
     /**
      * 按标识删除。
      *
-     * <p><b>注意</b>：本模块基于 mybatis-enhance，其 {@code EnhanceMapper} 不提供
-     * {@code deleteById} 能力（仅有 insert/updateById/select 系列）。
-     * 旧实现以 {@code selectById} 占位，产生"假删除"（静默成功但不删数据），
-     * 现改为显式抛出不支持异常；需要删除能力的业务请在 Mapper 接口上
-     * 自行声明 {@code @Delete} 方法，或使用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块。
+     * <p>原生 MyBatis 的删除 SQL 由业务 Mapper 显式维护。为避免在仓储基类中猜测表名或主键列，
+     * 本默认实现明确拒绝删除；业务方可在具体仓储中覆盖该方法，或使用 MyBatis-Plus/JPA 轨道。
      */
     @Override
     public void deleteById(ID id) {
         throw new UnsupportedOperationException(
-                "EnhanceMapper 不提供 deleteById 能力，请在业务 Mapper 上自行声明删除方法，"
+                "Ddd4jMapper 不定义删除 SQL，请在业务仓储中显式实现 deleteById，"
                         + "或改用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块");
     }
 
@@ -158,12 +155,12 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
     /**
      * 按标识批量删除。
      *
-     * <p>与 {@link #deleteById(Serializable)} 相同，EnhanceMapper 无删除能力，显式抛出不支持异常。
+     * <p>与 {@link #deleteById(Serializable)} 相同，删除 SQL 必须由业务仓储显式实现。
      */
     @Override
     public int deleteByIds(Collection<ID> ids) {
         throw new UnsupportedOperationException(
-                "EnhanceMapper 不提供 deleteByIds 能力，请在业务 Mapper 上自行声明删除方法，"
+                "Ddd4jMapper 不定义批量删除 SQL，请在业务仓储中显式实现 deleteByIds，"
                         + "或改用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块");
     }
 

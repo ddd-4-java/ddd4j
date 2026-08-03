@@ -2,10 +2,8 @@ package io.ddd4j.guice;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
-import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
-import com.baomidou.mybatisplus.enhance.plugins.inner.InsertIgnoreInnerInterceptor;
-import com.baomidou.mybatisplus.enhance.plugins.inner.SqlObservationInnerInterceptor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -100,7 +98,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
             try {
                 BaseRepositoryImpl repository = (BaseRepositoryImpl) injector.getInstance(repositoryImpl);
                 Object mapper = sqlSession.getMapper(mapperInterface);
-                Method setMapper = BaseRepositoryImpl.class.getMethod("setMapper", BaseMapper.class);
+                Method setMapper = BaseRepositoryImpl.class.getMethod("setBaseMapper", BaseMapper.class);
                 setMapper.invoke(repository, mapper);
                 log.debug("Injected mapper {} into repository {}",
                         mapperInterface.getSimpleName(), repositoryImpl.getSimpleName());
@@ -123,12 +121,10 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
             }
         }
 
-        MybatisPlusEnhanceInterceptor interceptor = new MybatisPlusEnhanceInterceptor();
-        interceptor.addInnerInterceptor(new InsertIgnoreInnerInterceptor());
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
-        interceptor.addInnerInterceptor(new Ddd4jAggregateFillInnerInterceptor());
-        interceptor.addInnerInterceptor(new SqlObservationInnerInterceptor());
         configuration.addInterceptor(interceptor);
+        configuration.addInterceptor(new Ddd4jAggregateFillInnerInterceptor());
         configuration.setEnvironment(new Environment("ddd4j-runtime-guice", new JdbcTransactionFactory(), dataSource));
 
         SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(configuration);

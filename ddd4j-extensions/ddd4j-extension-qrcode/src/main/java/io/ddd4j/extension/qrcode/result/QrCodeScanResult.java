@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.zxing.model.QrCodeDecodeResult;
+import io.ddd4j.extension.qrcode.model.QrCodeDecodeResult;
 import lombok.Getter;
 
 /** Decoded QR code results with application correlation metadata. */

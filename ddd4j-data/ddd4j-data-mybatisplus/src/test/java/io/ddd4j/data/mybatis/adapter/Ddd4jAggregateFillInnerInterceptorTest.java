@@ -20,8 +20,7 @@ class Ddd4jAggregateFillInnerInterceptorTest {
         parameters.put("query", query);
         TestAggregate aggregate = new TestAggregate("1");
 
-        new Ddd4jAggregateFillInnerInterceptor().afterQuery(
-                null, null, parameters, null, null, null, List.of(aggregate));
+        new Ddd4jAggregateFillInnerInterceptor().afterQuery(parameters, List.of(aggregate));
 
         assertThat(query.filled).hasSize(1);
         assertThat(query.filled.get(0)).isSameAs(aggregate);

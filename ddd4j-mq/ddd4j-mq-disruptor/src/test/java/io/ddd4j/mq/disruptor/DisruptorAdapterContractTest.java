@@ -1,7 +1,6 @@
 package io.ddd4j.mq.disruptor;
 
 import com.lmax.disruptor.RingBuffer;
-import com.lmax.disruptor.event.DisruptorEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

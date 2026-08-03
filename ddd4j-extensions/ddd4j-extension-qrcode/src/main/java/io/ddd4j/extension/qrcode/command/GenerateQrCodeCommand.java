@@ -1,6 +1,6 @@
 package io.ddd4j.extension.qrcode.command;
 
-import com.google.zxing.model.QrCodeRequest;
+import io.ddd4j.extension.qrcode.model.QrCodeRequest;
 import lombok.Builder;
 import lombok.Getter;
 

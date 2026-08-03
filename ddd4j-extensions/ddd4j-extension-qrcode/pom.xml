@@ -11,12 +11,16 @@
     </parent>
 
     <artifactId>ddd4j-extension-qrcode</artifactId>
-    <description>Ddd4j framework-neutral QR code application service based on zxing-extension</description>
+    <description>Ddd4j framework-neutral QR code application service based on ZXing</description>
 
     <dependencies>
         <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>zxing-extension</artifactId>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

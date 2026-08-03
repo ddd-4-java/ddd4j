@@ -11,7 +11,7 @@
 
     <artifactId>ddd4j-data-mybatis</artifactId>
     <description>ddd4j 数据层 - MyBatis 官方实现（零 MyBatis-Plus 依赖）：纯 MyBatis 3.x 风格的 RichRepository 实现，
-        整合 mybatis-enhance（数据权限/国际化注解），适配 ddd4j-core 的 Repository SPI。
+        通过 ddd4j 自有 Mapper 与扩展 SPI 适配 ddd4j-core 的 Repository SPI。
         等保数据加密通过自定义加密拦截器 + ddd4j-data-crypto 实现。
     </description>
 
@@ -44,26 +44,6 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
-        </dependency>
-        <!-- mybatis-enhance-annotation（纯 Java 注解：权限/国际化/加解密/签名） -->
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-enhance-annotation</artifactId>
-        </dependency>
-        <!-- mybatis-enhance-core（拦截器框架、SPI、SQL 工具） -->
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-enhance-core</artifactId>
-        </dependency>
-        <!-- mybatis-enhance-extension（数据权限/国际化/加解密/签名拦截器、EnhanceMapper） -->
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-enhance-extension</artifactId>
-        </dependency>
-        <!-- mybatis-enhance-typehandler（JSON/集合/数组/Blob/RSA 等通用 TypeHandler） -->
-        <dependency>
-            <groupId>io.github.hiwepy</groupId>
-            <artifactId>mybatis-enhance-typehandler</artifactId>
         </dependency>
         <!-- JSqlParser: SQL 解析/改写（租户拦截器/数据权限拦截器） -->
         <dependency>

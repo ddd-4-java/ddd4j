@@ -15,26 +15,20 @@
  */
 package io.ddd4j.data.mybatis.context;
 
-import com.baomidou.mybatisplus.enhance.context.TenantContext;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 
 import java.util.Objects;
 
 /**
- * 将 ddd4j {@link ThreadContext} 中的租户上下文适配为 mybatis-plus-enhance 的租户上下文。
+ * MyBatis-Plus 访问 ddd4j {@link ThreadContext} 租户上下文的适配器。
  *
  * <p>该适配器不维护第二份线程变量，ddd4j 的请求上下文始终是租户 ID 的唯一事实来源。</p>
  *
- * <pre>{@code
- * TenantLineHandler handler = new DefaultTenantLineHandler(new Ddd4jTenantContext());
- * TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(handler);
- * }</pre>
  */
-public class Ddd4jTenantContext extends TenantContext {
+public class Ddd4jTenantContext {
 
-	@Override
-	public void setCurrentTenantId(Object tenantId) {
+    public void setCurrentTenantId(Object tenantId) {
 		if (Objects.isNull(tenantId)) {
 			clear();
 			return;
@@ -42,13 +36,31 @@ public class Ddd4jTenantContext extends TenantContext {
 		ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
 	}
 
-	@Override
-	public Object getCurrentTenantId() {
+    public Object getCurrentTenantId() {
 		return ThreadContext.get(ContextConstants.TENANT_ID);
 	}
 
-	@Override
-	public void clear() {
-		ThreadContext.remove(ContextConstants.TENANT_ID);
-	}
+    public void clear() {
+        ThreadContext.remove(ContextConstants.TENANT_ID);
+    }
+
+    public Scope open(Object tenantId) {
+        Object previous = getCurrentTenantId();
+        setCurrentTenantId(tenantId);
+        return new Scope(previous);
+    }
+
+    public final class Scope implements AutoCloseable {
+
+        private final Object previous;
+
+        private Scope(Object previous) {
+            this.previous = previous;
+        }
+
+        @Override
+        public void close() {
+            setCurrentTenantId(previous);
+        }
+    }
 }
