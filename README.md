@@ -96,7 +96,7 @@
 | `ddd4j-runtime`      | 多框架运行时绑定        | Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit                                                                  |
 | `ddd4j-extensions`   | 跨领域扩展           | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                                       |
 | `ddd4j-parent`       | Maven 父 POM     | 编译/打包/发布规则                                                                                                                                       |
-| `ddd4j-samples`      | 示例工程            | Spring / Quarkus / Javalin 三运行时 DDD、CQRS、Auth 示例矩阵                                                                                               |
+| `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核，以及 Quarkus / Javalin / Micronaut / Vert.x / Helidon / Dropwizard 运行时示例                                                        |
 
 **模块结构树**：
 
@@ -170,15 +170,15 @@
 |------ddd4j-extension-qlexpress        #QLExpress规则引擎组件
 |----ddd4j-parent                       #业务工程父POM，定义编译/打包/发布规则
 |----ddd4j-samples                      #示例工程
-|--------ddd4j-sample-spring            #Spring 普通 DDD 示例：Order 充血模型 + Goods 轻量 PO/Query
+|--------ddd4j-sample-order-*           #跨运行时共享 Order 领域、应用服务和业务契约
 |--------ddd4j-sample-quarkus           #Quarkus 普通 DDD 示例：同一业务模型的 CDI/JAX-RS 适配
 |--------ddd4j-sample-javalin           #Javalin 普通 DDD 示例：同一业务模型的 Guice/Javalin 适配
-|--------ddd4j-sample-spring-cqrs       #Spring CQRS 示例
+|--------ddd4j-sample-micronaut         #Micronaut 普通 DDD 示例：共享业务内核的编译期 DI/HTTP 适配
+|--------ddd4j-sample-vertx             #Vert.x 普通 DDD 示例：共享业务内核的 EventBus/Router 适配
+|--------ddd4j-sample-helidon           #Helidon 普通 DDD 示例：共享业务内核的 CDI/JAX-RS 适配
+|--------ddd4j-sample-dropwizard        #Dropwizard 普通 DDD 示例：共享业务内核的 Bundle/Jersey 适配
 |--------ddd4j-sample-quarkus-cqrs      #Quarkus CQRS 示例
 |--------ddd4j-sample-javalin-cqrs      #Javalin CQRS 示例
-|--------ddd4j-sample-spring-satoken    #Spring + Sa-Token 鉴权示例
-|--------ddd4j-sample-spring-shiro      #Spring + Shiro 鉴权示例
-|--------ddd4j-sample-spring-security   #Spring + Spring Security 鉴权示例
 |--------ddd4j-sample-quarkus-satoken   #Quarkus + Sa-Token 鉴权示例
 |--------ddd4j-sample-quarkus-shiro     #Quarkus + Shiro 鉴权示例
 |--------ddd4j-sample-javalin-satoken   #Javalin + Sa-Token 鉴权示例

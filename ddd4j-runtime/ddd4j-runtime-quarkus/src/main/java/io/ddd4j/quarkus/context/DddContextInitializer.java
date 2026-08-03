@@ -15,18 +15,21 @@
  */
 package io.ddd4j.quarkus.context;
 
-import io.ddd4j.core.constant.SpiKeys;
-import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
+import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.quarkus.Ddd4jQuarkusRuntime;
+import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
  * Quarkus 启动期 SPI 注入器：将 CDI Bean 中的 SPI 实现注入到 ddd4j 上下文。
@@ -67,33 +70,35 @@ public class DddContextInitializer {
      */
     @Inject
     Instance<I18nProvider> i18nProvider;
+    @Inject
+    Instance<CommandBus> commandBus;
+    private Ddd4jQuarkusRuntime runtime;
 
     /**
      * 应用启动完成后注入 SPI 服务到上下文。
      * <p>
      * 使用 {@link Instance} 而非直接注入，避免业务方未提供某 SPI 时启动失败。
      */
-    void onStart(@Observes StartupEvent event) {
-        // DomainEventPublisher（必需）
-        if (domainEventPublisher.isUnsatisfied()) {
-            log.warn("No DomainEventPublisher bean found. DomainEvent.publish() will fail.");
-        } else {
-            BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
-                    domainEventPublisher.get());
+    synchronized void onStart(@Observes StartupEvent event) {
+        if (Objects.nonNull(runtime)) {
+            return;
         }
-
-        // SubjectProvider（可选）
-        if (!subjectProvider.isUnsatisfied()) {
-            BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class,
-                    subjectProvider.get());
+        if (!domainEventPublisher.isResolvable() || !subjectProvider.isResolvable()
+                || !i18nProvider.isResolvable() || !commandBus.isResolvable()) {
+            log.warn("Ddd4j Quarkus runtime requires unique DomainEventPublisher, SubjectProvider, I18nProvider and CommandBus beans");
+            return;
         }
-
-        // I18nProvider（可选）
-        if (!i18nProvider.isUnsatisfied()) {
-            BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class,
-                    i18nProvider.get());
-        }
+        runtime = new Ddd4jQuarkusRuntime(domainEventPublisher.get(), subjectProvider.get(), i18nProvider.get(),
+                commandBus.get());
+        runtime.start();
 
         log.info("Quarkus ddd4j SPI services initialized");
+    }
+
+    synchronized void onStop(@Observes ShutdownEvent event) {
+        if (Objects.nonNull(runtime)) {
+            runtime.close();
+            runtime = null;
+        }
     }
 }

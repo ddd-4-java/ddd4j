@@ -97,8 +97,8 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         }
         // OTel: 结束 span
         Object span = request.getAttribute(OTEL_SPAN_ATTRIBUTE);
-        if (span != null) {
-            if (exception != null) {
+        if (Objects.nonNull(span)) {
+            if (Objects.nonNull(exception)) {
                 WebOtelSupport.recordError(span, exception);
             }
             WebOtelSupport.endServerSpan(span, response.getStatus());
@@ -118,11 +118,11 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
     private static Map<String, String> extractHeaders(HttpServletRequest request) {
         Map<String, String> headers = new HashMap<>();
         Enumeration<String> names = request.getHeaderNames();
-        if (names != null) {
+        if (Objects.nonNull(names)) {
             while (names.hasMoreElements()) {
                 String name = names.nextElement();
                 String value = request.getHeader(name);
-                if (value != null) {
+                if (Objects.nonNull(value)) {
                     headers.put(name, value);
                 }
             }

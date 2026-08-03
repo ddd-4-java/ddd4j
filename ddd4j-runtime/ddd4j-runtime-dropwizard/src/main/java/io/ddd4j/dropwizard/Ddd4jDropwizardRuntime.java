@@ -6,6 +6,7 @@ import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.util.SubjectKitRegistrationScope;
 import io.dropwizard.lifecycle.Managed;
 
 /**
@@ -14,6 +15,7 @@ import io.dropwizard.lifecycle.Managed;
 public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
 
     private final SpiRegistrationScope registrations;
+    private final SubjectKitRegistrationScope subjectRegistration;
 
     public Ddd4jDropwizardRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus) {
@@ -22,11 +24,13 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
                 .register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider)
                 .register(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider)
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class, commandBus);
+        this.subjectRegistration = new SubjectKitRegistrationScope(subjectProvider);
     }
 
     @Override
     public void start() {
         registrations.start();
+        subjectRegistration.start();
     }
 
     @Override
@@ -36,6 +40,7 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
 
     @Override
     public void close() {
+        subjectRegistration.close();
         registrations.close();
     }
 }

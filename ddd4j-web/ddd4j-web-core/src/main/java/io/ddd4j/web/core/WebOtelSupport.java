@@ -3,6 +3,7 @@ package io.ddd4j.web.core;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * ddd4j-web 内部辅助类：通过纯反射安全调用 ddd4j-extension-otel，
@@ -58,11 +59,11 @@ public final class WebOtelSupport {
      * 启动 SERVER span，返回 span 对象（OTel 未就绪时返回 null）。
      */
     public static Object startServerSpan(String method, String path, Map<String, String> headers) {
-        if (START_SERVER_SPAN == null) {
+        if (Objects.isNull(START_SERVER_SPAN)) {
             return null;
         }
         try {
-            return START_SERVER_SPAN.invoke(null, method, path, headers == null ? new HashMap<>() : headers);
+            return START_SERVER_SPAN.invoke(null, method, path, Objects.isNull(headers) ? new HashMap<>() : headers);
         } catch (Throwable t) {
             return null;
         }
@@ -72,7 +73,7 @@ public final class WebOtelSupport {
      * 激活 span 为当前 Context，返回 Scope（try-with-resources 可关闭）。
      */
     public static AutoCloseable activate(Object span) {
-        if (ACTIVATE == null || span == null) {
+        if (Objects.isNull(ACTIVATE) || Objects.isNull(span)) {
             return () -> {
             };
         }
@@ -93,7 +94,7 @@ public final class WebOtelSupport {
      * 记录异常到 span。
      */
     public static void recordError(Object span, Throwable error) {
-        if (RECORD_ERROR == null || span == null || error == null) {
+        if (Objects.isNull(RECORD_ERROR) || Objects.isNull(span) || Objects.isNull(error)) {
             return;
         }
         try {
@@ -107,7 +108,7 @@ public final class WebOtelSupport {
      * 结束 span 并记录 HTTP 状态码。
      */
     public static void endServerSpan(Object span, int status) {
-        if (END_SERVER_SPAN == null || span == null) {
+        if (Objects.isNull(END_SERVER_SPAN) || Objects.isNull(span)) {
             return;
         }
         try {
@@ -121,7 +122,7 @@ public final class WebOtelSupport {
      * 注入 traceparent 到响应头。
      */
     public static void injectResponseContext(Map<String, String> responseHeaders) {
-        if (INJECT_RESPONSE_CONTEXT == null || responseHeaders == null) {
+        if (Objects.isNull(INJECT_RESPONSE_CONTEXT) || Objects.isNull(responseHeaders)) {
             return;
         }
         try {
@@ -135,7 +136,7 @@ public final class WebOtelSupport {
      * 检查 OTel 集成是否可用。
      */
     public static boolean isAvailable() {
-        if (IS_AVAILABLE == null) {
+        if (Objects.isNull(IS_AVAILABLE)) {
             return false;
         }
         try {

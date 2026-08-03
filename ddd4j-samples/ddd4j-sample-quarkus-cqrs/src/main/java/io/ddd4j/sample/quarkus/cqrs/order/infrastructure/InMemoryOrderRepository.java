@@ -89,7 +89,7 @@ public class InMemoryOrderRepository implements OrderRepository {
      * @return 匹配的订单列表
      */
     public List<Order> findByStatus(OrderStatus status) {
-        if (status == null) {
+        if (Objects.isNull(status)) {
             return List.of();
         }
         return rows.values().stream()

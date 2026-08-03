@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.cache;
 
+import java.util.Objects;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsId;
@@ -99,7 +101,7 @@ public class GoodsCacheService {
     public List<Goods> listByStatus(String status) {
         String cacheKey = "status:" + status;
         List<Goods> cached = (List<Goods>) CacheKit.get(BIZ_GOODS_LIST, cacheKey);
-        if (cached != null) {
+        if (Objects.nonNull(cached)) {
             log.debug("Cache hit: GOODS_LIST status={}", status);
             return cached;
         }

@@ -3,12 +3,15 @@ package io.ddd4j.extension.otel;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.StrKit;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
+
+import java.util.Objects;
 
 /**
  * 认证操作（Auth 集成点 #8）的 OTel Span 包装。
@@ -63,13 +66,13 @@ public final class AuthSpan {
                 .setAttribute(ATTR_AUTH_OPERATION, "login")
                 .setAttribute(ATTR_AUTH_FRAMEWORK, DEFAULT_FRAMEWORK)
                 .startSpan();
-        if (request != null && request.getLoginId() != null) {
+        if (Objects.nonNull(request) && Objects.nonNull(request.getLoginId())) {
             span.setAttribute(ATTR_AUTH_LOGIN_ID, String.valueOf(request.getLoginId()));
         }
         try (Scope scope = span.makeCurrent()) {
             Ddd4jOtel.enrichWithBusinessContext(span);
             String token = SubjectKit.login(request);
-            boolean success = token != null && !token.isEmpty();
+            boolean success = StrKit.isNotEmpty(token);
             span.setAttribute(ATTR_AUTH_SUCCESS, success);
             if (!success) {
                 span.setStatus(StatusCode.ERROR, "login failed");
@@ -159,9 +162,9 @@ public final class AuthSpan {
         try (Scope scope = span.makeCurrent()) {
             Ddd4jOtel.enrichWithBusinessContext(span);
             T principal = SubjectKit.verify(token);
-            boolean success = principal != null;
+            boolean success = Objects.nonNull(principal);
             span.setAttribute(ATTR_AUTH_SUCCESS, success);
-            if (success && principal.getLoginId() != null) {
+            if (success && Objects.nonNull(principal.getLoginId())) {
                 span.setAttribute(ATTR_AUTH_LOGIN_ID, String.valueOf(principal.getLoginId()));
             }
             if (!success) {
@@ -190,7 +193,7 @@ public final class AuthSpan {
                 .setSpanKind(SpanKind.INTERNAL)
                 .setAttribute(ATTR_AUTH_OPERATION, "hasRole")
                 .setAttribute(ATTR_AUTH_FRAMEWORK, DEFAULT_FRAMEWORK)
-                .setAttribute(ATTR_AUTH_ROLE, roleIdentifier == null ? "" : roleIdentifier)
+                .setAttribute(ATTR_AUTH_ROLE, Objects.isNull(roleIdentifier) ? "" : roleIdentifier)
                 .startSpan();
         try (Scope scope = span.makeCurrent()) {
             Ddd4jOtel.enrichWithBusinessContext(span);
@@ -214,7 +217,7 @@ public final class AuthSpan {
                 .setSpanKind(SpanKind.INTERNAL)
                 .setAttribute(ATTR_AUTH_OPERATION, "hasPermission")
                 .setAttribute(ATTR_AUTH_FRAMEWORK, DEFAULT_FRAMEWORK)
-                .setAttribute(ATTR_AUTH_PERMISSION, permission == null ? "" : permission)
+                .setAttribute(ATTR_AUTH_PERMISSION, Objects.isNull(permission) ? "" : permission)
                 .startSpan();
         try (Scope scope = span.makeCurrent()) {
             Ddd4jOtel.enrichWithBusinessContext(span);
@@ -280,7 +283,7 @@ public final class AuthSpan {
     private static void attachCurrentLoginId(Span span) {
         try {
             AuthPrincipal principal = SubjectKit.getPrincipal();
-            if (principal != null && principal.getLoginId() != null) {
+            if (Objects.nonNull(principal) && Objects.nonNull(principal.getLoginId())) {
                 span.setAttribute(ATTR_AUTH_LOGIN_ID, String.valueOf(principal.getLoginId()));
             }
         } catch (Exception ignored) {

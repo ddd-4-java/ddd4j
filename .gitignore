@@ -99,6 +99,7 @@ node_modules
 !/libs/*.jar
 
 ### Development tools ###
+.codegraph/
 .fastRequest
 *.http
 *.json

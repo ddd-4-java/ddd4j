@@ -25,7 +25,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  *
  * <p>本控制器与认证框架（sa-token/shiro/security）解耦，仅通过 {@link RbacService} 操作仓储。
  * 业务代码（User/Role/Permission/Repository/Service）与 Spring 示例
- * {@code ddd4j-sample-spring-satoken} 完全一致，仅 Controller 层使用 Javalin 风格。
+ * 外部 {@code ddd4j-boot-sample-auth-satoken} 保持同一 Subject 鉴权语义，仅 Controller 层使用 Javalin 风格。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

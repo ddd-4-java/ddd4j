@@ -28,10 +28,10 @@ NC='\033[0m'
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-# 从 ddd4j-dependencies 读取 BOM 版本
-DEPS_POM="ddd4j-dependencies/pom.xml"
-if [ ! -f "$DEPS_POM" ]; then
-    echo -e "${RED}❌ 找不到 $DEPS_POM${NC}"
+# BOM 是发布给消费方的版本清单；ddd4j-dependencies 仅管理第三方依赖。
+BOM_POM="ddd4j-bom/pom.xml"
+if [ ! -f "$BOM_POM" ]; then
+    echo -e "${RED}❌ 找不到 $BOM_POM${NC}"
     exit 1
 fi
 
@@ -59,19 +59,22 @@ done
 
 echo ""
 echo -e "${YELLOW}② 校验关键 ddd4j-* 工件在 BOM 中存在（警告级，非阻塞）${NC}"
+# 聚合 POM 不会作为依赖消费，避免将 ddd4j-data/mq/web/runtime 等聚合器误报为
+# 应进入 BOM 的工件。这里保留每个基础能力的公开入口作为回归锚点。
 required_artifacts=(
     "ddd4j-core"
     "ddd4j-annotation"
     "ddd4j-kit"
-    "ddd4j-data"
-    "ddd4j-mq"
-    "ddd4j-web"
-    "ddd4j-runtime"
+    "ddd4j-cache"
     "ddd4j-ddd-rules"
+    "ddd4j-data-mybatis"
+    "ddd4j-mq-core"
+    "ddd4j-web-core"
+    "ddd4j-runtime-spring"
 )
 warn_count=0
 for art in "${required_artifacts[@]}"; do
-    if grep -q "<artifactId>$art</artifactId>" "$DEPS_POM"; then
+    if rg -q -F "<artifactId>$art</artifactId>" "$BOM_POM"; then
         echo -e "${GREEN}  ✅ $art 在 BOM 中${NC}"
     else
         echo -e "${YELLOW}  ⚠️  $art 不在 BOM 中（建议补充到 dependencyManagement）${NC}"

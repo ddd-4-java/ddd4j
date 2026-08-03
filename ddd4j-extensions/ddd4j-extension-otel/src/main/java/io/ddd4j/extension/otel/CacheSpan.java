@@ -6,6 +6,7 @@ import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -50,7 +51,7 @@ public final class CacheSpan {
         try (Scope scope = span.makeCurrent()) {
             Ddd4jOtel.enrichWithBusinessContext(span);
             T result = supplier.get();
-            boolean hit = missCheck != null && !missCheck.get();
+            boolean hit = Objects.nonNull(missCheck) && !missCheck.get();
             span.setAttribute(Ddd4jOtel.ATTR_CACHE_HIT, hit);
             return result;
         } catch (Throwable t) {

@@ -1,5 +1,11 @@
 package io.ddd4j.sample.quarkus.shiro.rbac;
 
+import io.ddd4j.kit.lang.CollKit;
+
+import io.ddd4j.kit.lang.StrKit;
+
+import java.util.Objects;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
@@ -82,7 +88,7 @@ public class RbacService {
     public Map<String, Object> me() {
         AuthPrincipal principal = SubjectKit.getPrincipal();
         Map<String, Object> result = new HashMap<>();
-        if (principal == null) {
+        if (Objects.isNull(principal)) {
             result.put("authenticated", false);
             return result;
         }
@@ -129,7 +135,7 @@ public class RbacService {
     }
 
     public User createUser(User user) {
-        if (user.getId() == null || user.getId().isBlank()) {
+        if (StrKit.isBlank(user.getId())) {
             throw new IllegalArgumentException("user.id must not be blank");
         }
         if (userRepository.findById(user.getId()).isPresent()) {
@@ -140,16 +146,16 @@ public class RbacService {
 
     public User updateUser(String id, User patch) {
         User existing = findUser(id);
-        if (patch.getUsername() != null) {
+        if (Objects.nonNull(patch.getUsername())) {
             existing.setUsername(patch.getUsername());
         }
-        if (patch.getDisplayName() != null) {
+        if (Objects.nonNull(patch.getDisplayName())) {
             existing.setDisplayName(patch.getDisplayName());
         }
-        if (patch.getPassword() != null) {
+        if (Objects.nonNull(patch.getPassword())) {
             existing.setPassword(patch.getPassword());
         }
-        if (patch.getRoleCodes() != null) {
+        if (Objects.nonNull(patch.getRoleCodes())) {
             existing.setRoleCodes(new HashSet<>(patch.getRoleCodes()));
         }
         existing.setDisabled(patch.isDisabled());
@@ -182,7 +188,7 @@ public class RbacService {
     }
 
     public Role createRole(Role role) {
-        if (role.getCode() == null || role.getCode().isBlank()) {
+        if (StrKit.isBlank(role.getCode())) {
             throw new IllegalArgumentException("role.code must not be blank");
         }
         if (roleRepository.findByCode(role.getCode()).isPresent()) {
@@ -193,13 +199,13 @@ public class RbacService {
 
     public Role updateRole(String code, Role patch) {
         Role existing = findRole(code);
-        if (patch.getDisplayName() != null) {
+        if (Objects.nonNull(patch.getDisplayName())) {
             existing.setDisplayName(patch.getDisplayName());
         }
-        if (patch.getDescription() != null) {
+        if (Objects.nonNull(patch.getDescription())) {
             existing.setDescription(patch.getDescription());
         }
-        if (patch.getPermissionCodes() != null) {
+        if (Objects.nonNull(patch.getPermissionCodes())) {
             existing.setPermissionCodes(new HashSet<>(patch.getPermissionCodes()));
         }
         return roleRepository.save(existing);
@@ -231,7 +237,7 @@ public class RbacService {
     }
 
     public Permission createPermission(Permission permission) {
-        if (permission.getCode() == null || permission.getCode().isBlank()) {
+        if (StrKit.isBlank(permission.getCode())) {
             throw new IllegalArgumentException("permission.code must not be blank");
         }
         if (permissionRepository.findByCode(permission.getCode()).isPresent()) {
@@ -242,10 +248,10 @@ public class RbacService {
 
     public Permission updatePermission(String code, Permission patch) {
         Permission existing = findPermission(code);
-        if (patch.getDisplayName() != null) {
+        if (Objects.nonNull(patch.getDisplayName())) {
             existing.setDisplayName(patch.getDisplayName());
         }
-        if (patch.getDescription() != null) {
+        if (Objects.nonNull(patch.getDescription())) {
             existing.setDescription(patch.getDescription());
         }
         return permissionRepository.save(existing);
@@ -258,7 +264,7 @@ public class RbacService {
     }
 
     private List<AuthPrincipal.RolePair> buildRolePairs(Set<String> roleCodes) {
-        if (roleCodes == null || roleCodes.isEmpty()) {
+        if (CollKit.isEmpty(roleCodes)) {
             return List.of();
         }
         List<AuthPrincipal.RolePair> pairs = new ArrayList<>();
@@ -276,14 +282,14 @@ public class RbacService {
     // ============ Shiro 鉴权封装（手工调用，等价于 Sa-Token 注解） ============
 
     private Set<String> aggregatePermissions(Set<String> roleCodes) {
-        if (roleCodes == null || roleCodes.isEmpty()) {
+        if (CollKit.isEmpty(roleCodes)) {
             return Set.of();
         }
         Set<String> aggregated = new HashSet<>();
         for (String code : roleCodes) {
             roleRepository.findByCode(code)
                     .ifPresent(role -> {
-                        if (role.getPermissionCodes() != null) {
+                        if (Objects.nonNull(role.getPermissionCodes())) {
                             aggregated.addAll(role.getPermissionCodes());
                         }
                     });

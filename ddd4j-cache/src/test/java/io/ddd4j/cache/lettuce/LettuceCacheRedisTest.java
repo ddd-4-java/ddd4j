@@ -13,6 +13,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -44,10 +46,10 @@ class LettuceCacheRedisTest {
 
     @AfterAll
     static void tearDown() {
-        if (connection != null) {
+        if (Objects.nonNull(connection)) {
             connection.close();
         }
-        if (redisClient != null) {
+        if (Objects.nonNull(redisClient)) {
             redisClient.shutdown();
         }
     }

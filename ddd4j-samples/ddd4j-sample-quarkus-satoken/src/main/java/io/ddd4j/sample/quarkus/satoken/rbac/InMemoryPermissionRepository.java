@@ -47,7 +47,7 @@ public class InMemoryPermissionRepository {
      * 删除权限。
      */
     public boolean deleteByCode(String code) {
-        return store.remove(code) != null;
+        return Objects.nonNull(store.remove(code));
     }
 
     /**

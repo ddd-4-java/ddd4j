@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.order.cache;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.repository.OrderRepository;
@@ -62,12 +64,12 @@ public class OrderCacheService {
      * @return 订单（可能为空）
      */
     public Optional<Order> getOrder(String orderId) {
-        if (orderId == null || orderId.isBlank()) {
+        if (StrKit.isBlank(orderId)) {
             return Optional.empty();
         }
         // 1. 查缓存
         Order cached = CacheKit.get(CACHE_BIZ, orderId);
-        if (cached != null) {
+        if (Objects.nonNull(cached)) {
             log.debug("[OrderCacheService] 缓存命中: orderId={}", orderId);
             return Optional.of(cached);
         }
@@ -86,7 +88,7 @@ public class OrderCacheService {
      * @param order 订单聚合
      */
     public void putOrder(Order order) {
-        if (order == null) {
+        if (Objects.isNull(order)) {
             return;
         }
         CacheKit.put(CACHE_BIZ, order.id(), order);
@@ -99,7 +101,7 @@ public class OrderCacheService {
      * @param orderId 订单 ID
      */
     public void evictOrder(String orderId) {
-        if (orderId == null || orderId.isBlank()) {
+        if (StrKit.isBlank(orderId)) {
             return;
         }
         CacheKit.invalidate(CACHE_BIZ, orderId);

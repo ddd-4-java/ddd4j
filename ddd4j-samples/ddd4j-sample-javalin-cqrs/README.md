@@ -292,6 +292,6 @@ CacheKit.invalidate(BIZ_ORDER_STATS, STATS_KEY);
 ## 8. 相关项目
 
 - [`ddd4j-sample-javalin`](../ddd4j-sample-javalin/README.md) — Javalin 框架启动示例（非 CQRS 版本）
-- [`ddd4j-sample-spring-cqrs`](../ddd4j-sample-spring-cqrs) — 同 CQRS 思路在 Spring 平台
+- 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order` — Spring Boot CQRS 对照
 - [`ddd4j-sample-quarkus-cqrs`](../ddd4j-sample-quarkus-cqrs) — 同 CQRS 思路在 Quarkus 平台
 - ddd4j 核心抽象：`ddd4j-core`（`io.ddd4j.core.ddd.*`、`io.ddd4j.core.context.*`）

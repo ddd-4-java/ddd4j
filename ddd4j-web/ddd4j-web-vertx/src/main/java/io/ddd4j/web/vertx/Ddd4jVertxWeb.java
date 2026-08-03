@@ -122,7 +122,7 @@ public final class Ddd4jVertxWeb {
             }
             // OTel: 记录异常
             Object span = routingContext.get(OTEL_SPAN_KEY);
-            if (span != null) {
+            if (Objects.nonNull(span)) {
                 WebOtelSupport.recordError(span, failure);
                 WebOtelSupport.endServerSpan(span, error.status());
             }
@@ -139,7 +139,7 @@ public final class Ddd4jVertxWeb {
         context.request().headers().forEach(entry -> {
             String key = entry.getKey();
             String value = entry.getValue();
-            if (key != null && value != null) {
+            if (Objects.nonNull(key) && Objects.nonNull(value)) {
                 headers.put(key, value);
             }
         });
@@ -184,7 +184,7 @@ public final class Ddd4jVertxWeb {
 
         // OTel: 结束 span
         Object span = context.remove(OTEL_SPAN_KEY);
-        if (span != null) {
+        if (Objects.nonNull(span)) {
             int status = context.response().getStatusCode() > 0
                     ? context.response().getStatusCode() : 200;
             if (state.failed) {

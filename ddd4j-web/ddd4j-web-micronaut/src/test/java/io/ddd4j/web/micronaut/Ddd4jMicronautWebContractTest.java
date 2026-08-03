@@ -43,7 +43,6 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
     void setUp() {
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
-        BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
 
         Map<String, Object> properties = Map.of(
                 "micronaut.server.port", -1,
@@ -56,6 +55,7 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
                         "/contract/errors/**"),
                 "ddd4j.web.idempotency-cache-name", "micronaut-contract");
         server = ApplicationContext.run(EmbeddedServer.class, properties);
+        BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
         contractClient = new MicronautContractClient(HttpClient.newHttpClient(), server.getPort());
     }
 

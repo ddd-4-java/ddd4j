@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -175,7 +176,7 @@ class AuthSpanTest {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
         try {
             io.ddd4j.core.auth.AuthPrincipal p = AuthSpan.verify("token");
-            invoked.set(p != null);
+            invoked.set(Objects.nonNull(p));
         } catch (Exception ignored) {
         }
         // 验证至少被调用过（即使抛异常也代表执行到 SubjectKit）

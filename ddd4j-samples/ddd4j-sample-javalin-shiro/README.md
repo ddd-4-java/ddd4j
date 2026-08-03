@@ -246,7 +246,7 @@ curl 'http://localhost:7000/api/goods/page?current=1&size=10&status=ON_SALE&orde
 
 | 框架      | Sa-Token                       | Shiro                             | Security                       |
 |---------|--------------------------------|-----------------------------------|--------------------------------|
-| Spring  | `ddd4j-sample-spring-satoken`  | `ddd4j-sample-spring-shiro`       | `ddd4j-sample-spring-security` |
+| Spring Boot（外部） | `ddd4j-boot-sample-auth-satoken`  | `ddd4j-boot-sample-auth-shiro`       | `ddd4j-boot-sample-auth-security` |
 | Quarkus | `ddd4j-sample-quarkus-satoken` | `ddd4j-sample-quarkus-shiro`      | （待补充）                          |
 | Javalin | `ddd4j-sample-javalin-satoken` | `ddd4j-sample-javalin-shiro`（本示例） | （待补充）                          |
 

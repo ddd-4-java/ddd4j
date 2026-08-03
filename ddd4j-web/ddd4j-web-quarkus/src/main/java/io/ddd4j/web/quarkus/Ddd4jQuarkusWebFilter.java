@@ -107,7 +107,7 @@ public class Ddd4jQuarkusWebFilter {
         }
         // OTel: 结束 span
         Object span = request.getProperty(OTEL_SPAN_PROPERTY);
-        if (span != null) {
+        if (Objects.nonNull(span)) {
             WebOtelSupport.endServerSpan(span, response.getStatus());
             request.removeProperty(OTEL_SPAN_PROPERTY);
         }
@@ -127,7 +127,7 @@ public class Ddd4jQuarkusWebFilter {
         Map<String, String> headers = new HashMap<>();
         for (var entry : request.getHeaders().entrySet()) {
             String value = request.getHeaderString(entry.getKey());
-            if (value != null) {
+            if (Objects.nonNull(value)) {
                 headers.put(entry.getKey(), value);
             }
         }

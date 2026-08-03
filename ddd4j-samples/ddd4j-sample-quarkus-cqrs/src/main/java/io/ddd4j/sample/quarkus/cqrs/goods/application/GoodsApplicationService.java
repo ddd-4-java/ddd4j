@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.goods.application;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.*;
@@ -200,13 +202,13 @@ public class GoodsApplicationService {
     }
 
     private void validateCode(String code) {
-        if (Objects.isNull(code) || code.isBlank()) {
+        if (StrKit.isBlank(code)) {
             throw new BizRuntimeException("product.code.invalid", "code must not be blank");
         }
     }
 
     private void validateName(String name) {
-        if (Objects.isNull(name) || name.isBlank()) {
+        if (StrKit.isBlank(name)) {
             throw new BizRuntimeException("product.name.invalid", "name must not be blank");
         }
     }

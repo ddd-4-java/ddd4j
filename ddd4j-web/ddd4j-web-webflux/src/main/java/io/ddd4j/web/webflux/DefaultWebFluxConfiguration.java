@@ -39,7 +39,7 @@ public class DefaultWebFluxConfiguration {
         return new ProfileManager(environment::getActiveProfiles);
     }
 
-    @Bean
+    @Bean(name = "ddd4jReactiveRequestContextFilter")
     public ReactiveRequestContextFilter requestContextFilter() {
         return new ReactiveRequestContextFilter();
     }

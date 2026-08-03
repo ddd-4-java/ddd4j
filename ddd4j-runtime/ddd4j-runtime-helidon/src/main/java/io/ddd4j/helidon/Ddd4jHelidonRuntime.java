@@ -6,6 +6,7 @@ import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.util.SubjectKitRegistrationScope;
 
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 public final class Ddd4jHelidonRuntime implements AutoCloseable {
 
     private final SpiRegistrationScope registrations;
+    private final SubjectKitRegistrationScope subjectRegistration;
 
     public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus) {
@@ -27,14 +29,17 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
                         Objects.requireNonNull(i18nProvider, "i18nProvider must not be null"))
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class,
                         Objects.requireNonNull(commandBus, "commandBus must not be null"));
+        this.subjectRegistration = new SubjectKitRegistrationScope(subjectProvider);
     }
 
     public void start() {
         registrations.start();
+        subjectRegistration.start();
     }
 
     @Override
     public void close() {
+        subjectRegistration.close();
         registrations.close();
     }
 }

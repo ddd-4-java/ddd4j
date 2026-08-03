@@ -56,7 +56,7 @@ public class DefaultWebMvcConfiguration {
     /**
      * 请求上下文过滤器（线程上下文可继承）。
      */
-    @Bean
+    @Bean(name = "ddd4jRequestContextFilter")
     public RequestContextFilter requestContextFilter() {
         RequestContextFilter contextFilter = new RequestContextFilter();
         contextFilter.setThreadContextInheritable(true);

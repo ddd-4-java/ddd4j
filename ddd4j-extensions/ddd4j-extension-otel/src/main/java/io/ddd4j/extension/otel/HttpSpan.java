@@ -13,6 +13,7 @@ import io.opentelemetry.context.propagation.TextMapSetter;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * HTTP 入站 span 工具（Web 框架集成点 #1）。
@@ -69,12 +70,12 @@ public final class HttpSpan {
      * @return 上游 Context（若无上游则返回 Context.current()）
      */
     public static Context extractContext(Map<String, String> headers) {
-        if (headers == null || headers.isEmpty()) {
+        if (Objects.isNull(headers) || headers.isEmpty()) {
             return Context.current();
         }
         try {
             TextMapPropagator propagator = io.opentelemetry.api.GlobalOpenTelemetry.getPropagators().getTextMapPropagator();
-            if (propagator == null) {
+            if (Objects.isNull(propagator)) {
                 return Context.current();
             }
             return propagator.extract(Context.current(), headers, GETTER);
@@ -99,8 +100,8 @@ public final class HttpSpan {
         Span span = tracer.spanBuilder("HTTP " + method + " " + route)
                 .setSpanKind(SpanKind.SERVER)
                 .setParent(parent)
-                .setAttribute(ATTR_HTTP_METHOD, method == null ? "UNKNOWN" : method)
-                .setAttribute(ATTR_HTTP_ROUTE, route == null ? "" : route)
+                .setAttribute(ATTR_HTTP_METHOD, Objects.isNull(method) ? "UNKNOWN" : method)
+                .setAttribute(ATTR_HTTP_ROUTE, Objects.isNull(route) ? "" : route)
                 .startSpan();
         Ddd4jOtel.enrichWithBusinessContext(span);
         return span;
@@ -113,7 +114,7 @@ public final class HttpSpan {
      * @param status HTTP 状态码
      */
     public static void endServerSpan(Span span, int status) {
-        if (span == null || !span.getSpanContext().isValid()) {
+        if (Objects.isNull(span) || !span.getSpanContext().isValid()) {
             return;
         }
         span.setAttribute(ATTR_HTTP_STATUS, String.valueOf(status));
@@ -129,7 +130,7 @@ public final class HttpSpan {
      * 在 span 上记录异常并标记 ERROR。
      */
     public static void recordError(Span span, Throwable t) {
-        if (span == null || t == null) {
+        if (Objects.isNull(span) || Objects.isNull(t)) {
             return;
         }
         span.recordException(t);
@@ -142,12 +143,12 @@ public final class HttpSpan {
      * @param headers 响应头 Map
      */
     public static void injectContext(Map<String, String> headers) {
-        if (headers == null) {
+        if (Objects.isNull(headers)) {
             return;
         }
         try {
             TextMapPropagator propagator = io.opentelemetry.api.GlobalOpenTelemetry.getPropagators().getTextMapPropagator();
-            if (propagator == null) {
+            if (Objects.isNull(propagator)) {
                 return;
             }
             propagator.inject(Context.current(), headers, SETTER);
@@ -160,7 +161,7 @@ public final class HttpSpan {
      * 安全获取当前 Context 的 Scope（noop fallback）。
      */
     public static Scope makeCurrent(Span span) {
-        if (span == null || !span.getSpanContext().isValid()) {
+        if (Objects.isNull(span) || !span.getSpanContext().isValid()) {
             return Scope.noop();
         }
         return span.makeCurrent();
@@ -169,7 +170,7 @@ public final class HttpSpan {
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
-            if (carrier != null) {
+            if (Objects.nonNull(carrier)) {
                 carrier.put(key, value);
             }
         }
@@ -178,18 +179,18 @@ public final class HttpSpan {
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
-            return carrier == null ? Collections.emptyList() : carrier.keySet();
+            return Objects.isNull(carrier) ? Collections.emptyList() : carrier.keySet();
         }
 
         @Override
         public String get(Map<String, String> carrier, String key) {
-            if (carrier == null) {
+            if (Objects.isNull(carrier)) {
                 return null;
             }
             String value = carrier.get(key);
-            if (value == null) {
+            if (Objects.isNull(value)) {
                 for (Map.Entry<String, String> entry : carrier.entrySet()) {
-                    if (entry.getKey() != null && entry.getKey().equalsIgnoreCase(key)) {
+                    if (Objects.nonNull(entry.getKey()) && entry.getKey().equalsIgnoreCase(key)) {
                         return entry.getValue();
                     }
                 }

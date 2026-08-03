@@ -250,7 +250,7 @@ flowchart LR
 7. [`MQClient`](../../ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/MQClient.java)：理解多 Broker 路由；
 8. `ddd4j-sample-javalin-cqrs`：观察框架无关运行方式；
 9. `ddd4j-sample-quarkus-cqrs`：观察 CDI/JPA 适配；
-10. `ddd4j-sample-spring-cqrs`：观察 Spring 完整集成。
+10. 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order`：观察 Spring Boot 完整集成。
 
 ## 13. CodeGraph 维护命令
 

@@ -35,6 +35,15 @@ public final class I18nKit {
     }
 
     /**
+     * 获取当前全局国际化提供者，供运行时在关闭时恢复先前状态。
+     *
+     * @return 当前全局国际化提供者
+     */
+    public static I18nProvider getProvider() {
+        return provider;
+    }
+
+    /**
      * 注册指定 Locale 的 I18nProvider
      *
      * @param locale   Locale

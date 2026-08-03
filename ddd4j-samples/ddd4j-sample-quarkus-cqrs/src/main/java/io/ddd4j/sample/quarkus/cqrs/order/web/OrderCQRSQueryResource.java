@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
+import java.util.Objects;
+
 import io.ddd4j.sample.quarkus.cqrs.cache.OrderCacheService;
 import io.ddd4j.sample.quarkus.cqrs.order.web.dto.OrderResponse;
 import io.ddd4j.web.quarkus.TenantAwareResource;
@@ -47,8 +49,8 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
     @GET
     @Path("/list")
     public Response list(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize) {
-        int p = page == null || page < 1 ? 1 : page;
-        int ps = pageSize == null || pageSize < 1 ? 10 : pageSize;
+        int p = Objects.isNull(page) || page < 1 ? 1 : page;
+        int ps = Objects.isNull(pageSize) || pageSize < 1 ? 10 : pageSize;
         // 直接通过订单详情缓存逐个遍历（演示缓存读侧效果）
         return ok(Map.of("page", p, "pageSize", ps, "note", "see /api/orders/query/stats"));
     }

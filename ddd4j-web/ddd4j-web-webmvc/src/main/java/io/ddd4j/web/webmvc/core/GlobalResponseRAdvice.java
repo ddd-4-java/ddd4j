@@ -51,6 +51,10 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object data, MethodParameter returnType, MediaType mediaType,
                                   Class<? extends HttpMessageConverter<?>> aClass,
                                   ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
+        // 兼容声明为 Object 等宽泛类型、但运行时已显式返回 R 的控制器方法。
+        if (data instanceof IR) {
+            return data;
+        }
         if (Objects.isNull(data) || returnType.getParameterType().isAssignableFrom(void.class)) {
             return R.ok();
         }

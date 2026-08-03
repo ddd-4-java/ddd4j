@@ -11,18 +11,18 @@
 
 这是 ddd4j 在 Quarkus 框架下的**完整业务示例**，是所有 Quarkus 系列示例（auth/mq）的**业务基础**。
 
-**核心价值：与 `ddd4j-sample-spring` 的业务模型保持一致，仅框架绑定代码不同**，证明 ddd4j 的"三框架业务代码零差异"设计。
+**核心价值：与共享 `ddd4j-sample-order-*` 内核保持一致，仅框架绑定代码不同**，证明 ddd4j 的跨运行时业务边界设计。
 
 **双轨合一**：本示例同时演示 Order 充血模型和 Goods 轻量 PO/Query 的核心业务，让一个示例展示 ddd4j 在 Quarkus 下的**两套建模范式
 **。
 
-| 维度         | ddd4j-sample-spring | ddd4j-sample-quarkus（本示例） |
+| 维度         | 共享 Order 内核 | ddd4j-sample-quarkus（本示例） |
 |------------|---------------------|---------------------------|
-| 框架         | Spring Boot         | Quarkus                   |
-| DI 容器      | ApplicationContext  | CDI (Arc)                 |
-| SPI 注入     | `@Bean` 扫描          | `@Observes StartupEvent`  |
-| HTTP 框架    | Spring MVC          | Quarkus REST（JAX-RS）      |
-| 领域事件监听     | `@EventListener`    | CDI `@Observes`           |
+| 框架         | 纯 Java         | Quarkus                   |
+| DI 容器      | 无  | CDI (Arc)                 |
+| SPI 注入     | SPI 契约          | `@Observes StartupEvent`  |
+| HTTP 框架    | 无          | Quarkus REST（JAX-RS）      |
+| 领域事件监听     | 领域事件契约    | CDI `@Observes`           |
 | **领域模型代码** | **完全相同**            | **完全相同**                  |
 
 ## 演示的 ddd4j 核心能力
@@ -465,7 +465,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 - [ddd4j-core 源码](../../ddd4j-core)
 - [ddd4j-runtime-quarkus 源码](../../ddd4j-runtime/ddd4j-runtime-quarkus)
 - [ddd4j-web-quarkus 源码](../../ddd4j-web/ddd4j-web-quarkus)
-- [ddd4j-sample-spring-rich-model](../ddd4j-sample-spring-rich-model)（Spring 版对照）
+- 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order`（Spring Boot 对照）
 - [ddd4j-sample-cache](../ddd4j-sample-cache)（缓存示例参考）
 
 ## 作者

@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * RBAC 演示数据初始化：与 Spring 示例 {@code ddd4j-sample-spring-satoken} 完全等价。
+ * RBAC 演示数据初始化：与外部 Boot 示例 {@code ddd4j-boot-sample-auth-satoken} 使用同一 Subject 鉴权语义。
  *
  * <p>Javalin + Guice 没有 Spring {@code @PostConstruct} 钩子，故显式提供
  * {@link #initRbacData(UserRepository, RoleRepository, PermissionRepository)}

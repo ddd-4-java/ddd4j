@@ -89,8 +89,8 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         }).doFinally(signalType -> {
             // OTel: 结束 span
             Object s = exchange.getAttributes().remove(OTEL_SPAN_KEY);
-            if (s != null) {
-                int status = exchange.getResponse().getStatusCode() != null
+            if (Objects.nonNull(s)) {
+                int status = Objects.nonNull(exchange.getResponse().getStatusCode())
                         ? exchange.getResponse().getStatusCode().value() : 200;
                 WebOtelSupport.endServerSpan(s, status);
             }
@@ -107,7 +107,7 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
     private static Map<String, String> extractHeaders(ServerWebExchange exchange) {
         Map<String, String> headers = new HashMap<>();
         exchange.getRequest().getHeaders().forEach((k, v) -> {
-            if (v != null && !v.isEmpty()) {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
                 headers.put(k, v.get(0));
             }
         });

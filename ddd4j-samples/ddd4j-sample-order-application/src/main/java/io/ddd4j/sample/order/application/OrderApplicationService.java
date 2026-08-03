@@ -23,13 +23,21 @@ public class OrderApplicationService {
     private final OutboxPort outbox;
     private final OrderReadModelPort readModels;
     private final IdempotencyPort idempotency;
+    private final OrderTransactionPort transaction;
 
     public OrderApplicationService(OrderRepository repository, OutboxPort outbox,
                                    OrderReadModelPort readModels, IdempotencyPort idempotency) {
+        this(repository, outbox, readModels, idempotency, OrderTransactionPort.noop());
+    }
+
+    public OrderApplicationService(OrderRepository repository, OutboxPort outbox,
+                                   OrderReadModelPort readModels, IdempotencyPort idempotency,
+                                   OrderTransactionPort transaction) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.outbox = Objects.requireNonNull(outbox, "outbox must not be null");
         this.readModels = Objects.requireNonNull(readModels, "readModels must not be null");
         this.idempotency = Objects.requireNonNull(idempotency, "idempotency must not be null");
+        this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
     }
 
     public Order create(CreateOrderCommand command) {
@@ -99,10 +107,12 @@ public class OrderApplicationService {
 
     private void persist(Order order) {
         List<DomainEvent<?>> events = List.copyOf(order.domainEvents());
-        repository.save(order);
-        outbox.append(events.stream().map(event -> new OutboxMessage(UUID.randomUUID().toString(), order.id(),
-                event.getClass().getName(), event, Instant.now())).toList());
-        readModels.project(toReadModel(order));
+        transaction.execute(() -> {
+            repository.save(order);
+            outbox.append(events.stream().map(event -> new OutboxMessage(UUID.randomUUID().toString(), order.id(),
+                    event.getClass().getName(), event, Instant.now())).toList());
+            readModels.project(toReadModel(order));
+        });
         order.clearDomainEvents();
         log.debug("Persisted order {} with {} outbox events", order.id(), events.size());
     }

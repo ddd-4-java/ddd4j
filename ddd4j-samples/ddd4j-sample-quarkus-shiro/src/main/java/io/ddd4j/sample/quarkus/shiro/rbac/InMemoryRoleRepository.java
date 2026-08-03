@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.shiro.rbac;
 
+import java.util.Objects;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.*;
@@ -44,7 +46,7 @@ public class InMemoryRoleRepository {
      * 删除角色。
      */
     public boolean deleteByCode(String code) {
-        return store.remove(code) != null;
+        return Objects.nonNull(store.remove(code));
     }
 
     /**
@@ -52,10 +54,10 @@ public class InMemoryRoleRepository {
      */
     public Role addPermission(String roleCode, String permissionCode) {
         Role role = store.get(roleCode);
-        if (role == null) {
+        if (Objects.isNull(role)) {
             throw new IllegalArgumentException("role not found: " + roleCode);
         }
-        if (role.getPermissionCodes() == null) {
+        if (Objects.isNull(role.getPermissionCodes())) {
             role.setPermissionCodes(new HashSet<>());
         }
         role.getPermissionCodes().add(permissionCode);
@@ -67,10 +69,10 @@ public class InMemoryRoleRepository {
      */
     public Role removePermission(String roleCode, String permissionCode) {
         Role role = store.get(roleCode);
-        if (role == null) {
+        if (Objects.isNull(role)) {
             throw new IllegalArgumentException("role not found: " + roleCode);
         }
-        if (role.getPermissionCodes() != null) {
+        if (Objects.nonNull(role.getPermissionCodes())) {
             role.getPermissionCodes().remove(permissionCode);
         }
         return role;

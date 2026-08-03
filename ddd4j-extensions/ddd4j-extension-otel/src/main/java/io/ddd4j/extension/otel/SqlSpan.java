@@ -6,6 +6,8 @@ import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 
+import java.util.Objects;
+
 /**
  * SQL 执行的 OTel Span 辅助工具。
  *
@@ -44,9 +46,9 @@ public final class SqlSpan {
                 .setSpanKind(SpanKind.CLIENT)
                 .setAttribute(Ddd4jOtel.ATTR_DB_SYSTEM, dbSystem)
                 .startSpan();
-        if (statement != null && statement.length() < 256) {
+        if (Objects.nonNull(statement) && statement.length() < 256) {
             span.setAttribute(Ddd4jOtel.ATTR_DB_STATEMENT, statement);
-        } else if (statement != null) {
+        } else if (Objects.nonNull(statement)) {
             span.setAttribute(Ddd4jOtel.ATTR_DB_STATEMENT, statement.substring(0, 256) + "...");
         }
         try (Scope scope = span.makeCurrent()) {
@@ -73,7 +75,7 @@ public final class SqlSpan {
                 .setSpanKind(SpanKind.CLIENT)
                 .setAttribute(Ddd4jOtel.ATTR_DB_SYSTEM, dbSystem)
                 .startSpan();
-        if (statement != null && statement.length() < 256) {
+        if (Objects.nonNull(statement) && statement.length() < 256) {
             span.setAttribute(Ddd4jOtel.ATTR_DB_STATEMENT, statement);
         }
         try (Scope scope = span.makeCurrent()) {

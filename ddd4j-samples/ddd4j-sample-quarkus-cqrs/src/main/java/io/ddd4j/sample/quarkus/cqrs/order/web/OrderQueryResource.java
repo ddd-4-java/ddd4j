@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import io.ddd4j.sample.quarkus.cqrs.order.cache.OrderCacheService;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.OrderStatus;
@@ -79,7 +81,7 @@ public class OrderQueryResource extends TenantAwareResource {
             return ok(List.of());
         }
         List<Order> orders;
-        if (status != null && !status.isBlank()) {
+        if (StrKit.isNotBlank(status)) {
             OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
             orders = inMemory.findByStatus(orderStatus);
         } else {

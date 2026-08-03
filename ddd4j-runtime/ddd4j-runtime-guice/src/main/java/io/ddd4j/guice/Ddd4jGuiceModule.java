@@ -17,11 +17,14 @@ package io.ddd4j.guice;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
+import com.google.inject.Binding;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import io.ddd4j.core.constant.SpiKeys;
-import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.CommandExecutor;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
@@ -32,6 +35,10 @@ import io.ddd4j.guice.event.GuiceDomainEventPublisher;
 import io.ddd4j.guice.i18n.GuiceI18nProvider;
 import io.ddd4j.guice.subject.GuiceSubjectProvider;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Ddd4j Google Guice 核心模块。
@@ -57,14 +64,13 @@ public class Ddd4jGuiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        // 注册 GuiceContext 初始化
-        bind(GuiceContextInitializer.class).asEagerSingleton();
+        // 启动期注册并托管全局 SPI；应用关闭时可从 Injector 获取后调用 close()。
+        bind(Ddd4jGuiceRuntime.class).asEagerSingleton();
         // 注册 3 个核心 SPI
         bind(DomainEventPublisher.class).to(GuiceDomainEventPublisher.class).in(Singleton.class);
         bind(SubjectProvider.class).to(GuiceSubjectProvider.class).in(Singleton.class);
         bind(I18nProvider.class).to(GuiceI18nProvider.class).in(Singleton.class);
         bind(ProjectionPositionRepository.class).to(InMemoryProjectionPositionRepository.class).in(Singleton.class);
-        bind(ProjectionService.class).to(DefaultProjectionService.class).in(Singleton.class);
         bind(GuiceViewManager.class).in(Singleton.class);
         bind(ViewManager.class).to(GuiceViewManager.class);
         bind(ViewScheduler.class).to(GuiceViewManager.class);
@@ -90,30 +96,35 @@ public class Ddd4jGuiceModule extends AbstractModule {
         return new ProjectionRunner<>(projectionService, new NoopEventChunkReader<>());
     }
 
+    @Provides
+    @Singleton
+    public ProjectionService projectionService(ProjectionPositionRepository repository) {
+        return new DefaultProjectionService(repository);
+    }
+
     /**
-     * GuiceContext 初始化器（Eager Singleton）
-     * <p>
-     * 启动期将 Guice 管理的 SPI 实现注入到 ddd4j 上下文（替代旧的 DomainEvent.registerPublisher 静态注册）：
-     * <ul>
-     *   <li>{@link DomainEventPublisher} → {@link SpiKeys#DOMAIN_EVENT_PUBLISHER}</li>
-     *   <li>{@link SubjectProvider} → {@link SpiKeys#SUBJECT_PROVIDER}</li>
-     *   <li>{@link I18nProvider} → {@link SpiKeys#I18N_PROVIDER}</li>
-     * </ul>
+     * 从当前 Injector 中收集命令执行器，构建与其他运行时一致的命令总线。
      */
-    public static class GuiceContextInitializer {
-        @com.google.inject.Inject
-        public GuiceContextInitializer(Injector injector) {
-            GuiceContext.setInjector(injector);
-
-            // 注册 4 个核心 SPI 到上下文（线程级优先 → 全局兜底）
-            BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
-                    injector.getInstance(DomainEventPublisher.class));
-            BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class,
-                    injector.getInstance(SubjectProvider.class));
-            BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class,
-                    injector.getInstance(I18nProvider.class));
-
-            log.info("GuiceContext and ddd4j SPI services initialized");
+    @Provides
+    @Singleton
+    public CommandBus commandBus(Injector injector) {
+        List<CommandExecutor<?>> executors = new ArrayList<>();
+        for (Binding<?> binding : injector.getAllBindings().values()) {
+            Class<?> rawType = binding.getKey().getTypeLiteral().getRawType();
+            if (!CommandExecutor.class.isAssignableFrom(rawType) || CommandExecutor.class.equals(rawType)) {
+                continue;
+            }
+            CommandExecutor<?> executor = commandExecutor(injector, binding.getKey());
+            if (Objects.nonNull(executor)) {
+                executors.add(executor);
+            }
         }
+        return new DefaultCommandBus(executors);
+    }
+
+    @SuppressWarnings("unchecked")
+    private CommandExecutor<?> commandExecutor(Injector injector, Key<?> key) {
+        Object instance = injector.getInstance((Key<Object>) key);
+        return instance instanceof CommandExecutor<?> executor ? executor : null;
     }
 }

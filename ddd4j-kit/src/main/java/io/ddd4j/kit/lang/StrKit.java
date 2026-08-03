@@ -1455,7 +1455,7 @@ public class StrKit extends StrUtil {
      * @return
      */
     public static String quote(String[] array, String separator) {
-        if (null != array && array.length != 0) {
+        if (Objects.nonNull(array) && array.length != 0) {
             String[] last = new String[array.length];
             for (int i = 0; i < array.length; i++) {
                 last[i] = quote(array[i]);

@@ -35,6 +35,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--
+            Helidon MP 3 的 Jersey/Weld 集成仍依赖 CDI 3 的 @New 类型。
+            显式作为运行时适配器的传递依赖，隔离根目录中 Quarkus 的 CDI 4 管理。
+        -->
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
             <artifactId>microprofile-config-api</artifactId>

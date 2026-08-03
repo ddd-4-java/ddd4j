@@ -95,7 +95,7 @@ public final class Ddd4jJavalinWeb {
     private void completeContext(Context context) {
         // OTel: 结束 span
         Object span = context.attribute(OTEL_SPAN_ATTR);
-        if (span != null) {
+        if (Objects.nonNull(span)) {
             WebOtelSupport.endServerSpan(span, context.statusCode());
         }
         closeContext(context, context.statusCode() < 400);
@@ -108,7 +108,7 @@ public final class Ddd4jJavalinWeb {
         }
         // OTel: 记录异常
         Object span = context.attribute(OTEL_SPAN_ATTR);
-        if (span != null) {
+        if (Objects.nonNull(span)) {
             WebOtelSupport.recordError(span, exception);
             WebOtelSupport.endServerSpan(span, error.status());
         }
@@ -119,7 +119,7 @@ public final class Ddd4jJavalinWeb {
     private static Map<String, String> extractHeaders(Context context) {
         Map<String, String> headers = new HashMap<>();
         context.headerMap().forEach((k, v) -> {
-            if (v != null) {
+            if (Objects.nonNull(v)) {
                 headers.put(k, v);
             }
         });

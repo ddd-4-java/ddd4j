@@ -3,6 +3,8 @@ package io.ddd4j.extension.otel;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 
+import java.util.Objects;
+
 /**
  * 异常的 OTel Span 事件记录工具。
  *
@@ -29,7 +31,7 @@ public final class ExceptionSpan {
      * @param throwable 异常
      */
     public static void record(Throwable throwable) {
-        if (throwable == null || !Ddd4jOtel.isAvailable()) {
+        if (Objects.isNull(throwable) || !Ddd4jOtel.isAvailable()) {
             return;
         }
         try {
@@ -48,7 +50,7 @@ public final class ExceptionSpan {
      * 在指定 Span 上记录异常。
      */
     public static void record(Span span, Throwable throwable) {
-        if (throwable == null || span == null) {
+        if (Objects.isNull(throwable) || Objects.isNull(span)) {
             return;
         }
         span.recordException(throwable);

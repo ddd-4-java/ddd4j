@@ -12,7 +12,7 @@
 
     <artifactId>ddd4j-bom</artifactId>
     <packaging>pom</packaging>
-    <description>Ddd4j Boot BOM (Bill of Materials) - 用于外部项目引用 ddd4j 模块版本管理</description>
+    <description>Ddd4j BOM (Bill of Materials) - 用于外部项目统一管理 ddd4j 模块版本</description>
 
     <dependencyManagement>
         <dependencies>
@@ -146,6 +146,11 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-extension-monitor</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-validation</artifactId>
                 <version>${revision}</version>
             </dependency>
 

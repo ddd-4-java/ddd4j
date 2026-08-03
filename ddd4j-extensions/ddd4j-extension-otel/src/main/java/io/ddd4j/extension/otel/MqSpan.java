@@ -12,6 +12,7 @@ import io.opentelemetry.context.propagation.TextMapSetter;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 消息队列的 OTel Span 辅助工具。
@@ -79,10 +80,10 @@ public final class MqSpan {
      * 完成 CONSUMER span（异常标记）。
      */
     public static void endConsumer(Span span, Throwable error) {
-        if (span == null) {
+        if (Objects.isNull(span)) {
             return;
         }
-        if (error != null) {
+        if (Objects.nonNull(error)) {
             span.recordException(error);
             span.setStatus(StatusCode.ERROR, error.getClass().getSimpleName());
         }
@@ -99,7 +100,7 @@ public final class MqSpan {
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
-            if (carrier != null) {
+            if (Objects.nonNull(carrier)) {
                 carrier.put(key, value);
             }
         }
@@ -108,18 +109,18 @@ public final class MqSpan {
     private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
         @Override
         public Iterable<String> keys(Map<String, String> carrier) {
-            return carrier == null ? Collections.emptyList() : carrier.keySet();
+            return Objects.isNull(carrier) ? Collections.emptyList() : carrier.keySet();
         }
 
         @Override
         public String get(Map<String, String> carrier, String key) {
-            if (carrier == null) {
+            if (Objects.isNull(carrier)) {
                 return null;
             }
             String value = carrier.get(key);
-            if (value == null) {
+            if (Objects.isNull(value)) {
                 for (Map.Entry<String, String> entry : carrier.entrySet()) {
-                    if (entry.getKey() != null && entry.getKey().equalsIgnoreCase(key)) {
+                    if (Objects.nonNull(entry.getKey()) && entry.getKey().equalsIgnoreCase(key)) {
                         return entry.getValue();
                     }
                 }
@@ -129,12 +130,12 @@ public final class MqSpan {
     };
 
     private static void injectContext(Map<String, String> headers) {
-        if (headers == null) {
+        if (Objects.isNull(headers)) {
             return;
         }
         try {
             TextMapPropagator propagator = io.opentelemetry.api.GlobalOpenTelemetry.getPropagators().getTextMapPropagator();
-            if (propagator == null) {
+            if (Objects.isNull(propagator)) {
                 return;
             }
             propagator.inject(Context.current(), headers, SETTER);
@@ -144,12 +145,12 @@ public final class MqSpan {
     }
 
     private static Context extractContext(Map<String, String> headers) {
-        if (headers == null) {
+        if (Objects.isNull(headers)) {
             return Context.current();
         }
         try {
             TextMapPropagator propagator = io.opentelemetry.api.GlobalOpenTelemetry.getPropagators().getTextMapPropagator();
-            if (propagator == null) {
+            if (Objects.isNull(propagator)) {
                 return Context.current();
             }
             return propagator.extract(Context.current(), headers, GETTER);

@@ -12,6 +12,7 @@ import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -70,12 +71,12 @@ public final class Ddd4jOtel {
      */
     public static Tracer tracer() {
         Tracer cached = TRACER_CACHE.get();
-        if (cached != null) {
+        if (Objects.nonNull(cached)) {
             return cached;
         }
         try {
             OpenTelemetry otel = GlobalOpenTelemetry.get();
-            if (otel == null || otel == io.opentelemetry.api.OpenTelemetry.noop()) {
+            if (Objects.isNull(otel) || otel == io.opentelemetry.api.OpenTelemetry.noop()) {
                 available = false;
                 return io.opentelemetry.api.OpenTelemetry.noop().getTracer(TRACER_NAME);
             }
@@ -95,7 +96,7 @@ public final class Ddd4jOtel {
      * @return true 如果 OTel 已配置
      */
     public static boolean isAvailable() {
-        if (TRACER_CACHE.get() != null) {
+        if (Objects.nonNull(TRACER_CACHE.get())) {
             return available;
         }
         tracer();
@@ -110,7 +111,7 @@ public final class Ddd4jOtel {
      * @param span 目标 Span
      */
     public static void enrichWithBusinessContext(Span span) {
-        if (span == null || !span.getSpanContext().isValid()) {
+        if (Objects.isNull(span) || !span.getSpanContext().isValid()) {
             return;
         }
         AttributesBuilderHelper builder = new AttributesBuilderHelper();
@@ -138,19 +139,19 @@ public final class Ddd4jOtel {
 
         void readFromThreadContext() {
             String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
-            if (tenantId != null) {
+            if (Objects.nonNull(tenantId)) {
                 delegate.put(ATTR_TENANT_ID, tenantId);
             }
             try {
                 AuthPrincipal principal = SubjectKit.getPrincipal();
-                if (principal != null) {
-                    if (principal.getUserId() != null) {
+                if (Objects.nonNull(principal)) {
+                    if (Objects.nonNull(principal.getUserId())) {
                         delegate.put(ATTR_USER_ID, String.valueOf(principal.getUserId()));
                     }
-                    if (principal.getLoginId() != null) {
+                    if (Objects.nonNull(principal.getLoginId())) {
                         delegate.put(ATTR_LOGIN_ID, String.valueOf(principal.getLoginId()));
                     }
-                    if (principal.getUserCode() != null) {
+                    if (Objects.nonNull(principal.getUserCode())) {
                         delegate.put(ATTR_USER_CODE, String.valueOf(principal.getUserCode()));
                     }
                 }

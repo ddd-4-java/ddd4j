@@ -1,31 +1,38 @@
-# ddd4j 2.0.x 重构迁移完成报告 (REFACTOR_MIGRATION)
+# ddd4j 2.0.x 重构迁移说明 (REFACTOR_MIGRATION)
 
 > **基线版本：2.0.x.20260630-SNAPSHOT**（feature/2.0.x 分支）
-> 重构时间：2026-06-27
-> 性质：**破坏性变更（Breaking Change）**——已全部完成
+> 初始重构时间：2026-06-27
+> 当前阶段：**源码、契约测试和 CI 接线已收口；本机 Docker 基础设施闭环已通过，等待 CI 首次执行确认**
 
-本文档记录 ddd4j 2.0.x 重构的**最终结构与变更清单**，帮助现有项目理解新架构并迁移到新版本。
+本文档记录 ddd4j 2.0.x 已完成的基础重构与当前整合边界，帮助现有项目理解新架构并迁移到新版本。
 
 ---
 
-## 一、重构目标（已完成）
+## 一、重构目标与当前边界
 
-将 ddd4j 从"Spring 强耦合的单一仓库"重构为"**纯 Java 公共底座 + 三框架运行时绑定层**"，使 `ddd4j-boot`、`ddd4j-quarkus`、
-`ddd4j-javalin` 三个独立脚手架可**自由选择**继承的模块；`ddd4j-runtime-guice` 是 Javalin 侧复用的 Guice 运行时绑定层。
+将 ddd4j 从"Spring 强耦合的单一仓库"重构为"**纯 Java 公共底座 + 多运行时绑定层**"。核心契约不绑定容器，
+由 Spring、Quarkus、Guice、Micronaut、Vert.x、Helidon、Dropwizard 运行时模块负责接线；HTTP 能力由独立 Web
+适配器承载。
 
 **关键原则（已落实）**：
 
 - ✅ 纯 Java 模块（`ddd4j-core`、`ddd4j-core-api` 已合并）pom 中**零** `org.springframework.*` 依赖
 - ✅ ddd4j-mq-core 移除 `spring-context` / `spring-messaging`，统一使用纯 Java `MQMessage` 模型；Spring 消息桥接已迁入
   `ddd4j-mq-spring`
-- ✅ 三框架核心 SPI 全部实现：Spring/Quarkus/Javalin 各 3 个 SPI
+- ✅ 纯 Java 核心契约与 Spring Boot 自动装配解耦
+- ✅ 七类运行时均接入 `ddd4j-runtime-testkit` 共享生命周期契约
+- ✅ 八类 Web 适配器均继承 `ddd4j-web-testkit` 响应、鉴权、租户/Trace、幂等和上下文清理契约
+- ✅ 共享订单已提供 JDBC/PostgreSQL 写侧与读模型、Redis 幂等、Kafka ACK 发布和事务 Outbox；故障时 Outbox 保留消息重试
+- ✅ `ddd4j` 本体已移除 Spring Boot 依赖、自动装配资源与 Boot 样例；Boot 接线和共享订单 Boot 样例位于外部 `ddd4j-boot`
+- ✅ GitHub Actions 已配置 BOM、Java 规范、全量单元/契约测试，并在 Docker Job 中执行 PostgreSQL/Redis/Kafka Testcontainers
+- ✅ 本机 Docker Desktop 已通过 PostgreSQL、Redis、Kafka Testcontainers 订单 Outbox 闭环；CI Docker Job 保留相同验证，等待首次远端执行确认
 
 ---
 
-## 二、最终模块结构（2.0.x 完成态）
+## 二、当前模块结构（2.0.x）
 
 ```
-ddd4j/                                                    # 平铺式纯 Java 公共底座 + 三框架运行时绑定
+ddd4j/                                                    # 平铺式纯 Java 公共底座 + 多运行时绑定
 ├── 工程治理（根目录平铺）
 │   ├── ddd4j-bom                                        # BOM
 │   ├── ddd4j-dependencies                               # 依赖版本
@@ -37,11 +44,11 @@ ddd4j/                                                    # 平铺式纯 Java �
 │   ├── ddd4j-kit                                        # ⭐ 收编 ddd4j-core 14 个工具类（JsonKit/DateKit 等）
 │   └── ddd4j-ddd-rules                                        # DDD 架构规范（ArchUnit 增强：Clean + COLA）
 │
-├── 三框架运行时绑定（聚合模块）
+├── 多运行时绑定（聚合模块）
 │   └── ddd4j-runtime/
-│       ├── ddd4j-runtime-spring                         # Spring 框架运行时绑定（27 java，3 SPI + 工具类）
-│       ├── ddd4j-runtime-quarkus                        # Quarkus CDI 桥接（核心 SPI + CQRS/EventStore）
-│       └── ddd4j-runtime-guice                          # Guice 桥接（Javalin 侧复用）
+│       ├── ddd4j-runtime-testkit                        # 运行时生命周期共享契约
+│       ├── ddd4j-runtime-spring / quarkus / guice       # 既有主运行时绑定
+│       └── ddd4j-runtime-micronaut / vertx / helidon / dropwizard
 │
 ├── 业务模块聚合（pom 模块）
 │   ├── ddd4j-data/                                      # 数据抽象（6 子模块，无空壳）
@@ -61,12 +68,12 @@ ddd4j/                                                    # 平铺式纯 Java �
 │   │   ├── ddd4j-mq-nats                                # NATS JetStream 实现
 │   │   └── ddd4j-mq-disruptor                           # LMAX Disruptor 本地 MQ 实现
 │   │
-│   ├── ddd4j-web/                                       # Web 抽象（4 子模块：javalin/quarkus/webmvc/webflux）
+│   ├── ddd4j-web/                                       # Web Core + 8 适配器（MVC/WebFlux/Javalin/Quarkus/Micronaut/Vert.x/Helidon/Dropwizard）
 │   └── ddd4j-auth/                                      # 认证抽象（satoken/security/shiro/spring）
 │
 ├── ddd4j-cache                                          # 缓存抽象及多实现
 ├── ddd4j-extensions                                     # 7 子模块（akka/excel/jackson/monitor/pf4j/qlexpress/validation）
-└── ddd4j-samples                                        # Spring/Quarkus/Javalin 三运行时 DDD、CQRS、Auth 示例矩阵
+└── ddd4j-samples                                        # 共享 Order 内核 + Quarkus/Javalin/Micronaut/Vert.x/Helidon/Dropwizard 示例
 ```
 
 ---
@@ -185,11 +192,12 @@ mvn test  # 违反规则 → JUnit 失败 → 构建失败
 
 ---
 
-## 五、版本号与发版建议
+## 五、版本号与发版门槛
 
 - `io.ddd4j:ddd4j-parent` → `2.0.x`（保持）
 - `io.ddd4j:ddd4j` → `2.0.x`
-- 破坏性变更清单已通过 PR1-PR6 完成，**可直接发版** `2.0.x-RELEASE`
+- 破坏性变更清单、运行时/Web 契约和 Java 17 单元测试均已收口
+- 发出 `2.0.x-RELEASE` 前，必须在 Docker 可用 CI 环境确认 PostgreSQL、Redis、Kafka 的订单 Outbox Testcontainers Job 通过
 
 ---
 
@@ -205,7 +213,9 @@ mvn test  # 违反规则 → JUnit 失败 → 构建失败
 | PR6-A | 14 个工具类收编到 ddd4j-kit              | ✅  |
 | PR6-B | 清理 git 工作树（116 文件）                | ✅  |
 | PR6-C | 更新本文档                             | ✅  |
+| PR7   | 七 Runtime、八 Web Contract 与共享 Order 生产接线 | ✅  |
+| PR8   | PostgreSQL / Redis / Kafka Testcontainers 真实 Docker 执行 | ✅ 本机已验；CI Job 已配置 |
 
 ---
 
-**文档结束**。所有迁移工作已完成，可发版。
+**文档结束**。2.0.x 的代码与契约收口已完成；首次 CI Docker 验证通过后方可宣布生产就绪并发版。

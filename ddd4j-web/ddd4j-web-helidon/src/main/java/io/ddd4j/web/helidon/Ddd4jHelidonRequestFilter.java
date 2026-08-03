@@ -94,7 +94,7 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
         Map<String, String> headers = new HashMap<>();
         request.getHeaders().forEach((k, v) -> {
-            if (v != null && !v.isEmpty()) {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
                 headers.put(k, v.get(0));
             }
         });

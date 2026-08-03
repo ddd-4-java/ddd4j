@@ -246,7 +246,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 ## 8. 相关项目
 
 - [`ddd4j-sample-quarkus`](../ddd4j-sample-quarkus) — Quarkus 启动示例（演示 4 核心 SPI 与基础装配，非 CQRS）
-- [`ddd4j-sample-spring-cqrs`](../ddd4j-sample-spring-cqrs) — 同 CQRS 思路在 Spring 平台
+- 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order` — Spring Boot CQRS 对照
 - [`ddd4j-sample-javalin-cqrs`](../ddd4j-sample-javalin-cqrs) — 同 CQRS 思路在 Javalin 平台
 
 ---

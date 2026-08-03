@@ -1,8 +1,13 @@
 package io.ddd4j.sample.order.testkit;
 
+import io.ddd4j.sample.order.application.CreateOrderCommand;
+import io.ddd4j.sample.order.application.OrderApplicationService;
+import io.ddd4j.sample.order.application.OrderTransactionPort;
+import io.ddd4j.sample.order.application.OutboxDispatchResult;
 import io.ddd4j.sample.order.application.OutboxPublisher;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderStatus;
+import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,6 +40,22 @@ class OrderApplicationContractTest {
     }
 
     @Test
+    void shouldKeepFailedOutboxMessageForRetry() {
+        OrderScenario scenario = new OrderScenario();
+        scenario.application().create(new CreateOrderCommand("ORDER-RETRY", "buyer-retry", "Morgan"));
+        OutboxPublisher publisher = new OutboxPublisher(scenario.adapters(), message -> {
+            throw new IllegalStateException("Kafka is unavailable");
+        });
+
+        OutboxDispatchResult result = publisher.dispatchPending(10);
+
+        assertEquals(1, result.attempted());
+        assertEquals(0, result.published());
+        assertEquals(1, result.failed());
+        assertEquals(1, scenario.adapters().pending(10).size());
+    }
+
+    @Test
     void shouldMakePaymentIdempotent() {
         OrderScenario scenario = new OrderScenario();
         Order paid = scenario.paidOrder("ORDER-003");
@@ -43,5 +64,22 @@ class OrderApplicationContractTest {
 
         assertEquals(OrderStatus.PAID, duplicate.status());
         assertEquals(3, scenario.adapters().pending(10).size());
+    }
+
+    @Test
+    void shouldPersistOrderAndOutboxWithinTransactionBoundary() {
+        InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
+        AtomicInteger transactions = new AtomicInteger();
+        OrderTransactionPort transaction = operation -> {
+            transactions.incrementAndGet();
+            operation.run();
+        };
+        OrderApplicationService application = new OrderApplicationService(
+                adapters, adapters, adapters, adapters, transaction);
+
+        application.create(new CreateOrderCommand("ORDER-004", "buyer-4", "Taylor"));
+
+        assertEquals(1, transactions.get());
+        assertEquals(1, adapters.pending(10).size());
     }
 }

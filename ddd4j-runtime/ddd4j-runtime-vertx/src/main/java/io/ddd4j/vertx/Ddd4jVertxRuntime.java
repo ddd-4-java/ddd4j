@@ -11,6 +11,7 @@ import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.util.SubjectKitRegistrationScope;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
@@ -26,6 +27,7 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
 
     private final Vertx vertx;
     private final SpiRegistrationScope registrations;
+    private final SubjectKitRegistrationScope subjectRegistration;
 
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                             I18nProvider i18nProvider, CommandBus commandBus) {
@@ -35,6 +37,7 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
                 .register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider)
                 .register(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider)
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class, commandBus);
+        this.subjectRegistration = new SubjectKitRegistrationScope(subjectProvider);
     }
 
     public static Ddd4jVertxRuntime create(Vertx vertx, Collection<CommandExecutor<?>> executors) {
@@ -46,6 +49,7 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
 
     public void start() {
         registrations.start();
+        subjectRegistration.start();
     }
 
     public <T> Future<T> executeBlocking(Callable<T> task) {
@@ -60,6 +64,7 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
 
     @Override
     public void close() {
+        subjectRegistration.close();
         registrations.close();
     }
 }

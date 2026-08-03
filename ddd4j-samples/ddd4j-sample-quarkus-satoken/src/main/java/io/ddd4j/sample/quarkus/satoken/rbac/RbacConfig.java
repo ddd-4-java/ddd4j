@@ -1,5 +1,9 @@
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
+import io.ddd4j.kit.lang.CollKit;
+
+import java.util.Objects;
+
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
@@ -93,7 +97,7 @@ public class RbacConfig {
         return new SubjectDataProvider() {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
-                if (principal == null || principal.getUserId() == null) {
+                if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
                     return List.of();
                 }
                 String userId = String.valueOf(principal.getUserId());
@@ -104,7 +108,7 @@ public class RbacConfig {
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
-                if (principal == null || principal.getUserId() == null) {
+                if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
                     return List.of();
                 }
                 String userId = String.valueOf(principal.getUserId());
@@ -119,14 +123,14 @@ public class RbacConfig {
      * 聚合多角色下的全部权限编码（去重）。
      */
     private List<String> aggregatePermissions(Set<String> roleCodes) {
-        if (roleCodes == null || roleCodes.isEmpty()) {
+        if (CollKit.isEmpty(roleCodes)) {
             return List.of();
         }
         Set<String> aggregated = new HashSet<>();
         for (String roleCode : roleCodes) {
             roleRepository.findByCode(roleCode)
                     .ifPresent(role -> {
-                        if (role.getPermissionCodes() != null) {
+                        if (Objects.nonNull(role.getPermissionCodes())) {
                             aggregated.addAll(role.getPermissionCodes());
                         }
                     });

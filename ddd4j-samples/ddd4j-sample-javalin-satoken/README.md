@@ -189,7 +189,7 @@ curl 'http://localhost:8085/api/goods/page?current=1&size=10&status=ON_SALE&orde
 ### 🔗 相关示例
 
 - 同一框架的其他认证方案：`ddd4j-sample-javalin-shiro`
-- 其他框架的同认证方案：`ddd4j-sample-spring-satoken`、`ddd4j-sample-quarkus-satoken`
+- 其他框架的同认证方案：外部 `ddd4j-boot-sample-auth-satoken`、`ddd4j-sample-quarkus-satoken`
 - 核心 DDD 示例：`ddd4j-sample-javalin`
 
 ### 📄 相关文档

@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
+import java.util.Objects;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.*;
@@ -37,7 +39,7 @@ public class InMemoryUserRepository {
      * 按登录名查询。
      */
     public Optional<User> findByUsername(String username) {
-        if (username == null) {
+        if (Objects.isNull(username)) {
             return Optional.empty();
         }
         return store.values().stream()
@@ -56,7 +58,7 @@ public class InMemoryUserRepository {
      * 删除用户。
      */
     public boolean deleteById(String id) {
-        return store.remove(id) != null;
+        return Objects.nonNull(store.remove(id));
     }
 
     /**
@@ -64,10 +66,10 @@ public class InMemoryUserRepository {
      */
     public User addRole(String userId, String roleCode) {
         User user = store.get(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new IllegalArgumentException("user not found: " + userId);
         }
-        if (user.getRoleCodes() == null) {
+        if (Objects.isNull(user.getRoleCodes())) {
             user.setRoleCodes(new HashSet<>());
         }
         user.getRoleCodes().add(roleCode);
@@ -79,10 +81,10 @@ public class InMemoryUserRepository {
      */
     public User removeRole(String userId, String roleCode) {
         User user = store.get(userId);
-        if (user == null) {
+        if (Objects.isNull(user)) {
             throw new IllegalArgumentException("user not found: " + userId);
         }
-        if (user.getRoleCodes() != null) {
+        if (Objects.nonNull(user.getRoleCodes())) {
             user.getRoleCodes().remove(roleCode);
         }
         return user;
@@ -95,7 +97,7 @@ public class InMemoryUserRepository {
         List<User> result = new ArrayList<>();
         for (User user : store.values()) {
             Set<String> codes = user.getRoleCodes();
-            if (codes != null && codes.contains(roleCode)) {
+            if (Objects.nonNull(codes) && codes.contains(roleCode)) {
                 result.add(user);
             }
         }

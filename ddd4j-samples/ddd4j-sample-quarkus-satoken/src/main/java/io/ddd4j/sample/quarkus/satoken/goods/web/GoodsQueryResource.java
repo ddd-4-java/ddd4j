@@ -1,5 +1,9 @@
 package io.ddd4j.sample.quarkus.satoken.goods.web;
 
+import io.ddd4j.kit.lang.StrKit;
+
+import java.util.Objects;
+
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.satoken.goods.application.GoodsApplicationService;
@@ -82,10 +86,10 @@ public class GoodsQueryResource {
     private GoodsQuery buildQuery(Long current, Long size, String code, String nameLike, String status,
                                   BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
         GoodsQuery query = new GoodsQuery();
-        if (current != null) {
+        if (Objects.nonNull(current)) {
             query.setCurrent(current);
         }
-        if (size != null) {
+        if (Objects.nonNull(size)) {
             query.setSize(size);
         }
         query.setCode(code);
@@ -98,7 +102,7 @@ public class GoodsQueryResource {
     }
 
     private io.ddd4j.sample.quarkus.satoken.goods.domain.GoodsStatus parseStatus(String status) {
-        if (status == null || status.isBlank()) {
+        if (StrKit.isBlank(status)) {
             return null;
         }
         return io.ddd4j.sample.quarkus.satoken.goods.domain.GoodsStatus.valueOf(status.toUpperCase());

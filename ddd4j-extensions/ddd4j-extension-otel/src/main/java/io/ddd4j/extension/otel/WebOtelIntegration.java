@@ -6,6 +6,7 @@ import io.opentelemetry.context.Scope;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 8 个 web 框架的统一 OTel 入口点（Web 框架集成点 #1）。
@@ -59,7 +60,7 @@ public final class WebOtelIntegration {
         if (!Ddd4jOtel.isAvailable()) {
             return io.opentelemetry.api.trace.Span.getInvalid();
         }
-        Context parent = HttpSpan.extractContext(headers == null ? new HashMap<>() : headers);
+        Context parent = HttpSpan.extractContext(Objects.isNull(headers) ? new HashMap<>() : headers);
         return HttpSpan.serverSpan(method, route, parent);
     }
 
@@ -95,6 +96,6 @@ public final class WebOtelIntegration {
      * 通用 helper：从 HttpHeaders 风格（Map）提取。
      */
     public static Map<String, String> asHeaders(Map<String, String> headers) {
-        return headers == null ? new HashMap<>() : new HashMap<>(headers);
+        return Objects.isNull(headers) ? new HashMap<>() : new HashMap<>(headers);
     }
 }

@@ -1,6 +1,7 @@
 package io.ddd4j.quarkus.command;
 
 import io.ddd4j.core.cqrs.command.Command;
+import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
 import io.quarkus.runtime.StartupEvent;
@@ -26,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @ApplicationScoped
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class QuarkusCommandBus {
+public class QuarkusCommandBus implements CommandBus {
 
     /**
      * 命令类型到执行器的路由映射
@@ -66,6 +67,7 @@ public class QuarkusCommandBus {
      * @param <R>     结果类型
      * @return 执行结果
      */
+    @Override
     public <R> Result<R> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");

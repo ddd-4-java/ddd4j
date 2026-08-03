@@ -47,7 +47,7 @@ public class GuiceContext {
     /**
      * 初始化等待信号
      */
-    private static final CountDownLatch INIT_SIGNAL = new CountDownLatch(1);
+    private static volatile CountDownLatch initSignal = new CountDownLatch(1);
     /**
      * 自定义属性存储
      */
@@ -66,7 +66,7 @@ public class GuiceContext {
     public static Injector getInjector() {
         if (Objects.isNull(injector)) {
             try {
-                INIT_SIGNAL.await();
+                initSignal.await();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new IllegalStateException("Interrupted while waiting for GuiceContext initialization", e);
@@ -83,7 +83,7 @@ public class GuiceContext {
             log.warn("GuiceContext already initialized, overwriting existing Injector");
         }
         injector = inj;
-        INIT_SIGNAL.countDown();
+        initSignal.countDown();
         log.info("GuiceContext initialized with Injector: {}", inj);
     }
 
@@ -177,6 +177,15 @@ public class GuiceContext {
      */
     public static boolean isInitialized() {
         return Objects.nonNull(injector);
+    }
+
+    /**
+     * 清理全局 Injector 与运行期属性，供运行时关闭和测试隔离使用。
+     */
+    public static synchronized void clear() {
+        injector = null;
+        ATTRIBUTES.clear();
+        initSignal = new CountDownLatch(1);
     }
 
     /**

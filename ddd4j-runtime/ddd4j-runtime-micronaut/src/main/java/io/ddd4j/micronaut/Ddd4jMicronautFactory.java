@@ -46,9 +46,13 @@ public class Ddd4jMicronautFactory {
         return new DefaultCommandBus(executors);
     }
 
+    @Singleton
     @Context
     Ddd4jMicronautRuntime runtime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                   I18nProvider i18nProvider, CommandBus commandBus) {
-        return new Ddd4jMicronautRuntime(publisher, subjectProvider, i18nProvider, commandBus);
+        Ddd4jMicronautRuntime runtime = new Ddd4jMicronautRuntime(publisher, subjectProvider,
+                i18nProvider, commandBus);
+        runtime.start();
+        return runtime;
     }
 }

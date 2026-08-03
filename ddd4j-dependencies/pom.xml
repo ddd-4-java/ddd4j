@@ -901,14 +901,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.glassfish.jersey/jersey-bom -->
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jooq/jooq-bom -->
             <dependency>
                 <groupId>org.jooq</groupId>
@@ -8347,8 +8339,19 @@
                 <artifactId>milvus-sdk-java</artifactId>
                 <version>${milvus.version}</version>
             </dependency>
+            <!--
+                Hadoop 3.5.0 的 BOM 会在其后覆盖 Jersey 为 2.46（javax 基线）。
+                ddd4j 的通用 Jakarta 基线固定为 3.1.11；Helidon 模块在自身 POM 中
+                显式回退到其 3.0.18 兼容基线，避免跨运行时混用。
+            -->
+            <dependency>
+                <groupId>org.glassfish.jersey</groupId>
+                <artifactId>jersey-bom</artifactId>
+                <version>${jersey.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
-
     </dependencyManagement>
 
     <dependencies>

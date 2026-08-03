@@ -250,11 +250,10 @@ ddd4j-sample-javalin/
 
 | 示例                                                              | 演示内容                                  |
 |-----------------------------------------------------------------|---------------------------------------|
-| [ddd4j-sample-spring](../ddd4j-sample-spring)                   | Spring Boot 完整业务（含 DDD/CQRS/Cache/MQ） |
+| 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order`               | Spring Boot 共享 Order 应用（DDD/CQRS/Bearer/幂等） |
 | [ddd4j-sample-quarkus](../ddd4j-sample-quarkus)                 | Quarkus 完整业务（CDI 启动期注入 SPI）           |
 | [ddd4j-sample-javalin-satoken](../ddd4j-sample-javalin-satoken) | Javalin + Sa-Token 鉴权                 |
 | [ddd4j-sample-javalin-shiro](../ddd4j-sample-javalin-shiro)     | Javalin + Shiro 鉴权                    |
-| [ddd4j-sample-spring-cqrs](../ddd4j-sample-spring-cqrs)         | Spring CQRS 对照示例                      |
 | [ddd4j-sample-javalin-cqrs](../ddd4j-sample-javalin-cqrs)       | Javalin CQRS 对照示例                     |
 
 ## 📄 相关文档

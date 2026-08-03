@@ -1,5 +1,9 @@
 package io.ddd4j.sample.quarkus.cqrs.cache;
 
+import io.ddd4j.kit.lang.StrKit;
+
+import java.util.Objects;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.repository.OrderRepository;
@@ -112,7 +116,7 @@ public class OrderCacheService {
      * @return 订单（缓存命中或实时查询）
      */
     public Optional<Order> getOrderDetail(String orderId) {
-        if (orderId == null || orderId.isBlank()) {
+        if (StrKit.isBlank(orderId)) {
             return Optional.empty();
         }
         Object cached = CacheKit.get(BIZ_ORDER_DETAIL, orderId);
@@ -132,7 +136,7 @@ public class OrderCacheService {
      * @param order 订单聚合
      */
     public void putOrder(Order order) {
-        if (order == null) {
+        if (Objects.isNull(order)) {
             return;
         }
         CacheKit.put(BIZ_ORDER_DETAIL, order.id(), order);

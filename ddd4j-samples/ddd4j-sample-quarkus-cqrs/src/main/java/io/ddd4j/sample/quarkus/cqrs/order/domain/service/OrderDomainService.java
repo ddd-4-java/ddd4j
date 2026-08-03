@@ -1,5 +1,7 @@
 package io.ddd4j.sample.quarkus.cqrs.order.domain.service;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -61,7 +63,7 @@ public class OrderDomainService {
      * @return 被取消的订单数量
      */
     public int cancelAllDraftsOf(String buyerId) {
-        if (buyerId == null || buyerId.isBlank()) {
+        if (StrKit.isBlank(buyerId)) {
             throw new IllegalArgumentException(i18nProvider.getMessage("order.error.buyerIdRequired"));
         }
         // 演示：在 Quarkus 中如何同时获取领域接口与具体实现

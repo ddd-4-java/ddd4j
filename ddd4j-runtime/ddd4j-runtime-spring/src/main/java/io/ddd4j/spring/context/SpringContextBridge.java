@@ -16,14 +16,16 @@
 package io.ddd4j.spring.context;
 
 import io.ddd4j.core.constant.SpiKeys;
-import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
+import io.ddd4j.core.context.SpiRegistrationScope;
+import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKit;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -48,7 +50,7 @@ import java.util.Objects;
 @Slf4j
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 100)
-public class SpringContextBridge implements ApplicationListener<ContextRefreshedEvent> {
+public class SpringContextBridge implements ApplicationListener<ContextRefreshedEvent>, DisposableBean {
 
     /**
      * 领域事件发布器提供者
@@ -66,48 +68,97 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
      * 国际化提供者
      */
     private final ObjectProvider<I18nProvider> i18nProviderProvider;
+    /**
+     * 命令总线提供者
+     */
+    private final ObjectProvider<CommandBus> commandBusProvider;
+    private SpiRegistrationScope registrationScope;
+    private SubjectProvider registeredSubjectProvider;
+    private SubjectDataProvider registeredSubjectDataProvider;
+    private SubjectProvider previousSubjectProvider;
+    private SubjectDataProvider previousSubjectDataProvider;
 
     public SpringContextBridge(
             ObjectProvider<DomainEventPublisher> domainEventPublisherProvider,
             ObjectProvider<SubjectProvider> subjectProviderProvider,
             ObjectProvider<SubjectDataProvider> subjectDataProviderProvider,
-            ObjectProvider<I18nProvider> i18nProviderProvider) {
+            ObjectProvider<I18nProvider> i18nProviderProvider,
+            ObjectProvider<CommandBus> commandBusProvider) {
         this.domainEventPublisherProvider = domainEventPublisherProvider;
         this.subjectProviderProvider = subjectProviderProvider;
         this.subjectDataProviderProvider = subjectDataProviderProvider;
         this.i18nProviderProvider = i18nProviderProvider;
+        this.commandBusProvider = commandBusProvider;
     }
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        // DomainEventPublisher（必需）
+    public synchronized void onApplicationEvent(ContextRefreshedEvent event) {
+        if (Objects.nonNull(registrationScope)) {
+            return;
+        }
+
+        SpiRegistrationScope scope = new SpiRegistrationScope();
         DomainEventPublisher domainPublisher = domainEventPublisherProvider.getIfAvailable();
         if (Objects.nonNull(domainPublisher)) {
-            BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, domainPublisher);
+            scope.register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, domainPublisher);
         } else {
             log.warn("No DomainEventPublisher bean found. DomainEvent.publish() will fail.");
         }
 
-        // SubjectProvider（可选）
         SubjectProvider subjectProvider = subjectProviderProvider.getIfAvailable();
         if (Objects.nonNull(subjectProvider)) {
-            BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider);
-            // SubjectKit is the legacy-compatible static facade used by the auth adapters.
-            // Keep it synchronized with the context registry until the facade itself is
-            // migrated to Contexts lookup.
-            SubjectKit.register(subjectProvider);
+            scope.register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider);
         }
 
         SubjectDataProvider subjectDataProvider = subjectDataProviderProvider.getIfAvailable();
-        if (Objects.nonNull(subjectDataProvider)) {
-            SubjectKit.setDataProvider(subjectDataProvider);
-        }
-
-        // I18nProvider（可选）
         I18nProvider i18nProvider = i18nProviderProvider.getIfAvailable();
         if (Objects.nonNull(i18nProvider)) {
-            BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider);
+            scope.register(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider);
         }
 
+        CommandBus commandBus = commandBusProvider.getIfAvailable();
+        if (Objects.nonNull(commandBus)) {
+            scope.register(SpiKeys.COMMAND_BUS, CommandBus.class, commandBus);
+        }
+
+        scope.start();
+        registrationScope = scope;
+        registerLegacySubjectFacade(subjectProvider, subjectDataProvider);
+        log.info("Spring ddd4j SPI services initialized");
+    }
+
+    @Override
+    public synchronized void destroy() {
+        if (Objects.nonNull(registrationScope)) {
+            registrationScope.close();
+            registrationScope = null;
+        }
+        restoreLegacySubjectFacade();
+    }
+
+    private void registerLegacySubjectFacade(SubjectProvider subjectProvider, SubjectDataProvider subjectDataProvider) {
+        if (Objects.nonNull(subjectProvider)) {
+            previousSubjectProvider = SubjectKit.subjectProvider;
+            registeredSubjectProvider = subjectProvider;
+            SubjectKit.register(subjectProvider);
+        }
+        if (Objects.nonNull(subjectDataProvider)) {
+            previousSubjectDataProvider = SubjectKit.dataProvider;
+            registeredSubjectDataProvider = subjectDataProvider;
+            SubjectKit.setDataProvider(subjectDataProvider);
+        }
+    }
+
+    private void restoreLegacySubjectFacade() {
+        if (Objects.equals(SubjectKit.subjectProvider, registeredSubjectProvider)) {
+            SubjectKit.register(previousSubjectProvider);
+        }
+        if (Objects.equals(SubjectKit.dataProvider, registeredSubjectDataProvider)) {
+            SubjectKit.setDataProvider(previousSubjectDataProvider);
+        }
+        registeredSubjectProvider = null;
+        registeredSubjectDataProvider = null;
+        previousSubjectProvider = null;
+        previousSubjectDataProvider = null;
     }
 }
