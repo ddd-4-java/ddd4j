@@ -15,10 +15,19 @@
     <description>Ddd4j Boot Dependencies</description>
 
     <properties>
+        <!-- ArchUnit：分层约束验证（ddd4j-ddd-rules 模块用） -->
+        <!-- ASM：统一 Jetty/Quarkus 测试类路径，避免旧版 Handle 覆盖新版 API -->
+        <!-- source: ddd4j 脚手架 P0-1 补齐：动态多数据源切换 -->
+        <!-- Micronaut Platform 4.10.17 管理的核心组件版本，供 javac 注解处理器使用。 -->
+        <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
+        <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
+        <!-- Maven Plugin versions -->
+        <ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
+        <UserAgentUtils.version>1.21</UserAgentUtils.version>
         <activation.version>1.1.1</activation.version>
         <activemq.version>6.2.0</activemq.version>
-        <akka.version>2.8.8</akka.version>
         <akka-http.version>10.5.3</akka-http.version>
+        <akka.version>2.8.8</akka.version>
         <alipay-easysdk.version>2.2.3</alipay-easysdk.version>
         <alipay-sdk.version>4.40.865.ALL</alipay-sdk.version>
         <aliyun-cloud-auth20190307.version>3.13.3</aliyun-cloud-auth20190307.version>
@@ -31,17 +40,15 @@
         <aliyun-sdk-oss.version>3.18.5</aliyun-sdk-oss.version>
         <angus-mail.version>2.0.5</angus-mail.version>
         <ant-jsch.version>1.10.17</ant-jsch.version>
-        <antlr.version>${antlr4.version}</antlr.version>
-        <antlr4.version>4.13.2</antlr4.version>
         <antlr-runtime.version>3.5.3</antlr-runtime.version>
         <antlr-st4.version>4.3.4</antlr-st4.version>
+        <antlr.version>${antlr4.version}</antlr.version>
+        <antlr4.version>4.13.2</antlr4.version>
         <anyline.version>8.7.5-20260618</anyline.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <appium.version>10.1.1</appium.version>
-        <!-- ArchUnit：分层约束验证（ddd4j-ddd-rules 模块用） -->
         <archunit.version>1.4.2</archunit.version>
         <artemis.version>2.44.0</artemis.version>
-        <!-- ASM：统一 Jetty/Quarkus 测试类路径，避免旧版 Handle 覆盖新版 API -->
         <asm.version>9.10.1</asm.version>
         <asmsupport.version>0.4.3</asmsupport.version>
         <aspectj.version>1.9.25.1</aspectj.version>
@@ -53,15 +60,15 @@
         <aws-java-sdk.version>1.12.797</aws-java-sdk.version>
         <awssdk.version>2.30.0</awssdk.version>
         <axiom.version>2.0.0</axiom.version>
-        <axis.version>1.4</axis.version>
-        <axis2.version>1.8.2</axis2.version>
-        <axis2-api.version>1.4.1</axis2-api.version>
-        <axis2-jaxbri.version>1.7.9</axis2-jaxbri.version>
         <axis-schema.version>1.3</axis-schema.version>
         <axis-wsdl4j.version>1.5.1</axis-wsdl4j.version>
+        <axis.version>1.4</axis.version>
+        <axis2-api.version>1.4.1</axis2-api.version>
+        <axis2-jaxbri.version>1.7.9</axis2-jaxbri.version>
+        <axis2.version>1.8.2</axis2.version>
         <azure-ai-openai.version>1.0.0-beta.16</azure-ai-openai.version>
-        <batik.version>1.19</batik.version>
         <batik-js.version>1.8</batik-js.version>
+        <batik.version>1.19</batik.version>
         <bcmail.version>${bcprov.version}</bcmail.version>
         <bcpg.version>${bcprov.version}</bcpg.version>
         <bcpkix.version>${bcprov.version}</bcpkix.version>
@@ -85,10 +92,10 @@
         <classmate.version>1.7.1</classmate.version>
         <clickhouse.version>0.9.8</clickhouse.version>
         <cola.version>5.0.0</cola.version>
-        <commons-attributes.version>2.2</commons-attributes.version>
         <commons-attributes-api.version>2.2</commons-attributes-api.version>
         <commons-attributes-compiler.version>2.2</commons-attributes-compiler.version>
         <commons-attributes-plugin.version>2.2</commons-attributes-plugin.version>
+        <commons-attributes.version>2.2</commons-attributes.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-betwixt.version>0.8</commons-betwixt.version>
         <commons-chain.version>1.2</commons-chain.version>
@@ -143,37 +150,113 @@
         <cronet.version>119.6045.31</cronet.version>
         <cssparser.version>0.9.30</cssparser.version>
         <curator.version>5.9.0</curator.version>
-        <cxf.version>4.2.2</cxf.version>
         <cxf-rt-javassist.version>4.0.x.20241003.RELEASE</cxf-rt-javassist.version>
-        <db2jcc.version>12.1.5.0</db2jcc.version>
+        <cxf.version>4.2.2</cxf.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
+        <db2jcc.version>12.1.5.0</db2jcc.version>
         <debezium.version>3.6.0.Final</debezium.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
-        <derby.version>10.17.1.0</derby.version>
         <derby-locale.version>${derby.version}</derby-locale.version>
+        <derby.version>10.17.1.0</derby.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
         <disruptor.version>4.0.0</disruptor.version>
         <docker-client.version>8.16.0</docker-client.version>
         <docker-java.version>3.7.1</docker-java.version>
-        <docx4j.version>11.5.14</docx4j.version>
         <docx4j-template.version>1.0.1.RELEASE</docx4j-template.version>
+        <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
-        <dozer.version>5.5.1</dozer.version>
         <dozer-core.version>7.0.0</dozer-core.version>
         <dozer-extra-converters.version>7.0.x.20241003.RELEASE</dozer-extra-converters.version>
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
+        <dozer.version>5.5.1</dozer.version>
         <dropwizard-bom.version>5.0.2</dropwizard-bom.version>
-        <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
-        <druid.version>1.2.28</druid.version>
+        <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
         <druid-metrics.version>1.0.2.RELEASE</druid-metrics.version>
+        <druid.version>1.2.28</druid.version>
         <dubbo.version>3.3.6</dubbo.version>
-        <!-- source: ddd4j 脚手架 P0-1 补齐：动态多数据源切换 -->
         <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
         <dynamic-tp.version>1.2.2-x</dynamic-tp.version>
         <easy-captcha.version>1.0.2</easy-captcha.version>
+        <easy4j-agora-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-agora-java-sdk.version>
+        <easy4j-calibre-invoker.version>3.0.x.20260630-SNAPSHOT</easy4j-calibre-invoker.version>
+        <easy4j-canal-client-plus-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-canal-client-plus-sdk.version>
+        <easy4j-claudecode-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-claudecode-java-sdk.version>
+        <easy4j-codex-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-codex-java-sdk.version>
+        <easy4j-cos.version>3.0.x.20260630-SNAPSHOT</easy4j-cos.version>
+        <easy4j-cxf-rt-bytebuddy.version>3.0.x.20260630-SNAPSHOT</easy4j-cxf-rt-bytebuddy.version>
+        <easy4j-cxf-rt-javassist.version>3.0.x.20260630-SNAPSHOT</easy4j-cxf-rt-javassist.version>
+        <easy4j-dingtalk-sdk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-dingtalk-sdk-extension.version>
+        <easy4j-disruptor-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-disruptor-biz.version>
+        <easy4j-disruptor-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-disruptor-extension.version>
+        <easy4j-dozer-extra-converters.version>3.0.x.20260630-SNAPSHOT</easy4j-dozer-extra-converters.version>
+        <easy4j-dreamina-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-dreamina-java-sdk.version>
+        <easy4j-easydoc.version>3.0.x.20260630-SNAPSHOT</easy4j-easydoc.version>
+        <easy4j-easypdf.version>3.0.x.20260630-SNAPSHOT</easy4j-easypdf.version>
+        <easy4j-faceplusplus-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-faceplusplus-java-sdk.version>
+        <easy4j-fetion4j-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-fetion4j-sdk.version>
+        <easy4j-hermes-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-hermes-java-sdk.version>
+        <easy4j-hitool.version>3.0.x.20260630-SNAPSHOT</easy4j-hitool.version>
+        <easy4j-httpclient-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-httpclient-extension.version>
+        <easy4j-httpclient3-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-httpclient3-extension.version>
+        <easy4j-ishumei-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-ishumei-java-sdk.version>
+        <easy4j-jackson-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-jackson-extension.version>
+        <easy4j-javassist-plus.version>3.0.x.20260630-SNAPSHOT</easy4j-javassist-plus.version>
+        <easy4j-jcifs-pool.version>3.0.x.20260630-SNAPSHOT</easy4j-jcifs-pool.version>
+        <easy4j-jwt-issuer.version>3.0.x.20260630-SNAPSHOT</easy4j-jwt-issuer.version>
+        <easy4j-metrics-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-metrics-biz.version>
+        <easy4j-metrics-druid.version>3.0.x.20260630-SNAPSHOT</easy4j-metrics-druid.version>
+        <easy4j-metrics-ehcache3.version>3.0.x.20260630-SNAPSHOT</easy4j-metrics-ehcache3.version>
+        <easy4j-metrics-resteasy.version>3.0.x.20260630-SNAPSHOT</easy4j-metrics-resteasy.version>
+        <easy4j-metrics-sigar2.version>3.0.x.20260630-SNAPSHOT</easy4j-metrics-sigar2.version>
+        <easy4j-okhttp3-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-okhttp3-extension.version>
+        <easy4j-okhttp3-metrics-prometheus.version>3.0.x.20260630-SNAPSHOT</easy4j-okhttp3-metrics-prometheus.version>
+        <easy4j-openclaw-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-openclaw-java-sdk.version>
+        <easy4j-opencli-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-opencli-java-sdk.version>
+        <easy4j-opencode-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-opencode-java-sdk.version>
+        <easy4j-opencv-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-opencv-sdk.version>
+        <easy4j-pac4j-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-biz.version>
+        <easy4j-pac4j-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-extension.version>
+        <easy4j-pac4j-oauth-ext.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-oauth-ext.version>
+        <easy4j-pac4j-oauth-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-oauth-extension.version>
+        <easy4j-pac4j-otp-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-otp-extension.version>
+        <easy4j-pac4j-uniauth.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-uniauth.version>
+        <easy4j-pac4j-yiban.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-yiban.version>
+        <easy4j-pack-with-assembly.version>3.0.x.20260630-SNAPSHOT</easy4j-pack-with-assembly.version>
+        <easy4j-perf4j-log4j2.version>3.0.x.20260630-SNAPSHOT</easy4j-perf4j-log4j2.version>
+        <easy4j-pf4j-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pf4j-extension.version>
+        <easy4j-pf4j3-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pf4j3-extension.version>
+        <easy4j-playwright-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-playwright-extension.version>
+        <easy4j-rocketmq-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-rocketmq-biz.version>
+        <easy4j-schemacrawler-hive.version>3.0.x.20260630-SNAPSHOT</easy4j-schemacrawler-hive.version>
+        <easy4j-schemacrawler-impala.version>3.0.x.20260630-SNAPSHOT</easy4j-schemacrawler-impala.version>
+        <easy4j-schemacrawler-kylin.version>3.0.x.20260630-SNAPSHOT</easy4j-schemacrawler-kylin.version>
+        <easy4j-security-guard-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-security-guard-sdk.version>
+        <easy4j-security-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-security-jwt-extension.version>
+        <easy4j-shiro-biz-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-biz-sdk.version>
+        <easy4j-shiro-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-biz.version>
+        <easy4j-shiro-dingtalk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk-extension.version>
+        <easy4j-shiro-j2cache.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-j2cache.version>
+        <easy4j-shiro-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt-extension.version>
+        <easy4j-shiro-oauth2-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-oauth2-extension.version>
+        <easy4j-shiro-pf4j.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-pf4j.version>
+        <easy4j-shiro-saml-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-saml-extension.version>
+        <easy4j-shiro-weixin-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-weixin-extension.version>
+        <easy4j-soapui-template.version>3.0.x.20260630-SNAPSHOT</easy4j-soapui-template.version>
+        <easy4j-soaputils.version>3.0.x.20260630-SNAPSHOT</easy4j-soaputils.version>
+        <easy4j-socketio-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-socketio-extension.version>
+        <easy4j-spring-bytebuddy.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-bytebuddy.version>
+        <easy4j-spring-data-redis-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-data-redis-extension.version>
+        <easy4j-spring-enhance.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-enhance.version>
+        <easy4j-spring-javassist.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-javassist.version>
+        <easy4j-spring-security-extension2.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-security-extension2.version>
+        <easy4j-tencentcloud-sdk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-tencentcloud-sdk-extension.version>
+        <easy4j-validation-api-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-validation-api-extension.version>
+        <easy4j-wkhtmltopdf-invoker.version>3.0.x.20260630-SNAPSHOT</easy4j-wkhtmltopdf-invoker.version>
+        <easy4j-xxljob-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-xxljob-extension.version>
+        <easy4j-zxing-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-zxing-extension.version>
         <easyexcel.version>4.0.3</easyexcel.version>
         <easypoi.version>4.5.0</easypoi.version>
         <echarts.version>3.0.0.6</echarts.version>
@@ -201,8 +284,6 @@
         <glassfish-jstl.version>3.0.1</glassfish-jstl.version>
         <goeasy.version>0.4.2</goeasy.version>
         <google-api-client.version>2.9.0</google-api-client.version>
-        <google-api-services-androidpublisher.version>v3-rev20260528-2.0.0
-        </google-api-services-androidpublisher.version>
         <google-auth-library.version>1.48.0</google-auth-library.version>
         <google-cloud-translate.version>2.93.0</google-cloud-translate.version>
         <google-code-aviator.version>5.4.3</google-code-aviator.version>
@@ -214,8 +295,8 @@
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
         <grizzly.version>4.1.0-M1</grizzly.version>
         <groovy.version>5.0.3</groovy.version>
-        <grpc.version>1.82.1</grpc.version>
         <grpc-bom.version>1.82.1</grpc-bom.version>
+        <grpc.version>1.82.1</grpc.version>
         <gson.version>2.14.0</gson.version>
         <guava.version>33.6.0-jre</guava.version>
         <guerlab-sms.version>2.5.0</guerlab-sms.version>
@@ -223,15 +304,15 @@
         <h2.version>2.4.240</h2.version>
         <hadoop.version>3.5.0</hadoop.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <hanlp.version>portable-1.8.4</hanlp.version>
         <hanlp-restful.version>0.0.15</hanlp-restful.version>
+        <hanlp.version>portable-1.8.4</hanlp.version>
         <hazelcast.version>5.6.0</hazelcast.version>
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
         <helidon-bom.version>3.2.18</helidon-bom.version>
+        <hibernate-validator.version>8.0.4.Final</hibernate-validator.version>
         <hibernate.version>6.6.40.Final</hibernate.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
-        <hibernate-validator.version>8.0.4.Final</hibernate-validator.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <hive.version>4.2.0</hive.version>
         <hsqldb.version>2.7.4</hsqldb.version>
@@ -252,7 +333,6 @@
         <icu4j.version>78.3</icu4j.version>
         <imageio.version>3.13.1</imageio.version>
         <imagej.version>2.16.0</imagej.version>
-        <ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
         <infinispan.version>16.0.3</infinispan.version>
         <influxdb-client-java.version>7.5.0</influxdb-client-java.version>
         <influxdb-java.version>2.25</influxdb-java.version>
@@ -262,24 +342,24 @@
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
-        <jakarta.el-api.version>6.0.1</jakarta.el-api.version>
         <jakarta-inject.version>2.0.1</jakarta-inject.version>
-        <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
-        <jakarta-json.version>2.1.3</jakarta-json.version>
         <jakarta-json-bind.version>3.0.1</jakarta-json-bind.version>
-        <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version>
+        <jakarta-json.version>2.1.3</jakarta-json.version>
         <jakarta-mail.version>2.1.5</jakarta-mail.version>
         <jakarta-management.version>1.1.4</jakarta-management.version>
-        <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
-        <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
         <jakarta-servlet-jsp-jstl.version>3.0.2</jakarta-servlet-jsp-jstl.version>
+        <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
         <jakarta-transaction.version>2.0.1</jakarta-transaction.version>
         <jakarta-validation.version>3.1.1</jakarta-validation.version>
         <jakarta-websocket.version>2.2.0</jakarta-websocket.version>
-        <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
-        <jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
         <jakarta-xml-soap.version>3.0.2</jakarta-xml-soap.version>
         <jakarta-xml-ws.version>4.0.2</jakarta-xml-ws.version>
+        <jakarta.el-api.version>6.0.1</jakarta.el-api.version>
+        <jakarta.jms-api.version>3.1.0</jakarta.jms-api.version>
+        <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version>
+        <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+        <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
+        <jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
         <jandex.version>3.6.0</jandex.version>
         <janino.version>3.1.12</janino.version>
         <jasypt.version>1.9.3</jasypt.version>
@@ -289,8 +369,8 @@
         <java-websocket.version>1.6.0</java-websocket.version>
         <javalin.version>7.2.2</javalin.version>
         <javamelody.version>2.8.0</javamelody.version>
-        <javassist.version>3.32.0-GA</javassist.version>
         <javassist-plus.version>1.0.4.RELEASE</javassist-plus.version>
+        <javassist.version>3.32.0-GA</javassist.version>
         <javax-cache.version>1.1.1</javax-cache.version>
         <javax-money.version>1.1</javax-money.version>
         <jave.version>3.5.0</jave.version>
@@ -308,9 +388,9 @@
         <jersey.version>3.1.11</jersey.version>
         <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
         <jetcache.version>2.8.0.RC</jetcache.version>
-        <jetty.version>12.1.8</jetty.version>
         <jetty-reactive-httpclient.version>4.1.4</jetty-reactive-httpclient.version>
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
+        <jetty.version>12.1.8</jetty.version>
         <jgit.version>7.1.0.202411261347-r</jgit.version>
         <jgoodies.version>2.7.0</jgoodies.version>
         <jgroups.version>5.5.6.Final</jgroups.version>
@@ -318,24 +398,24 @@
         <jlayer.version>1.0.1</jlayer.version>
         <jmustache.version>1.16</jmustache.version>
         <joda-time.version>2.14.2</joda-time.version>
-        <jodd.version>5.3.0</jodd.version>
         <jodd-bean.version>5.1.6</jodd-bean.version>
+        <jodd.version>5.3.0</jodd.version>
         <jooq.version>3.21.6</jooq.version>
         <jpush-client.version>3.7.7</jpush-client.version>
         <jpush-jiguang-common.version>1.2.7</jpush-jiguang-common.version>
         <jruby.version>9.4.8.0</jruby.version>
         <jsch.version>2.28.3</jsch.version>
-        <json.version>20260522</json.version>
         <json-path.version>2.10.0</json-path.version>
         <json-schema-validator.version>2.2.14</json-schema-validator.version>
         <json-smart.version>2.6.0</json-smart.version>
+        <json.version>20260522</json.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <jsonschema.version>4.38.0</jsonschema.version>
         <jsoup.version>1.22.2</jsoup.version>
         <jsqlparser.version>5.3</jsqlparser.version>
         <jtds.version>1.3.1</jtds.version>
-        <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <junit.version>4.13.2</junit.version>
         <juniversalchardet.version>2.5.0</juniversalchardet.version>
         <junrar.version>7.6.0</junrar.version>
         <just-auth.version>1.16.7</just-auth.version>
@@ -347,18 +427,18 @@
         <kingbase8.version>8.6.0</kingbase8.version>
         <kisso.version>3.9.5</kisso.version>
         <knife4j.version>4.5.0</knife4j.version>
-        <kotlin.version>2.2.21</kotlin.version>
         <kotlin-coroutines.version>1.10.2</kotlin-coroutines.version>
         <kotlin-serialization.version>1.9.0</kotlin-serialization.version>
         <kotlin-stdlib.version>2.0.21</kotlin-stdlib.version>
+        <kotlin.version>2.2.21</kotlin.version>
         <kubernetes-client.version>6.13.3</kubernetes-client.version>
         <kurrentdb-client.version>1.2.0</kurrentdb-client.version>
         <kylin-jdbc.version>5.0.3</kylin-jdbc.version>
         <lettuce.version>7.1.0.RELEASE</lettuce.version>
-        <libphonenumber.version>9.0.33</libphonenumber.version>
         <libphonenumber-carrier.version>2.33</libphonenumber-carrier.version>
         <libphonenumber-geocoder.version>3.33</libphonenumber-geocoder.version>
         <libphonenumber-prefixmapper.version>3.33</libphonenumber-prefixmapper.version>
+        <libphonenumber.version>9.0.33</libphonenumber.version>
         <liquibase.version>4.33.0</liquibase.version>
         <liteflow.version>2.16.0</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
@@ -369,273 +449,6 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
-        <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
-        <metadata-extractor.version>2.20.0</metadata-extractor.version>
-        <mica-mqtt.version>2.6.6</mica-mqtt.version>
-        <micrometer.version>1.16.1</micrometer.version>
-        <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
-        <micronaut.version>4.10.17</micronaut.version>
-        <!-- Micronaut Platform 4.10.17 管理的核心组件版本，供 javac 注解处理器使用。 -->
-        <micronaut.core.version>4.10.26</micronaut.core.version>
-        <milvus.version>3.0.4</milvus.version>
-        <minio.version>8.6.0</minio.version>
-        <mockito.version>5.23.0</mockito.version>
-        <mongo-java-driver.version>3.12.14</mongo-java-driver.version>
-        <mongodb.version>5.6.1</mongodb.version>
-        <mssql-jdbc.version>12.10.2.jre11</mssql-jdbc.version>
-        <mybatis.version>3.5.19</mybatis.version>
-        <mybatis-caffeine.version>1.2.1</mybatis-caffeine.version>
-        <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
-        <mybatis-freemarker.version>1.3.1</mybatis-freemarker.version>
-        <mybatis-generator.version>1.4.2</mybatis-generator.version>
-        <mybatis-hazelcast.version>1.4.0</mybatis-hazelcast.version>
-        <mybatis-ignite.version>1.2.0</mybatis-ignite.version>
-        <mybatis-mate.version>1.3.6-sp2</mybatis-mate.version>
-        <mybatis-memcached.version>1.2.0</mybatis-memcached.version>
-        <mybatis-migrations.version>3.5.0</mybatis-migrations.version>
-        <mybatis-oscache.version>1.0.2</mybatis-oscache.version>
-        <mybatis-plus.version>3.5.16</mybatis-plus.version>
-        <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
-        <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
-        <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
-        <mybatis-r2dbc.version>3.1.1.RELEASE</mybatis-r2dbc.version>
-        <mybatis-redis.version>1.1.0</mybatis-redis.version>
-        <mybatis-spring.version>3.0.5</mybatis-spring.version>
-        <mybatis-thymeleaf.version>1.1.1</mybatis-thymeleaf.version>
-        <mybatis-tk.version>5.0.2</mybatis-tk.version>
-        <mybatis-typehandlers-extra.version>1.1.1</mybatis-typehandlers-extra.version>
-        <mybatis-typehandlers-jsr310.version>1.0.2</mybatis-typehandlers-jsr310.version>
-        <mybatis-velocity.version>2.3.1</mybatis-velocity.version>
-        <mysql.version>9.7.0</mysql.version>
-        <mysql-binlog-connector-java.version>0.30.3</mysql-binlog-connector-java.version>
-        <nacos.client.version>3.2.2</nacos.client.version>
-        <neethi.version>3.2.2</neethi.version>
-        <neo4j-java-driver.version>5.28.10</neo4j-java-driver.version>
-        <netty.version>4.2.15.Final</netty.version>
-        <netty-socketio.version>2.0.14</netty-socketio.version>
-        <netty-tcnative.version>2.0.79.Final</netty-tcnative.version>
-        <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
-        <objenesis.version>3.5</objenesis.version>
-        <okhttp.version>4.12.0</okhttp.version>
-        <ons-client.version>2.0.11.Final</ons-client.version>
-        <opensearch.version>3.9.0</opensearch.version>
-        <opentelemetry.version>1.57.0</opentelemetry.version>
-        <opentest4j.version>1.3.0</opentest4j.version>
-        <opentracing.version>0.33.0</opentracing.version>
-        <oracle-database.version>23.26.2.0.0</oracle-database.version>
-        <oshi.version>6.12.0</oshi.version>
-        <oshi-shaded.version>6.1.0</oshi-shaded.version>
-        <owasp-antisamy.version>1.7.8</owasp-antisamy.version>
-        <owasp-csrfguard.version>4.5.0-jakarta</owasp-csrfguard.version>
-        <owasp-encoder.version>1.4.0</owasp-encoder.version>
-        <owasp-esapi.version>2.7.0.0</owasp-esapi.version>
-        <owasp-html-sanitizer.version>20260313.1</owasp-html-sanitizer.version>
-        <p6spy.version>3.9.1</p6spy.version>
-        <pac4j.version>6.5.3</pac4j.version>
-        <pac4j-oauth-ext.version>6.1.x.20241003.RELEASE</pac4j-oauth-ext.version>
-        <pagehelper.version>6.1.1</pagehelper.version>
-        <paho-mqttv3.version>1.2.5</paho-mqttv3.version>
-        <paho-mqttv5.version>1.2.5</paho-mqttv5.version>
-        <paimon.version>1.4.2</paimon.version>
-        <paymentwall-sdk.version>2.0.4</paymentwall-sdk.version>
-        <paypal-checkout-sdk.version>2.0.0</paypal-checkout-sdk.version>
-        <paypal-payouts-sdk.version>1.1.1</paypal-payouts-sdk.version>
-        <paypal-rest-api-sdk.version>1.14.0</paypal-rest-api-sdk.version>
-        <paypal-server-sdk.version>2.3.0</paypal-server-sdk.version>
-        <pdfbox.version>3.0.7</pdfbox.version>
-        <perf4j.version>0.9.16</perf4j.version>
-        <persistence-api.version>1.0.2</persistence-api.version>
-        <pf4j.version>3.15.0</pf4j.version>
-        <pf4j-spring.version>0.10.0</pf4j-spring.version>
-        <pf4j-update.version>2.3.0</pf4j-update.version>
-        <pgvector.version>0.1.6</pgvector.version>
-        <picocli.version>4.7.7</picocli.version>
-        <pinyin4j.version>2.5.1</pinyin4j.version>
-        <png-encoder.version>1.5</png-encoder.version>
-        <poi.version>5.5.1</poi.version>
-        <pooled-jms.version>3.1.8</pooled-jms.version>
-        <postgresql.version>42.7.8</postgresql.version>
-        <powerjob-client.version>5.1.2</powerjob-client.version>
-        <prometheus-client.version>1.8.0</prometheus-client.version>
-        <prometheus-simpleclient.version>0.16.0</prometheus-simpleclient.version>
-        <protobuf-java.version>4.35.1</protobuf-java.version>
-        <protostuff.version>1.8.0</protostuff.version>
-        <proxool.version>0.9.1</proxool.version>
-        <pulsar.version>4.2.2</pulsar.version>
-        <pulsar-reactive.version>0.7.0</pulsar-reactive.version>
-        <qcloud-cos-api.version>5.6.269</qcloud-cos-api.version>
-        <qcloud-cos-api-bundle.version>5.6.269</qcloud-cos-api-bundle.version>
-        <qiniu-java-sdk.version>7.19.0</qiniu-java-sdk.version>
-        <qlexpress.version>4.1.2</qlexpress.version>
-        <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
-        <quartz.version>2.5.2</quartz.version>
-        <querydsl.version>5.1.0</querydsl.version>
-        <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
-        <r2dbc-mariadb.version>1.4.1</r2dbc-mariadb.version>
-        <r2dbc-mssql.version>1.0.5.RELEASE</r2dbc-mssql.version>
-        <r2dbc-mysql.version>1.4.2</r2dbc-mysql.version>
-        <r2dbc-oracle.version>1.3.0</r2dbc-oracle.version>
-        <r2dbc-pool.version>1.0.2.RELEASE</r2dbc-pool.version>
-        <r2dbc-postgresql.version>1.1.2.RELEASE</r2dbc-postgresql.version>
-        <r2dbc-proxy.version>1.1.6.RELEASE</r2dbc-proxy.version>
-        <r2dbc-spi.version>1.0.0.RELEASE</r2dbc-spi.version>
-        <rabbit-amqp-client.version>5.32.0</rabbit-amqp-client.version>
-        <rabbit-stream-client.version>0.24.0</rabbit-stream-client.version>
-        <reactive-streams.version>1.0.4</reactive-streams.version>
-        <redisson.version>3.52.0</redisson.version>
-        <reflections.version>0.10.2</reflections.version>
-        <resilience4j.version>2.4.0</resilience4j.version>
-        <rest-assured.version>6.0.0</rest-assured.version>
-        <rocketmq-acl.version>5.3.2</rocketmq-acl.version>
-        <rocketmq-client.version>5.5.0</rocketmq-client.version>
-        <rsocket.version>1.1.5</rsocket.version>
-        <rxjava.version>1.3.8</rxjava.version>
-        <rxjava2.version>2.2.21</rxjava2.version>
-        <rxjava3.version>3.1.12</rxjava3.version>
-        <sa-token.version>1.45.0</sa-token.version>
-        <saaj-impl.version>3.0.4</saaj-impl.version>
-        <scala3.version>3.5.2</scala3.version>
-        <schemacrawler.version>17.11.3</schemacrawler.version>
-        <schemacrawler-db2.version>${schemacrawler.version}</schemacrawler-db2.version>
-        <schemacrawler-diff.version>16.21.4</schemacrawler-diff.version>
-        <schemacrawler-hana.version>${schemacrawler.version}</schemacrawler-hana.version>
-        <schemacrawler-hsqldb.version>${schemacrawler.version}</schemacrawler-hsqldb.version>
-        <schemacrawler-mysql.version>${schemacrawler.version}</schemacrawler-mysql.version>
-        <schemacrawler-oracle.version>${schemacrawler.version}
-        </schemacrawler-oracle.version>  <!-- Note: 14.17.05 For Oracle 10g/11g -->
-        <schemacrawler-postgresql.version>${schemacrawler.version}</schemacrawler-postgresql.version>
-        <schemacrawler-sapiq.version>${schemacrawler.version}</schemacrawler-sapiq.version>
-        <schemacrawler-sqlite.version>${schemacrawler.version}</schemacrawler-sqlite.version>
-        <schemacrawler-sqlserver.version>${schemacrawler.version}</schemacrawler-sqlserver.version>
-        <schemacrawler-timesten.version>${schemacrawler.version}</schemacrawler-timesten.version>
-        <scijava-jep.version>2.4.2</scijava-jep.version>
-        <scijava-native.version>2.5.0</scijava-native.version>
-        <scribe.version>1.3.7</scribe.version>
-        <scribe-up.version>1.3.1</scribe-up.version>
-        <scribejava.version>8.3.3</scribejava.version>
-        <scribejava-apis-ext.version>1.0.1.RELEASE</scribejava-apis-ext.version>
-        <seata.version>2.0.0</seata.version>
-        <seatunnel.version>2.3.13</seatunnel.version>
-        <selenium.version>4.39.0</selenium.version>
-        <selenium-htmlunit.version>${selenium.version}</selenium-htmlunit.version>
-        <sendgrid.version>4.10.3</sendgrid.version>
-        <sentinel.version>1.8.10</sentinel.version>
-        <sequoiadb-driver.version>5.10</sequoiadb-driver.version>
-        <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
-        <sfntly.version>1.0.0</sfntly.version>
-        <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
-        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
-        <shedlock.version>7.2.1</shedlock.version>
-        <shiro.version>2.2.1</shiro.version>
-        <shiro-biz.version>1.2.3.RELEASE</shiro-biz.version>
-        <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
-        <shiro-hazelcast.version>${shiro.version}</shiro-hazelcast.version>
-        <shiro-j2cache.version>1.0.5.RELEASE</shiro-j2cache.version>
-        <shiro-oltu.version>1.0</shiro-oltu.version>
-        <shiro-pf4j.version>1.0.1.RELEASE</shiro-pf4j.version>
-        <shiro-redis.version>3.3.1</shiro-redis.version>
-        <shiro-redisson.version>1.5.0.RELEASE</shiro-redisson.version>
-        <shiro-thymeleaf.version>2.1.0</shiro-thymeleaf.version>
-        <sitemesh3.version>3.0.1</sitemesh3.version>
-        <skywalking.version>10.0.1</skywalking.version>
-        <slf4j.version>2.0.18</slf4j.version>
-        <smallrye-reactive-messaging-bom.version>4.27.0</smallrye-reactive-messaging-bom.version>
-        <sms4j.version>3.3.5</sms4j.version>
-        <smslib.version>3.5.4</smslib.version>
-        <snakeyaml.version>2.6</snakeyaml.version>
-        <snmp4j.version>3.12.2</snmp4j.version>
-        <snmp4j-agent.version>3.9.1</snmp4j-agent.version>
-        <soapui-template.version>1.0.2.RELEASE</soapui-template.version>
-        <socket-io.version>2.1.2</socket-io.version>
-        <spark.version>4.2.0</spark.version>
-        <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
-        <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
-        <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
-        <spring-initializr.version>0.24.0</spring-initializr.version>
-        <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
-        <spring-kafka.version>3.3.16</spring-kafka.version>
-        <spring-plugin.version>3.0.0</spring-plugin.version>
-        <spring-pulsar.version>1.2.18</spring-pulsar.version>
-        <springdoc.version>2.7.0</springdoc.version>
-        <springfox.version>3.0.0</springfox.version>
-        <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
-        <sshd.version>2.14.0</sshd.version>
-        <sshd-pam.version>0.11.1-atlassian-1</sshd-pam.version>
-        <sshd-sftp.version>2.14.0</sshd-sftp.version>
-        <svnkit.version>1.10.11</svnkit.version>
-        <swagger.version>2.0.0-rc2</swagger.version>
-        <swagger2markup.version>1.3.4</swagger2markup.version>
-        <swagger3.version>2.2.52</swagger3.version>
-        <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
-        <swagger-butler.version>2.0.0</swagger-butler.version>
-        <swagger-codegen.version>2.4.19</swagger-codegen.version>
-        <tablesaw.version>0.44.4</tablesaw.version>
-        <taos-jdbc.version>3.9.0</taos-jdbc.version>
-        <tencentcloud-api-faceid.version>3.1.1472</tencentcloud-api-faceid.version>
-        <tencentcloud-sdk-java.version>3.1.1492</tencentcloud-sdk-java.version>
-        <tencentcloud-sdk-java-sms.version>3.1.1451</tencentcloud-sdk-java-sms.version>
-        <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
-        <testcontainers.version>2.0.5</testcontainers.version>
-        <testcontainers-redis-module.version>2.2.4</testcontainers-redis-module.version>
-        <thumbnailator.version>0.4.21</thumbnailator.version>
-        <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
-        <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
-        <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
-        <thymeleaf-extras-springsecurity.version>3.1.3.RELEASE</thymeleaf-extras-springsecurity.version>
-        <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
-        <tika.version>3.3.1</tika.version>
-        <token-bucket.version>1.7</token-bucket.version>
-        <tomcat.version>11.0.15</tomcat.version>
-        <tongweb.version>7.0.E.6_P5</tongweb.version>
-        <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
-        <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
-        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <twilio.version>10.8.0</twilio.version>
-        <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
-        <undertow.version>2.3.20.Final</undertow.version>
-        <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
-        <unirest-java.version>4.10.0</unirest-java.version>
-        <UserAgentUtils.version>1.21</UserAgentUtils.version>
-        <vault-java-driver.version>6.2.2</vault-java-driver.version>
-        <velocity.version>2.4.1</velocity.version>
-        <vertx.version>5.1.5</vertx.version>
-        <webcollector.version>2.74-alpha</webcollector.version>
-        <webjars-locator.version>0.52</webjars-locator.version>
-        <webjars-locator-core.version>0.59</webjars-locator-core.version>
-        <webjars-locator-lite.version>1.1.2</webjars-locator-lite.version>
-        <webjars.sockjs-client.version>1.4.0</webjars.sockjs-client.version>
-        <webjars.stomp-websocket.version>2.3.4</webjars.stomp-websocket.version>
-        <webjars.swagger-ui.version>5.32.8</webjars.swagger-ui.version>
-        <wechatpay-java.version>0.2.17</wechatpay-java.version>
-        <weixin-emoji.version>1.0.2</weixin-emoji.version>
-        <weixin-java.version>4.8.4-20260626.095153</weixin-java.version>
-        <weixin-qrcode.version>1.2</weixin-qrcode.version>
-        <wildfly-openssl.version>2.3.0.Final</wildfly-openssl.version>
-        <woodstox-asl.version>4.4.1</woodstox-asl.version>
-        <woodstox-core.version>7.2.1</woodstox-core.version>
-        <woodstox-stax2-api.version>4.3.0</woodstox-stax2-api.version>
-        <wsdl4j.version>1.6.3</wsdl4j.version>
-        <xalan.version>2.7.3</xalan.version>
-        <xdocreport.version>2.1.0</xdocreport.version>
-        <xmemcached.version>2.4.9</xmemcached.version>
-        <xml-apis.version>2.0.2</xml-apis.version>
-        <xmlbeans.version>5.3.0</xmlbeans.version>
-        <xmlschema-core.version>2.3.2</xmlschema-core.version>
-        <xmlunit2.version>2.12.0</xmlunit2.version>
-        <xnio.version>3.8.17.Final</xnio.version>
-        <xnio-netty-transport.version>0.1.10.Final</xnio-netty-transport.version>
-        <xstream.version>1.4.21</xstream.version>
-        <xxl-job.version>3.4.2</xxl-job.version>
-        <yasson.version>3.0.4</yasson.version>
-        <zip4j.version>2.11.6</zip4j.version>
-        <zipkin2.version>3.5.1</zipkin2.version>
-        <zipkin-reporter.version>3.5.1</zipkin-reporter.version>
-        <zkclient.version>0.11</zkclient.version>
-        <zookeeper.version>3.9.5</zookeeper.version>
-        <zstd-jni.version>1.5.7-11</zstd-jni.version>
-        <zxing.version>3.5.4</zxing.version>
-
-        <!-- Maven Plugin versions -->
         <maven-alibaba-plugin.version>1.1.9</maven-alibaba-plugin.version>
         <maven-appassembler-plugin.version>2.1.0</maven-appassembler-plugin.version>
         <maven-asciidoctor-plugin.version>3.0.0</maven-asciidoctor-plugin.version>
@@ -667,11 +480,732 @@
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <maven-sonar-plugin.version>4.0.1.6619</maven-sonar-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
-
+        <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
+        <metadata-extractor.version>2.20.0</metadata-extractor.version>
+        <mica-mqtt.version>2.6.6</mica-mqtt.version>
+        <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
+        <micrometer.version>1.16.1</micrometer.version>
+        <micronaut.core.version>4.10.26</micronaut.core.version>
+        <micronaut.version>4.10.17</micronaut.version>
+        <milvus.version>3.0.4</milvus.version>
+        <minio.version>8.6.0</minio.version>
+        <mockito.version>5.23.0</mockito.version>
+        <mongo-java-driver.version>3.12.14</mongo-java-driver.version>
+        <mongodb.version>5.6.1</mongodb.version>
+        <mssql-jdbc.version>12.10.2.jre11</mssql-jdbc.version>
+        <mybatis-caffeine.version>1.2.1</mybatis-caffeine.version>
+        <mybatis-dynamic-sql.version>1.5.2</mybatis-dynamic-sql.version>
+        <mybatis-freemarker.version>1.3.1</mybatis-freemarker.version>
+        <mybatis-generator.version>1.4.2</mybatis-generator.version>
+        <mybatis-hazelcast.version>1.4.0</mybatis-hazelcast.version>
+        <mybatis-ignite.version>1.2.0</mybatis-ignite.version>
+        <mybatis-mate.version>1.3.6-sp2</mybatis-mate.version>
+        <mybatis-memcached.version>1.2.0</mybatis-memcached.version>
+        <mybatis-migrations.version>3.5.0</mybatis-migrations.version>
+        <mybatis-oscache.version>1.0.2</mybatis-oscache.version>
+        <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
+        <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
+        <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
+        <mybatis-r2dbc.version>3.1.1.RELEASE</mybatis-r2dbc.version>
+        <mybatis-redis.version>1.1.0</mybatis-redis.version>
+        <mybatis-spring.version>3.0.5</mybatis-spring.version>
+        <mybatis-thymeleaf.version>1.1.1</mybatis-thymeleaf.version>
+        <mybatis-tk.version>5.0.2</mybatis-tk.version>
+        <mybatis-typehandlers-extra.version>1.1.1</mybatis-typehandlers-extra.version>
+        <mybatis-typehandlers-jsr310.version>1.0.2</mybatis-typehandlers-jsr310.version>
+        <mybatis-velocity.version>2.3.1</mybatis-velocity.version>
+        <mybatis.version>3.5.19</mybatis.version>
+        <mysql-binlog-connector-java.version>0.30.3</mysql-binlog-connector-java.version>
+        <mysql.version>9.7.0</mysql.version>
+        <nacos.client.version>3.2.2</nacos.client.version>
+        <neethi.version>3.2.2</neethi.version>
+        <neo4j-java-driver.version>5.28.10</neo4j-java-driver.version>
+        <netty-socketio.version>2.0.14</netty-socketio.version>
+        <netty-tcnative.version>2.0.79.Final</netty-tcnative.version>
+        <netty.version>4.2.15.Final</netty.version>
+        <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
+        <objenesis.version>3.5</objenesis.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <ons-client.version>2.0.11.Final</ons-client.version>
+        <opensearch.version>3.9.0</opensearch.version>
+        <opentelemetry.version>1.57.0</opentelemetry.version>
+        <opentest4j.version>1.3.0</opentest4j.version>
+        <opentracing.version>0.33.0</opentracing.version>
+        <oracle-database.version>23.26.2.0.0</oracle-database.version>
+        <oshi-shaded.version>6.1.0</oshi-shaded.version>
+        <oshi.version>6.12.0</oshi.version>
+        <owasp-antisamy.version>1.7.8</owasp-antisamy.version>
+        <owasp-csrfguard.version>4.5.0-jakarta</owasp-csrfguard.version>
+        <owasp-encoder.version>1.4.0</owasp-encoder.version>
+        <owasp-esapi.version>2.7.0.0</owasp-esapi.version>
+        <owasp-html-sanitizer.version>20260313.1</owasp-html-sanitizer.version>
+        <p6spy.version>3.9.1</p6spy.version>
+        <pac4j-oauth-ext.version>6.1.x.20241003.RELEASE</pac4j-oauth-ext.version>
+        <pac4j.version>6.5.3</pac4j.version>
+        <pagehelper.version>6.1.1</pagehelper.version>
+        <paho-mqttv3.version>1.2.5</paho-mqttv3.version>
+        <paho-mqttv5.version>1.2.5</paho-mqttv5.version>
+        <paimon.version>1.4.2</paimon.version>
+        <paymentwall-sdk.version>2.0.4</paymentwall-sdk.version>
+        <paypal-checkout-sdk.version>2.0.0</paypal-checkout-sdk.version>
+        <paypal-payouts-sdk.version>1.1.1</paypal-payouts-sdk.version>
+        <paypal-rest-api-sdk.version>1.14.0</paypal-rest-api-sdk.version>
+        <paypal-server-sdk.version>2.3.0</paypal-server-sdk.version>
+        <pdfbox.version>3.0.7</pdfbox.version>
+        <perf4j.version>0.9.16</perf4j.version>
+        <persistence-api.version>1.0.2</persistence-api.version>
+        <pf4j-spring.version>0.10.0</pf4j-spring.version>
+        <pf4j-update.version>2.3.0</pf4j-update.version>
+        <pf4j.version>3.15.0</pf4j.version>
+        <pgvector.version>0.1.6</pgvector.version>
+        <picocli.version>4.7.7</picocli.version>
+        <pinyin4j.version>2.5.1</pinyin4j.version>
+        <png-encoder.version>1.5</png-encoder.version>
+        <poi.version>5.5.1</poi.version>
+        <pooled-jms.version>3.1.8</pooled-jms.version>
+        <postgresql.version>42.7.8</postgresql.version>
+        <powerjob-client.version>5.1.2</powerjob-client.version>
+        <prometheus-client.version>1.8.0</prometheus-client.version>
+        <prometheus-simpleclient.version>0.16.0</prometheus-simpleclient.version>
+        <protobuf-java.version>4.35.1</protobuf-java.version>
+        <protostuff.version>1.8.0</protostuff.version>
+        <proxool.version>0.9.1</proxool.version>
+        <pulsar-reactive.version>0.7.0</pulsar-reactive.version>
+        <pulsar.version>4.2.2</pulsar.version>
+        <qcloud-cos-api-bundle.version>5.6.269</qcloud-cos-api-bundle.version>
+        <qcloud-cos-api.version>5.6.269</qcloud-cos-api.version>
+        <qiniu-java-sdk.version>7.19.0</qiniu-java-sdk.version>
+        <qlexpress.version>4.1.2</qlexpress.version>
+        <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
+        <quartz.version>2.5.2</quartz.version>
+        <querydsl.version>5.1.0</querydsl.version>
+        <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
+        <r2dbc-mariadb.version>1.4.1</r2dbc-mariadb.version>
+        <r2dbc-mssql.version>1.0.5.RELEASE</r2dbc-mssql.version>
+        <r2dbc-mysql.version>1.4.2</r2dbc-mysql.version>
+        <r2dbc-oracle.version>1.3.0</r2dbc-oracle.version>
+        <r2dbc-pool.version>1.0.2.RELEASE</r2dbc-pool.version>
+        <r2dbc-postgresql.version>1.1.2.RELEASE</r2dbc-postgresql.version>
+        <r2dbc-proxy.version>1.1.6.RELEASE</r2dbc-proxy.version>
+        <r2dbc-spi.version>1.0.0.RELEASE</r2dbc-spi.version>
+        <rabbit-amqp-client.version>5.32.0</rabbit-amqp-client.version>
+        <rabbit-stream-client.version>0.24.0</rabbit-stream-client.version>
+        <reactive-streams.version>1.0.4</reactive-streams.version>
+        <redisson.version>3.52.0</redisson.version>
+        <reflections.version>0.10.2</reflections.version>
+        <resilience4j.version>2.4.0</resilience4j.version>
+        <rest-assured.version>6.0.0</rest-assured.version>
+        <rocketmq-acl.version>5.3.2</rocketmq-acl.version>
+        <rocketmq-client.version>5.5.0</rocketmq-client.version>
+        <rsocket.version>1.1.5</rsocket.version>
+        <rxjava.version>1.3.8</rxjava.version>
+        <rxjava2.version>2.2.21</rxjava2.version>
+        <rxjava3.version>3.1.12</rxjava3.version>
+        <sa-token.version>1.45.0</sa-token.version>
+        <saaj-impl.version>3.0.4</saaj-impl.version>
+        <scala3.version>3.5.2</scala3.version>
+        <schemacrawler-db2.version>${schemacrawler.version}</schemacrawler-db2.version>
+        <schemacrawler-diff.version>16.21.4</schemacrawler-diff.version>
+        <schemacrawler-hana.version>${schemacrawler.version}</schemacrawler-hana.version>
+        <schemacrawler-hsqldb.version>${schemacrawler.version}</schemacrawler-hsqldb.version>
+        <schemacrawler-mysql.version>${schemacrawler.version}</schemacrawler-mysql.version>
+        <schemacrawler-postgresql.version>${schemacrawler.version}</schemacrawler-postgresql.version>
+        <schemacrawler-sapiq.version>${schemacrawler.version}</schemacrawler-sapiq.version>
+        <schemacrawler-sqlite.version>${schemacrawler.version}</schemacrawler-sqlite.version>
+        <schemacrawler-sqlserver.version>${schemacrawler.version}</schemacrawler-sqlserver.version>
+        <schemacrawler-timesten.version>${schemacrawler.version}</schemacrawler-timesten.version>
+        <schemacrawler.version>17.11.3</schemacrawler.version>
+        <scijava-jep.version>2.4.2</scijava-jep.version>
+        <scijava-native.version>2.5.0</scijava-native.version>
+        <scribe-up.version>1.3.1</scribe-up.version>
+        <scribe.version>1.3.7</scribe.version>
+        <scribejava-apis-ext.version>1.0.1.RELEASE</scribejava-apis-ext.version>
+        <scribejava.version>8.3.3</scribejava.version>
+        <seata.version>2.0.0</seata.version>
+        <seatunnel.version>2.3.13</seatunnel.version>
+        <selenium-htmlunit.version>${selenium.version}</selenium-htmlunit.version>
+        <selenium.version>4.39.0</selenium.version>
+        <sendgrid.version>4.10.3</sendgrid.version>
+        <sentinel.version>1.8.10</sentinel.version>
+        <sequoiadb-driver.version>5.10</sequoiadb-driver.version>
+        <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
+        <sfntly.version>1.0.0</sfntly.version>
+        <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
+        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
+        <shedlock.version>7.2.1</shedlock.version>
+        <shiro-biz.version>1.2.3.RELEASE</shiro-biz.version>
+        <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
+        <shiro-hazelcast.version>${shiro.version}</shiro-hazelcast.version>
+        <shiro-j2cache.version>1.0.5.RELEASE</shiro-j2cache.version>
+        <shiro-oltu.version>1.0</shiro-oltu.version>
+        <shiro-pf4j.version>1.0.1.RELEASE</shiro-pf4j.version>
+        <shiro-redis.version>3.3.1</shiro-redis.version>
+        <shiro-redisson.version>1.5.0.RELEASE</shiro-redisson.version>
+        <shiro-thymeleaf.version>2.1.0</shiro-thymeleaf.version>
+        <shiro.version>2.2.1</shiro.version>
+        <sitemesh3.version>3.0.1</sitemesh3.version>
+        <skywalking.version>10.0.1</skywalking.version>
+        <slf4j.version>2.0.18</slf4j.version>
+        <smallrye-reactive-messaging-bom.version>4.27.0</smallrye-reactive-messaging-bom.version>
+        <sms4j.version>3.3.5</sms4j.version>
+        <smslib.version>3.5.4</smslib.version>
+        <snakeyaml.version>2.6</snakeyaml.version>
+        <snmp4j-agent.version>3.9.1</snmp4j-agent.version>
+        <snmp4j.version>3.12.2</snmp4j.version>
+        <soapui-template.version>1.0.2.RELEASE</soapui-template.version>
+        <socket-io.version>2.1.2</socket-io.version>
+        <spark.version>4.2.0</spark.version>
+        <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
+        <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
+        <spring-initializr.version>0.24.0</spring-initializr.version>
+        <spring-kafka.version>3.3.16</spring-kafka.version>
+        <spring-plugin.version>3.0.0</spring-plugin.version>
+        <spring-pulsar.version>1.2.18</spring-pulsar.version>
+        <springdoc.version>2.7.0</springdoc.version>
+        <springfox.version>3.0.0</springfox.version>
+        <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
+        <sshd-pam.version>0.11.1-atlassian-1</sshd-pam.version>
+        <sshd-sftp.version>2.14.0</sshd-sftp.version>
+        <sshd.version>2.14.0</sshd.version>
+        <svnkit.version>1.10.11</svnkit.version>
+        <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
+        <swagger-butler.version>2.0.0</swagger-butler.version>
+        <swagger-codegen.version>2.4.19</swagger-codegen.version>
+        <swagger.version>2.0.0-rc2</swagger.version>
+        <swagger2markup.version>1.3.4</swagger2markup.version>
+        <swagger3.version>2.2.52</swagger3.version>
+        <tablesaw.version>0.44.4</tablesaw.version>
+        <taos-jdbc.version>3.9.0</taos-jdbc.version>
+        <tencentcloud-api-faceid.version>3.1.1472</tencentcloud-api-faceid.version>
+        <tencentcloud-sdk-java-sms.version>3.1.1451</tencentcloud-sdk-java-sms.version>
+        <tencentcloud-sdk-java.version>3.1.1492</tencentcloud-sdk-java.version>
+        <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
+        <testcontainers-redis-module.version>2.2.4</testcontainers-redis-module.version>
+        <testcontainers.version>2.0.5</testcontainers.version>
+        <thumbnailator.version>0.4.21</thumbnailator.version>
+        <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
+        <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
+        <thymeleaf-extras-springsecurity.version>3.1.3.RELEASE</thymeleaf-extras-springsecurity.version>
+        <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
+        <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
+        <tika.version>3.3.1</tika.version>
+        <token-bucket.version>1.7</token-bucket.version>
+        <tomcat.version>11.0.15</tomcat.version>
+        <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
+        <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
+        <tongweb.version>7.0.E.6_P5</tongweb.version>
+        <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
+        <twilio.version>10.8.0</twilio.version>
+        <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
+        <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
+        <undertow.version>2.3.20.Final</undertow.version>
+        <unirest-java.version>4.10.0</unirest-java.version>
+        <vault-java-driver.version>6.2.2</vault-java-driver.version>
+        <velocity.version>2.4.1</velocity.version>
+        <vertx.version>5.1.5</vertx.version>
+        <webcollector.version>2.74-alpha</webcollector.version>
+        <webjars-locator-core.version>0.59</webjars-locator-core.version>
+        <webjars-locator-lite.version>1.1.2</webjars-locator-lite.version>
+        <webjars-locator.version>0.52</webjars-locator.version>
+        <webjars.sockjs-client.version>1.4.0</webjars.sockjs-client.version>
+        <webjars.stomp-websocket.version>2.3.4</webjars.stomp-websocket.version>
+        <webjars.swagger-ui.version>5.32.8</webjars.swagger-ui.version>
+        <wechatpay-java.version>0.2.17</wechatpay-java.version>
+        <weixin-emoji.version>1.0.2</weixin-emoji.version>
+        <weixin-java.version>4.8.4-20260626.095153</weixin-java.version>
+        <weixin-qrcode.version>1.2</weixin-qrcode.version>
+        <wildfly-openssl.version>2.3.0.Final</wildfly-openssl.version>
+        <woodstox-asl.version>4.4.1</woodstox-asl.version>
+        <woodstox-core.version>7.2.1</woodstox-core.version>
+        <woodstox-stax2-api.version>4.3.0</woodstox-stax2-api.version>
+        <wsdl4j.version>1.6.3</wsdl4j.version>
+        <xalan.version>2.7.3</xalan.version>
+        <xdocreport.version>2.1.0</xdocreport.version>
+        <xmemcached.version>2.4.9</xmemcached.version>
+        <xml-apis.version>2.0.2</xml-apis.version>
+        <xmlbeans.version>5.3.0</xmlbeans.version>
+        <xmlschema-core.version>2.3.2</xmlschema-core.version>
+        <xmlunit2.version>2.12.0</xmlunit2.version>
+        <xnio-netty-transport.version>0.1.10.Final</xnio-netty-transport.version>
+        <xnio.version>3.8.17.Final</xnio.version>
+        <xstream.version>1.4.21</xstream.version>
+        <xxl-job.version>3.4.2</xxl-job.version>
+        <yasson.version>3.0.4</yasson.version>
+        <zip4j.version>2.11.6</zip4j.version>
+        <zipkin-reporter.version>3.5.1</zipkin-reporter.version>
+        <zipkin2.version>3.5.1</zipkin2.version>
+        <zkclient.version>0.11</zkclient.version>
+        <zookeeper.version>3.9.5</zookeeper.version>
+        <zstd-jni.version>1.5.7-11</zstd-jni.version>
+        <zxing.version>3.5.4</zxing.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Source: https://github.com/easy-4-java/agora-java-sdk — easy4j agora-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>agora-java-sdk</artifactId>
+                <version>${easy4j-agora-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/calibre-invoker — easy4j calibre-invoker -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>calibre-invoker</artifactId>
+                <version>${easy4j-calibre-invoker.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/canal-client-plus-sdk — easy4j canal-client-plus-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>canal-client-plus-sdk</artifactId>
+                <version>${easy4j-canal-client-plus-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/claudecode-java-sdk — easy4j claudecode-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>claudecode-java-sdk</artifactId>
+                <version>${easy4j-claudecode-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/codex-java-sdk — easy4j codex-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>codex-java-sdk</artifactId>
+                <version>${easy4j-codex-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/cos — easy4j cos -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>cos</artifactId>
+                <version>${easy4j-cos.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/cxf-rt-bytebuddy — easy4j cxf-rt-bytebuddy -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>cxf-rt-bytebuddy</artifactId>
+                <version>${easy4j-cxf-rt-bytebuddy.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/cxf-rt-javassist — easy4j cxf-rt-javassist -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>cxf-rt-javassist</artifactId>
+                <version>${easy4j-cxf-rt-javassist.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/dingtalk-sdk-extension — easy4j dingtalk-sdk-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>dingtalk-sdk-extension</artifactId>
+                <version>${easy4j-dingtalk-sdk-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/disruptor-biz — easy4j disruptor-biz -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>disruptor-biz</artifactId>
+                <version>${easy4j-disruptor-biz.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/disruptor-extension — easy4j disruptor-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>disruptor-extension</artifactId>
+                <version>${easy4j-disruptor-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/dozer-extra-converters — easy4j dozer-extra-converters -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>dozer-extra-converters</artifactId>
+                <version>${easy4j-dozer-extra-converters.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/dreamina-java-sdk — easy4j dreamina-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>dreamina-java-sdk</artifactId>
+                <version>${easy4j-dreamina-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/easydoc — easy4j easydoc -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>easydoc</artifactId>
+                <version>${easy4j-easydoc.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/easypdf — easy4j easypdf -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>easypdf</artifactId>
+                <version>${easy4j-easypdf.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/faceplusplus-java-sdk — easy4j faceplusplus-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>faceplusplus-java-sdk</artifactId>
+                <version>${easy4j-faceplusplus-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/fetion4j-sdk — easy4j fetion4j-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>fetion4j-sdk</artifactId>
+                <version>${easy4j-fetion4j-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/hermes-java-sdk — easy4j hermes-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>hermes-java-sdk</artifactId>
+                <version>${easy4j-hermes-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/hitool — easy4j hitool -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>hitool</artifactId>
+                <version>${easy4j-hitool.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/httpclient-extension — easy4j httpclient-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>httpclient-extension</artifactId>
+                <version>${easy4j-httpclient-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/httpclient3-extension — easy4j httpclient3-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>httpclient3-extension</artifactId>
+                <version>${easy4j-httpclient3-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/ishumei-java-sdk — easy4j ishumei-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>ishumei-java-sdk</artifactId>
+                <version>${easy4j-ishumei-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/jackson-extension — easy4j jackson-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>jackson-extension</artifactId>
+                <version>${easy4j-jackson-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/javassist-plus — easy4j javassist-plus -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>javassist-plus</artifactId>
+                <version>${easy4j-javassist-plus.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/jcifs-pool — easy4j jcifs-pool -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>jcifs-pool</artifactId>
+                <version>${easy4j-jcifs-pool.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/jwt-issuer — easy4j jwt-issuer -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>jwt-issuer</artifactId>
+                <version>${easy4j-jwt-issuer.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/metrics-biz — easy4j metrics-biz -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>metrics-biz</artifactId>
+                <version>${easy4j-metrics-biz.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/metrics-druid — easy4j metrics-druid -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>metrics-druid</artifactId>
+                <version>${easy4j-metrics-druid.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/metrics-ehcache3 — easy4j metrics-ehcache3 -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>metrics-ehcache3</artifactId>
+                <version>${easy4j-metrics-ehcache3.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/metrics-resteasy — easy4j metrics-resteasy -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>metrics-resteasy</artifactId>
+                <version>${easy4j-metrics-resteasy.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/metrics-sigar2 — easy4j metrics-sigar2 -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>metrics-sigar2</artifactId>
+                <version>${easy4j-metrics-sigar2.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/okhttp3-extension — easy4j okhttp3-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>okhttp3-extension</artifactId>
+                <version>${easy4j-okhttp3-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/okhttp3-metrics-prometheus — easy4j okhttp3-metrics-prometheus -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>okhttp3-metrics-prometheus</artifactId>
+                <version>${easy4j-okhttp3-metrics-prometheus.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/openclaw-java-sdk — easy4j openclaw-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>openclaw-java-sdk</artifactId>
+                <version>${easy4j-openclaw-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/opencli-java-sdk — easy4j opencli-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>opencli-java-sdk</artifactId>
+                <version>${easy4j-opencli-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/opencode-java-sdk — easy4j opencode-java-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>opencode-java-sdk</artifactId>
+                <version>${easy4j-opencode-java-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/opencv-sdk — easy4j opencv-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>opencv-sdk</artifactId>
+                <version>${easy4j-opencv-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pac4j-biz — easy4j pac4j-biz -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pac4j-biz</artifactId>
+                <version>${easy4j-pac4j-biz.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pac4j-extension — easy4j pac4j-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pac4j-extension</artifactId>
+                <version>${easy4j-pac4j-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pac4j-oauth-ext — easy4j pac4j-oauth-ext -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pac4j-oauth-ext</artifactId>
+                <version>${easy4j-pac4j-oauth-ext.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pac4j-oauth-extension — easy4j pac4j-oauth-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pac4j-oauth-extension</artifactId>
+                <version>${easy4j-pac4j-oauth-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pac4j-otp-extension — easy4j pac4j-otp-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pac4j-otp-extension</artifactId>
+                <version>${easy4j-pac4j-otp-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pac4j-uniauth — easy4j pac4j-uniauth -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pac4j-uniauth</artifactId>
+                <version>${easy4j-pac4j-uniauth.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pac4j-yiban — easy4j pac4j-yiban -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pac4j-yiban</artifactId>
+                <version>${easy4j-pac4j-yiban.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pack-with-assembly — easy4j pack-with-assembly -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pack-with-assembly</artifactId>
+                <version>${easy4j-pack-with-assembly.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/perf4j-log4j2 — easy4j perf4j-log4j2 -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>perf4j-log4j2</artifactId>
+                <version>${easy4j-perf4j-log4j2.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pf4j-extension — easy4j pf4j-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pf4j-extension</artifactId>
+                <version>${easy4j-pf4j-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/pf4j3-extension — easy4j pf4j3-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pf4j3-extension</artifactId>
+                <version>${easy4j-pf4j3-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/playwright-extension — easy4j playwright-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>playwright-extension</artifactId>
+                <version>${easy4j-playwright-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/rocketmq-biz — easy4j rocketmq-biz -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>rocketmq-biz</artifactId>
+                <version>${easy4j-rocketmq-biz.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/schemacrawler-hive — easy4j schemacrawler-hive -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>schemacrawler-hive</artifactId>
+                <version>${easy4j-schemacrawler-hive.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/schemacrawler-impala — easy4j schemacrawler-impala -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>schemacrawler-impala</artifactId>
+                <version>${easy4j-schemacrawler-impala.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/schemacrawler-kylin — easy4j schemacrawler-kylin -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>schemacrawler-kylin</artifactId>
+                <version>${easy4j-schemacrawler-kylin.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/security-guard-sdk — easy4j security-guard-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>security-guard-sdk</artifactId>
+                <version>${easy4j-security-guard-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/security-jwt-extension — easy4j security-jwt-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>security-jwt-extension</artifactId>
+                <version>${easy4j-security-jwt-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-biz — easy4j shiro-biz -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-biz</artifactId>
+                <version>${easy4j-shiro-biz.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-biz-sdk — easy4j shiro-biz-sdk -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-biz-sdk</artifactId>
+                <version>${easy4j-shiro-biz-sdk.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-dingtalk-extension — easy4j shiro-dingtalk-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-dingtalk-extension</artifactId>
+                <version>${easy4j-shiro-dingtalk-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-j2cache — easy4j shiro-j2cache -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-j2cache</artifactId>
+                <version>${easy4j-shiro-j2cache.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-jwt-extension — easy4j shiro-jwt-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-jwt-extension</artifactId>
+                <version>${easy4j-shiro-jwt-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-oauth2-extension — easy4j shiro-oauth2-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-oauth2-extension</artifactId>
+                <version>${easy4j-shiro-oauth2-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-pf4j — easy4j shiro-pf4j -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-pf4j</artifactId>
+                <version>${easy4j-shiro-pf4j.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-saml-extension — easy4j shiro-saml-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-saml-extension</artifactId>
+                <version>${easy4j-shiro-saml-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-weixin-extension — easy4j shiro-weixin-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-weixin-extension</artifactId>
+                <version>${easy4j-shiro-weixin-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/soapui-template — easy4j soapui-template -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>soapui-template</artifactId>
+                <version>${easy4j-soapui-template.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/soaputils — easy4j soaputils -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>soaputils</artifactId>
+                <version>${easy4j-soaputils.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/socketio-extension — easy4j socketio-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>socketio-extension</artifactId>
+                <version>${easy4j-socketio-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/spring-bytebuddy — easy4j spring-bytebuddy -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>spring-bytebuddy</artifactId>
+                <version>${easy4j-spring-bytebuddy.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/spring-data-redis-extension — easy4j spring-data-redis-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>spring-data-redis-extension</artifactId>
+                <version>${easy4j-spring-data-redis-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/spring-enhance — easy4j spring-enhance -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>spring-enhance</artifactId>
+                <version>${easy4j-spring-enhance.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/spring-javassist — easy4j spring-javassist -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>spring-javassist</artifactId>
+                <version>${easy4j-spring-javassist.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/spring-security-extension2 — easy4j spring-security-extension2 -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>spring-security-extension2</artifactId>
+                <version>${easy4j-spring-security-extension2.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/tencentcloud-sdk-extension — easy4j tencentcloud-sdk-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>tencentcloud-sdk-extension</artifactId>
+                <version>${easy4j-tencentcloud-sdk-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/validation-api-extension — easy4j validation-api-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>validation-api-extension</artifactId>
+                <version>${easy4j-validation-api-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/wkhtmltopdf-invoker — easy4j wkhtmltopdf-invoker -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>wkhtmltopdf-invoker</artifactId>
+                <version>${easy4j-wkhtmltopdf-invoker.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/xxljob-extension — easy4j xxljob-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>xxljob-extension</artifactId>
+                <version>${easy4j-xxljob-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/zxing-extension — easy4j zxing-extension -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>zxing-extension</artifactId>
+                <version>${easy4j-zxing-extension.version}</version>
+            </dependency>
+
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-bom -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
