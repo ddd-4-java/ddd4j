@@ -23,8 +23,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <revision>2.0.x.20260630-SNAPSHOT</revision>
-        <java.version>17</java.version>
+        <revision>3.0.x.20260630-SNAPSHOT</revision>
+        <java.version>21</java.version>
         <lombok.version>1.18.46</lombok.version>
         <!-- P0-2: 单元测试开关（默认运行，业务项目可 -DskipTests 跳过） -->
         <skipTests>false</skipTests>
