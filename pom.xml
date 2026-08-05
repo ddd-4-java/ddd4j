@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns="http://maven.apache.org/POM/4.1.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 https://maven.apache.org/xsd/maven-4.1.0.xsd">
     <!-- POM的模型版本 -->
-    <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.1.0</modelVersion>
 
     <groupId>io.ddd4j</groupId>
     <artifactId>ddd4j</artifactId>
@@ -299,32 +299,6 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/flatten-maven-plugin -->
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>flatten-maven-plugin</artifactId>
-                    <version>${maven-flatten-plugin.version}</version>
-                    <configuration>
-                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                        <updatePomFile>true</updatePomFile>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>flatten</id>
-                            <phase>process-resources</phase>
-                            <goals>
-                                <goal>flatten</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>flatten.clean</id>
-                            <phase>clean</phase>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -487,11 +461,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
-            <!-- 模块版本管理插件 ：替换 ${revision} -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-            </plugin>
             <!-- 安装插件：将项目输出构件安装到本地仓库 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -627,11 +596,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-install-plugin</artifactId>
-                    </plugin>
-                    <!-- 模块版本管理插件 ：替换 ${revision} -->
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>flatten-maven-plugin</artifactId>
                     </plugin>
                     <!-- 签名插件：对构建的jar、javadoc、source使用gpg来签名 -->
                     <plugin>

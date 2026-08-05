@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+         xmlns="http://maven.apache.org/POM/4.1.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j</artifactId>
@@ -3462,12 +3462,6 @@
                 <artifactId>google-oauth-client-servlet</artifactId>
                 <version>${google-oauth-client.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.graphql-java/graphql-java — GraphQL Java -->
-            <dependency>
-                <groupId>com.graphql-java</groupId>
-                <artifactId>graphql-java</artifactId>
-                <version>${graphql-java.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-comet -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
@@ -4720,12 +4714,6 @@
                 <artifactId>jooq-meta</artifactId>
                 <version>${jooq.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/xyz.raylab/jooq-plus -->
-            <dependency>
-                <groupId>xyz.raylab</groupId>
-                <artifactId>jooq-plus</artifactId>
-                <version>${jooq-plus.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.jpush.api/jpush-client -->
             <dependency>
                 <groupId>cn.jpush.api</groupId>
@@ -5655,12 +5643,6 @@
                 <groupId>org.apache.neethi</groupId>
                 <artifactId>neethi</artifactId>
                 <version>${neethi.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/net.sourceforge.nekohtml/nekohtml — NekoHTML HTML 解析器 -->
-            <dependency>
-                <groupId>net.sourceforge.nekohtml</groupId>
-                <artifactId>nekohtml</artifactId>
-                <version>${nekohtml.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.neo4j.driver/neo4j-java-driver — Neo4j Java Driver -->
             <dependency>
@@ -8214,12 +8196,6 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>${maven-findbugs-plugin.version}</version>
-                </plugin>
-                <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/flatten-maven-plugin -->
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>flatten-maven-plugin</artifactId>
-                    <version>${maven-flatten-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
                 <plugin>
