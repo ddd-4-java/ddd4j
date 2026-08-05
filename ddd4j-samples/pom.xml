@@ -14,6 +14,11 @@
     <packaging>pom</packaging>
     <description>ddd4j 框架无关的业务内核与非 Spring Boot 运行时示例。</description>
 
+    <properties>
+        <!-- 示例模块仅用于演示与测试，不发布到远程仓库 -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <modules>
         <!-- 跨运行时共享的生产型订单业务内核 -->
         <module>ddd4j-sample-order-domain</module>
