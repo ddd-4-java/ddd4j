@@ -1,16 +1,16 @@
 package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.web.core.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.WebAccessPolicy;
-import io.ddd4j.web.core.WebContextScope;
-import io.ddd4j.web.core.WebHeaders;
-import io.ddd4j.web.core.WebIdempotencyLifecycle;
-import io.ddd4j.web.core.WebOtelSupport;
-import io.ddd4j.web.core.WebRequestContext;
-import io.ddd4j.web.core.WebRequestContextFactory;
-import io.ddd4j.web.core.WebRequestData;
-import io.ddd4j.web.core.WebRequestLifecycle;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.auth.WebAccessPolicy;
+import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.observability.WebOtelSupport;
+import io.ddd4j.web.core.context.WebRequestContext;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestData;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.health;
 
 /**
  * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。

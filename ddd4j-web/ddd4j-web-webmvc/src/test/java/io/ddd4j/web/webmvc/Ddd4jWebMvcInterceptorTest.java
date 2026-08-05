@@ -1,9 +1,9 @@
 package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.web.core.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.WebContextScope;
-import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.context.WebHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

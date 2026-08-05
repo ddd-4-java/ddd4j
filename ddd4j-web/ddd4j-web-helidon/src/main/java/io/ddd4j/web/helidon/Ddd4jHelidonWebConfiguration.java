@@ -1,6 +1,6 @@
 package io.ddd4j.web.helidon;
 
-import io.ddd4j.web.core.AuthenticationMode;
+import io.ddd4j.web.core.auth.AuthenticationMode;
 import lombok.Getter;
 import lombok.Setter;
 import org.eclipse.microprofile.config.Config;

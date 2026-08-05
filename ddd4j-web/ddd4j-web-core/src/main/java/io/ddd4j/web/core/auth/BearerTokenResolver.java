@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.auth;
 
 import io.ddd4j.kit.lang.StrKit;
 

@@ -1,8 +1,8 @@
 package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.api.R;
-import io.ddd4j.web.core.WebError;
-import io.ddd4j.web.core.WebExceptionTranslator;
+import io.ddd4j.web.core.error.WebError;
+import io.ddd4j.web.core.error.WebExceptionTranslator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

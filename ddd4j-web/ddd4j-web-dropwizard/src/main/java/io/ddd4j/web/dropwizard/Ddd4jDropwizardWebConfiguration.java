@@ -1,6 +1,6 @@
 package io.ddd4j.web.dropwizard;
 
-import io.ddd4j.web.core.AuthenticationMode;
+import io.ddd4j.web.core.auth.AuthenticationMode;
 import lombok.Getter;
 import lombok.Setter;
 

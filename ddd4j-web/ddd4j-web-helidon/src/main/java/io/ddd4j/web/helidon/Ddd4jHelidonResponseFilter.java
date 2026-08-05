@@ -1,8 +1,8 @@
 package io.ddd4j.web.helidon;
 
-import io.ddd4j.web.core.SynchronousWebRequestSession;
-import io.ddd4j.web.core.WebHeaders;
-import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.context.SynchronousWebRequestSession;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.WebRequestContext;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;

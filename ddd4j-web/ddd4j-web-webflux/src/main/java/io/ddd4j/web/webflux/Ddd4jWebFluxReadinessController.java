@@ -1,8 +1,8 @@
 package io.ddd4j.web.webflux;
 
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
-import io.ddd4j.web.core.ReadinessEndpoint;
-import io.ddd4j.web.core.ReadinessResponse;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
+import io.ddd4j.web.core.health.ReadinessResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

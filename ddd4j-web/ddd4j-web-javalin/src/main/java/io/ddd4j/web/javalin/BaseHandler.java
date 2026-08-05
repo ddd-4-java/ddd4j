@@ -4,7 +4,7 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.web.core.WebRequestFailure;
+import io.ddd4j.web.core.context.WebRequestFailure;
 import io.ddd4j.web.javalin.util.WebKit;
 import io.javalin.http.Context;
 import lombok.extern.slf4j.Slf4j;

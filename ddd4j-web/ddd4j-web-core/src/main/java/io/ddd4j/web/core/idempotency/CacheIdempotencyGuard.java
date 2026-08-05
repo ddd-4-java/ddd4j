@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.idempotency;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.cache.Cache;

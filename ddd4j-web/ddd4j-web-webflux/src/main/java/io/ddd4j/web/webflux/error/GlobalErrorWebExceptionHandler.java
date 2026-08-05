@@ -8,8 +8,8 @@ package io.ddd4j.web.webflux.error;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.web.core.WebError;
-import io.ddd4j.web.core.WebExceptionTranslator;
+import io.ddd4j.web.core.error.WebError;
+import io.ddd4j.web.core.error.WebExceptionTranslator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;

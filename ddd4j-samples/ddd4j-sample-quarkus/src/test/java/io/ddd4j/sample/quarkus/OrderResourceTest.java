@@ -11,7 +11,7 @@ import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.quarkus.order.infrastructure.QuarkusOrderAdapters;
 import io.ddd4j.sample.quarkus.spi.SampleSubjectProvider;
-import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.context.WebHeaders;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;

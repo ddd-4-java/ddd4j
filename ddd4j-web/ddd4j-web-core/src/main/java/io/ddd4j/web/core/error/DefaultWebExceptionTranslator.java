@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.error;
 
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;

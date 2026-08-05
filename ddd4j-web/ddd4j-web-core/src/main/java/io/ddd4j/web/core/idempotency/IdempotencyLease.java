@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.idempotency;
 
 import java.time.Duration;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.auth;
 
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
@@ -8,6 +8,7 @@ import io.ddd4j.core.subject.SubjectProvider;
 
 import java.util.Objects;
 import java.util.Optional;
+import io.ddd4j.web.core.error.WebStatusException;
 
 /**
  * 将标准 Bearer Token 委托给当前运行时注册的 Subject SPI。

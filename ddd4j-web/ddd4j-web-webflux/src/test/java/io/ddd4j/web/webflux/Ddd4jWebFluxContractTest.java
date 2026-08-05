@@ -1,10 +1,10 @@
 package io.ddd4j.web.webflux;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.web.core.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.DefaultWebExceptionTranslator;
-import io.ddd4j.web.core.WebHeaders;
-import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.webflux.error.GlobalErrorAttributes;
 import io.ddd4j.web.webflux.error.GlobalErrorWebExceptionHandler;
 import org.junit.jupiter.api.Test;

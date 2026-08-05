@@ -1,8 +1,8 @@
 package io.ddd4j.web.dropwizard;
 
-import io.ddd4j.web.core.SynchronousWebRequestSession;
-import io.ddd4j.web.core.WebHeaders;
-import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.context.SynchronousWebRequestSession;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.WebRequestContext;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;

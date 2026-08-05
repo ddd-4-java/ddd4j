@@ -1,10 +1,11 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.auth;
 
 import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import io.ddd4j.web.core.context.WebRequestContext;
 
 /**
  * 基于精确路径和 {@code /**} 前缀模式的访问策略。

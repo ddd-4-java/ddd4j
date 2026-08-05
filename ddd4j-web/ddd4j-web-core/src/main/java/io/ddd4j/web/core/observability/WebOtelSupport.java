@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.observability;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

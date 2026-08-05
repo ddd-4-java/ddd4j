@@ -1,9 +1,12 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.context;
 
-import io.ddd4j.web.core.BearerSubjectAuthenticator.Authentication;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
 
 import java.util.Objects;
 import java.util.Optional;
+import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.auth.WebAccessPolicy;
 
 /**
  * 在具体 Web 框架之外统一执行访问策略与 Subject 认证。

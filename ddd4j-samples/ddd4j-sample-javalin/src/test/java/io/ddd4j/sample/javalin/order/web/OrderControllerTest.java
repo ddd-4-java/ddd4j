@@ -2,7 +2,7 @@ package io.ddd4j.sample.javalin.order.web;
 
 import io.ddd4j.sample.javalin.JavalinSample;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.context.WebHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

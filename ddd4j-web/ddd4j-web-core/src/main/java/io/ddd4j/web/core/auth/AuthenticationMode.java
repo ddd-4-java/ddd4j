@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.auth;
 
 /**
  * HTTP 请求的认证模式。

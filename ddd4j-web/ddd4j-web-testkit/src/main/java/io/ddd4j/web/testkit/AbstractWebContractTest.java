@@ -2,7 +2,7 @@ package io.ddd4j.web.testkit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.web.core.WebHeaders;
+import io.ddd4j.web.core.context.WebHeaders;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

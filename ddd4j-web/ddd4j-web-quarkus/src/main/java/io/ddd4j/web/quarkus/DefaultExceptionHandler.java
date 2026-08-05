@@ -1,8 +1,8 @@
 package io.ddd4j.web.quarkus;
 
-import io.ddd4j.web.core.DefaultWebExceptionTranslator;
-import io.ddd4j.web.core.WebError;
-import io.ddd4j.web.core.WebExceptionTranslator;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.error.WebError;
+import io.ddd4j.web.core.error.WebExceptionTranslator;
 import io.ddd4j.kit.lang.StrKit;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;

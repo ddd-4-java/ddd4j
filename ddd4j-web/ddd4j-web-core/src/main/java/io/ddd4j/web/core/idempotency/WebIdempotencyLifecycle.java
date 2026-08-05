@@ -1,10 +1,13 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.idempotency;
 
 import io.ddd4j.kit.lang.StrKit;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
+import io.ddd4j.web.core.context.WebRequestContext;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.error.WebStatusException;
 
 /**
  * 将 HTTP 幂等键映射到框架无关的幂等状态机。

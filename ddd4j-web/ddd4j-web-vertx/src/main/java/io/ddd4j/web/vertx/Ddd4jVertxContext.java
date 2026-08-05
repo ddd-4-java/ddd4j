@@ -2,8 +2,8 @@ package io.ddd4j.web.vertx;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
-import io.ddd4j.web.core.WebContextScope;
-import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.context.WebRequestContext;
 import io.vertx.core.Future;
 import io.vertx.ext.web.RoutingContext;
 import lombok.experimental.UtilityClass;

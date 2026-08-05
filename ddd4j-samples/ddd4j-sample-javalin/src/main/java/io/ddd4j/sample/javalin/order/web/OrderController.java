@@ -9,8 +9,8 @@ import io.ddd4j.sample.order.domain.Money;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderQuery;
 import io.ddd4j.sample.order.domain.OrderStatus;
-import io.ddd4j.web.core.WebHeaders;
-import io.ddd4j.web.core.WebStatusException;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.error.WebStatusException;
 
 import java.math.BigDecimal;
 import java.util.Locale;

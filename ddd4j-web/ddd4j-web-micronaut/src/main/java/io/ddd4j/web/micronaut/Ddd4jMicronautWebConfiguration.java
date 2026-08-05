@@ -1,6 +1,6 @@
 package io.ddd4j.web.micronaut;
 
-import io.ddd4j.web.core.AuthenticationMode;
+import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import lombok.Getter;
 import lombok.Setter;

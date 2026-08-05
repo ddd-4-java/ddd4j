@@ -1,7 +1,7 @@
 package io.ddd4j.web.webflux;
 
 import io.ddd4j.core.subject.Subject;
-import io.ddd4j.web.core.WebRequestContext;
+import io.ddd4j.web.core.context.WebRequestContext;
 import lombok.experimental.UtilityClass;
 import reactor.core.publisher.Mono;
 

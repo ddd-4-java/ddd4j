@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.context;
 
 /**
  * ddd4j Web 适配器共同识别的标准与扩展请求头。

@@ -1,4 +1,4 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.health;
 
 import java.util.Objects;
 import java.util.function.BooleanSupplier;

@@ -1,7 +1,8 @@
-package io.ddd4j.web.core;
+package io.ddd4j.web.core.auth;
 
 import java.util.Objects;
 import java.util.function.Predicate;
+import io.ddd4j.web.core.context.WebRequestContext;
 
 /**
  * 决定一次 HTTP 请求采用何种认证模式。
