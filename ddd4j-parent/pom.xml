@@ -1543,6 +1543,19 @@
                 <spring.profiles.active>local</spring.profiles.active>
             </properties>
         </profile>
+        <!-- 发布到 Maven Central Portal：mvn -Prelease deploy（继承自 ddd4j-dependencies 的插件版本与默认配置） -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
     </profiles>
 

@@ -86,6 +86,7 @@
         <canal.version>1.1.8</canal.version>
         <cas-client.version>4.1.1</cas-client.version>
         <cassandra-driver.version>4.19.2</cassandra-driver.version>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
         <cglib.version>3.3.0</cglib.version>
         <checker-framework.version>3.55.1</checker-framework.version>
         <classgraph.version>4.8.184</classgraph.version>
@@ -8793,6 +8794,17 @@
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${maven-license-plugin.version}</version>
                 </plugin>
+                <!-- https://central.sonatype.org/publish/publish-portal-maven/ -->
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>central</publishingServerId>
+                        <tokenAuth>true</tokenAuth>
+                    </configuration>
+                </plugin>
                 <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-m2settings-maven-plugin -->
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
@@ -8865,5 +8877,21 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <!-- 发布到 Maven Central Portal：mvn -Prelease deploy（与阿里云私有仓库发布互不干扰） -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
