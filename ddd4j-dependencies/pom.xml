@@ -8123,16 +8123,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
-            <dependency>
-                <groupId>org.apache.tika</groupId>
-                <artifactId>tika-core</artifactId>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-parsers-standard-package -->
-            <dependency>
-                <groupId>org.apache.tika</groupId>
-                <artifactId>tika-parsers-standard-package</artifactId>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.google.crypto.tink/tink -->
             <dependency>
                 <groupId>com.google.crypto.tink</groupId>
