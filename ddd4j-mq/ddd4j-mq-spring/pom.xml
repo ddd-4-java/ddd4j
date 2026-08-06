@@ -45,10 +45,6 @@
             <artifactId>spring-beans</artifactId>
         </dependency>
         <!-- Lombok (迁出的 4 个类使用) -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

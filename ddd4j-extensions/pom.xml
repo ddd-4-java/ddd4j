@@ -32,15 +32,7 @@
     <dependencies>
 
         <!-- For Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
         <!-- For Slf4j Api -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
         <!-- For Servlet Api -->
         <dependency>
             <groupId>jakarta.servlet</groupId>

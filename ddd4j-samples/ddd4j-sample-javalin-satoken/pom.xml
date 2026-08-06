@@ -48,10 +48,6 @@
         <!-- Javalin Web 框架 + Google Guice（ddd4j-runtime-guice 已传递依赖） -->
 
         <!-- ================= Lombok ================= -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
 
         <!-- Javalin（含 Jetty 9.x，与 ddd4j 强制 Jetty 12 冲突，需要排除并显式引入 Jetty 12） -->
         <dependency>

@@ -119,11 +119,6 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <!-- Lombok：减少 POJO 模板代码（事件 / 命令 / 读模型 / 值对象） -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- 测试依赖 -->
         <dependency>
