@@ -8,7 +8,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-sample-order-redis</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Redis idempotency adapter for the shared Order sample.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>

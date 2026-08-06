@@ -13,7 +13,9 @@
 
     <artifactId>ddd4j-sample-quarkus-satoken</artifactId>
     <packaging>jar</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Quarkus + Sa-Token 鉴权示例：演示 CDI 容器下 SubjectKit 统一鉴权入口</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>

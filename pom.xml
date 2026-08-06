@@ -12,6 +12,7 @@
 
     <name>ddd4j</name>
     <description>Ddd4j For Java Projects</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <scm>
         <connection>scm:git:https://github.com/ddd-4-java/ddd4j.git</connection>

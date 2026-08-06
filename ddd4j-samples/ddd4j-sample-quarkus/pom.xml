@@ -12,10 +12,12 @@
     </parent>
 
     <artifactId>ddd4j-sample-quarkus</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Quarkus 框架启动示例：演示 ddd4j 在 Quarkus CDI 容器下的启动与业务装配。
         包含 ddd4j-runtime-quarkus 的 SPI 自动注入、ddd4j-web-quarkus 的 JAX-RS 资源基类，
         以及 4 个核心 SPI 的示例实现。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <!-- Quarkus 平台版本与 ddd4j-dependencies 保持一致（3.x LTS 系列） -->

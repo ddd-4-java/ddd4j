@@ -10,7 +10,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-runtime-vertx</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j Runtime - Vert.x 5 EventBus 与 worker 生命周期接线。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

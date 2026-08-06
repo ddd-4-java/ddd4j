@@ -11,11 +11,13 @@
     </parent>
 
     <artifactId>ddd4j-data-jpa</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据层 - JPA 标准实现（跨容器 Repository 范式）：
         基于 jakarta.persistence API，提供 JpaAggregateRepository 实现 RichRepository SPI，
         整合核心充血 Query + 字段加解密（JpaEncryptFieldListener）。
         适用于 Spring/OpenJPA/EclipseLink/Quarkus-Hibernate 等任意 Jakarta EE 容器。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

@@ -12,7 +12,9 @@
 
     <artifactId>ddd4j-parent</artifactId>
     <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Parent for Projects</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
 

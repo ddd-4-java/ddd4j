@@ -12,7 +12,9 @@
 
     <artifactId>ddd4j-samples</artifactId>
     <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 框架无关的业务内核与非 Spring Boot 运行时示例。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <!-- 示例模块仅用于演示与测试，不发布到远程仓库 -->

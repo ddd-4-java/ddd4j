@@ -10,7 +10,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-web-vertx</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j Web - Vert.x Router 适配。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

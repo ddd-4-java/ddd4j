@@ -11,9 +11,11 @@
     </parent>
 
     <artifactId>ddd4j-mq-spring</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j MQ - Spring 桥接：org.springframework.messaging.Message ↔ MQMessage 转换、BeanPostProcessor 监听注册。承担
         ddd4j-mq-core 与 Spring 容器（@Configuration/BeanPostProcessor/EventListener）的所有桥接职责。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- 纯 Java MQ 抽象 -->

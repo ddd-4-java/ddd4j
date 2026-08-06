@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-extension-qrcode</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j framework-neutral QR code application service based on ZXing</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

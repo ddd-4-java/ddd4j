@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-data-datascope</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j DataScope Component（数据权限）</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

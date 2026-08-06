@@ -12,7 +12,9 @@
     </parent>
 
     <artifactId>ddd4j-runtime-helidon</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j Runtime - Helidon MP 3 CDI 与 MicroProfile Config 接线。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

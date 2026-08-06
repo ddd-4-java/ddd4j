@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-mq-disruptor</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j LMAX Disruptor Local MQ Component</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

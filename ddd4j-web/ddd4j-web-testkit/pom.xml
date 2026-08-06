@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-web-testkit</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j Web 共享 HTTP 契约工具，不进入对外 BOM。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

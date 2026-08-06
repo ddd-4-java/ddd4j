@@ -12,10 +12,12 @@
 
     <artifactId>ddd4j-mq</artifactId>
     <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -spring(Spring Messaging 桥接)
         + 多 Broker/本地实现（ActiveMQ/Disruptor/Kafka/MQTT/NATS/ONS/Pulsar/RabbitMQ/Redis Stream/RocketMQ/SQS/TDMQ）。
         Spring Boot 自动装配留在外部 ddd4j-boot，当前仓库直接纳管各 Broker adapter。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- Test -->

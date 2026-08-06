@@ -12,9 +12,11 @@
     </parent>
 
     <artifactId>ddd4j-mq-activemq</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j ActiveMQ Classic (v5) adapter based on activemq-client and ddd4j MQ SPI. Pure Java, zero
         Spring.
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

@@ -12,8 +12,10 @@
 
     <artifactId>ddd4j-data</artifactId>
     <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据抽象聚合：（mybatis / mybatis-plus / panache / jpa）+ crypto/external/logs/datascope 扩展。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <modules>
         <module>ddd4j-data-crypto</module>

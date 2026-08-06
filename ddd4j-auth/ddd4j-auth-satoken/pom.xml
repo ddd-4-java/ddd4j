@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-auth-satoken</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Sa-Token Component</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- For DDD4j Core -->

@@ -11,11 +11,13 @@
     </parent>
 
     <artifactId>ddd4j-mq-core</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>
         ddd4j MQ - 纯 Java 抽象（零 Spring 依赖）：
         MQMessage / MQEventListener / MQBrokerAdapter SPI。
         各框架适配（Spring / Quarkus / Javalin）通过对应桥接模块提供。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- 纯 Java 核心契约 -->

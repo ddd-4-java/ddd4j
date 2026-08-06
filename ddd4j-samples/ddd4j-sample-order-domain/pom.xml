@@ -8,7 +8,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-sample-order-domain</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Framework-neutral Order aggregate and persistence ports.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>

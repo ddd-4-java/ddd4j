@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-extension-excel</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Excel Component — ExcelKit facade on top of Alibaba EasyExcel 4.x (pure Java, no Spring)</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- For EasyExcel: 复用原生注解(@ExcelProperty/@ExcelIgnore/@ColumnWidth 等)、EasyExcel、ExcelWriter、Converter、WriteHandler -->

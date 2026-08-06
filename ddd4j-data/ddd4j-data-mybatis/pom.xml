@@ -11,10 +11,12 @@
     </parent>
 
     <artifactId>ddd4j-data-mybatis</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据层 - MyBatis 官方实现（零 MyBatis-Plus 依赖）：纯 MyBatis 3.x 风格的 RichRepository 实现，
         通过 ddd4j 自有 Mapper 与扩展 SPI 适配 ddd4j-core 的 Repository SPI。
         等保数据加密通过自定义加密拦截器 + ddd4j-data-crypto 实现。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- ddd4j 核心契约 -->

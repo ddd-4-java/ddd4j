@@ -12,7 +12,9 @@
 
     <artifactId>ddd4j-runtime</artifactId>
     <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j 运行时绑定聚合：核心 SPI 的容器接线与共享契约测试。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <modules>
         <module>ddd4j-runtime-support</module>

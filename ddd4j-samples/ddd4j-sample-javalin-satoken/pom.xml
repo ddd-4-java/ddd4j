@@ -13,7 +13,9 @@
 
     <artifactId>ddd4j-sample-javalin-satoken</artifactId>
     <packaging>jar</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Javalin + Guice + Sa-Token 鉴权示例：演示无 DI 容器框架下 SubjectKit 统一鉴权入口</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- ddd4j core：核心 DDD/CQRS 抽象（API、Page、Repository、AggregateRoot 等） -->

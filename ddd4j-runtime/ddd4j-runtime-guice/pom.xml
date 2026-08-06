@@ -11,10 +11,12 @@
     </parent>
 
     <artifactId>ddd4j-runtime-guice</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Google Guice 运行时绑定：核心 SPI 的 Guice
         实现（DomainEventPublisher/SubjectProvider/I18nProvider）+ IoC 上下文 + Javalin 复用基础设施。与
         ddd4j-runtime-spring、ddd4j-runtime-quarkus 平级。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- 纯 Java 核心契约 -->

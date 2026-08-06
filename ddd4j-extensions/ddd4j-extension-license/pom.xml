@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-extension-license</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j License Component（软件授权）</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- ddd4j 缓存门面：License 验证结果缓存 -->

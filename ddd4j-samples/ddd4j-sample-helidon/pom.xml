@@ -10,7 +10,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-sample-helidon</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Helidon MP Order sample using the shared DDD/CQRS application kernel and ddd4j Web semantics.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <helidon.version>3.2.18</helidon.version>

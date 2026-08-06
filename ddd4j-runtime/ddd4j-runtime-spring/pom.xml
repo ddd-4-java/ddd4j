@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-runtime-spring</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Spring 运行时绑定：将纯 Java DDD 契约桥接到 Spring Framework。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- 依赖纯 Java 核心模块 -->

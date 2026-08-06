@@ -12,12 +12,14 @@
     </parent>
 
     <artifactId>ddd4j-sample-quarkus-cqrs</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Quarkus 平台上的 ddd4j Order/Goods CQRS 完整示例：
         将 Order 充血模型 + Goods 第三轨 (Model/Query) 双业务完整移植到 Quarkus 运行时，
         演示 ① CDI @ApplicationScoped 业务装配 ② JAX-RS REST 端点（命令/查询分离）③
         ProjectionView 内存读模型 ④ CDI @Observes 监听 ddd4j DomainEvent 桥接 ⑤
         CacheKit 缓存读侧（CQRS 缓存增强）。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <!-- Quarkus 平台版本与 ddd4j-dependencies 保持一致（3.x LTS 系列） -->

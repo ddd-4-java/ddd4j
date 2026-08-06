@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-mq-mqtt-mica</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j mica-mqtt AIO client adapter — pure Java, zero Spring, native dromara.mica-mqtt.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

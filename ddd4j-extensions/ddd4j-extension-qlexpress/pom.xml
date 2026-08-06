@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-extension-qlexpress</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
         <description>ddd4j QLExpress 4 通用执行、函数注册与安全选项工具组件</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

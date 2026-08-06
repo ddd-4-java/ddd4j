@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-kit</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 工具箱：继承式增强 Hutool，提供 Cache/Lang/Web 工具</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- Hutool（按需引入子模块，替代 hutool-all 全量引入） -->

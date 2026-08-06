@@ -11,9 +11,11 @@
     </parent>
 
     <artifactId>ddd4j-data-logs</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据层 - API 操作日志：ApiOperationLogAspect 切面 + Provider（纯 AspectJ，无 Spring 依赖）。
         Spring Boot auto-config 迁移到 ddd4j-boot-data。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- For DDD4j -->

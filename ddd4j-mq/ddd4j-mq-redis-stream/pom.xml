@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-mq-redis-stream</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Redis Stream adapter based on Jedis, Redisson, Lettuce and ddd4j MQ SPI.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

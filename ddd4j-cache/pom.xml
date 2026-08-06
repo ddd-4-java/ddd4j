@@ -13,6 +13,7 @@
 
     <artifactId>ddd4j-cache</artifactId>
     <packaging>jar</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>
         ddd4j 缓存实现层（单一 jar，多后端可选）。
         缓存 SPI（Cache/CacheStats/CacheManager/CacheConfig/CacheType）位于 ddd4j-core/cache（纯 Java）。
@@ -33,6 +34,7 @@
         - 用 Memcached：引入 com.googlecode.xmemcached:xmemcached
         - 用 JetCache：引入 com.alicp.jetcache:jetcache-core + 对应 starter
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- 核心契约（纯 Java 缓存 SPI） -->

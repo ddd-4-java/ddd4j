@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-mq-tdmq</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Tencent TDMQ adapter based on ddd4j MQ SPI. Pure Java, zero Spring.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

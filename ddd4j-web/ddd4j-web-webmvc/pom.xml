@@ -11,8 +11,10 @@
     </parent>
 
     <artifactId>ddd4j-web-webmvc</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j Web - Spring MVC 实现：Controller/Interceptor/Config/WebSocket。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

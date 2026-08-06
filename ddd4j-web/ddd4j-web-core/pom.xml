@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-web-core</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j Web Core：与 HTTP 框架无关的请求上下文、异常、Bearer 与幂等语义。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

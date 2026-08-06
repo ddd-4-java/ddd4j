@@ -11,9 +11,11 @@
     </parent>
 
     <artifactId>ddd4j-runtime-quarkus</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Quarkus 运行时绑定：核心 SPI、CDI、CQRS 读侧与 EventStore 桥接。与
         ddd4j-runtime-spring、ddd4j-runtime-guice 平级。
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

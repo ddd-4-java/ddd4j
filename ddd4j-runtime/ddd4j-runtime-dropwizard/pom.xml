@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-runtime-dropwizard</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j Runtime - Dropwizard 5 Bundle 与生命周期接线。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

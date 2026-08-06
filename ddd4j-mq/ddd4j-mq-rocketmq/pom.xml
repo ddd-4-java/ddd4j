@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-mq-rocketmq</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j RocketMQ adapter based on rocketmq-client and ddd4j MQ SPI.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>

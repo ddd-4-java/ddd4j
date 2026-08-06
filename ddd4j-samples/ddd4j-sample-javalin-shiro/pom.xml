@@ -13,8 +13,10 @@
 
     <artifactId>ddd4j-sample-javalin-shiro</artifactId>
     <packaging>jar</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Javalin + Guice + Apache Shiro 鉴权示例：演示无 DI 容器框架下 SubjectKit 统一鉴权入口（底层为 Shiro）
     </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <shiro.version>2.0.6</shiro.version>
