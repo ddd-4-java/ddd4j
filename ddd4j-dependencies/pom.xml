@@ -8831,7 +8831,6 @@
                     <extensions>true</extensions>
                     <configuration>
                         <publishingServerId>central</publishingServerId>
-                        <tokenAuth>true</tokenAuth>
                     </configuration>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-m2settings-maven-plugin -->
