@@ -689,6 +689,7 @@
         <thymeleaf-extras-springsecurity.version>3.1.3.RELEASE</thymeleaf-extras-springsecurity.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
         <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
+        <tika-bom.version>3.3.1</tika-bom.version>
         <tika.version>3.3.1</tika.version>
         <token-bucket.version>1.7</token-bucket.version>
         <tomcat.version>11.0.15</tomcat.version>
@@ -8114,6 +8115,14 @@
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf-spring6</artifactId>
                 <version>${thymeleaf.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-bom -->
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-bom</artifactId>
+                <version>${tika-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
             <dependency>
