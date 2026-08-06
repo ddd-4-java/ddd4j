@@ -15,7 +15,7 @@ import java.io.Serializable;
  * <p>业务项目的聚合根 Resource 应继承此类，类型参数：
  * <ul>
  *   <li>{@code M}：聚合根领域模型（{@link AggregateRoot} 子类）</li>
- *   <li>{@code Q}：查询参数对象</li>
+ *   <li>{@code Q}：查询参数对象（需实现 {@link Serializable}，否则会被 JAX-RS 擦除为 {@code Object} 引发构建期 Arc NPE）</li>
  *   <li>{@code ID}：主键类型</li>
  * </ul>
  *
@@ -38,7 +38,7 @@ import java.io.Serializable;
  */
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q, ID extends Serializable> extends TenantAwareResource {
+public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q extends Serializable, ID extends Serializable> extends TenantAwareResource {
 
     /**
      * 分页查询
