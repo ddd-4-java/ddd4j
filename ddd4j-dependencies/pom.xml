@@ -238,7 +238,7 @@
         <easy4j-security-guard-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-security-guard-sdk.version>
         <easy4j-security-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-security-jwt-extension.version>
         <easy4j-shiro-biz-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-biz-sdk.version>
-        <easy4j-shiro-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-biz.version>
+        <easy4j-shiro-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-extension.version>
         <easy4j-shiro-dingtalk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk-extension.version>
         <easy4j-shiro-j2cache.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-j2cache.version>
         <easy4j-shiro-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt-extension.version>
@@ -1071,11 +1071,17 @@
                 <artifactId>security-jwt-extension</artifactId>
                 <version>${easy4j-security-jwt-extension.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/shiro-biz — easy4j shiro-biz -->
+            <!-- Source: https://github.com/easy-4-java/shiro-extension — easy4j shiro-extension core -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-biz</artifactId>
-                <version>${easy4j-shiro-biz.version}</version>
+                <artifactId>shiro-extension-core</artifactId>
+                <version>${easy4j-shiro-extension.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-extension — easy4j shiro-extension spring -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-extension-spring</artifactId>
+                <version>${easy4j-shiro-extension.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/shiro-biz-sdk — easy4j shiro-biz-sdk -->
             <dependency>
