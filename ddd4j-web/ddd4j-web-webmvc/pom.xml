@@ -44,8 +44,8 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>spring-biz</artifactId>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>spring-extension</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.dozermapper</groupId>

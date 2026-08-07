@@ -17,6 +17,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>spring-extension</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-core</artifactId>
             <version>${revision}</version>
@@ -41,10 +45,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>spring-biz</artifactId>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
