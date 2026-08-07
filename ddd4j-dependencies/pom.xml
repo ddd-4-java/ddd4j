@@ -206,7 +206,7 @@
         <easy4j-httpclient3-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-httpclient3-extension.version>
         <easy4j-ishumei-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-ishumei-java-sdk.version>
         <easy4j-jackson-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-jackson-extension.version>
-        <easy4j-javassist-plus.version>3.0.x.20260630-SNAPSHOT</easy4j-javassist-plus.version>
+        <easy4j-javassist-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-javassist-extension.version>
         <easy4j-jcifs-pool.version>3.0.x.20260630-SNAPSHOT</easy4j-jcifs-pool.version>
         <easy4j-jwt-issuer.version>3.0.x.20260630-SNAPSHOT</easy4j-jwt-issuer.version>
         <easy4j-metrics-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-metrics-biz.version>
@@ -886,11 +886,11 @@
                 <artifactId>jackson-extension</artifactId>
                 <version>${easy4j-jackson-extension.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/javassist-plus — easy4j javassist-plus -->
+            <!-- Source: https://github.com/easy-4-java/javassist-extension — easy4j javassist-extension -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>javassist-plus</artifactId>
-                <version>${easy4j-javassist-plus.version}</version>
+                <artifactId>javassist-extension</artifactId>
+                <version>${easy4j-javassist-extension.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/jcifs-pool — easy4j jcifs-pool -->
             <dependency>
