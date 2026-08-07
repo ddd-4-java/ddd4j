@@ -242,16 +242,16 @@
         <easy4j-shiro-dingtalk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk.version>
         <easy4j-shiro-j2cache.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-j2cache.version>
         <easy4j-shiro-jwt.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt.version>
-        <easy4j-shiro-oauth2-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-oauth2-extension.version>
+        <easy4j-shiro-oauth.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-oauth.version>
         <easy4j-shiro-pf4j.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-pf4j.version>
-        <easy4j-shiro-saml-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-saml-extension.version>
-        <easy4j-shiro-weixin-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-weixin-extension.version>
+        <easy4j-shiro-saml.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-saml.version>
+        <easy4j-shiro-weixin.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-weixin.version>
         <easy4j-soapui-template.version>3.0.x.20260630-SNAPSHOT</easy4j-soapui-template.version>
         <easy4j-soaputils.version>3.0.x.20260630-SNAPSHOT</easy4j-soaputils.version>
         <easy4j-socketio-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-socketio-extension.version>
         <easy4j-spring-bytebuddy.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-bytebuddy.version>
         <easy4j-spring-data-redis-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-data-redis-extension.version>
-        <easy4j-spring-enhance.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-enhance.version>
+        <easy4j-spring-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-extension.version>
         <easy4j-spring-javassist.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-javassist.version>
         <easy4j-spring-security-extension2.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-security-extension2.version>
         <easy4j-tencentcloud-sdk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-tencentcloud-sdk-extension.version>
@@ -1118,11 +1118,17 @@
                 <artifactId>shiro-jwt-spring</artifactId>
                 <version>${easy4j-shiro-jwt.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/shiro-oauth2-extension — easy4j shiro-oauth2-extension -->
+            <!-- Source: https://github.com/easy-4-java/shiro-oauth — easy4j shiro-oauth core -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-oauth2-extension</artifactId>
-                <version>${easy4j-shiro-oauth2-extension.version}</version>
+                <artifactId>shiro-oauth-core</artifactId>
+                <version>${easy4j-shiro-oauth.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-oauth — easy4j shiro-oauth spring -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-oauth-spring</artifactId>
+                <version>${easy4j-shiro-oauth.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/shiro-pf4j — easy4j shiro-pf4j -->
             <dependency>
@@ -1130,17 +1136,29 @@
                 <artifactId>shiro-pf4j</artifactId>
                 <version>${easy4j-shiro-pf4j.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/shiro-saml-extension — easy4j shiro-saml-extension -->
+            <!-- Source: https://github.com/easy-4-java/shiro-saml — easy4j shiro-saml core -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-saml-extension</artifactId>
-                <version>${easy4j-shiro-saml-extension.version}</version>
+                <artifactId>shiro-saml-core</artifactId>
+                <version>${easy4j-shiro-saml.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/shiro-weixin-extension — easy4j shiro-weixin-extension -->
+            <!-- Source: https://github.com/easy-4-java/shiro-saml — easy4j shiro-saml spring -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-weixin-extension</artifactId>
-                <version>${easy4j-shiro-weixin-extension.version}</version>
+                <artifactId>shiro-saml-spring</artifactId>
+                <version>${easy4j-shiro-saml.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-weixin — easy4j shiro-weixin core -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-weixin-core</artifactId>
+                <version>${easy4j-shiro-weixin.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-weixin — easy4j shiro-weixin spring -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-weixin-spring</artifactId>
+                <version>${easy4j-shiro-weixin.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/soapui-template — easy4j soapui-template -->
             <dependency>
@@ -1172,11 +1190,11 @@
                 <artifactId>spring-data-redis-extension</artifactId>
                 <version>${easy4j-spring-data-redis-extension.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/spring-enhance — easy4j spring-enhance -->
+            <!-- Source: https://github.com/easy-4-java/spring-extension — easy4j spring-extension -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>spring-enhance</artifactId>
-                <version>${easy4j-spring-enhance.version}</version>
+                <artifactId>spring-extension</artifactId>
+                <version>${easy4j-spring-extension.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/spring-javassist — easy4j spring-javassist -->
             <dependency>

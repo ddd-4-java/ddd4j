@@ -24,7 +24,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-public class WebKit extends org.springframework.biz.utils.WebUtils {
+public class WebKit extends org.springframework.extension.utils.WebUtils {
 
     /**
      * 根据名称获取请求头值。
