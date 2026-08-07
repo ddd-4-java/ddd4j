@@ -27,10 +27,5 @@
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
