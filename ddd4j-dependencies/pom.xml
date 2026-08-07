@@ -231,7 +231,7 @@
         <easy4j-pf4j-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pf4j-extension.version>
         <easy4j-pf4j3-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pf4j3-extension.version>
         <easy4j-playwright-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-playwright-extension.version>
-        <easy4j-rocketmq-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-rocketmq-biz.version>
+        <easy4j-rocketmq-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-rocketmq-extension.version>
         <easy4j-schemacrawler-hive.version>3.0.x.20260630-SNAPSHOT</easy4j-schemacrawler-hive.version>
         <easy4j-schemacrawler-impala.version>3.0.x.20260630-SNAPSHOT</easy4j-schemacrawler-impala.version>
         <easy4j-schemacrawler-kylin.version>3.0.x.20260630-SNAPSHOT</easy4j-schemacrawler-kylin.version>
@@ -1035,11 +1035,11 @@
                 <artifactId>playwright-extension</artifactId>
                 <version>${easy4j-playwright-extension.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/rocketmq-biz — easy4j rocketmq-biz -->
+            <!-- Source: https://github.com/easy-4-java/rocketmq-extension — easy4j rocketmq-extension -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>rocketmq-biz</artifactId>
-                <version>${easy4j-rocketmq-biz.version}</version>
+                <artifactId>rocketmq-extension</artifactId>
+                <version>${easy4j-rocketmq-extension.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/schemacrawler-hive — easy4j schemacrawler-hive -->
             <dependency>
