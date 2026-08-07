@@ -27,8 +27,8 @@
         <ddd4j.api.include>io.ddd4j.__api_gate_requires_module_scope__.**</ddd4j.api.include>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jackson.version>2.22.0</jackson.version>
-        <jandex-maven-plugin.version>3.2.7</jandex-maven-plugin.version>
-        <japicmp-maven-plugin.version>0.23.1</japicmp-maven-plugin.version>
+        <maven-jandex-plugin.version>3.2.7</maven-jandex-plugin.version>
+        <maven-japicmp-plugin.version>0.23.1</maven-japicmp-plugin.version>
         <java.version>21</java.version>
         <lombok.version>1.18.46</lombok.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
@@ -550,7 +550,7 @@
                     <plugin>
                         <groupId>com.github.siom79.japicmp</groupId>
                         <artifactId>japicmp-maven-plugin</artifactId>
-                        <version>${japicmp-maven-plugin.version}</version>
+                        <version>${maven-japicmp-plugin.version}</version>
                         <configuration>
                             <oldVersion>
                                 <dependency>

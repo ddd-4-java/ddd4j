@@ -85,7 +85,7 @@
             <plugin>
                 <groupId>io.smallrye</groupId>
                 <artifactId>jandex-maven-plugin</artifactId>
-                <version>${jandex-maven-plugin.version}</version>
+                <version>${maven-jandex-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
