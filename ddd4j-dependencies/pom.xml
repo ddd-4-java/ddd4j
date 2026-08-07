@@ -239,7 +239,7 @@
         <easy4j-security-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-security-jwt-extension.version>
         <easy4j-shiro-biz-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-biz-sdk.version>
         <easy4j-shiro-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-extension.version>
-        <easy4j-shiro-dingtalk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk-extension.version>
+        <easy4j-shiro-dingtalk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk.version>
         <easy4j-shiro-j2cache.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-j2cache.version>
         <easy4j-shiro-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt-extension.version>
         <easy4j-shiro-oauth2-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-oauth2-extension.version>
@@ -1089,11 +1089,16 @@
                 <artifactId>shiro-biz-sdk</artifactId>
                 <version>${easy4j-shiro-biz-sdk.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/shiro-dingtalk-extension — easy4j shiro-dingtalk-extension -->
+            <!-- Source: https://github.com/easy-4-java/shiro-dingtalk — easy4j shiro-dingtalk -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-dingtalk-extension</artifactId>
-                <version>${easy4j-shiro-dingtalk-extension.version}</version>
+                <artifactId>shiro-dingtalk-core</artifactId>
+                <version>${easy4j-shiro-dingtalk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-dingtalk-spring</artifactId>
+                <version>${easy4j-shiro-dingtalk.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/shiro-j2cache — easy4j shiro-j2cache -->
             <dependency>
