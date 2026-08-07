@@ -54,7 +54,6 @@
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-extension-otel</artifactId>

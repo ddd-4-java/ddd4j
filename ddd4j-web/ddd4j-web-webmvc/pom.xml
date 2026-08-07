@@ -125,7 +125,6 @@
             <version>${revision}</version>
             <optional>true</optional>
         </dependency>
-        <!-- 测试 -->
     </dependencies>
 
 </project>
