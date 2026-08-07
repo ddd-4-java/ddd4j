@@ -241,7 +241,7 @@
         <easy4j-shiro-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-extension.version>
         <easy4j-shiro-dingtalk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk.version>
         <easy4j-shiro-j2cache.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-j2cache.version>
-        <easy4j-shiro-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt-extension.version>
+        <easy4j-shiro-jwt.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt.version>
         <easy4j-shiro-oauth2-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-oauth2-extension.version>
         <easy4j-shiro-pf4j.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-pf4j.version>
         <easy4j-shiro-saml-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-saml-extension.version>
@@ -1106,11 +1106,17 @@
                 <artifactId>shiro-j2cache</artifactId>
                 <version>${easy4j-shiro-j2cache.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/shiro-jwt-extension — easy4j shiro-jwt-extension -->
+            <!-- Source: https://github.com/easy-4-java/shiro-jwt — easy4j shiro-jwt core -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-jwt-extension</artifactId>
-                <version>${easy4j-shiro-jwt-extension.version}</version>
+                <artifactId>shiro-jwt-core</artifactId>
+                <version>${easy4j-shiro-jwt.version}</version>
+            </dependency>
+            <!-- Source: https://github.com/easy-4-java/shiro-jwt — easy4j shiro-jwt spring -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>shiro-jwt-spring</artifactId>
+                <version>${easy4j-shiro-jwt.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/shiro-oauth2-extension — easy4j shiro-oauth2-extension -->
             <dependency>
