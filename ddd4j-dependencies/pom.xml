@@ -220,8 +220,8 @@
         <easy4j-opencli-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-opencli-java-sdk.version>
         <easy4j-opencode-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-opencode-java-sdk.version>
         <easy4j-opencv-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-opencv-sdk.version>
-        <easy4j-pac4j-biz.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-biz.version>
-        <easy4j-pac4j-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-extension.version>
+        <easy4j-pac4j-extension-core.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-extension-core.version>
+        <easy4j-pac4j-extension-spring.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-extension-spring.version>
         <easy4j-pac4j-oauth-ext.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-oauth-ext.version>
         <easy4j-pac4j-oauth-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-oauth-extension.version>
         <easy4j-pac4j-otp-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-pac4j-otp-extension.version>
@@ -970,17 +970,17 @@
                 <artifactId>opencv-sdk</artifactId>
                 <version>${easy4j-opencv-sdk.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/pac4j-biz — easy4j pac4j-biz -->
+            <!-- Source: https://github.com/easy-4-java/pac4j-extension — easy4j pac4j core extension -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>pac4j-biz</artifactId>
-                <version>${easy4j-pac4j-biz.version}</version>
+                <artifactId>pac4j-extension-core</artifactId>
+                <version>${easy4j-pac4j-extension-core.version}</version>
             </dependency>
-            <!-- Source: https://github.com/easy-4-java/pac4j-extension — easy4j pac4j-extension -->
+            <!-- Source: https://github.com/easy-4-java/pac4j-extension — easy4j pac4j Spring extension -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>pac4j-extension</artifactId>
-                <version>${easy4j-pac4j-extension.version}</version>
+                <artifactId>pac4j-extension-spring</artifactId>
+                <version>${easy4j-pac4j-extension-spring.version}</version>
             </dependency>
             <!-- Source: https://github.com/easy-4-java/pac4j-oauth-ext — easy4j pac4j-oauth-ext -->
             <dependency>
