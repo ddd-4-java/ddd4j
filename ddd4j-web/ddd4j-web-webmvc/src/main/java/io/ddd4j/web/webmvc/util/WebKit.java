@@ -24,7 +24,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-public class WebKit extends org.springframework.extension.utils.WebUtils {
+public class WebKit {
 
     /**
      * 根据名称获取请求头值。
@@ -60,6 +60,26 @@ public class WebKit extends org.springframework.extension.utils.WebUtils {
     public static String getCookieVal(HttpServletRequest request, String name) {
         Cookie cookie = getCookie(request, name);
         return Objects.nonNull(cookie) ? cookie.getValue() : null;
+    }
+
+    /**
+     * 根据名称获取 Cookie。
+     *
+     * @param request 当前请求
+     * @param name Cookie 名称
+     * @return 匹配的 Cookie，不存在时返回 null
+     */
+    public static Cookie getCookie(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+        if (Objects.isNull(cookies)) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (Objects.equals(name, cookie.getName())) {
+                return cookie;
+            }
+        }
+        return null;
     }
 
     /**

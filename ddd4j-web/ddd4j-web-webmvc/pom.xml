@@ -78,6 +78,13 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- spring-extension 2.x retains its legacy javax.servlet-compatible API surface. -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
