@@ -72,10 +72,10 @@
 - **[DDD 思维导图](./docs/ddd/DDD%20思维导图.md)**：战略设计 + 战术设计完整知识体系
 - **[CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)**：命令查询职责分离核心概念
 - **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
-- **[架构边界规范](./docs/architecture/architecture-boundary.md)**：ddd4j 与各框架项目的职责铁律
-- **[架构全景（历史基线）](./docs/architecture/architecture.md)**：早期模块全景、SPI 设计与三框架运行时基线
-- **[当前源码架构导览](./docs/architecture/current-source-architecture.md)**：基于 CodeGraph 的模块边界、核心调用链、Mermaid 架构图与设计风险
-- **[2.0.x 发布质量门禁](./docs/production-release-quality.md)**：Java 17 验证、SBOM、许可证与可选 CVE 报告说明
+- **[架构边界规范](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md)**：ddd4j 与各框架项目的职责铁律
+- **[架构全景（历史基线）](./docs/superpowers/specs/2026-06-29-ddd4j-architecture-overview-design.md)**：早期模块全景、SPI 设计与三框架运行时基线
+- **[当前源码架构导览](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md)**：基于 CodeGraph 的模块边界、核心调用链、Mermaid 架构图与设计风险
+- **[发布质量门禁计划](./docs/superpowers/plans/2026-08-03-production-release-quality.md)**：Java 验证、SBOM、许可证与可选 CVE 报告说明
 
 ### 🏗️ 项目架构
 
@@ -446,14 +446,14 @@ order-service/
 
 | 文档                                                          | 说明                     |
 |-------------------------------------------------------------|------------------------|
-| [架构全景（历史基线）](./docs/architecture/architecture.md)       | 早期模块全景、SPI 设计与三框架基线     |
-| [当前源码架构导览](./docs/architecture/current-source-architecture.md) | CodeGraph 调用链、Mermaid 图和当前设计边界 |
-| [架构边界规范](./docs/architecture/architecture-boundary.md)      | ddd4j 与各框架项目的职责铁律      |
+| [架构全景（历史基线）](./docs/superpowers/specs/2026-06-29-ddd4j-architecture-overview-design.md)       | 早期模块全景、SPI 设计与三框架基线     |
+| [当前源码架构导览](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md) | CodeGraph 调用链、Mermaid 图和当前设计边界 |
+| [架构边界规范](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md)      | ddd4j 与各框架项目的职责铁律      |
 | [DDD 思维导图](./docs/ddd/DDD%20思维导图.md)                        | DDD 战略+战术设计知识体系        |
 | [CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)                      | CQRS 核心概念              |
 | [DDD 经典分层架构](./docs/ddd/1、DDD%20经典分层架构目录结构.md)              | 分层架构目录参考               |
 | [六边形架构](./docs/ddd/2、六边形架构详细目录结构参考.md)                      | 六边形架构目录参考              |
 | [整洁架构](./docs/ddd/3、整洁架构详细目录结构参考.md)                        | 整洁架构目录参考               |
 | [COLA V5 架构](./docs/ddd/4、COLA%20V5%20架构详细目录结构参考.md)        | COLA 菱形架构目录参考          |
-| [数据层优化计划](./docs/migration/ddd4j-data-optimization-plan.md) | ddd4j-data 模块优化方案      |
-| [迁移指南](./docs/migration/optional-migrations.md)             | 从旧版迁移到 2.0.x 的指南       |
+| [数据层优化计划](./docs/superpowers/plans/2026-06-29-ddd4j-data-optimization.md) | ddd4j-data 模块优化方案      |
+| [迁移指南](./docs/superpowers/specs/2026-07-02-optional-migrations-design.md)             | 从旧版迁移到 2.0.x 的指南       |
