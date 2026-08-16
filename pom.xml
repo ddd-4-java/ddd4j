@@ -63,8 +63,8 @@
         <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
         <spring-batch.version>5.2.2</spring-batch.version>
         <spring-data-bom.version>2024.1.5</spring-data-bom.version>
-        <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
-        <spring-framework.version>6.2.19</spring-framework.version>
+        <!-- 版本约束：feature/3.0.x 线对齐 ddd4j-boot 4.0.x（Boot 4），Spring Framework 切换至 7.x -->
+        <spring-framework.version>7.0.8</spring-framework.version>
         <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
         <spring-integration.version>6.5.10</spring-integration.version>
