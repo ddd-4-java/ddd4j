@@ -29,7 +29,6 @@
         <module>ddd4j-web-core</module>
         <module>ddd4j-web-testkit</module>
         <module>ddd4j-web-javalin</module>
-        <module>ddd4j-web-javalin6</module>
         <module>ddd4j-web-quarkus</module>
         <module>ddd4j-web-micronaut</module>
         <module>ddd4j-web-vertx</module>
