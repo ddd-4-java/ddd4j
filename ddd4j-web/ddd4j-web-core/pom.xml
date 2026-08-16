@@ -31,5 +31,28 @@
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- 测试期日志绑定：WebContextScope 的 MDC 恢复语义需要真实 MDC 实现（slf4j-simple 2.x 不支持 MDC） -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- 测试期 OTel 桥接：WebOtelSupport 反射路径需要真实 WebOtelIntegration 覆盖 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-extension-otel</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
