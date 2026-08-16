@@ -363,6 +363,10 @@
         <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
         <jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
         <jandex.version>3.6.0</jandex.version>
+        <!-- Jandex 索引 Maven 插件（与 jandex 库版本序列独立）：
+             Quarkus 等轨道模块生成 META-INF/jandex.idx 供扩展发现 Bean。
+             3.x 无默认 lifecycle binding，使用方需显式声明 executions。 -->
+        <maven-jandex-plugin.version>3.2.7</maven-jandex-plugin.version>
         <janino.version>3.1.12</janino.version>
         <jasypt.version>1.9.3</jasypt.version>
         <java-jwt.version>4.5.0</java-jwt.version>
@@ -8783,6 +8787,15 @@
     <build>
         <pluginManagement>
             <plugins>
+                <!-- https://mvnrepository.com/artifact/io.smallrye/jandex-maven-plugin -->
+                <!-- 官方文档：https://smallrye.io/smallrye-jandex/jandex-maven-plugin/ -->
+                <!-- 生成 META-INF/jandex.idx 索引（Quarkus 扩展/CDI Bean 发现依赖）。
+                     3.x 无默认 lifecycle binding，使用方需显式声明 executions（jandex goal）。 -->
+                <plugin>
+                    <groupId>io.smallrye</groupId>
+                    <artifactId>jandex-maven-plugin</artifactId>
+                    <version>${maven-jandex-plugin.version}</version>
+                </plugin>
                 <!-- https://mvnrepository.com/artifact/com.alibaba.cloud/toolkit-maven-plugin -->
                 <plugin>
                     <groupId>com.alibaba.cloud</groupId>
