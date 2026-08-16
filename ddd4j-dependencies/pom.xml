@@ -546,7 +546,7 @@
         <opentracing.version>0.33.0</opentracing.version>
         <oracle-database.version>23.26.2.0.0</oracle-database.version>
         <oshi-shaded.version>6.1.0</oshi-shaded.version>
-        <oshi.version>6.12.0</oshi.version>
+        <oshi.version>7.4.4</oshi.version>
         <owasp-antisamy.version>1.7.8</owasp-antisamy.version>
         <owasp-csrfguard.version>4.5.0-jakarta</owasp-csrfguard.version>
         <owasp-encoder.version>1.4.0</owasp-encoder.version>
