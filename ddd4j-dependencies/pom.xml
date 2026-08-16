@@ -456,6 +456,12 @@
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
         <maven-alibaba-plugin.version>1.1.9</maven-alibaba-plugin.version>
+        <!-- Maven 4 要求非生命周期插件显式版本（Maven 3 的"猜最新"策略已移除）：
+             ddd4j-parent 的 build 声明引用，缺版本会导致下游解析失败 -->
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <!-- surefire 开关默认值：ddd4j-parent 的 surefire 配置引用 ${skipTests}，
+             本 POM 作为被消费的 parent 链节点必须提供默认值（否则下游插值失败被当作 skip） -->
+        <skipTests>false</skipTests>
         <maven-appassembler-plugin.version>2.1.0</maven-appassembler-plugin.version>
         <maven-asciidoctor-plugin.version>3.0.0</maven-asciidoctor-plugin.version>
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
@@ -8795,6 +8801,12 @@
                     <groupId>io.smallrye</groupId>
                     <artifactId>jandex-maven-plugin</artifactId>
                     <version>${maven-jandex-plugin.version}</version>
+                </plugin>
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/com.alibaba.cloud/toolkit-maven-plugin -->
                 <plugin>
