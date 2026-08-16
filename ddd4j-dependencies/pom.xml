@@ -546,6 +546,7 @@
         <opentracing.version>0.33.0</opentracing.version>
         <oracle-database.version>23.26.2.0.0</oracle-database.version>
         <oshi-shaded.version>6.1.0</oshi-shaded.version>
+        <oshi-ffm.version>7.4.4</oshi-ffm.version>
         <oshi.version>7.4.4</oshi.version>
         <owasp-antisamy.version>1.7.8</owasp-antisamy.version>
         <owasp-csrfguard.version>4.5.0-jakarta</owasp-csrfguard.version>
@@ -6675,6 +6676,12 @@
                 <groupId>com.github.oshi</groupId>
                 <artifactId>oshi-core-shaded</artifactId>
                 <version>${oshi-shaded.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.github.oshi/oshi-core-ffm -->
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core-ffm</artifactId>
+                <version>${oshi-ffm.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer -->
             <dependency>
