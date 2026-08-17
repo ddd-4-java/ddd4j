@@ -340,7 +340,7 @@
         <influxdb-java.version>2.25</influxdb-java.version>
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <!-- jackson-annotations: managed by jackson-bom (tools.jackson.core:jackson-annotations) -->
+        <!-- jackson-annotations: managed by jackson-bom (com.fasterxml.jackson.core:jackson-annotations:2.22) -->
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
@@ -4719,11 +4719,11 @@
                 <version>${google-j2objc-annotations.version}</version>
             </dependency>
             <!-- jackson-core: managed by jackson-bom -->
-            <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-annotations -->
+            <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+            <!-- Jackson 3 仍使用 2.x annotations（BOM 中 version=2.22） -->
             <dependency>
-                <groupId>tools.jackson.core</groupId>
+                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind -->
             <dependency>
