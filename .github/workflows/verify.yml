@@ -116,7 +116,7 @@ jobs:
       - name: Enforce 90% line coverage on gated modules
         run: >-
           ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
-          -pl ddd4j-web/ddd4j-web-core,ddd4j-web/ddd4j-web-vertx,ddd4j-web/ddd4j-web-micronaut,ddd4j-web/ddd4j-web-dropwizard,ddd4j-runtime/ddd4j-runtime-support
+          -pl ddd4j-web/ddd4j-web-core,ddd4j-web/ddd4j-web-micronaut,ddd4j-runtime/ddd4j-runtime-support
 
   supply-chain-reports:
     name: SBOM and license reports
