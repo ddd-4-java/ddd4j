@@ -34,6 +34,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -52,11 +56,6 @@ jobs:
           grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
 
 
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          overwrite-settings: true
       - name: Diagnose private repo auth
         run: |
           echo "--- settings servers (masked) ---"
@@ -88,6 +87,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
+      # 两步法：先全 reactor 安装依赖（不激活 coverage，避免未达标依赖模块触发 check），
+      # 再对白名单模块强制 -Pcoverage verify。模块达标（LINE >= 90%）后加入白名单。
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -106,13 +111,6 @@ jobs:
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          overwrite-settings: true
-      # 两步法：先全 reactor 安装依赖（不激活 coverage，避免未达标依赖模块触发 check），
-      # 再对白名单模块强制 -Pcoverage verify。模块达标（LINE >= 90%）后加入白名单。
       - name: Install reactor dependencies without coverage enforcement
         run: ./mvnw -Denforcer.skip=true -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
@@ -127,6 +125,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -145,11 +147,6 @@ jobs:
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          overwrite-settings: true
       - name: Install reactor artifacts for plugin resolution
         run: ./mvnw -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
       - name: Install reactor artifacts for plugin resolution
@@ -190,6 +187,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -208,11 +209,6 @@ jobs:
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          overwrite-settings: true
       - name: Verify Docker daemon
         run: docker info
       # 容器化集成：Redis/MySQL/PostgreSQL/Kafka（testcontainers）。
