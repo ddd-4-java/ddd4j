@@ -39,6 +39,10 @@
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
 
         <!-- ======== API 文档 ======== -->
         <!-- Swagger 注解（@Schema，用于 ApiRestResponse 等） -->
