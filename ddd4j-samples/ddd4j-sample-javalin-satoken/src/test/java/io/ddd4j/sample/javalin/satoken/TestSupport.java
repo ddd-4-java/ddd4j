@@ -38,7 +38,7 @@ import io.ddd4j.sample.javalin.satoken.rbac.web.AuthenticationController;
 import io.ddd4j.sample.javalin.satoken.rbac.web.AuthorizationController;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
-import io.javalin.json.JavalinJackson;
+import io.javalin.json.JavalinJackson3;
 
 /**
  * 测试基础设施：手动创建 Guice 注入器并启动 Javalin。
@@ -96,7 +96,7 @@ public final class TestSupport {
         // 6) 启动 Javalin
         Javalin app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
-            cfg.jsonMapper(new JavalinJackson());
+            cfg.jsonMapper(new JavalinJackson3());
             // sa-token 需要在线程中维护 SaTokenContext 才能读写 token；
             // 测试侧在每个请求前后初始化/清理 mock 上下文，并把 Javalin 的 header/cookie 拷贝到 mock request 中。
             cfg.routes.before(ctx -> {

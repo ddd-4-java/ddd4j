@@ -23,7 +23,7 @@ import io.ddd4j.sample.javalin.cqrs.order.infrastructure.InMemoryOrderRepository
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderCQRSQueryController;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderController;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
+import io.javalin.json.JavalinJackson3;
 
 import java.util.Collection;
 
@@ -81,7 +81,7 @@ public final class TestSupport {
 
         Javalin app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
-            cfg.jsonMapper(new JavalinJackson());
+            cfg.jsonMapper(new JavalinJackson3());
             cfg.routes.apiBuilder(() -> {
                 orderController.routes();
                 orderQueryController.routes();

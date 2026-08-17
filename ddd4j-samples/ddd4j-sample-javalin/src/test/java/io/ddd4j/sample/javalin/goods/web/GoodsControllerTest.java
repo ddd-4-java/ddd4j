@@ -15,7 +15,7 @@ import io.ddd4j.sample.javalin.spi.AnonymousSubjectProvider;
 import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
 import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
+import io.javalin.json.JavalinJackson3;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ class GoodsControllerTest {
 
         app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
-            cfg.jsonMapper(new JavalinJackson());
+            cfg.jsonMapper(new JavalinJackson3());
             cfg.routes.apiBuilder(goodsController::routes);
         });
         app.start(0);

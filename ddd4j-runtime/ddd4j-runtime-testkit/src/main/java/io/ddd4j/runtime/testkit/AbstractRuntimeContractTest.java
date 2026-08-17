@@ -4,6 +4,7 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.context.ThreadContext;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
@@ -17,6 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public abstract class AbstractRuntimeContractTest {
 
     protected abstract RuntimeContract createRuntime();
+
+    @BeforeEach
+    void cleanContexts() {
+        ThreadContext.clear();
+        BaseContext.clear();
+    }
 
     @AfterEach
     void clearContexts() {

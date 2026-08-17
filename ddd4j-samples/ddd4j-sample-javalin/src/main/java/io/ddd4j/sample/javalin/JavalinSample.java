@@ -16,7 +16,7 @@ import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
 import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.web.javalin.Ddd4jJavalinWeb;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
+import io.javalin.json.JavalinJackson3;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -54,7 +54,7 @@ public final class JavalinSample {
             OrderController controller = new OrderController(service);
             Javalin app = Javalin.create(config -> {
                 config.startup.showJavalinBanner = false;
-                config.jsonMapper(new JavalinJackson());
+                config.jsonMapper(new JavalinJackson3());
                 new Ddd4jJavalinWeb().configure(config);
                 config.routes.apiBuilder(controller::routes);
             });
