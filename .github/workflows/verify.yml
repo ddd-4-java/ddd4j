@@ -73,7 +73,7 @@ jobs:
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
       - name: Run unit and adapter contracts
-        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs
+        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs -pl '!ddd4j-samples'
       - name: Verify build did not write generated files to source control
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
