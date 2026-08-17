@@ -112,7 +112,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor dependencies without coverage enforcement
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install -pl '!ddd4j-samples'
       - name: Enforce 90% line coverage on gated modules
         run: >-
           ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
@@ -148,9 +148,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
-      - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install -pl '!ddd4j-samples'
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
