@@ -39,7 +39,9 @@ jobs:
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
-          printf '%s' "$MAVEN_SETTINGS_XML" > "$HOME/.m2/settings.xml"
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+          # 验证写入的 settings 可被 Maven 解析（快速失败而非构建中途 401）
+          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -75,7 +77,9 @@ jobs:
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
-          printf '%s' "$MAVEN_SETTINGS_XML" > "$HOME/.m2/settings.xml"
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+          # 验证写入的 settings 可被 Maven 解析（快速失败而非构建中途 401）
+          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -102,7 +106,9 @@ jobs:
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
-          printf '%s' "$MAVEN_SETTINGS_XML" > "$HOME/.m2/settings.xml"
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+          # 验证写入的 settings 可被 Maven 解析（快速失败而非构建中途 401）
+          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -153,7 +159,9 @@ jobs:
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
-          printf '%s' "$MAVEN_SETTINGS_XML" > "$HOME/.m2/settings.xml"
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+          # 验证写入的 settings 可被 Maven 解析（快速失败而非构建中途 401）
+          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
