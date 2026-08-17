@@ -2,7 +2,6 @@ package io.ddd4j.sample.order.jdbc;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
 import io.ddd4j.sample.order.application.OutboxMessage;
 import io.ddd4j.sample.order.application.OutboxPort;
 
@@ -27,9 +26,7 @@ public final class JdbcOutboxPort implements OutboxPort {
 
     public JdbcOutboxPort(JdbcOrderTransactionPort transaction, ObjectMapper objectMapper) {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
-        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null")
-                .copy()
-                .registerModule(new JavaTimeInitializer());
+        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
     }
 
     @Override

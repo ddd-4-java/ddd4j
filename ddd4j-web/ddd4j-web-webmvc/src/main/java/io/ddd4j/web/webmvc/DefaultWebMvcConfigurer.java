@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.*;
+import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
 import tools.jackson.databind.ser.std.ToStringSerializer;
 import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
@@ -21,6 +22,7 @@ import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
 import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
 import tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
+import io.ddd4j.web.webmvc.converter.Jackson3HttpMessageConverter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -124,35 +126,39 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_PATTERN);
         simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
         simpleModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
-        simpleModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
+        simpleModule.addDeserializer(Date.class, new ValueDeserializer<Date>() {
             @Override
-            public Date deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException, JacksonException {
+            public Date deserialize(JsonParser p, DeserializationContext deserializationContext) {
                 if (Objects.isNull(p)) {
                     return null;
                 }
-                JsonNode node = p.getCodec().readTree(p);
-                if (Objects.isNull(node) || Objects.isNull(node.asText())) {
+                try {
+                    JsonNode node = p.readValueAsTree();
+                    if (Objects.isNull(node) || Objects.isNull(node.asText())) {
+                        return null;
+                    }
+                    return DateUtil.parse(node.asText());
+                } catch (Exception e) {
                     return null;
                 }
-                return DateUtil.parse(node.asText());
             }
         });
 
-        // 单独初始化ObjectMapper，不使用全局对象，因为下面要指定特殊的输出处理，会影响内部业务逻辑
-        ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .modules(simpleModule, new JavaTimeInitializer())
-                // objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.SIMPLIFIED_CHINESE));
-                .simpleDateFormat(DATE_TIME_PATTERN)
-                .serializationInclusion(JsonInclude.Include.NON_NULL)
-                .failOnEmptyBeans(false)
-                .failOnUnknownProperties(false)
-                .featuresToEnable(MapperFeature.USE_GETTERS_AS_SETTERS).build();
+        // Jackson 3 ObjectMapper（替代 Spring 6 的 Jackson2ObjectMapperBuilder，
+        // Spring 7 发布后可直接使用其原生 Jackson 3 支持）
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .addModules(simpleModule)
+                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .enable(MapperFeature.USE_GETTERS_AS_SETTERS)
+                .build();
 
-        //SerializerProvider serializerProvider = objectMapper.getSerializerProvider();
-        //serializerProvider.setNullValueSerializer(NullObjectJsonSerializer.INSTANCE);
-        MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter(objectMapper);
-        jackson2HttpMessageConverter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
-        converters.add(jackson2HttpMessageConverter);
+        // 桥接层：Spring 6 没有原生 Jackson 3 HttpMessageConverter，
+        // 使用自定义 Jackson3HttpMessageConverter 替代 MappingJackson2HttpMessageConverter
+        Jackson3HttpMessageConverter jackson3Converter = new Jackson3HttpMessageConverter(objectMapper);
+        jackson3Converter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
+        converters.add(jackson3Converter);
         converters.add(new ByteArrayHttpMessageConverter());
         converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
         converters.add(new ResourceHttpMessageConverter());

@@ -2,7 +2,6 @@ package io.ddd4j.sample.order.kafka;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
 import io.ddd4j.sample.order.application.IntegrationEventPublisher;
 import io.ddd4j.sample.order.application.OutboxMessage;
 import org.apache.kafka.clients.producer.Producer;
@@ -25,9 +24,7 @@ public final class KafkaIntegrationEventPublisher implements IntegrationEventPub
 
     public KafkaIntegrationEventPublisher(Producer<String, String> producer, ObjectMapper objectMapper, String topic) {
         this.producer = Objects.requireNonNull(producer, "producer must not be null");
-        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null")
-                .copy()
-                .registerModule(new JavaTimeInitializer());
+        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.topic = Objects.requireNonNull(topic, "topic must not be null");
     }
 
