@@ -218,6 +218,31 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
         </repository>
+        <!-- 阿里云私仓：easy4j SNAPSHOT 构件（io.github.easy4j:spring-extension 等）。
+             凭据由 settings.xml 按 server id（2624322-snapshot-3EoOv3）匹配注入；
+             公开环境无凭据时仅该仓库的下载失败，不影响公共依赖解析 -->
+        <repository>
+            <id>2624322-snapshot-3EoOv3</id>
+            <name>Aliyun Packages Snapshots</name>
+            <url>https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>2624322-release-6F6h6R</id>
+            <name>Aliyun Packages Releases</name>
+            <url>https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-release-6f6h6r</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
     </repositories>
 
     <pluginRepositories>
