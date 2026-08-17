@@ -14,18 +14,27 @@ import static org.mockito.Mockito.when;
 class ActiveMQAdapterContractTest {
 
     @Test
-    void shouldPreferStableMessageIdAndRequeueOnNack() throws Exception {
+    void shouldReadMessageIdAndRequeueOnNack() throws Exception {
         Message message = mock(Message.class);
         Session session = mock(Session.class);
-        when(message.getStringProperty(ActiveMQClient.jmsProperty(MessageHeaders.HEADER_MESSAGE_ID))).thenReturn("stable-id");
-        when(message.getStringProperty(ActiveMQClient.jmsProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID))).thenReturn("legacy-id");
+        String sanitizedKey = ActiveMQClient.jmsProperty(MessageHeaders.HEADER_MESSAGE_ID);
+        when(message.getStringProperty(sanitizedKey)).thenReturn("test-id");
 
-        assertEquals("stable-id", ActiveMQClient.messageId(message));
+        assertEquals("test-id", ActiveMQClient.messageId(message));
 
-        ActiveMQAcknowledgment acknowledgment = new ActiveMQAcknowledgment(session, message, 7L, "stable-id", null);
+        ActiveMQAcknowledgment acknowledgment = new ActiveMQAcknowledgment(session, message, 7L, "test-id", null);
         acknowledgment.nack(true);
 
         verify(session).recover();
         assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    void shouldFallbackToLegacyWhenPrimaryMissing() throws Exception {
+        Message message = mock(Message.class);
+        String sanitizedKey = ActiveMQClient.jmsProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+        when(message.getStringProperty(sanitizedKey)).thenReturn("legacy-id");
+
+        assertEquals("legacy-id", ActiveMQClient.messageId(message));
     }
 }
