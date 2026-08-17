@@ -13,6 +13,8 @@ permissions:
 env:
   DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
   NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+  ALIYUN_PACKAGES_USERNAME: ${{ secrets.ALIYUN_PACKAGES_USERNAME }}
+  ALIYUN_PACKAGES_PASSWORD: ${{ secrets.ALIYUN_PACKAGES_PASSWORD }}
 
 jobs:
   workflow-lint:
@@ -31,6 +33,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Configure Aliyun packages repository credentials
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<'SETTINGS'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>2624322-snapshot-3EoOv3</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+              <server>
+                <id>2624322-release-6F6h6R</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          SETTINGS
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -59,6 +80,25 @@ jobs:
     needs: workflow-lint
     steps:
       - uses: actions/checkout@v4
+      - name: Configure Aliyun packages repository credentials
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<'SETTINGS'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>2624322-snapshot-3EoOv3</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+              <server>
+                <id>2624322-release-6F6h6R</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          SETTINGS
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -78,11 +118,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Configure Aliyun packages repository credentials
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<'SETTINGS'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>2624322-snapshot-3EoOv3</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+              <server>
+                <id>2624322-release-6F6h6R</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          SETTINGS
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Install reactor artifacts for plugin resolution
+        run: ./mvnw -B -DskipTests -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
@@ -117,6 +178,25 @@ jobs:
     needs: [workflow-lint, unit-and-contract]
     steps:
       - uses: actions/checkout@v4
+      - name: Configure Aliyun packages repository credentials
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<'SETTINGS'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+            <servers>
+              <server>
+                <id>2624322-snapshot-3EoOv3</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+              <server>
+                <id>2624322-release-6F6h6R</id>
+                <username>${ALIYUN_PACKAGES_USERNAME}</username>
+                <password>${ALIYUN_PACKAGES_PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          SETTINGS
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
