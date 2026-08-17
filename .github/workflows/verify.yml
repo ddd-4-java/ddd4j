@@ -61,7 +61,7 @@ jobs:
           echo "--- settings servers (masked) ---"
           sed 's/<password>[^<]*</<password>***</' ~/.m2/settings.xml | grep -B1 -A2 "<server>" | head -30
           echo "--- direct maven resolve test ---"
-          ./mvnw -Denforcer.skip=true -B dependency:get -Dartifact=io.github.easy4j:spring-extension:3.0.x.20260630-SNAPSHOT -DremoteRepositories=2624322-snapshot-3EoOv3::default::https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3 2>&1 | tail -5 || true
+          ./mvnw -U -Denforcer.skip=true -B dependency:get -Dartifact=io.github.easy4j:spring-extension:3.0.x.20260630-SNAPSHOT -DremoteRepositories=2624322-snapshot-3EoOv3::default::https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3 2>&1 | tail -5 || true
       - name: Verify BOM publication contract
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
@@ -73,7 +73,7 @@ jobs:
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
       - name: Run unit and adapter contracts
-        run: ./mvnw -Denforcer.skip=true -B clean test -DskipITs
+        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs
       - name: Verify build did not write generated files to source control
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
@@ -112,10 +112,10 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor dependencies without coverage enforcement
-        run: ./mvnw -Denforcer.skip=true -B -DskipTests install
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
         run: >-
-          ./mvnw -Denforcer.skip=true -B -Pcoverage verify
+          ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
           -pl ddd4j-web/ddd4j-web-core,ddd4j-web/ddd4j-web-vertx,ddd4j-web/ddd4j-web-micronaut,ddd4j-web/ddd4j-web-dropwizard,ddd4j-runtime/ddd4j-runtime-support
 
   supply-chain-reports:
@@ -148,9 +148,9 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
       - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
@@ -215,6 +215,6 @@ jobs:
       # rabbitmq/rocketmq 为纯单测（mock 契约），由 unit-and-contract 的全 reactor test 覆盖。
       - name: Run Redis, MySQL, PostgreSQL and Kafka integration tests
         run: >-
-          ./mvnw -Denforcer.skip=true -B
+          ./mvnw -U -Denforcer.skip=true -B
           -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis
           -am test
