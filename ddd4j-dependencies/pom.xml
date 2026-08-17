@@ -13,7 +13,7 @@
     <artifactId>ddd4j-dependencies</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Ddd4j Boot Dependencies</description>
+    <description>Ddd4j Dependencies</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
