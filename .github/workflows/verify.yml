@@ -56,6 +56,12 @@ jobs:
           java-version: '21'
           cache: maven
           overwrite-settings: true
+      - name: Diagnose private repo auth
+        run: |
+          echo "--- settings servers (masked) ---"
+          sed 's/<password>[^<]*</<password>***</' ~/.m2/settings.xml | grep -B1 -A2 "<server>" | head -30
+          echo "--- direct maven resolve test ---"
+          ./mvnw -Denforcer.skip=true -B dependency:get -Dartifact=io.github.easy4j:spring-extension:3.0.x.20260630-SNAPSHOT -DremoteRepositories=2624322-snapshot-3EoOv3::default::https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3 2>&1 | tail -5 || true
       - name: Verify BOM publication contract
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
