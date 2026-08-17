@@ -21,10 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate workflow syntax
+        uses: reviewdog/action-actionlint@v1
         with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
+          reporter: github-check
+          fail_level: error
+
+  unit-and-contract:
+    name: Java 21 unit and contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -43,6 +50,59 @@ jobs:
           grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
 
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
+      - name: Verify BOM publication contract
+        run: ./scripts/check-bom-alignment.sh
+      - name: Verify Java style guardrails
+        run: ./scripts/verify-java-style.sh
+      - name: Verify release worktree state
+        env:
+          DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
+        run: ./scripts/verify-release-worktree.sh
+      - name: Verify DDD architecture rules
+        run: ./scripts/verify-architecture.sh
+      - name: Run unit and adapter contracts
+        run: ./mvnw -Denforcer.skip=true -B clean test -DskipITs
+      - name: Verify build did not write generated files to source control
+        env:
+          DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
+        run: ./scripts/verify-release-worktree.sh
+
+  coverage-gate:
+    name: Coverage gate (LINE >= 90%)
+    runs-on: ubuntu-latest
+    needs: workflow-lint
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Easy4J Maven repositories
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        shell: bash
+        run: |
+          install -d -m 700 "$HOME/.m2"
+          umask 077
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
+          # 凭据连通性自检（CI 环境下 401 快速定位）
+          USER_NAME=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
+          PASS_WORD=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
+          echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
       # 两步法：先全 reactor 安装依赖（不激活 coverage，避免未达标依赖模块触发 check），
       # 再对白名单模块强制 -Pcoverage verify。模块达标（LINE >= 90%）后加入白名单。
       - name: Install reactor dependencies without coverage enforcement
@@ -57,28 +117,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
-          ALIYUN_USER: ${{ secrets.ALIYUN_PACKAGES_USERNAME }}
-          ALIYUN_PASS: ${{ secrets.ALIYUN_PACKAGES_PASSWORD }}
         shell: bash
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
-          # 凭据连通性自检（直接用 secrets，避免解析 settings）
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$ALIYUN_USER:$ALIYUN_PASS" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
-          echo "credential check: HTTP $HTTP_CODE (user len ${#ALIYUN_USER})"
-          # 确认 settings 的 server 段凭据与 secrets 一致（id 匹配时 Maven 才会带鉴权）
-          grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
-
-
+          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
+          # 凭据连通性自检（CI 环境下 401 快速定位）
+          USER_NAME=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
+          PASS_WORD=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
+          echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
       - name: Install reactor artifacts for plugin resolution
         run: ./mvnw -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
       - name: Install reactor artifacts for plugin resolution
@@ -117,28 +179,30 @@ jobs:
     needs: [workflow-lint, unit-and-contract]
     steps:
       - uses: actions/checkout@v4
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
-          ALIYUN_USER: ${{ secrets.ALIYUN_PACKAGES_USERNAME }}
-          ALIYUN_PASS: ${{ secrets.ALIYUN_PACKAGES_PASSWORD }}
         shell: bash
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
-          # 凭据连通性自检（直接用 secrets，避免解析 settings）
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$ALIYUN_USER:$ALIYUN_PASS" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
-          echo "credential check: HTTP $HTTP_CODE (user len ${#ALIYUN_USER})"
-          # 确认 settings 的 server 段凭据与 secrets 一致（id 匹配时 Maven 才会带鉴权）
-          grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
-
-
+          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
+          # 凭据连通性自检（CI 环境下 401 快速定位）
+          USER_NAME=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
+          PASS_WORD=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
+          echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          overwrite-settings: true
       - name: Verify Docker daemon
         run: docker info
       # 容器化集成：Redis/MySQL/PostgreSQL/Kafka（testcontainers）。
