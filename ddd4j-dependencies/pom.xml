@@ -366,7 +366,7 @@
         <!-- Jandex 索引 Maven 插件（与 jandex 库版本序列独立）：
              Quarkus 等轨道模块生成 META-INF/jandex.idx 供扩展发现 Bean。
              3.x 无默认 lifecycle binding，使用方需显式声明 executions。 -->
-        <maven-jandex-plugin.version>3.2.7</maven-jandex-plugin.version>
+        <maven-jandex-plugin.version>3.6.0</maven-jandex-plugin.version>
         <janino.version>3.1.12</janino.version>
         <jasypt.version>1.9.3</jasypt.version>
         <java-jwt.version>4.5.0</java-jwt.version>
