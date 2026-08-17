@@ -694,8 +694,8 @@
         <tencentcloud-sdk-java-sms.version>3.1.1451</tencentcloud-sdk-java-sms.version>
         <tencentcloud-sdk-java.version>3.1.1492</tencentcloud-sdk-java.version>
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
-        <testcontainers-redis-module.version>2.2.4</testcontainers-redis-module.version>
-        <testcontainers.version>2.0.5</testcontainers.version>
+        <testcontainers-redis.version>2.2.4</testcontainers-redis.version>
+        <testcontainers-bom.version>2.0.5</testcontainers-bom.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
         <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
@@ -1753,9 +1753,15 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers.version}</version>
+                <version>${testcontainers-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.redis/testcontainers-redis — Testcontainers Redis 模块 -->
+            <dependency>
+                <groupId>com.redis</groupId>
+                <artifactId>testcontainers-redis</artifactId>
+                <version>${testcontainers-redis.version}</version>
             </dependency>
             <!-- tomcat: 直接声明具体 artifact（BOM 不存在于 Maven Central） -->
             <dependency>
@@ -8120,12 +8126,6 @@
                 <groupId>com.tencentcloudapi</groupId>
                 <artifactId>tencentcloud-sdk-java-sms</artifactId>
                 <version>${tencentcloud-sdk-java-sms.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.redis/testcontainers-redis — Testcontainers Redis 模块 -->
-            <dependency>
-                <groupId>com.redis</groupId>
-                <artifactId>testcontainers-redis</artifactId>
-                <version>${testcontainers-redis-module.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
             <dependency>
