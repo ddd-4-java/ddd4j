@@ -97,8 +97,8 @@ class RabbitMQContainerIntegrationTest {
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setHost(RABBIT.getHost());
         properties.setPort(RABBIT.getAmqpPort());
-        // username inherited from MQProperties
-        // password inherited from MQProperties
+        properties.setUsername(RABBIT.getAdminUsername());
+        properties.setPassword(RABBIT.getAdminPassword());
         properties.setVirtualHost("/");
         return properties;
     }
