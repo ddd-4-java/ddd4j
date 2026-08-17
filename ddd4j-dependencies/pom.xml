@@ -4720,10 +4720,11 @@
             </dependency>
             <!-- jackson-core: managed by jackson-bom -->
             <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
-            <!-- Jackson 3 仍使用 2.x annotations（BOM 中 version=2.22） -->
+            <!-- Jackson 3 仍使用 2.x annotations（version 与 jackson-bom 对齐） -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
+                <version>2.22</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind -->
             <dependency>
