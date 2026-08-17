@@ -35,21 +35,21 @@ jobs:
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+          ALIYUN_USER: ${{ secrets.ALIYUN_PACKAGES_USERNAME }}
+          ALIYUN_PASS: ${{ secrets.ALIYUN_PACKAGES_PASSWORD }}
         shell: bash
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
-          grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
-          # 凭据连通性自检（CI 环境下 401 快速定位）
-          USER_NAME=$(python3 -c "import xml.dom.minidom,os;d=xml.dom.minidom.parse(os.path.expanduser('~/.m2/settings.xml'));s=[e for e in d.getElementsByTagName('server') if e.getElementsByTagName('id')[0].firstChild.nodeValue=='2624322-snapshot-3EoOv3'][0];print(s.getElementsByTagName('username')[0].firstChild.nodeValue)")
-          PASS_WORD=$(python3 -c "import xml.dom.minidom,os;d=xml.dom.minidom.parse(os.path.expanduser('~/.m2/settings.xml'));s=[e for e in d.getElementsByTagName('server') if e.getElementsByTagName('id')[0].firstChild.nodeValue=='2624322-snapshot-3EoOv3'][0];print(s.getElementsByTagName('password')[0].firstChild.nodeValue)")
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
-          echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
-          fi
+          # 凭据连通性自检（直接用 secrets，避免解析 settings）
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$ALIYUN_USER:$ALIYUN_PASS" \
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
+          echo "credential check: HTTP $HTTP_CODE (user len ${#ALIYUN_USER})"
+          # 确认 settings 的 server 段凭据与 secrets 一致（id 匹配时 Maven 才会带鉴权）
+          grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
+
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
