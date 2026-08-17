@@ -144,6 +144,8 @@ jobs:
           cache: maven
       - name: Install reactor artifacts for plugin resolution
         run: ./mvnw -B -DskipTests -Dquarkus.build.skip=true install
+      - name: Install reactor artifacts for plugin resolution
+        run: ./mvnw -B -DskipTests -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
