@@ -83,11 +83,23 @@ public class MicaMqttMQClient implements MQClient {
             String topic = resolveTopic(event, mqProperties);
             try {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
-                client.publish(topic, body, qos(), builder -> builder.properties(mqttProperties -> {
-                    if (StrKit.isNotEmpty(event.getMsgId())) {
-                        mqttProperties.addUserProperty(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-                    }
-                }));
+                boolean sent = client.publish(topic, body, qos(), builder -> builder.properties(mqttProperties -> {
+                        if (StrKit.isNotEmpty(event.getMsgId())) {
+                            mqttProperties.addUserProperty(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                        }
+                    }));
+                if (!sent) {
+                    log.warn("Publish mica-mqtt [{}] failed (connection lost), reconnecting and retrying", topic);
+                    client.reconnect();
+                    sent = client.publish(topic, body, qos(), builder -> builder.properties(mqttProperties -> {
+                        if (StrKit.isNotEmpty(event.getMsgId())) {
+                            mqttProperties.addUserProperty(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                        }
+                    }));
+                }
+                if (!sent) {
+                    throw new IllegalStateException("Publish mica-mqtt event failed: " + topic);
+                }
             } catch (Exception ex) {
                 log.error("Publish mica-mqtt [{}]: {} failed!", topic, payload, ex);
                 throw new IllegalStateException("Publish mica-mqtt event failed", ex);

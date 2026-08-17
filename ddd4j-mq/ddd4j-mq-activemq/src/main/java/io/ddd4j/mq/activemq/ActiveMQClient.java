@@ -95,17 +95,18 @@ public class ActiveMQClient implements MQClient {
                     producer.setDeliveryMode(properties.isDurable() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
                     BytesMessage message = session.createBytesMessage();
                     message.writeBytes(payload.getBytes(StandardCharsets.UTF_8));
-                    message.setStringProperty(MessageHeaders.HEADER_DESTINATION_TOPIC, mqEvent.getTopic());
+                    message.setStringProperty(jmsProperty(MessageHeaders.HEADER_DESTINATION_TOPIC), mqEvent.getTopic());
                     if (Objects.nonNull(mqEvent.getTag())) {
                         // tag header 与 broker 端 selector property name 一致（无 .，合法 SQL-92）
-                        message.setStringProperty(tagHeaderKey(), mqEvent.getTag());
+                        message.setStringProperty(jmsProperty(tagHeaderKey()), mqEvent.getTag());
                     }
                     if (Objects.nonNull(mqEvent.getTenantId())) {
-                        message.setStringProperty(MessageHeaders.HEADER_TENANT_ID, mqEvent.getTenantId());
+                        message.setStringProperty(jmsProperty(MessageHeaders.HEADER_TENANT_ID), mqEvent.getTenantId());
                     }
                     if (Objects.nonNull(mqEvent.getMsgId())) {
-                        message.setJMSMessageID(mqEvent.getMsgId());
-                        message.setStringProperty(MessageHeaders.HEADER_MESSAGE_ID, mqEvent.getMsgId());
+                        // JMSMessageID 必须以 "ID:" 开头（Artemis checkProperty 校验）
+                        message.setJMSMessageID("ID:" + mqEvent.getMsgId());
+                        message.setStringProperty(jmsProperty(MessageHeaders.HEADER_MESSAGE_ID), mqEvent.getMsgId());
                     }
                     producer.send(message);
                 } catch (JMSException ex) {
@@ -180,10 +181,17 @@ public class ActiveMQClient implements MQClient {
      * 优先读取 ddd4j 标准消息 ID，兼容升级期旧键并最终回退到 JMS 原生 ID。
      */
     static String messageId(Message message) throws JMSException {
-        String messageId = message.getStringProperty(MessageHeaders.HEADER_MESSAGE_ID);
+        String messageId = message.getStringProperty(jmsProperty(MessageHeaders.HEADER_MESSAGE_ID));
         if (Objects.isNull(messageId)) {
-            messageId = message.getStringProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+            messageId = message.getStringProperty(jmsProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID));
         }
         return Objects.nonNull(messageId) ? messageId : ActivemqKit.messageIdOf(message);
+    }
+    /**
+     * ddd4j 消息头统一使用 {@code ddd4j.xxx.yyy} 命名，JMS 场景需替换为 '_'。
+     */
+    static String jmsProperty(String name) {
+        // JMS 属性名必须是合法 Java 标识符：'.' 与 '-' 均非法，统一替换为 '_'
+        return name.replace('.', '_').replace('-', '_');
     }
 }
