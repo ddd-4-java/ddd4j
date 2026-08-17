@@ -42,8 +42,8 @@ jobs:
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
           grep -q "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml"
           # 凭据连通性自检（CI 环境下 401 快速定位）
-          USER_NAME=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
-          PASS_WORD=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
+          USER_NAME=$(python3 -c "import xml.dom.minidom,os;d=xml.dom.minidom.parse(os.path.expanduser('~/.m2/settings.xml'));s=[e for e in d.getElementsByTagName('server') if e.getElementsByTagName('id')[0].firstChild.nodeValue=='2624322-snapshot-3EoOv3'][0];print(s.getElementsByTagName('username')[0].firstChild.nodeValue)")
+          PASS_WORD=$(python3 -c "import xml.dom.minidom,os;d=xml.dom.minidom.parse(os.path.expanduser('~/.m2/settings.xml'));s=[e for e in d.getElementsByTagName('server') if e.getElementsByTagName('id')[0].firstChild.nodeValue=='2624322-snapshot-3EoOv3'][0];print(s.getElementsByTagName('password')[0].firstChild.nodeValue)")
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
             "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
           echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
