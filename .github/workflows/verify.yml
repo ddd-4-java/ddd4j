@@ -73,7 +73,7 @@ jobs:
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
       - name: Run unit and adapter contracts
-        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs -pl '!ddd4j-samples'
+        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs -pl '!ddd4j-samples/*'
       - name: Verify build did not write generated files to source control
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
@@ -112,7 +112,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor dependencies without coverage enforcement
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install -pl '!ddd4j-samples'
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install -pl '!ddd4j-samples/*'
       - name: Enforce 90% line coverage on gated modules
         run: >-
           ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
@@ -148,7 +148,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install -pl '!ddd4j-samples'
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install -pl '!ddd4j-samples/*'
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
