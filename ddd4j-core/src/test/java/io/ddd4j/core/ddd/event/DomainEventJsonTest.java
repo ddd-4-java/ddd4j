@@ -1,14 +1,14 @@
 package io.ddd4j.core.ddd.event;
 
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DomainEventJsonTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeInitializer());
+    // Jackson 3 内建 JavaTimeModule（自动注册），无需手动 registerModule
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void shouldSerializeEventMetadataAsStableScalarValues() throws Exception {
