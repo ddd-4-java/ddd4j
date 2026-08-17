@@ -17,8 +17,8 @@ class ActiveMQAdapterContractTest {
     void shouldPreferStableMessageIdAndRequeueOnNack() throws Exception {
         Message message = mock(Message.class);
         Session session = mock(Session.class);
-        when(message.getStringProperty(MessageHeaders.HEADER_MESSAGE_ID)).thenReturn("stable-id");
-        when(message.getStringProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID)).thenReturn("legacy-id");
+        when(message.getStringProperty(ActiveMQClient.jmsProperty(MessageHeaders.HEADER_MESSAGE_ID))).thenReturn("stable-id");
+        when(message.getStringProperty(ActiveMQClient.jmsProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID))).thenReturn("legacy-id");
 
         assertEquals("stable-id", ActiveMQClient.messageId(message));
 
