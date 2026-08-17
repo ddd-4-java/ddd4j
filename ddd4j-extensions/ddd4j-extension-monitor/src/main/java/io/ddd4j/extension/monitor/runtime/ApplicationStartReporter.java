@@ -47,6 +47,7 @@ public class ApplicationStartReporter {
      *
      * <p>{@code git.properties} 缺失时不抛异常（仅日志记录），保证非 maven-git-commit-id 环境也能跑。
      */
+    @PostConstruct
     public void init() {
         Properties p = new Properties();
         try (InputStream in = this.getClass().getClassLoader().getResourceAsStream("git.properties")) {

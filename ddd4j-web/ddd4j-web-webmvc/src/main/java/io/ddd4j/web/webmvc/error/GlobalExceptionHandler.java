@@ -201,7 +201,7 @@ public class GlobalExceptionHandler {
         String defaultMessage = String.format("缺少请求头: [%s].", ex.getHeaderName());
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request.header", defaultMessage);
-            return ApiCode.SC_MISSING_REQUEST_PARAM.toResponse(message);
+            return ApiCode.SC_MISSING_REQUEST_HEADER.toResponse(message);
         }
         return ApiCode.SC_MISSING_REQUEST_PARAM.toResponse(defaultMessage);
     }

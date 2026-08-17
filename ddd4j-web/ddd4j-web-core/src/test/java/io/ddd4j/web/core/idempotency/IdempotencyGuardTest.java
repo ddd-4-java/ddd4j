@@ -18,6 +18,7 @@ class IdempotencyGuardTest {
 
         private final boolean acquired;
         private String completedKey;
+        private String releasedKey;
 
         private RecordingGuard(boolean acquired) {
             this.acquired = acquired;
@@ -35,6 +36,7 @@ class IdempotencyGuardTest {
 
         @Override
         public void release(String key) {
+            this.releasedKey = key;
         }
     }
 
@@ -64,5 +66,15 @@ class IdempotencyGuardTest {
         guard.complete(lease);
 
         assertEquals("order-1", guard.completedKey);
+    }
+
+    @Test
+    void releaseByLeaseDelegatesToKey() {
+        RecordingGuard guard = new RecordingGuard(true);
+        IdempotencyLease lease = guard.acquireLease("order-1", TTL).get();
+
+        guard.release(lease);
+
+        assertEquals("order-1", guard.releasedKey);
     }
 }
