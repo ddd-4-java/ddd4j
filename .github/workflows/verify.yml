@@ -27,7 +27,7 @@ jobs:
           fail_level: error
 
   unit-and-contract:
-    name: Java 17 unit and contract
+    name: Java 21 unit and contract
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
