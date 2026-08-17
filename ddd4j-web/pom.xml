@@ -25,17 +25,17 @@
         </dependency>
     </dependencies>
 
-    <modules>
-        <module>ddd4j-web-core</module>
-        <module>ddd4j-web-testkit</module>
-        <module>ddd4j-web-javalin</module>
-        <module>ddd4j-web-quarkus</module>
-        <module>ddd4j-web-micronaut</module>
-        <module>ddd4j-web-vertx</module>
-        <module>ddd4j-web-helidon</module>
-        <module>ddd4j-web-dropwizard</module>
-        <module>ddd4j-web-webflux</module>
-        <module>ddd4j-web-webmvc</module>
-    </modules>
+    <subprojects>
+        <subproject>ddd4j-web-core</subproject>
+        <subproject>ddd4j-web-testkit</subproject>
+        <subproject>ddd4j-web-javalin</subproject>
+        <subproject>ddd4j-web-quarkus</subproject>
+        <subproject>ddd4j-web-micronaut</subproject>
+        <subproject>ddd4j-web-vertx</subproject>
+        <subproject>ddd4j-web-helidon</subproject>
+        <subproject>ddd4j-web-dropwizard</subproject>
+        <subproject>ddd4j-web-webflux</subproject>
+        <subproject>ddd4j-web-webmvc</subproject>
+    </subprojects>
 
 </project>

@@ -20,10 +20,10 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <modules>
-        <module>ddd4j-auth-satoken</module>
-        <module>ddd4j-auth-security</module>
-        <module>ddd4j-auth-shiro</module>
-    </modules>
+    <subprojects>
+        <subproject>ddd4j-auth-satoken</subproject>
+        <subproject>ddd4j-auth-security</subproject>
+        <subproject>ddd4j-auth-shiro</subproject>
+    </subprojects>
 
 </project>

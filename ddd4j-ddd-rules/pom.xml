@@ -18,11 +18,11 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <modules>
+    <subprojects>
         <!-- Clean Architecture 规范检查 -->
-        <module>ddd4j-ddd-rules-clean</module>
+        <subproject>ddd4j-ddd-rules-clean</subproject>
         <!-- COLA 架构规范检查 -->
-        <module>ddd4j-ddd-rules-cola</module>
-    </modules>
+        <subproject>ddd4j-ddd-rules-cola</subproject>
+    </subprojects>
 
 </project>

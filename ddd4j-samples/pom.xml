@@ -21,33 +21,33 @@
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
-    <modules>
+    <subprojects>
         <!-- 跨运行时共享的生产型订单业务内核 -->
-        <module>ddd4j-sample-order-domain</module>
-        <module>ddd4j-sample-order-application</module>
-        <module>ddd4j-sample-order-local</module>
-        <module>ddd4j-sample-order-testkit</module>
-        <module>ddd4j-sample-order-jdbc</module>
-        <module>ddd4j-sample-order-kafka</module>
-        <module>ddd4j-sample-order-redis</module>
+        <subproject>ddd4j-sample-order-domain</subproject>
+        <subproject>ddd4j-sample-order-application</subproject>
+        <subproject>ddd4j-sample-order-local</subproject>
+        <subproject>ddd4j-sample-order-testkit</subproject>
+        <subproject>ddd4j-sample-order-jdbc</subproject>
+        <subproject>ddd4j-sample-order-kafka</subproject>
+        <subproject>ddd4j-sample-order-redis</subproject>
 
         <!-- 非 Boot 运行时示例：Order 充血模型、CQRS、缓存与消息边界。 -->
-        <module>ddd4j-sample-quarkus</module>
-        <module>ddd4j-sample-javalin</module>
-        <module>ddd4j-sample-micronaut</module>
-        <module>ddd4j-sample-vertx</module>
-        <module>ddd4j-sample-helidon</module>
-        <module>ddd4j-sample-dropwizard</module>
+        <subproject>ddd4j-sample-quarkus</subproject>
+        <subproject>ddd4j-sample-javalin</subproject>
+        <subproject>ddd4j-sample-micronaut</subproject>
+        <subproject>ddd4j-sample-vertx</subproject>
+        <subproject>ddd4j-sample-helidon</subproject>
+        <subproject>ddd4j-sample-dropwizard</subproject>
 
         <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
-        <module>ddd4j-sample-quarkus-cqrs</module>
-        <module>ddd4j-sample-javalin-cqrs</module>
+        <subproject>ddd4j-sample-quarkus-cqrs</subproject>
+        <subproject>ddd4j-sample-javalin-cqrs</subproject>
 
         <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
-        <module>ddd4j-sample-quarkus-satoken</module>
-        <module>ddd4j-sample-quarkus-shiro</module>
-        <module>ddd4j-sample-javalin-satoken</module>
-        <module>ddd4j-sample-javalin-shiro</module>
-    </modules>
+        <subproject>ddd4j-sample-quarkus-satoken</subproject>
+        <subproject>ddd4j-sample-quarkus-shiro</subproject>
+        <subproject>ddd4j-sample-javalin-satoken</subproject>
+        <subproject>ddd4j-sample-javalin-shiro</subproject>
+    </subprojects>
 
 </project>

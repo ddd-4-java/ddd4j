@@ -18,16 +18,16 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <modules>
+    <subprojects>
         <!-- ddd4j 深度集成扩展；Jackson、PF4J、Validation 已迁移为独立技术组件。 -->
-        <module>ddd4j-extension-excel</module>
-        <module>ddd4j-extension-license</module>
-        <module>ddd4j-extension-otel</module>
-        <module>ddd4j-extension-qrcode</module>
-        <module>ddd4j-extension-qlexpress</module>
-        <module>ddd4j-extension-monitor</module>
-        <module>ddd4j-extension-validation</module>
-    </modules>
+        <subproject>ddd4j-extension-excel</subproject>
+        <subproject>ddd4j-extension-license</subproject>
+        <subproject>ddd4j-extension-otel</subproject>
+        <subproject>ddd4j-extension-qrcode</subproject>
+        <subproject>ddd4j-extension-qlexpress</subproject>
+        <subproject>ddd4j-extension-monitor</subproject>
+        <subproject>ddd4j-extension-validation</subproject>
+    </subprojects>
 
     <dependencies>
 
