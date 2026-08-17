@@ -77,9 +77,9 @@ class RabbitMQContainerIntegrationTest {
             assertEquals(msgId, received.getProps().getMessageId(),
                     "messageId 完整保留");
             Map<String, Object> gotHeaders = received.getProps().getHeaders();
-            assertEquals(msgId, gotHeaders.get("ddd4j-message-id"));
-            assertEquals(tag, gotHeaders.get("ddd4j-message-tag"));
-            assertEquals(tenantId, gotHeaders.get("ddd4j-tenant-id"));
+            assertEquals(msgId, gotHeaders.get("ddd4j-message-id").toString());
+            assertEquals(tag, gotHeaders.get("ddd4j-message-tag").toString());
+            assertEquals(tenantId, gotHeaders.get("ddd4j-tenant-id").toString());
             assertEquals(body.length, received.getBody().length,
                     "消息体长度一致（未被截断）");
         }
