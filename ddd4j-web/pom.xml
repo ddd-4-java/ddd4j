@@ -16,15 +16,6 @@
     <description>ddd4j Web 抽象聚合：统一 Web 语义、契约测试与多框架适配。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <dependencies>
-        <!-- Test -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <subprojects>
         <subproject>ddd4j-web-core</subproject>
         <subproject>ddd4j-web-testkit</subproject>
