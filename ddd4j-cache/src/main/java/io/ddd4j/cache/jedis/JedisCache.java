@@ -1,6 +1,7 @@
 package io.ddd4j.cache.jedis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.*;
 import io.ddd4j.kit.lang.StrKit;
 import redis.clients.jedis.UnifiedJedis;
@@ -100,7 +101,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
     public JedisCache(UnifiedJedis jedis, CacheConfig config, Class<V> valueType, ObjectMapper objectMapper) {
         this.jedis = Objects.requireNonNull(jedis);
         this.valueType = Objects.requireNonNull(valueType);
-        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper();
+        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder().build();
         this.keyPrefix = config.getName() + ":";
         long expSec = config.getExpireAfterWriteSeconds();
         this.expireSeconds = expSec;
@@ -111,7 +112,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
      * 构造 Jedis 缓存（默认 ObjectMapper）。
      */
     public JedisCache(UnifiedJedis jedis, CacheConfig config, Class<V> valueType) {
-        this(jedis, config, valueType, new ObjectMapper());
+        this(jedis, config, valueType, JsonMapper.builder().build());
     }
 
     private String key(String key) {

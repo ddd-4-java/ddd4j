@@ -8,18 +8,18 @@ package io.ddd4j.web.webmvc;
 
 import cn.hutool.core.date.DateUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.*;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.ToStringSerializer;
+import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
+import tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalTimeDeserializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
@@ -126,7 +126,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         simpleModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
         simpleModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
             @Override
-            public Date deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            public Date deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException, JacksonException {
                 if (Objects.isNull(p)) {
                     return null;
                 }
@@ -140,13 +140,13 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
         // 单独初始化ObjectMapper，不使用全局对象，因为下面要指定特殊的输出处理，会影响内部业务逻辑
         ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-                .modules(simpleModule, new JavaTimeModule())
+                .modules(simpleModule, new JavaTimeInitializer())
                 // objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.SIMPLIFIED_CHINESE));
                 .simpleDateFormat(DATE_TIME_PATTERN)
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .failOnEmptyBeans(false)
                 .failOnUnknownProperties(false)
-                .featuresToEnable(MapperFeature.USE_GETTERS_AS_SETTERS, MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS).build();
+                .featuresToEnable(MapperFeature.USE_GETTERS_AS_SETTERS).build();
 
         //SerializerProvider serializerProvider = objectMapper.getSerializerProvider();
         //serializerProvider.setNullValueSerializer(NullObjectJsonSerializer.INSTANCE);

@@ -1,7 +1,7 @@
 package io.ddd4j.web.webmvc.error;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JacksonException;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.exception.BizCheckedException;
@@ -63,7 +63,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void jsonParseException_shouldReturnParsingError() throws Exception {
-        JsonParseException ex = new JsonParseException(null, "Invalid JSON");
+        JacksonException ex = new JacksonException(null, "Invalid JSON");
 
         ApiRestResponse<String> response = handler.jsonProcessingException(ex);
 

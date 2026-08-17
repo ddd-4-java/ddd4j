@@ -179,7 +179,7 @@ public enum ApiCode implements CustomApiCode {
      */
     SC_BINDING_ERROR(HttpStatus.SC_BAD_REQUEST, Constants.RT_FAIL, "参数绑定错误"),
     /**
-     * JsonProcessingException 400 (Bad Request) HttpMessageNotReadableException 400
+     * JacksonException 400 (Bad Request) HttpMessageNotReadableException 400
      * (Bad Request)
      */
     SC_PARSING_ERROR(HttpStatus.SC_BAD_REQUEST, Constants.RT_FAIL, "请求格式有误"),

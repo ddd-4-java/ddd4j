@@ -1,7 +1,7 @@
 package io.ddd4j.web.webmvc.core;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.annotation.api.RawResponse;
 import io.ddd4j.core.api.IR;
 import io.ddd4j.core.api.R;
@@ -66,7 +66,7 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
             try {
                 //将数据包装在R对象里后转换为json串进行返回
                 return objectMapper.writeValueAsString(R.ok(data));
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new BizRuntimeException(e);
             }
         }

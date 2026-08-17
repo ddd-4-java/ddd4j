@@ -34,19 +34,10 @@
         </dependency>
 
         <!-- ======== 序列化 ======== -->
-        <!-- Jackson（JSON 序列化，@JsonIgnore 等注解） -->
+        <!-- Jackson（JSON 序列化，@JsonIgnore 等注解；J3 中 annotations+jsr310 已内置于 databind） -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <!-- Jackson JSR310（LocalDateTime 序列化） -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
         <!-- ======== API 文档 ======== -->

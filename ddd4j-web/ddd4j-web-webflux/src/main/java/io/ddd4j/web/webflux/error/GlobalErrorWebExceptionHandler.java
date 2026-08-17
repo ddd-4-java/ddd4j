@@ -6,8 +6,8 @@
  */
 package io.ddd4j.web.webflux.error;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +70,7 @@ public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
         byte[] bodyBytes;
         try {
             bodyBytes = objectMapper.writeValueAsBytes(error.toResponse());
-        } catch (JsonProcessingException jsonEx) {
+        } catch (JacksonException jsonEx) {
             log.error("Unable to serialize WebFlux error response", jsonEx);
             bodyBytes = ("{\"code\":500,\"msg\":\"Internal Server Error\",\"data\":null}")
                     .getBytes(StandardCharsets.UTF_8);

@@ -104,7 +104,7 @@
         <!-- ================= JSON ================= -->
         <!-- Jackson 数据绑定：用于 PersonEvent/Person 的序列化与 JAX-RS 请求/响应 -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 

@@ -1,8 +1,9 @@
 package io.ddd4j.cache.memcached;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
@@ -53,9 +54,10 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         this.memcachedClient = Objects.requireNonNull(memcachedClient);
         this.expireSeconds = (int) (config.getExpireAfterWriteSeconds() > 0 ? config.getExpireAfterWriteSeconds() : 3600);
         this.valueType = Objects.requireNonNull(valueType);
-        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper()
+        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .build();
     }
 
     public MemcachedCache(MemcachedClient memcachedClient, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
@@ -70,7 +72,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
      * @param valueType       值类型
      */
     public MemcachedCache(MemcachedClient memcachedClient, CacheConfig config, Class<V> valueType) {
-        this(memcachedClient, config, valueType, new ObjectMapper());
+        this(memcachedClient, config, valueType, JsonMapper.builder().build());
     }
 
     private String serializeKey(K key) {

@@ -1,8 +1,9 @@
 package io.ddd4j.cache.lettuce;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;
@@ -65,9 +66,10 @@ public class LettuceCache<V> implements Cache<String, V> {
         this.expireDuration = config.getExpireAfterWriteSeconds() > 0 ? Duration.ofSeconds(config.getExpireAfterWriteSeconds()) : Duration.ZERO;
         this.valueType = Objects.requireNonNull(valueType);
         this.keyPrefix = config.getName() + ":";
-        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper()
+        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .build();
     }
 
     public LettuceCache(RedisCommands<String, String> commands, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
@@ -78,7 +80,7 @@ public class LettuceCache<V> implements Cache<String, V> {
      * 构造 Lettuce 缓存（默认 ObjectMapper）。
      */
     public LettuceCache(RedisCommands<String, String> commands, CacheConfig config, Class<V> valueType) {
-        this(commands, config, valueType, new ObjectMapper());
+        this(commands, config, valueType, JsonMapper.builder().build());
     }
 
     private String key(String key) {

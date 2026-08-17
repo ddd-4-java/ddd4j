@@ -1,8 +1,8 @@
 package io.ddd4j.web.webmvc.error;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.exc.InvalidFormatException;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.exception.BizCheckedException;
@@ -267,9 +267,9 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      */
-    @ExceptionHandler({JsonParseException.class, JsonProcessingException.class})
+    @ExceptionHandler({JacksonException.class, JacksonException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiRestResponse<String> jsonProcessingException(JsonProcessingException ex) {
+    public ApiRestResponse<String> jsonProcessingException(JacksonException ex) {
         this.logException(ex);
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request.param", ex.getMessage());

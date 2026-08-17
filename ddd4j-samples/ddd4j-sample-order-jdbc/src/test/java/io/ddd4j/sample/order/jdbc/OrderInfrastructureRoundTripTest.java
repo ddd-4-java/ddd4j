@@ -1,6 +1,6 @@
 package io.ddd4j.sample.order.jdbc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.redis.testcontainers.RedisContainer;
 import io.ddd4j.mq.delivery.MQDeliveryPolicy;
 import io.ddd4j.mq.delivery.MQOutboxRecord;

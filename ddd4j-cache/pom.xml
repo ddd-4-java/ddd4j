@@ -105,7 +105,7 @@
         <!-- ============ 公共依赖 ============ -->
         <!-- Jackson（序列化） -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- Testcontainers：Redis 集成测试（镜像清单来源 https://testcontainers.com/modules/ ） -->

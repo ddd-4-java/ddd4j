@@ -1,6 +1,6 @@
 package io.ddd4j.web.webflux;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;

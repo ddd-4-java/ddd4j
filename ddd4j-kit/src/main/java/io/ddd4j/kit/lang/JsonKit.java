@@ -5,21 +5,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.*;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.module.SimpleModule;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,58 +62,71 @@ public class JsonKit {
      * 创建默认 ObjectMapper
      */
     public static ObjectMapper defaultObjectMapper() {
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
-        ObjectMapper objectMapper = JsonMapper.builder()
+        // Jackson 3: JavaTimeInitializer is auto-registered; custom serializers use SimpleModule
+        SimpleModule customDateModule = new SimpleModule();
+        customDateModule.addSerializer(LocalDate.class,
+                new tools.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
+        customDateModule.addDeserializer(LocalDate.class,
+                new tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
+        customDateModule.addSerializer(LocalDateTime.class,
+                new tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
+        customDateModule.addDeserializer(LocalDateTime.class,
+                new tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
+
+        return JsonMapper.builder()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .defaultDateFormat(new BaseSimpleDateFormat())
-                .addModule(javaTimeModule)
-                .defaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_NULL, Include.NON_NULL))
+                .addModule(customDateModule)
+                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(Include.NON_NULL, Include.NON_NULL))
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .defaultTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
                 .build();
-        objectMapper.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        return objectMapper;
     }
 
     /**
      * 创建 Redis ObjectMapper（带 DefaultTyping）
      */
     public static ObjectMapper redisObjectMapper() {
-        ObjectMapper objectMapper = JsonMapper.builder()
-                .activateDefaultTyping(LaissezFaireSubTypeValidator.instance, DefaultTyping.NON_FINAL, As.WRAPPER_ARRAY)
+        return JsonMapper.builder()
+                .activateDefaultTyping(BasicPolymorphicTypeValidator.builder().build(), DefaultTyping.NON_FINAL, As.WRAPPER_ARRAY)
                 .defaultDateFormat(new SimpleDateFormat(YYYYMMDDHHMMSS))
-                .visibility(PropertyAccessor.ALL, Visibility.ANY)
-                .defaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_EMPTY, Include.NON_EMPTY))
+                .changeDefaultVisibility(vis -> vis.withVisibility(PropertyAccessor.ALL, Visibility.ANY))
+                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(Include.NON_EMPTY, Include.NON_EMPTY))
                 .configure(MapperFeature.USE_GETTERS_AS_SETTERS, false)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
-        return objectMapper;
     }
 
     /**
      * 创建自定义 ObjectMapper
      */
     public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(datePattern)));
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimePattern)));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimePattern)));
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(timePattern)));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(timePattern)));
-        javaTimeModule.addSerializer(Date.class, new JsonSerializer<Date>() {
-            public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        SimpleModule customDateModule = new SimpleModule();
+        customDateModule.addSerializer(LocalDate.class,
+                new tools.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
+        customDateModule.addDeserializer(LocalDate.class,
+                new tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(datePattern)));
+        customDateModule.addSerializer(LocalDateTime.class,
+                new tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimePattern)));
+        customDateModule.addDeserializer(LocalDateTime.class,
+                new tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimePattern)));
+        customDateModule.addSerializer(LocalTime.class,
+                new tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer(DateTimeFormatter.ofPattern(timePattern)));
+        customDateModule.addDeserializer(LocalTime.class,
+                new tools.jackson.databind.ext.javatime.deser.LocalTimeDeserializer(DateTimeFormatter.ofPattern(timePattern)));
+        customDateModule.addSerializer(Date.class, new ValueSerializer<Date>() {
+            public void serialize(Date date, JsonGenerator jsonGenerator, SerializationContext ctxt) {
                 SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
                 String formattedDate = formatter.format(date);
-                jsonGenerator.writeString(formattedDate);
+                try {
+                    jsonGenerator.writeString(formattedDate);
+                } catch (JacksonException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
-        javaTimeModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
-            public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+        customDateModule.addDeserializer(Date.class, new ValueDeserializer<Date>() {
+            public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) {
                 SimpleDateFormat format = new SimpleDateFormat(datePattern);
                 String date = jsonParser.getText();
                 try {
@@ -130,11 +136,12 @@ public class JsonKit {
                 }
             }
         });
-        objectMapper.registerModule(javaTimeModule);
-        objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
+        return JsonMapper.builder()
+                .addModule(customDateModule)
+                .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
     }
 
     /**
@@ -149,7 +156,7 @@ public class JsonKit {
         }
         try {
             return DEFAULT_OBJECT_MAPPER.writeValueAsString(object);
-        } catch (IOException var2) {
+        } catch (JacksonException var2) {
             log.error("write to json string error:" + object, var2);
             return "";
         }
@@ -162,7 +169,7 @@ public class JsonKit {
         Map<String, Object> map = new HashMap<>();
         try {
             JsonNode rootNode = DEFAULT_OBJECT_MAPPER.readTree(json);
-            Iterator<String> fieldNames = rootNode.fieldNames();
+            Iterator<String> fieldNames = rootNode.propertyNames().iterator();
             while (fieldNames.hasNext()) {
                 String fieldName = fieldNames.next();
                 JsonNode jsonNode = rootNode.get(fieldName);
@@ -182,7 +189,7 @@ public class JsonKit {
                     map.put(fieldName, list);
                 }
             }
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("parse json to map error:" + json, e);
         }
         return map;
@@ -201,7 +208,7 @@ public class JsonKit {
                 }
             }
             return list;
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("parse json to map error:" + json, e);
         }
         return null;
@@ -213,7 +220,7 @@ public class JsonKit {
     public static String toJsonWithDefaultPrettyPrinter(Object object) {
         try {
             return DEFAULT_OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(object);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             log.error("write to json string error:" + object, e);
             return "";
         }
@@ -235,7 +242,7 @@ public class JsonKit {
         } else {
             try {
                 return DEFAULT_OBJECT_MAPPER.readValue(json, clazz);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 log.error("parse json string error:" + json, e);
                 return null;
             }
@@ -258,7 +265,7 @@ public class JsonKit {
         } else {
             try {
                 return DEFAULT_OBJECT_MAPPER.readValue(json, javaType);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 log.error("parse json string error:" + json, e);
                 return null;
             }
@@ -283,7 +290,7 @@ public class JsonKit {
 
         try {
             return DEFAULT_OBJECT_MAPPER.readValue(jsonArray, javaType);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             log.error("translate to POJO failed. jsonArray=" + jsonArray, e);
             return new ArrayList();
         }
@@ -305,7 +312,7 @@ public class JsonKit {
         } else {
             try {
                 return DEFAULT_OBJECT_MAPPER.readValue(json, typeReference);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 log.error("parse json string error:" + json, e);
                 return null;
             }
@@ -346,7 +353,7 @@ public class JsonKit {
     public static void update(String jsonString, Object object) {
         try {
             DEFAULT_OBJECT_MAPPER.readerForUpdating(object).readValue(jsonString);
-        } catch (IOException var3) {
+        } catch (JacksonException var3) {
             log.error("update json string:" + jsonString + " to object:" + object + " error.", var3);
         }
     }
@@ -374,7 +381,7 @@ public class JsonKit {
             }
             // 4、如果 value 是 其他对象类型，则使用 convertValue 方法将对象转换成 valueType 类型
             return REDIS_OBJECT_MAPPER.convertValue(value, valueType);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }

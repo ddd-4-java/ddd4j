@@ -1,8 +1,8 @@
 package io.ddd4j.sample.order.kafka;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
 import io.ddd4j.sample.order.application.IntegrationEventPublisher;
 import io.ddd4j.sample.order.application.OutboxMessage;
 import org.apache.kafka.clients.producer.Producer;
@@ -27,7 +27,7 @@ public final class KafkaIntegrationEventPublisher implements IntegrationEventPub
         this.producer = Objects.requireNonNull(producer, "producer must not be null");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null")
                 .copy()
-                .registerModule(new JavaTimeModule());
+                .registerModule(new JavaTimeInitializer());
         this.topic = Objects.requireNonNull(topic, "topic must not be null");
     }
 
@@ -37,7 +37,7 @@ public final class KafkaIntegrationEventPublisher implements IntegrationEventPub
         try {
             String payload = objectMapper.writeValueAsString(message);
             producer.send(new ProducerRecord<>(topic, message.aggregateId(), payload)).get();
-        } catch (JsonProcessingException | InterruptedException | ExecutionException exception) {
+        } catch (JacksonException | InterruptedException | ExecutionException exception) {
             if (exception instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }

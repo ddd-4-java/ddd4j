@@ -1,8 +1,8 @@
 package io.ddd4j.sample.order.jdbc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
 import io.ddd4j.sample.order.application.OutboxMessage;
 import io.ddd4j.sample.order.application.OutboxPort;
 
@@ -29,7 +29,7 @@ public final class JdbcOutboxPort implements OutboxPort {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null")
                 .copy()
-                .registerModule(new JavaTimeModule());
+                .registerModule(new JavaTimeInitializer());
     }
 
     @Override
@@ -49,7 +49,7 @@ public final class JdbcOutboxPort implements OutboxPort {
                 statement.addBatch();
             }
             statement.executeBatch();
-        } catch (SQLException | JsonProcessingException exception) {
+        } catch (SQLException | JacksonException exception) {
             throw new IllegalStateException("Unable to append order outbox messages", exception);
         }
     }
@@ -72,7 +72,7 @@ public final class JdbcOutboxPort implements OutboxPort {
                 }
             }
             return messages;
-        } catch (SQLException | JsonProcessingException exception) {
+        } catch (SQLException | JacksonException exception) {
             throw new IllegalStateException("Unable to fetch pending order outbox messages", exception);
         }
     }

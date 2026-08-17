@@ -1,8 +1,9 @@
 package io.ddd4j.cache.redisson;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.*;
 import io.ddd4j.kit.lang.StrKit;
 import org.redisson.api.RBucket;
@@ -90,9 +91,10 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         this.expireSeconds = config.getExpireAfterWriteSeconds() > 0 ? config.getExpireAfterWriteSeconds() : 3600;
         this.valueType = Objects.requireNonNull(valueType);
         this.keyPrefix = config.getName() + ":";
-        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : new ObjectMapper()
+        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
+                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .build();
     }
 
     public RedissonCache(RedissonClient redissonClient, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
@@ -103,7 +105,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
      * 构造 Redisson 缓存（默认 ObjectMapper）。
      */
     public RedissonCache(RedissonClient redissonClient, CacheConfig config, Class<V> valueType) {
-        this(redissonClient, config, valueType, new ObjectMapper());
+        this(redissonClient, config, valueType, JsonMapper.builder().build());
     }
 
     private String key(String key) {

@@ -1,6 +1,6 @@
 package io.ddd4j.web.webmvc.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
