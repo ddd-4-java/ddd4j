@@ -40,7 +40,7 @@ jobs:
   deploy:
     name: Deploy to Aliyun
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     environment: aliyun-maven
     steps:
       - name: Validate inputs
