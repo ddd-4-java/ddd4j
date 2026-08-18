@@ -53,7 +53,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.version>3.37.0</quarkus.version>
+        <quarkus.version>3.38.2</quarkus.version>
         <reactor-bom.version>2025.0.6</reactor-bom.version>
         <revision>3.0.x.20260630-SNAPSHOT</revision>
         <!-- P0-2: 单元测试开关（默认运行，业务项目可 -DskipTests 跳过） -->
