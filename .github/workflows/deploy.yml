@@ -91,25 +91,23 @@ jobs:
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+          ALIYUN_USER: ${{ secrets.ALIYUN_PACKAGES_USERNAME }}
+          ALIYUN_PASS: ${{ secrets.ALIYUN_PACKAGES_PASSWORD }}
         shell: bash
         run: |
           install -d -m 700 "$HOME/.m2"
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
-          # 凭据连通性自检
+          # 凭据连通性自检（直接用 secrets，避免解析 settings）
           REPO="${{ steps.repo.outputs.repo }}"
-          REPO_ID="2624322-${REPO}-3EoOv3"
           if [[ "$REPO" == "release" ]]; then
-            REPO_ID="2624322-release-6F6h6R"
             REPO_URL="2624322-release-6f6h6r"
           else
             REPO_URL="2624322-snapshot-3eoov3"
           fi
-          USER_NAME=$(sed -n "s/.*<id>${REPO_ID}<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p" "$HOME/.m2/settings.xml" | head -1)
-          PASS_WORD=$(sed -n "s/.*<id>${REPO_ID}<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p" "$HOME/.m2/settings.xml" | head -1)
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
-          echo "Aliyun ${REPO} credential check: HTTP $HTTP_CODE"
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$ALIYUN_USER:$ALIYUN_PASS" \
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
+          echo "Aliyun ${REPO} credential check: HTTP $HTTP_CODE (user len ${#ALIYUN_USER})"
           if [[ "$HTTP_CODE" != "200" ]]; then
             echo "::error::Aliyun ${REPO} auth failed (HTTP $HTTP_CODE)" >&2
             exit 1
