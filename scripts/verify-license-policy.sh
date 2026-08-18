@@ -47,6 +47,12 @@ while IFS= read -r violation; do
       echo "[PASS] Excluded build-tool-only component absent from SBOM: ${coordinate} (${build_tool_reason})"
       continue
     fi
+    # 如果在 build-tool-exclusions 表中且 reason 包含 "provided" 或 "optional"，
+    # 即使出现在 SBOM 中也允许（provided scope 依赖由运行时容器提供，不属于发布内容）
+    if [[ "${build_tool_reason}" == *provided* || "${build_tool_reason}" == *optional* ]]; then
+      echo "[PASS] Excluded provided/optional component: ${coordinate} (${build_tool_reason})"
+      continue
+    fi
   fi
 
   echo "${violation}" >> "${VIOLATIONS_FILE}"
