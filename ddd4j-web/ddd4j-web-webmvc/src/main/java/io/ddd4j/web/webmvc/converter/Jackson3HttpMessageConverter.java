@@ -17,12 +17,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Spring 6 专用 Jackson 3 HttpMessageConverter。
+ * Spring 7 专用 Jackson 3 HttpMessageConverter。
  *
- * <p>替代 {@code MappingJackson2HttpMessageConverter}（要求 Jackson 2 ObjectMapper），
- * 内部直接使用 Jackson 3 {@link ObjectMapper} 进行序列化/反序列化。</p>
- *
- * <p>Spring 7 将原生支持 Jackson 3，届时此类可移除。</p>
+ * <p>Spring 7 的 MappingJackson2HttpMessageConverter 类名保留向后兼容但
+ * setObjectMapper 仍要求 Jackson 2 ObjectMapper，本类作为 Jackson 3 桥接层。</p>
  */
 public class Jackson3HttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {
 

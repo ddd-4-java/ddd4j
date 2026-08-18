@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.DateFormatter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import io.ddd4j.web.webmvc.converter.Jackson3HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -70,8 +69,8 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * Jackson 3 JSON 消息转换器。
-     * <p>替代 Spring 6 的 {@code MappingJackson2HttpMessageConverter}（只接受 Jackson 2 ObjectMapper），
-     * 使用 {@link Jackson3HttpMessageConverter} 桥接 Jackson 3 ObjectMapper。</p>
+     * <p>Spring 7 的 MappingJackson2HttpMessageConverter 类名保留向后兼容但
+     * setObjectMapper 仍要求 Jackson 2 ObjectMapper，使用 Jackson3HttpMessageConverter 桥接。</p>
      */
     @Bean
     public Jackson3HttpMessageConverter jackson3HttpMessageConverter() {

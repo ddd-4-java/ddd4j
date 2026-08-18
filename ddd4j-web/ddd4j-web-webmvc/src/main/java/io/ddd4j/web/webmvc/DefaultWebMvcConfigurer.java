@@ -25,8 +25,6 @@ import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import io.ddd4j.web.webmvc.converter.Jackson3HttpMessageConverter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.util.CollectionUtils;
@@ -144,8 +142,9 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
             }
         });
 
-        // Jackson 3 ObjectMapper（替代 Spring 6 的 Jackson2ObjectMapperBuilder，
-        // Spring 7 发布后可直接使用其原生 Jackson 3 支持）
+        // Jackson 3 ObjectMapper（ddd4j 3.0.x 使用 Spring Framework 7.0.8，
+        // 但 MappingJackson2HttpMessageConverter.setObjectMapper 仍要求 Jackson 2 ObjectMapper，
+        // 因此用 Jackson3HttpMessageConverter 桥接层转换）。
         ObjectMapper objectMapper = JsonMapper.builder()
                 .addModules(simpleModule)
                 .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
@@ -154,8 +153,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
                 .enable(MapperFeature.USE_GETTERS_AS_SETTERS)
                 .build();
 
-        // 桥接层：Spring 6 没有原生 Jackson 3 HttpMessageConverter，
-        // 使用自定义 Jackson3HttpMessageConverter 替代 MappingJackson2HttpMessageConverter
+        // Jackson3HttpMessageConverter 桥接层：接收 Jackson 3 ObjectMapper
         Jackson3HttpMessageConverter jackson3Converter = new Jackson3HttpMessageConverter(objectMapper);
         jackson3Converter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
         converters.add(jackson3Converter);
