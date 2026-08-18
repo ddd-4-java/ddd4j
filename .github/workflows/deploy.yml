@@ -114,7 +114,7 @@ jobs:
           fi
 
       - name: Install reactor artifacts
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install -pl '!ddd4j-samples/ddd4j-sample-dropwizard,!ddd4j-samples/ddd4j-sample-helidon,!ddd4j-samples/ddd4j-sample-javalin,!ddd4j-samples/ddd4j-sample-javalin-cqrs,!ddd4j-samples/ddd4j-sample-javalin-satoken,!ddd4j-samples/ddd4j-sample-javalin-shiro,!ddd4j-samples/ddd4j-sample-micronaut,!ddd4j-samples/ddd4j-sample-order-application,!ddd4j-samples/ddd4j-sample-order-domain,!ddd4j-samples/ddd4j-sample-order-jdbc,!ddd4j-samples/ddd4j-sample-order-kafka,!ddd4j-samples/ddd4j-sample-order-local,!ddd4j-samples/ddd4j-sample-order-redis,!ddd4j-samples/ddd4j-sample-order-testkit,!ddd4j-samples/ddd4j-sample-quarkus,!ddd4j-samples/ddd4j-sample-quarkus-cqrs,!ddd4j-samples/ddd4j-sample-quarkus-satoken,!ddd4j-samples/ddd4j-sample-quarkus-shiro,!ddd4j-samples/ddd4j-sample-vertx'
 
       - name: Deploy to Aliyun
         env:
