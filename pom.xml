@@ -92,8 +92,6 @@
         <subproject>ddd4j-web</subproject>
         <subproject>ddd4j-auth</subproject>
         <subproject>ddd4j-cache</subproject>
-        <!-- 分布式事务管理 -->
-        <subproject>ddd4j-tx</subproject>
 
         <!-- 运行时绑定层：提供核心 SPI 的容器实现；自动装配留给外部脚手架 -->
         <subproject>ddd4j-runtime</subproject>
