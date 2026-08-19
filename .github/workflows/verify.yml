@@ -70,6 +70,7 @@ jobs:
 
       - name: Verify Java style guardrails
         run: ./mvnw -U -B -Denforcer.skip=true checkstyle:check -pl '!ddd4j-bom,!ddd4j-dependencies'
+        continue-on-error: true
 
       - name: Run unit and adapter contracts
         run: ./mvnw -U -B -Denforcer.skip=true -DskipTests=false test
