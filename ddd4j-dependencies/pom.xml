@@ -673,8 +673,22 @@
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <spring-initializr.version>0.24.0</spring-initializr.version>
         <spring-kafka.version>3.3.16</spring-kafka.version>
+        <spring-amqp.version>3.2.5</spring-amqp.version>
+        <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
+        <spring-batch.version>5.2.2</spring-batch.version>
+        <spring-data-bom.version>2024.1.5</spring-data-bom.version>
+        <spring-framework.version>7.0.8</spring-framework.version>
+        <spring-graphql.version>1.4.6</spring-graphql.version>
+        <spring-hateoas.version>2.4.1</spring-hateoas.version>
+        <spring-integration.version>6.5.10</spring-integration.version>
+        <spring-ldap.version>3.2.12</spring-ldap.version>
         <spring-plugin.version>3.0.0</spring-plugin.version>
         <spring-pulsar.version>1.2.18</spring-pulsar.version>
+        <spring-restdocs.version>3.0.3</spring-restdocs.version>
+        <spring-retry.version>2.0.11</spring-retry.version>
+        <spring-security.version>6.4.6</spring-security.version>
+        <spring-session.version>3.4.3</spring-session.version>
+        <spring-ws.version>4.0.13</spring-ws.version>
         <springdoc.version>2.7.0</springdoc.version>
         <springfox.version>3.0.0</springfox.version>
         <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
@@ -765,6 +779,14 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
                 <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring-security.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
