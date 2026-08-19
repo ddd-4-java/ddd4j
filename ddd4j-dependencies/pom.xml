@@ -17,15 +17,10 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <!-- ArchUnit：分层约束验证（ddd4j-ddd-rules 模块用） -->
-        <!-- ASM：统一 Jetty/Quarkus 测试类路径，避免旧版 Handle 覆盖新版 API -->
-        <!-- source: ddd4j 脚手架 P0-1 补齐：动态多数据源切换 -->
-        <!-- Micronaut Platform 4.10.17 管理的核心组件版本，供 javac 注解处理器使用。 -->
-        <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
-        <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
-        <!-- Maven Plugin versions -->
-        <ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
-        <UserAgentUtils.version>1.21</UserAgentUtils.version>
+        <!-- 核心配置 -->
+        <skipTests>false</skipTests>
+
+        <!-- Third-Party Dependencies -->
         <activation.version>1.1.1</activation.version>
         <activemq.version>6.2.0</activemq.version>
         <akka-http.version>10.5.3</akka-http.version>
@@ -88,7 +83,6 @@
         <canal.version>1.1.8</canal.version>
         <cas-client.version>4.1.1</cas-client.version>
         <cassandra-driver.version>4.19.2</cassandra-driver.version>
-        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
         <cglib.version>3.3.0</cglib.version>
         <checker-framework.version>3.55.1</checker-framework.version>
         <classgraph.version>4.8.184</classgraph.version>
@@ -97,7 +91,6 @@
         <cola.version>5.0.0</cola.version>
         <commons-attributes-api.version>2.2</commons-attributes-api.version>
         <commons-attributes-compiler.version>2.2</commons-attributes-compiler.version>
-        <commons-attributes-plugin.version>2.2</commons-attributes-plugin.version>
         <commons-attributes.version>2.2</commons-attributes.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-betwixt.version>0.8</commons-betwixt.version>
@@ -158,7 +151,6 @@
         <db-meta.version>0.0.1-Release</db-meta.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <debezium.version>3.6.0.Final</debezium.version>
-        <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
         <derby-locale.version>${derby.version}</derby-locale.version>
         <derby.version>10.17.1.0</derby.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
@@ -238,8 +230,8 @@
         <easy4j-security-guard-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-security-guard-sdk.version>
         <easy4j-security-jwt-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-security-jwt-extension.version>
         <easy4j-shiro-biz-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-biz-sdk.version>
-        <easy4j-shiro-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-extension.version>
         <easy4j-shiro-dingtalk.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-dingtalk.version>
+        <easy4j-shiro-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-extension.version>
         <easy4j-shiro-j2cache.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-j2cache.version>
         <easy4j-shiro-jwt.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-jwt.version>
         <easy4j-shiro-oauth.version>3.0.x.20260630-SNAPSHOT</easy4j-shiro-oauth.version>
@@ -335,12 +327,12 @@
         <icu4j.version>78.3</icu4j.version>
         <imageio.version>3.13.1</imageio.version>
         <imagej.version>2.16.0</imagej.version>
+        <ImpalaJDBC41.version>2.6.3</ImpalaJDBC41.version>
         <infinispan.version>16.0.3</infinispan.version>
         <influxdb-client-java.version>7.5.0</influxdb-client-java.version>
         <influxdb-java.version>2.25</influxdb-java.version>
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <!-- jackson-annotations: managed by jackson-bom (com.fasterxml.jackson.core:jackson-annotations:2.22) -->
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jackson.version>3.2.1</jackson.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
@@ -365,10 +357,6 @@
         <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
         <jakarta.xml.bind-api.version>3.0.1</jakarta.xml.bind-api.version>
         <jandex.version>3.6.0</jandex.version>
-        <!-- Jandex 索引 Maven 插件（与 jandex 库版本序列独立）：
-             Quarkus 等轨道模块生成 META-INF/jandex.idx 供扩展发现 Bean。
-             3.x 无默认 lifecycle binding，使用方需显式声明 executions。 -->
-        <maven-jandex-plugin.version>3.6.0</maven-jandex-plugin.version>
         <janino.version>3.1.12</janino.version>
         <jasypt.version>1.9.3</jasypt.version>
         <java-jwt.version>4.5.0</java-jwt.version>
@@ -457,43 +445,6 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
-        <maven-alibaba-plugin.version>1.1.9</maven-alibaba-plugin.version>
-        <!-- Maven 4 要求非生命周期插件显式版本（Maven 3 的"猜最新"策略已移除）：
-             ddd4j-parent 的 build 声明引用，缺版本会导致下游解析失败 -->
-        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
-        <!-- surefire 开关默认值：ddd4j-parent 的 surefire 配置引用 ${skipTests}，
-             本 POM 作为被消费的 parent 链节点必须提供默认值（否则下游插值失败被当作 skip） -->
-        <skipTests>false</skipTests>
-        <maven-appassembler-plugin.version>2.1.0</maven-appassembler-plugin.version>
-        <maven-asciidoctor-plugin.version>3.0.0</maven-asciidoctor-plugin.version>
-        <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
-        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-        <maven-clirr-plugin.version>2.8</maven-clirr-plugin.version>
-        <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
-        <maven-codenarc-plugin.version>0.22-1</maven-codenarc-plugin.version>
-        <maven-dependency-check-plugin.version>12.2.2</maven-dependency-check-plugin.version>
-        <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
-        <maven-docker-plugin.version>0.48.1</maven-docker-plugin.version>
-        <maven-exec-plugin.version>3.6.3</maven-exec-plugin.version>
-        <maven-findbugs-plugin.version>3.0.5</maven-findbugs-plugin.version>
-        <maven-git-commit-id-plugin.version>4.9.10</maven-git-commit-id-plugin.version>
-        <maven-gwt-plugin.version>2.10.0</maven-gwt-plugin.version>
-        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
-        <maven-jarsigner-plugin.version>3.1.0</maven-jarsigner-plugin.version>
-        <maven-javancss-plugin.version>2.1</maven-javancss-plugin.version>
-        <maven-jaxb2-plugin.version>3.3.0</maven-jaxb2-plugin.version>
-        <maven-jdepend-plugin.version>2.2.0</maven-jdepend-plugin.version>
-        <maven-jetty-plugin.version>11.0.26</maven-jetty-plugin.version>
-        <maven-license-plugin.version>2.7.1</maven-license-plugin.version>
-        <maven-mybatis-generator-plugin.version>1.3.7</maven-mybatis-generator-plugin.version>
-        <maven-nexus-m2settings-plugin.version>1.7.0</maven-nexus-m2settings-plugin.version>
-        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
-        <maven-properties-plugin.version>1.3.0</maven-properties-plugin.version>
-        <maven-quarkus-plugin.version>${quarkus.version}</maven-quarkus-plugin.version>
-        <maven-rpm-plugin.version>2.3.0</maven-rpm-plugin.version>
-        <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
-        <maven-sonar-plugin.version>4.0.1.6619</maven-sonar-plugin.version>
-        <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
@@ -547,8 +498,8 @@
         <opentest4j.version>1.3.0</opentest4j.version>
         <opentracing.version>0.33.0</opentracing.version>
         <oracle-database.version>23.26.2.0.0</oracle-database.version>
-        <oshi-shaded.version>6.1.0</oshi-shaded.version>
         <oshi-ffm.version>7.4.4</oshi-ffm.version>
+        <oshi-shaded.version>6.1.0</oshi-shaded.version>
         <oshi.version>7.4.4</oshi.version>
         <owasp-antisamy.version>1.7.8</owasp-antisamy.version>
         <owasp-csrfguard.version>4.5.0-jakarta</owasp-csrfguard.version>
@@ -574,6 +525,7 @@
         <pf4j-update.version>2.3.0</pf4j-update.version>
         <pf4j.version>3.15.0</pf4j.version>
         <pgvector.version>0.1.6</pgvector.version>
+        <pi4j.version>4.0.2</pi4j.version>
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <png-encoder.version>1.5</png-encoder.version>
@@ -671,18 +623,18 @@
         <soapui-template.version>1.0.2.RELEASE</soapui-template.version>
         <socket-io.version>2.1.2</socket-io.version>
         <spark.version>4.2.0</spark.version>
-        <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
-        <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
-        <spring-initializr.version>0.24.0</spring-initializr.version>
-        <spring-kafka.version>3.3.16</spring-kafka.version>
         <spring-amqp.version>3.2.5</spring-amqp.version>
         <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
         <spring-batch.version>5.2.2</spring-batch.version>
+        <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
+        <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <spring-data-bom.version>2024.1.5</spring-data-bom.version>
         <spring-framework.version>7.0.8</spring-framework.version>
         <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
+        <spring-initializr.version>0.24.0</spring-initializr.version>
         <spring-integration.version>6.5.10</spring-integration.version>
+        <spring-kafka.version>3.3.16</spring-kafka.version>
         <spring-ldap.version>3.2.12</spring-ldap.version>
         <spring-plugin.version>3.0.0</spring-plugin.version>
         <spring-pulsar.version>1.2.18</spring-pulsar.version>
@@ -710,8 +662,8 @@
         <tencentcloud-sdk-java-sms.version>3.1.1451</tencentcloud-sdk-java-sms.version>
         <tencentcloud-sdk-java.version>3.1.1492</tencentcloud-sdk-java.version>
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
-        <testcontainers-redis.version>2.2.4</testcontainers-redis.version>
         <testcontainers-bom.version>2.0.5</testcontainers-bom.version>
+        <testcontainers-redis.version>2.2.4</testcontainers-redis.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
         <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
@@ -730,6 +682,7 @@
         <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
         <undertow.version>2.3.20.Final</undertow.version>
         <unirest-java.version>4.10.0</unirest-java.version>
+        <UserAgentUtils.version>1.21</UserAgentUtils.version>
         <vault-java-driver.version>6.2.2</vault-java-driver.version>
         <velocity.version>2.4.1</velocity.version>
         <vertx.version>5.1.5</vertx.version>
@@ -768,8 +721,44 @@
         <zookeeper.version>3.9.5</zookeeper.version>
         <zstd-jni.version>1.5.7-11</zstd-jni.version>
         <zxing.version>3.5.4</zxing.version>
-    
-        <pi4j.version>4.0.2</pi4j.version>
+
+        <!-- Maven Dependencies -->
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+        <commons-attributes-plugin.version>2.2</commons-attributes-plugin.version>
+        <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
+        <maven-alibaba-plugin.version>1.1.9</maven-alibaba-plugin.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <maven-appassembler-plugin.version>2.1.0</maven-appassembler-plugin.version>
+        <maven-asciidoctor-plugin.version>3.0.0</maven-asciidoctor-plugin.version>
+        <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <maven-clirr-plugin.version>2.8</maven-clirr-plugin.version>
+        <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
+        <maven-codenarc-plugin.version>0.22-1</maven-codenarc-plugin.version>
+        <maven-dependency-check-plugin.version>12.2.2</maven-dependency-check-plugin.version>
+        <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
+        <maven-docker-plugin.version>0.48.1</maven-docker-plugin.version>
+        <maven-exec-plugin.version>3.6.3</maven-exec-plugin.version>
+        <maven-findbugs-plugin.version>3.0.5</maven-findbugs-plugin.version>
+        <maven-git-commit-id-plugin.version>4.9.10</maven-git-commit-id-plugin.version>
+        <maven-gwt-plugin.version>2.10.0</maven-gwt-plugin.version>
+        <maven-jacoco-plugin.version>0.8.15</maven-jacoco-plugin.version>
+        <maven-jandex-plugin.version>3.6.0</maven-jandex-plugin.version>
+        <maven-jarsigner-plugin.version>3.1.0</maven-jarsigner-plugin.version>
+        <maven-javancss-plugin.version>2.1</maven-javancss-plugin.version>
+        <maven-jaxb2-plugin.version>3.3.0</maven-jaxb2-plugin.version>
+        <maven-jdepend-plugin.version>2.2.0</maven-jdepend-plugin.version>
+        <maven-jetty-plugin.version>11.0.26</maven-jetty-plugin.version>
+        <maven-license-plugin.version>2.7.1</maven-license-plugin.version>
+        <maven-mybatis-generator-plugin.version>1.3.7</maven-mybatis-generator-plugin.version>
+        <maven-nexus-m2settings-plugin.version>1.7.0</maven-nexus-m2settings-plugin.version>
+        <maven-pmd-plugin.version>3.28.0</maven-pmd-plugin.version>
+        <maven-properties-plugin.version>1.3.0</maven-properties-plugin.version>
+        <maven-quarkus-plugin.version>${quarkus.version}</maven-quarkus-plugin.version>
+        <maven-rpm-plugin.version>2.3.0</maven-rpm-plugin.version>
+        <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
+        <maven-sonar-plugin.version>4.0.1.6619</maven-sonar-plugin.version>
+        <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
     </properties>
 
     <dependencyManagement>
