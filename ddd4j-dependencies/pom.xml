@@ -593,6 +593,7 @@
         <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
         <quartz.version>2.5.2</quartz.version>
         <querydsl.version>5.1.0</querydsl.version>
+        <reactor-bom.version>2024.0.18</reactor-bom.version>
         <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
         <r2dbc-mariadb.version>1.4.1</r2dbc-mariadb.version>
         <r2dbc-mssql.version>1.0.5.RELEASE</r2dbc-mssql.version>
@@ -765,6 +766,14 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
                 <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring-security.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
