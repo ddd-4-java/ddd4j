@@ -547,6 +547,7 @@
         <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
         <quartz.version>2.5.2</quartz.version>
         <querydsl.version>5.1.0</querydsl.version>
+        <reactor-bom.version>2025.0.6</reactor-bom.version>
         <r2dbc-h2.version>1.1.0.RELEASE</r2dbc-h2.version>
         <r2dbc-mariadb.version>1.4.1</r2dbc-mariadb.version>
         <r2dbc-mssql.version>1.0.5.RELEASE</r2dbc-mssql.version>

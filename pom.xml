@@ -52,10 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.version>3.38.2</quarkus.version>
-        <reactor-bom.version>2025.0.6</reactor-bom.version>
         <revision>3.0.x.20260630-SNAPSHOT</revision>
-        <spring-framework.version>7.0.8</spring-framework.version>
-        <spring-security.version>7.0.6</spring-security.version>
         <!-- P0-2: 单元测试开关（默认运行，业务项目可 -DskipTests 跳过） -->
         <skipTests>false</skipTests>
     </properties>
