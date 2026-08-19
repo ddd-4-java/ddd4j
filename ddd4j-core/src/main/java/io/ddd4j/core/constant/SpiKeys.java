@@ -73,6 +73,16 @@ public final class SpiKeys {
 
     // ========== 数据相关 SPI ==========
 
+    // ========== 事务相关 SPI ==========
+    /**
+     * 分布式事务管理器 SPI key，对应 {@code io.ddd4j.tx.TransactionManager}
+     */
+    public static final String TRANSACTION_MANAGER = PREFIX + "tx.TransactionManager";
+    /**
+     * 事务边界端口 SPI key，对应 {@code io.ddd4j.tx.TransactionPort}
+     */
+    public static final String TRANSACTION_PORT = PREFIX + "tx.TransactionPort";
+
     private SpiKeys() {
     }
 }
