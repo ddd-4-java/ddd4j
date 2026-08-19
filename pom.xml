@@ -23,7 +23,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <revision>1.0.x20260625-SNAPSHOT</revision>
+        <revision>1.0.x.20260630-SNAPSHOT</revision>
         <java.version>1.8</java.version>
         <!-- Maven Plugin versions -->
         <maven.version>3.6.3</maven.version>
