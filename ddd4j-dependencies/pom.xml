@@ -772,9 +772,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Framework 7 基线（feature/3.0.x 对齐 ddd4j-boot 4.0.x / Boot 4 / Spring AI 2.0）：
-                 必须置于 micronaut-platform 等管理 Spring Framework 6.2.x 的 BOM 之前 import，
-                 否则其 spring-* 6.2.x 管理条目会压过本 POM 从 parent 继承的 FW7 BOM。 -->
+            <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
