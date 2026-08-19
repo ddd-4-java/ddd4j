@@ -58,22 +58,6 @@
         <revision>3.0.x.20260630-SNAPSHOT</revision>
         <!-- P0-2: 单元测试开关（默认运行，业务项目可 -DskipTests 跳过） -->
         <skipTests>false</skipTests>
-        <!-- Dependency versions -->
-        <spring-amqp.version>3.2.5</spring-amqp.version>
-        <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
-        <spring-batch.version>5.2.2</spring-batch.version>
-        <spring-data-bom.version>2024.1.5</spring-data-bom.version>
-        <!-- 版本约束：feature/3.0.x 线对齐 ddd4j-boot 4.0.x（Boot 4），Spring Framework 切换至 7.x -->
-        <spring-framework.version>7.0.8</spring-framework.version>
-        <spring-graphql.version>1.4.6</spring-graphql.version>
-        <spring-hateoas.version>2.4.1</spring-hateoas.version>
-        <spring-integration.version>6.5.10</spring-integration.version>
-        <spring-ldap.version>3.2.12</spring-ldap.version>
-        <spring-restdocs.version>3.0.3</spring-restdocs.version>
-        <spring-retry.version>2.0.11</spring-retry.version>
-        <spring-security.version>6.4.6</spring-security.version>
-        <spring-session.version>3.4.3</spring-session.version>
-        <spring-ws.version>4.0.13</spring-ws.version>
     </properties>
 
     <subprojects>
@@ -173,28 +157,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring-framework.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-bom</artifactId>
-                <version>${spring-security.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-bom -->
-            <dependency>
-                <groupId>io.projectreactor</groupId>
-                <artifactId>reactor-bom</artifactId>
-                <version>${reactor-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>tools.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
