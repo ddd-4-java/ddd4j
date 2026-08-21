@@ -9151,12 +9151,14 @@
                 <version>${easy4j-spring-security-extension2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-webflux -->
+            <!-- Spring WebFlux：Spring 框架的响应式 Web 框架（基于 Project Reactor）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webflux</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+            <!-- Spring WebMVC：Spring 框架的传统 Servlet Web 框架（MVC 模式）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
