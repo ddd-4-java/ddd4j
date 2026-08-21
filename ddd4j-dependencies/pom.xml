@@ -6182,19 +6182,21 @@
                 <version>${easy4j-metrics-ehcache3.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-httpclient -->
+            <!-- Dropwizard Metrics HttpClient：Apache HttpClient 的指标收集模块（请求计数、延迟等）。 -->
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-httpclient</artifactId>
                 <version>${dropwizard-metrics.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jcache -->
-            <!-- Metrics Integration for JCache, JSR 107 standard for caching. Uses the CacheStatisticsMXBean provided statistics. -->
+            <!-- Dropwizard Metrics JCache：JCache (JSR-107) 缓存的指标收集模块（命中率、大小等）。 -->
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-jcache</artifactId>
                 <version>${dropwizard-metrics.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/metrics-resteasy -->
+            <!-- Easy4J Metrics RESTEasy：Easy4J 的 RESTEasy (JAX-RS) 端点指标监控模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>metrics-resteasy</artifactId>
