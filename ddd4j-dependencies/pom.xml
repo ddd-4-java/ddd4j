@@ -2348,48 +2348,56 @@
             </dependency>
             <!-- cxf-rt-databinding -->
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-aegis -->
+            <!-- Apache CXF Databinding Aegis：Aegis 数据绑定框架，基于 XML Schema 自动生成 Java 类。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-databinding-aegis</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-jaxb -->
+            <!-- Apache CXF Databinding JAXB：CXF 的 JAXB 数据绑定实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-databinding-jaxb</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-jibx -->
+            <!-- Apache CXF Databinding JiBX：CXF 的 JiBX 数据绑定实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-databinding-jibx</artifactId>
                 <version>3.1.18</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-sdo -->
+            <!-- Apache CXF Databinding SDO：CXF 的 SDO（服务数据对象）数据绑定实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-databinding-sdo</artifactId>
                 <version>3.1.18</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-xmlbeans -->
+            <!-- Apache CXF Databinding XMLBeans：CXF 的 XMLBeans 数据绑定实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-databinding-xmlbeans</artifactId>
                 <version>3.1.18</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-features-clustering -->
+            <!-- Apache CXF Clustering Feature：CXF 的集群支持特性，提供故障转移能力。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-features-clustering</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-frontend-jaxrs -->
+            <!-- Apache CXF JAX-RS Frontend：CXF 的 JAX-RS（REST）前端实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-jaxrs</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-frontend-jaxws -->
+            <!-- Apache CXF JAX-WS Frontend：CXF 的 JAX-WS（SOAP Web 服务）前端实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -2406,18 +2414,21 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-frontend-js -->
+            <!-- Apache CXF JS Frontend：CXF 的 JavaScript 前端实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-js</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-javascript -->
+            <!-- Apache CXF JavaScript：CXF 的 JavaScript 客户端代码生成。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-javascript</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/cxf-rt-javassist -->
+            <!-- Easy4J CXF Javassist：Easy4J 封装的 CXF Javassist 数据绑定增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>cxf-rt-javassist</artifactId>
