@@ -5207,18 +5207,21 @@
                 <version>${jodd-bean.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jodd/jodd-core -->
+            <!-- Jodd Core：Jodd 工具集核心模块（字符串、反射、日期、IO 等常用工具）。 -->
             <dependency>
                 <groupId>org.jodd</groupId>
                 <artifactId>jodd-core</artifactId>
                 <version>${jodd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jooq/jooq -->
+            <!-- jOOQ：类型安全的 Java SQL 查询构建器，从数据库 Schema 生成 Java 代码。 -->
             <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jooq/jooq-bom -->
+            <!-- jOOQ BOM：jOOQ 数据库查询框架各模块的版本清单。 -->
             <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-bom</artifactId>
