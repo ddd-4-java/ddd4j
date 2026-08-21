@@ -8422,18 +8422,21 @@
                 <version>${scribejava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.scribejava/scribejava-core -->
+            <!-- ScribeJava Core：ScribeJava OAuth 库核心模块。 -->
             <dependency>
                 <groupId>com.github.scribejava</groupId>
                 <artifactId>scribejava-core</artifactId>
                 <version>${scribejava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.scribejava/scribejava-httpclient-ahc -->
+            <!-- ScribeJava AHC：ScribeJava 的 AsyncHttpClient 集成。 -->
             <dependency>
                 <groupId>com.github.scribejava</groupId>
                 <artifactId>scribejava-httpclient-ahc</artifactId>
                 <version>${scribejava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.scribejava/scribejava-httpclient-apache -->
+            <!-- ScribeJava Apache：ScribeJava 的 Apache HttpClient 集成。 -->
             <dependency>
                 <groupId>com.github.scribejava</groupId>
                 <artifactId>scribejava-httpclient-apache</artifactId>
