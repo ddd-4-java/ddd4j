@@ -4235,18 +4235,21 @@
                 <version>${httpconn.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore -->
+            <!-- Apache HttpCore：Apache HTTP 核心库（连接管理、HTTP 协议实现）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>${httpcore.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore-ab -->
+            <!-- Apache HttpCore AB：Apache HTTP 核心的异步阻塞传输模块。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-ab</artifactId>
                 <version>${httpcore.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore-nio -->
+            <!-- Apache HttpCore NIO：Apache HTTP 核心的 NIO 异步传输模块。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-nio</artifactId>
