@@ -1160,12 +1160,14 @@
                 <version>${aws-java-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-ses -->
+            <!-- AWS SES Java SDK：亚马逊简单邮件服务 SES 的 Java 客户端，用于发送事务性邮件。 -->
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-ses</artifactId>
                 <version>${aws-java-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sns -->
+            <!-- AWS SNS Java SDK：亚马逊简单通知服务 SNS 的 Java 客户端，支持 Pub/Sub 消息推送。 -->
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-sns</artifactId>
