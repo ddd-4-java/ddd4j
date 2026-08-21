@@ -6233,6 +6233,7 @@
                 <version>${micrometer.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bom -->
+            <!-- Micrometer Tracing BOM：Micrometer 分布式追踪各模块的版本清单。 -->
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-tracing-bom</artifactId>
