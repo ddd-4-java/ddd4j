@@ -10187,6 +10187,7 @@
                 <version>${xmlschema-core.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.ws.xmlschema/xmlschema-core -->
+            <!-- Apache XMLSchema Core：Apache XML Schema 解析和验证核心库（支持 XSD 1.0/1.1）。 -->
             <dependency>
                 <groupId>org.apache.ws.xmlschema</groupId>
                 <artifactId>xmlschema-core</artifactId>
