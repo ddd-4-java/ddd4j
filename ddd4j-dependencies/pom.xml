@@ -8060,18 +8060,21 @@
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-micrometer -->
+            <!-- Resilience4j Micrometer：Resilience4j 的 Micrometer 指标集成（新版）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-micrometer</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-prometheus -->
+            <!-- Resilience4j Prometheus：Resilience4j 的 Prometheus 指标导出（旧版）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-prometheus</artifactId>
                 <version>1.7.1</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-ratelimiter -->
+            <!-- Resilience4j RateLimiter：Resilience4j 的限流模式（限制请求速率）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-ratelimiter</artifactId>
