@@ -7024,18 +7024,21 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jboss.xnio.netty/netty-xnio-transport -->
+            <!-- Netty XNIO Transport：JBoss XNIO 与 Netty 的传输桥接模块。 -->
             <dependency>
                 <groupId>org.jboss.xnio.netty</groupId>
                 <artifactId>netty-xnio-transport</artifactId>
                 <version>${xnio-netty-transport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.nimbusds/nimbus-jose-jwt -->
+            <!-- Nimbus JOSE+JWT：JOSE/JWT 标准的 Java 实现（JWS/JWE/JWK 全支持）。 -->
             <dependency>
                 <groupId>com.nimbusds</groupId>
                 <artifactId>nimbus-jose-jwt</artifactId>
                 <version>${nimbus-jose-jwt.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons.ssl/not-yet-commons-ssl -->
+            <!-- Not Yet Commons SSL：Apache Commons SSL 的早期实现（JSSE 包装工具）。 -->
             <dependency>
                 <groupId>org.apache.commons.ssl</groupId>
                 <artifactId>not-yet-commons-ssl</artifactId>
