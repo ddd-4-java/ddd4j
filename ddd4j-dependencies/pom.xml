@@ -7374,6 +7374,7 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-otp-extension -->
+            <!-- Easy4J Pac4j OTP Extension：Easy4J 对 Pac4j 的一次性密码 (OTP) 认证扩展。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-otp-extension</artifactId>
@@ -7382,6 +7383,7 @@
             <!-- PAC4J For SAML Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-saml -->
             <!-- PAC4J For SAML Protocol -->
+            <!-- Pac4j SAML：Pac4j 安全框架的 SAML 2.0 单点登录协议支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-saml</artifactId>
@@ -7390,6 +7392,7 @@
             <!-- PAC4J For Relational DB -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-sql -->
             <!-- PAC4J For Relational DB -->
+            <!-- Pac4j SQL：Pac4j 安全框架的关系型数据库存储支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-sql</artifactId>
