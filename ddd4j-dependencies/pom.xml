@@ -4739,24 +4739,28 @@
                 <version>${jakarta.jws-api.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/jakarta.mail -->
+            <!-- Jakarta Mail (Angus)：Jakarta Mail API 的 Eclipse Angus 实现（SMTP/IMAP/POP3）。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>jakarta.mail</artifactId>
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
+            <!-- Jakarta Mail API：Jakarta 邮件服务标准 API（Session/Message/Transport）。 -->
             <dependency>
                 <groupId>jakarta.mail</groupId>
                 <artifactId>jakarta.mail-api</artifactId>
                 <version>${jakarta-mail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.management.j2ee/jakarta.management.j2ee-api -->
+            <!-- Jakarta Management J2EE API：Jakarta 企业级管理 API（J2EE 管理规范）。 -->
             <dependency>
                 <groupId>jakarta.management.j2ee</groupId>
                 <artifactId>jakarta.management.j2ee-api</artifactId>
                 <version>${jakarta-management.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api -->
+            <!-- Jakarta Persistence API：Jakarta 持久化标准 API（EntityManager/Query 等）。 -->
             <dependency>
                 <groupId>jakarta.persistence</groupId>
                 <artifactId>jakarta.persistence-api</artifactId>
