@@ -2441,18 +2441,21 @@
                 <version>${cxf-rt-javassist.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-client -->
+            <!-- Apache CXF JAX-RS Client：CXF 的 JAX-RS REST 客户端实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-client</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-extension-providers -->
+            <!-- Apache CXF JAX-RS Providers：CXF 的 JAX-RS 实体提供者扩展。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-extension-providers</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-extension-reactor -->
+            <!-- Apache CXF JAX-RS Reactor：CXF 的 JAX-RS 响应式（Reactor）扩展。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-extension-reactor</artifactId>
@@ -2460,54 +2463,63 @@
             </dependency>
             <!-- cxf-rt-rs-security -->
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-cors -->
+            <!-- Apache CXF JAX-RS CORS：CXF 的 JAX-RS 跨域资源共享支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-cors</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-jose -->
+            <!-- Apache CXF JAX-RS JOSE：CXF 的 JOSE（JSON 对象签名加密）安全支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-jose</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-jose-jaxrs -->
+            <!-- Apache CXF JAX-RS JOSE JAXRS：CXF 的 JOSE 与 JAX-RS 集成支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-oauth -->
+            <!-- Apache CXF JAX-RS OAuth 1.0a：CXF 的 OAuth 1.0a 认证支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-oauth</artifactId>
                 <version>3.4.10</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-oauth2 -->
+            <!-- Apache CXF JAX-RS OAuth 2.0：CXF 的 OAuth 2.0 认证支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-oauth2</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-sso-oidc -->
+            <!-- Apache CXF JAX-RS OIDC：CXF 的 OpenID Connect 单点登录支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-sso-oidc</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-sso-saml -->
+            <!-- Apache CXF JAX-RS SAML SSO：CXF 的 SAML 单点登录支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-sso-saml</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-service-description-swagger -->
+            <!-- Apache CXF Swagger：CXF 的 Swagger API 描述集成。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http -->
+            <!-- Apache CXF HTTP Transport：CXF 的 HTTP 传输层实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http</artifactId>
