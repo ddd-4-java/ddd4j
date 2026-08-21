@@ -9912,24 +9912,28 @@
                 <version>${weixin-java.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-cp -->
+            <!-- 微信 Java SDK 企业微信：WxJava 的企业微信 API 模块。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-cp</artifactId>
                 <version>${weixin-java.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-miniapp -->
+            <!-- 微信 Java SDK 小程序：WxJava 的微信小程序 API 模块。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-miniapp</artifactId>
                 <version>${weixin-java.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-mp -->
+            <!-- 微信 Java SDK 公众号：WxJava 的微信公众号 API 模块。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-mp</artifactId>
                 <version>${weixin-java.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-open -->
+            <!-- 微信 Java SDK 开放平台：WxJava 的微信开放平台 API 模块。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-open</artifactId>
