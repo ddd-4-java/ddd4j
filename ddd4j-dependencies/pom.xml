@@ -6299,12 +6299,14 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.milvus/milvus-sdk-java -->
+            <!-- Milvus SDK Java：Milvus 向量数据库的 Java 客户端（用于 AI 向量相似性检索）。 -->
             <dependency>
                 <groupId>io.milvus</groupId>
                 <artifactId>milvus-sdk-java</artifactId>
                 <version>${milvus.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.minio/minio -->
+            <!-- MinIO Java Client：MinIO 对象存储的 S3 兼容 Java 客户端。 -->
             <dependency>
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
