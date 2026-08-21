@@ -7244,6 +7244,7 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-core -->
+            <!-- Pac4j Core：Pac4j 安全框架核心模块（认证、授权、Profile 管理）。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-core</artifactId>
@@ -7252,6 +7253,7 @@
             <!-- PAC4J For CouchDB -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-couch -->
             <!-- PAC4J For CouchDB -->
+            <!-- Pac4j CouchDB：Pac4j 安全框架的 CouchDB 存储支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-couch</artifactId>
