@@ -8552,18 +8552,21 @@
             <!-- sfntly 是一个字体工具包，可用于使用、编辑和创建基于 SFNT (http://en.wikipedia.org/wiki/Sfnt) 的字体。 -->
             <!-- Source: https://mvnrepository.com/artifact/fr.opensagres.xdocreport.sfntly/sfntly -->
             <!-- sfntly 是一个字体工具包，可用于使用、编辑和创建基于 SFNT (http://en.wikipedia.org/wiki/Sfnt) 的字体。 -->
+            <!-- sfntly：Google 的 SFNT 字体格式处理库（TrueType/OpenType 字体读写）。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport.sfntly</groupId>
                 <artifactId>sfntly</artifactId>
                 <version>${sfntly.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-jdbc -->
+            <!-- ShardingSphere JDBC：Apache ShardingSphere 的 JDBC 层分库分表中间件。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-jdbc</artifactId>
                 <version>${shardingsphere-jdbc.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-distsql-engine -->
+            <!-- ShardingSphere DistSQL Engine：ShardingSphere 的分布式 SQL 解析引擎。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-distsql-engine</artifactId>
