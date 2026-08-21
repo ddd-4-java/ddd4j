@@ -9735,12 +9735,14 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.unboundid/unboundid-ldapsdk -->
+            <!-- UnboundID LDAP SDK：高性能纯 Java LDAP 客户端 SDK（比 JNDI 更快更易用）。 -->
             <dependency>
                 <groupId>com.unboundid</groupId>
                 <artifactId>unboundid-ldapsdk</artifactId>
                 <version>${unboundid-ldapsdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.undertow/undertow-core -->
+            <!-- Undertow Core：JBoss 高性能 NIO Web 服务器核心（Servlet 容器、HTTP/2、WebSocket）。 -->
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-core</artifactId>
