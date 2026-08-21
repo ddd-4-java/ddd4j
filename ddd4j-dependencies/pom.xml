@@ -5300,12 +5300,14 @@
                 <version>${json-smart.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.skyscreamer/jsonassert -->
+            <!-- JSONAssert：JUnit JSON 断言库，支持非严格模式的 JSON 对比。 -->
             <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
                 <version>${jsonassert.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.victools/jsonschema-generator -->
+            <!-- JSON Schema Generator：从 Java 类自动生成 JSON Schema 定义的库。 -->
             <dependency>
                 <groupId>com.github.victools</groupId>
                 <artifactId>jsonschema-generator</artifactId>
