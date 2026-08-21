@@ -5521,12 +5521,14 @@
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-server-common -->
+            <!-- Kafka Server Common：Kafka Broker 的公共工具模块。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-server-common</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-server-common -->
+            <!-- Kafka Server Common Test Jar：Kafka Server Common 的测试工具模块。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-server-common</artifactId>
