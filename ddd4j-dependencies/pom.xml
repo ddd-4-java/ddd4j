@@ -8492,12 +8492,14 @@
                 <version>${easy4j-security-guard-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/security-jwt-extension -->
+            <!-- Easy4J Security JWT Extension：Easy4J 的 JWT 安全扩展模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>security-jwt-extension</artifactId>
                 <version>${easy4j-security-jwt-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-bom -->
+            <!-- Selenium BOM：Selenium 浏览器自动化测试框架各模块的版本清单。 -->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-bom</artifactId>
@@ -8506,6 +8508,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.sendgrid/sendgrid-java -->
+            <!-- SendGrid Java：Twilio SendGrid 邮件发送服务的 Java SDK。 -->
             <dependency>
                 <groupId>com.sendgrid</groupId>
                 <artifactId>sendgrid-java</artifactId>
