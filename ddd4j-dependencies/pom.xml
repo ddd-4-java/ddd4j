@@ -7765,6 +7765,7 @@
                 <version>${protostuff.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-runtime -->
+            <!-- Protostuff Runtime：Protostuff 的运行时 Schema 生成模块（自动推断 POJO 结构）。 -->
             <dependency>
                 <groupId>io.protostuff</groupId>
                 <artifactId>protostuff-runtime</artifactId>
@@ -7773,6 +7774,7 @@
             <!-- Proxool是一种Java数据库连接池技术。sourceforge下的一个开源项目,这个项目提供一个健壮、易用的连接池，最为关键的是这个连接池提供监控的功能，方便易用，便于发现连接泄漏的情况。 -->
             <!-- Source: https://mvnrepository.com/artifact/com.cloudhopper.proxool/proxool -->
             <!-- Proxool是一种Java数据库连接池技术。sourceforge下的一个开源项目,这个项目提供一个健壮、易用的连接池，最为关键的是这个连接池提供监控的功能，方便易用，便于发现连接泄漏的情况。 -->
+            <!-- Proxool：Java 数据库连接池（支持连接泄漏监控、SQL 日志、健康检查）。 -->
             <dependency>
                 <groupId>com.cloudhopper.proxool</groupId>
                 <artifactId>proxool</artifactId>
