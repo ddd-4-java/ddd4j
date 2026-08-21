@@ -6652,12 +6652,14 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-http2 -->
+            <!-- Netty Codec HTTP/2：Netty 的 HTTP/2 协议编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http2</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-memcache -->
+            <!-- Netty Codec Memcache：Netty 的 Memcached 协议编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-memcache</artifactId>
