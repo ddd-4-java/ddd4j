@@ -4988,12 +4988,14 @@
                 <version>${jedis.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.scijava/jep -->
+            <!-- JEP：SciJava 项目提供的 Python 表达式解析器（Jython 替代方案）。 -->
             <dependency>
                 <groupId>org.scijava</groupId>
                 <artifactId>jep</artifactId>
                 <version>${scijava-jep.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.jersey/jersey-bom -->
+            <!-- Jersey BOM：GlassFish Jersey（JAX-RS 参考实现）各模块的版本清单。 -->
             <dependency>
                 <groupId>org.glassfish.jersey</groupId>
                 <artifactId>jersey-bom</artifactId>
@@ -5002,12 +5004,14 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-anno -->
+            <!-- JetCache Anno：JetCache 基于注解的缓存增强实现。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-anno</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-anno-api -->
+            <!-- JetCache Anno API：JetCache 缓存注解定义模块。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-anno-api</artifactId>
