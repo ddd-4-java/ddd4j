@@ -930,12 +930,14 @@
                 <version>${rabbit-amqp-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/angus-core -->
+            <!-- Eclipse Angus Mail Core：Jakarta Mail 规范的 Eclipse 实现核心，用于 Java 邮件发送接收。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>angus-core</artifactId>
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/angus-mail -->
+            <!-- Eclipse Angus Mail：Jakarta Mail 规范的 Eclipse 实现，提供 SMTP、IMAP、POP3 等邮件协议支持。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>angus-mail</artifactId>
@@ -944,24 +946,28 @@
             <!-- Static analytics -->
             <!-- Source: https://mvnrepository.com/artifact/com.google.code.findbugs/annotations -->
             <!-- Static analytics -->
+            <!-- FindBugs Annotations：SpotBugs/FindBugs 静态分析工具的注解库（@Nullable、@CheckForNull 等）。 -->
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${findbugs-annotations.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+            <!-- JetBrains Annotations：JetBrains 系列 IDE 的注解库（@NotNull、@Nullable、@Contract 等）。 -->
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains-annotations.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.ant/ant-jsch -->
+            <!-- Apache Ant JSch：Apache Ant 通过 JSch 实现的 SSH/SCP 远程任务支持模块。 -->
             <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant-jsch</artifactId>
                 <version>${ant-jsch.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.owasp.antisamy/antisamy -->
+            <!-- OWASP AntiSamy：OWASP 安全项目，提供 XSS 攻击防御的 HTML/CSS/SVG 输入清洗库。 -->
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
