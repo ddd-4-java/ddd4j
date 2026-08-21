@@ -9828,12 +9828,14 @@
                 <scope>compile</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/cn.edu.hfut.dmic.webcollector/WebCollector -->
+            <!-- WebCollector：国产 Java 网页爬虫框架（支持递归爬取、JS 渲染、自定义解析）。 -->
             <dependency>
                 <groupId>cn.edu.hfut.dmic.webcollector</groupId>
                 <artifactId>WebCollector</artifactId>
                 <version>${webcollector.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator -->
+            <!-- WebJars Locator：WebJars 资源路径定位器（自动发现前端库版本路径）。 -->
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>webjars-locator</artifactId>
