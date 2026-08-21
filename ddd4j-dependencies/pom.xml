@@ -5901,18 +5901,21 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+            <!-- Log4j Core：Log4j 2 的核心实现（Appender、Layout、Filter 等配置驱动的日志引擎）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core-test -->
+            <!-- Log4j Core Test：Log4j 2 核心的测试支持模块。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core-test</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-couchdb -->
+            <!-- Log4j CouchDB：Log4j 2 的 CouchDB 日志存储 Appender。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-couchdb</artifactId>
