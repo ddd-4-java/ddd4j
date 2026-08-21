@@ -9495,12 +9495,14 @@
                 <version>${taos-jdbc.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/tencentcloud-sdk-extension -->
+            <!-- Easy4J 腾讯云 SDK 扩展：Easy4J 对腾讯云 SDK 的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>tencentcloud-sdk-extension</artifactId>
                 <version>${easy4j-tencentcloud-sdk-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java -->
+            <!-- 腾讯云 SDK Java：腾讯云开放平台 Java 客户端 SDK（全产品 API 调用）。 -->
             <dependency>
                 <groupId>com.tencentcloudapi</groupId>
                 <artifactId>tencentcloud-sdk-java</artifactId>
