@@ -1487,48 +1487,56 @@
                 <version>${byte-buddy.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/javax.cache/cache-api -->
+            <!-- JSR-107 JCache API：Java 标准缓存 API 规范，提供统一的缓存编程模型。 -->
             <dependency>
                 <groupId>javax.cache</groupId>
                 <artifactId>cache-api</artifactId>
                 <version>${javax-cache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.cache2k/cache2k-api -->
+            <!-- cache2k API：轻量级、高性能 Java 内存缓存库 cache2k 的核心 API。 -->
             <dependency>
                 <groupId>org.cache2k</groupId>
                 <artifactId>cache2k-api</artifactId>
                 <version>${cache2k.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.cache2k/cache2k-config -->
+            <!-- cache2k Config：cache2k 的配置模块，提供 XML/Properties 配置支持。 -->
             <dependency>
                 <groupId>org.cache2k</groupId>
                 <artifactId>cache2k-config</artifactId>
                 <version>${cache2k.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.cache2k/cache2k-core -->
+            <!-- cache2k Core：cache2k 的核心实现，纯 Java 高性能内存缓存。 -->
             <dependency>
                 <groupId>org.cache2k</groupId>
                 <artifactId>cache2k-core</artifactId>
                 <version>${cache2k.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.cache2k/cache2k-jcache -->
+            <!-- cache2k JCache：cache2k 对 JSR-107 JCache 标准的实现。 -->
             <dependency>
                 <groupId>org.cache2k</groupId>
                 <artifactId>cache2k-jcache</artifactId>
                 <version>${cache2k.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.cache2k/cache2k-micrometer -->
+            <!-- cache2k Micrometer：cache2k 与 Micrometer 指标系统的集成。 -->
             <dependency>
                 <groupId>org.cache2k</groupId>
                 <artifactId>cache2k-micrometer</artifactId>
                 <version>${cache2k.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.cache2k/cache2k-spring -->
+            <!-- cache2k Spring：cache2k 与 Spring 框架的缓存抽象集成。 -->
             <dependency>
                 <groupId>org.cache2k</groupId>
                 <artifactId>cache2k-spring</artifactId>
                 <version>${cache2k.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+            <!-- Caffeine：Java 高性能、近乎最优的本地缓存库，是 Guava Cache 的后继者，支持自动加载和过期策略。 -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
