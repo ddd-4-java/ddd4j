@@ -9509,12 +9509,14 @@
                 <version>${tencentcloud-sdk-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java-faceid -->
+            <!-- 腾讯云 FaceID SDK：腾讯云人脸识别实名核验服务 SDK。 -->
             <dependency>
                 <groupId>com.tencentcloudapi</groupId>
                 <artifactId>tencentcloud-sdk-java-faceid</artifactId>
                 <version>${tencentcloud-api-faceid.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.tencentcloudapi/tencentcloud-sdk-java-sms -->
+            <!-- 腾讯云 SMS SDK：腾讯云短信服务 SDK（发送短信、模板管理等）。 -->
             <dependency>
                 <groupId>com.tencentcloudapi</groupId>
                 <artifactId>tencentcloud-sdk-java-sms</artifactId>
