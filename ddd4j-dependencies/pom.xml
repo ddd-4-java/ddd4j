@@ -3107,36 +3107,42 @@
                 <version>${feign.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-form-spring -->
+            <!-- OpenFeign Form Spring：Feign 表单提交对 Spring MVC 的支持。 -->
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-form-spring</artifactId>
                 <version>${feign.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-hystrix -->
+            <!-- OpenFeign Hystrix：Feign 与 Hystrix 断路器集成（已弃用，Hystrix 进入维护模式）。 -->
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-hystrix</artifactId>
                 <version>${feign.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp -->
+            <!-- OpenFeign OkHttp：Feign 使用 OkHttp 作为 HTTP 客户端实现。 -->
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-okhttp</artifactId>
                 <version>${feign.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-slf4j -->
+            <!-- OpenFeign SLF4J：Feign 与 SLF4J 日志门面集成。 -->
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-slf4j</artifactId>
                 <version>${feign.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/fetion4j-sdk -->
+            <!-- Easy4J 飞信 SDK：Easy4J 封装的飞信（fetion）即时通讯 SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>fetion4j-sdk</artifactId>
                 <version>${easy4j-fetion4j-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.jhlabs/filters -->
+            <!-- JH Labs Filters：JH Labs 提供的 Java 图像处理滤镜库。 -->
             <dependency>
                 <groupId>com.jhlabs</groupId>
                 <artifactId>filters</artifactId>
