@@ -1237,72 +1237,84 @@
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-css -->
+            <!-- Apache Batik CSS：Batik 的 CSS 解析与级联处理模块，用于 SVG 内联样式计算。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-css</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-dom -->
+            <!-- Apache Batik DOM：Batik 的 DOM 模型适配层，可与 W3C DOM API 互操作。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-dom</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-ext -->
+            <!-- Apache Batik Ext：Batik 扩展模块，提供对自定义 SVG 元素的扩展支持。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-ext</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-extension -->
+            <!-- Apache Batik Extension：Batik 扩展机制抽象，允许集成第三方图形功能。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-extension</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-gui-util -->
+            <!-- Apache Batik GUI Util：Batik 与 Swing/AWT GUI 框架交互的工具类。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-gui-util</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-gvt -->
+            <!-- Apache Batik GVT：Batik 几何矢量树（Graphics Vector Tree）渲染模块。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-gvt</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-js -->
+            <!-- Apache Batik JS：Batik 与 Rhino/Mozilla JavaScript 引擎的桥接模块。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-js</artifactId>
                 <version>${batik-js.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-parser -->
+            <!-- Apache Batik Parser：Batik 的 SVG/XML 解析器模块。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-parser</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-rasterizer -->
+            <!-- Apache Batik Rasterizer：Batik SVG 转 PNG/JPEG/TIFF 栅格化转换工具。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-rasterizer</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-script -->
+            <!-- Apache Batik Script：Batik 脚本扩展模块，支持 SVG 中嵌入 ECMAScript 脚本执行。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-script</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-svg-dom -->
+            <!-- Apache Batik SVG DOM：SVG 文档的 DOM 实现，支持节点级操作与查询。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-svg-dom</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-svggen -->
+            <!-- Apache Batik SVGGen：Java 2D 到 SVG 矢量图转换模块，可将图形导出为 SVG 格式。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-svggen</artifactId>
