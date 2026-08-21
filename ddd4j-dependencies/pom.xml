@@ -3835,12 +3835,14 @@
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-monitoring -->
+            <!-- Grizzly Monitoring：Grizzly 框架的监控指标收集模块。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-monitoring</artifactId>
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-portunif -->
+            <!-- Grizzly Port Unifier：Grizzly 的端口统一模块（单端口多协议）。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-portunif</artifactId>
@@ -3849,6 +3851,7 @@
             <!-- grizzly-websockets -->
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-websockets -->
             <!-- grizzly-websockets -->
+            <!-- Grizzly WebSockets：Grizzly 的 WebSocket 协议支持。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-websockets</artifactId>
