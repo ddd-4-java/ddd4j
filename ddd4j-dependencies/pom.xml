@@ -9940,12 +9940,14 @@
                 <version>${weixin-java.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-pay -->
+            <!-- 微信 Java SDK 支付：WxJava 的微信支付 API 模块（JSAPI/Native/H5/小程序支付等）。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-pay</artifactId>
                 <version>${weixin-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.wildfly.openssl/wildfly-openssl -->
+            <!-- WildFly OpenSSL：JBoss WildFly 的 OpenSSL JNI 集成（高性能 SSL/TLS）。 -->
             <dependency>
                 <groupId>org.wildfly.openssl</groupId>
                 <artifactId>wildfly-openssl</artifactId>
