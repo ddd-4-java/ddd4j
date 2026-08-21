@@ -9271,12 +9271,14 @@
                 <version>${sshd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-pam -->
+            <!-- Apache SSHD PAM：Apache SSHD 的 Linux PAM 认证集成。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-pam</artifactId>
                 <version>${sshd-pam.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-putty -->
+            <!-- Apache SSHD PuTTY：Apache SSHD 的 PuTTY 私钥格式支持。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-putty</artifactId>
