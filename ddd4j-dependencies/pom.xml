@@ -8891,12 +8891,14 @@
                 <version>${easy4j-shiro-weixin.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-weixin-spring -->
+            <!-- Easy4J Shiro WeChat Spring：Easy4J 的 Shiro 微信登录 Spring 集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-weixin-spring</artifactId>
                 <version>${easy4j-shiro-weixin.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.prometheus/simpleclient -->
+            <!-- Prometheus SimpleClient：Prometheus Java 客户端旧版（已被 prometheus-metrics-bom 取代）。 -->
             <dependency>
                 <groupId>io.prometheus</groupId>
                 <artifactId>simpleclient</artifactId>
