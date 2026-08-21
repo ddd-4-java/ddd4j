@@ -9687,12 +9687,14 @@
             <!-- license-server 的客户端 -->
             <!-- Source: https://mvnrepository.com/artifact/com.tongweb/tongweb-lic-sdk -->
             <!-- license-server 的客户端 -->
+            <!-- TongWeb License SDK：TongWeb 应用服务器的许可证管理客户端。 -->
             <dependency>
                 <groupId>com.tongweb</groupId>
                 <artifactId>tongweb-lic-sdk</artifactId>
                 <version>${tongweb-license-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba/transmittable-thread-local -->
+            <!-- Transmittable Thread Local (TTL)：阿里巴巴开源的可跨线程传递的 ThreadLocal（线程池场景必备）。 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>transmittable-thread-local</artifactId>
