@@ -5193,12 +5193,14 @@
                 <version>${jmustache.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+            <!-- Joda-Time：高质量的 Java 日期时间库（已被 java.time 取代，但仍在使用中）。 -->
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jodd/jodd-bean -->
+            <!-- Jodd Bean：Jodd 的 JavaBean 操作工具，支持属性拷贝、类型转换等。 -->
             <dependency>
                 <groupId>org.jodd</groupId>
                 <artifactId>jodd-bean</artifactId>
