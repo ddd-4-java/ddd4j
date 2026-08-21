@@ -1074,18 +1074,21 @@
                 <version>${aspectj.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.aspectj/aspectjtools -->
+            <!-- AspectJ Tools：AspectJ 编译时织入命令行工具集，用于将切面编织到 Java 字节码。 -->
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjtools</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+            <!-- AspectJ Weaver：AspectJ 加载时织入（LTW）代理，用于运行时动态应用切面。 -->
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-bom -->
+            <!-- AssertJ BOM：流式断言库 AssertJ 的版本清单，统一管理 AssertJ 各模块版本。 -->
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-bom</artifactId>
@@ -1094,36 +1097,42 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+            <!-- AssertJ Core：Java 流式断言 API，断言错误描述可读性强，用于单元测试编写。 -->
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.asynchttpclient/async-http-client -->
+            <!-- Async HTTP Client：基于 Netty 的异步 HTTP 客户端，支持 WebSocket 和 HTTP/2。 -->
             <dependency>
                 <groupId>org.asynchttpclient</groupId>
                 <artifactId>async-http-client</artifactId>
                 <version>${async-http-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.googlecode.aviator/aviator -->
+            <!-- Aviator：高性能、轻量级的 Java 表达式求值引擎，用于动态规则计算和脚本执行。 -->
             <dependency>
                 <groupId>com.googlecode.aviator</groupId>
                 <artifactId>aviator</artifactId>
                 <version>${google-code-aviator.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.awaitility/awaitility -->
+            <!-- Awaitility：异步测试库，DSL 风格等待条件满足，常用于异步事件或定时任务的测试。 -->
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
                 <version>${awaitility.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.awaitility/awaitility-groovy -->
+            <!-- Awaitility Groovy：Awaitility 对 Groovy DSL 的支持。 -->
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility-groovy</artifactId>
                 <version>${awaitility.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.awaitility/awaitility-kotlin -->
+            <!-- Awaitility Kotlin：Awaitility 对 Kotlin DSL 的支持。 -->
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility-kotlin</artifactId>
