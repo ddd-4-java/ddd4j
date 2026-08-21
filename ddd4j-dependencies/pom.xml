@@ -5571,18 +5571,21 @@
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams-scala_2.13 -->
+            <!-- Kafka Streams Scala 2.13：Kafka Streams 的 Scala 2.13 DSL 封装。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-streams-scala_2.13</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams-test-utils -->
+            <!-- Kafka Streams Test Utils：Kafka Streams 应用的单元测试工具（TopologyTestDriver）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-streams-test-utils</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-tools -->
+            <!-- Kafka Tools：Kafka 命令行管理工具集（Topic 管理、消费组查看等）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-tools</artifactId>
