@@ -8275,24 +8275,28 @@
                 </exclusions>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-diff -->
+            <!-- SchemaCrawler Diff：SchemaCrawler 的数据库 Schema 差异对比工具。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-diff</artifactId>
                 <version>${schemacrawler-diff.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-distrib -->
+            <!-- SchemaCrawler Distrib：SchemaCrawler 的发行版打包模块。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-distrib</artifactId>
                 <version>${schemacrawler.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-hana -->
+            <!-- SchemaCrawler HANA：SchemaCrawler 的 SAP HANA 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-hana</artifactId>
                 <version>${schemacrawler-hana.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/schemacrawler-hive -->
+            <!-- Easy4J SchemaCrawler Hive：Easy4J 的 SchemaCrawler Hive 数据库适配。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>schemacrawler-hive</artifactId>
