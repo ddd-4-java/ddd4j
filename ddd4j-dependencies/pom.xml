@@ -6666,18 +6666,21 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-mqtt -->
+            <!-- Netty Codec MQTT：Netty 的 MQTT 协议编解码器（支持 MQTT 3.1.1/5.0）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-mqtt</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-redis -->
+            <!-- Netty Codec Redis：Netty 的 Redis 协议（RESP）编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-redis</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-smtp -->
+            <!-- Netty Codec SMTP：Netty 的 SMTP 协议编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-smtp</artifactId>
