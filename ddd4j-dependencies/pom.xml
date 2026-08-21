@@ -6917,6 +6917,7 @@
                 <version>${netty-socketio.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative -->
+            <!-- Netty TCNative Linux x86_64：Netty 原生 OpenSSL JNI 库（Linux x86_64）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative</artifactId>
