@@ -8944,6 +8944,7 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.smallrye.reactive/smallrye-reactive-messaging-bom -->
+            <!-- SmallRye Reactive Messaging BOM：SmallRye 响应式消息传递框架版本清单（MicroProfile Reactive）。 -->
             <dependency>
                 <groupId>io.smallrye.reactive</groupId>
                 <artifactId>smallrye-reactive-messaging-bom</artifactId>
@@ -8952,6 +8953,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/smtp -->
+            <!-- Eclipse Angus SMTP：Jakarta Mail 的 SMTP 协议实现。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>smtp</artifactId>
