@@ -7679,12 +7679,14 @@
                 <version>${poi.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+            <!-- POI OOXML Schemas：POI 的 OOXML Schema 定义模块（旧版本格式兼容）。 -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml-schemas</artifactId>
                 <version>4.1.2</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad -->
+            <!-- POI Scratchpad：POI 的实验性功能模块（Visio、Publisher、Outlook 等格式支持）。 -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-scratchpad</artifactId>
