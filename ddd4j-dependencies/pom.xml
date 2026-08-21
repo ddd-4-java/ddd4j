@@ -8225,6 +8225,7 @@
                 <version>${rxjava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/cn.dev33/sa-token-bom -->
+            <!-- Sa-Token BOM：国产轻量级 Java 权限认证框架各模块的版本清单。 -->
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-bom</artifactId>
@@ -8233,6 +8234,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.sun.xml.messaging.saaj/saaj-impl -->
+            <!-- SAAJ Impl：SOAP with Attachments API for Java (SAAJ) 的参考实现。 -->
             <dependency>
                 <groupId>com.sun.xml.messaging.saaj</groupId>
                 <artifactId>saaj-impl</artifactId>
