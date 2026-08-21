@@ -4656,6 +4656,7 @@
                 <version>${google-j2objc-annotations.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom -->
+            <!-- Jackson BOM：Jackson JSON 处理库各模块的版本清单（Core/Databind/Dataformat 等）。 -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
@@ -5187,12 +5188,14 @@
             </dependency>
             <!-- 显式锁定 Jetty 核心组件版本，覆盖 micronaut-platform 传递的旧版本 -->
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
+            <!-- Jetty Server：Eclipse Jetty 嵌入式 Web 服务器核心（Servlet 容器、HTTP/1.1/2）。 -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-http -->
+            <!-- Jetty HTTP：Jetty 的 HTTP 协议解析和生成模块。 -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-http</artifactId>
