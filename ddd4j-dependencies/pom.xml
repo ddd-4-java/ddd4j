@@ -5957,12 +5957,14 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jcl -->
+            <!-- Log4j JCL：将 Apache Commons Logging (JCL) 调用桥接到 Log4j 2 实现。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jcl</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jpa -->
+            <!-- Log4j JPA：Log4j 2 的 JPA 日志存储 Appender（将日志写入数据库）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jpa</artifactId>
