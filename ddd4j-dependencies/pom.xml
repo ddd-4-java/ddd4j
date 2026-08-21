@@ -8338,12 +8338,14 @@
                 <version>${schemacrawler-mysql.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-offline -->
+            <!-- SchemaCrawler Offline：SchemaCrawler 的离线 Schema 分析模式（无需连接数据库）。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-offline</artifactId>
                 <version>${schemacrawler.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-oracle -->
+            <!-- SchemaCrawler Oracle：SchemaCrawler 的 Oracle 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-oracle</artifactId>
