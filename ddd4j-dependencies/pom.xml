@@ -6736,18 +6736,21 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-handler-ssl-ocsp -->
+            <!-- Netty Handler SSL OCSP：Netty 的 SSL/TLS OCSP（在线证书状态协议）支持。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler-ssl-ocsp</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-resolver -->
+            <!-- Netty Resolver：Netty 的地址解析框架（DNS 解析、服务发现等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-resolver</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-resolver-dns -->
+            <!-- Netty Resolver DNS：Netty 的异步 DNS 解析器（支持 DNSSEC、mDNS 等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-resolver-dns</artifactId>
