@@ -3983,12 +3983,14 @@
                 <version>${hamcrest.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hamcrest/hamcrest-library -->
+            <!-- Hamcrest Library：Hamcrest 的扩展匹配器集合。 -->
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
                 <version>${hamcrest.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
+            <!-- HanLP：国产中文自然语言处理库（分词、词性标注、命名实体识别、依存句法分析）。 -->
             <dependency>
                 <groupId>com.hankcs</groupId>
                 <artifactId>hanlp</artifactId>
