@@ -5113,18 +5113,21 @@
                 <version>${jcifs.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/jcifs-pool -->
+            <!-- Easy4J JCIFS Pool：Easy4J 对 JCIFS SMB/CIFS 文件共享客户端的连接池封装。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>jcifs-pool</artifactId>
                 <version>${easy4j-jcifs-pool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jdom/jdom2 -->
+            <!-- JDOM 2：Java XML DOM 解析库（比标准 DOM API 更简洁易用）。 -->
             <dependency>
                 <groupId>org.jdom</groupId>
                 <artifactId>jdom2</artifactId>
                 <version>${jdom2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.sleepycat/je -->
+            <!-- Berkeley DB Java Edition：Oracle Berkeley DB 嵌入式键值数据库 Java 版。 -->
             <dependency>
                 <groupId>com.sleepycat</groupId>
                 <artifactId>je</artifactId>
