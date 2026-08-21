@@ -9481,12 +9481,14 @@
                 <version>${tablesaw.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-saw -->
+            <!-- Tablesaw Saw：Tablesaw 的数据导入导出模块（CSV、JSON、数据库等）。 -->
             <dependency>
                 <groupId>tech.tablesaw</groupId>
                 <artifactId>tablesaw-saw</artifactId>
                 <version>${tablesaw.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.taosdata.jdbc/taos-jdbcdriver -->
+            <!-- TDengine JDBC：国产时序数据库 TDengine 的 JDBC 驱动。 -->
             <dependency>
                 <groupId>com.taosdata.jdbc</groupId>
                 <artifactId>taos-jdbcdriver</artifactId>
