@@ -4554,6 +4554,7 @@
             </dependency>
             <!-- ImageIO plugin for Windows Thumbs DB (Thumbs.db) format. -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-thumbsdb -->
+            <!-- TwelveMonkeys ImageIO ThumbsDB：Windows Thumbs.db 缩略图缓存的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-thumbsdb</artifactId>
@@ -4561,6 +4562,7 @@
             </dependency>
             <!-- ImageIO plugin for Aldus/Adobe Tagged Image File Format (TIFF). -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-tiff -->
+            <!-- TwelveMonkeys ImageIO TIFF：TIFF 图像格式的 ImageIO 插件（支持多页、压缩等）。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-tiff</artifactId>
