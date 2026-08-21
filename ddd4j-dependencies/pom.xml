@@ -1591,6 +1591,7 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apereo.cas.client/cas-client-support-saml -->
+            <!-- Apereo CAS Client SAML：CAS 客户端对 SAML 2.0 单点登录协议的支持。 -->
             <dependency>
                 <groupId>org.apereo.cas.client</groupId>
                 <artifactId>cas-client-support-saml</artifactId>
@@ -1603,6 +1604,7 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apereo.cas.client/cas-client-support-distributed-memcached -->
+            <!-- Apereo CAS Client Distributed Memcached：CAS 客户端对分布式 Memcached 票据存储的支持。 -->
             <dependency>
                 <groupId>org.apereo.cas.client</groupId>
                 <artifactId>cas-client-support-distributed-memcached</artifactId>
@@ -1615,12 +1617,14 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/cglib/cglib -->
+            <!-- CGLIB：强大的 Java 字节码生成库，被 Spring/Hibernate 等用于运行时生成动态代理子类。 -->
             <dependency>
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>${cglib.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/cglib/cglib-nodep -->
+            <!-- CGLIB Nodep：CGLIB 不依赖的精简版本，所有运行时所需库打包在一个 jar 中。 -->
             <dependency>
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
