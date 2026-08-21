@@ -6564,12 +6564,14 @@
                 <version>${mysql-binlog-connector-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+            <!-- MySQL Connector/J：MySQL 官方 JDBC 驱动（支持 MySQL 5.7+、X Protocol、连接池等）。 -->
             <dependency>
                 <groupId>com.mysql</groupId>
                 <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.nacos/nacos-client -->
+            <!-- Nacos Client：阿里 Nacos 配置中心和服务发现的 Java 客户端。 -->
             <dependency>
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-client</artifactId>
