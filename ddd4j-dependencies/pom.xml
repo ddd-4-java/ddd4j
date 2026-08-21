@@ -2646,12 +2646,14 @@
                 <version>${dependency-management-plugin.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derby -->
+            <!-- Apache Derby：纯 Java 嵌入式关系数据库（支持内存和文件模式）。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
                 <version>${derby.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbyclient -->
+            <!-- Derby Client：Apache Derby 的网络客户端 JDBC 驱动。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyclient</artifactId>
@@ -2664,36 +2666,42 @@
                 <version>${derby-locale.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbynet -->
+            <!-- Derby Net：Apache Derby 的网络服务器模块（远程访问 Derby 数据库）。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbynet</artifactId>
                 <version>${derby.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyoptionaltools -->
+            <!-- Derby Optional Tools：Apache Derby 的可选工具模块。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyoptionaltools</artifactId>
                 <version>${derby.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbyshared -->
+            <!-- Derby Shared：Apache Derby 的公共共享模块。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyshared</artifactId>
                 <version>${derby.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbytools -->
+            <!-- Derby Tools：Apache Derby 的命令行工具（ij、sysinfo 等）。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbytools</artifactId>
                 <version>${derby.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/dingtalk -->
+            <!-- 钉钉 SDK：阿里钉钉开放平台 Java SDK。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>dingtalk</artifactId>
                 <version>${dingtalk-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/dingtalk-sdk-extension -->
+            <!-- Easy4J DingTalk SDK Extension：Easy4J 对钉钉 SDK 的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>dingtalk-sdk-extension</artifactId>
