@@ -7276,6 +7276,7 @@
             <!-- PAC4J For GAE UserService Mechanism -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-gae -->
             <!-- PAC4J For GAE UserService Mechanism -->
+            <!-- Pac4j GAE：Pac4j 安全框架的 Google App Engine UserService 认证支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-gae</artifactId>
@@ -7284,6 +7285,7 @@
             <!-- PAC4J For HTTP Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-http -->
             <!-- PAC4J For HTTP Protocol -->
+            <!-- Pac4j HTTP：Pac4j 安全框架的 HTTP 协议认证支持（Basic/Digest Auth、Header 等）。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-http</artifactId>
