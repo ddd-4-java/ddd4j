@@ -7513,6 +7513,7 @@
                 <version>${easy4j-pf4j-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pf4j/pf4j-spring -->
+            <!-- PF4J Spring：PF4J 插件框架的 Spring 集成（插件中使用 Spring Bean）。 -->
             <dependency>
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j-spring</artifactId>
