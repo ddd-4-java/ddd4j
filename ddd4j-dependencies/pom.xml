@@ -4126,18 +4126,21 @@
                 <version>${hsqldb.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.htmlparser/htmlparser -->
+            <!-- HTMLParser：Java HTML 解析库（DOM 遍历、文本提取、链接抓取）。 -->
             <dependency>
                 <groupId>org.htmlparser</groupId>
                 <artifactId>htmlparser</artifactId>
                 <version>${htmlparser.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.htmlunit/htmlunit -->
+            <!-- HtmlUnit：无头浏览器自动化库（模拟浏览器行为，支持 JavaScript 执行）。 -->
             <dependency>
                 <groupId>org.htmlunit</groupId>
                 <artifactId>htmlunit</artifactId>
                 <version>${htmlunit.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/htmlunit3-driver -->
+            <!-- HtmlUnit3 Driver：Selenium 的 HtmlUnit 驱动程序（无头浏览器测试）。 -->
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>htmlunit3-driver</artifactId>
