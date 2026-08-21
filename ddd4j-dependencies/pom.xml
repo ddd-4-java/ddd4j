@@ -5871,12 +5871,14 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api-test -->
+            <!-- Log4j API Test：Log4j 2 API 的测试支持模块。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api-test</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-appserver -->
+            <!-- Log4j App Server：Log4j 2 应用服务器集成（Tomcat/Jetty 等容器日志）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-appserver</artifactId>
