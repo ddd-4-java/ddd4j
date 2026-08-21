@@ -5109,12 +5109,14 @@
                 <version>${jetty-reactive-httpclient.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.jgoodies/jgoodies-binding -->
+            <!-- JGoodies Binding：JGoodies 的数据绑定框架，用于 Swing 表单数据绑定。 -->
             <dependency>
                 <groupId>com.jgoodies</groupId>
                 <artifactId>jgoodies-binding</artifactId>
                 <version>2.13.0</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.jgoodies/jgoodies-forms -->
+            <!-- JGoodies Forms：JGoodies 的 Swing 表单布局框架。 -->
             <dependency>
                 <groupId>com.jgoodies</groupId>
                 <artifactId>jgoodies-forms</artifactId>
