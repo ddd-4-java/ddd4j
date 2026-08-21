@@ -3997,12 +3997,14 @@
                 <version>${hanlp.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.hankcs.hanlp.restful/hanlp-restful -->
+            <!-- HanLP RESTful：HanLP 自然语言处理库的 REST API 客户端。 -->
             <dependency>
                 <groupId>com.hankcs.hanlp.restful</groupId>
                 <artifactId>hanlp-restful</artifactId>
                 <version>${hanlp-restful.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.hazelcast/hazelcast -->
+            <!-- Hazelcast：分布式内存数据网格（IMDG），提供分布式 Map、Queue、Lock 等数据结构。 -->
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
