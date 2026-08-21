@@ -9369,12 +9369,14 @@
                 <version>${swagger3.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/swagger-bootstrap-ui -->
+            <!-- Swagger Bootstrap UI：Swagger 的 Bootstrap 风格增强 UI（旧版，已由 Knife4j 取代）。 -->
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>swagger-bootstrap-ui</artifactId>
                 <version>${swagger-bootstrap-ui.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.didispace/swagger-butler-core -->
+            <!-- Swagger Butler：微服务 Swagger 文档聚合管理工具核心模块。 -->
             <dependency>
                 <groupId>com.didispace</groupId>
                 <artifactId>swagger-butler-core</artifactId>
