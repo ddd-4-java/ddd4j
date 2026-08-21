@@ -4187,36 +4187,42 @@
                 <version>${easy4j-httpclient3-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+            <!-- Apache HttpClient 5：Apache HTTP 客户端新版（支持 HTTP/2、异步、连接池）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
                 <version>${httpclient5.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5-cache -->
+            <!-- Apache HttpClient 5 Cache：HttpClient 5 的缓存模块。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5-cache</artifactId>
                 <version>${httpclient5.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5-fluent -->
+            <!-- Apache HttpClient 5 Fluent：HttpClient 5 的流式 API 封装（简化调用）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5-fluent</artifactId>
                 <version>${httpclient5.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcomponents-asyncclient -->
+            <!-- Apache HttpComponents AsyncClient：Apache 异步 HTTP 客户端聚合包。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcomponents-asyncclient</artifactId>
                 <version>${httpasyncclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcomponents-client -->
+            <!-- Apache HttpComponents Client：Apache HTTP 客户端聚合包。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcomponents-client</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcomponents-core -->
+            <!-- Apache HttpComponents Core：Apache HTTP 核心库（连接管理、协议处理）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcomponents-core</artifactId>
