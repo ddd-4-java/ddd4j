@@ -3624,6 +3624,7 @@
                 <version>${google-api-services-androidpublisher.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.auth/google-auth-library-bom -->
+            <!-- Google Auth Library BOM：Google Cloud 凭证管理和 OAuth 2.0 认证库的版本清单。 -->
             <dependency>
                 <groupId>com.google.auth</groupId>
                 <artifactId>google-auth-library-bom</artifactId>
@@ -3632,6 +3633,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.google.cloud/google-cloud-translate-bom -->
+            <!-- Google Cloud Translate BOM：Google Cloud Translation API 的版本清单。 -->
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>google-cloud-translate-bom</artifactId>
@@ -3640,6 +3642,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.http-client/google-http-client-bom -->
+            <!-- Google HTTP Client BOM：Google HTTP 客户端库的版本清单。 -->
             <dependency>
                 <groupId>com.google.http-client</groupId>
                 <artifactId>google-http-client-bom</artifactId>
@@ -3648,6 +3651,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client -->
+            <!-- Google OAuth Client：Google OAuth 2.0 客户端库，用于访问 Google API。 -->
             <dependency>
                 <groupId>com.google.oauth-client</groupId>
                 <artifactId>google-oauth-client</artifactId>
