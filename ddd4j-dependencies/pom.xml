@@ -336,7 +336,7 @@
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
-        <jackson.version>2.22.2</jackson.version>
+        <jackson.version>3.2.1</jackson.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
@@ -673,13 +673,14 @@
         <thymeleaf-extras-springsecurity.version>3.1.3.RELEASE</thymeleaf-extras-springsecurity.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
         <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
-        <tika-bom.version>3.3.1</tika-bom.version>
         <token-bucket.version>1.7</token-bucket.version>
         <tomcat.version>11.0.15</tomcat.version>
         <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
         <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
         <tongweb.version>7.0.E.6_P5</tongweb.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
+        <truelicense.version>1.33</truelicense.version>
+        <tika-bom.version>3.3.2</tika-bom.version>
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
         <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
@@ -3611,19 +3612,6 @@
                 <artifactId>j2objc-annotations</artifactId>
                 <version>${google-j2objc-annotations.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>2.22</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom -->
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>2.22.2</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/tools.jackson/jackson-bom -->
             <dependency>
                 <groupId>tools.jackson</groupId>
@@ -3631,11 +3619,6 @@
                 <version>${jackson-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>tools.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
@@ -5797,6 +5780,16 @@
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j-spring</artifactId>
                 <version>${pf4j-spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.pf4j</groupId>
@@ -6322,10 +6315,17 @@
                 <artifactId>schemacrawler-commandline</artifactId>
                 <version>${schemacrawler.version}</version>
             </dependency>
+            <!-- SchemaCrawler For IBM DB2 : https://mvnrepository.com/artifact/us.fatehi/schemacrawler-db2 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-db2</artifactId>
                 <version>${schemacrawler-db2.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
@@ -6724,15 +6724,21 @@
                 <artifactId>shiro-quartz</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/org.crazycake/shiro-redis -->
             <dependency>
                 <groupId>org.crazycake</groupId>
                 <artifactId>shiro-redis</artifactId>
                 <version>${shiro-redis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.iherus.shiro</groupId>
-                <artifactId>shiro-redis</artifactId>
-                <version>2.5.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>shiro-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.github.streamone</groupId>
@@ -7271,13 +7277,6 @@
                 <version>${thymeleaf.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.tika</groupId>
-                <artifactId>tika-bom</artifactId>
-                <version>${tika-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.google.crypto.tink</groupId>
                 <artifactId>tink</artifactId>
                 <version>${google-crypto-tink.version}</version>
@@ -7351,6 +7350,21 @@
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>trogdor</artifactId>
                 <version>${kafka.version}</version>
+            </dependency>
+            <!-- 使用参考: https://blog.csdn.net/wuyuxing24/article/details/99692762-->
+            <!-- https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-core -->
+            <dependency>
+                <groupId>de.schlichtherle.truelicense</groupId>
+                <artifactId>truelicense-core</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-bom -->
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-bom</artifactId>
+                <version>${tika-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.unboundid</groupId>
@@ -7641,10 +7655,17 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.101tec/zkclient -->
             <dependency>
                 <groupId>com.101tec</groupId>
                 <artifactId>zkclient</artifactId>
                 <version>${zkclient.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
