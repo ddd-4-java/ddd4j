@@ -8241,6 +8241,7 @@
                 <version>${saaj-impl.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.scala-lang/scala3-library_3 -->
+            <!-- Scala 3 Library：Scala 3 编程语言标准库。 -->
             <dependency>
                 <groupId>org.scala-lang</groupId>
                 <artifactId>scala3-library_3</artifactId>
@@ -8248,12 +8249,14 @@
             </dependency>
             <!-- SchemaCrawler提供一组用于增强标准JDBC Metadata的API.SchemaCrawler还包含一个命令行工具能够将数据库结构和数据以一种易读的形式输出. -->
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler -->
+            <!-- SchemaCrawler：数据库 Schema 可视化和文档生成工具（表结构、关系、数据字典）。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler</artifactId>
                 <version>${schemacrawler.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-commandline -->
+            <!-- SchemaCrawler CLI：SchemaCrawler 的命令行接口。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-commandline</artifactId>
