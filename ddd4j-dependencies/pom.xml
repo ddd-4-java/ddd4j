@@ -3058,42 +3058,49 @@
                 <version>${easy4j-faceplusplus-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+            <!-- Fastjson：阿里开源的高性能 JSON 解析与生成库（1.x 旧版）。 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2 -->
+            <!-- Fastjson2：Fastjson 2.x 重写版本，性能大幅提升，更安全。 -->
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2-extension -->
+            <!-- Fastjson2 Extension：Fastjson2 的扩展模块集合，提供更多 JSON 序列化场景支持。 -->
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2-extension</artifactId>
                 <version>${fastjson2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2-extension-spring5 -->
+            <!-- Fastjson2 Spring5 Extension：Fastjson2 与 Spring 5 的 MessageConverter 集成。 -->
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2-extension-spring5</artifactId>
                 <version>${fastjson2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2-extension-spring6 -->
+            <!-- Fastjson2 Spring6 Extension：Fastjson2 与 Spring 6/Boot 3 的 MessageConverter 集成。 -->
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2-extension-spring6</artifactId>
                 <version>${fastjson2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-core -->
+            <!-- OpenFeign Core：Netflix Feign 的继任者，声明式 HTTP 客户端，简化 REST API 调用。 -->
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-core</artifactId>
                 <version>${feign.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-form -->
+            <!-- OpenFeign Form：Feign 的表单提交支持模块。 -->
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-form</artifactId>
