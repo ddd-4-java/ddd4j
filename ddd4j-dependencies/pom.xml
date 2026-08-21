@@ -7797,18 +7797,21 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-api -->
+            <!-- Pulsar Client API：Apache Pulsar 消息客户端 API 定义。 -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client-api</artifactId>
                 <version>${pulsar.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-reactive-adapter -->
+            <!-- Pulsar Client Reactive Adapter：Pulsar 的 Project Reactor 响应式适配器。 -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client-reactive-adapter</artifactId>
                 <version>${pulsar-reactive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-reactive-api -->
+            <!-- Pulsar Client Reactive API：Pulsar 响应式客户端 API 定义。 -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client-reactive-api</artifactId>
