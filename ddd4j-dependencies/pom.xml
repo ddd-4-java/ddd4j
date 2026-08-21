@@ -5815,18 +5815,21 @@
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.yomahub/liteflow-script-javax -->
+            <!-- LiteFlow Script Javax：LiteFlow 的 javax 脚本引擎支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-javax</artifactId>
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.yomahub/liteflow-script-kotlin -->
+            <!-- LiteFlow Script Kotlin：LiteFlow 的 Kotlin 脚本支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-kotlin</artifactId>
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.yomahub/liteflow-script-lua -->
+            <!-- LiteFlow Script Lua：LiteFlow 的 Lua 脚本支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-lua</artifactId>
