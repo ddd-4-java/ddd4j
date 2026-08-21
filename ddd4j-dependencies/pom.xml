@@ -9624,18 +9624,21 @@
                 <version>${tomcat.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core -->
+            <!-- Tomcat Embed Core：Apache Tomcat 嵌入式 Servlet 容器核心（零配置内嵌 Web 服务器）。 -->
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
                 <version>${tomcat.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-el -->
+            <!-- Tomcat Embed EL：Tomcat 嵌入式表达式语言 (EL) 实现。 -->
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-el</artifactId>
                 <version>${tomcat.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-websocket -->
+            <!-- Tomcat Embed WebSocket：Tomcat 嵌入式 WebSocket 支持模块。 -->
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
