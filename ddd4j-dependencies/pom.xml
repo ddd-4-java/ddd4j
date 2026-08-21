@@ -8811,18 +8811,21 @@
                 <version>${easy4j-shiro-oauth.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-oauth-spring -->
+            <!-- Easy4J Shiro OAuth Spring：Easy4J 的 Shiro OAuth 认证 Spring 集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-oauth-spring</artifactId>
                 <version>${easy4j-shiro-oauth.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-pf4j -->
+            <!-- Easy4J Shiro PF4J：Easy4J 的 Shiro PF4J 插件集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-pf4j</artifactId>
                 <version>${easy4j-shiro-pf4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-quartz -->
+            <!-- Shiro Quartz：Apache Shiro 的 Quartz 任务调度集成。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-quartz</artifactId>
