@@ -7093,12 +7093,14 @@
                 <version>${easy4j-okhttp3-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/okhttp3-metrics-prometheus -->
+            <!-- Easy4J OkHttp3 Metrics Prometheus：OkHttp3 的 Prometheus 指标监控模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>okhttp3-metrics-prometheus</artifactId>
                 <version>${easy4j-okhttp3-metrics-prometheus.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun.openservices/ons-client -->
+            <!-- 阿里云 ONS Client：阿里云消息队列 RocketMQ 版的 Java 客户端。 -->
             <dependency>
                 <groupId>com.aliyun.openservices</groupId>
                 <artifactId>ons-client</artifactId>
