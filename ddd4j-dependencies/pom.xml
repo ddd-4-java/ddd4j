@@ -8776,18 +8776,21 @@
                 <version>${easy4j-shiro-j2cache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/shiro-j2cache -->
+            <!-- Shiro J2Cache（旧坐标）：旧坐标下的 Shiro J2Cache 二级缓存集成（已迁至 io.github.easy4j）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>shiro-j2cache</artifactId>
                 <version>${shiro-j2cache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-jwt-core -->
+            <!-- Easy4J Shiro JWT Core：Easy4J 的 Shiro JWT 认证核心模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-jwt-core</artifactId>
                 <version>${easy4j-shiro-jwt.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-jwt-spring -->
+            <!-- Easy4J Shiro JWT Spring：Easy4J 的 Shiro JWT 认证 Spring 集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-jwt-spring</artifactId>
