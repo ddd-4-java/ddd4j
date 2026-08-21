@@ -8741,12 +8741,14 @@
                 <version>${easy4j-shiro-dingtalk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-extension-core -->
+            <!-- Easy4J Shiro Extension Core：Easy4J 的 Shiro 核心扩展模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-extension-core</artifactId>
                 <version>${easy4j-shiro-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-extension-spring -->
+            <!-- Easy4J Shiro Extension Spring：Easy4J 的 Shiro Spring 集成扩展。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-extension-spring</artifactId>
