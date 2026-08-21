@@ -10352,6 +10352,7 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <!-- SLF4J Simple：SLF4J 的简单控制台日志实现（测试用）。 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -10360,6 +10361,7 @@
         <!-- ======== Test ======== -->
         <!-- AssertJ（流式断言） -->
         <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+        <!-- AssertJ Core：Java 流式断言库（测试中使用）。 -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -10367,6 +10369,7 @@
         </dependency>
         <!-- ArchUnit（核心模块独立性自检） -->
         <!-- Source: https://mvnrepository.com/artifact/com.tngtech.archunit/archunit-junit5 -->
+        <!-- ArchUnit JUnit5：Java 架构规则测试框架（测试用）。 -->
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
