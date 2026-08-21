@@ -4684,6 +4684,7 @@
                 <version>${jakarta.ws.rs-api.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
+            <!-- Jakarta XML Binding API：Jakarta 版 JAXB（XML 与 Java 对象绑定）API。 -->
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
