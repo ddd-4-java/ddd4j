@@ -8401,18 +8401,21 @@
                 <version>${schemacrawler.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.scribe/scribe -->
+            <!-- Scribe：简单 OAuth 1.0a/2.0 Java 库（已被 ScribeJava 取代）。 -->
             <dependency>
                 <groupId>org.scribe</groupId>
                 <artifactId>scribe</artifactId>
                 <version>${scribe.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.scribe/scribe-up -->
+            <!-- Scribe UP：Scribe 的社交登录扩展（GitHub/Google/Facebook 等）。 -->
             <dependency>
                 <groupId>org.scribe</groupId>
                 <artifactId>scribe-up</artifactId>
                 <version>${scribe-up.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.scribejava/scribejava-apis -->
+            <!-- ScribeJava APIs：ScribeJava 的社交平台 API 客户端集（GitHub/Google/Facebook 等）。 -->
             <dependency>
                 <groupId>com.github.scribejava</groupId>
                 <artifactId>scribejava-apis</artifactId>
