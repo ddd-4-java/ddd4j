@@ -5422,18 +5422,21 @@
                 <version>${juniversalchardet.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.junrar/junrar -->
+            <!-- junrar：纯 Java RAR 压缩文件解压库（支持 RAR4/RAR5 格式）。 -->
             <dependency>
                 <groupId>com.github.junrar</groupId>
                 <artifactId>junrar</artifactId>
                 <version>${junrar.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/me.zhyd.oauth/JustAuth -->
+            <!-- JustAuth：国产第三方登录聚合库，集成 GitHub/Google/微信/QQ 等 50+ 平台 OAuth 登录。 -->
             <dependency>
                 <groupId>me.zhyd.oauth</groupId>
                 <artifactId>JustAuth</artifactId>
                 <version>${just-auth.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.auth0/jwks-rsa -->
+            <!-- Auth0 JWKS-RSA：Auth0 的 JSON Web Key Set (JWKS) RSA 签名验证库。 -->
             <dependency>
                 <groupId>com.auth0</groupId>
                 <artifactId>jwks-rsa</artifactId>
