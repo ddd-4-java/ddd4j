@@ -66,7 +66,6 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new ContractController())
                 .addInterceptors(interceptor)
                 .setControllerAdvice(new Ddd4jWebMvcExceptionHandler(new DefaultWebExceptionTranslator()))
-                .defaultRequest(request -> request.accept(MediaType.APPLICATION_JSON))
                 .build();
         contractClient = new MockMvcContractClient(mockMvc);
     }
