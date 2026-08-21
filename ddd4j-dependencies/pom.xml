@@ -7962,18 +7962,21 @@
                 <version>${redisson.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.redisson/redisson-mybatis -->
+            <!-- Redisson MyBatis：Redisson 的 MyBatis 二级缓存实现。 -->
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-mybatis</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-data-33 -->
+            <!-- Redisson Spring Data 33：Redisson 的 Spring Data Redis 3.3 集成。 -->
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-data-33</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.reflections/reflections -->
+            <!-- Reflections：Java 运行时元数据扫描库（类、注解、方法、字段的运行时发现）。 -->
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
