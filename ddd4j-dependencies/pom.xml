@@ -8832,6 +8832,7 @@
                 <version>${shiro.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.crazycake/shiro-redis -->
+            <!-- Shiro Redis：Apache Shiro 的 Redis 会话和缓存存储实现。 -->
             <dependency>
                 <groupId>org.crazycake</groupId>
                 <artifactId>shiro-redis</artifactId>
