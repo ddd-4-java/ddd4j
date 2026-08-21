@@ -5644,18 +5644,21 @@
                 <version>${kingbase8.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.baomidou/kisso -->
+            <!-- KISSO：基于 Cookie 的单点登录框架，支持 Token/JWT 会话管理。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>kisso</artifactId>
                 <version>${kisso.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/knife4j-core -->
+            <!-- Knife4j Core：国产增强 Swagger UI 的核心库，提供更美观的 API 文档界面。 -->
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-core</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/knife4j-openapi3-ui -->
+            <!-- Knife4j OpenAPI3 UI：Knife4j 的 OpenAPI 3.0 UI 前端模块。 -->
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-ui</artifactId>
