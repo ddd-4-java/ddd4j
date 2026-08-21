@@ -7309,6 +7309,7 @@
             <!-- PAC4J For Kerberos -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-kerberos -->
             <!-- PAC4J For Kerberos -->
+            <!-- Pac4j Kerberos：Pac4j 安全框架的 Kerberos/SPNEGO 认证支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-kerberos</artifactId>
@@ -7316,6 +7317,7 @@
             </dependency>
             <!-- PAC4J For LDAP -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-ldap -->
+            <!-- Pac4j LDAP：Pac4j 安全框架的 LDAP 目录认证支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-ldap</artifactId>
