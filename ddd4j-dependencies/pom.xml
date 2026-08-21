@@ -6098,12 +6098,14 @@
             </dependency>
             <!-- 磁道分析器是一个库，可以解析从银行发行的卡的磁道。所有的类都是不可变的和线程安全的。  标准` tostring() `函数格式的数据以可读的形式。 -->
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/magnetictrackparser -->
+            <!-- Magnetic Track Parser：银行卡磁道数据解析库（解析 Track1/Track2/Track3）。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>magnetictrackparser</artifactId>
                 <version>5.0.1</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.terracotta/management-common-resources-v2 -->
+            <!-- Terracotta Management Common：Terracotta 集群管理通用资源模块。 -->
             <dependency>
                 <groupId>org.terracotta</groupId>
                 <artifactId>management-common-resources-v2</artifactId>
