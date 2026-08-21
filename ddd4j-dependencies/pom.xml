@@ -5039,24 +5039,28 @@
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-redisson -->
+            <!-- JetCache Redisson：JetCache 使用 Redisson 作为 Redis 缓存后端的实现。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-redisson</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-starter-redis -->
+            <!-- JetCache Starter Redis：JetCache 的 Redis 启动器，开箱即用集成。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-starter-redis</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-starter-redis-lettuce -->
+            <!-- JetCache Starter Redis Lettuce：JetCache 的 Redis Lettuce 启动器。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-starter-redis-lettuce</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-starter-redisson -->
+            <!-- JetCache Starter Redisson：JetCache 的 Redisson 启动器。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-starter-redisson</artifactId>
