@@ -5202,6 +5202,7 @@
                 <version>${jetty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-io -->
+            <!-- Jetty IO：Jetty 的 NIO 网络 I/O 抽象层（连接、Buffer、协议处理）。 -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-io</artifactId>
