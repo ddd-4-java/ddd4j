@@ -7714,12 +7714,14 @@
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+            <!-- PostgreSQL JDBC：PostgreSQL 官方 JDBC 驱动（支持 COPY、JSONB、数组等高级特性）。 -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/tech.powerjob/powerjob-client -->
+            <!-- PowerJob Client：PowerJob 分布式任务调度平台的客户端 SDK。 -->
             <dependency>
                 <groupId>tech.powerjob</groupId>
                 <artifactId>powerjob-client</artifactId>
