@@ -4930,12 +4930,14 @@
                 <version>${jboss-logging.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/jcache -->
+            <!-- Caffeine JCache：Caffeine 对 JSR-107 JCache 标准的实现适配。 -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>jcache</artifactId>
                 <version>${caffeine.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.octo.captcha/jcaptcha -->
+            <!-- JCaptcha：基于 Java 的图形验证码生成库。 -->
             <dependency>
                 <groupId>com.octo.captcha</groupId>
                 <artifactId>jcaptcha</artifactId>
