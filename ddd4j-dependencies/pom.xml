@@ -9299,12 +9299,14 @@
                 <version>${sshd-sftp.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.antlr/ST4 -->
+            <!-- StringTemplate 4：ANTLR 项目的 Java 模板引擎（强类型模板，适合代码生成）。 -->
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>ST4</artifactId>
                 <version>${antlr-st4.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/javax.xml.stream/stax-api -->
+            <!-- StAX API：Java XML 流式解析 API（拉式解析器，比 SAX 更灵活）。 -->
             <dependency>
                 <groupId>javax.xml.stream</groupId>
                 <artifactId>stax-api</artifactId>
