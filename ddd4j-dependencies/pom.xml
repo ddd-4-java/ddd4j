@@ -6971,6 +6971,7 @@
                 <classifier>linux-aarch_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-unix-common -->
+            <!-- Netty Transport Native Unix Common Linux riscv64：Linux RISC-V 的 Unix 通用原生传输。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-unix-common</artifactId>
@@ -6978,6 +6979,7 @@
                 <classifier>linux-riscv64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-unix-common -->
+            <!-- Netty Transport Native Unix Common Linux x86_64：Linux x86_64 的 Unix 通用原生传输。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-unix-common</artifactId>
