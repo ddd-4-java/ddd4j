@@ -6343,6 +6343,7 @@
                 <version>${mongo-java-driver.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-bom -->
+            <!-- MongoDB Driver BOM：MongoDB Java 驱动各模块的版本清单（Sync/Async/Reactive）。 -->
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongodb-driver-bom</artifactId>
@@ -6351,6 +6352,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
+            <!-- MSSQL JDBC：微软 SQL Server 官方 JDBC 驱动。 -->
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
                 <artifactId>mssql-jdbc</artifactId>
