@@ -4679,6 +4679,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/jackson-extension -->
+            <!-- Easy4J Jackson Extension：Easy4J 对 Jackson JSON 库的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>jackson-extension</artifactId>
