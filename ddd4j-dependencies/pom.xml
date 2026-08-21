@@ -6888,18 +6888,21 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-classes-epoll -->
+            <!-- Netty Transport Epoll Classes：Netty Linux epoll 传输的 Java 类定义。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-classes-epoll</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-classes-kqueue -->
+            <!-- Netty Transport KQueue Classes：Netty macOS/BSD kqueue 传输的 Java 类定义。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-classes-kqueue</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-epoll -->
+            <!-- Netty Transport Native Epoll：Netty Linux epoll 传输的 JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-epoll</artifactId>
