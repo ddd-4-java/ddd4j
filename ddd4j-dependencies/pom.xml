@@ -4256,24 +4256,28 @@
                 <version>${httpcore.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore-osgi -->
+            <!-- Apache HttpCore OSGi：Apache HTTP 核心的 OSGi 打包版本。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-osgi</artifactId>
                 <version>${httpcore.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
+            <!-- Apache HttpCore 5：Apache HTTP 核心新版（支持 HTTP/2、异步）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
                 <artifactId>httpcore5</artifactId>
                 <version>${httpcore5.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5-h2 -->
+            <!-- Apache HttpCore 5 H2：HttpCore 5 的 HTTP/2 协议支持模块。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
                 <artifactId>httpcore5-h2</artifactId>
                 <version>${httpcore5.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5-reactive -->
+            <!-- Apache HttpCore 5 Reactive：HttpCore 5 的响应式流支持模块。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents.core5</groupId>
                 <artifactId>httpcore5-reactive</artifactId>
