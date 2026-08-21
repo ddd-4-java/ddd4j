@@ -5681,12 +5681,14 @@
                 <version>${kotlin-stdlib.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8 -->
+            <!-- Kotlin Stdlib JDK8：Kotlin 标准库的 JDK 8 兼容扩展（包含 Java 8 日期/流 API 等）。 -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
                 <version>${kotlin-stdlib.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-bom -->
+            <!-- Kotlin Coroutines BOM：Kotlin 协程库的版本清单。 -->
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-coroutines-bom</artifactId>
