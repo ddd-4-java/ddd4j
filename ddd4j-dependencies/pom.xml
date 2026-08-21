@@ -9568,12 +9568,14 @@
             </dependency>
             <!-- 使用说明参考：https://github.com/theborakompanioni/thymeleaf-extras-shiro -->
             <!-- Source: https://mvnrepository.com/artifact/com.github.theborakompanioni/thymeleaf-extras-shiro -->
+            <!-- Thymeleaf Shiro：Thymeleaf 模板中集成 Apache Shiro 权限标签的方言扩展。 -->
             <dependency>
                 <groupId>com.github.theborakompanioni</groupId>
                 <artifactId>thymeleaf-extras-shiro</artifactId>
                 <version>${shiro-thymeleaf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity6 -->
+            <!-- Thymeleaf Spring Security 6：Thymeleaf 模板中集成 Spring Security 6 权限标签的方言扩展。 -->
             <dependency>
                 <groupId>org.thymeleaf.extras</groupId>
                 <artifactId>thymeleaf-extras-springsecurity6</artifactId>
