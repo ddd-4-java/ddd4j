@@ -7728,12 +7728,14 @@
                 <version>${powerjob-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.googlecode.libphonenumber/prefixmapper -->
+            <!-- libphonenumber Prefix Mapper：电话号码前缀映射（号码归属地查询）。 -->
             <dependency>
                 <groupId>com.googlecode.libphonenumber</groupId>
                 <artifactId>prefixmapper</artifactId>
                 <version>${libphonenumber-prefixmapper.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.prometheus/prometheus-metrics-bom -->
+            <!-- Prometheus Metrics BOM：Prometheus 监控指标库各模块的版本清单。 -->
             <dependency>
                 <groupId>io.prometheus</groupId>
                 <artifactId>prometheus-metrics-bom</artifactId>
@@ -7742,6 +7744,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+            <!-- Protocol Buffers Java：Google Protocol Buffers 序列化框架的 Java 实现。 -->
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
