@@ -8303,12 +8303,14 @@
                 <version>${easy4j-schemacrawler-hive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-hsqldb -->
+            <!-- SchemaCrawler HSQLDB：SchemaCrawler 的 HSQLDB 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-hsqldb</artifactId>
                 <version>${schemacrawler-hsqldb.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/schemacrawler-impala -->
+            <!-- Easy4J SchemaCrawler Impala：Easy4J 的 SchemaCrawler Impala 数据库适配。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>schemacrawler-impala</artifactId>
