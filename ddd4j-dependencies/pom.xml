@@ -7158,18 +7158,21 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.opentest4j/opentest4j -->
+            <!-- OpenTest4J：测试框架间的公共异常和断言接口（JUnit5/TestNG 共用）。 -->
             <dependency>
                 <groupId>org.opentest4j</groupId>
                 <artifactId>opentest4j</artifactId>
                 <version>${opentest4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.oracle.database.r2dbc/oracle-r2dbc -->
+            <!-- Oracle R2DBC：Oracle 数据库的响应式数据库连接 (R2DBC) 驱动。 -->
             <dependency>
                 <groupId>com.oracle.database.r2dbc</groupId>
                 <artifactId>oracle-r2dbc</artifactId>
                 <version>${r2dbc-oracle.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/fr.opensagres.xdocreport/org.apache.poi.xwpf.converter.pdf.itext5 -->
+            <!-- XDocReport DOCX to PDF：使用 iText5 将 DOCX 文档转换为 PDF 的工具。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>org.apache.poi.xwpf.converter.pdf.itext5</artifactId>
