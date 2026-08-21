@@ -5801,12 +5801,14 @@
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.yomahub/liteflow-script-java -->
+            <!-- LiteFlow Script Java：LiteFlow 的原生 Java 脚本支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-java</artifactId>
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.yomahub/liteflow-script-javascript -->
+            <!-- LiteFlow Script JavaScript：LiteFlow 的 JavaScript 脚本支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-javascript</artifactId>
