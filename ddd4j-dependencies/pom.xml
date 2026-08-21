@@ -7193,18 +7193,21 @@
                 <version>${paho-mqttv5.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.oshi/oshi-core -->
+            <!-- OSHI：跨平台操作系统和硬件信息库（CPU/内存/磁盘/网络/传感器等）。 -->
             <dependency>
                 <groupId>com.github.oshi</groupId>
                 <artifactId>oshi-core</artifactId>
                 <version>${oshi.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.oshi/oshi-core-ffm -->
+            <!-- OSHI Core FFM：OSHI 的 Java Foreign Function & Memory API 实现（JDK 21+）。 -->
             <dependency>
                 <groupId>com.github.oshi</groupId>
                 <artifactId>oshi-core-ffm</artifactId>
                 <version>${oshi-ffm.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.oshi/oshi-core-shaded -->
+            <!-- OSHI Core Shaded：OSHI 的 shaded 打包版本（避免依赖冲突）。 -->
             <dependency>
                 <groupId>com.github.oshi</groupId>
                 <artifactId>oshi-core-shaded</artifactId>
