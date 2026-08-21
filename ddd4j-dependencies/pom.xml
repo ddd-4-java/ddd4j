@@ -1174,54 +1174,63 @@
                 <version>${aws-java-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sts -->
+            <!-- AWS STS Java SDK：AWS 安全令牌服务 STS 的 Java 客户端，支持临时凭证和联合身份。 -->
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-sts</artifactId>
                 <version>${aws-java-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.ws.commons.axiom/axiom-api -->
+            <!-- Apache Axiom：基于 St AX 的轻量级 XML 对象模型，提供内存中 XML 树形结构访问。 -->
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-api</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.ws.commons.axiom/axiom-dom -->
+            <!-- Apache Axiom DOM：Axiom 的 DOM 适配实现，提供 XML DOM 标准访问接口。 -->
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-dom</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.ws.commons.axiom/axiom-impl -->
+            <!-- Apache Axiom Impl：Axiom 的具体实现，基于 pull 解析的流式 XML 处理。 -->
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
                 <artifactId>axiom-impl</artifactId>
                 <version>${axiom.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.azure/azure-ai-openai -->
+            <!-- Azure OpenAI SDK：微软 Azure OpenAI 服务的 Java SDK，支持 GPT 系列模型调用。 -->
             <dependency>
                 <groupId>com.azure</groupId>
                 <artifactId>azure-ai-openai</artifactId>
                 <version>${azure-ai-openai.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-anim -->
+            <!-- Apache Batik Anim：Batik SVG 动画引擎，支持 SMIL 动画渲染。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-anim</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-awt-util -->
+            <!-- Apache Batik AWT Util：Batik 与 Java AWT 之间的工具类，处理 SVG 到 AWT 图像的桥接。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-awt-util</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-bridge -->
+            <!-- Apache Batik Bridge：Batik 与浏览器脚本、事件机制交互的桥接模块。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-bridge</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-codec -->
+            <!-- Apache Batik Codec：Batik 图像编解码模块，支持 PNG、JPEG、TIFF 等格式。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-codec</artifactId>
