@@ -10148,24 +10148,28 @@
                 <version>${xmlschema-core.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.xmlunit/xmlunit-assertj -->
+            <!-- XMLUnit AssertJ：XMLUnit 的 AssertJ 断言集成（AssertJ 2.x 风格）。 -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-assertj</artifactId>
                 <version>${xmlunit2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.xmlunit/xmlunit-assertj3 -->
+            <!-- XMLUnit AssertJ3：XMLUnit 的 AssertJ 3.x 断言集成。 -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-assertj3</artifactId>
                 <version>${xmlunit2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.xmlunit/xmlunit-core -->
+            <!-- XMLUnit Core：XML 文档比较和验证库核心模块。 -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-core</artifactId>
                 <version>${xmlunit2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.xmlunit/xmlunit-jakarta-jaxb-impl -->
+            <!-- XMLUnit Jakarta JAXB：XMLUnit 的 Jakarta JAXB XML 绑定实现。 -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-jakarta-jaxb-impl</artifactId>
