@@ -9081,12 +9081,14 @@
                 <version>${easy4j-spring-data-redis-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/spring-extension -->
+            <!-- Easy4J Spring Extension：Easy4J 的 Spring 框架扩展增强模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-extension</artifactId>
                 <version>${easy4j-spring-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.integration/spring-integration-mqtt -->
+            <!-- Spring Integration MQTT：Spring Integration 的 MQTT 协议消息通道适配器。 -->
             <dependency>
                 <groupId>org.springframework.integration</groupId>
                 <artifactId>spring-integration-mqtt</artifactId>
