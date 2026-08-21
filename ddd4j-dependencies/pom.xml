@@ -9355,12 +9355,14 @@
                 <version>${swagger3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
+            <!-- Swagger Annotations（旧版）：Swagger 2.x 的 API 注解（@Api、@ApiOperation 等）。 -->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations-jakarta -->
+            <!-- Swagger Annotations Jakarta：OpenAPI 3.0 的 Jakarta EE 注解。 -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-annotations-jakarta</artifactId>
