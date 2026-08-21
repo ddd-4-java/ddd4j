@@ -8004,18 +8004,21 @@
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-cache -->
+            <!-- Resilience4j Cache：Resilience4j 的缓存容错模式。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-cache</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-circuitbreaker -->
+            <!-- Resilience4j CircuitBreaker：Resilience4j 的断路器模式（快速失败、熔断保护）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-circuitbreaker</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-circularbuffer -->
+            <!-- Resilience4j CircularBuffer：Resilience4j 的环形缓冲区（滑动窗口统计）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-circularbuffer</artifactId>
