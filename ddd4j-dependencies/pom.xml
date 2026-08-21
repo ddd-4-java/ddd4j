@@ -2702,84 +2702,98 @@
                 <version>${disruptor.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/disruptor-biz -->
+            <!-- Easy4J Disruptor Biz：Easy4J 封装的 LMAX Disruptor 高性能线程间消息传递业务库。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>disruptor-biz</artifactId>
                 <version>${easy4j-disruptor-biz.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/disruptor-extension -->
+            <!-- Easy4J Disruptor Extension：Easy4J 对 LMAX Disruptor 的扩展增强库。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>disruptor-extension</artifactId>
                 <version>${easy4j-disruptor-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/dm20151123 -->
+            <!-- 阿里云 DM 2015-11-23：阿里云 DirectMail 旧版 API 客户端。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>dm20151123</artifactId>
                 <version>${aliyun-sdk-dm20151123.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.spotify/docker-client -->
+            <!-- Spotify Docker Client：Spotify 开源的 Docker 远程 API Java 客户端（已被 docker-java 取代）。 -->
             <dependency>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-client</artifactId>
                 <version>${docker-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.docker-java/docker-java -->
+            <!-- Docker Java：主流的 Docker 远程 API Java 客户端，支持镜像、容器、网络、卷等管理。 -->
             <dependency>
                 <groupId>com.github.docker-java</groupId>
                 <artifactId>docker-java</artifactId>
                 <version>${docker-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-core -->
+            <!-- docx4j Core：OpenXML 格式（.docx/.xlsx/.pptx）的 Java 文档生成与操作核心库。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-core</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-diffx -->
+            <!-- docx4j DiffX：docx4j 的 Word 文档对比工具。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-diffx</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-docx-anon -->
+            <!-- docx4j DOCX Anon：docx4j 的 DOCX 匿名化工具。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-docx-anon</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-export-fo -->
+            <!-- docx4j Export FO：docx4j 将 DOCX 导出为 XSL-FO 格式（用于 PDF 转换）。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-export-fo</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-ImportXHTML -->
+            <!-- docx4j ImportXHTML：docx4j 将 XHTML 导入到 DOCX 文档的工具。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-ImportXHTML</artifactId>
                 <version>11.4.8</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-Internal -->
+            <!-- docx4j JAXB Internal：docx4j 内部使用的 JAXB 实现模块。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-JAXB-Internal</artifactId>
                 <version>8.3.15</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-MOXy -->
+            <!-- docx4j JAXB MOXy：docx4j 的 EclipseLink MOXy JAXB 实现适配。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-JAXB-MOXy</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-ReferenceImpl -->
+            <!-- docx4j JAXB ReferenceImpl：docx4j 的 JAXB 参考实现（JAXB RI）适配。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-openxml-objects -->
+            <!-- docx4j OpenXML Objects：OpenXML（OOXML）格式的对象模型。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-openxml-objects</artifactId>
