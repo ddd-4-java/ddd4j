@@ -9194,12 +9194,14 @@
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-expression -->
+            <!-- Spring Expression：Spring 表达式语言（SpEL）模块，支持运行时表达式求值。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-expression</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-jcl -->
+            <!-- Spring JCL：Spring 自带的 Apache Commons Logging 桥接（自动检测 Log4j2/SLF4J）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jcl</artifactId>
