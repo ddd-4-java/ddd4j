@@ -5592,12 +5592,14 @@
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.12 -->
+            <!-- Kafka Scala 2.12：Apache Kafka Broker 的 Scala 2.12 构建版本。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka_2.12</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.12 -->
+            <!-- Kafka Scala 2.12 Test Jar：Kafka Broker 的 Scala 2.12 测试工具。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka_2.12</artifactId>
