@@ -1391,24 +1391,28 @@
                 <version>${bcpkix.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on -->
+            <!-- Bouncy Castle PKIX JDK18+：Bouncy Castle PKIX 在 JDK 18+ 上的实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpkix-jdk18on</artifactId>
                 <version>${bcpkix.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+            <!-- Bouncy Castle Provider JDK15：旧版 Bouncy Castle 加密算法提供者（仅 JDK 15+）。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
                 <version>1.70</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15to18 -->
+            <!-- Bouncy Castle Provider JDK15-JDK18 过渡版：Bouncy Castle 加密算法提供者的过渡版本。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15to18</artifactId>
                 <version>${bcprov.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
+            <!-- Bouncy Castle Provider JDK18+：Bouncy Castle 加密算法提供者（ JDK 18+）。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
