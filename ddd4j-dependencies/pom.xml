@@ -5172,18 +5172,21 @@
                 <version>${jjwt.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-orgjson -->
+            <!-- JJWT OrgJSON：JJWT 的 org.json 序列化实现模块。 -->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-orgjson</artifactId>
                 <version>${jjwt.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/javazoom/jlayer -->
+            <!-- JLayer：纯 Java 实现的 MP3 解码库，支持实时音频流播放。 -->
             <dependency>
                 <groupId>javazoom</groupId>
                 <artifactId>jlayer</artifactId>
                 <version>${jlayer.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.samskivert/jmustache -->
+            <!-- JMustache：轻量级 Java Mustache 模板引擎实现。 -->
             <dependency>
                 <groupId>com.samskivert</groupId>
                 <artifactId>jmustache</artifactId>
