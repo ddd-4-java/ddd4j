@@ -3397,6 +3397,7 @@
                 <version>${flyway.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.formio/formio -->
+            <!-- Formio：Java 表单处理库（表单定义、数据绑定、验证、序列化）。 -->
             <dependency>
                 <groupId>net.formio</groupId>
                 <artifactId>formio</artifactId>
@@ -3559,6 +3560,7 @@
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.freemarker/freemarker -->
+            <!-- FreeMarker：Java 模板引擎（Web 页面、邮件模板、代码生成等）。 -->
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
@@ -3632,6 +3634,7 @@
                 <version>${geodesy.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.maxmind.geoip2/geoip2 -->
+            <!-- GeoIP2：MaxMind IP 地理位置数据库 Java 客户端（IP→国家/城市/ISP）。 -->
             <dependency>
                 <groupId>com.maxmind.geoip2</groupId>
                 <artifactId>geoip2</artifactId>
