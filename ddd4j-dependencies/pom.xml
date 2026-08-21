@@ -7983,18 +7983,21 @@
                 <version>${reflections.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-all -->
+            <!-- Resilience4j All：Resilience4j 容错库全模块聚合包。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-all</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-annotations -->
+            <!-- Resilience4j Annotations：Resilience4j 的注解定义（@CircuitBreaker、@Retry 等）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-annotations</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-bulkhead -->
+            <!-- Resilience4j Bulkhead：Resilience4j 的隔板模式（限制并发请求数）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-bulkhead</artifactId>
