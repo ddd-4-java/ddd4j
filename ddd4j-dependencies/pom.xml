@@ -9222,18 +9222,21 @@
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+            <!-- SQLite JDBC：SQLite 数据库的 JDBC 驱动（纯 Java 实现，支持跨平台）。 -->
             <dependency>
                 <groupId>org.xerial</groupId>
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>${sqlite-jdbc.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hsqldb/sqltool -->
+            <!-- HSQLDB SQLTool：HSQLDB 数据库的命令行 SQL 工具。 -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>sqltool</artifactId>
                 <version>${hsqldb.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-core -->
+            <!-- Apache SSHD Core：纯 Java SSH 服务端/客户端实现（支持 SFTP、端口转发等）。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-core</artifactId>
