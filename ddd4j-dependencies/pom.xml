@@ -9285,12 +9285,14 @@
                 <version>${sshd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-scp -->
+            <!-- Apache SSHD SCP：Apache SSHD 的 SCP 文件传输模块。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-scp</artifactId>
                 <version>${sshd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-sftp -->
+            <!-- Apache SSHD SFTP：Apache SSHD 的 SFTP 文件传输模块。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-sftp</artifactId>
