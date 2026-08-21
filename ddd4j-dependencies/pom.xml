@@ -6329,12 +6329,14 @@
                 <version>${mockito.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/javax.money/money-api -->
+            <!-- JSR-354 Money API：Java 货币和货币转换标准 API（Money/CurrencyUnit）。 -->
             <dependency>
                 <groupId>javax.money</groupId>
                 <artifactId>money-api</artifactId>
                 <version>${javax-money.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
+            <!-- MongoDB Java Driver：MongoDB 官方 Java 驱动（同步/异步 CRUD、聚合、变更流等）。 -->
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
