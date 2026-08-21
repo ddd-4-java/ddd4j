@@ -6443,18 +6443,21 @@
                 <version>${mybatis-migrations.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-oscache -->
+            <!-- MyBatis OSCache：MyBatis 的 OSCache 缓存实现（二级缓存，已过时）。 -->
             <dependency>
                 <groupId>org.mybatis.caches</groupId>
                 <artifactId>mybatis-oscache</artifactId>
                 <version>${mybatis-oscache.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus -->
+            <!-- MyBatis-Plus：MyBatis 的增强工具，提供 BaseMapper/IService/代码生成器等功能。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-annotation -->
+            <!-- MyBatis-Plus Annotation：MyBatis-Plus 的注解定义模块（@TableName/@TableId/@TableField 等）。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-annotation</artifactId>
