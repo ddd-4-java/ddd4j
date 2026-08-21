@@ -8960,18 +8960,21 @@
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+            <!-- SnakeYAML：Java YAML 解析和生成库。 -->
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.snmp4j/snmp4j -->
+            <!-- SNMP4J：Java SNMP（简单网络管理协议）客户端实现。 -->
             <dependency>
                 <groupId>org.snmp4j</groupId>
                 <artifactId>snmp4j</artifactId>
                 <version>${snmp4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.snmp4j/snmp4j-agent -->
+            <!-- SNMP4J Agent：Java SNMP Agent（被管理端）实现。 -->
             <dependency>
                 <groupId>org.snmp4j</groupId>
                 <artifactId>snmp4j-agent</artifactId>
