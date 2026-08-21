@@ -8387,12 +8387,14 @@
                 <version>${schemacrawler-sqlserver.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-timesten -->
+            <!-- SchemaCrawler TimesTen：SchemaCrawler 的 Oracle TimesTen 内存数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-timesten</artifactId>
                 <version>${schemacrawler-timesten.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-utility -->
+            <!-- SchemaCrawler Utility：SchemaCrawler 的公共工具模块。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-utility</artifactId>
