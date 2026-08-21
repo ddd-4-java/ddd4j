@@ -5713,18 +5713,21 @@
                 <version>${kurrentdb-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.kylin/kylin-jdbc -->
+            <!-- Apache Kylin JDBC：Apache Kylin 大数据 OLAP 引擎的 JDBC 驱动。 -->
             <dependency>
                 <groupId>org.apache.kylin</groupId>
                 <artifactId>kylin-jdbc</artifactId>
                 <version>${kylin-jdbc.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.lettuce/lettuce-core -->
+            <!-- Lettuce：可扩展的 Redis 客户端，支持同步/异步/响应式 API 和集群模式。 -->
             <dependency>
                 <groupId>io.lettuce</groupId>
                 <artifactId>lettuce-core</artifactId>
                 <version>${lettuce.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/libphonenumber -->
+            <!-- libphonenumber：Google 的电话号码解析、格式化和验证库。 -->
             <dependency>
                 <groupId>com.googlecode.libphonenumber</groupId>
                 <artifactId>libphonenumber</artifactId>
