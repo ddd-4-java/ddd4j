@@ -4320,6 +4320,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
+            <!-- IBM ICU4J：IBM 国际化 Unicode 库，提供 Unicode 字符集、区域设置、日期格式化等。 -->
             <dependency>
                 <groupId>com.ibm.icu</groupId>
                 <artifactId>icu4j</artifactId>
