@@ -3002,48 +3002,56 @@
                 <version>${elasticsearch-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client -->
+            <!-- Elasticsearch REST Client：Elasticsearch 官方 REST 风格 Java 客户端（低层）。 -->
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-client</artifactId>
                 <version>${elasticsearch-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client-sniffer -->
+            <!-- Elasticsearch REST Client Sniffer：Elasticsearch REST 客户端的节点嗅探器，自动发现集群节点。 -->
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-client-sniffer</artifactId>
                 <version>${elasticsearch-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.owasp.encoder/encoder -->
+            <!-- OWASP Encoder：OWASP Java Encoder 提供安全的上下文输出编码，防止 XSS 攻击。 -->
             <dependency>
                 <groupId>org.owasp.encoder</groupId>
                 <artifactId>encoder</artifactId>
                 <version>${owasp-encoder.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.owasp.encoder/encoder-esapi -->
+            <!-- OWASP Encoder ESAPI：基于 ESAPI 实现的 OWASP 输出编码模块。 -->
             <dependency>
                 <groupId>org.owasp.encoder</groupId>
                 <artifactId>encoder-esapi</artifactId>
                 <version>${owasp-encoder.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.errorprone/error_prone_annotations -->
+            <!-- Error Prone Annotations：Google Error Prone 的注解模块，标识代码稳定性。 -->
             <dependency>
                 <groupId>com.google.errorprone</groupId>
                 <artifactId>error_prone_annotations</artifactId>
                 <version>${google-error_prone_annotations.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.owasp.esapi/esapi -->
+            <!-- OWASP ESAPI：OWASP 企业安全 API，提供输入验证、输出编码、加密等安全功能。 -->
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
                 <version>${owasp-esapi.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.glassfish.expressly/expressly -->
+            <!-- GlassFish Expressly：GlassFish 的 EL（表达式语言）实现，JSP/JSF 表达式求值。 -->
             <dependency>
                 <groupId>org.glassfish.expressly</groupId>
                 <artifactId>expressly</artifactId>
                 <version>${expressly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/faceplusplus-java-sdk -->
+            <!-- Easy4J Face++ SDK：Easy4J 封装的 Face++（旷视）人脸识别服务 SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>faceplusplus-java-sdk</artifactId>
