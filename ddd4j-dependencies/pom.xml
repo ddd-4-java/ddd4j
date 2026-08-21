@@ -7448,12 +7448,14 @@
                 <version>${paymentwall-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.paypal.sdk/payouts-sdk -->
+            <!-- PayPal Payouts SDK：PayPal 批量付款 API 的 Java 客户端。 -->
             <dependency>
                 <groupId>com.paypal.sdk</groupId>
                 <artifactId>payouts-sdk</artifactId>
                 <version>${paypal-payouts-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.paypal.sdk/paypal-server-sdk -->
+            <!-- PayPal Server SDK：PayPal 服务端 SDK（订单、支付、退款等 API）。 -->
             <dependency>
                 <groupId>com.paypal.sdk</groupId>
                 <artifactId>paypal-server-sdk</artifactId>
