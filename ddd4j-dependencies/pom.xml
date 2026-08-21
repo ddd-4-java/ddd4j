@@ -4981,6 +4981,7 @@
                 <version>${berkeley-je.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+            <!-- Jedis：轻量级 Redis Java 客户端，支持连接池和集群模式。 -->
             <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
