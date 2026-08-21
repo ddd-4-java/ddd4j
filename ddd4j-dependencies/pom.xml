@@ -4482,18 +4482,21 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.influxdb/influxdb-client-java -->
+            <!-- InfluxDB Client Java：InfluxDB 时序数据库官方 v2 Java 客户端。 -->
             <dependency>
                 <groupId>com.influxdb</groupId>
                 <artifactId>influxdb-client-java</artifactId>
                 <version>${influxdb-client-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java -->
+            <!-- InfluxDB Java：InfluxDB 时序数据库 v1 Java 客户端。 -->
             <dependency>
                 <groupId>org.influxdb</groupId>
                 <artifactId>influxdb-java</artifactId>
                 <version>${influxdb-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.spring.initializr/initializr-bom -->
+            <!-- Spring Initializr BOM：Spring 项目脚手架生成器（start.spring.io）的版本清单。 -->
             <dependency>
                 <groupId>io.spring.initializr</groupId>
                 <artifactId>initializr-bom</artifactId>
@@ -4502,12 +4505,14 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/ishumei-java-sdk -->
+            <!-- Easy4J 数美 SDK：Easy4J 封装数美科技（业务反欺诈、内容审核）Java SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>ishumei-java-sdk</artifactId>
                 <version>${easy4j-ishumei-java-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.sun.istack/istack-commons-runtime -->
+            <!-- istack Commons Runtime：GlassFish 的运行时通用工具模块（JAXB 等依赖）。 -->
             <dependency>
                 <groupId>com.sun.istack</groupId>
                 <artifactId>istack-commons-runtime</artifactId>
