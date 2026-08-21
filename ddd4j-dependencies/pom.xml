@@ -7342,12 +7342,14 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/pac4j-oauth-ext -->
+            <!-- Pac4j OAuth Ext：旧坐标下的 Pac4j OAuth 扩展（已迁至 io.github.easy4j）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>pac4j-oauth-ext</artifactId>
                 <version>${pac4j-oauth-ext.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-oauth-extension -->
+            <!-- Easy4J Pac4j OAuth Extension：Easy4J 对 Pac4j OAuth 认证的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-oauth-extension</artifactId>
