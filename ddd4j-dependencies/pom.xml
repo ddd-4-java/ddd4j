@@ -9058,12 +9058,14 @@
                 <version>${easy4j-spring-bytebuddy.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/spring-bytebuddy -->
+            <!-- Spring ByteBuddy（旧坐标）：旧坐标下的 Spring + ByteBuddy 字节码增强。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>spring-bytebuddy</artifactId>
                 <version>${spring-bytebuddy.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-bom -->
+            <!-- Spring Data BOM：Spring Data 各模块（JPA/Redis/MongoDB 等）的版本清单。 -->
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-bom</artifactId>
@@ -9072,6 +9074,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/spring-data-redis-extension -->
+            <!-- Easy4J Spring Data Redis Extension：Easy4J 的 Spring Data Redis 扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-data-redis-extension</artifactId>
