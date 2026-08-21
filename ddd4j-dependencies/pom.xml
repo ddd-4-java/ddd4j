@@ -3805,6 +3805,7 @@
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.groovy/groovy-bom -->
+            <!-- Groovy BOM：Groovy 动态语言的版本清单，统一管理 Groovy 各模块版本。 -->
             <dependency>
                 <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy-bom</artifactId>
@@ -3813,6 +3814,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.grpc/grpc-bom -->
+            <!-- gRPC BOM：gRPC 高性能 RPC 框架各模块的版本清单。 -->
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-bom</artifactId>
@@ -3821,6 +3823,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+            <!-- Gson：Google JSON 解析与序列化库。 -->
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
