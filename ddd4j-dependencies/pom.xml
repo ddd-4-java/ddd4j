@@ -9439,12 +9439,14 @@
                 <version>${swagger3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-models -->
+            <!-- Swagger Models（旧版）：Swagger 2.x 数据模型定义。 -->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-models</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models-jakarta -->
+            <!-- Swagger Models Jakarta：OpenAPI 3.0 数据模型的 Jakarta EE 适配。 -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-models-jakarta</artifactId>
