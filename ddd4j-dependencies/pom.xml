@@ -9425,12 +9425,14 @@
                 <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-jersey2-jaxrs -->
+            <!-- Swagger Jersey2 JAX-RS：Swagger 对 Jersey 2.x 框架的深度集成。 -->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jersey2-jaxrs</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models -->
+            <!-- Swagger Models v3：OpenAPI 3.0 数据模型定义（OpenAPI、PathItem、Schema 等）。 -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-models</artifactId>
