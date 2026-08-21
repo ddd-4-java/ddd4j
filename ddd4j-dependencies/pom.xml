@@ -9002,12 +9002,14 @@
                 <version>${easy4j-soaputils.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.socket/socket.io-client -->
+            <!-- Socket.IO Client：Socket.IO 实时通信客户端 Java 实现。 -->
             <dependency>
                 <groupId>io.socket</groupId>
                 <artifactId>socket.io-client</artifactId>
                 <version>${socket-io.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/socketio-extension -->
+            <!-- Easy4J SocketIO Extension：Easy4J 的 Socket.IO 扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>socketio-extension</artifactId>
