@@ -8457,18 +8457,21 @@
                 <version>${scribejava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.mercadopago/sdk-java -->
+            <!-- Mercado Pago SDK：南美最大支付平台 Mercado Pago 的 Java SDK。 -->
             <dependency>
                 <groupId>com.mercadopago</groupId>
                 <artifactId>sdk-java</artifactId>
                 <version>${mercadopago-sdk-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.seata/seata-metrics-exporter-prometheus -->
+            <!-- Seata Prometheus Exporter：Seata 分布式事务框架的 Prometheus 指标导出器。 -->
             <dependency>
                 <groupId>io.seata</groupId>
                 <artifactId>seata-metrics-exporter-prometheus</artifactId>
                 <version>${seata.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.seatunnel/seatunnel-api -->
+            <!-- Apache SeaTunnel：分布式数据集成引擎（支持 100+ 数据源的 ETL/ELT）。 -->
             <dependency>
                 <groupId>org.apache.seatunnel</groupId>
                 <artifactId>seatunnel-api</artifactId>
