@@ -4242,60 +4242,70 @@
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-core -->
+            <!-- Hutool Core：国产 Java 工具集 Hutool 的基础核心工具模块。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-core</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-cron -->
+            <!-- Hutool Cron：Hutool 的定时任务与 Cron 表达式解析模块。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-cron</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-crypto -->
+            <!-- Hutool Crypto：Hutool 的加密解密模块（对称/非对称/摘要/国密 SM4 等）。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-crypto</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-db -->
+            <!-- Hutool DB：Hutool 的数据库 JDBC 操作简化工具。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-db</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-dfa -->
+            <!-- Hutool DFA：Hutool 的确定有限状态自动机（DFA）模块，用于敏感词过滤等场景。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-dfa</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-http -->
+            <!-- Hutool Http：Hutool 的 HTTP 客户端封装，基于 JDK HttpClient 实现。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-http</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-json -->
+            <!-- Hutool JSON：Hutool 的 JSON 解析与生成工具。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-json</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-system -->
+            <!-- Hutool System：Hutool 的系统信息获取（CPU、内存、磁盘、操作系统等）模块。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-system</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.netflix.hystrix/hystrix-core -->
+            <!-- Hystrix Core：Netflix 的断路器库，实现服务容错和熔断模式（已进入维护模式）。 -->
             <dependency>
                 <groupId>com.netflix.hystrix</groupId>
                 <artifactId>hystrix-core</artifactId>
                 <version>${hystrix.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.netflix.hystrix/hystrix-metrics-event-stream -->
+            <!-- Hystrix Metrics Event Stream：Hystrix 指标事件流（SSE）输出模块。 -->
             <dependency>
                 <groupId>com.netflix.hystrix</groupId>
                 <artifactId>hystrix-metrics-event-stream</artifactId>
