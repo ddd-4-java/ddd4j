@@ -6529,18 +6529,21 @@
                 <version>${mybatis-thymeleaf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis/mybatis-typehandlers-jsr310 -->
+            <!-- MyBatis JSR310 TypeHandlers：MyBatis 的 Java 8 日期/时间 API 类型处理器。 -->
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-typehandlers-jsr310</artifactId>
                 <version>${mybatis-typehandlers-jsr310.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis/mybatis-typehandlers-threeten-extra -->
+            <!-- MyBatis ThreeTen Extra：MyBatis 的 ThreeTen-Extra 类型处理器。 -->
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-typehandlers-threeten-extra</artifactId>
                 <version>${mybatis-typehandlers-extra.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.scripting/mybatis-velocity -->
+            <!-- MyBatis Velocity：MyBatis 的 Velocity 脚本引擎支持（SQL 模板）。 -->
             <dependency>
                 <groupId>org.mybatis.scripting</groupId>
                 <artifactId>mybatis-velocity</artifactId>
