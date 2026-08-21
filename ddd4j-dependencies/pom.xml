@@ -9652,6 +9652,7 @@
                 <version>${tomcat.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jsp-api -->
+            <!-- Tomcat JSP API：Apache Tomcat 的 JSP (JavaServer Pages) API 模块。 -->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jsp-api</artifactId>
@@ -9660,6 +9661,7 @@
             <!-- 提供web应用的核心功能依赖聚合模块 -->
             <!-- Source: https://mvnrepository.com/artifact/com.tongweb/tongweb-embed-core -->
             <!-- For Tongweb --> <!-- 提供web应用的核心功能依赖聚合模块 -->
+            <!-- TongWeb Embed Core：国产 TongWeb 应用服务器嵌入式核心模块。 -->
             <dependency>
                 <groupId>com.tongweb</groupId>
                 <artifactId>tongweb-embed-core</artifactId>
@@ -9668,6 +9670,7 @@
             <!-- 提供dubbo的核心功能依赖聚合模块 -->
             <!-- Source: https://mvnrepository.com/artifact/com.tongweb/tongweb-embed-dubbo -->
             <!-- 提供dubbo的核心功能依赖聚合模块 -->
+            <!-- TongWeb Embed Dubbo：TongWeb 的嵌入式 Dubbo RPC 集成模块。 -->
             <dependency>
                 <groupId>com.tongweb</groupId>
                 <artifactId>tongweb-embed-dubbo</artifactId>
