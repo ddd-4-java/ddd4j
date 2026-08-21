@@ -1649,6 +1649,7 @@
                 <version>${classgraph.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.fasterxml/classmate -->
+            <!-- ClassMate：Java 类型解析库（泛型类型信息提取，被 Hibernate Validator 使用）。 -->
             <dependency>
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
@@ -2188,6 +2189,7 @@
                 <version>${qcloud-cos-api-bundle.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.crac/crac -->
+            <!-- CRaC：Coordinated Restore at Checkpoint（Java 应用快速启动/恢复框架）。 -->
             <dependency>
                 <groupId>org.crac</groupId>
                 <artifactId>crac</artifactId>
@@ -2341,6 +2343,7 @@
                 <version>${cxf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/cxf-rt-bytebuddy -->
+            <!-- Easy4J CXF ByteBuddy：Easy4J 的 CXF ByteBuddy 数据绑定增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>cxf-rt-bytebuddy</artifactId>
@@ -2435,6 +2438,7 @@
                 <version>${easy4j-cxf-rt-javassist.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/cxf-rt-javassist -->
+            <!-- CXF Javassist（旧坐标）：旧坐标下的 CXF Javassist 数据绑定增强。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>cxf-rt-javassist</artifactId>
