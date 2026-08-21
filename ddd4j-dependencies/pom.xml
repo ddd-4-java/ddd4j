@@ -630,7 +630,7 @@
         <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <spring-data-bom.version>2025.1.6</spring-data-bom.version>
-        <spring-framework.version>6.2.19</spring-framework.version>
+        <spring-framework.version>7.0.8</spring-framework.version>
         <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
         <spring-initializr.version>0.24.0</spring-initializr.version>
@@ -641,7 +641,7 @@
         <spring-pulsar.version>1.2.18</spring-pulsar.version>
         <spring-restdocs.version>3.0.3</spring-restdocs.version>
         <spring-retry.version>2.0.11</spring-retry.version>
-        <spring-security.version>6.5.11</spring-security.version>
+        <spring-security.version>7.0.6</spring-security.version>
         <spring-session.version>3.4.3</spring-session.version>
         <spring-ws.version>4.0.13</spring-ws.version>
         <springdoc.version>2.7.0</springdoc.version>
