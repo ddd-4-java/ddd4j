@@ -1420,30 +1420,35 @@
             </dependency>
             <!-- The Bouncy Castle Java APIs for TLS and DTLS, including a provider for the JSSE. -->
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bctls-jdk15to18 -->
+            <!-- Bouncy Castle TLS JDK15-JDK18 过渡版：Bouncy Castle 的 TLS/DTLS 实现过渡版本，可作为 JSSE Provider。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bctls-jdk15to18</artifactId>
                 <version>${bctls.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bctls-jdk18on -->
+            <!-- Bouncy Castle TLS JDK18+：Bouncy Castle 在 JDK 18+ 上的 TLS/DTLS 实现，可作为 JSSE Provider。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bctls-jdk18on</artifactId>
                 <version>${bctls.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.ibeetl/beetl -->
+            <!-- Beetl：国产通用 Java 模板引擎，语法简洁，功能强大，适合 HTML、代码生成、邮件等场景。 -->
             <dependency>
                 <groupId>com.ibeetl</groupId>
                 <artifactId>beetl</artifactId>
                 <version>${beetl.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.gitee.Jmysy/binlog4j-core -->
+            <!-- binlog4j：国产 MySQL binlog 订阅解析 SDK，支持 MySQL/PolarDB 的 binlog 增量订阅、解析和分发。 -->
             <dependency>
                 <groupId>com.gitee.Jmysy</groupId>
                 <artifactId>binlog4j-core</artifactId>
                 <version>${binlog4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/software.amazon.awssdk/bom -->
+            <!-- AWS SDK BOM：AWS Java v2 SDK 的版本清单，统一管理所有 AWS 服务模块版本。 -->
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
@@ -1452,6 +1457,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.zipkin.brave/brave-bom -->
+            <!-- Brave BOM：Zipkin Brave 分布式追踪库的版本清单，提供 Brave 核心及周边组件统一版本。 -->
             <dependency>
                 <groupId>io.zipkin.brave</groupId>
                 <artifactId>brave-bom</artifactId>
@@ -1460,18 +1466,21 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.buji/buji-pac4j -->
+            <!-- Buji Pac4j：Pac4j 安全库与 Shiro 集成桥接，让 Shiro 拥有 OAuth、OIDC、SAML 等认证能力。 -->
             <dependency>
                 <groupId>io.buji</groupId>
                 <artifactId>buji-pac4j</artifactId>
                 <version>${buji-pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
+            <!-- Byte Buddy：运行时代码生成库，比 ASM 更易用的链式 API，被 Mockito、Spring 等大量框架使用。 -->
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <version>${byte-buddy.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-agent -->
+            <!-- Byte Buddy Agent：Byte Buddy 的 Java agent，用于运行时动态修改类字节码。 -->
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy-agent</artifactId>
