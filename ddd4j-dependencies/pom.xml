@@ -8116,18 +8116,21 @@
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-rxjava3 -->
+            <!-- Resilience4j RxJava3：Resilience4j 与 RxJava 3 的集成。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-rxjava3</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-spring -->
+            <!-- Resilience4j Spring：Resilience4j 的 Spring AOP 注解集成。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-spring</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-timelimiter -->
+            <!-- Resilience4j TimeLimiter：Resilience4j 的超时限制模式（限制调用时间）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-timelimiter</artifactId>
