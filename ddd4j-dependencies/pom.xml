@@ -4874,6 +4874,7 @@
                 <version>${appium.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-bom -->
+            <!-- Cassandra Java Driver BOM：Apache Cassandra Java 驱动各模块的版本清单。 -->
             <dependency>
                 <groupId>org.apache.cassandra</groupId>
                 <artifactId>java-driver-bom</artifactId>
@@ -4882,18 +4883,21 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-core -->
+            <!-- Cassandra Java Driver Core：Apache Cassandra 分布式 NoSQL 数据库的 Java 驱动核心。 -->
             <dependency>
                 <groupId>org.apache.cassandra</groupId>
                 <artifactId>java-driver-core</artifactId>
                 <version>${cassandra-driver.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.binarywang/java-emoji-converter -->
+            <!-- Java Emoji Converter：Unicode Emoji 与各平台编码转换工具。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>java-emoji-converter</artifactId>
                 <version>1.0.2</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+            <!-- Auth0 Java JWT：Auth0 开源的 JWT 令牌创建与验证库。 -->
             <dependency>
                 <groupId>com.auth0</groupId>
                 <artifactId>java-jwt</artifactId>
