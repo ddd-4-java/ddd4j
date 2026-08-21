@@ -7499,12 +7499,14 @@
                 <version>${easy4j-perf4j-log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pf4j/pf4j -->
+            <!-- PF4J：轻量级 Java 插件框架（运行时加载/卸载插件）。 -->
             <dependency>
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j</artifactId>
                 <version>${pf4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pf4j-extension -->
+            <!-- Easy4J PF4J Extension：Easy4J 对 PF4J 插件框架的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pf4j-extension</artifactId>
