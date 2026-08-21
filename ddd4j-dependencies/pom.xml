@@ -10635,12 +10635,14 @@
                     <version>${maven-properties-plugin.version}</version>
                 </plugin>
                 <!-- Source: https://mvnrepository.com/artifact/io.quarkus/quarkus-maven-plugin -->
+                <!-- Quarkus Maven Plugin：Quarkus 框架的 Maven 构建插件（构建原生镜像、启动开发模式等）。 -->
                 <plugin>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-maven-plugin</artifactId>
                     <version>${maven-quarkus-plugin.version}</version>
                 </plugin>
                 <!-- Source: https://mvnrepository.com/artifact/io.quarkus/quarkus-extension-maven-plugin -->
+                <!-- Quarkus Extension Maven Plugin：Quarkus 扩展开发插件（生成扩展元数据）。 -->
                 <plugin>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-extension-maven-plugin</artifactId>
