@@ -6631,18 +6631,21 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-dns -->
+            <!-- Netty Codec DNS：Netty 的 DNS 协议编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-dns</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-haproxy -->
+            <!-- Netty Codec HAProxy：Netty 的 HAProxy PROXY 协议编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-haproxy</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-http -->
+            <!-- Netty Codec HTTP：Netty 的 HTTP/1.1 协议编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-http</artifactId>
