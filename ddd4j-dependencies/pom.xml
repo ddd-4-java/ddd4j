@@ -8529,18 +8529,21 @@
                 <version>${sequoiadb-driver.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/xalan/serializer -->
+            <!-- Xalan Serializer：Apache Xalan XSLT 库的序列化模块。 -->
             <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>serializer</artifactId>
                 <version>${xalan.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.sf.sevenzipjbinding/sevenzipjbinding -->
+            <!-- 7-Zip JBinding：7-Zip 压缩算法的 Java 绑定（支持 7z、ZIP、RAR 等格式）。 -->
             <dependency>
                 <groupId>net.sf.sevenzipjbinding</groupId>
                 <artifactId>sevenzipjbinding</artifactId>
                 <version>${sevenzipjbinding.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.sf.sevenzipjbinding/sevenzipjbinding-all-platforms -->
+            <!-- 7-Zip JBinding All Platforms：7-Zip JBinding 的全平台 JNI 库。 -->
             <dependency>
                 <groupId>net.sf.sevenzipjbinding</groupId>
                 <artifactId>sevenzipjbinding-all-platforms</artifactId>
