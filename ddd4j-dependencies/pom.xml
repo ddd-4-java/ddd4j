@@ -7485,12 +7485,14 @@
             <!-- Perf4J 是一个新的开放源码的性能记录，监测和分析库，主要用于企业Java应用程序。 -->
             <!-- Source: https://mvnrepository.com/artifact/org.perf4j/perf4j -->
             <!-- Perf4J 是一个新的开放源码的性能记录，监测和分析库，主要用于企业Java应用程序。 -->
+            <!-- Perf4J：Java 性能分析库（@Profiled 注解、StopWatch 计时、统计聚合）。 -->
             <dependency>
                 <groupId>org.perf4j</groupId>
                 <artifactId>perf4j</artifactId>
                 <version>${perf4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/perf4j-log4j2 -->
+            <!-- Easy4J Perf4J Log4j2：Easy4J 对 Perf4J 的 Log4j2 集成适配。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>perf4j-log4j2</artifactId>
