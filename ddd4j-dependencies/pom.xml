@@ -6263,6 +6263,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
+            <!-- Spring Framework BOM：Spring 核心框架各模块的版本清单（IoC/AOP/MVC/Data/Web 等）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
@@ -6271,6 +6272,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
+            <!-- Spring Security BOM：Spring 安全框架各模块的版本清单（认证/授权/OAuth2/OIDC 等）。 -->
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-bom</artifactId>
