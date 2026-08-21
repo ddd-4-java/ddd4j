@@ -4773,18 +4773,21 @@
                 <version>${jakarta-servlet.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.web/jakarta.servlet.jsp.jstl -->
+            <!-- Jakarta JSTL (GlassFish)：GlassFish 的 Jakarta JSP 标准标签库实现。 -->
             <dependency>
                 <groupId>org.glassfish.web</groupId>
                 <artifactId>jakarta.servlet.jsp.jstl</artifactId>
                 <version>${glassfish-jstl.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.servlet.jsp.jstl/jakarta.servlet.jsp.jstl-api -->
+            <!-- Jakarta JSTL API：Jakarta JSP 标准标签库 API（c:if/c:forEach 等）。 -->
             <dependency>
                 <groupId>jakarta.servlet.jsp.jstl</groupId>
                 <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
                 <version>${jakarta-servlet-jsp-jstl.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.transaction/jakarta.transaction-api -->
+            <!-- Jakarta Transaction API：Jakarta 事务管理标准 API（@Transactional 等）。 -->
             <dependency>
                 <groupId>jakarta.transaction</groupId>
                 <artifactId>jakarta.transaction-api</artifactId>
