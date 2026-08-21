@@ -4342,6 +4342,7 @@
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-cache -->
+            <!-- Hutool Cache：Hutool 的本地缓存工具模块（LRU、LFU、FIFO 等策略）。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-cache</artifactId>
