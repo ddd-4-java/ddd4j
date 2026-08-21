@@ -4443,6 +4443,7 @@
                 <version>${imageio.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-clippath -->
+            <!-- TwelveMonkeys ImageIO ClipPath：ImageIO 的剪贴路径元数据支持。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-clippath</artifactId>
@@ -4450,6 +4451,7 @@
             </dependency>
             <!-- TwelveMonkeys :: ImageIO :: Core -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-core -->
+            <!-- TwelveMonkeys ImageIO Core：ImageIO 增强插件核心模块（图像读写性能优化）。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-core</artifactId>
@@ -4457,6 +4459,7 @@
             </dependency>
             <!-- ImageIO plugin for Radiance RGBE High Dynaimc Range format (HDR). -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-hdr -->
+            <!-- TwelveMonkeys ImageIO HDR：Radiance HDR 高动态范围图像格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-hdr</artifactId>
@@ -4464,6 +4467,7 @@
             </dependency>
             <!-- ImageIO plugin for Apple Icon Image (ICNS) format. -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-icns -->
+            <!-- TwelveMonkeys ImageIO ICNS：Apple ICNS 图标格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-icns</artifactId>
@@ -4471,6 +4475,7 @@
             </dependency>
             <!-- ImageIO plugin for Amiga/Electronic Arts Interchange Filed Format (IFF) type ILBM and PBM format. -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-iff -->
+            <!-- TwelveMonkeys ImageIO IFF：Amiga IFF/ILBM 图像格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-iff</artifactId>
@@ -4478,6 +4483,7 @@
             </dependency>
             <!-- ImageIO plugin for Joint Photographer Expert Group images (JPEG/JFIF). -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-jpeg -->
+            <!-- TwelveMonkeys ImageIO JPEG：JPEG/JFIF 图像格式的 ImageIO 插件（性能优化）。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-jpeg</artifactId>
@@ -4485,6 +4491,7 @@
             </dependency>
             <!-- ImageIO metadata module. -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-metadata -->
+            <!-- TwelveMonkeys ImageIO Metadata：ImageIO 的 EXIF/IPTC/XMP 元数据读写模块。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-metadata</artifactId>
@@ -4492,6 +4499,7 @@
             </dependency>
             <!-- ImageIO plugin for ZSoft Paintbrush Format (PCX) -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-pcx -->
+            <!-- TwelveMonkeys ImageIO PCX：ZSoft PCX 图像格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-pcx</artifactId>
