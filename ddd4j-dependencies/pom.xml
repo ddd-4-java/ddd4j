@@ -7621,18 +7621,21 @@
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/info.picocli/picocli-shell-jline3 -->
+            <!-- Picocli Shell JLine3：picocli 命令行框架的 JLine3 交互式 Shell 集成。 -->
             <dependency>
                 <groupId>info.picocli</groupId>
                 <artifactId>picocli-shell-jline3</artifactId>
                 <version>${picocli.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.belerweb/pinyin4j -->
+            <!-- pinyin4j：Java 汉字转拼音工具库（支持多音字、声调、格式化）。 -->
             <dependency>
                 <groupId>com.belerweb</groupId>
                 <artifactId>pinyin4j</artifactId>
                 <version>${pinyin4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/playwright-extension -->
+            <!-- Easy4J Playwright Extension：Easy4J 对 Playwright 浏览器自动化框架的扩展。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>playwright-extension</artifactId>
