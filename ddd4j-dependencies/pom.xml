@@ -5607,12 +5607,14 @@
                 <classifier>test</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.13 -->
+            <!-- Kafka Scala 2.13：Apache Kafka Broker 的 Scala 2.13 构建版本。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka_2.13</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.13 -->
+            <!-- Kafka Scala 2.13 Test Jar：Kafka Broker 的 Scala 2.13 测试工具。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka_2.13</artifactId>
@@ -5620,6 +5622,7 @@
                 <classifier>test</classifier>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.axet/kaptcha -->
+            <!-- Kaptcha：Google 开源的验证码图片生成库（支持文本/算术/中文验证码）。 -->
             <dependency>
                 <groupId>com.github.axet</groupId>
                 <artifactId>kaptcha</artifactId>
