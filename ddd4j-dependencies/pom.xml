@@ -6217,6 +6217,7 @@
                 <version>${mica-mqtt.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-bom -->
+            <!-- Micrometer BOM：Micrometer 应用指标门面各模块的版本清单。 -->
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-bom</artifactId>
@@ -6225,6 +6226,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-stackdriver -->
+            <!-- Micrometer Stackdriver：Micrometer 的 Google Cloud Monitoring (Stackdriver) 指标输出。 -->
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-stackdriver</artifactId>
