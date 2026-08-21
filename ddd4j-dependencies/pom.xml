@@ -3618,6 +3618,7 @@
                 <version>${google-api-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-androidpublisher -->
+            <!-- Google API Services AndroidPublisher：Google Play 开发者发布 API 的 Java 客户端。 -->
             <dependency>
                 <groupId>com.google.apis</groupId>
                 <artifactId>google-api-services-androidpublisher</artifactId>
