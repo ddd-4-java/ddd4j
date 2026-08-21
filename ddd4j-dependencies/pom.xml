@@ -6550,12 +6550,14 @@
                 <version>${mybatis-velocity.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.jeffreyning/mybatisplus-plus -->
+            <!-- MyBatisPlus-Plus：MyBatis-Plus 的增强扩展（自定义类型处理、多表联查等）。 -->
             <dependency>
                 <groupId>com.github.jeffreyning</groupId>
                 <artifactId>mybatisplus-plus</artifactId>
                 <version>${mybatis-plus-ext.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.zendesk/mysql-binlog-connector-java -->
+            <!-- MySQL Binlog Connector：MySQL binlog 事件流解析库（用于 CDC 增量订阅）。 -->
             <dependency>
                 <groupId>com.zendesk</groupId>
                 <artifactId>mysql-binlog-connector-java</artifactId>
