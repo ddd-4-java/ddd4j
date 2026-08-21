@@ -8905,6 +8905,7 @@
                 <version>${prometheus-simpleclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.prometheus/simpleclient_bom -->
+            <!-- Prometheus SimpleClient BOM：Prometheus 旧版 Java 客户端各模块的版本清单。 -->
             <dependency>
                 <groupId>io.prometheus</groupId>
                 <artifactId>simpleclient_bom</artifactId>
@@ -8913,6 +8914,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/simulator -->
+            <!-- Caffeine Simulator：Caffeine 缓存性能模拟测试工具。 -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>simulator</artifactId>
