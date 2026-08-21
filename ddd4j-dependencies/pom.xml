@@ -3860,6 +3860,7 @@
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-websockets-server -->
+            <!-- Grizzly WebSockets Server：Grizzly 的 WebSocket 服务端实现。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-websockets-server</artifactId>
