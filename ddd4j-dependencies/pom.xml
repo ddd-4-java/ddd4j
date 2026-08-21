@@ -3830,18 +3830,21 @@
                 <version>${gson.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/guava -->
+            <!-- Caffeine Guava：用于旧版 Guava Cache 兼容 Caffeine 的桥桥模块。 -->
             <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>guava</artifactId>
                 <version>${caffeine.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.google.guava/guava -->
+            <!-- Guava：Google 核心 Java 工具库集合（集合、缓存、并发、字符串处理等）。 -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
+            <!-- Google Guice：轻量级 Java 依赖注入框架，由 Google 开发。 -->
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
@@ -3849,37 +3852,42 @@
             </dependency>
             <!-- JDBC Driver For H2 Database Engine -->
             <!-- Source: https://mvnrepository.com/artifact/com.h2database/h2 -->
-            <!-- JDBC Driver For H2 Database Engine -->
+            <!-- H2 Database：纯 Java 实现的关系数据库引擎，支持内存与文件两种运行模式。 -->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.h2database/h2-mvstore -->
+            <!-- H2 MVStore：H2 数据库的高性能多版本存储引擎，可作为嵌入式 NoSQL 存储使用。 -->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2-mvstore</artifactId>
                 <version>${h2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
+            <!-- Apache Hadoop Client：Hadoop 通用客户端聚合包。 -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-client</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs-client -->
+            <!-- Apache Hadoop HDFS Client：Hadoop 分布式文件系统 HDFS 的 Java 客户端。 -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-hdfs-client</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs-native-client -->
+            <!-- Apache Hadoop HDFS Native Client：基于 JNI 的 HDFS 客户端（高性能）。 -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-hdfs-native-client</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client -->
+            <!-- Apache Hadoop MapReduce Client BOM：Hadoop MapReduce 客户端版本清单。 -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-mapreduce-client</artifactId>
@@ -3888,24 +3896,28 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client-jobclient -->
+            <!-- Apache Hadoop MapReduce JobClient：提交 MapReduce 作业的客户端。 -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-yarn-client -->
+            <!-- Apache Hadoop YARN Client：YARN（资源调度）客户端。 -->
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-yarn-client</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hamcrest/hamcrest -->
+            <!-- Hamcrest：强大的匹配器（matcher）库，常与 JUnit/TestNG 配合使用编写灵活的断言。 -->
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest</artifactId>
                 <version>${hamcrest.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core -->
+            <!-- Hamcrest Core：Hamcrest 的核心匹配器库。 -->
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
