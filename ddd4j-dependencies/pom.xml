@@ -5086,12 +5086,14 @@
                 <version>${jetty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-util -->
+            <!-- Jetty Util：Jetty 通用工具类（URI、日期、多线程、安全等）。 -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.ee10/jetty-ee10-bom -->
+            <!-- Jetty EE10 BOM：Jetty 12 EE10 环境各模块的版本清单（Servlet 6.0/JSP 3.1/EL 5.0）。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.ee10</groupId>
                 <artifactId>jetty-ee10-bom</artifactId>
@@ -5100,6 +5102,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-reactive-httpclient -->
+            <!-- Jetty Reactive HttpClient：Jetty 的响应式 HTTP 客户端（基于 Reactive Streams 规范）。 -->
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-reactive-httpclient</artifactId>
