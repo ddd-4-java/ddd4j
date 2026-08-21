@@ -7530,18 +7530,21 @@
                 </exclusions>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pf4j/pf4j-update -->
+            <!-- PF4J Update：PF4J 插件的远程更新管理模块。 -->
             <dependency>
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j-update</artifactId>
                 <version>${pf4j-update.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pf4j3-extension -->
+            <!-- Easy4J PF4J3 Extension：Easy4J 对 PF4J 3.x 的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pf4j3-extension</artifactId>
                 <version>${easy4j-pf4j3-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pgvector/pgvector -->
+            <!-- pgvector：PostgreSQL 向量相似性搜索扩展的 Java 客户端（用于 AI 向量检索）。 -->
             <dependency>
                 <groupId>com.pgvector</groupId>
                 <artifactId>pgvector</artifactId>
