@@ -6359,6 +6359,7 @@
                 <version>${mssql-jdbc.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+            <!-- MyBatis：优秀的 Java 持久层框架，支持自定义 SQL、存储过程和高级映射。 -->
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
@@ -6366,6 +6367,7 @@
             </dependency>
             <!-- mybatis caches -->
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-caffeine -->
+            <!-- MyBatis Caffeine Cache：MyBatis 的 Caffeine 缓存实现（二级缓存）。 -->
             <dependency>
                 <groupId>org.mybatis.caches</groupId>
                 <artifactId>mybatis-caffeine</artifactId>
