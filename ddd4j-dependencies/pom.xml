@@ -5314,18 +5314,21 @@
                 <version>${jsonschema.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.victools/jsonschema-module-jackson -->
+            <!-- JSON Schema Module Jackson：JSON Schema 生成器的 Jackson 注解支持模块。 -->
             <dependency>
                 <groupId>com.github.victools</groupId>
                 <artifactId>jsonschema-module-jackson</artifactId>
                 <version>${jsonschema.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.victools/jsonschema-module-swagger-2 -->
+            <!-- JSON Schema Module Swagger 2：JSON Schema 生成器的 Swagger 2 注解支持模块。 -->
             <dependency>
                 <groupId>com.github.victools</groupId>
                 <artifactId>jsonschema-module-swagger-2</artifactId>
                 <version>${jsonschema.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+            <!-- Jsoup：Java HTML 解析库，支持 CSS 选择器、DOM 操作和 HTTP 请求。 -->
             <dependency>
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
