@@ -7413,12 +7413,14 @@
                 <version>${easy4j-pac4j-yiban.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pack-with-assembly -->
+            <!-- Easy4J Pack with Assembly：Easy4J 的 Maven Assembly 打包配置工具。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pack-with-assembly</artifactId>
                 <version>${easy4j-pack-with-assembly.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper -->
+            <!-- PageHelper：MyBatis 物理分页插件（自动拼接 LIMIT/OFFSET SQL）。 -->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
