@@ -1543,12 +1543,14 @@
                 <version>${caffeine.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/calibre-invoker -->
+            <!-- Easy4J Calibre Invoker：Easy4J 封装的 Calibre 电子书格式转换调用器，支持 EPUB/MOBI/AZW3 转换。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>calibre-invoker</artifactId>
                 <version>${easy4j-calibre-invoker.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/canal-client-plus-sdk -->
+            <!-- Easy4J Canal Plus SDK：阿里 Canal 增量订阅的 Easy4J 增强 SDK，支持集群、故障转移与重试。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>canal-client-plus-sdk</artifactId>
