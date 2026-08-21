@@ -9863,18 +9863,21 @@
                 <version>${jetty-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/websocket-client -->
+            <!-- Jetty WebSocket Client：Jetty 的 WebSocket 客户端实现。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>websocket-client</artifactId>
                 <version>${jetty-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/websocket-common -->
+            <!-- Jetty WebSocket Common：Jetty WebSocket 的公共模块（会话、帧处理等）。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>websocket-common</artifactId>
                 <version>${jetty-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/websocket-server -->
+            <!-- Jetty WebSocket Server：Jetty 的 WebSocket 服务端实现。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>websocket-server</artifactId>
