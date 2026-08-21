@@ -10084,24 +10084,28 @@
                 <version>${wildfly-openssl.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/wkhtmltopdf-invoker -->
+            <!-- Easy4J wkhtmltopdf Invoker：Easy4J 封装的 wkhtmltopdf HTML 转 PDF 工具调用器。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>wkhtmltopdf-invoker</artifactId>
                 <version>${easy4j-wkhtmltopdf-invoker.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core -->
+            <!-- Woodstox Core：高性能 StAX XML 解析器（支持 XML 1.1、命名空间、DTD）。 -->
             <dependency>
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
                 <version>${woodstox-core.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.codehaus.woodstox/woodstox-core-asl -->
+            <!-- Woodstox Core ASL：Woodstox 的 Apache License 2.0 版本（旧版）。 -->
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>${woodstox-asl.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/wsdl4j/wsdl4j -->
+            <!-- WSDL4J：WSDL (Web Services Description Language) 1.1 的 Java 解析和操作库。 -->
             <dependency>
                 <groupId>wsdl4j</groupId>
                 <artifactId>wsdl4j</artifactId>
