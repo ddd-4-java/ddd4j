@@ -4096,6 +4096,7 @@
                 <version>${hikaricp.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/hitool -->
+            <!-- Easy4J HiTool：Easy4J 封装的性能分析和监控工具。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>hitool</artifactId>
@@ -4186,12 +4187,14 @@
                 <version>${httpclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/httpclient-extension -->
+            <!-- Easy4J HttpClient Extension：Easy4J 对 Apache HttpClient 5 的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>httpclient-extension</artifactId>
                 <version>${easy4j-httpclient-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/httpclient3-extension -->
+            <!-- Easy4J HttpClient3 Extension：Easy4J 对 Apache HttpClient 3.x 的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>httpclient3-extension</artifactId>
