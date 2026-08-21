@@ -7061,12 +7061,14 @@
                 <version>${feshu-oapi.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.objenesis/objenesis -->
+            <!-- Objenesis：Java 对象实例化库（绕过构造函数创建对象，被 Mockito 等使用）。 -->
             <dependency>
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
                 <version>${objenesis.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc-bom -->
+            <!-- Oracle JDBC BOM：Oracle 数据库 JDBC 驱动各模块的版本清单。 -->
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc-bom</artifactId>
