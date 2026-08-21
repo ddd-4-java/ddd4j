@@ -4800,18 +4800,21 @@
                 <version>${jakarta-validation.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api -->
+            <!-- Jakarta WebSocket API：Jakarta WebSocket 服务端 API（@ServerEndpoint 等）。 -->
             <dependency>
                 <groupId>jakarta.websocket</groupId>
                 <artifactId>jakarta.websocket-api</artifactId>
                 <version>${jakarta-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-client-api -->
+            <!-- Jakarta WebSocket Client API：Jakarta WebSocket 客户端 API。 -->
             <dependency>
                 <groupId>jakarta.websocket</groupId>
                 <artifactId>jakarta.websocket-client-api</artifactId>
                 <version>${jakarta-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.ws.rs/jakarta.ws.rs-api -->
+            <!-- Jakarta RESTful Web Services API：Jakarta JAX-RS REST API 标准（@GET/@POST 等）。 -->
             <dependency>
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
