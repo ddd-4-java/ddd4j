@@ -8622,18 +8622,21 @@
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-couchbase-javaclient -->
+            <!-- ShedLock Couchbase：ShedLock 的 Couchbase 分布式锁存储实现。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-couchbase-javaclient</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-jdbc -->
+            <!-- ShedLock JDBC：ShedLock 的 JDBC 分布式锁存储实现。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-jdbc</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-jdbc-template -->
+            <!-- ShedLock JDBC Template：ShedLock 的 Spring JdbcTemplate 分布式锁存储实现。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-jdbc-template</artifactId>
