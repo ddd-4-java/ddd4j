@@ -7358,12 +7358,6 @@
                 <artifactId>truelicense-core</artifactId>
                 <version>${truelicense.version}</version>
             </dependency>
-            <!-- truelicense-xml（ddd4j-boot-auth-license 引用） -->
-            <dependency>
-                <groupId>de.schlichtherle.truelicense</groupId>
-                <artifactId>truelicense-xml</artifactId>
-                <version>${truelicense.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-bom -->
             <dependency>
                 <groupId>org.apache.tika</groupId>
@@ -8024,15 +8018,14 @@
     </build>
 
     <profiles>
-        <!-- 发布到 Maven Central Portal：mvn -Pcentral deploy（与阿里云私有仓库发布互不干扰） -->
+        <!-- 发布到 Maven Central Portal：mvn -Prelease deploy（与阿里云私有仓库发布互不干扰） -->
         <profile>
-            <id>central</id>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>${maven-central-publishing-plugin.version}</version>
                         <extensions>true</extensions>
                     </plugin>
                 </plugins>
