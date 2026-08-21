@@ -6701,18 +6701,21 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-xml -->
+            <!-- Netty Codec XML：Netty 的 XML 流式解析编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-xml</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-common -->
+            <!-- Netty Common：Netty 公共工具模块（ByteBuf、HashedWheelTimer、InternalLogger 等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-common</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-dev-tools -->
+            <!-- Netty Dev Tools：Netty 开发调试工具（日志、流量录制回放等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-dev-tools</artifactId>
