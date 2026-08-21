@@ -7927,18 +7927,21 @@
                 <version>${r2dbc-pool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.postgresql/r2dbc-postgresql -->
+            <!-- R2DBC PostgreSQL：PostgreSQL 的响应式数据库连接 (R2DBC) 驱动。 -->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>r2dbc-postgresql</artifactId>
                 <version>${r2dbc-postgresql.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-proxy -->
+            <!-- R2DBC Proxy：R2DBC 连接代理（SQL 日志、指标收集、慢查询追踪）。 -->
             <dependency>
                 <groupId>io.r2dbc</groupId>
                 <artifactId>r2dbc-proxy</artifactId>
                 <version>${r2dbc-proxy.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-spi -->
+            <!-- R2DBC SPI：响应式数据库连接 (R2DBC) 的标准接口定义。 -->
             <dependency>
                 <groupId>io.r2dbc</groupId>
                 <artifactId>r2dbc-spi</artifactId>
