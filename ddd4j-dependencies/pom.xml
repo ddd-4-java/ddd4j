@@ -6478,6 +6478,7 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-generator -->
+            <!-- MyBatis-Plus Generator：MyBatis-Plus 代码生成器（一键生成 Entity/Mapper/Service/Controller）。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-generator</artifactId>
@@ -6485,6 +6486,7 @@
             </dependency>
             <!-- jdk 11+ 引入可选模块 -->
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-jsqlparser -->
+            <!-- MyBatis-Plus JSqlParser：MyBatis-Plus 的 SQL 解析模块（JDK 11+，支持动态表名/多租户）。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-jsqlparser</artifactId>
