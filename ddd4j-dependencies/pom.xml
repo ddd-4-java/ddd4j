@@ -6874,12 +6874,14 @@
             <!-- Add netty-tcnative* as well as users need to ensure they use the correct version -->
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative-classes -->
             <!-- Add netty-tcnative* as well as users need to ensure they use the correct version -->
+            <!-- Netty TCNative Classes：Netty 原生 SSL 传输的 Java 类定义。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative-classes</artifactId>
                 <version>${netty-tcnative.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport -->
+            <!-- Netty Transport：Netty 的网络传输层抽象（Channel、EventLoop、ByteBuf 等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport</artifactId>
