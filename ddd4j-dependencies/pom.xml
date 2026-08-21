@@ -4140,30 +4140,35 @@
                 <version>${selenium-htmlunit.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient -->
+            <!-- Apache HttpAsyncClient：Apache 异步 HTTP 客户端（基于 NIO，支持 HTTP/1.1）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient</artifactId>
                 <version>${httpasyncclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient-cache -->
+            <!-- Apache HttpAsyncClient Cache：异步 HTTP 客户端的缓存模块。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient-cache</artifactId>
                 <version>${httpasyncclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient-osgi -->
+            <!-- Apache HttpAsyncClient OSGi：异步 HTTP 客户端的 OSGi 打包版本。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient-osgi</artifactId>
                 <version>${httpasyncclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+            <!-- Apache HttpClient：Apache HTTP 客户端（同步，支持连接池、Cookie、认证）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient-cache -->
+            <!-- Apache HttpClient Cache：HTTP 客户端的缓存模块（RFC 7234）。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient-cache</artifactId>
