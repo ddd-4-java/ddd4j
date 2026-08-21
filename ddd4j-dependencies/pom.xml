@@ -6515,12 +6515,14 @@
                 <version>${mybatis-redis.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
+            <!-- MyBatis Spring：MyBatis 与 Spring 框架的集成模块（SqlSessionFactory、Mapper 扫描等）。 -->
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-spring</artifactId>
                 <version>${mybatis-spring.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.scripting/mybatis-thymeleaf -->
+            <!-- MyBatis Thymeleaf：MyBatis 的 Thymeleaf 脚本引擎支持（SQL 模板）。 -->
             <dependency>
                 <groupId>org.mybatis.scripting</groupId>
                 <artifactId>mybatis-thymeleaf</artifactId>
