@@ -768,6 +768,7 @@
     <dependencyManagement>
         <dependencies>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-bom -->
+            <!-- Apache ActiveMQ：流行的开源消息中间件，实现了 JMS 1.1 规范，支持多种跨语言客户端和集群部署。 -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-bom</artifactId>
@@ -776,48 +777,56 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-console -->
+            <!-- ActiveMQ Console：基于 Web 的 ActiveMQ 管理控制台，用于监控和管理消息代理、队列、主题等。 -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-console</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-spring -->
+            <!-- ActiveMQ Spring 集成：将 ActiveMQ 与 Spring 框架深度整合，支持 JMS 模板和消息驱动 POJO。 -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-spring</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/agora-java-sdk -->
+            <!-- Easy4J Agora SDK：声网 Agora 音视频通信 Java SDK 的 Easy4J 封装，支持实时音视频通话、互动直播。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>agora-java-sdk</artifactId>
                 <version>${easy4j-agora-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor_3 -->
+            <!-- Akka Actor：构建高并发、分布式、容错应用的 Actor 模型工具包，基于 Scala/Java。 -->
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-actor_3</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.typesafe.akka/akka-cluster_3 -->
+            <!-- Akka Cluster：基于 Actor 的集群节点成员管理、领导选举与分布式协作框架。 -->
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-cluster_3</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.typesafe.akka/akka-http_3 -->
+            <!-- Akka HTTP：基于 Actor 模型的高性能 HTTP 服务端/客户端框架，底层基于 Akka Streams。 -->
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-http_3</artifactId>
                 <version>${akka-http.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.typesafe.akka/akka-remote_3 -->
+            <!-- Akka Remote：通过 JVM 网络协议让 Actor 在不同节点间透明通信。 -->
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-remote_3</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.typesafe.akka/akka-slf4j_3 -->
+            <!-- Akka SLF4J：将 Akka Actor 的日志事件桥接到 SLF4J 统一日志门面。 -->
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-slf4j_3</artifactId>
