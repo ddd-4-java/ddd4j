@@ -1557,24 +1557,28 @@
                 <version>${easy4j-canal-client-plus-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.otter/canal.client -->
+            <!-- Canal Client：阿里 Canal 客户端，订阅 MySQL binlog 实现数据增量同步。 -->
             <dependency>
                 <groupId>com.alibaba.otter</groupId>
                 <artifactId>canal.client</artifactId>
                 <version>${canal.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba.otter/canal.protocol -->
+            <!-- Canal Protocol：Canal 客户端/服务端通信协议层，基于 Protobuf 实现数据订阅交互。 -->
             <dependency>
                 <groupId>com.alibaba.otter</groupId>
                 <artifactId>canal.protocol</artifactId>
                 <version>${canal.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/carrier -->
+            <!-- libphonenumber Carrier：Google 电话号码解析库的运营商查询扩展，解析号码所属运营商。 -->
             <dependency>
                 <groupId>com.googlecode.libphonenumber</groupId>
                 <artifactId>carrier</artifactId>
                 <version>${libphonenumber-carrier.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apereo.cas.client/cas-client-core -->
+            <!-- Apereo CAS Client Core：CAS 单点登录系统的 Java 客户端核心库。 -->
             <dependency>
                 <groupId>org.apereo.cas.client</groupId>
                 <artifactId>cas-client-core</artifactId>
