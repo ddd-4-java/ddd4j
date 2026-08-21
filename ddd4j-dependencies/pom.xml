@@ -4828,12 +4828,14 @@
                 <version>${jakarta.xml.bind-api.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.xml.soap/jakarta.xml.soap-api -->
+            <!-- Jakarta SOAP API：Jakarta SOAP with Attachments API（SOAP 消息处理）。 -->
             <dependency>
                 <groupId>jakarta.xml.soap</groupId>
                 <artifactId>jakarta.xml.soap-api</artifactId>
                 <version>${jakarta-xml-soap.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.xml.ws/jakarta.xml.ws-api -->
+            <!-- Jakarta XML Web Services API：Jakarta JAX-WS 标准 API（SOAP Web 服务定义）。 -->
             <dependency>
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
