@@ -8373,12 +8373,14 @@
                 <version>${schemacrawler.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-sqlite -->
+            <!-- SchemaCrawler SQLite：SchemaCrawler 的 SQLite 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-sqlite</artifactId>
                 <version>${schemacrawler-sqlite.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-sqlserver -->
+            <!-- SchemaCrawler SQL Server：SchemaCrawler 的 Microsoft SQL Server 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-sqlserver</artifactId>
