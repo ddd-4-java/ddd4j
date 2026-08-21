@@ -7292,6 +7292,7 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-jakartaee -->
+            <!-- Pac4j Jakarta EE：Pac4j 安全框架的 Jakarta EE 安全 API 集成。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-jakartaee</artifactId>
@@ -7299,6 +7300,7 @@
             </dependency>
             <!-- PAC4J For JWT -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-jwt -->
+            <!-- Pac4j JWT：Pac4j 安全框架的 JWT 令牌认证支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-jwt</artifactId>
