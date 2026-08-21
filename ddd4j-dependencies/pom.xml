@@ -8797,12 +8797,14 @@
                 <version>${easy4j-shiro-jwt.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-lang -->
+            <!-- Shiro Lang：Apache Shiro 语言工具模块。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-lang</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-oauth-core -->
+            <!-- Easy4J Shiro OAuth Core：Easy4J 的 Shiro OAuth 认证核心模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-oauth-core</artifactId>
