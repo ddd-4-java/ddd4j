@@ -9095,18 +9095,21 @@
                 <version>${spring-integration.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/spring-javassist -->
+            <!-- Easy4J Spring Javassist：Easy4J 的 Spring + Javassist 字节码增强集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-javassist</artifactId>
                 <version>${easy4j-spring-javassist.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-jms -->
+            <!-- Spring JMS：Spring 框架的 JMS（Java 消息服务）集成模块。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jms</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
+            <!-- Spring Kafka：Spring 框架的 Apache Kafka 集成模块。 -->
             <dependency>
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka</artifactId>
