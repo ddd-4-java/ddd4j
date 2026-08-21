@@ -5850,18 +5850,21 @@
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-spring -->
+            <!-- LiteFlow Spring：LiteFlow 的 Spring 集成模块（自动装配、表达式注入等）。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-spring</artifactId>
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-1.2-api -->
+            <!-- Log4j 1.2 API Bridge：将 Log4j 1.x API 调用桥接到 Log4j 2.x 实现。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-1.2-api</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+            <!-- Log4j API：Apache Log4j 2 的日志 API（独立于实现的接口层）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-api</artifactId>
