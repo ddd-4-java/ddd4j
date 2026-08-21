@@ -9718,6 +9718,7 @@
             </dependency>
             <!-- truelicense-xml（ddd4j-boot-auth-license 引用） -->
             <!-- Source: https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-xml -->
+            <!-- TrueLicense XML：TrueLicense 的 XML 格式许可证序列化模块。 -->
             <dependency>
                 <groupId>de.schlichtherle.truelicense</groupId>
                 <artifactId>truelicense-xml</artifactId>
