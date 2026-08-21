@@ -9763,12 +9763,14 @@
                 <version>${undertow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.undertow/undertow-websockets-jsr -->
+            <!-- Undertow WebSockets JSR：Undertow 的 Jakarta WebSocket (JSR 356) 实现。 -->
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-websockets-jsr</artifactId>
                 <version>${undertow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.konghq/unirest-java-core -->
+            <!-- Unirest Java Core：Kong 开源的轻量级 HTTP 客户端库（Fluent API，自动 JSON 解析）。 -->
             <dependency>
                 <groupId>com.konghq</groupId>
                 <artifactId>unirest-java-core</artifactId>
