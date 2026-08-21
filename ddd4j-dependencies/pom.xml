@@ -6578,18 +6578,21 @@
                 <version>${nacos.client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.scijava/native-lib-loader -->
+            <!-- Native Lib Loader：SciJava 的 JNI 本地库加载器（跨平台加载 .so/.dll/.dylib）。 -->
             <dependency>
                 <groupId>org.scijava</groupId>
                 <artifactId>native-lib-loader</artifactId>
                 <version>${scijava-native.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.neethi/neethi -->
+            <!-- Apache Neethi：WS-Policy 规范的 Java 实现（Web 服务策略框架）。 -->
             <dependency>
                 <groupId>org.apache.neethi</groupId>
                 <artifactId>neethi</artifactId>
                 <version>${neethi.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.neo4j.driver/neo4j-java-driver -->
+            <!-- Neo4j Java Driver：Neo4j 图数据库官方 Java 驱动（Bolt 协议）。 -->
             <dependency>
                 <groupId>org.neo4j.driver</groupId>
                 <artifactId>neo4j-java-driver</artifactId>
