@@ -9596,18 +9596,21 @@
                 <version>${thymeleaf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.crypto.tink/tink -->
+            <!-- Google Tink：Google 开源的跨语言加密库（安全的加密、签名、MAC 封装）。 -->
             <dependency>
                 <groupId>com.google.crypto.tink</groupId>
                 <artifactId>tink</artifactId>
                 <version>${google-crypto-tink.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.tencentyun/tls-sig-api-v2 -->
+            <!-- 腾讯云 TLS 签名 API v2：腾讯云实时音视频服务的鉴权签名生成库。 -->
             <dependency>
                 <groupId>com.github.tencentyun</groupId>
                 <artifactId>tls-sig-api-v2</artifactId>
                 <version>${tencentcloud-tls-sig-api-v2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.isomorphism/token-bucket -->
+            <!-- Token Bucket：令牌桶限流算法的 Java 实现。 -->
             <dependency>
                 <groupId>org.isomorphism</groupId>
                 <artifactId>token-bucket</artifactId>
