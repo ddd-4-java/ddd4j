@@ -9166,24 +9166,28 @@
             </dependency>
             <!-- Spring Framework 核心组件需显式声明版本，覆盖 micronaut-platform 传递的旧版本 -->
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-aop -->
+            <!-- Spring AOP：Spring 框架的面向切面编程核心模块（代理、切面、通知等）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-beans -->
+            <!-- Spring Beans：Spring 框架的 Bean 容器核心（BeanFactory、Bean 定义、依赖注入）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-context -->
+            <!-- Spring Context：Spring 框架的 ApplicationContext 上下文模块（事件、资源、国际化等）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-core -->
+            <!-- Spring Core：Spring 框架的核心工具模块（资源加载、类型转换、环境抽象等）。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
