@@ -5335,12 +5335,14 @@
                 <version>${jsoup.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
+            <!-- JSqlParser：Java SQL 语句解析库，将 SQL 语句解析为可遍历的 AST（抽象语法树）。 -->
             <dependency>
                 <groupId>com.github.jsqlparser</groupId>
                 <artifactId>jsqlparser</artifactId>
                 <version>${jsqlparser.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
+            <!-- JSR-305 Annotations：Java 静态分析注解（@Nullable、@Nonnull、@CheckReturnValue 等）。 -->
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
