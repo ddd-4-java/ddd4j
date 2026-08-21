@@ -5018,18 +5018,21 @@
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-autoconfigure -->
+            <!-- JetCache Autoconfigure：JetCache 的 Spring Boot 自动配置模块。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-autoconfigure</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-core -->
+            <!-- JetCache Core：JetCache 分布式缓存框架核心，支持本地+远程二级缓存、缓存穿透保护等。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-core</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-redis-lettuce -->
+            <!-- JetCache Redis Lettuce：JetCache 使用 Lettuce 作为 Redis 缓存后端的实现。 -->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-redis-lettuce</artifactId>
