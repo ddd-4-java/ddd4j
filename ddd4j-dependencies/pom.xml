@@ -5230,12 +5230,14 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jooq/jooq-codegen -->
+            <!-- jOOQ Codegen：jOOQ 的代码生成工具，从数据库 Schema 自动生成 Java 数据库访问代码。 -->
             <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen</artifactId>
                 <version>${jooq.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jooq/jooq-meta -->
+            <!-- jOOQ Meta：jOOQ 的数据库元数据读取模块，用于 Schema 反向工程。 -->
             <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-meta</artifactId>
