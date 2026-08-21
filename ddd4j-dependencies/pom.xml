@@ -2083,37 +2083,42 @@
                 <version>${commons-validator.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-vfs2 -->
-            <!-- Apache Commons VFS is a Virtual File System library. VFS为访问各种不同的文件系统提供了单一的应用程序编程接口（API），大大的简化了应用程序本身代码的复杂度。 目前VFS支持FTP、Local Files 、HTTP/HTTPS、SFTP、Temporary Files、Zip、Jar/Tar（uncompressed、tgz or tbz2）、gzip/bzip2、res、ram 所有这些文件系统中的文件被封装成了FileObject这个类，文件的读写操作都通过此类来完成。文件的路径采用了URL的方式。 -->
+            <!-- Commons VFS2：虚拟文件系统库，提供统一的 API 访问 FTP、HTTP、SFTP、Zip 等多种文件系统。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-vfs2</artifactId>
                 <version>${commons-vfs2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/connect -->
+            <!-- Kafka Connect：Apache Kafka 数据集成框架，用于在 Kafka 和外部系统间流式传输数据。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>connect</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/connect-api -->
+            <!-- Kafka Connect API：Kafka Connect 框架的公共 API，定义 Connector、Task 等核心接口。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>connect-api</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/connect-basic-auth-extension -->
+            <!-- Kafka Connect Basic Auth Extension：Kafka Connect 的 HTTP Basic 认证扩展。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>connect-basic-auth-extension</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/connect-file -->
+            <!-- Kafka Connect File：将文件作为数据源（Source）和目标（Sink）连接到 Kafka。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>connect-file</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/connect-json -->
+            <!-- Kafka Connect JSON：Kafka Connect 的 JSON 转换器，支持 JSON 数据的 Schema 推断。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>connect-json</artifactId>
