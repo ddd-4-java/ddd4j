@@ -6147,18 +6147,21 @@
                 <version>${mariadb.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/markdown-clj/markdown-clj -->
+            <!-- markdown-clj：Clojure 编写的 Markdown 解析库（可在 Java 中调用）。 -->
             <dependency>
                 <groupId>markdown-clj</groupId>
                 <artifactId>markdown-clj</artifactId>
                 <version>${markdown.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor -->
+            <!-- Metadata Extractor：从图像/视频文件中提取 EXIF、IPTC、XMP 等元数据。 -->
             <dependency>
                 <groupId>com.drewnoakes</groupId>
                 <artifactId>metadata-extractor</artifactId>
                 <version>${metadata-extractor.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/metrics-biz -->
+            <!-- Easy4J Metrics Biz：Easy4J 的业务指标监控模块（QPS、延迟、错误率等）。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>metrics-biz</artifactId>
