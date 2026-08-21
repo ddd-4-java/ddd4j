@@ -5734,6 +5734,7 @@
                 <version>${libphonenumber.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.cloud/libraries-bom -->
+            <!-- Google Cloud Libraries BOM：Google Cloud 全家桶 SDK 的版本清单。 -->
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>libraries-bom</artifactId>
@@ -5742,6 +5743,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.liquibase/liquibase-cdi -->
+            <!-- Liquibase CDI：Liquibase 数据库版本管理工具的 CDI 集成模块。 -->
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-cdi</artifactId>
