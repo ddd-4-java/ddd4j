@@ -6909,6 +6909,7 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-epoll -->
+            <!-- Netty Transport Native Epoll Linux aarch64：Linux ARM64 的 epoll 传输 JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-epoll</artifactId>
@@ -6916,6 +6917,7 @@
                 <classifier>linux-aarch_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-epoll -->
+            <!-- Netty Transport Native Epoll Linux riscv64：Linux RISC-V 的 epoll 传输 JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-epoll</artifactId>
