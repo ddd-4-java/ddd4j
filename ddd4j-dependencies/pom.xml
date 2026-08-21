@@ -6925,6 +6925,7 @@
                 <classifier>linux-riscv64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-epoll -->
+            <!-- Netty Transport Native Epoll Linux x86_64：Linux x86_64 的 epoll 传输 JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-epoll</artifactId>
@@ -6932,6 +6933,7 @@
                 <classifier>linux-x86_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-kqueue -->
+            <!-- Netty Transport Native KQueue：macOS/BSD kqueue 传输的 JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-kqueue</artifactId>
