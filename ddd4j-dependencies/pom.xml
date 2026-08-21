@@ -6464,12 +6464,14 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-core -->
+            <!-- MyBatis-Plus Core：MyBatis-Plus 核心模块（BaseMapper、IService、条件构造器等）。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-core</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-extension -->
+            <!-- MyBatis-Plus Extension：MyBatis-Plus 扩展模块（分页插件、乐观锁、多租户等）。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
