@@ -3616,6 +3616,7 @@
                 <version>${fuin-cqrs4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/generator -->
+            <!-- Kafka Generator：Apache Kafka 的代码生成工具模块。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>generator</artifactId>
@@ -4080,6 +4081,7 @@
             <!-- Hibernate4 SQLite3 Dialect -->
             <!-- Source: https://mvnrepository.com/artifact/com.enigmabridge/hibernate4-sqlite-dialect -->
             <!-- Hibernate4 SQLite3 Dialect -->
+            <!-- Hibernate4 SQLite Dialect：Hibernate 4 的 SQLite 数据库方言实现。 -->
             <dependency>
                 <groupId>com.enigmabridge</groupId>
                 <artifactId>hibernate4-sqlite-dialect</artifactId>
