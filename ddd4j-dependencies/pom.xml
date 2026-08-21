@@ -7572,12 +7572,14 @@
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-library-pigpio -->
+            <!-- Pi4J pigpio：Pi4J 的 pigpio 守护进程通信库（高性能 GPIO 控制）。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-library-pigpio</artifactId>
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-plugin-gpiod -->
+            <!-- Pi4J Plugin GPIOd：Pi4J 的 GPIO 守护进程插件。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-plugin-gpiod</artifactId>
