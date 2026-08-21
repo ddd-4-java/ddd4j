@@ -7818,18 +7818,21 @@
                 <version>${pulsar-reactive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-reactive-jackson -->
+            <!-- Pulsar Reactive Jackson：Pulsar 响应式客户端的 Jackson 序列化支持。 -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client-reactive-jackson</artifactId>
                 <version>${pulsar-reactive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-reactive-producer-cache-caffeine -->
+            <!-- Pulsar Reactive Producer Cache Caffeine：Pulsar 响应式 Producer 的 Caffeine 缓存。 -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client-reactive-producer-cache-caffeine</artifactId>
                 <version>${pulsar-reactive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-reactive-producer-cache-caffeine-shaded -->
+            <!-- Pulsar Reactive Producer Cache Caffeine Shaded：Pulsar Producer 缓存的 shaded 版本。 -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client-reactive-producer-cache-caffeine-shaded</artifactId>
