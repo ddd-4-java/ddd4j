@@ -9842,18 +9842,21 @@
                 <version>${webjars-locator.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.webjars/webjars-locator-core -->
+            <!-- WebJars Locator Core：WebJars 资源定位器核心模块。 -->
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>webjars-locator-core</artifactId>
                 <version>${webjars-locator-core.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.webjars/webjars-locator-lite -->
+            <!-- WebJars Locator Lite：WebJars 资源定位器轻量版。 -->
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>webjars-locator-lite</artifactId>
                 <version>${webjars-locator-lite.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/websocket-api -->
+            <!-- Jetty WebSocket API：Jetty 的 WebSocket 编程接口。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>websocket-api</artifactId>
