@@ -6313,6 +6313,7 @@
                 <version>${minio.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-bom -->
+            <!-- Mockito BOM：Mockito 单元测试 Mock 框架各模块的版本清单。 -->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-bom</artifactId>
@@ -6321,6 +6322,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+            <!-- Mockito JUnit Jupiter：Mockito 与 JUnit 5 的集成扩展（自动初始化 Mock 注解）。 -->
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
