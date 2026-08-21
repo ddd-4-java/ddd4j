@@ -724,7 +724,6 @@
         <zxing.version>3.5.4</zxing.version>
 
         <!-- Maven Dependencies -->
-        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
         <commons-attributes-plugin.version>2.2</commons-attributes-plugin.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
         <maven-alibaba-plugin.version>1.1.9</maven-alibaba-plugin.version>
@@ -732,6 +731,7 @@
         <maven-appassembler-plugin.version>2.1.0</maven-appassembler-plugin.version>
         <maven-asciidoctor-plugin.version>3.0.0</maven-asciidoctor-plugin.version>
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
+        <maven-central-publishing-plugin.version>0.11.0</maven-central-publishing-plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
         <maven-clirr-plugin.version>2.8</maven-clirr-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
@@ -7798,7 +7798,7 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${central-publishing-maven-plugin.version}</version>
+                    <version>${maven-central-publishing-plugin.version}</version>
                     <extensions>true</extensions>
                     <configuration>
                         <publishingServerId>central</publishingServerId>
