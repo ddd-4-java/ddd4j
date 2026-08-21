@@ -6041,18 +6041,21 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-to-jul -->
+            <!-- Log4j to JUL：将 Log4j 2 日志调用转发到 java.util.logging (JUL) 实现。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-to-jul</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-to-slf4j -->
+            <!-- Log4j to SLF4J：将 Log4j 2 日志调用转发到 SLF4J 实现（用于 SLF4J 统一日志）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-to-slf4j</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-web -->
+            <!-- Log4j Web：Log4j 2 的 Servlet Web 集成（Web 应用日志上下文初始化）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-web</artifactId>
