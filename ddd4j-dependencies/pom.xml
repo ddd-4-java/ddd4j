@@ -8981,18 +8981,21 @@
                 <version>${snmp4j-agent.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.snmp4j/snmp4j-agent-db -->
+            <!-- SNMP4J Agent DB：SNMP4J Agent 的数据库持久化模块。 -->
             <dependency>
                 <groupId>org.snmp4j</groupId>
                 <artifactId>snmp4j-agent-db</artifactId>
                 <version>${snmp4j-agent.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/soapui-template -->
+            <!-- Easy4J SoapUI Template：Easy4J 的 SoapUI Web 服务测试模板工具。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>soapui-template</artifactId>
                 <version>${easy4j-soapui-template.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/soaputils -->
+            <!-- Easy4J SOAP Utils：Easy4J 的 SOAP Web 服务调用工具库。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>soaputils</artifactId>
