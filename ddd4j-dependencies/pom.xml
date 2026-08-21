@@ -5158,12 +5158,14 @@
                 <version>${jjwt.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
+            <!-- JJWT Impl：JJWT 的默认实现模块，提供 JWT 签名与解析的默认算法。 -->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-impl</artifactId>
                 <version>${jjwt.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson -->
+            <!-- JJWT Jackson：JJWT 的 Jackson 序列化实现模块，用于 JSON 序列化/反序列化 JWT 声明。 -->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId>
