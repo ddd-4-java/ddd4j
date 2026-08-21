@@ -1139,18 +1139,21 @@
                 <version>${awaitility.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.awaitility/awaitility-scala -->
+            <!-- Awaitility Scala：Awaitility 对 Scala DSL 的支持。 -->
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility-scala</artifactId>
                 <version>${awaitility.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-core -->
+            <!-- AWS Java SDK Core：AWS 各服务 Java SDK 的核心运行时（凭证、签名、重试、区域解析）。 -->
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-core</artifactId>
                 <version>${aws-java-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
+            <!-- AWS S3 Java SDK：亚马逊 S3 对象存储服务的 Java 客户端。 -->
             <dependency>
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-s3</artifactId>
