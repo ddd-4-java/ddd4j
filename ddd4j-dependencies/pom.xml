@@ -6281,6 +6281,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-bom -->
+            <!-- Reactor BOM：Project Reactor 响应式编程库的版本清单（Mono/Flux 核心及扩展）。 -->
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
@@ -6289,6 +6290,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.micronaut.platform/micronaut-platform -->
+            <!-- Micronaut Platform：Micronaut 微服务框架的平台 BOM（编译时 DI、云原生、GraalVM 支持）。 -->
             <dependency>
                 <groupId>io.micronaut.platform</groupId>
                 <artifactId>micronaut-platform</artifactId>
