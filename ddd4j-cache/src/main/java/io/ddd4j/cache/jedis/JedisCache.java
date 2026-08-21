@@ -1,7 +1,7 @@
 package io.ddd4j.cache.jedis;
 
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.*;
 import io.ddd4j.kit.lang.StrKit;
 import redis.clients.jedis.UnifiedJedis;

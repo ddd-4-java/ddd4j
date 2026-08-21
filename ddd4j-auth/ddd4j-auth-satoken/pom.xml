@@ -48,7 +48,7 @@
             <artifactId>hutool-all</artifactId>
         </dependency>
         <dependency>
-            <groupId>tools.jackson.core</groupId>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- Spring 相关自动配置已下沉到 ddd4j-runtime-spring / 下游项目，本模块保持纯 Java -->

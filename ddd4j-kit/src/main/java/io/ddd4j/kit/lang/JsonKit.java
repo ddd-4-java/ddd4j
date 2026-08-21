@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import tools.jackson.core.JsonGenerator;
-import tools.jackson.core.JsonParser;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.*;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import tools.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,13 +65,13 @@ public class JsonKit {
         // Jackson 3: JavaTimeInitializer is auto-registered; custom serializers use SimpleModule
         SimpleModule customDateModule = new SimpleModule();
         customDateModule.addSerializer(LocalDate.class,
-                new tools.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
+                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
         customDateModule.addDeserializer(LocalDate.class,
-                new tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
+                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
         customDateModule.addSerializer(LocalDateTime.class,
-                new tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
+                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
         customDateModule.addDeserializer(LocalDateTime.class,
-                new tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
+                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
 
         return JsonMapper.builder()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -103,17 +103,17 @@ public class JsonKit {
     public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
         SimpleModule customDateModule = new SimpleModule();
         customDateModule.addSerializer(LocalDate.class,
-                new tools.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
+                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
         customDateModule.addDeserializer(LocalDate.class,
-                new tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(datePattern)));
+                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(datePattern)));
         customDateModule.addSerializer(LocalDateTime.class,
-                new tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimePattern)));
+                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimePattern)));
         customDateModule.addDeserializer(LocalDateTime.class,
-                new tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimePattern)));
+                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimePattern)));
         customDateModule.addSerializer(LocalTime.class,
-                new tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer(DateTimeFormatter.ofPattern(timePattern)));
+                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalTimeSerializer(DateTimeFormatter.ofPattern(timePattern)));
         customDateModule.addDeserializer(LocalTime.class,
-                new tools.jackson.databind.ext.javatime.deser.LocalTimeDeserializer(DateTimeFormatter.ofPattern(timePattern)));
+                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalTimeDeserializer(DateTimeFormatter.ofPattern(timePattern)));
         customDateModule.addSerializer(Date.class, new ValueSerializer<Date>() {
             public void serialize(Date date, JsonGenerator jsonGenerator, SerializationContext ctxt) {
                 SimpleDateFormat formatter = new SimpleDateFormat(datePattern);

@@ -4,7 +4,7 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.data.crypto.enums.CryptoType;

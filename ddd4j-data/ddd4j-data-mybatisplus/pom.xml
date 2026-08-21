@@ -79,7 +79,7 @@
         </dependency>
         <!-- DefaultEncryptedFieldHandler 直接使用 ObjectMapper -->
         <dependency>
-            <groupId>tools.jackson.core</groupId>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- ======== Test ======== -->
