@@ -9137,12 +9137,14 @@
                 <version>${spring-pulsar.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.amqp/spring-rabbit -->
+            <!-- Spring Rabbit：Spring 框架的 RabbitMQ AMQP 客户端集成（模板、监听器容器等）。 -->
             <dependency>
                 <groupId>org.springframework.amqp</groupId>
                 <artifactId>spring-rabbit</artifactId>
                 <version>${spring-amqp.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/spring-security-extension2 -->
+            <!-- Easy4J Spring Security Extension 2：Easy4J 的 Spring Security 扩展增强模块 v2。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-security-extension2</artifactId>
