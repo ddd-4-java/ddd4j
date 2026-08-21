@@ -7876,12 +7876,14 @@
                 <version>${quartz.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz-jobs -->
+            <!-- Quartz Jobs：Quartz 的内置作业实现（NoOpJob、NativeJob 等）。 -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz-jobs</artifactId>
                 <version>${quartz.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.querydsl/querydsl-bom -->
+            <!-- QueryDSL BOM：QueryDSL 类型安全查询框架各模块的版本清单（JPA/JPA/MongoDB 等）。 -->
             <dependency>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-bom</artifactId>
