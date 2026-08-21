@@ -2242,48 +2242,56 @@
                 <version>${cssparser.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-client -->
+            <!-- Curator Client：ZooKeeper 官方 Java 客户端库 Apache Curator 的底层客户端。 -->
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-client</artifactId>
                 <version>${curator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-framework -->
+            <!-- Curator Framework：Curator 的高级 API 框架层，简化 ZooKeeper 分布式协调编程。 -->
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-framework</artifactId>
                 <version>${curator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-recipes -->
+            <!-- Curator Recipes：Curator 提供的高级分布式协调配方（Leader 选举、分布式锁、屏障等）。 -->
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-recipes</artifactId>
                 <version>${curator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-x-async -->
+            <!-- Curator X Async：Curator 的异步操作扩展。 -->
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-x-async</artifactId>
                 <version>${curator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-x-discovery -->
+            <!-- Curator X Discovery：Curator 提供基于 ZooKeeper 的服务发现实现。 -->
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-x-discovery</artifactId>
                 <version>${curator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-x-discovery-server -->
+            <!-- Curator X Discovery Server：Curator 服务发现的 REST 注册中心实现。 -->
             <dependency>
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-x-discovery-server</artifactId>
                 <version>${curator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-core -->
+            <!-- Apache CXF Core：Apache CXF Web 服务框架的核心模块。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-core</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-coloc -->
+            <!-- Apache CXF Coloc Binding：CXF 的同进程调用绑定。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-coloc</artifactId>
@@ -2291,36 +2299,42 @@
             </dependency>
             <!-- cxf-rt-bindings -->
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-corba -->
+            <!-- Apache CXF CORBA Binding：CXF 的 CORBA 协议绑定。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-corba</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-http -->
+            <!-- Apache CXF HTTP Binding：CXF 的 HTTP 传输绑定。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-http</artifactId>
                 <version>2.5.11</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-jbi -->
+            <!-- Apache CXF JBI Binding：CXF 的 JBI（Java 业务集成）协议绑定。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-jbi</artifactId>
                 <version>2.4.10</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-object -->
+            <!-- Apache CXF Object Binding：CXF 的本地对象调用绑定。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-object</artifactId>
                 <version>3.1.18</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-soap -->
+            <!-- Apache CXF SOAP Binding：CXF 的 SOAP 协议绑定。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-soap</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-xml -->
+            <!-- Apache CXF XML Binding：CXF 的纯 XML 协议绑定。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-bindings-xml</artifactId>
