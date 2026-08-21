@@ -5922,12 +5922,14 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-docker -->
+            <!-- Log4j Docker：Log4j 2 的 Docker 容器元数据注入模块（自动添加容器 ID/名称等）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-docker</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-flume-ng -->
+            <!-- Log4j Flume NG：Log4j 2 的 Apache Flume Appender（将日志发送到 Flume Agent）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-flume-ng</artifactId>
