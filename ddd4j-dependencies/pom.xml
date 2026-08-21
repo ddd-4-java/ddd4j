@@ -5697,6 +5697,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-bom -->
+            <!-- Kotlin Serialization BOM：Kotlin 序列化库的版本清单（JSON/CBOR/Protobuf 等格式）。 -->
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-serialization-bom</artifactId>
@@ -5705,6 +5706,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.kurrent/kurrentdb-client -->
+            <!-- KurrentDB Client：EventStoreDB（事件溯源数据库）的 Java 客户端。 -->
             <dependency>
                 <groupId>io.kurrent</groupId>
                 <artifactId>kurrentdb-client</artifactId>
