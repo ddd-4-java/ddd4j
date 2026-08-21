@@ -7427,18 +7427,21 @@
                 <version>${pagehelper.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.paimon/paimon-bundle -->
+            <!-- Apache Paimon：流式数据湖存储（支持 Flink/Spark 实时入湖和 CDC）。 -->
             <dependency>
                 <groupId>org.apache.paimon</groupId>
                 <artifactId>paimon-bundle</artifactId>
                 <version>${paimon.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.paimon/paimon-flink-2.2 -->
+            <!-- Apache Paimon Flink 2.2：Paimon 的 Flink 2.2 集成模块。 -->
             <dependency>
                 <groupId>org.apache.paimon</groupId>
                 <artifactId>paimon-flink-2.2</artifactId>
                 <version>${paimon.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.paymentwall/paymentwall-java -->
+            <!-- Paymentwall：全球支付网关 Java SDK（支持信用卡、PayPal、本地支付等）。 -->
             <dependency>
                 <groupId>com.paymentwall</groupId>
                 <artifactId>paymentwall-java</artifactId>
