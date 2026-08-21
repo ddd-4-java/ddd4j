@@ -8699,18 +8699,21 @@
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-config-core -->
+            <!-- Shiro Config Core：Apache Shiro 配置解析核心（INI 配置等）。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-core</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-core -->
+            <!-- Shiro Core：Apache Shiro 安全框架核心（Subject、Realm、Session 等）。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-crypto-core -->
+            <!-- Shiro Crypto Core：Apache Shiro 加密抽象模块。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-core</artifactId>
