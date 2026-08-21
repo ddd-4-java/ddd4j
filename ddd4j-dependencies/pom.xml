@@ -8573,12 +8573,14 @@
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-distsql-statement -->
+            <!-- ShardingSphere DistSQL Statement：ShardingSphere 的分布式 SQL 语句定义。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-distsql-statement</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-mysql -->
+            <!-- ShardingSphere SQL MySQL：ShardingSphere 的 MySQL SQL 解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-mysql</artifactId>
