@@ -10384,6 +10384,7 @@
             <scope>test</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
+        <!-- JUnit Jupiter：JUnit 5 测试框架聚合依赖（测试用）。 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
