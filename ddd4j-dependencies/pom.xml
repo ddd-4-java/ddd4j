@@ -9582,12 +9582,14 @@
                 <version>${thymeleaf-extras-springsecurity.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/nz.net.ultraq.thymeleaf/thymeleaf-layout-dialect -->
+            <!-- Thymeleaf Layout Dialect：Thymeleaf 的页面布局方言（模板继承和片段布局）。 -->
             <dependency>
                 <groupId>nz.net.ultraq.thymeleaf</groupId>
                 <artifactId>thymeleaf-layout-dialect</artifactId>
                 <version>${thymeleaf-layout-dialect.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf-spring6 -->
+            <!-- Thymeleaf Spring 6：Thymeleaf 与 Spring 6 WebMVC 的集成模块。 -->
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf-spring6</artifactId>
