@@ -7853,12 +7853,14 @@
                 <version>${qlexpress.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.binarywang/qrcode-utils -->
+            <!-- QRCode Utils：Java 二维码生成和解析工具库。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>qrcode-utils</artifactId>
                 <version>1.3</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom -->
+            <!-- Quarkus BOM：Quarkus 云原生 Java 框架各模块的版本清单。 -->
             <dependency>
                 <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-bom</artifactId>
@@ -7867,6 +7869,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
+            <!-- Quartz Scheduler：Java 企业级任务调度框架（Cron 触发、集群、持久化）。 -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
