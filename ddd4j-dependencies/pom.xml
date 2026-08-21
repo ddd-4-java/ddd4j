@@ -7128,12 +7128,14 @@
                 <version>${easy4j-opencli-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/opencode-java-sdk -->
+            <!-- Easy4J OpenCode SDK：Easy4J 封装的 OpenCode AI 代码助手 Java SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>opencode-java-sdk</artifactId>
                 <version>${easy4j-opencode-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/opencv-sdk -->
+            <!-- Easy4J OpenCV SDK：Easy4J 封装的 OpenCV 计算机视觉库 Java SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>opencv-sdk</artifactId>
