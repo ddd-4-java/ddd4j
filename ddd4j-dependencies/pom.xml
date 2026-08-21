@@ -6801,6 +6801,7 @@
                 <classifier>linux-x86_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative -->
+            <!-- Netty TCNative Linux x86_64 Fedora：Linux Fedora x86_64 的 BoringSSL/OpenSSL JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative</artifactId>
@@ -6808,6 +6809,7 @@
                 <classifier>linux-x86_64-fedora</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative -->
+            <!-- Netty TCNative Linux aarch64 Fedora：Linux Fedora ARM64 的 BoringSSL/OpenSSL JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative</artifactId>
