@@ -3257,96 +3257,112 @@
                 <version>${flowable.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-commandline -->
+            <!-- Flyway CLI：Flyway 数据库迁移的命令行工具。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-commandline</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+            <!-- Flyway Core：数据库版本迁移框架核心（SQL/Java 迁移脚本）。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-cassandra -->
+            <!-- Flyway Cassandra：Flyway 的 Cassandra 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-cassandra</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-db2 -->
+            <!-- Flyway DB2：Flyway 的 IBM DB2 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-db2</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-derby -->
+            <!-- Flyway Derby：Flyway 的 Apache Derby 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-derby</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-hsqldb -->
+            <!-- Flyway HSQLDB：Flyway 的 HSQLDB 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-hsqldb</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-informix -->
+            <!-- Flyway Informix：Flyway 的 IBM Informix 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-informix</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-mongodb -->
+            <!-- Flyway MongoDB：Flyway 的 MongoDB 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-mongodb</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-oracle -->
+            <!-- Flyway Oracle：Flyway 的 Oracle 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-oracle</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql -->
+            <!-- Flyway PostgreSQL：Flyway 的 PostgreSQL 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-postgresql</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-redshift -->
+            <!-- Flyway Redshift：Flyway 的 Amazon Redshift 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-redshift</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-saphana -->
+            <!-- Flyway SAP HANA：Flyway 的 SAP HANA 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-saphana</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-snowflake -->
+            <!-- Flyway Snowflake：Flyway 的 Snowflake 数据仓库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-snowflake</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-sybasease -->
+            <!-- Flyway Sybase ASE：Flyway 的 Sybase ASE 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-database-sybasease</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-firebird -->
+            <!-- Flyway Firebird：Flyway 的 Firebird 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-firebird</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-gcp-bigquery -->
+            <!-- Flyway GCP BigQuery：Flyway 的 Google Cloud BigQuery 支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-gcp-bigquery</artifactId>
