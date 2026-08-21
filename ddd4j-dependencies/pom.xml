@@ -8643,18 +8643,21 @@
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-mongo -->
+            <!-- ShedLock MongoDB：ShedLock 的 MongoDB 分布式锁存储实现。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-mongo</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-redis-jedis -->
+            <!-- ShedLock Redis Jedis：ShedLock 的 Redis Jedis 分布式锁存储实现。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-redis-jedis</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-redis-spring -->
+            <!-- ShedLock Redis Spring：ShedLock 的 Spring Data Redis 分布式锁存储实现。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-redis-spring</artifactId>
