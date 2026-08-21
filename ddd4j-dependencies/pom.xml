@@ -6757,12 +6757,14 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-resolver-dns-classes-macos -->
+            <!-- Netty Resolver DNS macOS Classes：Netty macOS 原生 DNS 解析器的 Java 类。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-resolver-dns-classes-macos</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-resolver-dns-native-macos -->
+            <!-- Netty Resolver DNS macOS Native：Netty macOS 原生 DNS 解析器 JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-resolver-dns-native-macos</artifactId>
