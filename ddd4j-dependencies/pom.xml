@@ -5780,18 +5780,21 @@
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-rule-sql -->
+            <!-- LiteFlow Rule SQL：LiteFlow 的数据库规则源适配器（支持从 SQL 数据库加载规则）。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-rule-sql</artifactId>
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-script-aviator -->
+            <!-- LiteFlow Script Aviator：LiteFlow 的 Aviator 脚本表达式支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-aviator</artifactId>
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-script-groovy -->
+            <!-- LiteFlow Script Groovy：LiteFlow 的 Groovy 脚本支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-groovy</artifactId>
