@@ -1766,66 +1766,70 @@
                 <version>${commons-compiler.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.codehaus.janino/commons-compiler-jdk -->
+            <!-- Commons Compiler JDK：Janino 编译器与 JDK javac 桥接模块。 -->
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>commons-compiler-jdk</artifactId>
                 <version>${janino.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+            <!-- Commons Compress：支持多种压缩归档格式（zip、tar、gz、7z、bzip2 等）的处理库。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>${commons-compress.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
-            <!-- Tools to assist in the reading of configuration/preferences files in various formats. -->
+            <!-- Commons Configuration：读取各种格式（Properties、XML、INI、JSON 等）配置文件的工具库。 -->
             <dependency>
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
                 <version>${commons-configuration.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
-            <!-- Tools to assist in the reading of configuration/preferences files in various formats -->
+            <!-- Commons Configuration 2：Commons Configuration 的 2.x 重写版本，提供统一的 ConfigurationBuilder API。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
                 <version>${commons-configuration2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-crypto -->
-            <!-- Apache Commons Crypto is a cryptographic library optimized with AES-NI (Advanced Encryption Standard New Instructions). -->
+            <!-- Commons Crypto：利用 AES-NI 硬件指令优化的高性能加密库。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-crypto</artifactId>
                 <version>${commons-crypto.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
-            <!-- The Apache Commons CSV library provides a sample interface for reading and writing CSV files of various types. -->
+            <!-- Commons CSV：CSV 格式文件读写库，支持 Excel、RFC4180、PostgreSQL 等多种方言。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>${commons-csv.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-daemon/commons-daemon -->
-            <!-- Apache Commons Daemon software provides an alternative invocation mechanism for unix-daemon-like Java code. 创建类似unix守护线程的java代码，可以安全地执行一些后台操作，线程不被某个应用程序控制，而是由操作系统控制类似windows的service， 可以设置一个服务依赖于另一个服务，一个服务关闭前必须先执行另一个服务。 -->
+            <!-- Commons Daemon：跨平台 Unix/Windows 守护进程调用库，用于将 Java 程序作为服务/守护进程运行。 -->
             <dependency>
                 <groupId>commons-daemon</groupId>
                 <artifactId>commons-daemon</artifactId>
                 <version>${commons-daemon.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/commons-dbcp/commons-dbcp -->
+            <!-- Commons DBCP：基于 Commons Pool 的 JDBC 数据库连接池实现（1.x 旧版）。 -->
             <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>${commons-dbcp.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
+            <!-- Commons DBCP2：基于 Commons Pool2 的 JDBC 数据库连接池（推荐版本）。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
                 <version>${commons-dbcp2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-dbutils/commons-dbutils -->
-            <!-- The Apache Commons DbUtils package is a set of Java utility classes for easing JDBC development. -->
+            <!-- Commons DbUtils：简化 JDBC 操作的轻量级工具库（QueryRunner、ResultSetHandler 等）。 -->
             <dependency>
                 <groupId>commons-dbutils</groupId>
                 <artifactId>commons-dbutils</artifactId>
@@ -1833,46 +1837,49 @@
             </dependency>
             <!-- Digester 是一个基于规则的XML文档解析库,主要用于XML到Java对象的映射。Struts就是用Digester来处理XML配置文件的。而且Digester还包含一个写好的RSS解析器。 -->
             <!-- Source: https://mvnrepository.com/artifact/commons-digester/commons-digester -->
-            <!-- Digester 是一个基于规则的XML文档解析库,主要用于XML到Java对象的映射。Struts就是用Digester来处理XML配置文件的。而且Digester还包含一个写好的RSS解析器。 -->
+            <!-- Commons Digester：基于规则的 XML 到 Java 对象映射库，通过模式匹配触发动作。 -->
             <dependency>
                 <groupId>commons-digester</groupId>
                 <artifactId>commons-digester</artifactId>
                 <version>${commons-digester.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-digester3 -->
-            <!-- The Apache Commons Digester package lets you configure an XML to Java object mapping module which triggers certain actions called rules whenever a particular pattern of nested XML elements is recognized. -->
+            <!-- Commons Digester 3：Commons Digester 的 2.x 重写版本，支持注解和现代 XML 解析。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-digester3</artifactId>
                 <version>${commons-digester3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-discovery/commons-discovery -->
-            <!-- The Apache Commons Discovery component is about discovering, or finding, implementations for pluggable interfaces. -->
+            <!-- Commons Discovery：通过 META-INF/services 机制查找可插拔接口实现的库。 -->
             <dependency>
                 <groupId>commons-discovery</groupId>
                 <artifactId>commons-discovery</artifactId>
                 <version>${commons-discovery.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
-            <!-- Apache Commons Email aims to provide an API for sending email. It is built on top of the JavaMail API, which it aims to simplify. -->
+            <!-- Commons Email：基于 JavaMail API 的简化邮件发送库。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-email</artifactId>
                 <version>${commons-email.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email2-core -->
+            <!-- Commons Email 2 Core：Commons Email 2.x 核心模块，与 Jakarta Mail 兼容。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-email2-core</artifactId>
                 <version>${commons-email2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email2-jakarta -->
+            <!-- Commons Email 2 Jakarta：Commons Email 2.x 的 Jakarta Mail 实现。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-email2-jakarta</artifactId>
                 <version>${commons-email2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email2-javax -->
+            <!-- Commons Email 2 Javax：Commons Email 2.x 的 Javax Mail 实现（兼容旧版）。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-email2-javax</artifactId>
@@ -1880,7 +1887,7 @@
             </dependency>
             <!-- Apache Commons Exec 是 Apache 上的一个 Java 项目，提供一些常用的方法用来执行外部进程 -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-exec -->
-            <!-- Apache Commons Exec 是 Apache 上的一个 Java 项目，提供一些常用的方法用来执行外部进程 -->
+            <!-- Commons Exec：在 Java 程序中执行外部进程的 API，支持同步、异步、超时和退出码处理。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-exec</artifactId>
