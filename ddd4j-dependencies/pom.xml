@@ -7010,12 +7010,14 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-sctp -->
+            <!-- Netty Transport SCTP：Netty 的 SCTP（流控制传输协议）传输实现。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-sctp</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-udt -->
+            <!-- Netty Transport UDT：Netty 的 UDT（UDP-based Data Transfer）高速传输实现。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-udt</artifactId>
