@@ -2154,25 +2154,28 @@
             </dependency>
             <!-- ContiPerf是一个轻量级的测试工具，基于JUnit 4 开发，可用于效率测试等。 -->
             <!-- Source: https://mvnrepository.com/artifact/org.databene/contiperf -->
-            <!-- ContiPerf是一个轻量级的测试工具，基于JUnit 4 开发，可用于效率测试等。 -->
+            <!-- ContiPerf：轻量级性能压测工具，基于 JUnit 4，用于编写效率和性能基准测试。 -->
             <dependency>
                 <groupId>org.databene</groupId>
                 <artifactId>contiperf</artifactId>
                 <version>${contiperf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.zxing/core -->
+            <!-- ZXing Core：1D/2D 条形码图像处理核心库（QR Code、Code128、EAN 等）。 -->
             <dependency>
                 <groupId>com.google.zxing</groupId>
                 <artifactId>core</artifactId>
                 <version>${zxing.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/cos -->
+            <!-- Easy4J COS：Easy4J 对腾讯云 COS 对象存储的封装 SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>cos</artifactId>
                 <version>${easy4j-cos.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.qcloud/cos_api -->
+            <!-- 腾讯云 COS API：腾讯云对象存储 COS 的 Java 客户端 SDK。 -->
             <dependency>
                 <groupId>com.qcloud</groupId>
                 <artifactId>cos_api</artifactId>
