@@ -6599,12 +6599,14 @@
                 <version>${neo4j-java-driver.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-all -->
+            <!-- Netty All：Netty 全模块聚合包（异步事件驱动网络框架）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-bom -->
+            <!-- Netty BOM：Netty 网络框架各模块的版本清单（Buffer/Codec/Transport/Handler 等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
