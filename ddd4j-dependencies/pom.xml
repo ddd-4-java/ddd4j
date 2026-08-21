@@ -7179,12 +7179,14 @@
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3 -->
+            <!-- Eclipse Paho MQTT v3：Eclipse Paho 的 MQTT 3.1.1 客户端实现。 -->
             <dependency>
                 <groupId>org.eclipse.paho</groupId>
                 <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
                 <version>${paho-mqttv3.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.mqttv5.client -->
+            <!-- Eclipse Paho MQTT v5：Eclipse Paho 的 MQTT 5.0 客户端实现。 -->
             <dependency>
                 <groupId>org.eclipse.paho</groupId>
                 <artifactId>org.eclipse.paho.mqttv5.client</artifactId>
