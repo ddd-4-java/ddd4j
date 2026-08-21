@@ -8352,18 +8352,21 @@
                 <version>${schemacrawler-oracle.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-postgresql -->
+            <!-- SchemaCrawler PostgreSQL：SchemaCrawler 的 PostgreSQL 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-postgresql</artifactId>
                 <version>${schemacrawler-postgresql.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-sapiq -->
+            <!-- SchemaCrawler SAPIQ：SchemaCrawler 的 SAP IQ 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-sapiq</artifactId>
                 <version>${schemacrawler-sapiq.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-scripting -->
+            <!-- SchemaCrawler Scripting：SchemaCrawler 的脚本扩展模块（支持 Groovy/JavaScript 等）。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-scripting</artifactId>
