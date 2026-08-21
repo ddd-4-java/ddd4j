@@ -9327,12 +9327,14 @@
                 <version>${webjars.stomp-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.rabbitmq/stream-client -->
+            <!-- RabbitMQ Stream Client：RabbitMQ 流协议的 Java 客户端（高性能持久化流）。 -->
             <dependency>
                 <groupId>com.rabbitmq</groupId>
                 <artifactId>stream-client</artifactId>
                 <version>${rabbit-stream-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/sunposition -->
+            <!-- SunPosition：太阳位置计算库（日出日落时间、太阳高度角/方位角）。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>sunposition</artifactId>
