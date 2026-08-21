@@ -6494,18 +6494,21 @@
             </dependency>
             <!-- jdk 8+ 引入可选模块 -->
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-jsqlparser-4.9 -->
+            <!-- MyBatis-Plus JSqlParser 4.9：MyBatis-Plus 的 JSqlParser 4.9 适配模块（JDK 8+）。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/pro.chenggang/mybatis-r2dbc -->
+            <!-- MyBatis R2DBC：MyBatis 的 R2DBC 响应式数据库连接支持。 -->
             <dependency>
                 <groupId>pro.chenggang</groupId>
                 <artifactId>mybatis-r2dbc</artifactId>
                 <version>${mybatis-r2dbc.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-redis -->
+            <!-- MyBatis Redis Cache：MyBatis 的 Redis 缓存实现（二级缓存）。 -->
             <dependency>
                 <groupId>org.mybatis.caches</groupId>
                 <artifactId>mybatis-redis</artifactId>
