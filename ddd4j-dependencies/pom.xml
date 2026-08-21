@@ -9411,12 +9411,14 @@
                 <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
+            <!-- Swagger JAX-RS：Swagger 对 JAX-RS REST 框架的自动扫描集成。 -->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jaxrs</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-jersey-jaxrs -->
+            <!-- Swagger Jersey JAX-RS：Swagger 对 Jersey (JAX-RS) 框架的深度集成。 -->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jersey-jaxrs</artifactId>
