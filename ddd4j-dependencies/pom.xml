@@ -5457,18 +5457,21 @@
                 <version>${jwt-issuer.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/jwt-issuer-with-jjwt -->
+            <!-- JWT Issuer with JJWT：基于 JJWT 库的 JWT 颁发器实现。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>jwt-issuer-with-jjwt</artifactId>
                 <version>${jwt-issuer.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/jwt-issuer-with-nimbus -->
+            <!-- JWT Issuer with Nimbus：基于 Nimbus JOSE+JWT 的 JWT 颁发器实现。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>jwt-issuer-with-nimbus</artifactId>
                 <version>${jwt-issuer.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
+            <!-- JExcelAPI：纯 Java 的 Excel 读写库（.xls 格式，不支持 .xlsx）。 -->
             <dependency>
                 <groupId>net.sourceforge.jexcelapi</groupId>
                 <artifactId>jxl</artifactId>
