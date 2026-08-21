@@ -7462,18 +7462,21 @@
                 <version>${paypal-server-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
+            <!-- Apache PDFBox：PDF 文档解析、创建、渲染和数字签名的纯 Java 库。 -->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
                 <version>${pdfbox.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-debugger -->
+            <!-- PDFBox Debugger：PDFBox 的 PDF 文档结构调试查看器。 -->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox-debugger</artifactId>
                 <version>${pdfbox.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-tools -->
+            <!-- PDFBox Tools：PDFBox 的命令行工具集（PDF 转图片、文本提取等）。 -->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox-tools</artifactId>
