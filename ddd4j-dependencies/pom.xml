@@ -7644,12 +7644,14 @@
             <!-- PNG Encoder 是一个 Java 类，用来将图像保存为 PNG 格式，该项目只包含两个 java 文件 -->
             <!-- Source: https://mvnrepository.com/artifact/com.keypoint/png-encoder -->
             <!-- PNG Encoder 是一个 Java 类，用来将图像保存为 PNG 格式，该项目只包含两个 java 文件 -->
+            <!-- PNG Encoder：轻量级 Java 图像保存为 PNG 格式的工具类。 -->
             <dependency>
                 <groupId>com.keypoint</groupId>
                 <artifactId>png-encoder</artifactId>
                 <version>${png-encoder.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+            <!-- Apache POI：Java 读写 Microsoft Office 格式文件（XLS/XLSX/DOC/DOCX/PPT/PPTX）。 -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
