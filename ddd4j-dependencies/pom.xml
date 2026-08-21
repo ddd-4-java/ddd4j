@@ -5936,18 +5936,21 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-iostreams -->
+            <!-- Log4j IOStreams：Log4j 2 的 IO 流包装模块（将 System.out/err 重定向到日志）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-iostreams</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jakarta-smtp -->
+            <!-- Log4j Jakarta SMTP：Log4j 2 的 Jakarta Mail SMTP Appender（发送日志邮件）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jakarta-smtp</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jakarta-web -->
+            <!-- Log4j Jakarta Web：Log4j 2 的 Jakarta Servlet Web 集成（Web 请求日志）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jakarta-web</artifactId>
