@@ -5279,18 +5279,21 @@
                 <version>${json-path.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path-assert -->
+            <!-- JsonPath Assert：Jayway JsonPath 的测试断言工具（配合 AssertJ 使用）。 -->
             <dependency>
-                <groupId>com.jayway.jsonpath</groupId>
+                <groupId>com.github.java-json-tools</groupId>
                 <artifactId>json-path-assert</artifactId>
                 <version>${json-path.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.java-json-tools/json-schema-validator -->
+            <!-- JSON Schema Validator：基于 JSON Schema 规范的 JSON 数据验证库。 -->
             <dependency>
                 <groupId>com.github.java-json-tools</groupId>
                 <artifactId>json-schema-validator</artifactId>
                 <version>${json-schema-validator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.minidev/json-smart -->
+            <!-- JSON Smart：轻量级高性能 JSON 解析库，比 org.json 更快。 -->
             <dependency>
                 <groupId>net.minidev</groupId>
                 <artifactId>json-smart</artifactId>
