@@ -2584,42 +2584,49 @@
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-ws-eventing -->
+            <!-- Apache CXF WS-Eventing：CXF 对 WS-Eventing 规范的支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-eventing</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-ws-mex -->
+            <!-- Apache CXF WS-MetadataExchange：CXF 对 WS-MEX 规范的支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-mex</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-ws-policy -->
+            <!-- Apache CXF WS-Policy：CXF 对 WS-Policy 规范的支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-policy</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-ws-rm -->
+            <!-- Apache CXF WS-ReliableMessaging：CXF 对 WS-RM（可靠消息传递）规范的支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-rm</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-ws-security -->
+            <!-- Apache CXF WS-Security：CXF 对 WS-Security（SOAP 消息安全）规范的支持。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-security</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.clojars.xumh/db-meta -->
+            <!-- DB Meta：基于 Active Record 模式的 Java ORM 库。 -->
             <dependency>
                 <groupId>org.clojars.xumh</groupId>
                 <artifactId>db-meta</artifactId>
                 <version>${db-meta.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.debezium/debezium-bom -->
+            <!-- Debezium BOM：Debezium 变更数据捕获（CDC）平台的版本清单，统一管理 Debezium 组件版本。 -->
             <dependency>
                 <groupId>io.debezium</groupId>
                 <artifactId>debezium-bom</artifactId>
@@ -2628,6 +2635,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.spring.gradle/dependency-management-plugin -->
+            <!-- Spring Dependency Management Plugin：在 Gradle 中提供 Maven 风格的依赖管理。 -->
             <dependency>
                 <groupId>io.spring.gradle</groupId>
                 <artifactId>dependency-management-plugin</artifactId>
