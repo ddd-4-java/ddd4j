@@ -9812,12 +9812,14 @@
                 <version>${velocity.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity-engine-scripting -->
+            <!-- Velocity Engine Scripting：Velocity 模板引擎的脚本语言集成模块。 -->
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity-engine-scripting</artifactId>
                 <version>${velocity.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.vertx/vertx-stack-depchain -->
+            <!-- Vert.x Stack：Eclipse Vert.x 响应式应用框架各模块的依赖链 BOM。 -->
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-stack-depchain</artifactId>
