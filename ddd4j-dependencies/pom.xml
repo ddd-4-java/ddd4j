@@ -9467,12 +9467,14 @@
                 <version>${webjars.swagger-ui.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.swagger2markup/swagger2markup -->
+            <!-- Swagger2Markup：将 Swagger/OpenAPI 文档转换为 Markdown/AsciiDoc 格式。 -->
             <dependency>
                 <groupId>io.github.swagger2markup</groupId>
                 <artifactId>swagger2markup</artifactId>
                 <version>${swagger2markup.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core -->
+            <!-- Tablesaw：Java 数据分析和可视化库（类似 Python Pandas 的 DataFrame API）。 -->
             <dependency>
                 <groupId>tech.tablesaw</groupId>
                 <artifactId>tablesaw-core</artifactId>
