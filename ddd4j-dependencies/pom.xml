@@ -8720,18 +8720,21 @@
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-crypto-hash -->
+            <!-- Shiro Crypto Hash：Apache Shiro 的哈希/摘要算法模块。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-hash</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-dingtalk-core -->
+            <!-- Easy4J Shiro DingTalk Core：Easy4J 的 Shiro 钉钉登录集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-dingtalk-core</artifactId>
                 <version>${easy4j-shiro-dingtalk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-dingtalk-spring -->
+            <!-- Easy4J Shiro DingTalk Spring：Easy4J 的 Shiro 钉钉登录 Spring 集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-dingtalk-spring</artifactId>
