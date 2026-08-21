@@ -4599,6 +4599,7 @@
                 <version>imagej-ui-swing-1.0.1</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/imap -->
+            <!-- Eclipse Angus IMAP：Jakarta Mail 的 IMAP 协议实现。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>imap</artifactId>
