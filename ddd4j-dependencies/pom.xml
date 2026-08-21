@@ -7260,12 +7260,14 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-extension-core -->
+            <!-- Easy4J Pac4j Extension Core：Easy4J 对 Pac4j 安全框架的核心扩展。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-extension-core</artifactId>
                 <version>${easy4j-pac4j-extension-core.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-extension-spring -->
+            <!-- Easy4J Pac4j Extension Spring：Easy4J 对 Pac4j 安全框架的 Spring 集成扩展。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-extension-spring</artifactId>
