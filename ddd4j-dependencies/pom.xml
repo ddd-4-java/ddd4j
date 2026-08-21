@@ -6787,6 +6787,7 @@
                 <classifier>osx-aarch_64</classifier>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.corundumstudio.socketio/netty-socketio -->
+            <!-- Netty-SocketIO：基于 Netty 的 Socket.IO 服务端实现（实时双向通信）。 -->
             <dependency>
                 <groupId>com.corundumstudio.socketio</groupId>
                 <artifactId>netty-socketio</artifactId>
