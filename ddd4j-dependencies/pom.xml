@@ -4788,30 +4788,35 @@
                 <version>${zxing.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.javassist/javassist -->
+            <!-- Javassist：强大的 Java 字节码编辑库，支持运行时修改类结构。 -->
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/javassist-extension -->
+            <!-- Easy4J Javassist Extension：Easy4J 对 Javassist 的扩展增强库。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>javassist-extension</artifactId>
                 <version>${easy4j-javassist-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/javassist-plus -->
+            <!-- Javassist Plus：旧坐标下的 Javassist 扩展（已迁至 io.github.easy4j）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>javassist-plus</artifactId>
                 <version>${javassist-plus.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-client-impl -->
+            <!-- Jetty WebSocket Client Impl：Jetty 对 javax.websocket 客户端的实现。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>javax-websocket-client-impl</artifactId>
                 <version>${jetty-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-server-impl -->
+            <!-- Jetty WebSocket Server Impl：Jetty 对 javax.websocket 服务端的实现。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>javax-websocket-server-impl</artifactId>
