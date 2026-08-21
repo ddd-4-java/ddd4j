@@ -4860,12 +4860,14 @@
                 <version>${jasypt.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.couchbase.client/java-client -->
+            <!-- Couchbase Java Client：Couchbase NoSQL 文档数据库官方 Java SDK。 -->
             <dependency>
                 <groupId>com.couchbase.client</groupId>
                 <artifactId>java-client</artifactId>
                 <version>${couchbase-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.appium/java-client -->
+            <!-- Appium Java Client：Appium 移动端自动化测试框架的 Java 客户端。 -->
             <dependency>
                 <groupId>io.appium</groupId>
                 <artifactId>java-client</artifactId>
