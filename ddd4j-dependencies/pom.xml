@@ -5387,18 +5387,21 @@
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
+            <!-- JUnit Jupiter Params：JUnit 5 的参数化测试支持（@ParameterizedTest）。 -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.junit.platform/junit-platform-commons -->
+            <!-- JUnit Platform Commons：JUnit 平台的通用工具模块（反射、类加载等）。 -->
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-commons</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.junit.platform/junit-platform-engine -->
+            <!-- JUnit Platform Engine：JUnit 平台的测试引擎发现和执行框架。 -->
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-engine</artifactId>
