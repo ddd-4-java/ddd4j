@@ -10176,18 +10176,21 @@
                 <version>${xmlunit2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.xmlunit/xmlunit-legacy -->
+            <!-- XMLUnit Legacy：XMLUnit 的旧版 API 兼容模块。 -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-legacy</artifactId>
                 <version>${xmlunit2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.xmlunit/xmlunit-matchers -->
+            <!-- XMLUnit Matchers：XMLUnit 的 Hamcrest 匹配器集成。 -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-matchers</artifactId>
                 <version>${xmlunit2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.xmlunit/xmlunit-placeholders -->
+            <!-- XMLUnit Placeholders：XMLUnit 的占位符匹配支持（动态值忽略）。 -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-placeholders</artifactId>
