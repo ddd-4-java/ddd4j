@@ -9313,12 +9313,14 @@
                 <version>1.0-2</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.codehaus.woodstox/stax2-api -->
+            <!-- StAX2 API：Woodstox 高性能 XML 解析器的扩展 StAX API。 -->
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>stax2-api</artifactId>
                 <version>${woodstox-stax2-api.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.webjars.bower/stomp-websocket -->
+            <!-- STOMP over WebSocket：STOMP 消息协议的 WebSocket 浏览器客户端（WebJars）。 -->
             <dependency>
                 <groupId>org.webjars.bower</groupId>
                 <artifactId>stomp-websocket</artifactId>
