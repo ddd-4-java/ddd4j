@@ -5750,12 +5750,14 @@
                 <version>${liquibase.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
+            <!-- Liquibase Core：数据库 Schema 版本管理工具，支持 SQL/XML/YAML/JSON 变更脚本。 -->
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
                 <version>${liquibase.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-core -->
+            <!-- LiteFlow：国产轻量级规则引擎/流程编排框架，支持组件热插拔。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-core</artifactId>
