@@ -8443,12 +8443,14 @@
                 <version>${scribejava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.scribejava/scribejava-httpclient-ning -->
+            <!-- ScribeJava Ning：ScribeJava 的 Ning AsyncHttpClient 集成。 -->
             <dependency>
                 <groupId>com.github.scribejava</groupId>
                 <artifactId>scribejava-httpclient-ning</artifactId>
                 <version>${scribejava.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.scribejava/scribejava-httpclient-okhttp -->
+            <!-- ScribeJava OkHttp：ScribeJava 的 OkHttp 集成。 -->
             <dependency>
                 <groupId>com.github.scribejava</groupId>
                 <artifactId>scribejava-httpclient-okhttp</artifactId>
