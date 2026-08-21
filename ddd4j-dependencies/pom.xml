@@ -2708,6 +2708,7 @@
                 <version>${easy4j-dingtalk-sdk-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.lmax/disruptor -->
+            <!-- LMAX Disruptor：超高性能线程间消息传递库（无锁环形缓冲区，纳秒级延迟）。 -->
             <dependency>
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
@@ -3161,30 +3162,35 @@
                 <version>2.0.235-1</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.flink/flink-cdc-common -->
+            <!-- Flink CDC Common：Apache Flink CDC（变更数据捕获）公共模块。 -->
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-cdc-common</artifactId>
                 <version>${flink-cdc.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.flink/flink-clients -->
+            <!-- Flink Clients：Apache Flink 的客户端模块（提交作业、获取结果等）。 -->
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-clients</artifactId>
                 <version>${flink.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.flink/flink-core -->
+            <!-- Flink Core：Apache Flink 流处理框架核心模块（算子、状态、窗口等）。 -->
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-core</artifactId>
                 <version>${flink.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.flink/flink-runtime -->
+            <!-- Flink Runtime：Apache Flink 的作业运行时模块（任务调度、状态管理、容错等）。 -->
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-runtime</artifactId>
                 <version>${flink.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.flink/flink-streaming-java -->
+            <!-- Flink Streaming Java：Apache Flink 的 Java 流处理 API（DataStream API）。 -->
             <dependency>
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-streaming-java</artifactId>
