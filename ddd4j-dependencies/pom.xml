@@ -9645,6 +9645,7 @@
                 <version>${tomcat.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jdbc -->
+            <!-- Tomcat JDBC：Apache Tomcat 的高性能 JDBC 连接池实现。 -->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
