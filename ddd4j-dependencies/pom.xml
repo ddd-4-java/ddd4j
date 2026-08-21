@@ -10221,24 +10221,28 @@
                 <version>${xxl-job.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/xxljob-extension -->
+            <!-- Easy4J XXL-Job Extension：Easy4J 对 XXL-Job 分布式任务调度平台的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>xxljob-extension</artifactId>
                 <version>${easy4j-xxljob-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse/yasson -->
+            <!-- Eclipse Yasson：Jakarta JSON Binding (JSON-B) 的参考实现（JSON 序列化/反序列化）。 -->
             <dependency>
                 <groupId>org.eclipse</groupId>
                 <artifactId>yasson</artifactId>
                 <version>${yasson.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
+            <!-- Zip4j：纯 Java ZIP 压缩/解压缩库（支持加密、分卷、AES-256）。 -->
             <dependency>
                 <groupId>net.lingala.zip4j</groupId>
                 <artifactId>zip4j</artifactId>
                 <version>${zip4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.zipkin.reporter2/zipkin-reporter-bom -->
+            <!-- Zipkin Reporter BOM：Zipkin 追踪数据上报器各模块的版本清单。 -->
             <dependency>
                 <groupId>io.zipkin.reporter2</groupId>
                 <artifactId>zipkin-reporter-bom</artifactId>
