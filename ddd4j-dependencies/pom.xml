@@ -8755,18 +8755,21 @@
                 <version>${easy4j-shiro-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.mingsoft/shiro-freemarker-tags -->
+            <!-- Shiro Freemarker Tags：Apache Shiro 的 FreeMarker 模板权限标签库。 -->
             <dependency>
                 <groupId>net.mingsoft</groupId>
                 <artifactId>shiro-freemarker-tags</artifactId>
                 <version>${shiro-freemarker.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-hazelcast -->
+            <!-- Shiro Hazelcast：Apache Shiro 的 Hazelcast 分布式缓存会话存储。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-hazelcast</artifactId>
                 <version>${shiro-hazelcast.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-j2cache -->
+            <!-- Easy4J Shiro J2Cache：Easy4J 的 Shiro J2Cache 二级缓存集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-j2cache</artifactId>
