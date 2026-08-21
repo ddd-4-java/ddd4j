@@ -5629,6 +5629,7 @@
                 <version>${kaptcha.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.keycloak/keycloak-admin-client -->
+            <!-- Keycloak Admin Client：Keycloak 身份认证服务的管理 REST API 客户端。 -->
             <dependency>
                 <groupId>org.keycloak</groupId>
                 <artifactId>keycloak-admin-client</artifactId>
@@ -5636,7 +5637,7 @@
             </dependency>
             <!-- JDBC Driver For KingBase8 -->
             <!-- Source: https://mvnrepository.com/artifact/com.kingbase8.jdbc/kingbase8 -->
-            <!-- JDBC Driver For KingBase8 -->
+            <!-- KingBase8 JDBC Driver：人大金仓数据库 KingbaseES 的 JDBC 驱动。 -->
             <dependency>
                 <groupId>com.kingbase8.jdbc</groupId>
                 <artifactId>kingbase8</artifactId>
