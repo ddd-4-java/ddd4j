@@ -5244,18 +5244,21 @@
                 <version>${jooq.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/cn.jpush.api/jpush-client -->
+            <!-- 极光推送客户端：极光 JPush 推送服务的 Java 客户端 SDK。 -->
             <dependency>
                 <groupId>cn.jpush.api</groupId>
                 <artifactId>jpush-client</artifactId>
                 <version>${jpush-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.mwiede/jsch -->
+            <!-- JSch（mwiede 维护分支）：纯 Java SSH2 实现，支持 SCP/SFTP/端口转发等。 -->
             <dependency>
                 <groupId>com.github.mwiede</groupId>
                 <artifactId>jsch</artifactId>
                 <version>${jsch.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.json/json -->
+            <!-- org.json：参考实现的 Java JSON 库（JSONObject/JSONArray）。 -->
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
