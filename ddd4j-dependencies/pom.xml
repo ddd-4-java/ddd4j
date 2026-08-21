@@ -8174,12 +8174,14 @@
                 <version>${rocketmq-acl.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-client -->
+            <!-- Apache RocketMQ Client：RocketMQ 的生产者/消费者客户端。 -->
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-client</artifactId>
                 <version>${rocketmq-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-common -->
+            <!-- Apache RocketMQ Common：RocketMQ 的公共工具模块。 -->
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-common</artifactId>
