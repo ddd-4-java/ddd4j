@@ -4011,24 +4011,28 @@
                 <version>${hazelcast.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.hazelcast/hazelcast-spring -->
+            <!-- Hazelcast Spring：Hazelcast 与 Spring 框架的集成模块。 -->
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast-spring</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-client -->
+            <!-- HBase Client：Apache HBase 分布式列式数据库的 Java 客户端。 -->
             <dependency>
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-client</artifactId>
                 <version>${hbase.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-protocol -->
+            <!-- HBase Protocol：Apache HBase 的 Protobuf 通信协议定义。 -->
             <dependency>
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-protocol</artifactId>
                 <version>${hbase.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.hdrhistogram/HdrHistogram -->
+            <!-- HdrHistogram：高动态范围直方图库（纳秒级延迟统计，用于性能监控）。 -->
             <dependency>
                 <groupId>org.hdrhistogram</groupId>
                 <artifactId>HdrHistogram</artifactId>
