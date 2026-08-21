@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.1.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
-    <modelVersion>4.1.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-parent</artifactId>
@@ -21,33 +21,33 @@
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
-    <subprojects>
+    <modules>
         <!-- 跨运行时共享的生产型订单业务内核 -->
-        <subproject>ddd4j-sample-order-domain</subproject>
-        <subproject>ddd4j-sample-order-application</subproject>
-        <subproject>ddd4j-sample-order-local</subproject>
-        <subproject>ddd4j-sample-order-testkit</subproject>
-        <subproject>ddd4j-sample-order-jdbc</subproject>
-        <subproject>ddd4j-sample-order-kafka</subproject>
-        <subproject>ddd4j-sample-order-redis</subproject>
+        <module>ddd4j-sample-order-domain</module>
+        <module>ddd4j-sample-order-application</module>
+        <module>ddd4j-sample-order-local</module>
+        <module>ddd4j-sample-order-testkit</module>
+        <module>ddd4j-sample-order-jdbc</module>
+        <module>ddd4j-sample-order-kafka</module>
+        <module>ddd4j-sample-order-redis</module>
 
         <!-- 非 Boot 运行时示例：Order 充血模型、CQRS、缓存与消息边界。 -->
-        <subproject>ddd4j-sample-quarkus</subproject>
-        <subproject>ddd4j-sample-javalin</subproject>
-        <subproject>ddd4j-sample-micronaut</subproject>
-        <subproject>ddd4j-sample-vertx</subproject>
-        <subproject>ddd4j-sample-helidon</subproject>
-        <subproject>ddd4j-sample-dropwizard</subproject>
+        <module>ddd4j-sample-quarkus</module>
+        <module>ddd4j-sample-javalin</module>
+        <module>ddd4j-sample-micronaut</module>
+        <module>ddd4j-sample-vertx</module>
+        <module>ddd4j-sample-helidon</module>
+        <module>ddd4j-sample-dropwizard</module>
 
         <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
-        <subproject>ddd4j-sample-quarkus-cqrs</subproject>
-        <subproject>ddd4j-sample-javalin-cqrs</subproject>
+        <module>ddd4j-sample-quarkus-cqrs</module>
+        <module>ddd4j-sample-javalin-cqrs</module>
 
         <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
-        <subproject>ddd4j-sample-quarkus-satoken</subproject>
-        <subproject>ddd4j-sample-quarkus-shiro</subproject>
-        <subproject>ddd4j-sample-javalin-satoken</subproject>
-        <subproject>ddd4j-sample-javalin-shiro</subproject>
-    </subprojects>
+        <module>ddd4j-sample-quarkus-satoken</module>
+        <module>ddd4j-sample-quarkus-shiro</module>
+        <module>ddd4j-sample-javalin-satoken</module>
+        <module>ddd4j-sample-javalin-shiro</module>
+    </modules>
 
 </project>

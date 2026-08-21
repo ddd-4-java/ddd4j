@@ -6429,12 +6429,14 @@
                 <version>${mybatis-mate.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-memcached -->
+            <!-- MyBatis Memcached Cache：MyBatis 的 Memcached 缓存实现（二级缓存）。 -->
             <dependency>
                 <groupId>org.mybatis.caches</groupId>
                 <artifactId>mybatis-memcached</artifactId>
                 <version>${mybatis-memcached.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis/mybatis-migrations -->
+            <!-- MyBatis Migrations：MyBatis 的数据库迁移工具（命令行 Schema 版本管理）。 -->
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-migrations</artifactId>

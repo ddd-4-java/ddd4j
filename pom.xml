@@ -73,32 +73,32 @@
         <skipTests>false</skipTests>
     </properties>
 
-    <subprojects>
-        <subproject>ddd4j-bom</subproject>
-        <subproject>ddd4j-dependencies</subproject>
+    <modules>
+        <module>ddd4j-bom</module>
+        <module>ddd4j-dependencies</module>
         <!-- 契约与基础层：保持框架无关或低耦合基础能力 -->
-        <subproject>ddd4j-annotation</subproject>
-        <subproject>ddd4j-core</subproject>
-        <subproject>ddd4j-kit</subproject>
+        <module>ddd4j-annotation</module>
+        <module>ddd4j-core</module>
+        <module>ddd4j-kit</module>
         <!-- DDD 架构规则：Clean/COLA 等目录与依赖边界约束 -->
-        <subproject>ddd4j-ddd-rules</subproject>
+        <module>ddd4j-ddd-rules</module>
 
         <!-- 能力聚合层：保持根目录平铺，内部按 core/框架/厂商实现继续平铺 -->
-        <subproject>ddd4j-data</subproject>
-        <subproject>ddd4j-mq</subproject>
-        <subproject>ddd4j-web</subproject>
-        <subproject>ddd4j-auth</subproject>
-        <subproject>ddd4j-cache</subproject>
+        <module>ddd4j-data</module>
+        <module>ddd4j-mq</module>
+        <module>ddd4j-web</module>
+        <module>ddd4j-auth</module>
+        <module>ddd4j-cache</module>
 
         <!-- 运行时绑定层：提供核心 SPI 的容器实现；自动装配留给外部脚手架 -->
-        <subproject>ddd4j-runtime</subproject>
+        <module>ddd4j-runtime</module>
 
         <!-- 业务能力 × 框架实现模块已下沉到各自能力聚合层下，例如 ddd4j-web-*、ddd4j-mq-* -->
         <!-- 跨领域扩展（akka/excel/jackson/pf4j/qlexpress） -->
-        <subproject>ddd4j-extensions</subproject>
-        <subproject>ddd4j-parent</subproject>
-        <subproject>ddd4j-samples</subproject>
-    </subprojects>
+        <module>ddd4j-extensions</module>
+        <module>ddd4j-parent</module>
+        <module>ddd4j-samples</module>
+    </modules>
 
     <!--开源协议采用Apache 2.0协议-->
     <licenses>

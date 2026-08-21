@@ -17,14 +17,14 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <subprojects>
-        <subproject>ddd4j-data-crypto</subproject>
-        <subproject>ddd4j-data-datascope</subproject>
-        <subproject>ddd4j-data-external</subproject>
-        <subproject>ddd4j-data-jpa</subproject>
-        <subproject>ddd4j-data-logs</subproject>
-        <subproject>ddd4j-data-mybatis</subproject>
-        <subproject>ddd4j-data-mybatisplus</subproject>
-    </subprojects>
+    <modules>
+        <module>ddd4j-data-crypto</module>
+        <module>ddd4j-data-datascope</module>
+        <module>ddd4j-data-external</module>
+        <module>ddd4j-data-jpa</module>
+        <module>ddd4j-data-logs</module>
+        <module>ddd4j-data-mybatis</module>
+        <module>ddd4j-data-mybatisplus</module>
+    </modules>
 
 </project>

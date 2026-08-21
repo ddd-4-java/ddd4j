@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.1.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
-    <modelVersion>4.1.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-dependencies</artifactId>
@@ -19,22 +19,22 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <subprojects>
-        <subproject>ddd4j-mq-core</subproject>
-        <subproject>ddd4j-mq-activemq</subproject>
-        <subproject>ddd4j-mq-disruptor</subproject>
-        <subproject>ddd4j-mq-kafka</subproject>
-        <subproject>ddd4j-mq-mqtt</subproject>
-        <subproject>ddd4j-mq-mqtt-mica</subproject>
-        <subproject>ddd4j-mq-nats</subproject>
-        <subproject>ddd4j-mq-ons</subproject>
-        <subproject>ddd4j-mq-pulsar</subproject>
-        <subproject>ddd4j-mq-rabbitmq</subproject>
-        <subproject>ddd4j-mq-redis-stream</subproject>
-        <subproject>ddd4j-mq-rocketmq</subproject>
-        <subproject>ddd4j-mq-sqs</subproject>
-        <subproject>ddd4j-mq-tdmq</subproject>
-        <subproject>ddd4j-mq-spring</subproject>
-    </subprojects>
+    <modules>
+        <module>ddd4j-mq-core</module>
+        <module>ddd4j-mq-activemq</module>
+        <module>ddd4j-mq-disruptor</module>
+        <module>ddd4j-mq-kafka</module>
+        <module>ddd4j-mq-mqtt</module>
+        <module>ddd4j-mq-mqtt-mica</module>
+        <module>ddd4j-mq-nats</module>
+        <module>ddd4j-mq-ons</module>
+        <module>ddd4j-mq-pulsar</module>
+        <module>ddd4j-mq-rabbitmq</module>
+        <module>ddd4j-mq-redis-stream</module>
+        <module>ddd4j-mq-rocketmq</module>
+        <module>ddd4j-mq-sqs</module>
+        <module>ddd4j-mq-tdmq</module>
+        <module>ddd4j-mq-spring</module>
+    </modules>
 
 </project>
