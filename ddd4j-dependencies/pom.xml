@@ -8137,12 +8137,14 @@
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.paypal.sdk/rest-api-sdk -->
+            <!-- PayPal REST API SDK：PayPal REST API 的旧版 Java SDK（已被 paypal-server-sdk 取代）。 -->
             <dependency>
                 <groupId>com.paypal.sdk</groupId>
                 <artifactId>rest-api-sdk</artifactId>
                 <version>${paypal-rest-api-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+            <!-- REST Assured：Java DSL 风格的 REST API 测试框架（流式断言 HTTP 响应）。 -->
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
