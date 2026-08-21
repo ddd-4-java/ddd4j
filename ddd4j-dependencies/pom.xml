@@ -7751,12 +7751,14 @@
                 <version>${protobuf-java.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util -->
+            <!-- Protobuf Java Util：Protocol Buffers 的 JSON 转换和 Struct 工具模块。 -->
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java-util</artifactId>
                 <version>${protobuf-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.protostuff/protostuff-core -->
+            <!-- Protostuff Core：高性能序列化框架（比 Protobuf 更快，支持 POJO 直接序列化）。 -->
             <dependency>
                 <groupId>io.protostuff</groupId>
                 <artifactId>protostuff-core</artifactId>
