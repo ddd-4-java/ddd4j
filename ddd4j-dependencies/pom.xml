@@ -6722,12 +6722,14 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-handler -->
+            <!-- Netty Handler：Netty 的 ChannelHandler 工具集（SSL/TLS、空闲检测、日志等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-handler-proxy -->
+            <!-- Netty Handler Proxy：Netty 的代理协议支持 Handler（SOCKS/HTTP 代理）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler-proxy</artifactId>
