@@ -5992,12 +5992,14 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-layout-template-json -->
+            <!-- Log4j Layout Template JSON：Log4j 2 的 JSON 模板布局（结构化 JSON 日志输出）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-layout-template-json</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-mongodb3 -->
+            <!-- Log4j MongoDB3：Log4j 2 的 MongoDB 3.x 日志存储 Appender。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-mongodb3</artifactId>
