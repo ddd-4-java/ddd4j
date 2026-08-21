@@ -8849,18 +8849,21 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.streamone/shiro-redisson -->
+            <!-- Shiro Redisson：Apache Shiro 的 Redisson 分布式会话存储实现。 -->
             <dependency>
                 <groupId>com.github.streamone</groupId>
                 <artifactId>shiro-redisson</artifactId>
                 <version>${shiro-redisson.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-saml-core -->
+            <!-- Easy4J Shiro SAML Core：Easy4J 的 Shiro SAML 单点登录核心模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-saml-core</artifactId>
                 <version>${easy4j-shiro-saml.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-saml-spring -->
+            <!-- Easy4J Shiro SAML Spring：Easy4J 的 Shiro SAML 单点登录 Spring 集成。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-saml-spring</artifactId>
