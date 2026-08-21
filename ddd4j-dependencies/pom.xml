@@ -5408,12 +5408,14 @@
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher -->
+            <!-- JUnit Platform Launcher：JUnit 平台的测试启动器 API（IDE/构建工具集成）。 -->
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-launcher</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.albfernandez/juniversalchardet -->
+            <!-- juniversalchardet：Mozilla 的字符编码自动检测库的 Java 移植版。 -->
             <dependency>
                 <groupId>com.github.albfernandez</groupId>
                 <artifactId>juniversalchardet</artifactId>
