@@ -4936,6 +4936,7 @@
                 <version>${javamelody.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.google.zxing/javase -->
+            <!-- ZXing JavaSE：ZXing 条形码库的 JavaSE 平台封装（图像读写、文件操作）。 -->
             <dependency>
                 <groupId>com.google.zxing</groupId>
                 <artifactId>javase</artifactId>
@@ -10171,16 +10172,18 @@
                 <version>${xml-apis.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/xml-path -->
+            <!-- REST Assured XML Path：REST Assured 的 XML 路径查询模块。 -->
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>xml-path</artifactId>
                 <version>${rest-assured.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.ws.xmlschema/xmlschema-core -->
+            <!-- Apache XMLSchema Core：Apache XML Schema 解析和验证核心库。 -->
             <dependency>
-                <groupId>org.apache.xmlbeans</groupId>
-                <artifactId>xmlbeans</artifactId>
-                <version>${xmlbeans.version}</version>
+                <groupId>org.apache.ws.xmlschema</groupId>
+                <artifactId>xmlschema-core</artifactId>
+                <version>${xmlschema-core.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.ws.xmlschema/xmlschema-core -->
             <dependency>
