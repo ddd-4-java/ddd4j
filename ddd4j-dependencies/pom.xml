@@ -4412,6 +4412,7 @@
                 <version>${hystrix.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.iceberg/iceberg-bom -->
+            <!-- Apache Iceberg BOM：Apache Iceberg 开放表格式各模块的版本清单（支持 ACID 事务和时间旅行）。 -->
             <dependency>
                 <groupId>org.apache.iceberg</groupId>
                 <artifactId>iceberg-bom</artifactId>
@@ -4427,6 +4428,7 @@
                 <version>${icu4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-batik -->
+            <!-- TwelveMonkeys ImageIO Batik：SVG 图像格式的 ImageIO 插件（基于 Apache Batik）。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-batik</artifactId>
@@ -4434,6 +4436,7 @@
             </dependency>
             <!-- ImageIO plugin for Microsoft Device Independent Bitmap (BMP/DIB) format. -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-bmp -->
+            <!-- TwelveMonkeys ImageIO BMP：BMP/DIB 位图格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-bmp</artifactId>
