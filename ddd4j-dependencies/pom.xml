@@ -8870,18 +8870,21 @@
                 <version>${easy4j-shiro-saml.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-spring -->
+            <!-- Shiro Spring：Apache Shiro 的 Spring 框架集成（自动配置、Web 支持等）。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-web -->
+            <!-- Shiro Web：Apache Shiro 的 Web 应用支持（Filter、Session 管理等）。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-weixin-core -->
+            <!-- Easy4J Shiro WeChat Core：Easy4J 的 Shiro 微信登录核心模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-weixin-core</artifactId>
