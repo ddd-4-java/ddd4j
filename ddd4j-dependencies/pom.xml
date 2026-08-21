@@ -6832,6 +6832,7 @@
                 <version>${netty-tcnative.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative-boringssl-static -->
+            <!-- Netty TCNative BoringSSL Static Linux x86_64：Linux x86_64 的静态 BoringSSL。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative-boringssl-static</artifactId>
@@ -6839,6 +6840,7 @@
                 <classifier>linux-x86_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative-boringssl-static -->
+            <!-- Netty TCNative BoringSSL Static Linux aarch64：Linux ARM64 的静态 BoringSSL。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative-boringssl-static</artifactId>
@@ -6846,6 +6848,7 @@
                 <classifier>linux-aarch_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative-boringssl-static -->
+            <!-- Netty TCNative BoringSSL Static macOS x86_64：macOS Intel 的静态 BoringSSL。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative-boringssl-static</artifactId>
