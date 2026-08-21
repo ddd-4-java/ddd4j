@@ -9257,12 +9257,14 @@
                 <version>${sshd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-mina -->
+            <!-- Apache SSHD MINA：Apache SSHD 基于 Apache MINA 的 NIO 传输实现。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-mina</artifactId>
                 <version>${sshd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-netty -->
+            <!-- Apache SSHD Netty：Apache SSHD 基于 Netty 的 NIO 传输实现。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-netty</artifactId>
