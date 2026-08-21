@@ -7107,18 +7107,21 @@
                 <version>${ons-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.poi/ooxml-schemas -->
+            <!-- Apache POI OOXML Schemas：POI 的 OOXML (Office Open XML) Schema 定义模块。 -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>ooxml-schemas</artifactId>
                 <version>1.4</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/openclaw-java-sdk -->
+            <!-- Easy4J OpenClaw SDK：Easy4J 封装的 OpenClaw AI Agent 平台 Java SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>openclaw-java-sdk</artifactId>
                 <version>${easy4j-openclaw-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/opencli-java-sdk -->
+            <!-- Easy4J OpenCLI SDK：Easy4J 封装的 OpenCLI 命令行工具 Java SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>opencli-java-sdk</artifactId>
