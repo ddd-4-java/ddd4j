@@ -4098,24 +4098,28 @@
                 <version>${easy4j-hitool.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-exec -->
+            <!-- Hive Exec：Apache Hive 查询执行引擎（MapReduce/Tez/Spark 任务执行）。 -->
             <dependency>
                 <groupId>org.apache.hive</groupId>
                 <artifactId>hive-exec</artifactId>
                 <version>${hive.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-jdbc -->
+            <!-- Hive JDBC：Apache Hive 的 JDBC 驱动（通过 HiveServer2 连接 Hive）。 -->
             <dependency>
                 <groupId>org.apache.hive</groupId>
                 <artifactId>hive-jdbc</artifactId>
                 <version>${hive.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-metastore -->
+            <!-- Hive Metastore：Apache Hive 的元数据存储服务（表 Schema、分区信息等）。 -->
             <dependency>
                 <groupId>org.apache.hive</groupId>
                 <artifactId>hive-metastore</artifactId>
                 <version>${hive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hsqldb/hsqldb -->
+            <!-- HSQLDB：轻量级 100% Java SQL 数据库（支持内存、文件、服务器模式）。 -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
