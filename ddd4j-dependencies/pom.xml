@@ -6617,12 +6617,14 @@
             <!-- All Netty modules -->
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-buffer -->
             <!-- All Netty modules -->
+            <!-- Netty Buffer：Netty 的高性能字节缓冲区（零拷贝、引用计数、池化）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-buffer</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec -->
+            <!-- Netty Codec：Netty 的编解码框架（ByteToMessageCodec 等）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec</artifactId>
