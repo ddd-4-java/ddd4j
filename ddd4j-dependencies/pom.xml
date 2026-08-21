@@ -7214,12 +7214,14 @@
                 <version>${oshi-shaded.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer -->
+            <!-- OWASP Java HTML Sanitizer：OWASP 的 HTML 输入清洗库（防止 XSS 攻击）。 -->
             <dependency>
                 <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
                 <artifactId>owasp-java-html-sanitizer</artifactId>
                 <version>${owasp-html-sanitizer.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/p6spy/p6spy -->
+            <!-- P6Spy：JDBC 数据库访问监控和日志框架（SQL 语句追踪、慢查询分析）。 -->
             <dependency>
                 <groupId>p6spy</groupId>
                 <artifactId>p6spy</artifactId>
