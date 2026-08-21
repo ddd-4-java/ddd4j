@@ -5443,12 +5443,14 @@
                 <version>${auth0-jwks-rsa.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/jwt-issuer -->
+            <!-- Easy4J JWT Issuer：Easy4J 封装的 JWT 颁发器，支持自定义 Payload 和过期时间。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>jwt-issuer</artifactId>
                 <version>${easy4j-jwt-issuer.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/jwt-issuer-api -->
+            <!-- JWT Issuer API：旧坐标下的 JWT 颁发器接口定义（已迁至 io.github.easy4j）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>jwt-issuer-api</artifactId>
