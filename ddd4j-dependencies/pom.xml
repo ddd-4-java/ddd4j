@@ -6112,18 +6112,21 @@
                 <version>${management-core.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/tk.mybatis/mapper -->
+            <!-- tk.mybatis Mapper：通用 Mapper 插件，MyBatis 单表 CRUD 零 SQL 写入。 -->
             <dependency>
                 <groupId>tk.mybatis</groupId>
                 <artifactId>mapper</artifactId>
                 <version>${mybatis-tk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
+            <!-- MapStruct：编译时 Java Bean 映射框架，通过注解处理器生成类型安全的映射代码。 -->
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct-jdk8 -->
+            <!-- MapStruct JDK8：MapStruct 的 JDK 8 兼容扩展（支持 Java 8 日期/时间 API 映射）。 -->
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-jdk8</artifactId>
