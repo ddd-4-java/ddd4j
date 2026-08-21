@@ -9884,12 +9884,14 @@
                 <version>${jetty-websocket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/websocket-servlet -->
+            <!-- Jetty WebSocket Servlet：Jetty WebSocket 的 Servlet 容器集成模块。 -->
             <dependency>
                 <groupId>org.eclipse.jetty.websocket</groupId>
                 <artifactId>websocket-servlet</artifactId>
                 <version>${jetty-websocket.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.wechatpay-apiv3/wechatpay-java -->
+            <!-- 微信支付 APIv3 Java SDK：微信支付官方 Java SDK（支付、退款、分账等 API）。 -->
             <dependency>
                 <groupId>com.github.wechatpay-apiv3</groupId>
                 <artifactId>wechatpay-java</artifactId>
