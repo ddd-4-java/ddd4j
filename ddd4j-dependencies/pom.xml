@@ -7607,12 +7607,14 @@
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-plugin-raspberrypi -->
+            <!-- Pi4J Plugin Raspberry Pi：Pi4J 的树莓派平台插件。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-plugin-raspberrypi</artifactId>
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-test -->
+            <!-- Pi4J Test：Pi4J 的集成测试模块。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-test</artifactId>
