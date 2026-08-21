@@ -9701,6 +9701,7 @@
                 <version>${transmittable-thread-local.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/trogdor -->
+            <!-- Kafka Trogdor：Apache Kafka 的分布式测试框架（集群级负载测试）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>trogdor</artifactId>
@@ -9709,6 +9710,7 @@
             <!-- 使用参考: https://blog.csdn.net/wuyuxing24/article/details/99692762-->
             <!-- 使用参考: https://blog.csdn.net/wuyuxing24/article/details/99692762 -->
             <!-- https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-core -->
+            <!-- TrueLicense Core：Java 软件许可证管理框架（生成、验证、管理软件许可密钥）。 -->
             <dependency>
                 <groupId>de.schlichtherle.truelicense</groupId>
                 <artifactId>truelicense-core</artifactId>
