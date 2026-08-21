@@ -9453,12 +9453,14 @@
                 <version>${swagger3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-servlet -->
+            <!-- Swagger Servlet：Swagger 对 Servlet 容器的 API 自动扫描集成。 -->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-servlet</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.webjars/swagger-ui -->
+            <!-- Swagger UI：OpenAPI 文档的交互式 Web 界面（WebJars 打包）。 -->
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>swagger-ui</artifactId>
