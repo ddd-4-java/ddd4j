@@ -6076,18 +6076,21 @@
                 <version>${logback.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/logging-mailhandler -->
+            <!-- Angus Logging MailHandler：通过邮件发送日志记录的 JUL MailHandler。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>logging-mailhandler</artifactId>
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+            <!-- Lombok：通过注解自动生成 getter/setter/toString/equals/hashCode/构造函数等样板代码。 -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.lz4/lz4-java -->
+            <!-- LZ4 Java：超快速压缩算法 LZ4 的 Java 实现（JNI + 纯 Java 双版本）。 -->
             <dependency>
                 <groupId>org.lz4</groupId>
                 <artifactId>lz4-java</artifactId>
