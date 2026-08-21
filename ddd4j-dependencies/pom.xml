@@ -833,12 +833,14 @@
                 <version>${akka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.typesafe.akka/akka-stream_3 -->
+            <!-- Akka Streams：基于响应式流规范的流式处理库，提供背压机制的异步数据流处理能力。 -->
             <dependency>
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-stream_3</artifactId>
                 <version>${akka.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/alibaba-dingtalk-service-sdk -->
+            <!-- 阿里云钉钉开放平台 SDK：用于发送工作通知、群消息、OA 审批、回调加解密等企业 IM 集成能力。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>alibaba-dingtalk-service-sdk</artifactId>
@@ -851,6 +853,7 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-easysdk -->
+            <!-- 支付宝 Easy SDK：封装了支付宝开放平台 OpenAPI 的简化调用方式，提供统一的门面接口和链式调用风格。 -->
             <dependency>
                 <groupId>com.alipay.sdk</groupId>
                 <artifactId>alipay-easysdk</artifactId>
@@ -871,48 +874,56 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-sdk-java -->
+            <!-- 支付宝开放平台 SDK：完整的支付宝支付、登录、分享、卡券等 OpenAPI Java 实现。 -->
             <dependency>
                 <groupId>com.alipay.sdk</groupId>
                 <artifactId>alipay-sdk-java</artifactId>
                 <version>${alipay-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-core -->
+            <!-- 阿里云 Java SDK Core：阿里云各产品 SDK 的公共依赖，提供凭证管理、区域端点、签名重试等核心能力。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>aliyun-java-sdk-core</artifactId>
                 <version>${aliyun-java-sdk-core.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-dm -->
+            <!-- 阿里云邮件推送 DM SDK：阿里云 DirectMail 邮件推送服务的 Java 客户端，用于批量发送邮件。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>aliyun-java-sdk-dm</artifactId>
                 <version>${aliyun-java-sdk-dm.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-green -->
+            <!-- 阿里云内容安全 Green SDK：基于深度学习的内容安全检测服务 SDK，支持文本、图像、视频违规识别。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>aliyun-java-sdk-green</artifactId>
                 <version>${aliyun-java-sdk-green.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-mts -->
+            <!-- 阿里云媒体转码 MTS SDK：支持音视频转码、截图、水印、剪辑等媒体处理的 Java 客户端。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>aliyun-java-sdk-mts</artifactId>
                 <version>${aliyun-sdk-mts.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-vod -->
+            <!-- 阿里云视频点播 VOD SDK：提供视频上传、转码、播放、加密、CDN 分发的 Java 客户端。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>aliyun-java-sdk-vod</artifactId>
                 <version>${aliyun-java-sdk-vod.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun.oss/aliyun-sdk-oss -->
+            <!-- 阿里云对象存储 OSS SDK：阿里云 OSS（Object Storage Service）的 Java 客户端，支持上传、下载、对象管理。 -->
             <dependency>
                 <groupId>com.aliyun.oss</groupId>
                 <artifactId>aliyun-sdk-oss</artifactId>
                 <version>${aliyun-sdk-oss.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
+            <!-- RabbitMQ AMQP 客户端：官方 RabbitMQ Java 客户端库，实现 AMQP 0-9-1 协议，用于消息发布/消费。 -->
             <dependency>
                 <groupId>com.rabbitmq</groupId>
                 <artifactId>amqp-client</artifactId>
