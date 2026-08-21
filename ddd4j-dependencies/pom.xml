@@ -9777,18 +9777,21 @@
                 <version>${unirest-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.konghq/unirest-modules-jackson -->
+            <!-- Unirest Jackson Module：Unirest HTTP 客户端的 Jackson JSON 序列化模块。 -->
             <dependency>
                 <groupId>com.konghq</groupId>
                 <artifactId>unirest-modules-jackson</artifactId>
                 <version>${unirest-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/eu.bitwalker/UserAgentUtils -->
+            <!-- UserAgentUtils：HTTP User-Agent 字符串解析库（识别浏览器、操作系统、设备类型）。 -->
             <dependency>
                 <groupId>eu.bitwalker</groupId>
                 <artifactId>UserAgentUtils</artifactId>
                 <version>${UserAgentUtils.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/validation-api-extension -->
+            <!-- Easy4J Validation API Extension：Easy4J 的 Bean Validation API 扩展。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>validation-api-extension</artifactId>
