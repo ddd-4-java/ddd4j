@@ -5885,6 +5885,7 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-bom -->
+            <!-- Log4j BOM：Apache Log4j 2 各模块的版本清单。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
@@ -5893,6 +5894,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-cassandra -->
+            <!-- Log4j Cassandra：Log4j 2 的 Cassandra 日志存储 Appender。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-cassandra</artifactId>
