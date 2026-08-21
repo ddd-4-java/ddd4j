@@ -6027,12 +6027,14 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-spring-cloud-config-client -->
+            <!-- Log4j Spring Cloud Config Client：Log4j 2 从 Spring Cloud Config 加载日志配置。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-spring-cloud-config-client</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-taglib -->
+            <!-- Log4j Taglib：Log4j 2 的 JSP 标签库（在 JSP 中直接输出日志）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-taglib</artifactId>
