@@ -9798,12 +9798,14 @@
                 <version>${easy4j-validation-api-extension.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.jopenlibs/vault-java-driver -->
+            <!-- Vault Java Driver：HashiCorp Vault 密钥管理服务的 Java 客户端。 -->
             <dependency>
                 <groupId>io.github.jopenlibs</groupId>
                 <artifactId>vault-java-driver</artifactId>
                 <version>${vault-java-driver.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity-engine-core -->
+            <!-- Apache Velocity：Java 模板引擎（Web 页面生成、代码生成、邮件模板等）。 -->
             <dependency>
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity-engine-core</artifactId>
