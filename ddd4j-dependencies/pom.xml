@@ -7781,12 +7781,14 @@
                 <version>${proxool.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.cloudhopper.proxool/proxool-cglib -->
+            <!-- Proxool CGLIB：Proxool 连接池的 CGLIB 代理支持。 -->
             <dependency>
                 <groupId>com.cloudhopper.proxool</groupId>
                 <artifactId>proxool-cglib</artifactId>
                 <version>${proxool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-bom -->
+            <!-- Apache Pulsar BOM：Apache Pulsar 分布式消息流平台各模块的版本清单。 -->
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-bom</artifactId>
