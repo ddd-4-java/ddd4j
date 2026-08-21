@@ -8478,12 +8478,14 @@
                 <version>${seatunnel.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.seatunnel/seatunnel-engine-core -->
+            <!-- SeaTunnel Engine Core：SeaTunnel 的执行引擎核心模块。 -->
             <dependency>
                 <groupId>org.apache.seatunnel</groupId>
                 <artifactId>seatunnel-engine-core</artifactId>
                 <version>${seatunnel.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/security-guard-sdk -->
+            <!-- Easy4J Security Guard SDK：Easy4J 的安全防护 SDK（接口签名、限流、防重放等）。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>security-guard-sdk</artifactId>
