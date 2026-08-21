@@ -4314,24 +4314,28 @@
                 <version>${hudi.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.hudi/hudi-spark4.0-bundle_2.13 -->
+            <!-- Hudi Spark 4.0 Bundle：Apache Hudi 的 Spark 4.0 集成包（Scala 2.13）。 -->
             <dependency>
                 <groupId>org.apache.hudi</groupId>
                 <artifactId>hudi-spark4.0-bundle_2.13</artifactId>
                 <version>${hudi.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+            <!-- Hutool All：Hutool 全模块聚合包（一站式引入所有工具）。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-aop -->
+            <!-- Hutool AOP：Hutool 的面向切面编程工具模块。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-aop</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.hutool/hutool-bloomFilter -->
+            <!-- Hutool BloomFilter：Hutool 的布隆过滤器模块（概率性集合成员测试）。 -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-bloomFilter</artifactId>
