@@ -7077,6 +7077,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-bom -->
+            <!-- OkHttp BOM：Square OkHttp HTTP 客户端各模块的版本清单（支持 HTTP/2、WebSocket）。 -->
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp-bom</artifactId>
@@ -7085,6 +7086,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/okhttp3-extension -->
+            <!-- Easy4J OkHttp3 Extension：Easy4J 对 OkHttp3 的增强扩展（拦截器、重试、指标等）。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>okhttp3-extension</artifactId>
