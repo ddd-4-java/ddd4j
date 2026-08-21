@@ -7586,18 +7586,21 @@
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-plugin-linuxfs -->
+            <!-- Pi4J Plugin LinuxFS：Pi4J 的 Linux 文件系统 GPIO 插件。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-plugin-linuxfs</artifactId>
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-plugin-mock -->
+            <!-- Pi4J Plugin Mock：Pi4J 的 Mock 插件（用于测试，无需真实硬件）。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-plugin-mock</artifactId>
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-plugin-pigpio -->
+            <!-- Pi4J Plugin pigpio：Pi4J 的 pigpio 守护进程插件。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-plugin-pigpio</artifactId>
