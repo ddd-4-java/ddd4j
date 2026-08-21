@@ -6987,6 +6987,7 @@
                 <classifier>linux-x86_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-unix-common -->
+            <!-- Netty Transport Native Unix Common macOS x86_64：macOS Intel 的 Unix 通用原生传输。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-unix-common</artifactId>
@@ -6994,6 +6995,7 @@
                 <classifier>osx-x86_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-unix-common -->
+            <!-- Netty Transport Native Unix Common macOS aarch64：macOS Apple Silicon 的 Unix 通用原生传输。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-unix-common</artifactId>
@@ -7001,6 +7003,7 @@
                 <classifier>osx-aarch_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-rxtx -->
+            <!-- Netty Transport RXTX：Netty 的串口（RXTX）传输实现。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-rxtx</artifactId>
