@@ -5764,6 +5764,7 @@
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-react-agent -->
+            <!-- LiteFlow React Agent：LiteFlow 的响应式组件执行代理模块。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-react-agent</artifactId>
@@ -5772,6 +5773,7 @@
                 <scope>compile</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-rule-nacos -->
+            <!-- LiteFlow Rule Nacos：LiteFlow 的 Nacos 规则源适配器（支持远程动态更新规则）。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-rule-nacos</artifactId>
