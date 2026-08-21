@@ -9749,12 +9749,14 @@
                 <version>${undertow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/undertow-metrics-prometheus -->
+            <!-- Undertow Metrics Prometheus：Undertow Web 服务器的 Prometheus 指标监控模块。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>undertow-metrics-prometheus</artifactId>
                 <version>${undertow-metrics.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.undertow/undertow-servlet -->
+            <!-- Undertow Servlet：Undertow 的 Servlet 容器实现（支持 Jakarta Servlet 规范）。 -->
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-servlet</artifactId>
