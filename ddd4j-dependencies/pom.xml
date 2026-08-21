@@ -3642,6 +3642,7 @@
                 <version>${geoip2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/gimap -->
+            <!-- Eclipse Angus IMAP：Jakarta Mail 的 IMAP 协议实现（收件箱访问）。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>gimap</artifactId>
