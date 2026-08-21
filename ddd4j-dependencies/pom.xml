@@ -8664,12 +8664,14 @@
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-zookeeper-curator -->
+            <!-- ShedLock ZooKeeper：ShedLock 的 ZooKeeper 分布式锁存储实现。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-zookeeper-curator</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-spring -->
+            <!-- ShedLock Spring：ShedLock 的 Spring 集成（@Scheduled 任务防重复执行）。 -->
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-spring</artifactId>
