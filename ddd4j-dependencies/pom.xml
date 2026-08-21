@@ -6817,6 +6817,7 @@
                 <classifier>linux-aarch_64-fedora</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative -->
+            <!-- Netty TCNative macOS x86_64：macOS Intel 的 BoringSSL/OpenSSL JNI 库。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative</artifactId>
@@ -6824,6 +6825,7 @@
                 <classifier>osx-x86_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-tcnative-boringssl-static -->
+            <!-- Netty TCNative BoringSSL Static：跨平台静态链接的 BoringSSL JNI 库（免安装 OpenSSL）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-tcnative-boringssl-static</artifactId>
