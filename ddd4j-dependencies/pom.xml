@@ -6374,6 +6374,7 @@
                 <version>${mybatis-caffeine.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.dynamic-sql/mybatis-dynamic-sql -->
+            <!-- MyBatis Dynamic SQL：MyBatis 的类型安全动态 SQL 构建器（Fluent API）。 -->
             <dependency>
                 <groupId>org.mybatis.dynamic-sql</groupId>
                 <artifactId>mybatis-dynamic-sql</artifactId>
@@ -6382,6 +6383,7 @@
             <!-- mybatis scripting -->
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.scripting/mybatis-freemarker -->
             <!-- mybatis scripting -->
+            <!-- MyBatis Freemarker：MyBatis 的 FreeMarker 脚本引擎支持（SQL 模板）。 -->
             <dependency>
                 <groupId>org.mybatis.scripting</groupId>
                 <artifactId>mybatis-freemarker</artifactId>
