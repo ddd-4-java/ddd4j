@@ -6203,12 +6203,14 @@
                 <version>${easy4j-metrics-resteasy.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/metrics-sigar2 -->
+            <!-- Easy4J Metrics Sigar2：Easy4J 的 Sigar2 系统资源指标采集模块（CPU/内存/磁盘等）。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>metrics-sigar2</artifactId>
                 <version>${easy4j-metrics-sigar2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.dromara.mica-mqtt/mica-mqtt-client -->
+            <!-- Mica MQTT Client：Dromara 社区的轻量级 MQTT 客户端（基于 Netty，支持 MQTT 3.1.1/5.0）。 -->
             <dependency>
                 <groupId>org.dromara.mica-mqtt</groupId>
                 <artifactId>mica-mqtt-client</artifactId>
