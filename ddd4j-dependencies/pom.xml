@@ -8211,12 +8211,14 @@
                 <version>${rxjava2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxjava -->
+            <!-- RxJava 3：Reactive Extensions 的 Java 实现（最新版响应式编程库）。 -->
             <dependency>
                 <groupId>io.reactivex.rxjava3</groupId>
                 <artifactId>rxjava</artifactId>
                 <version>${rxjava3.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.reactivex/rxjava -->
+            <!-- RxJava 1：Reactive Extensions 的 Java 实现（旧版，已被 RxJava 2/3 取代）。 -->
             <dependency>
                 <groupId>io.reactivex</groupId>
                 <artifactId>rxjava</artifactId>
