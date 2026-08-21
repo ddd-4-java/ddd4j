@@ -6956,12 +6956,14 @@
                 <classifier>osx-aarch_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-unix-common -->
+            <!-- Netty Transport Native Unix Common：Unix 通用原生传输 JNI 库（跨平台）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-unix-common</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-transport-native-unix-common -->
+            <!-- Netty Transport Native Unix Common Linux aarch64：Linux ARM64 的 Unix 通用原生传输。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-unix-common</artifactId>
