@@ -6771,6 +6771,7 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-resolver-dns-native-macos -->
+            <!-- Netty Resolver DNS macOS x86_64：macOS Intel 架构的原生 DNS 解析器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-resolver-dns-native-macos</artifactId>
@@ -6778,6 +6779,7 @@
                 <classifier>osx-x86_64</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-resolver-dns-native-macos -->
+            <!-- Netty Resolver DNS macOS aarch64：macOS Apple Silicon 架构的原生 DNS 解析器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-resolver-dns-native-macos</artifactId>
