@@ -1321,60 +1321,70 @@
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-swing -->
+            <!-- Apache Batik Swing：Batik 的 Swing 组件集成模块，用于在 Swing 应用中显示 SVG。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-swing</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-transcoder -->
+            <!-- Apache Batik Transcoder：Batik 转换器接口，支持在 SVG、PNG、JPEG、PDF 等格式间互转。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-transcoder</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-ttf2svg -->
+            <!-- Apache Batik TTF2SVG：将 TrueType 字体文件转换为 SVG 字形路径的工具。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-ttf2svg</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-util -->
+            <!-- Apache Batik Util：Batik 的通用工具类模块，提供几何、颜色、字符串等处理函数。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-util</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-xml -->
+            <!-- Apache Batik XML：Batik 的 XML 解析和序列化工具模块。 -->
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-xml</artifactId>
                 <version>${batik.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcjmail-jdk18on -->
+            <!-- Bouncy Castle JMail JDK18+：Bouncy Castle 在 JDK 18+ 上的 JMail 实现（S/MIME 邮件加密）。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcjmail-jdk18on</artifactId>
                 <version>${bcmail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk15to18 -->
+            <!-- Bouncy Castle JMail JDK15-JDK18 过渡版：Bouncy Castle JMail 的旧到新 JDK 过渡实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcmail-jdk15to18</artifactId>
                 <version>${bcmail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcpg-jdk15to18 -->
+            <!-- Bouncy Castle OpenPGP JDK15-JDK18 过渡版：Bouncy Castle OpenPGP（PGP 协议）的过渡版本。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpg-jdk15to18</artifactId>
                 <version>${bcpg.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpg-jdk18on -->
+            <!-- Bouncy Castle OpenPGP JDK18+：Bouncy Castle 在 JDK 18+ 上的 OpenPGP 实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpg-jdk18on</artifactId>
                 <version>${bcpg.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15to18 -->
+            <!-- Bouncy Castle PKIX JDK15-JDK18 过渡版：Bouncy Castle PKIX（X.509 证书路径验证）的过渡实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpkix-jdk15to18</artifactId>
