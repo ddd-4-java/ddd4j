@@ -7047,12 +7047,14 @@
             <!-- NOT Yet Commons SSL -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/not-yet-commons-ssl -->
             <!-- NOT Yet Commons SSL -->
+            <!-- Not Yet Commons SSL (Apache)：Apache 版本的 Commons SSL 工具库。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>not-yet-commons-ssl</artifactId>
                 <version>${commons-ssl.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.larksuite.oapi/oapi-sdk -->
+            <!-- 飞书开放平台 SDK：字节跳动飞书/Lark 的 Java 客户端 SDK（消息、文档、日历等 API）。 -->
             <dependency>
                 <groupId>com.larksuite.oapi</groupId>
                 <artifactId>oapi-sdk</artifactId>
