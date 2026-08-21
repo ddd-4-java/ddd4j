@@ -2800,18 +2800,21 @@
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-openxml-objects-pml -->
+            <!-- docx4j OpenXML PML：OpenXML 的 PresentationML（演示文稿）对象模型。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-openxml-objects-pml</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-openxml-objects-sml -->
+            <!-- docx4j OpenXML SML：OpenXML 的 SpreadsheetML（电子表格）对象模型。 -->
             <dependency>
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-openxml-objects-sml</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/docx4j-template-bom -->
+            <!-- docx4j Template BOM：docx4j 模板引擎的 BOM，提供 Word 模板填充生成工具。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>docx4j-template-bom</artifactId>
@@ -2820,54 +2823,63 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
+            <!-- dom4j：灵活的 Java XML 框架，提供 DOM/SAX/XPath 多种解析方式。 -->
             <dependency>
                 <groupId>org.dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${dom4j2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.sf.dozer/dozer -->
+            <!-- Dozer：JavaBean 之间的属性映射拷贝工具（已停止维护）。 -->
             <dependency>
                 <groupId>net.sf.dozer</groupId>
                 <artifactId>dozer</artifactId>
                 <version>${dozer.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.dozermapper/dozer-core -->
+            <!-- Dozer Core：Dozer 映射器的 GitHub 维护分支核心模块。 -->
             <dependency>
                 <groupId>com.github.dozermapper</groupId>
                 <artifactId>dozer-core</artifactId>
                 <version>${dozer-core.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/dozer-extra-converters -->
+            <!-- Easy4J Dozer Extra：Easy4J 对 Dozer 的扩展类型转换器集合。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>dozer-extra-converters</artifactId>
                 <version>${easy4j-dozer-extra-converters.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/dozer-extra-converters -->
+            <!-- Dozer Extra Converters（hiwepy）：旧坐标下的 Dozer 扩展转换器（已迁至 io.github.easy4j）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>dozer-extra-converters</artifactId>
                 <version>${dozer-extra-converters.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.dozermapper/dozer-proto3 -->
+            <!-- Dozer Proto3：Dozer 对 Protocol Buffers v3 的支持模块。 -->
             <dependency>
                 <groupId>com.github.dozermapper</groupId>
                 <artifactId>dozer-proto3</artifactId>
                 <version>${dozer-proto3.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.dozermapper/dozer-spring4 -->
+            <!-- Dozer Spring4：Dozer 与 Spring Framework 4.x 的集成模块。 -->
             <dependency>
                 <groupId>com.github.dozermapper</groupId>
                 <artifactId>dozer-spring4</artifactId>
                 <version>${dozer-spring4.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/dreamina-java-sdk -->
+            <!-- Easy4J Dreamina SDK：Easy4J 封装的字节跳动 Dreamina（豆包 AI 图像）SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>dreamina-java-sdk</artifactId>
                 <version>${easy4j-dreamina-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.dropwizard/dropwizard-bom -->
+            <!-- Dropwizard BOM：Dropwizard REST 微服务框架的版本清单。 -->
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-bom</artifactId>
@@ -2876,6 +2888,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.izettle/dropwizard-metrics-influxdb -->
+            <!-- Dropwizard Metrics InfluxDB：将 Dropwizard Metrics 推送到 InfluxDB 的桥接模块。 -->
             <dependency>
                 <groupId>com.izettle</groupId>
                 <artifactId>dropwizard-metrics-influxdb</artifactId>
