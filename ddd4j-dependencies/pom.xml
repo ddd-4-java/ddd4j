@@ -6687,12 +6687,14 @@
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-socks -->
+            <!-- Netty Codec SOCKS：Netty 的 SOCKS 代理协议编解码器（SOCKS4/SOCKS5）。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-socks</artifactId>
                 <version>${netty.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-codec-stomp -->
+            <!-- Netty Codec STOMP：Netty 的 STOMP 消息协议编解码器。 -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-stomp</artifactId>
