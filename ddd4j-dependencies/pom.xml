@@ -8039,18 +8039,21 @@
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-framework-common -->
+            <!-- Resilience4j Framework Common：Resilience4j 框架公共模块。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-framework-common</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-kotlin -->
+            <!-- Resilience4j Kotlin：Resilience4j 的 Kotlin 协程集成。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-kotlin</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-metrics -->
+            <!-- Resilience4j Metrics：Resilience4j 的 Micrometer 指标导出模块。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-metrics</artifactId>
