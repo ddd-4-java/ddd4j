@@ -4600,6 +4600,7 @@
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.infinispan/infinispan-bom -->
+            <!-- Infinispan BOM：Red Hat Infinispan 分布式缓存框架各模块的版本清单。 -->
             <dependency>
                 <groupId>org.infinispan</groupId>
                 <artifactId>infinispan-bom</artifactId>
