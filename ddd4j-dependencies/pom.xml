@@ -7948,12 +7948,14 @@
                 <version>${r2dbc-spi.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.reactivestreams/reactive-streams -->
+            <!-- Reactive Streams：响应式流标准规范接口（Publisher/Subscriber/Subscription）。 -->
             <dependency>
                 <groupId>org.reactivestreams</groupId>
                 <artifactId>reactive-streams</artifactId>
                 <version>${reactive-streams.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
+            <!-- Redisson：Redis 分布式对象和服务框架（分布式锁、队列、缓存、会话等）。 -->
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
