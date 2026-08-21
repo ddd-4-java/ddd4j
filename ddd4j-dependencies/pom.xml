@@ -9383,12 +9383,14 @@
                 <version>${swagger-butler.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-core -->
+            <!-- Swagger Core v3：OpenAPI 3.0 规范核心实现（解析、序列化、扫描）。 -->
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-core</artifactId>
                 <version>${swagger3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-core -->
+            <!-- Swagger Core（旧版）：Swagger 2.x 规范核心实现。 -->
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-core</artifactId>
