@@ -6408,18 +6408,21 @@
                 <version>${mybatis-hazelcast.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-ignite -->
+            <!-- MyBatis Ignite Cache：MyBatis 的 Apache Ignite 分布式缓存实现（二级缓存）。 -->
             <dependency>
                 <groupId>org.mybatis.caches</groupId>
                 <artifactId>mybatis-ignite</artifactId>
                 <version>${mybatis-ignite.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-mate-annotation -->
+            <!-- MyBatis Mate Annotation：MyBatis-Plus 企业版数据伴侣注解模块（字段脱敏、数据权限等）。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-mate-annotation</artifactId>
                 <version>${mybatis-mate.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-mate-starter -->
+            <!-- MyBatis Mate Starter：MyBatis-Plus 企业版数据伴侣 Spring Boot 启动器。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-mate-starter</artifactId>
