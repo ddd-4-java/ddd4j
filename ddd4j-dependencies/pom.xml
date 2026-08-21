@@ -8608,12 +8608,14 @@
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-sql92 -->
+            <!-- ShardingSphere SQL SQL92：ShardingSphere 的 SQL-92 标准解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-sql92</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-sqlserver -->
+            <!-- ShardingSphere SQL SQL Server：ShardingSphere 的 SQL Server SQL 解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-sqlserver</artifactId>
