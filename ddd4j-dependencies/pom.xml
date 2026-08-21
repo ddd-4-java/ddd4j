@@ -9016,18 +9016,21 @@
                 <version>${easy4j-socketio-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.webjars.bower/sockjs-client -->
+            <!-- SockJS Client：WebSocket 的浏览器兼容性降级库（自动回退到 HTTP 长轮询）。 -->
             <dependency>
                 <groupId>org.webjars.bower</groupId>
                 <artifactId>sockjs-client</artifactId>
                 <version>${webjars.sockjs-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.spark/spark-core_2.13 -->
+            <!-- Apache Spark Core：Apache Spark 大数据处理框架核心模块（Scala 2.13）。 -->
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-core_2.13</artifactId>
                 <version>${spark.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.spark/spark-sql_2.13 -->
+            <!-- Apache Spark SQL：Apache Spark 的结构化数据处理模块（DataFrame/Dataset API）。 -->
             <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-sql_2.13</artifactId>
