@@ -3798,6 +3798,7 @@
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-http-server-multipart -->
+            <!-- Grizzly HTTP Server Multipart：Grizzly HTTP 服务器的文件上传（multipart）支持。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-http-server-multipart</artifactId>
@@ -3806,24 +3807,28 @@
             <!-- grizzly-http-servlet -->
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-http-servlet -->
             <!-- grizzly-http-servlet -->
+            <!-- Grizzly HTTP Servlet：Grizzly 的 Servlet 容器实现。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-http-servlet</artifactId>
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-http-servlet-extras -->
+            <!-- Grizzly HTTP Servlet Extras：Grizzly Servlet 容器的扩展功能。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-http-servlet-extras</artifactId>
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-http-servlet-server -->
+            <!-- Grizzly HTTP Servlet Server：Grizzly 的嵌入式 Servlet 服务器。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-http-servlet-server</artifactId>
                 <version>${grizzly.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.grizzly/grizzly-http2 -->
+            <!-- Grizzly HTTP/2：Grizzly 的 HTTP/2 协议支持模块。 -->
             <dependency>
                 <groupId>org.glassfish.grizzly</groupId>
                 <artifactId>grizzly-http2</artifactId>
