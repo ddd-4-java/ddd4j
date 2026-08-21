@@ -5500,18 +5500,21 @@
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-metadata -->
+            <!-- Kafka Metadata：Kafka 集群元数据管理模块（KRaft 模式）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-metadata</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-raft -->
+            <!-- Kafka Raft：Kafka 的 KRaft 共识协议实现（替代 ZooKeeper）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-raft</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-server -->
+            <!-- Kafka Server：Kafka Broker 服务端模块。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-server</artifactId>
