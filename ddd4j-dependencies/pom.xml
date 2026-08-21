@@ -5665,6 +5665,7 @@
                 <version>${knife4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-bom -->
+            <!-- Kotlin BOM：Kotlin 标准库和扩展的版本清单。 -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-bom</artifactId>
@@ -5673,6 +5674,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib -->
+            <!-- Kotlin Stdlib：Kotlin 标准库（集合、协程、IO 等基础工具）。 -->
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
