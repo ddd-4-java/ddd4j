@@ -6133,12 +6133,14 @@
                 <version>${mapstruct.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor -->
+            <!-- MapStruct Processor：MapStruct 的注解处理器（编译时生成 Bean 映射实现代码）。 -->
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
+            <!-- MariaDB JDBC：MariaDB/MySQL 兼容的高性能 JDBC 驱动。 -->
             <dependency>
                 <groupId>org.mariadb.jdbc</groupId>
                 <artifactId>mariadb-java-client</artifactId>
