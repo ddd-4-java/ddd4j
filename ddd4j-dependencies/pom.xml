@@ -7142,12 +7142,14 @@
                 <version>${easy4j-opencv-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.opensearch.client/opensearch-java -->
+            <!-- OpenSearch Java Client：AWS OpenSearch/Elasticsearch 的 Java 客户端。 -->
             <dependency>
                 <groupId>org.opensearch.client</groupId>
                 <artifactId>opensearch-java</artifactId>
                 <version>${opensearch.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-bom -->
+            <!-- OpenTelemetry BOM：可观测性框架各模块的版本清单（Traces/Metrics/Logs）。 -->
             <dependency>
                 <groupId>io.opentelemetry</groupId>
                 <artifactId>opentelemetry-bom</artifactId>
