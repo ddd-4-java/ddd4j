@@ -1894,38 +1894,42 @@
                 <version>${commons-exec.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
-            <!-- The Apache Commons FileUpload component provides a sample yet flexible means of adding support for multipart file upload functionality to servlets and web applications. -->
+            <!-- Commons FileUpload：Servlet 和 Web 应用的多部分文件上传处理库。 -->
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
                 <version>${commons-fileupload.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-fileupload2-core -->
+            <!-- Commons FileUpload2 Core：Commons FileUpload 2.x 的核心模块，与 Jakarta Servlet API 集成。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-core</artifactId>
                 <version>${commons-fileupload2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-fileupload2-jakarta -->
+            <!-- Commons FileUpload2 Jakarta：Commons FileUpload 2.x 的 Jakarta Mail 集成模块。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-jakarta</artifactId>
                 <version>2.0.0-M1</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-fileupload2-jakarta-servlet5 -->
+            <!-- Commons FileUpload2 Jakarta Servlet5：Commons FileUpload 2.x 的 Jakarta Servlet 5 适配。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-jakarta-servlet5</artifactId>
                 <version>${commons-fileupload2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-fileupload2-jakarta-servlet6 -->
+            <!-- Commons FileUpload2 Jakarta Servlet6：Commons FileUpload 2.x 的 Jakarta Servlet 6 适配。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
                 <version>${commons-fileupload2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
-            <!-- The HttpClient component supports the client-side of RFC 1945 (HTTP/1.0) and RFC 2616 (HTTP/1.1) , several related specifications (RFC 2109 (Cookies) , RFC 2617 (HTTP Authentication) , etc.), and provides a framework by which new request types (methods) or HTTP extensions can be created easily. -->
+            <!-- Commons HttpClient：经典版 HTTP 客户端库（HTTP/1.1、Cookie、认证等，已被 Apache HttpComponents 取代）。 -->
             <dependency>
                 <groupId>commons-httpclient</groupId>
                 <artifactId>commons-httpclient</artifactId>
@@ -1933,14 +1937,14 @@
             </dependency>
             <!-- Commons Imaging (previously Sanselan) is a pure-Java image library. -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-imaging -->
-            <!-- Commons Imaging (previously Sanselan) is a pure-Java image library. -->
+            <!-- Commons Imaging（前身 Sanselan）：纯 Java 实现的图像处理库，支持多种图像格式读写和元数据。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-imaging</artifactId>
                 <version>${commons-imaging.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-io/commons-io -->
-            <!-- Commons-IO contains utility classes, stream implementations, file filters, and endian classes. -->
+            <!-- Commons IO：Java I/O 工具类库，简化文件和流操作。 -->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -1948,28 +1952,28 @@
             </dependency>
             <!-- Apache Commons JCI core interfaces and implementations. -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-jci-core -->
-            <!-- Apache Commons JCI core interfaces and implementations. -->
+            <!-- Commons JCI Core：Java 编译接口（JCI）核心，统一对各种编译器的访问。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-jci-core</artifactId>
                 <version>${commons-jci.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-jexl -->
-            <!-- The Apache Commons JEXL library is an implementation of the JSTL Expression Language with extensions. -->
+            <!-- Commons JEXL：JSTL 表达式语言的 Java 实现扩展，支持自定义函数和方法调用。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-jexl</artifactId>
                 <version>${commons-jexl.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-jexl3 -->
-            <!-- The Apache Commons JEXL library is an implementation of the JSTL Expression Language with extensions. -->
+            <!-- Commons JEXL 3：Commons JEXL 3.x 重写版本，提供更强大的表达式计算能力。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-jexl3</artifactId>
                 <version>${commons-jexl3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-jxpath/commons-jxpath -->
-            <!-- A Java-based implementation of XPath 1.0 that, in addition to XML processing, can inspect/modify Java object graphs (the library's explicit purpose) and even mixed Java/XML structures. -->
+            <!-- Commons JXPath：基于 XPath 的 Java 对象图查询与操作库，可处理 Java 对象和 XML。 -->
             <dependency>
                 <groupId>commons-jxpath</groupId>
                 <artifactId>commons-jxpath</artifactId>
@@ -1977,40 +1981,42 @@
             </dependency>
             <!-- Commons项目中用来处理Java基本对象方法的工具类包， 可以简化很多平时经常要用到的写法， 例如判断字符串是否为空等等 -->
             <!-- Source: https://mvnrepository.com/artifact/commons-lang/commons-lang -->
-            <!-- Commons项目中用来处理Java基本对象方法的工具类包， 可以简化很多平时经常要用到的写法， 例如判断字符串是否为空等等 -->
+            <!-- Commons Lang：扩展 Java 标准库的字符串、数组、反射等工具类（1.x 旧版）。 -->
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+            <!-- Commons Lang3：Commons Lang 的 3.x 重写版本，支持泛型，更新到 JDK 8+ API。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-logging/commons-logging -->
-            <!-- Jakarta Commons Logging (JCL) 提供的是一个日志 (Log) 接口 (interface) ，同时兼顾轻量级和不依赖于具体的日志实现工具 。 它提供给中间件 / 日志工具开发者一个简单的日志操作抽象，允许程序开发人员使用不同的具体日志实现工具。用户被假定已熟悉某种日志实现工具的更高级别的细节。 JCL 提供的接口，对其它一些日志工具，包括 Log4J, Avalon LogKit, and JDK 1.4 等，进行了简单的包装，此接口更接近于 Log4J 和 LogKit 的实现。 -->
+            <!-- Commons Logging（JCL）：轻量级日志门面，统一 Log4j、JDK Logging、SLF4J 等日志实现。 -->
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commons-logging.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
-            <!-- The Apache Commons Math project is a library of lightweight, self-contained mathematics and statistics components addressing the most common practical problems not immediately available in the Java programming language or commons-lang. -->
+            <!-- Commons Math 3：轻量级、自包含的数学和统计学组件库（3.x 版本）。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math4-core -->
+            <!-- Commons Math 4 Core：Commons Math 的 4.x 重写版本核心模块。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math4-core</artifactId>
                 <version>${commons-math4.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-net/commons-net -->
-            <!-- Apache Commons Net library contains a collection of network utilities and protocol implementations. Supported protocols include: Echo, Finger, FTP, NNTP, NTP, POP3(S), SMTP(S), Telnet, Whois -->
+            <!-- Commons Net：网络协议工具库集合（FTP、SMTP、POP3、Telnet、Whois 等）。 -->
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
@@ -2019,12 +2025,14 @@
             <!-- Commons Object Pooling Library -->
             <!-- Source: https://mvnrepository.com/artifact/commons-pool/commons-pool -->
             <!-- Commons Object Pooling Library -->
+            <!-- Commons Pool：通用对象池实现（1.x 旧版）。 -->
             <dependency>
                 <groupId>commons-pool</groupId>
                 <artifactId>commons-pool</artifactId>
                 <version>${commons-pool.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
+            <!-- Commons Pool 2：通用对象池实现 2.x 重写版本，修复 1.x 死锁等问题。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
@@ -2032,7 +2040,7 @@
             </dependency>
             <!-- Java library for dynamic proxying -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-proxy -->
-            <!-- Java library for dynamic proxying -->
+            <!-- Commons Proxy：Java 动态代理库，简化 JDK Proxy API 的使用。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-proxy</artifactId>
@@ -2040,33 +2048,35 @@
             </dependency>
             <!-- Commons Java API for RDF 1.1 -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-rdf-api -->
-            <!-- Commons Java API for RDF 1.1 -->
+            <!-- Commons RDF API：Apache Commons 提供的 RDF 1.1 Java API 通用接口。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-rdf-api</artifactId>
                 <version>${commons-rdf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-rdf-jena -->
+            <!-- Commons RDF Jena：Commons RDF 的 Apache Jena 实现。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-rdf-jena</artifactId>
                 <version>${commons-rdf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-rdf-rdf4j -->
+            <!-- Commons RDF RDF4j：Commons RDF 的 Eclipse RDF4j 实现。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-rdf-rdf4j</artifactId>
                 <version>${commons-rdf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
-            <!-- Apache Commons Text is a library focused on algorithms working on strings. -->
+            <!-- Commons Text：字符串处理算法库（Levenshtein 距离、Jaro-Winkler 相似度等）。 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
                 <version>${commons-text.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-validator/commons-validator -->
-            <!-- Apache Commons Validator provides the building blocks for both client side validation and server side data validation. It may be used standalone or with a framework like Struts. Commons-validator提供了一个简单的，可扩展的框架来在一个XML文件中定义校验器(校验方法)和校验规则。支持校验规则的和错误消息的国际化。 -->
+            <!-- Commons Validator：客户端和服务端数据验证框架，支持 XML 配置校验规则和国际化。 -->
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
