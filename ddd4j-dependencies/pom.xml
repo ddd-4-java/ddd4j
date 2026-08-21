@@ -9243,12 +9243,14 @@
                 <version>${sshd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-git -->
+            <!-- Apache SSHD Git：Apache SSHD 的 Git 协议集成（SSH Git 服务器/客户端）。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-git</artifactId>
                 <version>${sshd.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-ldap -->
+            <!-- Apache SSHD LDAP：Apache SSHD 的 LDAP 认证集成。 -->
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-ldap</artifactId>
