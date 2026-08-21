@@ -2526,6 +2526,7 @@
                 <version>${cxf.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http-hc -->
+            <!-- Apache CXF HTTP HC Transport：CXF 基于 Apache HttpClient 的 HTTP 传输层实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-hc</artifactId>
@@ -2533,24 +2534,28 @@
             </dependency>
             <!-- Jetty is needed if you're are not using the CXFServlet -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http-jetty -->
+            <!-- Apache CXF Jetty Transport：CXF 基于 Jetty 的 HTTP 传输层实现（用于不使用 CXFServlet 的场景）。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-jetty</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http-netty-client -->
+            <!-- Apache CXF HTTP Netty Client：CXF 基于 Netty 的异步 HTTP 客户端。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-netty-client</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http-netty-server -->
+            <!-- Apache CXF HTTP Netty Server：CXF 基于 Netty 的异步 HTTP 服务端。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-netty-server</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http-undertow -->
+            <!-- Apache CXF HTTP Undertow Transport：CXF 基于 Undertow 的 HTTP 传输层实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-undertow</artifactId>
@@ -2558,18 +2563,21 @@
             </dependency>
             <!-- cxf-rt-transports -->
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-local -->
+            <!-- Apache CXF Local Transport：CXF 的同进程本地传输实现（用于本地测试）。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-local</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-udp -->
+            <!-- Apache CXF UDP Transport：CXF 的 UDP 传输实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-udp</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-websocket -->
+            <!-- Apache CXF WebSocket Transport：CXF 的 WebSocket 传输实现。 -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-websocket</artifactId>
