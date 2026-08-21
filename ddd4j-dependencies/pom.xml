@@ -1655,24 +1655,28 @@
                 <version>${classmate.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/claudecode-java-sdk -->
+            <!-- Easy4J Claude Code SDK：Easy4J 封装的 Anthropic Claude 大模型调用 SDK，支持 Claude Code 接口。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>claudecode-java-sdk</artifactId>
                 <version>${easy4j-claudecode-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.clickhouse/clickhouse-jdbc -->
+            <!-- ClickHouse JDBC：高性能 OLAP 列式数据库 ClickHouse 的官方 JDBC 驱动。 -->
             <dependency>
                 <groupId>com.clickhouse</groupId>
                 <artifactId>clickhouse-jdbc</artifactId>
                 <version>${clickhouse.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/cloudauth20190307 -->
+            <!-- 阿里云实人认证 SDK：阿里云 CloudAuth 实名认证服务 SDK，用于金融级身份验证。 -->
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>cloudauth20190307</artifactId>
                 <version>${aliyun-cloud-auth20190307.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/codex-java-sdk -->
+            <!-- Easy4J Codex SDK：Easy4J 封装的 OpenAI Codex 代码大模型调用 SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>codex-java-sdk</artifactId>
@@ -1680,6 +1684,7 @@
             </dependency>
             <!-- For Alibaba Cola -->
             <!-- https://mvnrepository.com/artifact/com.alibaba.cola/cola-components-bom -->
+            <!-- Alibaba COLA Components BOM：阿里 COLA 架构的组件版本清单，提供 COLA 架构所需全套组件。 -->
             <dependency>
                 <groupId>com.alibaba.cola</groupId>
                 <artifactId>cola-components-bom</artifactId>
