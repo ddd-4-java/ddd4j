@@ -2895,36 +2895,42 @@
                 <version>${dropwizard-metrics-influxdb.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alibaba/druid -->
+            <!-- Alibaba Druid：阿里开源 JDBC 连接池、监控和 SQL 解析工具。 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/druid-metrics-prometheus -->
+            <!-- Druid Metrics Prometheus：将 Druid 监控指标推送到 Prometheus 的桥接模块。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>druid-metrics-prometheus</artifactId>
                 <version>${druid-metrics.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/dsn -->
+            <!-- Eclipse Angus DSN：Angus Mail 的 DSN（投递状态通知）实现。 -->
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>dsn</artifactId>
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.alibaba/dubbo -->
+            <!-- Apache Dubbo：阿里巴巴开源的高性能 Java RPC 框架。 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>dubbo</artifactId>
                 <version>${dubbo.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/dynamic-datasource-spring -->
+            <!-- MyBatis-Plus Dynamic DataSource：基于 Spring 的动态多数据源切换框架。 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>dynamic-datasource-spring</artifactId>
                 <version>${dynamic-datasource.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.dromara.dynamictp/dynamic-tp-dependencies -->
+            <!-- DynamicTp Dependencies：Dromara DynamicTp 动态线程池的版本清单。 -->
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-dependencies</artifactId>
@@ -2933,6 +2939,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/easydoc -->
+            <!-- Easy4J EasyDoc：Easy4J 接口文档生成与聚合工具。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>easydoc</artifactId>
