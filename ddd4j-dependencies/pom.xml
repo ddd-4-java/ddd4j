@@ -8188,12 +8188,14 @@
                 <version>${rocketmq-client.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/rocketmq-extension -->
+            <!-- Easy4J RocketMQ Extension：Easy4J 对 RocketMQ 的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>rocketmq-extension</artifactId>
                 <version>${easy4j-rocketmq-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.rsocket/rsocket-bom -->
+            <!-- RSocket BOM：RSocket 响应式二进制协议各模块的版本清单。 -->
             <dependency>
                 <groupId>io.rsocket</groupId>
                 <artifactId>rsocket-bom</artifactId>
@@ -8202,6 +8204,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava -->
+            <!-- RxJava 2：Reactive Extensions 的 Java 实现（响应式编程库）。 -->
             <dependency>
                 <groupId>io.reactivex.rxjava2</groupId>
                 <artifactId>rxjava</artifactId>
