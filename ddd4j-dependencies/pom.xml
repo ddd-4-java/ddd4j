@@ -5836,12 +5836,14 @@
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.yomahub/liteflow-script-python -->
+            <!-- LiteFlow Script Python：LiteFlow 的 Python 脚本支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-python</artifactId>
                 <version>${liteflow.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.yomahub/liteflow-script-qlexpress -->
+            <!-- LiteFlow Script QLExpress：LiteFlow 的阿里 QLExpress 规则表达式支持。 -->
             <dependency>
                 <groupId>com.yomahub</groupId>
                 <artifactId>liteflow-script-qlexpress</artifactId>
