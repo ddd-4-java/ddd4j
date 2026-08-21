@@ -5043,6 +5043,7 @@
                 <version>${javers.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-bom -->
+            <!-- JAXB BOM (GlassFish)：GlassFish JAXB XML 绑定库各模块的版本清单。 -->
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-bom</artifactId>
@@ -5051,28 +5052,32 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jaxen/jaxen -->
+            <!-- Jaxen：通用 Java XPath 引擎（支持 DOM、JDOM、dom4j 等多种 XML 模型）。 -->
             <dependency>
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
                 <version>${jaxen.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.firebirdsql.jdbc/jaybird -->
+            <!-- Jaybird：Firebird SQL 数据库的纯 Java JDBC 驱动。 -->
             <dependency>
                 <groupId>org.firebirdsql.jdbc</groupId>
                 <artifactId>jaybird</artifactId>
                 <version>${jaybird.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/jbig2-imageio -->
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>jbig2-imageio</artifactId>
-                <version>${jbig2-imageio.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.jboss.logging/jboss-logging -->
+            <!-- https://mvnrepository.com/artifact/org.jboss.logging/jboss-logging -->
+            <!-- JBoss Logging：JBoss 统一日志抽象层（被 Hibernate/WildFly 使用）。 -->
             <dependency>
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging</artifactId>
                 <version>${jboss-logging.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.octo.captcha/jcaptcha-api -->
+            <!-- JCaptcha API：验证码生成和验证的 Java 框架 API。 -->
+            <dependency>
+                <groupId>com.octo.captcha</groupId>
+                <artifactId>jcaptcha-api</artifactId>
+                <version>${jcaptcha-api.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/jcache -->
             <!-- Caffeine JCache：Caffeine 对 JSR-107 JCache 标准的实现适配。 -->
