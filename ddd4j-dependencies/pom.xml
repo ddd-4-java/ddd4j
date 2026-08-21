@@ -7326,6 +7326,7 @@
             <!-- PAC4J For MongoDB -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-mongo -->
             <!-- PAC4J For MongoDB -->
+            <!-- Pac4j MongoDB：Pac4j 安全框架的 MongoDB 存储支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-mongo</artifactId>
@@ -7334,6 +7335,7 @@
             <!-- PAC4J For OAuth Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-oauth -->
             <!-- PAC4J For OAuth Protocol -->
+            <!-- Pac4j OAuth：Pac4j 安全框架的 OAuth 1.0a/2.0 协议认证支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-oauth</artifactId>
