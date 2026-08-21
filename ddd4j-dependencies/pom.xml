@@ -9539,24 +9539,28 @@
                 <version>${testcontainers-redis.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+            <!-- Thumbnailator：Java 图片缩放、裁剪、旋转、水印处理库。 -->
             <dependency>
                 <groupId>net.coobird</groupId>
                 <artifactId>thumbnailator</artifactId>
                 <version>${thumbnailator.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf -->
+            <!-- Thymeleaf：现代服务器端 Java 模板引擎（自然模板，可直接在浏览器预览）。 -->
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf</artifactId>
                 <version>${thymeleaf.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-conditionalcomments -->
+            <!-- Thymeleaf Conditional Comments：Thymeleaf 的 IE 条件注释支持扩展。 -->
             <dependency>
                 <groupId>org.thymeleaf.extras</groupId>
                 <artifactId>thymeleaf-extras-conditionalcomments</artifactId>
                 <version>${thymeleaf-extras-conditionalcomments.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.mxab.thymeleaf.extras/thymeleaf-extras-data-attribute -->
+            <!-- Thymeleaf Data Attribute：Thymeleaf 的自定义 data-* 属性方言扩展。 -->
             <dependency>
                 <groupId>com.github.mxab.thymeleaf.extras</groupId>
                 <artifactId>thymeleaf-extras-data-attribute</artifactId>
