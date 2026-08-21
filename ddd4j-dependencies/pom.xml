@@ -7399,12 +7399,14 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-uniauth -->
+            <!-- Easy4J Pac4j UniAuth：Easy4J 对 Pac4j 的统一认证扩展（聚合多种认证源）。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-uniauth</artifactId>
                 <version>${easy4j-pac4j-uniauth.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-yiban -->
+            <!-- Easy4J Pac4j Yiban：Easy4J 对 Pac4j 的易班平台认证扩展。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-yiban</artifactId>
