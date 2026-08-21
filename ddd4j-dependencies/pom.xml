@@ -7839,12 +7839,14 @@
                 <version>${pulsar-reactive.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.qiniu/qiniu-java-sdk -->
+            <!-- 七牛云 SDK：七牛云对象存储和 CDN 的 Java 客户端。 -->
             <dependency>
                 <groupId>com.qiniu</groupId>
                 <artifactId>qiniu-java-sdk</artifactId>
                 <version>${qiniu-java-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba/qlexpress4 -->
+            <!-- QLExpress4：阿里开源的轻量级规则引擎/表达式求值引擎。 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>qlexpress4</artifactId>
