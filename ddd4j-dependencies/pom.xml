@@ -4284,18 +4284,21 @@
                 <version>${httpcore5.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
+            <!-- Apache HttpMime：Apache HTTP 客户端的 MIME 多部分（文件上传）支持。 -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpmime</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/httputils -->
+            <!-- HttpUtils（旧坐标）：旧坐标下的 HTTP 工具库（已迁至 io.github.easy4j）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>httputils</artifactId>
                 <version>${httputils.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.hudi/hudi-common -->
+            <!-- Apache Hudi Common：Apache Hudi 数据湖存储框架核心模块（增量数据处理、Schema 管理）。 -->
             <dependency>
                 <groupId>org.apache.hudi</groupId>
                 <artifactId>hudi-common</artifactId>
