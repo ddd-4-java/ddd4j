@@ -5123,31 +5123,35 @@
                 <version>1.9.0</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.jgoodies/jgoodies-looks -->
+            <!-- JGoodies Looks：JGoodies 的 Swing 外观主题库，提供跨平台一致的 UI 风格。 -->
             <dependency>
                 <groupId>com.jgoodies</groupId>
                 <artifactId>jgoodies-looks</artifactId>
                 <version>${jgoodies.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.jgoodies/jgoodies-validation -->
+            <!-- JGoodies Validation：JGoodies 的 Swing 表单验证框架。 -->
             <dependency>
                 <groupId>com.jgoodies</groupId>
                 <artifactId>jgoodies-validation</artifactId>
                 <version>2.5.1</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jgroups/jgroups -->
-            <!-- JGroups是一个开源的纯java编写的可靠的群组通讯工具。其是一个可靠的组播通讯工具集（需要说明的是，这并不是说必须要使用IP Multicast,JGroups也可以使用TCP来实现）。 其工作模式基于IP多播，但可以在可靠性和群组成员管理上进行扩展。其结构上设计灵活，提供了一种灵活兼容多种协议的协议栈，对于每个产品都有不同的可靠性需求。这种协议栈可以让用户定义的自己可靠性指标和性能指标。 JGroups可以用来创建一个组，这个组中的成员可以给其他成员发送消息。 -->
+            <!-- JGroups：可靠的群组通讯库，支持 IP 多播/TCP，用于集群成员管理与可靠消息传递。 -->
             <dependency>
                 <groupId>org.jgroups</groupId>
                 <artifactId>jgroups</artifactId>
                 <version>${jgroups.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/cn.jpush.api/jiguang-common -->
+            <!-- 极光推送公共库：极光 JPush SDK 的通用工具模块。 -->
             <dependency>
                 <groupId>cn.jpush.api</groupId>
                 <artifactId>jiguang-common</artifactId>
                 <version>${jpush-jiguang-common.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+            <!-- JJWT API：Java JWT（JSON Web Token）创建与验证库的核心 API。 -->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
