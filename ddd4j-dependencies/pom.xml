@@ -7551,18 +7551,21 @@
                 <version>${pgvector.version}</version>
             </dependency>
                 <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-core -->
+                <!-- Pi4J Core：Raspberry Pi GPIO/I2C/SPI/UART 硬件访问的 Java 库核心。 -->
                 <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-core</artifactId>
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-library-gpiod -->
+            <!-- Pi4J GPIO Daemon：Pi4J 的 GPIO 守护进程通信库。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-library-gpiod</artifactId>
                 <version>${pi4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-library-linuxfs -->
+            <!-- Pi4J Linux FS：Pi4J 的 Linux 文件系统 GPIO 访问库。 -->
             <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-library-linuxfs</artifactId>
