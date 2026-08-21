@@ -9523,6 +9523,7 @@
                 <version>${tencentcloud-sdk-java-sms.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.testcontainers/testcontainers-bom -->
+            <!-- Testcontainers BOM：Docker 容器化集成测试框架各模块的版本清单。 -->
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
@@ -9531,6 +9532,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.redis/testcontainers-redis -->
+            <!-- Testcontainers Redis：Testcontainers 的 Redis 测试容器模块。 -->
             <dependency>
                 <groupId>com.redis</groupId>
                 <artifactId>testcontainers-redis</artifactId>
