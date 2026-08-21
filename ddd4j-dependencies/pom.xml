@@ -5971,18 +5971,21 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jpl -->
+            <!-- Log4j JPL：将 Java Platform Logging (JPL/System.Logger) 调用桥接到 Log4j 2 实现。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jpl</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-jul -->
+            <!-- Log4j JUL：将 java.util.logging (JUL) 调用桥接到 Log4j 2 实现。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-jul</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-kubernetes -->
+            <!-- Log4j Kubernetes：Log4j 2 的 Kubernetes Pod 元数据注入模块。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-kubernetes</artifactId>
