@@ -4039,6 +4039,7 @@
                 <version>${hdrhistogram.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.helidon/helidon-bom -->
+            <!-- Helidon BOM：Oracle Helidon 微服务框架各模块的版本清单。 -->
             <dependency>
                 <groupId>io.helidon</groupId>
                 <artifactId>helidon-bom</artifactId>
@@ -4047,12 +4048,14 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/hermes-java-sdk -->
+            <!-- Easy4J Hermes SDK：Easy4J 封装的 Hermes 消息队列 SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>hermes-java-sdk</artifactId>
                 <version>${easy4j-hermes-java-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-platform -->
+            <!-- Hibernate Platform：Hibernate ORM 6.x 各模块的版本清单。 -->
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-platform</artifactId>
@@ -4061,12 +4064,14 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+            <!-- Hibernate Validator：Bean Validation (JSR 380) 参考实现（@NotNull、@Size 等验证注解）。 -->
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate-validator.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator-annotation-processor -->
+            <!-- Hibernate Validator Annotation Processor：Hibernate Validator 的编译时注解处理器。 -->
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator-annotation-processor</artifactId>
