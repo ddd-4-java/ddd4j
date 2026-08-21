@@ -8678,18 +8678,21 @@
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/shiro-biz -->
+            <!-- Shiro Biz：旧坐标下的 Apache Shiro 企业级安全增强库（已迁至 io.github.easy4j）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>shiro-biz</artifactId>
                 <version>${shiro-biz.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-biz-sdk -->
+            <!-- Easy4J Shiro Biz SDK：Easy4J 对 Apache Shiro 的企业级安全增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-biz-sdk</artifactId>
                 <version>${easy4j-shiro-biz-sdk.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-cache -->
+            <!-- Shiro Cache：Apache Shiro 的缓存抽象模块。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cache</artifactId>
