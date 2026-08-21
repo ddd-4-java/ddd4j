@@ -7358,6 +7358,7 @@
             <!-- PAC4J For OpenID Connect Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-oidc -->
             <!-- PAC4J For OpenID Connect Protocol -->
+            <!-- Pac4j OIDC：Pac4j 安全框架的 OpenID Connect 协议认证支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-oidc</artifactId>
@@ -7366,6 +7367,7 @@
             <!-- PAC4J For OpenId Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-openid -->
             <!-- PAC4J For OpenId Protocol -->
+            <!-- Pac4j OpenID：Pac4j 安全框架的 OpenID 2.0 协议认证支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-openid</artifactId>
