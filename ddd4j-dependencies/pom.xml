@@ -4507,6 +4507,7 @@
             </dependency>
             <!-- ImageIO plugin for Adobe Portable Document Format (PDF). -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-pdf -->
+            <!-- TwelveMonkeys ImageIO PDF：PDF 格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-pdf</artifactId>
@@ -4514,6 +4515,7 @@
             </dependency>
             <!-- ImageIO plugin for Apple Mac Paint Picture (PICT) format. -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-pict -->
+            <!-- TwelveMonkeys ImageIO PICT：Apple Mac PICT 图像格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-pict</artifactId>
@@ -4521,12 +4523,14 @@
             </dependency>
             <!-- ImageIO plugin for NetPBM Portable Any Map (PNM) -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-pnm -->
+            <!-- TwelveMonkeys ImageIO PNM：NetPBM PNM/PGM/PPM 图像格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-pnm</artifactId>
                 <version>${imageio.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-psd -->
+            <!-- TwelveMonkeys ImageIO PSD：Adobe Photoshop PSD 文件格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-psd</artifactId>
@@ -4534,6 +4538,7 @@
             </dependency>
             <!-- ImageIO plugin for Silicon Graphics Image Format (SGI) -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-sgi -->
+            <!-- TwelveMonkeys ImageIO SGI：Silicon Graphics SGI 图像格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-sgi</artifactId>
@@ -4541,6 +4546,7 @@
             </dependency>
             <!-- ImageIO plugin for Truevision TGA Image Format (TGA) -->
             <!-- Source: https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-tga -->
+            <!-- TwelveMonkeys ImageIO TGA：Truevision TGA 图像格式的 ImageIO 插件。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-tga</artifactId>
