@@ -3369,24 +3369,28 @@
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-gcp-spanner -->
+            <!-- Flyway GCP Spanner：Flyway 的 Google Cloud Spanner 支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-gcp-spanner</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-mysql -->
+            <!-- Flyway MySQL：Flyway 的 MySQL 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-mysql</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-singlestore -->
+            <!-- Flyway SingleStore：Flyway 的 SingleStore (MemSQL) 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-singlestore</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-sqlserver -->
+            <!-- Flyway SQL Server：Flyway 的 Microsoft SQL Server 数据库支持。 -->
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-sqlserver</artifactId>
