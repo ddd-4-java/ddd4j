@@ -7230,12 +7230,14 @@
             <!-- PAC4J For CAS Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-cas -->
             <!-- PAC4J For CAS Protocol -->
+            <!-- Pac4j CAS：Pac4j 安全框架的 CAS 单点登录协议支持。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-cas</artifactId>
                 <version>${pac4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-config -->
+            <!-- Pac4j Config：Pac4j 安全框架的配置管理模块。 -->
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-config</artifactId>
