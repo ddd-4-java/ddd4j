@@ -4557,12 +4557,14 @@
                 <version>${jai-imageio.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api -->
+            <!-- Jakarta Activation API：Jakarta 版的 JAF（JavaBeans Activation Framework），用于邮件和消息传递。 -->
             <dependency>
                 <groupId>jakarta.activation</groupId>
                 <artifactId>jakarta.activation-api</artifactId>
                 <version>${jakarta-activation.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.annotation/jakarta.annotation-api -->
+            <!-- Jakarta Annotation API：Jakarta 版的 Java 通用注解 API（@Generated、@Resource 等）。 -->
             <dependency>
                 <groupId>jakarta.annotation</groupId>
                 <artifactId>jakarta.annotation-api</artifactId>
