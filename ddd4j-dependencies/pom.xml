@@ -10326,6 +10326,7 @@
                 <version>${zstd-jni.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/zxing-extension -->
+            <!-- Easy4J ZXing Extension：Easy4J 对 ZXing 条形码/二维码库的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>zxing-extension</artifactId>
@@ -10337,6 +10338,7 @@
     <dependencies>
         <!-- For Lombok -->
         <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <!-- Lombok：通过注解自动生成 getter/setter/toString/equals/hashCode/构造函数等样板代码。 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -10344,6 +10346,7 @@
         </dependency>
         <!-- For Slf4j -->
         <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <!-- SLF4J API：Java 简单日志门面 API（统一日志接口）。 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
