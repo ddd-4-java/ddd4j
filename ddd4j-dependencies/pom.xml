@@ -9617,6 +9617,7 @@
                 <version>${token-bucket.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-annotations-api -->
+            <!-- Tomcat Annotations API：Apache Tomcat 的 Servlet 注解 API 模块。 -->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-annotations-api</artifactId>
