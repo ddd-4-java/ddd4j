@@ -26,7 +26,7 @@
         <!-- 由 verify-api-compatibility.sh 按模块传入，避免把反应堆依赖当作当前构件 API。 -->
         <ddd4j.api.include>io.ddd4j.__api_gate_requires_module_scope__.**</ddd4j.api.include>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
-        <jackson.version>3.2.1</jackson.version>
+        <jackson.version>2.22.2</jackson.version>
         <java.version>17</java.version>
         <lombok.version>1.18.46</lombok.version>
         <!-- Maven Plugin versions -->
