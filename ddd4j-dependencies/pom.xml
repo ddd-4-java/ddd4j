@@ -8921,12 +8921,14 @@
                 <version>${caffeine.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+            <!-- SLF4J API：Java 简单日志门面 API（统一日志接口）。 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-bom -->
+            <!-- SLF4J BOM：SLF4J 日志门面各模块的版本清单。 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-bom</artifactId>
@@ -8935,6 +8937,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+            <!-- SLF4J Simple：SLF4J 的简单控制台日志实现（无配置，直接输出到 stderr）。 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
