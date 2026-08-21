@@ -980,12 +980,14 @@
                 <version>${antlr4.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
+            <!-- ANTLR4 Runtime：强大的解析器生成器 ANTLR4 的运行时库，用于词法和语法解析。 -->
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
                 <version>${antlr4.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.anyline/anyline-data-jdbc -->
+            <!-- AnyLine Data JDBC：国产多数据源适配的 JDBC 框架，统一封装各种关系型数据库访问。 -->
             <dependency>
                 <groupId>org.anyline</groupId>
                 <artifactId>anyline-data-jdbc</artifactId>
@@ -993,48 +995,56 @@
             </dependency>
             <!-- For AnyLine Data JDBC MySQL -->
             <!-- https://mvnrepository.com/artifact/org.anyline/anyline-data-jdbc-mysql -->
+            <!-- AnyLine Data JDBC MySQL：AnyLine 针对 MySQL 数据库的 JDBC 适配驱动。 -->
             <dependency>
                 <groupId>org.anyline</groupId>
                 <artifactId>anyline-data-jdbc-mysql</artifactId>
                 <version>${anyline.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.anyline/anyline-environment-spring-data-jdbc -->
+            <!-- AnyLine Spring Data JDBC 适配：让 AnyLine 可与 Spring Data JDBC 框架集成使用。 -->
             <dependency>
                 <groupId>org.anyline</groupId>
                 <artifactId>anyline-environment-spring-data-jdbc</artifactId>
                 <version>${anyline.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apiguardian/apiguardian-api -->
+            <!-- APIGuardian API：JUnit 5 扩展机制用于标注 API 实验性、稳定或弃用状态的注解库。 -->
             <dependency>
                 <groupId>org.apiguardian</groupId>
                 <artifactId>apiguardian-api</artifactId>
                 <version>${apiguardian-api.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.skywalking/apm-toolkit-log4j-2.x -->
+            <!-- Apache SkyWalking Log4j 2.x Toolkit：将 traceId 注入 Log4j 2.x MDC，实现日志与链路追踪关联。 -->
             <dependency>
                 <groupId>org.apache.skywalking</groupId>
                 <artifactId>apm-toolkit-log4j-2.x</artifactId>
                 <version>${skywalking.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.skywalking/apm-toolkit-opentracing -->
+            <!-- Apache SkyWalking OpenTracing Toolkit：兼容 OpenTracing 规范的 SkyWalking 工具包。 -->
             <dependency>
                 <groupId>org.apache.skywalking</groupId>
                 <artifactId>apm-toolkit-opentracing</artifactId>
                 <version>${skywalking.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.skywalking/apm-toolkit-trace -->
+            <!-- Apache SkyWalking Trace Toolkit：在应用中获取当前 traceId/spanId，用于日志关联和自定义埋点。 -->
             <dependency>
                 <groupId>org.apache.skywalking</groupId>
                 <artifactId>apm-toolkit-trace</artifactId>
                 <version>${skywalking.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.tngtech.archunit/archunit-junit5 -->
+            <!-- ArchUnit JUnit5：通过单元测试验证 Java 应用架构规则的库（如分层、依赖、命名约束）。 -->
             <dependency>
                 <groupId>com.tngtech.archunit</groupId>
                 <artifactId>archunit-junit5</artifactId>
                 <version>${archunit.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/artemis-bom -->
+            <!-- Apache ActiveMQ Artemis：高性能异步消息中间件，支持 AMQP、MQTT、STOMP 等多种协议。 -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>artemis-bom</artifactId>
@@ -1043,18 +1053,21 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.ow2.asm/asm -->
+            <!-- ASM：Java 字节码分析与操作框架，被 Spring/Hibernate 等大量框架使用进行运行时增强。 -->
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>${asm.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/cn.wensiqun/asmsupport-client -->
+            <!-- ASMSupport：国产字节码生成框架，比 ASM 更易用的链式 API，用于动态生成 Java 类。 -->
             <dependency>
                 <groupId>cn.wensiqun</groupId>
                 <artifactId>asmsupport-client</artifactId>
                 <version>${asmsupport.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.aspectj/aspectjrt -->
+            <!-- AspectJ Runtime：面向切面编程（AOP）框架的运行时，提供切面织入和代理支持。 -->
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
