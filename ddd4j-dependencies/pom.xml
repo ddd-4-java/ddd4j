@@ -6392,6 +6392,7 @@
             <!-- mybatis generator -->
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator -->
             <!-- mybatis generator -->
+            <!-- MyBatis Generator BOM：MyBatis 代码生成器各模块的版本清单（自动生成 Mapper/XML/Model）。 -->
             <dependency>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator</artifactId>
@@ -6400,6 +6401,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-hazelcast -->
+            <!-- MyBatis Hazelcast Cache：MyBatis 的 Hazelcast 分布式缓存实现（二级缓存）。 -->
             <dependency>
                 <groupId>org.mybatis.caches</groupId>
                 <artifactId>mybatis-hazelcast</artifactId>
