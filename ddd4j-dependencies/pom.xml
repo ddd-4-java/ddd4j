@@ -8317,18 +8317,21 @@
                 <version>${easy4j-schemacrawler-impala.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/schemacrawler-kylin -->
+            <!-- Easy4J SchemaCrawler Kylin：Easy4J 的 SchemaCrawler Kylin OLAP 数据库适配。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>schemacrawler-kylin</artifactId>
                 <version>${easy4j-schemacrawler-kylin.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-lint -->
+            <!-- SchemaCrawler Lint：SchemaCrawler 的 Schema 规范性检查模块。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-lint</artifactId>
                 <version>${schemacrawler.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-mysql -->
+            <!-- SchemaCrawler MySQL：SchemaCrawler 的 MySQL 数据库适配。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-mysql</artifactId>
