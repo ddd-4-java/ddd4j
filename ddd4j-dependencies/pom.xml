@@ -5478,12 +5478,14 @@
                 <version>${jxl.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+            <!-- Kafka Clients：Apache Kafka 官方 Java 客户端（Producer/Consumer/Admin）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+            <!-- Kafka Clients Test Jar：Kafka Clients 的测试工具（EmbeddedKafka 等）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
@@ -5491,6 +5493,7 @@
                 <classifier>test</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-log4j-appender -->
+            <!-- Kafka Log4j Appender：将 Log4j 日志消息发送到 Kafka Topic 的 Appender。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-log4j-appender</artifactId>
