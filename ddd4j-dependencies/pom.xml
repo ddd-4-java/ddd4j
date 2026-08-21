@@ -6062,12 +6062,14 @@
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+            <!-- Logback Classic：SLF4J 的默认实现，支持自动重载配置和丰富的 Appender。 -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+            <!-- Logback Core：Logback 的核心引擎模块（Layout、Appender、Encoder 等）。 -->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
