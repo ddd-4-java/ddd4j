@@ -6168,12 +6168,14 @@
                 <version>${easy4j-metrics-biz.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/metrics-druid -->
+            <!-- Easy4J Metrics Druid：Easy4J 的 Druid 连接池指标监控模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>metrics-druid</artifactId>
                 <version>${easy4j-metrics-druid.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/metrics-ehcache3 -->
+            <!-- Easy4J Metrics Ehcache3：Easy4J 的 Ehcache3 缓存指标监控模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>metrics-ehcache3</artifactId>
