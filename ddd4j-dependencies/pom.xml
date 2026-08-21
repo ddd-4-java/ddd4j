@@ -5536,18 +5536,21 @@
                 <classifier>test</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-shell -->
+            <!-- Kafka Shell：Kafka 的交互式命令行管理工具。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-shell</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-storage -->
+            <!-- Kafka Storage：Kafka 的日志存储引擎实现（基于时间轮和分段日志）。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-storage</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-storage-api -->
+            <!-- Kafka Storage API：Kafka 存储层的抽象接口定义。 -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-storage-api</artifactId>
