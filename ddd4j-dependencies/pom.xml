@@ -9898,12 +9898,14 @@
                 <version>${wechatpay-java.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.rcarlosdasilva/weixin -->
+            <!-- WxJava：微信开发 Java SDK（公众号、小程序、支付、企业微信等）。 -->
             <dependency>
                 <groupId>io.github.rcarlosdasilva</groupId>
                 <artifactId>weixin</artifactId>
                 <version>0.6</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.binarywang/weixin-java-common -->
+            <!-- 微信 Java SDK Common：WxJava 微信 Java SDK 公共模块。 -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-common</artifactId>
