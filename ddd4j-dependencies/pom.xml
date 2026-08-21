@@ -7913,12 +7913,14 @@
                 <version>${r2dbc-mssql.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.asyncer/r2dbc-mysql -->
+            <!-- R2DBC MySQL：MySQL 的响应式数据库连接 (R2DBC) 驱动。 -->
             <dependency>
                 <groupId>io.asyncer</groupId>
                 <artifactId>r2dbc-mysql</artifactId>
                 <version>${r2dbc-mysql.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-pool -->
+            <!-- R2DBC Pool：R2DBC 连接池实现（响应式连接复用）。 -->
             <dependency>
                 <groupId>io.r2dbc</groupId>
                 <artifactId>r2dbc-pool</artifactId>
