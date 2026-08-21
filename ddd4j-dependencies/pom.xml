@@ -7892,18 +7892,21 @@
                 <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-h2 -->
+            <!-- R2DBC H2：H2 内存数据库的响应式数据库连接 (R2DBC) 驱动。 -->
             <dependency>
                 <groupId>io.r2dbc</groupId>
                 <artifactId>r2dbc-h2</artifactId>
                 <version>${r2dbc-h2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mariadb/r2dbc-mariadb -->
+            <!-- R2DBC MariaDB：MariaDB 的响应式数据库连接 (R2DBC) 驱动。 -->
             <dependency>
                 <groupId>org.mariadb</groupId>
                 <artifactId>r2dbc-mariadb</artifactId>
                 <version>${r2dbc-mariadb.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-mssql -->
+            <!-- R2DBC MSSQL：SQL Server 的响应式数据库连接 (R2DBC) 驱动。 -->
             <dependency>
                 <groupId>io.r2dbc</groupId>
                 <artifactId>r2dbc-mssql</artifactId>
