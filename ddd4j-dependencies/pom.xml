@@ -10507,36 +10507,42 @@
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/io.fabric8/docker-maven-plugin -->
                 <!-- http://dmp.fabric8.io -->
+                <!-- Docker Maven Plugin：fabric8 Docker 构建/推送/运行 Maven 插件（容器化部署）。 -->
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
                     <version>${maven-docker-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/exec-maven-plugin -->
+                <!-- Exec Maven Plugin：在 Maven 生命周期中执行系统命令或 Java 程序。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${maven-exec-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/findbugs-maven-plugin -->
+                <!-- FindBugs Maven Plugin：Java 静态代码分析插件（查找 bug，已由 SpotBugs 替代）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
                     <version>${maven-findbugs-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/flatten-maven-plugin -->
+                <!-- Flatten Maven Plugin：展开 POM 中的 `${revision}` 占位符（支持 CI/CD 版本注入）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>${maven-flatten-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+                <!-- Maven GPG Plugin：对 Maven 构件进行 GPG 签名（发布到 Central 时必须）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-gpg-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/pl.project13.maven/git-commit-id-plugin -->
+                <!-- Git Commit ID Maven Plugin：将 Git commit 信息注入到 `git.properties`（构建溯源）。 -->
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
