@@ -10555,12 +10555,14 @@
                     <version>${maven-gwt-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jarsigner-plugin -->
+                <!-- Maven JAR Signer Plugin：对 Maven 构件进行 JAR 签名。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jarsigner-plugin</artifactId>
                     <version>${maven-jarsigner-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+                <!-- JaCoCo Maven Plugin：代码覆盖率插件（测试覆盖率报告生成）。 -->
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
@@ -10582,30 +10584,35 @@
                     </executions>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/jaxb2-maven-plugin -->
+                <!-- JAXB2 Maven Plugin：从 XML Schema (XSD) 生成 Java 类（XSD→Java 代码生成）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxb2-maven-plugin</artifactId>
                     <version>${maven-jaxb2-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/javancss-maven-plugin -->
+                <!-- JavaNCSS Maven Plugin：代码行数统计插件（NCSS 复杂度计算）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>javancss-maven-plugin</artifactId>
                     <version>${maven-javancss-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/jdepend-maven-plugin -->
+                <!-- JDepend Maven Plugin：Java 包依赖分析插件（检查循环依赖、抽象度等）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jdepend-maven-plugin</artifactId>
                     <version>${maven-jdepend-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-maven-plugin -->
+                <!-- Jetty Maven Plugin：在 Maven 中运行嵌入式 Jetty 服务器（开发调试用）。 -->
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${maven-jetty-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.jooq/jooq-codegen-maven -->
+                <!-- jOOQ Codegen Maven：从数据库 Schema 生成 jOOQ 类型安全查询代码。 -->
                 <plugin>
                     <groupId>org.jooq</groupId>
                     <artifactId>jooq-codegen-maven</artifactId>
