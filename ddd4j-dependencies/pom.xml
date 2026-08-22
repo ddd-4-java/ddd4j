@@ -10427,12 +10427,14 @@
                     <version>${maven-jandex-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
+                <!-- Apache Maven AntRun：在 Maven 生命周期中运行 Ant 脚本的插件。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>${maven-antrun-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/com.alibaba.cloud/toolkit-maven-plugin -->
+                <!-- Alibaba Toolkit Maven Plugin：阿里云 Toolkit Maven 插件（云函数打包/部署等）。 -->
                 <plugin>
                     <groupId>com.alibaba.cloud</groupId>
                     <artifactId>toolkit-maven-plugin</artifactId>
@@ -10441,6 +10443,7 @@
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/appassembler-maven-plugin  -->
                 <!-- 官方文档：http://www.mojohaus.org/appassembler/appassembler-maven-plugin -->
                 <!-- 相关博客：http://blog.csdn.net/mn960mn/article/details/51554152 -->
+                <!-- Appassembler Maven Plugin：将 Java 应用打包为可执行的 Shell/Bat 脚本（含 classpath 配置）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>appassembler-maven-plugin</artifactId>
@@ -10448,18 +10451,21 @@
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
                 <!-- 官方文档：http://maven.apache.org/plugins/maven-assembly-plugin/ -->
+                <!-- Maven Assembly Plugin：将项目打包为可分发的压缩包（tar.gz/zip 等，含依赖和配置）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-checkstyle-plugin -->
+                <!-- Maven Checkstyle Plugin：代码风格检查插件（自动检查命名规范、格式等）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>${maven-checkstyle-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                <!-- Maven Compiler Plugin：Java 编译插件（源码/目标 JDK 版本、参数等配置）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -10472,6 +10478,7 @@
                     </configuration>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.owasp/dependency-check-maven -->
+                <!-- OWASP Dependency Check：依赖安全漏洞扫描插件（检查 CVE 漏洞）。 -->
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
