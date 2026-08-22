@@ -974,6 +974,7 @@
                 <version>${owasp-antisamy.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.antlr/antlr4 -->
+            <!-- ANTLR4：强大的解析器生成器（从语法文件生成词法/语法分析器）。 -->
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
@@ -1631,18 +1632,21 @@
                 <version>${cglib.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.checkerframework/checker-qual -->
+            <!-- Checker Framework：Java 类型系统扩展（@Nullable、@NonNull、@Tainted 等静态检查）。 -->
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
                 <version>${checker-framework.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.paypal.sdk/checkout-sdk -->
+            <!-- PayPal Checkout SDK：PayPal Checkout REST API 的 Java SDK（订单、支付、退款）。 -->
             <dependency>
                 <groupId>com.paypal.sdk</groupId>
                 <artifactId>checkout-sdk</artifactId>
                 <version>${paypal-checkout-sdk.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
+            <!-- ClassGraph：超快的 Java 类路径/classpath 扫描器（替代 Reflections、Spring 类扫描）。 -->
             <dependency>
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
@@ -2183,6 +2187,7 @@
                 <version>${qcloud-cos-api.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.qcloud/cos_api-bundle -->
+            <!-- 腾讯云 COS API Bundle：腾讯云对象存储 COS 的 Java 客户端（含所有依赖的 bundle 包）。 -->
             <dependency>
                 <groupId>com.qcloud</groupId>
                 <artifactId>cos_api-bundle</artifactId>
@@ -2196,48 +2201,56 @@
                 <version>${crac.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/us.fatehi/credit_card_number -->
+            <!-- Credit Card Number：信用卡号码生成和校验库（Luhn 算法）。 -->
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>credit_card_number</artifactId>
                 <version>3.0.0</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-api -->
+            <!-- Chromium Cronet API：Chromium 网络栈的 Java API（高性能 HTTP/QUIC 客户端）。 -->
             <dependency>
                 <groupId>org.chromium.net</groupId>
                 <artifactId>cronet-api</artifactId>
                 <version>${cronet.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-common -->
+            <!-- Chromium Cronet Common：Chromium Cronet 的公共模块。 -->
             <dependency>
                 <groupId>org.chromium.net</groupId>
                 <artifactId>cronet-common</artifactId>
                 <version>${cronet.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-embedded -->
+            <!-- Chromium Cronet Embedded：Chromium Cronet 的嵌入式实现（无需外部 Chromium 二进制）。 -->
             <dependency>
                 <groupId>org.chromium.net</groupId>
                 <artifactId>cronet-embedded</artifactId>
                 <version>${cronet.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-fallback -->
+            <!-- Chromium Cronet Fallback：Chromium Cronet 的回退实现（当 Cronet 不可用时使用 HttpURLConnection）。 -->
             <dependency>
                 <groupId>org.chromium.net</groupId>
                 <artifactId>cronet-fallback</artifactId>
                 <version>${cronet.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.owasp/csrfguard -->
+            <!-- OWASP CSRFGuard：OWASP 的 CSRF 防护库（自动生成/验证 CSRF Token）。 -->
             <dependency>
                 <groupId>org.owasp</groupId>
                 <artifactId>csrfguard</artifactId>
                 <version>${owasp-csrfguard.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.owasp/csrfguard-extension-session -->
+            <!-- OWASP CSRFGuard Session Extension：CSRFGuard 的 HTTP Session 集成扩展。 -->
             <dependency>
                 <groupId>org.owasp</groupId>
                 <artifactId>csrfguard-extension-session</artifactId>
                 <version>${owasp-csrfguard.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.sourceforge.cssparser/cssparser -->
+            <!-- CSS Parser：Java CSS 2.1 解析器（将 CSS 文本解析为样式表对象模型）。 -->
             <dependency>
                 <groupId>net.sourceforge.cssparser</groupId>
                 <artifactId>cssparser</artifactId>
@@ -2660,6 +2673,7 @@
                 <version>${derby.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_zh_CN -->
+            <!-- Apache Derby 中文语言包：Derby 嵌入式数据库的简体中文错误消息和界面翻译。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyLocale_zh_CN</artifactId>
@@ -3197,60 +3211,70 @@
                 <version>${flink.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-content-spring-configurator -->
+            <!-- Flowable Content Spring Configurator：Flowable 内容管理模块的 Spring 配置器。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-content-spring-configurator</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-form-spring-configurator -->
+            <!-- Flowable Form Spring Configurator：Flowable 表单引擎模块的 Spring 配置器。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-form-spring-configurator</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-groovy-script-static-engine -->
+            <!-- Flowable Groovy Script Static Engine：Flowable 的 Groovy 脚本静态编译引擎。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-groovy-script-static-engine</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-process-engine-mongodb -->
+            <!-- Flowable Process Engine MongoDB：Flowable 流程引擎的 MongoDB 持久化实现。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-process-engine-mongodb</artifactId>
                 <version>6.4.0.alpha1</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-admin-logic -->
+            <!-- Flowable UI Admin Logic：Flowable 管理控制台的业务逻辑模块。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-admin-logic</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-idm-logic -->
+            <!-- Flowable UI IDM Logic：Flowable 身份管理模块的业务逻辑。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-idm-logic</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-modeler-conf -->
+            <!-- Flowable UI Modeler Conf：Flowable 流程设计器的配置模块。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-modeler-conf</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-modeler-logic -->
+            <!-- Flowable UI Modeler Logic：Flowable 流程设计器的业务逻辑模块。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-modeler-logic</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-modeler-rest -->
+            <!-- Flowable UI Modeler REST：Flowable 流程设计器的 REST API 接口。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-modeler-rest</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-task-conf -->
+            <!-- Flowable UI Task Conf：Flowable 任务管理界面的配置模块。 -->
             <dependency>
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-task-conf</artifactId>
@@ -3404,156 +3428,182 @@
                 <version>${formio.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.odfdom.converter.core -->
+            <!-- xDocReport ODFDOM Converter Core：ODF 文档（LibreOffice）转换为核心模块。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.odfdom.converter.core</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.odfdom.converter.pdf -->
+            <!-- xDocReport ODFDOM to PDF：将 ODF 文档转换为 PDF 格式。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.odfdom.converter.pdf</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.odfdom.converter.xhtml -->
+            <!-- xDocReport ODFDOM to XHTML：将 ODF 文档转换为 XHTML 格式。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.odfdom.converter.xhtml</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.poi.xwpf.converter.core -->
+            <!-- xDocReport POI XWPF Converter Core：Word (.docx) 文档转换核心模块。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.poi.xwpf.converter.core</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.poi.xwpf.converter.pdf -->
+            <!-- xDocReport POI XWPF to PDF：将 Word (.docx) 文档转换为 PDF 格式。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.poi.xwpf.converter.xhtml -->
+            <!-- xDocReport POI XWPF to XHTML：将 Word (.docx) 文档转换为 XHTML 格式。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.poi.xwpf.converter.xhtml</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter -->
+            <!-- xDocReport Converter：文档格式转换核心引擎。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.converter</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.docx.docx4j -->
+            <!-- xDocReport DOCX Converter docx4j：使用 docx4j 库的 Word 文档转换器。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.converter.docx.docx4j</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.docx.xwpf -->
+            <!-- xDocReport DOCX Converter XWPF：使用 Apache POI XWPF 的 Word 文档转换器。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.odt.odfdom -->
+            <!-- xDocReport ODT Converter ODFDOM：使用 ODFDOM 库的 ODF 文档转换器。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.converter.odt.odfdom</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.core -->
+            <!-- xDocReport Core：xDocReport 文档处理框架核心模块。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.core</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document -->
+            <!-- xDocReport Document：文档抽象层（统一 DOCX/ODT/PPTX 等格式访问接口）。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.docx -->
+            <!-- xDocReport Document DOCX：Word (.docx) 格式的文档实现。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.odp -->
+            <!-- xDocReport Document ODP：OpenDocument 演示文稿 (.odp) 格式的文档实现。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document.odp</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.ods -->
+            <!-- xDocReport Document ODS：OpenDocument 电子表格 (.ods) 格式的文档实现。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document.ods</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.odt -->
+            <!-- xDocReport Document ODT：OpenDocument 文本 (.odt) 格式的文档实现。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document.odt</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.pptx -->
+            <!-- xDocReport Document PPTX：PowerPoint (.pptx) 格式的文档实现。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document.pptx</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.textstyling.wiki -->
+            <!-- xDocReport Document TextStyling Wiki：Wiki 标记文本样式转换模块。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document.textstyling.wiki</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.tools -->
+            <!-- xDocReport Document Tools：文档处理工具类（字段提取、书签操作等）。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.document.tools</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.itext.extension -->
+            <!-- xDocReport iText Extension：iText 2.x PDF 库的扩展（自定义 PDF 生成行为）。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.itext.extension</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.itext5.extension -->
+            <!-- xDocReport iText5 Extension：iText 5.x PDF 库的扩展（自定义 PDF 生成行为）。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.itext5.extension</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.remoting.resources -->
+            <!-- xDocReport Remoting Resources：远程资源访问模块（从 URL 加载文档模板）。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.remoting.resources</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template -->
+            <!-- xDocReport Template：文档模板引擎抽象层（支持 FreeMarker/Velocity 等模板引擎）。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.template</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.freemarker -->
+            <!-- xDocReport Template FreeMarker：xDocReport 的 FreeMarker 模板引擎实现。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.template.freemarker</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.textstyling.wiki -->
+            <!-- xDocReport Template TextStyling Wiki：Wiki 标记文本模板样式处理。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.template.textstyling.wiki</artifactId>
                 <version>0.9.4</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.template.velocity -->
+            <!-- xDocReport Template Velocity：xDocReport 的 Apache Velocity 模板引擎实现。 -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
                 <artifactId>fr.opensagres.xdocreport.template.velocity</artifactId>
@@ -3568,48 +3618,56 @@
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/org.fuin.ddd4j/ddd-4-java-core -->
+            <!-- DDD-4-Java Core：Java 领域驱动设计框架核心（聚合根、实体、值对象、领域事件基类）。 -->
             <dependency>
                 <groupId>org.fuin.ddd4j</groupId>
                 <artifactId>ddd-4-java-core</artifactId>
                 <version>${fuin-ddd4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.fuin.ddd4j/ddd-4-java-esc -->
+            <!-- DDD-4-Java ESC：DDD 框架的事件溯源组件（Event Sourcing 支持）。 -->
             <dependency>
                 <groupId>org.fuin.ddd4j</groupId>
                 <artifactId>ddd-4-java-esc</artifactId>
                 <version>${fuin-ddd4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.fuin.ddd4j/ddd-4-java-jsonb -->
+            <!-- DDD-4-Java JSON-B：DDD 框架的 Jakarta JSON Binding 序列化支持。 -->
             <dependency>
                 <groupId>org.fuin.ddd4j</groupId>
                 <artifactId>ddd-4-java-jsonb</artifactId>
                 <version>${fuin-ddd4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.fuin.ddd4j/ddd-4-java-jackson -->
+            <!-- DDD-4-Java Jackson：DDD 框架的 Jackson 序列化支持。 -->
             <dependency>
                 <groupId>org.fuin.ddd4j</groupId>
                 <artifactId>ddd-4-java-jackson</artifactId>
                 <version>${fuin-ddd4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.fuin.ddd4j/ddd-4-java-jaxb -->
+            <!-- DDD-4-Java JAXB：DDD 框架的 JAXB XML 序列化支持。 -->
             <dependency>
                 <groupId>org.fuin.ddd4j</groupId>
                 <artifactId>ddd-4-java-jaxb</artifactId>
                 <version>${fuin-ddd4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.fuin.cqrs4j/cqrs-4-java-core -->
+            <!-- CQRS-4-Java Core：Java CQRS 框架核心（命令/查询分离、事件总线接口）。 -->
             <dependency>
                 <groupId>org.fuin.cqrs4j</groupId>
                 <artifactId>cqrs-4-java-core</artifactId>
                 <version>${fuin-cqrs4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.fuin.cqrs4j/cqrs-4-java-jsonb -->
+            <!-- CQRS-4-Java JSON-B：CQRS 框架的 Jakarta JSON Binding 序列化支持。 -->
             <dependency>
                 <groupId>org.fuin.cqrs4j</groupId>
                 <artifactId>cqrs-4-java-jsonb</artifactId>
                 <version>${fuin-cqrs4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.fuin.cqrs4j/cqrs-4-java-jackson -->
+            <!-- CQRS-4-Java Jackson：CQRS 框架的 Jackson 序列化支持。 -->
             <dependency>
                 <groupId>org.fuin.cqrs4j</groupId>
                 <artifactId>cqrs-4-java-jackson</artifactId>
@@ -3623,12 +3681,14 @@
                 <version>${kafka.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.googlecode.libphonenumber/geocoder -->
+            <!-- libphonenumber Geocoder：Google libphonenumber 的电话号码地理归属地查询模块。 -->
             <dependency>
                 <groupId>com.googlecode.libphonenumber</groupId>
                 <artifactId>geocoder</artifactId>
                 <version>${libphonenumber-geocoder.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.gavaghan/geodesy -->
+            <!-- Geodesy：大地测量学计算库（GPS 坐标距离、方位角、Vincenty 公式）。 -->
             <dependency>
                 <groupId>org.gavaghan</groupId>
                 <artifactId>geodesy</artifactId>
@@ -3649,12 +3709,14 @@
                 <version>${angus-mail.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.goeasy/goeasy-sdk -->
+            <!-- GoEasy SDK：GoEasy 实时消息推送平台的 Java SDK。 -->
             <dependency>
                 <groupId>io.goeasy</groupId>
                 <artifactId>goeasy-sdk</artifactId>
                 <version>${goeasy.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
+            <!-- Google API Client：Google API 的通用 Java 客户端库（认证、HTTP、JSON 解析）。 -->
             <dependency>
                 <groupId>com.google.api-client</groupId>
                 <artifactId>google-api-client</artifactId>
@@ -3702,24 +3764,28 @@
                 <version>${google-oauth-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-appengine -->
+            <!-- Google OAuth Client AppEngine：Google OAuth 2.0 客户端的 App Engine 适配。 -->
             <dependency>
                 <groupId>com.google.oauth-client</groupId>
                 <artifactId>google-oauth-client-appengine</artifactId>
                 <version>${google-oauth-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-java6 -->
+            <!-- Google OAuth Client Java6：Google OAuth 2.0 客户端的 Java 6 适配。 -->
             <dependency>
                 <groupId>com.google.oauth-client</groupId>
                 <artifactId>google-oauth-client-java6</artifactId>
                 <version>${google-oauth-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-jetty -->
+            <!-- Google OAuth Client Jetty：Google OAuth 2.0 客户端的 Jetty 本地服务器适配（授权码回调）。 -->
             <dependency>
                 <groupId>com.google.oauth-client</groupId>
                 <artifactId>google-oauth-client-jetty</artifactId>
                 <version>${google-oauth-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-servlet -->
+            <!-- Google OAuth Client Servlet：Google OAuth 2.0 客户端的 Servlet 适配（Web 应用授权流程）。 -->
             <dependency>
                 <groupId>com.google.oauth-client</groupId>
                 <artifactId>google-oauth-client-servlet</artifactId>
@@ -4090,6 +4156,7 @@
                 <version>${hibernate4-sqlite-dialect.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
+            <!-- HikariCP：高性能 JDBC 连接池（Spring Boot 默认连接池，极速低延迟）。 -->
             <dependency>
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
@@ -4243,6 +4310,7 @@
                 <version>${httpcore.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/httpconn -->
+            <!-- HttpConn：基于 Apache HttpClient 的 HTTP 连接工具库（简化 HTTP 调用封装）。 -->
             <dependency>
                 <groupId>com.github.hiwepy</groupId>
                 <artifactId>httpconn</artifactId>
@@ -4581,18 +4649,21 @@
                 <version>${imageio.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-webp -->
+            <!-- TwelveMonkeys ImageIO WebP：Java ImageIO 的 WebP 图像格式读写支持。 -->
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-webp</artifactId>
                 <version>${imageio.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.imagej/imagej -->
+            <!-- ImageJ：科学图像处理分析框架（医学/生物图像处理的事实标准）。 -->
             <dependency>
                 <groupId>net.imagej</groupId>
                 <artifactId>imagej</artifactId>
                 <version>${imagej.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.imagej/imagej-ui-swing -->
+            <!-- ImageJ UI Swing：ImageJ 的 Swing 图形界面模块。 -->
             <dependency>
                 <groupId>net.imagej</groupId>
                 <artifactId>imagej-ui-swing</artifactId>
@@ -4652,18 +4723,21 @@
                 <version>${istack.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.sun.istack/istack-commons-tools -->
+            <!-- iStack Commons Tools：JAXB 代码生成和编译工具集。 -->
             <dependency>
                 <groupId>com.sun.istack</groupId>
                 <artifactId>istack-commons-tools</artifactId>
                 <version>${istack.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/me.snowdrop/istio-client -->
+            <!-- Istio Client：Istio 服务网格的 Java 客户端（VirtualService/DestinationRule 等资源管理）。 -->
             <dependency>
                 <groupId>me.snowdrop</groupId>
                 <artifactId>istio-client</artifactId>
                 <version>${istio-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.j2objc/j2objc-annotations -->
+            <!-- J2ObjC Annotations：Google J2ObjC Java-to-Objective-C 转换器的注解库。 -->
             <dependency>
                 <groupId>com.google.j2objc</groupId>
                 <artifactId>j2objc-annotations</artifactId>
@@ -4686,6 +4760,7 @@
                 <version>${easy4j-jackson-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.jai-imageio/jai-imageio-core -->
+            <!-- JAI ImageIO Core：Java Advanced Imaging 的 ImageIO 核心插件。 -->
             <dependency>
                 <groupId>com.github.jai-imageio</groupId>
                 <artifactId>jai-imageio-core</artifactId>
@@ -4741,6 +4816,7 @@
                 <version>${jakarta-json-bind.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/jakarta.jws/jakarta.jws-api -->
+            <!-- Jakarta JWS API：Jakarta Web Services 注解（@WebService、@WebMethod 等）。 -->
             <dependency>
                 <groupId>jakarta.jws</groupId>
                 <artifactId>jakarta.jws-api</artifactId>
@@ -4775,6 +4851,7 @@
                 <version>${jakarta.persistence-api.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+            <!-- Jakarta Servlet API：Jakarta Servlet 规范接口（HTTP 请求处理、过滤器、监听器）。 -->
             <dependency>
                 <groupId>jakarta.servlet</groupId>
                 <artifactId>jakarta.servlet-api</artifactId>
@@ -4802,6 +4879,7 @@
                 <version>${jakarta-transaction.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api -->
+            <!-- Jakarta Validation API：Jakarta Bean Validation 规范（@NotNull、@Size、@Valid 等校验注解）。 -->
             <dependency>
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
@@ -4850,18 +4928,21 @@
                 <version>${jakarta-xml-ws.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.smallrye/jandex -->
+            <!-- SmallRye Jandex：Java 类索引库（快速类注解/方法扫描，Quarkus/CDI 依赖）。 -->
             <dependency>
                 <groupId>io.smallrye</groupId>
                 <artifactId>jandex</artifactId>
                 <version>${jandex.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.codehaus.janino/janino -->
+            <!-- Janino：超小型 Java 编译器（运行时动态编译 Java 代码，Logback/SCALA 依赖）。 -->
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
                 <version>${janino.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jasypt/jasypt -->
+            <!-- JASYPT：Java 简化加密库（配置文件密码加密、Spring 集成、多种加密算法支持）。 -->
             <dependency>
                 <groupId>org.jasypt</groupId>
                 <artifactId>jasypt</artifactId>
@@ -4912,24 +4993,28 @@
                 <version>${auth0-java-jwt.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.axet/java-unrar -->
+            <!-- Java UnRAR：纯 Java RAR 解压缩库（支持 RAR3/4/5 格式）。 -->
             <dependency>
                 <groupId>com.github.axet</groupId>
                 <artifactId>java-unrar</artifactId>
                 <version>${java-unrar.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.fasterxml.uuid/java-uuid-generator -->
+            <!-- Java UUID Generator：高性能 UUID 生成库（支持 UUID v1/v3/v4/v5/v6/v7）。 -->
             <dependency>
                 <groupId>com.fasterxml.uuid</groupId>
                 <artifactId>java-uuid-generator</artifactId>
                 <version>${java-uuid-generator.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket -->
+            <!-- Java-WebSocket：轻量级 WebSocket 客户端/服务器库（基于 NIO，支持 WSS）。 -->
             <dependency>
                 <groupId>org.java-websocket</groupId>
                 <artifactId>Java-WebSocket</artifactId>
                 <version>${java-websocket.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.bull.javamelody/javamelody-core -->
+            <!-- JavaMelody：Java 应用性能监控（HTTP 请求、SQL、Spring Bean 调用统计和图表）。 -->
             <dependency>
                 <groupId>net.bull.javamelody</groupId>
                 <artifactId>javamelody-core</artifactId>
@@ -4978,6 +5063,7 @@
                 <version>${jetty-websocket.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-all-deps -->
+            <!-- JAVE All Deps：Java 音视频编码转换库（FFmpeg 的 Java 封装，含全平台本地库）。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-all-deps</artifactId>
@@ -4985,54 +5071,63 @@
             </dependency>
             <!-- The JAVE (Java Audio Video Encoder) library is Java wrapper on the ffmpeg project. -->
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-core -->
+            <!-- JAVE Core：Java 音视频编码转换核心库（不含本地库，需单独引入平台依赖）。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-core</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-linux-arm32 -->
+            <!-- JAVE Native Linux ARM32：JAVE 的 Linux ARM 32位本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-linux-arm32</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-linux-arm64 -->
+            <!-- JAVE Native Linux ARM64：JAVE 的 Linux ARM 64位本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-linux-arm64</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-linux32 -->
+            <!-- JAVE Native Linux x86：JAVE 的 Linux x86 32位本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-linux32</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-linux64 -->
+            <!-- JAVE Native Linux x86_64：JAVE 的 Linux x86 64位本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-linux64</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-osx64 -->
+            <!-- JAVE Native macOS x86_64：JAVE 的 macOS Intel 64位本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-osx64</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-osxm1 -->
+            <!-- JAVE Native macOS M1：JAVE 的 macOS Apple Silicon (M1/M2) 本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-osxm1</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-win32 -->
+            <!-- JAVE Native Windows x86：JAVE 的 Windows 32位本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-win32</artifactId>
                 <version>${jave.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-nativebin-win64 -->
+            <!-- JAVE Native Windows x86_64：JAVE 的 Windows 64位本地二进制库。 -->
             <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-nativebin-win64</artifactId>
@@ -5040,12 +5135,14 @@
             </dependency>
             <!-- JaVers是一个轻量级的Java库，专门用于审计和分析Java对象的变化。 -->
             <!-- https://mvnrepository.com/artifact/org.javers/javers-core -->
+            <!-- JaVers Core：Java 对象变更审计框架（对象图 diff、变更历史追踪、快照）。 -->
             <dependency>
                 <groupId>org.javers</groupId>
                 <artifactId>javers-core</artifactId>
                 <version>${javers.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.javers/javers-spring -->
+            <!-- JaVers Spring：JaVers 的 Spring 集成（自动审计 Spring Data JPA/Hibernate 实体变更）。 -->
             <dependency>
                 <groupId>org.javers</groupId>
                 <artifactId>javers-spring</artifactId>
@@ -5111,12 +5208,14 @@
             </dependency>
             <!-- IBM DB2 JDBC4 Driver -->
             <!-- https://mvnrepository.com/artifact/com.ibm.db2/jcc -->
+            <!-- IBM DB2 JCC：IBM DB2 数据库的 JDBC 驱动（Type 4 纯 Java 实现）。 -->
             <dependency>
                 <groupId>com.ibm.db2</groupId>
                 <artifactId>jcc</artifactId>
                 <version>${db2jcc.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.codelibs/jcifs -->
+            <!-- jCIFS：纯 Java 的 CIFS/SMB 客户端库（Windows 文件共享协议访问）。 -->
             <dependency>
                 <groupId>org.codelibs</groupId>
                 <artifactId>jcifs</artifactId>
@@ -10121,6 +10220,7 @@
                 <version>${wildfly-openssl.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.wildfly.openssl/wildfly-openssl-java -->
+            <!-- WildFly OpenSSL Java：JBoss WildFly 的 OpenSSL JNI 集成（高性能 SSL/TLS）。 -->
             <dependency>
                 <groupId>org.wildfly.openssl</groupId>
                 <artifactId>wildfly-openssl-java</artifactId>
@@ -10155,18 +10255,21 @@
                 <version>${wsdl4j.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/xalan/xalan -->
+            <!-- Apache Xalan：XSLT 1.0 处理器（XML 转换为 HTML/文本/其他 XML 格式）。 -->
             <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>xalan</artifactId>
                 <version>${xalan.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.googlecode.xmemcached/xmemcached -->
+            <!-- XMemcached：高性能多线程 Memcached Java 客户端（基于 NIO，支持集群和分布式）。 -->
             <dependency>
                 <groupId>com.googlecode.xmemcached</groupId>
                 <artifactId>xmemcached</artifactId>
                 <version>${xmemcached.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/xml-apis/xml-apis -->
+            <!-- XML APIs：Java XML 标准 API（SAX/DOM/StAX/JAXP 等接口定义）。 -->
             <dependency>
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
@@ -10243,24 +10346,28 @@
                 <version>${xmlunit2.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jboss.xnio/xnio-api -->
+            <!-- XNIO API：JBoss XNIO 的 NIO 传输 API（低级别非阻塞 I/O 框架）。 -->
             <dependency>
                 <groupId>org.jboss.xnio</groupId>
                 <artifactId>xnio-api</artifactId>
                 <version>${xnio.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.jboss.xnio/xnio-nio -->
+            <!-- XNIO NIO：JBoss XNIO 的 Java NIO 传输实现。 -->
             <dependency>
                 <groupId>org.jboss.xnio</groupId>
                 <artifactId>xnio-nio</artifactId>
                 <version>${xnio.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream -->
+            <!-- XStream：Java 对象与 XML/JSON 互相序列化的轻量级库。 -->
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>${xstream.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.xuxueli/xxl-job-core -->
+            <!-- XXL-Job Core：轻量级分布式任务调度平台（支持 cron、API 触发、分片广播、故障转移）。 -->
             <dependency>
                 <groupId>com.xuxueli</groupId>
                 <artifactId>xxl-job-core</artifactId>
@@ -10297,6 +10404,7 @@
                 <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.101tec/zkclient -->
+            <!-- ZkClient：Apache ZooKeeper 的高层封装客户端（自动重连、Watcher 管理、序列化）。 -->
             <dependency>
                 <groupId>com.101tec</groupId>
                 <artifactId>zkclient</artifactId>
@@ -10309,18 +10417,21 @@
                 </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper -->
+            <!-- Apache ZooKeeper：分布式协调服务（配置管理、命名服务、分布式同步、Leader 选举）。 -->
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper-prometheus-metrics -->
+            <!-- ZooKeeper Prometheus Metrics：将 ZooKeeper 指标暴露为 Prometheus 格式。 -->
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper-prometheus-metrics</artifactId>
                 <version>${zookeeper.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.luben/zstd-jni -->
+            <!-- Zstd JNI：Zstandard 压缩算法的 Java JNI 封装（Facebook 出品，高压缩比+高速度）。 -->
             <dependency>
                 <groupId>com.github.luben</groupId>
                 <artifactId>zstd-jni</artifactId>
@@ -10549,6 +10660,7 @@
                     <version>${maven-git-commit-id-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/gwt-maven-plugin -->
+                <!-- GWT Maven Plugin：Google Web Toolkit 的 Maven 构建插件（编译 Java→JavaScript、运行 DevMode 等）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>gwt-maven-plugin</artifactId>
@@ -10619,6 +10731,7 @@
                     <version>${jooq.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/license-maven-plugin -->
+                <!-- License Maven Plugin：管理项目许可证文件和头部版权声明（自动生成/检查/更新）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -10635,24 +10748,28 @@
                     </configuration>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-m2settings-maven-plugin -->
+                <!-- Nexus M2Settings Plugin：从 Nexus 服务器下载并合并 Maven settings.xml 配置。 -->
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-m2settings-maven-plugin</artifactId>
                     <version>${maven-nexus-m2settings-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
+                <!-- Nexus Staging Plugin：Maven Central 发布的暂存库管理（部署、关闭、发布、丢弃）。 -->
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>${maven-nexus-staging-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-pmd-plugin -->
+                <!-- Maven PMD Plugin：静态代码分析插件（检测未使用的变量、空 catch 块、复杂度超标等）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
                     <version>${maven-pmd-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/properties-maven-plugin -->
+                <!-- Properties Maven Plugin：从外部文件或系统属性读写 Maven 属性（集中配置管理）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
@@ -10673,30 +10790,35 @@
                     <version>${maven-quarkus-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/rpm-maven-plugin -->
+                <!-- RPM Maven Plugin：将 Maven 构件打包为 RPM 安装包（Linux 软件包分发）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>rpm-maven-plugin</artifactId>
                     <version>${maven-rpm-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-release-plugin -->
+                <!-- Maven Release Plugin：自动化版本发布流程（打标签、升级版本号、部署到仓库）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${maven-release-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
+                <!-- Maven Shade Plugin：构建可执行 Fat JAR（合并所有依赖并处理包名冲突）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>${maven-shade-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
+                <!-- SonarQube Scanner：将代码质量分析结果提交到 SonarQube/SonarCloud 服务器。 -->
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>${maven-sonar-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
+                <!-- Maven WAR Plugin：将 Web 应用打包为 WAR 文件（支持 overlay、web.xml 生成等）。 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
