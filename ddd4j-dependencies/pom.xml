@@ -10485,18 +10485,21 @@
                     <version>${maven-dependency-check-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/clirr-maven-plugin -->
+                <!-- Clirr Maven Plugin：Java 库二进制兼容性检查插件（检测 API 破坏性变更）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>clirr-maven-plugin</artifactId>
                     <version>${maven-clirr-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/codenarc-maven-plugin -->
+                <!-- CodeNarc Maven Plugin：Groovy 代码静态分析插件（检查规范、坏味道等）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>codenarc-maven-plugin</artifactId>
                     <version>${maven-codenarc-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/cobertura-maven-plugin -->
+                <!-- Cobertura Maven Plugin：代码覆盖率插件（已停止维护，推荐用 JaCoCo）。 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
