@@ -1,10 +1,10 @@
 package io.ddd4j.core.cqrs.readmodel;
 
 /**
- * 投影位置服务。
+ * 投影位置服务（纯 Java，零框架依赖）。
  *
- * <p>对齐 {@code cqrs-4-java} 的 ProjectionService 语义，但不继承
- * {@code org.fuin.*} API，保持 ddd4j-core 纯 Java 小内核可独立使用。
+ * <p>API 形态对齐 {@code cqrs-4-java} 的 ProjectionService 语义，但完全独立实现。
+ * 框架适配层（如 {@code ddd4j-runtime-spring}）提供 JPA 实现。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
