@@ -1,0 +1,13 @@
+# Task 4.4 集成测试（test profile）——H2 全量契约轨数据源。
+# MODE=PostgreSQL：让 H2 模拟 PG 方言行为（唯一约束语义、大小写等），缩小与 PG 容器轨的差异。
+# 不声明 driver-class-name：由 Boot 按 URL 推断（H2 轨推断 H2 驱动；PG 轨经
+# @DynamicPropertySource 覆盖 url/username/password 后自动推断 PostgreSQL 驱动）。
+spring:
+  datasource:
+    url: "jdbc:h2:mem:esit;MODE=PostgreSQL;DB_CLOSE_DELAY=-1"
+    username: "sa"
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false

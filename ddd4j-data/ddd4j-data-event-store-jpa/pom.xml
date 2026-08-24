@@ -18,6 +18,13 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
+    <properties>
+        <!-- 仅测试栈：H2 全量契约轨 + PG 容器 CI 轨所用的 Spring Boot starter 版本。
+             BOM 刻意不管理 Spring Boot（ddd4j 不依赖 Boot 运行时），故此处局部显式钉版，
+             取 3.4.4 = Spring 6.2 线（与 ddd4j 2.0.x 匹配；Boot 4.x/Spring 7 线勿用）。 -->
+        <spring-boot-it.version>3.4.4</spring-boot-it.version>
+    </properties>
+
     <dependencies>
         <!-- For DDD4j -->
         <dependency>
@@ -25,22 +32,80 @@
             <artifactId>ddd4j-data-event-store</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring Data JPA（版本由 ddd4j-dependencies 导入的 spring-data-bom 管理） -->
+        <!-- Spring Data JPA：显式钉 3.5.13（Spring 6.2 线，与 ddd4j-dependencies 管理的
+             spring-framework 6.2.x 匹配）。父 BOM 的 spring-data-bom 2025.1 → JPA 4.0.x
+             面向 Framework 7（RuntimeBeanReference 等 7.0 API），与本模块/本仓库的
+             6.2 线运行时 ABI 不兼容（Task 4.4 IT 实测 NoSuchMethodError），故模块级对齐。 -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
+            <version>3.5.13</version>
         </dependency>
-        <!-- Jakarta Persistence API（实体映射） -->
+        <!-- Spring Data Commons：与 spring-data-jpa 3.5.13 同版显式钉（防 BOM 4.0.6
+             管理项覆盖传递版本造成混版） -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>3.5.13</version>
+        </dependency>
+        <!-- Jakarta Persistence API（实体映射）：显式钉 3.1.0 与 Hibernate 6.6 / Boot 3.4-3.5 线
+             一致。BOM 管理的 3.2.0 会与 Hibernate 6.6 的 SessionFactory 在 Spring EMF 代理上
+             冲突（getSchemaManager() 两接口返回类型不兼容，Task 4.4 IT 实测）。 -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
         </dependency>
 
         <!-- ======== Test ======== -->
-        <!-- Testcontainers PostgreSQL（版本由 testcontainers-bom 管理；Task 4.4 集成测试用） -->
+        <!-- Spring Boot Data JPA（测试栈 IT 用：Hibernate + spring-orm/jdbc 装配，
+             版本局部钉 3.4.4，仅 test 作用域，不进入模块对外依赖面） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Spring Boot Test（@SpringBootTest + AssertJ/JUnit5 测试栈，test 作用域） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Hibernate ORM：测试栈运行时显式钉 6.6.40.Final（Boot 3.4/3.5 ＝ Spring 6.2 线）。
+             BOM 管理的 7.2.x 面向 Framework 7，与 spring-orm 6.2.x 组合不稳；本模块主代码
+             不依赖 Hibernate（仅经 JPA 抽象），test 作用域足够。 -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.6.40.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- H2 内存库（H2 全量契约轨；版本由 ddd4j-dependencies 的 h2.version 管理） -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Jackson JSR-310（DomainEvent 的 ZonedDateTime 时间戳真实 Jackson 往返） -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Testcontainers PostgreSQL（PG 容器 CI 轨；版本由 testcontainers-bom 管理。
+             用 2.x 新命名 testcontainers-postgresql/testcontainers-junit-jupiter，
+             避免 1.x 旧命名 artifact 与 BOM 管理的 2.x core 混版） -->
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>testcontainers-postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Testcontainers JUnit Jupiter 集成（@Testcontainers/@Container，含 disabledWithoutDocker） -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- PostgreSQL JDBC 驱动（Testcontainers 容器连接用） -->
@@ -50,5 +115,23 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试（H2/PG 双轨）随 test 阶段执行，
+                 需在父配置（**/*Test.java 之外）追加 IT 模式。PG 轨由
+                 @Testcontainers(disabledWithoutDocker=true) 在 Docker 缺席时自动跳过。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

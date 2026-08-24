@@ -2,8 +2,10 @@ package io.ddd4j.data.eventstore.jpa;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
+import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.data.eventstore.AggregateVersionConflictException;
 import io.ddd4j.data.eventstore.StoredEvent;
@@ -16,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -81,7 +84,8 @@ class JpaEventStoreTest {
         when(repository.findCurrentVersion(AGGREGATE_TYPE, AGGREGATE_ID)).thenReturn(0L);
         SampleEvent first = new SampleEvent();
         SampleEvent second = new SampleEvent();
-        SampleEvent third = new SampleEvent();
+        // third 经 respondTo 因果构造器派生自 first：correlationId/causationId 非空分支的组装断言
+        SampleEvent third = new SampleEvent(first);
         when(serializer.serialize(any(DomainEvent.class))).thenReturn("{}");
 
         eventStore.append(AGGREGATE_TYPE, new TestAggregateId(AGGREGATE_ID),
@@ -99,12 +103,18 @@ class JpaEventStoreTest {
         assertThat(saved).extracting(StoredEventEntity::getPayload).containsOnly("{}");
         assertThat(saved).extracting(StoredEventEntity::getAggregateType).containsOnly(AGGREGATE_TYPE);
         assertThat(saved).extracting(StoredEventEntity::getAggregateId).containsOnly(AGGREGATE_ID);
+        // 因果链：first 无因果（null）；third 的 correlationId=causationId=first.eventId
+        //（first 自身无 correlationId，respondTo 语义取 cause 的 eventId 补位）
+        assertThat(saved).extracting(StoredEventEntity::getCorrelationId)
+                .containsExactly(null, null, first.getEventId().asString());
+        assertThat(saved).extracting(StoredEventEntity::getCausationId)
+                .containsExactly(null, null, first.getEventId().asString());
         assertThat(saved).extracting(StoredEventEntity::getCreatedAt).allSatisfy(
                 createdAt -> assertThat(createdAt).isNotNull());
     }
 
     @Test
-    void read_应重建StoredEvent且correlationId空安全() {
+    void read_应重建StoredEvent且correlationId空安全() throws Exception {
         StoredEventEntity entity = new StoredEventEntity();
         entity.setEventId("11111111-1111-1111-1111-111111111111");
         entity.setAggregateType(AGGREGATE_TYPE);
@@ -115,6 +125,11 @@ class JpaEventStoreTest {
         entity.setCausationId("22222222-2222-2222-2222-222222222222");
         ZonedDateTime createdAt = ZonedDateTime.now();
         entity.setCreatedAt(createdAt);
+        // position 由数据库生成、实体无 setter：经反射注入真值，断言读回侧按真实
+        // position 重建（read 路径对 null position fail-loud，不静默归零）
+        Field positionField = StoredEventEntity.class.getDeclaredField("position");
+        positionField.setAccessible(true);
+        positionField.set(entity, 42L);
         when(repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(AGGREGATE_TYPE, AGGREGATE_ID))
                 .thenReturn(List.of(entity));
         SampleEvent event = new SampleEvent();
@@ -131,7 +146,7 @@ class JpaEventStoreTest {
         assertThat(single.aggregateId().asString()).isEqualTo(AGGREGATE_ID);
         assertThat(single.aggregateId().getType().asString()).isEqualTo("String");
         assertThat(single.version()).isEqualTo(1L);
-        assertThat(single.position()).isZero();
+        assertThat(single.position()).isEqualTo(42L);
         assertThat(single.timestamp()).isEqualTo(createdAt);
         assertThat(single.payload()).isSameAs(event);
         assertThat(single.correlationId()).isNull();
@@ -167,6 +182,10 @@ class JpaEventStoreTest {
 
         SampleEvent() {
             super(AGGREGATE_ID);
+        }
+
+        SampleEvent(io.ddd4j.core.ddd.event.Event respondTo) {
+            super(new EntityIdPath(new StringEntityId(AGGREGATE_ID)), respondTo);
         }
     }
 

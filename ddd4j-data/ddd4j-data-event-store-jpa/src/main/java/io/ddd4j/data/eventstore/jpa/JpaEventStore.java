@@ -121,11 +121,13 @@ public class JpaEventStore implements EventStore {
      * {@code eventId}／{@code correlationId}／{@code causationId} 经
      * {@link EventId#valueOf}（空安全）解析。
      *
-     * <p>{@code position} 由数据库生成（实体上无 setter）：持久化读回必非空；
-     * 瞬态实体（未落库）按 0 处理，保证重建路径对未持久化实体也全函数。
+     * <p>{@code position} 由数据库生成（实体上无 setter）：持久化读回必非空，
+     * 此处 fail-loud 断言——瞬态实体（未落库、无 position）进入重建路径视为
+     * 编程错误，直接抛 {@link NullPointerException} 而非静默按 0 处理。
      *
      * @param entity 持久化实体
      * @return 重建的持久化事件快照
+     * @throws NullPointerException entity 未持久化（position 为 null）
      * @throws IllegalStateException eventType 类不存在（事件类被重命名/删除后旧流不可读）
      */
     private StoredEvent toStoredEvent(StoredEventEntity entity) {
@@ -135,7 +137,8 @@ public class JpaEventStore implements EventStore {
                 entity.getAggregateType(),
                 new StringAggregateRootId(entity.getAggregateId()),
                 entity.getVersion(),
-                Objects.requireNonNullElse(entity.getPosition(), 0L),
+                Objects.requireNonNull(entity.getPosition(),
+                        "position must not be null in read path (transient entities unsupported)"),
                 entity.getCreatedAt(),
                 payload,
                 EventId.valueOf(entity.getCorrelationId()),
