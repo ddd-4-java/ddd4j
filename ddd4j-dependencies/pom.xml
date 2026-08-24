@@ -82,6 +82,7 @@
         <camel.version>4.20.0</camel.version>
         <canal.version>1.1.8</canal.version>
         <cas-client.version>4.1.1</cas-client.version>
+        <fuin-cqrs4j.version>0.6.0</fuin-cqrs4j.version>
         <cassandra-driver.version>4.19.2</cassandra-driver.version>
         <cglib.version>3.3.0</cglib.version>
         <checker-framework.version>3.55.1</checker-framework.version>
@@ -644,12 +645,12 @@
         <spring-security.version>6.5.11</spring-security.version>
         <spring-session.version>3.4.3</spring-session.version>
         <spring-ws.version>4.0.13</spring-ws.version>
-        <springdoc.version>2.7.0</springdoc.version>
+        <springdoc.version>2.8.14</springdoc.version>
         <springfox.version>3.0.0</springfox.version>
         <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
         <sshd-pam.version>0.11.1-atlassian-1</sshd-pam.version>
         <sshd-sftp.version>2.14.0</sshd-sftp.version>
-        <sshd.version>2.14.0</sshd.version>
+        <sshd.version>3.0.0-M2</sshd.version>
         <svnkit.version>1.10.11</svnkit.version>
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
         <swagger-butler.version>2.0.0</swagger-butler.version>
@@ -8328,6 +8329,22 @@
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-spring</artifactId>
+                <version>${resilience4j.version}</version>
+            </dependency>
+            <!-- resilience4j-bom 不管理 spring 集成模块，显式补齐 -->
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-spring-boot2</artifactId>
+                <version>${resilience4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-spring-boot3</artifactId>
+                <version>${resilience4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-spring-cloud2</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-timelimiter -->
