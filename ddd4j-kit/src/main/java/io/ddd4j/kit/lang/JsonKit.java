@@ -62,22 +62,18 @@ public class JsonKit {
      * 创建默认 ObjectMapper
      */
     public static ObjectMapper defaultObjectMapper() {
-        // Jackson 3: JavaTimeInitializer is auto-registered; custom serializers use SimpleModule
+        // Jackson 2: java.time 序列化通过 SimpleModule + JsonSerializer/JsonDeserializer 注册（jsr310 未在 classpath）
         SimpleModule customDateModule = new SimpleModule();
-        customDateModule.addSerializer(LocalDate.class,
-                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
-        customDateModule.addDeserializer(LocalDate.class,
-                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
-        customDateModule.addSerializer(LocalDateTime.class,
-                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
-        customDateModule.addDeserializer(LocalDateTime.class,
-                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
+        customDateModule.addSerializer(LocalDate.class, localDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
+        customDateModule.addDeserializer(LocalDate.class, localDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
+        customDateModule.addSerializer(LocalDateTime.class, localDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
+        customDateModule.addDeserializer(LocalDateTime.class, localDateTimeDeserializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
 
         return JsonMapper.builder()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .defaultDateFormat(new BaseSimpleDateFormat())
                 .addModule(customDateModule)
-                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(Include.NON_NULL, Include.NON_NULL))
+                .defaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_NULL, Include.NON_NULL))
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                 .defaultTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
                 .build();
@@ -88,10 +84,10 @@ public class JsonKit {
      */
     public static ObjectMapper redisObjectMapper() {
         return JsonMapper.builder()
-                .activateDefaultTyping(BasicPolymorphicTypeValidator.builder().build(), DefaultTyping.NON_FINAL, As.WRAPPER_ARRAY)
+                .activateDefaultTyping(BasicPolymorphicTypeValidator.builder().build(), ObjectMapper.DefaultTyping.NON_FINAL, As.WRAPPER_ARRAY)
                 .defaultDateFormat(new SimpleDateFormat(YYYYMMDDHHMMSS))
-                .changeDefaultVisibility(vis -> vis.withVisibility(PropertyAccessor.ALL, Visibility.ANY))
-                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(Include.NON_EMPTY, Include.NON_EMPTY))
+                .visibility(PropertyAccessor.ALL, Visibility.ANY)
+                .defaultPropertyInclusion(JsonInclude.Value.construct(Include.NON_EMPTY, Include.NON_EMPTY))
                 .configure(MapperFeature.USE_GETTERS_AS_SETTERS, false)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
@@ -102,20 +98,14 @@ public class JsonKit {
      */
     public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
         SimpleModule customDateModule = new SimpleModule();
-        customDateModule.addSerializer(LocalDate.class,
-                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
-        customDateModule.addDeserializer(LocalDate.class,
-                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateDeserializer(DateTimeFormatter.ofPattern(datePattern)));
-        customDateModule.addSerializer(LocalDateTime.class,
-                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimePattern)));
-        customDateModule.addDeserializer(LocalDateTime.class,
-                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimePattern)));
-        customDateModule.addSerializer(LocalTime.class,
-                new com.fasterxml.jackson.databind.ext.javatime.ser.LocalTimeSerializer(DateTimeFormatter.ofPattern(timePattern)));
-        customDateModule.addDeserializer(LocalTime.class,
-                new com.fasterxml.jackson.databind.ext.javatime.deser.LocalTimeDeserializer(DateTimeFormatter.ofPattern(timePattern)));
-        customDateModule.addSerializer(Date.class, new ValueSerializer<Date>() {
-            public void serialize(Date date, JsonGenerator jsonGenerator, SerializationContext ctxt) {
+        customDateModule.addSerializer(LocalDate.class, localDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
+        customDateModule.addDeserializer(LocalDate.class, localDateDeserializer(DateTimeFormatter.ofPattern(datePattern)));
+        customDateModule.addSerializer(LocalDateTime.class, localDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimePattern)));
+        customDateModule.addDeserializer(LocalDateTime.class, localDateTimeDeserializer(DateTimeFormatter.ofPattern(dateTimePattern)));
+        customDateModule.addSerializer(LocalTime.class, localTimeSerializer(DateTimeFormatter.ofPattern(timePattern)));
+        customDateModule.addDeserializer(LocalTime.class, localTimeDeserializer(DateTimeFormatter.ofPattern(timePattern)));
+        customDateModule.addSerializer(Date.class, new JsonSerializer<Date>() {
+            public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider ctxt) throws IOException {
                 SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
                 String formattedDate = formatter.format(date);
                 try {
@@ -125,8 +115,8 @@ public class JsonKit {
                 }
             }
         });
-        customDateModule.addDeserializer(Date.class, new ValueDeserializer<Date>() {
-            public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) {
+        customDateModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
                 SimpleDateFormat format = new SimpleDateFormat(datePattern);
                 String date = jsonParser.getText();
                 try {
@@ -169,7 +159,7 @@ public class JsonKit {
         Map<String, Object> map = new HashMap<>();
         try {
             JsonNode rootNode = DEFAULT_OBJECT_MAPPER.readTree(json);
-            Iterator<String> fieldNames = rootNode.propertyNames().iterator();
+            Iterator<String> fieldNames = rootNode.fieldNames();
             while (fieldNames.hasNext()) {
                 String fieldName = fieldNames.next();
                 JsonNode jsonNode = rootNode.get(fieldName);
@@ -390,6 +380,54 @@ public class JsonKit {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
                                                                      childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
                                                                                                                     childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
+    }
+
+    private static JsonSerializer<LocalDate> localDateSerializer(DateTimeFormatter formatter) {
+        return new JsonSerializer<LocalDate>() {
+            public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                gen.writeString(value.format(formatter));
+            }
+        };
+    }
+
+    private static JsonDeserializer<LocalDate> localDateDeserializer(DateTimeFormatter formatter) {
+        return new JsonDeserializer<LocalDate>() {
+            public LocalDate deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+                return LocalDate.parse(parser.getText(), formatter);
+            }
+        };
+    }
+
+    private static JsonSerializer<LocalDateTime> localDateTimeSerializer(DateTimeFormatter formatter) {
+        return new JsonSerializer<LocalDateTime>() {
+            public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                gen.writeString(value.format(formatter));
+            }
+        };
+    }
+
+    private static JsonDeserializer<LocalDateTime> localDateTimeDeserializer(DateTimeFormatter formatter) {
+        return new JsonDeserializer<LocalDateTime>() {
+            public LocalDateTime deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+                return LocalDateTime.parse(parser.getText(), formatter);
+            }
+        };
+    }
+
+    private static JsonSerializer<LocalTime> localTimeSerializer(DateTimeFormatter formatter) {
+        return new JsonSerializer<LocalTime>() {
+            public void serialize(LocalTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                gen.writeString(value.format(formatter));
+            }
+        };
+    }
+
+    private static JsonDeserializer<LocalTime> localTimeDeserializer(DateTimeFormatter formatter) {
+        return new JsonDeserializer<LocalTime>() {
+            public LocalTime deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+                return LocalTime.parse(parser.getText(), formatter);
+            }
+        };
     }
 
     private static class BaseSimpleDateFormat extends SimpleDateFormat {
