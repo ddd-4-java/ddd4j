@@ -21,6 +21,7 @@
         <module>ddd4j-data-crypto</module>
         <module>ddd4j-data-datascope</module>
         <module>ddd4j-data-event-store</module>
+        <module>ddd4j-data-event-store-jpa</module>
         <module>ddd4j-data-external</module>
         <module>ddd4j-data-jpa</module>
         <module>ddd4j-data-logs</module>

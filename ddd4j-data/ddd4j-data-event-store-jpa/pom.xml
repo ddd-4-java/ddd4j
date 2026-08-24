@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-event-store-jpa</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 事件存储 JPA 实现（Spring WebMVC/WebFlux 等 Spring 系运行时）：
+        基于 Spring Data JPA + jakarta.persistence 提供 EventStore SPI 的关系型落地
+        （StoredEventEntity + SpringDataStoredEventRepository），适配任何使用 Hibernate/JPA 的运行时。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-event-store</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Spring Data JPA（版本由 ddd4j-dependencies 导入的 spring-data-bom 管理） -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+        <!-- Jakarta Persistence API（实体映射） -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Testcontainers PostgreSQL（版本由 testcontainers-bom 管理；Task 4.4 集成测试用） -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- PostgreSQL JDBC 驱动（Testcontainers 容器连接用） -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
