@@ -653,9 +653,9 @@ public class OrderPlacedEvent extends DomainEvent {
     <artifactId>spring-boot-starter</artifactId>
 </dependency>
 <dependency>
-    <groupId>org.fuin.ddd4j</groupId>
-    <artifactId>ddd-4-java-core</artifactId>
-    <version>0.7.0</version>
+    <groupId>io.ddd4j</groupId>
+    <artifactId>ddd4j-core</artifactId>
+    <version>${ddd4j.version}</version>
 </dependency>
 ```
 
