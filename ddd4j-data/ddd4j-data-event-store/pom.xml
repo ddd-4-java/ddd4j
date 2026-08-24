@@ -31,18 +31,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <!-- 骨架期无源码：根 pom 的 jar-plugin skipIfEmpty=true 在 Maven 4 下会使 install 无主文件而失败，
-                 此处产出空 jar 以通过门禁；Task 3.2 落地 SPI 源码后本覆盖即成为无操作 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <skipIfEmpty>false</skipIfEmpty>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
