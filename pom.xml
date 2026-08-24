@@ -75,6 +75,8 @@
     <modules>
         <module>ddd4j-bom</module>
         <module>ddd4j-dependencies</module>
+        <!-- AI 依赖聚合：LLM/智能体/多模态 SDK（claude/codex/openclaw/opencode 等）的统一版本管理 -->
+        <module>ddd4j-ai-dependencies</module>
         <!-- 契约与基础层：保持框架无关或低耦合基础能力 -->
         <module>ddd4j-annotation</module>
         <module>ddd4j-core</module>
