@@ -34,7 +34,7 @@
         </dependency>
 
         <!-- ======== 序列化 ======== -->
-        <!-- Jackson（JSON 序列化，@JsonIgnore 等注解；J3 中 annotations+jsr310 已内置于 databind） -->
+        <!-- Jackson（JSON 序列化，@JsonIgnore 等注解；jsr310 未内置于 databind，测试作用域单独引入） -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -42,6 +42,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <!-- Jackson java.time 支持（仅测试需要：DomainEventJsonTest 的 findAndAddModules 经 SPI 发现；
+             主代码 java.time 序列化由 ddd4j-kit JsonKit 自定义序列化器承担） -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- ======== API 文档 ======== -->
