@@ -3,11 +3,13 @@ package io.ddd4j.core.ddd.model;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -45,11 +47,21 @@ import java.util.*;
  * <h3>事件能力</h3>
  * <pre>{@code
  * public class Order extends AggregateRoot<OrderId> {
- *     public void pay(Money amount) {
- *         registerEvent(new OrderPaidEvent(id, amount));
+ *     public void create(Money total) {
+ *         apply(new OrderCreatedEvent(id(), total));   // 反射派发 + 未提交事件入队
+ *     }
+ *
+ *     &#64;EventHandler
+ *     private void on(OrderCreatedEvent event) {
+ *         this.total = event.getTotal();
+ *     }
+ *
+ *     public void notify(Object notification) {
+ *         registerEvent(new OrderNotifiedEvent(id())); // 仅入队，不派发
  *     }
  * }
- * // order.domainEvents() → [OrderPaidEvent]
+ * // order.domainEvents() → [OrderCreatedEvent, OrderNotifiedEvent]
+ * // loadFromHistory(history) 重建状态且不入队（ignoreOnReplay 处理器跳过）
  * }</pre>
  *
  * @param <ID> 聚合根标识类型
@@ -213,6 +225,132 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     protected void registerEvent(DomainEvent<?> event) {
         Objects.requireNonNull(event, "event must not be null");
         mutableDomainEvents().add(event);
+    }
+
+    /**
+     * 应用领域事件：反射派发到 {@code @EventHandler} 方法，并注册进未提交事件列表。
+     *
+     * <p>按事件运行时类型查找处理器；处理器映射由 {@link #AGGREGATE_HANDLER_CACHE}
+     * 按聚合类做 {@link ClassValue} 缓存，子类处理器优先于超类同事件类型处理器。</p>
+     *
+     * <p>注意：本方法不做 {@code aggregateVersion} 连贯性校验 —— 版本校验属
+     * EventStore 乐观锁职责（阶段 3），此处只负责事件应用。</p>
+     *
+     * <h3>用法</h3>
+     * <pre>{@code
+     * public void create(Money total) {
+     *     apply(new OrderCreatedEvent(id(), total));
+     * }
+     *
+     * &#64;EventHandler
+     * private void on(OrderCreatedEvent event) {
+     *     this.total = event.getTotal();
+     * }
+     * }</pre>
+     *
+     * @param event 要应用的事件
+     * @param <E>   事件类型
+     * @return 应用成功的事件
+     * @throws NullPointerException  {@code event} 为 {@code null}
+     * @throws IllegalStateException 找不到对应事件类型的 {@code @EventHandler} 方法，或反射调用失败
+     */
+    protected <E extends DomainEvent<?>> E apply(E event) {
+        Objects.requireNonNull(event, "event must not be null");
+        Method handler = AGGREGATE_HANDLER_CACHE.get(getClass()).get(event.getClass());
+        if (Objects.isNull(handler)) {
+            throw new IllegalStateException("No @EventHandler method found for event type: "
+                    + event.getClass().getName() + " in aggregate: " + getClass().getName());
+        }
+        try {
+            handler.setAccessible(true);
+            handler.invoke(this, event);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Failed to invoke @EventHandler for "
+                    + event.getClass().getName(), e);
+        }
+        mutableDomainEvents().add(event);
+        return event;
+    }
+
+    /**
+     * 从历史事件流重建聚合根（事件溯源回放）。
+     *
+     * <p>逐事件按 {@link #AGGREGATE_REPLAY_CACHE} 查找处理器并反射调用：</p>
+     * <ul>
+     *   <li>标有 {@link EventHandler#ignoreOnReplay()} 的处理器在回放时跳过</li>
+     *   <li>本聚合不关心的历史事件类型静默跳过（允许跨聚合共享事件流）</li>
+     * </ul>
+     * <p>回放只重建状态、不进入未提交事件列表，结束后调用
+     * {@link #clearDomainEvents()} 保证列表为空。</p>
+     *
+     * @param history 历史事件流；{@code null} 时直接返回
+     * @throws IllegalStateException 反射调用处理器失败
+     */
+    public final void loadFromHistory(List<? extends DomainEvent<?>> history) {
+        if (Objects.isNull(history)) {
+            return;
+        }
+        Map<Class<?>, Method> handlers = AGGREGATE_REPLAY_CACHE.get(getClass());
+        for (DomainEvent<?> event : history) {
+            Method handler = handlers.get(event.getClass());
+            if (Objects.isNull(handler)) {
+                continue;
+            }
+            try {
+                handler.setAccessible(true);
+                handler.invoke(this, event);
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalStateException("Failed to replay event "
+                        + event.getClass().getName(), e);
+            }
+        }
+        clearDomainEvents();
+    }
+
+    /** 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），apply 用。 */
+    private static final ClassValue<Map<Class<?>, Method>> AGGREGATE_HANDLER_CACHE = new ClassValue<>() {
+        @Override
+        protected Map<Class<?>, Method> computeValue(Class<?> aggregateType) {
+            Map<Class<?>, Method> map = new HashMap<>();
+            scanHandlers(aggregateType, map, false);
+            return map;
+        }
+    };
+
+    /** 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），loadFromHistory 用（跳过 ignoreOnReplay）。 */
+    private static final ClassValue<Map<Class<?>, Method>> AGGREGATE_REPLAY_CACHE = new ClassValue<>() {
+        @Override
+        protected Map<Class<?>, Method> computeValue(Class<?> aggregateType) {
+            Map<Class<?>, Method> map = new HashMap<>();
+            scanHandlers(aggregateType, map, true);
+            return map;
+        }
+    };
+
+    /**
+     * 自聚合类向上遍历超类链，收集单 {@link DomainEvent} 参数且标有
+     * {@code @EventHandler} 的方法；{@code putIfAbsent} 保证子类处理器优先。
+     *
+     * @param aggregateType 聚合根类
+     * @param map           事件类型 → 处理器 Method 映射（原地填充）
+     * @param skipIgnored   {@code true} 时跳过 {@link EventHandler#ignoreOnReplay()} 处理器
+     */
+    private static void scanHandlers(Class<?> aggregateType, Map<Class<?>, Method> map, boolean skipIgnored) {
+        Class<?> current = aggregateType;
+        while (Objects.nonNull(current) && current != Object.class) {
+            for (Method method : current.getDeclaredMethods()) {
+                EventHandler annotation = method.getAnnotation(EventHandler.class);
+                if (Objects.isNull(annotation) || (skipIgnored && annotation.ignoreOnReplay())) {
+                    continue;
+                }
+                Class<?>[] parameters = method.getParameterTypes();
+                if (parameters.length == 1 && DomainEvent.class.isAssignableFrom(parameters[0])) {
+                    Class<?> eventType = parameters[0];
+                    map.putIfAbsent(eventType, method);
+                }
+            }
+            current = current.getSuperclass();
+        }
     }
 
     /**
