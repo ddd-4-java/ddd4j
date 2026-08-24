@@ -10372,6 +10372,25 @@
                 <artifactId>zxing-extension</artifactId>
                 <version>${easy4j-zxing-extension.version}</version>
             </dependency>
+        
+            <!-- 以下基础依赖从 ddd4j-boot-dependencies 迁入（非 Spring Boot starter） -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.hiwepy</groupId>
+                <artifactId>zxing-extension</artifactId>
+                <version>${easy4j-zxing-extension.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bom</artifactId>
+                <version>${resilience4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
