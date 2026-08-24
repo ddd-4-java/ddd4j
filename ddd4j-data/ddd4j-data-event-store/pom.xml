@@ -12,8 +12,9 @@
 
     <artifactId>ddd4j-data-event-store</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 事件存储模块：框架无关的 EventStore SPI + Jackson 序列化抽象。
-        不绑定任何运行时或持久化框架，实现由 ddd4j-data-event-store-{jpa,panache,jdbi,r2dbc} 提供。
+    <description>ddd4j 事件存储模块：框架无关的 EventStore SPI（同步）+ AsyncEventStore SPI（Reactor 单轨，
+        ADR-0005）+ Jackson 序列化抽象。不绑定任何运行时或持久化框架，
+        实现由 ddd4j-data-event-store-{jpa,panache,jdbi,r2dbc} 提供。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
@@ -28,6 +29,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <!-- Reactor 核心（AsyncEventStore 的 Mono/Flux 响应式轨道，ADR-0005 单轨决策；
+             版本由 ddd4j-dependencies 的 reactor-bom 2025.0.6 导入管理（:6464）） -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
         </dependency>
         <!-- Jackson java.time 支持（仅测试需要：EventPayloadSerializerTest 的 ZonedDateTime 时间戳经
              JavaTimeModule 序列化；主代码 java.time 序列化由 ddd4j-kit JsonKit 自定义序列化器承担） -->

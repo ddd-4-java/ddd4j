@@ -19,7 +19,8 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * </ul>
  *
  * <p>并以允许清单式规则 {@link #module_deps_allowlist} 锁定总依赖面：
- * 仅 JDK、io.ddd4j 家族模块与 Jackson 三件套（Task 3.3 EventPayloadSerializer 用）。
+ * 仅 JDK、io.ddd4j 家族模块、Jackson 三件套（Task 3.3 EventPayloadSerializer 用）
+ * 与 Reactor（Task 5.4 AsyncEventStore 响应式轨道，ADR-0005 单轨决策）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -45,7 +46,10 @@ class EventStoreModuleIndependenceTest {
 
     /**
      * SPI 模块依赖允许清单：仅 JDK（java..）、io.ddd4j 家族模块、
-     * Jackson（annotation／core／databind）与 Lombok 编译期标记。
+     * Jackson（annotation／core／databind）、Reactor（根包 {@code reactor..}——Maven
+     * 坐标 io.projectreactor:reactor-core 的 Java 包名；{@code AsyncEventStore} 的
+     * Mono/Flux 响应式轨道，ADR-0005 单轨决策：异步扩展仅此一份 Reactor 签名，
+     * 接受 Reactor 进入 SPI 层）与 Lombok 编译期标记。
      * 新增依赖必须显式加白并经 ADR 修订。
      */
     @ArchTest
@@ -57,6 +61,7 @@ class EventStoreModuleIndependenceTest {
                             "com.fasterxml.jackson.annotation..",
                             "com.fasterxml.jackson.core..",
                             "com.fasterxml.jackson.databind..",
+                            "reactor..",
                             "lombok.."
                     );
 }
