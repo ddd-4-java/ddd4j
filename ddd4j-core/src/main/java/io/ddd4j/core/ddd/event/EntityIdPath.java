@@ -1,6 +1,8 @@
 package io.ddd4j.core.ddd.event;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.ddd4j.kit.lang.StrKit;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,6 +24,11 @@ public final class EntityIdPath implements Serializable {
      * 路径分隔符。
      */
     public static final String PATH_SEPARATOR = "/";
+
+    /**
+     * 段内类型与值的分隔符（与 {@link StringEntityId#asTypedString()} 的拼接约定一致）。
+     */
+    private static final String TYPE_SEPARATOR = ":";
 
     private final List<EntityId> entityIds;
 
@@ -47,6 +54,49 @@ public final class EntityIdPath implements Serializable {
         if (this.entityIds.stream().anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("Entity identifier path must not contain null");
         }
+    }
+
+    /**
+     * 解析 {@link #asString()} 文本重建路径（与序列化对偶，Jackson 反序列化 + 事件回放使用）。
+     *
+     * <p>解析契约：按 {@link #PATH_SEPARATOR} 分段，每段按<b>首个</b> {@code :} 切成
+     * type 文本与 value 文本，重建为字符串标识。空串／空白／存在空段／段内缺 {@code :}
+     * 或 type、value 任一为空时抛出 {@link IllegalArgumentException}（消息含出错段原文）。
+     *
+     * <p><b>限制</b>：
+     * <ul>
+     *   <li>回读段一律重建为 {@link StringEntityId}（保留 value；重序列化后 type 统一为
+     *       {@code String:}），自定义 EntityId 实现类不还原为其原始类——类型注册表留待后续 ADR</li>
+     *   <li>值内含 {@code /} 或 {@code :} 的标识不受支持（typed-string 惯例约束）</li>
+     * </ul>
+     *
+     * @param path {@code Type:value} 依次以 {@code /} 连接的路径文本
+     * @return 重建的实体标识路径
+     * @throws IllegalArgumentException 路径为空或格式非法
+     */
+    @JsonCreator
+    public static EntityIdPath valueOf(String path) {
+        if (StrKit.isBlank(path)) {
+            throw new IllegalArgumentException("Entity id path must not be blank: '" + path + "'");
+        }
+        List<EntityId> parsed = new ArrayList<>();
+        for (String segment : path.split(PATH_SEPARATOR, -1)) {
+            parsed.add(parseSegment(segment, path));
+        }
+        return new EntityIdPath(parsed);
+    }
+
+    private static EntityId parseSegment(String segment, String path) {
+        if (StrKit.isBlank(segment)) {
+            throw new IllegalArgumentException(
+                    "Entity id path contains a blank segment: '" + segment + "' (path: '" + path + "')");
+        }
+        int separatorIndex = segment.indexOf(TYPE_SEPARATOR);
+        if (separatorIndex <= 0 || separatorIndex == segment.length() - 1) {
+            throw new IllegalArgumentException(
+                    "Entity id path segment must be in 'Type:value' form but was: '" + segment + "' (path: '" + path + "')");
+        }
+        return new StringEntityId(segment.substring(separatorIndex + 1));
     }
 
     /**
