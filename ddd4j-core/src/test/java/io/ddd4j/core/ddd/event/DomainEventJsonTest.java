@@ -1,14 +1,15 @@
 package io.ddd4j.core.ddd.event;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DomainEventJsonTest {
 
-    // Jackson 3 内建 JavaTimeModule（自动注册），无需手动 registerModule
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    // Jackson 2 不会自动注册 java.time 支持；findAndAddModules 经 SPI 发现 classpath 上的 jsr310（JavaTimeModule）
+    private final ObjectMapper objectMapper = JsonMapper.builder().findAndAddModules().build();
 
     @Test
     void shouldSerializeEventMetadataAsStableScalarValues() throws Exception {
