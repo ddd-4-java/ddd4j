@@ -6,14 +6,11 @@
  */
 package io.ddd4j.core.constant;
 
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
-
 /**
  * 框架核心常量定义。
  * <p>
  * 包含请求结果状态标识（success/fail/error）、主题参数名称、语言参数名称、
- * 以及 SLF4J 业务日志 Marker 等全局常量。
+ * 以及业务日志 Marker 名称等全局常量。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -48,17 +45,20 @@ public class Constants {
      */
     public static final String LANG_PARAM_NAME = "lang";
     /**
-     * 访问日志 Marker
+     * 访问日志 Marker 名称。
+     *
+     * <p>2.0.x 破坏性变更（ADR-0002 迁移义务①）：由 SLF4J {@code Marker} 改为纯 {@code String}，
+     * ddd4j-core 不再依赖日志门面，日志能力由家族模块（ddd4j-kit）与适配层承担。
      */
-    public static Marker accessMarker = MarkerFactory.getMarker("io.hiwepy.access");
+    public static final String ACCESS_MARKER = "io.hiwepy.access";
     /**
-     * 授权日志 Marker
+     * 授权日志 Marker 名称（2.0.x 破坏性变更：Marker→String，见 ADR-0002 迁移义务①）。
      */
-    public static Marker authzMarker = MarkerFactory.getMarker("io.hiwepy.authz");
+    public static final String AUTHZ_MARKER = "io.hiwepy.authz";
     /**
-     * 业务日志 Marker
+     * 业务日志 Marker 名称（2.0.x 破坏性变更：Marker→String，见 ADR-0002 迁移义务①）。
      */
-    public static Marker bizMarker = MarkerFactory.getMarker("io.hiwepy.biz");
+    public static final String BIZ_MARKER = "io.hiwepy.biz";
 
 }
 

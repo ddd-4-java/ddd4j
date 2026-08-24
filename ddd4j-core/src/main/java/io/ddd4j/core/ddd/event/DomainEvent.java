@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -44,7 +43,6 @@ import java.util.Set;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-@Slf4j
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> implements Event, Serializable {
 
