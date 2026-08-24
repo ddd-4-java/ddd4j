@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-event-store-panache</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 事件存储 Quarkus Panache 实现（Quarkus 运行时）：
+        基于 Quarkus Hibernate ORM Panache（active record 公有字段风格）提供 EventStore SPI
+        的关系型落地（PanacheStoredEventEntity + PanacheEventStore）。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Quarkus 平台 BOM（模块级再导入，= ddd4j-dependencies 同款 ${quarkus.version}）：
+                 阶段 5 实测必要（非冗余）。父 BOM 链中更早的 import 已把 hibernate-core 管理
+                 为 7.2.6.Final（面向 Framework 7 线）、hibernate-graalvm/jcache 管理为
+                 hibernate-platform:6.6.40.Final，压过了 quarkus-bom 的 7.4.5.Final——
+                 Quarkus 3.38.2 的 hibernate-orm 运行时按 7.4.x 编译
+                 （ChangesetCoordinatorInitiator 等），混版实测 @QuarkusTest 启动即
+                 NoClassDefFoundError（Task 5.2 IT 实测，同阶段 4 -jpa 教训的 Quarkus 侧镜像）。
+                 模块级 import 优先于父链管理项生效，使本模块的 Quarkus 全家桶
+                 （hibernate-core/graalvm/jcache、jakarta.persistence 3.2.0 等）整链对齐
+                 quarkus-bom，独立于 -jpa 模块的任何版本钉。 -->
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-event-store</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Quarkus Hibernate ORM Panache：版本由 ddd4j-dependencies 导入的
+             io.quarkus.platform:quarkus-bom（${quarkus.version}=3.38.2）管理，刻意不声明。
+             本模块对 hibernate-orm／jakarta.persistence 的解析独立于 Quarkus 全家桶自带版本，
+             不继承也不钉 ddd4j-data-event-store-jpa 模块的任何版本钉（阶段 4 教训：
+             Quarkus 栈必须整链由 quarkus-bom 对齐，禁止与 Spring 线的 Hibernate/JPA 钉混用）。 -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Quarkus JUnit 5 集成（@QuarkusTest 引导；3.31+ 由 quarkus-junit5 重定位至 quarkus-junit，BOM 管理） -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Quarkus H2 JDBC 驱动（@QuarkusTest 内存库 IT 用，BOM 管理，Docker 无关） -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Jackson JSR-310（DomainEvent 的 ZonedDateTime 时间戳真实 Jackson 往返，
+             mapper 经 findAndAddModules 发现 JavaTimeModule；版本由 BOM 链管理） -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的 @QuarkusTest 集成测试（H2 内存库）
+                 随 test 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
