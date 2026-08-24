@@ -74,8 +74,12 @@
             <scope>test</scope>
         </dependency>
         <!-- Hibernate ORM：测试栈运行时显式钉 6.6.40.Final（Boot 3.4/3.5 ＝ Spring 6.2 线）。
-             BOM 管理的 7.2.x 面向 Framework 7，与 spring-orm 6.2.x 组合不稳；本模块主代码
-             不依赖 Hibernate（仅经 JPA 抽象），test 作用域足够。 -->
+             此钉为实测必要（非冗余）：尽管 ddd4j-dependencies 声明了 hibernate-platform:6.6.40.Final
+             import（pom 行 ~4045），但本模块 BOM 链实际生效的 hibernate-core 管理版是 7.2.6.Final
+             （dependency:tree 实测；面向 Framework 7 线），与 spring-orm 6.2.x / 本模块显式钉的
+             jakarta.persistence-api 3.1.0 冲突（7.x 需 JPA API 3.2；去钉实测 H2 IT 全挂：
+             PersistenceUnitTransactionType NoClassDefFound）。本模块主代码不依赖 Hibernate
+             （仅经 JPA 抽象），test 作用域足够。 -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
