@@ -29,6 +29,13 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <!-- Jackson java.time 支持（仅测试需要：EventPayloadSerializerTest 的 ZonedDateTime 时间戳经
+             JavaTimeModule 序列化；主代码 java.time 序列化由 ddd4j-kit JsonKit 自定义序列化器承担） -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
