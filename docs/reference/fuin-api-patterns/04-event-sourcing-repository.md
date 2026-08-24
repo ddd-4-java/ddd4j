@@ -15,7 +15,7 @@
   - `read(id)`/`read(id, version)`（:85-120）：缓存感知读取；私有 `read(aggregate, id, targetVersion)`（:141-187）分页回放。
   - `update(aggregate[, metaType, metaData])`（:197-238）：乐观锁追加 + 冲突重试循环。
   - `add(aggregate[, metaType, metaData])`（:241-257）：复用 update，异常翻译为 `AggregateAlreadyExistsException`。
-  - `delete(id, expectedVersion)`（:312-327）：直接删流（硬删除）。
+  - `delete(id, expectedVersion)`（:312-327）：软删流（:320 传 `hardDelete=false`，esc-api 语义为流可重建、版本续接，非物理删除）。
   - 模板钩子：`conflictsResolved()`（:426-428，默认 false）、`getMaxTryCount()`（:437-439，默认 3）、`getAggregateCache()`（:448-450，默认 NoCache）、`getReadPageSize()`（:458-460，默认 100）、抽象 `getIdParamName()`（:478）。
   - 存储依赖：`org.fuin.esc:esc-api` 0.9.0（`EventStore`/`CommonEvent`/`StreamEventsSlice`/`ExpectedVersion` 均来自该外部库，ddd-4-java 本体不含 EventStore 接口——那是 05 篇主题）。
 
@@ -29,9 +29,11 @@
 int sliceStart = aggregate.getVersion() + 1;
 StreamEventsSlice currentSlice;
 do {
-    // ... readPageSize 与目标版本取小，决定本片条数
+    // ... omitted：sliceCount 计算（:154-159，readPageSize 与目标版本取小）
     try {
+        // ... omitted：LOG.debug（:162）
         currentSlice = getEventStore().readEventsForward(streamId, sliceStart, sliceCount);
+        // ... omitted：LOG.debug（:164）
     } catch (final StreamNotFoundException ex) {
         throw new AggregateNotFoundException(getAggregateType(), id);
     } catch (final StreamDeletedException ex) {
@@ -60,14 +62,16 @@ do {
         aggregate.markChangesAsCommitted();
         unsaved = false;
     } catch (final WrongExpectedVersionException ex) {
+        // ... omitted：LOG.debug（:229-230）
         expectedVersion = resolveConflicts(aggregate, integerVersion(ex.getActual()), retryCount++);
     }
+    // ... omitted：catch (StreamDeletedException | StreamNotFoundException) → AggregateNotFoundException（:232-234）
 } while (unsaved);
 ```
 
 `resolveConflicts`（:285-309）先限次（`retryCount == getMaxTryCount()` 即抛 `AggregateVersionConflictException`），再拉取未见事件交 `conflictsResolved()` 钩子裁决——默认直接冲突。
 
-**3）流标识——AggregateStreamId（AggregateStreamId.java:93-95）**
+**3）流标识——AggregateStreamId（AggregateStreamId.java:92-95，:92 为 @Override）**
 
 ```java
 @Override
@@ -89,9 +93,9 @@ public String asString() {
 ## 缺点（应规避的）
 
 - **抽象类绑定实现**：`EventStoreRepository` 是 abstract class 且构造器硬接 esc-api `EventStore`（:75-82），esc-api 的 `CommonEvent`/`TypeName`/`ExpectedVersion` 等类型经 `asCommonEvents`（:379-396）渗入领域层；换存储实现即换继承体系。
-- **受检异常噪音**：core `Repository` 每个方法 throws 2-3 个受检异常；`read(id)` 还得把不可能发生的 `AggregateVersionNotFoundException` 包成 RuntimeException（:95-98）自圆签名。
+- **受检异常噪音**：core `Repository` 多数方法 throws 2-3 个受检异常（`delete` 仅 1 个）；`read(id)` 还得把不可能发生的 `AggregateVersionNotFoundException` 包成 RuntimeException（:95-98）自圆签名。
 - **int/long 版本混用**：聚合版本 int、事件存储 long，靠运行时 `intVersion` 防线（:398-413）兜底，超界即 `IllegalStateException`。
-- **delete 是硬删流**：`deleteStream`（:320）直接物理删除事件流，违背 ES「事件不可变、只追加」原则，历史荡然无存。
+- **delete 是存储级软删流、删除不走事件**：`deleteStream(streamId, expectedVersion, false)`（:320）传 `hardDelete=false`，按 esc-api 语义是**软删除**——流可经追加重建、旧事件留存，并非物理抹除。真正的问题是删除作为存储管理命令执行而非领域事件追加：**不产生墓碑事件**，投影/订阅者无从感知删除发生；且软删后重建流时版本号不归零、接着软删前的版本继续（esc-api javadoc 明示），下游易误读流的历史。
 - **冲突解决的临时补丁**：事件存储不回传实际版本时整读聚合兜底（:289-292，TODO 引 EventStore issue 1052），重试路径开销不可控。
 - **metaData 无类型**：`update(aggregate, String metaType, Object metaData)`（:203）元数据裸 `Object`，序列化契约全凭实现自觉。
 - **接口样板**：core `Repository` 强制 `getAggregateClass()`/`getAggregateType()`/`create()` 工厂三件套，每个仓储重复实现。
@@ -113,7 +117,7 @@ public String asString() {
   - 缓存：fuin `AggregateCache` 钩子改写为 ddd4j 缓存模块（ddd4j-cache）的可选装饰，不入核心写入路径。
 - **不借鉴**：
   - 抽象类模板 + 构造器硬绑 esc-api——ddd4j-core 只留纯接口，实现下沉 ddd4j-data-event-store（多运行时，ADR-0003）。
-  - `delete(id, expectedVersion)` 硬删流——若 ddd4j 补删除语义，只做软删除（墓碑事件），永不物理删流。
+  - `delete(id, expectedVersion)` 存储级软删流（:320 传 `hardDelete=false`，流可重建、版本续接）——删除不走事件追加，无墓碑事件、投影/订阅者不可见；若 ddd4j 补删除语义，应以墓碑领域事件走统一追加路径，而非调用存储删除命令。
   - 受检异常 `throws` 声明、`RuntimeException("Cannot happen")` 自圆补丁（:95-98）。
   - `getAggregateClass()`/`create()` 接口级工厂样板——ddd4j 由实现模块自管实例化。
   - `Object metaData` 无类型元数据——改为类型化元数据对象或暂不提供。
@@ -125,5 +129,5 @@ public String asString() {
 - [ ] 阶段 4：实现内置乐观锁重试（默认 3 次）+ 类型化冲突裁决策略（`conflictsResolved` 等价物，默认拒绝）。
 - [ ] 阶段 4：add 复用 update + `AggregateAlreadyExistsException` 翻译；追加后 nextVersion 一致性断言。
 - [ ] 阶段 4：int/long 版本边界转换工具 + `Integer.MAX_VALUE` 显式上限测试。
-- [ ] 评估：ddd4j-core `EventSourcingRepository` 是否补 `delete(id, expectedVersion)`——若补，限定软删除语义并在 ADR-0005 记录。
+- [ ] 评估：ddd4j-core `EventSourcingRepository` 是否补 `delete(id, expectedVersion)`——若补，限定墓碑事件式软删除（删除也走事件追加），并在 ADR-0005 记录。
 - [ ] Task 1.10：ADR-0005（event-store SPI）引用本文档「抽象类不借鉴、并发机制借鉴」结论。
