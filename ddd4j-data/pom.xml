@@ -19,6 +19,7 @@
 
     <modules>
         <module>ddd4j-data-cqrs</module>
+        <module>ddd4j-data-cqrs-micronaut</module>
         <module>ddd4j-data-cqrs-quarkus</module>
         <module>ddd4j-data-cqrs-spring</module>
         <module>ddd4j-data-crypto</module>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-cqrs-micronaut</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j CQRS Micronaut 适配：MicronautCommandBus 以 @Singleton 继承
+        ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象），
+        构造期经 BeanContext.getBeansOfType 收集 CommandExecutor Bean 注册 CommandRegistry。
+        事务刻意不引入（micronaut-data 的 io.micronaut.transaction.annotation.Transactional
+        由集成方标注在 service bean 上，总线只做纯分发路由）。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Micronaut 平台 BOM（模块级再导入，= ddd4j-dependencies:6471 同款，引用根 pom:448 的
+                 ${micronaut.version}=4.10.17，刻意不声明本地版本属性）：沿 -event-store-panache /
+                 -cqrs-quarkus 实证的模式预防父链混版——模块级 import 优先于父链管理项生效，使本模块的
+                 Micronaut 全家桶整链由平台 BOM 对齐（平台 4.10.17 把 io.micronaut:micronaut-core/
+                 inject/runtime 管理为 ${micronaut.core.version}=4.10.26，io.micronaut.test:
+                 micronaut-test-junit5 为 4.10.3）。注意坐标实证：io.micronaut.platform 组下只有
+                 micron-platform 聚合 BOM（io.micronaut:micronaut-bom 不在本仓 BOM 链内，
+                 本地仓库的 micronaut-bom:3.10.10 系其它来源的错配版本，不可引用）。
+                 副作用（有意，JUnit 线实证注记）：平台 import 只把 junit-jupiter 聚合 POM
+                 管到 5.14.0；父链逐项显式管理（junit-jupiter-api/engine/params 与
+                 junit-platform-* 均挂 ${junit-jupiter.version}=6.1.0 的 JUnit 6 统一线）
+                 压过 import 的平台管理项——代码级测试栈整链 6.1.0（聚合 POM 版本无代码
+                 意义），micronaut-test-junit5 4.10.3 的 Jupiter 扩展 API 在 6.1.0 实测
+                 兼容（本模块 IT 全绿）；刻意不拆线对齐（拆 5.14 需连 junit-platform
+                 一起退到 1.14.0，父链单属性设计下不可局部覆写，收益不抵成本）。 -->
+            <dependency>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>${micronaut.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-cqrs</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Micronaut Core（核心工具/Environment；平台 BOM 管理无版本 = ${micronaut.core.version} 线） -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-core</artifactId>
+        </dependency>
+        <!-- Micronaut DI（BeanContext/@Singleton 构造型容器 API，jakarta.inject-api 随其传递；
+             平台 BOM 管理无版本） -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject</artifactId>
+        </dependency>
+        <!-- Micronaut Runtime（运行时装配件：micronaut-context/context-propagation/aop 等随其传递，
+             平台 BOM 管理无版本；适配器运行时栈整链对齐用） -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-runtime</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Micronaut JUnit 5 集成（@MicronautTest 真实 BeanContext 引导；io.micronaut.test 组，
+             平台 BOM 管理 = 4.10.3；JUnit 线说明见上方 BOM 再导入注释的实证注记） -->
+            <dependency>
+                <groupId>io.micronaut.test</groupId>
+                <artifactId>micronaut-test-junit5</artifactId>
+                <scope>test</scope>
+            </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Micronaut 的 Bean 定义在编译期由注解处理器生成（micronaut-inject-java 产出
+                 $Definition 类 + META-INF/services 的 BeanDefinitionReference 注册），
+                 没有它 @Singleton 类对运行期 BeanContext 不可见（与 Spring/CDI 的运行期反射
+                 发现机制的根本差异）。插件级配置同时作用于 main 与 test 编译（IT 的样例执行器/
+                 @Factory 也需要生成 Bean 定义）。lombok 与根 pom:249 保持一致；
+                 micronaut-inject-java 版本由上方模块级平台 BOM 管理。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-inject-java</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <!-- surefire 默认不含 *IT.java；本模块的 @MicronautTest 集成测试随 test
+                 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
