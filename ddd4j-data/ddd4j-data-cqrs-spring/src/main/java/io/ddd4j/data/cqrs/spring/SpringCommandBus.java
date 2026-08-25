@@ -1,7 +1,9 @@
 package io.ddd4j.data.cqrs.spring;
 
+import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.data.cqrs.CommandHandler;
 import io.ddd4j.data.cqrs.CommandRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,8 @@ import java.util.Objects;
 /**
  * {@link DefaultCommandBus} 的 Spring 装配适配器：命令契约与路由全部复用
  * ddd4j-core（ADR-0004），本类只做两件事——收集执行器 Bean＋组装总线，
- * 零新框架抽象（不 override {@code execute}，不提供自定义 BeanPostProcessor）。
+ * 零新框架抽象（{@code execute} 仅纯委托 override 供事务代理挂靠，
+ * 不复制路由逻辑，不提供自定义 BeanPostProcessor）。
  *
  * <p><b>仅服务 Spring 系运行时</b>（WebMVC／WebFlux／Helidon-Spring）；Quarkus
  * 运行时用 {@code ddd4j-data-cqrs-quarkus} 的 {@code QuarkusCommandBus}。
@@ -49,12 +52,19 @@ import java.util.Objects;
  * }</pre>
  * 本模块不提供自定义 BeanPostProcessor（ADR-0004：仅扫描＋自动注入）。
  *
- * <h3>事务与代理</h3>
+ * <h3>事务与代理（execute 必须 <b>方法级</b> @Transactional）</h3>
  * <p>
- * 类级 {@link Transactional @Transactional} 包 {@code execute}：容器中存在
- * {@code PlatformTransactionManager} 时由 Spring 代理生效（无事务管理器时刻板静默
- * 不激活）。因此本类<b>不可 {@code final}</b>（CGLIB 代理需子类化）；同理，
- * {@code CommandExecutor} Bean 不得依赖本总线（构造期收集会形成循环依赖）。
+ * {@link #execute} 以<b>方法级</b> {@link Transactional @Transactional} 纯委托
+ * override（{@code return super.execute(command)}）包裹：Spring 事务切面的
+ * 属性查找先查<b>被调方法自身</b>、再查其<b>声明类</b>（见
+ * {@code AbstractFallbackTransactionAttributeSource}）——继承自
+ * {@code DefaultCommandBus} 的方法其声明类是 core，类级注解在<b>本类</b>上
+ * 对该继承方法<b>永不生效</b>（历史缺陷：类级注解在集成方带事务管理器时静默
+ * 分发非事务，Task 6.3 修复轮实证）。方法级注解落在子类自己的方法上，
+ * {@code PlatformTransactionManager} 存在时由 Spring 代理真实生效（无事务
+ * 管理器时刻板静默不激活）。因此本类<b>不可 {@code final}</b>（CGLIB 代理需
+ * 子类化）；同理，{@code CommandExecutor} Bean 不得依赖本总线（构造期收集
+ * 会形成循环依赖）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see DefaultCommandBus
@@ -63,7 +73,6 @@ import java.util.Objects;
  * @since 2.0.x
  */
 @Component
-@Transactional
 public class SpringCommandBus extends DefaultCommandBus {
 
     /**
@@ -76,6 +85,23 @@ public class SpringCommandBus extends DefaultCommandBus {
     @Autowired
     public SpringCommandBus(ApplicationContext context, CommandRegistry registry) {
         super(collect(context, registry));
+    }
+
+    /**
+     * 事务化分发（<b>纯委托</b>，路由逻辑全在 {@link DefaultCommandBus}）。
+     * <p>
+     * 必须<b>方法级</b> {@code @Transactional}：Spring 事务切面对继承方法只查
+     * 方法自身与其声明类（DefaultCommandBus），类级注解对本类的继承方法不生效
+     * （见类 javadoc「事务与代理」）。
+     *
+     * @param command 命令，非空
+     * @param <R>     结果载荷类型
+     * @return 执行结果
+     */
+    @Override
+    @Transactional
+    public <R> Result<R> execute(Command command) {
+        return super.execute(command);
     }
 
     private static Collection<CommandExecutor<?>> collect(ApplicationContext context, CommandRegistry registry) {
