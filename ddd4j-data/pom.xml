@@ -48,6 +48,7 @@
         <module>ddd4j-data-projection-r2dbc</module>
         <module>ddd4j-data-projection-quarkus</module>
         <module>ddd4j-data-projection-spring</module>
+        <module>ddd4j-data-projection-vertx</module>
     </modules>
 
 </project>
