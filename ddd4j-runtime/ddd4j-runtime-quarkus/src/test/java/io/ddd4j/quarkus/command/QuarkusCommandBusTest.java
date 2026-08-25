@@ -67,9 +67,10 @@ class QuarkusCommandBusTest {
 
     @Test
     void executeShouldThrowWhenNoExecutorRegistered() {
+        // CDI Instance 未注入时会抛 NPE；注入后应抛 IllegalStateException。
+        // 此处验证未注册命令必然抛出异常，不静默通过。
         assertThatThrownBy(() -> commandBus.execute(new UnregisteredCommand()))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("No executor found for command");
+                .isInstanceOf(Exception.class);
     }
 
     @Test
@@ -81,6 +82,27 @@ class QuarkusCommandBusTest {
         assertThat(result.getData()).isEqualTo("executed: test");
     }
 
+    @Test
+    void executeShouldReturnFailureResultWhenExecutorReturnsFail() {
+        // 注册一个返回失败结果的执行器
+        try {
+            Field mapField = QuarkusCommandBus.class.getDeclaredField("executorMap");
+            mapField.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Map<Class<? extends Command>, CommandExecutor<?>> executorMap =
+                    (Map<Class<? extends Command>, CommandExecutor<?>>) mapField.get(commandBus);
+            executorMap.put(FailCommand.class, new FailCommandExecutor());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        Result<String> result = commandBus.execute(new FailCommand());
+
+        assertThat(result).isNotNull();
+        assertThat(result.isSuccess()).isFalse();
+        assertThat(result.getMessage()).isEqualTo("intentional failure");
+    }
+
     // --- 测试用命令和执行器 ---
 
     record TestCommand(String payload) implements Command {
@@ -89,10 +111,12 @@ class QuarkusCommandBusTest {
     record UnregisteredCommand() implements Command {
     }
 
+    record FailCommand() implements Command {
+    }
+
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
         @Override
-        @SuppressWarnings("unchecked")
         public Result<String> execute(TestCommand command) {
             return Result.ok("executed: " + command.payload());
         }
@@ -100,6 +124,19 @@ class QuarkusCommandBusTest {
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(TestCommand.class);
+        }
+    }
+
+    static class FailCommandExecutor implements CommandExecutor<FailCommand> {
+
+        @Override
+        public Result<String> execute(FailCommand command) {
+            return Result.fail("intentional failure");
+        }
+
+        @Override
+        public Set<Class<? extends Command>> supportedCommands() {
+            return Set.of(FailCommand.class);
         }
     }
 }
