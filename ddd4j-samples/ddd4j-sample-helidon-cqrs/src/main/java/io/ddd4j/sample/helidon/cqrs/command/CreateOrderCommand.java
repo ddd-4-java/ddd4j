@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.helidon.cqrs.command;
 
+import io.ddd4j.core.cqrs.command.Command;
+
 /**
  * 创建订单命令（CQRS 写侧）。
  *
@@ -21,5 +23,5 @@ package io.ddd4j.sample.helidon.cqrs.command;
  * @param buyerId   买家 ID
  * @param buyerName 买家名称
  */
-public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) {
+public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) implements Command {
 }

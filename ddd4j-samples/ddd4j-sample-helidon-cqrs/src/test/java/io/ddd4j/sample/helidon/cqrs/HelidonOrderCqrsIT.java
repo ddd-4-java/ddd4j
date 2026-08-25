@@ -1,6 +1,6 @@
 package io.ddd4j.sample.helidon.cqrs;
 
-import io.ddd4j.sample.helidon.cqrs.cqrs.ViewManager;
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.helidon.microprofile.tests.junit5.HelidonTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

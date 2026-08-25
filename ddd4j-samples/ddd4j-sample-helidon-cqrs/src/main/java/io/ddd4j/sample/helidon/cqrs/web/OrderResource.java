@@ -14,9 +14,9 @@
  */
 package io.ddd4j.sample.helidon.cqrs.web;
 
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.helidon.cqrs.command.CreateOrderCommand;
-import io.ddd4j.sample.helidon.cqrs.cqrs.CommandBus;
-import io.ddd4j.sample.helidon.cqrs.cqrs.ViewManager;
 import io.ddd4j.sample.helidon.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.helidon.cqrs.readmodel.OrderSummaryViewEntity;
 import io.ddd4j.sample.helidon.cqrs.repository.EventSourcingOrderRepository;
@@ -37,8 +37,7 @@ import java.util.Objects;
 /**
  * 订单 REST 资源（Helidon MP 运行时）。
  *
- * <p>通过 CDI {@code @Inject} 获取 CQRS 组件，
- * 不再直接访问 {@code HelidonCqrsApplication} 静态字段。
+ * <p>通过 CDI {@code @Inject} 获取 core CQRS 组件。
  */
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
@@ -49,17 +48,14 @@ public class OrderResource {
     private final EventSourcingOrderRepository orderRepository;
     private final CommandBus commandBus;
     private final OrderSummaryView readView;
-    private final ViewManager viewManager;
 
     @Inject
     public OrderResource(EventSourcingOrderRepository orderRepository,
                          CommandBus commandBus,
-                         OrderSummaryView readView,
-                         ViewManager viewManager) {
+                         OrderSummaryView readView) {
         this.orderRepository = Objects.requireNonNull(orderRepository, "orderRepository must not be null");
         this.commandBus = Objects.requireNonNull(commandBus, "commandBus must not be null");
         this.readView = Objects.requireNonNull(readView, "readView must not be null");
-        this.viewManager = Objects.requireNonNull(viewManager, "viewManager must not be null");
     }
 
     @POST
@@ -72,10 +68,10 @@ public class OrderResource {
 
         CreateOrderCommand command = new CreateOrderCommand(
                 request.orderNo(), request.buyerId(), request.buyerName());
-        String orderId = commandBus.execute(command);
+        Result<String> result = commandBus.execute(command);
 
         return Response.status(201)
-                .entity(Map.of("success", true, "orderId", orderId))
+                .entity(Map.of("success", true, "orderId", result.getData()))
                 .build();
     }
 

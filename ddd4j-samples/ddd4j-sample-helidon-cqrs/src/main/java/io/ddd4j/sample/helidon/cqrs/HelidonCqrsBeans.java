@@ -14,11 +14,12 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
-import io.ddd4j.sample.helidon.cqrs.command.CreateOrderCommand;
-import io.ddd4j.sample.helidon.cqrs.command.CreateOrderCommandHandler;
-import io.ddd4j.sample.helidon.cqrs.cqrs.CommandBus;
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
-import io.ddd4j.sample.helidon.cqrs.cqrs.ViewManager;
+import io.ddd4j.sample.helidon.cqrs.command.CreateOrderCommandHandler;
+import io.ddd4j.sample.helidon.cqrs.readmodel.InMemoryEventChunkReader;
+import io.ddd4j.sample.helidon.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.helidon.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.helidon.cqrs.repository.EventSourcingOrderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -30,14 +31,16 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
+import java.util.List;
+
 /**
  * Helidon CDI 中 CQRS 组件的装配。
  *
- * <p>使用 {@code @Produces} 工厂方法代替手动静态字段，
- * 使 OrderResource 可以通过 {@code @Inject} 获取依赖。
+ * <p>使用 core SPI（{@link DefaultCommandBus}、{@link InMemoryViewManager}）
+ * 替代本地重写的 CommandBus/ViewManager。
  *
- * <p>{@link io.ddd4j.core.cqrs.eventstore.InMemoryEventStore}、{@code EventSourcingOrderRepository}、
- * {@code OrderSummaryView} 和 {@code ViewManager} 均为 {@code @ApplicationScoped}，
+ * <p>{@link InMemoryEventStore}、{@code EventSourcingOrderRepository}、
+ * {@code OrderSummaryView} 和 {@code InMemoryViewManager} 均为 {@code @ApplicationScoped}，
  * 保证所有注入点共享同一实例（读写模型状态一致）。
  *
  * <p>生命周期通过 {@code @Observes} 事件管理，避免 CDI 自引用循环依赖。
@@ -46,7 +49,7 @@ import jakarta.inject.Inject;
 public class HelidonCqrsBeans {
 
     @Inject
-    private Instance<ViewManager> viewManagerInstance;
+    private Instance<InMemoryViewManager> viewManagerInstance;
 
     void onStart(@Observes @Initialized(ApplicationScoped.class) Object event) {
         viewManagerInstance.get().start();
@@ -64,6 +67,12 @@ public class HelidonCqrsBeans {
 
     @Produces
     @ApplicationScoped
+    InMemoryEventChunkReader chunkReader(InMemoryEventStore eventStore) {
+        return new InMemoryEventChunkReader(eventStore);
+    }
+
+    @Produces
+    @ApplicationScoped
     EventSourcingOrderRepository orderRepository(InMemoryEventStore eventStore) {
         return new EventSourcingOrderRepository(eventStore);
     }
@@ -77,9 +86,7 @@ public class HelidonCqrsBeans {
     @Produces
     @ApplicationScoped
     CommandBus commandBus(CreateOrderCommandHandler commandHandler) {
-        CommandBus bus = new CommandBus();
-        bus.register(CreateOrderCommand.class, commandHandler::execute);
-        return bus;
+        return new DefaultCommandBus(List.of(commandHandler));
     }
 
     @Produces
@@ -90,8 +97,8 @@ public class HelidonCqrsBeans {
 
     @Produces
     @ApplicationScoped
-    ViewManager viewManager(InMemoryEventStore eventStore, OrderSummaryView orderSummaryView) {
-        ViewManager mgr = new ViewManager(eventStore);
+    InMemoryViewManager viewManager(InMemoryEventChunkReader chunkReader, OrderSummaryView orderSummaryView) {
+        InMemoryViewManager mgr = new InMemoryViewManager(chunkReader);
         mgr.register(orderSummaryView);
         return mgr;
     }

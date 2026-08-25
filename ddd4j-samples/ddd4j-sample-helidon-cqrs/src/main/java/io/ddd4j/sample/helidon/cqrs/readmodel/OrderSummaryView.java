@@ -14,13 +14,13 @@
  */
 package io.ddd4j.sample.helidon.cqrs.readmodel;
 
-import io.ddd4j.sample.helidon.cqrs.cqrs.ProjectionView;
+import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.sample.helidon.cqrs.repository.EventSourcingOrderRepository;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
 import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
 
-
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,13 +28,13 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 订单摘要投影视图（CQRS 读侧，Micronaut 运行时）。
+ * 订单摘要投影视图（CQRS 读侧）。
  *
- * <p>订阅 {@link OrderCreatedEvent} 和 {@link OrderPaidEvent}，
+ * <p>实现 core {@link ProjectionView} 接口，
+ * 订阅 {@link OrderCreatedEvent} 和 {@link OrderPaidEvent}，
  * 从 EventSourcingOrderRepository 获取订单详情，维护内存读模型。
  */
-
-public class OrderSummaryView implements ProjectionView {
+public class OrderSummaryView implements ProjectionView<Object> {
 
     private static final String NAME = "order-summary-view";
 
@@ -51,7 +51,22 @@ public class OrderSummaryView implements ProjectionView {
     }
 
     @Override
-    public void handleEvents(List<Object> events) {
+    public String getCron() {
+        return "*/5 * * * * *";
+    }
+
+    @Override
+    public int getChunkSize() {
+        return 1000;
+    }
+
+    @Override
+    public Collection<String> getEventTypes() {
+        return List.of("OrderCreatedEvent", "OrderPaidEvent");
+    }
+
+    @Override
+    public void handleEvents(Collection<Object> events) {
         for (Object event : events) {
             if (event instanceof OrderCreatedEvent created) {
                 handleCreated(created);
