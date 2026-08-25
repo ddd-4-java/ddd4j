@@ -38,6 +38,7 @@
         <module>ddd4j-data-logs</module>
         <module>ddd4j-data-mybatis</module>
         <module>ddd4j-data-mybatisplus</module>
+        <module>ddd4j-data-projection</module>
     </modules>
 
 </project>
