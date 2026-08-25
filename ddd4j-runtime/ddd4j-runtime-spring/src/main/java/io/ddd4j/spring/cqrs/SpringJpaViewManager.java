@@ -14,6 +14,9 @@
  */
 package io.ddd4j.spring.cqrs;
 
+import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,6 +48,10 @@ public class SpringJpaViewManager implements ViewManager {
      */
     private final ViewScheduler scheduler;
     /**
+     * 投影位置仓储（可选，用于查询真实投影位置）
+     */
+    private final ProjectionPositionRepository positionRepository;
+    /**
      * 运行状态标志
      */
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -52,8 +60,24 @@ public class SpringJpaViewManager implements ViewManager {
      */
     private final ConcurrentMap<String, ViewScheduler.ViewScheduleHandle> handles = new ConcurrentHashMap<>();
 
+    /**
+     * 构造视图管理器（无位置仓储，getProjectionStatus 返回基线状态）。
+     *
+     * @param scheduler 视图调度器
+     */
     public SpringJpaViewManager(ViewScheduler scheduler) {
+        this(scheduler, null);
+    }
+
+    /**
+     * 构造视图管理器（带位置仓储，getProjectionStatus 返回真实位置）。
+     *
+     * @param scheduler          视图调度器
+     * @param positionRepository 投影位置仓储；为 null 时 getProjectionStatus 返回基线状态
+     */
+    public SpringJpaViewManager(ViewScheduler scheduler, ProjectionPositionRepository positionRepository) {
         this.scheduler = scheduler;
+        this.positionRepository = positionRepository;
     }
 
     @Override
@@ -81,6 +105,28 @@ public class SpringJpaViewManager implements ViewManager {
     public void triggerOnce() {
         // 业务方可在测试或运维场景调用，由具体 View 实现增量拉取
         log.info("triggerOnce() - 业务方应在子类 override");
+    }
+
+    /**
+     * 查询指定投影视图的实时状态。
+     *
+     * <p>若构造时注入了 {@link ProjectionPositionRepository}，则从仓储读取真实位置；
+     * 否则返回基线状态。lastRunAt / lastEventCount / lastError 当前由
+     * {@link io.ddd4j.core.cqrs.readmodel.ProjectionMetrics} 回调跟踪，
+     * 本实现暂不持久化这些字段（置 null / 0）。
+     *
+     * @param streamId 投影流 ID
+     * @return 投影状态快照
+     * @since 3.0.x
+     */
+    @Override
+    public ProjectionStatus getProjectionStatus(String streamId) {
+        if (positionRepository == null) {
+            return ProjectionStatus.baseline(streamId, isRunning());
+        }
+        Optional<ProjectionPosition> position = positionRepository.findByStreamId(streamId);
+        long nextEventNumber = position.map(ProjectionPosition::getNextEventNumber).orElse(0L);
+        return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 
     /**
