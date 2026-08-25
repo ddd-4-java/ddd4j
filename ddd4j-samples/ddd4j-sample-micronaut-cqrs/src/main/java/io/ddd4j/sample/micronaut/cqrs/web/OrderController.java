@@ -14,7 +14,8 @@
  */
 package io.ddd4j.sample.micronaut.cqrs.web;
 
-import io.ddd4j.sample.micronaut.cqrs.cqrs.CommandBus;
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.micronaut.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.OrderSummaryViewEntity;
@@ -64,10 +65,10 @@ public class OrderController {
 
         CreateOrderCommand command = new CreateOrderCommand(
                 request.orderNo(), request.buyerId(), request.buyerName());
-        String orderId = commandBus.execute(command);
+        Result<String> result = commandBus.execute(command);
 
         return HttpResponse.status(io.micronaut.http.HttpStatus.CREATED)
-                .body(Map.of("success", true, "orderId", orderId));
+                .body(Map.of("success", true, "orderId", result.getData()));
     }
 
     @Get("/{id}")

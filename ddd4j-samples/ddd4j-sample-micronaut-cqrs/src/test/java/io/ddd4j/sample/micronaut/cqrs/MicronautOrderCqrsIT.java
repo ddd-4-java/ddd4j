@@ -2,7 +2,7 @@ package io.ddd4j.sample.micronaut.cqrs;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.sample.micronaut.cqrs.cqrs.ViewManager;
+import io.ddd4j.sample.micronaut.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.OrderSummaryViewEntity;
 import io.ddd4j.sample.micronaut.cqrs.repository.EventSourcingOrderRepository;
@@ -40,7 +40,7 @@ class MicronautOrderCqrsIT {
     OrderSummaryView readView;
 
     @Inject
-    ViewManager viewManager;
+    InMemoryViewManager viewManager;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

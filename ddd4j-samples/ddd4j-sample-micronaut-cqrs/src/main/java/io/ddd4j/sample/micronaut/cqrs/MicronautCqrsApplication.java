@@ -14,10 +14,12 @@
  */
 package io.ddd4j.sample.micronaut.cqrs;
 
-import io.ddd4j.sample.micronaut.cqrs.cqrs.CommandBus;
-import io.ddd4j.sample.micronaut.cqrs.cqrs.ViewManager;
-import io.ddd4j.sample.micronaut.cqrs.command.CreateOrderCommand;
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.sample.micronaut.cqrs.command.CreateOrderCommandHandler;
+import io.ddd4j.sample.micronaut.cqrs.readmodel.InMemoryEventChunkReader;
+import io.ddd4j.sample.micronaut.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.OrderSummaryView;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.event.StartupEvent;
@@ -25,10 +27,12 @@ import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Singleton;
 
+import java.util.List;
+
 /**
  * Micronaut CQRS 集成示例启动入口。
  *
- * <p>装配 CommandBus / ViewManager，注册命令处理器和投影视图。
+ * <p>装配 core SPI CommandBus / InMemoryViewManager。
  */
 public class MicronautCqrsApplication {
 
@@ -40,21 +44,24 @@ public class MicronautCqrsApplication {
     public static class CqrsConfig {
 
         @Singleton
-        io.ddd4j.core.cqrs.eventstore.InMemoryEventStore eventStore() {
-            return new io.ddd4j.core.cqrs.eventstore.InMemoryEventStore();
+        InMemoryEventStore eventStore() {
+            return new InMemoryEventStore();
+        }
+
+        @Singleton
+        InMemoryEventChunkReader chunkReader(InMemoryEventStore eventStore) {
+            return new InMemoryEventChunkReader(eventStore);
         }
 
         @Singleton
         CommandBus commandBus(CreateOrderCommandHandler handler) {
-            CommandBus bus = new CommandBus();
-            bus.register(CreateOrderCommand.class, handler::execute);
-            return bus;
+            return new DefaultCommandBus(List.of(handler));
         }
 
         @Singleton
-        ViewManager viewManager(io.ddd4j.core.cqrs.eventstore.InMemoryEventStore eventStore,
-                                OrderSummaryView orderSummaryView) {
-            ViewManager manager = new ViewManager(eventStore);
+        InMemoryViewManager viewManager(InMemoryEventChunkReader chunkReader,
+                                        OrderSummaryView orderSummaryView) {
+            InMemoryViewManager manager = new InMemoryViewManager(chunkReader);
             manager.register(orderSummaryView);
             return manager;
         }
@@ -63,9 +70,9 @@ public class MicronautCqrsApplication {
     @Singleton
     static class StartupListener {
 
-        private final ViewManager viewManager;
+        private final InMemoryViewManager viewManager;
 
-        StartupListener(ViewManager viewManager) {
+        StartupListener(InMemoryViewManager viewManager) {
             this.viewManager = viewManager;
         }
 
