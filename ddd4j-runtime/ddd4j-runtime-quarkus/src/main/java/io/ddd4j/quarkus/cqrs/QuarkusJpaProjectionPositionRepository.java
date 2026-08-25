@@ -57,7 +57,7 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
     @Transactional
     public ProjectionPosition save(ProjectionPosition position) {
         QuarkusJpaProjectionPosition entity = (QuarkusJpaProjectionPosition) position;
-        QuarkusJpaProjectionPosition current = manager().find(QuarkusJpaProjectionPosition.class, entity.streamId);
+        QuarkusJpaProjectionPosition current = manager().find(QuarkusJpaProjectionPosition.class, entity.getStreamId());
         if (Objects.isNull(current)) {
             manager().persist(entity);
             return entity;
