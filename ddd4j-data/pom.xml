@@ -40,6 +40,7 @@
         <module>ddd4j-data-mybatisplus</module>
         <module>ddd4j-data-projection</module>
         <module>ddd4j-data-projection-jpa</module>
+        <module>ddd4j-data-projection-jdbi</module>
         <module>ddd4j-data-projection-panache</module>
     </modules>
 
