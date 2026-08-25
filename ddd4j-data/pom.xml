@@ -18,6 +18,7 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <modules>
+        <module>ddd4j-data-cqrs</module>
         <module>ddd4j-data-crypto</module>
         <module>ddd4j-data-datascope</module>
         <module>ddd4j-data-event-store</module>
