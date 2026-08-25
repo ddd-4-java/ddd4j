@@ -755,10 +755,6 @@
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <maven-sonar-plugin.version>4.0.1.6619</maven-sonar-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
-            <!-- ddd4j-ai-dependencies 模块专用 AI SDK 版本属性 -->
-        <easy4j-claudecode-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-claudecode-java-sdk.version>
-        <easy4j-codex-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-codex-java-sdk.version>
-        <easy4j-dreamina-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-dreamina-java-sdk.version>
 </properties>
 
     <dependencyManagement>
@@ -10355,23 +10351,6 @@
                 <groupId>io.github.hiwepy</groupId>
                 <artifactId>zxing-extension</artifactId>
                 <version>${easy4j-zxing-extension.version}</version>
-            </dependency>
-            <!-- ddd4j-ai-dependencies 模块专用依赖（LLM/智能体/多模态 AI SDK） -->
-            <!-- 此处仅做 BOM 版本管理，实际依赖在 ddd4j-ai-dependencies 模块的 <dependencies> 块中 -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>claudecode-java-sdk</artifactId>
-                <version>${easy4j-claudecode-java-sdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>codex-java-sdk</artifactId>
-                <version>${easy4j-codex-java-sdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>dreamina-java-sdk</artifactId>
-                <version>${easy4j-dreamina-java-sdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
