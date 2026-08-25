@@ -254,6 +254,7 @@
         <easyexcel.version>4.0.3</easyexcel.version>
         <easypoi.version>4.5.0</easypoi.version>
         <echarts.version>3.0.0.6</echarts.version>
+        <eventstore-db-client.version>5.4.5</eventstore-db-client.version>
         <ehcache3.version>3.12.0</ehcache3.version>
         <elasticsearch-client.version>9.2.1</elasticsearch-client.version>
         <expressly.version>6.0.0</expressly.version>
@@ -5444,6 +5445,11 @@
                 <version>${opentelemetry.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.eventstore</groupId>
+                <artifactId>db-client-java</artifactId>
+                <version>${eventstore-db-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.opentest4j</groupId>
