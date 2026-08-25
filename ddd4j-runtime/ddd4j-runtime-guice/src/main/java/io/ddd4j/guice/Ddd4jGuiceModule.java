@@ -44,20 +44,28 @@ import java.util.Objects;
 /**
  * Ddd4j Google Guice 核心模块。
  * <p>
- * 注册 3 个核心 SPI 的 Guice 实现：
+ * 注册核心 SPI 的 Guice 实现：
  * <ul>
  *   <li>{@link DomainEventPublisher} → {@link GuiceDomainEventPublisher}（基于 Guava EventBus）</li>
  *   <li>{@link SubjectProvider} → {@link GuiceSubjectProvider}（基于 Guice Injector）</li>
  *   <li>{@link I18nProvider} → {@link GuiceI18nProvider}（基于 ResourceBundle）</li>
+ *   <li>{@link ProjectionPositionRepository} → 内存版（{@code InMemoryProjectionPositionRepository}，重启丢失）</li>
  * </ul>
  * <p>
- * 用户在自己的 Guice Injector 中 install(this) 即可启用 ddd4j 全部功能：
+ * 投影位置仓储默认使用内存实现。如需重启后保留投影进度，可使用 JDBC 持久化实现：
  * <pre>{@code
+ * // 默认内存模式
  * Injector injector = Guice.createInjector(new Ddd4jGuiceModule());
- * DomainEventPublisher publisher = injector.getInstance(DomainEventPublisher.class);
+ *
+ * // JDBC 持久化模式（覆盖默认内存绑定）
+ * Injector injector = Guice.createInjector(
+ *     Modules.override(new Ddd4jGuiceModule())
+ *            .with(new Ddd4jJdbcProjectionGuiceModule(dataSource))
+ * );
  * }</pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @see Ddd4jJdbcProjectionGuiceModule
  * @since 2.0.x
  */
 @Slf4j
