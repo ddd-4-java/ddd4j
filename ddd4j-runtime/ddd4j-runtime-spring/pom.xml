@@ -82,6 +82,12 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <!-- Micrometer（可选，用于 ProjectionMetrics 适配；版本由 ddd4j-dependencies BOM 管理） -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-runtime-testkit</artifactId>
