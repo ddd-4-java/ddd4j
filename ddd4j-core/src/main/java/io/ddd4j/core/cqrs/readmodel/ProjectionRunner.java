@@ -38,9 +38,30 @@ public class ProjectionRunner<E> {
 
     private final EventChunkReader<E> chunkReader;
 
+    private final ProjectionMetrics metrics;
+
+    /**
+     * 构造投影运行器（无指标采集）。
+     *
+     * @param projectionService 投影位置服务
+     * @param chunkReader       事件块读取器
+     */
     public ProjectionRunner(ProjectionService projectionService, EventChunkReader<E> chunkReader) {
+        this(projectionService, chunkReader, NoopProjectionMetrics.INSTANCE);
+    }
+
+    /**
+     * 构造投影运行器（带可选指标采集）。
+     *
+     * @param projectionService 投影位置服务
+     * @param chunkReader       事件块读取器
+     * @param metrics           投影指标回调；为 null 时使用 {@link NoopProjectionMetrics#INSTANCE}
+     */
+    public ProjectionRunner(ProjectionService projectionService, EventChunkReader<E> chunkReader,
+                            ProjectionMetrics metrics) {
         this.projectionService = Objects.requireNonNull(projectionService, "projectionService must not be null");
         this.chunkReader = Objects.requireNonNull(chunkReader, "chunkReader must not be null");
+        this.metrics = Objects.requireNonNullElse(metrics, NoopProjectionMetrics.INSTANCE);
     }
 
     /**
@@ -51,21 +72,33 @@ public class ProjectionRunner<E> {
      */
     public EventChunk<E> runOnce(ProjectionView<E> view) {
         ProjectionView<E> projectionView = validateView(view);
-        long nextEventNumber = projectionService.readProjectionPosition(projectionView.getStreamId());
-        EventChunk<E> chunk = chunkReader.read(
-                projectionView.getStreamId(),
-                nextEventNumber,
-                projectionView.getChunkSize(),
-                projectionView.getEventTypes()
-        );
-        EventChunk<E> safeChunk = Objects.requireNonNull(chunk, "chunkReader must not return null");
-        if (safeChunk.hasEvents()) {
-            projectionView.handleEvents(safeChunk.getEvents());
+        String streamId = projectionView.getStreamId();
+        metrics.onRunStarted(streamId);
+        long startNanos = System.nanoTime();
+        long previousPosition = projectionService.readProjectionPosition(streamId);
+        try {
+            EventChunk<E> chunk = chunkReader.read(
+                    streamId,
+                    previousPosition,
+                    projectionView.getChunkSize(),
+                    projectionView.getEventTypes()
+            );
+            EventChunk<E> safeChunk = Objects.requireNonNull(chunk, "chunkReader must not return null");
+            if (safeChunk.hasEvents()) {
+                projectionView.handleEvents(safeChunk.getEvents());
+            }
+            long positionAdvance = 0;
+            if (safeChunk.getNextEventNumber() > previousPosition) {
+                positionAdvance = safeChunk.getNextEventNumber() - previousPosition;
+                projectionService.updateProjectionPosition(streamId, safeChunk.getNextEventNumber());
+            }
+            long durationNanos = System.nanoTime() - startNanos;
+            metrics.onRunCompleted(streamId, safeChunk.getEvents().size(), durationNanos, positionAdvance);
+            return safeChunk;
+        } catch (RuntimeException ex) {
+            metrics.onRunFailed(streamId, ex);
+            throw ex;
         }
-        if (safeChunk.getNextEventNumber() > nextEventNumber) {
-            projectionService.updateProjectionPosition(projectionView.getStreamId(), safeChunk.getNextEventNumber());
-        }
-        return safeChunk;
     }
 
     /**
