@@ -30,14 +30,14 @@ import java.io.Serializable;
 /**
  * Spring JPA 投影位置实体。
  *
- * <p>对应数据库表 {@code SPRING_QRY_PROJECTION_POS}（可通过 {@code @Table} 改名）。
+ * <p>对应数据库表 {@code DDD4J_PROJECTION_POSITION}（与 Quarkus 运行时统一，可通过 {@code @Table} 改名）。
  * 持久化读侧视图的增量拉取偏移量，重启后从上次位置继续拉取。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Entity
-@Table(name = "SPRING_QRY_PROJECTION_POS")
+@Table(name = "DDD4J_PROJECTION_POSITION")
 @Getter
 @Setter
 @NoArgsConstructor
