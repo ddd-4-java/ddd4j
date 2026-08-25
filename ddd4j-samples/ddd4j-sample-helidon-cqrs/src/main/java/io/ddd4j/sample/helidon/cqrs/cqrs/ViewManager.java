@@ -16,6 +16,9 @@ package io.ddd4j.sample.helidon.cqrs.cqrs;
 
 
 
+import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -47,10 +50,10 @@ public class ViewManager {
     }
 
     public void triggerOnce() {
-        List<InMemoryEventStore.StoredEvent> events = eventStore.readAll(lastPosition, 1000);
+        List<StoredEvent> events = eventStore.readAll(lastPosition, 1000);
         if (!events.isEmpty()) {
             List<Object> payloads = events.stream()
-                    .map(InMemoryEventStore.StoredEvent::event)
+                    .map(StoredEvent::event)
                     .toList();
             for (ProjectionView view : views) {
                 view.handleEvents(payloads);

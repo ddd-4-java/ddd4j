@@ -15,7 +15,7 @@
 package io.ddd4j.sample.dropwizard.cqrs;
 
 import io.ddd4j.sample.dropwizard.cqrs.cqrs.CommandBus;
-import io.ddd4j.sample.dropwizard.cqrs.cqrs.InMemoryEventStore;
+import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.sample.dropwizard.cqrs.cqrs.ViewManager;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommandHandler;

@@ -40,6 +40,11 @@ public class MicronautCqrsApplication {
     public static class CqrsConfig {
 
         @Singleton
+        io.ddd4j.core.cqrs.eventstore.InMemoryEventStore eventStore() {
+            return new io.ddd4j.core.cqrs.eventstore.InMemoryEventStore();
+        }
+
+        @Singleton
         CommandBus commandBus(CreateOrderCommandHandler handler) {
             CommandBus bus = new CommandBus();
             bus.register(CreateOrderCommand.class, handler::execute);
@@ -47,7 +52,7 @@ public class MicronautCqrsApplication {
         }
 
         @Singleton
-        ViewManager viewManager(io.ddd4j.sample.micronaut.cqrs.cqrs.InMemoryEventStore eventStore,
+        ViewManager viewManager(io.ddd4j.core.cqrs.eventstore.InMemoryEventStore eventStore,
                                 OrderSummaryView orderSummaryView) {
             ViewManager manager = new ViewManager(eventStore);
             manager.register(orderSummaryView);

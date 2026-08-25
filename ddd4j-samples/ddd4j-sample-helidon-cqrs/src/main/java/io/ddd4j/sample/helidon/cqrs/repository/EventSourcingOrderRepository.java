@@ -15,7 +15,7 @@
 package io.ddd4j.sample.helidon.cqrs.repository;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.sample.helidon.cqrs.cqrs.InMemoryEventStore;
+import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderRepository;
 

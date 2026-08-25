@@ -17,7 +17,7 @@ package io.ddd4j.sample.helidon.cqrs;
 import io.ddd4j.sample.helidon.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.helidon.cqrs.command.CreateOrderCommandHandler;
 import io.ddd4j.sample.helidon.cqrs.cqrs.CommandBus;
-import io.ddd4j.sample.helidon.cqrs.cqrs.InMemoryEventStore;
+import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.sample.helidon.cqrs.cqrs.ViewManager;
 import io.ddd4j.sample.helidon.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.helidon.cqrs.repository.EventSourcingOrderRepository;
@@ -36,7 +36,7 @@ import jakarta.inject.Inject;
  * <p>使用 {@code @Produces} 工厂方法代替手动静态字段，
  * 使 OrderResource 可以通过 {@code @Inject} 获取依赖。
  *
- * <p>{@code InMemoryEventStore}、{@code EventSourcingOrderRepository}、
+ * <p>{@link io.ddd4j.core.cqrs.eventstore.InMemoryEventStore}、{@code EventSourcingOrderRepository}、
  * {@code OrderSummaryView} 和 {@code ViewManager} 均为 {@code @ApplicationScoped}，
  * 保证所有注入点共享同一实例（读写模型状态一致）。
  *

@@ -15,7 +15,7 @@
 package io.ddd4j.sample.vertx.cqrs;
 
 import io.ddd4j.sample.vertx.cqrs.cqrs.CommandBus;
-import io.ddd4j.sample.vertx.cqrs.cqrs.InMemoryEventStore;
+import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.sample.vertx.cqrs.cqrs.ViewManager;
 import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommandHandler;
