@@ -21,6 +21,8 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
@@ -70,6 +72,8 @@ public class Ddd4jGuiceModule extends AbstractModule {
         bind(SubjectProvider.class).to(GuiceSubjectProvider.class).in(Singleton.class);
         bind(I18nProvider.class).to(GuiceI18nProvider.class).in(Singleton.class);
         bind(ProjectionPositionRepository.class).to(InMemoryProjectionPositionRepository.class).in(Singleton.class);
+        // 默认线程池大小绑定（可通过 GuicePropertyLoader 覆盖）
+        bindConstant().annotatedWith(Names.named("ddd4j.view-manager.thread-pool-size")).to(2);
         bind(GuiceViewManager.class).in(Singleton.class);
         bind(ViewManager.class).to(GuiceViewManager.class);
         bind(ViewScheduler.class).to(GuiceViewManager.class);
