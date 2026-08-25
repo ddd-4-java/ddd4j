@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-projection-javalin</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 投影调度 Javalin 适配（Javalin 运行时）：
+        JavalinProjectionScheduler 以静态 create(Javalin) 工厂实现 ViewScheduler SPI
+        （ScheduledExecutorService + CronExpression——Javalin 无内置 cron 调度，退化为
+        JDK 调度），JavalinProjectionViewManager 以静态 create(Javalin, Collection,
+        ProjectionRunner) 工厂实现 ViewManager SPI（手动注册，无 CDI 容器），
+        生命周期由 Javalin app.events(serverStopping) 钩子管理——投影契约全部复用 ddd4j-core。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-projection</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Javalin 核心（轻量 Web 框架，无 DI 容器；版本由 ddd4j-dependencies 导入的
+             io.javalin:javalin-bom（${javalin.version}=7.2.2）管理，刻意不声明） -->
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试（真实 Javalin 启动）
+                 随 test 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
