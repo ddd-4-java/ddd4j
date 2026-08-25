@@ -30,6 +30,12 @@
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-api</artifactId>
         </dependency>
+        <!-- OpenTelemetry SDK Testing（版本由 opentelemetry-bom 管理，用于 InMemoryMetricReader 真实断言） -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
