@@ -16,6 +16,7 @@ package io.ddd4j.core.cqrs.readmodel;
 
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -30,6 +31,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public class ProjectionRunner<E> {
 
     private final ProjectionService projectionService;
@@ -76,7 +78,11 @@ public class ProjectionRunner<E> {
             return;
         }
         for (ProjectionView<E> view : views) {
-            runOnce(view);
+            try {
+                runOnce(view);
+            } catch (RuntimeException ex) {
+                log.error("Projection view '{}' failed, continuing with next view", view.getName(), ex);
+            }
         }
     }
 
