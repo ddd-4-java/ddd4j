@@ -16,12 +16,16 @@ package io.ddd4j.guice.cqrs;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -37,6 +41,8 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     /** default thread pool size */
     private static final int DEFAULT_THREAD_POOL_SIZE = 2;
 
+    /** projection position repository (optional, for real status queries) */
+    private final ProjectionPositionRepository positionRepository;
     /** running state flag */
     private final AtomicBoolean running = new AtomicBoolean(false);
     /** scheduled view task handle map */
@@ -50,7 +56,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * Create a new GuiceViewManager with default thread pool size (2).
      */
     public GuiceViewManager() {
-        this(DEFAULT_THREAD_POOL_SIZE);
+        this(DEFAULT_THREAD_POOL_SIZE, null);
     }
 
     /**
@@ -61,10 +67,22 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      */
     @Inject
     public GuiceViewManager(@Named("ddd4j.view-manager.thread-pool-size") int threadPoolSize) {
+        this(threadPoolSize, null);
+    }
+
+    /**
+     * Create a new GuiceViewManager with specified thread pool size and position repository.
+     *
+     * @param threadPoolSize    thread pool size for the scheduler
+     * @param positionRepository projection position repository; null disables real status queries
+     * @throws IllegalArgumentException if threadPoolSize is less than 1
+     */
+    public GuiceViewManager(int threadPoolSize, ProjectionPositionRepository positionRepository) {
         if (threadPoolSize < 1) {
             throw new IllegalArgumentException("Thread pool size must be at least 1: " + threadPoolSize);
         }
         this.threadPoolSize = threadPoolSize;
+        this.positionRepository = positionRepository;
     }
 
     @Override
@@ -111,6 +129,28 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     @Override
     public void triggerOnce() {
         log.info("triggerOnce() should be implemented by concrete view logic");
+    }
+
+    /**
+     * 查询指定投影视图的实时状态。
+     *
+     * <p>若构造时注入了 {@link ProjectionPositionRepository}，则从仓储读取真实位置；
+     * 否则返回基线状态。lastRunAt / lastEventCount / lastError 当前由
+     * {@link io.ddd4j.core.cqrs.readmodel.ProjectionMetrics} 回调跟踪，
+     * 本实现暂不持久化这些字段（置 null / 0）。
+     *
+     * @param streamId 投影流 ID
+     * @return 投影状态快照
+     * @since 3.0.x
+     */
+    @Override
+    public ProjectionStatus getProjectionStatus(String streamId) {
+        if (positionRepository == null) {
+            return ProjectionStatus.baseline(streamId, isRunning());
+        }
+        Optional<ProjectionPosition> position = positionRepository.findByStreamId(streamId);
+        long nextEventNumber = position.map(ProjectionPosition::getNextEventNumber).orElse(0L);
+        return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 
     @Override
