@@ -14,38 +14,38 @@
  */
 package io.ddd4j.sample.vertx.cqrs;
 
-import io.ddd4j.sample.vertx.cqrs.cqrs.CommandBus;
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
-import io.ddd4j.sample.vertx.cqrs.cqrs.ViewManager;
 import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommandHandler;
+import io.ddd4j.sample.vertx.cqrs.readmodel.InMemoryEventChunkReader;
+import io.ddd4j.sample.vertx.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.vertx.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.vertx.cqrs.repository.EventSourcingOrderRepository;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
+import java.util.List;
+
 /**
  * Vert.x CQRS 集成示例启动入口。
  */
 public class VertxCqrsApplication {
 
-    // 共享组件（手动装配）
+    // 共享组件（手动装配，使用 core SPI）
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
-    public static final CommandBus COMMAND_BUS = createCommandBus();
+    public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
-    public static final ViewManager VIEW_MANAGER = createViewManager();
+    public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
+    public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
 
-    private static CommandBus createCommandBus() {
-        CommandBus bus = new CommandBus();
-        bus.register(CreateOrderCommand.class, COMMAND_HANDLER::execute);
-        return bus;
-    }
-
-    private static ViewManager createViewManager() {
-        ViewManager mgr = new ViewManager(EVENT_STORE);
+    private static InMemoryViewManager createViewManager() {
+        InMemoryViewManager mgr = new InMemoryViewManager(CHUNK_READER);
         mgr.register(READ_VIEW);
         return mgr;
     }
@@ -69,11 +69,11 @@ public class VertxCqrsApplication {
             }
 
             CreateOrderCommand command = new CreateOrderCommand(orderNo, buyerId, buyerName);
-            String orderId = COMMAND_BUS.execute(command);
+            Result<String> result = COMMAND_BUS.execute(command);
 
             ctx.response().setStatusCode(201)
                     .putHeader("Content-Type", "application/json")
-                    .end("{\"success\":true,\"orderId\":\"" + orderId + "\"}");
+                    .end("{\"success\":true,\"orderId\":\"" + result.getData() + "\"}");
         });
 
         // GET /orders/:id -> 查询订单摘要
