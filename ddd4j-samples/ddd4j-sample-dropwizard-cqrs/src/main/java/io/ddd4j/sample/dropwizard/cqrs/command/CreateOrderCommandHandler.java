@@ -14,20 +14,23 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.command;
 
+import io.ddd4j.core.cqrs.command.Command;
+import io.ddd4j.core.cqrs.command.CommandExecutor;
+import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.dropwizard.cqrs.repository.EventSourcingOrderRepository;
 import io.ddd4j.sample.order.domain.Order;
 
-
 import java.util.Objects;
+import java.util.Set;
 
 /**
- * 创建订单命令处理器（写侧入口）。
+ * 创建订单命令执行器（写侧入口）。
  *
- * <p>用 {@link Order#draft} 工厂方法创建聚合根，
+ * <p>实现 core {@link CommandExecutor} 接口，
+ * 用 {@link Order#draft} 工厂方法创建聚合根，
  * 通过 {@link EventSourcingOrderRepository} 持久化到 EventStore。
  */
-
-public class CreateOrderCommandHandler {
+public class CreateOrderCommandHandler implements CommandExecutor<CreateOrderCommand> {
 
     private final EventSourcingOrderRepository orderRepository;
 
@@ -35,9 +38,15 @@ public class CreateOrderCommandHandler {
         this.orderRepository = Objects.requireNonNull(orderRepository, "orderRepository must not be null");
     }
 
-    public String execute(CreateOrderCommand command) {
+    @Override
+    public Set<Class<? extends Command>> supportedCommands() {
+        return Set.of(CreateOrderCommand.class);
+    }
+
+    @Override
+    public Result<String> execute(CreateOrderCommand command) {
         Order order = Order.draft(command.orderNo(), command.buyerId(), command.buyerName());
         orderRepository.save(order);
-        return order.id();
+        return Result.ok(order.id());
     }
 }

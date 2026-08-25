@@ -14,11 +14,12 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs;
 
-import io.ddd4j.sample.dropwizard.cqrs.cqrs.CommandBus;
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
-import io.ddd4j.sample.dropwizard.cqrs.cqrs.ViewManager;
-import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommandHandler;
+import io.ddd4j.sample.dropwizard.cqrs.readmodel.InMemoryEventChunkReader;
+import io.ddd4j.sample.dropwizard.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.dropwizard.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.dropwizard.cqrs.repository.EventSourcingOrderRepository;
 import io.ddd4j.sample.dropwizard.cqrs.web.OrderResource;
@@ -26,27 +27,24 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 
+import java.util.List;
+
 /**
  * Dropwizard CQRS 集成示例启动入口。
  */
 public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfiguration> {
 
-    // 共享组件（手动装配）
+    // 共享组件（手动装配，使用 core SPI）
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
-    public static final CommandBus COMMAND_BUS = createCommandBus();
+    public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
-    public static final ViewManager VIEW_MANAGER = createViewManager();
+    public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
+    public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
 
-    private static CommandBus createCommandBus() {
-        CommandBus bus = new CommandBus();
-        bus.register(CreateOrderCommand.class, COMMAND_HANDLER::execute);
-        return bus;
-    }
-
-    private static ViewManager createViewManager() {
-        ViewManager mgr = new ViewManager(EVENT_STORE);
+    private static InMemoryViewManager createViewManager() {
+        InMemoryViewManager mgr = new InMemoryViewManager(CHUNK_READER);
         mgr.register(READ_VIEW);
         return mgr;
     }

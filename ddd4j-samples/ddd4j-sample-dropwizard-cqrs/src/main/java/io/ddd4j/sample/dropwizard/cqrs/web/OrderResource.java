@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.web;
 
+import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.dropwizard.cqrs.DropwizardCqrsApplication;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.dropwizard.cqrs.readmodel.OrderSummaryViewEntity;
@@ -46,10 +47,10 @@ public class OrderResource {
 
         CreateOrderCommand command = new CreateOrderCommand(
                 request.orderNo(), request.buyerId(), request.buyerName());
-        String orderId = DropwizardCqrsApplication.COMMAND_BUS.execute(command);
+        Result<String> result = DropwizardCqrsApplication.COMMAND_BUS.execute(command);
 
         return Response.status(201)
-                .entity(Map.of("success", true, "orderId", orderId))
+                .entity(Map.of("success", true, "orderId", result.getData()))
                 .build();
     }
 
