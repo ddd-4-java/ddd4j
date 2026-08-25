@@ -14,13 +14,19 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
+import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.event.Shutdown;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -38,6 +44,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j(topic = "### DDD4J-QUARKUS : ViewManager ###")
 @ApplicationScoped
 public class QuarkusJpaViewManager implements ViewManager {
+
+    /**
+     * 投影位置仓储（CDI 可选注入，不可用时 getProjectionStatus 返回基线状态）
+     */
+    @Inject
+    Instance<ProjectionPositionRepository> positionRepositories;
 
     /**
      * 运行状态标志
@@ -74,5 +86,28 @@ public class QuarkusJpaViewManager implements ViewManager {
     @Override
     public void triggerOnce() {
         log.info("triggerOnce() - 业务方应在 QuarkusJpaProjectionService override");
+    }
+
+    /**
+     * 查询指定投影视图的实时状态。
+     *
+     * <p>若 CDI 容器中存在 {@link ProjectionPositionRepository} Bean，则从仓储读取真实位置；
+     * 否则返回基线状态。lastRunAt / lastEventCount / lastError 当前由
+     * {@link io.ddd4j.core.cqrs.readmodel.ProjectionMetrics} 回调跟踪，
+     * 本实现暂不持久化这些字段（置 null / 0）。
+     *
+     * @param streamId 投影流 ID
+     * @return 投影状态快照
+     * @since 3.0.x
+     */
+    @Override
+    public ProjectionStatus getProjectionStatus(String streamId) {
+        if (positionRepositories.isUnsatisfied()) {
+            return ProjectionStatus.baseline(streamId, isRunning());
+        }
+        ProjectionPositionRepository repository = positionRepositories.get();
+        Optional<ProjectionPosition> position = repository.findByStreamId(streamId);
+        long nextEventNumber = position.map(ProjectionPosition::getNextEventNumber).orElse(0L);
+        return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 }
