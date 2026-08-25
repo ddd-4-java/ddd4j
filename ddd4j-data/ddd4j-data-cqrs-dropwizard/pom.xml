@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-cqrs-dropwizard</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j CQRS Dropwizard 5 适配：DropwizardCommandBus 以静态 create(Application, Collection)
+        工厂继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）。
+        Dropwizard 不内置 DI 容器——执行器由集成方以 JDK ServiceLoader 风格（META-INF/services）
+        或手动扫描供入 create 工厂的 Collection 参数，工厂内经 CommandRegistry 整批注册；
+        集成点为 Application.run（manual-registration 模式，与 javalin/vertx 对称）。
+        事务刻意不引入（Dropwizard 无声明式事务栈，由集成方在资源/执行器内自管）。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Jersey 3.1.x 对齐（模块级覆盖）：dropwizard-bom 5.0.2 只管理
+                 io.dropwizard.* 构件，org.glassfish.jersey 的版本来自
+                 ddd4j-dependencies:5171-5179 的 jersey-bom（${jersey.version}=
+                 3.1.11，与 dropwizard-dependencies 5.0.2 同线）；但
+                 ddd4j-dependencies:3936-3943 先行以 BOM 形式导入了
+                 org.apache.hadoop:hadoop-mapreduce-client:3.5.0（其父
+                 hadoop-project 以 jersey2.version=2.46 管理 Jersey 2.x 子集
+                 —— javax.ws.rs 旧命名空间），first-wins 下 2.46 会劫持
+                 jersey-common/server/client 等子集，与 Dropwizard 5 的
+                 jakarta 线（jakarta.ws.rs 3.1）混链即 NoClassDefFoundError。
+                 本模块级再导入同线 jersey-bom 即可整族对齐 3.1.11（当前 pom
+                 的 dependencyManagement 优先于父级导入），零全局副作用。 -->
+            <dependency>
+                <groupId>org.glassfish.jersey</groupId>
+                <artifactId>jersey-bom</artifactId>
+                <version>${jersey.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Dropwizard Metrics 整族对齐（同因 hadoop-mapreduce-client BOM 劫持）：
+                 hadoop-project 3.5.0 另以 4.0.1 管理 io.dropwizard.metrics:metrics-core
+                 （及 jmx/healthchecks 子集），先于 ddd4j 全局管理生效 → dropwizard-core
+                 5.0.2（按 4.2.x 编译）运行期 NoSuchMethodError。模块级导入
+                 metrics-bom（${dropwizard-metrics.version}=4.2.39，与 dropwizard
+                 5.0.2 同线）整族回正。 -->
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-bom</artifactId>
+                <version>${dropwizard-metrics.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-cqrs</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Dropwizard 核心（Jetty/Jersey/Jackson 装配栈，无 DI 容器；版本由
+             ddd4j-dependencies:2886-2888 导入的 io.dropwizard:dropwizard-bom
+             （${dropwizard-bom.version}=5.0.2）管理，刻意不声明） -->
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Dropwizard 测试支持（DropwizardTestSupport 启动真实 Jersey/Jetty 容器；
+             版本由 dropwizard-bom 5.0.2 管理，刻意不声明） -->
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试（真实 Dropwizard 启动 +
+                 ServiceLoader 发现）随 test 阶段执行，需在父配置（**/*Test.java 之外）
+                 追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -19,6 +19,7 @@
 
     <modules>
         <module>ddd4j-data-cqrs</module>
+        <module>ddd4j-data-cqrs-dropwizard</module>
         <module>ddd4j-data-cqrs-helidon</module>
         <module>ddd4j-data-cqrs-javalin</module>
         <module>ddd4j-data-cqrs-micronaut</module>
