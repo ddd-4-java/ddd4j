@@ -17,7 +17,6 @@ package io.ddd4j.core.ddd.model.metadata;
 import io.ddd4j.annotation.orm.DomainField;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -72,7 +71,7 @@ public class DomainModelInfo<M> {
                 ? poProperty2ColumnProvider
                 : p -> null;
 
-        for (Field field : FieldUtils.getAllFieldsList(modelType)) {
+        for (Field field : getAllFields(modelType)) {
             if (Modifier.isStatic(field.getModifiers())
                     || Modifier.isTransient(field.getModifiers())
                     || field.isSynthetic()) {
@@ -139,5 +138,21 @@ public class DomainModelInfo<M> {
     public String getPoColumn(String property) {
         DomainFieldInfo info = findField(property);
         return Objects.nonNull(info) ? info.getPoColumn() : null;
+    }
+
+    /**
+     * 获取指定类及其所有父类声明的全部字段（等价于 commons-lang3 {@code FieldUtils.getAllFieldsList}）。
+     *
+     * @param clazz 目标类
+     * @return 全部字段列表（包含父类私有字段）
+     */
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class<?> current = clazz;
+        while (Objects.nonNull(current) && current != Object.class) {
+            fields.addAll(Arrays.asList(current.getDeclaredFields()));
+            current = current.getSuperclass();
+        }
+        return fields;
     }
 }

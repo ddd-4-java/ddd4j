@@ -33,29 +33,25 @@
             <version>${revision}</version>
         </dependency>
 
-        <!-- ======== 序列化 ======== -->
-        <!-- Jackson（JSON 序列化，@JsonIgnore 等注解；J3 中 annotations+jsr310 已内置于 databind） -->
+        <!-- ======== 序列化（有意保留） ======== -->
+        <!-- Jackson databind：ddd4j-core 事件载荷序列化契约依赖 Jackson（JsonKit/DomainEvent），
+             属有意保留；事件 payload 的 JSON 往返是核心契约。 -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        <!-- Jackson annotations（com.fasterxml.jackson 2.x）：@JsonProperty/@JsonCreator/@JsonIgnore/@JsonValue
+             保证 DomainEvent/EventId/AggregateVersion/EntityIdPath 等事件/实体 JSON 往返稳定；
+             Jackson 3 的 databind 兼容 Jackson 2 注解包，两者需同时保留。 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
 
-        <!-- ======== API 文档 ======== -->
-        <!-- Swagger 注解（@Schema，用于 ApiRestResponse 等） -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-        </dependency>
-        <!-- Commons Lang3（字符串/对象工具） -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <!-- TransmittableThreadLocal（线程上下文透传） -->
+        <!-- ======== 线程上下文透传（有意保留） ======== -->
+        <!-- TransmittableThreadLocal：ThreadContext 使用 TTL 实现跨线程池的上下文透传（租户/Subject/requestId），
+             ddd4j-web 运行时（Spring/Quarkus/Micronaut 等）在异步线程中依赖此语义。
+             JDK 21 ScopedValue 可作为未来替代，当前保留 TTL 以兼容 Java 17+ 运行时。 -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>

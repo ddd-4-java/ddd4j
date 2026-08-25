@@ -17,7 +17,6 @@ package io.ddd4j.core;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.ddd4j.core.constant.Constants;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -26,26 +25,29 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * model for interacting with client.
+ * 接口响应对象（model for interacting with client）。
+ *
+ * <p>字段说明：
+ * <ul>
+ *   <li>{@code code} — 成功或异常编码</li>
+ *   <li>{@code message} — 成功或异常消息</li>
+ *   <li>{@code data} — 成功或异常数据</li>
+ *   <li>{@code error} — 校验失败信息</li>
+ * </ul>
  */
-@Schema(name = "ApiRestResponse", description = "接口响应对象")
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiRestResponse<T> {
 
-    @Schema(name = "code", type = "integer", description = "成功或异常编码")
     @Getter
     private final int code;
 
-    @Schema(name = "message", type = "string", description = "成功或异常消息")
     @Getter
     private final String message;
 
-    @Schema(name = "data", description = "成功或异常数据")
     @Getter
     private T data;
 
-    @Schema(name = "error", description = "校验失败信息")
     private List<Map<String, String>> error;
 
     public ApiRestResponse() {
