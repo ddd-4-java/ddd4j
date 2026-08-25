@@ -52,4 +52,26 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
         log.debug("Publishing domain event: {}", domainEvent.getClass().getSimpleName());
         event.fire(domainEvent);
     }
+
+    /**
+     * 发布任意对象事件。
+     *
+     * <p>若事件为 {@link DomainEvent} 实例则委托给 {@link #publish(DomainEvent)}；
+     * 否则打印 warn 日志，避免静默丢弃非 DomainEvent 体系的事件。
+     *
+     * @param event 任意事件对象
+     */
+    @Override
+    public void publish(Object event) {
+        if (Objects.isNull(event)) {
+            log.warn("Attempted to publish null event object");
+            return;
+        }
+        if (event instanceof DomainEvent<?> domainEvent) {
+            publish(domainEvent);
+        } else {
+            log.warn("Published non-DomainEvent object via CDI event bus: {}", event.getClass().getName());
+            this.event.fire(event);
+        }
+    }
 }
