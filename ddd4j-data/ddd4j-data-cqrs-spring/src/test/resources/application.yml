@@ -1,0 +1,11 @@
+# Task 6.3 集成测试配置（默认轨，无 profile）。
+#
+# 类级 @Transactional 的激活由 Spring Boot TransactionAutoConfiguration 决定：
+# 容器中存在 PlatformTransactionManager Bean 时自动开启注解代理——Spring Boot
+# 没有（也不应有）绕过事务管理器直接“启用 tx 注解”的 yml 开关。本 IT 刻意只带
+# 一个引导关注点（Spring 容器启动：无数据源/事务管理器），因此 @Transactional
+# 在此为「刻板已声明、代理未激活」状态；事务语义的全量验证由 -event-store-jpa
+# 模块的真实事务 IT 覆盖（阶段 4，H2 + PlatformTransactionManager）。
+spring:
+  application:
+    name: ddd4j-data-cqrs-spring-it
