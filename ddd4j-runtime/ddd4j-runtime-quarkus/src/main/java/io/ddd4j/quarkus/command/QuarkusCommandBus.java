@@ -61,7 +61,7 @@ public class QuarkusCommandBus implements CommandBus {
                 log.info("Registered command executor: {} -> {}", commandType.getName(), executor.getClass().getSimpleName());
             }
         }
-        log.info("QuarkusCommandBus initialized with {} executors", executors.stream().count());
+        log.info("QuarkusCommandBus initialized with {} command types", executorMap.size());
     }
 
     /**
