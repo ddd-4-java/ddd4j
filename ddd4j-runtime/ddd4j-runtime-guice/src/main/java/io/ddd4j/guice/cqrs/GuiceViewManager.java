@@ -14,6 +14,8 @@
  */
 package io.ddd4j.guice.cqrs;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.kit.lang.StrKit;
@@ -24,7 +26,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Guice 环境默认的 CQRS 读侧视图管理器。
+ * Guice runtime default CQRS read-side view manager.
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -32,23 +34,43 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseable {
 
-    /**
-     * 运行状态标志
-     */
+    /** default thread pool size */
+    private static final int DEFAULT_THREAD_POOL_SIZE = 2;
+
+    /** running state flag */
     private final AtomicBoolean running = new AtomicBoolean(false);
-    /**
-     * 已调度的视图任务句柄集
-     */
+    /** scheduled view task handle map */
     private final ConcurrentMap<String, ScheduledFuture<?>> handles = new ConcurrentHashMap<>();
-    /**
-     * 调度线程池执行器
-     */
+    /** thread pool size */
+    private final int threadPoolSize;
+    /** scheduler thread pool */
     private ScheduledExecutorService executor;
+
+    /**
+     * Create a new GuiceViewManager with default thread pool size (2).
+     */
+    public GuiceViewManager() {
+        this(DEFAULT_THREAD_POOL_SIZE);
+    }
+
+    /**
+     * Create a new GuiceViewManager with specified thread pool size.
+     *
+     * @param threadPoolSize thread pool size for the scheduler
+     * @throws IllegalArgumentException if threadPoolSize is less than 1
+     */
+    @Inject
+    public GuiceViewManager(@Named("ddd4j.view-manager.thread-pool-size") int threadPoolSize) {
+        if (threadPoolSize < 1) {
+            throw new IllegalArgumentException("Thread pool size must be at least 1: " + threadPoolSize);
+        }
+        this.threadPoolSize = threadPoolSize;
+    }
 
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
-            executor = Executors.newScheduledThreadPool(2, runnable -> {
+            executor = Executors.newScheduledThreadPool(threadPoolSize, runnable -> {
                 Thread thread = new Thread(runnable, "ddd4j-runtime-guice-view-manager");
                 thread.setDaemon(true);
                 return thread;
@@ -95,10 +117,27 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ensureStarted();
         long period = parseCronToPeriodSeconds(cron);
-        java.util.concurrent.ScheduledFuture<?> future =
-                executor.scheduleAtFixedRate(task, period, period, TimeUnit.SECONDS);
+        return scheduleAtFixedRate(viewName, period, task);
+    }
+
+    /**
+     * Schedule a task with a fixed interval (not depending on cron expression).
+     *
+     * @param viewName        view name (for logging / debugging)
+     * @param intervalSeconds interval in seconds
+     * @param task            task to execute
+     * @return task handle that can be used to cancel
+     * @throws IllegalArgumentException if intervalSeconds is less than or equal to 0
+     */
+    public ViewScheduleHandle scheduleAtFixedRate(String viewName, long intervalSeconds, Runnable task) {
+        if (intervalSeconds <= 0) {
+            throw new IllegalArgumentException("Interval seconds must be positive: " + intervalSeconds);
+        }
+        ensureStarted();
+        ScheduledFuture<?> future =
+                executor.scheduleAtFixedRate(task, intervalSeconds, intervalSeconds, TimeUnit.SECONDS);
         handles.put(viewName, future);
-        log.info("View scheduled: {} period={}s", viewName, period);
+        log.info("View scheduled: {} period={}s", viewName, intervalSeconds);
         return new GuiceViewScheduleHandle(future);
     }
 
@@ -108,25 +147,53 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
     }
 
+    // Parse cron expression to period seconds.
+    // Supported formats: 0/N, */N (every N seconds), N * * * * (every N minutes), * * * * * (every 60 seconds)
     private long parseCronToPeriodSeconds(String cron) {
         if (StrKit.isEmpty(cron)) {
-            return 60L;
+            throw new IllegalArgumentException("Cron expression must not be empty");
         }
-        if (cron.startsWith("0/")) {
+
+        // try to match 0/N or */N format (every N seconds)
+        if (cron.startsWith("0/") || cron.startsWith("*/")) {
+            String intervalStr = cron.substring(2).split("\\s+")[0];
             try {
-                return Long.parseLong(cron.substring(2).split("\\s+")[0]);
+                long interval = Long.parseLong(intervalStr);
+                if (interval <= 0) {
+                    throw new IllegalArgumentException("Cron interval must be positive: " + cron);
+                }
+                return interval;
             } catch (NumberFormatException exception) {
-                return 60L;
+                throw new IllegalArgumentException("Invalid cron expression: " + cron, exception);
             }
         }
-        return 60L;
+
+        // try to match N * * * * format (every N minutes)
+        String[] parts = cron.trim().split("\\s+");
+        if (parts.length == 5 && parts[1].equals("*") && parts[2].equals("*") && parts[3].equals("*") && parts[4].equals("*")) {
+            if (parts[0].equals("*")) {
+                return 60L; // every minute
+            }
+            try {
+                long minutes = Long.parseLong(parts[0]);
+                if (minutes <= 0) {
+                    throw new IllegalArgumentException("Cron interval must be positive: " + cron);
+                }
+                return minutes * 60;
+            } catch (NumberFormatException exception) {
+                throw new IllegalArgumentException("Invalid cron expression: " + cron, exception);
+            }
+        }
+
+        throw new IllegalArgumentException("Unsupported cron expression format: " + cron
+                + ". Supported formats: '0/N', '*/N', 'N * * * *', '* * * * *'");
     }
 
     private static class GuiceViewScheduleHandle implements ViewScheduleHandle {
 
-        private final java.util.concurrent.ScheduledFuture<?> future;
+        private final ScheduledFuture<?> future;
 
-        GuiceViewScheduleHandle(java.util.concurrent.ScheduledFuture<?> future) {
+        GuiceViewScheduleHandle(ScheduledFuture<?> future) {
             this.future = future;
         }
 
