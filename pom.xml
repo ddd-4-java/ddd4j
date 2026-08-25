@@ -499,6 +499,25 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- 许可证检查：验证所有 .java 文件含 Apache-2.0 header -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.6</version>
+                <configuration>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>${session.rootDirectory}/config/apache-2.0-header.txt</header>
+                            <includes>
+                                <include>src/main/java/**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/generated/**</exclude>
+                            </excludes>
+                        </licenseSet>
+                    </licenseSets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
