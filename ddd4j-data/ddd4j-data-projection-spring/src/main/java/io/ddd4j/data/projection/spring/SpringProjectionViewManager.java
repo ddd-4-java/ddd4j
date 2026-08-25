@@ -5,6 +5,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.SmartLifecycle;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -15,18 +16,21 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Spring 投影视图管理器（{@link ViewManager} SPI 的 Spring 实现）。
  *
- * <p>以 {@code @Component} 实现：注入所有 {@link ProjectionView} Beans +
- * {@link ProjectionRunner}；{@link #start()} 遍历 views 按 cron 调
- * {@link ViewScheduler#schedule}，{@link #stop()} 取消全部 handle，
- * {@link #triggerOnce()} 立即执行一次所有 view 的 runOnce。
+ * <p>以 {@code @Component} + {@link SmartLifecycle} 实现 Spring 生命周期适配：
+ * 注入所有 {@link ProjectionView} Beans + {@link ProjectionRunner}；
+ * {@link #start()} 遍历 views 按 cron 调 {@link ViewScheduler#schedule}，
+ * {@link #stop()} 取消全部 handle，{@link #triggerOnce()} 立即执行一次所有 view 的 runOnce。
+ * 实现 {@link SmartLifecycle} 使 Spring 容器启动后自动调用 {@link #start()}，
+ * 与 Quarkus 版 {@code QuarkusProjectionViewManager} 的 {@code @Observes Startup} 行为对齐。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see ViewManager
+ * @see SmartLifecycle
  * @see ProjectionRunner
  * @since 2.0.x
  */
 @Component
-public class SpringProjectionViewManager implements ViewManager {
+public class SpringProjectionViewManager implements ViewManager, SmartLifecycle {
 
     private final ViewScheduler scheduler;
 
@@ -71,6 +75,16 @@ public class SpringProjectionViewManager implements ViewManager {
     @Override
     public boolean isRunning() {
         return running;
+    }
+
+    @Override
+    public boolean isAutoStartup() {
+        return true;
+    }
+
+    @Override
+    public int getPhase() {
+        return Integer.MAX_VALUE - 100;
     }
 
     @Override

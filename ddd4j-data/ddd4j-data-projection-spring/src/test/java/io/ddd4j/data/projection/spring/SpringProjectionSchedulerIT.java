@@ -57,12 +57,17 @@ class SpringProjectionSchedulerIT {
 
     @Test
     void viewManager_start_stop_应管理生命周期() {
-        assertThat(viewManager.isRunning()).isFalse();
-
-        viewManager.start();
+        // SmartLifecycle + isAutoStartup()=true → 容器启动后已自动 start
         assertThat(viewManager.isRunning()).isTrue();
 
         // start 幂等：再次 start 不抛异常
+        viewManager.start();
+        assertThat(viewManager.isRunning()).isTrue();
+
+        viewManager.stop();
+        assertThat(viewManager.isRunning()).isFalse();
+
+        // 可手动重新启动
         viewManager.start();
         assertThat(viewManager.isRunning()).isTrue();
 
