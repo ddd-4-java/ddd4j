@@ -30,13 +30,13 @@ import java.io.Serializable;
 /**
  * Quarkus 标准 JPA 投影位置实体。
  *
- * <p>对应数据库表 {@code QUARKUS_QRY_PROJECTION_POS}。
+ * <p>对应数据库表 {@code DDD4J_PROJECTION_POSITION}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Entity
-@Table(name = "QUARKUS_QRY_PROJECTION_POS")
+@Table(name = "DDD4J_PROJECTION_POSITION")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -51,22 +51,27 @@ public class QuarkusJpaProjectionPosition implements ProjectionPosition, Seriali
      */
     @Id
     @Column(name = "STREAM_ID", nullable = false, length = 250, updatable = false)
-    public String streamId;
+    private String streamId;
 
     /**
      * 下一条待处理的事件序号
      */
     @Column(name = "NEXT_EVENT_NUMBER", nullable = false, updatable = true)
-    public long nextEventNumber;
+    private long nextEventNumber;
 
     @Override
     public long getNextEventNumber() {
         return nextEventNumber;
     }
 
+    /**
+     * 返回一个 {@code nextEventNumber} 已更新的新实例（不可变契约）。
+     *
+     * @param nextEventNumber 新的下一个事件号
+     * @return 包含新事件号的新实例，原实例不受影响
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
-        this.nextEventNumber = nextEventNumber;
-        return this;
+        return new QuarkusJpaProjectionPosition(this.streamId, nextEventNumber);
     }
 }
