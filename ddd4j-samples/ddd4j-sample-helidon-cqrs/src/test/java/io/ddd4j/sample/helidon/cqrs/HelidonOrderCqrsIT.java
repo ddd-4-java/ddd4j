@@ -1,5 +1,6 @@
 package io.ddd4j.sample.helidon.cqrs;
 
+import io.ddd4j.sample.helidon.cqrs.cqrs.ViewManager;
 import io.helidon.microprofile.tests.junit5.HelidonTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Helidon 订单 CQRS 集成测试。
+ *
+ * <p>CQRS 组件由 {@link HelidonCqrsBeans} 通过 {@code beans.xml}
+ * 自动发现，无需 {@code @AddBean} 注解。
  */
 @HelidonTest
 @DisplayName("Helidon Order CQRS 集成测试")
@@ -23,6 +27,9 @@ class HelidonOrderCqrsIT {
 
     @Inject
     private WebTarget webTarget;
+
+    @Inject
+    private ViewManager viewManager;
 
     @Test
     @DisplayName("POST /orders 创建订单 -> 返回 201 + orderId")
@@ -46,7 +53,7 @@ class HelidonOrderCqrsIT {
         String orderId = (String) createResp.readEntity(Map.class).get("orderId");
 
         // 触发投影
-        HelidonCqrsApplication.VIEW_MANAGER.triggerOnce();
+        viewManager.triggerOnce();
 
         Response getResp = webTarget.path("/orders/" + orderId)
                 .request(MediaType.APPLICATION_JSON)
