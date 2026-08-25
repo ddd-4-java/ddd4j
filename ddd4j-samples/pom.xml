@@ -45,6 +45,7 @@
         <subproject>ddd4j-sample-micronaut-cqrs</subproject>
         <subproject>ddd4j-sample-helidon-cqrs</subproject>
         <subproject>ddd4j-sample-vertx-cqrs</subproject>
+        <subproject>ddd4j-sample-dropwizard-cqrs</subproject>
 
         <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
         <subproject>ddd4j-sample-quarkus-satoken</subproject>
