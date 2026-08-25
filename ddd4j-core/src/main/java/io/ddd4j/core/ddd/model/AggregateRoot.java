@@ -27,45 +27,70 @@ import java.util.*;
 
 /**
  * 充血聚合根基类（ddd4j 唯一推荐）。
- * <p>
- * 保留旧 ddd4j {@code Model.save()/update()/delete()/saveOrUpdate()/updateByKey()}
- * 的全部充血语义，但通过 {@link RepositoryRegistry}（基于 {@link io.ddd4j.core.context.Contexts}
- * 的上下文查找）获取仓储实例，彻底消除对 MyBatis 等 ORM 的静态注册表耦合。
  *
- * <h3>充血持久化方法（实例方法）</h3>
+ * <p>本类支持两种使用模式，业务方应根据持久化策略选择其一，
+ * <b>不应在同一聚合中混用</b>（见下方警告）。
+ *
+ * <h2>模式一：Active Record（充血 CRUD）</h2>
+ * <p>聚合根直接持有 {@code save()/update()/delete()} 等实例方法，
+ * 通过 {@link RepositoryRegistry} 获取仓储实例完成持久化。
+ * 适用于传统 CRUD 场景，状态直接落库。</p>
  * <pre>{@code
+ * // 实例方法
  * Order order = new Order(orderId, total);
- * order.save();         // ← 自动找到 OrderRepository.save(order)
+ * order.save();         // ← OrderRepository.save(order)
  * order.pay(amount);
- * order.update();       // ← 自动找到 OrderRepository.save(order)
- * order.saveOrUpdate(); // ← 自动找到 OrderRepository.save(order)
- * order.delete();       // ← 自动找到 OrderRepository.delete(order)
+ * order.update();       // ← OrderRepository.updateById(order)
+ * order.saveOrUpdate(); // ← OrderRepository.insertOrUpdate(order)
+ * order.delete();       // ← OrderRepository.delete(order)
  *
- * // 批量
- * List<Order> orders = ...;
- * AggregateRoot.save(orders);   // ← 自动找到 OrderRepository.saveAll(orders)
- * AggregateRoot.delete(query);  // ← 自动找到 OrderRepository.deleteByQuery(query)
- * }</pre>
+ * // 静态批量
+ * AggregateRoot.save(orders);   // ← OrderRepository.saveAll(orders)
+ * AggregateRoot.delete(query);  // ← OrderRepository.deleteByQuery(query)
  *
- * <h3>充血查询方法（静态）</h3>
- * <pre>{@code
+ * // 静态查询
  * Optional<Order> found = AggregateRoot.get(Order.class, orderId);
- * Optional<Order> first = AggregateRoot.one(Order.class);
  * List<Order> all = AggregateRoot.list(Order.class);
  * Page<Order> page = AggregateRoot.page(query);
- * int count = AggregateRoot.count(query);
- * boolean exists = AggregateRoot.exist(query);
  * }</pre>
  *
- * <h3>事件能力</h3>
+ * <h2>模式二：Event Sourcing（事件溯源）</h2>
+ * <p>聚合根状态完全由领域事件驱动。业务方法通过 {@link #registerEvent(DomainEvent)} 注册事件，
+ * 仓储层持久化事件流而非聚合快照。重建状态时使用 {@link #loadFromHistory(List)}。</p>
  * <pre>{@code
  * public class Order extends AggregateRoot<OrderId> {
+ *     private Money total;
+ *     private OrderStatus status;
+ *
  *     public void pay(Money amount) {
+ *         // 业务校验 ...
  *         registerEvent(new OrderPaidEvent(id, amount));
  *     }
+ *
+ *     // 事件溯源 handler（方法名 = on + 事件类简单名）
+ *     void onOrderPaid(OrderPaidEvent event) {
+ *         this.status = OrderStatus.PAID;
+ *     }
  * }
- * // order.domainEvents() → [OrderPaidEvent]
+ *
+ * // 重建聚合状态
+ * Order order = new Order();
+ * List<DomainEvent<?>> history = eventStore.read(orderId);
+ * order.loadFromHistory(history);
+ *
+ * // 获取未提交事件
+ * List<DomainEvent<?>> pending = order.pullDomainEvents();
  * }</pre>
+ *
+ * <h2>警告：两种模式不应混用</h2>
+ * <p><b>在同一聚合中同时使用 Active Record 方法（{@code save()/update()}）
+ * 和 Event Sourcing 方法（{@code registerEvent()/pullDomainEvents()}）会导致：</b></p>
+ * <ul>
+ *   <li>事件丢失 —— {@code save()} 直接落库快照，未提交的注册事件被丢弃</li>
+ *   <li>重复持久化 —— 事件已通过 EventStore 持久化，再次调用 {@code save()} 造成快照冗余写入</li>
+ *   <li>状态不一致 —— 快照与事件流两条轨道产生分叉，重建结果不可预期</li>
+ * </ul>
+ * <p>选择一种模式并贯穿整个聚合的生命周期。</p>
  *
  * @param <ID> 聚合根标识类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
