@@ -24,6 +24,7 @@
         <module>ddd4j-data-cqrs-micronaut</module>
         <module>ddd4j-data-cqrs-quarkus</module>
         <module>ddd4j-data-cqrs-spring</module>
+        <module>ddd4j-data-cqrs-vertx</module>
         <module>ddd4j-data-crypto</module>
         <module>ddd4j-data-datascope</module>
         <module>ddd4j-data-event-store</module>
