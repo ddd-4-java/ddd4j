@@ -215,4 +215,17 @@ public final class RepositoryRegistry {
         BaseContext.remove(key(queryClass));
         QUERY_INSTANCES.remove(queryClass);
     }
+
+    /**
+     * 清除所有已注册的仓储实例（用于测试清理）。
+     *
+     * <p>同时清除 {@link BaseContext} 中的注册项和静态 {@link #INSTANCES} / {@link #QUERY_INSTANCES} 映射。
+     * 调用后所有通过 {@link #repository} / {@link #repositoryForQuery} 的查找将抛出异常。
+     */
+    public static void clear() {
+        INSTANCES.keySet().forEach(clazz -> BaseContext.remove(key(clazz)));
+        QUERY_INSTANCES.keySet().forEach(clazz -> BaseContext.remove(key(clazz)));
+        INSTANCES.clear();
+        QUERY_INSTANCES.clear();
+    }
 }

@@ -115,6 +115,20 @@ class RepositoryRegistryTest {
     }
 
     @Test
+    void clear_shouldRemoveAllRegistrations() {
+        RepositoryRegistry.register(Order.class, OrderQuery.class, globalRepo);
+        assertThat(RepositoryRegistry.repository(Order.class)).isSameAs(globalRepo);
+        assertThat(RepositoryRegistry.repositoryForQuery(OrderQuery.class)).isSameAs(globalRepo);
+
+        RepositoryRegistry.clear();
+
+        assertThatThrownBy(() -> RepositoryRegistry.repository(Order.class))
+                .isInstanceOf(BizRuntimeException.class);
+        assertThatThrownBy(() -> RepositoryRegistry.repositoryForQuery(OrderQuery.class))
+                .isInstanceOf(BizRuntimeException.class);
+    }
+
+    @Test
     void repository_shouldFallbackToBaseContextAfterThreadRemoved() {
         RepositoryRegistry.register(Order.class, globalRepo);
         ThreadContext.inject(RepositoryRegistry.key(Order.class), Repository.class, threadRepo);
