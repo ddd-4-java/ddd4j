@@ -22,6 +22,7 @@ import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -72,6 +73,29 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class AggregateRoot<ID extends Serializable> implements Entity<ID> {
+
+    /**
+     * 事件处理器方法缓存（ClassValue 二级索引）。
+     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 对应的 onXxx 方法（可能为 null）。
+     */
+    private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
+        @Override
+        protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
+            return new ClassValue<>() {
+                @Override
+                protected Method computeValue(Class<?> eventClass) {
+                    String handlerName = "on" + eventClass.getSimpleName();
+                    try {
+                        Method m = aggregateClass.getDeclaredMethod(handlerName, eventClass);
+                        m.setAccessible(true);
+                        return m;
+                    } catch (NoSuchMethodException e) {
+                        return null;
+                    }
+                }
+            };
+        }
+    };
 
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
@@ -264,6 +288,60 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             domainEvents = new ArrayList<>();
         }
         return domainEvents;
+    }
+
+    // ========================= 事件溯源 =========================
+
+    /**
+     * 应用领域事件：通过 ClassValue 缓存的反射路由到聚合内部的 {@code on<EventTypeSimpleName>} 方法。
+     *
+     * <p>例如 {@code OrderCreatedEvent} 路由到 {@code onOrderCreated(OrderCreatedEvent event)}。
+     * 若聚合未定义对应的 handler 方法，则静默忽略（不影响聚合状态）。
+     *
+     * <p>注意：{@code apply} 仅用于事件溯源回放（从历史事件重建聚合状态），
+     * 不会将事件注册到未提交事件缓冲区。业务方法应使用 {@link #registerEvent(DomainEvent)}。
+     *
+     * @param event 领域事件
+     * @param <E>   事件类型
+     */
+    protected <E extends DomainEvent<?>> void apply(E event) {
+        Objects.requireNonNull(event, "event must not be null");
+        ClassValue<Method> handlerCache = EVENT_HANDLER_CACHE.get(this.getClass());
+        Method handler = handlerCache.get(event.getClass());
+        if (Objects.nonNull(handler)) {
+            try {
+                handler.invoke(this, event);
+            } catch (Exception e) {
+                throw new BizRuntimeException("Failed to apply event {} on aggregate {}",
+                        event.getClass().getSimpleName(), this.getClass().getSimpleName(), e);
+            }
+        }
+    }
+
+    /**
+     * 从历史事件列表重建聚合状态（事件溯源核心方法）。
+     *
+     * <p>按顺序依次调用 {@link #apply(DomainEvent)}，使聚合状态恢复到最新版本。
+     * 典型用法：从 EventStore 读取事件后，调用此方法重建聚合根。
+     *
+     * <pre>{@code
+     * Order order = new Order(); // 空聚合
+     * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
+     *         .map(StoredEvent::event)
+     *         .map(e -> (DomainEvent<?>) e)
+     *         .toList();
+     * order.loadFromHistory(history);
+     * }</pre>
+     *
+     * @param events 历史事件列表（按版本升序）
+     */
+    public void loadFromHistory(List<? extends DomainEvent<?>> events) {
+        if (Objects.isNull(events) || events.isEmpty()) {
+            return;
+        }
+        for (DomainEvent<?> event : events) {
+            apply(event);
+        }
     }
 
     // ========================= 仓储查找 =========================
