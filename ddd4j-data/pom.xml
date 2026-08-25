@@ -42,6 +42,7 @@
         <module>ddd4j-data-projection-jpa</module>
         <module>ddd4j-data-projection-jdbi</module>
         <module>ddd4j-data-projection-panache</module>
+        <module>ddd4j-data-projection-r2dbc</module>
     </modules>
 
 </project>
