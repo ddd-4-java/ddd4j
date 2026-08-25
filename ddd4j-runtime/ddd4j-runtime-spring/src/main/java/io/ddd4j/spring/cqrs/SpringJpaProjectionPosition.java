@@ -65,9 +65,17 @@ public class SpringJpaProjectionPosition implements ProjectionPosition, Serializ
         return nextEventNumber;
     }
 
+    /**
+     * 推进到下一个位置，返回新的不可变实例。
+     * <p>
+     * 遵循 {@link ProjectionPosition} 接口契约：不修改当前实例，返回包含新偏移量的新对象。
+     * 调用方通过 {@code repository.save(新实例)} 持久化（JPA merge 语义）。
+     *
+     * @param nextEventNumber 新的下一个事件号
+     * @return 包含新偏移量的新实例
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
-        this.nextEventNumber = nextEventNumber;
-        return this;
+        return new SpringJpaProjectionPosition(this.streamId, nextEventNumber);
     }
 }
