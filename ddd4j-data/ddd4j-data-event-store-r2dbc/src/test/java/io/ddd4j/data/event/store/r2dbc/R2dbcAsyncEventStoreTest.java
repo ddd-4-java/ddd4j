@@ -27,6 +27,7 @@ import io.ddd4j.core.ddd.event.StringEntityType;
 import io.r2dbc.h2.CloseableConnectionFactory;
 import io.r2dbc.h2.H2ConnectionFactory;
 import io.r2dbc.h2.H2ConnectionOption;
+import io.r2dbc.spi.Batch;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryMetadata;
@@ -143,9 +144,9 @@ class R2dbcAsyncEventStoreTest {
                 .expectErrorSatisfies(error -> {
                     assertThat(error).isInstanceOf(AggregateVersionConflictException.class);
                     AggregateVersionConflictException conflict = (AggregateVersionConflictException) error;
-                    assertThat(conflict.getAggregateId()).isEqualTo("order-002");
-                    assertThat(conflict.getExpectedVersion()).isEqualTo(0);
-                    assertThat(conflict.getActualVersion()).isEqualTo(1);
+                    assertThat(conflict.aggregateId()).isEqualTo("order-002");
+                    assertThat(conflict.expectedVersion()).isEqualTo(0);
+                    assertThat(conflict.actualVersion()).isEqualTo(1);
                 })
                 .verify();
 
@@ -192,8 +193,9 @@ class R2dbcAsyncEventStoreTest {
                 .verifyComplete();
 
         long lastPosition = eventStore.readAll(0, 10).collectList().block().get(2).position();
+        // fromPosition 含（inclusive）：从最后一条位置起读只应返回该条本身
         StepVerifier.create(eventStore.readAll(lastPosition, 10).count())
-                .assertNext(count -> assertThat(count).isZero())
+                .assertNext(count -> assertThat(count).isEqualTo(1))
                 .verifyComplete();
     }
 
@@ -330,7 +332,10 @@ class R2dbcAsyncEventStoreTest {
         }
 
         OrderItemAddedEvent(TestOrderId orderId, String itemId, int quantity) {
-            this(orderId, itemId, quantity, null);
+            super(new EntityIdPath(orderId));
+            this.orderId = orderId.asString();
+            this.itemId = itemId;
+            this.quantity = quantity;
         }
 
         OrderItemAddedEvent(TestOrderId orderId, String itemId, int quantity, Event respondTo) {
@@ -371,10 +376,10 @@ class R2dbcAsyncEventStoreTest {
      */
     private static class SingleConnectionFactory implements ConnectionFactory {
 
-        private final Connection wrapper;
+        private final NoCloseConnection wrapper;
 
-        SingleConnectionFactory(Connection shared) {
-            this.wrapper = new NoCloseConnection(shared);
+        SingleConnectionFactory(Connection delegate) {
+            this.wrapper = new NoCloseConnection(delegate);
         }
 
         @Override
@@ -384,12 +389,12 @@ class R2dbcAsyncEventStoreTest {
 
         @Override
         public ConnectionFactoryMetadata getMetadata() {
-            return wrapper.getMetadata();
+            return () -> "single-connection";
         }
     }
 
     /**
-     * 不关闭底层连接的包装（由测试统一关闭）。
+     * 包装连接：close() 为空操作，其他方法直接委托（与同步 {@link R2dbcEventStoreTest} 同款）。
      */
     private static class NoCloseConnection implements Connection {
 
@@ -400,8 +405,18 @@ class R2dbcAsyncEventStoreTest {
         }
 
         @Override
+        public Publisher<Void> close() {
+            return Mono.empty();
+        }
+
+        @Override
         public Publisher<Void> beginTransaction() {
             return delegate.beginTransaction();
+        }
+
+        @Override
+        public Publisher<Void> beginTransaction(TransactionDefinition definition) {
+            return delegate.beginTransaction(definition);
         }
 
         @Override
@@ -415,43 +430,13 @@ class R2dbcAsyncEventStoreTest {
         }
 
         @Override
-        public Publisher<Void> close() {
-            return Mono.empty();
+        public Batch createBatch() {
+            return delegate.createBatch();
         }
 
         @Override
-        public Publisher<Boolean> setTransactionIsolationLevel(IsolationLevel isolationLevel) {
-            return delegate.setTransactionIsolationLevel(isolationLevel);
-        }
-
-        @Override
-        public Publisher<Boolean> setTransactionDefinition(TransactionDefinition definition) {
-            return delegate.setTransactionDefinition(definition);
-        }
-
-        @Override
-        public Publisher<Void> setAutoCommit(boolean autoCommit) {
-            return delegate.setAutoCommit(autoCommit);
-        }
-
-        @Override
-        public Publisher<Boolean> isAutoCommit() {
-            return delegate.isAutoCommit();
-        }
-
-        @Override
-        public ConnectionMetadata getMetadata() {
-            return delegate.getMetadata();
-        }
-
-        @Override
-        public boolean isClosed() {
-            return delegate.isClosed();
-        }
-
-        @Override
-        public Publisher<Void> beginTransaction(TransactionDefinition definition) {
-            return delegate.beginTransaction(definition);
+        public Statement createStatement(String sql) {
+            return delegate.createStatement(sql);
         }
 
         @Override
@@ -470,18 +455,43 @@ class R2dbcAsyncEventStoreTest {
         }
 
         @Override
-        public Publisher<Boolean> isValid(ValidationDepth depth) {
-            return delegate.isValid(depth);
+        public Publisher<Void> setAutoCommit(boolean autoCommit) {
+            return delegate.setAutoCommit(autoCommit);
         }
 
         @Override
-        public Statement createStatement(String sql) {
-            return delegate.createStatement(sql);
+        public boolean isAutoCommit() {
+            return delegate.isAutoCommit();
         }
 
         @Override
-        public Publisher<Object> getTransactionIsolationLevel() {
+        public ConnectionMetadata getMetadata() {
+            return delegate.getMetadata();
+        }
+
+        @Override
+        public Publisher<Void> setTransactionIsolationLevel(IsolationLevel isolationLevel) {
+            return delegate.setTransactionIsolationLevel(isolationLevel);
+        }
+
+        @Override
+        public IsolationLevel getTransactionIsolationLevel() {
             return delegate.getTransactionIsolationLevel();
+        }
+
+        @Override
+        public Publisher<Void> setLockWaitTimeout(Duration timeout) {
+            return delegate.setLockWaitTimeout(timeout);
+        }
+
+        @Override
+        public Publisher<Void> setStatementTimeout(Duration timeout) {
+            return delegate.setStatementTimeout(timeout);
+        }
+
+        @Override
+        public Publisher<Boolean> validate(ValidationDepth depth) {
+            return delegate.validate(depth);
         }
     }
 }
