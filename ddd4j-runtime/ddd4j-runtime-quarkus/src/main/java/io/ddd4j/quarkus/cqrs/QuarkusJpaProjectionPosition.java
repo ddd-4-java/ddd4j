@@ -14,6 +14,7 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
+import io.ddd4j.core.constant.ProjectionConstants;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +37,7 @@ import java.io.Serializable;
  * @since 2.0.x
  */
 @Entity
-@Table(name = "DDD4J_PROJECTION_POSITION")
+@Table(name = ProjectionConstants.TABLE_NAME)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -50,13 +51,13 @@ public class QuarkusJpaProjectionPosition implements ProjectionPosition, Seriali
      * 事件流 ID
      */
     @Id
-    @Column(name = "STREAM_ID", nullable = false, length = 250, updatable = false)
+    @Column(name = ProjectionConstants.COLUMN_STREAM_ID, nullable = false, length = 250, updatable = false)
     private String streamId;
 
     /**
      * 下一条待处理的事件序号
      */
-    @Column(name = "NEXT_EVENT_NUMBER", nullable = false, updatable = true)
+    @Column(name = ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER, nullable = false, updatable = true)
     private long nextEventNumber;
 
     @Override

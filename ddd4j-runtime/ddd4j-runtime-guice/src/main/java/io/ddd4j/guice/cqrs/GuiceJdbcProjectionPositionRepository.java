@@ -14,6 +14,7 @@
  */
 package io.ddd4j.guice.cqrs;
 
+import io.ddd4j.core.constant.ProjectionConstants;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
@@ -50,26 +51,26 @@ import java.util.Optional;
 public class GuiceJdbcProjectionPositionRepository implements ProjectionPositionRepository {
 
     /** 统一表名，与 Spring/Quarkus 运行时一致 */
-    private static final String TABLE_NAME = "DDD4J_PROJECTION_POSITION";
+    private static final String TABLE_NAME = ProjectionConstants.TABLE_NAME;
 
     private static final String UPSERT_UPDATE =
-            "UPDATE " + TABLE_NAME + " SET next_event_number = ? WHERE stream_id = ?";
+            "UPDATE " + TABLE_NAME + " SET " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " = ? WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
     private static final String UPSERT_INSERT =
-            "INSERT INTO " + TABLE_NAME + " (stream_id, next_event_number) VALUES (?, ?)";
+            "INSERT INTO " + TABLE_NAME + " (" + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + ") VALUES (?, ?)";
 
     private static final String SELECT_BY_STREAM_ID =
-            "SELECT stream_id, next_event_number FROM " + TABLE_NAME + " WHERE stream_id = ?";
+            "SELECT " + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " FROM " + TABLE_NAME + " WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
     private static final String SELECT_ALL =
-            "SELECT stream_id, next_event_number FROM " + TABLE_NAME;
+            "SELECT " + ProjectionConstants.COLUMN_STREAM_ID + ", " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " FROM " + TABLE_NAME;
 
     private static final String DELETE_BY_STREAM_ID =
-            "DELETE FROM " + TABLE_NAME + " WHERE stream_id = ?";
+            "DELETE FROM " + TABLE_NAME + " WHERE " + ProjectionConstants.COLUMN_STREAM_ID + " = ?";
 
     private static final String CREATE_TABLE_IF_NOT_EXISTS =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME
-                    + " (stream_id VARCHAR(255) PRIMARY KEY, next_event_number BIGINT NOT NULL DEFAULT 0)";
+                    + " (" + ProjectionConstants.COLUMN_STREAM_ID + " VARCHAR(255) PRIMARY KEY, " + ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER + " BIGINT NOT NULL DEFAULT 0)";
 
     private final DataSource dataSource;
 
@@ -194,6 +195,6 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
      * 从 ResultSet 读取一行投影位置。
      */
     private ProjectionPosition readPosition(ResultSet rs) throws SQLException {
-        return new DefaultProjectionPosition(rs.getString("stream_id"), rs.getLong("next_event_number"));
+        return new DefaultProjectionPosition(rs.getString(ProjectionConstants.COLUMN_STREAM_ID), rs.getLong(ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER));
     }
 }

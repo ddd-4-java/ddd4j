@@ -32,6 +32,7 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.guice.cqrs.GuiceViewManager;
+import io.ddd4j.guice.GuiceConstants;
 import io.ddd4j.guice.event.GuiceDomainEventPublisher;
 import io.ddd4j.guice.i18n.GuiceI18nProvider;
 import io.ddd4j.guice.subject.GuiceSubjectProvider;
@@ -81,7 +82,7 @@ public class Ddd4jGuiceModule extends AbstractModule {
         bind(I18nProvider.class).to(GuiceI18nProvider.class).in(Singleton.class);
         bind(ProjectionPositionRepository.class).to(InMemoryProjectionPositionRepository.class).in(Singleton.class);
         // 默认线程池大小绑定（可通过 GuicePropertyLoader 覆盖）
-        bindConstant().annotatedWith(Names.named("ddd4j.view-manager.thread-pool-size")).to(2);
+        bindConstant().annotatedWith(Names.named(GuiceConstants.VIEW_MANAGER_THREAD_POOL_SIZE_KEY)).to(GuiceConstants.DEFAULT_THREAD_POOL_SIZE);
         bind(GuiceViewManager.class).in(Singleton.class);
         bind(ViewManager.class).to(GuiceViewManager.class);
         bind(ViewScheduler.class).to(GuiceViewManager.class);

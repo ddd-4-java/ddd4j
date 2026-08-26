@@ -14,6 +14,7 @@
  */
 package io.ddd4j.guice.cqrs;
 
+import io.ddd4j.core.constant.ProjectionConstants;
 import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.micrometer.core.instrument.Counter;
@@ -66,14 +67,14 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
     @Override
     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
-        Counter.builder("projection.events.total")
-                .tag("stream", streamId)
+        Counter.builder(ProjectionConstants.METRIC_EVENTS_TOTAL)
+                .tag(ProjectionConstants.TAG_STREAM, streamId)
                 .description("Total number of projected events")
                 .register(registry)
                 .increment(eventCount);
 
-        Timer.builder("projection.run.duration")
-                .tag("stream", streamId)
+        Timer.builder(ProjectionConstants.METRIC_RUN_DURATION)
+                .tag(ProjectionConstants.TAG_STREAM, streamId)
                 .description("Projection run duration")
                 .register(registry)
                 .record(durationNanos, TimeUnit.NANOSECONDS);
@@ -83,8 +84,8 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
     @Override
     public void onRunFailed(String streamId, Throwable error) {
-        Counter.builder("projection.errors.total")
-                .tag("stream", streamId)
+        Counter.builder(ProjectionConstants.METRIC_ERRORS_TOTAL)
+                .tag(ProjectionConstants.TAG_STREAM, streamId)
                 .description("Total number of projection run failures")
                 .register(registry)
                 .increment();

@@ -16,6 +16,7 @@ package io.ddd4j.guice.cqrs;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.ddd4j.guice.GuiceConstants;
 import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
@@ -41,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseable {
 
     /** default thread pool size */
-    private static final int DEFAULT_THREAD_POOL_SIZE = 2;
+    private static final int DEFAULT_THREAD_POOL_SIZE = GuiceConstants.DEFAULT_THREAD_POOL_SIZE;
 
     /** projection position repository (optional, for real status queries) */
     private final ProjectionPositionRepository positionRepository;
@@ -70,7 +71,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * @throws IllegalArgumentException if threadPoolSize is less than 1
      */
     @Inject
-    public GuiceViewManager(@Named("ddd4j.view-manager.thread-pool-size") int threadPoolSize) {
+    public GuiceViewManager(@Named(GuiceConstants.VIEW_MANAGER_THREAD_POOL_SIZE_KEY) int threadPoolSize) {
         this(threadPoolSize, null, null);
     }
 
