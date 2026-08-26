@@ -22,6 +22,7 @@ import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -326,6 +327,15 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * <p>注意：{@code apply} 仅用于事件溯源回放（从历史事件重建聚合状态），
      * 不会将事件注册到未提交事件缓冲区。业务方法应使用 {@link #registerEvent(DomainEvent)}。
      *
+     * <h3>异常处理</h3>
+     * <p>反射调用精确捕获两类异常：
+     * <ul>
+     *   <li>{@link InvocationTargetException} — handler 自身抛出的异常解包后透传，
+     *       运行时异常直接抛出，受检异常包装为 {@link BizRuntimeException}</li>
+     *   <li>{@link IllegalAccessException} — 通常为 JDK 17+ 模块系统未开放反射访问，
+     *       错误消息明确指引解决方案（{@code --add-opens} 或 {@code module-info.java opens}）</li>
+     * </ul>
+     *
      * @param event 领域事件
      * @param <E>   事件类型
      */
@@ -333,13 +343,34 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         Objects.requireNonNull(event, "event must not be null");
         ClassValue<Method> handlerCache = EVENT_HANDLER_CACHE.get(this.getClass());
         Method handler = handlerCache.get(event.getClass());
-        if (Objects.nonNull(handler)) {
-            try {
-                handler.invoke(this, event);
-            } catch (Exception e) {
-                throw new BizRuntimeException("Failed to apply event {} on aggregate {}",
-                        event.getClass().getSimpleName(), this.getClass().getSimpleName(), e);
+        if (Objects.isNull(handler)) {
+            return;
+        }
+        try {
+            handler.invoke(this, event);
+        } catch (InvocationTargetException e) {
+            // handler 自身抛出的业务异常：解包透传，避免包装后丢失原始堆栈
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException re) {
+                throw re;
             }
+            if (cause instanceof Error err) {
+                throw err;
+            }
+            throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
+                    + " on aggregate " + this.getClass().getSimpleName(), cause);
+        } catch (IllegalAccessException e) {
+            // JDK 17+ 模块系统限制：handler 所在包未对反射开放
+            throw new BizRuntimeException(
+                    "Cannot access @EventHandler method '" + handler.getName()
+                            + "' on aggregate " + this.getClass().getName()
+                            + ". On JDK 17+, ensure the handler's declaring package is opened via"
+                            + " 'opens' in module-info.java or '--add-opens' JVM flag.",
+                    e);
+        } catch (Exception e) {
+            // 其他反射异常（如 setAccessible 抛出的 InaccessibleObjectException）
+            throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
+                    + " on aggregate " + this.getClass().getSimpleName(), e);
         }
     }
 

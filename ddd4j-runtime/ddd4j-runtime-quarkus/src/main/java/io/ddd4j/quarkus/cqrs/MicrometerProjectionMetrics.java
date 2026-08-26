@@ -15,11 +15,16 @@
 package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 
+import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,6 +59,7 @@ import java.util.concurrent.TimeUnit;
 public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
     private final MeterRegistry registry;
+    private final ConcurrentMap<String, ProjectionRunInfo> runInfoMap = new ConcurrentHashMap<>();
 
     /**
      * 构造 Micrometer 投影指标适配器。
@@ -78,6 +84,8 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 .description("Projection run duration")
                 .register(registry)
                 .record(durationNanos, TimeUnit.NANOSECONDS);
+
+        runInfoMap.put(streamId, new ProjectionRunInfo(Instant.now(), eventCount, null));
     }
 
     @Override
@@ -87,5 +95,14 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
                 .description("Total number of projection run failures")
                 .register(registry)
                 .increment();
+
+        runInfoMap.merge(streamId,
+                new ProjectionRunInfo(Instant.now(), 0, error.getMessage()),
+                (old, newInfo) -> newInfo);
+    }
+
+    @Override
+    public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
+        return Optional.ofNullable(runInfoMap.get(streamId));
     }
 }

@@ -16,8 +16,10 @@ package io.ddd4j.guice.cqrs;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
@@ -43,6 +45,8 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
 
     /** projection position repository (optional, for real status queries) */
     private final ProjectionPositionRepository positionRepository;
+    /** projection metrics (optional, for backfilling runtime status fields) */
+    private final ProjectionMetrics projectionMetrics;
     /** running state flag */
     private final AtomicBoolean running = new AtomicBoolean(false);
     /** scheduled view task handle map */
@@ -56,7 +60,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * Create a new GuiceViewManager with default thread pool size (2).
      */
     public GuiceViewManager() {
-        this(DEFAULT_THREAD_POOL_SIZE, null);
+        this(DEFAULT_THREAD_POOL_SIZE, null, null);
     }
 
     /**
@@ -67,7 +71,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      */
     @Inject
     public GuiceViewManager(@Named("ddd4j.view-manager.thread-pool-size") int threadPoolSize) {
-        this(threadPoolSize, null);
+        this(threadPoolSize, null, null);
     }
 
     /**
@@ -78,11 +82,25 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * @throws IllegalArgumentException if threadPoolSize is less than 1
      */
     public GuiceViewManager(int threadPoolSize, ProjectionPositionRepository positionRepository) {
+        this(threadPoolSize, positionRepository, null);
+    }
+
+    /**
+     * Create a new GuiceViewManager with specified thread pool size, position repository, and projection metrics.
+     *
+     * @param threadPoolSize    thread pool size for the scheduler
+     * @param positionRepository projection position repository; null disables real status queries
+     * @param projectionMetrics  projection metrics; null disables runtime status backfill
+     * @throws IllegalArgumentException if threadPoolSize is less than 1
+     */
+    public GuiceViewManager(int threadPoolSize, ProjectionPositionRepository positionRepository,
+                            ProjectionMetrics projectionMetrics) {
         if (threadPoolSize < 1) {
             throw new IllegalArgumentException("Thread pool size must be at least 1: " + threadPoolSize);
         }
         this.threadPoolSize = threadPoolSize;
         this.positionRepository = positionRepository;
+        this.projectionMetrics = projectionMetrics;
     }
 
     @Override
@@ -135,9 +153,8 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
      * 查询指定投影视图的实时状态。
      *
      * <p>若构造时注入了 {@link ProjectionPositionRepository}，则从仓储读取真实位置；
-     * 否则返回基线状态。lastRunAt / lastEventCount / lastError 当前由
-     * {@link io.ddd4j.core.cqrs.readmodel.ProjectionMetrics} 回调跟踪，
-     * 本实现暂不持久化这些字段（置 null / 0）。
+     * 否则返回基线状态。运行时字段（lastRunAt / lastEventCount / lastError）通过
+     * {@link ProjectionMetrics#getLastRunInfo(String)} 回填；未注入时置 null / 0。
      *
      * @param streamId 投影流 ID
      * @return 投影状态快照
@@ -150,6 +167,12 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
         }
         Optional<ProjectionPosition> position = positionRepository.findByStreamId(streamId);
         long nextEventNumber = position.map(ProjectionPosition::getNextEventNumber).orElse(0L);
+        if (projectionMetrics != null) {
+            return projectionMetrics.getLastRunInfo(streamId)
+                    .map(info -> new ProjectionStatus(streamId, nextEventNumber, isRunning(),
+                            info.lastRunAt(), info.lastEventCount(), info.lastError()))
+                    .orElse(new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null));
+        }
         return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 

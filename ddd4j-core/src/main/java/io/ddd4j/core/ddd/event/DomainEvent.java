@@ -170,10 +170,14 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     /**
      * 默认以事件类简单名称作为稳定事件类型。
      *
+     * <p>只读属性（{@code access = READ_ONLY}）：序列化仍输出 {@code event-type}；
+     * 反序列化跳过绑定——值由 {@link ClassValue} 从 {@code getClass()} 派生，天然正确，
+     * 亦不触发默认 {@code FAIL_ON_UNKNOWN_PROPERTIES} 的未知属性失败。
+     *
      * @return 事件类型
      */
     @Override
-    @JsonProperty("event-type")
+    @JsonProperty(value = "event-type", access = JsonProperty.Access.READ_ONLY)
     public EventType getEventType() {
         return EVENT_TYPES.get(getClass());
     }

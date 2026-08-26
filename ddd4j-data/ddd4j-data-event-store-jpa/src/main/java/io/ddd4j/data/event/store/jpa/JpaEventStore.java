@@ -20,9 +20,7 @@ import io.ddd4j.kit.lang.JsonKit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -82,6 +80,20 @@ public class JpaEventStore implements EventStore {
      * 冲突时整体回滚，不留半截流。
      *
      * <p>事务边界：本方法内开启编程式事务，调用方无需额外包裹。
+     *
+     * <h3>批量插入</h3>
+     * <p>循环构造 entity 后，先 {@link EntityManager#flush()} 触发 Hibernate 批量 INSERT，
+     * 再 {@link EntityManager#clear()} 清空 persistence context。
+     * 顺序很关键：先 flush 再 clear 才能让 Hibernate 把所有 INSERT 合并为批量 SQL。
+     *
+     * <p>批量插入需配合 Hibernate 配置生效：
+     * <pre>{@code
+     * spring.jpa.properties.hibernate.jdbc.batch_size=50
+     * spring.jpa.properties.hibernate.order_inserts=true
+     * spring.jpa.properties.hibernate.order_updates=true
+     * }</pre>
+     *
+     * <p>未配置 batch_size 时，每次 flush 仍会发出单条 INSERT（行为正确，但无性能提升）。
      */
     @Override
     public void append(String aggregateId, List<Object> events, long expectedVersion) {
@@ -115,6 +127,11 @@ public class JpaEventStore implements EventStore {
                 repository.save(entity);
                 version++;
             }
+
+            // 触发 Hibernate 批量 INSERT：先 flush 把所有未刷盘的 SQL 发到 DB，
+            // 再 clear 释放 persistence context 中的 entity（避免 OOM）。
+            entityManager.flush();
+            entityManager.clear();
 
             tx.commit();
         } catch (RuntimeException e) {
@@ -162,7 +179,6 @@ public class JpaEventStore implements EventStore {
      * @param entity 持久化实体
      * @return 重建的存储事件
      */
-    @SuppressWarnings("unchecked")
     private StoredEvent toStoredEvent(StoredEventEntity entity) {
         Object event = deserializePayload(entity.getPayload(), entity.getEventType());
         return new StoredEvent(
@@ -183,14 +199,7 @@ public class JpaEventStore implements EventStore {
      * @param eventType 事件类型全限定名
      * @return 反序列化后的事件对象或 Map
      */
-    @SuppressWarnings("unchecked")
     private Object deserializePayload(String payload, String eventType) {
-        try {
-            Class<?> eventClass = Class.forName(eventType);
-            return JsonKit.toObject(payload, eventClass);
-        } catch (ClassNotFoundException e) {
-            // 事件类已被删除或重命名，回退为 Map
-            return JsonKit.toMap(payload);
-        }
+        return io.ddd4j.core.cqrs.eventstore.EventDeserializer.deserialize(payload, eventType);
     }
 }

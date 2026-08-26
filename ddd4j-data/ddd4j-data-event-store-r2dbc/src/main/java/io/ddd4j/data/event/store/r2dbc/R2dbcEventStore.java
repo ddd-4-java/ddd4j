@@ -47,12 +47,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 主键 {@code (aggregate_id, version)}，{@code position} 唯一索引。
  * 表在首次操作时通过 {@code CREATE TABLE IF NOT EXISTS} 懒创建。
  *
- * <h3>乐观锁与 position 生成</h3>
- * <p>append 在 autocommit 模式下以 {@code SELECT COUNT(*)} 读取当前事件数
- * （即当前版本，与 JPA 侧 {@code findCurrentVersion} 语义一致），
- * 与 {@code expectedVersion} 不一致即抛 {@link IllegalStateException}。
- * 全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
- * 与 JPA 侧策略一致；单实例部署下保证严格递增，多实例高并发场景建议切换为数据库序列。
+     * <h3>乐观锁与 position 生成</h3>
+     * <p>append 在事务内以 {@code SELECT COUNT(*)} 读取当前事件数
+     * （即当前版本，与 JPA 侧 {@code findCurrentVersion} 语义一致），
+     * 与 {@code expectedVersion} 不一致即抛 {@link IllegalStateException} 并回滚。
+     * 全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
+     * 与 JPA 侧策略一致；多实例高并发场景建议切换为数据库序列。
  *
  * <h3>payload 序列化</h3>
  * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
@@ -131,8 +131,9 @@ public class R2dbcEventStore implements EventStore {
         ensureInitialized();
         Connection connection = Mono.from(connectionFactory.create()).block();
         try {
-            // 版本校验和 position 查询在 autocommit 模式下执行（BEGIN 之前），
-            // 确保能读到其他连接已提交的数据（H2 R2DBC READ COMMITTED 语义）
+            Mono.from(connection.beginTransaction()).block();
+
+            // 版本校验在事务内执行，与并发写入互斥
             Long actualVersion = Mono.from(connection.createStatement(CURRENT_VERSION_SQL)
                             .bind(0, aggregateId)
                             .execute())
@@ -146,13 +147,11 @@ public class R2dbcEventStore implements EventStore {
                         "Version conflict: expected " + expectedVersion + " but was " + actualVersion);
             }
 
+            // position 生成在事务内执行，避免并发连接读到相同的 maxPos
             Long maxPos = Mono.from(connection.createStatement(NEXT_POSITION_SQL).execute())
                     .flatMap(result -> Mono.from(result.map((row, meta) -> row.get(0, Long.class))))
                     .block();
             long position = (maxPos != null ? maxPos : 0L) + 1L;
-
-            // 事务仅包裹 INSERT 操作，保证多事件原子提交
-            Mono.from(connection.beginTransaction()).block();
             LocalDateTime now = LocalDateTime.now();
             long version = expectedVersion;
             for (Object event : events) {
@@ -254,7 +253,6 @@ public class R2dbcEventStore implements EventStore {
      * @param row 当前行
      * @return 重建的存储事件
      */
-    @SuppressWarnings("unchecked")
     private StoredEvent toStoredEvent(Row row) {
         String payload = row.get("payload", String.class);
         String eventType = row.get("event_type", String.class);
@@ -293,14 +291,7 @@ public class R2dbcEventStore implements EventStore {
      * @param eventType 事件类型全限定名
      * @return 反序列化后的事件对象或 Map
      */
-    @SuppressWarnings("unchecked")
     private Object deserializePayload(String payload, String eventType) {
-        try {
-            Class<?> eventClass = Class.forName(eventType);
-            return JsonKit.toObject(payload, eventClass);
-        } catch (ClassNotFoundException e) {
-            // 事件类已被删除或重命名，回退为 Map
-            return JsonKit.toMap(payload);
-        }
+        return io.ddd4j.core.cqrs.eventstore.EventDeserializer.deserialize(payload, eventType);
     }
 }

@@ -14,6 +14,9 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.time.Instant;
+import java.util.Optional;
+
 /**
  * 投影运行指标 SPI（纯 Java，零外部依赖）。
  *
@@ -72,5 +75,19 @@ public interface ProjectionMetrics {
      */
     default void onRunFailed(String streamId, Throwable error) {
         // no-op
+    }
+
+    /**
+     * 查询指定流的最近一次运行状态。
+     *
+     * <p>默认返回空 Optional（表示该实现不跟踪状态）。
+     * 实现方可在 {@link #onRunCompleted} / {@link #onRunFailed} 中记录运行时信息，
+     * 供 {@link ViewManager#getProjectionStatus(String)} 回填。
+     *
+     * @param streamId 投影流 ID
+     * @return 最近一次运行信息；不跟踪时返回 {@code Optional.empty()}
+     */
+    default Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
+        return Optional.empty();
     }
 }

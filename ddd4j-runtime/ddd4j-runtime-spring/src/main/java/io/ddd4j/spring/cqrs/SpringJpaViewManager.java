@@ -14,8 +14,10 @@
  */
 package io.ddd4j.spring.cqrs;
 
+import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
@@ -52,6 +54,10 @@ public class SpringJpaViewManager implements ViewManager {
      */
     private final ProjectionPositionRepository positionRepository;
     /**
+     * 投影运行指标（可选，用于回填运行时状态字段）
+     */
+    private final ProjectionMetrics projectionMetrics;
+    /**
      * 运行状态标志
      */
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -66,7 +72,7 @@ public class SpringJpaViewManager implements ViewManager {
      * @param scheduler 视图调度器
      */
     public SpringJpaViewManager(ViewScheduler scheduler) {
-        this(scheduler, null);
+        this(scheduler, null, null);
     }
 
     /**
@@ -76,8 +82,21 @@ public class SpringJpaViewManager implements ViewManager {
      * @param positionRepository 投影位置仓储；为 null 时 getProjectionStatus 返回基线状态
      */
     public SpringJpaViewManager(ViewScheduler scheduler, ProjectionPositionRepository positionRepository) {
+        this(scheduler, positionRepository, null);
+    }
+
+    /**
+     * 构造视图管理器（带位置仓储 + 运行指标，getProjectionStatus 返回完整状态）。
+     *
+     * @param scheduler          视图调度器
+     * @param positionRepository 投影位置仓储；为 null 时 getProjectionStatus 返回基线状态
+     * @param projectionMetrics  投影运行指标；为 null 时运行时字段（lastRunAt 等）置空
+     */
+    public SpringJpaViewManager(ViewScheduler scheduler, ProjectionPositionRepository positionRepository,
+                                ProjectionMetrics projectionMetrics) {
         this.scheduler = scheduler;
         this.positionRepository = positionRepository;
+        this.projectionMetrics = projectionMetrics;
     }
 
     @Override
@@ -111,9 +130,8 @@ public class SpringJpaViewManager implements ViewManager {
      * 查询指定投影视图的实时状态。
      *
      * <p>若构造时注入了 {@link ProjectionPositionRepository}，则从仓储读取真实位置；
-     * 否则返回基线状态。lastRunAt / lastEventCount / lastError 当前由
-     * {@link io.ddd4j.core.cqrs.readmodel.ProjectionMetrics} 回调跟踪，
-     * 本实现暂不持久化这些字段（置 null / 0）。
+     * 否则返回基线状态。运行时字段（lastRunAt / lastEventCount / lastError）通过
+     * {@link ProjectionMetrics#getLastRunInfo(String)} 回填；未注入时置 null / 0。
      *
      * @param streamId 投影流 ID
      * @return 投影状态快照
@@ -126,6 +144,12 @@ public class SpringJpaViewManager implements ViewManager {
         }
         Optional<ProjectionPosition> position = positionRepository.findByStreamId(streamId);
         long nextEventNumber = position.map(ProjectionPosition::getNextEventNumber).orElse(0L);
+        if (projectionMetrics != null) {
+            return projectionMetrics.getLastRunInfo(streamId)
+                    .map(info -> new ProjectionStatus(streamId, nextEventNumber, isRunning(),
+                            info.lastRunAt(), info.lastEventCount(), info.lastError()))
+                    .orElse(new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null));
+        }
         return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);
     }
 

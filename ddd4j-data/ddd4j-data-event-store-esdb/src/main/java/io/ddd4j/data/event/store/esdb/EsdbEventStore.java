@@ -19,7 +19,6 @@ import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.kit.lang.JsonKit;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +170,9 @@ public class EsdbEventStore implements EventStore {
      * <p>通过 ESDB 的 {@code readAll} 读取全局日志，
      * 按 {@code commitPosition >= fromPosition} 过滤后返回。
      * ESDB 全局日志包含系统事件（如 {@code $stream-metadata}），
-     * 本方法仅返回用户事件（通过流前缀过滤）。
+     * 本方法仅返回用户事件。
+     * 当构造时传入非空 {@code streamPrefix}，仅返回该前缀下的事件流；
+     * 前缀为空时返回所有用户事件。
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
@@ -191,6 +192,10 @@ public class EsdbEventStore implements EventStore {
                 }
                 // 过滤系统流（以 $ 开头）
                 if (recorded.getStreamId().startsWith("$")) {
+                    continue;
+                }
+                // 过滤非本前缀的用户流（当 streamPrefix 非空时）
+                if (!streamPrefix.isEmpty() && !recorded.getStreamId().startsWith(streamPrefix)) {
                     continue;
                 }
                 // 按 commitPosition 过滤
@@ -289,19 +294,8 @@ public class EsdbEventStore implements EventStore {
      * @param eventType 事件类型全限定名
      * @return 反序列化后的事件对象或 Map
      */
-    @SuppressWarnings("unchecked")
     private Object deserializePayload(RecordedEvent recorded, String eventType) {
-        try {
-            Class<?> eventClass = Class.forName(eventType);
-            return recorded.getEventDataAs(eventClass);
-        } catch (ClassNotFoundException | IOException e) {
-            // 事件类已被删除或重命名，回退为 Map
-            try {
-                String json = new String(recorded.getEventData());
-                return JsonKit.toMap(json);
-            } catch (Exception ex) {
-                throw new IllegalStateException("Failed to deserialize event payload for type: " + eventType, ex);
-            }
-        }
+        String json = new String(recorded.getEventData());
+        return io.ddd4j.core.cqrs.eventstore.EventDeserializer.deserialize(json, eventType);
     }
 }

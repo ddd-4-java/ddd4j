@@ -20,6 +20,7 @@
     <subprojects>
         <subproject>ddd4j-data-crypto</subproject>
         <subproject>ddd4j-data-datascope</subproject>
+        <subproject>ddd4j-data-event-store</subproject>
         <subproject>ddd4j-data-event-store-jpa</subproject>
         <subproject>ddd4j-data-event-store-r2dbc</subproject>
         <subproject>ddd4j-data-event-store-esdb</subproject>
