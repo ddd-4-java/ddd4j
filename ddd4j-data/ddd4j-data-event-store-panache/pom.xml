@@ -29,6 +29,28 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
+
+        <!-- ======== Test ======== -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -39,6 +61,13 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>com.tngtech.archunit:archunit-junit5</classpathDependencyExclude>
+                        <classpathDependencyExclude>com.tngtech.archunit:archunit-junit5-engine</classpathDependencyExclude>
+                        <classpathDependencyExclude>com.tngtech.archunit:archunit-junit5-engine-api</classpathDependencyExclude>
+                        <classpathDependencyExclude>com.tngtech.archunit:archunit-junit5-api</classpathDependencyExclude>
+                        <classpathDependencyExclude>com.tngtech.archunit:archunit</classpathDependencyExclude>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
         </plugins>
