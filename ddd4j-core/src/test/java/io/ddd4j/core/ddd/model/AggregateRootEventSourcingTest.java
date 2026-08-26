@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * {@link AggregateRoot} 事件溯源测试（apply + loadFromHistory）。
@@ -75,15 +76,14 @@ class AggregateRootEventSourcingTest {
     }
 
     @Test
-    @DisplayName("apply 无对应 handler 时应静默忽略，不抛异常")
-    void apply_noHandler_shouldSilentlyIgnore() {
+    @DisplayName("apply 无对应 handler 时应抛 IllegalStateException（2.0.x 严格语义）")
+    void apply_noHandler_shouldThrow() {
         Order order = new Order("o1");
 
         // OrderShipped 没有定义 onOrderShipped 方法
-        order.applyEvent(new OrderShipped("o1"));
-
-        // 不抛异常，聚合状态不变
-        assertThat(order.getOrderNo()).isNull();
+        assertThatThrownBy(() -> order.applyEvent(new OrderShipped("o1")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("No @EventHandler method found");
     }
 
     @Test
@@ -122,14 +122,14 @@ class AggregateRootEventSourcingTest {
     }
 
     @Test
-    @DisplayName("apply 不应将事件注册到未提交事件缓冲区")
-    void apply_shouldNotRegisterEventToBuffer() {
+    @DisplayName("apply 应将事件注册到未提交事件缓冲区（2.0.x 语义）")
+    void apply_shouldRegisterEventToBuffer() {
         Order order = new Order("o1");
 
         order.applyEvent(new OrderCreated("o1", "ORD-001"));
 
-        assertThat(order.hasDomainEvents()).isFalse();
-        assertThat(order.domainEvents()).isEmpty();
+        assertThat(order.hasDomainEvents()).isTrue();
+        assertThat(order.domainEvents()).hasSize(1);
     }
 
     // ========================= Fixtures =========================

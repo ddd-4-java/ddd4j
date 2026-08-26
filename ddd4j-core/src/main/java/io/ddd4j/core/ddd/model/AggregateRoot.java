@@ -17,6 +17,7 @@ package io.ddd4j.core.ddd.model;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
@@ -102,7 +103,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 事件处理器方法缓存（ClassValue 二级索引）。
-     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 对应的 onXxx 方法（可能为 null）。
+     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
+     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
      */
     private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
         @Override
@@ -110,18 +112,42 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             return new ClassValue<>() {
                 @Override
                 protected Method computeValue(Class<?> eventClass) {
-                    String handlerName = "on" + eventClass.getSimpleName();
-                    try {
-                        Method m = aggregateClass.getDeclaredMethod(handlerName, eventClass);
-                        m.setAccessible(true);
-                        return m;
-                    } catch (NoSuchMethodException e) {
-                        return null;
-                    }
+                    return resolveHandler(aggregateClass, eventClass);
                 }
             };
         }
     };
+
+    /**
+     * 解析事件处理器：优先 {@code @EventHandler} 注解方法（沿继承链，参数可接收该事件类型），
+     * 回退到 {@code on<EventType>} 命名约定（3.0.x 兼容路径）。
+     *
+     * @param aggregateClass 聚合根类型
+     * @param eventClass     事件类型
+     * @return 处理器方法；两者均未命中时返回 {@code null}
+     */
+    private static Method resolveHandler(Class<?> aggregateClass, Class<?> eventClass) {
+        for (Class<?> current = aggregateClass; current != null && current != Object.class;
+             current = current.getSuperclass()) {
+            for (Method method : current.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(EventHandler.class)) {
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes.length == 1 && parameterTypes[0].isAssignableFrom(eventClass)) {
+                        method.setAccessible(true);
+                        return method;
+                    }
+                }
+            }
+        }
+        String handlerName = "on" + eventClass.getSimpleName();
+        try {
+            Method method = aggregateClass.getDeclaredMethod(handlerName, eventClass);
+            method.setAccessible(true);
+            return method;
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
 
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
@@ -339,15 +365,50 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * @param event 领域事件
      * @param <E>   事件类型
      */
-    protected <E extends DomainEvent<?>> void apply(E event) {
+    /**
+     * 应用领域事件（2.0.x 语义）。
+     *
+     * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
+     * 并返回事件本身。找不到处理器时抛 {@link IllegalStateException}。
+     *
+     * @param event 领域事件
+     * @return 传入的事件（链式调用便利）
+     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     */
+    protected <E extends DomainEvent<?>> E apply(E event) {
+        return apply(event, false);
+    }
+
+    /**
+     * 事件应用内部实现。
+     *
+     * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
+     * 并注册进未提交事件列表（2.0.x 语义：找不到处理器时抛 {@link IllegalStateException}）。
+     * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
+     *
+     * @param event 领域事件
+     * @param replay 是否处于历史回放（{@code loadFromHistory}）
+     * @return 传入的事件
+     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     */
+    private <E extends DomainEvent<?>> E apply(E event, boolean replay) {
         Objects.requireNonNull(event, "event must not be null");
         ClassValue<Method> handlerCache = EVENT_HANDLER_CACHE.get(this.getClass());
         Method handler = handlerCache.get(event.getClass());
         if (Objects.isNull(handler)) {
-            return;
+            throw new IllegalStateException("No @EventHandler method found for event type: "
+                    + event.getClass().getName() + " on aggregate " + this.getClass().getName());
+        }
+        if (replay && handler.isAnnotationPresent(EventHandler.class)
+                && handler.getAnnotation(EventHandler.class).ignoreOnReplay()) {
+            return event;
         }
         try {
             handler.invoke(this, event);
+            if (!replay) {
+                // 2.0.x 语义：apply 反射派发后注册进未提交事件列表；回放（loadFromHistory）不入队
+                mutableDomainEvents().add(event);
+            }
         } catch (InvocationTargetException e) {
             // handler 自身抛出的业务异常：解包透传，避免包装后丢失原始堆栈
             Throwable cause = e.getCause();
@@ -372,6 +433,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
                     + " on aggregate " + this.getClass().getSimpleName(), e);
         }
+        return event;
     }
 
     /**
@@ -396,7 +458,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             return;
         }
         for (DomainEvent<?> event : events) {
-            apply(event);
+            apply(event, true);
         }
     }
 
