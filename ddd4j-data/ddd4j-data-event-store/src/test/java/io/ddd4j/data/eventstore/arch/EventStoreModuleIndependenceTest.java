@@ -23,8 +23,9 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 /**
- * ddd4j-data-event-store 模块独立性自检：确保框架无关的 EventStore SPI
- * 不被运行时或持久化框架污染（ADR-0003／ADR-0005）。
+ * ddd4j-data-event-store 模块独立性自检：确保异步/高级 EventStore 扩展
+ * （{@link io.ddd4j.data.eventstore.AsyncEventStore}，同步 SPI 唯一事实源在
+ * ddd4j-core）不被运行时或持久化框架污染（ADR-0003／ADR-0005）。
  *
  * <p>本测试在 CI 阶段自动执行，防止以下耦合再次引入：
  * <ul>

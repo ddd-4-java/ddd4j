@@ -11,7 +11,10 @@
 
     <artifactId>ddd4j-data-event-store</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 事件存储 SPI（框架无关，ADR-0005）。运行时实现见 -jpa / -panache / -jdbi / -r2dbc 等子模块。
+    <description>ddd4j 事件存储异步/高级扩展层（ADR-0005）：AsyncEventStore 响应式轨道 +
+        AsyncStoredEvent 富事件载体 + EventPayloadSerializer + 版本冲突异常。
+        同步 EventStore SPI 的唯一事实源在 ddd4j-core（io.ddd4j.core.cqrs.eventstore），
+        运行时实现见 -jpa / -r2dbc / -esdb 子模块。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 

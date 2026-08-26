@@ -22,11 +22,13 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
- * 持久化的领域事件快照（ADR-0005）。
+ * 响应式事件存储的持久化领域事件快照（ADR-0005）。
  *
- * <p>事件从 {@link EventStore} 读回后的载体：在 {@link DomainEvent} 完整因果元数据
- * （eventId／correlationId／causationId）之上，补充聚合定位（aggregateType／aggregateId／version）
- * 与全局顺序。
+ * <p>本模块承载 core 同步 {@link io.ddd4j.core.cqrs.eventstore.EventStore} SPI
+ * 之上的<b>异步/高级扩展轨道</b>（{@link AsyncEventStore}）的事件载体：
+ * 在 {@link DomainEvent} 完整因果元数据（eventId／correlationId／causationId）之上，
+ * 补充聚合定位（aggregateType／aggregateId／version）与全局顺序。
+ * 与 core 的最小 {@code StoredEvent} record（同步轨道）语义互补，勿混用。
  *
  * <h3>全局 position</h3>
  * <p>{@code position} 是跨所有聚合流全局递增的事件序号，由存储实现分配——这是 esc-api
@@ -38,7 +40,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public final class StoredEvent {
+public final class AsyncStoredEvent {
 
     private final EventId eventId;
     private final String aggregateType;
@@ -63,7 +65,7 @@ public final class StoredEvent {
      * @param correlationId  关联事件标识；无关联时 {@code null}
      * @param causationId    因果事件标识；无因果时 {@code null}
      */
-    public StoredEvent(EventId eventId, String aggregateType, AggregateRootId aggregateId,
+    public AsyncStoredEvent(EventId eventId, String aggregateType, AggregateRootId aggregateId,
                        long version, long position, ZonedDateTime timestamp,
                        DomainEvent<?> payload, EventId correlationId, EventId causationId) {
         this.eventId = Objects.requireNonNull(eventId, "eventId must not be null");

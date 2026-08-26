@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * {@link StoredEvent} 构造契约测试。
+ * {@link AsyncStoredEvent} 构造契约测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-class StoredEventTest {
+class AsyncStoredEventTest {
 
     private static final EventId EVENT_ID = new EventId();
     private static final String AGGREGATE_TYPE = "Order";
@@ -62,13 +62,13 @@ class StoredEventTest {
     @ParameterizedTest(name = "constructor rejects null {0}")
     @MethodSource("nullMandatoryArguments")
     void constructorRejectsNullMandatoryArgument(String argumentName, int nullIndex) {
-        assertThrows(NullPointerException.class, () -> newStoredEventWithNullAt(nullIndex),
+        assertThrows(NullPointerException.class, () -> newAsyncStoredEventWithNullAt(nullIndex),
                 "argument " + argumentName + " must be null-checked");
     }
 
     @Test
     void constructorAllowsNullCorrelationAndCausationId() {
-        StoredEvent storedEvent = new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID,
+        AsyncStoredEvent storedEvent = new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID,
                 VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
 
         assertNull(storedEvent.correlationId(), "correlationId should be nullable");
@@ -79,7 +79,7 @@ class StoredEventTest {
     void accessorsReturnConstructorValues() {
         DomainEvent<?> payload = new TestEvent();
 
-        StoredEvent storedEvent = new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID,
+        AsyncStoredEvent storedEvent = new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID,
                 VERSION, POSITION, TIMESTAMP, payload, CORRELATION_ID, CAUSATION_ID);
 
         assertSame(EVENT_ID, storedEvent.eventId());
@@ -93,13 +93,13 @@ class StoredEventTest {
         assertSame(CAUSATION_ID, storedEvent.causationId());
     }
 
-    private static StoredEvent newStoredEventWithNullAt(int nullIndex) {
+    private static AsyncStoredEvent newAsyncStoredEventWithNullAt(int nullIndex) {
         return switch (nullIndex) {
-            case 0 -> new StoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 1 -> new StoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 2 -> new StoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 3 -> new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
-            case 4 -> new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
+            case 0 -> new AsyncStoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 1 -> new AsyncStoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 2 -> new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 3 -> new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
+            case 4 -> new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
             default -> throw new IllegalArgumentException("unexpected null index: " + nullIndex);
         };
     }
