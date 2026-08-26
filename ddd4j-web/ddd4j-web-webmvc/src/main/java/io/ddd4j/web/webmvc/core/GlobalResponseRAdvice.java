@@ -14,8 +14,8 @@
  */
 package io.ddd4j.web.webmvc.core;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.annotation.api.RawResponse;
 import io.ddd4j.core.api.IR;
 import io.ddd4j.core.api.R;

@@ -18,7 +18,7 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.data.crypto.enums.CryptoType;
 import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;

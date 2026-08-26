@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.1.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-dependencies</artifactId>
@@ -16,16 +16,16 @@
     <description>Ddd4j 运行时绑定聚合：核心 SPI 的容器接线与共享契约测试。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <modules>
-        <module>ddd4j-runtime-support</module>
-        <module>ddd4j-runtime-testkit</module>
-        <module>ddd4j-runtime-spring</module>
-        <module>ddd4j-runtime-quarkus</module>
-        <module>ddd4j-runtime-guice</module>
-        <module>ddd4j-runtime-micronaut</module>
-        <module>ddd4j-runtime-vertx</module>
-        <module>ddd4j-runtime-helidon</module>
-        <module>ddd4j-runtime-dropwizard</module>
-    </modules>
+    <subprojects>
+        <subproject>ddd4j-runtime-support</subproject>
+        <subproject>ddd4j-runtime-testkit</subproject>
+        <subproject>ddd4j-runtime-spring</subproject>
+        <subproject>ddd4j-runtime-quarkus</subproject>
+        <subproject>ddd4j-runtime-guice</subproject>
+        <subproject>ddd4j-runtime-micronaut</subproject>
+        <subproject>ddd4j-runtime-vertx</subproject>
+        <subproject>ddd4j-runtime-helidon</subproject>
+        <subproject>ddd4j-runtime-dropwizard</subproject>
+    </subprojects>
 
 </project>

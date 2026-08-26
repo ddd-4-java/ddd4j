@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.1.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-dependencies</artifactId>
@@ -18,16 +18,16 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <modules>
+    <subprojects>
         <!-- ddd4j 深度集成扩展；Jackson、PF4J、Validation 已迁移为独立技术组件。 -->
-        <module>ddd4j-extension-excel</module>
-        <module>ddd4j-extension-license</module>
-        <module>ddd4j-extension-otel</module>
-        <module>ddd4j-extension-qrcode</module>
-        <module>ddd4j-extension-qlexpress</module>
-        <module>ddd4j-extension-monitor</module>
-        <module>ddd4j-extension-validation</module>
-    </modules>
+        <subproject>ddd4j-extension-excel</subproject>
+        <subproject>ddd4j-extension-license</subproject>
+        <subproject>ddd4j-extension-otel</subproject>
+        <subproject>ddd4j-extension-qrcode</subproject>
+        <subproject>ddd4j-extension-qlexpress</subproject>
+        <subproject>ddd4j-extension-monitor</subproject>
+        <subproject>ddd4j-extension-validation</subproject>
+    </subprojects>
 
     <dependencies>
 

@@ -15,9 +15,9 @@
 package io.ddd4j.cache.lettuce;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.CASOperation;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheConfig;

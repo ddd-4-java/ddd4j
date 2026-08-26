@@ -15,7 +15,7 @@
 package io.ddd4j.data.crypto.strategy;
 
 import cn.hutool.crypto.digest.HmacAlgorithm;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.data.crypto.enums.CryptoType;
