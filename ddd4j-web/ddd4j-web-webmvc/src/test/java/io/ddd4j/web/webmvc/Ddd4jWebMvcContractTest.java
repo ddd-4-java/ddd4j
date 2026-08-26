@@ -152,6 +152,7 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         private MockHttpServletRequestBuilder requestBuilder(String method, String path,
                                                              Map<String, String> headers, String body) {
             MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path);
+            builder.accept(MediaType.APPLICATION_JSON);
             headers.forEach(builder::header);
             if (StringUtils.hasLength(body)) {
                 builder.contentType(MediaType.APPLICATION_JSON).content(body);

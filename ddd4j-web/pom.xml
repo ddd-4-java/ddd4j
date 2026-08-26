@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.1.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
-    <modelVersion>4.1.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-dependencies</artifactId>
@@ -16,17 +16,17 @@
     <description>ddd4j Web 抽象聚合：统一 Web 语义、契约测试与多框架适配。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <subprojects>
-        <subproject>ddd4j-web-core</subproject>
-        <subproject>ddd4j-web-testkit</subproject>
-        <subproject>ddd4j-web-javalin</subproject>
-        <subproject>ddd4j-web-quarkus</subproject>
-        <subproject>ddd4j-web-micronaut</subproject>
-        <subproject>ddd4j-web-vertx</subproject>
-        <subproject>ddd4j-web-helidon</subproject>
-        <subproject>ddd4j-web-dropwizard</subproject>
-        <subproject>ddd4j-web-webflux</subproject>
-        <subproject>ddd4j-web-webmvc</subproject>
-    </subprojects>
+    <modules>
+        <module>ddd4j-web-core</module>
+        <module>ddd4j-web-testkit</module>
+        <module>ddd4j-web-javalin</module>
+        <module>ddd4j-web-quarkus</module>
+        <module>ddd4j-web-micronaut</module>
+        <module>ddd4j-web-vertx</module>
+        <module>ddd4j-web-helidon</module>
+        <module>ddd4j-web-dropwizard</module>
+        <module>ddd4j-web-webflux</module>
+        <module>ddd4j-web-webmvc</module>
+    </modules>
 
 </project>

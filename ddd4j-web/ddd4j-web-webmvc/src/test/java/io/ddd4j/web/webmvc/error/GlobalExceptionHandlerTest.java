@@ -1,7 +1,7 @@
 package io.ddd4j.web.webmvc.error;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.exception.BizCheckedException;

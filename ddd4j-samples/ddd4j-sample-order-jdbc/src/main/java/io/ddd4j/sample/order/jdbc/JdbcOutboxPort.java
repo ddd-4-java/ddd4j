@@ -14,8 +14,8 @@
  */
 package io.ddd4j.sample.order.jdbc;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.order.application.OutboxMessage;
 import io.ddd4j.sample.order.application.OutboxPort;
 
