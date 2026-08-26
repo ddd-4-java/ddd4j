@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.r2dbc;
 
+import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.kit.lang.JsonKit;
@@ -65,37 +66,40 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class R2dbcEventStore implements EventStore {
 
-    private static final String TABLE_NAME = "DDD4J_EVENT_STORE";
-
     private static final String CREATE_TABLE_SQL =
-            "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
-                    + "aggregate_id VARCHAR(255) NOT NULL, "
-                    + "version BIGINT NOT NULL, "
-                    + "position BIGINT NOT NULL, "
-                    + "event_type VARCHAR(512) NOT NULL, "
-                    + "event_id VARCHAR(64), "
-                    + "payload CLOB NOT NULL, "
-                    + "timestamp TIMESTAMP NOT NULL, "
-                    + "PRIMARY KEY (aggregate_id, version), "
-                    + "CONSTRAINT uk_position UNIQUE (position)"
+            "CREATE TABLE IF NOT EXISTS " + EventStoreConstants.TABLE_NAME + " ("
+                    + EventStoreConstants.COLUMN_AGGREGATE_ID + " VARCHAR(255) NOT NULL, "
+                    + EventStoreConstants.COLUMN_VERSION + " BIGINT NOT NULL, "
+                    + EventStoreConstants.COLUMN_POSITION + " BIGINT NOT NULL, "
+                    + EventStoreConstants.COLUMN_EVENT_TYPE + " VARCHAR(512) NOT NULL, "
+                    + EventStoreConstants.COLUMN_EVENT_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_PAYLOAD + " CLOB NOT NULL, "
+                    + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
+                    + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_VERSION + "), "
+                    + "CONSTRAINT uk_position UNIQUE (" + EventStoreConstants.COLUMN_POSITION + ")"
                     + ")";
 
     private static final String INSERT_SQL =
-            "INSERT INTO " + TABLE_NAME
-                    + " (aggregate_id, version, position, event_type, payload, timestamp)"
+            "INSERT INTO " + EventStoreConstants.TABLE_NAME
+                    + " (" + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_VERSION
+                    + ", " + EventStoreConstants.COLUMN_POSITION + ", " + EventStoreConstants.COLUMN_EVENT_TYPE
+                    + ", " + EventStoreConstants.COLUMN_PAYLOAD + ", " + EventStoreConstants.COLUMN_TIMESTAMP + ")"
                     + " VALUES ($1, $2, $3, $4, $5, $6)";
 
     private static final String CURRENT_VERSION_SQL =
-            "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE aggregate_id = $1";
+            "SELECT COUNT(*) FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $1";
 
     private static final String NEXT_POSITION_SQL =
-            "SELECT COALESCE(MAX(position), 0) FROM " + TABLE_NAME;
+            "SELECT COALESCE(MAX(" + EventStoreConstants.COLUMN_POSITION + "), 0) FROM " + EventStoreConstants.TABLE_NAME;
 
     private static final String READ_BY_AGGREGATE_SQL =
-            "SELECT * FROM " + TABLE_NAME + " WHERE aggregate_id = $1 ORDER BY version ASC";
+            "SELECT * FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $1 ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
 
     private static final String READ_ALL_SQL =
-            "SELECT * FROM " + TABLE_NAME + " WHERE position >= $1 ORDER BY position ASC LIMIT $2";
+            "SELECT * FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_POSITION + " >= $1 ORDER BY " + EventStoreConstants.COLUMN_POSITION + " ASC LIMIT $2";
 
     private final ConnectionFactory connectionFactory;
 
@@ -254,18 +258,18 @@ public class R2dbcEventStore implements EventStore {
      * @return 重建的存储事件
      */
     private StoredEvent toStoredEvent(Row row) {
-        String payload = row.get("payload", String.class);
-        String eventType = row.get("event_type", String.class);
+        String payload = row.get(EventStoreConstants.COLUMN_PAYLOAD, String.class);
+        String eventType = row.get(EventStoreConstants.COLUMN_EVENT_TYPE, String.class);
         Object event = deserializePayload(payload, eventType);
         // r2dbc-h2 对 TIMESTAMP 列返回 LocalDateTime，转为 Instant
         Instant timestamp = null;
-        LocalDateTime ldt = row.get("timestamp", LocalDateTime.class);
+        LocalDateTime ldt = row.get(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
         if (ldt != null) {
             timestamp = ldt.toInstant(ZoneOffset.UTC);
         } else {
             // 兜底：尝试其他类型（不同 R2DBC 驱动可能返回不同类型）
             try {
-                timestamp = row.get("timestamp", Instant.class);
+                timestamp = row.get(EventStoreConstants.COLUMN_TIMESTAMP, Instant.class);
             } catch (Exception ignored) {
                 timestamp = Instant.now();
             }
@@ -274,10 +278,10 @@ public class R2dbcEventStore implements EventStore {
             timestamp = Instant.now();
         }
         return new StoredEvent(
-                row.get("aggregate_id", String.class),
-                row.get("version", Long.class),
+                row.get(EventStoreConstants.COLUMN_AGGREGATE_ID, String.class),
+                row.get(EventStoreConstants.COLUMN_VERSION, Long.class),
                 event,
-                row.get("position", Long.class),
+                row.get(EventStoreConstants.COLUMN_POSITION, Long.class),
                 timestamp);
     }
 

@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
+import io.ddd4j.core.constant.EventStoreConstants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,34 +32,34 @@ import java.time.Instant;
  * @since 3.0.0
  */
 @Entity
-@Table(name = "DDD4J_EVENT_STORE")
+@Table(name = EventStoreConstants.TABLE_NAME)
 @IdClass(StoredEventEntityId.class)
 public class StoredEventEntity {
 
     @Id
-    @Column(name = "aggregate_id", nullable = false, length = 255)
+    @Column(name = EventStoreConstants.COLUMN_AGGREGATE_ID, nullable = false, length = 255)
     private String aggregateId;
 
     @Id
-    @Column(name = "version", nullable = false)
+    @Column(name = EventStoreConstants.COLUMN_VERSION, nullable = false)
     private long version;
 
-    @Column(name = "position", nullable = false, unique = true)
+    @Column(name = EventStoreConstants.COLUMN_POSITION, nullable = false, unique = true)
     private long position;
 
-    @Column(name = "event_type", nullable = false, length = 512)
+    @Column(name = EventStoreConstants.COLUMN_EVENT_TYPE, nullable = false, length = 512)
     private String eventType;
 
-    @Column(name = "event_id", length = 64)
+    @Column(name = EventStoreConstants.COLUMN_EVENT_ID, length = 64)
     private String eventId;
 
     /**
      * 事件载荷 JSON 文本。使用 CLOB 以支持大体积事件。
      */
-    @Column(name = "payload", nullable = false, columnDefinition = "CLOB")
+    @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false, columnDefinition = "CLOB")
     private String payload;
 
-    @Column(name = "timestamp", nullable = false)
+    @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     private Instant timestamp;
 
     public StoredEventEntity() {

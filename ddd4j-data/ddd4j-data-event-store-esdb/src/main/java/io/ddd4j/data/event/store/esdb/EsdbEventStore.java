@@ -15,6 +15,7 @@
 package io.ddd4j.data.event.store.esdb;
 
 import com.eventstore.dbclient.*;
+import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.kit.lang.JsonKit;
@@ -65,7 +66,7 @@ import java.util.concurrent.CompletionException;
  */
 public class EsdbEventStore implements EventStore {
 
-    private static final long DEFAULT_READ_LIMIT = 4096L;
+    private static final long DEFAULT_READ_LIMIT = EventStoreConstants.ESDB_DEFAULT_READ_LIMIT;
 
     private final EventStoreDBClient client;
     private final String streamPrefix;
@@ -191,7 +192,7 @@ public class EsdbEventStore implements EventStore {
                     continue;
                 }
                 // 过滤系统流（以 $ 开头）
-                if (recorded.getStreamId().startsWith("$")) {
+                if (recorded.getStreamId().startsWith(EventStoreConstants.ESDB_SYSTEM_STREAM_PREFIX)) {
                     continue;
                 }
                 // 过滤非本前缀的用户流（当 streamPrefix 非空时）
