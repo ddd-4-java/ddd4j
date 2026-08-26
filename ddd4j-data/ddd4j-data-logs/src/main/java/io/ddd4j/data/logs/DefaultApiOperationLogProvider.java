@@ -84,7 +84,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         // 4、判断是否需要记录日志
         boolean needLog = log.isInfoEnabled() && Objects.isNull(hidden);
         if (!needLog) {
-            log.info(Constants.accessMarker, "Stopwatch: {}", stopWatch);
+            log.info(Constants.ACCESS_MARKER + " ", "Stopwatch: {}", stopWatch);
             return;
         }
 
@@ -95,7 +95,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         if (Objects.nonNull(request)) {
             uri = request.getRequestURI();
             ipAddress = WebUtils.getRemoteAddr(request);
-            log.info(Constants.accessMarker, " >> URI {} IP {} ", uri, ipAddress);
+            log.info(Constants.ACCESS_MARKER + " ", " >> URI {} IP {} ", uri, ipAddress);
         }
 
         // 6、筛选出有意义的参数
@@ -108,12 +108,12 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         this.saveLog(joinPoint, method, apiOperation, rt, ex, stopWatch);
 
         if (Objects.isNull(ex)) {
-            log.info(Constants.accessMarker, " >> invoke method {} with args {} Success! elapsed={}", methodName, methodArgs, stopWatch);
+            log.info(Constants.ACCESS_MARKER + " ", " >> invoke method {} with args {} Success! elapsed={}", methodName, methodArgs, stopWatch);
         } else {
-            log.error(Constants.accessMarker, " >> invoke method {} with args {} error {} elapsed={}", methodName, methodArgs, ex.getMessage(), stopWatch);
+            log.error(Constants.ACCESS_MARKER + " ", " >> invoke method {} with args {} error {} elapsed={}", methodName, methodArgs, ex.getMessage(), stopWatch);
         }
 
-        log.info(Constants.accessMarker, "Stopwatch: {}", stopWatch);
+        log.info(Constants.ACCESS_MARKER + " ", "Stopwatch: {}", stopWatch);
     }
 
     /**
