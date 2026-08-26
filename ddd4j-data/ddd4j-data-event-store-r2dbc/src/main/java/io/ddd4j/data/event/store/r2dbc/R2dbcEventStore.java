@@ -69,6 +69,7 @@ public class R2dbcEventStore implements EventStore {
     private static final String CREATE_TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS " + EventStoreConstants.TABLE_NAME + " ("
                     + EventStoreConstants.COLUMN_AGGREGATE_ID + " VARCHAR(255) NOT NULL, "
+                    + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " VARCHAR(255), "
                     + EventStoreConstants.COLUMN_VERSION + " BIGINT NOT NULL, "
                     + EventStoreConstants.COLUMN_POSITION + " BIGINT NOT NULL, "
                     + EventStoreConstants.COLUMN_EVENT_TYPE + " VARCHAR(512) NOT NULL, "

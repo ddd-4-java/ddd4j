@@ -60,6 +60,10 @@ public final class EventStoreConstants {
      * 时间戳列名。
      */
     public static final String COLUMN_TIMESTAMP = "timestamp";
+    /**
+     * 聚合类型列名（异步轨道写入；同步轨道留空，可空列保证双轨同表兼容）。
+     */
+    public static final String COLUMN_AGGREGATE_TYPE = "aggregate_type";
 
     // ==================== ESDB ====================
     /**
