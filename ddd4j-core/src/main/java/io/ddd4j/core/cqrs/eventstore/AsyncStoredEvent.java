@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.eventstore;
+package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -24,11 +24,11 @@ import java.util.Objects;
 /**
  * 响应式事件存储的持久化领域事件快照（ADR-0005）。
  *
- * <p>本模块承载 core 同步 {@link io.ddd4j.core.cqrs.eventstore.EventStore} SPI
- * 之上的<b>异步/高级扩展轨道</b>（{@link AsyncEventStore}）的事件载体：
- * 在 {@link DomainEvent} 完整因果元数据（eventId／correlationId／causationId）之上，
- * 补充聚合定位（aggregateType／aggregateId／version）与全局顺序。
- * 与 core 的最小 {@code StoredEvent} record（同步轨道）语义互补，勿混用。
+ * <p>与同步 {@link StoredEvent} record <b>同包共居</b>的响应式轨道事件载体
+ * （{@link AsyncEventStore} 的读写类型）：在 {@link DomainEvent} 完整因果元数据
+ * （eventId／correlationId／causationId）之上，补充聚合定位
+ * （aggregateType／aggregateId／version）与全局顺序。
+ * 两者语义互补——同步轨道用最小 record，响应式轨道用富载体，勿混用。
  *
  * <h3>全局 position</h3>
  * <p>{@code position} 是跨所有聚合流全局递增的事件序号，由存储实现分配——这是 esc-api

@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.eventstore.jackson;
+package io.ddd4j.core.cqrs.eventstore.jackson;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 import java.util.Objects;
@@ -38,14 +38,13 @@ import java.util.Objects;
  * 反序列化端完全依赖调用方传入的 {@code eventType}——这是更安全的契约。
  *
  * <h3>跨运行时共享</h3>
- * <p>Spring / Quarkus / Micronaut / Helidon / Javalin / Vert.x / Dropwizard 均使用
- * Jackson 2.22.x，本抽象不绑定任何运行时。
+ * <p>ddd4j-core 使用 Jackson 3（{@code tools.jackson}）序列化契约，本抽象不绑定任何运行时。
  *
  * <h3>mapper 隔离</h3>
- * <p>构造器对传入 mapper 先执行 {@link ObjectMapper#copy()}——构造后传入的 source
+ * <p>构造器对传入 mapper 先执行 {@code rebuild().build()}（Jackson 3 中
+ * {@code copy()} 的替代，种子化 builder 重建）——构造后传入的 source
  * mapper 保持不受影响（如 Spring 全局 mapper 不会被序列化器内部行为污染）。
- * {@code copy()} 会携带 source 已注册的全部 module（如 jsr310 {@code JavaTimeModule}）
- * 与配置。
+ * {@code rebuild()} 会携带 source 已注册的全部 module（如 jsr310）与配置。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -62,7 +61,7 @@ public class EventPayloadSerializer {
      * @param source 源 mapper；构造后保持不变
      */
     public EventPayloadSerializer(ObjectMapper source) {
-        this.objectMapper = Objects.requireNonNull(source, "source must not be null").copy();
+        this.objectMapper = Objects.requireNonNull(source, "source must not be null").rebuild().build();
     }
 
     /**
@@ -88,7 +87,7 @@ public class EventPayloadSerializer {
      *
      * <p>使用调用方提供的 {@code eventType} 还原目标类型，无需依赖 JSON 中的类型标记。
      * 调用方负责保证 {@code eventType} 与实际写入的事件类型一致（通常通过
-     * {@link StoredEvent#getPayload()} 的运行时类型或持久化时记录的类名获取）。
+     * 事件实际运行时类型或持久化时记录的类名获取）。
      *
      * @param json      JSON 文本（不含多态标记）
      * @param eventType 目标事件类型

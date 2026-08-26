@@ -56,6 +56,16 @@
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
         </dependency>
+
+        <!-- ======== 响应式事件存储轨道（有意保留） ======== -->
+        <!-- Reactor：AsyncEventStore/AsyncStoredEvent 的 Flux/Mono 类型来源。同步与异步
+             事件存储 SPI 的唯一事实源同包共居（io.ddd4j.core.cqrs.eventstore），
+             异步轨道需要 Reactor 类型签名，属有意保留。 -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -12,13 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.eventstore.jackson;
+package io.ddd4j.core.cqrs.eventstore.jackson;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -45,10 +44,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class EventPayloadSerializerTest {
 
     /**
-     * 测试基 mapper：注册 JavaTimeModule 支持 java.time（serializer 构造时 copy() 会携带该 module）。
+     * 测试基 mapper：Jackson 3 内建 JavaTimeModule（自动注册），直接支持 java.time。
+     * Jackson 3 默认关闭 FAIL_ON_UNKNOWN_PROPERTIES（与 Jackson 2 相反），
+     * 此处显式启用以保持「严格反序列化」契约（serializer 构造时 rebuild() 会携带该配置）。
      */
     private final ObjectMapper sourceMapper = JsonMapper.builder()
-            .addModule(new JavaTimeModule())
+            .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .build();
 
     private final EventPayloadSerializer serializer = new EventPayloadSerializer(sourceMapper);

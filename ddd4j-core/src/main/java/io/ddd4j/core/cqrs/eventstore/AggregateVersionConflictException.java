@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.eventstore;
+package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 
