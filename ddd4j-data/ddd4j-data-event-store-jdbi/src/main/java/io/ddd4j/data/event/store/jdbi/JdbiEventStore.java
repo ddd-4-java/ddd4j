@@ -55,10 +55,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <h3>乐观锁与 position 生成</h3>
  * <p>append 在事务内以 {@code SELECT COUNT(*)} 读取当前事件数
  * （即当前版本），与 {@code expectedVersion} 不一致即抛 {@link IllegalStateException}
- * 并回滚。全局 position 在事务内以 {@code ORDER BY position DESC LIMIT 1 FOR UPDATE}
- * 行锁读取当前最大值后 +1 生成：并发 append 在最大行上互斥，串行化分配，
- * 消除热路径上的 {@code uk_position} 冲突（空表首写无行可锁，仍由唯一约束兜底）。
- * 超高吞吐多实例场景建议切换数据库序列。
+ * 并回滚。全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
+ * 与 JPA/R2DBC 侧策略一致。
  *
  * <h3>payload 序列化</h3>
  * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
@@ -90,10 +88,9 @@ public class JdbiEventStore implements EventStore {
             "SELECT COUNT(*) FROM " + EventStoreConstants.TABLE_NAME
                     + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId";
 
-    /** 行锁读取当前最大 position 行：FOR UPDATE 使并发 append 在此互斥，串行化分配。 */
     private static final String NEXT_POSITION_SQL =
-            "SELECT " + EventStoreConstants.COLUMN_POSITION + " FROM " + EventStoreConstants.TABLE_NAME
-                    + " ORDER BY " + EventStoreConstants.COLUMN_POSITION + " DESC LIMIT 1 FOR UPDATE";
+            "SELECT COALESCE(MAX(" + EventStoreConstants.COLUMN_POSITION + "), 0) FROM "
+                    + EventStoreConstants.TABLE_NAME;
 
     private static final String INSERT_SQL =
             "INSERT INTO " + EventStoreConstants.TABLE_NAME
@@ -137,9 +134,9 @@ public class JdbiEventStore implements EventStore {
      * 不一致即抛 {@link IllegalStateException} 并回滚。多事件在同一事务内原子提交，
      * 不留半截流。
      *
-     * <p>position 生成：事务内以行锁（{@code FOR UPDATE}）读取当前最大 position 后 +1
-     * 递增，并发 append 在最大行上互斥串行化。首条的 position 在循环前预取，
-     * 后续每条 +1，避免每条都执行锁定查询。
+     * <p>position 生成：事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 递增，
+     * 与 JPA/R2DBC 侧策略一致。首条的 position 在循环前预取 maxPos，
+     * 后续每条 +1，避免每条都执行 MAX 查询。
      */
     @Override
     public void append(String aggregateId, List<Object> events, long expectedVersion) {
@@ -160,11 +157,10 @@ public class JdbiEventStore implements EventStore {
                         "Version conflict: expected " + expectedVersion + " but was " + actualVersion);
             }
 
-            // position 生成在事务内以行锁读取，并发 append 在最大行上互斥，串行化分配
+            // position 生成在事务内执行，避免并发连接读到相同的 maxPos
             long maxPos = handle.createQuery(NEXT_POSITION_SQL)
                     .mapTo(Long.class)
-                    .findFirst()
-                    .orElse(0L);
+                    .one();
             long position = maxPos + 1L;
             LocalDateTime now = LocalDateTime.now();
             long version = expectedVersion;

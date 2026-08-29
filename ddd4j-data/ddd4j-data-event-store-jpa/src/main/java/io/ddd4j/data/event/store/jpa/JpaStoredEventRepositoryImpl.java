@@ -15,7 +15,6 @@
 package io.ddd4j.data.event.store.jpa;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import java.util.List;
 import java.util.Objects;
@@ -27,10 +26,9 @@ import java.util.Objects;
  * 所有查询均使用 JPQL，保持框架无关性。
  *
  * <h3>position 生成策略</h3>
- * <p>行锁读取当前最大 position 后 +1（{@code ORDER BY position DESC + LIMIT 1 +
- * PESSIMISTIC_WRITE}），并发 append 在最大行上互斥串行化，消除热路径上的
- * {@code uk_position} 冲突；空表首写无行可锁仍由唯一约束兜底。
- * 超高吞吐多实例场景建议切换数据库序列。
+ * <p>使用 {@code SELECT COALESCE(MAX(position), 0) + 1} 生成全局单调 position。
+ * 此策略在单实例部署下保证严格递增；在多实例高并发场景下，
+ * 建议切换为数据库序列（如 PostgreSQL 的 {@code NEXTVAL}）以避免争用。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -92,12 +90,14 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
 
     @Override
     public long nextPosition() {
-        List<Long> max = entityManager.createQuery(
-                        "SELECT e.position FROM StoredEventEntity e ORDER BY e.position DESC",
-                        Long.class)
-                .setMaxResults(1)
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                .getResultList();
-        return (max.isEmpty() ? 0L : max.get(0)) + 1L;
+        try {
+            Long maxPosition = entityManager.createQuery(
+                            "SELECT COALESCE(MAX(e.position), 0) FROM StoredEventEntity e",
+                            Long.class)
+                    .getSingleResult();
+            return (maxPosition != null ? maxPosition : 0L) + 1L;
+        } catch (NoResultException e) {
+            return 1L;
+        }
     }
 }

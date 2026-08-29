@@ -20,7 +20,6 @@ import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.kit.lang.JsonKit;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 
 import java.time.Instant;
@@ -72,9 +71,6 @@ public class PanacheEventStore implements EventStore {
      * <p>乐观锁：先查询当前流最大版本，与 {@code expectedVersion} 不一致即抛
      * {@link IllegalStateException}。同一聚合的 append 操作在同一事务内完成，
      * 冲突时整体回滚，不留半截流。
-     *
-     * <p>position 生成：每条事件经 {@link #nextPosition()} 以行锁分配，
-     * 并发 append 在最大行上互斥串行化（详见该方法说明）。
      *
      * <p>事务边界：本方法内开启编程式事务，调用方无需额外包裹。
      */
@@ -179,24 +175,20 @@ public class PanacheEventStore implements EventStore {
     }
 
     /**
-     * 分配下一个全局 position（行锁读取当前最大 position + 1）。
-     *
-     * <p>以 {@code ORDER BY position DESC + setMaxResults(1) + PESSIMISTIC_WRITE}
-     * （SQL 层 {@code LIMIT 1 FOR UPDATE}）锁定当前最大行：并发 append 在此互斥，
-     * 串行化分配，消除热路径上的 {@code uk_position} 冲突。同事务内逐条调用时，
-     * auto-flush 先刷入本批刚插入的行，查询即可见新最大值，批内 position 严格递增。
-     * 空表首写无行可锁，仍由唯一约束兜底。
+     * 分配下一个全局 position（{@code COALESCE(MAX(position), 0) + 1}）。
      *
      * @return 下一个可用的全局 position
      */
     private long nextPosition() {
-        List<Long> max = entityManager.createQuery(
-                        "SELECT e.position FROM PanacheStoredEventEntity e ORDER BY e.position DESC",
-                        Long.class)
-                .setMaxResults(1)
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                .getResultList();
-        return (max.isEmpty() ? 0L : max.get(0)) + 1L;
+        try {
+            Long maxPosition = entityManager.createQuery(
+                            "SELECT COALESCE(MAX(e.position), 0) FROM PanacheStoredEventEntity e",
+                            Long.class)
+                    .getSingleResult();
+            return (maxPosition != null ? maxPosition : 0L) + 1L;
+        } catch (NoResultException e) {
+            return 1L;
+        }
     }
 
     /**
