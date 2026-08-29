@@ -90,4 +90,19 @@ public interface ProjectionMetrics {
     default Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
         return Optional.empty();
     }
+
+    /**
+     * 同一视图连续失败达到 {@link ProjectionRunner#CONSECUTIVE_FAILURE_THRESHOLD} 次时
+     * 的熔断信号。
+     *
+     * <p>实现方可在此抛出告警、暂停消费、发送 PagerDuty 等。信号是粘性的——
+     * 每次达到阈值的整数倍都会触发（5、10、15…），便于升级处理。
+     * 该回调不影响主流程（{@link ProjectionRunner#runAll} 仍继续隔离后续异常）。
+     *
+     * @param viewName        投影视图名
+     * @param consecutiveFail 截至当前的连续失败次数
+     */
+    default void onCircuitOpened(String viewName, int consecutiveFail) {
+        // no-op
+    }
 }

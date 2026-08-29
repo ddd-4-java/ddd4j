@@ -20,12 +20,24 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 增量投影运行器。
  *
  * <p>封装通用投影流程：读取当前位置、拉取事件块、执行业务投影、推进位置。
  * 框架适配层只需要负责调度、事务和 Bean 装配。
+ *
+ * <h3>异常暴露</h3>
+ * <p>{@link #runAll} 在视图间隔离异常，且对连续失败计数：
+ * <ul>
+ *   <li>单次失败 → WARN 级日志；视图状态由 {@link ProjectionMetrics#getLastRunInfo} 暴露</li>
+ *   <li>同一视图连续失败达到 {@link #CONSECUTIVE_FAILURE_THRESHOLD}（默认 5）→ ERROR 级日志 + 发出
+ *       {@link ProjectionMetrics#onCircuitOpened(String, int)} 熔断信号，外部可据此触发告警</li>
+ *   <li>视图恢复一次成功即重置计数</li>
+ * </ul>
  *
  * @param <E> 事件类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -34,11 +46,21 @@ import java.util.Objects;
 @Slf4j
 public class ProjectionRunner<E> {
 
+    /**
+     * 同一视图连续失败触发熔断信号的阈值。
+     */
+    public static final int CONSECUTIVE_FAILURE_THRESHOLD = 5;
+
     private final ProjectionService projectionService;
 
     private final EventChunkReader<E> chunkReader;
 
     private final ProjectionMetrics metrics;
+
+    /**
+     * 视图名 → 连续失败计数（视图恢复成功后清零）。
+     */
+    private final ConcurrentMap<String, AtomicInteger> consecutiveFailures = new ConcurrentHashMap<>();
 
     /**
      * 构造投影运行器（无指标采集）。
@@ -104,6 +126,11 @@ public class ProjectionRunner<E> {
     /**
      * 运行多个视图的一次增量投影。
      *
+     * <p>视图间异常隔离（不互相阻塞），且对连续失败进行熔断信号。
+     * 连续失败次数通过 {@link ProjectionMetrics#getLastRunInfo}（按 streamId）查询；
+     * 同一 stream 连续 {@value #CONSECUTIVE_FAILURE_THRESHOLD} 次失败后，发出
+     * {@link ProjectionMetrics#onCircuitOpened(String, int)} 信号。
+     *
      * @param views 投影视图集合
      */
     public void runAll(Collection<? extends ProjectionView<E>> views) {
@@ -111,10 +138,21 @@ public class ProjectionRunner<E> {
             return;
         }
         for (ProjectionView<E> view : views) {
+            String viewName = view.getName();
             try {
                 runOnce(view);
+                // 成功则重置连续失败计数
+                consecutiveFailures.remove(viewName);
             } catch (RuntimeException ex) {
-                log.error("Projection view '{}' failed, continuing with next view", view.getName(), ex);
+                AtomicInteger counter = consecutiveFailures.computeIfAbsent(viewName, k -> new AtomicInteger());
+                int failures = counter.incrementAndGet();
+                log.warn("Projection view '{}' failed (consecutive={}/{}), continuing with next view",
+                        viewName, failures, CONSECUTIVE_FAILURE_THRESHOLD, ex);
+                if (failures >= CONSECUTIVE_FAILURE_THRESHOLD && failures % CONSECUTIVE_FAILURE_THRESHOLD == 0) {
+                    log.error("Projection view '{}' has failed consecutively for {} runs — CIRCUIT OPEN, alerting downstream",
+                            viewName, failures, ex);
+                    metrics.onCircuitOpened(viewName, failures);
+                }
             }
         }
     }
