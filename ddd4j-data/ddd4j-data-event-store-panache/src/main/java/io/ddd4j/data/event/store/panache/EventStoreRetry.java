@@ -134,29 +134,26 @@ final class EventStoreRetry {
         if (containsCause(t, SQLIntegrityConstraintViolationException.class)) {
             return true;
         }
-        // JPA PersistenceException + message 含 uk_position（覆盖 Hibernate 包装路径）
+        // 遍历 cause 链，匹配两种关键字：
+        //   1. SQLException 嵌套中的标准 SQL 关键字
+        //   2. 任何 RuntimeException（含 PersistenceException）消息中的 uk_position
         Throwable current = t;
         while (current != null) {
-            if (current instanceof SQLException) {
-                String msg = current.getMessage();
-                if (msg != null) {
-                    String lower = msg.toLowerCase();
-                    if (lower.contains("uk_position") || lower.contains("unique constraint")
-                            || lower.contains("duplicate key") || lower.contains("duplicate entry")) {
-                        return true;
-                    }
+            String msg = current.getMessage();
+            if (msg != null) {
+                String lower = msg.toLowerCase();
+                if (lower.contains("uk_position") || lower.contains("unique constraint")
+                        || lower.contains("unique index") || lower.contains("duplicate key")
+                        || lower.contains("duplicate entry")) {
+                    return true;
                 }
             }
-            // PersistenceException 一般不带 SQL 关键字，但其 cause 链会包含；
-            // 上面 SQLException 遍历已覆盖。
             if (current.getCause() == current) {
                 break;
             }
             current = current.getCause();
         }
-        // PersistenceException 单独识别（Hibernate 唯一约束会包成 PersistenceException，
-        // cause 链未必有 SQLException 但有 ConstraintViolationException——后者是
-        // org.hibernate.exception 的，编译期不可见，故此处仅按类名匹配）
+        // Hibernate ConstraintViolationException（按类名匹配，避免编译期依赖 hibernate-core）
         if (containsCauseByName(t, "ConstraintViolationException")) {
             return true;
         }
