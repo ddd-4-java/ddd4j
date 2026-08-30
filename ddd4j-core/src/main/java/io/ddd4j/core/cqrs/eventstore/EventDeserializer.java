@@ -76,6 +76,18 @@ public final class EventDeserializer {
     }
 
     /**
+     * 获取当前进程级类名过滤器。
+     *
+     * <p>供其他反序列化入口（如配置驱动的工厂类加载）复用同一白名单，
+     * 保证全 JVM 的类名加载策略一致。
+     *
+     * @return 当前生效的过滤器（永不为 {@code null}；未注册时返回 {@link #defaultFilter()}）
+     */
+    public static ClassNameFilter filter() {
+        return filter;
+    }
+
+    /**
      * 校验类名是否为合法的 Java 全限定名格式。
      *
      * <p>在以 {@code Class.forName} 加载外部输入的类名之前调用，

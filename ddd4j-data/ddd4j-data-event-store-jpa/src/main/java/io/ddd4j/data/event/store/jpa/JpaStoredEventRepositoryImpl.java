@@ -30,6 +30,11 @@ import java.util.Objects;
  * 此策略在单实例部署下保证严格递增；在多实例高并发场景下，
  * 建议切换为数据库序列（如 PostgreSQL 的 {@code NEXTVAL}）以避免争用。
  *
+ * <p><b>并发冲突契约：</b>{@code MAX(position)} 读取无行锁保护，并发 append 可能
+ * 读到相同值导致 {@code uk_position} 唯一约束冲突，事务被回滚。调用方应捕获
+ * {@code ConstraintViolationException} 并按指数退避重试整个 append 流程；版本号
+ * 若已变化则回到乐观锁失败分支。高并发多实例场景应切换为数据库序列。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
