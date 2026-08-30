@@ -55,14 +55,27 @@ public class PanacheEventStore implements EventStore {
 
     private final EntityManager entityManager;
 
+    private final EventStoreRetry retry;
+
     /**
      * 创建 Panache 事件存储。
      *
-     * @param entityManager JPA 实体管理器（由调用方管理生命周期）
+     * @param entityManager JPA EntityManager
      * @throws NullPointerException entityManager 为 null 时抛出
      */
     public PanacheEventStore(EntityManager entityManager) {
+        this(entityManager, new EventStoreRetry());
+    }
+
+    /**
+     * 创建 Panache 事件存储（指定重试策略；主要供测试使用）。
+     *
+     * @param entityManager JPA EntityManager
+     * @param retry         重试策略
+     */
+    public PanacheEventStore(EntityManager entityManager, EventStoreRetry retry) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
+        this.retry = Objects.requireNonNull(retry, "retry must not be null");
     }
 
     /**
@@ -73,6 +86,11 @@ public class PanacheEventStore implements EventStore {
      * 冲突时整体回滚，不留半截流。
      *
      * <p>事务边界：本方法内开启编程式事务，调用方无需额外包裹。
+     *
+     * <p><b>并发冲突契约：</b>{@link #nextPosition()} 读取 {@code MAX(position)} 无行锁保护，
+     * 并发 append 可能读到相同值导致 {@code uk_position} 唯一约束冲突，事务被回滚。
+     * 调用方应捕获 {@code ConstraintViolationException} 并按指数退避重试整个 append 流程；
+     * 版本号若已变化则回到乐观锁失败分支。高并发多实例场景应切换为数据库序列。
      */
     @Override
     public void append(String aggregateId, List<Object> events, long expectedVersion) {
@@ -82,40 +100,42 @@ public class PanacheEventStore implements EventStore {
             return;
         }
 
-        EntityTransaction tx = entityManager.getTransaction();
-        try {
-            tx.begin();
-            entityManager.clear();
+        retry.execute("append(" + aggregateId + ")", () -> {
+            EntityTransaction tx = entityManager.getTransaction();
+            try {
+                tx.begin();
+                entityManager.clear();
 
-            long currentVersion = findCurrentVersion(aggregateId);
-            if (currentVersion != expectedVersion) {
-                throw new IllegalStateException(
-                        "Version conflict: expected " + expectedVersion + " but was " + currentVersion);
-            }
+                long currentVersion = findCurrentVersion(aggregateId);
+                if (currentVersion != expectedVersion) {
+                    throw new IllegalStateException(
+                            "Version conflict: expected " + expectedVersion + " but was " + currentVersion);
+                }
 
-            Instant now = Instant.now();
-            long version = expectedVersion;
-            for (Object event : events) {
-                PanacheStoredEventEntity entity = new PanacheStoredEventEntity();
-                entity.aggregateId = aggregateId;
-                entity.version = version;
-                entity.position = nextPosition();
-                entity.eventType = event.getClass().getName();
-                entity.payload = JsonKit.toJson(event);
-                entity.timestamp = now;
-                entityManager.persist(entity);
-                version++;
-            }
+                Instant now = Instant.now();
+                long version = expectedVersion;
+                for (Object event : events) {
+                    PanacheStoredEventEntity entity = new PanacheStoredEventEntity();
+                    entity.aggregateId = aggregateId;
+                    entity.version = version;
+                    entity.position = nextPosition();
+                    entity.eventType = event.getClass().getName();
+                    entity.payload = JsonKit.toJson(event);
+                    entity.timestamp = now;
+                    entityManager.persist(entity);
+                    version++;
+                }
 
-            entityManager.flush();
-            entityManager.clear();
-            tx.commit();
-        } catch (RuntimeException e) {
-            if (tx.isActive()) {
-                tx.rollback();
+                entityManager.flush();
+                entityManager.clear();
+                tx.commit();
+            } catch (RuntimeException e) {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+                throw e;
             }
-            throw e;
-        }
+        });
     }
 
     /**

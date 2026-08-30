@@ -58,6 +58,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 并回滚。全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
  * 与 JPA/R2DBC 侧策略一致。
  *
+ * <p><b>并发冲突契约：</b>由于 H2 不支持 {@code FOR UPDATE} 行锁（详见 0980d22c
+ * 回退提交），并发的 append 事务可能读到相同的 {@code MAX(position)} 并各自生成
+ * 重复的 position 值。{@code uk_position} 唯一约束作为兜底会抛
+ * {@link java.sql.SQLException}/{@code ConstraintViolationException}，事务被强制回滚。
+ * 调用方应捕获该异常并按指数退避重试整个 append 流程（保持 expectedVersion 不变）；
+ * 若重试后版本号已变化则回到 {@link IllegalStateException} 乐观锁失败分支。
+ * 高并发多实例场景建议改用数据库序列（如 PostgreSQL {@code nextval}）。
+ *
  * <h3>payload 序列化</h3>
  * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
  * 读取时通过 {@link EventDeserializer#deserialize} 按 {@code event_type} 反序列化。
@@ -115,6 +123,8 @@ public class JdbiEventStore implements EventStore {
 
     private final Jdbi jdbi;
 
+    private final EventStoreRetry retry;
+
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     /**
@@ -124,7 +134,18 @@ public class JdbiEventStore implements EventStore {
      * @throws NullPointerException jdbi 为 null 时抛出
      */
     public JdbiEventStore(Jdbi jdbi) {
+        this(jdbi, new EventStoreRetry());
+    }
+
+    /**
+     * 创建 JDBI 事件存储（指定重试策略；主要供测试使用）。
+     *
+     * @param jdbi  JDBI 实例
+     * @param retry 重试策略
+     */
+    public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry) {
         this.jdbi = Objects.requireNonNull(jdbi, "jdbi must not be null");
+        this.retry = Objects.requireNonNull(retry, "retry must not be null");
     }
 
     /**
@@ -146,37 +167,46 @@ public class JdbiEventStore implements EventStore {
             return;
         }
         ensureInitialized();
-        jdbi.useTransaction(handle -> {
-            // 版本校验（乐观锁第一道）
-            long actualVersion = handle.createQuery(CURRENT_VERSION_SQL)
-                    .bind("aggregateId", aggregateId)
-                    .mapTo(Long.class)
-                    .one();
-            if (actualVersion != expectedVersion) {
-                throw new IllegalStateException(
-                        "Version conflict: expected " + expectedVersion + " but was " + actualVersion);
-            }
+        try {
+            retry.execute("append(" + aggregateId + ")", () -> {
+                jdbi.useTransaction(handle -> {
+                    // 版本校验（乐观锁第一道）
+                    long actualVersion = handle.createQuery(CURRENT_VERSION_SQL)
+                            .bind("aggregateId", aggregateId)
+                            .mapTo(Long.class)
+                            .one();
+                    if (actualVersion != expectedVersion) {
+                        throw new IllegalStateException(
+                                "Version conflict: expected " + expectedVersion + " but was " + actualVersion);
+                    }
 
-            // position 生成在事务内执行，避免并发连接读到相同的 maxPos
-            long maxPos = handle.createQuery(NEXT_POSITION_SQL)
-                    .mapTo(Long.class)
-                    .one();
-            long position = maxPos + 1L;
-            LocalDateTime now = LocalDateTime.now();
-            long version = expectedVersion;
-            for (Object event : events) {
-                handle.createUpdate(INSERT_SQL)
-                        .bind("aggregateId", aggregateId)
-                        .bind("version", version)
-                        .bind("position", position)
-                        .bind("eventType", event.getClass().getName())
-                        .bind("payload", JsonKit.toJson(event))
-                        .bind("timestamp", now)
-                        .execute();
-                version++;
-                position++;
-            }
-        });
+                    // position 生成在事务内执行，避免并发连接读到相同的 maxPos
+                    long maxPos = handle.createQuery(NEXT_POSITION_SQL)
+                            .mapTo(Long.class)
+                            .one();
+                    long position = maxPos + 1L;
+                    LocalDateTime now = LocalDateTime.now();
+                    long version = expectedVersion;
+                    for (Object event : events) {
+                        handle.createUpdate(INSERT_SQL)
+                                .bind("aggregateId", aggregateId)
+                                .bind("version", version)
+                                .bind("position", position)
+                                .bind("eventType", event.getClass().getName())
+                                .bind("payload", JsonKit.toJson(event))
+                                .bind("timestamp", now)
+                                .execute();
+                        version++;
+                        position++;
+                    }
+                });
+                return null;
+            });
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
