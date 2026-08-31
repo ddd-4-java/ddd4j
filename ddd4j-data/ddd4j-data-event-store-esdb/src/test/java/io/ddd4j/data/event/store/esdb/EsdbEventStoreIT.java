@@ -14,10 +14,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,13 +29,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EsdbEventStoreIT {
     private static final String ORDER_TYPE = "Order";
     @Container static final GenericContainer<?> ESDB = new GenericContainer<>(DockerImageName.parse("eventstore/eventstore:24.10.0-bookworm-slim"))
-            .withExposedPorts(2113).withEnv("INSECURE", "true").withEnv("EVENTSTORE_MEM_DB", "true");
+            .withExposedPorts(2113)
+            .withEnv("EVENTSTORE_CLUSTER_SIZE", "1")
+            .withEnv("EVENTSTORE_RUN_PROJECTIONS", "All")
+            .withEnv("EVENTSTORE_START_STANDARD_PROJECTIONS", "true")
+            .withEnv("EVENTSTORE_INSECURE", "true")
+            .withEnv("EVENTSTORE_MEM_DB", "true")
+            .waitingFor(Wait.forHttp("/health/live").forPort(2113)
+                    .forStatusCodeMatching(status -> status >= 200 && status < 300))
+            .withStartupTimeout(Duration.ofMinutes(2));
     private static EventStoreDBClient client;
     private EventStore store;
 
     @BeforeAll static void createClient() {
         client = EventStoreDBClient.create(EventStoreDBConnectionString.parseOrThrow(
-                "esdb://localhost:" + ESDB.getMappedPort(2113) + "?tls=false&maxDiscoverAttempts=10"));
+                "esdb://" + ESDB.getHost() + ":" + ESDB.getMappedPort(2113)
+                        + "?tls=false&maxDiscoverAttempts=3"));
     }
     @AfterAll static void closeClient() { if (client != null) client.shutdown(); }
     @BeforeEach void setUp() { store = new EsdbEventStore(client, "it-" + System.nanoTime() + "-"); }
