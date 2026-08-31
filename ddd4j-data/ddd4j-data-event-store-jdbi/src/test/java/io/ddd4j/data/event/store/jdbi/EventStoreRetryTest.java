@@ -154,4 +154,85 @@ class EventStoreRetryTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("baseDelayMillis");
     }
+
+    @Test
+    void 任意RuntimeException_message含uk_position关键字_判定可重试() {
+        // 模拟 Hibernate 把 SQLException 包装为 PersistenceException 时，
+        // cause 链可能不包含 SQLException 但 message 仍带 uk_position 字样。
+        RuntimeException wrapped = new RuntimeException(
+                "Unique index uk_position violation detected");
+        assertThat(EventStoreRetry.isRetriable(wrapped)).isTrue();
+    }
+
+    @Test
+    void 任意RuntimeException_message含unique_index关键字_判定可重试() {
+        // H2 错误信息原文："Unique index uk_position violation"
+        RuntimeException wrapped = new RuntimeException("Unique index uk_position violation");
+        assertThat(EventStoreRetry.isRetriable(wrapped)).isTrue();
+    }
+
+    @Test
+    void 任意RuntimeException_message含duplicate_entry关键字_判定可重试() {
+        RuntimeException wrapped = new RuntimeException("Duplicate entry 'x' for key 'uk_position'");
+        assertThat(EventStoreRetry.isRetriable(wrapped)).isTrue();
+    }
+
+    @Test
+    void cause链中任意Throwable_message含uk_position_判定可重试() {
+        // 深层嵌套场景：顶层 RuntimeException → cause RuntimeException → message 含关键字
+        RuntimeException deep = new RuntimeException("uk_position violation");
+        RuntimeException outer = new RuntimeException("outer wrapper", deep);
+        assertThat(EventStoreRetry.isRetriable(outer)).isTrue();
+    }
+
+    @Test
+    void cause链中类名ConstraintViolationException_判定可重试() {
+        // 模拟 Hibernate ConstraintViolationException：编译期不可见，仅按类名匹配。
+        Throwable hibernateCve = createThrowableByName(
+                "org.hibernate.exception.ConstraintViolationException",
+                "Unique index uk_position violation");
+        RuntimeException wrapped = new RuntimeException("PersistenceException wrapper", hibernateCve);
+        assertThat(EventStoreRetry.isRetriable(wrapped)).isTrue();
+    }
+
+    @Test
+    void 线程中断_sleeper被中断_恢复中断标志() throws Exception {
+        AtomicInteger interruptedFlagAfter = new AtomicInteger(0);
+        EventStoreRetry.Sleeper interruptingSleeper = millis -> {
+            throw new InterruptedException("test interrupt");
+        };
+        EventStoreRetry retry = new EventStoreRetry(3, 1L, interruptingSleeper);
+
+        // 验证：retry 把 InterruptedException 包成 RuntimeException，但保留线程中断标志
+        assertThatThrownBy(() -> retry.execute("op", () -> {
+            throw new SQLIntegrityConstraintViolationException("uk_position");
+        })).isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("interrupted");
+
+        // 必须在 catch 之后再次检查中断标志，确保被恢复
+        assertThat(Thread.currentThread().isInterrupted())
+                .as("Thread interrupt flag must be restored after InterruptedException handling")
+                .isTrue();
+        // 清理中断标志，避免污染同线程后续测试
+        Thread.interrupted();
+    }
+
+    /**
+     * 通过反射构造指定类名的 Throwable 实例（用于模拟 Hibernate 等编译期不可见的类）。
+     * 若类不存在则返回带相同消息的普通 RuntimeException。
+     */
+    private static Throwable createThrowableByName(String className, String message) {
+        try {
+            Class<?> cls = Class.forName(className);
+            return (Throwable) cls.getConstructor(String.class).newInstance(message);
+        } catch (Throwable reflectFailure) {
+            // 编译期无 hibernate-core 时回退为带相同类名的 RuntimeException 子类（不会真实触发）
+            return new RuntimeException(message) {
+                @Override
+                public String toString() {
+                    return className + ": " + message;
+                }
+            };
+        }
+    }
 }

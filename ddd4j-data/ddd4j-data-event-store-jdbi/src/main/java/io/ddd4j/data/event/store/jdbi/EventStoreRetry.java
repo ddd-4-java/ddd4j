@@ -25,13 +25,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * EventStore append 重试工具：捕获 {@code uk_position} 唯一约束冲突后
  * 按指数退避自动重试整个 append 操作（保持 {@code expectedVersion} 不变）。
  *
- * <p>仅对{@link #isRetriable(Throwable) 可重试异常}做重试：
- * <ul>
- *   <li>{@link SQLIntegrityConstraintViolationException}（JDBC 标准）</li>
- *   <li>任意 {@link SQLException} 含 "uk_position" 或 "unique constraint" 字样</li>
- * </ul>
- *
- * <p>非可重试异常（{@link IllegalStateException} 乐观锁失败等）立即抛出，不重试。
+ * <p>检测范围（按顺序短路）：
+ * <ol>
+ *   <li>{@link IllegalStateException}（乐观锁版本冲突）— 立即抛，不重试</li>
+ *   <li>嵌套 {@link SQLIntegrityConstraintViolationException}</li>
+ *   <li>任意 cause 链中消息含 "uk_position"/"unique constraint"/"unique index"/"duplicate key"/"duplicate entry"
+ *       的 {@link Throwable}（覆盖 Hibernate 包装路径）</li>
+ *   <li>类名为 "ConstraintViolationException" 的 cause（兼容 Hibernate，避免编译期依赖）</li>
+ * </ol>
  *
  * <p>退避策略：基础延迟 10ms，每次翻倍，加 0-10ms 抖动避免雷鸣群。
  * 默认最大 5 次尝试（含首次）；总耗时上限 ~310ms（10+20+40+80+160+抖动）。
@@ -92,7 +93,12 @@ final class EventStoreRetry {
                 long delay = computeDelay(attempt);
                 LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
                         operation, attempt, maxAttempts, delay);
-                sleeper.sleep(delay);
+                try {
+                    sleeper.sleep(delay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
+                }
             }
         }
         // 不应到达，但编译器要求
@@ -110,10 +116,10 @@ final class EventStoreRetry {
      *
      * <p>判断规则（按顺序短路）：
      * <ol>
-     *   <li>非 {@link RuntimeException} 且非 {@link Exception}（如 {@link java.lang.Error}）→ false</li>
-     *   <li>顶层异常为 {@link SQLIntegrityConstraintViolationException} → true</li>
-     *   <li>顶层或任何 cause 为 {@link SQLException}，且 message 含 "uk_position"/"unique constraint" → true</li>
-     *   <li>{@link IllegalStateException} 是乐观锁失败信号，<b>不可</b>重试</li>
+     *   <li>{@link IllegalStateException}（乐观锁版本冲突）→ false（不可重试）</li>
+     *   <li>顶层或任何 cause 为 {@link SQLIntegrityConstraintViolationException} → true</li>
+     *   <li>顶层或任何 cause 的 message 含 "uk_position"/"unique constraint"/"unique index"/"duplicate key"/"duplicate entry" → true</li>
+     *   <li>类名为 "ConstraintViolationException" 的 cause（兼容 Hibernate，避免编译期依赖） → true</li>
      * </ol>
      */
     static boolean isRetriable(Throwable t) {
@@ -124,22 +130,58 @@ final class EventStoreRetry {
         if (t instanceof IllegalStateException) {
             return false;
         }
-        // JDBC 唯一约束冲突标准异常
-        if (t instanceof SQLIntegrityConstraintViolationException) {
+        // JDBC 唯一约束冲突标准异常（顶层或嵌套 cause）
+        if (containsCause(t, SQLIntegrityConstraintViolationException.class)) {
             return true;
         }
-        // 任意 SQLException 嵌套链中匹配关键字
+        // 遍历 cause 链，匹配两种关键字：
+        //   1. SQLException 嵌套中的标准 SQL 关键字
+        //   2. 任何 RuntimeException（含 PersistenceException）消息中的 uk_position
         Throwable current = t;
         while (current != null) {
-            if (current instanceof SQLException) {
-                String msg = current.getMessage();
-                if (msg != null) {
-                    String lower = msg.toLowerCase();
-                    if (lower.contains("uk_position") || lower.contains("unique constraint")
-                            || lower.contains("duplicate key") || lower.contains("duplicate entry")) {
-                        return true;
-                    }
+            String msg = current.getMessage();
+            if (msg != null) {
+                String lower = msg.toLowerCase();
+                if (lower.contains("uk_position") || lower.contains("unique constraint")
+                        || lower.contains("unique index") || lower.contains("duplicate key")
+                        || lower.contains("duplicate entry")) {
+                    return true;
                 }
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        // Hibernate ConstraintViolationException（按类名匹配，避免编译期依赖 hibernate-core）
+        if (containsCauseByName(t, "ConstraintViolationException")) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean containsCause(Throwable t, Class<? extends Throwable> target) {
+        Throwable current = t;
+        while (current != null) {
+            if (target.isInstance(current)) {
+                return true;
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    /**
+     * 通过类名匹配识别 cause 链中的特定异常（避免硬依赖 Hibernate）。
+     */
+    private static boolean containsCauseByName(Throwable t, String simpleClassName) {
+        Throwable current = t;
+        while (current != null) {
+            if (simpleClassName.equals(current.getClass().getSimpleName())) {
+                return true;
             }
             if (current.getCause() == current) {
                 break;
