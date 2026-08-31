@@ -47,7 +47,7 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
         }
         // 兜底：尝试从 query parameter 提取
         String tokenParam = request.getParameter("token");
-        if (tokenParam != null && !tokenParam.isBlank()) {
+        if (tokenParam != null && !tokenParam.trim().isEmpty()) {
             return tokenParam.trim();
         }
         return null;

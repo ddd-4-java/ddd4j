@@ -57,7 +57,7 @@ public final class SqsMessageAcknowledgmentFactory {
      */
     private static AmazonSQS resolveAmazonSqs(MQMessage<?> message) {
         Object client = message.headers().get(HEADER_AMAZON_SQS);
-        return client instanceof AmazonSQS amazonSqs ? amazonSqs : null;
+        return client instanceof AmazonSQS ? (AmazonSQS) client : null;
     }
 
     /**

@@ -420,7 +420,8 @@
         <protostuff.version>1.8.0</protostuff.version>
         <protobuf-java.version>4.35.1</protobuf-java.version>
         <proxool.version>0.9.1</proxool.version>
-        <pulsar.version>4.1.2</pulsar.version>
+        <!-- Pulsar 4.x requires a newer JDK; feature/1.0.x uses the Java 8 client line. -->
+        <pulsar.version>2.10.6</pulsar.version>
         <pulsar-reactive.version>0.7.0</pulsar-reactive.version>
         <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <qcloud-cos-api.version>5.6.259</qcloud-cos-api.version>
@@ -3364,10 +3365,10 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${javax-servlet.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/javax.validation/javax.validation-api -->
+            <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
             <dependency>
                 <groupId>javax.validation</groupId>
-                <artifactId>javax.validation-api</artifactId>
+                <artifactId>validation-api</artifactId>
                 <version>${javax-validation.version}</version>
             </dependency>
 

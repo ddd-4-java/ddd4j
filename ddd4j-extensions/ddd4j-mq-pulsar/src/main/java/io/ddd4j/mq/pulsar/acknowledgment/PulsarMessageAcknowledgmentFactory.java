@@ -32,8 +32,8 @@ public final class PulsarMessageAcknowledgmentFactory {
         Message<?> pulsarMessage = headers.get(PulsarMessageAcknowledgment.HEADER_PULSAR_MESSAGE, Message.class);
         if (consumer == null || pulsarMessage == null) {
             Object payload = message.getPayload();
-            if (payload instanceof Message<?> payloadMessage) {
-                pulsarMessage = payloadMessage;
+            if (payload instanceof Message) {
+                pulsarMessage = (Message<?>) payload;
             }
         }
         if (consumer == null || pulsarMessage == null) {
@@ -52,9 +52,9 @@ public final class PulsarMessageAcknowledgmentFactory {
         Objects.requireNonNull(message, "message");
         Object consumerHeader = message.headers().get(PulsarMessageAcknowledgment.HEADER_PULSAR_CONSUMER);
         Object messageHeader = message.headers().get(PulsarMessageAcknowledgment.HEADER_PULSAR_MESSAGE);
-        if (!(consumerHeader instanceof Consumer<?> consumer) || !(messageHeader instanceof Message<?> pulsarMessage)) {
+        if (!(consumerHeader instanceof Consumer) || !(messageHeader instanceof Message)) {
             return Optional.empty();
         }
-        return Optional.of(new PulsarMessageAcknowledgment(consumer, pulsarMessage));
+        return Optional.of(new PulsarMessageAcknowledgment((Consumer<?>) consumerHeader, (Message<?>) messageHeader));
     }
 }

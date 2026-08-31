@@ -10,7 +10,6 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.pulsar.core.PulsarTemplate;
 
 /**
  * Pulsar 组件自动配置，在 {@code ddd4j.mq.enabled=true} 且 broker=pulsar 时生效。
@@ -33,10 +32,10 @@ public class Ddd4jPulsarMQAutoConfiguration {
      */
     @Bean
     public PulsarMQBrokerAdapter pulsarMQBrokerAdapter(
-            PulsarTemplate<String> pulsarTemplate,
+            PulsarClient pulsarClient,
             Ddd4jMQProperties properties,
             PulsarConsumerEndpointRegistrar consumerEndpointRegistrar) {
-        return new PulsarMQBrokerAdapter(pulsarTemplate, properties, consumerEndpointRegistrar);
+        return new PulsarMQBrokerAdapter(pulsarClient, properties, consumerEndpointRegistrar);
     }
 
     /**
@@ -44,8 +43,8 @@ public class Ddd4jPulsarMQAutoConfiguration {
      */
     @Bean
     public MQEventPublisher pulsarMQEventPublisher(
-            PulsarTemplate<String> pulsarTemplate,
+            PulsarClient pulsarClient,
             Ddd4jMQProperties properties) {
-        return new PulsarMQEventPublisher(pulsarTemplate, properties);
+        return new PulsarMQEventPublisher(pulsarClient, properties);
     }
 }

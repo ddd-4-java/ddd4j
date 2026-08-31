@@ -30,14 +30,14 @@ public final class AmqpMessageAcknowledgmentFactory {
         // 逻辑块：从 AMQP 标准头提取 Channel 与 deliveryTag
         Object channelHeader = headers.get(AmqpHeaders.CHANNEL);
         Object deliveryTagHeader = headers.get(AmqpHeaders.DELIVERY_TAG);
-        if (!(channelHeader instanceof Channel channel) || deliveryTagHeader == null) {
+        if (!(channelHeader instanceof Channel) || deliveryTagHeader == null) {
             return Optional.empty();
         }
 
         long deliveryTag = toLong(deliveryTagHeader);
         String messageId = headerAsString(headers, AmqpHeaders.MESSAGE_ID);
         String correlationId = headerAsString(headers, AmqpHeaders.CORRELATION_ID);
-        return Optional.of(new AmqpMessageAcknowledgment(channel, deliveryTag, messageId, correlationId));
+        return Optional.of(new AmqpMessageAcknowledgment((Channel) channelHeader, deliveryTag, messageId, correlationId));
     }
 
     /**
@@ -50,7 +50,7 @@ public final class AmqpMessageAcknowledgmentFactory {
         Objects.requireNonNull(message, "message");
         Object channelHeader = message.headers().get(AmqpHeaders.CHANNEL);
         Object deliveryTagHeader = message.headers().get(AmqpHeaders.DELIVERY_TAG);
-        if (!(channelHeader instanceof Channel channel) || deliveryTagHeader == null) {
+        if (!(channelHeader instanceof Channel) || deliveryTagHeader == null) {
             return Optional.empty();
         }
         long deliveryTag = toLong(deliveryTagHeader);
@@ -58,15 +58,15 @@ public final class AmqpMessageAcknowledgmentFactory {
         Object correlationIdHeader = message.headers().get(AmqpHeaders.CORRELATION_ID);
         String messageId = messageIdHeader == null ? null : String.valueOf(messageIdHeader);
         String correlationId = correlationIdHeader == null ? null : String.valueOf(correlationIdHeader);
-        return Optional.of(new AmqpMessageAcknowledgment(channel, deliveryTag, messageId, correlationId));
+        return Optional.of(new AmqpMessageAcknowledgment((Channel) channelHeader, deliveryTag, messageId, correlationId));
     }
 
     /**
      * 将 header 值安全转换为 long。
      */
     private static long toLong(Object value) {
-        if (value instanceof Number number) {
-            return number.longValue();
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
         }
         return Long.parseLong(String.valueOf(value));
     }

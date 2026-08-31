@@ -14,15 +14,15 @@ import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.spi.MQBrokerAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
-import org.springframework.pulsar.core.PulsarTemplate;
+import org.apache.pulsar.client.api.PulsarClient;
 
 /**
- * Pulsar Broker 适配器，桥接 ddd4j MQ SPI 与 Spring Pulsar。
+ * Pulsar Broker 适配器，桥接 ddd4j MQ SPI 与原生 Pulsar Java Client。
  */
 @RequiredArgsConstructor
 public class PulsarMQBrokerAdapter implements MQBrokerAdapter {
 
-    private final PulsarTemplate<String> pulsarTemplate;
+    private final PulsarClient pulsarClient;
     private final Ddd4jMQProperties properties;
     private final PulsarConsumerEndpointRegistrar consumerEndpointRegistrar;
 
@@ -33,7 +33,7 @@ public class PulsarMQBrokerAdapter implements MQBrokerAdapter {
 
     @Override
     public MQEventPublisher createPublisher(Ddd4jMQProperties props) {
-        return new PulsarMQEventPublisher(pulsarTemplate, props);
+        return new PulsarMQEventPublisher(pulsarClient, props);
     }
 
     @Override

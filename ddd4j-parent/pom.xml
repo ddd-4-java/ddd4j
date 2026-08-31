@@ -97,7 +97,7 @@
         <!-- For Validation Api -->
         <dependency>
             <groupId>javax.validation</groupId>
-            <artifactId>javax.validation-api</artifactId>
+            <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>

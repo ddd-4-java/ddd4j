@@ -97,7 +97,7 @@ public class SqsMQConsumerEndpointRegistrar implements AutoCloseable {
      * 返回已登记的监听器定义。
      */
     public List<MQListenerDefinition> registeredDefinitions() {
-        return List.copyOf(registeredDefinitions);
+        return java.util.Collections.unmodifiableList(new java.util.ArrayList<MQListenerDefinition>(registeredDefinitions));
     }
 
     /**

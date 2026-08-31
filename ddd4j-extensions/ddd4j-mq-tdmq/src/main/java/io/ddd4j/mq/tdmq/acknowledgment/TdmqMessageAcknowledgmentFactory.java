@@ -26,8 +26,8 @@ public final class TdmqMessageAcknowledgmentFactory {
             return Optional.of(ack);
         }
         Object payload = message.payload();
-        if (payload instanceof TdmqMessageAcknowledgment nativeAck) {
-            return Optional.of(nativeAck);
+        if (payload instanceof TdmqMessageAcknowledgment) {
+            return Optional.of((TdmqMessageAcknowledgment) payload);
         }
         return Optional.empty();
     }

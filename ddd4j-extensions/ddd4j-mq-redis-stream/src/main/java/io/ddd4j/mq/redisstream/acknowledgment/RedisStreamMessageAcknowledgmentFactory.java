@@ -57,13 +57,13 @@ public final class RedisStreamMessageAcknowledgmentFactory {
         Object streamKeyHeader = message.headers().get(RedisStreamMessageAcknowledgment.HEADER_STREAM_KEY);
         Object groupHeader = message.headers().get(RedisStreamMessageAcknowledgment.HEADER_CONSUMER_GROUP);
         Object recordIdHeader = message.headers().get(RedisStreamMessageAcknowledgment.HEADER_RECORD_ID);
-        if (!(streamKeyHeader instanceof String streamKey)
-                || !(groupHeader instanceof String consumerGroup)
-                || !(recordIdHeader instanceof RecordId recordId)) {
+        if (!(streamKeyHeader instanceof String)
+                || !(groupHeader instanceof String)
+                || !(recordIdHeader instanceof RecordId)) {
             return Optional.empty();
         }
         return Optional.of(new RedisStreamMessageAcknowledgment(
-                stringRedisTemplate, streamKey, consumerGroup, recordId));
+                stringRedisTemplate, (String) streamKeyHeader, (String) groupHeader, (RecordId) recordIdHeader));
     }
 
     /**
@@ -78,6 +78,6 @@ public final class RedisStreamMessageAcknowledgmentFactory {
      * 判断字符串是否有内容。
      */
     private static boolean hasText(String value) {
-        return value != null && !value.isBlank();
+        return value != null && !value.trim().isEmpty();
     }
 }

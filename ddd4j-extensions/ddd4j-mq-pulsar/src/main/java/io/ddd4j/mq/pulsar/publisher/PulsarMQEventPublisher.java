@@ -5,61 +5,43 @@ import io.ddd4j.core.utils.JsonKit;
 import io.ddd4j.mq.config.Ddd4jMQProperties;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.pulsar.core.PulsarTemplate;
+import org.apache.pulsar.client.api.Producer;
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.api.Schema;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 基于 {@link PulsarTemplate} 的领域事件发布实现。
- */
-@Slf4j
-@RequiredArgsConstructor
+/** 基于原生 PulsarClient 的领域事件发布实现（JDK8 兼容）。 */
 public class PulsarMQEventPublisher implements MQEventPublisher {
-
-    private final PulsarTemplate<String> pulsarTemplate;
+    private final PulsarClient pulsarClient;
     private final Ddd4jMQProperties properties;
-
-    @Override
-    public <T extends MQEvent> void publish(T event, MQDestination destination) {
-        Objects.requireNonNull(event, "event");
-        Objects.requireNonNull(destination, "destination");
-
-        // 逻辑块：补齐事件元数据
-        if (!StringUtils.hasText(event.getTopic())) {
-            event.setTopic(properties.getDefaultTopic());
-        }
-        if (!StringUtils.hasText(event.getNamespace())) {
-            event.setNamespace(properties.getNamespace());
-        }
-        if (event.getMsgId() == null) {
-            event.setMsgId(String.valueOf(System.currentTimeMillis()));
-        }
-
-        // 逻辑块：序列化并发送到 Pulsar topic
-        String payload = JsonKit.toJson(event);
+    private final Map<String, Producer<String>> producers = new ConcurrentHashMap<String, Producer<String>>();
+    public PulsarMQEventPublisher(PulsarClient pulsarClient, Ddd4jMQProperties properties) { this.pulsarClient = Objects.requireNonNull(pulsarClient, "pulsarClient"); this.properties = Objects.requireNonNull(properties, "properties"); }
+    @Override public <T extends MQEvent> void publish(T event, MQDestination destination) {
+        Objects.requireNonNull(event, "event"); Objects.requireNonNull(destination, "destination");
+        if (!StringUtils.hasText(event.getTopic())) event.setTopic(properties.getDefaultTopic());
+        if (!StringUtils.hasText(event.getNamespace())) event.setNamespace(properties.getNamespace());
+        if (event.getMsgId() == null) event.setMsgId(String.valueOf(System.currentTimeMillis()));
         String topic = buildTopic(destination, event.getTag());
-        pulsarTemplate.send(topic, payload);
-        log.debug("Published Pulsar event, topic={}, msgId={}", topic, event.getMsgId());
+        try { producer(topic).send(JsonKit.toJson(event)); }
+        catch (PulsarClientException exception) { throw new IllegalStateException("Failed to publish Pulsar event to " + topic, exception); }
     }
-
-    /**
-     * 根据目的地与 tag 生成 Pulsar topic 名称。
-     */
+    private Producer<String> producer(String topic) throws PulsarClientException {
+        Producer<String> existing = producers.get(topic); if (existing != null) return existing;
+        Producer<String> created = pulsarClient.newProducer(Schema.STRING).topic(topic).create();
+        Producer<String> previous = producers.putIfAbsent(topic, created);
+        if (previous != null) { created.close(); return previous; }
+        return created;
+    }
     private String buildTopic(MQDestination destination, String eventTag) {
-        String namespace = StringUtils.hasText(destination.namespace())
-                ? destination.namespace()
-                : properties.getNamespace();
-        String topic = StringUtils.hasText(destination.topic())
-                ? destination.topic()
-                : properties.getDefaultTopic();
+        String namespace = StringUtils.hasText(destination.namespace()) ? destination.namespace() : properties.getNamespace();
+        String topic = StringUtils.hasText(destination.topic()) ? destination.topic() : properties.getDefaultTopic();
         String tag = StringUtils.hasText(destination.tag()) ? destination.tag() : eventTag;
-        String physicalTopic = StringUtils.hasText(namespace) ? namespace + "." + topic : topic;
-        if (!StringUtils.hasText(tag)) {
-            return physicalTopic;
-        }
-        return physicalTopic + "." + tag;
+        String physical = StringUtils.hasText(namespace) ? namespace + "." + topic : topic;
+        return StringUtils.hasText(tag) ? physical + "." + tag : physical;
     }
 }

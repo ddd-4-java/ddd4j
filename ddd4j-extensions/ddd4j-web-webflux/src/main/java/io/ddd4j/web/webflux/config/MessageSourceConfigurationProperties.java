@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 public class MessageSourceConfigurationProperties {
 
     /** 资源 bundle 基名列表，默认 {@code messages} */
-    private List<String> basename = new ArrayList<>(List.of("messages"));
+    private List<String> basename = new ArrayList<String>(Collections.singletonList("messages"));
 
     /** 默认编码 */
     private Charset encoding = StandardCharsets.UTF_8;
