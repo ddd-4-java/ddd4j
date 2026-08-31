@@ -237,7 +237,7 @@
         <easy4j-socketio-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-socketio-extension.version>
         <easy4j-spring-bytebuddy.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-bytebuddy.version>
         <easy4j-spring-data-redis-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-data-redis-extension.version>
-        <easy4j-spring-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-extension.version>
+        <easy4j-spring-extension.version>2.0.x.20260630-SNAPSHOT</easy4j-spring-extension.version>
         <easy4j-spring-javassist.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-javassist.version>
         <easy4j-spring-security-extension2.version>3.0.x.20260630-SNAPSHOT</easy4j-spring-security-extension2.version>
         <easy4j-tencentcloud-sdk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-tencentcloud-sdk-extension.version>
