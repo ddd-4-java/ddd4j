@@ -388,6 +388,20 @@ class ProjectionRunnerTest {
         }
 
         @Test
+        void runAllIsolated_其中一个视图抛异常_应继续执行后续视图() {
+            TestView first = new TestView("first", "first", 0, List.of("created"));
+            TestView second = new TestView("second", "second", 100, List.of("created"));
+            when(projectionService.readProjectionPosition("second")).thenReturn(0L);
+            when(chunkReader.read(eq("second"), eq(0L), eq(100), eq(List.of("created"))))
+                    .thenReturn(new EventChunk<>(List.of("e2"), 1));
+
+            runner.runAllIsolated(List.of(first, second));
+
+            assertThat(second.handled).containsExactly("e2");
+            verify(projectionService).updateProjectionPosition("second", 1L);
+        }
+
+        @Test
         void runAll_单视图集合_应等价于runOnce() {
             TestView view = new TestView("person-list", "person-list", 100, List.of("created"));
             when(projectionService.readProjectionPosition("person-list")).thenReturn(0L);

@@ -16,7 +16,6 @@ package io.ddd4j.core.cqrs.readmodel;
 
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -31,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 框架适配层只需要负责调度、事务和 Bean 装配。
  *
  * <h3>异常暴露</h3>
- * <p>{@link #runAll} 在视图间隔离异常，且对连续失败计数：
+ * <p>{@link #runAll} 保持失败即传播；{@link #runAllIsolated} 在视图间隔离异常，且对连续失败计数：
  * <ul>
  *   <li>单次失败 → WARN 级日志；视图状态由 {@link ProjectionMetrics#getLastRunInfo} 暴露</li>
  *   <li>同一视图连续失败达到 {@link #CONSECUTIVE_FAILURE_THRESHOLD}（默认 5）→ ERROR 级日志 + 发出
@@ -43,7 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-@Slf4j
 public class ProjectionRunner<E> {
 
     /**
@@ -124,9 +122,7 @@ public class ProjectionRunner<E> {
     }
 
     /**
-     * 运行多个视图的一次增量投影。
-     *
-     * <p>视图间异常隔离（不互相阻塞），且对连续失败进行熔断信号。
+     * 运行多个视图的一次增量投影，遇到异常立即向调用方传播。
      * 连续失败次数通过 {@link ProjectionMetrics#getLastRunInfo}（按 streamId）查询；
      * 同一 stream 连续 {@value #CONSECUTIVE_FAILURE_THRESHOLD} 次失败后，发出
      * {@link ProjectionMetrics#onCircuitOpened(String, int)} 信号。
@@ -134,6 +130,24 @@ public class ProjectionRunner<E> {
      * @param views 投影视图集合
      */
     public void runAll(Collection<? extends ProjectionView<E>> views) {
+        if (CollKit.isEmpty(views)) {
+            return;
+        }
+        for (ProjectionView<E> view : views) {
+            runOnce(view);
+        }
+    }
+
+    /**
+     * 运行多个视图的一次增量投影，并隔离单个视图失败。
+     *
+     * <p>连续失败次数通过 {@link ProjectionMetrics#getLastRunInfo}（按 streamId）查询；
+     * 同一 stream 连续 {@value #CONSECUTIVE_FAILURE_THRESHOLD} 次失败后，发出
+     * {@link ProjectionMetrics#onCircuitOpened(String, int)} 信号。
+     *
+     * @param views 投影视图集合
+     */
+    public void runAllIsolated(Collection<? extends ProjectionView<E>> views) {
         if (CollKit.isEmpty(views)) {
             return;
         }
@@ -146,11 +160,7 @@ public class ProjectionRunner<E> {
             } catch (RuntimeException ex) {
                 AtomicInteger counter = consecutiveFailures.computeIfAbsent(viewName, k -> new AtomicInteger());
                 int failures = counter.incrementAndGet();
-                log.warn("Projection view '{}' failed (consecutive={}/{}), continuing with next view",
-                        viewName, failures, CONSECUTIVE_FAILURE_THRESHOLD, ex);
                 if (failures >= CONSECUTIVE_FAILURE_THRESHOLD && failures % CONSECUTIVE_FAILURE_THRESHOLD == 0) {
-                    log.error("Projection view '{}' has failed consecutively for {} runs — CIRCUIT OPEN, alerting downstream",
-                            viewName, failures, ex);
                     metrics.onCircuitOpened(viewName, failures);
                 }
             }
