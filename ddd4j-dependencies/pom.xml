@@ -155,7 +155,8 @@
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
         <dingtalk-sdk.version>2.2.54</dingtalk-sdk.version>
-        <disruptor.version>4.0.0</disruptor.version>
+        <!-- Disruptor 4.x requires Java 11; feature/1.0.x remains on JDK8. -->
+        <disruptor.version>3.4.4</disruptor.version>
         <disruptor-biz.version>1.0.0.RELEASE</disruptor-biz.version>
         <dubbo.version>3.3.6</dubbo.version>
         <dynamic-tp.version>1.2.2</dynamic-tp.version>
@@ -306,7 +307,8 @@
         <jxl.version>2.6.12</jxl.version>
         <jwt-issuer.version>1.1.8.RELEASE</jwt-issuer.version>
         <kaptcha.version>0.0.9</kaptcha.version>
-        <kafka.version>4.3.1</kafka.version>
+        <!-- Kafka 4.x requires JDK11; feature/1.0.x uses the JDK8-compatible client line. -->
+        <kafka.version>2.8.2</kafka.version>
         <knife4j.version>4.5.0</knife4j.version>
         <kingbase8.version>8.6.0</kingbase8.version>
         <kisso.version>3.9.5</kisso.version>
@@ -478,7 +480,8 @@
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
         <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shedlock.version>7.2.1</shedlock.version>
-        <shiro.version>2.2.1</shiro.version>
+        <!-- Shiro 2.x requires JDK11; feature/1.0.x remains a JDK8 release line. -->
+        <shiro.version>1.13.0</shiro.version>
         <shiro-biz.version>1.2.0.RELEASE</shiro-biz.version>
         <shiro-hazelcast.version>${shiro.version}</shiro-hazelcast.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
@@ -596,7 +599,8 @@
         <maven-codenarc-plugin.version>0.22-1</maven-codenarc-plugin.version>
         <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
         <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
-        <maven-dependency-check-plugin.version>12.2.2</maven-dependency-check-plugin.version>
+        <!-- Dependency-Check 11+ requires JDK11; feature/1.0.x is a JDK8 release line. -->
+        <maven-dependency-check-plugin.version>10.0.4</maven-dependency-check-plugin.version>
         <maven-docker-plugin.version>0.48.0</maven-docker-plugin.version>
         <maven-exec-plugin.version>3.6.2</maven-exec-plugin.version>
         <maven-findbugs-plugin.version>3.0.5</maven-findbugs-plugin.version>

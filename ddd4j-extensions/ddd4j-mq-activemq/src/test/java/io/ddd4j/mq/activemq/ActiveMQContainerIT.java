@@ -5,7 +5,7 @@ import io.ddd4j.mq.activemq.autoconfigure.Ddd4jActiveMQAutoConfiguration;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.publish.MQEventPublisher;
-import jakarta.jms.ConnectionFactory;
+import javax.jms.ConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

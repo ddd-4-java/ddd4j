@@ -46,8 +46,8 @@ public final class OnsMessageAcknowledgmentFactory {
             return fromOnsMessage(onsMessage);
         }
         Object payload = message.payload();
-        if (payload instanceof Message nativeMessage) {
-            return fromOnsMessage(nativeMessage);
+        if (payload instanceof Message) {
+            return fromOnsMessage((Message) payload);
         }
         OnsMessageAcknowledgment ack = message.nativeMessage(OnsMessageAcknowledgment.class);
         return ack == null ? Optional.empty() : Optional.of(ack);

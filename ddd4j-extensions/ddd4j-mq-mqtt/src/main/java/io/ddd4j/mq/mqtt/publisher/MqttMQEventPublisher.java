@@ -46,7 +46,7 @@ public class MqttMQEventPublisher implements MQEventPublisher {
         // 逻辑块：序列化并发布到 MQTT 主题
         String mqttTopic = buildMqttTopic(destination, event.getTag());
         String payload = JsonKit.toJson(event);
-        var message = MessageBuilder.withPayload(payload.getBytes(StandardCharsets.UTF_8))
+        org.springframework.messaging.Message<byte[]> message = MessageBuilder.withPayload(payload.getBytes(StandardCharsets.UTF_8))
                 .setHeader(MqttHeaders.TOPIC, mqttTopic)
                 .setHeader(MqttHeaders.QOS, defaultQos)
                 .setHeader(MqttHeaders.ID, event.getMsgId())

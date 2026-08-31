@@ -10,7 +10,7 @@ import io.ddd4j.data.crypto.strategy.NoOpCryptoStrategy;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.stream.Collectors;
 
@@ -40,11 +40,11 @@ public class DefaultCryptoAutoConfiguration {
 
     @Bean
     public FlksecCryptoStrategy flksecCryptoStrategy(ObjectProvider<ObjectMapper> objectMapperProvider,
-                                                     ObjectProvider<RestClient> restClientObjectProvider,
+                                                     ObjectProvider<RestTemplate> restTemplateProvider,
                                                      CryptoProperties cryptoProperties) {
         ObjectMapper objectMapper = objectMapperProvider.getIfAvailable(ObjectMapper::new);
-        RestClient restClient = restClientObjectProvider.getIfAvailable();
-        return new FlksecCryptoStrategy(objectMapper, restClient, cryptoProperties.getFlksecAddress(), cryptoProperties.getFlksecPort());
+        RestTemplate restTemplate = restTemplateProvider.getIfAvailable(RestTemplate::new);
+        return new FlksecCryptoStrategy(objectMapper, restTemplate, cryptoProperties.getFlksecAddress(), cryptoProperties.getFlksecPort());
     }
 
 }

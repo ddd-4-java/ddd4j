@@ -95,8 +95,8 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
     public void close() {
         for (String endpointId : endpointIds) {
             try {
-                if (endpointRegistry.getListenerContainer(endpointId) instanceof DefaultMessageListenerContainer container) {
-                    container.stop();
+                if (endpointRegistry.getListenerContainer(endpointId) instanceof DefaultMessageListenerContainer) {
+                    ((DefaultMessageListenerContainer) endpointRegistry.getListenerContainer(endpointId)).stop();
                 }
             } catch (Exception ex) {
                 log.warn("Failed to stop ActiveMQ listener container: id={}", endpointId, ex);
@@ -109,7 +109,7 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
      * 返回已登记的监听器定义（只读视图）。
      */
     public List<MQListenerDefinition> registeredDefinitions() {
-        return List.copyOf(registeredDefinitions);
+        return java.util.Collections.unmodifiableList(new java.util.ArrayList<MQListenerDefinition>(registeredDefinitions));
     }
 
     /**
@@ -186,10 +186,11 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
      * 从 JMS 消息提取文本载荷。
      */
     private static String extractPayload(Message jmsMessage) throws JMSException {
-        if (jmsMessage instanceof TextMessage textMessage) {
-            return textMessage.getText();
+        if (jmsMessage instanceof TextMessage) {
+            return ((TextMessage) jmsMessage).getText();
         }
-        if (jmsMessage instanceof BytesMessage bytesMessage) {
+        if (jmsMessage instanceof BytesMessage) {
+            BytesMessage bytesMessage = (BytesMessage) jmsMessage;
             byte[] bytes = new byte[(int) bytesMessage.getBodyLength()];
             bytesMessage.readBytes(bytes);
             return new String(bytes, StandardCharsets.UTF_8);

@@ -27,7 +27,7 @@ public final class DisruptorMessageAcknowledgmentFactory {
             return Optional.empty();
         }
         Object tagHeader = message.headers().get("disruptor.deliveryTag");
-        long deliveryTag = tagHeader instanceof Number number ? number.longValue() : event.getSequence();
+        long deliveryTag = tagHeader instanceof Number ? ((Number) tagHeader).longValue() : event.getSequence();
         return Optional.of(new DisruptorMessageAcknowledgment(event, null, deliveryTag));
     }
 }

@@ -40,8 +40,8 @@ public final class NatsMessageAcknowledgmentFactory {
             return fromNatsMessage(natsMessage);
         }
         Object payload = message.payload();
-        if (payload instanceof Message nativeMessage) {
-            return fromNatsMessage(nativeMessage);
+        if (payload instanceof Message) {
+            return fromNatsMessage((Message) payload);
         }
         return Optional.empty();
     }

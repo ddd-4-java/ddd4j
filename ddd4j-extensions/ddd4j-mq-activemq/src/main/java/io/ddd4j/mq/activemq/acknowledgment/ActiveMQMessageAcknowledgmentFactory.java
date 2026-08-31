@@ -31,8 +31,8 @@ public final class ActiveMQMessageAcknowledgmentFactory {
         Message jmsMessage = headers.get(ActiveMQMessageAcknowledgment.HEADER_JMS_MESSAGE, Message.class);
         if (jmsMessage == null) {
             Object payload = message.getPayload();
-            if (payload instanceof Message payloadMessage) {
-                jmsMessage = payloadMessage;
+            if (payload instanceof Message) {
+                jmsMessage = (Message) payload;
             }
         }
         if (jmsMessage == null) {
@@ -53,17 +53,17 @@ public final class ActiveMQMessageAcknowledgmentFactory {
         Object sessionHeader = message.headers().get(ActiveMQMessageAcknowledgment.HEADER_JMS_SESSION);
 
         Message jmsMessage = null;
-        if (messageHeader instanceof Message headerMessage) {
-            jmsMessage = headerMessage;
-        } else if (message.payload() instanceof Message payloadMessage) {
-            jmsMessage = payloadMessage;
-        } else if (message.nativeMessage() instanceof Message nativeMessage) {
-            jmsMessage = nativeMessage;
+        if (messageHeader instanceof Message) {
+            jmsMessage = (Message) messageHeader;
+        } else if (message.payload() instanceof Message) {
+            jmsMessage = (Message) message.payload();
+        } else if (message.nativeMessage() instanceof Message) {
+            jmsMessage = (Message) message.nativeMessage();
         }
         if (jmsMessage == null) {
             return Optional.empty();
         }
-        Session session = sessionHeader instanceof Session jmsSession ? jmsSession : null;
+        Session session = sessionHeader instanceof Session ? (Session) sessionHeader : null;
         return Optional.of(new ActiveMQMessageAcknowledgment(jmsMessage, session));
     }
 }

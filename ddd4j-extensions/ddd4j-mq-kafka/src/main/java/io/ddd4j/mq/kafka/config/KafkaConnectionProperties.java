@@ -79,7 +79,7 @@ public class KafkaConnectionProperties {
     }
 
     private void putBootstrapServers(Map<String, Object> props) {
-        if (bootstrapServers != null && !bootstrapServers.isBlank()) {
+        if (bootstrapServers != null && !bootstrapServers.trim().isEmpty()) {
             props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);

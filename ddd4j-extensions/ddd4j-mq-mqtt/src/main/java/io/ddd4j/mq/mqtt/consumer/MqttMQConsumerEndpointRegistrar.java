@@ -101,7 +101,7 @@ public class MqttMQConsumerEndpointRegistrar implements AutoCloseable {
      * 返回已登记的监听器定义（只读视图）。
      */
     public List<MQListenerDefinition> registeredDefinitions() {
-        return List.copyOf(registeredDefinitions);
+        return java.util.Collections.unmodifiableList(new java.util.ArrayList<MQListenerDefinition>(registeredDefinitions));
     }
 
     /**
@@ -145,11 +145,11 @@ public class MqttMQConsumerEndpointRegistrar implements AutoCloseable {
      */
     private String extractPayload(Message<?> message) {
         Object payload = message.getPayload();
-        if (payload instanceof byte[] bytes) {
-            return new String(bytes, StandardCharsets.UTF_8);
+        if (payload instanceof byte[]) {
+            return new String((byte[]) payload, StandardCharsets.UTF_8);
         }
-        if (payload instanceof String text) {
-            return text;
+        if (payload instanceof String) {
+            return (String) payload;
         }
         return String.valueOf(payload);
     }

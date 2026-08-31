@@ -102,8 +102,8 @@ public class KafkaMQBrokerAdapter implements MQBrokerAdapter, DisposableBean {
         }
         Object ackObj = message.headers().get(KafkaMessageAcknowledgment.HEADER_KAFKA_ACK);
         Object recordObj = message.headers().get(KafkaMessageAcknowledgment.HEADER_KAFKA_RECORD);
-        if (ackObj instanceof Acknowledgment acknowledgment && recordObj instanceof ConsumerRecord<?, ?> record) {
-            return new KafkaMessageAcknowledgment(acknowledgment, record);
+        if (ackObj instanceof Acknowledgment && recordObj instanceof ConsumerRecord) {
+            return new KafkaMessageAcknowledgment((Acknowledgment) ackObj, (ConsumerRecord<?, ?>) recordObj);
         }
         return new NoOpMessageAcknowledgment();
     }

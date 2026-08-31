@@ -12,7 +12,7 @@ import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,13 +26,13 @@ import java.util.Objects;
 public class FlksecCryptoStrategy implements CryptoStrategy {
 
     private final ObjectMapper objectMapper;
-    private final RestClient restClient;
+    private final RestTemplate restTemplate;
     private final String address;
     private final String port;
 
-    public FlksecCryptoStrategy(ObjectMapper objectMapper, RestClient restClient, String address, String port) {
+    public FlksecCryptoStrategy(ObjectMapper objectMapper, RestTemplate restTemplate, String address, String port) {
         this.objectMapper = objectMapper;
-        this.restClient = restClient;
+        this.restTemplate = restTemplate;
         this.address = address;
         this.port = port;
     }
@@ -69,11 +69,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("plainIsEncode", String.valueOf(plainIsEncode));
             // 远程请求地址
             String url = String.format("https://%s:%s/api/crypto/sysEncrypt", address, port);
-            ResponseEntity<FlkSecEncryptResponseVO> encryptResponse = restClient.post()
-                    .uri(url)
-                    .body(bodyContent)
-                    .retrieve()
-                    .toEntity(FlkSecEncryptResponseVO.class);
+            ResponseEntity<FlkSecEncryptResponseVO> encryptResponse = restTemplate.postForEntity(url, bodyContent, FlkSecEncryptResponseVO.class);
             if (encryptResponse.getStatusCode().is2xxSuccessful()) {
                 FlkSecEncryptResponseVO encryptResponseVO = encryptResponse.getBody();
                 if (Objects.isNull(encryptResponseVO)) {
@@ -115,11 +111,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("plainIsEncode", String.valueOf(plainIsEncode));
             // 远程请求地址
             String url = String.format("https://%s:%s/api/crypto/sysDecrypt", address, port);
-            ResponseEntity<FlkSecDecryptResponseVO> decryptResponse = restClient.post()
-                    .uri(url)
-                    .body(bodyContent)
-                    .retrieve()
-                    .toEntity(FlkSecDecryptResponseVO.class);
+            ResponseEntity<FlkSecDecryptResponseVO> decryptResponse = restTemplate.postForEntity(url, bodyContent, FlkSecDecryptResponseVO.class);
             if (decryptResponse.getStatusCode().is2xxSuccessful()) {
                 FlkSecDecryptResponseVO decryptResponseVO = decryptResponse.getBody();
                 if (Objects.isNull(decryptResponseVO)) {
@@ -160,11 +152,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("data", valueAsString);
             // 远程请求地址
             String url = String.format("https://%s:%s/api/hmac/sm3hmac", address, port);
-            ResponseEntity<FlkSecSignResponseVO> response = restClient.post()
-                    .uri(url)
-                    .body(bodyContent)
-                    .retrieve()
-                    .toEntity(FlkSecSignResponseVO.class);
+            ResponseEntity<FlkSecSignResponseVO> response = restTemplate.postForEntity(url, bodyContent, FlkSecSignResponseVO.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 FlkSecSignResponseVO responseVO = response.getBody();
                 if (Objects.isNull(responseVO)) {

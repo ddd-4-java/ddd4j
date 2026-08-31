@@ -2,6 +2,7 @@ package io.ddd4j.mq.disruptor.core;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 /**
  * Disruptor RingBuffer 事件槽：承载本地 MQ 消息载荷与路由元数据。
@@ -24,7 +25,7 @@ public class DisruptorMQEvent {
      */
     public String routeKey() {
         String base = namespace + "." + topic;
-        if (tag == null || tag.isBlank() || "*".equals(tag)) {
+        if (!StringUtils.hasText(tag) || "*".equals(tag)) {
             return base;
         }
         return base + "." + tag;
