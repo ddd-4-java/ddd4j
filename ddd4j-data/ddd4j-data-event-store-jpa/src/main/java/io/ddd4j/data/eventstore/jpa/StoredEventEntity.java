@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
@@ -62,9 +61,8 @@ public class StoredEventEntity {
     @Column(name = "event_type", nullable = false, length = 256)
     private String eventType;
 
-    /** 序列化事件负载（JSON 文本）。 */
-    @Lob
-    @Column(name = "payload", nullable = false)
+    /** 序列化事件负载（可与 JDBI/R2DBC 共享的 JSON TEXT）。 */
+    @Column(name = "payload", nullable = false, columnDefinition = "TEXT")
     private String payload;
 
     /** 关联 ID（可选，36 字符）。 */

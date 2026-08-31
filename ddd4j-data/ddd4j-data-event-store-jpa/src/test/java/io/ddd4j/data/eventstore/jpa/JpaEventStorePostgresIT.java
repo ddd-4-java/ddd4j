@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -78,6 +79,9 @@ class JpaEventStorePostgresIT {
     @Autowired
     private SpringDataStoredEventRepository repository;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     /**
      * 以容器实际连接参数覆盖 test profile 的 H2 数据源（驱动由 Boot 按 URL 推断）。
      */
@@ -118,6 +122,19 @@ class JpaEventStorePostgresIT {
         });
         assertThat(((PgEvent) stored.get(0).payload()).getFact()).isEqualTo("created");
         assertThat(((PgEvent) stored.get(1).payload()).getFact()).isEqualTo("renamed");
+    }
+
+    @Test
+    void payloadColumnShouldUsePortableTextType() {
+        String dataType = jdbcTemplate.queryForObject("""
+                select data_type
+                from information_schema.columns
+                where table_schema = current_schema()
+                  and table_name = 'ddd4j_stored_event'
+                  and column_name = 'payload'
+                """, String.class);
+
+        assertThat(dataType).isEqualTo("text");
     }
 
     /**
