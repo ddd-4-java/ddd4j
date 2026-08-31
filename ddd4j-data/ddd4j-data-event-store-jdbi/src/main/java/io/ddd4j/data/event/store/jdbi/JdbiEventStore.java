@@ -14,18 +14,23 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.core.constant.EventStoreConstants;
-import io.ddd4j.core.cqrs.eventstore.EventDeserializer;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.EventId;
+import io.ddd4j.core.ddd.event.StringEntityType;
 import org.jdbi.v3.core.Jdbi;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -80,21 +85,25 @@ public class JdbiEventStore implements EventStore {
     private static final String CREATE_TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS " + EventStoreConstants.TABLE_NAME + " ("
                     + EventStoreConstants.COLUMN_AGGREGATE_ID + " VARCHAR(255) NOT NULL, "
-                    + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " VARCHAR(255), "
+                    + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " VARCHAR(255) NOT NULL, "
                     + EventStoreConstants.COLUMN_VERSION + " BIGINT NOT NULL, "
                     + EventStoreConstants.COLUMN_POSITION + " BIGINT NOT NULL, "
                     + EventStoreConstants.COLUMN_EVENT_TYPE + " VARCHAR(512) NOT NULL, "
                     + EventStoreConstants.COLUMN_EVENT_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_CORRELATION_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_CAUSATION_ID + " VARCHAR(64), "
                     + EventStoreConstants.COLUMN_PAYLOAD + " CLOB NOT NULL, "
                     + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
-                    + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_ID + ", "
+                    + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_TYPE + ", "
+                    + EventStoreConstants.COLUMN_AGGREGATE_ID + ", "
                     + EventStoreConstants.COLUMN_VERSION + "), "
                     + "CONSTRAINT uk_position UNIQUE (" + EventStoreConstants.COLUMN_POSITION + ")"
                     + ")";
 
     private static final String CURRENT_VERSION_SQL =
             "SELECT COUNT(*) FROM " + EventStoreConstants.TABLE_NAME
-                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId";
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = :aggregateType"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId";
 
     private static final String NEXT_POSITION_SQL =
             "SELECT COALESCE(MAX(" + EventStoreConstants.COLUMN_POSITION + "), 0) FROM "
@@ -103,16 +112,28 @@ public class JdbiEventStore implements EventStore {
     private static final String INSERT_SQL =
             "INSERT INTO " + EventStoreConstants.TABLE_NAME
                     + " (" + EventStoreConstants.COLUMN_AGGREGATE_ID
+                    + ", " + EventStoreConstants.COLUMN_AGGREGATE_TYPE
                     + ", " + EventStoreConstants.COLUMN_VERSION
                     + ", " + EventStoreConstants.COLUMN_POSITION
                     + ", " + EventStoreConstants.COLUMN_EVENT_TYPE
+                    + ", " + EventStoreConstants.COLUMN_EVENT_ID
+                    + ", " + EventStoreConstants.COLUMN_CORRELATION_ID
+                    + ", " + EventStoreConstants.COLUMN_CAUSATION_ID
                     + ", " + EventStoreConstants.COLUMN_PAYLOAD
                     + ", " + EventStoreConstants.COLUMN_TIMESTAMP
-                    + ") VALUES (:aggregateId, :version, :position, :eventType, :payload, :timestamp)";
+                    + ") VALUES (:aggregateId, :aggregateType, :version, :position, :eventType, :eventId, :correlationId, :causationId, :payload, :timestamp)";
 
     private static final String READ_BY_AGGREGATE_SQL =
             "SELECT * FROM " + EventStoreConstants.TABLE_NAME
-                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId"
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = :aggregateType"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId"
+                    + " ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
+
+    private static final String READ_BY_VERSION_RANGE_SQL =
+            "SELECT * FROM " + EventStoreConstants.TABLE_NAME
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = :aggregateType"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId"
+                    + " AND " + EventStoreConstants.COLUMN_VERSION + " BETWEEN :fromVersion AND :toVersion"
                     + " ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
 
     private static final String READ_ALL_SQL =
@@ -124,6 +145,7 @@ public class JdbiEventStore implements EventStore {
     private final Jdbi jdbi;
 
     private final EventStoreRetry retry;
+    private final EventPayloadSerializer serializer;
 
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -134,7 +156,7 @@ public class JdbiEventStore implements EventStore {
      * @throws NullPointerException jdbi 为 null 时抛出
      */
     public JdbiEventStore(Jdbi jdbi) {
-        this(jdbi, new EventStoreRetry());
+        this(jdbi, new EventStoreRetry(), new EventPayloadSerializer(tools.jackson.databind.json.JsonMapper.builder().findAndAddModules().build()));
     }
 
     /**
@@ -144,8 +166,13 @@ public class JdbiEventStore implements EventStore {
      * @param retry 重试策略
      */
     public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry) {
+        this(jdbi, retry, new EventPayloadSerializer(tools.jackson.databind.json.JsonMapper.builder().findAndAddModules().build()));
+    }
+
+    public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry, EventPayloadSerializer serializer) {
         this.jdbi = Objects.requireNonNull(jdbi, "jdbi must not be null");
         this.retry = Objects.requireNonNull(retry, "retry must not be null");
+        this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
     }
 
     /**
@@ -160,7 +187,9 @@ public class JdbiEventStore implements EventStore {
      * 后续每条 +1，避免每条都执行 MAX 查询。
      */
     @Override
-    public void append(String aggregateId, List<Object> events, long expectedVersion) {
+    public void append(String aggregateType, AggregateRootId aggregateId,
+                       List<? extends DomainEvent<?>> events, long expectedVersion) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         Objects.requireNonNull(events, "events must not be null");
         if (events.isEmpty()) {
@@ -168,16 +197,17 @@ public class JdbiEventStore implements EventStore {
         }
         ensureInitialized();
         try {
-            retry.execute("append(" + aggregateId + ")", () -> {
+            retry.execute("append(" + aggregateType + ":" + aggregateId.asString() + ")", () -> {
                 jdbi.useTransaction(handle -> {
                     // 版本校验（乐观锁第一道）
                     long actualVersion = handle.createQuery(CURRENT_VERSION_SQL)
-                            .bind("aggregateId", aggregateId)
+                            .bind("aggregateType", aggregateType)
+                            .bind("aggregateId", aggregateId.asString())
                             .mapTo(Long.class)
                             .one();
                     if (actualVersion != expectedVersion) {
-                        throw new IllegalStateException(
-                                "Version conflict: expected " + expectedVersion + " but was " + actualVersion);
+                        throw new AggregateVersionConflictException(
+                                aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
                     }
 
                     // position 生成在事务内执行，避免并发连接读到相同的 maxPos
@@ -185,18 +215,20 @@ public class JdbiEventStore implements EventStore {
                             .mapTo(Long.class)
                             .one();
                     long position = maxPos + 1L;
-                    LocalDateTime now = LocalDateTime.now();
                     long version = expectedVersion;
-                    for (Object event : events) {
+                    for (DomainEvent<?> event : events) {
                         handle.createUpdate(INSERT_SQL)
-                                .bind("aggregateId", aggregateId)
-                                .bind("version", version)
+                                .bind("aggregateId", aggregateId.asString())
+                                .bind("aggregateType", aggregateType)
+                                .bind("version", ++version)
                                 .bind("position", position)
                                 .bind("eventType", event.getClass().getName())
-                                .bind("payload", JsonKit.toJson(event))
-                                .bind("timestamp", now)
+                                .bind("eventId", event.getEventId().asString())
+                                .bind("correlationId", event.getCorrelationId() == null ? null : event.getCorrelationId().asString())
+                                .bind("causationId", event.getCausationId() == null ? null : event.getCausationId().asString())
+                                .bind("payload", serializer.serialize(event))
+                                .bind("timestamp", event.getEventTimestamp().toLocalDateTime())
                                 .execute();
-                        version++;
                         position++;
                     }
                 });
@@ -216,11 +248,26 @@ public class JdbiEventStore implements EventStore {
      * 事件载荷通过 {@link EventDeserializer} 反序列化，类型无法还原时回退为 {@code Map}。
      */
     @Override
-    public List<StoredEvent> read(String aggregateId) {
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         ensureInitialized();
         return jdbi.withHandle(handle -> handle.createQuery(READ_BY_AGGREGATE_SQL)
-                .bind("aggregateId", aggregateId)
+                .bind("aggregateType", aggregateType)
+                .bind("aggregateId", aggregateId.asString())
+                .map((rs, ctx) -> toStoredEvent(rs))
+                .list());
+    }
+
+    @Override
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
+                                  long fromVersion, long toVersion) {
+        ensureInitialized();
+        return jdbi.withHandle(handle -> handle.createQuery(READ_BY_VERSION_RANGE_SQL)
+                .bind("aggregateType", aggregateType)
+                .bind("aggregateId", aggregateId.asString())
+                .bind("fromVersion", fromVersion)
+                .bind("toVersion", toVersion)
                 .map((rs, ctx) -> toStoredEvent(rs))
                 .list());
     }
@@ -267,20 +314,54 @@ public class JdbiEventStore implements EventStore {
     private StoredEvent toStoredEvent(ResultSet rs) throws SQLException {
         String payload = rs.getString(EventStoreConstants.COLUMN_PAYLOAD);
         String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
-        Object event = EventDeserializer.deserialize(payload, eventType);
+        DomainEvent<?> event = serializer.deserialize(payload, resolveEventType(eventType));
         // H2 JDBC 对 TIMESTAMP 列返回 LocalDateTime，转为 Instant（与 R2DBC 实现一致）
-        Instant timestamp;
+        LocalDateTime timestamp;
         LocalDateTime ldt = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
         if (ldt != null) {
-            timestamp = ldt.toInstant(ZoneOffset.UTC);
+            timestamp = ldt;
         } else {
-            timestamp = Instant.now();
+            timestamp = LocalDateTime.now();
         }
         return new StoredEvent(
-                rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID),
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
+                rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),
+                new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
                 rs.getLong(EventStoreConstants.COLUMN_VERSION),
-                event,
                 rs.getLong(EventStoreConstants.COLUMN_POSITION),
-                timestamp);
+                timestamp.atZone(ZoneId.systemDefault()),
+                event,
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
+        try {
+            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+        }
+    }
+
+    private record StringAggregateRootId(String value) implements AggregateRootId {
+
+        private static final StringEntityType TYPE = new StringEntityType("String");
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        @JsonValue
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
     }
 }
