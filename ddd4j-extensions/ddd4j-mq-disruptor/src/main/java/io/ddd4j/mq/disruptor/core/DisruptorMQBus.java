@@ -104,10 +104,13 @@ public class DisruptorMQBus {
     if (!StringUtils.hasText(name)) {
       return new YieldingWaitStrategy();
     }
-    return switch (name.trim().toLowerCase()) {
-      case "blocking" -> new BlockingWaitStrategy();
-      case "busyspin", "busy-spin" -> new BusySpinWaitStrategy();
-      default -> new YieldingWaitStrategy();
-    };
+    String normalized = name.trim().toLowerCase();
+    if ("blocking".equals(normalized)) {
+      return new BlockingWaitStrategy();
+    }
+    if ("busyspin".equals(normalized) || "busy-spin".equals(normalized)) {
+      return new BusySpinWaitStrategy();
+    }
+    return new YieldingWaitStrategy();
   }
 }

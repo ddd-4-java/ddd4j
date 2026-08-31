@@ -54,10 +54,11 @@ public final class MqttMessageAcknowledgmentFactory {
             topicHeader = message.headers().get(MqttHeaders.TOPIC);
         }
         Object qosHeader = message.headers().get(MqttHeaders.RECEIVED_QOS);
-        if (!(topicHeader instanceof String topic)) {
+        if (!(topicHeader instanceof String)) {
             return Optional.empty();
         }
-        int qos = qosHeader instanceof Number number ? number.intValue() : 0;
+        String topic = (String) topicHeader;
+        int qos = qosHeader instanceof Number ? ((Number) qosHeader).intValue() : 0;
         Object idHeader = message.headers().get(MqttHeaders.ID);
         String messageId = idHeader == null ? null : String.valueOf(idHeader);
         if (qos <= 0) {
@@ -71,8 +72,8 @@ public final class MqttMessageAcknowledgmentFactory {
      */
     private static int resolveQos(MessageHeaders headers) {
         Object qosHeader = headers.get(MqttHeaders.RECEIVED_QOS);
-        if (qosHeader instanceof Number number) {
-            return number.intValue();
+        if (qosHeader instanceof Number) {
+            return ((Number) qosHeader).intValue();
         }
         return 0;
     }
@@ -91,8 +92,24 @@ public final class MqttMessageAcknowledgmentFactory {
      * @param acknowledgment 确认实现
      * @param qosAck         是否为 QoS 级确认
      */
-    public record MessageAcknowledgmentOrNoOp(
-            io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment,
-            boolean qosAck) {
+    public static final class MessageAcknowledgmentOrNoOp {
+
+        private final io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment;
+        private final boolean qosAck;
+
+        public MessageAcknowledgmentOrNoOp(
+                io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment,
+                boolean qosAck) {
+            this.acknowledgment = acknowledgment;
+            this.qosAck = qosAck;
+        }
+
+        public io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment() {
+            return acknowledgment;
+        }
+
+        public boolean qosAck() {
+            return qosAck;
+        }
     }
 }

@@ -77,10 +77,12 @@ public class MicaMqttMQEventPublisher implements MQEventPublisher {
      * 将整数 QoS 映射为 mica {@link MqttQoS}。
      */
     private MqttQoS toMqttQoS(int qos) {
-        return switch (qos) {
-            case 2 -> MqttQoS.QOS2;
-            case 1 -> MqttQoS.QOS1;
-            default -> MqttQoS.QOS0;
-        };
+        if (qos == 2) {
+            return MqttQoS.QOS2;
+        }
+        if (qos == 1) {
+            return MqttQoS.QOS1;
+        }
+        return MqttQoS.QOS0;
     }
 }

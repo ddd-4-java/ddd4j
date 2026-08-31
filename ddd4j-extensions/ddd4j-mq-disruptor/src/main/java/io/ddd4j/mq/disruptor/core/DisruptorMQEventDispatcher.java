@@ -7,6 +7,7 @@ import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -94,7 +95,7 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
         String namespace = definition.getNamespace();
         String topic = definition.getTopic();
         String tags = definition.getTags();
-        String tag = (tags == null || tags.isBlank() || "*".equals(tags.trim()))
+        String tag = (!StringUtils.hasText(tags) || "*".equals(tags.trim()))
                 ? null
                 : (tags.contains("||") ? tags.substring(0, tags.indexOf("||")).trim() : tags.trim());
         DisruptorMQEvent probe = new DisruptorMQEvent();
@@ -107,6 +108,22 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
     /**
      * 已注册 handler 记录。
      */
-    private record RegisteredHandler(MQListenerDefinition definition, MQConsumerHandler handler) {
+    private static final class RegisteredHandler {
+
+        private final MQListenerDefinition definition;
+        private final MQConsumerHandler handler;
+
+        private RegisteredHandler(MQListenerDefinition definition, MQConsumerHandler handler) {
+            this.definition = definition;
+            this.handler = handler;
+        }
+
+        private MQListenerDefinition definition() {
+            return definition;
+        }
+
+        private MQConsumerHandler handler() {
+            return handler;
+        }
     }
 }

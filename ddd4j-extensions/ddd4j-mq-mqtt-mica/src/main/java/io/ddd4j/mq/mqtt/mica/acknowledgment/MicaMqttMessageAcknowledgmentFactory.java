@@ -46,11 +46,12 @@ public final class MicaMqttMessageAcknowledgmentFactory {
     public static Optional<MicaMqttMessageAcknowledgment> from(MQMessage<?> message) {
         Objects.requireNonNull(message, "message");
         Object topicHeader = message.headers().get(MicaMqttHeaders.TOPIC);
-        if (!(topicHeader instanceof String topic)) {
+        if (!(topicHeader instanceof String)) {
             return Optional.empty();
         }
+        String topic = (String) topicHeader;
         Object qosHeader = message.headers().get(MicaMqttHeaders.QOS);
-        int qos = qosHeader instanceof Number number ? number.intValue() : 0;
+        int qos = qosHeader instanceof Number ? ((Number) qosHeader).intValue() : 0;
         Object idHeader = message.headers().get(MicaMqttHeaders.MESSAGE_ID);
         String messageId = idHeader == null ? null : String.valueOf(idHeader);
         if (qos <= 0) {
@@ -86,8 +87,8 @@ public final class MicaMqttMessageAcknowledgmentFactory {
             return message.fixedHeader().qosLevel().value();
         }
         Object qosHeader = headers.get(MicaMqttHeaders.QOS);
-        if (qosHeader instanceof Number number) {
-            return number.intValue();
+        if (qosHeader instanceof Number) {
+            return ((Number) qosHeader).intValue();
         }
         return 0;
     }
@@ -98,8 +99,8 @@ public final class MicaMqttMessageAcknowledgmentFactory {
     private static String resolveMessageId(MqttPublishMessage message, Map<String, Object> headers) {
         if (message != null) {
             Object variableHeader = message.variableHeader();
-            if (variableHeader instanceof MqttPublishVariableHeader publishHeader) {
-                return String.valueOf(publishHeader.packetId());
+            if (variableHeader instanceof MqttPublishVariableHeader) {
+                return String.valueOf(((MqttPublishVariableHeader) variableHeader).packetId());
             }
         }
         Object idHeader = headers.get(MicaMqttHeaders.MESSAGE_ID);
@@ -112,8 +113,24 @@ public final class MicaMqttMessageAcknowledgmentFactory {
      * @param acknowledgment 确认实现
      * @param qosAck         是否为 QoS 级确认
      */
-    public record MessageAcknowledgmentOrNoOp(
-            io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment,
-            boolean qosAck) {
+    public static final class MessageAcknowledgmentOrNoOp {
+
+        private final io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment;
+        private final boolean qosAck;
+
+        public MessageAcknowledgmentOrNoOp(
+                io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment,
+                boolean qosAck) {
+            this.acknowledgment = acknowledgment;
+            this.qosAck = qosAck;
+        }
+
+        public io.ddd4j.mq.acknowledgment.MessageAcknowledgment acknowledgment() {
+            return acknowledgment;
+        }
+
+        public boolean qosAck() {
+            return qosAck;
+        }
     }
 }

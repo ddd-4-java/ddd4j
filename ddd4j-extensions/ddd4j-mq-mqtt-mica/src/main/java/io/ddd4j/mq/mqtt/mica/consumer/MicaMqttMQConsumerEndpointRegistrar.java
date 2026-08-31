@@ -51,9 +51,15 @@ public class MicaMqttMQConsumerEndpointRegistrar implements AutoCloseable {
 
         // 逻辑块：按 QoS 注册 mica 订阅（等价于 @MqttClientSubscribe(qos=...)）
         switch (qos) {
-            case 2 -> mqttClientTemplate.subQos2(mqttTopic, listener);
-            case 1 -> mqttClientTemplate.subQos1(mqttTopic, listener);
-            default -> mqttClientTemplate.subQos0(mqttTopic, listener);
+            case 2:
+                mqttClientTemplate.subQos2(mqttTopic, listener);
+                break;
+            case 1:
+                mqttClientTemplate.subQos1(mqttTopic, listener);
+                break;
+            default:
+                mqttClientTemplate.subQos0(mqttTopic, listener);
+                break;
         }
 
         subscribedTopics.add(mqttTopic);
