@@ -14,7 +14,13 @@
  */
 package io.ddd4j.data.event.store.panache;
 
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
@@ -48,6 +54,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * </ol>
  */
 class PanacheEventStoreRetryTest {
+
+    private static final String ORDER_TYPE = "Order";
 
     static final class CountingSleeper implements EventStoreRetry.Sleeper {
         final AtomicInteger calls = new AtomicInteger();
@@ -130,24 +138,26 @@ class PanacheEventStoreRetryTest {
 
     @Test
     void append_成功路径_不触发Sleeper() {
-        eventStore.append("agg-1", List.of(new TestEvent("e1")), 0L);
+        TestAggregateRootId orderId = new TestAggregateRootId("agg-1");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0L);
 
         assertThat(sleeper.calls.get()).isZero();
-        assertThat(eventStore.read("agg-1")).hasSize(1);
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
     @Test
-    void append_期望版本不匹配_IllegalStateException_不触发重试_事务回滚() {
-        eventStore.append("agg-1", List.of(new TestEvent("e1")), 0L);
+    void append_期望版本不匹配_强类型冲突异常_不触发重试_事务回滚() {
+        TestAggregateRootId orderId = new TestAggregateRootId("agg-1");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0L);
 
         assertThatThrownBy(() ->
-                eventStore.append("agg-1", List.of(new TestEvent("e2")), 99L))
-                .isInstanceOf(IllegalStateException.class);
+                eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 99L))
+                .isInstanceOf(AggregateVersionConflictException.class);
 
         assertThat(sleeper.calls.get())
-                .as("IllegalStateException 是乐观锁失败信号，不应触发重试")
+                .as("聚合版本冲突是乐观锁失败信号，不应触发重试")
                 .isZero();
-        assertThat(eventStore.read("agg-1")).hasSize(1);
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
     @Test
@@ -162,27 +172,52 @@ class PanacheEventStoreRetryTest {
         // 应成功：第一次 INSERT 触发 uk_position 冲突，重试后第二次 INSERT 成功
         // （FaultInjector 仅第一次抛错，第二次透传真实 SQL；Hibernate 事务 rollback
         // 后 EntityManager 状态清空，重试走全新事务）
-        eventStore.append("agg-conflict", List.of(new TestEvent("e1")), 0L);
+        TestAggregateRootId orderId = new TestAggregateRootId("agg-conflict");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0L);
 
         // 关键断言 1：Sleeper 至少被调用 1 次（即重试机制确实触发过）
         assertThat(sleeper.calls.get())
                 .as("EventStoreRetry 应至少触发一次退避以处理 uk_position 冲突")
                 .isGreaterThanOrEqualTo(1);
         // 关键断言 2：最终落库成功（重试恢复）
-        assertThat(eventStore.read("agg-conflict")).hasSize(1);
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
     @Test
     void append_空事件列表_不触发Sleeper_不落库() {
-        eventStore.append("agg-empty", List.of(), 0L);
+        TestAggregateRootId orderId = new TestAggregateRootId("agg-empty");
+        eventStore.append(ORDER_TYPE, orderId, List.of(), 0L);
 
         assertThat(sleeper.calls.get()).isZero();
-        assertThat(eventStore.read("agg-empty")).isEmpty();
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).isEmpty();
     }
 
-    /**
-     * 测试事件 POJO。
-     */
-    record TestEvent(String name) {
+    record TestAggregateRootId(String value) implements AggregateRootId {
+        private static final EntityType TYPE = new StringEntityType("Order");
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+    }
+
+    static final class TestEvent extends DomainEvent<TestAggregateRootId> {
+        TestEvent() {
+            super();
+        }
+
+        TestEvent(TestAggregateRootId orderId) {
+            super(new EntityIdPath(orderId));
+        }
     }
 }

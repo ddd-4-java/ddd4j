@@ -20,7 +20,8 @@ import java.util.Objects;
 /**
  * {@link PanacheStoredEventEntity} 的复合主键类。
  *
- * <p>主键由 {@code aggregate_id} + {@code version} 组成，保证同一聚合内的版本号唯一。
+ * <p>主键由 {@code aggregate_type} + {@code aggregate_id} + {@code version} 组成，
+ * 保证同一聚合类型流内的版本号唯一。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -29,19 +30,25 @@ public class PanacheStoredEventId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String aggregateType;
     private String aggregateId;
     private long version;
 
     public PanacheStoredEventId() {
     }
 
-    public PanacheStoredEventId(String aggregateId, long version) {
+    public PanacheStoredEventId(String aggregateType, String aggregateId, long version) {
+        this.aggregateType = aggregateType;
         this.aggregateId = aggregateId;
         this.version = version;
     }
 
     public String getAggregateId() {
         return aggregateId;
+    }
+
+    public String getAggregateType() {
+        return aggregateType;
     }
 
     public long getVersion() {
@@ -53,11 +60,13 @@ public class PanacheStoredEventId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PanacheStoredEventId that = (PanacheStoredEventId) o;
-        return version == that.version && Objects.equals(aggregateId, that.aggregateId);
+        return version == that.version
+                && Objects.equals(aggregateType, that.aggregateType)
+                && Objects.equals(aggregateId, that.aggregateId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aggregateId, version);
+        return Objects.hash(aggregateType, aggregateId, version);
     }
 }

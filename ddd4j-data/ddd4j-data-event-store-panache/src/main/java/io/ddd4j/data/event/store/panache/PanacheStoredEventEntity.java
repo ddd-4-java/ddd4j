@@ -24,7 +24,6 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
-import java.util.List;
 
 /**
  * 事件存储 Quarkus Panache 实体——映射统一 schema {@code DDD4J_EVENT_STORE}。
@@ -37,7 +36,7 @@ import java.util.List;
  * （继承 {@link PanacheEntityBase}）以公有字段直接承载列映射，省去 getter/setter 样板。
  *
  * <h3>主键设计</h3>
- * <p>复合主键 {@code (aggregate_id, version)} 通过 {@link IdClass} 实现，
+ * <p>复合主键 {@code (aggregate_type, aggregate_id, version)} 通过 {@link IdClass} 实现，
  * 保证同一聚合内的版本号唯一。{@code position} 为全局单调递增列（带唯一约束），
  * 由应用层分配（{@link #nextPosition}），用于全局分页读取。
  *
@@ -50,6 +49,11 @@ import java.util.List;
         name = "uk_position", columnNames = {EventStoreConstants.COLUMN_POSITION}))
 @IdClass(PanacheStoredEventId.class)
 public class PanacheStoredEventEntity extends PanacheEntityBase {
+
+    /** 聚合类型（复合主键之一）。 */
+    @Id
+    @Column(name = EventStoreConstants.COLUMN_AGGREGATE_TYPE, nullable = false, length = 255)
+    public String aggregateType;
 
     /** 聚合根标识（复合主键之一）。 */
     @Id
@@ -78,48 +82,16 @@ public class PanacheStoredEventEntity extends PanacheEntityBase {
     @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false)
     public String payload;
 
-    /** 聚合类型名（异步轨道写入；同步轨道留 NULL，可空列保证双轨同表兼容）。 */
-    @Column(name = EventStoreConstants.COLUMN_AGGREGATE_TYPE, length = 255)
-    public String aggregateType;
+    /** 关联事件标识（可选）。 */
+    @Column(name = EventStoreConstants.COLUMN_CORRELATION_ID, length = 64)
+    public String correlationId;
+
+    /** 因果事件标识（可选）。 */
+    @Column(name = EventStoreConstants.COLUMN_CAUSATION_ID, length = 64)
+    public String causationId;
 
     /** 事件存储时间。 */
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     public Instant timestamp;
 
-    /**
-     * 读取聚合流当前版本（最新 {@code version}）。
-     *
-     * <p>取版本号最高的实体，空流返回 {@code 0L}。
-     * 与 JPA 模块的 {@code COUNT} 策略语义一致（假设版本从 0 连续递增，无空洞）。
-     *
-     * @param aggregateId 聚合 ID
-     * @return 流当前版本；空流为 {@code 0L}
-     */
-    public static long findCurrentVersion(String aggregateId) {
-        PanacheStoredEventEntity latest = find("aggregateId = ?1 order by version desc", aggregateId).firstResult();
-        return latest != null ? latest.version : 0L;
-    }
-
-    /**
-     * 按版本升序读取聚合流全部事件实体。
-     *
-     * @param aggregateId 聚合 ID
-     * @return 版本升序的持久化实体列表
-     */
-    public static List<PanacheStoredEventEntity> findByAggregateId(String aggregateId) {
-        return list("aggregateId = ?1 order by version", aggregateId);
-    }
-
-    /**
-     * 分配下一个全局 position（{@code COALESCE(MAX(position), 0) + 1}）。
-     *
-     * <p>在单实例部署下保证严格递增；在多实例高并发场景下，
-     * 建议切换为数据库序列（如 PostgreSQL 的 {@code NEXTVAL}）以避免争用。
-     *
-     * @return 下一个可用的全局 position
-     */
-    public static long nextPosition() {
-        PanacheStoredEventEntity latest = find("order by position desc").firstResult();
-        return (latest != null ? latest.position : 0L) + 1L;
-    }
 }
