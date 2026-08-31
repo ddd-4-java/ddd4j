@@ -20,7 +20,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
@@ -77,9 +76,8 @@ public class PanacheStoredEventEntity extends PanacheEntityBase {
     @Column(name = EventStoreConstants.COLUMN_EVENT_ID, length = 64)
     public String eventId;
 
-    /** 序列化事件载荷（JSON 文本，CLOB 以支持大体积事件）。 */
-    @Lob
-    @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false)
+    /** 序列化事件载荷（可与其余 EventStore adapter 共享的 JSON TEXT）。 */
+    @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false, columnDefinition = "TEXT")
     public String payload;
 
     /** 关联事件标识（可选）。 */
