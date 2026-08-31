@@ -1,13 +1,11 @@
 package io.ddd4j.ddd.command;
 
-import org.fuin.ddd4j.core.AggregateRootId;
-import org.fuin.ddd4j.core.EntityId;
-import org.fuin.cqrs4j.core.AggregateCommand;
-import org.fuin.cqrs4j.jackson.AbstractAggregateCommand;
+import io.ddd4j.core.cqrs.command.AggregateCommand;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.EntityId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.io.Serial;
 
 /**
  * ddd4j 聚合命令基类（纯净 DDD 轨道）。
@@ -21,13 +19,13 @@ import java.io.Serial;
  *   <li>自动 Jackson 序列化（通过 REST 收发 JSON）</li>
  * </ul>
  *
- * <p>命令是"意图/请求"的载体，由 {@link org.fuin.cqrs4j.core.CommandExecutor} 执行。
+ * <p>命令是"意图/请求"的载体，由 {@link io.ddd4j.core.cqrs.command.CommandExecutor} 执行。
  * 命令处理流程：
  * <pre>
  * REST 接收 JSON → 反序列化成 Command → CommandExecutor.execute(ctx, cmd) → 聚合根应用命令 → 产生领域事件
  * </pre>
  *
- * <p>使用方式（参考 ddd-cqrs-4-java-example 的 CreatePersonCommand）：
+ * <p>使用方式：
  * <pre>
  * public class CreateOrderCommand extends DddAggregateCommand&lt;OrderId, OrderId&gt; {
  *     public static final EventType TYPE = new EventType("CreateOrderCommand");
@@ -59,9 +57,8 @@ import java.io.Serial;
  * @since 3.4.x
  */
 public abstract class DddAggregateCommand<ROOT_ID extends AggregateRootId, ENTITY_ID extends EntityId>
-        extends AbstractAggregateCommand<ROOT_ID, ENTITY_ID> {
+        extends AggregateCommand<ROOT_ID, ENTITY_ID> {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

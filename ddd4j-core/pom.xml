@@ -82,16 +82,6 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
         </dependency>
-        <!-- For DDD4j Core -->
-        <dependency>
-            <groupId>org.fuin.ddd4j</groupId>
-            <artifactId>ddd-4-java-core</artifactId>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.fuin.ddd4j/ddd-4-java-esc -->
-        <dependency>
-            <groupId>org.fuin.ddd4j</groupId>
-            <artifactId>ddd-4-java-esc</artifactId>
-        </dependency>
         <!-- For BouncyCastle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>

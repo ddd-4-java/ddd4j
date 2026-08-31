@@ -3,13 +3,13 @@ package io.ddd4j.ddd.aggregate;
 import java.time.LocalDateTime;
 
 import lombok.Getter;
-import org.fuin.ddd4j.core.AggregateRootId;
-import org.fuin.ddd4j.core.AbstractAggregateRoot;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.model.AggregateRoot;
 
 /**
  * ddd4j 聚合根基类（纯净 DDD 轨道）。
  *
- * <p>基于 fuinorg {@link AbstractAggregateRoot}，提供：
+ * <p>基于 ddd4j 原生 {@link AggregateRoot}，提供：
  * <ul>
  *   <li>领域事件收集（{@code apply} 产生事件 → {@code getUncommittedChanges} 取出）</li>
  *   <li>事件溯源状态重建（{@code loadFromHistory} 重放历史事件）</li>
@@ -26,12 +26,11 @@ import org.fuin.ddd4j.core.AbstractAggregateRoot;
  *
  * @param <ID> 聚合根标识类型（必须是 {@link AggregateRootId} 子类型）
  * @author wandl
- * @see AbstractAggregateRoot
- * @see org.fuin.ddd4j.core.ApplyEvent
+ * @see AggregateRoot
  * @since 3.4.x
  */
 @Getter
-public abstract class DddAggregateRoot<ID extends AggregateRootId> extends AbstractAggregateRoot<ID> {
+public abstract class DddAggregateRoot<ID extends AggregateRootId> extends AggregateRoot<ID> {
 
     /** 创建时间（审计字段，无 ORM 注解） */
     protected LocalDateTime createTime;

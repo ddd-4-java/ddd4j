@@ -1,15 +1,15 @@
 package io.ddd4j.ddd.event;
 
-import org.fuin.ddd4j.core.EntityId;
-import org.fuin.ddd4j.core.EntityIdPath;
-import org.fuin.ddd4j.jackson.AbstractDomainEvent;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityId;
+import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.Event;
 
-import java.io.Serial;
 
 /**
  * ddd4j 领域事件基类（纯净 DDD 轨道）。
  *
- * <p>基于 fuinorg {@link AbstractDomainEvent}，提供完整的领域事件契约：
+ * <p>基于 ddd4j 原生 {@link DomainEvent}，提供完整的领域事件契约：
  * <ul>
  *   <li>{@code eventId} — 事件唯一标识（UUID，自动生成）</li>
  *   <li>{@code entityIdPath} — 从聚合根到事件源的路径（如 {@code "Order 1/OrderItem 2"}）</li>
@@ -26,7 +26,7 @@ import java.io.Serial;
  *   <li>事件本身不可变（equals/hashCode 仅基于 eventId）</li>
  * </ul>
  *
- * <p>使用方式（参考 ddd-cqrs-4-java-example 的 PersonCreatedEvent）：
+ * <p>使用方式：
  * <pre>
  * public class OrderCreatedEvent extends DddDomainEvent&lt;OrderId&gt; {
  *     public static final EventType TYPE = new EventType("OrderCreatedEvent");
@@ -50,12 +50,11 @@ import java.io.Serial;
  *
  * @param <ID> 事件源实体标识类型
  * @author wandl
- * @see AbstractDomainEvent
+ * @see DomainEvent
  * @since 3.4.x
  */
-public abstract class DddDomainEvent<ID extends EntityId> extends AbstractDomainEvent<ID> {
+public abstract class DddDomainEvent<ID extends EntityId> extends DomainEvent<ID> {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -80,7 +79,7 @@ public abstract class DddDomainEvent<ID extends EntityId> extends AbstractDomain
      * @param entityIdPath 从聚合根到事件源的路径
      * @param causationEvent 导致本事件的前置事件（用于因果关系链路追踪，可为 {@code null}）
      */
-    protected DddDomainEvent(EntityIdPath entityIdPath, org.fuin.ddd4j.core.Event causationEvent) {
+    protected DddDomainEvent(EntityIdPath entityIdPath, Event causationEvent) {
         super(entityIdPath, causationEvent);
     }
 

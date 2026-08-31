@@ -29,7 +29,7 @@ import java.util.Map;
  *               <li><b>纯净 DDD 轨道</b>：使用 {@link io.ddd4j.core.contract.Model}
  *                   （不继承任何框架类，适合 COLA/Clean/Hexagonal 架构）</li>
  *               <li><b>事件溯源轨道</b>：使用 {@code io.ddd4j.ddd.aggregate.DddAggregateRoot}
- *                   （基于 fuinorg ddd-4-java，支持 ES/CQRS）</li>
+ *                   （基于 ddd4j 原生 DDD Core，支持 ES/CQRS）</li>
  *             </ul>
  *             <p>
  *             本类将在 5.0.x 版本移除。迁移期间保留向后兼容。
