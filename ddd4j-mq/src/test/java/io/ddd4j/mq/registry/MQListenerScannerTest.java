@@ -11,6 +11,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -25,7 +27,7 @@ class MQListenerScannerTest {
             Ddd4jMQProperties props = context.getBean(Ddd4jMQProperties.class);
             MQListenerScanner scanner = new MQListenerScanner(context.getBean(MQListenerDefinitionRegistry.class));
 
-            var definitions = scanner.scan();
+            List<MQListenerDefinition> definitions = scanner.scan();
 
             assertFalse(definitions.isEmpty());
             assertEquals(1, definitions.size());

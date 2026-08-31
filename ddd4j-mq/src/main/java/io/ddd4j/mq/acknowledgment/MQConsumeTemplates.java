@@ -66,10 +66,22 @@ public final class MQConsumeTemplates {
             return;
         }
         switch (disposition) {
-            case ACK, DISCARD -> ack.ackSingle();
-            case REQUEUE -> ack.requeue();
-            case REJECT_TO_DLQ -> ack.discard();
-            case DEFER -> ack.requeue();
+            case ACK:
+            case DISCARD:
+                ack.ackSingle();
+                break;
+            case REQUEUE:
+                ack.requeue();
+                break;
+            case REJECT_TO_DLQ:
+                ack.discard();
+                break;
+            case DEFER:
+                ack.requeue();
+                break;
+            default:
+                ack.requeue();
+                break;
         }
     }
 

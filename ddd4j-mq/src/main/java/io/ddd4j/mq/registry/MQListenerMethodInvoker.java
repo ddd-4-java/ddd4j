@@ -40,8 +40,11 @@ public class MQListenerMethodInvoker {
         MQListenerScanner.prepareMethod(definition);
         Method method = definition.getMethod();
         Object payload = resolvePayload(definition, message);
-        if (payload instanceof MQEvent mqEvent && !mqEvent.supports(definition.supports())) {
-            return AckDisposition.DISCARD;
+        if (payload instanceof MQEvent) {
+            MQEvent mqEvent = (MQEvent) payload;
+            if (!mqEvent.supports(definition.supports())) {
+                return AckDisposition.DISCARD;
+            }
         }
 
         Object[] args = resolveArguments(method, context, message, payload);
@@ -64,8 +67,8 @@ public class MQListenerMethodInvoker {
         if (payloadType.isInstance(raw)) {
             return raw;
         }
-        if (raw instanceof String text) {
-            return serialization.deserialize(text, payloadType);
+        if (raw instanceof String) {
+            return serialization.deserialize((String) raw, payloadType);
         }
         return serialization.deserialize(serialization.serialize(raw), payloadType);
     }
@@ -117,11 +120,11 @@ public class MQListenerMethodInvoker {
         if (result == null) {
             return AckDisposition.ACK;
         }
-        if (result instanceof AckDisposition disposition) {
-            return disposition;
+        if (result instanceof AckDisposition) {
+            return (AckDisposition) result;
         }
-        if (result instanceof Boolean bool) {
-            return bool ? AckDisposition.ACK : AckDisposition.REQUEUE;
+        if (result instanceof Boolean) {
+            return ((Boolean) result) ? AckDisposition.ACK : AckDisposition.REQUEUE;
         }
         return AckDisposition.ACK;
     }
@@ -162,8 +165,11 @@ public class MQListenerMethodInvoker {
             return headerTenant;
         }
         Object payload = message.payload();
-        if (payload instanceof MQEvent mqEvent && StringUtils.hasText(mqEvent.getTenantId())) {
-            return mqEvent.getTenantId();
+        if (payload instanceof MQEvent) {
+            MQEvent mqEvent = (MQEvent) payload;
+            if (StringUtils.hasText(mqEvent.getTenantId())) {
+                return mqEvent.getTenantId();
+            }
         }
         return ThreadContext.get(ContextConstants.TENANT_ID);
     }

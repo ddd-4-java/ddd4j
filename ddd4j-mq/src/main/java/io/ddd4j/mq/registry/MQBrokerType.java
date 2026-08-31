@@ -37,22 +37,46 @@ public enum MQBrokerType {
         String normalized = raw.trim()
                 .replace('_', '-')
                 .toLowerCase(Locale.ROOT);
-        return switch (normalized) {
-            case "disruptor", "local", "local-disruptor" -> DISRUPTOR;
-            case "rabbit" -> RABBIT;
-            case "kafka" -> KAFKA;
-            case "rocket" -> ROCKET;
-            case "pulsar" -> PULSAR;
-            case "redis", "redis-stream", "redisstream" -> REDIS_STREAM;
-            case "activemq", "artemis" -> ACTIVEMQ;
-            case "nats" -> NATS;
-            case "mqtt" -> MQTT;
-            case "mqtt-mica", "mica-mqtt", "mica" -> MQTT_MICA;
-            case "ons" -> ONS;
-            case "tdmq" -> TDMQ;
-            case "sqs" -> SQS;
-            default -> NONE;
-        };
+        if ("disruptor".equals(normalized) || "local".equals(normalized) || "local-disruptor".equals(normalized)) {
+            return DISRUPTOR;
+        }
+        if ("rabbit".equals(normalized)) {
+            return RABBIT;
+        }
+        if ("kafka".equals(normalized)) {
+            return KAFKA;
+        }
+        if ("rocket".equals(normalized)) {
+            return ROCKET;
+        }
+        if ("pulsar".equals(normalized)) {
+            return PULSAR;
+        }
+        if ("redis".equals(normalized) || "redis-stream".equals(normalized) || "redisstream".equals(normalized)) {
+            return REDIS_STREAM;
+        }
+        if ("activemq".equals(normalized) || "artemis".equals(normalized)) {
+            return ACTIVEMQ;
+        }
+        if ("nats".equals(normalized)) {
+            return NATS;
+        }
+        if ("mqtt".equals(normalized)) {
+            return MQTT;
+        }
+        if ("mqtt-mica".equals(normalized) || "mica-mqtt".equals(normalized) || "mica".equals(normalized)) {
+            return MQTT_MICA;
+        }
+        if ("ons".equals(normalized)) {
+            return ONS;
+        }
+        if ("tdmq".equals(normalized)) {
+            return TDMQ;
+        }
+        if ("sqs".equals(normalized)) {
+            return SQS;
+        }
+        return NONE;
     }
 
     /**

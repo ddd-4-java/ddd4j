@@ -24,7 +24,7 @@ public class MQConsumerContext {
 
     /** 原始消息头（不可变视图） */
     @Builder.Default
-    private Map<String, Object> headers = Map.of();
+    private Map<String, Object> headers = Collections.emptyMap();
 
     /** 完整消息信封 */
     private MQMessage<?> message;
@@ -57,6 +57,6 @@ public class MQConsumerContext {
      * @return 消息头
      */
     public Map<String, Object> getHeaders() {
-        return headers == null ? Map.of() : Collections.unmodifiableMap(headers);
+        return headers == null ? Collections.<String, Object>emptyMap() : Collections.unmodifiableMap(headers);
     }
 }

@@ -12,7 +12,7 @@ public class JsonMQMessageSerialization implements MQMessageSerialization, MQEve
         if (src == null) {
             return null;
         }
-        String text = src instanceof String s ? s : String.valueOf(src);
+        String text = src instanceof String ? (String) src : String.valueOf(src);
         if (text.isEmpty()) {
             return null;
         }

@@ -2,7 +2,7 @@ package io.ddd4j.mq.contract;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -15,7 +15,7 @@ class MQMessageNativeMessageTest {
     @Test
     void nativeMessageShouldReturnMatchingInstance() {
         Object nativeHandle = "native-payload";
-        MQMessage<String> message = MQMessage.of("payload", Map.of(), "id-1", "corr-1", nativeHandle);
+        MQMessage<String> message = MQMessage.of("payload", Collections.<String, Object>emptyMap(), "id-1", "corr-1", nativeHandle);
 
         assertEquals(nativeHandle, message.nativeMessage(String.class));
         assertNull(message.nativeMessage(Integer.class));

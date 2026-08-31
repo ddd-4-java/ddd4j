@@ -19,9 +19,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 
 import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 应用就绪后扫描 {@link MQEventListener} 并通过 {@link MQBrokerAdapter} 动态注册消费端点。
@@ -165,11 +167,11 @@ public class MQListenerRegistrar {
      */
     private List<MQConsumeInterceptor> orderedInterceptors() {
         if (interceptors == null || interceptors.isEmpty()) {
-            return List.of();
+            return Collections.emptyList();
         }
         return interceptors.stream()
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingInt(MQConsumeInterceptor::order))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

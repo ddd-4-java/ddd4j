@@ -1,6 +1,7 @@
 package io.ddd4j.mq.contract;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -9,19 +10,44 @@ import java.util.Objects;
  *
  * @param <T> 业务载荷类型
  */
-public record MQMessage<T>(
-        T payload,
-        Map<String, Object> headers,
-        String messageId,
-        String correlationId,
-        Object nativeMessage
-) {
+public final class MQMessage<T> {
+
+    private final T payload;
+    private final Map<String, Object> headers;
+    private final String messageId;
+    private final String correlationId;
+    private final Object nativeMessage;
 
     /**
      * 构造消息信封，headers 不可变。
      */
-    public MQMessage {
-        headers = headers == null ? Map.of() : Collections.unmodifiableMap(headers);
+    public MQMessage(T payload, Map<String, Object> headers, String messageId, String correlationId, Object nativeMessage) {
+        this.payload = payload;
+        this.headers = headers == null ? Collections.<String, Object>emptyMap()
+                : Collections.unmodifiableMap(new HashMap<String, Object>(headers));
+        this.messageId = messageId;
+        this.correlationId = correlationId;
+        this.nativeMessage = nativeMessage;
+    }
+
+    public T payload() {
+        return payload;
+    }
+
+    public Map<String, Object> headers() {
+        return headers;
+    }
+
+    public String messageId() {
+        return messageId;
+    }
+
+    public String correlationId() {
+        return correlationId;
+    }
+
+    public Object nativeMessage() {
+        return nativeMessage;
     }
 
     /**
@@ -33,7 +59,7 @@ public record MQMessage<T>(
      * @return 消息信封
      */
     public static <T> MQMessage<T> of(T payload, String messageId) {
-        return new MQMessage<>(payload, Map.of(), messageId, null, null);
+        return new MQMessage<T>(payload, Collections.<String, Object>emptyMap(), messageId, null, null);
     }
 
     /**
@@ -101,5 +127,32 @@ public record MQMessage<T>(
             return (N) nativeMessage;
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof MQMessage)) {
+            return false;
+        }
+        MQMessage<?> that = (MQMessage<?>) other;
+        return Objects.equals(payload, that.payload)
+                && Objects.equals(headers, that.headers)
+                && Objects.equals(messageId, that.messageId)
+                && Objects.equals(correlationId, that.correlationId)
+                && Objects.equals(nativeMessage, that.nativeMessage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload, headers, messageId, correlationId, nativeMessage);
+    }
+
+    @Override
+    public String toString() {
+        return "MQMessage[payload=" + payload + ", headers=" + headers + ", messageId=" + messageId
+                + ", correlationId=" + correlationId + ", nativeMessage=" + nativeMessage + "]";
     }
 }

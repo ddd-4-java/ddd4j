@@ -3,6 +3,7 @@ package io.ddd4j.mq.registry;
 import io.ddd4j.core.contract.annotation.MQEventListener;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -65,10 +66,10 @@ public class MQListenerDefinition {
             String defaultGroup,
             String defaultNamespace) {
 
-        String group = ann.group() != null && !ann.group().isBlank()
+        String group = StringUtils.hasText(ann.group())
                 ? ann.group()
                 : defaultGroup + "_" + method.getName();
-        String namespace = ann.namespace() != null && !ann.namespace().isBlank()
+        String namespace = StringUtils.hasText(ann.namespace())
                 ? ann.namespace()
                 : defaultNamespace;
 
@@ -109,7 +110,7 @@ public class MQListenerDefinition {
      * 物理 destination（namespace.topic）。
      */
     public String physicalDestination() {
-        if (namespace != null && !namespace.isBlank()) {
+        if (StringUtils.hasText(namespace)) {
             return namespace + "." + topic;
         }
         return topic;

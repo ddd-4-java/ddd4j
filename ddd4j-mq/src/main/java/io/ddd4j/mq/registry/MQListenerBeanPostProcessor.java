@@ -16,6 +16,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -98,7 +99,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
                 .namespace(namespace)
                 .topic(annotation.topic())
                 .tags(annotation.tags())
-                .supports(List.of(annotation.supports()))
+                .supports(Arrays.asList(annotation.supports()))
                 .concat(annotation.concat())
                 .build();
     }
@@ -112,7 +113,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
         Objects.requireNonNull(definition, "definition");
         Method method = definition.getMethod();
         Object bean = definition.getBean();
-        if (bean != null && !method.canAccess(bean)) {
+        if (bean != null && !method.isAccessible()) {
             method.setAccessible(true);
         }
     }
