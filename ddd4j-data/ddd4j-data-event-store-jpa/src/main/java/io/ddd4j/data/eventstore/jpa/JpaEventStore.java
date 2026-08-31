@@ -95,6 +95,7 @@ public class JpaEventStore implements EventStore {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
         return repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(
                         aggregateType, aggregateId.asString())
@@ -102,6 +103,7 @@ public class JpaEventStore implements EventStore {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
         return repository.findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
@@ -110,6 +112,7 @@ public class JpaEventStore implements EventStore {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<StoredEvent> readAll(long fromPosition, int limit) {
         return repository.findByPositionGreaterThanEqualOrderByPositionAsc(fromPosition)
                 .stream().limit(limit).map(this::toStoredEvent).toList();
