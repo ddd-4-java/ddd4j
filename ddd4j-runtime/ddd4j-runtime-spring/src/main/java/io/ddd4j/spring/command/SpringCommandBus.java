@@ -88,9 +88,7 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
                 Class<? extends Command> commandType = (Class<? extends Command>) obj;
                 CommandExecutor<?> previous = executorMap.putIfAbsent(commandType, executor);
                 if (Objects.nonNull(previous)) {
-                    log.warn("命令类型 {} 已注册执行器 {}，忽略重复注册: {}",
-                            commandType.getName(), previous.getClass().getSimpleName(),
-                            executor.getClass().getSimpleName());
+                    throw new IllegalStateException("Multiple executors found for command: " + commandType.getName());
                 } else {
                     log.info("注册命令执行器: {} -> {}", commandType.getName(),
                             executor.getClass().getSimpleName());

@@ -57,7 +57,10 @@ public class QuarkusCommandBus implements CommandBus {
     void onStart(@Observes StartupEvent event) {
         for (CommandExecutor<?> executor : executors) {
             for (Class<? extends Command> commandType : executor.supportedCommands()) {
-                executorMap.put(commandType, executor);
+                CommandExecutor<?> previous = executorMap.putIfAbsent(commandType, executor);
+                if (Objects.nonNull(previous)) {
+                    throw new IllegalStateException("Multiple executors found for command: " + commandType.getName());
+                }
                 log.info("Registered command executor: {} -> {}", commandType.getName(), executor.getClass().getSimpleName());
             }
         }
