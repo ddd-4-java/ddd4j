@@ -16,16 +16,10 @@ package io.ddd4j.guice;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
-import com.google.inject.Binding;
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
@@ -38,9 +32,6 @@ import io.ddd4j.guice.i18n.GuiceI18nProvider;
 import io.ddd4j.guice.subject.GuiceSubjectProvider;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Ddd4j Google Guice 核心模块。
@@ -86,6 +77,7 @@ public class Ddd4jGuiceModule extends AbstractModule {
         bind(GuiceViewManager.class).in(Singleton.class);
         bind(ViewManager.class).to(GuiceViewManager.class);
         bind(ViewScheduler.class).to(GuiceViewManager.class);
+        install(new Ddd4jCommandGuiceModule());
     }
 
     /**
@@ -114,29 +106,4 @@ public class Ddd4jGuiceModule extends AbstractModule {
         return new DefaultProjectionService(repository);
     }
 
-    /**
-     * 从当前 Injector 中收集命令执行器，构建与其他运行时一致的命令总线。
-     */
-    @Provides
-    @Singleton
-    public CommandBus commandBus(Injector injector) {
-        List<CommandExecutor<?>> executors = new ArrayList<>();
-        for (Binding<?> binding : injector.getAllBindings().values()) {
-            Class<?> rawType = binding.getKey().getTypeLiteral().getRawType();
-            if (!CommandExecutor.class.isAssignableFrom(rawType) || CommandExecutor.class.equals(rawType)) {
-                continue;
-            }
-            CommandExecutor<?> executor = commandExecutor(injector, binding.getKey());
-            if (Objects.nonNull(executor)) {
-                executors.add(executor);
-            }
-        }
-        return new DefaultCommandBus(executors);
-    }
-
-    @SuppressWarnings("unchecked")
-    private CommandExecutor<?> commandExecutor(Injector injector, Key<?> key) {
-        Object instance = injector.getInstance((Key<Object>) key);
-        return instance instanceof CommandExecutor<?> executor ? executor : null;
-    }
 }
