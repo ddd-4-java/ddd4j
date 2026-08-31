@@ -376,15 +376,25 @@ class ProjectionRunnerTest {
         }
 
         @Test
-        void runAll_其中一个视图抛异常_应隔离异常继续执行后续视图() {
+        void runAll_其中一个视图抛异常_应向上传播中断后续视图() {
             TestView first = new TestView("first", "first", 0, List.of("created")); // chunkSize 非法，会抛 IllegalArgumentException
+            TestView second = new TestView("second", "second", 100, List.of("created"));
+
+            assertThatThrownBy(() -> runner.runAll(List.of(first, second)))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+            verify(projectionService, never()).readProjectionPosition("second");
+        }
+
+        @Test
+        void runAllIsolated_其中一个视图抛异常_应隔离异常继续执行后续视图() {
+            TestView first = new TestView("first", "first", 0, List.of("created"));
             TestView second = new TestView("second", "second", 100, List.of("created"));
             when(projectionService.readProjectionPosition("second")).thenReturn(0L);
             when(chunkReader.read(eq("second"), eq(0L), eq(100), eq(List.of("created"))))
                     .thenReturn(new EventChunk<>(List.of("e2"), 1));
 
-            // runAll 不应抛出异常，first 的异常被隔离
-            runner.runAll(List.of(first, second));
+            runner.runAllIsolated(List.of(first, second));
 
             // second 仍应被执行
             assertThat(second.handled).containsExactly("e2");
