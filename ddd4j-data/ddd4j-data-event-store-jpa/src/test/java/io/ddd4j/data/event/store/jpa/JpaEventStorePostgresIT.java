@@ -81,6 +81,19 @@ class JpaEventStorePostgresIT {
         assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
     }
 
+    @Test
+    void payloadColumnShouldUsePortableTextType() {
+        Object dataType = entityManager.createNativeQuery("""
+                select data_type
+                from information_schema.columns
+                where table_schema = current_schema()
+                  and table_name = 'ddd4j_event_store'
+                  and column_name = 'payload'
+                """).getSingleResult();
+
+        assertThat(dataType).isEqualTo("text");
+    }
+
     private record TestAggregateRootId(String value) implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("Order");
