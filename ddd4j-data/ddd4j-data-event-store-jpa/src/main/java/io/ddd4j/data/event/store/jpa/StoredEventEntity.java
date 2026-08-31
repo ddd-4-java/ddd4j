@@ -19,6 +19,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.Instant;
 
@@ -66,7 +67,8 @@ public class StoredEventEntity {
     /**
      * 事件载荷 JSON 文本。使用 CLOB 以支持大体积事件。
      */
-    @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false, columnDefinition = "CLOB")
+    @Lob
+    @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false)
     private String payload;
 
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)

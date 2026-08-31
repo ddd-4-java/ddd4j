@@ -83,7 +83,7 @@ class JpaEventStoreIT {
         List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
         assertThat(events).hasSize(1);
         assertThat(events.get(0).aggregateType()).isEqualTo(ORDER_TYPE);
-        assertThat(events.get(0).aggregateId()).isEqualTo(orderId);
+        assertThat(events.get(0).aggregateId().asString()).isEqualTo(orderId.asString());
         assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
         assertThat(events.get(0).eventId()).isEqualTo(event.getEventId());
     }
