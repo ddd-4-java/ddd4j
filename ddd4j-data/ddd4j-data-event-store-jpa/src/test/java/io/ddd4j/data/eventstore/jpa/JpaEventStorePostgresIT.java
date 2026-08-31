@@ -132,7 +132,8 @@ class JpaEventStorePostgresIT {
         ItAggregateId aggregateId = new ItAggregateId("agg-pg-2");
         CountDownLatch startGate = new CountDownLatch(1);
         AtomicInteger successes = new AtomicInteger();
-        try (ExecutorService pool = Executors.newFixedThreadPool(2)) {
+        ExecutorService pool = Executors.newFixedThreadPool(2);
+        try {
             Future<?> first = pool.submit(
                     () -> appendConcurrently(aggregateId, startGate, successes));
             Future<?> second = pool.submit(
@@ -140,6 +141,9 @@ class JpaEventStorePostgresIT {
             startGate.countDown();
             first.get(30, TimeUnit.SECONDS);
             second.get(30, TimeUnit.SECONDS);
+        } finally {
+            pool.shutdown();
+            pool.awaitTermination(30, TimeUnit.SECONDS);
         }
 
         assertThat(successes.get()).isEqualTo(1);
