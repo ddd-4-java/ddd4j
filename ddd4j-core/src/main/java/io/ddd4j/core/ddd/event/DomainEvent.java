@@ -1,5 +1,6 @@
 package io.ddd4j.core.ddd.event;
 
+import io.ddd4j.core.context.BaseContext;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
@@ -40,4 +41,10 @@ public abstract class DomainEvent<ID extends EntityId> implements Event {
     @SuppressWarnings("unchecked") public ID getEntityId() { return entityIdPath == null ? null : (ID) entityIdPath.last(); }
     public AggregateVersion getAggregateVersion() { return aggregateVersion; }
     public void setAggregateVersion(AggregateVersion aggregateVersion) { this.aggregateVersion = aggregateVersion; }
+    /** 通过框架适配层注册的纯 Java 发布端口发布当前事件。 */
+    public void publish() {
+        DomainEventPublisher publisher = BaseContext.get(DomainEventPublisher.class);
+        if (publisher == null) throw new IllegalStateException("DomainEventPublisher is not registered");
+        publisher.publish(this);
+    }
 }
