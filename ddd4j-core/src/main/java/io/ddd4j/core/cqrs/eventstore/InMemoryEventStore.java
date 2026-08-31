@@ -14,7 +14,10 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
-import java.time.Instant;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
+
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * 内存事件存储默认实现（CQRS 写侧）。
  *
- * <p>按聚合 ID 存储事件列表，支持 append + read + readAll。
+ * <p>按聚合类型与聚合 ID 存储事件列表，支持 append + read + readAll。
  * 并发安全：{@code append} 使用 {@code synchronized} 保证乐观版本校验的原子性，
  * {@code read} / {@code readAll} 无锁读取。
  *
@@ -50,24 +53,46 @@ public class InMemoryEventStore implements EventStore {
     private final AtomicLong globalPosition = new AtomicLong(0);
 
     @Override
-    public synchronized void append(String aggregateId, List<Object> events, long expectedVersion) {
-        List<StoredEvent> existing = store.computeIfAbsent(aggregateId, k -> new CopyOnWriteArrayList<>());
+    public synchronized void append(String aggregateType, AggregateRootId aggregateId,
+                                    List<? extends DomainEvent<?>> events, long expectedVersion) {
+        String streamKey = streamKey(aggregateType, aggregateId);
+        List<StoredEvent> existing = store.computeIfAbsent(streamKey, k -> new CopyOnWriteArrayList<>());
         long currentVersion = existing.size();
         if (currentVersion != expectedVersion) {
-            throw new IllegalStateException(
-                    "Version conflict: expected " + expectedVersion + " but was " + currentVersion);
+            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, currentVersion);
         }
-        for (Object event : events) {
+        for (DomainEvent<?> event : events) {
             long position = globalPosition.incrementAndGet();
-            StoredEvent storedEvent = new StoredEvent(aggregateId, currentVersion++, event, position, Instant.now());
+            StoredEvent storedEvent = new StoredEvent(
+                    event.getEventId(),
+                    aggregateType,
+                    aggregateId,
+                    currentVersion++,
+                    position,
+                    ZonedDateTime.now(),
+                    event,
+                    event.getCorrelationId(),
+                    event.getCausationId());
             existing.add(storedEvent);
             positionIndex.put(position, storedEvent);
         }
     }
 
     @Override
-    public List<StoredEvent> read(String aggregateId) {
-        return store.getOrDefault(aggregateId, Collections.emptyList());
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
+        return store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList());
+    }
+
+    @Override
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
+        List<StoredEvent> events = read(aggregateType, aggregateId);
+        List<StoredEvent> result = new ArrayList<>();
+        for (StoredEvent event : events) {
+            if (event.version() >= fromVersion && event.version() <= toVersion) {
+                result.add(event);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -83,5 +108,9 @@ public class InMemoryEventStore implements EventStore {
             count++;
         }
         return result;
+    }
+
+    private String streamKey(String aggregateType, AggregateRootId aggregateId) {
+        return aggregateType + "#" + aggregateId.asTypedString();
     }
 }
