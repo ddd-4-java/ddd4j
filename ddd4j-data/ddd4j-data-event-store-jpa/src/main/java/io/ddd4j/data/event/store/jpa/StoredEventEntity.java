@@ -37,6 +37,10 @@ import java.time.Instant;
 public class StoredEventEntity {
 
     @Id
+    @Column(name = EventStoreConstants.COLUMN_AGGREGATE_TYPE, nullable = false, length = 255)
+    private String aggregateType;
+
+    @Id
     @Column(name = EventStoreConstants.COLUMN_AGGREGATE_ID, nullable = false, length = 255)
     private String aggregateId;
 
@@ -53,6 +57,12 @@ public class StoredEventEntity {
     @Column(name = EventStoreConstants.COLUMN_EVENT_ID, length = 64)
     private String eventId;
 
+    @Column(name = EventStoreConstants.COLUMN_CORRELATION_ID, length = 64)
+    private String correlationId;
+
+    @Column(name = EventStoreConstants.COLUMN_CAUSATION_ID, length = 64)
+    private String causationId;
+
     /**
      * 事件载荷 JSON 文本。使用 CLOB 以支持大体积事件。
      */
@@ -67,6 +77,14 @@ public class StoredEventEntity {
 
     public String getAggregateId() {
         return aggregateId;
+    }
+
+    public String getAggregateType() {
+        return aggregateType;
+    }
+
+    public void setAggregateType(String aggregateType) {
+        this.aggregateType = aggregateType;
     }
 
     public void setAggregateId(String aggregateId) {
@@ -103,6 +121,22 @@ public class StoredEventEntity {
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
+
+    public String getCausationId() {
+        return causationId;
+    }
+
+    public void setCausationId(String causationId) {
+        this.causationId = causationId;
     }
 
     public String getPayload() {

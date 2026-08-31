@@ -53,6 +53,14 @@ public final class EventStoreConstants {
      */
     public static final String COLUMN_EVENT_ID = "event_id";
     /**
+     * 关联事件标识列名。
+     */
+    public static final String COLUMN_CORRELATION_ID = "correlation_id";
+    /**
+     * 因果事件标识列名。
+     */
+    public static final String COLUMN_CAUSATION_ID = "causation_id";
+    /**
      * 事件载荷列名。
      */
     public static final String COLUMN_PAYLOAD = "payload";

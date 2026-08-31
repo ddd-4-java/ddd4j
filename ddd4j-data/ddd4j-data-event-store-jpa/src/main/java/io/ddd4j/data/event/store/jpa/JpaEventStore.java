@@ -14,12 +14,21 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import tools.jackson.databind.json.JsonMapper;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.EventId;
+import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +56,7 @@ public class JpaEventStore implements EventStore {
 
     private final EntityManager entityManager;
     private final JpaStoredEventRepository repository;
+    private final EventPayloadSerializer serializer;
 
     /**
      * 创建 JPA 事件存储。
@@ -57,7 +67,8 @@ public class JpaEventStore implements EventStore {
      * @throws NullPointerException entityManager 为 null 时抛出
      */
     public JpaEventStore(EntityManager entityManager) {
-        this(entityManager, new JpaStoredEventRepositoryImpl(entityManager));
+        this(entityManager, new JpaStoredEventRepositoryImpl(entityManager),
+                new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     /**
@@ -68,8 +79,14 @@ public class JpaEventStore implements EventStore {
      * @throws NullPointerException 任一参数为 null 时抛出
      */
     public JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository) {
+        this(entityManager, repository, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+    }
+
+    public JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
+                         EventPayloadSerializer serializer) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
+        this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
     }
 
     /**
@@ -96,7 +113,9 @@ public class JpaEventStore implements EventStore {
      * <p>未配置 batch_size 时，每次 flush 仍会发出单条 INSERT（行为正确，但无性能提升）。
      */
     @Override
-    public void append(String aggregateId, List<Object> events, long expectedVersion) {
+    public void append(String aggregateType, AggregateRootId aggregateId,
+                       List<? extends DomainEvent<?>> events, long expectedVersion) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         Objects.requireNonNull(events, "events must not be null");
         if (events.isEmpty()) {
@@ -108,24 +127,26 @@ public class JpaEventStore implements EventStore {
             tx.begin();
             entityManager.clear();
 
-            long currentVersion = repository.findCurrentVersion(aggregateId);
+            long currentVersion = repository.findCurrentVersion(aggregateType, aggregateId.asString());
             if (currentVersion != expectedVersion) {
-                throw new IllegalStateException(
-                        "Version conflict: expected " + expectedVersion + " but was " + currentVersion);
+                throw new AggregateVersionConflictException(
+                        aggregateType, aggregateId.asString(), expectedVersion, currentVersion);
             }
 
-            Instant now = Instant.now();
             long version = expectedVersion;
-            for (Object event : events) {
+            for (DomainEvent<?> event : events) {
                 StoredEventEntity entity = new StoredEventEntity();
-                entity.setAggregateId(aggregateId);
-                entity.setVersion(version);
+                entity.setAggregateType(aggregateType);
+                entity.setAggregateId(aggregateId.asString());
+                entity.setVersion(++version);
                 entity.setPosition(repository.nextPosition());
                 entity.setEventType(event.getClass().getName());
-                entity.setPayload(JsonKit.toJson(event));
-                entity.setTimestamp(now);
+                entity.setEventId(event.getEventId().asString());
+                entity.setCorrelationId(event.getCorrelationId() == null ? null : event.getCorrelationId().asString());
+                entity.setCausationId(event.getCausationId() == null ? null : event.getCausationId().asString());
+                entity.setPayload(serializer.serialize(event));
+                entity.setTimestamp(event.getEventTimestamp().toInstant());
                 repository.save(entity);
-                version++;
             }
 
             // 触发 Hibernate 批量 INSERT：先 flush 把所有未刷盘的 SQL 发到 DB，
@@ -149,9 +170,20 @@ public class JpaEventStore implements EventStore {
      * 事件载荷通过 {@link JsonKit} 反序列化，类型无法还原时回退为 {@code Map}。
      */
     @Override
-    public List<StoredEvent> read(String aggregateId) {
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
-        return repository.findByAggregateIdOrderByVersionAsc(aggregateId)
+        return repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(aggregateType, aggregateId.asString())
+                .stream()
+                .map(this::toStoredEvent)
+                .toList();
+    }
+
+    @Override
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
+                                  long fromVersion, long toVersion) {
+        return repository.findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
+                        aggregateType, aggregateId.asString(), fromVersion, toVersion)
                 .stream()
                 .map(this::toStoredEvent)
                 .toList();
@@ -173,20 +205,23 @@ public class JpaEventStore implements EventStore {
     /**
      * 将持久化实体转换为 core {@link StoredEvent}。
      *
-     * <p>事件类型通过 {@code Class.forName} 还原，payload 通过 {@link JsonKit#toObject}
-     * 反序列化。若事件类不存在（被删除/重命名），回退为 {@code Map} 并记录日志。
+     * <p>事件类型通过显式存储的 class name 还原，payload 通过强类型序列化器反序列化。
      *
      * @param entity 持久化实体
      * @return 重建的存储事件
      */
     private StoredEvent toStoredEvent(StoredEventEntity entity) {
-        Object event = deserializePayload(entity.getPayload(), entity.getEventType());
+        DomainEvent<?> event = serializer.deserialize(entity.getPayload(), resolveEventType(entity.getEventType()));
         return new StoredEvent(
-                entity.getAggregateId(),
+                EventId.valueOf(entity.getEventId()),
+                entity.getAggregateType(),
+                new StringAggregateRootId(entity.getAggregateId()),
                 entity.getVersion(),
-                event,
                 entity.getPosition(),
-                entity.getTimestamp());
+                ZonedDateTime.ofInstant(entity.getTimestamp(), ZoneOffset.UTC),
+                event,
+                EventId.valueOf(entity.getCorrelationId()),
+                EventId.valueOf(entity.getCausationId()));
     }
 
     /**
@@ -199,7 +234,33 @@ public class JpaEventStore implements EventStore {
      * @param eventType 事件类型全限定名
      * @return 反序列化后的事件对象或 Map
      */
-    private Object deserializePayload(String payload, String eventType) {
-        return io.ddd4j.core.cqrs.eventstore.EventDeserializer.deserialize(payload, eventType);
+    @SuppressWarnings("unchecked")
+    private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
+        try {
+            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+        }
+    }
+
+    private record StringAggregateRootId(String value) implements AggregateRootId {
+
+        private static final StringEntityType TYPE = new StringEntityType("String");
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        @JsonValue
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
     }
 }

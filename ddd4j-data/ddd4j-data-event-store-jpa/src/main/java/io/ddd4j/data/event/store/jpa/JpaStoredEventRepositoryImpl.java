@@ -53,12 +53,14 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
     }
 
     @Override
-    public long findCurrentVersion(String aggregateId) {
+    public long findCurrentVersion(String aggregateType, String aggregateId) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         try {
             Long count = entityManager.createQuery(
-                            "SELECT COUNT(e) FROM StoredEventEntity e WHERE e.aggregateId = :aggregateId",
+                            "SELECT COUNT(e) FROM StoredEventEntity e WHERE e.aggregateType = :aggregateType AND e.aggregateId = :aggregateId",
                             Long.class)
+                    .setParameter("aggregateType", aggregateType)
                     .setParameter("aggregateId", aggregateId)
                     .getSingleResult();
             return count != null ? count : 0L;
@@ -68,12 +70,27 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
     }
 
     @Override
-    public List<StoredEventEntity> findByAggregateIdOrderByVersionAsc(String aggregateId) {
+    public List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(String aggregateType, String aggregateId) {
+        Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         return entityManager.createQuery(
-                        "SELECT e FROM StoredEventEntity e WHERE e.aggregateId = :aggregateId ORDER BY e.version ASC",
+                        "SELECT e FROM StoredEventEntity e WHERE e.aggregateType = :aggregateType AND e.aggregateId = :aggregateId ORDER BY e.version ASC",
                         StoredEventEntity.class)
+                .setParameter("aggregateType", aggregateType)
                 .setParameter("aggregateId", aggregateId)
+                .getResultList();
+    }
+
+    @Override
+    public List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
+            String aggregateType, String aggregateId, long fromVersion, long toVersion) {
+        return entityManager.createQuery(
+                        "SELECT e FROM StoredEventEntity e WHERE e.aggregateType = :aggregateType AND e.aggregateId = :aggregateId AND e.version BETWEEN :fromVersion AND :toVersion ORDER BY e.version ASC",
+                        StoredEventEntity.class)
+                .setParameter("aggregateType", aggregateType)
+                .setParameter("aggregateId", aggregateId)
+                .setParameter("fromVersion", fromVersion)
+                .setParameter("toVersion", toVersion)
                 .getResultList();
     }
 
