@@ -4,6 +4,7 @@ import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.repository.EventSourcingRepository;
 import io.ddd4j.ddd.aggregate.DddAggregateRoot;
 
 import java.util.List;
@@ -16,7 +17,8 @@ import java.util.Objects;
  * @param <ID> 聚合根标识类型
  * @param <A> 聚合根类型
  */
-public abstract class DddEventStoreRepository<ID extends AggregateRootId, A extends DddAggregateRoot<ID>> {
+public abstract class DddEventStoreRepository<ID extends AggregateRootId, A extends DddAggregateRoot<ID>>
+        implements EventSourcingRepository<A, ID> {
     private final EventStore eventStore;
 
     protected DddEventStoreRepository(EventStore eventStore) {

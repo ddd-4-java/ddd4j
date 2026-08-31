@@ -7,6 +7,7 @@ import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.repository.EventSourcingRepository;
 import io.ddd4j.ddd.aggregate.DddAggregateRoot;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ class DddEventStoreRepositoryTest {
     void shouldPersistAndRebuildAggregateFromEventStream() {
         TestId id = new TestId("order-1");
         TestRepository repository = new TestRepository();
+        assertEquals(true, repository instanceof EventSourcingRepository);
         TestAggregate created = new TestAggregate(id);
         created.record("created");
         repository.add(created);
