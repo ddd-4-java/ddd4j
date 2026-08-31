@@ -26,7 +26,11 @@ public class CodeVersionService implements ApplicationListener<ApplicationEvent>
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (!(event instanceof ContextRefreshedEvent refreshed) || refreshed.getApplicationContext().getParent() != null) {
+        if (!(event instanceof ContextRefreshedEvent)) {
+            return;
+        }
+        ContextRefreshedEvent refreshed = (ContextRefreshedEvent) event;
+        if (refreshed.getApplicationContext().getParent() != null) {
             return;
         }
         try {
