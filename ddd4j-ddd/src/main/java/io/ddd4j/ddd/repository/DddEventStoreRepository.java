@@ -1,11 +1,13 @@
 package io.ddd4j.ddd.repository;
 
 import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.ddd.aggregate.DddAggregateRoot;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -22,7 +24,12 @@ public abstract class DddEventStoreRepository<ID extends AggregateRootId, A exte
     }
 
     protected final List<DomainEvent<?>> readEvents(String aggregateType, ID aggregateId) {
-        return eventStore.read(aggregateType, aggregateId);
+        List<StoredEvent> storedEvents = eventStore.read(aggregateType, aggregateId);
+        List<DomainEvent<?>> events = new ArrayList<DomainEvent<?>>();
+        for (StoredEvent storedEvent : storedEvents) {
+            events.add(storedEvent.payload());
+        }
+        return events;
     }
 
     protected final void appendEvents(String aggregateType, ID aggregateId,
