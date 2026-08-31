@@ -1,6 +1,6 @@
 ## Ddd4j Boot 3.x 简介
 
-**Ddd4j Boot** 是一个基于 **领域驱动设计（DDD）** 思想的 Java 微服务开发脚手架。采用 Spring Boot 3.5.x 构建，使用轻量级 [ddd-4-java](https://github.com/fuinorg/ddd-4-java) 和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing）。
+**Ddd4j Boot** 是一个基于 **领域驱动设计（DDD）** 思想的 Java 微服务开发脚手架。采用 Spring Boot 3.5.x 构建，使用 ddd4j 原生 DDD/CQRS/Event Sourcing Core 实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing）。
 
 本项目遵循 **Eric Evans** 和 **Vaughn Vernon** 的 DDD 经典理论，不依赖特殊框架，仅使用标准的 JEE/Spring 规范，帮助开发者构建可维护、可扩展的复杂业务系统。
 
@@ -30,7 +30,7 @@
 
 - **1. 完整的 DDD 分层架构**：提供标准的领域层、应用层、接口层和基础设施层结构，支持 COLA V5 架构模式
 
-- **2. 轻量级 DDD 实现**：基于 [ddd-4-java](https://github.com/fuinorg/ddd-4-java) 和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java) 库，无需引入重量级框架，保持代码简洁
+- **2. 轻量级 DDD 实现**：基于 ddd4j 原生 DDD/CQRS Core，无需引入重量级框架，保持代码简洁
 
 - **3. 技术栈集成**：基于 Spring Boot 3.5.x（详见 [Spring Boot 官方文档](https://docs.spring.io/spring-boot/docs/3.5.x/reference/html/features.html#features.spring-application)），集成 [MyBatis Plus](https://baomidou.com/introduce/)、Jackson、Guava、Swagger、SaToken 等常用组件，统一版本管理
 
@@ -51,7 +51,7 @@
 
 - **[DDD 思维导图](./docs/DDD%20思维导图.md)**：涵盖战略设计（限界上下文、子域划分、统一语言）和战术设计（实体、值对象、聚合、领域服务、仓储、领域事件）的完整知识体系
 - **[CQRS 思维导图](./docs/CQRS%20思维导图.md)**：深入理解命令查询职责分离、事件处理、一致性模型等核心概念
-- **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
+- **参考示例项目**：可使用仓库内的订单样例了解 DDD/CQRS/Event Sourcing 的端到端组织方式
 
 **CQRS 架构概览图**：
 
@@ -455,4 +455,3 @@ cola-platform/  (Maven父工程)
 │
 └─ pom.xml                         # 父POM，管理所有子模块
 ```
-

@@ -78,7 +78,7 @@
         <module>ddd4j-mq</module>
         <!-- 监控告警：钉钉/企微机器人 + 日志告警 -->
         <module>ddd4j-monitor</module>
-        <!-- 纯 DDD 轨道：集成 fuinorg ddd-4-java + cqrs-4-java，领域层零 MyBatis Plus 依赖 -->
+        <!-- 纯 DDD 轨道：ddd4j 原生 DDD/CQRS/Event Sourcing，领域层零 MyBatis Plus 依赖 -->
         <module>ddd4j-ddd</module>
         <module>ddd4j-extensions</module>
         <module>ddd4j-parent</module>
