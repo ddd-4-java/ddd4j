@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * {@code aggregate_id} VARCHAR(255)、{@code aggregate_type} VARCHAR(255)（可空）、
  * {@code version} BIGINT、{@code position} BIGINT（UNIQUE）、
  * {@code event_type} VARCHAR(512)、{@code event_id} VARCHAR(64)、
- * {@code payload} CLOB（JSON 文本）、{@code timestamp} TIMESTAMP。
+ * {@code payload} TEXT（JSON 文本）、{@code timestamp} TIMESTAMP。
  * 主键 {@code (aggregate_id, version)}，{@code position} 唯一索引。
  * 表在首次操作时通过 {@code CREATE TABLE IF NOT EXISTS} 懒创建。
  *
@@ -92,7 +92,7 @@ public class JdbiEventStore implements EventStore {
                     + EventStoreConstants.COLUMN_EVENT_ID + " VARCHAR(64), "
                     + EventStoreConstants.COLUMN_CORRELATION_ID + " VARCHAR(64), "
                     + EventStoreConstants.COLUMN_CAUSATION_ID + " VARCHAR(64), "
-                    + EventStoreConstants.COLUMN_PAYLOAD + " CLOB NOT NULL, "
+                    + EventStoreConstants.COLUMN_PAYLOAD + " TEXT NOT NULL, "
                     + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
                     + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_TYPE + ", "
                     + EventStoreConstants.COLUMN_AGGREGATE_ID + ", "
