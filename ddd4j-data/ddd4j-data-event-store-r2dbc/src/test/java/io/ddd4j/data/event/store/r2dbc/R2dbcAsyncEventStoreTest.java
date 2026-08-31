@@ -119,12 +119,12 @@ class R2dbcAsyncEventStoreTest {
                     AsyncStoredEvent restoredFirst = events.get(0);
                     assertThat(restoredFirst.aggregateId()).isEqualTo(orderId);
                     assertThat(restoredFirst.aggregateType()).isEqualTo(AGGREGATE_TYPE);
-                    assertThat(restoredFirst.version()).isEqualTo(0);
+                    assertThat(restoredFirst.version()).isEqualTo(1);
                     assertThat(restoredFirst.payload()).isInstanceOf(OrderCreatedEvent.class);
                     assertThat(restoredFirst.eventId()).isEqualTo(first.getEventId());
 
                     AsyncStoredEvent restoredSecond = events.get(1);
-                    assertThat(restoredSecond.version()).isEqualTo(1);
+                    assertThat(restoredSecond.version()).isEqualTo(2);
                     assertThat(restoredSecond.payload()).isInstanceOf(OrderItemAddedEvent.class);
                     // 因果链：respondTo(first) → correlationId/causationId 均为 first.eventId
                     assertThat(restoredSecond.correlationId()).isEqualTo(first.getEventId());
@@ -152,6 +152,25 @@ class R2dbcAsyncEventStoreTest {
 
         // 冲突后流未受影响
         StepVerifier.create(eventStore.read(AGGREGATE_TYPE, orderId).count())
+                .assertNext(count -> assertThat(count).isEqualTo(1))
+                .verifyComplete();
+    }
+
+    @Test
+    void streamsWithSameIdAndDifferentAggregateTypesMustRemainIndependent() {
+        TestOrderId sharedId = new TestOrderId("shared-id");
+
+        StepVerifier.create(eventStore.append("Order", sharedId,
+                        Flux.just(new OrderCreatedEvent(sharedId, "order-customer")), 0))
+                .verifyComplete();
+        StepVerifier.create(eventStore.append("Invoice", sharedId,
+                        Flux.just(new OrderCreatedEvent(sharedId, "invoice-customer")), 0))
+                .verifyComplete();
+
+        StepVerifier.create(eventStore.read("Order", sharedId).count())
+                .assertNext(count -> assertThat(count).isEqualTo(1))
+                .verifyComplete();
+        StepVerifier.create(eventStore.read("Invoice", sharedId).count())
                 .assertNext(count -> assertThat(count).isEqualTo(1))
                 .verifyComplete();
     }

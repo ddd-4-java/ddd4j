@@ -28,6 +28,7 @@ import io.ddd4j.kit.text.StrPool;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.Row;
+import io.r2dbc.spi.Statement;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tools.jackson.databind.ObjectMapper;
@@ -75,14 +76,17 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
     private static final String CREATE_TABLE_SQL =
             "CREATE TABLE IF NOT EXISTS " + EventStoreConstants.TABLE_NAME + " ("
                     + EventStoreConstants.COLUMN_AGGREGATE_ID + " VARCHAR(255) NOT NULL, "
-                    + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " VARCHAR(255), "
+                    + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " VARCHAR(255) NOT NULL, "
                     + EventStoreConstants.COLUMN_VERSION + " BIGINT NOT NULL, "
                     + EventStoreConstants.COLUMN_POSITION + " BIGINT NOT NULL, "
                     + EventStoreConstants.COLUMN_EVENT_TYPE + " VARCHAR(512) NOT NULL, "
                     + EventStoreConstants.COLUMN_EVENT_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_CORRELATION_ID + " VARCHAR(64), "
+                    + EventStoreConstants.COLUMN_CAUSATION_ID + " VARCHAR(64), "
                     + EventStoreConstants.COLUMN_PAYLOAD + " CLOB NOT NULL, "
                     + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
-                    + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_VERSION + "), "
+                    + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_TYPE + ", "
+                    + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_VERSION + "), "
                     + "CONSTRAINT uk_position UNIQUE (" + EventStoreConstants.COLUMN_POSITION + ")"
                     + ")";
 
@@ -91,26 +95,30 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
                     + " (" + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_AGGREGATE_TYPE
                     + ", " + EventStoreConstants.COLUMN_VERSION + ", " + EventStoreConstants.COLUMN_POSITION
                     + ", " + EventStoreConstants.COLUMN_EVENT_TYPE + ", " + EventStoreConstants.COLUMN_EVENT_ID
+                    + ", " + EventStoreConstants.COLUMN_CORRELATION_ID + ", " + EventStoreConstants.COLUMN_CAUSATION_ID
                     + ", " + EventStoreConstants.COLUMN_PAYLOAD + ", " + EventStoreConstants.COLUMN_TIMESTAMP + ")"
-                    + " VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+                    + " VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)";
 
     private static final String CURRENT_VERSION_SQL =
             "SELECT COUNT(*) FROM " + EventStoreConstants.TABLE_NAME
-                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $1";
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = $1"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $2";
 
     private static final String NEXT_POSITION_SQL =
             "SELECT COALESCE(MAX(" + EventStoreConstants.COLUMN_POSITION + "), 0) FROM " + EventStoreConstants.TABLE_NAME;
 
     private static final String READ_BY_AGGREGATE_SQL =
             "SELECT * FROM " + EventStoreConstants.TABLE_NAME
-                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $1"
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = $1"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $2"
                     + " ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
 
     private static final String READ_RANGE_SQL =
             "SELECT * FROM " + EventStoreConstants.TABLE_NAME
-                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $1"
-                    + " AND " + EventStoreConstants.COLUMN_VERSION + " >= $2"
-                    + " AND " + EventStoreConstants.COLUMN_VERSION + " <= $3"
+                    + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = $1"
+                    + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = $2"
+                    + " AND " + EventStoreConstants.COLUMN_VERSION + " >= $3"
+                    + " AND " + EventStoreConstants.COLUMN_VERSION + " <= $4"
                     + " ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
 
     private static final String READ_ALL_SQL =
@@ -168,7 +176,7 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
         return ensureInitialized().then(Mono.usingWhen(
                 connectionFactory.create(),
                 connection -> Mono.from(connection.beginTransaction())
-                        .then(currentVersion(connection, aggregateIdString))
+                        .then(currentVersion(connection, aggregateType, aggregateIdString))
                         .flatMap(actualVersion -> {
                             if (actualVersion != expectedVersion) {
                                 return Mono.error(new AggregateVersionConflictException(
@@ -194,7 +202,8 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
         return ensureInitialized().thenMany(Flux.usingWhen(
                 connectionFactory.create(),
                 connection -> Flux.from(connection.createStatement(READ_BY_AGGREGATE_SQL)
-                                .bind(0, aggregateId.asTypedString())
+                                .bind(0, aggregateType)
+                                .bind(1, aggregateId.asTypedString())
                                 .execute())
                         .flatMap(result -> result.map((row, metadata) -> toAsyncStoredEvent(row, aggregateType))),
                 connection -> Mono.from(connection.close()),
@@ -213,9 +222,10 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
         return ensureInitialized().thenMany(Flux.usingWhen(
                 connectionFactory.create(),
                 connection -> Flux.from(connection.createStatement(READ_RANGE_SQL)
-                                .bind(0, aggregateId.asTypedString())
-                                .bind(1, fromVersion)
-                                .bind(2, toVersion)
+                                .bind(0, aggregateType)
+                                .bind(1, aggregateId.asTypedString())
+                                .bind(2, fromVersion)
+                                .bind(3, toVersion)
                                 .execute())
                         .flatMap(result -> result.map((row, metadata) -> toAsyncStoredEvent(row, aggregateType))),
                 connection -> Mono.from(connection.close()),
@@ -264,9 +274,10 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
                 .doOnSuccess(v -> initialized.set(true));
     }
 
-    private Mono<Long> currentVersion(Connection connection, String aggregateIdString) {
+    private Mono<Long> currentVersion(Connection connection, String aggregateType, String aggregateIdString) {
         return Mono.from(connection.createStatement(CURRENT_VERSION_SQL)
-                        .bind(0, aggregateIdString)
+                        .bind(0, aggregateType)
+                        .bind(1, aggregateIdString)
                         .execute())
                 .flatMap(result -> Mono.from(result.map((row, metadata) -> row.get(0, Long.class))))
                 .defaultIfEmpty(0L);
@@ -280,26 +291,29 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
 
     /**
      * 顺序写入全部事件：position 在事务内按 {@code MAX+1} 递增分配，
-     * 版本从 {@code expectedVersion} 递增；任一写入失败整体回滚。
+     * 首事件版本为 {@code expectedVersion + 1}；任一写入失败整体回滚。
      */
     private Mono<Void> insertAll(Connection connection, String aggregateType, String aggregateIdString,
                                  List<? extends DomainEvent<?>> events, long expectedVersion) {
         return nextPosition(connection).flatMap(maxPosition -> {
             long position = maxPosition + 1;
-            long version = expectedVersion;
+            long version = expectedVersion + 1L;
             Mono<Void> chain = Mono.empty();
             for (DomainEvent<?> event : events) {
                 final long eventVersion = version;
                 final long eventPosition = position;
-                chain = chain.then(Mono.from(connection.createStatement(INSERT_SQL)
-                                .bind(0, aggregateIdString)
-                                .bind(1, aggregateType)
-                                .bind(2, eventVersion)
-                                .bind(3, eventPosition)
-                                .bind(4, event.getClass().getName())
-                                .bind(5, event.getEventId().asString())
-                                .bind(6, payloadSerializer.serialize(event))
-                                .bind(7, LocalDateTime.now())
+                Statement statement = connection.createStatement(INSERT_SQL)
+                        .bind(0, aggregateIdString)
+                        .bind(1, aggregateType)
+                        .bind(2, eventVersion)
+                        .bind(3, eventPosition)
+                        .bind(4, event.getClass().getName())
+                        .bind(5, event.getEventId().asString());
+                bindNullable(statement, 6, event.getCorrelationId() == null ? null : event.getCorrelationId().asString());
+                bindNullable(statement, 7, event.getCausationId() == null ? null : event.getCausationId().asString());
+                chain = chain.then(Mono.from(statement
+                                .bind(8, payloadSerializer.serialize(event))
+                                .bind(9, LocalDateTime.now())
                                 .execute())
                         .flatMap(result -> Mono.from(result.getRowsUpdated()))
                         .then());
@@ -308,6 +322,14 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
             }
             return chain;
         });
+    }
+
+    private void bindNullable(Statement statement, int index, String value) {
+        if (value == null) {
+            statement.bindNull(index, String.class);
+        } else {
+            statement.bind(index, value);
+        }
     }
 
     /**
@@ -341,8 +363,8 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
                 position,
                 ZonedDateTime.of(timestamp, ZoneId.systemDefault()),
                 event,
-                event.getCorrelationId(),
-                event.getCausationId());
+                EventId.valueOf(row.get(EventStoreConstants.COLUMN_CORRELATION_ID, String.class)),
+                EventId.valueOf(row.get(EventStoreConstants.COLUMN_CAUSATION_ID, String.class)));
     }
 
     private DomainEvent<?> deserializePayload(String payload, String eventType) {
