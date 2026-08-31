@@ -9,7 +9,7 @@ import lombok.Getter;
  * @公众号 架构师修行录
  */
 @Getter
-@Deprecated(since = "3.4.x", forRemoval = true)
+@Deprecated
 public enum ResultCode implements IEnum<Integer> {
     OK(0, "请求/操作成功"),
     SUCCESS(200, "请求/操作成功"),

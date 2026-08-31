@@ -24,7 +24,7 @@ import java.util.Map;
  * execution, respectively (i.e. individually explicitly or all via the <tt>clear</tt> method).</p>
  *
  */
-@Deprecated(since = "3.4.x", forRemoval = true)
+@Deprecated
 public class ThreadContext {
 
     /**
@@ -262,4 +262,3 @@ public class ThreadContext {
         }
     }
 }
-

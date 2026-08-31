@@ -45,7 +45,7 @@ import java.util.List;
  *             本类将在 5.0.x 版本移除。
  * @author <a href="https://github.com/wandl">wandl</a>
  */
-@Deprecated(since = "3.4.x", forRemoval = true)
+@Deprecated
 public class BaseServiceImpl<M extends BaseMapper<T>, T extends Model<?>> extends ServiceImpl<M, T> implements InitializingBean,
         ApplicationEventPublisherAware, ApplicationContextAware, EmbeddedValueResolverAware, IBaseService<T> {
 

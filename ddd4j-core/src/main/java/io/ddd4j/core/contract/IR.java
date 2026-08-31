@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Jensen
  * @公众号 架构师修行录
  */
-@Deprecated(since = "3.4.x", forRemoval = true)
+@Deprecated
 public interface IR extends Serializable {
     Serializable getCode();
 

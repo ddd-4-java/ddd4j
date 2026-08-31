@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Deprecated(since = "3.4.x", forRemoval = true)
+@Deprecated
 public class JSONObjectTypeHandler extends BaseTypeHandler<JSONObject> {
 
     @Override

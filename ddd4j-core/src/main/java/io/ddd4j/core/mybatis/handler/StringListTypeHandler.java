@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-@Deprecated(since = "3.4.x", forRemoval = true)
+@Deprecated
 public class StringListTypeHandler extends BaseTypeHandler<List<String>> {
 
     @Override

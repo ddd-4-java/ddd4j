@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 @MappedTypes(BooleanEnum.class)
 @MappedJdbcTypes(JdbcType.INTEGER)
-@Deprecated(since = "3.4.x", forRemoval = true)
+@Deprecated
 public class CustomBooleanEnumTypeHandler extends BaseTypeHandler<BooleanEnum> {
 
     @Override
