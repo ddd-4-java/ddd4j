@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  *
  * @param <ID> 聚合根标识类型
  */
-public abstract class AggregateRoot<ID extends Serializable> implements Serializable {
+public abstract class AggregateRoot<ID extends Serializable> implements Entity<ID> {
     private static final long serialVersionUID = 1L;
     private final List<DomainEvent<?>> uncommittedChanges = new ArrayList<DomainEvent<?>>();
 
