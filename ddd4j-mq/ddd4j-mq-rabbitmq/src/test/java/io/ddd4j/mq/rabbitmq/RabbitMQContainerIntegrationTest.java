@@ -5,9 +5,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.GetResponse;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.rabbitmq.RabbitMQContainer;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ class RabbitMQContainerIntegrationTest {
     private static final String QUEUE = "ddd4j.it.rabbit.verify";
 
     @Container
-    static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:3.13-management");
+    static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:4.1.8-management");
 
     @Test
     void rabbitMQPropertiesConnectsToContainerBroker() throws Exception {
