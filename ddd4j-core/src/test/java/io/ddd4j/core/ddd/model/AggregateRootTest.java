@@ -4,9 +4,12 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.event.StringEntityId;
+import io.ddd4j.core.ddd.repository.Repository;
+import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,6 +42,18 @@ class AggregateRootTest {
         assertEquals(first.id(), second.id());
         assertEquals(true, first.sameIdentityAs(second));
     }
+    @Test
+    void shouldPersistThroughRegisteredRepository() {
+        PersistentAggregate aggregate = new PersistentAggregate(new StringEntityId("persisted"));
+        RecordingRepository repository = new RecordingRepository();
+        RepositoryRegistry.register(PersistentAggregate.class, repository);
+        assertEquals(aggregate, aggregate.save());
+        aggregate.update();
+        aggregate.delete();
+        assertEquals(2, repository.saves);
+        assertEquals(1, repository.deletes);
+        RepositoryRegistry.unregister(PersistentAggregate.class);
+    }
     private static final class TestAggregate extends AggregateRoot<StringEntityId> {
         void record(TestEvent event) { apply(event); }
         @EventHandler private void on(TestEvent event) { }
@@ -57,5 +72,15 @@ class AggregateRootTest {
         private final StringEntityId id;
         private IdentityAggregate(StringEntityId id) { this.id = id; }
         @Override public StringEntityId id() { return id; }
+    }
+    private static final class PersistentAggregate extends AggregateRoot<StringEntityId> {
+        private final StringEntityId id; private PersistentAggregate(StringEntityId id) { this.id = id; }
+        @Override public StringEntityId id() { return id; }
+    }
+    private static final class RecordingRepository implements Repository<PersistentAggregate, StringEntityId> {
+        private int saves; private int deletes;
+        @Override public Optional<PersistentAggregate> findById(StringEntityId id) { return Optional.empty(); }
+        @Override public PersistentAggregate save(PersistentAggregate aggregate) { saves++; return aggregate; }
+        @Override public void deleteById(StringEntityId id) { deletes++; }
     }
 }
