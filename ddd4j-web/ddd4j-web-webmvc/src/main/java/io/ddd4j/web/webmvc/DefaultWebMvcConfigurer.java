@@ -14,13 +14,12 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.databind.ext.javatime.JavaTimeInitializer;
-import com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.databind.ext.javatime.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateSerializer;
-import com.fasterxml.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
 import io.ddd4j.web.webmvc.converter.Jackson3HttpMessageConverter;
 import org.springframework.http.MediaType;
@@ -124,7 +123,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_PATTERN);
         simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
         simpleModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
-        simpleModule.addDeserializer(Date.class, new ValueDeserializer<Date>() {
+        simpleModule.addDeserializer(Date.class, new JsonDeserializer<Date>() {
             @Override
             public Date deserialize(JsonParser p, DeserializationContext deserializationContext) {
                 if (Objects.isNull(p)) {
@@ -142,18 +141,17 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
             }
         });
 
-        // Jackson 3 ObjectMapper（ddd4j 3.0.x 使用 Spring Framework 7.0.8，
-        // 但 MappingJackson2HttpMessageConverter.setObjectMapper 仍要求 Jackson 2 ObjectMapper，
-        // 因此用 Jackson3HttpMessageConverter 桥接层转换）。
+        // 2.0.x 维持 Jackson 2 ObjectMapper；转换器类名保留既有 API 兼容性。
         ObjectMapper objectMapper = JsonMapper.builder()
                 .addModules(simpleModule)
-                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .defaultPropertyInclusion(JsonInclude.Value.construct(
+                        JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
                 .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .enable(MapperFeature.USE_GETTERS_AS_SETTERS)
                 .build();
 
-        // Jackson3HttpMessageConverter 桥接层：接收 Jackson 3 ObjectMapper
+        // 自定义转换器：接收配置完成的 Jackson 2 ObjectMapper。
         Jackson3HttpMessageConverter jackson3Converter = new Jackson3HttpMessageConverter(objectMapper);
         jackson3Converter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
         converters.add(jackson3Converter);
