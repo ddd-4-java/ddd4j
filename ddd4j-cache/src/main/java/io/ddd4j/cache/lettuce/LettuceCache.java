@@ -68,7 +68,7 @@ public class LettuceCache<V> implements Cache<String, V> {
         this.keyPrefix = config.getName() + ":";
         this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .defaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
                 .build();
     }
 

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>在 CI {@code infrastructure-integration} job（Docker daemon）下运行；本地需 Docker 环境。
  */
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 class RabbitMQContainerIntegrationTest {
 
     private static final String EXCHANGE = "ddd4j.it.rabbit";

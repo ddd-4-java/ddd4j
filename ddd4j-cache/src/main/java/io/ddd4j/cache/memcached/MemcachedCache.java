@@ -56,7 +56,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
         this.valueType = Objects.requireNonNull(valueType);
         this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .defaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
                 .build();
     }
 
