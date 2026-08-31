@@ -83,7 +83,7 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
                     + EventStoreConstants.COLUMN_EVENT_ID + " VARCHAR(64), "
                     + EventStoreConstants.COLUMN_CORRELATION_ID + " VARCHAR(64), "
                     + EventStoreConstants.COLUMN_CAUSATION_ID + " VARCHAR(64), "
-                    + EventStoreConstants.COLUMN_PAYLOAD + " CLOB NOT NULL, "
+                    + EventStoreConstants.COLUMN_PAYLOAD + " TEXT NOT NULL, "
                     + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
                     + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_TYPE + ", "
                     + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_VERSION + "), "
