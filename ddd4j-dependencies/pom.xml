@@ -518,9 +518,9 @@
         <!-- 第三方 Boot starter 版本（Phase 2 迁出 boot 轨前暂 pin） -->
         <spring-boot-starter-mybatis.version>3.0.5</spring-boot-starter-mybatis.version>
         <spring-boot-starter-ip2region.version>3.3.x.20241003.RELEASE</spring-boot-starter-ip2region.version>
-        <spring-boot-starter-redistpl-plus.version>1.0.x.20260630-SNAPSHOT</spring-boot-starter-redistpl-plus.version>
-        <spring-boot-starter-security-biz.version>1.0.x.20260630-SNAPSHOT</spring-boot-starter-security-biz.version>
-        <spring-boot-starter-security-jwt.version>1.0.x.20260630-SNAPSHOT</spring-boot-starter-security-jwt.version>
+        <spring-boot-starter-redistpl-plus.version>2.7.x.20240823.RELEASE</spring-boot-starter-redistpl-plus.version>
+        <spring-boot-starter-security-biz.version>2.7.x.20241003.RELEASE</spring-boot-starter-security-biz.version>
+        <spring-boot-starter-security-jwt.version>2.7.x.20241003.RELEASE</spring-boot-starter-security-jwt.version>
         <spring-plugin.version>3.0.0</spring-plugin.version>
         <spring-javassist.version>1.0.x.20260630-SNAPSHOT</spring-javassist.version>
         <spring-initializr.version>0.24.0</spring-initializr.version>
