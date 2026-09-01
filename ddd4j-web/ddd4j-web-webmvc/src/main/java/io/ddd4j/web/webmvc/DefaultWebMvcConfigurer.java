@@ -21,7 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
-import io.ddd4j.web.webmvc.converter.Jackson3HttpMessageConverter;
+import io.ddd4j.web.webmvc.converter.CustomHttpMessageConverter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
@@ -141,7 +141,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
             }
         });
 
-        // 2.0.x 维持 Jackson 2 ObjectMapper；转换器类名保留既有 API 兼容性。
+        // 2.0.x 使用 Jackson 2 ObjectMapper。
         ObjectMapper objectMapper = JsonMapper.builder()
                 .addModules(simpleModule)
                 .defaultPropertyInclusion(JsonInclude.Value.construct(
@@ -152,9 +152,9 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
                 .build();
 
         // 自定义转换器：接收配置完成的 Jackson 2 ObjectMapper。
-        Jackson3HttpMessageConverter jackson3Converter = new Jackson3HttpMessageConverter(objectMapper);
-        jackson3Converter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
-        converters.add(jackson3Converter);
+        CustomHttpMessageConverter customConverter = new CustomHttpMessageConverter(objectMapper);
+        customConverter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
+        converters.add(customConverter);
         converters.add(new ByteArrayHttpMessageConverter());
         converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
         converters.add(new ResourceHttpMessageConverter());
