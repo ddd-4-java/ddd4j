@@ -2,7 +2,6 @@ package io.ddd4j.mq.publish;
 
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
 
 /**
  * 领域事件发布端口。
@@ -10,7 +9,7 @@ import io.ddd4j.mq.spi.MQEventPublisherContract;
  * 各 {@code ddd4j-cmpt-*} 模块通过 {@link io.ddd4j.mq.spi.MQBrokerAdapter} 提供实现。
  * </p>
  */
-public interface MQEventPublisher extends io.ddd4j.core.contract.MQEventPublisher, MQEventPublisherContract {
+public interface MQEventPublisher extends io.ddd4j.core.contract.MQEventPublisher {
 
     /**
      * 发布领域事件到指定目的地。

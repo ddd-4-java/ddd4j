@@ -5,7 +5,7 @@ import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.mqtt.autoconfigure.Ddd4jMqttMQAutoConfiguration;
 import io.ddd4j.mq.mqtt.config.Ddd4jMqttProperties;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -47,7 +47,7 @@ class MqttContainerIT {
             .waitingFor(Wait.forListeningPort());
 
     @Autowired
-    private MQEventPublisherContract mqEventPublisher;
+    private MQEventPublisher mqEventPublisher;
 
     @Autowired
     private MqttPahoClientFactory mqttPahoClientFactory;

@@ -3,7 +3,7 @@ package io.ddd4j.mq.rocket;
 import io.ddd4j.mq.rocket.autoconfigure.Ddd4jRocketMQAutoConfiguration;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.junit.jupiter.api.AfterAll;
@@ -59,7 +59,7 @@ class RocketMQContainerIT {
     private static volatile boolean containersStarted;
 
     @Autowired
-    private MQEventPublisherContract mqEventPublisher;
+    private MQEventPublisher mqEventPublisher;
 
     @Autowired
     private RocketMQTemplate rocketMQTemplate;

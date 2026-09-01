@@ -8,7 +8,7 @@ import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.publish.MQEventPublisher;
 import io.ddd4j.mq.sqs.autoconfigure.Ddd4jSqsMQAutoConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -58,7 +58,7 @@ class SqsContainerIT {
     private static volatile boolean containersStarted;
 
     @Autowired
-    private MQEventPublisherContract mqEventPublisher;
+    private MQEventPublisher mqEventPublisher;
 
     @Autowired
     private AmazonSQS amazonSqs;
