@@ -243,12 +243,9 @@
                                 <Implementation-URL>${project.url}</Implementation-URL>
                                 <Implementation-Build-Date>${maven.build.timestamp}</Implementation-Build-Date>
                                 <Implementation-Build-Os>${os.name} ${os.version} ${os.arch}</Implementation-Build-Os>
-                                <Implementation-Build-Java>${java.version} ${java.vendor} ${java.vm.name}
-                                    ${java.vm.version} ${java.vm.vendor}
-                                </Implementation-Build-Java>
+                                <Implementation-Build-Java>${java.vm.name} ${java.vm.version}</Implementation-Build-Java>
                                 <Implementation-Build-TimeZone>${user.timezone}</Implementation-Build-TimeZone>
-                                <Implementation-Build-Java-Encoding>${project.build.sourceEncoding}
-                                </Implementation-Build-Java-Encoding>
+                                <Implementation-Build-Java-Encoding>${project.build.sourceEncoding}</Implementation-Build-Java-Encoding>
                             </manifestEntries>
                         </archive>
                     </configuration>
