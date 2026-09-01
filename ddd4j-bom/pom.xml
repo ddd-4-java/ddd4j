@@ -39,6 +39,16 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-event-store-jpa</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-event-store-jdbi</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-web</artifactId>
                 <version>${revision}</version>
             </dependency>

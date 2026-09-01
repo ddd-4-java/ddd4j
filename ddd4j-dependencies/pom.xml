@@ -218,6 +218,10 @@
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
         <hibernate.version>6.6.40.Final</hibernate.version>
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
+        <!-- 1.0.x 事件存储适配器：javax.persistence 线（Hibernate 5.6 为最后的 javax 版，JDK8 兼容） -->
+        <hibernate5.version>5.6.15.Final</hibernate5.version>
+        <javax-persistence.version>2.2</javax-persistence.version>
+        <jdbi3.version>3.39.0</jdbi3.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <h2.version>2.4.240</h2.version>
@@ -2828,6 +2832,22 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
+            </dependency>
+            <!-- 1.0.x 事件存储适配器（javax.persistence 线 / JDBI3） -->
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${javax-persistence.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-core</artifactId>
+                <version>${jdbi3.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
