@@ -3,7 +3,7 @@ package io.ddd4j.mq.pulsar;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQEventPublisherContract;
 import io.ddd4j.mq.pulsar.autoconfigure.Ddd4jPulsarMQAutoConfiguration;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,7 +47,7 @@ class PulsarContainerIT {
             .waitingFor(Wait.forLogMessage(".*messaging service is ready.*", 1));
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private PulsarClient pulsarClient;

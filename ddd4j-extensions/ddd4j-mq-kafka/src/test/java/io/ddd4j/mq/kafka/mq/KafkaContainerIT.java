@@ -3,7 +3,7 @@ package io.ddd4j.mq.kafka.mq;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQEventPublisherContract;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -49,7 +49,7 @@ class KafkaContainerIT {
     private static final KafkaContainer KAFKA = new KafkaContainer("apache/kafka:3.8.1");
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;

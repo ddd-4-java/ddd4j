@@ -3,7 +3,7 @@ package io.ddd4j.mq.tdmq;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQEventPublisherContract;
 import io.ddd4j.mq.tdmq.autoconfigure.Ddd4jTdmqMQAutoConfiguration;
 import io.ddd4j.mq.tdmq.client.TdmqClient;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TdmqMQSmokeIT {
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private TdmqClient tdmqClient;
