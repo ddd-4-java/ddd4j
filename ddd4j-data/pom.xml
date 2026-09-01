@@ -57,6 +57,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
@@ -72,6 +78,8 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
+                    <!-- 覆盖 parent 中含 PermSize 的 argLine（JDK 8+ 已移除该参数，否则 fork VM 无法启动） -->
+                    <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
