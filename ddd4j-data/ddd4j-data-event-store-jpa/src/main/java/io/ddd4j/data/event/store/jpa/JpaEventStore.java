@@ -41,7 +41,7 @@ import java.util.Objects;
  * <h3>事务管理</h3>
  * <p>本实现使用编程式事务管理（{@link EntityTransaction}），在 {@code append}
  * 方法内开启事务，冲突或异常时整体回滚。调用方无需（也不应）在外层包裹事务。
- * {@code read} / {@code readAll} 为只读操作，不主动管理事务。
+ * {@code read} / {@code readAll} 同样在本方法内开启只读事务，保证读隔离性。
  *
  * <h3>payload 序列化</h3>
  * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
@@ -173,20 +173,43 @@ public class JpaEventStore implements EventStore {
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
-        return repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(aggregateType, aggregateId.asString())
-                .stream()
-                .map(this::toStoredEvent)
-                .toList();
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            List<StoredEvent> result = repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(
+                            aggregateType, aggregateId.asString())
+                    .stream()
+                    .map(this::toStoredEvent)
+                    .toList();
+            tx.commit();
+            return result;
+        } catch (RuntimeException e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        }
     }
 
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
-        return repository.findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
-                        aggregateType, aggregateId.asString(), fromVersion, toVersion)
-                .stream()
-                .map(this::toStoredEvent)
-                .toList();
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            List<StoredEvent> result = repository.findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
+                            aggregateType, aggregateId.asString(), fromVersion, toVersion)
+                    .stream()
+                    .map(this::toStoredEvent)
+                    .toList();
+            tx.commit();
+            return result;
+        } catch (RuntimeException e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        }
     }
 
     /**
@@ -196,10 +219,21 @@ public class JpaEventStore implements EventStore {
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
-        return repository.findByPositionGreaterThanEqualOrderByPositionAsc(fromPosition, limit)
-                .stream()
-                .map(this::toStoredEvent)
-                .toList();
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            List<StoredEvent> result = repository.findByPositionGreaterThanEqualOrderByPositionAsc(fromPosition, limit)
+                    .stream()
+                    .map(this::toStoredEvent)
+                    .toList();
+            tx.commit();
+            return result;
+        } catch (RuntimeException e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        }
     }
 
     /**

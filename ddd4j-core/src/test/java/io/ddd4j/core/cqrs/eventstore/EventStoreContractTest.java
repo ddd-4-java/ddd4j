@@ -41,7 +41,7 @@ public abstract class EventStoreContractTest {
         assertThat(events.get(0).aggregateId()).isEqualTo(ORDER_1);
         assertThat(events.get(0).payload()).isSameAs(first);
         assertThat(events.get(1).payload()).isSameAs(second);
-        assertThat(events).extracting(StoredEvent::version).containsExactly(0L, 1L);
+        assertThat(events).extracting(StoredEvent::version).containsExactly(1L, 2L);
     }
 
     @Test

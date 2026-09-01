@@ -57,17 +57,18 @@ public class InMemoryEventStore implements EventStore {
                                     List<? extends DomainEvent<?>> events, long expectedVersion) {
         String streamKey = streamKey(aggregateType, aggregateId);
         List<StoredEvent> existing = store.computeIfAbsent(streamKey, k -> new CopyOnWriteArrayList<>());
-        long currentVersion = existing.size();
-        if (currentVersion != expectedVersion) {
-            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, currentVersion);
+        long actualVersion = existing.size();
+        if (actualVersion != expectedVersion) {
+            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
         }
+        long version = expectedVersion;
         for (DomainEvent<?> event : events) {
             long position = globalPosition.incrementAndGet();
             StoredEvent storedEvent = new StoredEvent(
                     event.getEventId(),
                     aggregateType,
                     aggregateId,
-                    currentVersion++,
+                    ++version,
                     position,
                     ZonedDateTime.now(),
                     event,
