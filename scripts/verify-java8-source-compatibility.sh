@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # 扫描范围：JDK8 反应堆内的全部模块目录
-DIRS=(ddd4j-annotation ddd4j-core ddd4j-data ddd4j-data-event-store-jpa ddd4j-data-event-store-jdbi ddd4j-ddd ddd4j-extensions ddd4j-kit ddd4j-monitor ddd4j-mq ddd4j-web)
+DIRS=(ddd4j-annotation ddd4j-core ddd4j-data ddd4j-data-event-store-jpa ddd4j-data-event-store-jdbi ddd4j-data-event-store-r2dbc ddd4j-ddd ddd4j-extensions ddd4j-kit ddd4j-monitor ddd4j-mq ddd4j-web)
 
 # 以下两个模块不在 JDK8 反应堆内（尚未完成 Java 8 移植，见 ddd4j-extensions/pom.xml 注释）；
 # 重新纳入反应堆时请删除这两条排除。

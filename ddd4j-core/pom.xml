@@ -183,6 +183,12 @@
             <artifactId>spring-webflux</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- For Reactor（AsyncEventStore 响应式契约，版本由 reactor-bom 管理） -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- For Spring Aop -->
         <dependency>
             <groupId>org.springframework</groupId>

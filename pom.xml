@@ -72,9 +72,10 @@
         <module>ddd4j-kit</module>
         <!-- 数据层：BaseRepositoryImpl 四泛型封装 MyBatis Plus -->
         <module>ddd4j-data</module>
-        <!-- 事件存储：EventStore 的 JPA/JDBI 持久化适配器（javax/JDK8 轨道） -->
+        <!-- 事件存储：EventStore/AsyncEventStore 的 JPA/JDBI/R2DBC 持久化适配器（javax/JDK8 轨道） -->
         <module>ddd4j-data-event-store-jpa</module>
         <module>ddd4j-data-event-store-jdbi</module>
+        <module>ddd4j-data-event-store-r2dbc</module>
         <!-- Web 层：拦截器/Session/Feign/多租户 -->
         <module>ddd4j-web</module>
         <!-- 消息队列：5 种 MQ 统一抽象 -->

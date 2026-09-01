@@ -10,11 +10,11 @@
         <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
     </parent>
 
-    <artifactId>ddd4j-data-event-store-jpa</artifactId>
+    <artifactId>ddd4j-data-event-store-r2dbc</artifactId>
     <packaging>jar</packaging>
 
-    <name>ddd4j-data-event-store-jpa</name>
-    <description>EventStore 的 javax.persistence（JPA 2.2 / Hibernate 5.x）适配器：程序化事务、乐观锁 + 唯一约束双保险、TEXT payload schema</description>
+    <name>ddd4j-data-event-store-r2dbc</name>
+    <description>AsyncEventStore 的 R2DBC SPI + Reactor 响应式适配器：TEXT payload schema、事务内乐观锁校验、懒建表，无框架绑定（JDK8）</description>
 
     <dependencies>
         <dependency>
@@ -32,16 +32,25 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- JPA 2.2 API（javax 命名空间，运行时由容器或 Hibernate 5.x 提供） -->
+        <!-- R2DBC SPI（版本由 ddd4j-dependencies 的 r2dbc-spi.version 管理，运行时由 ConnectionFactory 实现提供） -->
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-spi</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- 测试：Hibernate 5.6（最后的 javax.persistence 线，JDK8 兼容）+ H2 -->
+        <!-- Reactor（版本由 reactor-bom 管理） -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+        <!-- 测试：R2DBC H2 内存库 -->
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-h2</artifactId>
+            <!-- 覆盖全局 r2dbc-h2.version=1.1.0.RELEASE：其编译期依赖 H2 2.4.240
+                 （Session.prepareCommand(String) 单参签名，Java 11 字节码），与 JDK8 轨道
+                 不兼容；1.0.0.RELEASE 基于 R2DBC SPI 1.0.0 + H2 2.1/2.2 API（Java 8） -->
+            <version>1.0.0.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -51,12 +60,7 @@
             <version>2.2.224</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- PostgreSQL 容器轨：TC 2.0.5 JDK8 兼容（字节码 0x34=52） -->
+        <!-- 测试容器轨（PostgreSQL 方言验证，容器环境另行启用） -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-postgresql</artifactId>
@@ -68,10 +72,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <!-- 未在 ddd4j-dependencies 中管理，显式钉版本 -->
-            <version>42.7.4</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
