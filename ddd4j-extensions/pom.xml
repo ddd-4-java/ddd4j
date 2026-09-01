@@ -18,8 +18,7 @@
         <module>ddd4j-auth-datascope</module>
         <module>ddd4j-auth-license</module>
         <module>ddd4j-auth-satoken</module>
-        <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-auth-security 构建 -->
-        <!-- <module>ddd4j-auth-security</module> -->
+        <module>ddd4j-auth-security</module>
         <module>ddd4j-auth-shiro</module>
         <module>ddd4j-data-crypto</module>
         <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-data-external 构建 -->
