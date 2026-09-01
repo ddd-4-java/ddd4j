@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-projection-spring</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 投影调度 Spring 适配（Spring WebMVC/WebFlux + Helidon-Spring）：
+        SpringProjectionScheduler 以 @Component + SmartLifecycle 实现 ViewScheduler SPI
+        （TaskScheduler.schedule + CronTrigger 注册定时任务），SpringProjectionViewManager
+        以 @Component 实现 ViewManager SPI（收集 ProjectionView Bean + ProjectionRunner 驱动
+        runOnce），零新框架抽象——投影契约全部复用 ddd4j-core。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <properties>
+        <!-- 仅测试栈：@SpringBootTest 真实容器所用的 Spring Boot starter 版本。
+             BOM 刻意不管理 Spring Boot（ddd4j 不依赖 Boot 运行时），故此处局部显式钉版，
+             取 3.4.4 = Spring 6.2 线（与 ddd4j-dependencies 管理的 spring-framework 6.2.x
+             匹配；Boot 4.x/Spring 7 线勿用），test 作用域不进入对外依赖面。 -->
+        <spring-boot-it.version>3.4.4</spring-boot-it.version>
+    </properties>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-projection</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Spring Context：@Component 刻板 + SmartLifecycle + TaskScheduler + CronTrigger
+             （版本由 ddd4j-dependencies 导入的 spring-framework-bom 管理 = Spring 6.2 线） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <!-- Spring TX：声明式事务支持（版本由 spring-framework-bom 管理） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Spring Boot Test（@SpringBootTest + AssertJ/JUnit5 测试栈，
+             版本局部钉 3.4.4 仅测试栈，同 -event-store-jpa 决策） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试（真实 Spring 容器）随 test
+                 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
