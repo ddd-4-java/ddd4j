@@ -5,7 +5,7 @@ import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.disruptor.autoconfigure.Ddd4jDisruptorMQAutoConfiguration;
 import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQEventPublisherContract;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class DisruptorMQSmokeIT {
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private MQEventPublisherContract mqEventPublisher;
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {

@@ -3,7 +3,7 @@ package io.ddd4j.mq.redisstream;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQEventPublisherContract;
 import io.ddd4j.mq.redisstream.autoconfigure.Ddd4jRedisStreamMQAutoConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class RedisStreamContainerIT {
             .withExposedPorts(6379);
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;

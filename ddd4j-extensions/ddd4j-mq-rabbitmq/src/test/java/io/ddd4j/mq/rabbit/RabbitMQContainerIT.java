@@ -3,7 +3,7 @@ package io.ddd4j.mq.rabbit;
 import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQEventPublisherContract;
 import io.ddd4j.mq.rabbit.autoconfigure.Ddd4jRabbitMQAutoConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class RabbitMQContainerIT {
     private static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:3.13-management");
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;

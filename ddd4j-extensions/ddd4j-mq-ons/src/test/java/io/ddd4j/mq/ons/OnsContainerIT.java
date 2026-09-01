@@ -5,7 +5,7 @@ import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
 import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.ons.autoconfigure.Ddd4jOnsMQAutoConfiguration;
-import io.ddd4j.mq.publish.MQEventPublisher;
+import io.ddd4j.mq.spi.MQEventPublisherContract;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class OnsContainerIT {
 
     @Autowired
-    private MQEventPublisher mqEventPublisher;
+    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private Producer onsProducer;
@@ -50,7 +50,7 @@ class OnsContainerIT {
     }
 
     /**
-     * 冒烟：{@link MQEventPublisher#publish} 不抛异常（需真实 ONS / RocketMQ Proxy 端点时启用本 IT）。
+     * 冒烟：{@link MQEventPublisherContract#publish} 不抛异常（需真实 ONS / RocketMQ Proxy 端点时启用本 IT）。
      */
     @Test
     void publishShouldNotThrow() {
