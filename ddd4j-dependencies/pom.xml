@@ -206,7 +206,25 @@
         <groovy.version>5.0.3</groovy.version>
         <guava.version>32.1.3-jre</guava.version>
         <guerlab-sms.version>2.5.0</guerlab-sms.version>
-        <guice.version>7.0.0</guice.version>
+        <!-- Guice 锁定 5.1.0：最后一个 JDK8 可用大版本（7.0.0 需 Java 11+），供后续批次 runtime-guice 容器移植使用 -->
+        <guice.version>5.1.0</guice.version>
+        <!-- ==================================================================================
+             容器框架版本定义（Stage E 后续批次移植用）：为 data-cqrs/projection/web/runtime/sample 各
+             框架线（javalin/vertx/micronaut/helidon/dropwizard）预先锁定 JDK8 可用的最后大版本。
+             本批次只定义版本属性 + BOM import，不添加任何依赖，避免影响现网模块。
+             版本均经 Maven Central maven-metadata 核实为对应线的最新补丁（2026-09-02）。
+             ================================================================================== -->
+        <!-- Javalin 4.6.8：Javalin 5+ 弃用 JDK8，4.x 为最后 JDK8 线（无独立 BOM，单 artifact） -->
+        <javalin.version>4.6.8</javalin.version>
+        <!-- Vert.x 4.5.33：Vert.x 5 弃用 JDK8，4.5.x 为维护线（BOM=vertx-stack-depchain） -->
+        <vertx.version>4.5.33</vertx.version>
+        <!-- Micronaut 3.10.10：Micronaut 4 弃用 JDK8（BOM=micronaut-bom） -->
+        <micronaut.version>3.10.10</micronaut.version>
+        <!-- Helidon 2.6.14：Helidon 3 弃用 JDK8，2.x 为 javax 线（BOM=helidon-bom） -->
+        <helidon.version>2.6.14</helidon.version>
+        <!-- Dropwizard 2.1.12：Dropwizard 3+ 弃用 JDK8，2.x 为 javax/jetty9 线（BOM=dropwizard-bom；
+             io.dropwizard.metrics 与本框架无关，见上方 dropwizard-metrics.version） -->
+        <dropwizard.version>2.1.12</dropwizard.version>
         <grizzly.version>4.1.0-M1</grizzly.version>
         <gson.version>2.14.0</gson.version>
         <hazelcast.version>5.6.0</hazelcast.version>
@@ -215,7 +233,8 @@
         <hanlp-restful.version>0.0.15</hanlp-restful.version>
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
-        <hibernate.version>6.6.40.Final</hibernate.version>
+        <!-- Stage E 批次 0 收敛：删除 hibernate.version=6.6.40 属性残留（Hibernate 6.x 需 Java 11+，1.0.x 无消费者）；
+             ORM 一律走 hibernate5.version=5.6.15.Final（javax 线，JDK8 兼容） -->
         <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
         <!-- 1.0.x 事件存储适配器：javax.persistence 线（Hibernate 5.6 为最后的 javax 版，JDK8 兼容） -->
         <hibernate5.version>5.6.15.Final</hibernate5.version>
@@ -539,6 +558,7 @@
         <tencentcloud-sdk-java.version>3.1.1372</tencentcloud-sdk-java.version>
         <tencentcloud-sdk-java-sms.version>3.1.1357</tencentcloud-sdk-java-sms.version>
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
+        <!-- Testcontainers 锁定 2.0.5：当前 1.0.x 全部 ContainerIT 在 JDK8 实测绿；若后续批次容器移植出现字节码/API 不兼容，退回 JDK8 官方线 1.20.6 -->
         <testcontainers.version>2.0.5</testcontainers.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
@@ -5040,6 +5060,40 @@
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
                 <version>${reactor-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- ============ 容器框架 BOM import（Stage E 后续批次移植用，仅版本管理，不加依赖） ============ -->
+            <!-- https://mvnrepository.com/artifact/io.vertx/vertx-stack-depchain -->
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-stack-depchain</artifactId>
+                <version>${vertx.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-bom -->
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-bom</artifactId>
+                <version>${micronaut.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.helidon/helidon-bom -->
+            <dependency>
+                <groupId>io.helidon</groupId>
+                <artifactId>helidon-bom</artifactId>
+                <version>${helidon.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.dropwizard/dropwizard-bom -->
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-bom</artifactId>
+                <version>${dropwizard.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -49,7 +49,8 @@
         <spring-security.version>5.8.16</spring-security.version>
         <spring-session-bom.version>2021.2.3</spring-session-bom.version>
         <spring-ws.version>3.1.8</spring-ws.version>
-        <reactor-bom.version>2023.0.19</reactor-bom.version>
+        <!-- reactor-bom 与 ddd4j-dependencies 收敛统一为 2025.0.6（reactor-core 3.8.6 字节码 major=52，JDK8 兼容已实测） -->
+        <reactor-bom.version>2025.0.6</reactor-bom.version>
         <jackson-bom.version>2.22.2</jackson-bom.version>
         <maven-clean-plugin.version>3.4.1</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
