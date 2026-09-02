@@ -1,15 +1,12 @@
 package io.ddd4j.mq.kafka.mq;
 
-import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +28,11 @@ import org.testcontainers.kafka.KafkaContainer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Kafka 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework + spring-kafka，无 Boot）。
+ * <p>公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。</p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -43,13 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         KafkaContainerIT.KafkaInfrastructureConfiguration.class,
         Ddd4jKafkaMQAutoConfiguration.class
 })
-@EnabledIf("io.ddd4j.mq.kafka.mq.KafkaContainerIT#isDockerAvailable")
-class KafkaContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class KafkaContainerIT extends AbstractMqContainerIT {
 
     private static final KafkaContainer KAFKA = new KafkaContainer("apache/kafka:3.8.1");
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -64,37 +58,13 @@ class KafkaContainerIT {
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "kafka");
-        registry.add("ddd4j.mq.namespace", () -> "it");
+        registerCommonMqProperties(registry, "kafka", SMOKE_NAMESPACE);
         registry.add("ddd4j.mq.test.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
-    }
-
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
+    @Override
+    protected void verifyBrokerClient() {
         assertNotNull(kafkaTemplate);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic("smoke");
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of("smoke", "ping", "it")));
     }
 
     /**
@@ -137,8 +107,5 @@ class KafkaContainerIT {
             props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
             return new DefaultKafkaConsumerFactory<>(props);
         }
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }

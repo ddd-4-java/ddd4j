@@ -1,14 +1,10 @@
 package io.ddd4j.mq.disruptor;
 
-import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
-import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.disruptor.autoconfigure.Ddd4jDisruptorMQAutoConfiguration;
 import io.ddd4j.mq.disruptor.config.DisruptorMQProperties;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
-import org.junit.jupiter.api.Test;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,11 +12,9 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * Disruptor 本地 MQ 冒烟测试（无 Testcontainers：进程内 RingBuffer，无需外部 Broker）。
+ * <p>公共骨架（发布者注入、冒烟发布断言）见 {@link AbstractMqContainerIT}。</p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -28,30 +22,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         DisruptorMQSmokeIT.DisruptorPropertiesConfiguration.class,
         Ddd4jDisruptorMQAutoConfiguration.class
 })
-class DisruptorMQSmokeIT {
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
+class DisruptorMQSmokeIT extends AbstractMqContainerIT {
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "disruptor");
-        registry.add("ddd4j.mq.namespace", () -> "it");
-    }
-
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic("smoke");
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of("smoke", "ping", "it")));
+        registerCommonMqProperties(registry, "disruptor", SMOKE_NAMESPACE);
     }
 
     /**
@@ -67,8 +42,5 @@ class DisruptorMQSmokeIT {
         DisruptorMQProperties disruptorMQProperties() {
             return new DisruptorMQProperties();
         }
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }
