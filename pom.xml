@@ -79,6 +79,10 @@
         <module>ddd4j-runtime</module>
         <module>ddd4j-cache</module>
         <module>ddd4j-metrics</module>
+        <module>ddd4j-data-cqrs</module>
+        <module>ddd4j-data-cqrs-spring</module>
+        <module>ddd4j-data-projection</module>
+        <module>ddd4j-data-projection-spring</module>
         <module>ddd4j-data-event-store-esdb</module>
         <module>ddd4j-data-event-store-r2dbc</module>
         <!-- Web 层：拦截器/Session/Feign/多租户 -->
