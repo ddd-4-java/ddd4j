@@ -76,6 +76,17 @@ public final class EventDeserializer {
     }
 
     /**
+     * 返回当前进程级类名过滤器。
+     *
+     * <p>未通过 {@link #setFilter(ClassNameFilter)} 显式注册时返回 {@link #defaultFilter()}。
+     *
+     * @return 当前生效的过滤器
+     */
+    public static ClassNameFilter filter() {
+        return filter;
+    }
+
+    /**
      * 校验类名是否为合法的 Java 全限定名格式。
      *
      * <p>在以 {@code Class.forName} 加载外部输入的类名之前调用，

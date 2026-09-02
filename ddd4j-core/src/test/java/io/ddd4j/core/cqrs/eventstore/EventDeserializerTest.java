@@ -118,5 +118,14 @@ class EventDeserializerTest {
             assertThatThrownBy(() -> EventDeserializer.setFilter(null))
                     .isInstanceOf(NullPointerException.class);
         }
+
+        @Test
+        void filter_getter返回当前生效过滤器() {
+            assertThat(EventDeserializer.filter()).isSameAs(EventDeserializer.defaultFilter());
+
+            ClassNameFilter custom = name -> name.startsWith("io.ddd4j.");
+            EventDeserializer.setFilter(custom);
+            assertThat(EventDeserializer.filter()).isSameAs(custom);
+        }
     }
 }
