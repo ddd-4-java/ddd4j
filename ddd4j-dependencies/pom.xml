@@ -208,7 +208,6 @@
         <guerlab-sms.version>2.5.0</guerlab-sms.version>
         <guice.version>7.0.0</guice.version>
         <grizzly.version>4.1.0-M1</grizzly.version>
-        <grpc.version>1.35.0</grpc.version>
         <gson.version>2.14.0</gson.version>
         <hazelcast.version>5.6.0</hazelcast.version>
         <hadoop.version>3.4.2</hadoop.version>
@@ -224,7 +223,7 @@
         <jdbi3.version>3.39.0</jdbi3.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hikaricp.version>7.1.0</hikaricp.version>
-        <h2.version>2.4.240</h2.version>
+        <h2.version>2.2.224</h2.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <htmlunit.version>4.19.0</htmlunit.version>
@@ -277,8 +276,7 @@
         <jcl.version>1.1</jcl.version>
         <jcifs.version>3.0.2</jcifs.version>
         <jersey.version>3.1.11</jersey.version>
-        <jetty-reactive-httpclient.version>4.1.4</jetty-reactive-httpclient.version>
-        <jetty.version>12.1.5</jetty.version>
+        <jetty.version>9.4.58.v20250814</jetty.version>
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
         <jedis.version>7.1.0</jedis.version>
         <jetbrains-annotations.version>26.0.2-1</jetbrains-annotations.version>
@@ -545,7 +543,7 @@
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
-        <tomcat.version>11.0.15</tomcat.version>
+        <tomcat.version>9.0.121</tomcat.version>
         <tongweb.version>7.0.E.6_P5</tongweb.version>
         <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
         <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
