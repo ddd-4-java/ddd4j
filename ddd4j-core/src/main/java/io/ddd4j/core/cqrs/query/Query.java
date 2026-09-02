@@ -241,6 +241,27 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
         return (Q) this;
     }
 
+    /**
+     * 追加显式 {@link PropertyRef} 条件（包内可见，供 {@link PersistenceQueryScope} 使用，
+     * 1.0.x 对齐 3.0.x 契约：支持 PERSISTENCE 空间的查询作用域）。
+     */
+    void addCondition(boolean condition, PropertyRef ref, String operator, Object value) {
+        if (condition) {
+            conditions.add(new LambdaCondition(ref, operator, value));
+        }
+    }
+
+    /**
+     * 追加显式 {@link PropertyRef} 排序（包内可见，供 {@link PersistenceQueryScope} 使用）。
+     */
+    void addOrderBy(PropertyRef ref, String direction) {
+        if ("DESC".equalsIgnoreCase(direction)) {
+            orderByConditions.add(LambdaCondition.desc(ref));
+        } else {
+            orderByConditions.add(LambdaCondition.asc(ref));
+        }
+    }
+
     private <Q extends Query<M>> Q addCollectionCondition(boolean condition, SFunction<M, ?> column,
                                                             String operator, Collection<?> values) {
         if (condition && Objects.nonNull(values) && !values.isEmpty()) {
