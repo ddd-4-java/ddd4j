@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.1.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
-    <modelVersion>4.1.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
-        <artifactId>ddd4j-data</artifactId>
+        <artifactId>ddd4j-dependencies</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
     </parent>
 
     <artifactId>ddd4j-data-event-store-esdb</artifactId>
@@ -35,6 +35,7 @@
         <dependency>
             <groupId>com.eventstore</groupId>
             <artifactId>db-client-java</artifactId>
+            <version>${eventstore-db-client.version}</version>
         </dependency>
 
         <!-- ======== Test ======== -->
