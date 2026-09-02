@@ -201,9 +201,16 @@ public class JpaEventStore implements EventStore {
     }
 
     private long maxPosition() {
-        Long max = entityManager.createQuery(
-                "select coalesce(max(e.position), 0) from " + ENTITY + " e", Long.class).getSingleResult();
-        return max == null ? 0L : max;
+        // PESSIMISTIC_WRITE 行锁序列化并发 append 的全局 position 分配
+        //（回填自 3.0.x 7263653c）。取最大 position 行加锁（避免聚合查询，
+        // H2 不支持 grouped select 的 FOR UPDATE）；空表无行可锁时由
+        // uk_position 唯一约束兜底并发冲突。
+        List<Long> maxRows = entityManager.createQuery(
+                "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
+                .setMaxResults(1)
+                .setLockMode(javax.persistence.LockModeType.PESSIMISTIC_WRITE)
+                .getResultList();
+        return maxRows.isEmpty() ? 0L : maxRows.get(0);
     }
 
     private StoredEvent toStoredEvent(StoredEventEntity entity) {

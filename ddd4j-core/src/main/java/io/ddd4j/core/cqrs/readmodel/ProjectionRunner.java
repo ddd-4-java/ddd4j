@@ -11,6 +11,7 @@ public class ProjectionRunner<E> {
     public static final int CONSECUTIVE_FAILURE_THRESHOLD = 5;
     private final ProjectionService projectionService; private final EventChunkReader<E> chunkReader; private final ProjectionMetrics metrics;
     private final Map<String, AtomicInteger> consecutiveFailures = new ConcurrentHashMap<String, AtomicInteger>();
+    private final Map<String, ProjectionRunInfo> lastRunInfos = new ConcurrentHashMap<String, ProjectionRunInfo>();
     public ProjectionRunner(ProjectionService projectionService, EventChunkReader<E> chunkReader) { this(projectionService, chunkReader, NoopProjectionMetrics.INSTANCE); }
     public ProjectionRunner(ProjectionService projectionService, EventChunkReader<E> chunkReader, ProjectionMetrics metrics) {
         this.projectionService = Objects.requireNonNull(projectionService, "projectionService"); this.chunkReader = Objects.requireNonNull(chunkReader, "chunkReader");
@@ -23,6 +24,7 @@ public class ProjectionRunner<E> {
             if (chunk.hasEvents()) actual.handleEvents(chunk.getEvents());
             long advance = chunk.getNextEventNumber() > previous ? chunk.getNextEventNumber() - previous : 0L;
             if (advance > 0) projectionService.updateProjectionPosition(streamId, chunk.getNextEventNumber());
+            lastRunInfos.put(streamId, new ProjectionRunInfo(java.time.Instant.now(), chunk.getEvents().size(), null));
             metrics.onRunCompleted(streamId, chunk.getEvents().size(), System.nanoTime() - started, advance);
             return chunk;
         } catch (RuntimeException exception) { metrics.onRunFailed(streamId, exception); throw exception; }
@@ -37,12 +39,22 @@ public class ProjectionRunner<E> {
             String name = view.getName();
             try { runOnce(view); consecutiveFailures.remove(name); }
             catch (RuntimeException exception) {
+                lastRunInfos.put(view.getStreamId(), new ProjectionRunInfo(java.time.Instant.now(), 0, exception.getMessage()));
                 AtomicInteger counter = consecutiveFailures.get(name);
                 if (counter == null) { AtomicInteger created = new AtomicInteger(); AtomicInteger previous = ((ConcurrentHashMap<String, AtomicInteger>) consecutiveFailures).putIfAbsent(name, created); counter = previous == null ? created : previous; }
                 int failures = counter.incrementAndGet();
                 if (failures >= CONSECUTIVE_FAILURE_THRESHOLD && failures % CONSECUTIVE_FAILURE_THRESHOLD == 0) metrics.onCircuitOpened(name, failures);
             }
         }
+    }
+    /** 返回视图流的状态快照（位置 + 最近运行信息），回填自 3.0.x fbada828。 */
+    public ProjectionStatus projectionStatus(ProjectionView<E> view) {
+        String streamId = validate(view).getStreamId();
+        long next = projectionService.readProjectionPosition(streamId);
+        ProjectionRunInfo info = lastRunInfos.get(streamId);
+        return info == null
+                ? new ProjectionStatus(streamId, next, false, null, 0, null)
+                : new ProjectionStatus(streamId, next, true, info.getLastRunAt(), info.getLastEventCount(), info.getLastError());
     }
     private ProjectionView<E> validate(ProjectionView<E> view) {
         ProjectionView<E> actual = Objects.requireNonNull(view, "view");

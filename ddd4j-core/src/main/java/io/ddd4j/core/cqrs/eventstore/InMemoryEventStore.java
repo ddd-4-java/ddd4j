@@ -6,12 +6,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
-/** 开发与测试使用的线程安全内存事件存储。 */
+/**
+ * 开发与测试使用的线程安全内存事件存储。
+ *
+ * <p>{@code readAll} 通过 {@link NavigableMap} 按全局 position 索引实现
+ * O(limit) 复杂度（回填自 3.0.x 性能优化），避免全流扫描 + 排序。
+ */
 public final class InMemoryEventStore implements EventStore {
     private final Map<String, List<StoredEvent>> streams = new ConcurrentHashMap<String, List<StoredEvent>>();
+    /** 全局 position → StoredEvent 索引（用于 readAll 高效分页）。 */
+    private final NavigableMap<Long, StoredEvent> positionIndex = new ConcurrentSkipListMap<Long, StoredEvent>();
     private long nextPosition = 1L;
     @Override public synchronized void append(String aggregateType, AggregateRootId aggregateId, List<? extends DomainEvent<?>> events, long expectedVersion) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null"); Objects.requireNonNull(aggregateId, "aggregateId must not be null"); Objects.requireNonNull(events, "events must not be null");
@@ -23,9 +32,12 @@ public final class InMemoryEventStore implements EventStore {
         if (stream == null) { stream = new ArrayList<StoredEvent>(); streams.put(key, stream); }
         for (DomainEvent<?> event : events) {
             long version = stream.size() + 1L;
+            long position = nextPosition++;
             event.setAggregateVersion(new io.ddd4j.core.ddd.event.AggregateVersion(version));
-            stream.add(new StoredEvent(event.getEventId(), aggregateType, aggregateId, version, nextPosition++,
-                    event.getEventTimestamp(), event, event.getCorrelationId(), event.getCausationId()));
+            StoredEvent stored = new StoredEvent(event.getEventId(), aggregateType, aggregateId, version, position,
+                    event.getEventTimestamp(), event, event.getCorrelationId(), event.getCausationId());
+            stream.add(stored);
+            positionIndex.put(position, stored);
         }
     }
     @Override public synchronized List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -40,9 +52,11 @@ public final class InMemoryEventStore implements EventStore {
     }
     @Override public synchronized List<StoredEvent> readAll(long fromPosition, int limit) {
         if (limit <= 0) throw new IllegalArgumentException("limit must be positive");
-        List<StoredEvent> result = new ArrayList<StoredEvent>();
-        for (List<StoredEvent> stream : streams.values()) for (StoredEvent event : stream) if (event.position() >= fromPosition) result.add(event);
-        Collections.sort(result, new java.util.Comparator<StoredEvent>() { @Override public int compare(StoredEvent left, StoredEvent right) { return Long.compare(left.position(), right.position()); } });
-        return result.size() <= limit ? result : new ArrayList<StoredEvent>(result.subList(0, limit));
+        List<StoredEvent> result = new ArrayList<StoredEvent>(Math.min(limit, positionIndex.size()));
+        for (StoredEvent event : positionIndex.tailMap(fromPosition, true).values()) {
+            result.add(event);
+            if (result.size() == limit) break;
+        }
+        return result;
     }
 }
