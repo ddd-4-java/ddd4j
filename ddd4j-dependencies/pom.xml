@@ -167,8 +167,8 @@
         <elasticsearch-client.version>9.2.1</elasticsearch-client.version>
         <expressly.version>6.0.0</expressly.version>
         <fastdfs.version>1.27.2</fastdfs.version>
-        <fastjson.version>2.0.60</fastjson.version>
-        <fastjson2.version>2.0.60</fastjson2.version>
+        <fastjson.version>2.0.62</fastjson.version>
+        <fastjson2.version>2.0.62</fastjson2.version>
         <feign.version>11.10</feign.version>
         <findbugs-annotations.version>3.0.1u2</findbugs-annotations.version>
         <findbugs-jsr305.version>3.0.2</findbugs-jsr305.version>
