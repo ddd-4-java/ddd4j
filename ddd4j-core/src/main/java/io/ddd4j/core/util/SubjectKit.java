@@ -14,7 +14,7 @@
  */
 package io.ddd4j.core.util;
 
-import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.subject.SubjectProvider;

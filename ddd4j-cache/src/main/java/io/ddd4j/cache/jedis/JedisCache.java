@@ -15,12 +15,14 @@
 package io.ddd4j.cache.jedis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.*;
 import io.ddd4j.kit.lang.StrKit;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -331,7 +333,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         for (int attempt = 0; attempt < maxTries; attempt++) {
             String currentJson = jedis.get(cachedKey);
             V currentValue = deserialize(currentJson);
-            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<V>() {
                 @Override
                 public String key() {
                     return cachedKey;

@@ -105,10 +105,11 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
         this.expireSeconds = config.getExpireAfterWriteSeconds() > 0 ? config.getExpireAfterWriteSeconds() : 3600;
         this.valueType = Objects.requireNonNull(valueType);
         this.keyPrefix = config.getName() + ":";
-        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
+        ObjectMapper om = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
                 .build();
+        om.setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
+        this.objectMapper = om;
     }
 
     public RedissonCache(RedissonClient redissonClient, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
@@ -368,7 +369,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             String currentJson = bucket.get();
             V currentValue = deserialize(currentJson);
 
-            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<V>() {
                 @Override
                 public String key() {
                     return cachedKey;

@@ -80,10 +80,11 @@ public class LettuceCache<V> implements Cache<String, V> {
         this.expireDuration = config.getExpireAfterWriteSeconds() > 0 ? Duration.ofSeconds(config.getExpireAfterWriteSeconds()) : Duration.ZERO;
         this.valueType = Objects.requireNonNull(valueType);
         this.keyPrefix = config.getName() + ":";
-        this.objectMapper = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
+        ObjectMapper om = Objects.nonNull(objectMapper) ? objectMapper : JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
                 .build();
+        om.setDefaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
+        this.objectMapper = om;
     }
 
     public LettuceCache(RedisCommands<String, String> commands, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
@@ -177,7 +178,7 @@ public class LettuceCache<V> implements Cache<String, V> {
         for (int attempt = 0; attempt < maxTries; attempt++) {
             String currentJson = commands.get(cachedKey);
             V currentValue = deserialize(currentJson);
-            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<V>() {
                 @Override
                 public String key() {
                     return cachedKey;

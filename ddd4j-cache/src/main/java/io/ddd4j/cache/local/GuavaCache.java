@@ -126,7 +126,7 @@ public class GuavaCache<K, V> implements Cache<K, V> {
         ConcurrentMap<K, V> map = cache.asMap();
         for (int attempt = 0; attempt < 16; attempt++) {
             V current = cache.getIfPresent(key);
-            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<V>() {
                 @Override
                 public String key() {
                     return String.valueOf(key);

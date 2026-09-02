@@ -1,5 +1,6 @@
 package io.ddd4j.core.subject;
 
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.Functions;
 import io.ddd4j.core.util.JacksonKit;
 import org.apache.commons.collections.MapUtils;
