@@ -1,6 +1,7 @@
 package io.ddd4j.data.eventstore.panache;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +16,7 @@ import java.util.List;
 
 /**
  * 事件存储 Quarkus Panache 实体：以追加写（append-only）方式落地
- * {@code io.ddd4j.data.eventstore.StoredEvent}（ADR-0005，见
+ * {@code io.ddd4j.core.cqrs.eventstore.StoredEvent}（ADR-0005，见
  * {@code docs/adr/0005-event-store-spi.md}）。
  *
  * <p>表结构与 {@code ddd4j-data-event-store-jpa} 的 {@code StoredEventEntity} 完全一致
@@ -39,11 +40,12 @@ import java.util.List;
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @see io.ddd4j.data.eventstore.StoredEvent
+ * @see io.ddd4j.core.cqrs.eventstore.StoredEvent
  * @see PanacheEventStore
  * @since 2.0.x
  */
 @Entity
+@RegisterForReflection
 @Table(name = "ddd4j_stored_event",
        uniqueConstraints = @UniqueConstraint(
            name = "uk_aggregate_version",

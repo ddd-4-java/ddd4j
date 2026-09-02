@@ -6,10 +6,10 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
-import io.ddd4j.data.eventstore.AggregateVersionConflictException;
-import io.ddd4j.data.eventstore.EventStore;
-import io.ddd4j.data.eventstore.StoredEvent;
-import io.ddd4j.data.eventstore.jackson.EventPayloadSerializer;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
+import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import org.jdbi.v3.core.Jdbi;
 
 import java.sql.ResultSet;

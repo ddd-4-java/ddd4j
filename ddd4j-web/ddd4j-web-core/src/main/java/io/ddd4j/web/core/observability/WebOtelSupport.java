@@ -12,6 +12,21 @@ import java.util.Objects;
  * <p>8 个 web 框架的拦截器/过滤器通过此类集成 WebOtelIntegration。
  * 若 ddd4j-extension-otel 不在 classpath 上，所有方法为 noop（反射失败 → 安全降级）。
  *
+ * <h3>GraalVM native-image 注意事项</h3>
+ * <p>本类在运行时通过 {@code Class.forName} + {@code getMethod} 反射调用
+ * {@code io.ddd4j.extension.otel.WebOtelIntegration} 的 6 个静态方法
+ * （{@code startServerSpan} / {@code activate} / {@code recordError} /
+ * {@code endServerSpan} / {@code injectResponseContext} / {@code isAvailable}）。
+ * 本模块是框架无关纯 Java 模块，刻意不引入 Quarkus 注解与 OTel 编译依赖，
+ * 因此 native 反射注册由业务方声明。Quarkus 应用构建 native image 时请在
+ * {@code application.properties} 加：
+ * <pre>{@code
+ * # WebOtelSupport 反射调用 WebOtelIntegration 所需；
+ * # 不配置时 JVM 模式正常，native 模式下静默降级为 noop（无 tracing）
+ * quarkus.native.reflection.include-patterns=io.ddd4j.extension.otel.WebOtelIntegration
+ * }</pre>
+ * <p>JVM 模式无需任何配置。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class WebOtelSupport {

@@ -1,4 +1,4 @@
-package io.ddd4j.data.eventstore;
+package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;

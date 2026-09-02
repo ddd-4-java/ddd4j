@@ -11,7 +11,7 @@ import jakarta.persistence.UniqueConstraint;
 import java.time.ZonedDateTime;
 
 /**
- * 事件存储 JPA 实体：以追加写（append-only）方式落地 {@code io.ddd4j.data.eventstore.StoredEvent}。
+ * 事件存储 JPA 实体：以追加写（append-only）方式落地 {@code io.ddd4j.core.cqrs.eventstore.StoredEvent}。
  *
  * <p>设计要点（ADR-0005，见 {@code docs/adr/0005-event-store-spi.md}）：
  * <ul>
@@ -26,7 +26,7 @@ import java.time.ZonedDateTime;
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @see io.ddd4j.data.eventstore.StoredEvent
+ * @see io.ddd4j.core.cqrs.eventstore.StoredEvent
  * @since 2.0.x
  */
 @Entity

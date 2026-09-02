@@ -29,7 +29,7 @@
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-event-store</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Spring Data JPA：显式钉 3.5.13（Spring 6.2 线，与 ddd4j-dependencies 管理的

@@ -22,7 +22,7 @@
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-event-store</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- R2DBC SPI（ConnectionFactory/Connection 响应式连接标准接口；
@@ -30,11 +30,6 @@
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-spi</artifactId>
-        </dependency>
-        <!-- Reactor 核心（Mono/Flux 组装；版本由 reactor-bom 2025.0.6 导入管理（:6464）） -->
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-core</artifactId>
         </dependency>
 
         <!-- ======== Test ======== -->

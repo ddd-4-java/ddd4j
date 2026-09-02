@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.data.logs;
 
 import io.ddd4j.core.constant.Constants;
@@ -11,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -26,6 +42,11 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
+
+    /**
+     * 访问日志 Marker（由 core 常量构造，保证 Marker 过滤语义，见 ADR-0002）。
+     */
+    private static final Marker ACCESS_MARKER = MarkerFactory.getMarker(Constants.ACCESS_MARKER);
 
     @Override
     public void doBefore(JoinPoint joinPoint, Operation apiOperation) {
@@ -70,7 +91,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         // 4、判断是否需要记录日志
         boolean needLog = log.isInfoEnabled() && Objects.isNull(hidden);
         if (!needLog) {
-            log.info(Constants.accessMarker, "Stopwatch: {}", stopWatch);
+            log.info(ACCESS_MARKER, "Stopwatch: {}", stopWatch);
             return;
         }
 
@@ -81,7 +102,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         if (Objects.nonNull(request)) {
             uri = request.getRequestURI();
             ipAddress = WebUtils.getRemoteAddr(request);
-            log.info(Constants.accessMarker, " >> URI {} IP {} ", uri, ipAddress);
+            log.info(ACCESS_MARKER, " >> URI {} IP {} ", uri, ipAddress);
         }
 
         // 6、筛选出有意义的参数
@@ -94,12 +115,12 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         this.saveLog(joinPoint, method, apiOperation, rt, ex, stopWatch);
 
         if (Objects.isNull(ex)) {
-            log.info(Constants.accessMarker, " >> invoke method {} with args {} Success! elapsed={}", methodName, methodArgs, stopWatch);
+            log.info(ACCESS_MARKER, " >> invoke method {} with args {} Success! elapsed={}", methodName, methodArgs, stopWatch);
         } else {
-            log.error(Constants.accessMarker, " >> invoke method {} with args {} error {} elapsed={}", methodName, methodArgs, ex.getMessage(), stopWatch);
+            log.error(ACCESS_MARKER, " >> invoke method {} with args {} error {} elapsed={}", methodName, methodArgs, ex.getMessage(), stopWatch);
         }
 
-        log.info(Constants.accessMarker, "Stopwatch: {}", stopWatch);
+        log.info(ACCESS_MARKER, "Stopwatch: {}", stopWatch);
     }
 
     /**

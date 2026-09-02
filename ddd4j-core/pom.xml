@@ -67,6 +67,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
         </dependency>
+        <!-- Reactor 核心（AsyncEventStore 的 Mono/Flux 响应式轨道，ADR-0005 单轨决策；
+             版本由 ddd4j-dependencies 的 reactor-bom 2025.0.6 导入管理（:6464）） -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

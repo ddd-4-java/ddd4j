@@ -28,7 +28,6 @@
         <module>ddd4j-data-cqrs-vertx</module>
         <module>ddd4j-data-crypto</module>
         <module>ddd4j-data-datascope</module>
-        <module>ddd4j-data-event-store</module>
         <module>ddd4j-data-event-store-jpa</module>
         <module>ddd4j-data-event-store-panache</module>
         <module>ddd4j-data-event-store-jdbi</module>

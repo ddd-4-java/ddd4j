@@ -1,4 +1,18 @@
-package io.ddd4j.data.eventstore;
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -8,11 +22,13 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
- * 持久化的领域事件快照（ADR-0005）。
+ * 响应式事件存储的持久化领域事件快照（ADR-0005）。
  *
- * <p>事件从 {@link EventStore} 读回后的载体：在 {@link DomainEvent} 完整因果元数据
- * （eventId／correlationId／causationId）之上，补充聚合定位（aggregateType／aggregateId／version）
- * 与全局顺序。
+ * <p>与同步 {@link StoredEvent} record <b>同包共居</b>的响应式轨道事件载体
+ * （{@link AsyncEventStore} 的读写类型）：在 {@link DomainEvent} 完整因果元数据
+ * （eventId／correlationId／causationId）之上，补充聚合定位
+ * （aggregateType／aggregateId／version）与全局顺序。
+ * 两者语义互补——同步轨道用最小 record，响应式轨道用富载体，勿混用。
  *
  * <h3>全局 position</h3>
  * <p>{@code position} 是跨所有聚合流全局递增的事件序号，由存储实现分配——这是 esc-api
@@ -24,7 +40,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public final class StoredEvent {
+public final class AsyncStoredEvent {
 
     private final EventId eventId;
     private final String aggregateType;
@@ -49,7 +65,7 @@ public final class StoredEvent {
      * @param correlationId  关联事件标识；无关联时 {@code null}
      * @param causationId    因果事件标识；无因果时 {@code null}
      */
-    public StoredEvent(EventId eventId, String aggregateType, AggregateRootId aggregateId,
+    public AsyncStoredEvent(EventId eventId, String aggregateType, AggregateRootId aggregateId,
                        long version, long position, ZonedDateTime timestamp,
                        DomainEvent<?> payload, EventId correlationId, EventId causationId) {
         this.eventId = Objects.requireNonNull(eventId, "eventId must not be null");

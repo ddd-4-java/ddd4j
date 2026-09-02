@@ -1,7 +1,7 @@
 package io.ddd4j.data.eventstore.jpa;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.ddd4j.data.eventstore.jackson.EventPayloadSerializer;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

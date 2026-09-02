@@ -44,7 +44,7 @@
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-event-store</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Quarkus Hibernate ORM Panache：版本由 ddd4j-dependencies 导入的

@@ -1,7 +1,7 @@
 package io.ddd4j.data.eventstore.panache;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.ddd4j.data.eventstore.jackson.EventPayloadSerializer;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.transaction.Transactional;

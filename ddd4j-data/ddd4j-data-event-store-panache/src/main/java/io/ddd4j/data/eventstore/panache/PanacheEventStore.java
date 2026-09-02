@@ -6,10 +6,10 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
-import io.ddd4j.data.eventstore.AggregateVersionConflictException;
-import io.ddd4j.data.eventstore.EventStore;
-import io.ddd4j.data.eventstore.StoredEvent;
-import io.ddd4j.data.eventstore.jackson.EventPayloadSerializer;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
+import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -154,6 +154,17 @@ public class PanacheEventStore implements EventStore {
 
     /**
      * 按限定名还原事件类型。
+     *
+     * <p><b>GraalVM native-image 注意事项</b>：本方法通过 {@link Class#forName} 加载的是
+     * <b>业务领域事件类</b>（持久化在 {@code event_type} 列的限定名），这类类不在本模块
+     * 控制范围内，Quarkus 应用构建 native image 时需业务方在 {@code application.properties}
+     * 注册反射（反序列化经 Jackson，同样需要）：
+     * <pre>{@code
+     * # 将 com.example.events 替换为业务事件类所在包（本模块自身的 PanacheStoredEventEntity
+     * # 已通过 @RegisterForReflection 注册，无需业务方处理）
+     * quarkus.native.reflection.include-patterns=com.example.events.**
+     * }</pre>
+     * 不注册时 JVM 模式正常，native 模式下读路径对旧事件抛 {@link IllegalStateException}。
      *
      * @param eventType 事件类型限定名
      * @return 事件类型
