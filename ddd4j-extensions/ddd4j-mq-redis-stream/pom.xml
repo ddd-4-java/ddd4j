@@ -23,6 +23,14 @@
             <artifactId>ddd4j-mq</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- 复用 ddd4j-mq 测试基类 AbstractMqContainerIT -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-mq</artifactId>
+            <version>${revision}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>

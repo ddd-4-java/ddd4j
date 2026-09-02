@@ -13,6 +13,10 @@
     <artifactId>ddd4j-mq</artifactId>
     <description>消息队列契约与 SPI</description>
 
+    <properties>
+        <mq.testcontainers.version>1.20.6</mq.testcontainers.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -26,6 +30,18 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- 集成测试基类 AbstractMqContainerIT：Spring 测试上下文 + Testcontainers 前置检测 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${mq.testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -45,6 +61,18 @@
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+            <!-- 发布 test-jar：供 mq-* 扩展模块以 test 依赖复用 AbstractMqContainerIT 基类 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

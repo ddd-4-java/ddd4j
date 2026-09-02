@@ -1,14 +1,11 @@
 package io.ddd4j.mq.activemq;
 
-import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.activemq.autoconfigure.Ddd4jActiveMQAutoConfiguration;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import javax.jms.ConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +18,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * ActiveMQ Artemis 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ * <p>公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。</p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -38,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         ActiveMQContainerIT.ArtemisInfrastructureConfiguration.class,
         Ddd4jActiveMQAutoConfiguration.class
 })
-@EnabledIf("io.ddd4j.mq.activemq.ActiveMQContainerIT#isDockerAvailable")
-class ActiveMQContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class ActiveMQContainerIT extends AbstractMqContainerIT {
 
     private static final String ARTEMIS_USER = "artemis";
     private static final String ARTEMIS_PASSWORD = "artemis";
@@ -51,9 +47,6 @@ class ActiveMQContainerIT {
             .withEnv("ARTEMIS_USER", ARTEMIS_USER)
             .withEnv("ARTEMIS_PASSWORD", ARTEMIS_PASSWORD)
             .waitingFor(Wait.forListeningPort());
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -69,39 +62,15 @@ class ActiveMQContainerIT {
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
         String brokerUrl = "tcp://" + ARTEMIS.getHost() + ":" + ARTEMIS.getMappedPort(ARTEMIS_PORT);
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "activemq");
-        registry.add("ddd4j.mq.namespace", () -> "it");
+        registerCommonMqProperties(registry, "activemq", SMOKE_NAMESPACE);
         registry.add("ddd4j.mq.test.artemis.broker-url", () -> brokerUrl);
         registry.add("ddd4j.mq.test.artemis.user", () -> ARTEMIS_USER);
         registry.add("ddd4j.mq.test.artemis.password", () -> ARTEMIS_PASSWORD);
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
-    }
-
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
+    @Override
+    protected void verifyBrokerClient() {
         assertNotNull(jmsTemplate);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic("smoke");
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of("smoke", "ping", "it")));
     }
 
     /**
@@ -139,8 +108,5 @@ class ActiveMQContainerIT {
         JmsListenerEndpointRegistry jmsListenerEndpointRegistry() {
             return new JmsListenerEndpointRegistry();
         }
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }

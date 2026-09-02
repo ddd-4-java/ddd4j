@@ -1,12 +1,9 @@
 package io.ddd4j.mq.rabbit;
 
-import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
 import io.ddd4j.mq.rabbit.autoconfigure.Ddd4jRabbitMQAutoConfiguration;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
@@ -21,14 +18,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * RabbitMQ 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ * <p>公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。</p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -36,13 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         RabbitMQContainerIT.RabbitInfrastructureConfiguration.class,
         Ddd4jRabbitMQAutoConfiguration.class
 })
-@EnabledIf("io.ddd4j.mq.rabbit.RabbitMQContainerIT#isDockerAvailable")
-class RabbitMQContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class RabbitMQContainerIT extends AbstractMqContainerIT {
 
     private static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:3.13-management");
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -57,40 +50,16 @@ class RabbitMQContainerIT {
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "rabbit");
-        registry.add("ddd4j.mq.namespace", () -> "it");
+        registerCommonMqProperties(registry, "rabbit", SMOKE_NAMESPACE);
         registry.add("ddd4j.mq.test.rabbit.host", RABBIT::getHost);
         registry.add("ddd4j.mq.test.rabbit.port", () -> String.valueOf(RABBIT.getAmqpPort()));
         registry.add("ddd4j.mq.test.rabbit.username", RABBIT::getAdminUsername);
         registry.add("ddd4j.mq.test.rabbit.password", RABBIT::getAdminPassword);
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
-    }
-
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
+    @Override
+    protected void verifyBrokerClient() {
         assertNotNull(rabbitTemplate);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic("smoke");
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of("smoke", "ping", "it")));
     }
 
     /**
@@ -129,8 +98,5 @@ class RabbitMQContainerIT {
         RabbitListenerEndpointRegistry rabbitListenerEndpointRegistry() {
             return new RabbitListenerEndpointRegistry();
         }
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }

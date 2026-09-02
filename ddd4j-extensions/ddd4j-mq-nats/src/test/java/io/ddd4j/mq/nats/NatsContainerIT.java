@@ -1,13 +1,10 @@
 package io.ddd4j.mq.nats;
 
-import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
-import io.ddd4j.mq.contract.MQDestination;
 import io.ddd4j.mq.nats.autoconfigure.Ddd4jNatsMQAutoConfiguration;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import io.nats.client.Connection;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +12,23 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * NATS 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ * <p>公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。</p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         Ddd4jMQPropertiesConfiguration.class,
         Ddd4jNatsMQAutoConfiguration.class
 })
-@EnabledIf("io.ddd4j.mq.nats.NatsContainerIT#isDockerAvailable")
-class NatsContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class NatsContainerIT extends AbstractMqContainerIT {
 
     private static final int NATS_PORT = 4222;
 
@@ -40,9 +36,6 @@ class NatsContainerIT {
             .withExposedPorts(NATS_PORT)
             .withCommand("-js", "-m", "8222")
             .waitingFor(Wait.forListeningPort());
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private Connection natsConnection;
@@ -58,39 +51,12 @@ class NatsContainerIT {
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
         String servers = "nats://" + NATS.getHost() + ":" + NATS.getMappedPort(NATS_PORT);
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "nats");
-        registry.add("ddd4j.mq.namespace", () -> "it");
+        registerCommonMqProperties(registry, "nats", SMOKE_NAMESPACE);
         registry.add("ddd4j.mq.nats.servers", () -> servers);
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
-    }
-
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
+    @Override
+    protected void verifyBrokerClient() {
         assertNotNull(natsConnection);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic("smoke");
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of("smoke", "ping", "it")));
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }
