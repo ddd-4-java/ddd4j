@@ -19,4 +19,6 @@ public final class RepositoryRegistry {
         return (Repository<M, ID>) repository;
     }
     public static void unregister(Class<?> aggregateType) { REPOSITORIES.remove(aggregateType); }
+    /** 清空全部注册项（供测试隔离使用）。调用后所有 {@link #repository} 查找将抛出异常。 */
+    public static void clear() { REPOSITORIES.clear(); }
 }
