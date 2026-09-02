@@ -80,11 +80,16 @@ class EsdbEventStoreTest {
         assertThat(new EsdbEventStore(client).read(ORDER_TYPE, new TestId("missing"))).isEmpty();
     }
 
-    record TestId(String value) implements AggregateRootId {
+    static final class TestId implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
+        private final String value;
+        TestId(String value) { this.value = value; }
         @Override public EntityType getType() { return TYPE; }
         @Override public String asString() { return value; }
         @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+        @Override public boolean equals(Object o) { return this == o || (o instanceof TestId && java.util.Objects.equals(value, ((TestId)o).value)); }
+        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
+        @Override public String toString() { return "TestId{" + value + "}"; }
     }
 
     static final class TestEvent extends DomainEvent<TestId> {

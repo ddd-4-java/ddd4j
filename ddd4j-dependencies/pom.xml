@@ -561,7 +561,7 @@
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
         <!-- Testcontainers 锁定 2.0.5：当前 1.0.x 全部 ContainerIT 在 JDK8 实测绿；若后续批次容器移植出现字节码/API 不兼容，退回 JDK8 官方线 1.20.6 -->
         <testcontainers.version>2.0.5</testcontainers.version>
-        <testcontainers-redis.version>2.2.4</testcontainers-redis.version>
+        <testcontainers-redis.version>2.0.2</testcontainers-redis.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
@@ -6953,6 +6953,41 @@
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-ui-task-conf</artifactId>
                 <version>${flowable.version}</version>
+            </dependency>
+            <!-- OpenTelemetry BOM（版本由 opentelemetry.version 属性管理，
+                 解 debezium-bom 等更早 BOM 压版到 1.19 的问题） -->
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>${opentelemetry.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- OTel SDK 族显式钉版（显式条目优先于一切 import，解 transitive 被压版问题） -->
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-common</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-testing</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-metrics</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-trace</artifactId>
+                <version>${opentelemetry.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
