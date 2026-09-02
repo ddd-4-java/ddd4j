@@ -1,12 +1,9 @@
 package io.ddd4j.mq.redisstream;
 
-import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
 import io.ddd4j.mq.redisstream.autoconfigure.Ddd4jRedisStreamMQAutoConfiguration;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +17,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Redis Stream 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
+ * <p>公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。</p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -36,14 +32,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         RedisStreamContainerIT.RedisInfrastructureConfiguration.class,
         Ddd4jRedisStreamMQAutoConfiguration.class
 })
-@EnabledIf("io.ddd4j.mq.redisstream.RedisStreamContainerIT#isDockerAvailable")
-class RedisStreamContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class RedisStreamContainerIT extends AbstractMqContainerIT {
 
     private static final GenericContainer<?> REDIS = new GenericContainer<>(DockerImageName.parse("redis:7-alpine"))
             .withExposedPorts(6379);
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -58,38 +51,14 @@ class RedisStreamContainerIT {
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "redis-stream");
-        registry.add("ddd4j.mq.namespace", () -> "it");
+        registerCommonMqProperties(registry, "redis-stream", SMOKE_NAMESPACE);
         registry.add("ddd4j.mq.test.redis.host", REDIS::getHost);
         registry.add("ddd4j.mq.test.redis.port", () -> String.valueOf(REDIS.getMappedPort(6379)));
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
-    }
-
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
+    @Override
+    protected void verifyBrokerClient() {
         assertNotNull(stringRedisTemplate);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic("smoke");
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of("smoke", "ping", "it")));
     }
 
     /**
@@ -118,8 +87,5 @@ class RedisStreamContainerIT {
         StringRedisTemplate stringRedisTemplate(LettuceConnectionFactory redisConnectionFactory) {
             return new StringRedisTemplate(redisConnectionFactory);
         }
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }

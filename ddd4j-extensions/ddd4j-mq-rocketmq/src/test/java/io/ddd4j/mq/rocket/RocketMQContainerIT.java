@@ -1,37 +1,33 @@
 package io.ddd4j.mq.rocket;
 
 import io.ddd4j.mq.rocket.autoconfigure.Ddd4jRocketMQAutoConfiguration;
-import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.Container;
 import org.testcontainers.containers.FixedHostPortGenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.MountableFile;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 /**
  * RocketMQ 发布路径 Testcontainers 冒烟集成测试（{@code rocketmq-spring-boot-starter}）。
  * <p>
  * 无官方 Testcontainers RocketMQ 模块，使用 {@link FixedHostPortGenericContainer} + {@code apache/rocketmq} 镜像，
  * NameServer/Broker 固定端口映射以避免 broker 注册地址与客户端不可达问题。
+ * 公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。
  */
 @SpringBootTest(classes = RocketMQContainerIT.TestApplication.class)
-@EnabledIf("io.ddd4j.mq.rocket.RocketMQContainerIT#isDockerAvailable")
-class RocketMQContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class RocketMQContainerIT extends AbstractMqContainerIT {
 
     private static final String ROCKETMQ_IMAGE = "apache/rocketmq:5.3.1";
     private static final Network ROCKETMQ_NETWORK = Network.newNetwork();
@@ -54,12 +50,7 @@ class RocketMQContainerIT {
             .withCommand("sh", "mqbroker", "-n", "namesrv:9876", "-c", "/home/rocketmq/rocketmq-5.3.1/conf/broker-it.conf")
             .waitingFor(Wait.forLogMessage(".*boot success.*", 1));
 
-    private static final String SMOKE_TOPIC = "smoke";
-
     private static volatile boolean containersStarted;
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
@@ -122,39 +113,21 @@ class RocketMQContainerIT {
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
         ensureContainersStarted();
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "rocket");
+        registerCommonMqProperties(registry, "rocket", "");
         // RocketMQ topic 不允许 '.'，冒烟测试使用无 namespace 的单一 topic 段
-        registry.add("ddd4j.mq.namespace", () -> "");
         registry.add("rocketmq.name-server", () -> "127.0.0.1:9876");
         registry.add("rocketmq.producer.group", () -> "it-producer-group");
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
+    @Override
+    protected void verifyBrokerClient() {
+        assertNotNull(rocketMQTemplate);
     }
 
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
-        assertNotNull(rocketMQTemplate);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic(SMOKE_TOPIC);
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of(SMOKE_TOPIC, "ping", "")));
+    @Override
+    protected String smokeNamespace() {
+        // RocketMQ topic 不允许 '.'，冒烟使用无 namespace 的单一 topic 段
+        return "";
     }
 
     @SpringBootApplication
@@ -164,8 +137,5 @@ class RocketMQContainerIT {
             Ddd4jRocketMQAutoConfiguration.class
     })
     static class TestApplication {
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }
