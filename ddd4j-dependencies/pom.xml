@@ -359,7 +359,7 @@
         <maven.version>3.6.3</maven.version>
         <mercadopago-sdk-java.version>2.1.29</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
-        <mockito.version>5.20.0</mockito.version>
+        <mockito.version>4.11.0</mockito.version>
         <mongodb.version>5.6.1</mongodb.version>
         <mongo-java-driver.version>3.12.14</mongo-java-driver.version>
         <mssql-jdbc.version>12.10.2.jre11</mssql-jdbc.version>

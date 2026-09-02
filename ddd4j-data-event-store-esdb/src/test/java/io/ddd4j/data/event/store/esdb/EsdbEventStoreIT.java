@@ -20,6 +20,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,7 +52,7 @@ class EsdbEventStoreIT {
 
     @Test void appendReadRangeAndGlobalReadFollowStrongContract() {
         TestId id = new TestId("order-1");
-        store.append(ORDER_TYPE, id, List.of(new TestEvent(id), new TestEvent(id), new TestEvent(id)), 0);
+        store.append(ORDER_TYPE, id, java.util.Arrays.asList(new TestEvent(id), new TestEvent(id), new TestEvent(id)), 0);
         List<StoredEvent> all = store.read(ORDER_TYPE, id);
         assertThat(all).extracting(StoredEvent::version).containsExactly(1L, 2L, 3L);
         assertThat(store.read(ORDER_TYPE, id, 2, 3)).extracting(StoredEvent::version).containsExactly(2L, 3L);

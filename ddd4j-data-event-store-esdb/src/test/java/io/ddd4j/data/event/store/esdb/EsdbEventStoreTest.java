@@ -19,6 +19,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -49,7 +50,7 @@ class EsdbEventStoreTest {
         when(client.appendToStream(anyString(), any(AppendToStreamOptions.class), any(EventData[].class)))
                 .thenReturn(CompletableFuture.completedFuture(null));
 
-        new EsdbEventStore(client, "test-").append(ORDER_TYPE, id, List.of(new TestEvent(id)), 0);
+        new EsdbEventStore(client, "test-").append(ORDER_TYPE, id, java.util.Arrays.asList(new TestEvent(id)), 0);
 
         verify(client).appendToStream(streamCaptor.capture(), any(AppendToStreamOptions.class), any(EventData[].class));
         assertThat(streamCaptor.getValue()).isEqualTo("test-Order::order-1");
@@ -57,7 +58,7 @@ class EsdbEventStoreTest {
 
     @Test
     void appendEmptyEventsMustNotCallClient() {
-        new EsdbEventStore(client).append(ORDER_TYPE, new TestId("empty"), List.of(), 0);
+        new EsdbEventStore(client).append(ORDER_TYPE, new TestId("empty"), java.util.Arrays.asList(), 0);
         verifyNoInteractions(client);
     }
 
@@ -69,7 +70,7 @@ class EsdbEventStoreTest {
                 .thenReturn(CompletableFuture.failedFuture(conflict));
 
         assertThatThrownBy(() -> new EsdbEventStore(client).append(ORDER_TYPE, new TestId("conflict"),
-                List.of(new TestEvent(new TestId("conflict"))), 0))
+                java.util.Arrays.asList(new TestEvent(new TestId("conflict"))), 0))
                 .isInstanceOf(AggregateVersionConflictException.class);
     }
 
