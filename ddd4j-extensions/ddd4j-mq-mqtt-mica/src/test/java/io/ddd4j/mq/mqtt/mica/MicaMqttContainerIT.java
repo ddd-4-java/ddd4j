@@ -1,33 +1,31 @@
 package io.ddd4j.mq.mqtt.mica;
 
 import io.ddd4j.mq.mqtt.mica.autoconfigure.Ddd4jMicaMqttMQAutoConfiguration;
-import io.ddd4j.core.contract.MQEvent;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import org.dromara.mica.mqtt.spring.client.MqttClientTemplate;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * mica-mqtt 发布路径 Testcontainers 冒烟集成测试（Eclipse Mosquitto）。
  * <p>
  * 使用 {@link GenericContainer} + {@code eclipse-mosquitto:2}，端口 1883。
+ * 公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。
  */
 @SpringBootTest(classes = MicaMqttContainerIT.TestApplication.class)
-@EnabledIf("io.ddd4j.mq.mqtt.mica.MicaMqttContainerIT#isDockerAvailable")
-class MicaMqttContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class MicaMqttContainerIT extends AbstractMqContainerIT {
 
     private static final int MQTT_PORT = 1883;
 
@@ -35,9 +33,6 @@ class MicaMqttContainerIT {
             DockerImageName.parse("eclipse-mosquitto:2"))
             .withExposedPorts(MQTT_PORT)
             .waitingFor(Wait.forListeningPort());
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private MqttClientTemplate mqttClientTemplate;
@@ -54,9 +49,7 @@ class MicaMqttContainerIT {
     static void registerProperties(DynamicPropertyRegistry registry) {
         String host = MOSQUITTO.getHost();
         int port = MOSQUITTO.getMappedPort(MQTT_PORT);
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "mqtt-mica");
-        registry.add("ddd4j.mq.namespace", () -> "it");
+        registerCommonMqProperties(registry, "mqtt-mica", SMOKE_NAMESPACE);
         registry.add("ddd4j.mq.mica.url", () -> "tcp://" + host + ":" + port);
         registry.add("ddd4j.mq.mica.qos", () -> "1");
         registry.add("mqtt.client.enabled", () -> "true");
@@ -67,31 +60,9 @@ class MicaMqttContainerIT {
         registry.add("mqtt.client.reconnect", () -> "true");
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
-    }
-
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
+    @Override
+    protected void verifyBrokerClient() {
         assertNotNull(mqttClientTemplate);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic("smoke");
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of("smoke", "ping", "it")));
     }
 
     @SpringBootApplication
@@ -101,8 +72,5 @@ class MicaMqttContainerIT {
             Ddd4jMicaMqttMQAutoConfiguration.class
     })
     static class TestApplication {
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }
