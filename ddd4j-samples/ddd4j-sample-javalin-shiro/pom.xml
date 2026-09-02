@@ -145,6 +145,16 @@
             <artifactId>jackson-databind</artifactId>
             <version>3.2.1</version>
         </dependency>
+        <!-- jackson-annotations 是 Jackson 2/3 共用的注解包（com.fasterxml.jackson.annotation）：
+             tools.jackson jackson-bom 3.2.1 要求 2.22（新增 @JsonApplyView，序列化时按需加载），
+             而上游若干 BOM 会把 annotations 压到 2.21，导致 JavalinJackson3 运行期
+             ClassNotFoundException: com.fasterxml.jackson.annotation.JsonApplyView。
+             显式声明直依赖（版本优先于 dependencyManagement），Jackson 2 向后兼容新 annotations。 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.22</version>
+        </dependency>
 </dependencies>
 
     <build>
