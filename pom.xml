@@ -76,6 +76,7 @@
         <!-- 事件存储：EventStore/AsyncEventStore 的 JPA/JDBI/R2DBC 持久化适配器（javax/JDK8 轨道） -->
         <module>ddd4j-data-event-store-jpa</module>
         <module>ddd4j-data-event-store-jdbi</module>
+        <module>ddd4j-runtime</module>
         <module>ddd4j-cache</module>
         <module>ddd4j-metrics</module>
         <module>ddd4j-data-event-store-esdb</module>
