@@ -8,8 +8,10 @@ package io.ddd4j.web.webflux.error;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.api.R;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
+import io.ddd4j.web.error.BaseErrorConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -21,20 +23,21 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
  * WebFlux 全局错误 Web 处理器（纯 Spring Framework {@link WebExceptionHandler}，不依赖 Boot {@code AbstractErrorWebExceptionHandler}）。
+ *
+ * <p>翻译、5xx 日志与 {@link R} 响应体构造复用 {@link BaseErrorConfiguration}，
+ * 此处只保留 Reactive 流式写出与 JSON 序列化。
  */
 @Component
 @Order(-2)
 @Slf4j
-public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
+public class GlobalErrorWebExceptionHandler extends BaseErrorConfiguration implements WebExceptionHandler {
 
     private final GlobalErrorAttributes errorAttributes;
     private final ObjectMapper objectMapper;
-    private final WebExceptionTranslator exceptionTranslator;
 
     /**
      * @param errorAttributes 错误属性组装器
@@ -42,10 +45,14 @@ public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
      */
     public GlobalErrorWebExceptionHandler(GlobalErrorAttributes errorAttributes, ObjectMapper objectMapper,
                                           WebExceptionTranslator exceptionTranslator) {
+        super(exceptionTranslator);
         this.errorAttributes = Objects.requireNonNull(errorAttributes, "errorAttributes must not be null");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
-        this.exceptionTranslator = Objects.requireNonNull(exceptionTranslator,
-                "exceptionTranslator must not be null");
+    }
+
+    @Override
+    protected String frameworkName() {
+        return "WebFlux";
     }
 
     /**
@@ -59,21 +66,18 @@ public class GlobalErrorWebExceptionHandler implements WebExceptionHandler {
         }
 
         errorAttributes.storeError(exchange, ex);
-        WebError error = exceptionTranslator.translate(ex);
-        if (error.status() >= 500) {
-            log.error("Unhandled WebFlux request failure", ex);
-        }
+        WebError error = translate(ex);
+        logUnhandled(ex, error);
 
         response.setStatusCode(HttpStatusCode.valueOf(error.status()));
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         byte[] bodyBytes;
         try {
-            bodyBytes = objectMapper.writeValueAsBytes(error.toResponse());
+            bodyBytes = objectMapper.writeValueAsBytes(toResponse(error));
         } catch (JacksonException jsonEx) {
             log.error("Unable to serialize WebFlux error response", jsonEx);
-            bodyBytes = ("{\"code\":500,\"msg\":\"Internal Server Error\",\"data\":null}")
-                    .getBytes(StandardCharsets.UTF_8);
+            bodyBytes = fallbackBody();
         }
 
         DataBuffer buffer = response.bufferFactory().wrap(bodyBytes);
