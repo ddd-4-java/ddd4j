@@ -762,7 +762,7 @@
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <maven-sonar-plugin.version>4.0.1.6619</maven-sonar-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
-    </properties>
+</properties>
 
     <dependencyManagement>
         <dependencies>
@@ -1381,6 +1381,8 @@
                 <artifactId>claudecode-java-sdk</artifactId>
                 <version>${easy4j-claudecode-java-sdk.version}</version>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.clickhouse/clickhouse-jdbc -->
+            <!-- ClickHouse JDBC：高性能 OLAP 列式数据库 ClickHouse 的官方 JDBC 驱动。 -->
             <dependency>
                 <groupId>com.clickhouse</groupId>
                 <artifactId>clickhouse-jdbc</artifactId>
@@ -1396,6 +1398,9 @@
                 <artifactId>codex-java-sdk</artifactId>
                 <version>${easy4j-codex-java-sdk.version}</version>
             </dependency>
+            <!-- For Alibaba Cola -->
+            <!-- https://mvnrepository.com/artifact/com.alibaba.cola/cola-components-bom -->
+            <!-- Alibaba COLA Components BOM：阿里 COLA 架构的组件版本清单，提供 COLA 架构所需全套组件。 -->
             <dependency>
                 <groupId>com.alibaba.cola</groupId>
                 <artifactId>cola-components-bom</artifactId>
@@ -2247,6 +2252,8 @@
                 <artifactId>dreamina-java-sdk</artifactId>
                 <version>${easy4j-dreamina-java-sdk.version}</version>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.dropwizard/dropwizard-bom -->
+            <!-- Dropwizard BOM：Dropwizard REST 微服务框架的版本清单。 -->
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-bom</artifactId>
@@ -2951,7 +2958,10 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- 覆盖上游 BOM 遗留的 gRPC 1.56.x 管理，避免同一运行时混用 API/Core/Stub 版本。 -->
+            <!-- gRPC 核心工件显式钉版（= grpc-bom 同版）：debezium-bom/dropwizard-bom 等更早
+                 import 的 BOM 会把 grpc-core/api 压到 1.56.x（无 ForwardingChannelBuilder2），
+                 与 grpc-netty-shaded 1.82.1 混版导致 esdb 客户端 NoClassDefFoundError；
+                 Maven 显式管理条目优先于一切 import，此处整族钉齐。 -->
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-api</artifactId>
@@ -2987,6 +2997,8 @@
                 <artifactId>grpc-stub</artifactId>
                 <version>${grpc.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+            <!-- Gson：Google JSON 解析与序列化库。 -->
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
@@ -5485,6 +5497,8 @@
                 <artifactId>opencode-java-sdk</artifactId>
                 <version>${easy4j-opencode-java-sdk.version}</version>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/opencv-sdk -->
+            <!-- Easy4J OpenCV SDK：Easy4J 封装的 OpenCV 计算机视觉库 Java SDK。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>opencv-sdk</artifactId>
@@ -7654,6 +7668,25 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>zxing-extension</artifactId>
                 <version>${easy4j-zxing-extension.version}</version>
+            </dependency>
+        
+            <!-- 以下基础依赖从 ddd4j-boot-dependencies 迁入（非 Spring Boot starter） -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.hiwepy</groupId>
+                <artifactId>zxing-extension</artifactId>
+                <version>${easy4j-zxing-extension.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bom</artifactId>
+                <version>${resilience4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
     </dependencies>
     </dependencyManagement>

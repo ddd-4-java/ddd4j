@@ -14,8 +14,6 @@
  */
 package io.ddd4j.core.ddd.model.metadata;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,7 +35,8 @@ import java.util.function.Function;
  *   <tr><td>column</td><td>DB 列名</td><td>DB 列名（来自 PO TableInfo 桥接）</td></tr>
  * </table>
  *
- * <p><b>零框架依赖</b>：本类只依赖 slf4j（MP 用 ibatis-logging 是其特性，本类用 slf4j 更通用）。
+ * <p><b>零依赖</b>：本类为纯 JDK 实现（ADR-0002：core 不直接依赖日志门面），
+ * 无 MP 的 ibatis-logging 依赖。
  * PO 字段→列名映射通过 {@code poProperty2ColumnProvider} 由基础设施层注入。
  *
  * <h3>充血查询翻译链路</h3>
@@ -55,7 +54,6 @@ import java.util.function.Function;
  * @author wandl
  * @since 2.0.x
  */
-@Slf4j
 @SuppressWarnings("unchecked")
 public final class DomainModelHelper {
 
@@ -105,9 +103,6 @@ public final class DomainModelHelper {
             info = MODEL_INFO_CACHE.get(key);
             if (Objects.nonNull(info)) {
                 return (DomainModelInfo<M>) info;
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("init DomainModelInfo for class {}", modelClass.getName());
             }
             info = new DomainModelInfo<>(modelClass, poProperty2ColumnProvider);
             MODEL_INFO_CACHE.put(key, info);

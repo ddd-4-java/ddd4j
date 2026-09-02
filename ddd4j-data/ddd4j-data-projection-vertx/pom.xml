@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-projection-vertx</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 投影调度 Vert.x 5 适配（Vert.x 运行时）：
+        VertxProjectionScheduler 以静态 create(Vertx) 工厂实现 ViewScheduler SPI
+        （ScheduledExecutorService + CronExpression——Vert.x 无内置 cron 调度，
+        退化为 JDK 调度，以 millis period 逼近 cron 表达式），VertxProjectionViewManager
+        以静态 create(Vertx, Collection, ProjectionRunner) 工厂实现 ViewManager SPI
+        （手动注册，无 DI 容器）——投影契约全部复用 ddd4j-core。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-projection</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Vert.x Core（事件循环/上下文/worker 线程模型；坐标实证注记：
+             ddd4j-dependencies 的 io.vertx:vertx-stack-depchain 条目是
+             dependencyManagement 的 <scope>compile</scope> 版本管理项（非
+             <scope>import</scope> 的 BOM 导入）——不向本链传播 vertx-core 的
+             版本管理，故此处显式声明 ${vertx.version}=5.1.5（Vert.x 5 线：
+             Vertx 接口化 + Future 结果型）。） -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Vert.x JUnit 5 集成（VertxTestContext 异步桥；与 vertx-core 同线
+             5.1.5，显式声明原因同上） -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-junit5</artifactId>
+            <version>${vertx.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试（真实 Vert.x 实例
+                 生命周期）随 test 阶段执行，需在父配置（**/*Test.java 之外）追加
+                 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

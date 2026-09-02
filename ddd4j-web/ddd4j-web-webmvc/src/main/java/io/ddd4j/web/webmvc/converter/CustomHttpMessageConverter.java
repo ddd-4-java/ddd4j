@@ -31,16 +31,16 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Spring 7 专用 Jackson 3 HttpMessageConverter。
+ * 自定义 Jackson 2 {@link HttpMessageConverter}。
  *
- * <p>Spring 7 的 MappingJackson2HttpMessageConverter 类名保留向后兼容但
- * setObjectMapper 仍要求 Jackson 2 ObjectMapper，本类作为 Jackson 3 桥接层。</p>
+ * <p>2.0.x 使用 Jackson 2 {@link ObjectMapper}；本类避免将 MVC 转换器实现
+ * 与 Spring 默认转换器的内部配置耦合。</p>
  */
-public class Jackson3HttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {
+public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {
 
     private final ObjectMapper objectMapper;
 
-    public Jackson3HttpMessageConverter(ObjectMapper objectMapper) {
+    public CustomHttpMessageConverter(ObjectMapper objectMapper) {
         super(MediaType.APPLICATION_JSON, new MediaType("application", "*+json"));
         this.objectMapper = objectMapper;
     }

@@ -30,7 +30,7 @@ import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
 import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
 import tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
-import io.ddd4j.web.webmvc.converter.Jackson3HttpMessageConverter;
+import io.ddd4j.web.webmvc.converter.CustomHttpMessageConverter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.*;
 import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
@@ -152,7 +152,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
         // Jackson 3 ObjectMapper（ddd4j 3.0.x 使用 Spring Framework 7.0.8，
         // 但 MappingJackson2HttpMessageConverter.setObjectMapper 仍要求 Jackson 2 ObjectMapper，
-        // 因此用 Jackson3HttpMessageConverter 桥接层转换）。
+        // 因此用 CustomHttpMessageConverter 桥接层转换）。
         ObjectMapper objectMapper = JsonMapper.builder()
                 .addModules(simpleModule)
                 .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
@@ -161,8 +161,8 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
                 .enable(MapperFeature.USE_GETTERS_AS_SETTERS)
                 .build();
 
-        // Jackson3HttpMessageConverter 桥接层：接收 Jackson 3 ObjectMapper
-        Jackson3HttpMessageConverter jackson3Converter = new Jackson3HttpMessageConverter(objectMapper);
+        // CustomHttpMessageConverter 桥接层：接收 Jackson 3 ObjectMapper
+        CustomHttpMessageConverter jackson3Converter = new CustomHttpMessageConverter(objectMapper);
         jackson3Converter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
         converters.add(jackson3Converter);
         converters.add(new ByteArrayHttpMessageConverter());

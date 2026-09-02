@@ -6,9 +6,9 @@
 （Spring Boot）、[ddd4j-quarkus](https://github.com/hiwepy/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/hiwepy/ddd4j-javalin)
 以及 Micronaut、Vert.x、Helidon、Dropwizard 等运行时提供**同一套纯净的、可复用的领域层基础**。
 
-基于轻量级 [ddd-4-java](https://github.com/fuinorg/ddd-4-java) 和 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java)
-库实现领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing），遵循 **Eric Evans** 和 **Vaughn Vernon** 的 DDD
-经典理论。
+领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing）的抽象层全部由 `ddd4j-core` **自研实现**，遵循
+**Eric Evans** 和 **Vaughn Vernon** 的 DDD 经典理论；API 形态参考了 [ddd-4-java](https://github.com/fuinorg/ddd-4-java)
+与 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java)（参考来源，不依赖）。
 
 ### 🎯 核心定位
 
@@ -17,7 +17,7 @@
 | **本质**   | 框架无关的 DDD/CQRS/ES 通用基础层（非 Spring Boot 项目）                                                                                                                     |
 | **运行时**  | Java 17，不依赖任何容器框架                                                                                                                                             |
 | **消费方**  | ddd4j-boot（Spring Boot）/ ddd4j-quarkus / ddd4j-javalin                                                                                                        |
-| **底层依赖** | fuinorg ddd-4-java + cqrs-4-java + esc-api                                                                                                                    |
+| **底层依赖** | 零第三方 DDD 框架依赖，DDD/CQRS/ES 抽象全部由 ddd4j-core 自研                                                                    |
 | **铁律**   | core/annotation/mq-core 等基础契约层零 `@AutoConfiguration` · 零 `spring.factories` · 零 starter；Spring/Web/Auth/Extensions 等适配层只保留显式 `@Configuration`/`@Component` 胶水 |
 
 ### 🏗️ 三层架构分离
@@ -42,20 +42,20 @@
 └──────────────────────────┬──────────────────────────────────────────┘
            ┌───────────────┼───────────────┐
            ▼               ▼               ▼
-    ddd-4-java       cqrs-4-java       esc-api
-    (fuinorg)        (fuinorg)         (fuinorg)
+      DDD 构建块         CQRS 抽象        ES 抽象
+     (ddd4j-core)    (ddd4j-core)    (ddd4j-core)
 ```
 
 ### ✨ 主要特性
 
 - **框架无关**：核心契约层零 Spring/MyBatis/Servlet import，可同时被 Spring Boot / Quarkus / Javalin 复用
 - **DDD 战术模式**：提供普通充血模型 `AggregateRoot` / `Repository<M, P, ID>`（统一仓储接口，对齐 MyBatis-Plus
-  BaseMapper），并基于 fuinorg ddd-4-java 提供 ES 轨道
+  BaseMapper），并由 ddd4j-core 自研提供 ES 轨道
   `DddAggregateRoot`、`DddDomainEvent`、`DddEventStoreRepository`
-- **CQRS 命令查询分离**：基于 fuinorg cqrs-4-java，提供 Command/View/ProjectionPosition 等 SPI
+- **CQRS 命令查询分离**：基于 ddd4j-core 自研抽象，提供 Command/View/ProjectionPosition 等 SPI
 - **事件溯源（ES）**：聚合根状态通过事件流重建，支持时间旅行和完整审计
-- **三轨 DDD 模型**：兼容轻量 `PO/Query` 快速 CRUD 轨道 + `AggregateRoot/Repository` 普通充血模型轨道 + fuinorg
-  CQRS/ES 轨道
+- **三轨 DDD 模型**：兼容轻量 `PO/Query` 快速 CRUD 轨道 + `AggregateRoot/Repository` 普通充血模型轨道 + ddd4j-core
+  自研 CQRS/ES 轨道
 - **Lambda 充血查询**：`Query<T>` 支持 Lambda 类型安全条件构建（`eq`/`like`/`in`/`between`/`orderByDesc` 等），充血执行（
   `list()`/`page()`/`one()`/`count()`），三 ORM 模块各自实现
 - **三组核心 SPI**：`DomainEventPublisher`（进程内事件）/ `MQEventPublisher`（跨进程消息）/ `Repository<M, P, ID>`（统一领域仓储，对齐
@@ -71,7 +71,7 @@
 
 - **[DDD 思维导图](./docs/ddd/DDD%20思维导图.md)**：战略设计 + 战术设计完整知识体系
 - **[CQRS 思维导图](./docs/ddd/CQRS%20思维导图.md)**：命令查询职责分离核心概念
-- **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
+- **[参考示例项目](https://github.com/fuinorg/ddd-cqrs-4-java-example)**（参考来源，不依赖）：Greg Young 风格的 DDD/CQRS/Event Sourcing 微服务示例
 - **[架构边界规范](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md)**：ddd4j 与各框架项目的职责铁律
 - **[架构全景（历史基线）](./docs/superpowers/specs/2026-06-29-ddd4j-architecture-overview-design.md)**：早期模块全景、SPI 设计与三框架运行时基线
 - **[当前源码架构导览](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md)**：基于 CodeGraph 的模块边界、核心调用链、Mermaid 架构图与设计风险

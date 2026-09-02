@@ -18,7 +18,6 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.subject.Subject;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Slf4j
 @UtilityClass
 @SuppressWarnings("unchecked")
 public class ThreadContext {
@@ -84,10 +82,6 @@ public class ThreadContext {
             return null;
         }
         Object value = map.get(key);
-        if (Objects.nonNull(value) && log.isTraceEnabled()) {
-            log.trace("Retrieved value of type [{}] for key [{}] bound to thread [{}]",
-                    value.getClass().getName(), key, Thread.currentThread().getName());
-        }
         return value;
     }
 
@@ -108,10 +102,6 @@ public class ThreadContext {
         }
         ensureResourcesInitialized();
         THREAD_LOCAL_POOL.get().put(key, value);
-        if (log.isTraceEnabled()) {
-            log.trace("Bound value of type [{}] for key [{}] to thread [{}]",
-                    value.getClass().getName(), key, Thread.currentThread().getName());
-        }
     }
 
     /**
@@ -125,10 +115,6 @@ public class ThreadContext {
         Object value = Objects.nonNull(map) ? map.remove(key) : null;
         if (Objects.nonNull(map) && map.isEmpty()) {
             clear();
-        }
-        if (Objects.nonNull(value) && log.isTraceEnabled()) {
-            log.trace("Removed value of type [{}] for key [{}] from thread [{}]",
-                    value.getClass().getName(), key, Thread.currentThread().getName());
         }
         return value;
     }

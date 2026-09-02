@@ -16,6 +16,7 @@ package io.ddd4j.sample.dropwizard.cqrs.readmodel;
 
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.readmodel.EventChunk;
 import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
 
@@ -45,7 +46,7 @@ public class InMemoryEventChunkReader implements EventChunkReader<Object> {
             return EventChunk.empty(fromEventNumber);
         }
         List<Object> payloads = storedEvents.stream()
-                .map(StoredEvent::event)
+                .map(e -> (Object) e.payload())
                 .toList();
         long nextPos = storedEvents.get(storedEvents.size() - 1).position() + 1;
         return new EventChunk<>(payloads, nextPos);

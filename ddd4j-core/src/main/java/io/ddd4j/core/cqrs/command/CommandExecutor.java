@@ -31,7 +31,7 @@ import java.util.Set;
  * <h3>注册与路由</h3>
  * <p>
  * 业务方实现 {@code CommandExecutor}，由框架适配层扫描并注册到
- * {@code io.ddd4j.core.cqrs.command.CommandRegistry}：
+ * {@code io.ddd4j.data.cqrs.CommandRegistry}：
  * </p>
  *
  * <pre>{@code

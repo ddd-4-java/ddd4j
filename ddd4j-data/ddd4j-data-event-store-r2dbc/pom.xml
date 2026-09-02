@@ -21,6 +21,7 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
@@ -43,6 +44,7 @@
         </dependency>
 
         <!-- ======== Test ======== -->
+        <!-- r2dbc-h2（纯响应式 H2 内存库 IT 用，无容器；版本由 ddd4j-dependencies 管理（:8055）） -->
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-h2</artifactId>
@@ -58,6 +60,7 @@
             <artifactId>r2dbc-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Reactor 测试（StepVerifier 断言 Mono/Flux 信号序列；版本随 reactor-bom） -->
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>

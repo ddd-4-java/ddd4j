@@ -63,11 +63,14 @@
             <artifactId>feign-core</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- Lombok -->
-        <!-- Jackson（J3 中 jsr310 已内置于 databind） -->
+        <!-- Jackson 2 -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>

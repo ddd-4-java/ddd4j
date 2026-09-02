@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.DateFormatter;
-import io.ddd4j.web.webmvc.converter.Jackson3HttpMessageConverter;
+import io.ddd4j.web.webmvc.converter.CustomHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -82,14 +82,14 @@ public class BaseWebConfig implements WebMvcConfigurer {
     }
 
     /**
-     * Jackson 3 JSON 消息转换器。
-     * <p>Spring 7 的 MappingJackson2HttpMessageConverter 类名保留向后兼容但
-     * setObjectMapper 仍要求 Jackson 2 ObjectMapper，使用 Jackson3HttpMessageConverter 桥接。</p>
+     * 自定义 Jackson 2 JSON 消息转换器。
+     * <p>2.0.x 使用 Jackson 2 ObjectMapper；本 Bean 避免将 MVC 转换器实现
+     * 与 Spring 默认转换器的内部配置耦合。</p>
      */
     @Bean
-    public Jackson3HttpMessageConverter jackson3HttpMessageConverter() {
-        log.debug("Loading jackson3HttpMessageConverter");
-        Jackson3HttpMessageConverter converter = new Jackson3HttpMessageConverter(mvcObjectMapper());
+    public CustomHttpMessageConverter customHttpMessageConverter() {
+        log.debug("Loading customHttpMessageConverter");
+        CustomHttpMessageConverter converter = new CustomHttpMessageConverter(mvcObjectMapper());
         converter.setDefaultCharset(Charset.defaultCharset());
         return converter;
     }

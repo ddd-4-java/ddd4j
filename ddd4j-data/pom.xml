@@ -18,18 +18,37 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <subprojects>
+        <subproject>ddd4j-data-cqrs</subproject>
+        <subproject>ddd4j-data-cqrs-dropwizard</subproject>
+        <subproject>ddd4j-data-cqrs-helidon</subproject>
+        <subproject>ddd4j-data-cqrs-javalin</subproject>
+        <subproject>ddd4j-data-cqrs-micronaut</subproject>
+        <subproject>ddd4j-data-cqrs-quarkus</subproject>
+        <subproject>ddd4j-data-cqrs-spring</subproject>
+        <subproject>ddd4j-data-cqrs-vertx</subproject>
         <subproject>ddd4j-data-crypto</subproject>
         <subproject>ddd4j-data-datascope</subproject>
-        <subproject>ddd4j-data-event-store-jpa</subproject>
-        <subproject>ddd4j-data-event-store-r2dbc</subproject>
         <subproject>ddd4j-data-event-store-esdb</subproject>
         <subproject>ddd4j-data-event-store-jdbi</subproject>
+        <subproject>ddd4j-data-event-store-jpa</subproject>
         <subproject>ddd4j-data-event-store-panache</subproject>
+        <subproject>ddd4j-data-event-store-r2dbc</subproject>
         <subproject>ddd4j-data-external</subproject>
         <subproject>ddd4j-data-jpa</subproject>
         <subproject>ddd4j-data-logs</subproject>
         <subproject>ddd4j-data-mybatis</subproject>
         <subproject>ddd4j-data-mybatisplus</subproject>
+        <subproject>ddd4j-data-projection</subproject>
+        <subproject>ddd4j-data-projection-dropwizard</subproject>
+        <subproject>ddd4j-data-projection-helidon</subproject>
+        <subproject>ddd4j-data-projection-javalin</subproject>
+        <subproject>ddd4j-data-projection-jpa</subproject>
+        <subproject>ddd4j-data-projection-jdbi</subproject>
+        <subproject>ddd4j-data-projection-micronaut</subproject>
+        <subproject>ddd4j-data-projection-panache</subproject>
+        <subproject>ddd4j-data-projection-r2dbc</subproject>
+        <subproject>ddd4j-data-projection-quarkus</subproject>
+        <subproject>ddd4j-data-projection-spring</subproject>
+        <subproject>ddd4j-data-projection-vertx</subproject>
     </subprojects>
-
 </project>

@@ -16,6 +16,9 @@ package io.ddd4j.sample.micronaut.cqrs.repository;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderRepository;
 import jakarta.inject.Singleton;
@@ -36,6 +39,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Singleton
 public class EventSourcingOrderRepository implements OrderRepository {
 
+    /** 聚合类型（当前 core EventStore SPI 需显式 aggregateType 定位流）。 */
+    private static final String AGGREGATE_TYPE = "Order";
+
     private final InMemoryEventStore eventStore;
 
     /** orderNo -> aggregateId 映射（幂等性检查）。 */
@@ -53,9 +59,9 @@ public class EventSourcingOrderRepository implements OrderRepository {
         if (!order.domainEvents().isEmpty()) {
             List<DomainEvent<?>> events = order.pullDomainEvents();
             long currentVersion = orderCache.containsKey(order.id())
-                    ? eventStore.read(order.id()).size() : 0;
-            List<Object> payloads = new ArrayList<>(events);
-            eventStore.append(order.id(), payloads, currentVersion);
+                    ? eventStore.read(AGGREGATE_TYPE, aggregateId(order.id())).size() : 0;
+            List<DomainEvent<?>> payloads = new ArrayList<>(events);
+            eventStore.append(AGGREGATE_TYPE, aggregateId(order.id()), payloads, currentVersion);
             orderNoIndex.put(order.orderNo(), order.id());
             orderCache.put(order.id(), order);
         }
@@ -80,5 +86,33 @@ public class EventSourcingOrderRepository implements OrderRepository {
     @Override
     public long count() {
         return orderNoIndex.size();
+    }
+
+    /**
+     * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
+     * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
+     */
+    private record OrderAggregateId(String value) implements AggregateRootId {
+
+        private static final EntityType TYPE = new StringEntityType("Order");
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+    }
+
+    private static AggregateRootId aggregateId(String value) {
+        return new OrderAggregateId(value);
     }
 }

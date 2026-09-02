@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-projection</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 投影侧框架集成 SPI：ProjectionHandler 业务入口 + ProjectionHandlerRegistry 注册中心
+        + ProjectionDispatcher 分发门面。投影契约（ProjectionService/EventChunkReader/
+        ProjectionPositionRepository 等 16 个抽象）全部复用 ddd4j-core，本模块不重定义任何契约；
+        运行时调度器在 ddd4j-data-projection-{spring,quarkus,micronaut,helidon,javalin,vertx,dropwizard}。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Reactor 核心（ProjectionDispatcher.chunkByEvent 的 Flux 流式拉取轨道；
+             版本由 ddd4j-dependencies 的 reactor-bom 2025.0.6 导入管理（:6464），
+             与 ddd4j-data-event-store 的 AsyncEventStore 单轨决策（ADR-0005）同源约定 -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

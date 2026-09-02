@@ -25,6 +25,11 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- Quarkus Hibernate ORM Panache：版本由 ddd4j-dependencies 导入的
+             io.quarkus.platform:quarkus-bom（${quarkus.version}=3.38.2）管理，刻意不声明。
+             本模块对 hibernate-orm／jakarta.persistence 的解析独立于 Quarkus 全家桶自带版本，
+             不继承也不钉 ddd4j-data-event-store-jpa 模块的任何版本钉（阶段 4 教训：
+             Quarkus 栈必须整链由 quarkus-bom 对齐，禁止与 Spring 线的 Hibernate/JPA 钉混用）。 -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
@@ -41,6 +46,7 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- JUnit Jupiter / AssertJ（retry 单元测试与非 Quarkus 契约测试栈；版本由 BOM 链管理） -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -51,6 +57,9 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Testcontainers PostgreSQL（PG 容器 CI 轨；版本由 testcontainers-bom 管理，
+             2.x 新命名 testcontainers-postgresql/testcontainers-junit-jupiter；
+             @Testcontainers(disabledWithoutDocker=true) 在 Docker 缺席时自动跳过） -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-postgresql</artifactId>
@@ -61,6 +70,7 @@
             <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- PostgreSQL JDBC 驱动（Testcontainers 容器连接用） -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
