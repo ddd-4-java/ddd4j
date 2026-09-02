@@ -4195,6 +4195,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- 修复 test classpath 混版：io.debezium:debezium-bom:3.6.0.Final 在本 POM 的 BOM import
+                 序列中排位靠前（先 import 的 BOM 在 Maven 4 中优先），其内部把 junit-jupiter 聚合器
+                 钉到 ${version.junit}=6.0.3，压过了后导入的 junit-bom(${junit-jupiter.version})，
+                 导致 junit-jupiter:6.0.3 与 junit-jupiter-api/engine:6.1.0 同存。
+                 显式 dependencyManagement 条目优先于一切 import，这里钉回 ${junit-jupiter.version}。 -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
@@ -4884,6 +4894,15 @@
                 <version>${mockito.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- 修复 test classpath 混版：debezium-bom:3.6.0.Final（先 import，优先级更高）把
+                 mockito-core 钉到 ${version.mockito}=5.19.0，压过了后导入的 mockito-bom(${mockito.version})，
+                 导致 mockito-core:5.19.0 与 mockito-junit-jupiter:5.23.0 同存。
+                 显式条目优先于一切 import，这里钉回 ${mockito.version}。 -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
