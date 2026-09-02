@@ -3866,6 +3866,40 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- gRPC 核心工件显式钉版（= grpc-bom 同版）：debezium-bom/dropwizard-bom 等更早
+                 import 的 BOM 会把 grpc-core/api 压到 1.56.x（无 ForwardingChannelBuilder2），
+                 与 grpc-netty-shaded 1.82.1 混版导致 esdb 客户端 NoClassDefFoundError；
+                 Maven 显式管理条目优先于一切 import，此处整族钉齐。 -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-api</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-core</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-stub</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-protobuf-lite</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty-shaded</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
             <!-- Gson：Google JSON 解析与序列化库。 -->
             <dependency>

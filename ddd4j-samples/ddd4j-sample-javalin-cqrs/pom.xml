@@ -122,7 +122,16 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>runtime</scope>
         </dependency>
-    </dependencies>
+            <!-- Javalin 7 的 JavalinJackson3 依赖 Jackson 3（tools.jackson）：2.0.x 线整体为
+             Jackson 2（com.fasterxml，DDD 事件序列化走 core EventPayloadSerializer），
+             仅 Javalin HTTP 层的 JSON 编解码用 J3，双 Jackson 共存是本线既定形态。
+             J3 无 BOM 管理（tools.jackson BOM 未发布到 Central），模块级显式钉版。 -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+</dependencies>
 
     <build>
         <plugins>
@@ -138,8 +147,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skip>false</skip>
-                    <skipTests>false</skipTests>
+                    <skip>${skipTests}</skip>
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
         </plugins>
