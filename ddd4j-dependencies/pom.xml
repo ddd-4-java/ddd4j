@@ -310,7 +310,7 @@
         <jwt-issuer.version>1.1.8.RELEASE</jwt-issuer.version>
         <kaptcha.version>0.0.9</kaptcha.version>
         <!-- Kafka 4.x requires JDK11; feature/1.0.x uses the JDK8-compatible client line. -->
-        <kafka.version>2.8.2</kafka.version>
+        <kafka.version>3.9.2</kafka.version>
         <knife4j.version>4.5.0</knife4j.version>
         <kingbase8.version>8.6.0</kingbase8.version>
         <kisso.version>3.9.5</kisso.version>
