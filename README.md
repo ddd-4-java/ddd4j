@@ -455,3 +455,13 @@ cola-platform/  (Maven父工程)
 │
 └─ pom.xml                         # 父POM，管理所有子模块
 ```
+
+---
+
+## 维护状态：EOL（End of Life）
+
+> **1.0.x 线已于 2026-09-02 终止维护**（tag `eol/jdk8`）。
+>
+> - 终态包含最后一轮 JDK8 安全刷新：guava 32.1.3（CVE-2023-2976 修复）、spring-security 5.8.16、jackson 2.22.2、kafka-clients 3.9.2 等（见 `git log` 7 个 `build(deps)` 提交）。
+> - 已知基线遗留（不再修复）：mockito 5.20.0 需 Java 11+，`ddd4j-data`/`ddd4j-auth-security` 两模块 testCompile 失败；commons-lang3 被上游 BOM 钉在 3.8.1。
+> - 新项目请使用 2.0.x（JDK 17）或 3.0.x（JDK 21）线。
