@@ -1,0 +1,4 @@
+# ddd4j-sample-micronaut-cqrs Micronaut 配置
+micronaut:
+  application:
+    name: ddd4j-sample-micronaut-cqrs

@@ -42,6 +42,10 @@
         <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
         <module>ddd4j-sample-quarkus-cqrs</module>
         <module>ddd4j-sample-javalin-cqrs</module>
+        <module>ddd4j-sample-dropwizard-cqrs</module>
+        <module>ddd4j-sample-helidon-cqrs</module>
+        <module>ddd4j-sample-micronaut-cqrs</module>
+        <module>ddd4j-sample-vertx-cqrs</module>
 
         <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
         <module>ddd4j-sample-quarkus-satoken</module>
