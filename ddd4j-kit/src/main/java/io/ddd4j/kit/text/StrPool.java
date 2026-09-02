@@ -32,6 +32,7 @@ public interface StrPool {
     String COLON = ":";
     String COMMA = ",";
     String DASH = "-";
+    String DDD4J_PREFIX = "ddd4j.";
     String DOLLAR = "$";
     String DOT = ".";
     String DOTDOT = "..";
@@ -63,6 +64,7 @@ public interface StrPool {
     String LEFT_BRACKET = "(";
     String LEFT_CHEV = "<";
     String DOT_NEWLINE = ",\n";
+    String MS = "ms";
     String NEWLINE = "\n";
     String N = "n";
     String NO = "no";

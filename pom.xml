@@ -84,6 +84,7 @@
 
         <!-- 能力聚合层：保持根目录平铺，内部按 core/框架/厂商实现继续平铺 -->
         <module>ddd4j-data</module>
+        <module>ddd4j-metrics</module>
         <module>ddd4j-mq</module>
         <module>ddd4j-web</module>
         <module>ddd4j-auth</module>
