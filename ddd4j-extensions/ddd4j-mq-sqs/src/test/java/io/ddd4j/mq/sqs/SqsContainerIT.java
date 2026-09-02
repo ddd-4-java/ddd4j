@@ -5,12 +5,9 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import io.ddd4j.core.contract.MQEvent;
 import io.ddd4j.mq.config.Ddd4jMQPropertiesConfiguration;
-import io.ddd4j.mq.contract.MQDestination;
-import io.ddd4j.mq.spi.MQEventPublisherContract;
 import io.ddd4j.mq.sqs.autoconfigure.Ddd4jSqsMQAutoConfiguration;
-import org.junit.jupiter.api.Test;
+import io.ddd4j.mq.test.AbstractMqContainerIT;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +18,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * AWS SQS 发布路径 Testcontainers 冒烟集成测试（纯 Spring Framework，无 Boot）。
  * <p>
  * 使用 ElasticMQ 兼容端点；IT 内 {@code @Primary} 覆盖 {@link AmazonSQS}。
+ * 公共骨架（发布者注入、Docker 前置、冒烟发布断言）见 {@link AbstractMqContainerIT}。
+ * </p>
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -40,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         Ddd4jSqsMQAutoConfiguration.class,
         SqsContainerIT.ElasticMqSqsConfiguration.class
 })
-@EnabledIf("io.ddd4j.mq.sqs.SqsContainerIT#isDockerAvailable")
-class SqsContainerIT {
+@EnabledIf("io.ddd4j.mq.test.AbstractMqContainerIT#isDockerAvailable")
+class SqsContainerIT extends AbstractMqContainerIT {
 
     private static final String AWS_REGION = "us-east-1";
     private static final String QUEUE_NAME = "ddd4j-smoke-queue";
@@ -56,9 +53,6 @@ class SqsContainerIT {
     private static String sqsEndpoint;
 
     private static volatile boolean containersStarted;
-
-    @Autowired
-    private MQEventPublisherContract mqEventPublisher;
 
     @Autowired
     private AmazonSQS amazonSqs;
@@ -83,38 +77,20 @@ class SqsContainerIT {
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
         ensureContainersStarted();
-        registry.add("ddd4j.mq.enabled", () -> "true");
-        registry.add("ddd4j.mq.broker", () -> "sqs");
-        registry.add("ddd4j.mq.namespace", () -> "it");
+        registerCommonMqProperties(registry, "sqs", SMOKE_NAMESPACE);
         registry.add("ddd4j.mq.sqs.region", () -> AWS_REGION);
         registry.add("ddd4j.mq.sqs.queue-url", () -> queueUrl);
     }
 
-    /**
-     * Docker 是否可用（Testcontainers 前置条件）。
-     */
-    static boolean isDockerAvailable() {
-        try {
-            DockerClientFactory.instance().client();
-            return true;
-        } catch (Throwable ex) {
-            return false;
-        }
+    @Override
+    protected void verifyBrokerClient() {
+        assertNotNull(amazonSqs);
     }
 
-    @Test
-    void publishShouldNotThrow() {
-        assertNotNull(mqEventPublisher);
-        assertNotNull(amazonSqs);
-
-        DemoPublishEvent event = new DemoPublishEvent();
-        event.setTopic(queueUrl);
-        event.setTag("ping");
-        event.setTenantId("tenant-it");
-
-        assertDoesNotThrow(() -> mqEventPublisher.publish(
-                event,
-                MQDestination.of(queueUrl, "ping", "it")));
+    @Override
+    protected String smokeTopic() {
+        // SQS 冒烟 topic 即预创建队列的 queue URL
+        return queueUrl;
     }
 
     /**
@@ -135,8 +111,5 @@ class SqsContainerIT {
                     .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("x", "x")))
                     .build();
         }
-    }
-
-    static class DemoPublishEvent extends MQEvent {
     }
 }
