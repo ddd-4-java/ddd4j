@@ -560,6 +560,7 @@
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
         <!-- Testcontainers 锁定 2.0.5：当前 1.0.x 全部 ContainerIT 在 JDK8 实测绿；若后续批次容器移植出现字节码/API 不兼容，退回 JDK8 官方线 1.20.6 -->
         <testcontainers.version>2.0.5</testcontainers.version>
+        <testcontainers-redis.version>2.2.4</testcontainers-redis.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
