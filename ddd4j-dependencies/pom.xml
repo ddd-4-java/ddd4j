@@ -248,8 +248,8 @@
         <influxdb-client-java.version>7.4.0</influxdb-client-java.version>
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <jackson-annotations.version>2.13.5</jackson-annotations.version>
-        <jackson.version>2.13.5</jackson.version>
+        <jackson-annotations.version>2.22</jackson-annotations.version>
+        <jackson.version>2.22.2</jackson.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <!-- Jakarta EE 改为 javax 依赖以支持 JDK 1.8 -->
         <javax-activation.version>1.1.1</javax-activation.version>
