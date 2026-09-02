@@ -422,6 +422,7 @@
         <kotlin-stdlib.version>2.0.21</kotlin-stdlib.version>
         <kotlin.version>2.2.21</kotlin.version>
         <kubernetes-client.version>6.13.3</kubernetes-client.version>
+        <eventstore-db-client.version>5.4.5</eventstore-db-client.version>
         <kurrentdb-client.version>1.2.0</kurrentdb-client.version>
         <kylin-jdbc.version>5.0.3</kylin-jdbc.version>
         <lettuce.version>7.1.0.RELEASE</lettuce.version>
@@ -5884,6 +5885,14 @@
                 <groupId>io.kurrent</groupId>
                 <artifactId>kurrentdb-client</artifactId>
                 <version>${kurrentdb-client.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.eventstore/db-client-java -->
+            <!-- EventStoreDB Client：EventStoreDB（事件溯源数据库）的 gRPC Java 客户端（esdb 模块用，
+                 与 3.0.x 线版本一致；io.kurrent:kurrentdb-client 为更名后新坐标，包名不兼容，勿混用） -->
+            <dependency>
+                <groupId>com.eventstore</groupId>
+                <artifactId>db-client-java</artifactId>
+                <version>${eventstore-db-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.kylin/kylin-jdbc -->
             <!-- Apache Kylin JDBC：Apache Kylin 大数据 OLAP 引擎的 JDBC 驱动。 -->

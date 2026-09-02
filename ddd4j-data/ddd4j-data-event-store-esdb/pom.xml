@@ -10,13 +10,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ddd4j-data-event-store-jpa</artifactId>
+    <artifactId>ddd4j-data-event-store-esdb</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层 - EventStore JPA 持久化实现：
-        基于 jakarta.persistence API 实现 core 的 EventStore SPI
-        （io.ddd4j.core.cqrs.eventstore.EventStore），
-        提供 StoredEvent 实体的乐观锁追加、按流读取与全局位置分页拉取。
-        框架无关（纯 JPA），适用于任意 Jakarta EE 容器。
+    <description>ddd4j 数据层 - EventStoreDB 持久化实现：
+        基于 com.eventstore:db-client-java（EventStoreDB gRPC 客户端）实现 core 的
+        EventStore SPI（io.ddd4j.core.cqrs.eventstore.EventStore），
+        将聚合事件流映射到 EventStoreDB 流（stream = aggregateId，
+        expectedVersion → 期望修订号，position → 全局提交位置）。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
@@ -31,26 +31,18 @@
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- JPA API -->
+        <!-- EventStoreDB gRPC Java 客户端 -->
         <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
+            <groupId>com.eventstore</groupId>
+            <artifactId>db-client-java</artifactId>
         </dependency>
 
         <!-- ======== Test ======== -->
+        <!-- Jackson JSR-310（Jackson 2 线：java.time 序列化需显式 module，
+             findAndAddModules 经 ServiceLoader 发现；Jackson 3 内建故 3.0.x 原版无需此依赖） -->
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -64,13 +56,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Testcontainers：EventStoreDB 集成测试（GenericContainer，无专用模块） -->
+        <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>testcontainers</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -79,8 +77,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -93,6 +91,11 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
+                    <!-- 同时匹配 *Test.java（单元测试）和 *IT.java（集成测试） -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>
