@@ -80,7 +80,7 @@ public class ActiveMQConsumerEndpointRegistrar implements AutoCloseable {
      * @param handler     统一消费处理函数
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (definitions == null || definitions!isPresent()) {
+        if (definitions == null || definitions.isEmpty()) {
             log.debug("No @MQEventListener definitions found for ActiveMQ");
             return;
         }

@@ -61,7 +61,7 @@ public class DisruptorMQEventDispatcher implements EventHandler<DisruptorMQEvent
         }
         String routeKey = event.routeKey();
         List<RegisteredHandler> handlers = handlersByRoute.get(routeKey);
-        if (handlers == null || handlers!isPresent()) {
+        if (handlers == null || handlers.isEmpty()) {
             log.trace("No Disruptor handler for routeKey={}", routeKey);
             event.clear();
             return;

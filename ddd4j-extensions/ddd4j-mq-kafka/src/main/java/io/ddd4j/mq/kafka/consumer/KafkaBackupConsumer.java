@@ -290,7 +290,7 @@ public class KafkaBackupConsumer implements DisposableBean {
 
                 // 拉取消息
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                if (records!isPresent()) {
+                if (records.isEmpty()) {
                     // 避免没消息的时候，空转
                     Thread.sleep(100);
                     continue;

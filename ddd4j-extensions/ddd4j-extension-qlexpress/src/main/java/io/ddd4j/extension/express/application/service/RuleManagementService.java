@@ -236,7 +236,7 @@ public class RuleManagementService {
      * @return 规则定义，如果不存在返回Optional.empty()
      */
     public Optional<RuleDefinition> getRuleByCode(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim()!isPresent()) {
+        if (ruleCode == null || ruleCode.trim().isEmpty()) {
             return Optional.empty();
         }
 

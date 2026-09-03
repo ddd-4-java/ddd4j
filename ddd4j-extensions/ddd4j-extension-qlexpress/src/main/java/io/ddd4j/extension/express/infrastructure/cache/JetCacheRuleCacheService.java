@@ -105,7 +105,7 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim()!isPresent()) {
+        if (ruleCode == null || ruleCode.trim().isEmpty()) {
             return null;
         }
 
@@ -133,7 +133,7 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (ruleCode == null || ruleCode.trim()!isPresent() || rule == null) {
+        if (ruleCode == null || ruleCode.trim().isEmpty() || rule == null) {
             return;
         }
 
@@ -154,7 +154,7 @@ public class JetCacheRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim()!isPresent()) {
+        if (ruleCode == null || ruleCode.trim().isEmpty()) {
             return;
         }
 

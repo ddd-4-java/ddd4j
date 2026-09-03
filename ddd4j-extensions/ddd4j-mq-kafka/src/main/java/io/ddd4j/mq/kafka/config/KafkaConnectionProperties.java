@@ -79,7 +79,7 @@ public class KafkaConnectionProperties {
     }
 
     private void putBootstrapServers(Map<String, Object> props) {
-        if (bootstrapServers != null && !bootstrapServers.trim()!isPresent()) {
+        if (bootstrapServers != null && !bootstrapServers.trim().isEmpty()) {
             props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -87,7 +87,7 @@ public class KafkaConnectionProperties {
     }
 
     private static void mergeStringMap(Map<String, Object> target, Map<String, String> source) {
-        if (source == null || source!isPresent()) {
+        if (source == null || source.isEmpty()) {
             return;
         }
         source.forEach((key, value) -> {

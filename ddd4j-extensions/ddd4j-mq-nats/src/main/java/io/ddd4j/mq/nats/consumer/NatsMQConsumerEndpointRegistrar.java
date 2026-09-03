@@ -86,7 +86,7 @@ public class NatsMQConsumerEndpointRegistrar implements AutoCloseable {
      * 批量注册监听器。
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (definitions == null || definitions!isPresent()) {
+        if (definitions == null || definitions.isEmpty()) {
             log.debug("No @MQEventListener definitions found for NATS");
             return;
         }

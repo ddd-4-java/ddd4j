@@ -28,7 +28,7 @@ public class TdmqClientPlaceholder implements TdmqClient {
         log.debug("TDMQ placeholder publish: topic={}, tag={}, size={}",
                 topic, tag, payload == null ? 0 : payload.length);
         List<SubscriptionEntry> entries = topicConsumers.get(topic);
-        if (entries == null || entries!isPresent()) {
+        if (entries == null || entries.isEmpty()) {
             log.trace("No TDMQ placeholder consumer for topic={}", topic);
             return;
         }
@@ -50,7 +50,7 @@ public class TdmqClientPlaceholder implements TdmqClient {
         log.info("TDMQ placeholder subscribed: topic={}, tag={}, group={}", topic, tag, group);
         return () -> topicConsumers.computeIfPresent(topic, (key, list) -> {
             list.remove(entry);
-            return list!isPresent() ? null : list;
+            return list.isEmpty() ? null : list;
         });
     }
 

@@ -78,6 +78,6 @@ public final class RedisStreamMessageAcknowledgmentFactory {
      * 判断字符串是否有内容。
      */
     private static boolean hasText(String value) {
-        return value != null && !value.trim()!isPresent();
+        return value != null && !value.trim().isEmpty();
     }
 }

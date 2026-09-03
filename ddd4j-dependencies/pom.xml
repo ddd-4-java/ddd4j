@@ -7005,6 +7005,12 @@
                 <artifactId>javax.ws.rs-api</artifactId>
                 <version>${javax.ws.rs-api.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api -->
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>1.3.2</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.eclipse.microprofile.config/microprofile-config-api -->
             <dependency>
                 <groupId>org.eclipse.microprofile.config</groupId>

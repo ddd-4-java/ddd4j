@@ -38,7 +38,7 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim()!isPresent()) {
+        if (ruleCode == null || ruleCode.trim().isEmpty()) {
             return null;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -53,7 +53,7 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (ruleCode == null || ruleCode.trim()!isPresent() || rule == null) {
+        if (ruleCode == null || ruleCode.trim().isEmpty() || rule == null) {
             return;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;
@@ -67,7 +67,7 @@ public class RedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim()!isPresent()) {
+        if (ruleCode == null || ruleCode.trim().isEmpty()) {
             return;
         }
         String cacheKey = RULE_CACHE_PREFIX + ruleCode;

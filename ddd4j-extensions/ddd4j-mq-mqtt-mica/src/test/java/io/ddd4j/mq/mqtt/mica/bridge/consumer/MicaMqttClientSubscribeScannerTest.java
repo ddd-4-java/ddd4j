@@ -34,7 +34,7 @@ class MicaMqttClientSubscribeScannerTest {
 
         List<MicaMqttClientSubscribeDefinition> definitions = scanner.scan();
 
-        assertFalse(definitions!isPresent());
+        assertFalse(definitions.isEmpty());
         assertEquals(2, definitions.size());
 
         MicaMqttClientSubscribeDefinition qos0 = definitions.stream()

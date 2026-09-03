@@ -50,7 +50,7 @@ public class Sequence {
             synchronized (refillLock) {
                 // 双重检查
                 // 双重检查
-                if (idPool!isPresent()) {
+                if (idPool.isEmpty()) {
                     try {
                         refill();
                     } catch (Exception e) {

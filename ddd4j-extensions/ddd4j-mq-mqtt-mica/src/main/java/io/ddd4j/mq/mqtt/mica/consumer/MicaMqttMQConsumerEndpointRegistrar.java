@@ -73,7 +73,7 @@ public class MicaMqttMQConsumerEndpointRegistrar implements AutoCloseable {
      * 批量注册监听器（启动阶段调用）。
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (definitions == null || definitions!isPresent()) {
+        if (definitions == null || definitions.isEmpty()) {
             log.debug("No @MQEventListener definitions found for mica-mqtt");
             return;
         }
@@ -85,7 +85,7 @@ public class MicaMqttMQConsumerEndpointRegistrar implements AutoCloseable {
 
     @Override
     public void close() {
-        if (subscribedTopics!isPresent()) {
+        if (subscribedTopics.isEmpty()) {
             return;
         }
         try {
