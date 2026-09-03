@@ -5,7 +5,7 @@
 package io.ddd4j.web.webmvc.error;
 
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.biz.context.support.ResourceBasenameHandler;
+import org.springframework.extension.context.support.ResourceBasenameHandler;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;

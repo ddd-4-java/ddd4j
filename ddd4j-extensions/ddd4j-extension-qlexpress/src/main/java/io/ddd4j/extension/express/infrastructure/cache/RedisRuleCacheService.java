@@ -80,7 +80,7 @@ public class RedisRuleCacheService implements RuleCacheService {
     @Override
     public void evictAll() {
         Set<String> keys = redisTemplate.keys(RULE_CACHE_PREFIX + "*");
-        if (keys != null && !keys.isEmpty()) {
+        if (keys != null && keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
     }

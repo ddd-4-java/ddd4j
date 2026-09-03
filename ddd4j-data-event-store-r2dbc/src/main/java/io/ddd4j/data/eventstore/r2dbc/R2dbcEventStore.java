@@ -2,8 +2,8 @@ package io.ddd4j.data.eventstore.r2dbc;
 
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncEventStore;
+import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
 import io.ddd4j.core.cqrs.eventstore.EventStoreConstants;
-import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.AggregateVersion;
@@ -129,35 +129,38 @@ public class R2dbcEventStore implements AsyncEventStore {
 
     @Override
     public Mono<Void> append(String aggregateType, AggregateRootId aggregateId,
-                             List<? extends DomainEvent<?>> events, long expectedVersion) {
+                             Flux<? extends DomainEvent<?>> events, long expectedVersion) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         Objects.requireNonNull(events, "events must not be null");
-        if (events.isEmpty()) {
-            return Mono.empty();
-        }
-        return ensureInitialized().then(Mono.usingWhen(
-                Mono.from(connectionFactory.create()),
-                connection -> Mono.from(connection.beginTransaction())
-                        .then(queryCurrentVersion(connection, aggregateType, aggregateId))
-                        .flatMap(actualVersion -> {
-                            if (actualVersion.longValue() != expectedVersion) {
-                                return Mono.<Void>error(new AggregateVersionConflictException(
-                                        aggregateType, aggregateId.asString(), expectedVersion,
-                                        actualVersion.longValue()));
-                            }
-                            return nextPosition(connection)
-                                    .flatMap(maxPosition -> executeInserts(connection, aggregateType,
-                                            aggregateId, events, expectedVersion,
-                                            maxPosition.longValue() + 1L));
-                        })
-                        .then(Mono.from(connection.commitTransaction()))
-                        .onErrorResume(ex -> rollback(connection).then(Mono.<Void>error(ex))),
-                connection -> Mono.from(connection.close())));
+        // 3.0.x 契约语义：append 以 Flux 表达事件流，实现先行物化（订阅一次即完成追加）
+        return events.collectList().flatMap(eventList -> {
+            if (eventList.isEmpty()) {
+                return Mono.empty();
+            }
+            return ensureInitialized().then(Mono.usingWhen(
+                    Mono.from(connectionFactory.create()),
+                    connection -> Mono.from(connection.beginTransaction())
+                            .then(queryCurrentVersion(connection, aggregateType, aggregateId))
+                            .flatMap(actualVersion -> {
+                                if (actualVersion.longValue() != expectedVersion) {
+                                    return Mono.<Void>error(new AggregateVersionConflictException(
+                                            aggregateType, aggregateId.asString(), expectedVersion,
+                                            actualVersion.longValue()));
+                                }
+                                return nextPosition(connection)
+                                        .flatMap(maxPosition -> executeInserts(connection, aggregateType,
+                                                aggregateId, eventList, expectedVersion,
+                                                maxPosition.longValue() + 1L));
+                            })
+                            .then(Mono.from(connection.commitTransaction()))
+                            .onErrorResume(ex -> rollback(connection).then(Mono.<Void>error(ex))),
+                    connection -> Mono.from(connection.close())));
+        });
     }
 
     @Override
-    public Flux<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
+    public Flux<AsyncStoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         return ensureInitialized().thenMany(query(READ_BY_AGGREGATE_SQL,
@@ -165,8 +168,8 @@ public class R2dbcEventStore implements AsyncEventStore {
     }
 
     @Override
-    public Flux<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
-                                  long fromVersion, long toVersion) {
+    public Flux<AsyncStoredEvent> read(String aggregateType, AggregateRootId aggregateId,
+                                       long fromVersion, long toVersion) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         return ensureInitialized().thenMany(query(READ_RANGE_SQL,
@@ -175,7 +178,7 @@ public class R2dbcEventStore implements AsyncEventStore {
     }
 
     @Override
-    public Flux<StoredEvent> readAll(long fromPosition, int limit) {
+    public Flux<AsyncStoredEvent> readAll(long fromPosition, int limit) {
         if (limit <= 0) {
             throw new IllegalArgumentException("limit must be positive");
         }
@@ -184,15 +187,15 @@ public class R2dbcEventStore implements AsyncEventStore {
     }
 
     /** 在事务内执行查询并流式映射行：行流消费完毕后提交，异常回滚。 */
-    private Flux<StoredEvent> query(String sql, Function<Statement, Statement> binder) {
+    private Flux<AsyncStoredEvent> query(String sql, Function<Statement, Statement> binder) {
         return Flux.usingWhen(
                 Mono.from(connectionFactory.create()),
                 connection -> Flux.from(connection.beginTransaction())
                         .thenMany(Flux.from(binder.apply(connection.createStatement(sql)).execute()))
                         .flatMap(result -> result.map((row, metadata) -> mapRow(row)))
                         .concatWith(Mono.from(connection.commitTransaction())
-                                .then(Mono.<StoredEvent>empty()))
-                        .onErrorResume(ex -> rollback(connection).then(Mono.<StoredEvent>error(ex))),
+                                .then(Mono.<AsyncStoredEvent>empty()))
+                        .onErrorResume(ex -> rollback(connection).then(Mono.<AsyncStoredEvent>error(ex))),
                 connection -> Mono.from(connection.close()));
     }
 
@@ -271,15 +274,15 @@ public class R2dbcEventStore implements AsyncEventStore {
                 .doOnSuccess(v -> initialized.compareAndSet(false, true));
     }
 
-    /** 行 → {@link StoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。 */
-    private StoredEvent mapRow(Row row) {
+    /** 行 → {@link AsyncStoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。 */
+    private AsyncStoredEvent mapRow(Row row) {
         String eventType = row.get(EventStoreConstants.COLUMN_EVENT_TYPE, String.class);
         DomainEvent<?> payload = serializer.deserialize(
                 row.get(EventStoreConstants.COLUMN_PAYLOAD, String.class), resolveEventType(eventType));
         LocalDateTime timestamp = row.get(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
         Long version = row.get(EventStoreConstants.COLUMN_VERSION, Long.class);
         Long position = row.get(EventStoreConstants.COLUMN_POSITION, Long.class);
-        return new StoredEvent(
+        return new AsyncStoredEvent(
                 EventId.valueOf(row.get(EventStoreConstants.COLUMN_EVENT_ID, String.class)),
                 row.get(EventStoreConstants.COLUMN_AGGREGATE_TYPE, String.class),
                 new StringAggregateRootId(row.get(EventStoreConstants.COLUMN_AGGREGATE_ID, String.class)),

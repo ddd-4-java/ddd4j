@@ -49,7 +49,8 @@
         <spring-security.version>5.8.16</spring-security.version>
         <spring-session-bom.version>2021.2.3</spring-session-bom.version>
         <spring-ws.version>3.1.8</spring-ws.version>
-        <reactor-bom.version>2023.0.19</reactor-bom.version>
+        <!-- reactor-bom 与 ddd4j-dependencies 收敛统一为 2025.0.6（reactor-core 3.8.6 字节码 major=52，JDK8 兼容已实测） -->
+        <reactor-bom.version>2025.0.6</reactor-bom.version>
         <jackson-bom.version>2.22.2</jackson-bom.version>
         <maven-clean-plugin.version>3.4.1</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
@@ -75,9 +76,27 @@
         <!-- 事件存储：EventStore/AsyncEventStore 的 JPA/JDBI/R2DBC 持久化适配器（javax/JDK8 轨道） -->
         <module>ddd4j-data-event-store-jpa</module>
         <module>ddd4j-data-event-store-jdbi</module>
+        <module>ddd4j-runtime</module>
+        <module>ddd4j-cache</module>
+        <module>ddd4j-metrics</module>
+        <module>ddd4j-data-cqrs</module>
+        <module>ddd4j-data-cqrs-spring</module>
+        <module>ddd4j-data-projection</module>
+        <module>ddd4j-data-projection-spring</module>
+        <module>ddd4j-data-projection-jpa</module>
+        <module>ddd4j-data-projection-jdbi</module>
+        <module>ddd4j-web</module>
+        <module>ddd4j-web-testkit</module>
+        <module>ddd4j-web-core</module>
+        <module>ddd4j-web-javalin</module>
+        <module>ddd4j-web-vertx</module>
+        <module>ddd4j-web-micronaut</module>
+        <module>ddd4j-web-helidon</module>
+        <module>ddd4j-web-dropwizard</module>
+        <module>ddd4j-data-projection-r2dbc</module>
+        <module>ddd4j-data-event-store-esdb</module>
         <module>ddd4j-data-event-store-r2dbc</module>
         <!-- Web 层：拦截器/Session/Feign/多租户 -->
-        <module>ddd4j-web</module>
         <!-- 消息队列：5 种 MQ 统一抽象 -->
         <module>ddd4j-mq</module>
         <!-- 监控告警：钉钉/企微机器人 + 日志告警 -->
@@ -239,6 +258,13 @@
                         <target>${java.version}</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <maxmem>512M</maxmem>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->

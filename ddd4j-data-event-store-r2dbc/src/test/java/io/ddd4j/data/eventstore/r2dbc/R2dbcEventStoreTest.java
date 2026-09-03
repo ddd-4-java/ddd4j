@@ -3,7 +3,7 @@ package io.ddd4j.data.eventstore.r2dbc;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncEventStore;
 import io.ddd4j.core.cqrs.eventstore.EventStoreConstants;
-import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -48,10 +48,10 @@ class R2dbcEventStoreTest {
     @Test
     void appendAndReadShouldRoundTripBusinessPayload() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-a");
-        eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(
-                new OrderCreatedEvent("created"), new OrderCreatedEvent("renamed")), 0).block();
+        eventStore.append(ORDER_TYPE, orderId, reactor.core.publisher.Flux.fromIterable(Arrays.<DomainEvent<?>>asList(
+                new OrderCreatedEvent("created"), new OrderCreatedEvent("renamed"))), 0).block();
 
-        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId).collectList().block();
+        List<AsyncStoredEvent> events = eventStore.read(ORDER_TYPE, orderId).collectList().block();
         assertEquals(2, events.size());
         assertEquals(1L, events.get(0).version());
         assertEquals(2L, events.get(1).version());
@@ -65,11 +65,11 @@ class R2dbcEventStoreTest {
     void appendWithStaleVersionShouldReject() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-b");
         eventStore.append(ORDER_TYPE, orderId,
-                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("first")), 0).block();
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("first"))), 0).block();
 
         AggregateVersionConflictException conflict = assertThrows(AggregateVersionConflictException.class,
                 () -> eventStore.append(ORDER_TYPE, orderId,
-                        Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("second")), 0).block());
+                        reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("second"))), 0).block());
         assertEquals(0L, conflict.expectedVersion());
         assertEquals(1L, conflict.actualVersion());
     }
@@ -77,10 +77,10 @@ class R2dbcEventStoreTest {
     @Test
     void readVersionRangeShouldReturnInclusiveSlice() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-c");
-        eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(
-                new OrderCreatedEvent("v1"), new OrderCreatedEvent("v2"), new OrderCreatedEvent("v3")), 0).block();
+        eventStore.append(ORDER_TYPE, orderId, reactor.core.publisher.Flux.fromIterable(Arrays.<DomainEvent<?>>asList(
+                new OrderCreatedEvent("v1"), new OrderCreatedEvent("v2"), new OrderCreatedEvent("v3"))), 0).block();
 
-        List<StoredEvent> slice = eventStore.read(ORDER_TYPE, orderId, 2, 3).collectList().block();
+        List<AsyncStoredEvent> slice = eventStore.read(ORDER_TYPE, orderId, 2, 3).collectList().block();
         assertEquals(2, slice.size());
         assertEquals(2L, slice.get(0).version());
         assertEquals(3L, slice.get(1).version());
@@ -91,11 +91,11 @@ class R2dbcEventStoreTest {
         TestAggregateRootId first = new TestAggregateRootId("order-d");
         TestAggregateRootId second = new TestAggregateRootId("order-e");
         eventStore.append(ORDER_TYPE, first,
-                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("d")), 0).block();
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("d"))), 0).block();
         eventStore.append(ORDER_TYPE, second,
-                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("e")), 0).block();
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("e"))), 0).block();
 
-        List<StoredEvent> events = eventStore.readAll(1, 10).collectList().block();
+        List<AsyncStoredEvent> events = eventStore.readAll(1, 10).collectList().block();
         assertEquals(2, events.size());
         assertEquals(first.asString(), events.get(0).aggregateId().asString());
         assertEquals(second.asString(), events.get(1).aggregateId().asString());
@@ -109,9 +109,9 @@ class R2dbcEventStoreTest {
         TestAggregateRootId orderId = new TestAggregateRootId("order-f");
         OrderCreatedEvent cause = new OrderCreatedEvent("cause");
         OrderCreatedEvent effect = new OrderCreatedEvent("effect", cause);
-        eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(cause, effect), 0).block();
+        eventStore.append(ORDER_TYPE, orderId, reactor.core.publisher.Flux.fromIterable(Arrays.<DomainEvent<?>>asList(cause, effect)), 0).block();
 
-        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId).collectList().block();
+        List<AsyncStoredEvent> events = eventStore.read(ORDER_TYPE, orderId).collectList().block();
         assertNull(events.get(0).correlationId());
         assertEquals(cause.getEventId(), events.get(1).correlationId());
         assertEquals(cause.getEventId(), events.get(1).causationId());
@@ -126,7 +126,7 @@ class R2dbcEventStoreTest {
     @Test
     void payloadColumnShouldUseTextType() {
         eventStore.append(ORDER_TYPE, new TestAggregateRootId("order-g"),
-                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("g")), 0).block();
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("g"))), 0).block();
         String dataType = Mono.usingWhen(
                         Mono.from(connectionFactory.create()),
                         connection -> Mono.from(connection.createStatement(

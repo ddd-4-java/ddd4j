@@ -1,5 +1,6 @@
 package io.ddd4j.core.subject;
 
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.Functions;
 import io.ddd4j.core.util.JacksonKit;
 import org.apache.commons.collections.MapUtils;
@@ -13,6 +14,14 @@ public interface Subject {
     <T extends AuthPrincipal> T getPrincipal();
     <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId);
     <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue);
+
+    /**
+     * 验证 token 并返回认证主体（默认回落到 getPrincipalByToken）。
+     * 各框架适配层（sa-token/shiro/security）可覆写此方法实现 token 校验逻辑。
+     */
+    default <T extends AuthPrincipal> T verify(String token) {
+        return getPrincipalByToken(token);
+    }
 
     boolean isPermitted(String permission);
     boolean isPermitted(Object loginId, String permission);

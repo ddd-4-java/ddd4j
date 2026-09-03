@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-event-store-esdb</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 数据层 - EventStoreDB 持久化实现：
+        基于 com.eventstore:db-client-java（EventStoreDB gRPC 客户端）实现 core 的
+        EventStore SPI（io.ddd4j.core.cqrs.eventstore.EventStore），
+        将聚合事件流映射到 EventStoreDB 流（stream = aggregateId，
+        expectedVersion → 期望修订号，position → 全局提交位置）。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- EventStoreDB gRPC Java 客户端 -->
+        <dependency>
+            <groupId>com.eventstore</groupId>
+            <artifactId>db-client-java</artifactId>
+            <version>${eventstore-db-client.version}</version>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Testcontainers：EventStoreDB 集成测试（GenericContainer，无专用模块） -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <skipTests>false</skipTests>
+                    <!-- 同时匹配 *Test.java（单元测试）和 *IT.java（集成测试） -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

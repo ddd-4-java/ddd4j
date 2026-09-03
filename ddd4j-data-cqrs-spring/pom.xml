@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-cqrs-spring</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j CQRS Spring 适配（Spring WebMVC/WebFlux + Helidon-Spring）：
+        SpringCommandBus 以 @Component 继承 ddd4j-core DefaultCommandBus（ADR-0004：
+        命令分发唯一入口，零新框架抽象），构造期经 ApplicationContext.getBeansOfType
+        收集 CommandExecutor Bean 注册 CommandRegistry，类级 @Transactional 包 execute。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <properties>
+        <!-- 仅测试栈：@SpringBootTest 真实容器所用的 Spring Boot starter 版本（与 -event-store-jpa
+             的 Task 4.1 决策一致）。BOM 刻意不管理 Spring Boot（4.1+4.2 实证全仓无 BOM 管理），
+             故此处局部显式钉版，取 3.4.4 = Spring 6.2 线（与 ddd4j-dependencies 管理的
+             spring-framework 6.2.x 匹配；Boot 4.x/Spring 7 线勿用），test 作用域不进入对外依赖面。 -->
+        <spring-boot-it.version>3.4.4</spring-boot-it.version>
+    </properties>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-cqrs</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Spring Context：@Component 刻板 + ApplicationContext 收集（版本由 ddd4j-dependencies
+             导入的 spring-framework-bom 管理 = Spring 6.2 线，刻意不声明） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <!-- Spring TX：类级 org.springframework.transaction.annotation.Transactional 刻板 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Spring Boot Test（@SpringBootTest + ApplicationContextRunner 测试栈，
+             版本局部钉 3.4.4 仅测试栈，同 -event-store-jpa 决策） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试（真实 Spring 容器）随 test
+                 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

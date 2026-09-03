@@ -146,7 +146,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
         
         // 清除所有Redis缓存
         Set<String> keys = redisTemplate.keys(RULE_CACHE_PREFIX + "*");
-        if (keys != null && !keys.isEmpty()) {
+        if (keys != null && keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
         

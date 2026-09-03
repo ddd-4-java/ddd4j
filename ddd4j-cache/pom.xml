@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.1.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-cache</artifactId>
+    <packaging>jar</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        ddd4j 缓存实现层（单一 jar，多后端可选）。
+        缓存 SPI（Cache/CacheStats/CacheManager/CacheConfig/CacheType）位于 ddd4j-core/cache（纯 Java）。
+
+        本模块按包名分层，包含所有缓存后端实现：
+        - core/ 本地缓存门面（CacheKit）+ Caffeine/Guava/Hutool 直接实现
+        - jedis/ Jedis 原生实现（传入 UnifiedJedis，Jedis 5+/7+）
+        - lettuce/ Lettuce 原生实现（传入 RedisCommands）
+        - redisson/ Redisson 原生实现（传入 RedissonClient）+ 分布式锁
+        - memcached/ Memcached 原生实现（传入 MemcachedClient）
+        - jetcache/ JetCache 完整适配层（JetCacheAdapter/Manager/Converter）
+
+        所有外部缓存客户端依赖标记 optional，消费方按需引入：
+        - 用 Caffeine：默认引入（compile）
+        - 用 Jedis：引入 redis.clients:jedis
+        - 用 Lettuce：引入 io.lettuce:lettuce-core
+        - 用 Redisson：引入 org.redisson:redisson
+        - 用 Memcached：引入 com.googlecode.xmemcached:xmemcached
+        - 用 JetCache：引入 com.alicp.jetcache:jetcache-core + 对应 starter
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <!-- 核心契约（纯 Java 缓存 SPI） -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- ============ 本地缓存后端 ============ -->
+        <!-- Caffeine（默认本地缓存，compile） -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+        <!-- Guava（GuavaCache，optional） -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Hutool Cache（HutoolCache，optional） -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-cache</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ============ 远程缓存后端（全部 optional，消费方按需引入） ============ -->
+        <!-- Jedis（JedisCache，Jedis 5+/7+ UnifiedJedis） -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Lettuce（LettuceCache） -->
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Redisson（RedissonCache + 分布式锁） -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Memcached / XMemcached（MemcachedCache） -->
+        <dependency>
+            <groupId>com.googlecode.xmemcached</groupId>
+            <artifactId>xmemcached</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ============ JetCache 适配（optional） ============ -->
+        <!-- JetCache 核心引擎（JetCacheAdapter/Manager/Converter） -->
+        <dependency>
+            <groupId>com.alicp.jetcache</groupId>
+            <artifactId>jetcache-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ============ 公共依赖 ============ -->
+        <!-- Jackson（序列化） -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- Testcontainers：Redis 集成测试（镜像清单来源 https://testcontainers.com/modules/ ） -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.redis</groupId>
+            <artifactId>testcontainers-redis</artifactId>
+            <version>${testcontainers-redis.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

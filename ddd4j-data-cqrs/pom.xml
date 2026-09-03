@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-cqrs</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j CQRS 命令侧框架集成 SPI：@CommandHandler 发现注解 + CommandRegistry 注册中心。
+        零运行时框架依赖（命令契约复用 ddd4j-core 的 Command/CommandExecutor/DefaultCommandBus，
+        ADR-0004）；运行时适配器在 ddd4j-data-cqrs-{spring,quarkus,...} 子模块。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-annotation</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+
+</project>

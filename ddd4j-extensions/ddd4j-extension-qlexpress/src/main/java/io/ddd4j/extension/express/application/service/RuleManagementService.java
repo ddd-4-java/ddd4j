@@ -295,7 +295,7 @@ public class RuleManagementService {
                     }
                     return r1.getRuleCode().compareTo(r2.getRuleCode());
                 })
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
     
     /**
@@ -306,7 +306,7 @@ public class RuleManagementService {
     public List<RuleDefinition> getAllFunctionRules() {
         return getAllEnabledRules().stream()
                 .filter(rule -> "FUNCTION".equals(rule.getRuleType()))
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**

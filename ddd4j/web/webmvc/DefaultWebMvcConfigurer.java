@@ -1,0 +1,222 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.web.webmvc;
+
+import cn.hutool.core.date.DateUtil;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.*;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.ToStringSerializer;
+import tools.jackson.databind.ext.javatime.JavaTimeInitializer;
+import tools.jackson.databind.ext.javatime.deser.LocalDateDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer;
+import tools.jackson.databind.ext.javatime.deser.LocalTimeDeserializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalDateTimeSerializer;
+import tools.jackson.databind.ext.javatime.ser.LocalTimeSerializer;
+import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
+import io.ddd4j.web.webmvc.converter.CustomHttpMessageConverter;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.*;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.resource.LiteWebJarsResourceResolver;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
+
+/**
+ * Spring WebMVC 自定义配置器。
+ * <p>配置消息转换器（Jackson JSON/日期序列化）、拦截器、静态资源映射等。</p>
+ */
+public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
+
+    /**
+     * 日期时间格式
+     */
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    /**
+     * 日期格式
+     */
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    /**
+     * 时间格式
+     */
+    private static final String TIME_PATTERN = "HH:mm:ss";
+
+    private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
+    private final String META_INF_WEBJAR_RESOURCES = META_INF_RESOURCES + "webjars/";
+
+    /**
+     * 语言切换拦截器
+     */
+    private LocaleChangeInterceptor localeChangeInterceptor;
+    /**
+     * MDC 日志拦截器
+     */
+    private Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor;
+    /**
+     * 本地资源配置
+     */
+    private LocalResourceProperteis localResourceProperteis;
+
+    public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
+                                   LocaleChangeInterceptor localeChangeInterceptor,
+                                   Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor) {
+        super();
+        this.localResourceProperteis = localResourceProperteis;
+        this.localeChangeInterceptor = localeChangeInterceptor;
+        this.ddd4jWebMvcInterceptor = ddd4jWebMvcInterceptor;
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    /**
+     * 配置 HTTP 消息转换器。
+     * <p>注册 Jackson JSON 转换器（含 Long 转 String、日期时间格式化、自定义序列化修饰器）以及
+     * ByteArray、String、Resource、Source、Form 等默认转换器。</p>
+     *
+     * @param converters 消息转换器列表
+     */
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+
+        // 指定BigDecimal类型字段使用自定义的CustomDoubleSerialize序列化器
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
+        simpleModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
+
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(DATE_PATTERN);
+        simpleModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormat));
+        simpleModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormat));
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_PATTERN);
+        simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
+        simpleModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+        simpleModule.addDeserializer(Date.class, new ValueDeserializer<Date>() {
+            @Override
+            public Date deserialize(JsonParser p, DeserializationContext deserializationContext) {
+                if (Objects.isNull(p)) {
+                    return null;
+                }
+                try {
+                    JsonNode node = p.readValueAsTree();
+                    if (Objects.isNull(node) || Objects.isNull(node.asText())) {
+                        return null;
+                    }
+                    return DateUtil.parse(node.asText());
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        });
+
+        // Jackson 3 ObjectMapper（ddd4j 3.0.x 使用 Spring Framework 7.0.8，
+        // 但 MappingJackson2HttpMessageConverter.setObjectMapper 仍要求 Jackson 2 ObjectMapper，
+        // 因此用 CustomHttpMessageConverter 桥接层转换）。
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .addModules(simpleModule)
+                .changeDefaultPropertyInclusion(incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL))
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .enable(MapperFeature.USE_GETTERS_AS_SETTERS)
+                .build();
+
+        // CustomHttpMessageConverter 桥接层：接收 Jackson 3 ObjectMapper
+        CustomHttpMessageConverter jackson3Converter = new CustomHttpMessageConverter(objectMapper);
+        jackson3Converter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
+        converters.add(jackson3Converter);
+        converters.add(new ByteArrayHttpMessageConverter());
+        converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        converters.add(new ResourceHttpMessageConverter());
+        converters.add(new ResourceRegionHttpMessageConverter());
+        try {
+            converters.add(new SourceHttpMessageConverter<>());
+        } catch (Throwable ex) {
+            // Ignore when no TransformerFactory implementation is available...
+        }
+        converters.add(new AllEncompassingFormHttpMessageConverter());
+    }
+
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(ddd4jWebMvcInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE);
+        registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE + 1);
+    }
+
+    /**
+     * 配置静态资源映射。
+     * <p>支持本地文件资源映射、静态目录资源及 WebJars 资源。</p>
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 本地资源映射
+        if (!CollectionUtils.isEmpty(localResourceProperteis.getLocalLocations())) {
+            Iterator<Entry<String, String>> ite = localResourceProperteis.getLocalLocations().entrySet().iterator();
+            while (ite.hasNext()) {
+                Entry<String, String> entry = ite.next();
+                if (localResourceProperteis.isLocalRelative()) {
+                    registry.addResourceHandler(entry.getKey()).addResourceLocations(ResourceUtils.FILE_URL_PREFIX
+                            + localResourceProperteis.getLocalStorage() + File.separator + entry.getValue());
+                } else {
+                    registry.addResourceHandler(entry.getKey()).addResourceLocations(entry.getValue());
+                }
+            }
+        }
+        // 指定个性化资源映射
+        registry.addResourceHandler("/assets/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/assets/");
+        registry.addResourceHandler("/js/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/js/");
+        registry.addResourceHandler("/css/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/css/");
+        registry.addResourceHandler("/images/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/images/");
+        if (!registry.hasMappingForPattern("/webjars/**")) {
+            registry.addResourceHandler("/webjars/**").addResourceLocations(META_INF_WEBJAR_RESOURCES)
+                    .resourceChain(false).addResolver(new LiteWebJarsResourceResolver());
+        }
+
+    }
+
+}
