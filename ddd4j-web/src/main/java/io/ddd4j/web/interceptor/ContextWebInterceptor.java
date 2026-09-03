@@ -1,7 +1,7 @@
 package io.ddd4j.web.interceptor;
 
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.kit.cache.RedisKit;
+import io.ddd4j.web.utils.RedisKit;
 import io.ddd4j.web.core.SessionContext;
 import io.ddd4j.web.utils.RequestContext;
 import lombok.extern.slf4j.Slf4j;

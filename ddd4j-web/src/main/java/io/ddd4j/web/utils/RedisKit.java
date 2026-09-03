@@ -1,4 +1,4 @@
-package io.ddd4j.kit.cache;
+package io.ddd4j.web.utils;
 
 import io.ddd4j.core.context.SpringContext;
 import io.ddd4j.core.utils.JsonKit;

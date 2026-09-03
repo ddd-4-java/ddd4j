@@ -2,7 +2,7 @@ package io.ddd4j.web.interceptor;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.contract.exception.ServiceException;
-import io.ddd4j.kit.cache.RedisKit;
+import io.ddd4j.web.utils.RedisKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.auth.annotation.Inside;
 import io.ddd4j.web.core.SessionContext;

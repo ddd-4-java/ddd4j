@@ -19,6 +19,12 @@
             <artifactId>ddd4j-annotation</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- 工具包（CollKit/StrKit，与 2.0.x/3.0.x core 依赖结构一致） -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- For Servlet Api -->
         <dependency>
             <groupId>javax.servlet</groupId>
