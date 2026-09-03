@@ -1,0 +1,47 @@
+/**
+ * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
+ * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+package io.ddd4j.data.external;
+
+import cn.hutool.core.date.SystemClock;
+import lombok.Data;
+
+/**
+ * 全局序列号生成配置属性类
+ * <p>用于配置雪花算法的工作机器ID、数据中心ID等参数</p>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+@Data
+public class SequenceProperties {
+
+    /**
+     * 配置前缀
+     */
+    public static final String PREFIX = "ddd4j.sequence";
+
+    /**
+     * 工作机器ID,数据范围为0~31，一共32个
+     */
+    private Long workerId;
+    /**
+     * 数据中心ID,数据范围为0~255
+     */
+    private Long dataCenterId;
+    /**
+     * 是否使用{@link SystemClock} 获取当前时间戳
+     */
+    private boolean useSystemClock;
+    /**
+     * 允许时间回拨的毫秒量,建议5ms
+     */
+    private Long timeOffset = 5L;
+    /**
+     * 限定一个随机上限，在不同毫秒下生成序号时，给定一个随机数，避免偶数问题，0表示无随机，上限不包括值本身。
+     */
+    private Long randomSequenceLimit;
+
+}

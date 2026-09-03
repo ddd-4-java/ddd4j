@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-cqrs-quarkus</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j CQRS Quarkus（ArC）适配：QuarkusCommandBus 以 @ApplicationScoped 继承
+        ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象），
+        构造期经 CDI Instance&lt;CommandExecutor&gt; 流式收集注册 CommandRegistry，
+        类级 @ActivateRequestContext 包 execute。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Quarkus 平台 BOM（模块级再导入，= ddd4j-dependencies:8022 同款，引用根 pom:55 的
+                 ${quarkus.version}=3.38.2，刻意不声明本地 quarkus 版本属性）：沿 -event-store-panache
+                 实证的模式预防父链混版——父 BOM 链更早的 import（spring-data-bom/hibernate-platform 等）
+                 可能把 Quarkus 全家桶的传递依赖管理为面向其它框架线的版本，模块级 import 优先于
+                 父链管理项生效，使本模块的 Quarkus 栈整链由 quarkus-bom 对齐。 -->
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-cqrs</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Quarkus ArC（CDI 运行时）：@ApplicationScoped/@Inject/Instance 收集与
+             jakarta.enterprise.context.control.@ActivateRequestContext 拦截器，BOM 管理无版本 -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Quarkus JUnit 5 集成（@QuarkusTest 真实 ArC 容器引导；BOM 管理） -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的 @QuarkusTest 集成测试随 test
+                 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

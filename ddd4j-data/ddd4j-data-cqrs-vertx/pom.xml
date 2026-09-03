@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-cqrs-vertx</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j CQRS Vert.x 5 适配：VertxCommandBus 以静态 create(Vertx, Collection)
+        工厂继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）。
+        Vert.x 无 DI 容器——执行器由集成方以 JDK ServiceLoader 风格（META-INF/services）
+        或手动扫描供入 create 工厂的 Collection 参数，工厂内经 CommandRegistry 整批注册。
+        execute 刻意保持同步返回 Result（不暴露 Vert.x Future——异步包装由集成方委托
+        worker 线程完成）；事务刻意不引入（Vert.x 无事务管理栈，由集成方自管）。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-cqrs</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Vert.x Core（事件循环/上下文/worker 线程模型；坐标实证注记：
+             ddd4j-dependencies:9997 的 io.vertx:vertx-stack-depchain 条目是
+             dependencyManagement 的 <scope>compile</scope> 版本管理项（非
+             <scope>import</scope> 的 BOM 导入）——不向本链传播 vertx-core 的
+             版本管理，故此处显式声明 ${vertx.version}=5.1.5（Vert.x 5 线：
+             Vertx 接口化 + Future 结果型）。） -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Vert.x JUnit 5 集成（VertxTestContext 异步桥；与 vertx-core 同线
+             5.1.5，显式声明原因同上——本地 .m2 仅有 4.5.x 旧版，5.1.5 实证可解析） -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-junit5</artifactId>
+            <version>${vertx.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试（真实 Vert.x 实例
+                 生命周期 + ServiceLoader 发现）随 test 阶段执行，需在父配置
+                 （**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
