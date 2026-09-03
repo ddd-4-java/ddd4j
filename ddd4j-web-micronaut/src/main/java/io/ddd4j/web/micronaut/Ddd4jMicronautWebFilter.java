@@ -27,14 +27,12 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.micronaut.core.propagation.MutablePropagatedContext;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
-import io.micronaut.http.annotation.RequestFilter;
-import io.micronaut.http.annotation.ServerFilter;
-import io.micronaut.http.filter.FilterContinuation;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.scheduling.annotation.ExecuteOn;
+import io.micronaut.http.annotation.Filter;
+import io.micronaut.http.filter.HttpFilter;
+import io.micronaut.http.filter.FilterChain;
 import jakarta.inject.Inject;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -47,12 +45,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Micronaut 4 Filter Method 请求上下文、Bearer Subject 与幂等适配器。
+ * Micronaut 3 Filter 请求上下文、Bearer Subject 与幂等适配器。
  *
  * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
-@ServerFilter(ServerFilter.MATCH_ALL_PATTERN)
-public final class Ddd4jMicronautWebFilter {
+@Filter("/**")
+public final class Ddd4jMicronautWebFilter implements HttpFilter {
 
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
@@ -80,11 +78,8 @@ public final class Ddd4jMicronautWebFilter {
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
     }
 
-    @RequestFilter
-    @ExecuteOn(TaskExecutors.BLOCKING)
-    public Publisher<MutableHttpResponse<?>> filter(HttpRequest<?> request,
-                                                     FilterContinuation<Publisher<MutableHttpResponse<?>>> continuation,
-                                                     MutablePropagatedContext propagatedContext) {
+    @Override
+    public Publisher<? extends HttpResponse<?>> doFilter(HttpRequest<?> request, FilterChain chain) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
         Map<String, String> headers = extractRequestHeaders(request);
         Object span = WebOtelSupport.startServerSpan(
@@ -93,27 +88,42 @@ public final class Ddd4jMicronautWebFilter {
 
         WebRequestContext requestContext = createContext(request);
         Optional<Authentication> authentication = requestLifecycle.authenticate(requestContext);
-        propagatedContext.add(new Ddd4jMicronautContext(requestContext,
-                authentication.map(Authentication::subject)));
+        if (authentication.isPresent()) {
+            Ddd4jMicronautContext.set(new Ddd4jMicronautContext(requestContext,
+                    Optional.of(authentication.get().subject())));
+        } else {
+            Ddd4jMicronautContext.set(new Ddd4jMicronautContext(requestContext, Optional.empty()));
+        }
         Optional<WebIdempotencyLifecycle.Scope> idempotencyScope = idempotencyLifecycle.flatMap(lifecycle ->
                 lifecycle.open(requestContext, request.getHeaders().get(WebHeaders.IDEMPOTENCY_KEY)));
-        return Flux.from(continuation.proceed())
-                .doOnNext(response -> {
-                    addResponseHeaders(response, requestContext);
-                    closeIdempotency(idempotencyScope, response.getStatus().getCode() < 400);
-                    // OTel: 结束 span
-                    WebOtelSupport.endServerSpan(span, response.getStatus().getCode());
-                })
-                .doOnError(throwable -> {
-                    WebOtelSupport.recordError(span, throwable);
-                    WebOtelSupport.endServerSpan(span, 500);
-                    closeIdempotency(idempotencyScope, false);
-                })
-                .doOnCancel(() -> {
-                    WebOtelSupport.recordError(span, new RuntimeException("cancelled"));
-                    WebOtelSupport.endServerSpan(span, 500);
-                    closeIdempotency(idempotencyScope, false);
-                });
+        try {
+            return Flux.from(chain.proceed(request))
+                    .doOnNext(response -> {
+                        addResponseHeaders(response, requestContext);
+                        closeIdempotency(idempotencyScope, response.getStatus().getCode() < 400);
+                        // OTel: 结束 span
+                        WebOtelSupport.endServerSpan(span, response.getStatus().getCode());
+                        Ddd4jMicronautContext.clear();
+                    })
+                    .doOnError(throwable -> {
+                        WebOtelSupport.recordError(span, throwable);
+                        WebOtelSupport.endServerSpan(span, 500);
+                        closeIdempotency(idempotencyScope, false);
+                        Ddd4jMicronautContext.clear();
+                    })
+                    .doOnCancel(() -> {
+                        WebOtelSupport.recordError(span, new RuntimeException("cancelled"));
+                        WebOtelSupport.endServerSpan(span, 500);
+                        closeIdempotency(idempotencyScope, false);
+                        Ddd4jMicronautContext.clear();
+                    });
+        } catch (RuntimeException exception) {
+            WebOtelSupport.recordError(span, exception);
+            WebOtelSupport.endServerSpan(span, 500);
+            closeIdempotency(idempotencyScope, false);
+            Ddd4jMicronautContext.clear();
+            throw exception;
+        }
     }
 
     private static Map<String, String> extractRequestHeaders(HttpRequest<?> request) {
@@ -128,8 +138,8 @@ public final class Ddd4jMicronautWebFilter {
 
     private WebRequestContext createContext(HttpRequest<?> request) {
         InetSocketAddress remoteAddress = request.getRemoteAddress();
-        String remoteHost = Objects.nonNull(remoteAddress.getAddress())
-                ? remoteAddress.getAddress().getHostAddress() : remoteAddress.getHostString();
+        String remoteHost = Objects.nonNull(remoteAddress) && Objects.nonNull(remoteAddress.getAddress())
+                ? remoteAddress.getAddress().getHostAddress() : "unknown";
         return contextFactory.create(new WebRequestData(
                 request.getHeaders().get(WebHeaders.REQUEST_ID),
                 request.getHeaders().get(WebHeaders.TRACE_ID),
@@ -143,9 +153,12 @@ public final class Ddd4jMicronautWebFilter {
                 request.getPath()));
     }
 
-    private void addResponseHeaders(MutableHttpResponse<?> response, WebRequestContext context) {
-        response.header(WebHeaders.REQUEST_ID, context.requestId());
-        response.header(WebHeaders.TRACE_ID, context.traceId());
+    private void addResponseHeaders(HttpResponse<?> response, WebRequestContext context) {
+        if (response instanceof MutableHttpResponse) {
+            MutableHttpResponse<?> mutable = (MutableHttpResponse<?>) response;
+            mutable.header(WebHeaders.REQUEST_ID, context.requestId());
+            mutable.header(WebHeaders.TRACE_ID, context.traceId());
+        }
     }
 
     private void closeIdempotency(Optional<WebIdempotencyLifecycle.Scope> scope, boolean successful) {

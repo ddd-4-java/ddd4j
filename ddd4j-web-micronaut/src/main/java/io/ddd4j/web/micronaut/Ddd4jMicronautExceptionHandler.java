@@ -52,6 +52,6 @@ public final class Ddd4jMicronautExceptionHandler implements ExceptionHandler<Th
         if (error.status() >= 500) {
             log.error("Unhandled HTTP request failure: {} {}", request.getMethodName(), request.getPath(), exception);
         }
-        return HttpResponse.status(error.status(), error.message()).body(error.toResponse());
+        return HttpResponse.status(io.micronaut.http.HttpStatus.valueOf(error.status())).body(error.toResponse());
     }
 }
