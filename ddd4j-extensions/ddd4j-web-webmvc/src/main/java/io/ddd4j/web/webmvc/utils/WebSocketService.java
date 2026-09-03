@@ -14,7 +14,7 @@
  */
 package io.ddd4j.web.webmvc.utils;
 
-import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.core.utils.JsonKit;
 import io.ddd4j.spring.context.SpringContext;
 import io.ddd4j.web.webmvc.config.BaseWebProperties;
 import lombok.SneakyThrows;
