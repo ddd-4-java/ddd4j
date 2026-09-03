@@ -23,7 +23,7 @@ public class DefaultCryptoAutoConfiguration {
 
     @Bean
     public DefaultCryptoProvider cryptoProvider(ObjectProvider<CryptoStrategy> cryptoStrategyProvider, CryptoProperties cryptoProperties) {
-        return new DefaultCryptoProvider(cryptoStrategyProvider.stream().collect(Collectors.collect(java.util.stream.Collectors.toList())), cryptoProperties);
+        return new DefaultCryptoProvider(cryptoStrategyProvider.stream().collect(Collectors.toList()), cryptoProperties);
     }
 
     @Bean

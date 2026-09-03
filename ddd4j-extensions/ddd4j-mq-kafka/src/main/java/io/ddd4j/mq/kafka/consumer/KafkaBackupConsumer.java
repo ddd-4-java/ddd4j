@@ -384,7 +384,7 @@ public class KafkaBackupConsumer implements DisposableBean {
             // 提取消息值
             List<Object> jsonList = recordList.stream()
                     .map(ConsumerRecord::value)
-                    .collect(Collectors.collect(java.util.stream.Collectors.toList()));
+                    .collect(Collectors.toList());
 
             // 执行备份
             try {

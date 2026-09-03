@@ -53,11 +53,11 @@ public class RuleManagementController {
         if (StringUtils.hasText(ruleType)) {
             rules = ruleManagementService.getRulesByType(ruleType).stream()
                     .map(ruleMapper::toResponse)
-                    .collect(Collectors.collect(java.util.stream.Collectors.toList()));
+                    .collect(Collectors.toList());
         } else {
             rules = ruleManagementService.getAllRules().stream()
                     .map(ruleMapper::toResponse)
-                    .collect(Collectors.collect(java.util.stream.Collectors.toList()));
+                    .collect(Collectors.toList());
         }
         return ResponseEntity.ok(rules);
     }
