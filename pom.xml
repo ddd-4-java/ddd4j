@@ -92,7 +92,6 @@
         <module>ddd4j-data-event-store-esdb</module>
         <module>ddd4j-data-event-store-r2dbc</module>
         <!-- Web 层：拦截器/Session/Feign/多租户 -->
-        <module>ddd4j-web</module>
         <!-- 消息队列：5 种 MQ 统一抽象 -->
         <module>ddd4j-mq</module>
         <!-- 监控告警：钉钉/企微机器人 + 日志告警 -->
