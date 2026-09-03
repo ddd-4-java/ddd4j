@@ -14,56 +14,56 @@
  */
 package io.ddd4j.web.helidon;
 
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
-import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.web.error.BaseErrorConfiguration;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Helidon MP 全局异常映射。
+ *
+ * <p>翻译、5xx 日志与响应体构造复用 {@link BaseErrorConfiguration}，
+ * 此处只保留 JAX-RS 的 {@code Response} 写出与 {@link WebApplicationException} 归一。
  */
 @Provider
-public final class Ddd4jHelidonExceptionMapper implements ExceptionMapper<RuntimeException> {
-
-    private static final Logger log = LoggerFactory.getLogger(Ddd4jHelidonExceptionMapper.class);
-
-    private final WebExceptionTranslator translator;
+public final class Ddd4jHelidonExceptionMapper extends BaseErrorConfiguration implements ExceptionMapper<RuntimeException> {
 
     public Ddd4jHelidonExceptionMapper() {
-        this(new DefaultWebExceptionTranslator());
+        super();
     }
 
     public Ddd4jHelidonExceptionMapper(WebExceptionTranslator translator) {
-        this.translator = Objects.requireNonNull(translator, "translator must not be null");
+        super(translator);
+    }
+
+    @Override
+    protected String frameworkName() {
+        return "Helidon";
+    }
+
+    /**
+     * 先归一 JAX-RS {@link WebApplicationException}（保留容器给出的状态与消息），
+     * 其余异常走 ddd4j 通用翻译。
+     */
+    @Override
+    protected WebError doTranslate(Throwable exception) {
+        if (exception instanceof WebApplicationException) {
+            WebApplicationException webException = (WebApplicationException) exception;
+            return httpStatusError(webException.getResponse().getStatus(),
+                    webException.getResponse().getStatusInfo().getReasonPhrase(), webException.getMessage());
+        }
+        return super.doTranslate(exception);
     }
 
     @Override
     public Response toResponse(RuntimeException exception) {
         WebError error = translate(exception);
-        if (error.status() >= 500) {
-            log.error("Unhandled Helidon HTTP request failure", exception);
-        }
+        logUnhandled(exception, error);
         return Response.status(error.status()).type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(error.toResponse()).build();
-    }
-
-    WebError translate(Throwable exception) {
-        if (exception instanceof WebApplicationException) {
-            WebApplicationException webException = (WebApplicationException) exception;
-            int status = webException.getResponse().getStatus();
-            String message = StrKit.isBlank(webException.getMessage())
-                    ? webException.getResponse().getStatusInfo().getReasonPhrase() : webException.getMessage();
-            return new WebError(status, status, message, null);
-        }
-        return translator.translate(exception);
+                .entity(toResponse(error)).build();
     }
 }

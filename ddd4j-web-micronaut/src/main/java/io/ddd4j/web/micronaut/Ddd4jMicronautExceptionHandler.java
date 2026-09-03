@@ -14,44 +14,50 @@
  */
 package io.ddd4j.web.micronaut;
 
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
+import io.ddd4j.web.error.BaseErrorConfiguration;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Micronaut 全局异常到 ddd4j R 响应的映射。
+ *
+ * <p>翻译与响应体构造复用 {@link BaseErrorConfiguration}，此处只保留
+ * Micronaut 的 {@code HttpResponse} 写出与请求上下文日志。
  */
 @Singleton
-public final class Ddd4jMicronautExceptionHandler implements ExceptionHandler<Throwable, HttpResponse<?>> {
+public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration implements ExceptionHandler<Throwable, HttpResponse<?>> {
 
     private static final Logger log = LoggerFactory.getLogger(Ddd4jMicronautExceptionHandler.class);
 
-    private final WebExceptionTranslator translator;
-
     @Inject
     public Ddd4jMicronautExceptionHandler() {
-        this(new DefaultWebExceptionTranslator());
+        super();
     }
 
     public Ddd4jMicronautExceptionHandler(WebExceptionTranslator translator) {
-        this.translator = Objects.requireNonNull(translator, "translator must not be null");
+        super(translator);
+    }
+
+    @Override
+    protected String frameworkName() {
+        return "Micronaut";
     }
 
     @Override
     public HttpResponse<?> handle(HttpRequest request, Throwable exception) {
-        WebError error = translator.translate(exception);
-        if (error.status() >= 500) {
-            log.error("Unhandled HTTP request failure: {} {}", request.getMethodName(), request.getPath(), exception);
+        WebError error = translate(exception);
+        if (isServerError(error)) {
+            log.error("Unhandled {} request failure: {} {}", frameworkName(), request.getMethodName(),
+                    request.getPath(), exception);
         }
-        return HttpResponse.status(io.micronaut.http.HttpStatus.valueOf(error.status())).body(error.toResponse());
+        return HttpResponse.status(HttpStatus.valueOf(error.status())).body(toResponse(error));
     }
 }
