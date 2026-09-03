@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.1.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+    <modelVersion>4.1.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-runtime</artifactId>
@@ -61,6 +61,12 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
+        <!-- Micrometer（可选，用于 ProjectionMetrics 适配；版本由 ddd4j-dependencies BOM 管理） -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- Google Guava EventBus -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -74,6 +80,12 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-runtime-testkit</artifactId>
             <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- H2 内存数据库，用于 JDBC 仓储测试 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

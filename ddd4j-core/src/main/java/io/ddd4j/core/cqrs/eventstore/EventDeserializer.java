@@ -76,11 +76,12 @@ public final class EventDeserializer {
     }
 
     /**
-     * 返回当前进程级类名过滤器。
+     * 获取当前进程级类名过滤器。
      *
-     * <p>未通过 {@link #setFilter(ClassNameFilter)} 显式注册时返回 {@link #defaultFilter()}。
+     * <p>供其他反序列化入口（如配置驱动的工厂类加载）复用同一白名单，
+     * 保证全 JVM 的类名加载策略一致。
      *
-     * @return 当前生效的过滤器
+     * @return 当前生效的过滤器（永不为 {@code null}；未注册时返回 {@link #defaultFilter()}）
      */
     public static ClassNameFilter filter() {
         return filter;

@@ -1,10 +1,24 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core.cqrs.readmodel;
 
 /**
- * 投影位置服务（纯 Java，零框架依赖）。
+ * 投影位置服务。
  *
- * <p>API 形态对齐 {@code cqrs-4-java} 的 ProjectionService 语义，但完全独立实现。
- * 框架适配层（如 {@code ddd4j-runtime-spring}）提供 JPA 实现。
+ * <p>对齐 ProjectionService 语义，完全独立实现，
+ * 保持 ddd4j-core 纯 Java 小内核可独立使用。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x

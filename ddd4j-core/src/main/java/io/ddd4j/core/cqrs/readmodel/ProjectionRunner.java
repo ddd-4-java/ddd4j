@@ -123,9 +123,6 @@ public class ProjectionRunner<E> {
 
     /**
      * 运行多个视图的一次增量投影，遇到异常立即向调用方传播。
-     * 连续失败次数通过 {@link ProjectionMetrics#getLastRunInfo}（按 streamId）查询；
-     * 同一 stream 连续 {@value #CONSECUTIVE_FAILURE_THRESHOLD} 次失败后，发出
-     * {@link ProjectionMetrics#onCircuitOpened(String, int)} 信号。
      *
      * @param views 投影视图集合
      */

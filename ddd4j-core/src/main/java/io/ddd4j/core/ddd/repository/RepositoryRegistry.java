@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core.ddd.repository;
 
 import io.ddd4j.core.context.BaseContext;
@@ -200,5 +214,18 @@ public final class RepositoryRegistry {
     public static void unregisterQuery(Class<?> queryClass) {
         BaseContext.remove(key(queryClass));
         QUERY_INSTANCES.remove(queryClass);
+    }
+
+    /**
+     * 清除所有已注册的仓储实例（用于测试清理）。
+     *
+     * <p>同时清除 {@link BaseContext} 中的注册项和静态 {@link #INSTANCES} / {@link #QUERY_INSTANCES} 映射。
+     * 调用后所有通过 {@link #repository} / {@link #repositoryForQuery} 的查找将抛出异常。
+     */
+    public static void clear() {
+        INSTANCES.keySet().forEach(clazz -> BaseContext.remove(key(clazz)));
+        QUERY_INSTANCES.keySet().forEach(clazz -> BaseContext.remove(key(clazz)));
+        INSTANCES.clear();
+        QUERY_INSTANCES.clear();
     }
 }

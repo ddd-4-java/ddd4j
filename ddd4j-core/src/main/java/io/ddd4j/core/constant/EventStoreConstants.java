@@ -21,7 +21,7 @@ package io.ddd4j.core.constant;
  * 避免魔法字面量散落在各运行时模块。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 3.0.x
  */
 public final class EventStoreConstants {
 

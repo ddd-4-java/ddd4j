@@ -39,4 +39,29 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
         log.debug("Publishing domain event: {}", event.getClass().getSimpleName());
         publisher.publishEvent(event);
     }
+
+    /**
+     * 发布任意对象事件。
+     * <p>
+     * 若事件为 {@link DomainEvent} 实例，委托给 {@link #publish(DomainEvent)}；
+     * 否则记录 warn 日志，明确告知只支持 DomainEvent，避免静默丢弃。
+     * <p>
+     * 与 Quarkus {@code CdiDomainEventPublisher} 行为对齐：覆写 core 默认 no-op，
+     * 确保非 DomainEvent 对象不会被静默忽略。
+     *
+     * @param event 任意事件对象
+     */
+    @Override
+    public void publish(Object event) {
+        if (Objects.isNull(event)) {
+            log.warn("Attempted to publish null event object");
+            return;
+        }
+        if (event instanceof DomainEvent<?> domainEvent) {
+            publish(domainEvent);
+        } else {
+            log.warn("Published event is not a DomainEvent instance, " +
+                    "only DomainEvent is supported. Event type: {}", event.getClass().getName());
+        }
+    }
 }

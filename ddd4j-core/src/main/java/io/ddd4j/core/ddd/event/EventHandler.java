@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core.ddd.event;
 
 import java.lang.annotation.ElementType;
@@ -10,6 +24,7 @@ import java.lang.annotation.Target;
  *
  * <p>ddd4j-core 的 {@link io.ddd4j.core.ddd.model.AggregateRoot#apply(DomainEvent)}
  * 通过反射调用所有标有此注解的方法，完成事件应用到聚合状态。
+ * 未标注此注解时回退到 {@code on<EventType>} 命名约定（3.0.x 兼容）。
  *
  * <h3>使用</h3>
  * <pre>{@code

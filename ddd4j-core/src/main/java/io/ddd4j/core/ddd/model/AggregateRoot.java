@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.api.Page;
@@ -9,60 +23,76 @@ import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
 /**
  * 充血聚合根基类（ddd4j 唯一推荐）。
- * <p>
- * 保留旧 ddd4j {@code Model.save()/update()/delete()/saveOrUpdate()/updateByKey()}
- * 的全部充血语义，但通过 {@link RepositoryRegistry}（基于 {@link io.ddd4j.core.context.Contexts}
- * 的上下文查找）获取仓储实例，彻底消除对 MyBatis 等 ORM 的静态注册表耦合。
  *
- * <h3>充血持久化方法（实例方法）</h3>
+ * <p>本类支持两种使用模式，业务方应根据持久化策略选择其一，
+ * <b>不应在同一聚合中混用</b>（见下方警告）。
+ *
+ * <h2>模式一：Active Record（充血 CRUD）</h2>
+ * <p>聚合根直接持有 {@code save()/update()/delete()} 等实例方法，
+ * 通过 {@link RepositoryRegistry} 获取仓储实例完成持久化。
+ * 适用于传统 CRUD 场景，状态直接落库。</p>
  * <pre>{@code
+ * // 实例方法
  * Order order = new Order(orderId, total);
- * order.save();         // ← 自动找到 OrderRepository.save(order)
+ * order.save();         // ← OrderRepository.save(order)
  * order.pay(amount);
- * order.update();       // ← 自动找到 OrderRepository.save(order)
- * order.saveOrUpdate(); // ← 自动找到 OrderRepository.save(order)
- * order.delete();       // ← 自动找到 OrderRepository.delete(order)
+ * order.update();       // ← OrderRepository.updateById(order)
+ * order.saveOrUpdate(); // ← OrderRepository.insertOrUpdate(order)
+ * order.delete();       // ← OrderRepository.delete(order)
  *
- * // 批量
- * List<Order> orders = ...;
- * AggregateRoot.save(orders);   // ← 自动找到 OrderRepository.saveAll(orders)
- * AggregateRoot.delete(query);  // ← 自动找到 OrderRepository.deleteByQuery(query)
- * }</pre>
+ * // 静态批量
+ * AggregateRoot.save(orders);   // ← OrderRepository.saveAll(orders)
+ * AggregateRoot.delete(query);  // ← OrderRepository.deleteByQuery(query)
  *
- * <h3>充血查询方法（静态）</h3>
- * <pre>{@code
+ * // 静态查询
  * Optional<Order> found = AggregateRoot.get(Order.class, orderId);
- * Optional<Order> first = AggregateRoot.one(Order.class);
  * List<Order> all = AggregateRoot.list(Order.class);
  * Page<Order> page = AggregateRoot.page(query);
- * int count = AggregateRoot.count(query);
- * boolean exists = AggregateRoot.exist(query);
  * }</pre>
  *
- * <h3>事件能力</h3>
+ * <h2>模式二：Event Sourcing（事件溯源）</h2>
+ * <p>聚合根状态完全由领域事件驱动。业务方法通过 {@link #registerEvent(DomainEvent)} 注册事件，
+ * 仓储层持久化事件流而非聚合快照。重建状态时使用 {@link #loadFromHistory(List)}。</p>
  * <pre>{@code
  * public class Order extends AggregateRoot<OrderId> {
- *     public void create(Money total) {
- *         apply(new OrderCreatedEvent(id(), total));   // 反射派发 + 未提交事件入队
+ *     private Money total;
+ *     private OrderStatus status;
+ *
+ *     public void pay(Money amount) {
+ *         // 业务校验 ...
+ *         registerEvent(new OrderPaidEvent(id, amount));
  *     }
  *
- *     &#64;EventHandler
- *     private void on(OrderCreatedEvent event) {
- *         this.total = event.getTotal();
- *     }
- *
- *     public void notify(Object notification) {
- *         registerEvent(new OrderNotifiedEvent(id())); // 仅入队，不派发
+ *     // 事件溯源 handler（方法名 = on + 事件类简单名）
+ *     void onOrderPaid(OrderPaidEvent event) {
+ *         this.status = OrderStatus.PAID;
  *     }
  * }
- * // order.domainEvents() → [OrderCreatedEvent, OrderNotifiedEvent]
- * // loadFromHistory(history) 重建状态且不入队（ignoreOnReplay 处理器跳过）
+ *
+ * // 重建聚合状态
+ * Order order = new Order();
+ * List<DomainEvent<?>> history = eventStore.read(orderId);
+ * order.loadFromHistory(history);
+ *
+ * // 获取未提交事件
+ * List<DomainEvent<?>> pending = order.pullDomainEvents();
  * }</pre>
+ *
+ * <h2>警告：两种模式不应混用</h2>
+ * <p><b>在同一聚合中同时使用 Active Record 方法（{@code save()/update()}）
+ * 和 Event Sourcing 方法（{@code registerEvent()/pullDomainEvents()}）会导致：</b></p>
+ * <ul>
+ *   <li>事件丢失 —— {@code save()} 直接落库快照，未提交的注册事件被丢弃</li>
+ *   <li>重复持久化 —— 事件已通过 EventStore 持久化，再次调用 {@code save()} 造成快照冗余写入</li>
+ *   <li>状态不一致 —— 快照与事件流两条轨道产生分叉，重建结果不可预期</li>
+ * </ul>
+ * <p>选择一种模式并贯穿整个聚合的生命周期。</p>
  *
  * @param <ID> 聚合根标识类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -70,6 +100,54 @@ import java.util.*;
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class AggregateRoot<ID extends Serializable> implements Entity<ID> {
+
+    /**
+     * 事件处理器方法缓存（ClassValue 二级索引）。
+     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
+     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
+     */
+    private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
+        @Override
+        protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
+            return new ClassValue<>() {
+                @Override
+                protected Method computeValue(Class<?> eventClass) {
+                    return resolveHandler(aggregateClass, eventClass);
+                }
+            };
+        }
+    };
+
+    /**
+     * 解析事件处理器：优先 {@code @EventHandler} 注解方法（沿继承链，参数可接收该事件类型），
+     * 回退到 {@code on<EventType>} 命名约定（3.0.x 兼容路径）。
+     *
+     * @param aggregateClass 聚合根类型
+     * @param eventClass     事件类型
+     * @return 处理器方法；两者均未命中时返回 {@code null}
+     */
+    private static Method resolveHandler(Class<?> aggregateClass, Class<?> eventClass) {
+        for (Class<?> current = aggregateClass; current != null && current != Object.class;
+             current = current.getSuperclass()) {
+            for (Method method : current.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(EventHandler.class)) {
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes.length == 1 && parameterTypes[0].isAssignableFrom(eventClass)) {
+                        method.setAccessible(true);
+                        return method;
+                    }
+                }
+            }
+        }
+        String handlerName = "on" + eventClass.getSimpleName();
+        try {
+            Method method = aggregateClass.getDeclaredMethod(handlerName, eventClass);
+            method.setAccessible(true);
+            return method;
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
 
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
@@ -228,132 +306,6 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 应用领域事件：反射派发到 {@code @EventHandler} 方法，并注册进未提交事件列表。
-     *
-     * <p>按事件运行时类型查找处理器；处理器映射由 {@link #AGGREGATE_HANDLER_CACHE}
-     * 按聚合类做 {@link ClassValue} 缓存，子类处理器优先于超类同事件类型处理器。</p>
-     *
-     * <p>注意：本方法不做 {@code aggregateVersion} 连贯性校验 —— 版本校验属
-     * EventStore 乐观锁职责（阶段 3），此处只负责事件应用。</p>
-     *
-     * <h3>用法</h3>
-     * <pre>{@code
-     * public void create(Money total) {
-     *     apply(new OrderCreatedEvent(id(), total));
-     * }
-     *
-     * &#64;EventHandler
-     * private void on(OrderCreatedEvent event) {
-     *     this.total = event.getTotal();
-     * }
-     * }</pre>
-     *
-     * @param event 要应用的事件
-     * @param <E>   事件类型
-     * @return 应用成功的事件
-     * @throws NullPointerException  {@code event} 为 {@code null}
-     * @throws IllegalStateException 找不到对应事件类型的 {@code @EventHandler} 方法，或反射调用失败
-     */
-    protected <E extends DomainEvent<?>> E apply(E event) {
-        Objects.requireNonNull(event, "event must not be null");
-        Method handler = AGGREGATE_HANDLER_CACHE.get(getClass()).get(event.getClass());
-        if (Objects.isNull(handler)) {
-            throw new IllegalStateException("No @EventHandler method found for event type: "
-                    + event.getClass().getName() + " in aggregate: " + getClass().getName());
-        }
-        try {
-            handler.setAccessible(true);
-            handler.invoke(this, event);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Failed to invoke @EventHandler for "
-                    + event.getClass().getName(), e);
-        }
-        mutableDomainEvents().add(event);
-        return event;
-    }
-
-    /**
-     * 从历史事件流重建聚合根（事件溯源回放）。
-     *
-     * <p>逐事件按 {@link #AGGREGATE_REPLAY_CACHE} 查找处理器并反射调用：</p>
-     * <ul>
-     *   <li>标有 {@link EventHandler#ignoreOnReplay()} 的处理器在回放时跳过</li>
-     *   <li>本聚合不关心的历史事件类型静默跳过（允许跨聚合共享事件流）</li>
-     * </ul>
-     * <p>回放只重建状态、不进入未提交事件列表，结束后调用
-     * {@link #clearDomainEvents()} 保证列表为空。</p>
-     *
-     * @param history 历史事件流；{@code null} 时直接返回
-     * @throws IllegalStateException 反射调用处理器失败
-     */
-    public final void loadFromHistory(List<? extends DomainEvent<?>> history) {
-        if (Objects.isNull(history)) {
-            return;
-        }
-        Map<Class<?>, Method> handlers = AGGREGATE_REPLAY_CACHE.get(getClass());
-        for (DomainEvent<?> event : history) {
-            Method handler = handlers.get(event.getClass());
-            if (Objects.isNull(handler)) {
-                continue;
-            }
-            try {
-                handler.setAccessible(true);
-                handler.invoke(this, event);
-            } catch (ReflectiveOperationException e) {
-                throw new IllegalStateException("Failed to replay event "
-                        + event.getClass().getName(), e);
-            }
-        }
-        clearDomainEvents();
-    }
-
-    /** 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），apply 用。 */
-    private static final ClassValue<Map<Class<?>, Method>> AGGREGATE_HANDLER_CACHE = new ClassValue<>() {
-        @Override
-        protected Map<Class<?>, Method> computeValue(Class<?> aggregateType) {
-            Map<Class<?>, Method> map = new HashMap<>();
-            scanHandlers(aggregateType, map, false);
-            return map;
-        }
-    };
-
-    /** 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），loadFromHistory 用（跳过 ignoreOnReplay）。 */
-    private static final ClassValue<Map<Class<?>, Method>> AGGREGATE_REPLAY_CACHE = new ClassValue<>() {
-        @Override
-        protected Map<Class<?>, Method> computeValue(Class<?> aggregateType) {
-            Map<Class<?>, Method> map = new HashMap<>();
-            scanHandlers(aggregateType, map, true);
-            return map;
-        }
-    };
-
-    /**
-     * 自聚合类向上遍历超类链，收集单 {@link DomainEvent} 参数且标有
-     * {@code @EventHandler} 的方法；{@code putIfAbsent} 保证子类处理器优先。
-     *
-     * @param aggregateType 聚合根类
-     * @param map           事件类型 → 处理器 Method 映射（原地填充）
-     * @param skipIgnored   {@code true} 时跳过 {@link EventHandler#ignoreOnReplay()} 处理器
-     */
-    private static void scanHandlers(Class<?> aggregateType, Map<Class<?>, Method> map, boolean skipIgnored) {
-        Class<?> current = aggregateType;
-        while (Objects.nonNull(current) && current != Object.class) {
-            for (Method method : current.getDeclaredMethods()) {
-                EventHandler annotation = method.getAnnotation(EventHandler.class);
-                if (Objects.isNull(annotation) || (skipIgnored && annotation.ignoreOnReplay())) {
-                    continue;
-                }
-                Class<?>[] parameters = method.getParameterTypes();
-                if (parameters.length == 1 && DomainEvent.class.isAssignableFrom(parameters[0])) {
-                    Class<?> eventType = parameters[0];
-                    map.putIfAbsent(eventType, method);
-                }
-            }
-            current = current.getSuperclass();
-        }
-    }
-
-    /**
      * 返回未提交的领域事件（不可变视图）。
      */
     public List<DomainEvent<?>> domainEvents() {
@@ -388,6 +340,126 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             domainEvents = new ArrayList<>();
         }
         return domainEvents;
+    }
+
+    // ========================= 事件溯源 =========================
+
+    /**
+     * 应用领域事件：通过 ClassValue 缓存的反射路由到聚合内部的 {@code on<EventTypeSimpleName>} 方法。
+     *
+     * <p>例如 {@code OrderCreatedEvent} 路由到 {@code onOrderCreated(OrderCreatedEvent event)}。
+     * 若聚合未定义对应的 handler 方法，则静默忽略（不影响聚合状态）。
+     *
+     * <p>注意：{@code apply} 仅用于事件溯源回放（从历史事件重建聚合状态），
+     * 不会将事件注册到未提交事件缓冲区。业务方法应使用 {@link #registerEvent(DomainEvent)}。
+     *
+     * <h3>异常处理</h3>
+     * <p>反射调用精确捕获两类异常：
+     * <ul>
+     *   <li>{@link InvocationTargetException} — handler 自身抛出的异常解包后透传，
+     *       运行时异常直接抛出，受检异常包装为 {@link BizRuntimeException}</li>
+     *   <li>{@link IllegalAccessException} — 通常为 JDK 17+ 模块系统未开放反射访问，
+     *       错误消息明确指引解决方案（{@code --add-opens} 或 {@code module-info.java opens}）</li>
+     * </ul>
+     *
+     * @param event 领域事件
+     * @param <E>   事件类型
+     */
+    /**
+     * 应用领域事件（2.0.x 语义）。
+     *
+     * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
+     * 并返回事件本身。找不到处理器时抛 {@link IllegalStateException}。
+     *
+     * @param event 领域事件
+     * @return 传入的事件（链式调用便利）
+     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     */
+    protected <E extends DomainEvent<?>> E apply(E event) {
+        return apply(event, false);
+    }
+
+    /**
+     * 事件应用内部实现。
+     *
+     * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
+     * 并注册进未提交事件列表（2.0.x 语义：找不到处理器时抛 {@link IllegalStateException}）。
+     * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
+     *
+     * @param event 领域事件
+     * @param replay 是否处于历史回放（{@code loadFromHistory}）
+     * @return 传入的事件
+     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     */
+    private <E extends DomainEvent<?>> E apply(E event, boolean replay) {
+        Objects.requireNonNull(event, "event must not be null");
+        ClassValue<Method> handlerCache = EVENT_HANDLER_CACHE.get(this.getClass());
+        Method handler = handlerCache.get(event.getClass());
+        if (Objects.isNull(handler)) {
+            throw new IllegalStateException("No @EventHandler method found for event type: "
+                    + event.getClass().getName() + " on aggregate " + this.getClass().getName());
+        }
+        if (replay && handler.isAnnotationPresent(EventHandler.class)
+                && handler.getAnnotation(EventHandler.class).ignoreOnReplay()) {
+            return event;
+        }
+        try {
+            handler.invoke(this, event);
+            if (!replay) {
+                // 2.0.x 语义：apply 反射派发后注册进未提交事件列表；回放（loadFromHistory）不入队
+                mutableDomainEvents().add(event);
+            }
+        } catch (InvocationTargetException e) {
+            // handler 自身抛出的业务异常：解包透传，避免包装后丢失原始堆栈
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException re) {
+                throw re;
+            }
+            if (cause instanceof Error err) {
+                throw err;
+            }
+            throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
+                    + " on aggregate " + this.getClass().getSimpleName(), cause);
+        } catch (IllegalAccessException e) {
+            // JDK 17+ 模块系统限制：handler 所在包未对反射开放
+            throw new BizRuntimeException(
+                    "Cannot access @EventHandler method '" + handler.getName()
+                            + "' on aggregate " + this.getClass().getName()
+                            + ". On JDK 17+, ensure the handler's declaring package is opened via"
+                            + " 'opens' in module-info.java or '--add-opens' JVM flag.",
+                    e);
+        } catch (Exception e) {
+            // 其他反射异常（如 setAccessible 抛出的 InaccessibleObjectException）
+            throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
+                    + " on aggregate " + this.getClass().getSimpleName(), e);
+        }
+        return event;
+    }
+
+    /**
+     * 从历史事件列表重建聚合状态（事件溯源核心方法）。
+     *
+     * <p>按顺序依次调用 {@link #apply(DomainEvent)}，使聚合状态恢复到最新版本。
+     * 典型用法：从 EventStore 读取事件后，调用此方法重建聚合根。
+     *
+     * <pre>{@code
+     * Order order = new Order(); // 空聚合
+     * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
+     *         .map(StoredEvent::event)
+     *         .map(e -> (DomainEvent<?>) e)
+     *         .toList();
+     * order.loadFromHistory(history);
+     * }</pre>
+     *
+     * @param events 历史事件列表（按版本升序）
+     */
+    public void loadFromHistory(List<? extends DomainEvent<?>> events) {
+        if (Objects.isNull(events) || events.isEmpty()) {
+            return;
+        }
+        for (DomainEvent<?> event : events) {
+            apply(event, true);
+        }
     }
 
     // ========================= 仓储查找 =========================

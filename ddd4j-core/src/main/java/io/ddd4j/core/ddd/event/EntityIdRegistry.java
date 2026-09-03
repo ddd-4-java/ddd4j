@@ -20,12 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
- * {@link EntityId} 类型注册表。
+ * {@link EntityId} 类型注册表（修复方案见 {@code docs/superpowers/specs/2026-08-25-eventstore-spi-hardening.md}）。
  *
- * <p>用于按 {@link EntityType} 字符串还原自定义 {@link EntityId} 实现类：业务方在
- * 启动期通过 {@link #register(String, Function)} 注册工厂函数；未注册的
- * {@code EntityType} 通过 {@link #valueOf(String, String)} 返回 {@code null}，
- * 由调用方按业务语义兜底（r2dbc 模块对未注册类型显式报错并附注册指引）。
+ * <p>用于 {@link EntityIdPath#valueOf(String)} 反序列化时按 {@code EntityType} 字符串还原自定义
+ * {@code EntityId} 实现类：业务方在启动期通过 {@link #register(String, Function)} 注册工厂函数；
+ * 未注册的 {@code EntityType} 一律回退为 {@link StringEntityId}（保持与历史行为一致，
+ * 序列化端只输出原始 value，类型在自定义场景下默认丢失）。
  *
  * <h3>注册时机</h3>
  * <p>建议在框架适配层（如 Spring {@code @PostConstruct}、Quarkus {@code @Startup}）
@@ -35,8 +35,17 @@ import java.util.function.Function;
  * <p>{@link StringEntityId}（type 名称 {@code "String"}）启动期自动注册，
  * 无需业务方重复注册。
  *
+ * <h3>示例</h3>
+ * <pre>{@code
+ * // 启动期注册
+ * EntityIdRegistry.register("OrderId", value -> new OrderId(OrderIdType.INSTANCE, value));
+ *
+ * // 反序列化路径 "OrderId:o1/Customer:c1" → 还原为 OrderId + Customer（已注册）
+ * // 未注册类型（如 Foo）回退为 StringEntityId，不抛异常
+ * }</pre>
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 4.0.0
  */
 public final class EntityIdRegistry {
 
