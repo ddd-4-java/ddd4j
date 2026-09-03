@@ -28,14 +28,14 @@ public final class AggregateVersion implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private final int value;
+    private final long value;
 
     /**
      * 创建版本号。
      *
      * @param value 大于等于零的版本号
      */
-    public AggregateVersion(int value) {
+    public AggregateVersion(long value) {
         if (value < 0) {
             throw new IllegalArgumentException("Aggregate version must not be negative");
         }
@@ -48,7 +48,7 @@ public final class AggregateVersion implements Serializable {
      * @return 版本号
      */
     @JsonValue
-    public int asInt() {
+    public long asInt() {
         return value;
     }
 

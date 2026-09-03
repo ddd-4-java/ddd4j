@@ -262,7 +262,7 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
      * @return 聚合版本；未设置时返回 {@code null}
      */
     @JsonIgnore
-    public Integer getAggregateVersionInteger() {
+    public Long getAggregateVersionInteger() {
         return Objects.nonNull(aggregateVersion) ? aggregateVersion.asInt() : null;
     }
 
