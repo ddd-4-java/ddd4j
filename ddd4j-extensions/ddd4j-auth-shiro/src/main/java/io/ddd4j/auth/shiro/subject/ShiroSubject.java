@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
-import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.auth.AuthPrincipal;
 
 /**
  * 基于 Apache Shiro 的 {@link Subject} 实现。

@@ -1,6 +1,6 @@
 package io.ddd4j.auth.security.subject;
 
-import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.Subject;
 
 public class SecuritySubject implements Subject {

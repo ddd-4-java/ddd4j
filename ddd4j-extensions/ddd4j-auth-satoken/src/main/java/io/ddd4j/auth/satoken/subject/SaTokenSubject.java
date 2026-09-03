@@ -3,7 +3,7 @@ package io.ddd4j.auth.satoken.subject;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.strategy.SaStrategy;
 import io.ddd4j.auth.satoken.util.StpKit;
-import io.ddd4j.core.subject.AuthPrincipal;
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.Subject;
 
 import java.util.List;
