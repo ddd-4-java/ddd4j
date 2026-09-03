@@ -57,12 +57,12 @@ class SpringJpaViewManagerTest {
 
             ProjectionStatus status = manager.getProjectionStatus("orders");
 
-            assertThat(status.streamId()).isEqualTo("orders");
-            assertThat(status.nextEventNumber()).isEqualTo(0L);
-            assertThat(status.running()).isTrue();
-            assertThat(status.lastRunAt()).isNull();
-            assertThat(status.lastEventCount()).isEqualTo(0);
-            assertThat(status.lastError()).isNull();
+            assertThat(status.getStreamId()).isEqualTo("orders");
+            assertThat(status.getNextEventNumber()).isEqualTo(0L);
+            assertThat(status.isRunning()).isTrue();
+            assertThat(status.getLastRunAt()).isNull();
+            assertThat(status.getLastEventCount()).isEqualTo(0);
+            assertThat(status.getLastError()).isNull();
         }
 
         @Test
@@ -76,12 +76,12 @@ class SpringJpaViewManagerTest {
 
             ProjectionStatus status = manager.getProjectionStatus("orders");
 
-            assertThat(status.streamId()).isEqualTo("orders");
-            assertThat(status.nextEventNumber()).isEqualTo(42L);
-            assertThat(status.running()).isTrue();
-            assertThat(status.lastRunAt()).isNull();
-            assertThat(status.lastEventCount()).isEqualTo(0);
-            assertThat(status.lastError()).isNull();
+            assertThat(status.getStreamId()).isEqualTo("orders");
+            assertThat(status.getNextEventNumber()).isEqualTo(42L);
+            assertThat(status.isRunning()).isTrue();
+            assertThat(status.getLastRunAt()).isNull();
+            assertThat(status.getLastEventCount()).isEqualTo(0);
+            assertThat(status.getLastError()).isNull();
         }
 
         @Test
@@ -95,9 +95,9 @@ class SpringJpaViewManagerTest {
 
             ProjectionStatus status = manager.getProjectionStatus("unknown");
 
-            assertThat(status.streamId()).isEqualTo("unknown");
-            assertThat(status.nextEventNumber()).isEqualTo(0L);
-            assertThat(status.running()).isTrue();
+            assertThat(status.getStreamId()).isEqualTo("unknown");
+            assertThat(status.getNextEventNumber()).isEqualTo(0L);
+            assertThat(status.isRunning()).isTrue();
         }
 
         @Test
@@ -107,7 +107,7 @@ class SpringJpaViewManagerTest {
 
             ProjectionStatus status = manager.getProjectionStatus("orders");
 
-            assertThat(status.running()).isFalse();
+            assertThat(status.isRunning()).isFalse();
         }
     }
 }

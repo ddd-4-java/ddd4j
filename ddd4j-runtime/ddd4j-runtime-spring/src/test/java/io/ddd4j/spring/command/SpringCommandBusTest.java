@@ -139,7 +139,7 @@ class SpringCommandBusTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(TestCommand.class);
+            return new java.util.HashSet<>(java.util.Arrays.asList(TestCommand.class));
         }
 
         @Override
@@ -153,7 +153,7 @@ class SpringCommandBusTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(AnotherCommand.class);
+            return new java.util.HashSet<>(java.util.Arrays.asList(AnotherCommand.class));
         }
 
         @Override

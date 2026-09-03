@@ -44,6 +44,12 @@ class EsdbEventStoreTest {
         assertThat(EsdbEventStore.toExpectedRevision(3)).isEqualTo(ExpectedRevision.expectedRevision(2));
     }
 
+
+    private static <T> java.util.concurrent.CompletableFuture<T> failedFuture(Throwable ex) {
+        java.util.concurrent.CompletableFuture<T> f = new java.util.concurrent.CompletableFuture<>();
+        f.completeExceptionally(ex);
+        return f;
+    }
     @Test
     void appendShouldUseAggregateTypeInStreamAndPreserveCoreEventIdentity() {
         TestId id = new TestId("order-1");
@@ -67,7 +73,7 @@ class EsdbEventStoreTest {
         WrongExpectedVersionException conflict = org.mockito.Mockito.mock(WrongExpectedVersionException.class);
         when(conflict.getActualVersion()).thenReturn(ExpectedRevision.expectedRevision(0));
         when(client.appendToStream(anyString(), any(AppendToStreamOptions.class), any(EventData[].class)))
-                .thenReturn(CompletableFuture.failedFuture(conflict));
+                .thenReturn(failedFuture(conflict));
 
         assertThatThrownBy(() -> new EsdbEventStore(client).append(ORDER_TYPE, new TestId("conflict"),
                 java.util.Arrays.asList(new TestEvent(new TestId("conflict"))), 0))
@@ -77,7 +83,7 @@ class EsdbEventStoreTest {
     @Test
     void absentStronglyTypedStreamMustReadEmpty() {
         StreamNotFoundException absent = org.mockito.Mockito.mock(StreamNotFoundException.class);
-        when(client.readStream(anyString(), any())).thenReturn(CompletableFuture.failedFuture(absent));
+        when(client.readStream(anyString(), any())).thenReturn(failedFuture(absent));
         assertThat(new EsdbEventStore(client).read(ORDER_TYPE, new TestId("missing"))).isEmpty();
     }
 
