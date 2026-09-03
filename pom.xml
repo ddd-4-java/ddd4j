@@ -86,6 +86,7 @@
         <module>ddd4j-data-projection-jpa</module>
         <module>ddd4j-data-projection-jdbi</module>
         <module>ddd4j-web</module>
+        <module>ddd4j-web-testkit</module>
         <module>ddd4j-web-core</module>
         <module>ddd4j-data-projection-r2dbc</module>
         <module>ddd4j-data-event-store-esdb</module>
