@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.quarkus.event;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -37,5 +51,27 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
         }
         log.debug("Publishing domain event: {}", domainEvent.getClass().getSimpleName());
         event.fire(domainEvent);
+    }
+
+    /**
+     * 发布任意对象事件。
+     *
+     * <p>若事件为 {@link DomainEvent} 实例则委托给 {@link #publish(DomainEvent)}；
+     * 否则打印 warn 日志，避免静默丢弃非 DomainEvent 体系的事件。
+     *
+     * @param event 任意事件对象
+     */
+    @Override
+    public void publish(Object event) {
+        if (Objects.isNull(event)) {
+            log.warn("Attempted to publish null event object");
+            return;
+        }
+        if (event instanceof DomainEvent<?> domainEvent) {
+            publish(domainEvent);
+        } else {
+            log.warn("Published non-DomainEvent object via CDI event bus: {}", event.getClass().getName());
+            this.event.fire(event);
+        }
     }
 }
