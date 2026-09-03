@@ -71,12 +71,12 @@ public abstract class DddEventStoreRepository<ID extends AggregateRootId, A exte
 
     private void append(A aggregate, long expectedVersion) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        List<DomainEvent<?>> changes = aggregate.getUncommittedChanges();
+        List<DomainEvent<?>> changes = aggregate.pullDomainEvents();
         if (changes.isEmpty()) {
             return;
         }
         eventStore.append(aggregateType(), aggregate.id(), changes, expectedVersion);
-        aggregate.clearUncommittedChanges();
+        aggregate.clearDomainEvents();
     }
 
     /** 子类提供回放用的空/初始聚合实例。 */

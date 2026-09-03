@@ -20,9 +20,9 @@ class AggregateRootTest {
         TestAggregate aggregate = new TestAggregate();
         TestEvent created = new TestEvent();
         aggregate.record(created);
-        assertEquals(1, aggregate.getUncommittedChanges().size());
+        assertEquals(1, aggregate.pullDomainEvents().size());
         aggregate.loadFromHistory(Collections.<DomainEvent<?>>singletonList(new TestEvent()));
-        assertEquals(0, aggregate.getUncommittedChanges().size());
+        assertEquals(0, aggregate.pullDomainEvents().size());
     }
     @Test
     void shouldDispatchApplyAndReplayToEventHandler() {

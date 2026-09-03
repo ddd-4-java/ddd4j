@@ -1,18 +1,50 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core;
 
 
-import org.springframework.core.env.Environment;
-
+/**
+ * 当前活跃环境配置文件管理器。
+ * <p>
+ * 通过 {@link java.util.function.Supplier} 获取当前应用的所有活跃 Profile 名称，
+ * 并提供便捷方法获取第一个活跃 Profile。
+ * <p>
+ * 各框架适配层（Spring / Quarkus）在启动时注入对应的 Profile 提供者。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class ProfileManager {
 
-    private final Environment environment;
+    private final java.util.function.Supplier<String[]> activeProfilesSupplier;
 
-    public ProfileManager(Environment environment) {
-        this.environment = environment;
+    /**
+     * 构造 ProfileManager。
+     *
+     * @param activeProfilesSupplier 活跃 Profile 名称数组的提供者
+     */
+    public ProfileManager(java.util.function.Supplier<String[]> activeProfilesSupplier) {
+        this.activeProfilesSupplier = activeProfilesSupplier;
     }
 
+    /**
+     * 获取第一个活跃的 Profile 名称。
+     *
+     * @return 第一个活跃 Profile 名称，如果没有则返回 null
+     */
     public String getOneActive() {
-        for (String profileName : environment.getActiveProfiles()) {
+        for (String profileName : activeProfilesSupplier.get()) {
             return profileName;
         }
         return null;

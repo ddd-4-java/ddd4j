@@ -1,6 +1,16 @@
-/**
- * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
- * All Rights Reserved.
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package io.ddd4j.core.exception;
 
@@ -8,9 +18,26 @@ import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.CustomApiCode;
 import io.ddd4j.core.util.I18nKit;
 import lombok.Getter;
-import org.springframework.core.NestedRuntimeException;
 
-public class BizRuntimeException extends NestedRuntimeException {
+import java.util.Objects;
+
+/**
+ * 业务运行时异常（ddd4j 核心异常基类）。
+ * <p>
+ * 合并了原 {@code ServiceException} 的 i18n 能力：所有 message 参数会先经过
+ * {@link I18nKit#get(String, Object...)} 国际化处理，再传给父类。
+ * <p>
+ * 支持两种 message 风格：
+ * <ul>
+ *   <li><b>i18n key</b>：{@code new BizRuntimeException("user.not.found", userId)}
+ *       —— 先查 i18n 资源，找不到则原样返回</li>
+ *   <li><b>纯文本</b>：{@code new BizRuntimeException("用户不存在")}
+ *       —— 无 i18n 资源匹配时原样使用</li>
+ * </ul>
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+public class BizRuntimeException extends RuntimeException {
 
     @Getter
     private Integer code;
@@ -20,13 +47,10 @@ public class BizRuntimeException extends NestedRuntimeException {
     private Object[] args;
 
     public BizRuntimeException(Integer code, String message) {
-        super(message);
+        super(I18nKit.get(message));
         this.code = code;
     }
 
-    /**
-     * 1.0.x 对齐 3.0.x：支持 i18n 占位符参数的构造器（SLF4J {} 风格按序替换）。
-     */
     public BizRuntimeException(Integer code, String message, Object... args) {
         super(I18nKit.get(message, args));
         this.code = code;
@@ -34,54 +58,59 @@ public class BizRuntimeException extends NestedRuntimeException {
     }
 
     public BizRuntimeException(Integer code, String i18nCode, String message) {
-        super(message);
+        super(I18nKit.get(i18nCode, message));
         this.code = code;
         this.i18nCode = i18nCode;
     }
 
     public BizRuntimeException(Integer code, String i18nCode, Object[] args, String message) {
-        super(message);
+        super(I18nKit.get(i18nCode, Objects.nonNull(args) ? args : new Object[]{message}));
         this.code = code;
         this.i18nCode = i18nCode;
         this.args = args;
     }
 
     public BizRuntimeException(String message) {
-        super(message);
+        super(I18nKit.get(message));
     }
 
-    /**
-     * 1.0.x 对齐 3.0.x：支持 i18n 占位符参数的构造器（SLF4J {} 风格按序替换）。
-     */
     public BizRuntimeException(String message, Object... args) {
         super(I18nKit.get(message, args));
         this.code = 500;
     }
 
     public BizRuntimeException(String message, Throwable cause) {
-        super(message, cause);
+        super(I18nKit.get(message), cause);
     }
 
     public BizRuntimeException(ApiCode code, String i18nCode) {
-        super(code.getReason());
+        super(I18nKit.get(i18nCode, code.getReason()));
         this.code = code.getCode();
         this.i18nCode = i18nCode;
     }
 
     public BizRuntimeException(Integer code, String message, Throwable cause) {
-        super(message, cause);
+        super(I18nKit.get(message), cause);
         this.code = code;
     }
 
     public BizRuntimeException(Integer code, String i18nCode, String defMsg, Throwable cause) {
-        super(defMsg, cause);
+        super(I18nKit.get(i18nCode, defMsg), cause);
         this.code = code;
         this.i18nCode = i18nCode;
     }
 
     public BizRuntimeException(CustomApiCode code) {
-        super(code.getReason());
+        super(I18nKit.get(code.getReason()));
         this.code = code.getCode();
+    }
+
+    public BizRuntimeException() {
+        this(500, "Internal Server Error");
+    }
+
+    public BizRuntimeException(Throwable e) {
+        this(e.getMessage());
     }
 
     public static BizRuntimeException e(String message) {

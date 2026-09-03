@@ -11,7 +11,7 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
  *
  * <p>基于 ddd4j 原生 {@link AggregateRoot}，提供：
  * <ul>
- *   <li>领域事件收集（{@code apply} 产生事件 → {@code getUncommittedChanges} 取出）</li>
+ *   <li>领域事件收集（{@code apply} 产生事件 → {@code pullDomainEvents} 取出）</li>
  *   <li>事件溯源状态重建（{@code loadFromHistory} 重放历史事件）</li>
  *   <li>{@code @ApplyEvent} 注解驱动的事件处理方法</li>
  *   <li>审计字段（{@code createTime}/{@code updateTime}，无 ORM 注解）</li>

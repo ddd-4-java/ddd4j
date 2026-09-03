@@ -24,7 +24,7 @@ public class DefaultWebFluxConfiguration {
 
     @Bean
     public ProfileManager profileManager(Environment environment) {
-        return new ProfileManager(environment);
+        return new ProfileManager(environment::getActiveProfiles);
     }
 
     @Bean
