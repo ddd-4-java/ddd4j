@@ -300,6 +300,7 @@
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
         <jedis.version>7.1.0</jedis.version>
         <jetbrains-annotations.version>26.0.2-1</jetbrains-annotations.version>
+        <jdbi.version>3.45.4</jdbi.version>
         <jetcache.version>2.7.8</jetcache.version>
         <jjwt.version>0.13.0</jjwt.version>
         <jgoodies.version>2.7.0</jgoodies.version>
