@@ -70,7 +70,7 @@ class Ddd4jGuiceModuleTest {
         Injector injector = Guice.createInjector(new Ddd4jCryptoGuiceModule(), new Ddd4jLogsGuiceModule());
 
         assertNotNull(injector.getInstance(io.ddd4j.data.crypto.CryptoProperties.class));
-        assertNotNull(injector.getInstance(io.ddd4j.data.logs.ApiOperationLogProvider.class));
+        assertNotNull(injector.getInstance(io.ddd4j.data.logs.aspect.ApiOperationLogProvider.class));
     }
 
     @Test

@@ -38,7 +38,7 @@ class Ddd4jMicronautReadinessHealthIndicatorTest {
     private HealthResult result(Ddd4jMicronautReadinessHealthIndicator healthIndicator) {
         AtomicReference<HealthResult> result = new AtomicReference<>();
         AtomicReference<Throwable> error = new AtomicReference<>();
-        healthIndicator.getResult().subscribe(new Subscriber<>() {
+        healthIndicator.getResult().subscribe(new Subscriber<HealthResult>() {
             @Override
             public void onSubscribe(Subscription subscription) {
                 subscription.request(1);

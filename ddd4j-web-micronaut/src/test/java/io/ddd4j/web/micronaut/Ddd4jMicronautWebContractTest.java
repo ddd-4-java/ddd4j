@@ -172,7 +172,7 @@ final class MicronautContractController {
 
     @Get("/errors/{type}")
     R<Void> error(String type) {
-        Exception ex;
+        RuntimeException ex;
         switch (type) {
             case "bad-request": ex = new IllegalArgumentException("bad request"); break;
             case "forbidden": ex = new SecurityException("forbidden"); break;

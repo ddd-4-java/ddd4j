@@ -25,21 +25,21 @@
         <!-- <module>ddd4j-data-external</module> -->
         <module>ddd4j-data-logs</module>
         <module>ddd4j-data-mybatis</module>
-        <module>ddd4j-mq-activemq</module>
-        <module>ddd4j-mq-disruptor</module>
-        <module>ddd4j-mq-kafka</module>
-        <module>ddd4j-mq-mqtt</module>
+        <!-- <module>ddd4j-mq-activemq</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-disruptor</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-kafka</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-mqtt</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
         <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-mq-mqtt-mica 构建 -->
-        <!-- <module>ddd4j-mq-mqtt-mica</module> -->
-        <module>ddd4j-mq-nats</module>
-        <module>ddd4j-mq-ons</module>
-        <module>ddd4j-mq-pulsar</module>
-        <module>ddd4j-mq-rabbitmq</module>
-        <module>ddd4j-mq-redis-stream</module>
+        <!-- <module>ddd4j-mq-mqtt-mica</module> 2026-09-04 迁往 ddd4j-mq/ -->
+        <!-- <module>ddd4j-mq-nats</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-ons</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-pulsar</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-rabbitmq</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-redis-stream</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
         <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-mq-rocketmq 构建 -->
-        <!-- <module>ddd4j-mq-rocketmq</module> -->
-        <module>ddd4j-mq-sqs</module>
-        <module>ddd4j-mq-tdmq</module>
+        <!-- <module>ddd4j-mq-rocketmq</module> 2026-09-04 迁往 ddd4j-mq/ -->
+        <!-- <module>ddd4j-mq-sqs</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
+        <!-- <module>ddd4j-mq-tdmq</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
         <module>ddd4j-extension-akka</module>
         <module>ddd4j-extension-excel</module>
         <module>ddd4j-extension-jackson</module>

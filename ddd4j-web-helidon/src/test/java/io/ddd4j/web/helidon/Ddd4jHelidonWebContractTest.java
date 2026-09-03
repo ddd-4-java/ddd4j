@@ -98,10 +98,15 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
             Response response = Objects.isNull(body)
                     ? builder.method(method)
                     : builder.method(method, Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
-            try (response) {
+            try {
+                // response close handled below
                 Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
                 response.getStringHeaders().forEach((name, values) -> responseHeaders.put(name, Collections.unmodifiableList(new java.util.ArrayList<>(values))));
-                return new WebContractResponse(response.getStatus(), responseHeaders, response.readEntity(String.class));
+                WebContractResponse contractResponse = new WebContractResponse(response.getStatus(), responseHeaders, response.readEntity(String.class));
+                response.close();
+                return contractResponse;
+            } catch (Exception processingError) {
+                throw new IllegalStateException("Helidon contract response processing failed", processingError);
             }
         }
     }
@@ -170,7 +175,7 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
         @GET
         @Path("/errors/{type}")
         public R<Void> error(@PathParam("type") String type) {
-            Exception __ex;
+            RuntimeException __ex;
             switch (type) {
                 case "bad-request": __ex = new IllegalArgumentException("bad request"); break;
                 case "forbidden": __ex = new SecurityException("forbidden"); break;

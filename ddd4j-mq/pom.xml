@@ -11,70 +11,30 @@
     </parent>
 
     <artifactId>ddd4j-mq</artifactId>
-    <description>消息队列契约与 SPI</description>
+    <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 消息队列抽象聚合：-core(纯 Java MQ SPI) + -spring(Spring Messaging 桥接)
+        + 多 Broker/本地实现（ActiveMQ/Disruptor/Kafka/MQTT/NATS/ONS/Pulsar/RabbitMQ/Redis Stream/RocketMQ/SQS/TDMQ）。
+        Spring Boot 自动装配留在外部 ddd4j-boot，当前仓库直接纳管各 Broker adapter。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <properties>
-        <mq.testcontainers.version>1.20.6</mq.testcontainers.version>
-    </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- 集成测试基类 AbstractMqContainerIT：Spring 测试上下文 + Testcontainers 前置检测 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <version>${mq.testcontainers.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <!-- 覆盖 parent 的 surefire skip=true，本模块允许运行单元测试 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                    <skipTests>false</skipTests>
-                    <!-- 覆盖 parent 中含 PermSize 的 argLine（JDK 8+ 已移除该参数） -->
-                    <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <!-- 发布 test-jar：供 mq-* 扩展模块以 test 依赖复用 AbstractMqContainerIT 基类 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
+    <modules>
+        <module>ddd4j-mq-core</module>
+        <module>ddd4j-mq-activemq</module>
+        <module>ddd4j-mq-disruptor</module>
+        <module>ddd4j-mq-kafka</module>
+        <module>ddd4j-mq-mqtt</module>
+        <module>ddd4j-mq-mqtt-mica</module>
+        <module>ddd4j-mq-nats</module>
+        <module>ddd4j-mq-ons</module>
+        <module>ddd4j-mq-pulsar</module>
+        <module>ddd4j-mq-rabbitmq</module>
+        <module>ddd4j-mq-redis-stream</module>
+        <module>ddd4j-mq-rocketmq</module>
+        <module>ddd4j-mq-sqs</module>
+        <module>ddd4j-mq-tdmq</module>
+        <module>ddd4j-mq-spring</module>
+    </modules>
 </project>

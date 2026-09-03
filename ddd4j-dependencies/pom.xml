@@ -19,7 +19,8 @@
         <activation.version>1.1.1</activation.version>
         <!-- ArchUnit：分层约束验证（ddd4j-ddd 模块用） -->
         <archunit.version>1.4.2</archunit.version>
-        <artemis.version>2.44.0</artemis.version>
+        <artemis.version>2.19.0</artemis.version>
+        <!-- Artemis 2.19.0 = 最后 JDK8（major 52）版本；2.20.0 起 major 55/JDK11 -->
         <akka.version>2.8.8</akka.version>
         <akka-http.version>10.5.3</akka-http.version>
         <alipay-sdk.version>4.40.865.ALL</alipay-sdk.version>
@@ -300,7 +301,7 @@
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
-        <jedis.version>7.1.0</jedis.version>
+        <jedis.version>7.5.2</jedis.version>
         <jetbrains-annotations.version>26.0.2-1</jetbrains-annotations.version>
         <jdbi.version>3.45.4</jdbi.version>
         <jetcache.version>2.7.8</jetcache.version>
@@ -329,6 +330,7 @@
         <just-auth.version>1.16.7</just-auth.version>
         <junit.version>4.13.2</junit.version>
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <junit-platform-launcher.version>1.11.4</junit-platform-launcher.version>
         <jxl.version>2.6.12</jxl.version>
         <jwt-issuer.version>1.1.8.RELEASE</jwt-issuer.version>
         <kaptcha.version>0.0.9</kaptcha.version>
@@ -392,7 +394,7 @@
         <mybatis-tk.version>5.0.1</mybatis-tk.version>
         <mysql.version>9.7.0</mysql.version>
         <mysql-binlog-connector-java.version>0.30.3</mysql-binlog-connector-java.version>
-        <mica-mqtt.version>2.5.10</mica-mqtt.version>
+        <mica-mqtt.version>2.6.6</mica-mqtt.version>
         <micrometer.version>1.16.1</micrometer.version>
         <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
         <minio.version>8.6.0</minio.version>
@@ -704,6 +706,11 @@
                 <groupId>javax.websocket</groupId>
                 <artifactId>javax.websocket-api</artifactId>
                 <version>${javax-websocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -2999,6 +3006,12 @@
                 <version>${hive.version}</version>
             </dependency>
 
+<!-- ActiveMQ Artemis JMS 客户端（javax 线；2.19.0 为最后 JDK8 版本） -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>artemis-jms-client</artifactId>
+                <version>${artemis.version}</version>
+            </dependency>
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-core</artifactId>
@@ -6039,6 +6052,12 @@
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client-api</artifactId>
+                <version>${pulsar.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client -->
+            <dependency>
+                <groupId>org.apache.pulsar</groupId>
+                <artifactId>pulsar-client</artifactId>
                 <version>${pulsar.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework.pulsar/spring-pulsar -->

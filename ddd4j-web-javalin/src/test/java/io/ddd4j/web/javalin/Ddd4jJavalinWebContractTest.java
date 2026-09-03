@@ -59,10 +59,8 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         Ddd4jJavalinWeb ddd4jWeb = new Ddd4jJavalinWeb(new WebRequestContextFactory(), requestLifecycle,
                 new DefaultWebExceptionTranslator(),
                 new WebIdempotencyLifecycle(new CacheIdempotencyGuard("javalin-contract")));
-        app = Javalin.create(config -> {
-            config.showJavalinBanner = false;
-            ddd4jWeb.configure(config);
-        });
+        app = Javalin.create(config -> config.showJavalinBanner = false);
+        ddd4jWeb.configure(app);
         registerContractRoutes(app);
         app.start(0);
         contractClient = new JavalinContractClient(app.port());
