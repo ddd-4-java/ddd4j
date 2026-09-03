@@ -18,6 +18,7 @@ import io.ddd4j.core.constant.ProjectionConstants;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -25,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 基于 JDBC 的投影位置持久化仓储（纯 java.sql，无 ORM 依赖）。
@@ -48,9 +47,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.x
  */
+@Slf4j
 public class GuiceJdbcProjectionPositionRepository implements ProjectionPositionRepository {
-
-    private static final Logger log = LoggerFactory.getLogger(GuiceJdbcProjectionPositionRepository.class);
 
     /** 统一表名，与 Spring/Quarkus 运行时一致 */
     private static final String TABLE_NAME = ProjectionConstants.TABLE_NAME;

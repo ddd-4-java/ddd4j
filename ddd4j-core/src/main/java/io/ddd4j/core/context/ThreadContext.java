@@ -184,7 +184,7 @@ public class ThreadContext {
         if (Objects.isNull(value)) {
             return;
         }
-        if (value instanceof String && ((String) value).isEmpty()) {
+        if (value instanceof String && io.ddd4j.kit.lang.StrKit.isEmpty(((String) value))) {
             return;
         }
         put(key, value);

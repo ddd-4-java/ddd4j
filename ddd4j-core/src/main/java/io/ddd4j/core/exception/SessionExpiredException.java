@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import java.io.Serial;
 
 /**
  * Session 过期异常（业务会话已超时）。
@@ -29,7 +30,6 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class SessionExpiredException extends AuthenticationException {
-
     private static final long serialVersionUID = 1L;
 
     public SessionExpiredException(String message) {

@@ -89,7 +89,7 @@ public final class SpiRegistrationScope implements AutoCloseable {
                     .filter(current -> current == service)
                     .ifPresent(ignored -> {
                         if (previous.isPresent()) {
-                            BaseContext.inject(key, type, previous.get());
+                            BaseContext.inject(key, type, previous.orElseThrow());
                         } else {
                             BaseContext.remove(key);
                         }

@@ -18,13 +18,12 @@ import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Guice IoC 容器上下文（等价于 Spring 的 ApplicationContext）。
@@ -41,9 +40,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class GuiceContext {
-
-    private static final Logger log = LoggerFactory.getLogger(GuiceContext.class);
 
     /**
      * 初始化等待信号

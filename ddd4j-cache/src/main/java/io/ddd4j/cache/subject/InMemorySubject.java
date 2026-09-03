@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.cache.subject;
 
 import io.ddd4j.cache.CacheKit;
@@ -24,7 +10,6 @@ import io.ddd4j.kit.lang.StrKit;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.Collections;
 
 /**
  * 基于 {@link CacheKit} 的内存版 {@link Subject} 实现（单进程、非持久化）。
@@ -97,6 +82,7 @@ public class InMemorySubject implements Subject {
         return (T) principalByToken(tokenValue);
     }
 
+    @Override
     public String login(AuthRequest request) {
         try {
             validate(request);
@@ -114,6 +100,7 @@ public class InMemorySubject implements Subject {
         }
     }
 
+    @Override
     public void logout() {
         String token = currentToken();
         if (Objects.isNull(token)) {
@@ -128,6 +115,7 @@ public class InMemorySubject implements Subject {
         clearCurrentToken();
     }
 
+    @Override
     public void logout(Object loginId) {
         String loginIdKey = cacheKey(loginId);
         String token = CacheKit.get(TOKEN_BY_LOGIN_ID_CACHE, loginIdKey);
@@ -141,10 +129,12 @@ public class InMemorySubject implements Subject {
         }
     }
 
+    @Override
     public void kickout(Object loginId) {
         logout(loginId);
     }
 
+    @Override
     public String refresh() {
         AuthPrincipal principal = getPrincipal();
         if (Objects.isNull(principal)) {
@@ -159,6 +149,7 @@ public class InMemorySubject implements Subject {
         return newToken;
     }
 
+    @Override
     public <T extends AuthPrincipal> T verify(String token) {
         return getPrincipalByToken(token);
     }
@@ -290,11 +281,13 @@ public class InMemorySubject implements Subject {
         return Objects.nonNull(principal) && Objects.equals(principal.getDeviceId(), deviceId);
     }
 
+    @Override
     public void disable(Object loginId, long timeout) {
         long disabledUntil = timeout < 0 ? PERMANENT_DISABLE : Instant.now().plusSeconds(timeout).getEpochSecond();
         CacheKit.put(DISABLED_UNTIL_CACHE, cacheKey(loginId), disabledUntil);
     }
 
+    @Override
     public boolean isDisabled(Object loginId) {
         Long disabledUntil = CacheKit.get(DISABLED_UNTIL_CACHE, cacheKey(loginId));
         if (Objects.isNull(disabledUntil)) {
@@ -310,6 +303,7 @@ public class InMemorySubject implements Subject {
         return disabled;
     }
 
+    @Override
     public void untieDisable(Object loginId) {
         CacheKit.invalidate(DISABLED_UNTIL_CACHE, cacheKey(loginId));
     }

@@ -15,6 +15,7 @@
 package io.ddd4j.core.util;
 
 import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -29,18 +30,11 @@ import java.util.Objects;
  * <ul>
  *   <li>注册 SPI：{@code register(SubjectProvider)} / {@code setDataProvider(SubjectDataProvider)}</li>
  *   <li>获取当前 Subject：{@link #getSubject()}（业务统一入口）</li>
- *   <li>便捷门面：{@code getPrincipal} / {@code hasPermission} / {@code hasRole} / {@code isLogin} 等</li>
+ *   <li>便捷门面：{@code login} / {@code logout} / {@code getPrincipal} / {@code hasPermission} 等</li>
  * </ul>
  *
  * <p>各框架适配层在启动时调用 {@link #register(SubjectProvider)} 注入实现，
  * 业务代码统一通过 {@code SubjectKit.xxx()} 调用。
- *
- * <p>1.0.x（JDK8）移植说明：3.0.x 版本将会话生命周期（login/logout/kickout/refresh/verify）、
- * 会话数据（setAttribute/getAttribute）与封禁（disable/isDisabled/untieDisable）纳入 core
- * Subject SPI，并绑定 {@code io.ddd4j.core.auth.AuthPrincipal}；1.0.x 线会话生命周期由
- * extensions（auth-security/satoken/shiro）承担，Subject SPI 保持只读语义不变，
- * 故本门面未移植生命周期方法，主体类型绑定 1.0.x 的
- * {@link io.ddd4j.core.subject.AuthPrincipal}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -148,7 +142,7 @@ public final class SubjectKit {
         SubjectKit.strategy = strategy;
     }
 
-    // ==================== 身份读取（便捷门面）====================
+    // ==================== 身份与会话读取（便捷门面）====================
 
     public static <T extends AuthPrincipal> T getPrincipal() {
         return getSubject().getPrincipal();
@@ -222,6 +216,62 @@ public final class SubjectKit {
         return getSubject().isAuthenticated();
     }
 
+    // ==================== 会话生命周期（便捷门面，对齐 StpUtil.login/logout）====================
+
+    /**
+     * 登录（建立会话）。
+     *
+     * @param request 登录请求
+     * @return 会话凭证
+     */
+    public static String login(AuthRequest request) {
+        return getSubject().login(request);
+    }
+
+    /**
+     * 登出当前会话。
+     */
+    public static void logout() {
+        getSubject().logout();
+    }
+
+    /**
+     * 按 loginId 登出。
+     *
+     * @param loginId 账号 ID
+     */
+    public static void logout(Object loginId) {
+        getSubject().logout(loginId);
+    }
+
+    /**
+     * 踢人下线。
+     *
+     * @param loginId 账号 ID
+     */
+    public static void kickout(Object loginId) {
+        getSubject().kickout(loginId);
+    }
+
+    /**
+     * 刷新会话凭证。
+     *
+     * @return 新凭证
+     */
+    public static String refresh() {
+        return getSubject().refresh();
+    }
+
+    /**
+     * 校验凭证（仅校验，不建会话）。
+     *
+     * @param token 凭证
+     * @return 认证主体，校验失败返回 null
+     */
+    public static <T extends AuthPrincipal> T verify(String token) {
+        return getSubject().verify(token);
+    }
+
     // ==================== 权限与角色（便捷门面）====================
 
     public static boolean hasPermission(String permission) {
@@ -247,4 +297,29 @@ public final class SubjectKit {
     public static boolean hasAllRole(String... roleIdentifiers) {
         return getSubject().hasAllRole(roleIdentifiers);
     }
+
+    // ==================== 会话数据（便捷门面）====================
+
+    public static void setAttribute(String key, Object value) {
+        getSubject().setAttribute(key, value);
+    }
+
+    public static <V> V getAttribute(String key) {
+        return getSubject().getAttribute(key);
+    }
+
+    // ==================== 封禁（便捷门面）====================
+
+    public static void disable(Object loginId, long timeout) {
+        getSubject().disable(loginId, timeout);
+    }
+
+    public static boolean isDisabled(Object loginId) {
+        return getSubject().isDisabled(loginId);
+    }
+
+    public static void untieDisable(Object loginId) {
+        getSubject().untieDisable(loginId);
+    }
+
 }

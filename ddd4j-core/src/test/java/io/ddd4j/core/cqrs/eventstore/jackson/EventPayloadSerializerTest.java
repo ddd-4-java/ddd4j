@@ -1,5 +1,6 @@
 package io.ddd4j.core.cqrs.eventstore.jackson;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EventPayloadSerializerTest {
 
-    private final EventPayloadSerializer serializer = new EventPayloadSerializer();
+    private final EventPayloadSerializer serializer = new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build());
 
     @Test
     void serializeShouldCarryOnlyBusinessProperty() {

@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import java.io.Serial;
 
 /**
  * 凭证错误异常（用户名存在但密码错误）。
@@ -29,7 +30,6 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class BadCredentialsException extends AuthenticationException {
-
     private static final long serialVersionUID = 1L;
 
     public BadCredentialsException(String message) {

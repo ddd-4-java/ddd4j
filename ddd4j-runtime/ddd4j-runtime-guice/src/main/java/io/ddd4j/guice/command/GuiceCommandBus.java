@@ -18,13 +18,12 @@ import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Guice command bus implementation.
@@ -41,10 +40,9 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.x
  */
+@Slf4j
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class GuiceCommandBus implements CommandBus {
-
-    private static final Logger log = LoggerFactory.getLogger(GuiceCommandBus.class);
 
     /**
      * Command type to executor routing map

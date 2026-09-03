@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import java.io.Serial;
 
 /**
  * 角色被拒绝异常（访问受保护资源但缺少必要角色）。
@@ -29,7 +30,6 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class RoleDeniedException extends AuthorizationException {
-
     private static final long serialVersionUID = 1L;
 
     public RoleDeniedException(String message) {

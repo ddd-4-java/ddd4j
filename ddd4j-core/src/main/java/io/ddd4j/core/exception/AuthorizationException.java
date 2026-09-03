@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import java.io.Serial;
 
 /**
  * 授权/访问控制异常抽象（鉴权通过后无权限/无角色）。
@@ -24,7 +25,6 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class AuthorizationException extends RuntimeException {
-
     private static final long serialVersionUID = 1L;
 
     public AuthorizationException(String message) {

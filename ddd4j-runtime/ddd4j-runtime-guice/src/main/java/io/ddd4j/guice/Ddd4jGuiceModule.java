@@ -30,8 +30,7 @@ import io.ddd4j.guice.GuiceConstants;
 import io.ddd4j.guice.event.GuiceDomainEventPublisher;
 import io.ddd4j.guice.i18n.GuiceI18nProvider;
 import io.ddd4j.guice.subject.GuiceSubjectProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -61,9 +60,8 @@ import org.slf4j.LoggerFactory;
  * @see Ddd4jJdbcProjectionGuiceModule
  * @since 2.0.x
  */
+@Slf4j
 public class Ddd4jGuiceModule extends AbstractModule {
-
-    private static final Logger log = LoggerFactory.getLogger(Ddd4jGuiceModule.class);
 
     @Override
     protected void configure() {

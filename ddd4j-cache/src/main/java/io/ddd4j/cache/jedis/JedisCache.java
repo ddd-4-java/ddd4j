@@ -1,21 +1,6 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.cache.jedis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cache.*;
 import io.ddd4j.kit.lang.StrKit;
@@ -356,7 +341,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
             String newJson = serialize(newValue);
             // 用 Lua 原子比较
             Object result = jedis.eval(LUA_CAS, Arrays.asList(cachedKey),
-                    Arrays.asList(Objects.isNull(currentJson) ? "" : currentJson, newJson, String.valueOf(expireSeconds)));
+                    List.of(Objects.isNull(currentJson) ? "" : currentJson, newJson, String.valueOf(expireSeconds)));
             if (Long.valueOf(1).equals(result)) {
                 return newValue;
             }
@@ -370,7 +355,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         String expectedJson = Objects.isNull(expectedOldValue) ? null : serialize(expectedOldValue);
         String newJson = serialize(newValue);
         Object result = jedis.eval(LUA_CAS, Arrays.asList(cachedKey),
-                Arrays.asList(Objects.isNull(expectedJson) ? "" : expectedJson, newJson, "0"));
+                List.of(Objects.isNull(expectedJson) ? "" : expectedJson, newJson, "0"));
         return Long.valueOf(1).equals(result);
     }
 

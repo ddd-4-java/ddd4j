@@ -1,5 +1,7 @@
 package io.ddd4j.data.eventstore.jdbi;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.EventStoreConstants;
@@ -115,7 +117,7 @@ public class JdbiEventStore implements EventStore {
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     public JdbiEventStore(Jdbi jdbi) {
-        this(jdbi, new EventPayloadSerializer());
+        this(jdbi, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     public JdbiEventStore(Jdbi jdbi, EventPayloadSerializer serializer) {

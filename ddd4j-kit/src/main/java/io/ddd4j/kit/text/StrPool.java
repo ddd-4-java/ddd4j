@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,8 +32,8 @@ public interface StrPool {
     String COLON = ":";
     String COMMA = ",";
     String DASH = "-";
-    String DOLLAR = "$";
     String DDD4J_PREFIX = "ddd4j.";
+    String DOLLAR = "$";
     String DOT = ".";
     String DOTDOT = "..";
     String DOT_CLASS = ".class";
@@ -113,6 +114,6 @@ public interface StrPool {
 
     String[] EMPTY_ARRAY = new String[0];
 
-    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes();
+    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes(java.nio.charset.StandardCharsets.UTF_8);
 
 }

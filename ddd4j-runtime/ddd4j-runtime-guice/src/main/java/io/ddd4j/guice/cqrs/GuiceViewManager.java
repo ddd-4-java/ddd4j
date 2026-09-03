@@ -25,13 +25,12 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.kit.lang.StrKit;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Guice runtime default CQRS read-side view manager.
@@ -39,9 +38,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseable {
-
-    private static final Logger log = LoggerFactory.getLogger(GuiceViewManager.class);
 
     /** default thread pool size */
     private static final int DEFAULT_THREAD_POOL_SIZE = GuiceConstants.DEFAULT_THREAD_POOL_SIZE;

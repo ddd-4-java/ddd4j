@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import java.io.Serial;
 
 /**
  * 账号过期异常（账号使用期限到期）。
@@ -29,7 +30,6 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class AccountExpiredException extends AuthenticationException {
-
     private static final long serialVersionUID = 1L;
 
     public AccountExpiredException(String message) {

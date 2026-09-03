@@ -19,9 +19,8 @@ import com.google.inject.Inject;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
+import lombok.extern.slf4j.Slf4j;
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Guice 实现的领域事件发布者
@@ -31,9 +30,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public class GuiceDomainEventPublisher implements DomainEventPublisher {
-
-    private static final Logger log = LoggerFactory.getLogger(GuiceDomainEventPublisher.class);
 
     /**
      * Guava 事件总线

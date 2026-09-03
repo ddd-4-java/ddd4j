@@ -18,8 +18,8 @@ class QueryTest {
                 .current(2).size(25).ignoreTenantId();
         assertEquals(1, query.getConditions().size());
         assertEquals("name", query.getConditions().get(0).property());
-        assertEquals("=", query.getConditions().get(0).getOperator());
-        assertEquals("DESC", query.getOrderByConditions().get(0).getOperator());
+        assertEquals("=", query.getConditions().get(0).operator());
+        assertEquals("DESC", query.getOrderByConditions().get(0).operator());
         assertEquals(2L, query.getCurrent());
         assertEquals(25L, query.getSize());
         assertTrue(query.isIgnoreTenantId());
@@ -42,16 +42,16 @@ class QueryTest {
                 .ignorePage();
 
         assertEquals(9, query.getConditions().size());
-        assertEquals("LIKE_LEFT", query.getConditions().get(0).getOperator());
-        assertEquals("LIKE_RIGHT", query.getConditions().get(1).getOperator());
-        assertEquals("NOT_LIKE", query.getConditions().get(2).getOperator());
-        assertEquals(">=", query.getConditions().get(3).getOperator());
-        assertEquals("<=", query.getConditions().get(4).getOperator());
-        assertEquals("IN", query.getConditions().get(5).getOperator());
-        assertEquals(Arrays.asList("A", "B"), query.getConditions().get(5).getValue());
-        assertEquals("NOT_IN", query.getConditions().get(6).getOperator());
-        assertEquals("IS_NULL", query.getConditions().get(7).getOperator());
-        assertEquals("IS_NOT_NULL", query.getConditions().get(8).getOperator());
+        assertEquals("LIKE_LEFT", query.getConditions().get(0).operator());
+        assertEquals("LIKE_RIGHT", query.getConditions().get(1).operator());
+        assertEquals("NOT_LIKE", query.getConditions().get(2).operator());
+        assertEquals(">=", query.getConditions().get(3).operator());
+        assertEquals("<=", query.getConditions().get(4).operator());
+        assertEquals("IN", query.getConditions().get(5).operator());
+        assertEquals(Arrays.asList("A", "B"), query.getConditions().get(5).value());
+        assertEquals("NOT_IN", query.getConditions().get(6).operator());
+        assertEquals("IS_NULL", query.getConditions().get(7).operator());
+        assertEquals("IS_NOT_NULL", query.getConditions().get(8).operator());
         assertEquals(1, query.getSetOperations().size());
         assertEquals(-1L, query.getSize());
         assertTrue(query.getOrderByConditions().isEmpty());

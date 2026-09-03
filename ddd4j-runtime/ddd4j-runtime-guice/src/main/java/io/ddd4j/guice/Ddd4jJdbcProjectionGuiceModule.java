@@ -18,11 +18,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import io.ddd4j.guice.cqrs.GuiceJdbcProjectionPositionRepository;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ddd4j 投影位置 JDBC 持久化的 Guice 桥接模块。
@@ -54,9 +53,8 @@ import org.slf4j.LoggerFactory;
  * @see GuiceJdbcProjectionPositionRepository
  * @since 3.0.x
  */
+@Slf4j
 public class Ddd4jJdbcProjectionGuiceModule extends AbstractModule {
-
-    private static final Logger log = LoggerFactory.getLogger(Ddd4jJdbcProjectionGuiceModule.class);
 
     private final DataSource dataSource;
 

@@ -9,12 +9,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * 反射工具类
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j(topic = "### BASE-KIT : ReflectKit ###")
 @UtilityClass
@@ -53,7 +53,7 @@ public class ReflectKit extends ReflectUtil {
                 }
                 field.setAccessible(true); // 确保可以访问私有字段
                 Object value = field.get(obj);
-                if (value != null) {
+                if (Objects.nonNull(value)) {
                     return false; // 如果某个字段不为 null，则直接返回 false
                 }
             }

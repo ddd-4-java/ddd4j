@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import java.io.Serial;
 
 /**
  * 账号不存在异常（登录时账号未注册）。
@@ -29,7 +30,6 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class UnknownAccountException extends AuthenticationException {
-
     private static final long serialVersionUID = 1L;
 
     public UnknownAccountException(String message) {

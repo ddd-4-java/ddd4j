@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.i18n;
 
+import io.ddd4j.kit.lang.StrKit;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -26,17 +28,15 @@ import java.util.ResourceBundle;
  * 各框架适配层提供实现：
  * <ul>
  *   <li>Spring: 基于 MessageSource</li>
+ *   <li>Quarkus: 基于 CDI + ResourceBundle</li>
  *   <li>Guice: 基于 ResourceBundle</li>
  * </ul>
  * 默认实现返回原始 key。
  *
- * <p>1.0.x（JDK8）实现说明：3.0.x 版本接口内使用 private static 方法（Java 9+），
- * 此处降级为接口级 static 方法，语义保持一致。
- *
  * <h3>占位符约定</h3>
  * <ul>
  *   <li><b>资源文件中</b>：使用 {@code java.text.MessageFormat} 风格 {@code {0}, {1}, ...}
- *       （与 Spring MessageSource 一致）</li>
+ *       （与 Spring MessageSource / Quarkus 一致）</li>
  *   <li><b>纯文本 message（未命中资源）</b>：兼容 SLF4J 风格 {@code {}}
  *       按顺序替换，便于业务代码直接写 {@code "Repository for {} not found"}</li>
  * </ul>
@@ -51,8 +51,10 @@ public interface I18nProvider {
      * 命中资源时走 {@link MessageFormat}（{@code {0}} 风格）；未命中资源时走 SLF4J 风格
      * （{@code {}} 按出现顺序替换），避免业务消息中的 {@code {}} 被 MessageFormat 误解析。
      */
-    I18nProvider DEFAULT = (key, args) -> {
-        if (isBlank(key)) {
+    I18nProvider DEFAULT = new I18nProvider() {
+        @Override
+        public String getMessage(String key, Object... args) {
+        if (StrKit.isBlank(key)) {
             return null;
         }
         // 1. 先尝试从 i18n 资源加载（资源文件使用 {0} 风格）
@@ -71,7 +73,8 @@ public interface I18nProvider {
             return MessageFormat.format(pattern, args);
         }
         // 3. 未命中资源：把原始 key 当作纯文本，按 SLF4J {} 风格按序替换
-        return formatSlfStyle(key, args);
+            return Internals.formatSlfStyle(key, args);
+        }
     };
 
     /**
@@ -82,7 +85,14 @@ public interface I18nProvider {
      * @param args    替换参数
      * @return 替换后的消息
      */
-    static String formatSlfStyle(String message, Object... args) {
+    /**
+     * JDK8 兼容：接口私有静态方法收敛到嵌套类。
+     */
+    final class Internals {
+        private Internals() {
+        }
+
+        static String formatSlfStyle(String message, Object... args) {
         if (Objects.isNull(args) || args.length == 0) {
             return message;
         }
@@ -95,14 +105,9 @@ public interface I18nProvider {
             result = result.substring(0, idx) + Objects.toString(arg, "null") + result.substring(idx + 2);
         }
         return result;
+    
     }
 
-    /**
-     * 判断字符串是否为空白（null、空串或全空白字符，等价 3.0.x StrKit.isBlank）。
-     */
-    static boolean isBlank(String text) {
-        return Objects.isNull(text) || text.trim().isEmpty();
-    }
 
     /**
      * 获取国际化消息
@@ -111,5 +116,7 @@ public interface I18nProvider {
      * @param args 格式化参数
      * @return 国际化后的消息
      */
+    }
+
     String getMessage(String key, Object... args);
 }

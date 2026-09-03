@@ -2,28 +2,32 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.map.MapUtil;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 
 /**
  * Map工具类
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
+@Slf4j
 public class MapKit extends MapUtil {
 
     public <T> T get(Map map, String key) {
-        if (map == null) return null;
+        if (Objects.isNull(map)) {
+            return null;
+        }
         return (T) map.get(key);
     }
 
     public <T> T get(Map map, String key, T defaultValue) {
         T result = get(map, key);
-        if (result == null) return defaultValue;
+        if (Objects.isNull(result)) {
+            return defaultValue;
+        }
         return result;
     }
 
@@ -35,20 +39,24 @@ public class MapKit extends MapUtil {
      * @return
      */
     public <T> T search(Map map, String path) {
-        if (map == null) return null;
+        if (Objects.isNull(map)) {
+            return null;
+        }
         String[] keyArray = path.split("\\.");
         if (keyArray.length == 1) {
             return get(map, keyArray[0]);
         } else {
             Map value = null;
             for (int i = 0; i < keyArray.length - 1; i++) {
-                if (value == null) {
+                if (Objects.isNull(value)) {
                     value = get(map, keyArray[i]);
                 } else if (value.containsKey(keyArray[i])) {
                     value = (Map) value.get(keyArray[i]);
                 }
             }
-            if (value == null) return null;
+            if (Objects.isNull(value)) {
+                return null;
+            }
             return (T) value.get(keyArray[keyArray.length - 1]);
         }
     }
@@ -62,12 +70,14 @@ public class MapKit extends MapUtil {
      */
     public <T> T search(Map map, String keyword, T defaultValue) {
         T result = search(map, keyword);
-        if (result == null) return defaultValue;
+        if (Objects.isNull(result)) {
+            return defaultValue;
+        }
         return result;
     }
 
     public boolean has(Map map, String keyword) {
-        return search(map, keyword) != null;
+        return Objects.nonNull(search(map, keyword));
     }
 
     public <T> T of(Object obj) {
@@ -88,7 +98,7 @@ public class MapKit extends MapUtil {
                         Object fieldValue = field.get(o);
                         map.put(fieldName, fieldValue);
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        log.warn("Read field failed: {}", field.getName(), e);
                     }
                 }
                 list.add(map);
@@ -108,7 +118,7 @@ public class MapKit extends MapUtil {
                     Object fieldValue = field.get(obj);
                     map.put(fieldName, fieldValue);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    log.warn("Read field failed: {}", field.getName(), e);
                 }
             }
             return (T) map;

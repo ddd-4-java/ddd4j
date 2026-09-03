@@ -17,8 +17,6 @@ package io.ddd4j.guice.cqrs;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +44,7 @@ public class GuiceInMemoryProjectionPositionRepository implements ProjectionPosi
 
     @Override
     public List<ProjectionPosition> findAll() {
-        return Collections.unmodifiableList(new java.util.ArrayList<>(store.values()));
+        return List.copyOf(store.values());
     }
 
     @Override

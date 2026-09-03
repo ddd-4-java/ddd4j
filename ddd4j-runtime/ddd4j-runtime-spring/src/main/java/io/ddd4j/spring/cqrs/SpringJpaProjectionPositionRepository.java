@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.spring.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
@@ -67,19 +53,9 @@ public class SpringJpaProjectionPositionRepository
         jpaRepository.deleteById(streamId);
     }
 
-    /**
-     * 重置指定投影位置到 0（重新拉取全量事件）。
-     * <p>
-     * 方法体为空是正确的：Spring Data JPA 通过 {@link Query} 注解直接执行 JPQL UPDATE 语句，
-     * 不需要方法体内的代码。{@link Modifying} 标记这是一个修改型查询（非 SELECT），
-     * Spring Data 在事务内执行该 JPQL 并自动提交。
-     *
-     * @param streamId 投影流 ID
-     */
     @Override
     @Modifying
     @Query("UPDATE SpringJpaProjectionPosition p SET p.nextEventNumber = 0 WHERE p.streamId = :streamId")
     public void resetToZero(@Param("streamId") String streamId) {
-        // 由 Spring Data JPA 执行 @Query 中的 JPQL，方法体留空
     }
 }

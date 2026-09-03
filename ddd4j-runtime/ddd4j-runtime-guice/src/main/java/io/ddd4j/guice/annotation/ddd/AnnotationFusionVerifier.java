@@ -16,10 +16,9 @@ package io.ddd4j.guice.annotation.ddd;
 
 import com.google.inject.Singleton;
 import io.ddd4j.annotation.ddd.DDDAnnotation;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 独立验证器：验证 ddd4j-runtime-guice 内聚的 DDD 注解与 Guice @Singleton 元注解融合。
@@ -27,9 +26,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public final class AnnotationFusionVerifier {
-
-    private static final Logger log = LoggerFactory.getLogger(AnnotationFusionVerifier.class);
 
     private AnnotationFusionVerifier() {
     }

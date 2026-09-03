@@ -15,10 +15,9 @@
 package io.ddd4j.guice.aspect;
 
 import io.ddd4j.core.context.ThreadContext;
+import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 异步方法 ThreadContext 清理拦截器（等价于 Spring 的 AsyncAspect）。
@@ -35,9 +34,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class AsyncCleanupInterceptor implements MethodInterceptor {
-
-    private static final Logger log = LoggerFactory.getLogger(AsyncCleanupInterceptor.class);
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {

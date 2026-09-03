@@ -23,12 +23,11 @@ import com.google.inject.Singleton;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.guice.command.GuiceCommandBus;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ddd4j Command Bus Guice module.
@@ -49,9 +48,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.x
  */
+@Slf4j
 public class Ddd4jCommandGuiceModule extends AbstractModule {
-
-    private static final Logger log = LoggerFactory.getLogger(Ddd4jCommandGuiceModule.class);
 
     @Override
     protected void configure() {

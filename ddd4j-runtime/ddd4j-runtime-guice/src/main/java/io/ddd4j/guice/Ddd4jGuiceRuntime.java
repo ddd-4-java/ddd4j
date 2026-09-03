@@ -27,9 +27,9 @@ import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Collections;
 
 /**
  * Guice 容器与 ddd4j 全局 SPI 的生命周期桥梁。

@@ -1,5 +1,7 @@
 package io.ddd4j.data.eventstore.jpa;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
@@ -54,7 +56,7 @@ public class JpaEventStore implements EventStore {
     private final EventPayloadSerializer serializer;
 
     public JpaEventStore(EntityManager entityManager) {
-        this(entityManager, new EventPayloadSerializer());
+        this(entityManager, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     public JpaEventStore(EntityManager entityManager, EventPayloadSerializer serializer) {

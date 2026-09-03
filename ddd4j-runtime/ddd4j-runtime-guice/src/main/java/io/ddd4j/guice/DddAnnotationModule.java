@@ -20,14 +20,13 @@ import com.google.inject.Singleton;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * DDD 注解扫描绑定模块：用 ClassGraph 扫描 DDD 注解标注的类并绑定到 Guice。
@@ -35,9 +34,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public class DddAnnotationModule extends AbstractModule {
-
-    private static final Logger log = LoggerFactory.getLogger(DddAnnotationModule.class);
 
     private static final String[] DDD_ANNOTATION_NAMES = {
             "io.ddd4j.guice.annotation.ddd.DomainService",

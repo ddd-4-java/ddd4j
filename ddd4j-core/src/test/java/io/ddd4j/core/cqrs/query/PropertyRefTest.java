@@ -9,9 +9,9 @@ class PropertyRefTest {
     @Test
     void shouldResolveSerializableGetterReferenceToDomainProperty() {
         PropertyRef property = PropertyRef.domain((SFunction<TestAggregate, String>) TestAggregate::getName);
-        assertEquals(PropertySpace.DOMAIN, property.getSpace());
-        assertEquals(TestAggregate.class, property.getOwnerType());
-        assertEquals("name", property.getProperty());
+        assertEquals(PropertySpace.DOMAIN, property.space());
+        assertEquals(TestAggregate.class, property.ownerType());
+        assertEquals("name", property.property());
     }
     private static final class TestAggregate {
         private final String name = "name";

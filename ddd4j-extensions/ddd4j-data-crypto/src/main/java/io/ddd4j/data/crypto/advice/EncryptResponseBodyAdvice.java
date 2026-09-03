@@ -90,7 +90,7 @@ public class EncryptResponseBodyAdvice implements ResponseBodyAdvice<ApiRestResp
 
         String encryptText = aes.encryptHex(dataText);
 
-        return ApiRestResponse.of(body.getCode(), body.getStatus(), body.getMessage(), encryptText);
+        return ApiRestResponse.of(body.getCode(), body.getMessage(), encryptText);
     }
 
 }

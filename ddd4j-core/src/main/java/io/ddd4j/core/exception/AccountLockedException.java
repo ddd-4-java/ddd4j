@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import java.io.Serial;
 
 /**
  * 账号被锁定异常（短时间内多次失败锁定）。
@@ -29,7 +30,6 @@ package io.ddd4j.core.exception;
  * @since 3.0.0
  */
 public class AccountLockedException extends AuthenticationException {
-
     private static final long serialVersionUID = 1L;
 
     public AccountLockedException(String message) {

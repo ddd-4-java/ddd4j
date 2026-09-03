@@ -17,6 +17,8 @@ package io.ddd4j.core.cqrs.query;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.util.SFunction;
+import io.ddd4j.kit.lang.CollKit;
+import io.ddd4j.kit.text.StrPool;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,33 +32,12 @@ import java.util.Optional;
  * <p>该作用域只负责构造 ORM 无关的查询 AST，不持有 ORM Wrapper，也不把 PO
  * 元数据写入领域模型。Repository 执行时必须再次校验 PO 类型。
  *
- * <p>1.0.x（JDK8）实现说明：3.0.x 版本依赖 ddd4j-kit 的 StrPool/CollKit，
- * 此处以私有常量与纯 JDK8 判空替代（操作符取值与 3.0.x StrPool 完全一致）。
- *
  * @param <M> 聚合根类型
  * @param <P> 持久化对象类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
 public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
-
-    // ==================== 查询操作符（与 3.0.x kit StrPool 取值一致） ====================
-    private static final String EQUALS = "=";
-    private static final String NOT_EQUALS = "<>";
-    private static final String LIKE = "LIKE";
-    private static final String LIKE_LEFT = "LIKE_LEFT";
-    private static final String LIKE_RIGHT = "LIKE_RIGHT";
-    private static final String NOT_LIKE = "NOT_LIKE";
-    private static final String GT = ">";
-    private static final String GE = ">=";
-    private static final String LT = "<";
-    private static final String LE = "<=";
-    private static final String IN = "IN";
-    private static final String NOT_IN = "NOT_IN";
-    private static final String IS_NULL = "IS_NULL";
-    private static final String IS_NOT_NULL = "IS_NOT_NULL";
-    private static final String ASC = "ASC";
-    private static final String DESC = "DESC";
 
     private final Query<M> query;
     private final Class<P> persistenceType;
@@ -67,79 +48,79 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
     }
 
     public PersistenceQueryScope<M, P> eq(SFunction<P, ?> property, Object value) {
-        return condition(true, property, EQUALS, value);
+        return condition(true, property, StrPool.EQUALS, value);
     }
 
     public PersistenceQueryScope<M, P> eq(boolean condition, SFunction<P, ?> property, Object value) {
-        return condition(condition, property, EQUALS, value);
+        return condition(condition, property, StrPool.EQUALS, value);
     }
 
     public PersistenceQueryScope<M, P> ne(SFunction<P, ?> property, Object value) {
-        return condition(true, property, NOT_EQUALS, value);
+        return condition(true, property, StrPool.NOT_EQUALS, value);
     }
 
     public PersistenceQueryScope<M, P> like(SFunction<P, ?> property, Object value) {
-        return condition(true, property, LIKE, value);
+        return condition(true, property, StrPool.LIKE, value);
     }
 
     public PersistenceQueryScope<M, P> likeLeft(SFunction<P, ?> property, Object value) {
-        return condition(true, property, LIKE_LEFT, value);
+        return condition(true, property, StrPool.LIKE_LEFT, value);
     }
 
     public PersistenceQueryScope<M, P> likeRight(SFunction<P, ?> property, Object value) {
-        return condition(true, property, LIKE_RIGHT, value);
+        return condition(true, property, StrPool.LIKE_RIGHT, value);
     }
 
     public PersistenceQueryScope<M, P> notLike(SFunction<P, ?> property, Object value) {
-        return condition(true, property, NOT_LIKE, value);
+        return condition(true, property, StrPool.NOT_LIKE, value);
     }
 
     public PersistenceQueryScope<M, P> gt(SFunction<P, ?> property, Object value) {
-        return condition(true, property, GT, value);
+        return condition(true, property, StrPool.GT, value);
     }
 
     public PersistenceQueryScope<M, P> ge(SFunction<P, ?> property, Object value) {
-        return condition(true, property, GE, value);
+        return condition(true, property, StrPool.GE, value);
     }
 
     public PersistenceQueryScope<M, P> lt(SFunction<P, ?> property, Object value) {
-        return condition(true, property, LT, value);
+        return condition(true, property, StrPool.LT, value);
     }
 
     public PersistenceQueryScope<M, P> le(SFunction<P, ?> property, Object value) {
-        return condition(true, property, LE, value);
+        return condition(true, property, StrPool.LE, value);
     }
 
     public PersistenceQueryScope<M, P> between(SFunction<P, ?> property, Object start, Object end) {
-        condition(Objects.nonNull(start), property, GE, start);
-        return condition(Objects.nonNull(end), property, LE, end);
+        condition(Objects.nonNull(start), property, StrPool.GE, start);
+        return condition(Objects.nonNull(end), property, StrPool.LE, end);
     }
 
     public PersistenceQueryScope<M, P> in(SFunction<P, ?> property, Collection<?> values) {
-        return condition(isNotEmpty(values), property, IN,
-                Objects.isNull(values) ? null : new ArrayList<Object>(values));
+        return condition(CollKit.isNotEmpty(values), property, StrPool.IN,
+                Objects.isNull(values) ? null : new ArrayList<>(values));
     }
 
     public PersistenceQueryScope<M, P> notIn(SFunction<P, ?> property, Collection<?> values) {
-        return condition(isNotEmpty(values), property, NOT_IN,
-                Objects.isNull(values) ? null : new ArrayList<Object>(values));
+        return condition(CollKit.isNotEmpty(values), property, StrPool.NOT_IN,
+                Objects.isNull(values) ? null : new ArrayList<>(values));
     }
 
     public PersistenceQueryScope<M, P> isNull(SFunction<P, ?> property) {
-        return condition(true, property, IS_NULL, null);
+        return condition(true, property, StrPool.IS_NULL, null);
     }
 
     public PersistenceQueryScope<M, P> isNotNull(SFunction<P, ?> property) {
-        return condition(true, property, IS_NOT_NULL, null);
+        return condition(true, property, StrPool.IS_NOT_NULL, null);
     }
 
     public PersistenceQueryScope<M, P> orderByAsc(SFunction<P, ?> property) {
-        query.addOrderBy(reference(property), ASC);
+        query.addOrderBy(reference(property), StrPool.ASC);
         return this;
     }
 
     public PersistenceQueryScope<M, P> orderByDesc(SFunction<P, ?> property) {
-        query.addOrderBy(reference(property), DESC);
+        query.addOrderBy(reference(property), StrPool.DESC);
         return this;
     }
 
@@ -162,12 +143,24 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
         return query;
     }
 
-    // 说明：3.0.x 版本另有 list()/page()/one()/oneOpt()/count() 执行方法，依赖 3.0.x Query 的
-    // Repository 执行绑定（674 行完整实现）。1.0.x Query 为纯条件模型（无执行绑定），
-    // 故本契约仅移植查询构造 DSL；执行请通过 domain() 取得 Query 后由业务仓储完成。
+    public List<M> list() {
+        return query.list();
+    }
 
-    private static boolean isNotEmpty(Collection<?> collection) {
-        return Objects.nonNull(collection) && !collection.isEmpty();
+    public Page<M> page() {
+        return query.page();
+    }
+
+    public M one() {
+        return query.one();
+    }
+
+    public Optional<M> oneOpt() {
+        return query.oneOpt();
+    }
+
+    public long count() {
+        return query.count();
     }
 
     private PersistenceQueryScope<M, P> condition(boolean condition, SFunction<P, ?> property,

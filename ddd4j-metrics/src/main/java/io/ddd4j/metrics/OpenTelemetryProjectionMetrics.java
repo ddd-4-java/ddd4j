@@ -15,8 +15,8 @@
 package io.ddd4j.metrics;
 
 import io.ddd4j.core.constant.ProjectionConstants;
-import io.ddd4j.kit.text.StrPool;
 import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
+import io.ddd4j.kit.text.StrPool;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.DoubleHistogram;

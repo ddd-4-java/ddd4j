@@ -449,7 +449,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
      *         .map(StoredEvent::event)
      *         .map(e -> (DomainEvent<?>) e)
-     *         .toList();
+     *         .collect(Collectors.toList());
      * order.loadFromHistory(history);
      * }</pre>
      *

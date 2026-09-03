@@ -121,7 +121,7 @@ public final class DomainModelHelper {
      * 移除 Domain Model 缓存（用于测试或热加载）。
      */
     public static void remove(Class<?> modelClass) {
-        MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType(), modelClass));
+        MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType, modelClass));
     }
 
     /**
@@ -131,14 +131,7 @@ public final class DomainModelHelper {
         MODEL_INFO_CACHE.clear();
     }
 
-    /**
-     * 缓存键（Domain Model + 持久化类型二元组）。
-     *
-     * <p>1.0.x（JDK8）实现说明：3.0.x 中本类为 record，JDK8 无 record 语法，
-     * 降级为 final class + 手写 equals/hashCode，语义保持一致。
-     */
     private static final class ModelMappingKey {
-
         private final Class<?> modelType;
         private final Class<?> persistenceType;
 
@@ -147,26 +140,17 @@ public final class DomainModelHelper {
             this.persistenceType = persistenceType;
         }
 
-        private Class<?> modelType() {
-            return modelType;
-        }
-
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof ModelMappingKey)) {
-                return false;
-            }
+            if (this == o) return true;
+            if (!(o instanceof ModelMappingKey)) return false;
             ModelMappingKey that = (ModelMappingKey) o;
-            return Objects.equals(modelType, that.modelType)
-                    && Objects.equals(persistenceType, that.persistenceType);
+            return modelType.equals(that.modelType) && persistenceType.equals(that.persistenceType);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(modelType, persistenceType);
+            return 31 * modelType.hashCode() + persistenceType.hashCode();
         }
     }
 }

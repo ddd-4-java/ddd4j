@@ -15,6 +15,7 @@
 package io.ddd4j.core.ddd.model.metadata;
 
 import io.ddd4j.annotation.orm.DomainField;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
@@ -99,11 +100,11 @@ public class DomainModelInfo<M> {
         DomainField annotation = field.getAnnotation(DomainField.class);
         if (Objects.nonNull(annotation)) {
             // 优先级 1：直接声明 column
-            if (hasText(annotation.column())) {
+            if (StrKit.hasText(annotation.column())) {
                 return annotation.column();
             }
             // 优先级 2：通过 poField 查找
-            if (hasText(annotation.poField())) {
+            if (StrKit.hasText(annotation.poField())) {
                 String col = provider.apply(annotation.poField());
                 if (Objects.nonNull(col)) {
                     return col;
@@ -137,13 +138,6 @@ public class DomainModelInfo<M> {
     public String getPoColumn(String property) {
         DomainFieldInfo info = findField(property);
         return Objects.nonNull(info) ? info.getPoColumn() : null;
-    }
-
-    /**
-     * 判断字符串是否有有效文本（非 null 且包含非空白字符，等价 3.0.x StrKit.hasText）。
-     */
-    private static boolean hasText(String text) {
-        return Objects.nonNull(text) && !text.trim().isEmpty();
     }
 
     /**

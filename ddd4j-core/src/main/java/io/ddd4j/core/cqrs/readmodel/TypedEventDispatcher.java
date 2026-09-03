@@ -14,8 +14,10 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
+import io.ddd4j.kit.lang.CollKit;
+import io.ddd4j.kit.lang.StrKit;
+
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -24,9 +26,6 @@ import java.util.Objects;
  * 轻量类型事件分发器。
  *
  * <p>用于替代业务代码里大量 {@code instanceof} 分支，保持读侧投影处理逻辑清晰。
- *
- * <p>1.0.x（JDK8）实现说明：3.0.x 版本依赖 ddd4j-kit 的 StrKit/CollKit 与
- * {@code Map.copyOf}（Java 10+），此处降级为纯 JDK8 实现，语义保持一致。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -45,7 +44,7 @@ public class TypedEventDispatcher {
     }
 
     public int dispatchAll(Collection<? extends TypedEvent> events) {
-        if (isEmpty(events)) {
+        if (CollKit.isEmpty(events)) {
             return 0;
         }
         int dispatched = 0;
@@ -58,7 +57,7 @@ public class TypedEventDispatcher {
     }
 
     public boolean dispatch(String eventType, Object event) {
-        if (isBlank(eventType) || Objects.isNull(event)) {
+        if (StrKit.isBlank(eventType) || Objects.isNull(event)) {
             return false;
         }
         TypedEventHandler<?> handler = handlers.get(eventType);
@@ -75,25 +74,17 @@ public class TypedEventDispatcher {
 
     private Map<String, TypedEventHandler<?>> indexHandlers(Collection<? extends TypedEventHandler<?>> eventHandlers) {
         Map<String, TypedEventHandler<?>> indexedHandlers = new LinkedHashMap<>();
-        if (isEmpty(eventHandlers)) {
-            return Collections.unmodifiableMap(indexedHandlers);
+        if (CollKit.isEmpty(eventHandlers)) {
+            return Map.copyOf(indexedHandlers);
         }
         for (TypedEventHandler<?> handler : eventHandlers) {
             TypedEventHandler<?> safeHandler = Objects.requireNonNull(handler, "handler must not be null");
-            if (isBlank(safeHandler.getEventType())) {
+            if (StrKit.isBlank(safeHandler.getEventType())) {
                 throw new IllegalArgumentException("handler eventType must not be blank");
             }
             indexedHandlers.put(safeHandler.getEventType(), safeHandler);
         }
-        return Collections.unmodifiableMap(indexedHandlers);
-    }
-
-    private static boolean isEmpty(Collection<?> collection) {
-        return Objects.isNull(collection) || collection.isEmpty();
-    }
-
-    private static boolean isBlank(String text) {
-        return Objects.isNull(text) || text.trim().isEmpty();
+        return Map.copyOf(indexedHandlers);
     }
 
     private <E> void invoke(TypedEventHandler<E> handler, Object event) {

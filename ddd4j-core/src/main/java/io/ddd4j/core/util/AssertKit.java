@@ -358,8 +358,7 @@ public class AssertKit {
         } else if (object.getClass().isArray()) {
             return Array.getLength(object) == 0;
         } else if (object instanceof String) {
-            String text = (String) object;
-            return Objects.isNull(text) || text.isEmpty();
+            return io.ddd4j.kit.lang.StrKit.isEmpty(((String) object));
         } else if (object instanceof Map) {
             return ((Map<?, ?>) object).isEmpty();
         } else if (object instanceof Optional) {

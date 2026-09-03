@@ -1,5 +1,6 @@
 package io.ddd4j.data.eventstore.r2dbc;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncEventStore;
 import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
@@ -119,7 +120,7 @@ public class R2dbcEventStore implements AsyncEventStore {
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     public R2dbcEventStore(ConnectionFactory connectionFactory) {
-        this(connectionFactory, new EventPayloadSerializer());
+        this(connectionFactory, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     public R2dbcEventStore(ConnectionFactory connectionFactory, EventPayloadSerializer serializer) {

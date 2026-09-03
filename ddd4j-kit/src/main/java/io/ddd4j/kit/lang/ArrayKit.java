@@ -4,23 +4,19 @@ import cn.hutool.core.util.ArrayUtil;
 import lombok.experimental.UtilityClass;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * 数组工具类
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
 public class ArrayKit extends ArrayUtil {
 
     public <T> T[] convert(Collection<T> coll) {
-        if (coll == null || coll.size() == 0) {
+        if (Objects.isNull(coll) || coll.size() == 0) {
             return null;
         }
         Class tClass = null;
@@ -48,12 +44,13 @@ public class ArrayKit extends ArrayUtil {
         }
         array = CollKit.convert(CollKit.convert(array).stream().sorted().collect(Collectors.toList()));
     }
+
     public <T> boolean isNotEmpty(T[] array) {
-        return null != array && array.length != 0;
+        return Objects.nonNull(array) && array.length != 0;
     }
 
     public <T> boolean isEmpty(T[] array) {
-        return null == array || array.length == 0;
+        return Objects.isNull(array) || array.length == 0;
     }
 
 }

@@ -1,62 +1,117 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
+
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 开发与测试使用的线程安全内存事件存储。
+ * 内存事件存储默认实现（CQRS 写侧）。
  *
- * <p>{@code readAll} 通过 {@link NavigableMap} 按全局 position 索引实现
- * O(limit) 复杂度（回填自 3.0.x 性能优化），避免全流扫描 + 排序。
+ * <p>按聚合类型与聚合 ID 存储事件列表，支持 append + read + readAll。
+ * 并发安全：{@code append} 使用 {@code synchronized} 保证乐观版本校验的原子性，
+ * {@code read} / {@code readAll} 无锁读取。
+ *
+ * <h3>性能优化（M19）</h3>
+ * <p>{@code readAll} 通过 {@link NavigableMap} 按全局 position 索引，
+ * 实现 O(limit) 复杂度，避免全量扫描 + 排序。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.0
  */
-public final class InMemoryEventStore implements EventStore {
-    private final Map<String, List<StoredEvent>> streams = new ConcurrentHashMap<String, List<StoredEvent>>();
-    /** 全局 position → StoredEvent 索引（用于 readAll 高效分页）。 */
-    private final NavigableMap<Long, StoredEvent> positionIndex = new ConcurrentSkipListMap<Long, StoredEvent>();
-    private long nextPosition = 1L;
-    @Override public synchronized void append(String aggregateType, AggregateRootId aggregateId, List<? extends DomainEvent<?>> events, long expectedVersion) {
-        Objects.requireNonNull(aggregateType, "aggregateType must not be null"); Objects.requireNonNull(aggregateId, "aggregateId must not be null"); Objects.requireNonNull(events, "events must not be null");
-        if (events.isEmpty()) return;
-        String key = aggregateType + "::" + aggregateId.asString();
-        List<StoredEvent> stream = streams.get(key);
-        long actualVersion = stream == null ? 0L : stream.size();
-        if (actualVersion != expectedVersion) throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
-        if (stream == null) { stream = new ArrayList<StoredEvent>(); streams.put(key, stream); }
+public class InMemoryEventStore implements EventStore {
+
+    private final Map<String, List<StoredEvent>> store = new ConcurrentHashMap<>();
+
+    /**
+     * 全局 position → StoredEvent 索引（用于 readAll 高效分页）。
+     */
+    private final NavigableMap<Long, StoredEvent> positionIndex = new java.util.concurrent.ConcurrentSkipListMap<>();
+
+    private final AtomicLong globalPosition = new AtomicLong(0);
+
+    @Override
+    public synchronized void append(String aggregateType, AggregateRootId aggregateId,
+                                    List<? extends DomainEvent<?>> events, long expectedVersion) {
+        String streamKey = streamKey(aggregateType, aggregateId);
+        List<StoredEvent> existing = store.computeIfAbsent(streamKey, k -> new CopyOnWriteArrayList<>());
+        long actualVersion = existing.size();
+        if (actualVersion != expectedVersion) {
+            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
+        }
+        long version = expectedVersion;
         for (DomainEvent<?> event : events) {
-            long version = stream.size() + 1L;
-            long position = nextPosition++;
-            event.setAggregateVersion(new io.ddd4j.core.ddd.event.AggregateVersion(version));
-            StoredEvent stored = new StoredEvent(event.getEventId(), aggregateType, aggregateId, version, position,
-                    event.getEventTimestamp(), event, event.getCorrelationId(), event.getCausationId());
-            stream.add(stored);
-            positionIndex.put(position, stored);
+            long position = globalPosition.incrementAndGet();
+            StoredEvent storedEvent = new StoredEvent(
+                    event.getEventId(),
+                    aggregateType,
+                    aggregateId,
+                    ++version,
+                    position,
+                    ZonedDateTime.now(),
+                    event,
+                    event.getCorrelationId(),
+                    event.getCausationId());
+            existing.add(storedEvent);
+            positionIndex.put(position, storedEvent);
         }
     }
-    @Override public synchronized List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
-        Objects.requireNonNull(aggregateType, "aggregateType must not be null"); Objects.requireNonNull(aggregateId, "aggregateId must not be null");
-        List<StoredEvent> stream = streams.get(aggregateType + "::" + aggregateId.asString());
-        return stream == null ? Collections.<StoredEvent>emptyList() : Collections.unmodifiableList(new ArrayList<StoredEvent>(stream));
+
+    @Override
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
+        return store.getOrDefault(streamKey(aggregateType, aggregateId), Collections.emptyList());
     }
-    @Override public synchronized List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
-        List<StoredEvent> all = read(aggregateType, aggregateId); List<StoredEvent> result = new ArrayList<StoredEvent>();
-        for (StoredEvent event : all) if (event.version() >= fromVersion && event.version() <= toVersion) result.add(event);
+
+    @Override
+    public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
+        List<StoredEvent> events = read(aggregateType, aggregateId);
+        List<StoredEvent> result = new ArrayList<>();
+        for (StoredEvent event : events) {
+            if (event.version() >= fromVersion && event.version() <= toVersion) {
+                result.add(event);
+            }
+        }
         return result;
     }
-    @Override public synchronized List<StoredEvent> readAll(long fromPosition, int limit) {
-        if (limit <= 0) throw new IllegalArgumentException("limit must be positive");
-        List<StoredEvent> result = new ArrayList<StoredEvent>(Math.min(limit, positionIndex.size()));
-        for (StoredEvent event : positionIndex.tailMap(fromPosition, true).values()) {
+
+    @Override
+    public List<StoredEvent> readAll(long fromPosition, int limit) {
+        NavigableMap<Long, StoredEvent> tail = positionIndex.tailMap(fromPosition, true);
+        List<StoredEvent> result = new ArrayList<>(Math.min(limit, tail.size()));
+        int count = 0;
+        for (StoredEvent event : tail.values()) {
+            if (count >= limit) {
+                break;
+            }
             result.add(event);
-            if (result.size() == limit) break;
+            count++;
         }
         return result;
+    }
+
+    private String streamKey(String aggregateType, AggregateRootId aggregateId) {
+        return aggregateType + "#" + aggregateId.asTypedString();
     }
 }

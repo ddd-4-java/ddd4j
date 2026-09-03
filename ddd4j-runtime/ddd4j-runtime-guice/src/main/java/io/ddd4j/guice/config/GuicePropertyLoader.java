@@ -16,13 +16,12 @@ package io.ddd4j.guice.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Guice 属性加载器（等价于 Spring 的 PropertySourcePostProcessor）。
@@ -34,9 +33,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class GuicePropertyLoader extends AbstractModule {
-
-    private static final Logger log = LoggerFactory.getLogger(GuicePropertyLoader.class);
 
     /**
      * 默认配置文件路径
