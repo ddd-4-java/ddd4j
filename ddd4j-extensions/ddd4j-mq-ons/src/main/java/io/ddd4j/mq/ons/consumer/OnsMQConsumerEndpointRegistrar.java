@@ -65,7 +65,7 @@ public class OnsMQConsumerEndpointRegistrar implements AutoCloseable {
      * 批量注册监听器。
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (definitions == null || definitions.isEmpty()) {
+        if (definitions == null || definitions!isPresent()) {
             log.debug("No @MQEventListener definitions found for ONS");
             return;
         }

@@ -86,7 +86,7 @@ public class RabbitMQConsumerEndpointRegistrar {
      * 批量注册监听器（启动阶段调用）。
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (definitions == null || definitions.isEmpty()) {
+        if (definitions == null || definitions!isPresent()) {
             log.debug("No @MQEventListener definitions found for RabbitMQ");
             return;
         }

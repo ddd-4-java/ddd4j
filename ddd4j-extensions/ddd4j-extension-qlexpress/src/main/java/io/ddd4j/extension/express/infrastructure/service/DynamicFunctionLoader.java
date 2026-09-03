@@ -99,7 +99,7 @@ public class DynamicFunctionLoader {
      */
     private void loadClassFunction(RuleDefinition rule) throws Exception {
         String functionClass = rule.getFunctionClass();
-        if (functionClass == null || functionClass.trim().isEmpty()) {
+        if (functionClass == null || functionClass.trim()!isPresent()) {
             log.warn("函数类名为空: {}", rule.getRuleCode());
             return;
         }
@@ -116,7 +116,7 @@ public class DynamicFunctionLoader {
             } else {
                 // 如果是静态方法，通过反射调用
                 String methodName = rule.getFunctionMethod();
-                if (methodName != null && !methodName.trim().isEmpty()) {
+                if (methodName != null && !methodName.trim()!isPresent()) {
                     Method method = clazz.getMethod(methodName, Object[].class);
                     // 创建包装函数
                     CustomFunction wrapper = createMethodWrapper(clazz, method);

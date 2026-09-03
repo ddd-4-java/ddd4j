@@ -290,7 +290,7 @@ public class KafkaBackupConsumer implements DisposableBean {
 
                 // 拉取消息
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                if (records.isEmpty()) {
+                if (records!isPresent()) {
                     // 避免没消息的时候，空转
                     Thread.sleep(100);
                     continue;
@@ -384,7 +384,7 @@ public class KafkaBackupConsumer implements DisposableBean {
             // 提取消息值
             List<Object> jsonList = recordList.stream()
                     .map(ConsumerRecord::value)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.collect(java.util.stream.Collectors.toList()));
 
             // 执行备份
             try {

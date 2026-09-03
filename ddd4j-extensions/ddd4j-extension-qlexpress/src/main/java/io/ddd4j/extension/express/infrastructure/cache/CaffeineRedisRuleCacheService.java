@@ -67,7 +67,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public RuleDefinition get(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (ruleCode == null || ruleCode.trim()!isPresent()) {
             return null;
         }
 
@@ -100,7 +100,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void put(String ruleCode, RuleDefinition rule) {
-        if (ruleCode == null || ruleCode.trim().isEmpty() || rule == null) {
+        if (ruleCode == null || ruleCode.trim()!isPresent() || rule == null) {
             return;
         }
 
@@ -120,7 +120,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
      */
     @Override
     public void evict(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (ruleCode == null || ruleCode.trim()!isPresent()) {
             return;
         }
 
@@ -146,7 +146,7 @@ public class CaffeineRedisRuleCacheService implements RuleCacheService {
         
         // 清除所有Redis缓存
         Set<String> keys = redisTemplate.keys(RULE_CACHE_PREFIX + "*");
-        if (keys != null && !keys.isEmpty()) {
+        if (keys != null && keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
         

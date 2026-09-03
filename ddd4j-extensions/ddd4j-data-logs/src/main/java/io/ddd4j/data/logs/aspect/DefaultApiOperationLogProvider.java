@@ -75,7 +75,7 @@ public class DefaultApiOperationLogProvider implements ApiOperationLogProvider {
         Object[] args = joinPoint.getArgs();
         List<Object> methodArgs = Objects.isNull(args) ? null : Stream.of(args)
                 .filter(arg -> !(arg instanceof ServletRequest && arg instanceof ServletResponse))
-                .collect(Collectors.toList());
+                .collect(Collectors.collect(java.util.stream.Collectors.toList()));
 
         // 5、如果开启日志，则发送日志消息
         this.saveLog(joinPoint, method, apiOperation, rt, ex, stopWatch);

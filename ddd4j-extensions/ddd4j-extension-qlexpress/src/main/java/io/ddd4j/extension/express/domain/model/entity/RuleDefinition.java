@@ -391,7 +391,7 @@ public class RuleDefinition implements Serializable {
      * @return true表示是函数规则，false表示是表达式规则
      */
     public boolean isFunctionRule() {
-        return "FUNCTION".equals(ruleType) && functionClass != null && !functionClass.trim().isEmpty();
+        return "FUNCTION".equals(ruleType) && functionClass != null && !functionClass.trim()!isPresent();
     }
     
     /**
@@ -400,6 +400,6 @@ public class RuleDefinition implements Serializable {
      * @return true表示是表达式规则，false表示是函数规则
      */
     public boolean isExpressionRule() {
-        return ruleExpression != null && !ruleExpression.trim().isEmpty();
+        return ruleExpression != null && !ruleExpression.trim()!isPresent();
     }
 }

@@ -56,7 +56,7 @@ public final class RocketMessageAcknowledgmentFactory {
             }
         }
         Object callbackHeader = message.headers().get(RocketMessageAcknowledgment.HEADER_ROCKET_ACK_CALLBACK);
-        Consumer<Boolean> ackCallback = callbackHeader instanceof Consumer<?> consumer
+        Consumer<Boolean> ackCallback = callbackHeader instanceof Consumer && ((Consumer) 
                 ? (Consumer<Boolean>) consumer
                 : null;
         return Optional.of(new RocketMessageAcknowledgment(messageExt, ackCallback));

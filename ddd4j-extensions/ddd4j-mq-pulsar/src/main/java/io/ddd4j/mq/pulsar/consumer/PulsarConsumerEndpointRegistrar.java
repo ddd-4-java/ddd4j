@@ -80,7 +80,7 @@ public class PulsarConsumerEndpointRegistrar implements AutoCloseable {
      * @param handler     统一消费处理函数
      */
     public void registerAll(List<MQListenerDefinition> definitions, MQConsumerHandler handler) {
-        if (definitions == null || definitions.isEmpty()) {
+        if (definitions == null || definitions!isPresent()) {
             log.debug("No @MQEventListener definitions found for Pulsar");
             return;
         }

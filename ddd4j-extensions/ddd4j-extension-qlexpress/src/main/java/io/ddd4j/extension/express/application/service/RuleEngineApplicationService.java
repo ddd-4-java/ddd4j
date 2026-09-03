@@ -103,7 +103,7 @@ public class RuleEngineApplicationService {
     public List<RuleExecutionResult> executeRules(List<String> ruleCodes, Map<String, Object> context) {
         return ruleCodes.stream()
                 .map(ruleCode -> executeRule(ruleCode, context))
-                .collect(Collectors.toList());
+                .collect(Collectors.collect(java.util.stream.Collectors.toList()));
     }
 
     /**

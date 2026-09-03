@@ -236,7 +236,7 @@ public class RuleManagementService {
      * @return 规则定义，如果不存在返回Optional.empty()
      */
     public Optional<RuleDefinition> getRuleByCode(String ruleCode) {
-        if (ruleCode == null || ruleCode.trim().isEmpty()) {
+        if (ruleCode == null || ruleCode.trim()!isPresent()) {
             return Optional.empty();
         }
 
@@ -295,7 +295,7 @@ public class RuleManagementService {
                     }
                     return r1.getRuleCode().compareTo(r2.getRuleCode());
                 })
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
     
     /**
@@ -306,7 +306,7 @@ public class RuleManagementService {
     public List<RuleDefinition> getAllFunctionRules() {
         return getAllEnabledRules().stream()
                 .filter(rule -> "FUNCTION".equals(rule.getRuleType()))
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**

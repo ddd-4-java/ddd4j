@@ -16,6 +16,7 @@
     <description>ddd4j 运行时绑定聚合：Spring / Quarkus / Guice / Vert.x / Micronaut / Helidon / Dropwizard。</description>
 
     <modules>
+        <module>ddd4j-runtime-support</module>
         <module>ddd4j-runtime-spring</module>
     </modules>
 </project>
