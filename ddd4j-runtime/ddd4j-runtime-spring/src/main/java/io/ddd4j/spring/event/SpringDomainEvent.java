@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.*;
+import java.util.Collections;
 
 /**
  * Spring 领域事件基类（继承 ApplicationEvent）

@@ -88,6 +88,11 @@
         <module>ddd4j-web</module>
         <module>ddd4j-web-testkit</module>
         <module>ddd4j-web-core</module>
+        <module>ddd4j-web-javalin</module>
+        <module>ddd4j-web-vertx</module>
+        <module>ddd4j-web-micronaut</module>
+        <module>ddd4j-web-helidon</module>
+        <module>ddd4j-web-dropwizard</module>
         <module>ddd4j-data-projection-r2dbc</module>
         <module>ddd4j-data-event-store-esdb</module>
         <module>ddd4j-data-event-store-r2dbc</module>

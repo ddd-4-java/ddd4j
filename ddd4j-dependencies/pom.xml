@@ -296,6 +296,8 @@
         <jcl.version>1.1</jcl.version>
         <jcifs.version>3.0.2</jcifs.version>
         <jersey.version>3.1.11</jersey.version>
+        <microprofile-config-api.version>2.0.1</microprofile-config-api.version>
+        <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
         <jedis.version>7.1.0</jedis.version>
@@ -2567,6 +2569,13 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            
+            <!-- https://mvnrepository.com/artifact/io.javalin/javalin -->
+            <dependency>
+                <groupId>io.javalin</groupId>
+                <artifactId>javalin</artifactId>
+                <version>${javalin.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
             <dependency>
@@ -6990,8 +6999,20 @@
                 <artifactId>opentelemetry-sdk-trace</artifactId>
                 <version>${opentelemetry.version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${javax.ws.rs-api.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.eclipse.microprofile.config/microprofile-config-api -->
+            <dependency>
+                <groupId>org.eclipse.microprofile.config</groupId>
+                <artifactId>microprofile-config-api</artifactId>
+                <version>${microprofile-config-api.version}</version>
+            </dependency>
         </dependencies>
-    </dependencyManagement>
+        </dependencyManagement>
 
     <build>
         <pluginManagement>

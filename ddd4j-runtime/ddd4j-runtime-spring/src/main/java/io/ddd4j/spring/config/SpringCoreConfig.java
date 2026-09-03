@@ -41,7 +41,7 @@ public class SpringCoreConfig {
     @Bean
     public RuntimeReadinessRegistry runtimeReadinessRegistry(
             ObjectProvider<ReadinessContributor> readinessContributors) {
-        return new RuntimeReadinessRegistry(readinessContributors.orderedStream().collect(java.util.stream.Collectors.toList()));
+        return new RuntimeReadinessRegistry(readinessContributors.orderedStream().collect(Collectors.toList()));
     }
 
     @Bean

@@ -21,6 +21,7 @@ import org.springframework.beans.*;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.Arrays;
 
 /**
  * Bean 处理工具类。
