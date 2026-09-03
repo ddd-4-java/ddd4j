@@ -15,7 +15,6 @@
 package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.constant.XHeaders;
-import io.ddd4j.kit.web.IpKit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.MDC;
@@ -38,10 +37,12 @@ public class MdcInterceptor implements HandlerInterceptor {
         MDC.put("requestURL", request.getRequestURL().toString());
         MDC.put("requestURI", request.getRequestURI());
         MDC.put("queryString", request.getQueryString());
-        MDC.put("remoteAddr", IpKit.parseRemoteAddr(
-                request.getHeader("X-Forwarded-For"),
-                request.getHeader("X-Real-IP"),
-                request.getRemoteAddr()));
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        String xRealIp = request.getHeader("X-Real-IP");
+        String remoteAddr = xForwardedFor != null && !xForwardedFor.isEmpty()
+                ? xForwardedFor.split(",")[0].trim()
+                : (xRealIp != null && !xRealIp.isEmpty() ? xRealIp : request.getRemoteAddr());
+        MDC.put("remoteAddr", remoteAddr);
         MDC.put("remoteHost", request.getRemoteHost());
         MDC.put("remotePort", String.valueOf(request.getRemotePort()));
         MDC.put("localAddr", request.getLocalAddr());

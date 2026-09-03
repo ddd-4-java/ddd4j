@@ -92,7 +92,7 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
             }
 
             if (feignHeader.autoFillSystemId() && (Objects.isNull(webSystemId) || !org.springframework.util.StringUtils.hasLength(webSystemId))) {
-                String systemId = (Objects.isNull(ThreadContext.get(SYSTEM_ID)) || !ThreadContext.<String>get(SYSTEM_ID).isPresent()) ? "0" : ThreadContext.get(SYSTEM_ID);
+                String systemId = (Objects.isNull(ThreadContext.get(SYSTEM_ID))) ? "0" : ThreadContext.get(SYSTEM_ID);
                 for (String headerSystemId : HEADER_SYSTEM_IDS) {
                     template.header(headerSystemId, systemId);
                 }

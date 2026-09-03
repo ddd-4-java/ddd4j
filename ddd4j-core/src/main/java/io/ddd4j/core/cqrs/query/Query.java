@@ -234,6 +234,43 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
         return Collections.unmodifiableList(setOperations);
     }
 
+    /**
+     * Execute query and return paged results. Stub for 3.0.x API compatibility.
+     * Override in concrete query implementations with actual repository access.
+     */
+    public <T> T page() {
+        throw new UnsupportedOperationException("page() not implemented for " + getClass().getSimpleName());
+    }
+
+    /**
+     * Execute query and return list results. Stub for 3.0.x API compatibility.
+     */
+    public List<M> list() {
+        throw new UnsupportedOperationException("list() not implemented for " + getClass().getSimpleName());
+    }
+
+    /**
+     * Execute query and return first result. Stub for 3.0.x API compatibility.
+     */
+    public M first() {
+        List<M> results = list();
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    /**
+     * Execute query and check existence. Stub for 3.0.x API compatibility.
+     */
+    public boolean exist() {
+        return count() > 0;
+    }
+
+    /**
+     * Execute query and return count. Stub for 3.0.x API compatibility.
+     */
+    public long count() {
+        throw new UnsupportedOperationException("count() not implemented for " + getClass().getSimpleName());
+    }
+
     private <Q extends Query<M>> Q addCondition(boolean condition, SFunction<M, ?> column, String operator, Object value) {
         if (condition) {
             conditions.add(new LambdaCondition(PropertyRef.domain(column), operator, value));

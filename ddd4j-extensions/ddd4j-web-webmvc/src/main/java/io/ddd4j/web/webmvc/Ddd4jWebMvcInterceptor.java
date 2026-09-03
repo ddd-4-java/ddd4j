@@ -105,7 +105,8 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
                                 Exception exception) {
         Object attribute = request.getAttribute(STATE_ATTRIBUTE);
         boolean successful = Objects.isNull(exception) && response.getStatus() < 400;
-        if (attribute instanceof RequestState && (RequestState) attribute) {
+        if (attribute instanceof RequestState) {
+            RequestState state = (RequestState) attribute;
             state.close(successful);
             request.removeAttribute(STATE_ATTRIBUTE);
         }

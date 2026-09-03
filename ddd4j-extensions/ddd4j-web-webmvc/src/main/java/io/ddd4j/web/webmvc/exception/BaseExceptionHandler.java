@@ -69,7 +69,7 @@ public abstract class BaseExceptionHandler {
     protected void logException(Exception ex) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {
-            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), IpKit.getRemoteAddr(request));
+            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), request.getRemoteAddr());
         }
         log.error(ex.getMessage(), ex);
     }
@@ -77,7 +77,7 @@ public abstract class BaseExceptionHandler {
     protected void logException(Exception ex, Map<String, Object> detailMap) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {
-            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), IpKit.getRemoteAddr(request));
+            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), request.getRemoteAddr());
         }
         for (Map.Entry<String, Object> entry : detailMap.entrySet()) {
             Object val = entry.getValue();

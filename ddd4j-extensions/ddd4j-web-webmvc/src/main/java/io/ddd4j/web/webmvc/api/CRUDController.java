@@ -41,14 +41,14 @@ import java.util.Objects;
 @Deprecated
 @Slf4j(topic = "### BASE-WEB : CRUDController ###")
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class CRUDController<M extends AggregateRoot<?>, Q extends Query<M>> {
+public class CRUDController<M extends AggregateRoot<ID>, Q extends Query<M>, ID extends Serializable> {
 
-    protected Repository<M, Serializable> repository;
+    protected Repository<M, ID> repository;
 
-    private Repository<M, Serializable> getRepository() {
+    private Repository<M, ID> getRepository() {
         if (Objects.isNull(this.repository)) {
             Class<M> modelClass = ReflectKit.getSuperClassGenericType(this.getClass(), 0);
-            this.repository = (Repository<M, Serializable>) RepositoryRegistry.repository(modelClass);
+            this.repository = (Repository<M, ID>) RepositoryRegistry.repository(modelClass);
         }
         if (Objects.isNull(this.repository)) {
             log.error("未找到实体仓库");
@@ -83,7 +83,7 @@ public class CRUDController<M extends AggregateRoot<?>, Q extends Query<M>> {
 
     @GetMapping("/detail/{id}")
     public M detail(@PathVariable("id") String id) {
-        return getRepository().findById(id).orElse(null);
+        return getRepository().findById((ID) id).orElse(null);
     }
 
     @PostMapping({"/save", "/create"})
@@ -108,6 +108,6 @@ public class CRUDController<M extends AggregateRoot<?>, Q extends Query<M>> {
 
     @PostMapping({"/delete/{id}", "/remove/{id}"})
     public void delete(@PathVariable("id") String id) {
-        getRepository().deleteById(id);
+        getRepository().deleteById((ID) id);
     }
 }

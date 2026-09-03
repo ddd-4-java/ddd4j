@@ -51,7 +51,7 @@ public class GlobalRestExceptionAdvice {
     @ExceptionHandler({BindException.class})
     public R<String> bindException(HttpServletRequest request, Model model, BindException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
-        List<String> errList = e.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.collect(java.util.stream.Collectors.toList()));
+        List<String> errList = e.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
         log.error("请求参数校验失败：{} {}\n**StackTraces:** {}", errList, model, projectStackTrace);
         return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), String.join(",", errList));
     }
