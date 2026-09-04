@@ -27,6 +27,7 @@
         <subproject>ddd4j-web-dropwizard</subproject>
         <subproject>ddd4j-web-webflux</subproject>
         <subproject>ddd4j-web-webmvc</subproject>
+        <subproject>ddd4j-web-validation</subproject>
     </subprojects>
 
 </project>
