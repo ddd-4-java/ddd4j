@@ -63,6 +63,13 @@
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     </properties>
 
+    <!--
+        1.0.x 模块聚合策略：
+        顶层 module 仅声明"聚合根 + 真正可编译的子模块"。
+        ddd4j-{auth,data,web,runtime,mq} 是聚合根，子模块由其 pom 管理（与 2.0.x/3.0.x 对齐）。
+        2026-09-04 删除原根 pom 中 11 个 data-* 空壳子模块声明（cqrs/cqrs-spring/event-store-*x4/projection-*x5）
+        —— 这些子目录虽存在但无 pom.xml，编译失败；待从 2.0.x 补完 pom 后再独立顶层构建。
+    -->
     <modules>
         <module>ddd4j-bom</module>
         <module>ddd4j-dependencies</module>
@@ -71,33 +78,23 @@
         <module>ddd4j-core</module>
         <!-- 工具箱：继承式增强 Hutool -->
         <module>ddd4j-kit</module>
-        <!-- 数据层：BaseRepositoryImpl 四泛型封装 MyBatis Plus -->
+        <!-- 数据层聚合根：BaseRepositoryImpl 四泛型封装 MyBatis Plus（子模块由 ddd4j-data/pom.xml 管理） -->
         <module>ddd4j-data</module>
-        <!-- 事件存储：EventStore/AsyncEventStore 的 JPA/JDBI/R2DBC 持久化适配器（javax/JDK8 轨道） -->
-        <module>ddd4j-data-event-store-jpa</module>
-        <module>ddd4j-data-event-store-jdbi</module>
+        <!-- 运行时绑定聚合根：spring/quarkus/guice/vertx/micronaut/helidon/dropwizard/support/testkit -->
         <module>ddd4j-runtime</module>
-        <!-- 认证/授权抽象：satoken/security/shiro/datascope/license（聚合根，2026-09-04 与 2.0.x/3.0.x 对齐） -->
+        <!-- 认证/授权聚合根：satoken/security/shiro/datascope/license -->
         <module>ddd4j-auth</module>
         <module>ddd4j-cache</module>
         <module>ddd4j-metrics</module>
-        <module>ddd4j-data-cqrs</module>
-        <module>ddd4j-data-cqrs-spring</module>
-        <module>ddd4j-data-projection</module>
-        <module>ddd4j-data-projection-spring</module>
-        <module>ddd4j-data-projection-jpa</module>
-        <module>ddd4j-data-projection-jdbi</module>
+        <!-- Web 层聚合根：core + webflux + webmvc + validation（其余框架桥接待补 pom） -->
         <module>ddd4j-web</module>
-        <module>ddd4j-data-projection-r2dbc</module>
-        <module>ddd4j-data-event-store-esdb</module>
-        <module>ddd4j-data-event-store-r2dbc</module>
-        <!-- Web 层：拦截器/Session/Feign/多租户 -->
-        <!-- 消息队列：5 种 MQ 统一抽象 -->
+        <!-- 消息队列聚合根：14 broker + core + spring 桥接 -->
         <module>ddd4j-mq</module>
-        <!-- 监控告警：钉钉/企微机器人 + 日志告警 -->
+        <!-- 监控告警：钉钉/企微机器人 + 日志告警（独立 jar 模块） -->
         <module>ddd4j-monitor</module>
-        <!-- 纯 DDD 轨道：ddd4j 原生 DDD/CQRS/Event Sourcing，领域层零 MyBatis Plus 依赖 -->
+        <!-- 纯 DDD 轨道：ddd4j 原生 DDD/CQRS/Event Sourcing，领域层零 MyBatis Plus 依赖（1.0.x 独有） -->
         <module>ddd4j-ddd</module>
+        <!-- 扩展组件聚合根：仅 7 模块（与 2.0.x 对齐）+ 3 个 1.0.x 独有保留 -->
         <module>ddd4j-extensions</module>
         <module>ddd4j-parent</module>
     </modules>
