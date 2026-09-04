@@ -246,4 +246,9 @@ public class BaiduRegionTemplate {
     }
 
 
+
+    private static long secondsUntilNextDay() {
+        java.time.LocalDateTime tomorrowStart = java.time.LocalDate.now().plusDays(1).atStartOfDay();
+        return java.time.Duration.between(java.time.LocalDateTime.now(), tomorrowStart).getSeconds();
+    }
 }

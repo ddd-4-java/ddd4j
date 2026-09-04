@@ -147,4 +147,8 @@ public class GlobalSequence extends Sequence {
         }
     }
 
+
+    public String nextIdStr() {
+        return snowflake.nextIdStr();
+    }
 }
