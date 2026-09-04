@@ -27,6 +27,7 @@
         <module>ddd4j-web-dropwizard</module>
         <module>ddd4j-web-webflux</module>
         <module>ddd4j-web-webmvc</module>
+        <module>ddd4j-web-validation</module>
     </modules>
 
 </project>
