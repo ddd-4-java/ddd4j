@@ -18,6 +18,7 @@ import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * 登录成功事件（通用鉴权事件）。
@@ -36,5 +37,56 @@ import java.time.Instant;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
-public record AuthSucceededEvent(AuthRequest request, AuthPrincipal principal, String token, Instant occurredAt) {
+public final class AuthSucceededEvent {
+    private final AuthRequest request;
+    private final AuthPrincipal principal;
+    private final String token;
+    private final Instant occurredAt;
+
+    public AuthSucceededEvent(AuthRequest request, AuthPrincipal principal, String token, Instant occurredAt) {
+
+        this.request = request;
+        this.principal = principal;
+        this.token = token;
+        this.occurredAt = occurredAt;
+    }
+
+    public AuthRequest request() {
+        return request;
+    }
+
+    public AuthPrincipal principal() {
+        return principal;
+    }
+
+    public String token() {
+        return token;
+    }
+
+    public Instant occurredAt() {
+        return occurredAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AuthSucceededEvent)) return false;
+        AuthSucceededEvent that = (AuthSucceededEvent) o;
+        return Objects.equals(request, that.request) && Objects.equals(principal, that.principal) && Objects.equals(token, that.token) && Objects.equals(occurredAt, that.occurredAt);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(request);
+result = 31 * result + request.hashCode();
+        result = 31 * result + principal.hashCode();
+        result = 31 * result + token.hashCode();
+        result = 31 * result + occurredAt.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthSucceededEvent{" + request + ", " + principal + ", " + token + ", " + occurredAt + '}';
+    }
 }

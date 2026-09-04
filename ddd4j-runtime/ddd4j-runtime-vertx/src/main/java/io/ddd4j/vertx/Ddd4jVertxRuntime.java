@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.Collections;
 
 /**
  * Vert.x 显式运行时。调用方拥有 Vertx 实例，本类不会代为关闭它。
@@ -35,7 +36,7 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
 
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                             I18nProvider i18nProvider, CommandBus commandBus) {
-        this(vertx, publisher, subjectProvider, i18nProvider, commandBus, List.of());
+        this(vertx, publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
     }
 
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,

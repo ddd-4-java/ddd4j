@@ -110,9 +110,9 @@ class WebCoreContractTest {
     @Test
     void shouldNotReleaseLeaseOwnedByLaterRequest() {
         CacheIdempotencyGuard guard = newGuard("web-core-test");
-        IdempotencyLease expiredLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).orElseThrow();
+        IdempotencyLease expiredLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).get();
         CacheKit.invalidate("web-core-test", "payment-lease");
-        IdempotencyLease activeLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).orElseThrow();
+        IdempotencyLease activeLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).get();
 
         guard.release(expiredLease);
 
@@ -207,11 +207,11 @@ class WebCoreContractTest {
         WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
         WebRequestContext context = requestContext(null);
 
-        WebIdempotencyLifecycle.Scope released = lifecycle.open(context, "release-key").orElseThrow();
+        WebIdempotencyLifecycle.Scope released = lifecycle.open(context, "release-key").get();
         released.close();
         assertThat(lifecycle.open(context, "release-key")).isPresent();
 
-        WebIdempotencyLifecycle.Scope completed = lifecycle.open(context, "complete-key").orElseThrow();
+        WebIdempotencyLifecycle.Scope completed = lifecycle.open(context, "complete-key").get();
         completed.complete();
         completed.close();
         assertThatThrownBy(() -> lifecycle.open(context, "complete-key"))

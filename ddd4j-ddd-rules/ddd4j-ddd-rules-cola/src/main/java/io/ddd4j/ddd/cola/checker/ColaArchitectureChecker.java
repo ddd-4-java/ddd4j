@@ -1,5 +1,8 @@
 package io.ddd4j.ddd.cola.checker;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -56,30 +59,22 @@ public class ColaArchitectureChecker {
     /**
      * COLA 架构必需的四层目录名称
      */
-    private static final Set<String> REQUIRED_LAYERS = Set.of(
-            "domain", "adapter", "application", "infrastructure"
-    );
+    private static final Set<String> REQUIRED_LAYERS = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("domain", "adapter", "application", "infrastructure")));
 
     /**
      * 领域层（domain）推荐的子包名称
      */
-    private static final Set<String> DOMAIN_SUB_PACKAGES = Set.of(
-            "model", "ability", "gateway", "event"
-    );
+    private static final Set<String> DOMAIN_SUB_PACKAGES = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("model", "ability", "gateway", "event")));
 
     /**
      * 应用层（application）推荐的子包名称
      */
-    private static final Set<String> APPLICATION_SUB_PACKAGES = Set.of(
-            "executor", "query", "extension", "service"
-    );
+    private static final Set<String> APPLICATION_SUB_PACKAGES = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("executor", "query", "extension", "service")));
 
     /**
      * 适配器层（adapter）推荐的子包名称
      */
-    private static final Set<String> ADAPTER_SUB_PACKAGES = Set.of(
-            "persistence", "web", "messaging", "rpc"
-    );
+    private static final Set<String> ADAPTER_SUB_PACKAGES = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("persistence", "web", "messaging", "rpc")));
     /**
      * 违规项列表
      */
@@ -269,25 +264,25 @@ public class ColaArchitectureChecker {
      * 获取 COLA 规范要求的目录结构描述。
      */
     public String getExpectedStructure() {
-        return """
-                COLA 架构目录规范：
-                %s/
-                ├── domain/                  ← 领域层（零外部依赖）
-                │   ├── model/
-                │   ├── ability/
-                │   └── gateway/
-                ├── adapter/                 ← 适配器层（实现 gateway）
-                │   ├── persistence/
-                │   ├── web/
-                │   └── messaging/
-                ├── application/             ← 应用层（编排领域能力）
-                │   ├── executor/
-                │   ├── query/
-                │   └── extension/
-                └── infrastructure/          ← 基础设施层
-                    ├── config/
-                    ├── external/
-                    └── common/
-                """.formatted(basePackage);
+        StringBuilder sb = new StringBuilder();
+        sb.append("COLA 架构目录规范：\n");
+        sb.append(basePackage).append("/\n");
+        sb.append("├── domain/                  ← 领域层（零外部依赖）\n");
+        sb.append("│   ├── model/\n");
+        sb.append("│   ├── ability/\n");
+        sb.append("│   └── gateway/\n");
+        sb.append("├── adapter/                 ← 适配器层（实现 gateway）\n");
+        sb.append("│   ├── persistence/\n");
+        sb.append("│   ├── web/\n");
+        sb.append("│   └── messaging/\n");
+        sb.append("├── application/             ← 应用层（编排领域能力）\n");
+        sb.append("│   ├── executor/\n");
+        sb.append("│   ├── query/\n");
+        sb.append("│   └── extension/\n");
+        sb.append("└── infrastructure/          ← 基础设施层\n");
+        sb.append("    ├── config/\n");
+        sb.append("    ├── external/\n");
+        sb.append("    └── common/");
+        return sb.toString();
     }
 }

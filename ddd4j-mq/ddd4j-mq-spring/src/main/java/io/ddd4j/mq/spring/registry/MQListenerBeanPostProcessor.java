@@ -1,5 +1,8 @@
 package io.ddd4j.mq.spring.registry;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.ArrayList;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.listener.MQListener;
@@ -73,7 +76,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
      * 返回已登记的监听器定义（不可变快照）。
      */
     public List<MQListener> getListeners() {
-        return List.copyOf(listeners);
+        return Collections.unmodifiableList(new ArrayList<>(listeners));
     }
 
     /**
@@ -103,7 +106,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
                 .namespace(namespace)
                 .topic(annotation.topic())
                 .tags(annotation.tags())
-                .supports(List.of(annotation.supports()))
+                .supports(Arrays.asList(annotation.supports()))
                 .separator(annotation.separator())
                 .build();
     }

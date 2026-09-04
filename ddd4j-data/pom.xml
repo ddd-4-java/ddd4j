@@ -13,43 +13,45 @@
     <artifactId>ddd4j-data</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据抽象聚合：（mybatis / mybatis-plus / panache / jpa）+ crypto/external/logs/datascope 扩展。
-    </description>
+    <description>ddd4j 数据层聚合根：cqrs/projection/event-store 各框架实现 + crypto/external/logs/mybatis/mybatisplus/jpa/datascope 扩展（与 2.0.x/3.0.x 拓扑对齐）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
+    <!--
+        2026-09-04 ddd4j-data 转为 packaging=pom 聚合根（与 2.0.x/3.0.x 对齐）：
+        原 ddd4j-data 根 src 的 19 个共享类（annotation/config/typehandlers/旧版 BaseRepositoryImpl）
+        已删除——它们是过时代码：
+        - 6 个 orm 注解已被 ddd4j-annotation/orm 取代
+        - 10 个 typehandlers 已不再使用（MyBatis-Plus 集成移至 ddd4j-data-mybatisplus 子模块）
+        - 旧版 BaseRepositoryImpl 与 ddd4j-data-mybatisplus 子模块重复
+        子模块各自自包含，无外部共享代码需求。
+    -->
+
     <modules>
+        <!--
+            2026-09-04 收敛：
+            - 仅声明 1.0.x JDK 8 行能编译的子模块（11 个）
+            - 移除 quarkus / micronaut / helidon / panache / jpa 等使用 jakarta 命名空间的模块
+              （1.0.x JDK 8 + javax 命名空间基线不兼容）
+            - 移除 11 个空壳子模块（仅 target 残留）
+        -->
+        <!-- cqrs 核心（从 2.0.x 复制补齐 2026-09-04） -->
         <module>ddd4j-data-cqrs</module>
-        <module>ddd4j-data-cqrs-dropwizard</module>
-        <module>ddd4j-data-cqrs-helidon</module>
+        <!-- cqrs 框架桥接（仅 javalin/dropwizard/vertx，quarkus/micronaut/helidon 1.0.x 不兼容） -->
         <module>ddd4j-data-cqrs-javalin</module>
-        <module>ddd4j-data-cqrs-micronaut</module>
-        <module>ddd4j-data-cqrs-quarkus</module>
-        <module>ddd4j-data-cqrs-spring</module>
+        <module>ddd4j-data-cqrs-dropwizard</module>
         <module>ddd4j-data-cqrs-vertx</module>
-        <module>ddd4j-data-crypto</module>
-        <module>ddd4j-data-datascope</module>
-        <module>ddd4j-data-event-store-jpa</module>
-        <module>ddd4j-data-event-store-panache</module>
-        <module>ddd4j-data-event-store-jdbi</module>
-        <module>ddd4j-data-event-store-esdb</module>
-        <module>ddd4j-data-event-store-r2dbc</module>
-        <module>ddd4j-data-external</module>
-        <module>ddd4j-data-jpa</module>
-        <module>ddd4j-data-logs</module>
+        <!-- projection 框架桥接（同上） -->
+        <module>ddd4j-data-projection-javalin</module>
+        <module>ddd4j-data-projection-dropwizard</module>
+        <module>ddd4j-data-projection-vertx</module>
+        <!-- 扩展（mybatis/mybatisplus/crypto/logs/external 均 javax 命名空间） -->
         <module>ddd4j-data-mybatis</module>
         <module>ddd4j-data-mybatisplus</module>
-        <module>ddd4j-data-projection</module>
-        <module>ddd4j-data-projection-dropwizard</module>
-        <module>ddd4j-data-projection-helidon</module>
-        <module>ddd4j-data-projection-javalin</module>
-        <module>ddd4j-data-projection-jpa</module>
-        <module>ddd4j-data-projection-jdbi</module>
-        <module>ddd4j-data-projection-micronaut</module>
-        <module>ddd4j-data-projection-panache</module>
-        <module>ddd4j-data-projection-r2dbc</module>
-        <module>ddd4j-data-projection-quarkus</module>
-        <module>ddd4j-data-projection-spring</module>
-        <module>ddd4j-data-projection-vertx</module>
+        <module>ddd4j-data-crypto</module>
+        <module>ddd4j-data-logs</module>
+        <module>ddd4j-data-external</module>
     </modules>
+
+    <!-- 2026-09-04：ddd4j-data 已转 packaging=pom 聚合根，移除原 jar 模块的 dependencies + build（子模块各自自管） -->
 
 </project>

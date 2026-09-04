@@ -1,5 +1,8 @@
 package io.ddd4j.ddd.clean.checker;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -54,30 +57,22 @@ public class CleanArchitectureChecker {
     /**
      * Clean Architecture 必需的四层目录名称
      */
-    private static final Set<String> REQUIRED_LAYERS = Set.of(
-            "domain", "application", "adapter", "infrastructure"
-    );
+    private static final Set<String> REQUIRED_LAYERS = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("domain", "application", "adapter", "infrastructure")));
 
     /**
      * 领域层（domain）推荐的子包名称
      */
-    private static final Set<String> DOMAIN_SUB_PACKAGES = Set.of(
-            "entity", "valueobject", "repository", "event", "service"
-    );
+    private static final Set<String> DOMAIN_SUB_PACKAGES = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("entity", "valueobject", "repository", "event", "service")));
 
     /**
      * 应用层（application）推荐的子包名称
      */
-    private static final Set<String> APPLICATION_SUB_PACKAGES = Set.of(
-            "service", "command", "query", "port"
-    );
+    private static final Set<String> APPLICATION_SUB_PACKAGES = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("service", "command", "query", "port")));
 
     /**
      * 适配器层（adapter）推荐的子包名称
      */
-    private static final Set<String> ADAPTER_SUB_PACKAGES = Set.of(
-            "persistence", "web", "messaging", "gateway"
-    );
+    private static final Set<String> ADAPTER_SUB_PACKAGES = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("persistence", "web", "messaging", "gateway")));
     /**
      * 违规项列表
      */
@@ -256,23 +251,23 @@ public class CleanArchitectureChecker {
      * 获取规范要求的目录结构描述。
      */
     public String getExpectedStructure() {
-        return """
-                Clean Architecture 目录规范：
-                %s/
-                ├── domain/              ← 领域层（零外部依赖）
-                │   ├── entity/
-                │   ├── valueobject/
-                │   └── repository/
-                ├── application/         ← 应用层（Use Cases）
-                │   ├── service/
-                │   └── command/
-                ├── adapter/             ← 适配器层
-                │   ├── persistence/
-                │   ├── web/
-                │   └── messaging/
-                └── infrastructure/      ← 框架层
-                    ├── config/
-                    └── external/
-                """.formatted(basePackage);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Clean Architecture 目录规范：\n");
+        sb.append(basePackage).append("/\n");
+        sb.append("├── domain/              ← 领域层（零外部依赖）\n");
+        sb.append("│   ├── entity/\n");
+        sb.append("│   ├── valueobject/\n");
+        sb.append("│   └── repository/\n");
+        sb.append("├── application/         ← 应用层（Use Cases）\n");
+        sb.append("│   ├── service/\n");
+        sb.append("│   └── command/\n");
+        sb.append("├── adapter/             ← 适配器层\n");
+        sb.append("│   ├── persistence/\n");
+        sb.append("│   ├── web/\n");
+        sb.append("│   └── messaging/\n");
+        sb.append("└── infrastructure/      ← 框架层\n");
+        sb.append("    ├── config/\n");
+        sb.append("    └── external/");
+        return sb.toString();
     }
 }

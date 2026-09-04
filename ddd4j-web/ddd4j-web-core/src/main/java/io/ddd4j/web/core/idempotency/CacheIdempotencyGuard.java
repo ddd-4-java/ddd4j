@@ -44,7 +44,7 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         }
         boolean acquired = CacheKit.putIfAbsent(cacheName, key, PROCESSING);
         if (acquired) {
-            CacheKit.expire(cacheName, key, effectiveTtl.toSeconds());
+            CacheKit.expire(cacheName, key, effectiveTtl.getSeconds());
         }
         return acquired;
     }
@@ -61,7 +61,7 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         if (!CacheKit.putIfAbsent(cacheName, key, ownerToken)) {
             return Optional.empty();
         }
-        CacheKit.expire(cacheName, key, effectiveTtl.toSeconds());
+        CacheKit.expire(cacheName, key, effectiveTtl.getSeconds());
         return Optional.of(new IdempotencyLease(key, ownerToken, effectiveTtl));
     }
 
@@ -79,7 +79,7 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
             return;
         }
         if (CacheKit.replace(cacheName, effectiveLease.key(), effectiveLease.ownerToken(), COMPLETED)) {
-            CacheKit.expire(cacheName, effectiveLease.key(), effectiveLease.ttl().toSeconds());
+            CacheKit.expire(cacheName, effectiveLease.key(), effectiveLease.ttl().getSeconds());
         }
     }
 

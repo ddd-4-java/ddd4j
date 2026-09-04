@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.ddd.model;
 
+import java.util.Collections;
+import java.util.ArrayList;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -106,10 +108,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
      * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
      */
-    private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
+    private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<ClassValue<Method>>() {
         @Override
         protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
-            return new ClassValue<>() {
+            return new ClassValue<Method>() {
                 @Override
                 protected Method computeValue(Class<?> eventClass) {
                     return resolveHandler(aggregateClass, eventClass);
@@ -127,8 +129,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * @return 处理器方法；两者均未命中时返回 {@code null}
      */
     private static Method resolveHandler(Class<?> aggregateClass, Class<?> eventClass) {
-        for (Class<?> current = aggregateClass; current != null && current != Object.class;
-             current = current.getSuperclass()) {
+for (Class<?> current = aggregateClass; current != null && current != Object.class;
+                    current = current.getSuperclass()) {
             for (Method method : current.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(EventHandler.class)) {
                     Class<?>[] parameterTypes = method.getParameterTypes();
@@ -316,7 +318,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 返回并清空未提交的领域事件。
      */
     public List<DomainEvent<?>> pullDomainEvents() {
-        List<DomainEvent<?>> events = List.copyOf(mutableDomainEvents());
+        List<DomainEvent<?>> events = Collections.unmodifiableList(new ArrayList<>(mutableDomainEvents()));
         clearDomainEvents();
         return events;
     }
@@ -412,10 +414,12 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         } catch (InvocationTargetException e) {
             // handler 自身抛出的业务异常：解包透传，避免包装后丢失原始堆栈
             Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException re) {
+            if (cause instanceof RuntimeException) {
+                RuntimeException re = (RuntimeException) cause;
                 throw re;
             }
-            if (cause instanceof Error err) {
+            if (cause instanceof Error) {
+                Error err = (Error) cause;
                 throw err;
             }
             throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
@@ -447,7 +451,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
      *         .map(StoredEvent::event)
      *         .map(e -> (DomainEvent<?>) e)
-     *         .toList();
+     *         .collect(Collectors.toList());
      * order.loadFromHistory(history);
      * }</pre>
      *

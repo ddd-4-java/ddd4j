@@ -4,6 +4,7 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import java.util.Arrays;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -51,9 +52,9 @@ class JdbiEventStoreRetryTest {
     @Test
     void aggregateVersionConflictMustNotRetry() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-1");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new TestEvent(orderId)), 0);
 
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0))
+        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new TestEvent(orderId)), 0))
                 .isInstanceOf(AggregateVersionConflictException.class);
 
         assertThat(sleeper.calls.get()).isZero();
@@ -73,7 +74,7 @@ class JdbiEventStoreRetryTest {
         });
         TestAggregateRootId orderId = new TestAggregateRootId("order-2");
 
-        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new TestEvent(orderId)), 0);
 
         assertThat(sleeper.calls.get()).isGreaterThanOrEqualTo(1);
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);

@@ -83,7 +83,8 @@ public class BigDecimalStringConverter implements Converter<BigDecimal> {
         try {
             // 先用 DecimalFormat 解析（处理千分位、小数位）
             Number parsed = formatHolder.get().parse(raw.trim());
-            if (parsed instanceof BigDecimal bd) {
+            if (parsed instanceof BigDecimal) {
+                BigDecimal bd = (BigDecimal) parsed;
                 return bd;
             }
             return new BigDecimal(parsed.toString());

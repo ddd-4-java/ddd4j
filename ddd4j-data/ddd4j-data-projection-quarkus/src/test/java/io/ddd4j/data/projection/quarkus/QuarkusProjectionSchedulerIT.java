@@ -1,5 +1,6 @@
 package io.ddd4j.data.projection.quarkus;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -144,7 +145,7 @@ class QuarkusProjectionSchedulerIT {
 
         @Override
         public Collection<String> getEventTypes() {
-            return Set.of("TestEvent");
+            return Collections.singleton("TestEvent");
         }
 
         @Override

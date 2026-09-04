@@ -2,7 +2,7 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.util.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -201,10 +201,10 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(0))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(0))) {
             sb.deleteCharAt(0);
         }
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
@@ -243,7 +243,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(0))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(0))) {
             sb.deleteCharAt(0);
         }
         return sb.toString();
@@ -260,7 +260,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
@@ -277,7 +277,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && sb.charAt(0) == leadingCharacter) {
+        while (sb.length() > 0 && sb.charAt(0) == leadingCharacter) {
             sb.deleteCharAt(0);
         }
         return sb.toString();
@@ -294,7 +294,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && sb.charAt(sb.length() - 1) == trailingCharacter) {
+        while (sb.length() > 0 && sb.charAt(sb.length() - 1) == trailingCharacter) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
@@ -1170,9 +1170,9 @@ public class StrKit extends StrUtil {
      */
     public static String replaceAll(String src, String tar, String str) {
         StringBuilder sb = new StringBuilder();
-        byte bytesSrc[] = src.getBytes();
+        byte bytesSrc[] = src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
 
-        byte bytes[] = str.getBytes();
+        byte bytes[] = str.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         int point = 0;
         for (int i = 0; i < bytes.length; i++) {
 
@@ -1252,7 +1252,7 @@ public class StrKit extends StrUtil {
             return new String[0];
         }
         List<String> ret = new ArrayList<String>();
-        byte bytes[] = src.getBytes();
+        byte bytes[] = src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         int curPoint = 0;
         for (int i = 0; i < bytes.length; i++) {
             if (bytes[i] == letter) {

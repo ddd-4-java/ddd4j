@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Spring Data JPA 投影位置仓储（{@link ProjectionPositionRepository} SPI 实现）。
@@ -39,7 +40,7 @@ public class SpringJpaProjectionPositionRepository
 
     @Override
     public List<ProjectionPosition> findAll() {
-        return jpaRepository.findAll().stream().map(p -> (ProjectionPosition) p).toList();
+        return jpaRepository.findAll().stream().map(p -> (ProjectionPosition) p).collect(Collectors.toList());
     }
 
     @Override

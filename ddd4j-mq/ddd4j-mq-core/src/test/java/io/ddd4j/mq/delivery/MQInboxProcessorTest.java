@@ -1,5 +1,7 @@
 package io.ddd4j.mq.delivery;
 
+import java.util.Collections;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -28,7 +30,7 @@ class MQInboxProcessorTest {
 
         assertEquals(1, handled.get());
         assertEquals("order-read-model:message-1", store.lastKey);
-        assertEquals(List.of("processed", "duplicate"), observer.inboxOutcomes);
+        assertEquals(Arrays.asList("processed", "duplicate"), observer.inboxOutcomes);
     }
 
     @Test
@@ -53,7 +55,7 @@ class MQInboxProcessorTest {
                             throw new IllegalStateException("business failed");
                         }));
 
-        assertEquals(List.of("failed"), observer.inboxOutcomes);
+        assertEquals(Collections.singletonList("failed"), observer.inboxOutcomes);
     }
 
     private static final class InMemoryInboxStore implements MQInboxStore {

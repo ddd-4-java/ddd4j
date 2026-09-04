@@ -1,12 +1,15 @@
 package io.ddd4j.data.cqrs.dropwizard;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
-import io.dropwizard.core.Application;
+import io.dropwizard.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.server.DefaultServerFactory;
-import io.dropwizard.core.setup.Environment;
+import io.dropwizard.setup.Environment;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.jupiter.api.AfterAll;
@@ -116,10 +119,10 @@ class DropwizardCommandBusIT {
         DefaultServerFactory serverFactory = (DefaultServerFactory) configuration.getServerFactory();
         HttpConnectorFactory applicationConnector = new HttpConnectorFactory();
         applicationConnector.setPort(0);
-        serverFactory.setApplicationConnectors(List.of(applicationConnector));
+        serverFactory.setApplicationConnectors(Collections.singletonList(applicationConnector));
         HttpConnectorFactory adminConnector = new HttpConnectorFactory();
         adminConnector.setPort(0);
-        serverFactory.setAdminConnectors(List.of(adminConnector));
+        serverFactory.setAdminConnectors(Collections.singletonList(adminConnector));
         return configuration;
     }
 
@@ -185,7 +188,7 @@ class DropwizardCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(SampleCommand.class, CompanionCommand.class);
+            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
         @Override

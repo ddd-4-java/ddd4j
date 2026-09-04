@@ -137,12 +137,12 @@ class GuiceViewManagerTest {
         manager.start();
         ProjectionStatus status = manager.getProjectionStatus("orders");
 
-        assertEquals("orders", status.streamId());
-        assertEquals(0L, status.nextEventNumber());
-        assertTrue(status.running());
-        assertNull(status.lastRunAt());
-        assertEquals(0, status.lastEventCount());
-        assertNull(status.lastError());
+        assertEquals("orders", status.getStreamId());
+        assertEquals(0L, status.getNextEventNumber());
+        assertTrue(status.isRunning());
+        assertNull(status.getLastRunAt());
+        assertEquals(0, status.getLastEventCount());
+        assertNull(status.getLastError());
     }
 
     @Test
@@ -155,12 +155,12 @@ class GuiceViewManagerTest {
 
         ProjectionStatus status = mgr.getProjectionStatus("orders");
 
-        assertEquals("orders", status.streamId());
-        assertEquals(42L, status.nextEventNumber());
-        assertTrue(status.running());
-        assertNull(status.lastRunAt());
-        assertEquals(0, status.lastEventCount());
-        assertNull(status.lastError());
+        assertEquals("orders", status.getStreamId());
+        assertEquals(42L, status.getNextEventNumber());
+        assertTrue(status.isRunning());
+        assertNull(status.getLastRunAt());
+        assertEquals(0, status.getLastEventCount());
+        assertNull(status.getLastError());
 
         mgr.stop();
     }
@@ -174,9 +174,9 @@ class GuiceViewManagerTest {
 
         ProjectionStatus status = mgr.getProjectionStatus("unknown");
 
-        assertEquals("unknown", status.streamId());
-        assertEquals(0L, status.nextEventNumber());
-        assertTrue(status.running());
+        assertEquals("unknown", status.getStreamId());
+        assertEquals(0L, status.getNextEventNumber());
+        assertTrue(status.isRunning());
 
         mgr.stop();
     }
@@ -185,6 +185,6 @@ class GuiceViewManagerTest {
     void getProjectionStatus_whenStopped_runningIsFalse() {
         ProjectionStatus status = manager.getProjectionStatus("orders");
 
-        assertFalse(status.running());
+        assertFalse(status.isRunning());
     }
 }

@@ -660,7 +660,7 @@ public class AntPathMatcher implements PathMatcher {
                         this.variableNames.add(matcher.group(1));
                     } else {
                         String variablePattern = match.substring(colonIdx + 1, match.length() - 1);
-                        patternBuilder.append('(');
+patternBuilder.append('(');
                         patternBuilder.append(variablePattern);
                         patternBuilder.append(')');
                         String variableName = match.substring(1, colonIdx);

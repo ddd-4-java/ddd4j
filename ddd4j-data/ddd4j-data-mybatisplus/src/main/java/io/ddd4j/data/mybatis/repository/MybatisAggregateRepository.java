@@ -814,7 +814,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     @Override
     public void fill(Query<M> query, AggregateRoot<?> model) {
         if (modelClass().isInstance(model)) {
-            fill(query, List.of(modelClass().cast(model)));
+            fill(query, Collections.singletonList(modelClass().cast(model)));
         }
     }
 
@@ -883,20 +883,50 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             LambdaCondition condition = (LambdaCondition) obj;
             String column = translateProperty(condition);
             switch (condition.operator()) {
-                case "=" -> wrapper.eq(column, condition.value());
-                case "<>" -> wrapper.ne(column, condition.value());
-                case ">" -> wrapper.gt(column, condition.value());
-                case ">=" -> wrapper.ge(column, condition.value());
-                case "<" -> wrapper.lt(column, condition.value());
-                case "<=" -> wrapper.le(column, condition.value());
-                case "LIKE" -> wrapper.like(column, condition.value());
-                case "LIKE_LEFT" -> wrapper.likeLeft(column, condition.value());
-                case "LIKE_RIGHT" -> wrapper.likeRight(column, condition.value());
-                case "NOT_LIKE" -> wrapper.notLike(column, condition.value());
-                case "IN" -> wrapper.in(column, (Collection<?>) condition.value());
-                case "NOT_IN" -> wrapper.notIn(column, (Collection<?>) condition.value());
-                case "IS_NULL" -> wrapper.isNull(column);
-                case "IS_NOT_NULL" -> wrapper.isNotNull(column);
+                case "=":
+                    wrapper.eq(column, condition.value());
+                    break;
+                case "<>":
+                    wrapper.ne(column, condition.value());
+                    break;
+                case ">":
+                    wrapper.gt(column, condition.value());
+                    break;
+                case ">=":
+                    wrapper.ge(column, condition.value());
+                    break;
+                case "<":
+                    wrapper.lt(column, condition.value());
+                    break;
+                case "<=":
+                    wrapper.le(column, condition.value());
+                    break;
+                case "LIKE":
+                    wrapper.like(column, condition.value());
+                    break;
+                case "LIKE_LEFT":
+                    wrapper.likeLeft(column, condition.value());
+                    break;
+                case "LIKE_RIGHT":
+                    wrapper.likeRight(column, condition.value());
+                    break;
+                case "NOT_LIKE":
+                    wrapper.notLike(column, condition.value());
+                    break;
+                case "IN":
+                    wrapper.in(column, (Collection<?>) condition.value());
+                    break;
+                case "NOT_IN":
+                    wrapper.notIn(column, (Collection<?>) condition.value());
+                    break;
+                case "IS_NULL":
+                    wrapper.isNull(column);
+                    break;
+                case "IS_NOT_NULL":
+                    wrapper.isNotNull(column);
+                    break;
+                default:
+                    break;
             }
         }
     }

@@ -120,6 +120,6 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
         }
         return repository.findById(streamId)
                 .map(ProjectionPositionEntity::getNextEventNumber)
-                .orElseThrow();
+                .get();
     }
 }

@@ -24,7 +24,8 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
     @Override
     public WebError translate(Throwable throwable) {
         Throwable cause = Objects.requireNonNull(throwable, "throwable must not be null");
-        if (cause instanceof WebStatusException exception) {
+        if (cause instanceof WebStatusException) {
+            WebStatusException exception = (WebStatusException) cause;
             return new WebError(exception.getStatus(), exception.getCode(), message(exception), exception.getData());
         }
         if (cause instanceof IdempotentException) {
@@ -43,7 +44,8 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
         if (cause instanceof SecurityException) {
             return error(FORBIDDEN, cause);
         }
-        if (cause instanceof BizRuntimeException exception) {
+        if (cause instanceof BizRuntimeException) {
+            BizRuntimeException exception = (BizRuntimeException) cause;
             int status = normalizeStatus(exception.getCode());
             return new WebError(status, Objects.nonNull(exception.getCode()) ? exception.getCode() : status,
                     message(exception), null);

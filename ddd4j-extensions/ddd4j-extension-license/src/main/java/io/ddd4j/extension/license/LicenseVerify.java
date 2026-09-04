@@ -172,10 +172,10 @@ public class LicenseVerify {
 
     private PublicKey loadPublicKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
-        try (var inputStream = Files.newInputStream(Paths.get(publicKeysStorePath))) {
+        try (java.io.InputStream inputStream = Files.newInputStream(Paths.get(publicKeysStorePath))) {
             keyStore.load(inputStream, storePass.toCharArray());
         }
-        var certificate = keyStore.getCertificate(publicAlias);
+        java.security.cert.Certificate certificate = keyStore.getCertificate(publicAlias);
         if (Objects.isNull(certificate)) {
             throw new IllegalStateException("公钥别称不存在: " + publicAlias);
         }

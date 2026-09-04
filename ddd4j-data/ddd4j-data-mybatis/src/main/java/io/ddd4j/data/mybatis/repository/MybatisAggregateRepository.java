@@ -473,30 +473,22 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     private boolean matchesOperator(Object actual, Object expected, String operator) {
         switch (operator) {
-            case "=" -> {
+            case "=":
                 return Objects.equals(actual, expected);
-            }
-            case "<>" -> {
+            case "<>":
                 return !Objects.equals(actual, expected);
-            }
-            case "IS_NULL" -> {
+            case "IS_NULL":
                 return Objects.isNull(actual);
-            }
-            case "IS_NOT_NULL" -> {
+            case "IS_NOT_NULL":
                 return Objects.nonNull(actual);
-            }
-            case "LIKE" -> {
+            case "LIKE":
                 return Objects.nonNull(actual) && actual.toString().contains(String.valueOf(expected));
-            }
-            case "IN" -> {
+            case "IN":
                 return toCollection(expected).contains(actual);
-            }
-            case "NOT_IN" -> {
+            case "NOT_IN":
                 return !toCollection(expected).contains(actual);
-            }
-            default -> {
+            default:
                 return true;
-            }
         }
     }
 
@@ -548,11 +540,14 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
     }
 
     private Collection<?> toCollection(Object value) {
-        if (value instanceof Collection<?> collection) {
-            return collection;
+        if (value instanceof Collection<?>) {
+            return (Collection<?>) value;
         }
-        if (value instanceof String str && StrKit.isNotEmpty(str)) {
-            return Arrays.asList(str.split(","));
+        if (value instanceof String) {
+            String str = (String) value;
+            if (StrKit.isNotEmpty(str)) {
+                return Arrays.asList(str.split(","));
+            }
         }
         return Collections.emptyList();
     }
@@ -564,7 +559,8 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
         Class<?> current = getClass();
         while (Objects.nonNull(current) && current != MybatisAggregateRepository.class) {
             Type superclass = current.getGenericSuperclass();
-            if (superclass instanceof ParameterizedType pt) {
+            if (superclass instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) superclass;
                 Type[] args = pt.getActualTypeArguments();
                 if (index < args.length && args[index] instanceof Class) {
                     return (Class<C>) args[index];

@@ -24,9 +24,10 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-        if (beanFactory instanceof ConfigurableEnvironment env) {
+        if (beanFactory instanceof ConfigurableEnvironment) {
+            ConfigurableEnvironment env = (ConfigurableEnvironment) beanFactory;
             env.getPropertySources()
-                    .addLast(new PropertySource<>("ddd4j-app-props", System.getProperties()) {
+                    .addLast(new PropertySource<Object>("ddd4j-app-props", System.getProperties()) {
                         @Override
                         public Object getProperty(String name) {
                             if (Objects.nonNull(name) && name.startsWith("ddd4j.")) {

@@ -75,9 +75,10 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
                 return;
             }
             Select select = (Select) CCJSqlParserUtil.parse(originalSql);
-            if (!(select instanceof PlainSelect ps)) {
+            if (!(select instanceof PlainSelect)) {
                 return;
             }
+            PlainSelect ps = (PlainSelect) select;
             Expression where = ps.getWhere();
             Expression scope = CCJSqlParserUtil.parseCondExpression(scopeCondition);
             if (Objects.isNull(where)) {

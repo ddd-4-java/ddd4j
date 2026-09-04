@@ -5,9 +5,9 @@ import io.ddd4j.dropwizard.Ddd4jBundle;
 import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebBundle;
-import io.dropwizard.core.Application;
+import io.dropwizard.Application;
 import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
+import io.dropwizard.setup.Environment;
 import io.dropwizard.lifecycle.Managed;
 
 /**

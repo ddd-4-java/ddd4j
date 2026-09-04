@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.web.javalin;
 
 import io.ddd4j.core.context.ThreadContext;
@@ -19,9 +33,10 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.javalin.config.JavalinConfig;
+import io.javalin.Javalin;
 import io.javalin.http.Context;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,14 +44,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Arrays;
 
 /**
  * 在 Javalin 创建阶段安装统一请求上下文、Bearer Subject、异常与幂等处理链。
  *
  * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
-@Slf4j
 public final class Ddd4jJavalinWeb {
+
+    private static final Logger log = LoggerFactory.getLogger(Ddd4jJavalinWeb.class);
 
     private static final String STATE_ATTRIBUTE = Ddd4jJavalinWeb.class.getName() + ".state";
     private static final String OTEL_SPAN_ATTR = Ddd4jJavalinWeb.class.getName() + ".otelSpan";
@@ -49,7 +66,7 @@ public final class Ddd4jJavalinWeb {
 
     public Ddd4jJavalinWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
-                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
+                        new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
                                         ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, new RuntimeReadinessRegistry());
@@ -62,7 +79,7 @@ public final class Ddd4jJavalinWeb {
      */
     public Ddd4jJavalinWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
-                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
+                        new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
                                         ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, readinessRegistry);
@@ -89,12 +106,12 @@ public final class Ddd4jJavalinWeb {
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
-    public void configure(JavalinConfig config) {
-        JavalinConfig javalinConfig = Objects.requireNonNull(config, "config must not be null");
-        javalinConfig.routes.before(this::openContext);
-        javalinConfig.routes.after(this::completeContext);
-        javalinConfig.routes.exception(Exception.class, this::handleException);
-        javalinConfig.routes.get(ReadinessEndpoint.PATH, this::readiness);
+    public void configure(Javalin app) {
+        Javalin javalinApp = Objects.requireNonNull(app, "app must not be null");
+        javalinApp.before(this::openContext);
+        javalinApp.after(this::completeContext);
+        javalinApp.exception(Exception.class, this::handleException);
+        javalinApp.get(ReadinessEndpoint.PATH, this::readiness);
     }
 
     private void readiness(Context context) {
@@ -106,7 +123,7 @@ public final class Ddd4jJavalinWeb {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
         Map<String, String> headers = extractHeaders(context);
         Object span = WebOtelSupport.startServerSpan(
-                context.method().name(), context.path(), headers);
+                context.method(), context.path(), headers);
         context.attribute(OTEL_SPAN_ATTR, span);
         WebOtelSupport.activate(span);
 
@@ -130,10 +147,11 @@ public final class Ddd4jJavalinWeb {
     private void completeContext(Context context) {
         // OTel: 结束 span
         Object span = context.attribute(OTEL_SPAN_ATTR);
+        int status = context.status();
         if (Objects.nonNull(span)) {
-            WebOtelSupport.endServerSpan(span, context.statusCode());
+            WebOtelSupport.endServerSpan(span, status);
         }
-        closeContext(context, context.statusCode() < 400);
+        closeContext(context, status < 400);
     }
 
     private void handleException(Exception exception, Context context) {
@@ -170,8 +188,8 @@ public final class Ddd4jJavalinWeb {
                 resolveLocale(context),
                 context.header(WebHeaders.FORWARDED_FOR),
                 context.header("X-Real-IP"),
-                context.req().getRemoteAddr(),
-                context.method().name(),
+                context.ip(),
+                context.method(),
                 context.path()));
     }
 

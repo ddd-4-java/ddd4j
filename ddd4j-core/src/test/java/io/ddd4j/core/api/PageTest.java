@@ -1,5 +1,7 @@
 package io.ddd4j.core.api;
 
+import java.util.Collections;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ class PageTest {
 
     @Test
     void succeed_shouldCarryRecordsAndTotal() {
-        List<String> records = List.of("a", "b");
+        List<String> records = Arrays.asList("a", "b");
 
         Page<String> page = Page.succeed(records, 2L, 1L, 10L);
 
@@ -59,7 +61,7 @@ class PageTest {
 
     @Test
     void remove_shouldDeleteElement() {
-        Page<String> page = Page.succeed(new ArrayList<>(List.of("a", "b")), 2L, 1L, 10L);
+        Page<String> page = Page.succeed(new ArrayList<>(Arrays.asList("a", "b")), 2L, 1L, 10L);
 
         boolean removed = page.remove("a");
 
@@ -69,7 +71,7 @@ class PageTest {
 
     @Test
     void contains_shouldDetectElement() {
-        Page<String> page = Page.succeed(List.of("a"), 1L, 1L, 10L);
+        Page<String> page = Page.succeed(Collections.singletonList("a"), 1L, 1L, 10L);
 
         assertThat(page.contains("a")).isTrue();
         assertThat(page.contains("z")).isFalse();
@@ -87,7 +89,7 @@ class PageTest {
     @Test
     void peek_shouldApplyConsumerAndReturnSelf() {
         List<String> collected = new ArrayList<>();
-        Page<String> page = Page.succeed(List.of("a", "b"), 2L, 1L, 10L);
+        Page<String> page = Page.succeed(Arrays.asList("a", "b"), 2L, 1L, 10L);
 
         Page<String> result = page.peek(collected::add);
 
@@ -106,7 +108,7 @@ class PageTest {
 
     @Test
     void stream_shouldExposeRecords() {
-        Page<String> page = Page.succeed(List.of("a", "b"), 2L, 1L, 10L);
+        Page<String> page = Page.succeed(Arrays.asList("a", "b"), 2L, 1L, 10L);
 
         List<String> collected = page.stream().toList();
 
@@ -116,7 +118,7 @@ class PageTest {
     @Test
     void builderMethods_shouldChainCorrectly() {
         Page<String> page = Page.<String>empty()
-                .setRecords(List.of("x"))
+                .setRecords(Collections.singletonList("x"))
                 .setTotal(1L)
                 .setCurrent(1L)
                 .setSize(5L);

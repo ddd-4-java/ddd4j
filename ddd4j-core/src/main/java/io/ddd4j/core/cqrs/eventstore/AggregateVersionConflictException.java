@@ -16,7 +16,6 @@ package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 
-import java.io.Serial;
 import java.util.List;
 
 /**
@@ -31,8 +30,6 @@ import java.util.List;
  * @since 2.0.x
  */
 public class AggregateVersionConflictException extends RuntimeException {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String aggregateType;

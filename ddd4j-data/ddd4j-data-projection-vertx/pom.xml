@@ -25,7 +25,7 @@
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-projection</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Vert.x Core（事件循环/上下文/worker 线程模型；坐标实证注记：

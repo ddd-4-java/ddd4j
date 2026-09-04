@@ -96,7 +96,8 @@ public final class LambdaKit {
             Method method = func.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(true);
             Object lambdaObj = method.invoke(func);
-            if (lambdaObj instanceof SerializedLambda lambda) {
+            if (lambdaObj instanceof SerializedLambda) {
+                SerializedLambda lambda = (SerializedLambda) lambdaObj;
                 return lambda;
             }
             throw new IllegalArgumentException("无法解析 Lambda 表达式，writeReplace 返回非 SerializedLambda: " + lambdaObj);

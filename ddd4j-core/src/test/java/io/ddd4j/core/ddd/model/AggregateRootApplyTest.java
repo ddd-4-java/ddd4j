@@ -1,5 +1,6 @@
 package io.ddd4j.core.ddd.model;
 
+import java.util.Arrays;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -55,7 +56,7 @@ class AggregateRootApplyTest {
     void loadFromHistoryRebuildsAggregateWithoutEnqueueing() {
         Order order = new Order("order-1");
 
-        order.loadFromHistory(List.of(new OrderCreatedEvent(), new OrderCreatedEvent()));
+        order.loadFromHistory(Arrays.asList(new OrderCreatedEvent(), new OrderCreatedEvent()));
 
         assertEquals("CREATED", order.status, "replay should rebuild aggregate state");
         assertTrue(order.domainEvents().isEmpty(), "replay must not enqueue events into domainEvents");
@@ -69,7 +70,7 @@ class AggregateRootApplyTest {
         assertTrue(applying.notified, "apply should invoke ignoreOnReplay=true handler");
 
         Order replaying = new Order("order-1");
-        replaying.loadFromHistory(List.of(new OrderCreatedEvent(), new OrderNotifiedEvent()));
+        replaying.loadFromHistory(Arrays.asList(new OrderCreatedEvent(), new OrderNotifiedEvent()));
         assertEquals("CREATED", replaying.status, "normal handlers should still replay");
         assertFalse(replaying.notified, "loadFromHistory should skip ignoreOnReplay=true handler");
     }

@@ -17,13 +17,13 @@ class Ddd4jHelidonReadinessHealthCheckTest {
 
         HealthCheckResponse ready = healthCheck.call();
 
-        assertEquals(HealthCheckResponse.Status.UP, ready.getStatus());
-        assertEquals(1L, ready.getData().orElseThrow().get("checks"));
+        assertEquals(HealthCheckResponse.State.UP, ready.getState());
+        assertEquals(1L, ready.getData().get().get("checks"));
 
         registry.register(() -> ReadinessResult.unavailable("kafka", "secret broker error"));
         HealthCheckResponse unavailable = healthCheck.call();
 
-        assertEquals(HealthCheckResponse.Status.DOWN, unavailable.getStatus());
-        assertEquals(2L, unavailable.getData().orElseThrow().get("checks"));
+        assertEquals(HealthCheckResponse.State.DOWN, unavailable.getState());
+        assertEquals(2L, unavailable.getData().get().get("checks"));
     }
 }

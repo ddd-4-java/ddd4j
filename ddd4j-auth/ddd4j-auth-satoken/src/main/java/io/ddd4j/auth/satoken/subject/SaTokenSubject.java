@@ -244,7 +244,8 @@ public class SaTokenSubject implements Subject {
             return null;
         }
         StpLogic logic = StpUtil.stpLogic;
-        if (logic instanceof StpLogicJwtForSimple jwtLogic) {
+        if (logic instanceof StpLogicJwtForSimple) {
+            StpLogicJwtForSimple jwtLogic = (StpLogicJwtForSimple) logic;
             // JWT Simple 必须经过 ddd4j 配置器，以固定 issuer/audience 与撤销语义。
             if (!(jwtLogic instanceof Ddd4jStpLogicJwtForSimple)) {
                 return null;
@@ -265,8 +266,11 @@ public class SaTokenSubject implements Subject {
 
     private Object jwtLoginId(String token, StpLogicJwtForSimple logic) {
         try {
-            if (logic instanceof Ddd4jStpLogicJwtForSimple secureLogic && !secureLogic.hasExpectedClaims(token)) {
-                return null;
+            if (logic instanceof Ddd4jStpLogicJwtForSimple) {
+                Ddd4jStpLogicJwtForSimple secureLogic = (Ddd4jStpLogicJwtForSimple) logic;
+                if (!secureLogic.hasExpectedClaims(token)) {
+                    return null;
+                }
             }
             // JWT Simple 的有效期由 Sa-Token 服务端映射管理，不能误用会要求 eff 声明的 getPayloads(...).
             return SaJwtUtil.getPayloadsNotCheck(token, logic.getLoginType(), logic.jwtSecretKey())

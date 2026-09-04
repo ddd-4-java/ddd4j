@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.exception;
 
-import java.io.Serial;
 
 /**
  * 凭证（密码）过期异常。
@@ -30,8 +29,6 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class CredentialsExpiredException extends AuthenticationException {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public CredentialsExpiredException(String message) {

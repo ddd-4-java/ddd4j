@@ -61,7 +61,7 @@ public interface StrPool {
     String HASH = "#";
     String HAT = "^";
     String LEFT_BRACE = "{";
-    String LEFT_BRACKET = "(";
+String LEFT_BRACKET = "(";
     String LEFT_CHEV = "<";
     String DOT_NEWLINE = ",\n";
     String MS = "ms";
@@ -114,6 +114,6 @@ public interface StrPool {
 
     String[] EMPTY_ARRAY = new String[0];
 
-    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes();
+    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes(java.nio.charset.StandardCharsets.UTF_8);
 
 }

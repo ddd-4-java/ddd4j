@@ -1,5 +1,7 @@
 package io.ddd4j.data.mybatis.repository;
 
+import java.util.Collections;
+import java.util.Arrays;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -172,7 +174,7 @@ class MybatisAggregateRepositoryCrudTest {
 
     @Test
     void findAll_shouldReturnAllModels() {
-        List<OrderPO> poList = List.of(
+        List<OrderPO> poList = Arrays.asList(
                 new OrderPO("1", "PAID", null),
                 new OrderPO("2", "DRAFT", null)
         );
@@ -199,7 +201,7 @@ class MybatisAggregateRepositoryCrudTest {
     @Test
     void findFirst_shouldReturnFirstModel() {
         OrderPO po = new OrderPO("1", "PAID", null);
-        when(mapper.selectList(any(QueryWrapper.class))).thenReturn(List.of(po));
+        when(mapper.selectList(any(QueryWrapper.class))).thenReturn(Collections.singletonList(po));
 
         Optional<Order> result = repository.findFirst();
 

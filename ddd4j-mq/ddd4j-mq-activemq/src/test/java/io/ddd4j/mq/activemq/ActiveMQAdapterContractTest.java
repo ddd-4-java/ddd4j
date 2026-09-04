@@ -1,8 +1,8 @@
 package io.ddd4j.mq.activemq;
 
 import io.ddd4j.mq.message.MessageHeaders;
-import jakarta.jms.Message;
-import jakarta.jms.Session;
+import javax.jms.Message;
+import javax.jms.Session;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,5 +1,8 @@
 package io.ddd4j.data.projection;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import org.junit.jupiter.api.Test;
@@ -33,7 +36,7 @@ class ProjectionHandlerRegistryTest {
     @Test
     void registeredHandlerIsFoundByExactEventType() {
         RecordingHandler handler = new RecordingHandler("order-summary",
-                Set.of(OrderCreated.class, OrderPaid.class));
+                Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(OrderCreated.class, OrderPaid.class)));
 
         registry.register(handler);
 
@@ -45,7 +48,7 @@ class ProjectionHandlerRegistryTest {
 
     @Test
     void findHandlerReturnsEmptyForUnregisteredEventType() {
-        registry.register(new RecordingHandler("order-summary", Set.of(OrderCreated.class)));
+        registry.register(new RecordingHandler("order-summary", Collections.singleton(OrderCreated.class)));
 
         Optional<ProjectionHandler> found = registry.findHandler(OrderPaid.class);
 
@@ -65,19 +68,19 @@ class ProjectionHandlerRegistryTest {
 
     @Test
     void duplicateEventTypeRegistrationThrowsIllegalStateWithEventName() {
-        registry.register(new RecordingHandler("order-summary", Set.of(OrderCreated.class)));
+        registry.register(new RecordingHandler("order-summary", Collections.singleton(OrderCreated.class)));
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
-                () -> registry.register(new RecordingHandler("another-view", Set.of(OrderCreated.class))));
+                () -> registry.register(new RecordingHandler("another-view", Collections.singleton(OrderCreated.class)));
 
         assertThat(ex).hasMessageContaining(OrderCreated.class.getName());
     }
 
     @Test
     void conflictingBatchRegistrationIsRejectedEntirely() {
-        registry.register(new RecordingHandler("order-summary", Set.of(OrderCreated.class)));
+        registry.register(new RecordingHandler("order-summary", Collections.singleton(OrderCreated.class)));
         RecordingHandler multiTypeHandler = new RecordingHandler("order-lifecycle",
-                Set.of(OrderCreated.class, OrderPaid.class));
+                Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(OrderCreated.class, OrderPaid.class)));
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> registry.register(multiTypeHandler));
@@ -92,18 +95,18 @@ class ProjectionHandlerRegistryTest {
 
     @Test
     void allViewIsImmutable() {
-        registry.register(new RecordingHandler("order-summary", Set.of(OrderCreated.class)));
+        registry.register(new RecordingHandler("order-summary", Collections.singleton(OrderCreated.class)));
 
         assertThrows(UnsupportedOperationException.class,
-                () -> registry.all().add(new RecordingHandler("another-view", Set.of(OrderPaid.class))));
+                () -> registry.all().add(new RecordingHandler("another-view", Collections.singleton(OrderPaid.class)));
     }
 
     @Test
     void multipleHandlersRouteToTheirOwnEventTypesAndMultiTypeHandlerAppearsOnce() {
-        RecordingHandler summaryHandler = new RecordingHandler("order-summary", Set.of(OrderCreated.class));
-        RecordingHandler paymentHandler = new RecordingHandler("payment-view", Set.of(OrderPaid.class));
+        RecordingHandler summaryHandler = new RecordingHandler("order-summary", Collections.singleton(OrderCreated.class));
+        RecordingHandler paymentHandler = new RecordingHandler("payment-view", Collections.singleton(OrderPaid.class));
         RecordingHandler lifecycleHandler = new RecordingHandler("order-lifecycle",
-                Set.of(OrderShipped.class, OrderCancelled.class));
+                Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(OrderShipped.class, OrderCancelled.class)));
 
         registry.register(summaryHandler);
         registry.register(paymentHandler);
@@ -120,7 +123,7 @@ class ProjectionHandlerRegistryTest {
 
     @Test
     void defaultHandlerConfigurationMatchesContract() {
-        ProjectionHandler handler = new RecordingHandler("order-summary", Set.of(OrderCreated.class));
+        ProjectionHandler handler = new RecordingHandler("order-summary", Collections.singleton(OrderCreated.class));
 
         assertThat(handler.getName()).isEqualTo("order-summary");
         assertThat(handler.getCron()).isEqualTo("0/5 * * * * *");

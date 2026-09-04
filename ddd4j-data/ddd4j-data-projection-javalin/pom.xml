@@ -25,7 +25,7 @@
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-projection</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- Javalin 核心（轻量 Web 框架，无 DI 容器；版本由 ddd4j-dependencies 导入的

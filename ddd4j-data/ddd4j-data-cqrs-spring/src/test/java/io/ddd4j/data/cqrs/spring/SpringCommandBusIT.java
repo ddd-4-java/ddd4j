@@ -1,5 +1,8 @@
 package io.ddd4j.data.cqrs.spring;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -123,7 +126,7 @@ class SpringCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(ConflictCommand.class);
+            return Collections.singleton(ConflictCommand.class);
         }
 
         @Override
@@ -141,7 +144,7 @@ class SpringCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(ConflictCommand.class, CompanionCommand.class);
+            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(ConflictCommand.class, CompanionCommand.class)));
         }
 
         @Override

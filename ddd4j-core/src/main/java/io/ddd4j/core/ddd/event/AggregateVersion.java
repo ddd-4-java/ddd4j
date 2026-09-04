@@ -16,7 +16,6 @@ package io.ddd4j.core.ddd.event;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -24,8 +23,6 @@ import java.util.Objects;
  * 聚合根的单调版本号。
  */
 public final class AggregateVersion implements Serializable {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private final long value;
@@ -57,9 +54,10 @@ public final class AggregateVersion implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof AggregateVersion that)) {
+        if (!(object instanceof AggregateVersion)) {
             return false;
         }
+        AggregateVersion that = (AggregateVersion) object;
         return value == that.value;
     }
 

@@ -1,5 +1,6 @@
 package io.ddd4j.data.cqrs.sample;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -34,7 +35,7 @@ public class TxProbeCommandHandler implements CommandExecutor<TxProbeCommand> {
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(TxProbeCommand.class);
+        return Collections.singleton(TxProbeCommand.class);
     }
 
     @Override

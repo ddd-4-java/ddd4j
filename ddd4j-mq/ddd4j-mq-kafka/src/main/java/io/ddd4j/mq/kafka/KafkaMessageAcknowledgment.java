@@ -87,7 +87,7 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         if (acknowledged.compareAndSet(false, true)) {
             TopicPartition partition = new TopicPartition(record.topic(), record.partition());
             OffsetAndMetadata offset = new OffsetAndMetadata(record.offset() + 1);
-            consumer.commitSync(Map.of(partition, offset));
+            consumer.commitSync(java.util.Collections.singletonMap(partition, offset));
         }
     }
 

@@ -1,5 +1,6 @@
 package io.ddd4j.data.event.store.esdb;
 
+import java.util.Arrays;
 import com.eventstore.dbclient.AppendToStreamOptions;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
@@ -49,7 +50,7 @@ class EsdbEventStoreTest {
         when(client.appendToStream(anyString(), any(AppendToStreamOptions.class), any(EventData[].class)))
                 .thenReturn(CompletableFuture.completedFuture(null));
 
-        new EsdbEventStore(client, "test-").append(ORDER_TYPE, id, List.of(new TestEvent(id)), 0);
+        new EsdbEventStore(client, "test-").append(ORDER_TYPE, id, Arrays.asList(new TestEvent(id)), 0);
 
         verify(client).appendToStream(streamCaptor.capture(), any(AppendToStreamOptions.class), any(EventData[].class));
         assertThat(streamCaptor.getValue()).isEqualTo("test-Order::order-1");
@@ -57,7 +58,7 @@ class EsdbEventStoreTest {
 
     @Test
     void appendEmptyEventsMustNotCallClient() {
-        new EsdbEventStore(client).append(ORDER_TYPE, new TestId("empty"), List.of(), 0);
+        new EsdbEventStore(client).append(ORDER_TYPE, new TestId("empty"), Arrays.asList(), 0);
         verifyNoInteractions(client);
     }
 
@@ -69,7 +70,7 @@ class EsdbEventStoreTest {
                 .thenReturn(CompletableFuture.failedFuture(conflict));
 
         assertThatThrownBy(() -> new EsdbEventStore(client).append(ORDER_TYPE, new TestId("conflict"),
-                List.of(new TestEvent(new TestId("conflict"))), 0))
+                Arrays.asList(new TestEvent(new TestId("conflict"))), 0))
                 .isInstanceOf(AggregateVersionConflictException.class);
     }
 

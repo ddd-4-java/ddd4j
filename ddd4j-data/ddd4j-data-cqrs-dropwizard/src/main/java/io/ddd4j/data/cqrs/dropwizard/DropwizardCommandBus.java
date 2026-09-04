@@ -4,7 +4,7 @@ import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.data.cqrs.CommandHandler;
 import io.ddd4j.data.cqrs.CommandRegistry;
-import io.dropwizard.core.Application;
+import io.dropwizard.Application;
 
 import java.util.Collection;
 import java.util.Objects;

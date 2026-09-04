@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.exception;
 
-import java.io.Serial;
 
 /**
  * Token 无效异常（格式错误/签名错误/伪造）。
@@ -30,8 +29,6 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class TokenInvalidException extends AuthenticationException {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public TokenInvalidException(String message) {

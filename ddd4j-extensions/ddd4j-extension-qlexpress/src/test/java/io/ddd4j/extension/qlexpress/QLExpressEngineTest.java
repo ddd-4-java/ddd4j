@@ -1,5 +1,6 @@
 package io.ddd4j.extension.qlexpress;
 
+import java.util.Collections;
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
 import io.ddd4j.extension.qlexpress.function.NamedQLFunction;
@@ -37,7 +38,7 @@ class QLExpressEngineTest {
     void invalidExpressionShouldReturnValidationFailure() {
         QLExpressEngine engine = QLExpress.create();
 
-        assertThat(engine.validate("if (").valid()).isFalse();
+assertThat(engine.validate("if (").valid()).isFalse());
         assertThat(engine.validate(" ").message()).isEqualTo("表达式不能为空");
     }
 
@@ -45,7 +46,7 @@ class QLExpressEngineTest {
     void safeExecutionShouldCaptureFailure() {
         QLExpressEngine engine = QLExpress.create();
 
-        QLExpressExecutionResult<Object> result = engine.executeSafely("missing + 1", Map.of());
+        QLExpressExecutionResult<Object> result = engine.executeSafely("missing + 1", Collections.emptyMap());
 
         assertThat(result.success()).isFalse();
         assertThat(result.errorCode()).isNotBlank();
@@ -59,13 +60,13 @@ class QLExpressEngineTest {
                 .function(new MultiplierFunction(2))
                 .build();
 
-        assertThat(engine.execute("multiply(5)", Map.of())).isEqualTo(10);
+        assertThat(engine.execute("multiply(5)", Collections.emptyMap())).isEqualTo(10);
 
         engine.registerOrReplaceFunction(new MultiplierFunction(3));
-        assertThat(engine.execute("multiply(5)", Map.of())).isEqualTo(15);
+        assertThat(engine.execute("multiply(5)", Collections.emptyMap())).isEqualTo(15);
 
         assertThat(engine.removeFunction("multiply")).isTrue();
-        assertThat(engine.executeSafely("multiply(5)", Map.of()).success()).isFalse();
+        assertThat(engine.executeSafely("multiply(5)", Collections.emptyMap()).success()).isFalse();
     }
 
     @Test

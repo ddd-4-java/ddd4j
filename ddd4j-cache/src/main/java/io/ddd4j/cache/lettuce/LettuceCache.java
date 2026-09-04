@@ -163,7 +163,7 @@ public class LettuceCache<V> implements Cache<String, V> {
         for (int attempt = 0; attempt < maxTries; attempt++) {
             String currentJson = commands.get(cachedKey);
             V currentValue = deserialize(currentJson);
-            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<V>() {
                 @Override
                 public String key() {
                     return cachedKey;

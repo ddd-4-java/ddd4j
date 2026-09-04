@@ -180,7 +180,7 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
 
             // 2. 构造 ddd4j GetsResponse（version 仅 memcached 有真实值）
             io.ddd4j.core.cache.GetsResponse<V> response =
-                    new io.ddd4j.core.cache.GetsResponse<>() {
+                    new io.ddd4j.core.cache.GetsResponse<V>() {
                         @Override
                         public String key() {
                             return cachedKey;

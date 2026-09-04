@@ -27,12 +27,12 @@
             <version>${revision}</version>
         </dependency>
         <!-- JDBI 核心（Statement/Handle API，不含 sqlobject）：ddd4j-dependencies 只定义了
-             ${jdbi.version}=3.45.4 属性（:375）而无 dependencyManagement 条目（控制器预检），
+             ${jdbi3.version}=3.45.4 属性（:375）而无 dependencyManagement 条目（控制器预检），
              故此处显式声明版本，属性经继承解析。 -->
         <dependency>
             <groupId>org.jdbi</groupId>
             <artifactId>jdbi3-core</artifactId>
-            <version>${jdbi.version}</version>
+            <version>${jdbi3.version}</version>
         </dependency>
 
         <!-- ======== Test ======== -->

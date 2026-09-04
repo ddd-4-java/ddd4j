@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.web.vertx;
 
 import io.ddd4j.core.context.ThreadContext;
@@ -21,16 +35,16 @@ public class Ddd4jVertxContext {
     private static final String REQUEST_CONTEXT_KEY = Ddd4jVertxContext.class.getName() + ".request";
     private static final String SUBJECT_KEY = Ddd4jVertxContext.class.getName() + ".subject";
 
-    public Optional<WebRequestContext> request(RoutingContext context) {
+    public static Optional<WebRequestContext> request(RoutingContext context) {
         return Optional.ofNullable(Objects.requireNonNull(context, "context must not be null")
                 .get(REQUEST_CONTEXT_KEY));
     }
 
-    public Optional<Subject> subject(RoutingContext context) {
+    public static Optional<Subject> subject(RoutingContext context) {
         return Optional.ofNullable(Objects.requireNonNull(context, "context must not be null").get(SUBJECT_KEY));
     }
 
-    public <T> Future<T> executeBlocking(RoutingContext context, Callable<T> task) {
+    public static <T> Future<T> executeBlocking(RoutingContext context, Callable<T> task) {
         RoutingContext routingContext = Objects.requireNonNull(context, "context must not be null");
         Callable<T> actualTask = Objects.requireNonNull(task, "task must not be null");
         WebRequestContext requestContext = request(routingContext)

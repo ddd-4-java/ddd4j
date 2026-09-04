@@ -1,5 +1,6 @@
 package io.ddd4j.extension.qrcode;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -144,7 +145,7 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
             }
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
             Result result = new MultiFormatReader().decode(bitmap);
-            return List.of(new QrCodeDecodeResult(result.getText()));
+            return Arrays.asList(new QrCodeDecodeResult(result.getText()));
         } catch (Exception exception) {
             throw new IllegalStateException("QR code decoding failed", exception);
         }

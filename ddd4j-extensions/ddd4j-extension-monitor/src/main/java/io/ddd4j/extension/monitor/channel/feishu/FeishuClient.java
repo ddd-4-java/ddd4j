@@ -8,9 +8,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
@@ -33,13 +30,6 @@ public class FeishuClient {
      * 由 {@link FeishuProperties#getWebhookUrl()} 注入）。
      */
     public static final String DEFAULT_BASE_URL = "https://open.feishu.cn/open-apis/bot/v2/hook/";
-
-    /**
-     * HTTP 客户端（连接超时 10s）
-     */
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
-            .build();
 
     /**
      * 飞书机器人 webhook 完整地址（含 token）
@@ -85,14 +75,11 @@ public class FeishuClient {
     public void send(String msg) {
         try {
             String url = buildUrl();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .timeout(Duration.ofSeconds(10))
+            cn.hutool.http.HttpResponse response = cn.hutool.http.HttpRequest.post(url)
                     .header("Content-Type", "application/json; charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString(msg, StandardCharsets.UTF_8))
-                    .build();
-            HttpResponse<String> response = HTTP_CLIENT.send(request,
-                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                    .body(msg)
+                    .timeout(10_000)
+                    .execute();
             log.debug("【发送飞书告警】响应：{}", response.body());
         } catch (Exception e) {
             log.error("【发送飞书告警】error: {}", e.getMessage(), e);

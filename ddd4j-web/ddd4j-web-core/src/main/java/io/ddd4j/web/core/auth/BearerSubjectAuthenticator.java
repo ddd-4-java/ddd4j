@@ -50,6 +50,20 @@ public final class BearerSubjectAuthenticator {
         return new Authentication(token, principal, subject);
     }
 
-    public record Authentication(String token, AuthPrincipal principal, Subject subject) {
+    public static final class Authentication {
+
+        private final String token;
+        private final AuthPrincipal principal;
+        private final Subject subject;
+
+        public Authentication(String token, AuthPrincipal principal, Subject subject) {
+            this.token = token;
+            this.principal = principal;
+            this.subject = subject;
+        }
+
+        public String token() { return token; }
+        public AuthPrincipal principal() { return principal; }
+        public Subject subject() { return subject; }
     }
 }

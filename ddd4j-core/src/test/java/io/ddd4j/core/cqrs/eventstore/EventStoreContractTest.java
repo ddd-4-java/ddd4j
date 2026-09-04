@@ -4,6 +4,7 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
+import java.util.Arrays;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -33,7 +34,7 @@ public abstract class EventStoreContractTest {
         TestEvent first = new TestEvent((TestAggregateRootId) ORDER_1);
         TestEvent second = new TestEvent((TestAggregateRootId) ORDER_1);
 
-        store.append(ORDER_TYPE, ORDER_1, List.of(first, second), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(first, second), 0);
 
         List<StoredEvent> events = store.read(ORDER_TYPE, ORDER_1);
         assertThat(events).hasSize(2);
@@ -47,9 +48,9 @@ public abstract class EventStoreContractTest {
     @Test
     void appendWithStaleVersionShouldExposeTypedConflict() {
         EventStore store = createEventStore();
-        store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
 
-        assertThatThrownBy(() -> store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1)), 0))
+        assertThatThrownBy(() -> store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1)), 0))
                 .isInstanceOf(AggregateVersionConflictException.class)
                 .satisfies(error -> {
                     AggregateVersionConflictException conflict = (AggregateVersionConflictException) error;
@@ -63,7 +64,7 @@ public abstract class EventStoreContractTest {
     @Test
     void readWithVersionRangeShouldReturnInclusiveSlice() {
         EventStore store = createEventStore();
-        store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1)), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1)), 0);
 
         List<StoredEvent> events = store.read(ORDER_TYPE, ORDER_1, 1, 2);
 
@@ -73,8 +74,8 @@ public abstract class EventStoreContractTest {
     @Test
     void readAllShouldPreserveGlobalPositionOrderAcrossAggregates() {
         EventStore store = createEventStore();
-        store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
-        store.append(ORDER_TYPE, ORDER_2, List.of(new TestEvent((TestAggregateRootId) ORDER_2)), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
+        store.append(ORDER_TYPE, ORDER_2, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_2)), 0);
 
         List<StoredEvent> events = store.readAll(1, 10);
 

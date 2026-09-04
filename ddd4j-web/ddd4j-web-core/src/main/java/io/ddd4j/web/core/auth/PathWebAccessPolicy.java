@@ -22,7 +22,7 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
                 .filter(StrKit::isNotBlank)
                 .map(String::trim)
                 .distinct()
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
         this.defaultMode = Objects.requireNonNull(defaultMode, "defaultMode must not be null");
     }
 

@@ -34,7 +34,7 @@ class QrCodeTemplateRegistryTests {
         QrCodeTemplateDefinition definition = new QrCodeTemplateDefinition("welcome", frame);
 
         QrCodeFrame bound = new QrCodeTemplateBinder().bind(definition,
-                Collections.singletonMap("name", "DDD4J"));
+                Collections.singletonMap("name", "DDD4J");
 
         assertThat(((QrCodeTextElement) bound.getElements().get(0)).getText()).isEqualTo("欢迎 DDD4J");
         assertThat(((QrCodeTextElement) definition.getFrame().getElements().get(0)).getText())

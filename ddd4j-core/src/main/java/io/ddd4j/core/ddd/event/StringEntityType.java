@@ -17,15 +17,12 @@ package io.ddd4j.core.ddd.event;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.io.Serial;
 import java.util.Objects;
 
 /**
  * 基于字符串的实体类型值对象。
  */
 public final class StringEntityType implements EntityType {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String value;
@@ -53,9 +50,10 @@ public final class StringEntityType implements EntityType {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof StringEntityType that)) {
+        if (!(object instanceof StringEntityType)) {
             return false;
         }
+        StringEntityType that = (StringEntityType) object;
         return Objects.equals(value, that.value);
     }
 

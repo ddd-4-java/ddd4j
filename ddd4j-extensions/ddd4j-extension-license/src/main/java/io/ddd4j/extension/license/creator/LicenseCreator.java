@@ -60,7 +60,7 @@ public class LicenseCreator {
             SignedLicense license = new SignedLicense(algorithm, payload, signature.sign());
 
             temporary = Files.createTempFile(target.getParent(), target.getFileName().toString(), ".tmp");
-            Files.writeString(temporary, license.serialize(), StandardCharsets.UTF_8);
+            Files.write(temporary, license.serialize().getBytes(StandardCharsets.UTF_8));
             moveAtomically(temporary, target);
             temporary = null;
             log.info("License 证书生成成功: path={}, subject={}", target, param.getSubject());
@@ -93,13 +93,14 @@ public class LicenseCreator {
 
     private PrivateKey loadPrivateKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
-        try (var inputStream = Files.newInputStream(Paths.get(param.getPrivateKeysStorePath()))) {
+        try (java.io.InputStream inputStream = Files.newInputStream(Paths.get(param.getPrivateKeysStorePath()))) {
             keyStore.load(inputStream, param.getStorePass().toCharArray());
         }
         Key key = keyStore.getKey(param.getPrivateAlias(), param.getKeyPass().toCharArray());
-        if (!(key instanceof PrivateKey privateKey)) {
+        if (!(key instanceof PrivateKey)) {
             throw new IllegalStateException("私钥别称未指向 PrivateKey: " + param.getPrivateAlias());
         }
+        PrivateKey privateKey = (PrivateKey) key;
         return privateKey;
     }
 

@@ -405,12 +405,15 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         // ddd4j 标准做法：业务侧提供自定义 SessionDAO/Realm 把 loginId 映射到 Session
         // 此处降级处理：使用 DefaultSecurityManager 的 logout 入口
         SecurityManager sm = SecurityUtils.getSecurityManager();
-        if (sm instanceof DefaultSecurityManager dsm && Objects.nonNull(loginId)) {
-            // 注意：DefaultSecurityManager 没有直接 killByPrincipal，我们走 sessionId 路径
-            // 业务方可通过 Subject.runAs / 自定义 SessionDAO 实现
-            // 这里降级为：如果登录用户就是被踢者，登出当前会话
-            if (Objects.equals(loginId, getLoginId())) {
-                logout();
+        if (sm instanceof DefaultSecurityManager) {
+            DefaultSecurityManager dsm = (DefaultSecurityManager) sm;
+            if (Objects.nonNull(loginId)) {
+                // 注意：DefaultSecurityManager 没有直接 killByPrincipal，我们走 sessionId 路径
+                // 业务方可通过 Subject.runAs / 自定义 SessionDAO 实现
+                // 这里降级为：如果登录用户就是被踢者，登出当前会话
+                if (Objects.equals(loginId, getLoginId())) {
+                    logout();
+                }
             }
         }
     }

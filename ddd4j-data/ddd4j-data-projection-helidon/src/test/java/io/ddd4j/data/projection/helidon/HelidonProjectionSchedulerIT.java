@@ -1,5 +1,6 @@
 package io.ddd4j.data.projection.helidon;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.readmodel.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,7 +73,7 @@ class HelidonProjectionSchedulerIT {
 
             @Override
             public Collection<String> getEventTypes() {
-                return Set.of("TestEvent");
+                return Collections.singleton("TestEvent");
             }
 
             @Override
@@ -102,7 +103,7 @@ class HelidonProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         HelidonProjectionViewManager viewManager =
-                new HelidonProjectionViewManager(scheduler, runner, List.of(view));
+                new HelidonProjectionViewManager(scheduler, runner, Collections.singletonList(view));
 
         assertThat(viewManager.isRunning()).isFalse();
 
@@ -125,7 +126,7 @@ class HelidonProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         HelidonProjectionViewManager viewManager =
-                new HelidonProjectionViewManager(scheduler, runner, List.of(view));
+                new HelidonProjectionViewManager(scheduler, runner, Collections.singletonList(view));
 
         viewManager.start();
         viewManager.triggerOnce();

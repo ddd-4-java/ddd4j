@@ -1,5 +1,6 @@
 package io.ddd4j.data.projection.micronaut;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
@@ -78,7 +79,7 @@ class TestFactory {
 
         @Override
         public Collection<String> getEventTypes() {
-            return Set.of("TestEvent");
+            return Collections.singleton("TestEvent");
         }
 
         @Override

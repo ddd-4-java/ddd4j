@@ -2,45 +2,92 @@ package io.ddd4j.extension.qlexpress.function;
 
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
-import io.ddd4j.kit.lang.StrKit;
+import com.alibaba.qlexpress4.runtime.function.CustomFunction;
 
-import java.time.Instant;
-import java.time.ZoneId;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Date;
-import java.util.Objects;
 
 /**
- * 格式化 Java 日期时间对象。
+ * 自定义函数：日期格式化
+ * 
+ * <p>硬编码格式的函数，适用于逻辑固定的函数规则。
+ * 将日期对象格式化为指定格式的字符串。
+ * 
+ * <p>使用示例：
+ * <pre>
+ * formatDate(date, "yyyy-MM-dd HH:mm:ss")
+ * formatDate(localDateTime, "yyyy/MM/dd")
+ * </pre>
+ * 
+ * <p>支持的日期类型：
+ * <ul>
+ *   <li>java.util.Date</li>
+ *   <li>java.time.LocalDateTime</li>
+ * </ul>
+ * 
+ * @author ddd4j
+ * @version 1.0
+ * @since 1.0
  */
-public final class FormatDateFunction implements NamedQLFunction {
+public class FormatDateFunction implements NamedQLFunction {
 
+    /**
+     * 执行函数调用
+     * 
+     * @param qContext QLExpress上下文
+     * @param parameters 函数参数，需要2个参数：date（日期对象）和pattern（格式化模式）
+     * @return 格式化后的日期字符串
+     * @throws Throwable 如果参数数量不正确、参数类型错误或格式化失败
+     */
     @Override
     public String name() {
         return "formatDate";
     }
 
     @Override
-    public Object call(QContext qContext, Parameters parameters) {
-        FunctionArguments.requireSize(parameters, 2, name());
-        Object date = FunctionArguments.value(parameters, 0);
-        Object patternValue = FunctionArguments.value(parameters, 1);
-        if (Objects.isNull(date)) {
+    public Object call(QContext qContext, Parameters parameters) throws Throwable {
+        if (parameters == null || parameters.size() < 2) {
+            throw new IllegalArgumentException("formatDate函数需要2个参数：date和pattern");
+        }
+        
+        Object dateObj = getParameterValue(parameters, 0, qContext);
+        Object patternObj = getParameterValue(parameters, 1, qContext);
+        String pattern = patternObj != null ? patternObj.toString() : null;
+
+        if (dateObj == null) {
             return null;
         }
-        if (Objects.isNull(patternValue) || !StrKit.hasText(patternValue.toString())) {
-            throw new IllegalArgumentException("formatDate 格式不能为空");
-        }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(patternValue.toString());
-        if (date instanceof Date legacyDate) {
-            Instant instant = legacyDate.toInstant();
-            return formatter.format(instant.atZone(ZoneId.systemDefault()));
+        if (dateObj instanceof Date) {
+            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+            return sdf.format((Date) dateObj);
+        } else if (dateObj instanceof LocalDateTime) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+            return ((LocalDateTime) dateObj).format(formatter);
+        } else {
+            throw new IllegalArgumentException("formatDate函数第一个参数必须是Date或LocalDateTime类型");
         }
-        if (date instanceof TemporalAccessor temporalAccessor) {
-            return formatter.format(temporalAccessor);
+    }
+    
+    /**
+     * 获取参数值（兼容不同的 QLExpress 版本）
+     */
+    private Object getParameterValue(Parameters parameters, int index, QContext qContext) throws Throwable {
+        try {
+            if (parameters.get(index) != null) {
+                Object param = parameters.get(index);
+                try {
+                    java.lang.reflect.Method getObjectMethod = param.getClass().getMethod("getObject", QContext.class);
+                    return getObjectMethod.invoke(param, qContext);
+                } catch (NoSuchMethodException e) {
+                    return param;
+                }
+            }
+        } catch (Exception e) {
+            // 忽略
         }
-        throw new IllegalArgumentException("formatDate 仅支持 Date 和 java.time 日期类型");
+        throw new IllegalArgumentException("无法获取参数值，索引: " + index);
     }
 }

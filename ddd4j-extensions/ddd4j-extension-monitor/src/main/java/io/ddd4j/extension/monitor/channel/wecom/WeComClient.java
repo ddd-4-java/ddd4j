@@ -5,9 +5,6 @@ import io.ddd4j.extension.monitor.message.Message;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
@@ -25,13 +22,6 @@ public class WeComClient {
      * 企业微信群机器人 Webhook 基础地址
      */
     public static final String BASE_URL = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=";
-
-    /**
-     * HTTP 客户端（连接超时 10s）
-     */
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
-            .build();
 
     /**
      * 企业微信机器人 Webhook key
@@ -80,15 +70,12 @@ public class WeComClient {
         Message content = Message.markdown("", msg, null);
         String payload = JsonKit.toJson(content);
         String url = baseUrl + key;
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .timeout(Duration.ofSeconds(10))
-                .header("Content-Type", "application/json; charset=UTF-8")
-                .POST(HttpRequest.BodyPublishers.ofString(payload, StandardCharsets.UTF_8))
-                .build();
         try {
-            HttpResponse<String> response = HTTP_CLIENT.send(request,
-                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            cn.hutool.http.HttpResponse response = cn.hutool.http.HttpRequest.post(url)
+                    .header("Content-Type", "application/json; charset=UTF-8")
+                    .body(payload)
+                    .timeout(10_000)
+                    .execute();
             log.debug("【发送企业微信告警】响应：{}", response.body());
         } catch (Exception e) {
             log.error("【发送企业微信告警】error: {}", e.getMessage(), e);

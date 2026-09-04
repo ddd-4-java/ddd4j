@@ -4,6 +4,8 @@
  */
 package io.ddd4j.data.event.store.panache;
 
+import java.util.Collections;
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
@@ -65,7 +67,7 @@ class PanacheEventStoreTest {
         TestAggregateRootId orderId = new TestAggregateRootId("order-1");
         OrderCreatedEvent event = new OrderCreatedEvent(orderId);
 
-        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0);
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(event), 0);
 
         List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
         assertThat(events).hasSize(1);
@@ -80,12 +82,12 @@ class PanacheEventStoreTest {
     void readWithVersionRangeAndConflictShouldFollowCoreContract() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-2");
         eventStore.append(ORDER_TYPE, orderId,
-                List.of(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0);
+                Arrays.asList(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0);
 
         assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
                 .extracting(StoredEvent::version)
                 .containsExactly(1L, 2L);
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0))
+        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new OrderCreatedEvent(orderId)), 0))
                 .isInstanceOf(AggregateVersionConflictException.class);
     }
 
@@ -93,8 +95,8 @@ class PanacheEventStoreTest {
     void readAllShouldRemainPositionOrderedAcrossAggregateTypes() {
         TestAggregateRootId firstId = new TestAggregateRootId("order-3");
         TestAggregateRootId secondId = new TestAggregateRootId("order-4");
-        eventStore.append(ORDER_TYPE, firstId, List.of(new OrderCreatedEvent(firstId)), 0);
-        eventStore.append("Invoice", secondId, List.of(new OrderCreatedEvent(secondId)), 0);
+        eventStore.append(ORDER_TYPE, firstId, Arrays.asList(new OrderCreatedEvent(firstId)), 0);
+        eventStore.append("Invoice", secondId, Arrays.asList(new OrderCreatedEvent(secondId)), 0);
 
         List<StoredEvent> events = eventStore.readAll(0, 10);
         assertThat(events).hasSize(2);

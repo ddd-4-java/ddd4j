@@ -1,5 +1,6 @@
 package io.ddd4j.data.mybatis.adapter;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.data.mybatis.plugins.inner.Ddd4jAggregateFillInnerInterceptor;
@@ -20,7 +21,7 @@ class Ddd4jAggregateFillInnerInterceptorTest {
         parameters.put("query", query);
         TestAggregate aggregate = new TestAggregate("1");
 
-        new Ddd4jAggregateFillInnerInterceptor().afterQuery(parameters, List.of(aggregate));
+        new Ddd4jAggregateFillInnerInterceptor().afterQuery(parameters, Collections.singletonList(aggregate));
 
         assertThat(query.filled).hasSize(1);
         assertThat(query.filled.get(0)).isSameAs(aggregate);

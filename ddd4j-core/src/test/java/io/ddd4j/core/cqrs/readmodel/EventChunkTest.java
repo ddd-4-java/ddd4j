@@ -1,5 +1,7 @@
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.util.Collections;
+import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ class EventChunkTest {
 
         @Test
         void 构造器_正常事件与位置_应保存事件并返回位置() {
-            List<String> events = List.of("e1", "e2", "e3");
+            List<String> events = Arrays.asList("e1", "e2", "e3");
 
             EventChunk<String> chunk = new EventChunk<>(events, 5);
 
@@ -36,14 +38,14 @@ class EventChunkTest {
 
         @Test
         void 构造器_nextEventNumber为零_应允许() {
-            EventChunk<String> chunk = new EventChunk<>(List.of("e1"), 0);
+            EventChunk<String> chunk = new EventChunk<>(Collections.singletonList("e1"), 0);
 
             assertThat(chunk.getNextEventNumber()).isZero();
         }
 
         @Test
         void 构造器_nextEventNumber为负数_应抛IllegalArgumentException() {
-            assertThatThrownBy(() -> new EventChunk<>(List.of("e1"), -1))
+            assertThatThrownBy(() -> new EventChunk<>(Collections.singletonList("e1"), -1))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("nextEventNumber must not be negative");
         }
@@ -57,7 +59,7 @@ class EventChunkTest {
 
         @Test
         void 构造器_events为空列表_应创建空chunk且hasEvents为false() {
-            EventChunk<String> chunk = new EventChunk<>(List.of(), 0);
+            EventChunk<String> chunk = new EventChunk<>(Arrays.asList(), 0);
 
             assertThat(chunk.getEvents()).isEmpty();
             assertThat(chunk.hasEvents()).isFalse();
@@ -114,14 +116,14 @@ class EventChunkTest {
 
         @Test
         void hasEvents_事件非空_应返回true() {
-            EventChunk<String> chunk = new EventChunk<>(List.of("e1"), 1);
+            EventChunk<String> chunk = new EventChunk<>(Collections.singletonList("e1"), 1);
 
             assertThat(chunk.hasEvents()).isTrue();
         }
 
         @Test
         void getEvents_返回不可变List_修改应抛UnsupportedOperationException() {
-            EventChunk<String> chunk = new EventChunk<>(List.of("e1", "e2"), 2);
+            EventChunk<String> chunk = new EventChunk<>(Arrays.asList("e1", "e2"), 2);
 
             assertThatThrownBy(() -> chunk.getEvents().add("e3"))
                     .isInstanceOf(UnsupportedOperationException.class);
@@ -137,7 +139,7 @@ class EventChunkTest {
 
         @Test
         void getNextEventNumber_应返回构造时传入的值() {
-            EventChunk<String> chunk = new EventChunk<>(List.of("e1"), 99L);
+            EventChunk<String> chunk = new EventChunk<>(Collections.singletonList("e1"), 99L);
 
             assertThat(chunk.getNextEventNumber()).isEqualTo(99L);
         }

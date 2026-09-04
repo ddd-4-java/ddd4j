@@ -1,97 +1,157 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- */
-package io.ddd4j.data.event.store.r2dbc;
+package io.ddd4j.data.eventstore.r2dbc;
 
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
-import io.ddd4j.core.cqrs.eventstore.EventStore;
-import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+import io.ddd4j.core.cqrs.eventstore.AsyncEventStore;
+import io.ddd4j.core.cqrs.eventstore.EventStoreConstants;
+import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityIdRegistry;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.r2dbc.h2.CloseableConnectionFactory;
 import io.r2dbc.h2.H2ConnectionFactory;
-import io.r2dbc.h2.H2ConnectionOption;
-import io.r2dbc.spi.Connection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * R2DBC 同步边界的 H2 强类型契约测试。
- */
 class R2dbcEventStoreTest {
 
     private static final String ORDER_TYPE = "Order";
+
     private CloseableConnectionFactory connectionFactory;
-    private EventStore eventStore;
+    private AsyncEventStore eventStore;
 
     @BeforeEach
     void setUp() {
-        connectionFactory = H2ConnectionFactory.inMemory(
-                "sync_eventstore_" + System.nanoTime(), "sa", "",
-                Map.of(H2ConnectionOption.DB_CLOSE_DELAY, "-1"));
-        EntityIdRegistry.register(TestAggregateRootId.TYPE_NAME, TestAggregateRootId::new);
+        // CloseableConnectionFactory 持有常驻会话，保证内存库在工厂存活期内不销毁
+        connectionFactory = H2ConnectionFactory.inMemory("r2dbc-event-store-test");
         eventStore = new R2dbcEventStore(connectionFactory);
     }
 
     @AfterEach
     void tearDown() {
-        EntityIdRegistry.unregister(TestAggregateRootId.TYPE_NAME);
-        Connection connection = Mono.from(connectionFactory.create()).block();
-        if (connection != null) {
-            Mono.from(connection.createStatement("DROP TABLE IF EXISTS DDD4J_EVENT_STORE").execute()).block();
-            Mono.from(connection.close()).block();
-        }
+        connectionFactory.close().block();
     }
 
     @Test
-    void appendAndReadShouldPreserveTypedMetadata() {
-        TestAggregateRootId orderId = new TestAggregateRootId("order-1");
-        OrderCreatedEvent event = new OrderCreatedEvent(orderId);
+    void appendAndReadShouldRoundTripBusinessPayload() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-a");
+        eventStore.append(ORDER_TYPE, orderId, reactor.core.publisher.Flux.fromIterable(Arrays.<DomainEvent<?>>asList(
+                new OrderCreatedEvent("created"), new OrderCreatedEvent("renamed"))), 0).block();
 
-        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0);
-
-        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
-        assertThat(events).hasSize(1);
-        assertThat(events.get(0).aggregateType()).isEqualTo(ORDER_TYPE);
-        assertThat(events.get(0).aggregateId()).isEqualTo(orderId);
-        assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
-        assertThat(events.get(0).eventId()).isEqualTo(event.getEventId());
+        List<AsyncStoredEvent> events = eventStore.read(ORDER_TYPE, orderId).collectList().block();
+        assertEquals(2, events.size());
+        assertEquals(1L, events.get(0).version());
+        assertEquals(2L, events.get(1).version());
+        assertInstanceOf(OrderCreatedEvent.class, events.get(0).payload());
+        assertEquals("created", ((OrderCreatedEvent) events.get(0).payload()).getFact());
+        assertEquals("renamed", ((OrderCreatedEvent) events.get(1).payload()).getFact());
+        assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
     }
 
     @Test
-    void versionRangeAndAggregateTypeIsolationShouldFollowCoreContract() {
-        TestAggregateRootId orderId = new TestAggregateRootId("shared");
+    void appendWithStaleVersionShouldReject() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-b");
         eventStore.append(ORDER_TYPE, orderId,
-                List.of(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0);
-        eventStore.append("Invoice", orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("first"))), 0).block();
 
-        assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
-                .extracting(StoredEvent::version)
-                .containsExactly(1L, 2L);
-        assertThat(eventStore.read("Invoice", orderId)).hasSize(1);
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0))
-                .isInstanceOf(AggregateVersionConflictException.class);
+        AggregateVersionConflictException conflict = assertThrows(AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId,
+                        reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("second"))), 0).block());
+        assertEquals(0L, conflict.expectedVersion());
+        assertEquals(1L, conflict.actualVersion());
     }
 
-    static final class TestAggregateRootId implements AggregateRootId {
-        private static final String TYPE_NAME = "R2dbcOrder";
-        private static final EntityType TYPE = new StringEntityType(TYPE_NAME);
+    @Test
+    void readVersionRangeShouldReturnInclusiveSlice() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-c");
+        eventStore.append(ORDER_TYPE, orderId, reactor.core.publisher.Flux.fromIterable(Arrays.<DomainEvent<?>>asList(
+                new OrderCreatedEvent("v1"), new OrderCreatedEvent("v2"), new OrderCreatedEvent("v3"))), 0).block();
+
+        List<AsyncStoredEvent> slice = eventStore.read(ORDER_TYPE, orderId, 2, 3).collectList().block();
+        assertEquals(2, slice.size());
+        assertEquals(2L, slice.get(0).version());
+        assertEquals(3L, slice.get(1).version());
+    }
+
+    @Test
+    void readAllShouldPreserveGlobalPositionOrder() {
+        TestAggregateRootId first = new TestAggregateRootId("order-d");
+        TestAggregateRootId second = new TestAggregateRootId("order-e");
+        eventStore.append(ORDER_TYPE, first,
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("d"))), 0).block();
+        eventStore.append(ORDER_TYPE, second,
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("e"))), 0).block();
+
+        List<AsyncStoredEvent> events = eventStore.readAll(1, 10).collectList().block();
+        assertEquals(2, events.size());
+        assertEquals(first.asString(), events.get(0).aggregateId().asString());
+        assertEquals(second.asString(), events.get(1).aggregateId().asString());
+        assertTrue(events.get(0).position() < events.get(1).position());
+        assertEquals(1L, events.get(0).position());
+        assertEquals(2L, events.get(1).position());
+    }
+
+    @Test
+    void causalityColumnsShouldRoundTrip() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-f");
+        OrderCreatedEvent cause = new OrderCreatedEvent("cause");
+        OrderCreatedEvent effect = new OrderCreatedEvent("effect", cause);
+        eventStore.append(ORDER_TYPE, orderId, reactor.core.publisher.Flux.fromIterable(Arrays.<DomainEvent<?>>asList(cause, effect)), 0).block();
+
+        List<AsyncStoredEvent> events = eventStore.read(ORDER_TYPE, orderId).collectList().block();
+        assertNull(events.get(0).correlationId());
+        assertEquals(cause.getEventId(), events.get(1).correlationId());
+        assertEquals(cause.getEventId(), events.get(1).causationId());
+    }
+
+    @Test
+    void readMissingStreamShouldReturnEmpty() {
+        assertEquals(0, eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing"))
+                .collectList().block().size());
+    }
+
+    @Test
+    void payloadColumnShouldUseTextType() {
+        eventStore.append(ORDER_TYPE, new TestAggregateRootId("order-g"),
+                reactor.core.publisher.Flux.fromIterable(Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("g"))), 0).block();
+        String dataType = Mono.usingWhen(
+                        Mono.from(connectionFactory.create()),
+                        connection -> Mono.from(connection.createStatement(
+                                        "select data_type from information_schema.columns"
+                                                + " where upper(table_name) = $1"
+                                                + " and upper(column_name) = $2")
+                                .bind(0, EventStoreConstants.TABLE_NAME.toUpperCase())
+                                .bind(1, EventStoreConstants.COLUMN_PAYLOAD.toUpperCase())
+                                .execute())
+                                .flatMap(result -> Mono.from(result.map((row, metadata) ->
+                                        row.get(0, String.class)))),
+                        connection -> Mono.from(connection.close()))
+                .block();
+        // H2 2.2 将 TEXT 声明报告为 CHARACTER VARYING（PG 上为 text，容器轨另验）；
+        // 断言语义：payload 落在字符类型族，而非数值/二进制
+        assertTrue(dataType != null && dataType.startsWith("CHARACTER"));
+    }
+
+    private static final class TestAggregateRootId implements AggregateRootId {
+
+        private static final EntityType TYPE = new StringEntityType("Order");
+
         private final String value;
 
-        TestAggregateRootId(String value) {
+        private TestAggregateRootId(String value) {
             this.value = value;
         }
 
@@ -107,27 +167,35 @@ class R2dbcEventStoreTest {
 
         @Override
         public String asTypedString() {
-            return TYPE_NAME + ":" + value;
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            return object instanceof TestAggregateRootId other && value.equals(other.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return value.hashCode();
+            return TYPE.asString() + ":" + value;
         }
     }
 
-    static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
-        OrderCreatedEvent() {
+    /** 业务事件样例：无参构造 + JavaBean 属性（payload 序列化约定）。 */
+    public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
+
+        private String fact;
+
+        public OrderCreatedEvent() {
             super();
         }
 
-        OrderCreatedEvent(TestAggregateRootId orderId) {
-            super(new EntityIdPath(orderId));
+        private OrderCreatedEvent(String fact) {
+            super(new EntityIdPath(new TestAggregateRootId("order-1")));
+            this.fact = fact;
+        }
+
+        private OrderCreatedEvent(String fact, io.ddd4j.core.ddd.event.Event causingEvent) {
+            super(new EntityIdPath(new TestAggregateRootId("order-1")), causingEvent);
+            this.fact = fact;
+        }
+
+        public String getFact() {
+            return fact;
+        }
+
+        public void setFact(String fact) {
+            this.fact = fact;
         }
     }
 }

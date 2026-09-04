@@ -1,23 +1,16 @@
-package io.ddd4j.quarkus.annotation.ddd;
+package io.ddd4j.annotation;
 
-import io.ddd4j.annotation.ddd.DDDAnnotation;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Stereotype;
+import org.springframework.stereotype.Service;
 
 import java.lang.annotation.*;
 
 /**
- * Quarkus 业务服务 Bean（领域服务）。
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * 领域模型标记-领域服务
  */
 @DDDAnnotation
 @Documented
+@Service
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Stereotype
-@ApplicationScoped
-@Inherited
+@Target(value = {ElementType.TYPE})
 public @interface DomainService {
 }

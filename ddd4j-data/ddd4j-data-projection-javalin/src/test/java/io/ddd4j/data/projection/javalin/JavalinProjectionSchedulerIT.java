@@ -1,5 +1,7 @@
 package io.ddd4j.data.projection.javalin;
 
+import java.util.Collections;
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.AfterEach;
@@ -87,7 +89,7 @@ class JavalinProjectionSchedulerIT {
 
             @Override
             public Collection<String> getEventTypes() {
-                return Set.of("TestEvent");
+                return Collections.singleton("TestEvent");
             }
 
             @Override
@@ -99,7 +101,7 @@ class JavalinProjectionSchedulerIT {
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         JavalinProjectionScheduler scheduler =
-                JavalinProjectionScheduler.create(app, List.of(), createRunner());
+                JavalinProjectionScheduler.create(app, Arrays.asList(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
                 "direct-view", "0/1 * * * * *", () -> {});
@@ -115,7 +117,7 @@ class JavalinProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         JavalinProjectionViewManager viewManager =
-                JavalinProjectionViewManager.create(app, List.of(view), runner);
+                JavalinProjectionViewManager.create(app, Collections.singletonList(view), runner);
 
         assertThat(viewManager.isRunning()).isFalse();
 
@@ -135,7 +137,7 @@ class JavalinProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         JavalinProjectionViewManager viewManager =
-                JavalinProjectionViewManager.create(app, List.of(view), runner);
+                JavalinProjectionViewManager.create(app, Collections.singletonList(view), runner);
 
         viewManager.start();
         viewManager.triggerOnce();

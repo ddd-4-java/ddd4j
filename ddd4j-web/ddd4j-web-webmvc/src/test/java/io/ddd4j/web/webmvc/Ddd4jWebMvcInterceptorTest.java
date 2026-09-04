@@ -29,7 +29,7 @@ class Ddd4jWebMvcInterceptorTest {
 
         assertTrue(interceptor.preHandle(request, response, new Object()));
         assertFalse(ThreadContext.getResources().isEmpty());
-        assertEquals(ThreadContext.get(WebContextScope.REQUEST_ID, String.class).orElseThrow(),
+        assertEquals(ThreadContext.get(WebContextScope.REQUEST_ID, String.class).get(),
                 response.getHeader(WebHeaders.REQUEST_ID));
 
         interceptor.afterCompletion(request, response, new Object(), null);

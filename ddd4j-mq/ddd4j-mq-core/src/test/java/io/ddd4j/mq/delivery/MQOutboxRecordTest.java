@@ -1,5 +1,6 @@
 package io.ddd4j.mq.delivery;
 
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -24,8 +25,8 @@ class MQOutboxRecordTest {
     @Test
     void constructor_shouldRejectBlankIdentityAndDestination() {
         assertThrows(IllegalArgumentException.class, () -> MQOutboxRecord.pending("", "orders.created", "{}",
-                Map.of(), Instant.EPOCH));
+                Collections.emptyMap(), Instant.EPOCH));
         assertThrows(IllegalArgumentException.class, () -> MQOutboxRecord.pending("message-1", " ", "{}",
-                Map.of(), Instant.EPOCH));
+                Collections.emptyMap(), Instant.EPOCH));
     }
 }

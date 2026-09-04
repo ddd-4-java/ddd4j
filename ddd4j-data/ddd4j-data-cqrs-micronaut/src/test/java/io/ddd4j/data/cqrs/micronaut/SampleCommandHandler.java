@@ -1,5 +1,6 @@
 package io.ddd4j.data.cqrs.micronaut;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -30,7 +31,7 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(SampleCommand.class);
+        return Collections.singleton(SampleCommand.class);
     }
 
     @Override

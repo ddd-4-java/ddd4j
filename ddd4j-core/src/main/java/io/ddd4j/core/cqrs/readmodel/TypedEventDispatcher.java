@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.util.Collections;
+import java.util.HashMap;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 
@@ -75,7 +77,7 @@ public class TypedEventDispatcher {
     private Map<String, TypedEventHandler<?>> indexHandlers(Collection<? extends TypedEventHandler<?>> eventHandlers) {
         Map<String, TypedEventHandler<?>> indexedHandlers = new LinkedHashMap<>();
         if (CollKit.isEmpty(eventHandlers)) {
-            return Map.copyOf(indexedHandlers);
+            return Collections.unmodifiableMap(new HashMap<>(indexedHandlers));
         }
         for (TypedEventHandler<?> handler : eventHandlers) {
             TypedEventHandler<?> safeHandler = Objects.requireNonNull(handler, "handler must not be null");
@@ -84,7 +86,7 @@ public class TypedEventDispatcher {
             }
             indexedHandlers.put(safeHandler.getEventType(), safeHandler);
         }
-        return Map.copyOf(indexedHandlers);
+        return Collections.unmodifiableMap(new HashMap<>(indexedHandlers));
     }
 
     private <E> void invoke(TypedEventHandler<E> handler, Object event) {

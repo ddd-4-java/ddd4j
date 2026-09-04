@@ -15,11 +15,11 @@
     <description>ddd4j CQRS 命令侧框架集成 SPI：@CommandHandler 发现注解 + CommandRegistry 注册中心。
         零运行时框架依赖（命令契约复用 ddd4j-core 的 Command/CommandExecutor/DefaultCommandBus，
         ADR-0004）；运行时适配器在 ddd4j-data-cqrs-{spring,quarkus,...} 子模块。
+        2026-09-04 从 2.0.x 复制补齐（之前 ddd4j-data-cqrs 是空壳）。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
-        <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>

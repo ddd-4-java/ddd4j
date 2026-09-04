@@ -90,8 +90,8 @@ public final class MqDeliveryMetrics {
     private static LongCounter counter(AtomicReference<CounterHandle> cache, String name, String description) {
         Meter meter = Ddd4jOtel.meter();
         CounterHandle cached = cache.get();
-        if (Objects.nonNull(cached) && cached.meter() == meter) {
-            return cached.counter();
+        if (Objects.nonNull(cached) && cached.meter == meter) {
+            return cached.counter;
         }
         CounterHandle created = new CounterHandle(
                 meter,
@@ -101,7 +101,7 @@ public final class MqDeliveryMetrics {
                         .build()
         );
         cache.set(created);
-        return created.counter();
+        return created.counter;
     }
 
     private static Attributes attributes(String broker, String outcome) {
@@ -113,6 +113,13 @@ public final class MqDeliveryMetrics {
         );
     }
 
-    private record CounterHandle(Meter meter, LongCounter counter) {
+    private static final class CounterHandle {
+        private final Meter meter;
+        private final LongCounter counter;
+
+        CounterHandle(Meter meter, LongCounter counter) {
+            this.meter = meter;
+            this.counter = counter;
+        }
     }
 }

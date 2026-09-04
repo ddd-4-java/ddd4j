@@ -46,7 +46,7 @@ class RabbitMQContainerIntegrationTest {
     void rabbitMQPropertiesConnectsToContainerBroker() throws Exception {
         RabbitMQProperties properties = brokerProperties();
 
-        try (Connection connection = properties.connectionFactory().newConnection();
+try (Connection connection = properties.connectionFactory().newConnection())
              Channel channel = connection.createChannel()) {
 
             channel.exchangeDeclare(EXCHANGE, "direct", true);

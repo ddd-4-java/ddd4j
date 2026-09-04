@@ -14,11 +14,11 @@
  */
 package io.ddd4j.core.ddd.event;
 
+import java.util.Collections;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +30,6 @@ import java.util.Objects;
  * 从聚合根到事件源实体的有序标识路径。
  */
 public final class EntityIdPath implements Serializable {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -64,7 +62,7 @@ public final class EntityIdPath implements Serializable {
         if (Objects.isNull(entityIds) || entityIds.isEmpty()) {
             throw new IllegalArgumentException("Entity identifier path must not be empty");
         }
-        this.entityIds = List.copyOf(entityIds);
+        this.entityIds = Collections.unmodifiableList(new ArrayList<>(entityIds));
         if (this.entityIds.stream().anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("Entity identifier path must not contain null");
         }
@@ -263,9 +261,10 @@ public final class EntityIdPath implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof EntityIdPath that)) {
+        if (!(object instanceof EntityIdPath)) {
             return false;
         }
+        EntityIdPath that = (EntityIdPath) object;
         return Objects.equals(entityIds, that.entityIds);
     }
 

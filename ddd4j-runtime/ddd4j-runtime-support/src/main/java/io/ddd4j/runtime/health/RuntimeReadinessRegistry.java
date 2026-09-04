@@ -1,5 +1,6 @@
 package io.ddd4j.runtime.health;
 
+import java.util.ArrayList;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.ReadinessReport;
 
@@ -7,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Collections;
 
 /**
  * Runtime 对应用 ReadinessContributor 的无框架注册与查询入口。
@@ -19,7 +21,7 @@ public final class RuntimeReadinessRegistry {
     private final List<ReadinessContributor> contributors = new CopyOnWriteArrayList<>();
 
     public RuntimeReadinessRegistry() {
-        this(List.of());
+        this(Collections.emptyList());
     }
 
     public RuntimeReadinessRegistry(Collection<? extends ReadinessContributor> contributors) {
@@ -75,6 +77,6 @@ public final class RuntimeReadinessRegistry {
      * @return 已注册检查器快照
      */
     public List<ReadinessContributor> contributors() {
-        return List.copyOf(contributors);
+        return Collections.unmodifiableList(new ArrayList<>(contributors));
     }
 }

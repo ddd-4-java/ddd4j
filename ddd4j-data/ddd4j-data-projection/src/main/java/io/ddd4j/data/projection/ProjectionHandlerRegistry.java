@@ -1,5 +1,6 @@
 package io.ddd4j.data.projection;
 
+import java.util.HashSet;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 import java.util.Collection;
@@ -58,7 +59,7 @@ public class ProjectionHandlerRegistry {
      */
     public void register(ProjectionHandler handler) {
         ProjectionHandler actual = Objects.requireNonNull(handler, "handler must not be null");
-        Set<Class<?>> eventTypes = Set.copyOf(actual.eventTypes());
+        Set<Class<?>> eventTypes = Collections.unmodifiableSet(new HashSet<>(actual.eventTypes()));
         for (Class<?> eventType : eventTypes) {
             if (handlers.containsKey(eventType)) {
                 throw new IllegalStateException(

@@ -12,11 +12,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,10 +33,6 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      */
     private final ObjectMapper objectMapper;
     /**
-     * HTTP 客户端
-     */
-    private final HttpClient httpClient;
-    /**
      * 远程服务地址
      */
     private final String address;
@@ -50,13 +45,11 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      * 构造函数
      *
      * @param objectMapper JSON 对象映射器
-     * @param httpClient   HTTP 客户端
      * @param address      远程服务地址
      * @param port         远程服务端口
      */
-    public FlksecCryptoStrategy(ObjectMapper objectMapper, HttpClient httpClient, String address, String port) {
+    public FlksecCryptoStrategy(ObjectMapper objectMapper, String address, String port) {
         this.objectMapper = objectMapper;
-        this.httpClient = httpClient;
         this.address = address;
         this.port = port;
     }
@@ -91,13 +84,13 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("data", valueAsString);
             bodyContent.put("plainIsEncode", String.valueOf(plainIsEncode));
             String url = String.format("https://%s:%s/api/crypto/sysEncrypt", address, port);
-            HttpResponse<String> encryptResponse = httpClient.send(
-                    HttpRequest.newBuilder(URI.create(url))
-                            .header("Content-Type", "application/json")
-                            .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(bodyContent)))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            if (encryptResponse.statusCode() >= 200 && encryptResponse.statusCode() < 300) {
+            HttpResponse encryptResponse = HttpRequest.post(url)
+                    .header("Content-Type", "application/json")
+                    .body(objectMapper.writeValueAsString(bodyContent))
+                    .execute();
+            int encryptStatus = encryptResponse.getStatus();
+            try {
+            if (encryptStatus >= 200 && encryptStatus < 300) {
                 EncryptResponse encryptResponseVO = objectMapper.readValue(encryptResponse.body(), EncryptResponse.class);
                 if (Objects.isNull(encryptResponseVO)) {
                     throw new BizRuntimeException("调用远程接口加密失败，请稍后重试");
@@ -110,13 +103,13 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
                     throw new BizRuntimeException(encryptResponseVO.getMsg());
                 }
             } else {
-                throw new BizRuntimeException("调用远程接口加密失败，StatusCode :" + encryptResponse.statusCode());
+                throw new BizRuntimeException("调用远程接口加密失败，StatusCode :" + encryptStatus);
             }
-        } catch (IOException | InterruptedException e) {
+            } finally {
+                encryptResponse.close();
+            }
+        } catch (IOException e) {
             log.error("调用远程接口加密失败：{}", e.getMessage());
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
             throw new BizRuntimeException("调用远程接口加密失败，请稍后重试");
         }
     }
@@ -136,13 +129,13 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("data", value);
             bodyContent.put("plainIsEncode", String.valueOf(plainIsEncode));
             String url = String.format("https://%s:%s/api/crypto/sysDecrypt", address, port);
-            HttpResponse<String> decryptResponse = httpClient.send(
-                    HttpRequest.newBuilder(URI.create(url))
-                            .header("Content-Type", "application/json")
-                            .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(bodyContent)))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            if (decryptResponse.statusCode() >= 200 && decryptResponse.statusCode() < 300) {
+            HttpResponse decryptResponse = HttpRequest.post(url)
+                    .header("Content-Type", "application/json")
+                    .body(objectMapper.writeValueAsString(bodyContent))
+                    .execute();
+            int decryptStatus = decryptResponse.getStatus();
+            try {
+            if (decryptStatus >= 200 && decryptStatus < 300) {
                 DecryptResponse decryptResponseVO = objectMapper.readValue(decryptResponse.body(), DecryptResponse.class);
                 if (Objects.isNull(decryptResponseVO)) {
                     throw new BizRuntimeException("调用远程接口解密失败，请稍后重试");
@@ -155,13 +148,13 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
                     throw new BizRuntimeException(decryptResponseVO.getMsg());
                 }
             } else {
-                throw new BizRuntimeException("调用远程接口解密失败，StatusCode :" + decryptResponse.statusCode());
+                throw new BizRuntimeException("调用远程接口解密失败，StatusCode :" + decryptStatus);
             }
-        } catch (IOException | InterruptedException e) {
+            } finally {
+                decryptResponse.close();
+            }
+        } catch (IOException e) {
             log.error("调用远程接口解密失败：{}", e.getMessage());
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
             throw new BizRuntimeException("调用远程接口解密失败，请稍后重试");
         }
     }
@@ -182,30 +175,30 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("key", key);
             bodyContent.put("data", valueAsString);
             String url = String.format("https://%s:%s/api/hmac/sm3hmac", address, port);
-            HttpResponse<String> response = httpClient.send(
-                    HttpRequest.newBuilder(URI.create(url))
-                            .header("Content-Type", "application/json")
-                            .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(bodyContent)))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                SignResponse responseVO = objectMapper.readValue(response.body(), SignResponse.class);
-                if (Objects.isNull(responseVO)) {
-                    throw new BizRuntimeException("调用远程接口签名失败，请稍后重试");
-                }
-                if (responseVO.getCode() == 200) {
-                    return StringUtils.defaultString(responseVO.getData());
+            HttpResponse response = HttpRequest.post(url)
+                    .header("Content-Type", "application/json")
+                    .body(objectMapper.writeValueAsString(bodyContent))
+                    .execute();
+            int signStatus = response.getStatus();
+            try {
+                if (signStatus >= 200 && signStatus < 300) {
+                    SignResponse responseVO = objectMapper.readValue(response.body(), SignResponse.class);
+                    if (Objects.isNull(responseVO)) {
+                        throw new BizRuntimeException("调用远程接口签名失败，请稍后重试");
+                    }
+                    if (responseVO.getCode() == 200) {
+                        return StringUtils.defaultString(responseVO.getData());
+                    } else {
+                        throw new BizRuntimeException(responseVO.getMsg());
+                    }
                 } else {
-                    throw new BizRuntimeException(responseVO.getMsg());
+                    throw new BizRuntimeException("调用远程接口签名失败，StatusCode :" + signStatus);
                 }
-            } else {
-                throw new BizRuntimeException("调用远程接口签名失败，StatusCode :" + response.statusCode());
+            } finally {
+                response.close();
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             log.error("调用远程接口签名失败：{}", e.getMessage());
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
             throw new BizRuntimeException("调用远程接口签名失败，请稍后重试");
         }
     }

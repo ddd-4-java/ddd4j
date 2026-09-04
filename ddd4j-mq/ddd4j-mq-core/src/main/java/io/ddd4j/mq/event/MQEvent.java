@@ -10,7 +10,6 @@ import io.ddd4j.mq.MQProperties;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,6 @@ public class MQEvent implements Serializable {
      * 用于获取 defaultTopic / namespace / broker 默认值。
      */
     public static final String MQ_PROPERTIES = "MQProperties";
-    @Serial
     private static final long serialVersionUID = 1L;
     /**
      * 消息 ID，默认当前时间戳

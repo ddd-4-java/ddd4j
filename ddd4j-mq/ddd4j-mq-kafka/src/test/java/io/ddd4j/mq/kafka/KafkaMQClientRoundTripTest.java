@@ -1,5 +1,6 @@
 package io.ddd4j.mq.kafka;
 
+import java.util.Collections;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
@@ -60,7 +61,7 @@ class KafkaMQClientRoundTripTest {
 
         // 3. 走框架统一入口 init()：注册序列化器/配置到 BaseContext，
         //    初始化生产者（注册进 publishers Map）并注册消费者
-        client.init(List.of(listener), mqProps, new JsonMQEventSerialization(), null);
+        client.init(Collections.singletonList(listener), mqProps, new JsonMQEventSerialization(), null);
 
         // 4. 生产：走 MQEvent.publish() 的 BaseContext 路由（与生产环境用法一致）
         OrderPaidEvent event = new OrderPaidEvent();

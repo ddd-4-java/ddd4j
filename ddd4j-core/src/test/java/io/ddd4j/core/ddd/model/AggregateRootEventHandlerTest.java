@@ -1,5 +1,6 @@
 package io.ddd4j.core.ddd.model;
 
+import java.util.Arrays;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -52,7 +53,7 @@ class AggregateRootEventHandlerTest {
     void ignoreOnReplayHandlerNotInvokedOnLoad() {
         Counter counter = new Counter();
 
-        counter.loadFromHistory(List.of(new IncrementEvent(), new CountNotifiedEvent()));
+        counter.loadFromHistory(Arrays.asList(new IncrementEvent(), new CountNotifiedEvent()));
 
         assertEquals(1, counter.count, "normal handler should replay and rebuild state");
         assertFalse(counter.sideEffectRan, "ignoreOnReplay=true handler must be skipped on loadFromHistory");
@@ -87,7 +88,7 @@ class AggregateRootEventHandlerTest {
         assertEquals(1, applying.count, "apply should reach private @EventHandler via setAccessible");
 
         PrivateHandlerCounter replaying = new PrivateHandlerCounter();
-        replaying.loadFromHistory(List.of(new IncrementEvent(), new IncrementEvent()));
+        replaying.loadFromHistory(Arrays.asList(new IncrementEvent(), new IncrementEvent()));
         assertEquals(2, replaying.count, "loadFromHistory should reach private @EventHandler via setAccessible");
         assertTrue(replaying.domainEvents().isEmpty(), "replay must not enqueue events");
     }

@@ -1,5 +1,8 @@
 package io.ddd4j.core.auth;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -42,7 +45,7 @@ class AuthPrincipalTest {
         AuthPrincipal.RolePair role = new AuthPrincipal.RolePair()
                 .setRoleId("r1").setRoleCode("admin").setRoleName("Admin");
 
-        AuthPrincipal principal = new AuthPrincipal().setRoles(List.of(role));
+        AuthPrincipal principal = new AuthPrincipal().setRoles(Collections.singletonList(role));
 
         assertThat(principal.getRoles()).hasSize(1);
         assertThat(principal.getRoles().get(0).getRoleCode()).isEqualTo("admin");
@@ -50,7 +53,7 @@ class AuthPrincipalTest {
 
     @Test
     void setPerms_shouldCarryPermissionSet() {
-        AuthPrincipal principal = new AuthPrincipal().setPerms(Set.of("user:add", "user:del"));
+        AuthPrincipal principal = new AuthPrincipal().setPerms(Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("user:add", "user:del"))));
 
         assertThat(principal.getPerms()).containsExactlyInAnyOrder("user:add", "user:del");
     }

@@ -1,5 +1,6 @@
 package io.ddd4j.micronaut.health;
 
+import java.util.Collections;
 import io.ddd4j.core.health.ReadinessReport;
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 import io.micronaut.context.annotation.Requires;
@@ -32,7 +33,7 @@ public class Ddd4jMicronautReadinessHealthIndicator implements HealthIndicator {
         ReadinessReport report = readinessRegistry.readiness();
         HealthStatus status = report.ready() ? HealthStatus.UP : HealthStatus.DOWN;
         HealthResult result = HealthResult.builder("ddd4j", status)
-                .details(Map.of("checks", report.results().size()))
+                .details(Collections.singletonMap("checks", report.results().size()))
                 .build();
         return Publishers.just(result);
     }

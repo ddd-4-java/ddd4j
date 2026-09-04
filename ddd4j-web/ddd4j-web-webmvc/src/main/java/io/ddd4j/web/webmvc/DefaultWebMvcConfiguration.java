@@ -126,7 +126,7 @@ public class DefaultWebMvcConfiguration {
         String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
                 new String[]{"/health", "/health/readiness", "/health/liveness", ReadinessEndpoint.PATH,
                         "/assets/**", "/webjars/**"});
-        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+        return new PathWebAccessPolicy(java.util.Arrays.asList(publicPaths), AuthenticationMode.REQUIRED);
     }
 
     @Bean

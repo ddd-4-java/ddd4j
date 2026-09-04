@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.exception;
 
-import java.io.Serial;
 
 /**
  * 账号被禁用异常（业务侧封禁）。
@@ -30,8 +29,6 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class AccountDisabledException extends AuthenticationException {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public AccountDisabledException(String message) {

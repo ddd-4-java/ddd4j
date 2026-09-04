@@ -7,7 +7,7 @@ import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
-import jakarta.jms.*;
+import javax.jms.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
@@ -69,7 +69,7 @@ public class ActiveMQClient implements MQClient {
         if (Objects.nonNull(properties.getPassword()) && StrKit.isNotBlank(properties.getPassword())) {
             factory.setPassword(properties.getPassword());
         }
-        factory.setClientID(Objects.requireNonNullElse(properties.getClientIdPrefix(), "ddd4j-mq-"));
+        factory.setClientID((properties.getClientIdPrefix() != null ? properties.getClientIdPrefix() : "ddd4j-mq-"));
         return factory;
     }
 

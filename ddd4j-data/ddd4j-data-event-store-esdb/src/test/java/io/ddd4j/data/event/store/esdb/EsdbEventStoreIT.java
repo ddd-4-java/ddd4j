@@ -1,5 +1,6 @@
 package io.ddd4j.data.event.store.esdb;
 
+import java.util.Arrays;
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.eventstore.dbclient.EventStoreDBConnectionString;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -51,7 +52,7 @@ class EsdbEventStoreIT {
 
     @Test void appendReadRangeAndGlobalReadFollowStrongContract() {
         TestId id = new TestId("order-1");
-        store.append(ORDER_TYPE, id, List.of(new TestEvent(id), new TestEvent(id), new TestEvent(id)), 0);
+        store.append(ORDER_TYPE, id, Arrays.asList(new TestEvent(id), new TestEvent(id), new TestEvent(id)), 0);
         List<StoredEvent> all = store.read(ORDER_TYPE, id);
         assertThat(all).extracting(StoredEvent::version).containsExactly(1L, 2L, 3L);
         assertThat(store.read(ORDER_TYPE, id, 2, 3)).extracting(StoredEvent::version).containsExactly(2L, 3L);

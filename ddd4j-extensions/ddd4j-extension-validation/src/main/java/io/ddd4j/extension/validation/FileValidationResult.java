@@ -1,5 +1,7 @@
 package io.ddd4j.extension.validation;
 
+import java.util.Objects;
+
 /**
  * 文件校验结果。
  *
@@ -7,7 +9,51 @@ package io.ddd4j.extension.validation;
  * @param failure 失败原因，通过时为空
  * @param detectedType 内容检测结果，可以为空
  */
-public record FileValidationResult(boolean valid, FileValidationFailure failure, DetectedFileType detectedType) {
+public final class FileValidationResult {
+    private final boolean valid;
+    private final FileValidationFailure failure;
+    private final DetectedFileType detectedType;
+
+    public FileValidationResult(boolean valid, FileValidationFailure failure, DetectedFileType detectedType) {
+
+        this.valid = valid;
+        this.failure = failure;
+        this.detectedType = detectedType;
+    }
+
+    public boolean valid() {
+        return valid;
+    }
+
+    public FileValidationFailure failure() {
+        return failure;
+    }
+
+    public DetectedFileType detectedType() {
+        return detectedType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FileValidationResult)) return false;
+        FileValidationResult that = (FileValidationResult) o;
+        return Objects.equals(valid, that.valid) && Objects.equals(failure, that.failure) && Objects.equals(detectedType, that.detectedType);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(valid);
+        result = 31 * result + Objects.hashCode(failure);
+        result = 31 * result + Objects.hashCode(detectedType);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "FileValidationResult{" + valid + ", " + failure + ", " + detectedType + '}';
+    }
+
 
     /**
      * 创建成功结果。
@@ -29,4 +75,5 @@ public record FileValidationResult(boolean valid, FileValidationFailure failure,
     public static FileValidationResult invalid(FileValidationFailure failure, DetectedFileType detectedType) {
         return new FileValidationResult(false, failure, detectedType);
     }
+
 }

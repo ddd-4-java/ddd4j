@@ -12,9 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -67,7 +66,6 @@ public class PconlineRegionTemplate {
     /**
      * HTTP 客户端
      */
-    private final HttpClient httpClient;
     /**
      * 缓存服务
      */
@@ -78,8 +76,8 @@ public class PconlineRegionTemplate {
      *
      * @param httpClient HTTP 客户端
      */
-    public PconlineRegionTemplate(HttpClient httpClient) {
-        this(httpClient, RegionCache.none());
+    public PconlineRegionTemplate() {
+        this(RegionCache.none());
     }
 
     /**
@@ -88,21 +86,20 @@ public class PconlineRegionTemplate {
      * @param httpClient  HTTP 客户端
      * @param regionCache 缓存服务
      */
-    public PconlineRegionTemplate(HttpClient httpClient, RegionCache regionCache) {
-        this.httpClient = httpClient;
+    public PconlineRegionTemplate(RegionCache regionCache) {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
     public static void main(String[] args) throws IOException {
 
-        PconlineRegionTemplate template = new PconlineRegionTemplate(HttpClient.newHttpClient());
+        PconlineRegionTemplate template = new PconlineRegionTemplate();
 
         Optional<JSONObject> mapLL2 = template.getLocationByIp("13.228.204.118"); // lng：116.86380647644208  lat：38.297615350325717
         mapLL2.ifPresent(location -> log.info("Location: {}", location.toJSONString()));
     }
 
     private static String trimWhitespace(String value) {
-        return Objects.isNull(value) ? null : value.strip();
+        return Objects.isNull(value) ? null : value.trim();
     }
 
     /**
@@ -132,13 +129,8 @@ public class PconlineRegionTemplate {
         try {
 
             String url = String.format(GET_COUNTRY_BY_IP_URL, ip);
-            HttpResponse<String> response = httpClient.send(
-                    HttpRequest.newBuilder(URI.create(url))
-                            .header("Accept", "application/json")
-                            .GET()
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+            HttpResponse response = HttpRequest.get(url).header("Accept", "application/json").execute();
+            if (response.getStatus() >= 200 && response.getStatus() < 300) {
                 String bodyString = response.body();
                 log.info(" IP : {} >> Location : {} ", ip, bodyString);
                 if (StrKit.hasText(bodyString)) {
@@ -150,7 +142,7 @@ public class PconlineRegionTemplate {
                     }
                 }
             }
-            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", ip, response.statusCode(), response.body());
+            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", ip, response.getStatus(), response.body());
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();

@@ -10,6 +10,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <!-- JDK8 线：JSqlParser 4.9（5.x 需 JDK11+） -->
+        <jsqlparser.version>4.9</jsqlparser.version>
+    </properties>
+
+
     <artifactId>ddd4j-data-mybatis</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据层 - MyBatis 官方实现（零 MyBatis-Plus 依赖）：纯 MyBatis 3.x 风格的 RichRepository 实现，
@@ -52,6 +58,7 @@
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
+            <version>${jsqlparser.version}</version>
             <exclusions>
                 <!-- JSqlParser 将仅用于其基准测试的 JMH 声明为 compile；ddd4j 运行时不需要它。 -->
                 <exclusion>

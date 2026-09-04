@@ -14,9 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,7 +42,6 @@ public class BaiduRegionTemplate {
     /**
      * HTTP 客户端
      */
-    private final HttpClient httpClient;
     /**
      * 缓存服务
      */
@@ -53,10 +51,9 @@ public class BaiduRegionTemplate {
      * 构造函数（无缓存）
      *
      * @param ak         百度地图AK密钥
-     * @param httpClient HTTP 客户端
      */
-    public BaiduRegionTemplate(String ak, HttpClient httpClient) {
-        this(ak, httpClient, RegionCache.none());
+    public BaiduRegionTemplate(String ak) {
+        this(ak, RegionCache.none());
     }
 
     /**
@@ -66,15 +63,14 @@ public class BaiduRegionTemplate {
      * @param httpClient  HTTP 客户端
      * @param regionCache 缓存服务
      */
-    public BaiduRegionTemplate(String ak, HttpClient httpClient, RegionCache regionCache) {
+    public BaiduRegionTemplate(String ak, RegionCache regionCache) {
         this.ak = ak;
-        this.httpClient = httpClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
     public static void main(String[] args) throws IOException {
 
-        BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", HttpClient.newHttpClient());
+        BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh");
 
         Optional<JSONObject> mapLL2 = template.getLocationByIp("183.128.136.82"); // lng：116.86380647644208  lat：38.297615350325717
         log.debug(mapLL2.get().toJSONString());
@@ -133,13 +129,8 @@ public class BaiduRegionTemplate {
         // 3、调用三方接口解析IP信息
         try {
             String url = String.format(GET_LOCATION_BY_IP_URL, this.ak, ip);
-            HttpResponse<String> response = httpClient.send(
-                    HttpRequest.newBuilder(URI.create(url))
-                            .header("Accept", "application/json")
-                            .GET()
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+            HttpResponse response = HttpRequest.get(url).header("Accept", "application/json").execute();
+            if (response.getStatus() >= 200 && response.getStatus() < 300) {
                 String bodyString = response.body();
                 log.info(" IP : {} >> Location : {} ", ip, bodyString);
                 if (StrKit.hasText(bodyString)) {
@@ -151,7 +142,7 @@ public class BaiduRegionTemplate {
                     return Optional.of(jsonObject);
                 }
             }
-            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", ip, response.statusCode(), response.body());
+            log.error("IP : {} >> Location Query Error. Response Code >> {}, Body >> {}", ip, response.getStatus(), response.body());
         } catch (Exception e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();

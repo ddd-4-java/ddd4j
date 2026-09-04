@@ -82,19 +82,19 @@ class ProjectionPositionR2dbcIT {
         // 逐事件推进到 5（每次一条 MERGE INTO 原子 upsert）
         StepVerifier.create(positions.findByStreamIdReactive(ORDER_SUMMARY)
                         .flatMap(optional -> positions.saveReactive(
-                                optional.orElseThrow().withNextEventNumber(1L)))
+                                optional.get().withNextEventNumber(1L)))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(2L))))
+                                        optional.get().withNextEventNumber(2L))))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(3L))))
+                                        optional.get().withNextEventNumber(3L))))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(4L))))
+                                        optional.get().withNextEventNumber(4L))))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(5L)))))
+                                        optional.get().withNextEventNumber(5L)))))
                 .expectNextMatches(position -> position.getNextEventNumber() == 5L)
                 .verifyComplete();
 

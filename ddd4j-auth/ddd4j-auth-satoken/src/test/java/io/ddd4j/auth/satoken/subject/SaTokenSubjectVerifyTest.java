@@ -1,5 +1,6 @@
 package io.ddd4j.auth.satoken.subject;
 
+import java.util.Collections;
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.dao.SaTokenDao;
@@ -173,7 +174,7 @@ class SaTokenSubjectVerifyTest {
         SaTokenSubject subject = install(logic);
         AuthPrincipal principal = principal("permission-user");
         login(logic, principal);
-        AtomicReference<List<String>> permissions = new AtomicReference<>(List.of("order:read"));
+        AtomicReference<List<String>> permissions = new AtomicReference<>(Collections.singletonList("order:read"));
         SubjectKit.setDataProvider(new SubjectDataProvider() {
             @Override
             public List<String> getPermissionList(AuthPrincipal ignored) {
@@ -182,7 +183,7 @@ class SaTokenSubjectVerifyTest {
         });
 
         assertThat(subject.isPermitted(principal.getLoginId(), "order:read")).isTrue();
-        permissions.set(List.of("order:write"));
+        permissions.set(Collections.singletonList("order:write"));
 
         assertThat(subject.isPermitted(principal.getLoginId(), "order:read")).isFalse();
         assertThat(subject.isPermitted(principal.getLoginId(), "order:write")).isTrue();

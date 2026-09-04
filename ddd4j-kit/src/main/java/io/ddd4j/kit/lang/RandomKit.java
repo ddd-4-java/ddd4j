@@ -6,7 +6,8 @@ import lombok.experimental.UtilityClass;
 /**
  * 随机工具类
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author Jensen
+ * @公众号 架构师修行录
  */
 @UtilityClass
 public class RandomKit extends RandomUtil {

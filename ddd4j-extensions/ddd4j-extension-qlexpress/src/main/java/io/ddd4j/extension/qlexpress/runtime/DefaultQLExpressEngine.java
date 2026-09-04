@@ -1,5 +1,7 @@
 package io.ddd4j.extension.qlexpress.runtime;
 
+import java.util.Collections;
+import java.util.HashSet;
 import com.alibaba.qlexpress4.CheckOptions;
 import com.alibaba.qlexpress4.Express4Runner;
 import com.alibaba.qlexpress4.InitOptions;
@@ -53,7 +55,7 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
     public Object execute(String expression, Map<String, Object> context, QLExpressExecutionOptions options) {
         requireExpression(expression);
         QLExpressExecutionOptions checkedOptions = Objects.requireNonNull(options, "options 不能为空");
-        Map<String, Object> safeContext = Objects.isNull(context) ? Map.of() : context;
+        Map<String, Object> safeContext = Objects.isNull(context) ? Collections.emptyMap() : context;
         try {
             QLResult result = runner.execute(expression, safeContext, checkedOptions.toNativeOptions());
             return result.getResult();
@@ -116,13 +118,13 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
     @Override
     public Set<String> getExternalVariables(String expression) {
         requireExpression(expression);
-        return Set.copyOf(runner.getOutVarNames(expression));
+        return Collections.unmodifiableSet(new HashSet<>(runner.getOutVarNames(expression)));
     }
 
     @Override
     public Set<String> getExternalFunctions(String expression) {
         requireExpression(expression);
-        return Set.copyOf(runner.getOutFunctions(expression));
+        return Collections.unmodifiableSet(new HashSet<>(runner.getOutFunctions(expression)));
     }
 
     @Override

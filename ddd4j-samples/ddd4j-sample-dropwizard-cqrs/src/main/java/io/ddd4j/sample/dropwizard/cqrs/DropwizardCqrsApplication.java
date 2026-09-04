@@ -23,9 +23,9 @@ import io.ddd4j.sample.dropwizard.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.dropwizard.cqrs.readmodel.OrderSummaryView;
 import io.ddd4j.sample.dropwizard.cqrs.repository.EventSourcingOrderRepository;
 import io.ddd4j.sample.dropwizard.cqrs.web.OrderResource;
-import io.dropwizard.core.Application;
+import io.dropwizard.Application;
 import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
+import io.dropwizard.setup.Environment;
 
 import java.util.List;
 

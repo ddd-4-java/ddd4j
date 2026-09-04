@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,7 +73,7 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void springAnnotationPackageShouldContainExpectedAnnotations() {
-        Set<Class<?>> annotations = Set.of(
+        Set<Class<?>> annotations = new java.util.HashSet<>(java.util.Arrays.asList(
                 DomainService.class,
                 DomainRepository.class,
                 DomainEntity.class,
@@ -83,7 +84,7 @@ class SpringDddAnnotationFusionTest {
                 ApplicationService.class,
                 QueryService.class,
                 CommandExecutor.class
-        );
+        ));
 
         assertEquals(10, annotations.size());
         assertNull(loadOptional("io.ddd4j.spring.annotation.DomainEvent"));

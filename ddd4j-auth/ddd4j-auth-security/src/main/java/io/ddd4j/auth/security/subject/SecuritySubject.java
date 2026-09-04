@@ -1,5 +1,6 @@
 package io.ddd4j.auth.security.subject;
 
+import java.util.Arrays;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.exception.*;
@@ -70,7 +71,8 @@ public class SecuritySubject implements Subject {
         if (Objects.nonNull(principal)) {
             return principal;
         }
-        if (auth.getPrincipal() instanceof AuthUserDetails userDetails) {
+        if (auth.getPrincipal() instanceof AuthUserDetails) {
+            AuthUserDetails userDetails = (AuthUserDetails) auth.getPrincipal();
             return (T) userDetails.getAuthPrincipal();
         }
         List<AuthPrincipal.RolePair> roles = new ArrayList<>();
@@ -113,7 +115,7 @@ public class SecuritySubject implements Subject {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 Objects.nonNull(request.getPrincipal()) ? request.getPrincipal() : request.getLoginId(),
                 credentials,
-                List.of()
+                Arrays.asList()
         );
         auth.setDetails(request.getExtra());
         try {

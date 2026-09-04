@@ -1,5 +1,8 @@
 package io.ddd4j.mq.util;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -49,7 +52,7 @@ class TagMatcherTest {
 
     @Test
     void findIncludesShouldKeepDeclarationOrder() {
-        assertEquals(List.of("A", "B"), List.copyOf(TagMatcher.findIncludes("A || B -C")));
-        assertEquals(List.of(), List.copyOf(TagMatcher.findIncludes("* -C")));
+        assertEquals(Arrays.asList("A", "B"), Collections.unmodifiableList(new ArrayList<>(TagMatcher.findIncludes("A || B -C"))));
+        assertEquals(Arrays.asList(), Collections.unmodifiableList(new ArrayList<>(TagMatcher.findIncludes("* -C"))));
     }
 }

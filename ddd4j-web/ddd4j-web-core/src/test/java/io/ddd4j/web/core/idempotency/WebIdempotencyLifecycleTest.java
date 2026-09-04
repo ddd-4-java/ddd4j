@@ -112,7 +112,7 @@ class WebIdempotencyLifecycleTest {
                         null, Duration.ofMinutes(5))));
 
         WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
-        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").orElseThrow();
+        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").get();
 
         scope.close();
         scope.complete();
@@ -128,7 +128,7 @@ class WebIdempotencyLifecycleTest {
                         null, Duration.ofMinutes(5))));
 
         WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
-        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").orElseThrow();
+        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").get();
 
         scope.close();
         scope.close();

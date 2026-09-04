@@ -38,11 +38,11 @@ public final class WebIdempotencyLifecycle {
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
         String storageKey = storageKey(requestContext, idempotencyKey.trim());
         Optional<IdempotencyLease> lease = guard.acquireLease(storageKey, ttl);
-        if (lease.isEmpty()) {
+        if (!lease.isPresent()) {
             throw new WebStatusException(DefaultWebExceptionTranslator.CONFLICT,
                     "Duplicate idempotent request");
         }
-        return Optional.of(new Scope(guard, lease.orElseThrow()));
+        return Optional.of(new Scope(guard, lease.get()));
     }
 
     private String storageKey(WebRequestContext context, String idempotencyKey) {

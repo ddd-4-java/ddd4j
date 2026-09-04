@@ -1,5 +1,6 @@
 package io.ddd4j.extension.excel.importer;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,8 +18,8 @@ class ImportResultTest {
     @Test
     void of_should_return_immutable_view() {
         ImportResult<String> result = ImportResult.of(
-                List.of("a", "b"),
-                List.of(ImportError.ofValidation(1, "bad")));
+                Arrays.asList("a", "b"),
+                Arrays.asList(ImportError.ofValidation(1, "bad")));
 
         // 修改原始 list 不影响 result
         java.util.List<String> data = new java.util.ArrayList<>(result.getData());
@@ -37,8 +38,8 @@ class ImportResultTest {
     @Test
     void successRate_with_errors_should_be_ratio() {
         ImportResult<String> r = ImportResult.of(
-                List.of("ok1", "ok2"),
-                List.of(ImportError.ofValidation(1, "fail")));
+                Arrays.asList("ok1", "ok2"),
+                Arrays.asList(ImportError.ofValidation(1, "fail")));
         assertThat(r.getTotalCount()).isEqualTo(3);
         assertThat(r.successRate()).isCloseTo(2.0 / 3.0, org.assertj.core.data.Offset.offset(0.001));
     }

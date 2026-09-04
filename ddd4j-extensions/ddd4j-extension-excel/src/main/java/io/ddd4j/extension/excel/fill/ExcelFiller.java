@@ -80,7 +80,7 @@ public final class ExcelFiller {
      * @return 填充后的 xlsx 字节
      */
     public static byte[] fillList(InputStream template, List<?> list, FillConfig fillConfig) {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              InputStream tpl = toNonClosingStream(template);
              ExcelWriter writer = EasyExcel.write(out).withTemplate(tpl).build()) {
             WriteSheet sheet = EasyExcel.writerSheet().build();
@@ -106,7 +106,7 @@ public final class ExcelFiller {
      * @return 填充后的 xlsx 字节
      */
     public static byte[] fillComposite(InputStream template, Map<String, Object> vars, List<?> list) {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              InputStream tpl = toNonClosingStream(template);
              ExcelWriter writer = EasyExcel.write(out).withTemplate(tpl).build()) {
             WriteSheet sheet = EasyExcel.writerSheet().build();
@@ -126,7 +126,7 @@ public final class ExcelFiller {
      * @return 填充后的 xlsx 字节
      */
     public static byte[] fillListInBatches(InputStream template, List<List<?>> batches) {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              InputStream tpl = toNonClosingStream(template);
              ExcelWriter writer = EasyExcel.write(out).withTemplate(tpl).build()) {
             WriteSheet sheet = EasyExcel.writerSheet().build();
@@ -146,6 +146,12 @@ public final class ExcelFiller {
         if (in instanceof ByteArrayInputStream) {
             return in;
         }
-        return new ByteArrayInputStream(in.readAllBytes());
+        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+        byte[] chunk = new byte[8192];
+        int n;
+        while ((n = in.read(chunk)) != -1) {
+            buffer.write(chunk, 0, n);
+        }
+        return new ByteArrayInputStream(buffer.toByteArray());
     }
 }

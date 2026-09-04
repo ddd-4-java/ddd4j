@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>ddd4j-auth-datascope</artifactId>
-    <description>Ddd4j DataScope Component（数据权限）。从 1.0.x 同步 2026-09-04。</description>
+    <description>Ddd4j DataScope Component</description>
 
     <dependencies>
         <dependency>
@@ -22,11 +22,9 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
-        <!-- For Validation -->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>

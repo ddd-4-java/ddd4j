@@ -63,11 +63,15 @@ public class RedisStreamMQProperties extends MQProperties {
      * 基于 {@link #clientType} 创建对应后端的 Stream 操作适配。
      */
     public RedisStreamOperations newOperations() {
-        return switch (clientType) {
-            case JEDIS -> new JedisRedisStreamOperations(newJedis());
-            case REDISSON -> new RedissonRedisStreamOperations(url);
-            case LETTUCE -> new LettuceRedisStreamOperations(url);
-        };
+        switch (clientType) {
+            case JEDIS:
+                return new JedisRedisStreamOperations(newJedis());
+            case REDISSON:
+                return new RedissonRedisStreamOperations(url);
+            case LETTUCE:
+            default:
+                return new LettuceRedisStreamOperations(url);
+        }
     }
 
     /**

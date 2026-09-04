@@ -1,5 +1,6 @@
 package io.ddd4j.auth.satoken.subject;
 
+import java.util.Collections;
 import cn.dev33.satoken.stp.StpInterface;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.SubjectKit;
@@ -16,7 +17,7 @@ public class SaTokenSubjectDataBridge implements StpInterface {
     public List<String> getPermissionList(Object loginId, String loginType) {
         AuthPrincipal principal = SubjectKit.getPrincipalByLoginId(loginId);
         if (Objects.isNull(principal)) {
-            return List.of();
+            return java.util.Collections.emptyList();
         }
         return SubjectKit.getDataProvider().getPermissionList(principal);
     }
@@ -25,7 +26,7 @@ public class SaTokenSubjectDataBridge implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         AuthPrincipal principal = SubjectKit.getPrincipalByLoginId(loginId);
         if (Objects.isNull(principal)) {
-            return List.of();
+            return java.util.Collections.emptyList();
         }
         return SubjectKit.getDataProvider().getRoleList(principal);
     }

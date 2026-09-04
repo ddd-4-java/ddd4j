@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.util.Collections;
 
 class OtelMQDeliveryObserverTest {
 
@@ -49,7 +50,7 @@ class OtelMQDeliveryObserverTest {
     @Test
     void shouldDelegateAllDeliveryOutcomesWithoutMessageAttributes() {
         OtelMQDeliveryObserver observer = new OtelMQDeliveryObserver("kafka");
-        MQOutboxRecord record = MQOutboxRecord.pending("message-1", "orders.created", "{}", Map.of(),
+        MQOutboxRecord record = MQOutboxRecord.pending("message-1", "orders.created", "{}", Collections.emptyMap(),
                 Instant.EPOCH);
 
         observer.onOutboxPublished(record);

@@ -39,28 +39,49 @@ public enum BrokerType {
      * 解析配置字符串为 Broker 类型（兼容 redisStream 等历史命名）。
      */
     public static BrokerType from(String raw) {
-        if (!StrKit.hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
+        if (!StrKit.isNotEmpty(raw) || "none".equalsIgnoreCase(raw.trim())) {
             return NONE;
         }
         String normalized = raw.trim()
                 .replace('_', '-')
                 .toLowerCase(Locale.ROOT);
-        return switch (normalized) {
-            case "disruptor", "local", "local-disruptor" -> DISRUPTOR;
-            case "rabbit" -> RABBIT;
-            case "kafka" -> KAFKA;
-            case "rocket" -> ROCKET;
-            case "pulsar" -> PULSAR;
-            case "redis", "redis-stream", "redisstream" -> REDIS_STREAM;
-            case "activemq", "artemis" -> ACTIVEMQ;
-            case "nats" -> NATS;
-            case "mqtt" -> MQTT;
-            case "mqtt-mica", "mica-mqtt", "mica" -> MQTT_MICA;
-            case "ons" -> ONS;
-            case "tdmq" -> TDMQ;
-            case "sqs" -> SQS;
-            default -> NONE;
-        };
+        switch (normalized) {
+            case "disruptor":
+            case "local":
+            case "local-disruptor":
+                return DISRUPTOR;
+            case "rabbit":
+                return RABBIT;
+            case "kafka":
+                return KAFKA;
+            case "rocket":
+                return ROCKET;
+            case "pulsar":
+                return PULSAR;
+            case "redis":
+            case "redis-stream":
+            case "redisstream":
+                return REDIS_STREAM;
+            case "activemq":
+            case "artemis":
+                return ACTIVEMQ;
+            case "nats":
+                return NATS;
+            case "mqtt":
+                return MQTT;
+            case "mqtt-mica":
+            case "mica-mqtt":
+            case "mica":
+                return MQTT_MICA;
+            case "ons":
+                return ONS;
+            case "tdmq":
+                return TDMQ;
+            case "sqs":
+                return SQS;
+            default:
+                return NONE;
+        }
     }
 
 

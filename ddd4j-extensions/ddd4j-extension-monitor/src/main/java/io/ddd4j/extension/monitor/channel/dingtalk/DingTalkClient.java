@@ -6,9 +6,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
@@ -28,13 +25,6 @@ public class DingTalkClient {
      * 钉钉机器人 Webhook 基础地址
      */
     public static final String BASE_URL = "https://oapi.dingtalk.com/robot/send?access_token=";
-
-    /**
-     * HTTP 客户端（连接超时 10s）
-     */
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10))
-            .build();
 
     /**
      * 钉钉机器人 access_token
@@ -94,14 +84,11 @@ public class DingTalkClient {
             long timestamp = System.currentTimeMillis();
             String sign = getSign(timestamp, secret);
             String url = baseUrl + accessToken + "&timestamp=" + timestamp + "&sign=" + sign;
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .timeout(Duration.ofSeconds(10))
+            cn.hutool.http.HttpResponse response = cn.hutool.http.HttpRequest.post(url)
                     .header("Content-Type", "application/json; charset=UTF-8")
-                    .POST(HttpRequest.BodyPublishers.ofString(msg, StandardCharsets.UTF_8))
-                    .build();
-            HttpResponse<String> response = HTTP_CLIENT.send(request,
-                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+                    .body(msg)
+                    .timeout(10_000)
+                    .execute();
             log.debug("【发送钉钉群消息】响应：{}", response.body());
         } catch (Exception e) {
             log.error("【发送钉钉群消息】error: {}", e.getMessage(), e);

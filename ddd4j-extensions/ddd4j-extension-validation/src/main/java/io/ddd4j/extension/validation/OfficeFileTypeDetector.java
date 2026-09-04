@@ -42,7 +42,16 @@ public final class OfficeFileTypeDetector implements FileTypeDetector {
 
     private byte[] readSignature(ValidatableFile file, int size) throws IOException {
         try (InputStream inputStream = new BufferedInputStream(file.openStream())) {
-            return inputStream.readNBytes(size);
+            byte[] buffer = new byte[size];
+            int read = 0;
+            while (read < size) {
+                int n = inputStream.read(buffer, read, size - read);
+                if (n == -1) {
+                    break;
+                }
+                read += n;
+            }
+            return read == size ? buffer : java.util.Arrays.copyOf(buffer, read);
         }
     }
 
@@ -75,7 +84,7 @@ public final class OfficeFileTypeDetector implements FileTypeDetector {
     }
 
     private Optional<DetectedFileType> detectOle(ValidatableFile file) throws IOException {
-        try (InputStream inputStream = new BufferedInputStream(file.openStream());
+try (InputStream inputStream = new BufferedInputStream(file.openStream());
                 POIFSFileSystem fileSystem = new POIFSFileSystem(inputStream)) {
             DirectoryNode root = fileSystem.getRoot();
             if (root.hasEntry("WordDocument")) {

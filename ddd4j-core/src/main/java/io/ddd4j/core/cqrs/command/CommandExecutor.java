@@ -40,7 +40,7 @@ import java.util.Set;
  * public class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
  *     &#64;Override
  *     public Set<Class<? extends Command>> supportedCommands() {
- *         return Set.of(CreateOrderCommand.class);
+ *         return Collections.singleton(CreateOrderCommand.class);
  *     }
  *
  *     &#64;Override

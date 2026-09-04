@@ -1,5 +1,6 @@
 package io.ddd4j.data.projection.spring;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.readmodel.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -167,7 +168,7 @@ class SpringProjectionSchedulerIT {
 
         @Override
         public Collection<String> getEventTypes() {
-            return Set.of("TestEvent");
+            return Collections.singleton("TestEvent");
         }
 
         @Override

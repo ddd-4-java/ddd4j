@@ -33,7 +33,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.resource.LiteWebJarsResourceResolver;
+import org.springframework.web.servlet.resource.WebJarsResourceResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -153,7 +153,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
         // 自定义转换器：接收配置完成的 Jackson 2 ObjectMapper。
         CustomHttpMessageConverter customConverter = new CustomHttpMessageConverter(objectMapper);
-        customConverter.setSupportedMediaTypes(List.of(MediaType.APPLICATION_JSON));
+        customConverter.setSupportedMediaTypes(java.util.Arrays.asList(MediaType.APPLICATION_JSON));
         converters.add(customConverter);
         converters.add(new ByteArrayHttpMessageConverter());
         converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
@@ -204,7 +204,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/images/");
         if (!registry.hasMappingForPattern("/webjars/**")) {
             registry.addResourceHandler("/webjars/**").addResourceLocations(META_INF_WEBJAR_RESOURCES)
-                    .resourceChain(false).addResolver(new LiteWebJarsResourceResolver());
+                    .resourceChain(false).addResolver(new WebJarsResourceResolver());
         }
 
     }

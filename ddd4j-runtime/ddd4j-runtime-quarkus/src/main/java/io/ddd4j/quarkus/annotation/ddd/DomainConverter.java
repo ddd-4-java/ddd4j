@@ -1,23 +1,16 @@
-package io.ddd4j.quarkus.annotation.ddd;
+package io.ddd4j.annotation;
 
-import io.ddd4j.annotation.ddd.DDDAnnotation;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Stereotype;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
 
 /**
- * Quarkus 领域转换器。
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * 领域模型标记-模型转换器
  */
 @DDDAnnotation
 @Documented
+@Component
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Stereotype
-@ApplicationScoped
-@Inherited
+@Target(value = {ElementType.TYPE})
 public @interface DomainConverter {
 }

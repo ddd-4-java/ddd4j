@@ -81,13 +81,13 @@ public final class TagMatcher {
 
     private static List<String> tokens(String expression) {
         if (Objects.isNull(expression) || io.ddd4j.kit.lang.StrKit.isBlank(expression) || Objects.equals(WILDCARD, expression.trim())) {
-            return List.of();
+            return java.util.Collections.emptyList();
         }
         return Stream.of(expression.replace(OR, " ").trim().split("\\s+"))
                 .map(String::trim)
                 .filter(token -> !io.ddd4j.kit.lang.StrKit.isEmpty(token))
                 .filter(token -> !OR.equals(token))
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     private static String trimToNull(String s) {

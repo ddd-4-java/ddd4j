@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.exception;
 
-import java.io.Serial;
 
 /**
  * Token 过期异常（业务会话生命周期到点）。
@@ -30,8 +29,6 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class TokenExpiredException extends AuthenticationException {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public TokenExpiredException(String message) {

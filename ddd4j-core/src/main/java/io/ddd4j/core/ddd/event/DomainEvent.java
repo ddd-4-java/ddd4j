@@ -25,7 +25,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -61,11 +60,9 @@ import java.util.Set;
 @Slf4j
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> implements Event, Serializable {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<>() {
+    private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<EventType>() {
         @Override
         protected EventType computeValue(Class<?> type) {
             return new EventType(type.getSimpleName());

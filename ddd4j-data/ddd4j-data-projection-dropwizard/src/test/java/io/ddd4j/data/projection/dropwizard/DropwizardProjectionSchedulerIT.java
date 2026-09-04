@@ -1,10 +1,12 @@
 package io.ddd4j.data.projection.dropwizard;
 
+import java.util.Collections;
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.readmodel.*;
-import io.dropwizard.core.Application;
+import io.dropwizard.Application;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.server.DefaultServerFactory;
-import io.dropwizard.core.setup.Environment;
+import io.dropwizard.setup.Environment;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.jupiter.api.AfterAll;
@@ -111,10 +113,10 @@ class DropwizardProjectionSchedulerIT {
         DefaultServerFactory serverFactory = (DefaultServerFactory) configuration.getServerFactory();
         HttpConnectorFactory applicationConnector = new HttpConnectorFactory();
         applicationConnector.setPort(0);
-        serverFactory.setApplicationConnectors(List.of(applicationConnector));
+        serverFactory.setApplicationConnectors(Collections.singletonList(applicationConnector));
         HttpConnectorFactory adminConnector = new HttpConnectorFactory();
         adminConnector.setPort(0);
-        serverFactory.setAdminConnectors(List.of(adminConnector));
+        serverFactory.setAdminConnectors(Collections.singletonList(adminConnector));
         return configuration;
     }
 
@@ -131,7 +133,7 @@ class DropwizardProjectionSchedulerIT {
 
         @Override
         public void run(Configuration configuration, Environment environment) {
-            Collection<ProjectionView<?>> views = List.of(
+            Collection<ProjectionView<?>> views = Arrays.asList(
                     new ProjectionViewStub("test-view-1", "0/5 * * * * *"),
                     new ProjectionViewStub("test-view-2", "0/10 * * * * *")
             );
@@ -185,7 +187,7 @@ class DropwizardProjectionSchedulerIT {
 
         @Override
         public Collection<String> getEventTypes() {
-            return Set.of("TestEvent");
+            return Collections.singleton("TestEvent");
         }
 
         @Override

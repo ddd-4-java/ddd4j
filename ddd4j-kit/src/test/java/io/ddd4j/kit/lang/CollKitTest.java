@@ -28,7 +28,7 @@ class CollKitTest {
 
     @Test
     void isEmpty_collection_shouldReturnFalseForNonEmpty() {
-        assertThat(CollKit.isEmpty(List.of(1))).isFalse();
+        assertThat(CollKit.isEmpty(Collections.singletonList(1))).isFalse();
     }
 
     @Test
@@ -43,7 +43,7 @@ class CollKitTest {
 
     @Test
     void isNotEmpty_collection_shouldBeNegation() {
-        assertThat(CollKit.isNotEmpty(List.of(1))).isTrue();
+        assertThat(CollKit.isNotEmpty(Collections.singletonList(1))).isTrue();
         assertThat(CollKit.isNotEmpty((java.util.Collection<?>) null)).isFalse();
     }
 

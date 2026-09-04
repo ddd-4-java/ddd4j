@@ -21,9 +21,10 @@ public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcess
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         // 将 ddd4j 配置属性源添加到 Spring Environment
-        if (beanFactory instanceof ConfigurableEnvironment env) {
+        if (beanFactory instanceof ConfigurableEnvironment) {
+            ConfigurableEnvironment env = (ConfigurableEnvironment) beanFactory;
             env.getPropertySources()
-                    .addLast(new PropertySource<>("ddd4j-defaults", System.getProperties()) {
+                    .addLast(new PropertySource<Object>("ddd4j-defaults", System.getProperties()) {
                         @Override
                         public Object getProperty(String name) {
                             // 仅处理 ddd4j.* 前缀属性

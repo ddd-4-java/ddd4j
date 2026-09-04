@@ -1,5 +1,7 @@
 package io.ddd4j.data.projection.vertx;
 
+import java.util.Collections;
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.AfterEach;
@@ -89,7 +91,7 @@ class VertxProjectionSchedulerIT {
 
             @Override
             public Collection<String> getEventTypes() {
-                return Set.of("TestEvent");
+                return Collections.singleton("TestEvent");
             }
 
             @Override
@@ -101,7 +103,7 @@ class VertxProjectionSchedulerIT {
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         VertxProjectionScheduler scheduler =
-                VertxProjectionScheduler.create(vertx, List.of(), createRunner());
+                VertxProjectionScheduler.create(vertx, Arrays.asList(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
                 "direct-view", "0/1 * * * * *", () -> {});
@@ -117,7 +119,7 @@ class VertxProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         VertxProjectionViewManager viewManager =
-                VertxProjectionViewManager.create(vertx, List.of(view), runner);
+                VertxProjectionViewManager.create(vertx, Collections.singletonList(view), runner);
 
         assertThat(viewManager.isRunning()).isFalse();
 
@@ -137,7 +139,7 @@ class VertxProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         VertxProjectionViewManager viewManager =
-                VertxProjectionViewManager.create(vertx, List.of(view), runner);
+                VertxProjectionViewManager.create(vertx, Collections.singletonList(view), runner);
 
         viewManager.start();
         viewManager.triggerOnce();

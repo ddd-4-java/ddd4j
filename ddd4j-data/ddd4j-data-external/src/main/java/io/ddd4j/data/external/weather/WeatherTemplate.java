@@ -12,9 +12,8 @@ import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import java.util.Objects;
 
 /**
@@ -57,15 +56,13 @@ public class WeatherTemplate {
     /**
      * HTTP 客户端
      */
-    private final HttpClient httpClient;
 
     /**
      * 构造函数
      *
      * @param httpClient HTTP 客户端
      */
-    public WeatherTemplate(HttpClient httpClient) {
-        this.httpClient = httpClient;
+    public WeatherTemplate() {
     }
 
     /**
@@ -96,20 +93,17 @@ public class WeatherTemplate {
      */
     private JSONObject fetchWeather(String cityCode) {
         try {
-            HttpResponse<String> response = httpClient.send(
-                    HttpRequest.newBuilder(URI.create(String.format(SOJSON_WEATHER_URL, cityCode)))
-                            .header("Accept", "application/json")
-                            .GET()
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+            HttpResponse response = HttpRequest.get(String.format(SOJSON_WEATHER_URL, cityCode))
+                    .header("Accept", "application/json")
+                    .execute();
+            if (response.getStatus() >= 200 && response.getStatus() < 300) {
                 String bodyString = response.body();
                 if (StrKit.hasText(bodyString)) {
                     log.info("city_code {} >> weather :  {}", cityCode, bodyString);
                     return JSONObject.parseObject(bodyString);
                 }
             }
-            log.error("Weather Query Error. Response Code >> {}, Body >> {}", response.statusCode(), response.body());
+            log.error("Weather Query Error. Response Code >> {}, Body >> {}", response.getStatus(), response.body());
         } catch (Exception e) {
             log.error("Weather Query Failed: city_code={}", cityCode, e);
         }

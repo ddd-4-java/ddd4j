@@ -9,12 +9,7 @@ import java.util.Objects;
  *
  * <p>默认值采用 60 秒租约、12 次最多尝试，以及 1 秒到 5 分钟的指数退避。
  */
-public record MQDeliveryPolicy(
-        Duration leaseDuration,
-        int maxAttempts,
-        Duration initialBackoff,
-        Duration maxBackoff,
-        double jitterFactor) {
+public final class MQDeliveryPolicy {
 
     private static final Duration DEFAULT_LEASE_DURATION = Duration.ofSeconds(60);
     private static final Duration DEFAULT_INITIAL_BACKOFF = Duration.ofSeconds(1);
@@ -22,7 +17,14 @@ public record MQDeliveryPolicy(
     private static final int DEFAULT_MAX_ATTEMPTS = 12;
     private static final double DEFAULT_JITTER_FACTOR = 0.20D;
 
-    public MQDeliveryPolicy {
+    private final Duration leaseDuration;
+    private final int maxAttempts;
+    private final Duration initialBackoff;
+    private final Duration maxBackoff;
+    private final double jitterFactor;
+
+    public MQDeliveryPolicy(Duration leaseDuration, int maxAttempts, Duration initialBackoff,
+                            Duration maxBackoff, double jitterFactor) {
         Objects.requireNonNull(leaseDuration, "leaseDuration must not be null");
         Objects.requireNonNull(initialBackoff, "initialBackoff must not be null");
         Objects.requireNonNull(maxBackoff, "maxBackoff must not be null");
@@ -41,6 +43,60 @@ public record MQDeliveryPolicy(
         if (jitterFactor < 0.0D || jitterFactor > 1.0D) {
             throw new IllegalArgumentException("jitterFactor must be between zero and one");
         }
+        this.leaseDuration = leaseDuration;
+        this.maxAttempts = maxAttempts;
+        this.initialBackoff = initialBackoff;
+        this.maxBackoff = maxBackoff;
+        this.jitterFactor = jitterFactor;
+    }
+
+    public Duration leaseDuration() {
+        return leaseDuration;
+    }
+
+    public int maxAttempts() {
+        return maxAttempts;
+    }
+
+    public Duration initialBackoff() {
+        return initialBackoff;
+    }
+
+    public Duration maxBackoff() {
+        return maxBackoff;
+    }
+
+    public double jitterFactor() {
+        return jitterFactor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MQDeliveryPolicy)) return false;
+        MQDeliveryPolicy that = (MQDeliveryPolicy) o;
+        return maxAttempts == that.maxAttempts
+                && Double.compare(that.jitterFactor, jitterFactor) == 0
+                && leaseDuration.equals(that.leaseDuration)
+                && initialBackoff.equals(that.initialBackoff)
+                && maxBackoff.equals(that.maxBackoff);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = leaseDuration.hashCode();
+        result = 31 * result + maxAttempts;
+        result = 31 * result + initialBackoff.hashCode();
+        result = 31 * result + maxBackoff.hashCode();
+        result = 31 * result + Double.valueOf(jitterFactor).hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "MQDeliveryPolicy{leaseDuration=" + leaseDuration + ", maxAttempts=" + maxAttempts
+                + ", initialBackoff=" + initialBackoff + ", maxBackoff=" + maxBackoff
+                + ", jitterFactor=" + jitterFactor + '}';
     }
 
     /**

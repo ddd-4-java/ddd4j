@@ -38,8 +38,8 @@ public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object result = invocation.proceed();
-        if (result instanceof List<?> results) {
-            afterQuery(invocation.getArgs()[1], results);
+        if (result instanceof List<?>) {
+            afterQuery(invocation.getArgs()[1], (List<?>) result);
         }
         return result;
     }

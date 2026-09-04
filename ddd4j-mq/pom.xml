@@ -19,6 +19,7 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
+
     <modules>
         <module>ddd4j-mq-core</module>
         <module>ddd4j-mq-activemq</module>
@@ -36,5 +37,4 @@
         <module>ddd4j-mq-tdmq</module>
         <module>ddd4j-mq-spring</module>
     </modules>
-
 </project>

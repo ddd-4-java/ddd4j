@@ -25,15 +25,40 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-kit</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- OpenTelemetry API（版本由 ddd4j-dependencies 的 opentelemetry-bom 管理） -->
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-api</artifactId>
+            <version>1.57.0</version>
         </dependency>
-        <!-- OpenTelemetry SDK Testing（版本由 opentelemetry-bom 管理，用于 InMemoryMetricReader 真实断言） -->
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-sdk-testing</artifactId>
+            <version>1.57.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+            <version>1.57.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- OpenTelemetry SDK Testing（版本由 opentelemetry-bom 管理，用于 InMemoryMetricReader 真实断言） -->
+
+        <!-- JUnit 5 / AssertJ（测试断言栈） -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

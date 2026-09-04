@@ -65,7 +65,7 @@ public class SqsMQClient implements MQClient {
         if (Objects.isNull(message.messageAttributes())) {
             return null;
         }
-        var v = message.messageAttributes().get(key);
+        software.amazon.awssdk.services.sqs.model.MessageAttributeValue v = message.messageAttributes().get(key);
         return Objects.isNull(v) ? null : v.stringValue();
     }
 

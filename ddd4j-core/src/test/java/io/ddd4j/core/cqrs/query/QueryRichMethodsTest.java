@@ -1,5 +1,7 @@
 package io.ddd4j.core.cqrs.query;
 
+import java.util.Collections;
+import java.util.Arrays;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.Repository;
@@ -49,7 +51,7 @@ class QueryRichMethodsTest {
 
     @Test
     void list_shouldDelegateToRepository() {
-        List<TestAggregate> expected = List.of(new TestAggregate("1", "A"));
+        List<TestAggregate> expected = Arrays.asList(new TestAggregate("1", "A"));
         when(repository.findList(any())).thenReturn(expected);
 
         List<TestAggregate> result = query.list();
@@ -78,7 +80,7 @@ class QueryRichMethodsTest {
 
     @Test
     void list_withIfEmpty_shouldReturnWhenNotEmpty() {
-        List<TestAggregate> expected = List.of(new TestAggregate("1", "A"));
+        List<TestAggregate> expected = Arrays.asList(new TestAggregate("1", "A"));
         when(repository.findList(any())).thenReturn(expected);
 
         List<TestAggregate> result = query.list("No orders found");
@@ -90,7 +92,7 @@ class QueryRichMethodsTest {
 
     @Test
     void page_shouldDelegateToRepository() {
-        Page<TestAggregate> expected = Page.succeed(List.of(new TestAggregate("1", "A")), 1, 1, 10);
+        Page<TestAggregate> expected = Page.succeed(Arrays.asList(new TestAggregate("1", "A")), 1, 1, 10);
         when(repository.page(any())).thenReturn(expected);
 
         Page<TestAggregate> result = query.current(1).size(10).page();
@@ -279,7 +281,7 @@ class QueryRichMethodsTest {
 
     @Test
     void maps_shouldDelegateToRepository() {
-        List<Map<String, Object>> expected = List.of(Map.of("id", "1", "name", "A"));
+        List<Map<String, Object>> expected = Arrays.asList(Map.of("id", "1", "name", "A"));
         when(repository.maps(any())).thenReturn(expected);
 
         List<Map<String, Object>> result = query.maps();
@@ -291,7 +293,7 @@ class QueryRichMethodsTest {
     @Test
     void map_shouldReturnFirstElement() {
         Map<String, Object> expected = Map.of("id", "1", "name", "A");
-        when(repository.maps(any())).thenReturn(List.of(expected));
+        when(repository.maps(any())).thenReturn(Collections.singletonList(expected));
 
         Map<String, Object> result = query.map();
 

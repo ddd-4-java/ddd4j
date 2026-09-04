@@ -19,7 +19,7 @@ import com.google.inject.Provides;
 import io.ddd4j.data.crypto.CryptoProperties;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.data.crypto.strategy.DefaultCryptoStrategy;
-import jakarta.inject.Singleton;
+import javax.inject.Singleton;
 
 /**
  * ddd4j 加解密的 Guice 桥接模块。

@@ -32,6 +32,9 @@ class VertxDomainEventPublisherTest {
         }
     }
 
-    private record LocalEvent(String name) {
+    private static final class LocalEvent {
+        private final String name;
+        LocalEvent(String name) { this.name = name; }
+        String name() { return name; }
     }
 }

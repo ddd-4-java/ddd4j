@@ -18,12 +18,12 @@ class Ddd4jQuarkusReadinessHealthCheckTest {
         HealthCheckResponse ready = healthCheck.call();
 
         assertEquals(HealthCheckResponse.Status.UP, ready.getStatus());
-        assertEquals(1L, ready.getData().orElseThrow().get("checks"));
+        assertEquals(1L, ready.getData().get().get("checks"));
 
         registry.register(() -> ReadinessResult.unavailable("redis", "secret connection error"));
         HealthCheckResponse unavailable = healthCheck.call();
 
         assertEquals(HealthCheckResponse.Status.DOWN, unavailable.getStatus());
-        assertEquals(2L, unavailable.getData().orElseThrow().get("checks"));
+        assertEquals(2L, unavailable.getData().get().get("checks"));
     }
 }

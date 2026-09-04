@@ -8,12 +8,14 @@ import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.dropwizard.core.ConfiguredBundle;
-import io.dropwizard.core.Configuration;
-import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
+import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -30,23 +32,23 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     private final Collection<ReadinessContributor> readinessContributors;
 
     public Ddd4jBundle() {
-        this(List.of(), List.of(), null, I18nProvider.DEFAULT, List.of());
+        this(Collections.emptyList(), Collections.emptyList(), null, I18nProvider.DEFAULT, Collections.emptyList());
     }
 
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                       SubjectProvider subjectProvider, I18nProvider i18nProvider) {
-        this(executors, listeners, subjectProvider, i18nProvider, List.of());
+        this(executors, listeners, subjectProvider, i18nProvider, Collections.emptyList());
     }
 
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                       SubjectProvider subjectProvider, I18nProvider i18nProvider,
                       Collection<? extends ReadinessContributor> readinessContributors) {
-        this.executors = List.copyOf(Objects.requireNonNull(executors, "executors must not be null"));
-        this.listeners = List.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
+        this.executors = Collections.unmodifiableList(new java.util.ArrayList<>(Objects.requireNonNull(executors, "executors must not be null")));
+        this.listeners = Collections.unmodifiableList(new java.util.ArrayList<>(Objects.requireNonNull(listeners, "listeners must not be null")));
         this.subjectProvider = subjectProvider;
         this.i18nProvider = Objects.requireNonNull(i18nProvider, "i18nProvider must not be null");
-        this.readinessContributors = List.copyOf(Objects.requireNonNull(readinessContributors,
-                "readinessContributors must not be null"));
+        this.readinessContributors = Collections.unmodifiableList(new java.util.ArrayList<>(Objects.requireNonNull(readinessContributors,
+                "readinessContributors must not be null")));
     }
 
     @Override

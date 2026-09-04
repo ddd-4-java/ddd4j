@@ -1,5 +1,6 @@
 package io.ddd4j.extension.validation;
 
+import java.util.ArrayList;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.io.IOException;
@@ -55,7 +56,7 @@ public final class FileValidationService {
             DetectedFileType detectedType = null;
             if (policy.isStrict()) {
                 Optional<DetectedFileType> detected = fileTypeDetector.detect(file);
-                if (detected.isEmpty()) {
+                if (!detected.isPresent()) {
                     return FileValidationResult.invalid(FileValidationFailure.TYPE_UNDETECTABLE, null);
                 }
                 detectedType = detected.get();
@@ -127,7 +128,7 @@ public final class FileValidationService {
         }
 
         private static <T> Collection<T> copyOf(Collection<T> source) {
-            return Objects.isNull(source) ? Collections.emptyList() : java.util.List.copyOf(source);
+            return Objects.isNull(source) ? Collections.emptyList() : java.util.Collections.unmodifiableList(new ArrayList<>(source));
         }
     }
 }

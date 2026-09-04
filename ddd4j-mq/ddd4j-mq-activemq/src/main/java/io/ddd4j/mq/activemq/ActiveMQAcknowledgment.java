@@ -2,9 +2,9 @@ package io.ddd4j.mq.activemq;
 
 import io.ddd4j.mq.BrokerType;
 import io.ddd4j.mq.message.Acknowledgment;
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
-import jakarta.jms.Session;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 
 import java.util.Objects;
 import java.util.Optional;

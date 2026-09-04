@@ -4,6 +4,8 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
+import java.util.Collections;
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
@@ -78,7 +80,7 @@ class JpaEventStoreIT {
         TestAggregateRootId orderId = new TestAggregateRootId("order-1");
         OrderCreatedEvent event = new OrderCreatedEvent(orderId);
 
-        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0);
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(event), 0);
 
         List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
         assertThat(events).hasSize(1);
@@ -91,9 +93,9 @@ class JpaEventStoreIT {
     @Test
     void appendWithStaleVersionShouldRollbackAndExposeTypedConflict() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-2");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new OrderCreatedEvent(orderId)), 0);
 
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0))
+        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new OrderCreatedEvent(orderId)), 0))
                 .isInstanceOf(AggregateVersionConflictException.class);
 
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
@@ -103,7 +105,7 @@ class JpaEventStoreIT {
     void readWithVersionRangeShouldReturnInclusiveEvents() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-3");
         eventStore.append(ORDER_TYPE, orderId,
-                List.of(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0);
+                Arrays.asList(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0);
 
         assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
                 .extracting(StoredEvent::version)

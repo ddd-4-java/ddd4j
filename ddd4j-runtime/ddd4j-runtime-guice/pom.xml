@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -12,14 +12,9 @@
 
     <artifactId>ddd4j-runtime-guice</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Ddd4j Google Guice 运行时绑定：核心 SPI 的 Guice
-        实现（DomainEventPublisher/SubjectProvider/I18nProvider）+ IoC 上下文 + Javalin 复用基础设施。与
-        ddd4j-runtime-spring、ddd4j-runtime-quarkus 平级。
-    </description>
-    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+    <description>ddd4j Google Guice runtime binding: core SPI Guice implementation + IoC context.</description>
 
     <dependencies>
-        <!-- 纯 Java 核心契约 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
@@ -30,7 +25,6 @@
             <artifactId>ddd4j-runtime-support</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Ddd4j 工具包 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-kit</artifactId>
@@ -52,22 +46,14 @@
             <version>${revision}</version>
         </dependency>
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-mybatisplus</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <!-- Google Guice -->
-        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
-        <!-- Micrometer（可选，用于 ProjectionMetrics 适配；版本由 ddd4j-dependencies BOM 管理） -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- Google Guava EventBus -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -82,12 +68,10 @@
             <version>${revision}</version>
             <scope>test</scope>
         </dependency>
-        <!-- H2 内存数据库，用于 JDBC 仓储测试 -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

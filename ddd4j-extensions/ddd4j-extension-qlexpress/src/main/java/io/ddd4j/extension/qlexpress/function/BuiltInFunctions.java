@@ -1,5 +1,6 @@
 package io.ddd4j.extension.qlexpress.function;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public final class BuiltInFunctions {
     }
 
     public static List<NamedQLFunction> all() {
-        return List.of(
+        return Arrays.asList(
                 new ContainsFunction(),
                 new StartsWithFunction(),
                 new EndsWithFunction(),

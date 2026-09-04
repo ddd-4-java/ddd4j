@@ -1,5 +1,8 @@
 package io.ddd4j.data.projection;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Collections;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
 import io.ddd4j.core.cqrs.readmodel.EventChunk;
@@ -48,13 +51,13 @@ class ProjectionDispatcherTest {
     void chunkByEventEmitsOnlyRequestedTypeAndCompletesWhenExhausted() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
                 new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
-                        Set.of(ProjectionHandlerRegistryTest.OrderCreated.class,
-                                ProjectionHandlerRegistryTest.OrderPaid.class));
+                        Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(ProjectionHandlerRegistryTest.OrderCreated.class,
+                                ProjectionHandlerRegistryTest.OrderPaid.class))));
         registry.register(handler);
         ProjectionHandlerRegistryTest.OrderCreated first = new ProjectionHandlerRegistryTest.OrderCreated();
         ProjectionHandlerRegistryTest.OrderPaid paid = new ProjectionHandlerRegistryTest.OrderPaid();
         ProjectionHandlerRegistryTest.OrderCreated second = new ProjectionHandlerRegistryTest.OrderCreated();
-        chunkReader.enqueue(new EventChunk<>(List.of(first, paid, second), 3));
+        chunkReader.enqueue(new EventChunk<>(Arrays.asList(first, paid, second), 3));
         chunkReader.enqueue(EventChunk.empty(3));
 
         List<DomainEvent<?>> emitted = dispatcher
@@ -75,7 +78,7 @@ class ProjectionDispatcherTest {
     @Test
     void chunkByEventReturnsEmptyFluxForUnregisteredEventType() {
         registry.register(new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
-                Set.of(ProjectionHandlerRegistryTest.OrderCreated.class)));
+                Collections.singleton(ProjectionHandlerRegistryTest.OrderCreated.class);
 
         List<DomainEvent<?>> emitted = dispatcher
                 .chunkByEvent(ProjectionHandlerRegistryTest.OrderShipped.class)
@@ -89,7 +92,7 @@ class ProjectionDispatcherTest {
     @Test
     void chunkByEventContinuesFromPersistedPosition() {
         registry.register(new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
-                Set.of(ProjectionHandlerRegistryTest.OrderCreated.class)));
+                Collections.singleton(ProjectionHandlerRegistryTest.OrderCreated.class);
         positions.save(new DefaultProjectionPosition("order-summary", 7));
 
         dispatcher.chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)
@@ -103,7 +106,7 @@ class ProjectionDispatcherTest {
     void dispatchOneAppliesHandlerInOrderAndAdvancesPositionByOne() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
                 new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
-                        Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+                        Collections.singleton(ProjectionHandlerRegistryTest.OrderCreated.class);
         registry.register(handler);
         ProjectionHandlerRegistryTest.OrderCreated first = new ProjectionHandlerRegistryTest.OrderCreated();
         ProjectionHandlerRegistryTest.OrderCreated second = new ProjectionHandlerRegistryTest.OrderCreated();
@@ -123,7 +126,7 @@ class ProjectionDispatcherTest {
     void dispatchOneKeepsPositionWhenHandlerFails() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
                 new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
-                        Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+                        Collections.singleton(ProjectionHandlerRegistryTest.OrderCreated.class);
         handler.failWith(new IllegalStateException("projection boom"));
         registry.register(handler);
 
@@ -138,7 +141,7 @@ class ProjectionDispatcherTest {
     void dispatchOneRejectsNullArguments() {
         ProjectionHandlerRegistryTest.RecordingHandler handler =
                 new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
-                        Set.of(ProjectionHandlerRegistryTest.OrderCreated.class));
+                        Collections.singleton(ProjectionHandlerRegistryTest.OrderCreated.class);
 
         assertThrows(NullPointerException.class,
                 () -> dispatcher.dispatchOne(null, handler));
@@ -181,7 +184,7 @@ class ProjectionDispatcherTest {
         @Override
         public EventChunk<DomainEvent<?>> read(String streamId, long fromEventNumber, int chunkSize,
                                                Collection<String> eventTypes) {
-            calls.add(new ReadCall(streamId, fromEventNumber, chunkSize, List.copyOf(eventTypes)));
+            calls.add(new ReadCall(streamId, fromEventNumber, chunkSize, Collections.unmodifiableList(new ArrayList<>(eventTypes))));
             EventChunk<DomainEvent<?>> chunk = script.poll();
             return chunk != null ? chunk : EventChunk.empty(fromEventNumber);
         }

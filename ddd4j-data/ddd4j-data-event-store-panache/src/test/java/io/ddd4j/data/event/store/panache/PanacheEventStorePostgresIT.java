@@ -1,5 +1,6 @@
 package io.ddd4j.data.event.store.panache;
 
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -68,7 +69,7 @@ class PanacheEventStorePostgresIT {
         assertThat(dataType).isEqualTo("text");
 
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0L);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new OrderCreatedEvent(orderId)), 0L);
 
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
         assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).payload())

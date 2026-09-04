@@ -1,8 +1,22 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.web.webmvc.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.core.BaseCoreProperties;
-import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.core.config.BaseCoreProperties;
+import io.ddd4j.core.utils.JsonKit;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
 import io.ddd4j.web.webmvc.core.GlobalResponseRAdvice;
 import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;
@@ -10,7 +24,7 @@ import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
 import io.ddd4j.web.webmvc.utils.LocalDateTimeFormatter;
 import io.ddd4j.web.webmvc.utils.LocalTimeFormatter;
 import io.ddd4j.web.webmvc.ws.BaseWebSocketServer;
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -111,7 +125,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
      * 注册拦截器。
      */
     public void addInterceptors(InterceptorRegistry registry) {
-        if (Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {
+        if (Objects.nonNull(baseWebInterceptors) && baseWebInterceptors.isEmpty()) {
             baseWebInterceptors.forEach(baseInterceptor -> {
                 log.debug("Loading {}", baseInterceptor.getClass().getSimpleName());
                 registry.addInterceptor(baseInterceptor).addPathPatterns(baseInterceptor.pathPatterns()).excludePathPatterns(baseInterceptor.excludePathPatterns());
@@ -124,7 +138,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
     @PostConstruct
     public void init() {
         // 启动WebSocket服务端
-        if (!baseWebSocketServers.isEmpty()) {
+        if (baseWebSocketServers.isEmpty()) {
             for (BaseWebSocketServer server : baseWebSocketServers) {
 //                WebSocketKit.startServer(server.getClass());
             }

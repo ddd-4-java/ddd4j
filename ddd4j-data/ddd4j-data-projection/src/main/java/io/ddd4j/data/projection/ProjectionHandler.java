@@ -1,5 +1,8 @@
 package io.ddd4j.data.projection;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 import java.util.Collection;
@@ -34,7 +37,7 @@ import java.util.Collection;
  *
  *     &#64;Override
  *     public Collection<Class<? extends DomainEvent<?>>> eventTypes() {
- *         return Set.of(OrderCreated.class, OrderPaid.class);
+ *         return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(OrderCreated.class, OrderPaid.class)));
  *     }
  *
  *     &#64;Override

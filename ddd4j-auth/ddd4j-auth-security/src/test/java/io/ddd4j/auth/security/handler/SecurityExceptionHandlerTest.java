@@ -54,7 +54,7 @@ class SecurityExceptionHandlerTest {
     void accessDeniedWithAuthenticatedUserReturns403() {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("user-1", "pw",
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_user"))));
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_user"));
 
         ResponseEntity<ApiRestResponse<String>> response =
                 handler.accessDeniedException(new AccessDeniedException("denied"));

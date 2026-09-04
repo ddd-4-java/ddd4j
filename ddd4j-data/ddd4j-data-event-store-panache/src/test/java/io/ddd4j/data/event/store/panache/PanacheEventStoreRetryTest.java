@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.panache;
 
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
@@ -139,7 +140,7 @@ class PanacheEventStoreRetryTest {
     @Test
     void append_成功路径_不触发Sleeper() {
         TestAggregateRootId orderId = new TestAggregateRootId("agg-1");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0L);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new TestEvent(orderId)), 0L);
 
         assertThat(sleeper.calls.get()).isZero();
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
@@ -148,10 +149,10 @@ class PanacheEventStoreRetryTest {
     @Test
     void append_期望版本不匹配_强类型冲突异常_不触发重试_事务回滚() {
         TestAggregateRootId orderId = new TestAggregateRootId("agg-1");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0L);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new TestEvent(orderId)), 0L);
 
         assertThatThrownBy(() ->
-                eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 99L))
+                eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new TestEvent(orderId)), 99L))
                 .isInstanceOf(AggregateVersionConflictException.class);
 
         assertThat(sleeper.calls.get())
@@ -173,7 +174,7 @@ class PanacheEventStoreRetryTest {
         // （FaultInjector 仅第一次抛错，第二次透传真实 SQL；Hibernate 事务 rollback
         // 后 EntityManager 状态清空，重试走全新事务）
         TestAggregateRootId orderId = new TestAggregateRootId("agg-conflict");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0L);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new TestEvent(orderId)), 0L);
 
         // 关键断言 1：Sleeper 至少被调用 1 次（即重试机制确实触发过）
         assertThat(sleeper.calls.get())
@@ -186,7 +187,7 @@ class PanacheEventStoreRetryTest {
     @Test
     void append_空事件列表_不触发Sleeper_不落库() {
         TestAggregateRootId orderId = new TestAggregateRootId("agg-empty");
-        eventStore.append(ORDER_TYPE, orderId, List.of(), 0L);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(), 0L);
 
         assertThat(sleeper.calls.get()).isZero();
         assertThat(eventStore.read(ORDER_TYPE, orderId)).isEmpty();

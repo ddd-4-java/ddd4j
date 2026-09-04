@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.exception;
 
-import java.io.Serial;
 
 /**
  * 认证异常抽象（纯 Java）
@@ -25,8 +24,6 @@ import java.io.Serial;
  * @since 2.0.x
  */
 public class AuthenticationException extends RuntimeException {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public AuthenticationException(String message) {

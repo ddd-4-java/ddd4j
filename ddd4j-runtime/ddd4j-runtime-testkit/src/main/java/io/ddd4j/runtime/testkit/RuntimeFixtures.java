@@ -1,5 +1,6 @@
 package io.ddd4j.runtime.testkit;
 
+import java.util.Arrays;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.constant.SpiKeys;
@@ -12,6 +13,7 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.ReadinessResult;
 import io.ddd4j.core.subject.SubjectProvider;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public final class RuntimeFixtures {
     private final SubjectProvider subjectProvider = new InMemorySubjectProvider(new InMemorySubject(event -> {
     }));
     private final I18nProvider i18nProvider = I18nProvider.DEFAULT;
-    private final CommandBus commandBus = new DefaultCommandBus(List.of());
+    private final CommandBus commandBus = new DefaultCommandBus(Collections.emptyList());
 
     public DomainEventPublisher publisher() {
         return publisher;
@@ -48,14 +50,15 @@ public final class RuntimeFixtures {
     }
 
     public List<ReadinessContributor> readinessContributors() {
-        return List.of(() -> ReadinessResult.ready("runtime-fixture"));
+        return Arrays.asList(() -> ReadinessResult.ready("runtime-fixture"));
     }
 
     public Map<String, Class<?>> services() {
-        return Map.of(
-                SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
-                SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class,
-                SpiKeys.I18N_PROVIDER, I18nProvider.class,
-                SpiKeys.COMMAND_BUS, CommandBus.class);
+        Map<String, Class<?>> services = new java.util.HashMap<>();
+        services.put(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class);
+        services.put(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class);
+        services.put(SpiKeys.I18N_PROVIDER, I18nProvider.class);
+        services.put(SpiKeys.COMMAND_BUS, CommandBus.class);
+        return Collections.unmodifiableMap(services);
     }
 }

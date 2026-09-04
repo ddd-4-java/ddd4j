@@ -1,5 +1,6 @@
 package io.ddd4j.data.cqrs;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.command.Command;
 
 import java.lang.annotation.Documented;
@@ -25,7 +26,7 @@ import java.lang.annotation.Target;
  * public class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
  *     &#64;Override
  *     public Set<Class<? extends Command>> supportedCommands() {
- *         return Set.of(CreateOrderCommand.class);
+ *         return Collections.singleton(CreateOrderCommand.class);
  *     }
  *
  *     &#64;Override

@@ -1,5 +1,6 @@
 package io.ddd4j.extension.monitor.channel.feishu;
 
+import java.util.Collections;
 import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.kit.lang.JsonKit;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 /**
  * 飞书群机器人 {@link Sender} 适配器。
@@ -52,7 +54,7 @@ public class FeishuRobotSender implements Sender {
         Map<String, Object> textPara = new HashMap<>();
         textPara.put("tag", "text");
         textPara.put("text", msg);
-        List<List<Map<String, Object>>> paragraphs = List.of(List.of(textPara));
+        List<List<Map<String, Object>>> paragraphs = Arrays.asList(Collections.singletonList(textPara));
 
         Map<String, Object> zhCn = new HashMap<>();
         zhCn.put("title", "");

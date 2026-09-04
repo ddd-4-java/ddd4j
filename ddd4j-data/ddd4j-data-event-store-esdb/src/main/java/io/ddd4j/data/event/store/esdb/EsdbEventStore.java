@@ -4,6 +4,7 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
+import java.util.Arrays;
 import com.eventstore.dbclient.AppendToStreamOptions;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventDataBuilder;
@@ -90,7 +91,7 @@ public class EsdbEventStore implements EventStore {
                     .maxCount(EventStoreConstants.ESDB_DEFAULT_READ_LIMIT)).join();
             return result.getEvents().stream().map(event -> toStoredEvent(event, aggregateType, aggregateId)).toList();
         } catch (CompletionException exception) {
-            if (exception.getCause() instanceof StreamNotFoundException) return List.of();
+            if (exception.getCause() instanceof StreamNotFoundException) return Arrays.asList();
             throw new IllegalStateException("Failed to read events from stream: " + streamName, exception.getCause());
         }
     }

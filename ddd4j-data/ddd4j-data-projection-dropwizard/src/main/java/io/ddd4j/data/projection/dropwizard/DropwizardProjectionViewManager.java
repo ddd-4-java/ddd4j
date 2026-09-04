@@ -4,7 +4,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
 import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import io.dropwizard.core.setup.Environment;
+import io.dropwizard.setup.Environment;
 
 import java.util.Collection;
 import java.util.Map;

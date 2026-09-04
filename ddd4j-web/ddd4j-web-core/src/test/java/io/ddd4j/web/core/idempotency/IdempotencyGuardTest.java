@@ -61,7 +61,7 @@ class IdempotencyGuardTest {
     @Test
     void completeByLeaseDelegatesToKey() {
         RecordingGuard guard = new RecordingGuard(true);
-        IdempotencyLease lease = guard.acquireLease("order-1", TTL).orElseThrow();
+        IdempotencyLease lease = guard.acquireLease("order-1", TTL).get();
 
         guard.complete(lease);
 

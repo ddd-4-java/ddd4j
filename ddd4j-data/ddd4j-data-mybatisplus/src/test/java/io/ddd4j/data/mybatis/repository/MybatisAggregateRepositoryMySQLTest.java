@@ -56,7 +56,7 @@ class MybatisAggregateRepositoryMySQLTest {
     @BeforeAll
     static void setUp() throws Exception {
         // 1. 建表
-        try (Connection conn = MYSQL.createConnection("");
+try (Connection conn = MYSQL.createConnection(""))
              Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS orders ("
                     + "id VARCHAR(64) PRIMARY KEY, "

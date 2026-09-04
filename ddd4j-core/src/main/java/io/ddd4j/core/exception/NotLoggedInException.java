@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.exception;
 
-import java.io.Serial;
 
 /**
  * 未登录异常（访问受保护资源前未登录）。
@@ -30,8 +29,6 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class NotLoggedInException extends AuthenticationException {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     public NotLoggedInException(String message) {

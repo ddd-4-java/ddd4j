@@ -1,5 +1,6 @@
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ class NoopEventChunkReaderTest {
     void read_应返回空chunk() {
         NoopEventChunkReader<String> reader = new NoopEventChunkReader<>();
 
-        EventChunk<String> chunk = reader.read("person-list", 0, 100, List.of("created"));
+        EventChunk<String> chunk = reader.read("person-list", 0, 100, Collections.singletonList("created"));
 
         assertThat(chunk).isNotNull();
         assertThat(chunk.hasEvents()).isFalse();
@@ -33,7 +34,7 @@ class NoopEventChunkReaderTest {
     void read_nextEventNumber应等于传入的fromEventNumber() {
         NoopEventChunkReader<String> reader = new NoopEventChunkReader<>();
 
-        EventChunk<String> chunk = reader.read("person-list", 42, 100, List.of("created"));
+        EventChunk<String> chunk = reader.read("person-list", 42, 100, Collections.singletonList("created"));
 
         assertThat(chunk.getNextEventNumber()).isEqualTo(42L);
     }

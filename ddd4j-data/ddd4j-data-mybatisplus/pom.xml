@@ -10,6 +10,12 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <!-- JDK8 线：JSqlParser 4.9（5.x 需 JDK11+） -->
+        <jsqlparser.version>4.9</jsqlparser.version>
+    </properties>
+
+
     <artifactId>ddd4j-data-mybatisplus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。
@@ -19,6 +25,12 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <!-- MyBatis Plus JSqlParser 4.9 变体（JDK8 兼容；Pagination/TenantLine 拦截器需要） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
         <!-- 核心契约 + 上下文（纯 Java） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -46,15 +58,11 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-extension</artifactId>
         </dependency>
-        <!-- MyBatis Plus JSqlParser（PaginationInnerInterceptor / TenantLineInnerInterceptor 在此模块） -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-jsqlparser</artifactId>
-        </dependency>
         <!-- JSqlParser（DataPermissionInnerInterceptor / MybatisTenantLineInnerInterceptor 需要） -->
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
+            <version>${jsqlparser.version}</version>
             <exclusions>
                 <!-- JSqlParser 将仅用于其基准测试的 JMH 声明为 compile；ddd4j 运行时不需要它。 -->
                 <exclusion>

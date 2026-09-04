@@ -1,5 +1,7 @@
 package io.ddd4j.dropwizard;
 
+import java.util.Collections;
+import java.util.ArrayList;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
@@ -18,7 +20,7 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
     private final List<Consumer<Object>> listeners;
 
     public DropwizardDomainEventPublisher(Collection<Consumer<Object>> listeners) {
-        this.listeners = List.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
+        this.listeners = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(listeners, "listeners must not be null")));
     }
 
     @Override

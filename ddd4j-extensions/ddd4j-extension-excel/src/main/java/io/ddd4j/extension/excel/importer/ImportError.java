@@ -59,7 +59,8 @@ public final class ImportError {
      * @return {@link ImportError}
      */
     public static ImportError of(long rowIndex, Exception exception) {
-        if (exception instanceof ExcelDataConvertException edce) {
+        if (exception instanceof ExcelDataConvertException) {
+            ExcelDataConvertException edce = (ExcelDataConvertException) exception;
             return new ImportError(
                     edce.getRowIndex(),
                     edce.getColumnIndex(),

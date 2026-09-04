@@ -127,15 +127,15 @@ public interface AggregateController {
         richRepository.deleteByQuery(query);
     }
 
-    private Repository repository(String model) {
+    default Repository repository(String model) {
         return RepositoryRegistry.repository((Class) modelClass(model));
     }
 
-    private Repository richRepository(String model) {
+    default Repository richRepository(String model) {
         return repository(model);
     }
 
-    private Query<?> query(String model, Map<String, Object> source) {
+    default Query<?> query(String model, Map<String, Object> source) {
         Class<? extends Query> queryClass = queryClass(model);
         Query<?> query = BeanKit.ofMap(source, queryClass);
         if (Objects.nonNull(query)) {
@@ -144,7 +144,7 @@ public interface AggregateController {
         return newInstance(queryClass);
     }
 
-    private AggregateRoot<?> aggregate(String model, Map<String, Object> source) {
+    default AggregateRoot<?> aggregate(String model, Map<String, Object> source) {
         Class<? extends AggregateRoot<?>> modelClass = modelClass(model);
         AggregateRoot<?> aggregate = BeanKit.ofMap(source, modelClass);
         if (Objects.nonNull(aggregate)) {
@@ -153,7 +153,7 @@ public interface AggregateController {
         return newInstance(modelClass);
     }
 
-    private List<AggregateRoot<?>> aggregates(String model, List<Map<String, Object>> source) {
+    default List<AggregateRoot<?>> aggregates(String model, List<Map<String, Object>> source) {
         List<AggregateRoot<?>> aggregates = new ArrayList<>();
         if (Objects.isNull(source)) {
             return aggregates;
@@ -164,23 +164,25 @@ public interface AggregateController {
         return aggregates;
     }
 
-    private Class<? extends AggregateRoot<?>> modelClass(String model) {
+    default Class<? extends AggregateRoot<?>> modelClass(String model) {
         Object mapped = MappingKit.get("MODEL_NAME", model);
-        if (mapped instanceof Class<?> mappedClass && AggregateRoot.class.isAssignableFrom(mappedClass)) {
-            return (Class<? extends AggregateRoot<?>>) mappedClass;
+        if (mapped instanceof Class
+                && AggregateRoot.class.isAssignableFrom((Class<?>) mapped)) {
+            return (Class<? extends AggregateRoot<?>>) mapped;
         }
         throw new BizRuntimeException("Aggregate model mapping not found for {}", model);
     }
 
-    private Class<? extends Query> queryClass(String model) {
+    default Class<? extends Query> queryClass(String model) {
         Object mapped = MappingKit.get("MODEL_QUERY", modelClass(model));
-        if (mapped instanceof Class<?> mappedClass && Query.class.isAssignableFrom(mappedClass)) {
-            return (Class<? extends Query>) mappedClass;
+        if (mapped instanceof Class
+                && Query.class.isAssignableFrom((Class<?>) mapped)) {
+            return (Class<? extends Query>) mapped;
         }
         throw new BizRuntimeException("Query mapping not found for model {}", model);
     }
 
-    private <T> T newInstance(Class<T> type) {
+    default <T> T newInstance(Class<T> type) {
         try {
             return type.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {

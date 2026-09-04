@@ -1,5 +1,6 @@
 package io.ddd4j.data.mybatis.adapter;
 
+import java.util.Arrays;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +20,7 @@ class Ddd4jSqlObservationSinkTest {
 
     @Test
     void shouldStoreSqlObservationInThreadContext() {
-        List<String> params = List.of("PAID", "2024");
+        List<String> params = Arrays.asList("PAID", "2024");
 
         new Ddd4jSqlObservationSink().accept(
                 new SqlObservation("io.ddd4j.data.mybatis.OrderMapper.listPaid", "SELECT * FROM orders", params, 8_000_000L, null));

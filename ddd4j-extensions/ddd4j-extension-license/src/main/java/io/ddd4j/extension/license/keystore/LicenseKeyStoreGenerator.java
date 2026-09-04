@@ -145,7 +145,13 @@ public class LicenseKeyStoreGenerator {
             process.destroyForcibly();
             throw new IllegalStateException("keytool 执行超时: " + redactedCommand(command));
         }
-        String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+        byte[] chunk = new byte[8192];
+        int n;
+        while ((n = process.getInputStream().read(chunk)) != -1) {
+            buf.write(chunk, 0, n);
+        }
+        String output = new String(buf.toByteArray(), StandardCharsets.UTF_8);
         int code = process.exitValue();
         if (code != 0) {
             throw new IllegalStateException("keytool 执行失败 (code=" + code + "): " + output

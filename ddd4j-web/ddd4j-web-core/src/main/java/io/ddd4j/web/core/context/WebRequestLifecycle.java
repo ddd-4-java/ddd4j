@@ -25,10 +25,13 @@ public final class WebRequestLifecycle {
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
         AuthenticationMode mode = Objects.requireNonNull(accessPolicy.authenticationMode(requestContext),
                 "access policy must return an authentication mode");
-        return switch (mode) {
-            case DISABLED -> Optional.empty();
-            case OPTIONAL -> authenticator.authenticateOptional(requestContext.authorization());
-            case REQUIRED -> Optional.of(authenticator.authenticateSubject(requestContext.authorization()));
-        };
+        if (mode == AuthenticationMode.DISABLED) {
+            return Optional.empty();
+        } else if (mode == AuthenticationMode.OPTIONAL) {
+            return authenticator.authenticateOptional(requestContext.authorization());
+        } else if (mode == AuthenticationMode.REQUIRED) {
+            return Optional.of(authenticator.authenticateSubject(requestContext.authorization()));
+        }
+        throw new IllegalStateException("Unknown authentication mode: " + mode);
     }
 }

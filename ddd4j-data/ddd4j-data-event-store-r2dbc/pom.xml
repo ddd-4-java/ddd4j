@@ -5,58 +5,62 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
-        <artifactId>ddd4j-data</artifactId>
+        <artifactId>ddd4j-dependencies</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
     </parent>
 
     <artifactId>ddd4j-data-event-store-r2dbc</artifactId>
-    <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 事件存储 R2DBC 响应式实现（WebFlux/Vert.x 等响应式运行时）：
-        纯 io.r2dbc.spi Connection API 落地（零 Spring，beginTransaction/commit/rollback
-        真响应式事务），提供 AsyncEventStore SPI 的实现（R2dbcEventStore）。
-    </description>
-    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+    <packaging>jar</packaging>
+
+    <name>ddd4j-data-event-store-r2dbc</name>
+    <description>AsyncEventStore 的 R2DBC SPI + Reactor 响应式适配器：TEXT payload schema、事务内乐观锁校验、懒建表，无框架绑定（JDK8）</description>
 
     <dependencies>
-        <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.hiwepy</groupId>
+                    <artifactId>mybatis-plus-enhance</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        <!-- R2DBC SPI（ConnectionFactory/Connection 响应式连接标准接口；
-             版本由 ddd4j-dependencies 的 ${r2dbc-spi.version}=1.0.0.RELEASE 管理（:8104）） -->
+        <!-- R2DBC SPI（版本由 ddd4j-dependencies 的 r2dbc-spi.version 管理，运行时由 ConnectionFactory 实现提供） -->
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-spi</artifactId>
+            <scope>provided</scope>
         </dependency>
-
-        <!-- ======== Test ======== -->
-        <!-- r2dbc-h2（纯响应式 H2 内存库 IT 用，无容器；版本由 ddd4j-dependencies 管理（:8055）） -->
+        <!-- Reactor（版本由 reactor-bom 管理） -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+        </dependency>
+        <!-- 测试：R2DBC H2 内存库 -->
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-h2</artifactId>
+            <!-- 覆盖全局 r2dbc-h2.version=1.1.0.RELEASE：其编译期依赖 H2 2.4.240
+                 （Session.prepareCommand(String) 单参签名，Java 11 字节码），与 JDK8 轨道
+                 不兼容；1.0.0.RELEASE 基于 R2DBC SPI 1.0.0 + H2 2.1/2.2 API（Java 8） -->
+            <version>1.0.0.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>r2dbc-postgresql</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!-- 覆盖全局 h2.version=2.4.240（Java 11 字节码）：2.2.224 为最后的 Java 8 版本 -->
+            <version>2.2.224</version>
             <scope>test</scope>
         </dependency>
-        <!-- Reactor 测试（StepVerifier 断言 Mono/Flux 信号序列；版本随 reactor-bom） -->
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Jackson JSR-310（DomainEvent 的 ZonedDateTime 时间戳真实 Jackson 往返，
-             mapper 经 findAndAddModules 发现 JavaTimeModule；版本由 BOM 链管理） -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- 测试容器轨（PostgreSQL 方言验证，容器环境另行启用） -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-postgresql</artifactId>
@@ -67,20 +71,23 @@
             <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- surefire 默认不含 *IT.java；本模块的纯 r2dbc-h2+H2 集成测试随 test 阶段执行，
-                 需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <!-- 覆盖 parent 的 surefire skip=true，本模块运行契约测试 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*IT.java</include>
-                    </includes>
+                    <skip>false</skip>
+                    <skipTests>false</skipTests>
+                    <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
         </plugins>

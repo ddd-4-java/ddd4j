@@ -56,7 +56,7 @@ public class NestedRegionTemplate {
      * @return 去除空白后的字符串
      */
     private static String trimWhitespace(String value) {
-        return Objects.isNull(value) ? null : value.strip();
+        return Objects.isNull(value) ? null : value.trim();
     }
 
     /**

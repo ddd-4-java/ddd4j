@@ -86,7 +86,7 @@ public final class ExcelExporter {
     public static byte[] exportMultiSheet(Map<String, Class<?>> headMap,
                                    Map<String, List<?>> dataMap,
                                    WriteOptions options) {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              ExcelWriter writer = buildWriter(out, options)) {
             for (Map.Entry<String, Class<?>> entry : headMap.entrySet()) {
                 String sheetName = entry.getKey();

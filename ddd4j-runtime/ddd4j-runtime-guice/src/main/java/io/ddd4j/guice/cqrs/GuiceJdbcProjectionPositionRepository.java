@@ -86,7 +86,7 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
 
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
-        try (Connection conn = dataSource.getConnection();
+try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_BY_STREAM_ID)) {
             ps.setString(1, streamId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -102,7 +102,7 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
 
     @Override
     public List<ProjectionPosition> findAll() {
-        try (Connection conn = dataSource.getConnection();
+try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
              ResultSet rs = ps.executeQuery()) {
             List<ProjectionPosition> result = new ArrayList<>();
@@ -163,7 +163,7 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
 
     @Override
     public void deleteByStreamId(String streamId) {
-        try (Connection conn = dataSource.getConnection();
+try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE_BY_STREAM_ID)) {
             ps.setString(1, streamId);
             ps.executeUpdate();
@@ -182,7 +182,7 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
      * 确保投影位置表存在（CREATE TABLE IF NOT EXISTS）。
      */
     private void ensureTable() {
-        try (Connection conn = dataSource.getConnection();
+try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute(CREATE_TABLE_IF_NOT_EXISTS);
             log.info("Ensured projection position table exists: {}", TABLE_NAME);

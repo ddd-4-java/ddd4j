@@ -1,5 +1,6 @@
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -83,7 +84,7 @@ class EventChunkReaderContractTest {
         reader.append(1, "a");
         reader.append(2, "b");
 
-        EventChunk<String> chunk = reader.read("s", 1, 100, List.of());
+        EventChunk<String> chunk = reader.read("s", 1, 100, Arrays.asList());
 
         assertThat(chunk.getEvents()).containsExactly("a", "b");
     }

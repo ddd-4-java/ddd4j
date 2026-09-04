@@ -1,5 +1,6 @@
 package io.ddd4j.web.micronaut;
 
+import java.util.Arrays;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
@@ -39,7 +40,7 @@ class Ddd4jMicronautWebFilterUnitTest {
     private WebRequestLifecycle newLifecycle() {
         return new WebRequestLifecycle(
                 new BearerSubjectAuthenticator(),
-                new PathWebAccessPolicy(java.util.List.of(), io.ddd4j.web.core.auth.AuthenticationMode.REQUIRED));
+                new PathWebAccessPolicy(java.util.Arrays.asList(), io.ddd4j.web.core.auth.AuthenticationMode.REQUIRED));
     }
 
     @Test

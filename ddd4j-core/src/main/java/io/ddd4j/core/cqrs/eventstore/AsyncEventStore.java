@@ -47,7 +47,7 @@ import reactor.core.publisher.Mono;
  *
  * <h3>实现</h3>
  * <ul>
- *   <li>同步轨道：-jpa / -r2dbc / -esdb 三个实现模块（{@link EventStore}）</li>
+ *   <li>同步轨道：-jpa / -jdbi / -r2dbc 实现模块（{@link EventStore}）</li>
  *   <li>响应式轨道：具体实现（纯 {@code io.r2dbc.spi} 真响应式事务）为后续演进</li>
  * </ul>
  *

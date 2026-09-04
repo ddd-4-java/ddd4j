@@ -17,7 +17,6 @@ package io.ddd4j.core.ddd.event;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -25,8 +24,6 @@ import java.util.Objects;
  * 领域事件类型的稳定标识。
  */
 public final class EventType implements Serializable {
-
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String value;
@@ -58,9 +55,10 @@ public final class EventType implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof EventType that)) {
+        if (!(object instanceof EventType)) {
             return false;
         }
+        EventType that = (EventType) object;
         return Objects.equals(value, that.value);
     }
 

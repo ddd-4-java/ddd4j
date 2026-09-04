@@ -1,5 +1,6 @@
 package io.ddd4j.data.cqrs.quarkus;
 
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.data.cqrs.CommandHandler;
@@ -86,7 +87,7 @@ public class QuarkusCommandBus extends DefaultCommandBus {
      * {@link #QuarkusCommandBus(Instance)} 装配。
      */
     protected QuarkusCommandBus() {
-        super(List.of());
+        super(Arrays.asList());
     }
 
     private static Collection<CommandExecutor<?>> collect(Instance<CommandExecutor<?>> executors) {

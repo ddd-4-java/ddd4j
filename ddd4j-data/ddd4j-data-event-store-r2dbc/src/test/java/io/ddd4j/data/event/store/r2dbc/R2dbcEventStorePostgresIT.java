@@ -1,5 +1,6 @@
 package io.ddd4j.data.event.store.r2dbc;
 
+import java.util.Collections;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -60,7 +61,7 @@ class R2dbcEventStorePostgresIT {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
         OrderCreatedEvent event = new OrderCreatedEvent(orderId);
 
-        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0L);
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(event), 0L);
 
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
         assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId().asString())

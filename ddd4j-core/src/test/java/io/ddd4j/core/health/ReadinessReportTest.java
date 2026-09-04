@@ -1,5 +1,6 @@
 package io.ddd4j.core.health;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -10,7 +11,7 @@ class ReadinessReportTest {
 
     @Test
     void check_shouldReportReadyWhenAllContributorsAreReady() {
-        ReadinessReport report = ReadinessReport.check(List.of(
+        ReadinessReport report = ReadinessReport.check(Arrays.asList(
                 () -> ReadinessResult.ready("postgresql"),
                 () -> ReadinessResult.ready("redis")));
 
@@ -20,7 +21,7 @@ class ReadinessReportTest {
 
     @Test
     void check_shouldFailClosedWhenContributorThrows() {
-        ReadinessReport report = ReadinessReport.check(List.of(
+        ReadinessReport report = ReadinessReport.check(Arrays.asList(
                 () -> ReadinessResult.ready("postgresql"),
                 () -> {
                     throw new IllegalStateException("redis connection refused");

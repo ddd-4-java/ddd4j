@@ -1,5 +1,8 @@
 package io.ddd4j.data.cqrs;
 
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -119,7 +122,7 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CreateOrderCommand.class);
+            return Collections.singleton(CreateOrderCommand.class);
         }
 
         @Override
@@ -132,7 +135,7 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CancelOrderCommand.class);
+            return Collections.singleton(CancelOrderCommand.class);
         }
 
         @Override
@@ -149,7 +152,7 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CreateOrderCommand.class, CancelOrderCommand.class);
+            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(CreateOrderCommand.class, CancelOrderCommand.class)));
         }
 
         @Override
@@ -166,7 +169,7 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(ShipOrderCommand.class, TrackOrderCommand.class);
+            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(ShipOrderCommand.class, TrackOrderCommand.class)));
         }
 
         @Override
