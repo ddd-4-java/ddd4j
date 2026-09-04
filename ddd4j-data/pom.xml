@@ -13,6 +13,14 @@
     <artifactId>ddd4j-data</artifactId>
     <description>ddd4j 数据层：BaseRepositoryImpl 四泛型封装 MyBatis Plus，充血 Model/Query，多租户</description>
 
+    <!--
+        注意：ddd4j-data 在 1.0.x 行是非聚合根的 jar 模块（共享 src 提供 annotation/config/BaseRepositoryImpl 等基础），
+        cqrs/projection/event-store 子模块通过 relativePath=../pom.xml 复用本聚合 pom 作为依赖源。
+        与 2.0.x/3.0.x 不同构（它们使用 packaging=pom + ddd4j-data-core 拆分子模块）。
+        这是 1.0.x 历史的"目录结构差异"，迁移到 packaging=pom 需要新建 ddd4j-data-core 容纳共享代码——大手术。
+        暂保留原结构，并在 2.0.x/3.0.x 的非允许轴偏差表中标注。
+    -->
+
     <dependencies>
         <!-- For ddd4j-core -->
         <dependency>

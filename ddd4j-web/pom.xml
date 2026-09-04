@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,79 +11,24 @@
     </parent>
 
     <artifactId>ddd4j-web</artifactId>
-    <description>Ddd4j Web 层：拦截器/Session/Feign 透传/多租户/全局异常</description>
+    <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Ddd4j Web 抽象聚合：core（基础 Controller/Advice/Utils） + 各运行时框架桥接（Javalin/Spring WebFlux/WebMVC/Vertx/Micronaut/Helidon/Dropwizard/Quarkus）+ validation/testkit。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-kit</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-websocket</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-messaging</artifactId>
-            <optional>true</optional>
-        </dependency>
-<!-- OpenFeign（可选，用于 FeignHeaderInterceptor 的 RequestInterceptor） -->
-        <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.websocket</groupId>
-            <artifactId>javax.websocket-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-    </dependencies>
+    <!--
+        ddd4j-web 子模块分两批：
+        （1）当前已具备 pom.xml + 源码（可编译）：core / webflux / webmvc / validation
+        （2）2.0.x/3.0.x 拓扑占位（无 pom.xml，需后续从 2.0.x 复制）：
+            javalin / vertx / micronaut / helidon / dropwizard / quarkus / testkit
+        当前仅在 modules 中声明（1），保证 Maven 构建通过；
+        （2）目录保留作为拓扑对齐锚点，等补完 pom 后再加入。
+    -->
+    <modules>
+        <module>ddd4j-web-core</module>
+        <module>ddd4j-web-webflux</module>
+        <module>ddd4j-web-webmvc</module>
+        <module>ddd4j-web-validation</module>
+    </modules>
 
 </project>

@@ -24,5 +24,6 @@
         <module>ddd4j-runtime-vertx</module>
         <module>ddd4j-runtime-helidon</module>
         <module>ddd4j-runtime-dropwizard</module>
+        <module>ddd4j-runtime-quarkus</module>
     </modules>
 </project>

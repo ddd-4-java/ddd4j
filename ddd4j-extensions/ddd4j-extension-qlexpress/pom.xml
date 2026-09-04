@@ -50,6 +50,11 @@
             <artifactId>spring-webmvc</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- For javax.annotation.PostConstruct (JDK 8 transitive via spring-context) -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
 </dependencies>
 
 </project>

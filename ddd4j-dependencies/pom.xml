@@ -529,8 +529,10 @@
         <snmp4j-agent.version>3.8.3</snmp4j-agent.version>
         <soapui-template.version>1.0.2.RELEASE</soapui-template.version>
         <socket-io.version>2.1.2</socket-io.version>
-        <!-- 版本约束：Spring Framework 锁定 6.x，不得升级至 7.x -->
+        <!-- 版本约束：Spring Framework 锁定 5.3.x（JDK 8 兼容），不得升级至 6.x -->
         <spring-framework.version>5.3.39</spring-framework.version>
+        <!-- Spring Security 锁定 5.8.x（与 Spring Framework 5.3.x 配套，JDK 8 兼容） -->
+        <spring-security.version>5.8.16</spring-security.version>
         <springdoc.version>2.7.0</springdoc.version>
         <springfox.version>3.0.0</springfox.version>
         <spring-biz.version>1.1.5.RELEASE</spring-biz.version>

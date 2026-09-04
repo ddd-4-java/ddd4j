@@ -14,46 +14,25 @@
     <packaging>pom</packaging>
     <description>Ddd4j Component</description>
 
+    <!--
+        ddd4j-extensions 仅含 7 个与 2.0.x/3.0.x 对齐的 extension-* 子模块；
+        ddd4j-auth-* / ddd4j-data-* / ddd4j-mq-* / ddd4j-web-* 已迁往对应业务域聚合根
+        （与 2.0.x/3.0.x 拓扑一致，遵循"严禁目录结构差异"约束）。
+        ddd4j-extension-{akka,jackson,pf4j} 为 1.0.x 历史扩展保留（2.0.x/3.0.x 已废弃）。
+    -->
     <modules>
-        <module>ddd4j-auth-datascope</module>
-        <module>ddd4j-auth-license</module>
-        <module>ddd4j-auth-satoken</module>
-        <module>ddd4j-auth-security</module>
-        <module>ddd4j-auth-shiro</module>
-        <module>ddd4j-data-crypto</module>
-        <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-data-external 构建 -->
-        <!-- <module>ddd4j-data-external</module> -->
-        <module>ddd4j-data-logs</module>
-        <module>ddd4j-data-mybatis</module>
-        <!-- <module>ddd4j-mq-activemq</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-disruptor</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-kafka</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-mqtt</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-mq-mqtt-mica 构建 -->
-        <!-- <module>ddd4j-mq-mqtt-mica</module> 2026-09-04 迁往 ddd4j-mq/ -->
-        <!-- <module>ddd4j-mq-nats</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-ons</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-pulsar</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-rabbitmq</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-redis-stream</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-mq-rocketmq 构建 -->
-        <!-- <module>ddd4j-mq-rocketmq</module> 2026-09-04 迁往 ddd4j-mq/ -->
-        <!-- <module>ddd4j-mq-sqs</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <!-- <module>ddd4j-mq-tdmq</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
-        <module>ddd4j-extension-akka</module>
+        <!-- 7 个对齐 2.0.x/3.0.x 的 extension 子模块 -->
         <module>ddd4j-extension-excel</module>
         <module>ddd4j-extension-license</module>
-        <module>ddd4j-extension-validation</module>
-        <module>ddd4j-extension-qrcode</module>
         <module>ddd4j-extension-otel</module>
+        <module>ddd4j-extension-qrcode</module>
+        <module>ddd4j-extension-qlexpress</module>
         <module>ddd4j-extension-monitor</module>
+        <module>ddd4j-extension-validation</module>
+        <!-- 1.0.x 独有扩展保留（Akka / Jackson 增强 / PF4J 插件 SPI） -->
+        <module>ddd4j-extension-akka</module>
         <module>ddd4j-extension-jackson</module>
         <module>ddd4j-extension-pf4j</module>
-        <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-extension-qlexpress 构建 -->
-        <!-- <module>ddd4j-extension-qlexpress</module> -->
-        <module>ddd4j-web-validation</module>
-        <module>ddd4j-web-webflux</module>
-        <module>ddd4j-web-webmvc</module>
     </modules>
 
     <dependencies>
