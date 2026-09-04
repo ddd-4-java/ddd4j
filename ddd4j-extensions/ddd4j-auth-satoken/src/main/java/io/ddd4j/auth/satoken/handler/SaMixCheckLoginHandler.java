@@ -9,11 +9,10 @@ import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.date.DateTime;
-import io.ddd4j.auth.satoken.SaConstants;
 import io.ddd4j.auth.satoken.SaTempToken;
 import io.ddd4j.auth.satoken.annotation.SaMixCheckLogin;
 import io.ddd4j.auth.satoken.util.SaTempKit;
-import org.springframework.util.StringUtils;
+import io.ddd4j.core.constant.AuthConstants;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.HashMap;
@@ -22,6 +21,8 @@ import java.util.Objects;
 
 /**
  * 注解 SaMixCheckLogin 的处理器
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMixCheckLogin> {
 
@@ -39,9 +40,9 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
     @Override
     public void checkMethod(SaMixCheckLogin at, AnnotatedElement element) {
         // 获取前端请求提交的临时验证码
-        String tempToken = SaHolder.getRequest().getParam(SaConstants.PARAM_TEMP_TOKEN);
+        String tempToken = SaHolder.getRequest().getParam(AuthConstants.PARAM_TEMP_TOKEN);
         // 如果存在，则校验
-        if (StringUtils.hasText(tempToken)) {
+        if (Objects.nonNull(tempToken) && io.ddd4j.kit.lang.StrKit.isNotBlank(tempToken)) {
             try {
                 // 获取指定 业务标识、指定 Token 的剩余有效期，单位：秒
                 long timeout = SaTempKit.getTimeout(tempToken);
@@ -55,7 +56,8 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
                     throw new SaTokenException(SaErrorCode.CODE_11012, "无效的Token，未通过校验");
                 }
                 // 检查登录时的账号id值是否为空
-                if (!StringUtils.hasText(saTempToken.getLoginId())) {
+                if (Objects.isNull(saTempToken.getLoginId())
+                        || !io.ddd4j.kit.lang.StrKit.isNotBlank(saTempToken.getLoginId())) {
                     throw new SaTokenException(SaErrorCode.CODE_11002, "登录时的账号id值为空");
                 }
                 // 判断临时Token是否是需要登录的，且不是一次性使用的；则进行登录操作
@@ -89,21 +91,33 @@ public class SaMixCheckLoginHandler implements SaAnnotationHandlerInterface<SaMi
         // 校验通过，什么也不做
     }
 
+    /**
+     * 从临时 Token 中提取 Token 载荷（JWT 扩展信息）。
+     *
+     * @param value 临时 Token 对象
+     * @return Token 扩展数据 Map
+     */
     public Map<String, Object> getTokenPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
-            put(SaConstants.PAYLOAD_AUTH_TYPE, value.getAuthType());
-            put(SaConstants.PAYLOAD_ISSUED_AT, DateTime.now());
-            put(SaConstants.PAYLOAD_SUBJECT, value.getLoginId());
+            put(AuthConstants.JWT_AUTH_TYPE, value.getAuthType());
+            put(AuthConstants.JWT_ISSUED_AT, DateTime.now());
+            put(AuthConstants.JWT_SUBJECT, value.getLoginId());
         }};
     }
 
+    /**
+     * 从临时 Token 中提取终端载荷（设备信息）。
+     *
+     * @param value 临时 Token 对象
+     * @return 终端扩展数据 Map
+     */
     public Map<String, Object> getTerminalPayload(SaTempToken value) throws SaTokenException {
         return new HashMap<String, Object>() {{
-            put(SaConstants.FIELD_APP_ID, value.getAppId());
-            put(SaConstants.FIELD_APP_CHANNEL, value.getAppChannel());
-            put(SaConstants.FIELD_APP_VERSION, value.getAppVersion());
-            put(SaConstants.FIELD_DEVICE_TYPE, value.getDeviceType());
-            put(SaConstants.FIELD_DEVICE_ID, value.getDeviceId());
+            put(AuthConstants.FIELD_APP_ID, value.getAppId());
+            put(AuthConstants.FIELD_APP_CHANNEL, value.getAppChannel());
+            put(AuthConstants.FIELD_APP_VERSION, value.getAppVersion());
+            put(AuthConstants.FIELD_DEVICE_TYPE, value.getDeviceType());
+            put(AuthConstants.FIELD_DEVICE_ID, value.getDeviceId());
         }};
     }
 
