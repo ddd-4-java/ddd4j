@@ -14,12 +14,14 @@
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j
-        跨领域扩展聚合：akka/excel/jackson/pf4j/qlexpress。基础包（ddd4j-core/ddd4j-kit/ddd4j-monitor）已提升为顶层模块，业务模块（auth/data/mq/web）已重组为独立聚合层。
+        跨领域扩展聚合：excel/pf4j/qlexpress/qrcode/otel/monitor/validation/license。
+        基础包（ddd4j-core/ddd4j-kit/ddd4j-monitor）已提升为顶层模块，业务模块（auth/data/mq/web）已重组为独立聚合层。
+        Akka/Jackson 已迁出本仓库（ddd4j-boot-extension-{akka,jackson}）；PF4J 因仍有价值三方保留。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <modules>
-        <!-- ddd4j 深度集成扩展；Jackson、PF4J、Validation 已迁移为独立技术组件。 -->
+        <!-- 7 个三方对齐模块（与 2.0.x/3.0.x 一致） -->
         <module>ddd4j-extension-excel</module>
         <module>ddd4j-extension-license</module>
         <module>ddd4j-extension-otel</module>
@@ -27,6 +29,8 @@
         <module>ddd4j-extension-qlexpress</module>
         <module>ddd4j-extension-monitor</module>
         <module>ddd4j-extension-validation</module>
+        <!-- 1.0.x 独有保留：ddd4j-extension-pf4j（插件 SPI，三方保留） -->
+        <module>ddd4j-extension-pf4j</module>
     </modules>
 
     <dependencies>
