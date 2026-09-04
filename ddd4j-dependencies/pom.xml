@@ -180,7 +180,7 @@
         <easy4j-canal-client-plus-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-canal-client-plus-sdk.version>
         <easy4j-claudecode-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-claudecode-java-sdk.version>
         <easy4j-codex-java-sdk.version>3.0.x.20260630-SNAPSHOT</easy4j-codex-java-sdk.version>
-        <easy4j-cos.version>6.0.x.20241003.RELEASE</easy4j-cos.version>
+        <easy4j-cos.version>3.0.x.20260630-SNAPSHOT</easy4j-cos.version>
         <easy4j-cxf-rt-bytebuddy.version>3.0.x.20260630-SNAPSHOT</easy4j-cxf-rt-bytebuddy.version>
         <easy4j-cxf-rt-javassist.version>3.0.x.20260630-SNAPSHOT</easy4j-cxf-rt-javassist.version>
         <easy4j-dingtalk-sdk-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-dingtalk-sdk-extension.version>

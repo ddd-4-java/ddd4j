@@ -52,7 +52,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.version>3.38.2</quarkus.version>
-        <revision>3.0.x.20260730-SNAPSHOT</revision>
+        <!-- 版本号规则：3.0.x 适配 JDK 21（对应 easy4j 3.0.x.20260630-SNAPSHOT 组件线） -->
+        <revision>3.0.x.20260630-SNAPSHOT</revision>
         <!-- P0-2: 单元测试开关（默认运行，业务项目可 -DskipTests 跳过） -->
         <skipTests>false</skipTests>
     </properties>
