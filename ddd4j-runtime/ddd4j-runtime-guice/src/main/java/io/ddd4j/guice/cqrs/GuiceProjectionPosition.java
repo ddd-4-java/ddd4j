@@ -34,6 +34,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GuiceProjectionPosition implements ProjectionPosition, Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

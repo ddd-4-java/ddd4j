@@ -27,7 +27,6 @@ import io.ddd4j.guice.context.GuiceContext;
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,7 +41,7 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
     @Inject
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                              I18nProvider i18nProvider, CommandBus commandBus) {
-        this(injector, publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
+        this(injector, publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,

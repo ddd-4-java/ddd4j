@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-data-projection-jpa</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 投影位置 JPA 实现（Spring WebMVC/WebFlux 等 Spring 系运行时）：
+        基于 Spring Data JPA 落地 core 的 ProjectionPositionRepository SPI（接口在
+        io.ddd4j.core.cqrs.readmodel，本模块不重定义），ProjectionPositionEntity +
+        SpringDataProjectionPositionRepository + JpaProjectionPositionRepository 组装。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <properties>
+        <!-- 仅测试栈：H2 内存库 IT 所用的 Spring Boot starter 版本。
+             BOM 刻意不管理 Spring Boot（ddd4j 不依赖 Boot 运行时），故此处局部显式钉版，
+             取 3.4.4 = Spring 6.2 线（与 ddd4j 2.0.x 匹配；Boot 4.x/Spring 7 线勿用），
+             与 ddd4j-data-event-store-jpa（Task 4.1/4.2）同款模式。 -->
+        <spring-boot-it.version>3.4.4</spring-boot-it.version>
+    </properties>
+
+    <dependencies>
+        <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-projection</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- Spring 刻板注解（@Repository 等，spring-framework-bom 管版本，Spring 6.2 线） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <!-- Spring 声明式事务（@Transactional，spring-framework-bom 管版本） -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+        <!-- Spring Data JPA：显式钉 3.5.13（Spring 6.2 线，与 ddd4j-dependencies 管理的
+             spring-framework 6.2.x 匹配）。父 BOM 的 spring-data-bom 2025.1 → JPA 4.0.x
+             面向 Framework 7（RuntimeBeanReference 等 7.0 API），与本模块/本仓库的
+             6.2 线运行时 ABI 不兼容（Task 4.4 IT 实测 NoSuchMethodError），故模块级对齐
+             （与 ddd4j-data-event-store-jpa 同款决策）。 -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>3.5.13</version>
+        </dependency>
+        <!-- Spring Data Commons：与 spring-data-jpa 3.5.13 同版显式钉（防 BOM 4.0.x
+             管理项覆盖传递版本造成混版） -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>3.5.13</version>
+        </dependency>
+        <!-- Jakarta Persistence API（实体映射）：显式钉 3.1.0 与 Hibernate 6.6 / Boot 3.4-3.5 线
+             一致。BOM 管理的 3.2.0 会与 Hibernate 6.6 的 SessionFactory 在 Spring EMF 代理上
+             冲突（getSchemaManager() 两接口返回类型不兼容，Task 4.4 IT 实测）。 -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Spring Boot Data JPA（测试栈 IT 用：Hibernate + spring-orm/jdbc 装配，
+             版本局部钉 3.4.4，仅 test 作用域，不进入模块对外依赖面） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Spring Boot Test（@SpringBootTest + AssertJ/JUnit5 测试栈，test 作用域） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Hibernate ORM：测试栈运行时显式钉 6.6.40.Final（Boot 3.4/3.5 ＝ Spring 6.2 线）。
+             此钉为实测必要（非冗余，与 ddd4j-data-event-store-jpa 同款）：本模块 BOM 链实际
+             生效的 hibernate-core 管理版面向 Framework 7 线，与 spring-orm 6.2.x / 本模块
+             显式钉的 jakarta.persistence-api 3.1.0 冲突。本模块主代码不依赖 Hibernate
+             （仅经 JPA 抽象），test 作用域足够。 -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.6.40.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- H2 内存库（IT 数据源；版本由 ddd4j-dependencies 的 h2.version 管理） -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- surefire 默认不含 *IT.java；本模块的集成测试随 test 阶段执行，
+                 需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

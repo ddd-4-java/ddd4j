@@ -51,9 +51,7 @@ public interface I18nProvider {
      * 命中资源时走 {@link MessageFormat}（{@code {0}} 风格）；未命中资源时走 SLF4J 风格
      * （{@code {}} 按出现顺序替换），避免业务消息中的 {@code {}} 被 MessageFormat 误解析。
      */
-    I18nProvider DEFAULT = new I18nProvider() {
-        @Override
-        public String getMessage(String key, Object... args) {
+    I18nProvider DEFAULT = (key, args) -> {
         if (StrKit.isBlank(key)) {
             return null;
         }
@@ -73,8 +71,7 @@ public interface I18nProvider {
             return MessageFormat.format(pattern, args);
         }
         // 3. 未命中资源：把原始 key 当作纯文本，按 SLF4J {} 风格按序替换
-            return Internals.formatSlfStyle(key, args);
-        }
+        return formatSlfStyle(key, args);
     };
 
     /**
@@ -85,14 +82,7 @@ public interface I18nProvider {
      * @param args    替换参数
      * @return 替换后的消息
      */
-    /**
-     * JDK8 兼容：接口私有静态方法收敛到嵌套类。
-     */
-    final class Internals {
-        private Internals() {
-        }
-
-        static String formatSlfStyle(String message, Object... args) {
+    private static String formatSlfStyle(String message, Object... args) {
         if (Objects.isNull(args) || args.length == 0) {
             return message;
         }
@@ -105,9 +95,7 @@ public interface I18nProvider {
             result = result.substring(0, idx) + Objects.toString(arg, "null") + result.substring(idx + 2);
         }
         return result;
-    
     }
-
 
     /**
      * 获取国际化消息
@@ -116,7 +104,5 @@ public interface I18nProvider {
      * @param args 格式化参数
      * @return 国际化后的消息
      */
-    }
-
     String getMessage(String key, Object... args);
 }

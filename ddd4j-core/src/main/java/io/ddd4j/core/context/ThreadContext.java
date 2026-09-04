@@ -41,7 +41,7 @@ public class ThreadContext {
      * 线程变量池
      */
     private static final TransmittableThreadLocal<Map<Object, Object>> THREAD_LOCAL_POOL =
-            new TransmittableThreadLocal<Map<Object, Object>>() {
+            new TransmittableThreadLocal<>() {
                 @Override
                 public Map<Object, Object> copy(Map<Object, Object> parentValue) {
                     return copyResources(parentValue);

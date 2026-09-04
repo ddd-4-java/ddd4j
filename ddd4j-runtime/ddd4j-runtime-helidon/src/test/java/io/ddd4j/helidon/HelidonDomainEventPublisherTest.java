@@ -3,15 +3,13 @@ package io.ddd4j.helidon;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.StringEntityId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.never;
@@ -50,7 +48,7 @@ class HelidonDomainEventPublisherTest {
     void publishDomainEventFiresTypedEvent() {
         when(beanManager.getEvent()).thenReturn(event);
         HelidonDomainEventPublisher publisher = new HelidonDomainEventPublisher(beanManager);
-        DomainEvent<EntityId> domainEvent = new DomainEvent<EntityId>(new EntityIdPath(new StringEntityId("orders"), new StringEntityId("created"))) {
+        DomainEvent<EntityId> domainEvent = new DomainEvent<EntityId>("orders.created") {
         };
 
         publisher.publish(domainEvent);

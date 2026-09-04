@@ -2,7 +2,7 @@ package io.ddd4j.mq.activemq.util;
 
 import io.ddd4j.kit.lang.StrKit;
 
-import javax.jms.*;
+import jakarta.jms.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -48,15 +48,13 @@ public final class ActivemqKit {
      * 从 JMS Message 提取 payload 字符串（兼容 BytesMessage / TextMessage）。
      */
     public static String extractPayload(Message message) throws JMSException {
-        if (message instanceof BytesMessage) {
-            BytesMessage bm = (BytesMessage) message;
+        if (message instanceof BytesMessage bm) {
             bm.reset();
             byte[] buf = new byte[(int) bm.getBodyLength()];
             bm.readBytes(buf);
             return new String(buf, StandardCharsets.UTF_8);
         }
-        if (message instanceof TextMessage) {
-            TextMessage tm = (TextMessage) message;
+        if (message instanceof TextMessage tm) {
             return tm.getText();
         }
         return "";

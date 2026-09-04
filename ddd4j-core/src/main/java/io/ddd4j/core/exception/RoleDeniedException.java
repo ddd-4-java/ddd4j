@@ -30,6 +30,8 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class RoleDeniedException extends AuthorizationException {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public RoleDeniedException(String message) {

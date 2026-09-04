@@ -28,7 +28,6 @@ import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
 
 import java.util.List;
-import java.util.Arrays;
 
 /**
  * Guice 运行时 CQRS 契约测试。
@@ -53,7 +52,7 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         StubExecutorA executorA = new StubExecutorA();
         StubExecutorB executorB = new StubExecutorB();
 
-        GuiceCommandBus commandBus = new GuiceCommandBus(Arrays.asList(executorA, executorB));
+        GuiceCommandBus commandBus = new GuiceCommandBus(List.of(executorA, executorB));
         GuiceViewManager viewManager = new GuiceViewManager();
         GuiceInMemoryProjectionPositionRepository positionRepository =
                 new GuiceInMemoryProjectionPositionRepository();

@@ -5,14 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.AfterDeploymentValidation;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.configurator.BeanConfigurator;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeShutdown;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
+import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.configurator.BeanConfigurator;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeforeShutdown;
 import java.util.Collections;
 import java.util.Set;
 
@@ -81,19 +81,19 @@ class Ddd4jHelidonExtensionBeanBranchTest {
     @org.junit.jupiter.api.Test
     @org.junit.jupiter.api.extension.ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
     void startUsesExistingBeans() {
-        javax.enterprise.inject.spi.BeanManager beanManager = org.mockito.Mockito.mock(javax.enterprise.inject.spi.BeanManager.class);
-        javax.enterprise.inject.spi.AfterDeploymentValidation event = org.mockito.Mockito.mock(javax.enterprise.inject.spi.AfterDeploymentValidation.class);
+        jakarta.enterprise.inject.spi.BeanManager beanManager = org.mockito.Mockito.mock(jakarta.enterprise.inject.spi.BeanManager.class);
+        jakarta.enterprise.inject.spi.AfterDeploymentValidation event = org.mockito.Mockito.mock(jakarta.enterprise.inject.spi.AfterDeploymentValidation.class);
 
         io.ddd4j.core.subject.SubjectProvider subjectProvider = org.mockito.Mockito.mock(io.ddd4j.core.subject.SubjectProvider.class);
         io.ddd4j.core.i18n.I18nProvider i18nProvider = org.mockito.Mockito.mock(io.ddd4j.core.i18n.I18nProvider.class);
         io.ddd4j.core.cqrs.command.CommandBus commandBus = org.mockito.Mockito.mock(io.ddd4j.core.cqrs.command.CommandBus.class);
 
         when(beanManager.getBeans(org.mockito.ArgumentMatchers.any(Class.class)))
-                .thenReturn(java.util.Collections.singleton(org.mockito.Mockito.mock(javax.enterprise.inject.spi.Bean.class)));
+                .thenReturn(java.util.Collections.singleton(org.mockito.Mockito.mock(jakarta.enterprise.inject.spi.Bean.class)));
         when(beanManager.resolve(org.mockito.ArgumentMatchers.any(java.util.Set.class)))
                 .thenAnswer(inv -> inv.getArgument(0, java.util.Set.class).iterator().next());
         when(beanManager.createCreationalContext(org.mockito.ArgumentMatchers.any()))
-                .thenReturn(org.mockito.Mockito.mock(javax.enterprise.context.spi.CreationalContext.class));
+                .thenReturn(org.mockito.Mockito.mock(jakarta.enterprise.context.spi.CreationalContext.class));
         when(beanManager.getReference(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.any(Class.class), org.mockito.ArgumentMatchers.any()))
                 .thenAnswer(inv -> {
                     Class<?> type = inv.getArgument(1);

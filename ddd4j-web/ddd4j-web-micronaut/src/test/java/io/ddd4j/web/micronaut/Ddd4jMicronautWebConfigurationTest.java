@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +18,7 @@ class Ddd4jMicronautWebConfigurationTest {
     @Test
     void defaults() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();
-        assertEquals(Arrays.asList("/health", "/health/readiness", "/health/liveness"), cfg.getPublicPaths());
+        assertEquals(List.of("/health", "/health/readiness", "/health/liveness"), cfg.getPublicPaths());
         assertEquals(AuthenticationMode.REQUIRED, cfg.getDefaultAuthenticationMode());
         assertTrue(cfg.isIdempotencyEnabled());
         assertEquals("ddd4j-web-idempotency", cfg.getIdempotencyCacheName());
@@ -32,12 +30,12 @@ class Ddd4jMicronautWebConfigurationTest {
     void setters() {
         Ddd4jMicronautWebConfiguration cfg = new Ddd4jMicronautWebConfiguration();
 
-        List<String> paths = new ArrayList<>(Collections.singletonList("/api"));
+        List<String> paths = new ArrayList<>(List.of("/api"));
         cfg.setPublicPaths(paths);
-        assertEquals(Collections.singletonList("/api"), cfg.getPublicPaths());
+        assertEquals(List.of("/api"), cfg.getPublicPaths());
         assertNotSame(paths, cfg.getPublicPaths());
         paths.add("/mutated");
-        assertEquals(Collections.singletonList("/api"), cfg.getPublicPaths());
+        assertEquals(List.of("/api"), cfg.getPublicPaths());
 
         cfg.setDefaultAuthenticationMode(AuthenticationMode.OPTIONAL);
         assertEquals(AuthenticationMode.OPTIONAL, cfg.getDefaultAuthenticationMode());

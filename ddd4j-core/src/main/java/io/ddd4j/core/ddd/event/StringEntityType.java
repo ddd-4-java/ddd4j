@@ -24,6 +24,8 @@ import java.util.Objects;
  * 基于字符串的实体类型值对象。
  */
 public final class StringEntityType implements EntityType {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String value;
@@ -51,10 +53,9 @@ public final class StringEntityType implements EntityType {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof StringEntityType)) {
+        if (!(object instanceof StringEntityType that)) {
             return false;
         }
-        StringEntityType that = (StringEntityType) object;
         return Objects.equals(value, that.value);
     }
 

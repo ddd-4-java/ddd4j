@@ -8,7 +8,6 @@ import org.springframework.biz.context.SpringContextAwareContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import java.util.stream.Collectors;
 
 /**
  * Spring 核心配置
@@ -28,7 +27,7 @@ public class SpringCoreConfig {
     @Bean
     public RuntimeReadinessRegistry runtimeReadinessRegistry(
             ObjectProvider<ReadinessContributor> readinessContributors) {
-        return new RuntimeReadinessRegistry(readinessContributors.orderedStream().collect(Collectors.toList()));
+        return new RuntimeReadinessRegistry(readinessContributors.orderedStream().toList());
     }
 
     @Bean

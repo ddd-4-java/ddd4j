@@ -114,6 +114,6 @@ public interface StrPool {
 
     String[] EMPTY_ARRAY = new String[0];
 
-    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes();
 
 }

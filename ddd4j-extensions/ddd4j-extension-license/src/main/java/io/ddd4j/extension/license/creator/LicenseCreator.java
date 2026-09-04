@@ -93,14 +93,13 @@ public class LicenseCreator {
 
     private PrivateKey loadPrivateKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
-        try (java.io.InputStream inputStream = Files.newInputStream(Paths.get(param.getPrivateKeysStorePath()))) {
+        try (var inputStream = Files.newInputStream(Paths.get(param.getPrivateKeysStorePath()))) {
             keyStore.load(inputStream, param.getStorePass().toCharArray());
         }
         Key key = keyStore.getKey(param.getPrivateAlias(), param.getKeyPass().toCharArray());
-        if (!(key instanceof PrivateKey)) {
+        if (!(key instanceof PrivateKey privateKey)) {
             throw new IllegalStateException("私钥别称未指向 PrivateKey: " + param.getPrivateAlias());
         }
-        PrivateKey privateKey = (PrivateKey) key;
         return privateKey;
     }
 

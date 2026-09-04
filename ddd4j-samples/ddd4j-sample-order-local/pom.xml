@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-samples</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>ddd4j-sample-order-local</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Single-process Order adapters for local development and runtime Web samples.</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+    <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-sample-order-application</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+</project>

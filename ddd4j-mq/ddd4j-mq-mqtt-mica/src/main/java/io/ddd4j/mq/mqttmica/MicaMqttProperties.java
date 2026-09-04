@@ -75,13 +75,10 @@ public class MicaMqttProperties extends MQProperties {
     }
 
     public MqttQoS mqttQoS() {
-        switch (qos) {
-            case 0:
-                return MqttQoS.QOS0;
-            case 2:
-                return MqttQoS.QOS2;
-            default:
-                return MqttQoS.QOS1;
-        }
+        return switch (qos) {
+            case 0 -> MqttQoS.QOS0;
+            case 2 -> MqttQoS.QOS2;
+            default -> MqttQoS.QOS1;
+        };
     }
 }

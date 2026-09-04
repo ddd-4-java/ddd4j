@@ -26,6 +26,8 @@ import java.util.UUID;
  * 全局唯一事件标识。
  */
 public final class EventId implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final UUID value;
@@ -83,10 +85,9 @@ public final class EventId implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof EventId)) {
+        if (!(object instanceof EventId that)) {
             return false;
         }
-        EventId that = (EventId) object;
         return Objects.equals(value, that.value);
     }
 

@@ -30,6 +30,8 @@ import java.util.Objects;
  * 从聚合根到事件源实体的有序标识路径。
  */
 public final class EntityIdPath implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -261,10 +263,9 @@ public final class EntityIdPath implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof EntityIdPath)) {
+        if (!(object instanceof EntityIdPath that)) {
             return false;
         }
-        EntityIdPath that = (EntityIdPath) object;
         return Objects.equals(entityIds, that.entityIds);
     }
 

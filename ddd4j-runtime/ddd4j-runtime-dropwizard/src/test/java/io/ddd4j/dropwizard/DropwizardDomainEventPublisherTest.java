@@ -2,8 +2,6 @@ package io.ddd4j.dropwizard;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityId;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.StringEntityId;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 class DropwizardDomainEventPublisherTest {
 
@@ -50,7 +47,7 @@ class DropwizardDomainEventPublisherTest {
         Consumer<Object> listener = mock(Consumer.class);
         DropwizardDomainEventPublisher publisher =
                 new DropwizardDomainEventPublisher(Collections.singletonList(listener));
-        DomainEvent<EntityId> event = new DomainEvent<EntityId>(new EntityIdPath(new StringEntityId("orders"), new StringEntityId("created"))) {
+        DomainEvent<EntityId> event = new DomainEvent<EntityId>("orders.created") {
         };
 
         publisher.publish(event);

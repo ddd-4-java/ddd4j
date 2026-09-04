@@ -8,7 +8,7 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 
 /**
- * {@link io.ddd4j.auth.datascope.DataScopeProvider} 数据作用域评估的 OTel Span 包装。
+ * {@link io.ddd4j.data.datascope.DataScopeProvider} 数据作用域评估的 OTel Span 包装。
  *
  * <p>为多租户过滤/数据权限评估提供 span 包装，
  * 无 OTel 时为 noop。
@@ -32,7 +32,7 @@ public final class DataScopeSpan {
      * @param provider DataScopeProvider 实例
      * @return 是否允许访问
      */
-    public static boolean evaluate(String dataType, Object data, io.ddd4j.auth.datascope.DataScopeProvider provider) {
+    public static boolean evaluate(String dataType, Object data, io.ddd4j.data.datascope.DataScopeProvider provider) {
         if (!Ddd4jOtel.isAvailable()) {
             return provider.hasPermissions(dataType, data);
         }

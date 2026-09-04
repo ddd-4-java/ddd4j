@@ -12,7 +12,6 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.ReadinessResult;
 import io.ddd4j.core.subject.SubjectProvider;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public final class RuntimeFixtures {
     private final SubjectProvider subjectProvider = new InMemorySubjectProvider(new InMemorySubject(event -> {
     }));
     private final I18nProvider i18nProvider = I18nProvider.DEFAULT;
-    private final CommandBus commandBus = new DefaultCommandBus(Collections.emptyList());
+    private final CommandBus commandBus = new DefaultCommandBus(List.of());
 
     public DomainEventPublisher publisher() {
         return publisher;

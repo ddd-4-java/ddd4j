@@ -25,6 +25,8 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class AuthorizationException extends RuntimeException {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public AuthorizationException(String message) {

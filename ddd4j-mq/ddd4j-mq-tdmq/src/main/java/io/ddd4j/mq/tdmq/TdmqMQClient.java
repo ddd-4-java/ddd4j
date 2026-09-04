@@ -106,7 +106,7 @@ public class TdmqMQClient implements MQClient {
         }
         String topic = resolveTopic(listener, mqProperties);
         String tagExpression = listener.getTags();
-        String group = StrKit.isNotEmpty(listener.getGroup()) ? listener.getGroup() : properties.getDefaultGroup();
+        String group = StrKit.hasText(listener.getGroup()) ? listener.getGroup() : properties.getDefaultGroup();
         if (Objects.isNull(brokerSubscriber)) {
             this.brokerSubscriber = new InMemoryBrokerSubscriber(topicSubscribers);
             log.warn("TdmqMQClient: no BrokerSubscriber injected, falling back to in-memory broker (test only).");
@@ -234,24 +234,8 @@ public class TdmqMQClient implements MQClient {
     /**
      * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
      */
-    public static final class DeliveredMessage {
-        private final String messageId;
-        private final String correlationId;
-        private final byte[] payload;
-        private final java.util.function.Consumer<Boolean> ackCallback;
-
-        public DeliveredMessage(String messageId, String correlationId, byte[] payload,
-                                java.util.function.Consumer<Boolean> ackCallback) {
-            this.messageId = messageId;
-            this.correlationId = correlationId;
-            this.payload = payload;
-            this.ackCallback = ackCallback;
-        }
-
-        public String messageId() { return messageId; }
-        public String correlationId() { return correlationId; }
-        public byte[] payload() { return payload; }
-        public java.util.function.Consumer<Boolean> ackCallback() { return ackCallback; }
+    public record DeliveredMessage(String messageId, String correlationId, byte[] payload,
+                                   java.util.function.Consumer<Boolean> ackCallback) {
     }
 
     /**

@@ -52,30 +52,21 @@ public interface MQClient extends AutoCloseable {
     String MQ_STORER = MQEvent.MQ_EVENT_PUBLISHER + ".storer";
 
     /**
-     * JDK8 兼容工具（接口私有静态方法为 JDK9+ 特性，收敛到嵌套类）。
+     * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
      */
-    final class Internals {
+    private static String escape(String s) {
+        return s.replace("'", "''");
+    }
 
-        private Internals() {
+    /**
+     * 反射调用异常解包（对齐 base-mq）。
+     */
+    private static Throwable unwrap(Exception ex) {
+        Throwable cause = ex.getCause();
+        if (Objects.nonNull(cause) && Objects.nonNull(cause.getCause())) {
+            return cause.getCause();
         }
-
-        /**
-         * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
-         */
-        static String escape(String s) {
-            return s.replace("'", "''");
-        }
-
-        /**
-         * 反射调用异常解包（对齐 base-mq）。
-         */
-        static Throwable unwrap(Exception ex) {
-            Throwable cause = ex.getCause();
-            if (Objects.nonNull(cause) && Objects.nonNull(cause.getCause())) {
-                return cause.getCause();
-            }
-            return Objects.nonNull(cause) ? cause : ex;
-        }
+        return Objects.nonNull(cause) ? cause : ex;
     }
 
     /**
@@ -224,7 +215,7 @@ public interface MQClient extends AutoCloseable {
             // 反射调用 @MQEventListener 标注的监听方法
             listener.getMethod().invoke(listener.getBean(), event);
         } catch (Exception e) {
-            throw Internals.unwrap(e);
+            throw unwrap(e);
         } finally {
             ThreadContext.clear();
         }
@@ -460,7 +451,7 @@ public interface MQClient extends AutoCloseable {
                 if (!first) {
                     sb.append(" OR ");
                 }
-                sb.append(prop).append(" = '").append(Internals.escape(i)).append("'");
+                sb.append(prop).append(" = '").append(escape(i)).append("'");
                 first = false;
             }
             sb.append(" OR ").append(prop).append(" IS NULL)");
@@ -472,7 +463,7 @@ public interface MQClient extends AutoCloseable {
                 if (!first) {
                     exclude.append(" AND ");
                 }
-                exclude.append("(").append(prop).append(" <> '").append(Internals.escape(e)).append("' OR ").append(prop).append(" IS NULL)");
+                exclude.append("(").append(prop).append(" <> '").append(escape(e)).append("' OR ").append(prop).append(" IS NULL)");
                 first = false;
             }
             String left = sb.isEmpty() ? "1=1" : sb.toString();

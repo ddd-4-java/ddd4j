@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import java.util.Arrays;
 
 /**
  * {@link EventSpan} 领域事件/CQRS span 测试（无 SDK 依赖，纯行为验证）。
@@ -40,7 +39,7 @@ class EventSpanTest {
 
     @Test
     void query_shouldReturnValue() {
-        List<String> result = EventSpan.query("OrderQuery", () -> Arrays.asList("ORD-001", "ORD-002"));
+        List<String> result = EventSpan.query("OrderQuery", () -> List.of("ORD-001", "ORD-002"));
 
         assertThat(result).hasSize(2);
     }

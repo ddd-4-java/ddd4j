@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.web.vertx;
 
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
@@ -34,6 +20,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,18 +29,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Vert.x Router 的标准请求上下文、认证、幂等和异常处理链。
  *
  * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
+@Slf4j
 public final class Ddd4jVertxWeb {
-
-    private static final Logger log = LoggerFactory.getLogger(Ddd4jVertxWeb.class);
 
     private static final String STATE_KEY = Ddd4jVertxWeb.class.getName() + ".state";
     private static final String OTEL_SPAN_KEY = Ddd4jVertxWeb.class.getName() + ".otelSpan";
@@ -67,7 +50,7 @@ public final class Ddd4jVertxWeb {
 
     public Ddd4jVertxWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
-                        new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
                                         ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, new RuntimeReadinessRegistry());
@@ -80,7 +63,7 @@ public final class Ddd4jVertxWeb {
      */
     public Ddd4jVertxWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
-                        new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
+                        new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
                                         ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, readinessRegistry);
@@ -253,24 +236,9 @@ public final class Ddd4jVertxWeb {
         }
     }
 
-    private static final class AuthenticationResult {
-
-        private final Optional<BearerSubjectAuthenticator.Authentication> authentication;
-
-        private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
-
-        AuthenticationResult(Optional<BearerSubjectAuthenticator.Authentication> authentication, Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
-
-            this.authentication = authentication;
-
-            this.idempotencyScope = idempotencyScope;
-
-        }
-
-        Optional<BearerSubjectAuthenticator.Authentication> authentication() { return authentication; }
-
-        Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() { return idempotencyScope; }
-
+    private record AuthenticationResult(
+            Optional<BearerSubjectAuthenticator.Authentication> authentication,
+            Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
     }
 
     private static final class RequestState {

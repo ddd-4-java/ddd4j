@@ -86,7 +86,7 @@ class CaffeineCacheTest {
     void putAll_shouldStoreMultipleEntries() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
 
-        cache.putAll(new java.util.HashMap<String,String>() {{ put("k1","v1"); put("k2","v2"); }});
+        cache.putAll(Map.of("k1", "v1", "k2", "v2"));
 
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
         assertThat(cache.getIfPresent("k2")).isEqualTo("v2");

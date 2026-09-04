@@ -106,10 +106,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
      * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
      */
-    private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<ClassValue<Method>>() {
+    private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
         @Override
         protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
-            return new ClassValue<Method>() {
+            return new ClassValue<>() {
                 @Override
                 protected Method computeValue(Class<?> eventClass) {
                     return resolveHandler(aggregateClass, eventClass);
@@ -412,12 +412,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         } catch (InvocationTargetException e) {
             // handler 自身抛出的业务异常：解包透传，避免包装后丢失原始堆栈
             Throwable cause = e.getCause();
-            if (cause instanceof RuntimeException) {
-                RuntimeException re = (RuntimeException) cause;
+            if (cause instanceof RuntimeException re) {
                 throw re;
             }
-            if (cause instanceof Error) {
-                Error err = (Error) cause;
+            if (cause instanceof Error err) {
                 throw err;
             }
             throw new BizRuntimeException("Failed to apply event " + event.getClass().getSimpleName()
@@ -449,7 +447,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
      *         .map(StoredEvent::event)
      *         .map(e -> (DomainEvent<?>) e)
-     *         .collect(Collectors.toList());
+     *         .toList();
      * order.loadFromHistory(history);
      * }</pre>
      *

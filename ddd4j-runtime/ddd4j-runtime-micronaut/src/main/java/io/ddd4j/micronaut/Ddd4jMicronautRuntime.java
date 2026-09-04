@@ -15,7 +15,6 @@ import jakarta.annotation.PreDestroy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Collections;
 
 /**
  * Micronaut 容器与 ddd4j 全局 SPI 的生命周期桥梁。
@@ -28,7 +27,7 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
 
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus) {
-        this(publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
+        this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,

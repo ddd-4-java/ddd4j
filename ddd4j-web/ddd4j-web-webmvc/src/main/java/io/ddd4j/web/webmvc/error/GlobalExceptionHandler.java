@@ -1,30 +1,28 @@
 package io.ddd4j.web.webmvc.error;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import hitool.core.format.ByteUnitFormat;
-import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
 import io.ddd4j.core.exception.BizCheckedException;
 import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
-import io.ddd4j.core.util.WebUtils;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.*;
+import io.ddd4j.kit.web.IpKit;
+import io.ddd4j.web.webmvc.config.ServerI18nProperties;
+import io.ddd4j.web.webmvc.util.WebUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.biz.context.NestedMessageSource;
-import org.springframework.biz.web.multipart.MaxUploadSizePerFileExceededException;
-import org.springframework.biz.web.servlet.support.RequestContextUtils;
+import org.springframework.extension.context.NestedMessageSource;
+import org.springframework.extension.web.multipart.MaxUploadSizePerFileExceededException;
+import org.springframework.extension.web.servlet.support.RequestContextUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -62,17 +60,23 @@ import java.util.*;
  * 异常增强，以JSON的形式返回给客服端
  * 异常增强类型：NullPointerException,RunTimeException,ClassCastException,
  * NoSuchMethodException,IOException,IndexOutOfBoundsException
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ControllerAdvice
 @ResponseBody
 @Slf4j
-public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptionHandler {
+public class GlobalExceptionHandler {
 
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
     @Autowired
     private ServerI18nProperties serverI18NProperties;
+
+    private static String formatKilobytes(long bytes) {
+        return String.format("%.0f KB", bytes / 1024.0d);
+    }
 
     // --- 4xx Client Error ---
 
@@ -197,7 +201,7 @@ public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptio
         String defaultMessage = String.format("缺少请求头: [%s].", ex.getHeaderName());
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request.header", defaultMessage);
-            return ApiCode.SC_MISSING_REQUEST_PARAM.toResponse(message);
+            return ApiCode.SC_MISSING_REQUEST_HEADER.toResponse(message);
         }
         return ApiCode.SC_MISSING_REQUEST_PARAM.toResponse(defaultMessage);
     }
@@ -263,9 +267,9 @@ public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptio
     /**
      * 400 (Bad Request)
      */
-    @ExceptionHandler({JsonParseException.class, JsonProcessingException.class})
+    @ExceptionHandler({JacksonException.class, JacksonException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiRestResponse<String> jsonProcessingException(JsonProcessingException ex) {
+    public ApiRestResponse<String> jsonProcessingException(JacksonException ex) {
         this.logException(ex);
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request.param", ex.getMessage());
@@ -344,9 +348,9 @@ public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptio
 
     protected ApiRestResponse<?> bindException(Exception ex, BindingResult result) {
         if (result.getErrorCount() > 0) {
-            List<Map<String, String>> errorList = Lists.newArrayList();
+            List<Map<String, String>> errorList = new ArrayList<>();
             for (FieldError error : result.getFieldErrors()) {
-                Map<String, String> errorMap = Maps.newHashMap();
+                Map<String, String> errorMap = new HashMap<>();
                 errorMap.put("field", error.getField());
                 errorMap.put("msg", error.getDefaultMessage());
                 errorList.add(errorMap);
@@ -445,7 +449,7 @@ public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptio
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", ByteUnitFormat.B.to(ByteUnitFormat.K, ex.getMaxUploadSize()));
+        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", formatKilobytes(ex.getMaxUploadSize()));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);
@@ -460,7 +464,7 @@ public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptio
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizePerFileExceededException(MaxUploadSizePerFileExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", ByteUnitFormat.B.to(ByteUnitFormat.K, ex.getMaxUploadSizePerFile()));
+        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", formatKilobytes(ex.getMaxUploadSizePerFile()));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);
@@ -933,6 +937,14 @@ public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptio
             return getMessageSource().getMessage(i18nCode, args, message, locale);
         }
         return message;
+    }
+
+    protected void logException(Exception ex) {
+        HttpServletRequest request = WebUtils.getHttpServletRequest();
+        if (Objects.nonNull(request)) {
+            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), IpKit.getRemoteAddr(request));
+        }
+        log.error(ex.getMessage(), ex);
     }
 
 }

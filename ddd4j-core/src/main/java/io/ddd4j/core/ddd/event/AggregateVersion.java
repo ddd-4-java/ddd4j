@@ -24,6 +24,8 @@ import java.util.Objects;
  * 聚合根的单调版本号。
  */
 public final class AggregateVersion implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final long value;
@@ -55,10 +57,9 @@ public final class AggregateVersion implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof AggregateVersion)) {
+        if (!(object instanceof AggregateVersion that)) {
             return false;
         }
-        AggregateVersion that = (AggregateVersion) object;
         return value == that.value;
     }
 

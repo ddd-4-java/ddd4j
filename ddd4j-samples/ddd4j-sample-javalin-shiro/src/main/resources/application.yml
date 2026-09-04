@@ -1,0 +1,10 @@
+# Javalin + Guice + Apache Shiro 鉴权示例配置
+# 端口在 JavalinShiroApplication.main() 中设置：JavalinShiroApplication.PORT = 7000
+server:
+  port: 7000
+
+# Shiro 配置（演示用内存 Realm，生产环境请替换为 JDBC Realm / 自定义 Realm）
+shiro:
+  realm: javalinShiroRealm
+  # 演示账号：admin/admin（admin 角色），10001/10001（user 角色）
+  credentialsMatcher: simple

@@ -96,7 +96,7 @@ public class MQListener {
      * 返回策略匹配支持列表。
      */
     public List<String> supports() {
-        return Objects.isNull(supports) ? java.util.Collections.emptyList() : supports;
+        return Objects.isNull(supports) ? List.of() : supports;
     }
 
     /**

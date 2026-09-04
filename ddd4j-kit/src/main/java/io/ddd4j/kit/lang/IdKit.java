@@ -193,25 +193,12 @@ public class IdKit extends IdUtil {
     }
 
     private static Snowflake newSnowflake(SnowflakeOptions options) {
-        return new Snowflake(null, options.workerId, options.dataCenterId, options.useSystemClock,
-                options.timeOffset, options.randomSequenceLimit);
+        return new Snowflake(null, options.workerId(), options.dataCenterId(), options.useSystemClock(),
+                options.timeOffset(), options.randomSequenceLimit());
     }
 
-    private static final class SnowflakeOptions {
-        private final long workerId;
-        private final long dataCenterId;
-        private final boolean useSystemClock;
-        private final long timeOffset;
-        private final long randomSequenceLimit;
-
-        private SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
-                                 long timeOffset, long randomSequenceLimit) {
-            this.workerId = workerId;
-            this.dataCenterId = dataCenterId;
-            this.useSystemClock = useSystemClock;
-            this.timeOffset = timeOffset;
-            this.randomSequenceLimit = randomSequenceLimit;
-        }
+    private record SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
+                                    long timeOffset, long randomSequenceLimit) {
     }
 
     /**

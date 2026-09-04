@@ -7,7 +7,6 @@ import io.ddd4j.kit.lang.StrKit;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.SetParams;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -318,7 +317,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         for (int attempt = 0; attempt < maxTries; attempt++) {
             String currentJson = jedis.get(cachedKey);
             V currentValue = deserialize(currentJson);
-            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<V>() {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
                 @Override
                 public String key() {
                     return cachedKey;
@@ -340,7 +339,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
             }
             String newJson = serialize(newValue);
             // 用 Lua 原子比较
-            Object result = jedis.eval(LUA_CAS, Arrays.asList(cachedKey),
+            Object result = jedis.eval(LUA_CAS, List.of(cachedKey),
                     List.of(Objects.isNull(currentJson) ? "" : currentJson, newJson, String.valueOf(expireSeconds)));
             if (Long.valueOf(1).equals(result)) {
                 return newValue;
@@ -354,7 +353,7 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
         String cachedKey = key(key);
         String expectedJson = Objects.isNull(expectedOldValue) ? null : serialize(expectedOldValue);
         String newJson = serialize(newValue);
-        Object result = jedis.eval(LUA_CAS, Arrays.asList(cachedKey),
+        Object result = jedis.eval(LUA_CAS, List.of(cachedKey),
                 List.of(Objects.isNull(expectedJson) ? "" : expectedJson, newJson, "0"));
         return Long.valueOf(1).equals(result);
     }

@@ -1,0 +1,8 @@
+# Maven coordinate<TAB>reason
+# Accepted only when the aggregate SBOM proves the component is absent from release artifacts.
+javax.annotation:javax.annotation-api:1.3.2	Maven Enforcer plugin provided dependency
+javax.el:javax.el-api:3.0.1-b04	Servlet container provided dependency (CDDL)
+javax.interceptor:javax.interceptor-api:1.2	Servlet container provided dependency (CDDL)
+javax.jms:javax.jms-api:2.0.1	Servlet container provided dependency (CDDL)
+javax.servlet:javax.servlet-api:4.0.1	Servlet container provided dependency (CDDL)
+javax.websocket:javax.websocket-api:1.1	Servlet container provided dependency (CDDL)

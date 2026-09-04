@@ -11,13 +11,31 @@
     </parent>
 
     <artifactId>ddd4j-auth-datascope</artifactId>
-    <description>Ddd4j DataScope Component</description>
+    <description>Ddd4j DataScope Component（数据权限）。从 1.0.x 同步 2026-09-04。</description>
 
     <dependencies>
-        <!-- For Validation -->
         <dependency>
             <groupId>com.github.hiwepy</groupId>
             <artifactId>spring-biz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <!-- For Validation -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

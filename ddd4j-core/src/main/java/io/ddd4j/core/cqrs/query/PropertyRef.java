@@ -30,20 +30,14 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-public final class PropertyRef implements Serializable {
-    private final PropertySpace space;
-    private final Class<?> ownerType;
-    private final String property;
+public record PropertyRef(PropertySpace space, Class<?> ownerType, String property) implements Serializable {
 
-    public PropertyRef(PropertySpace space, Class<?> ownerType, String property) {
+    public PropertyRef {
         Objects.requireNonNull(space, "space must not be null");
         Objects.requireNonNull(ownerType, "ownerType must not be null");
         if (StrKit.isEmpty(property)) {
             throw new IllegalArgumentException("property must not be empty");
         }
-        this.space = space;
-        this.ownerType = ownerType;
-        this.property = property;
     }
 
     public static <M> PropertyRef domain(SFunction<M, ?> function) {
@@ -85,38 +79,5 @@ public final class PropertyRef implements Serializable {
                                                           Class<?> expectedType) {
         return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
                 + " is incompatible with repository type " + expectedType.getName());
-    }
-
-    public PropertySpace space() {
-        return space;
-    }
-
-    public Class<?> ownerType() {
-        return ownerType;
-    }
-
-    public String property() {
-        return property;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PropertyRef)) return false;
-        PropertyRef that = (PropertyRef) o;
-        return Objects.equals(space, that.space) && Objects.equals(ownerType, that.ownerType) && Objects.equals(property, that.property);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hashCode(space);
-        result = 31 * result + Objects.hashCode(ownerType);
-        result = 31 * result + Objects.hashCode(property);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "PropertyRef{" + space + ", " + ownerType + ", " + property + '}';
     }
 }

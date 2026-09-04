@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.web.webmvc.api;
 
 import io.ddd4j.core.api.Page;
@@ -41,14 +27,14 @@ import java.util.Objects;
 @Deprecated
 @Slf4j(topic = "### BASE-WEB : CRUDController ###")
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class CRUDController<M extends AggregateRoot<ID>, Q extends Query<M>, ID extends Serializable> {
+public class CRUDController<M extends AggregateRoot<?>, Q extends Query<M>> {
 
-    protected Repository<M, ID> repository;
+    protected Repository<M, Serializable> repository;
 
-    private Repository<M, ID> getRepository() {
+    private Repository<M, Serializable> getRepository() {
         if (Objects.isNull(this.repository)) {
             Class<M> modelClass = ReflectKit.getSuperClassGenericType(this.getClass(), 0);
-            this.repository = (Repository<M, ID>) RepositoryRegistry.repository(modelClass);
+            this.repository = (Repository<M, Serializable>) RepositoryRegistry.repository(modelClass);
         }
         if (Objects.isNull(this.repository)) {
             log.error("未找到实体仓库");
@@ -83,7 +69,7 @@ public class CRUDController<M extends AggregateRoot<ID>, Q extends Query<M>, ID 
 
     @GetMapping("/detail/{id}")
     public M detail(@PathVariable("id") String id) {
-        return getRepository().findById((ID) id).orElse(null);
+        return getRepository().findById(id).orElse(null);
     }
 
     @PostMapping({"/save", "/create"})
@@ -108,6 +94,6 @@ public class CRUDController<M extends AggregateRoot<ID>, Q extends Query<M>, ID 
 
     @PostMapping({"/delete/{id}", "/remove/{id}"})
     public void delete(@PathVariable("id") String id) {
-        getRepository().deleteById((ID) id);
+        getRepository().deleteById(id);
     }
 }

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Ddd4j 架构视图 (优化版)</title>
     <style>
         body {
@@ -11,298 +11,662 @@
             background-color: #F5F5F7; /* iOS System Gray 6 */
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
+            gap: 32px;
             min-height: 100vh;
         }
+
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1280px;
             background: white;
             border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             padding: 40px;
             box-sizing: border-box;
+            overflow-x: auto;
+        }
+
+        .architecture-svg {
+            display: block;
+            width: 100%;
+            min-width: 1120px;
+            height: auto;
+        }
+
+        .info-card {
+            width: 100%;
+            max-width: 1280px;
+            padding: 32px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding: 20px;
+            }
+
+            .container,
+            .info-card {
+                padding: 24px;
+                border-radius: 18px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 
-           SVG Design Logic:
-           Width: 1120px (1200 - 80 padding)
-           Left Column (Label): 120px
-           Gap: 20px
-           Right Column (Content): 980px
-           
-           Vertical Layout:
-           1. Samples (Top): Height 100px
-           2. Gap: 30px
-           3. Components: Height 240px (3 rows)
-           4. Gap: 30px
-           5. Core: Height 160px
-           6. Gap: 30px
-           7. Management: Height 90px
-           
-           Total SVG Height: ~700px
-        -->
-        <svg width="100%" height="700" viewBox="0 0 1120 700" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <!-- Filters for iOS/Material depth -->
-                <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.08"/>
-                </filter>
-                <filter id="innerGlow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feFlood flood-color="#FFFFFF" flood-opacity="0.3"/>
-                    <feComposite operator="out" in2="SourceGraphic"/>
-                    <feGaussianBlur stdDeviation="2"/>
-                    <feComposite operator="atop" in2="SourceGraphic"/>
-                </filter>
-                
-                <!-- Gradients -->
-                <linearGradient id="bg-samples" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:#F5F5F7" />
-                    <stop offset="100%" style="stop-color:#E5E5EA" />
-                </linearGradient>
-                <linearGradient id="bg-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#007AFF" />
-                    <stop offset="100%" style="stop-color:#0056B3" />
-                </linearGradient>
-                <linearGradient id="bg-green" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#34C759" />
-                    <stop offset="100%" style="stop-color:#248A3D" />
-                </linearGradient>
-                <linearGradient id="bg-orange" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#FF9500" />
-                    <stop offset="100%" style="stop-color:#C66900" />
-                </linearGradient>
-                <linearGradient id="bg-purple" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#5856D6" />
-                    <stop offset="100%" style="stop-color:#3634A3" />
-                </linearGradient>
-            </defs>
+<div class="container">
+    <!--
+       SVG Design Logic:
+       Width: 1120px (1200 - 80 padding)
+       Left Column (Label): 120px
+       Gap: 20px
+       Right Column (Content): 980px
 
-            <!-- ==============================
-                 Layer 1: 应用示例 (Samples)
-                 Y: 0, Height: 100
-            =============================== -->
-            <g transform="translate(0, 0)">
-                <!-- Left Label -->
-                <rect x="0" y="0" width="120" height="100" rx="16" fill="url(#bg-purple)" filter="url(#dropShadow)"/>
-                <text x="60" y="55" font-size="16" fill="white" font-weight="bold" text-anchor="middle" dominant-baseline="middle">应用示例</text>
-                
-                <!-- Right Content Container -->
-                <rect x="140" y="0" width="980" height="100" rx="16" fill="#F2F2F7" stroke="#E5E5EA" stroke-width="1"/>
-                
-                <!-- Items Row -->
-                <g transform="translate(150, 15)">
-                     <!-- 7 items, ~130px each + 10px gap -->
-                    <g>
-                        <rect x="0" y="0" width="125" height="70" rx="10" fill="white" filter="url(#dropShadow)"/>
-                        <text x="62.5" y="35" font-size="13" fill="#333" font-weight="500" text-anchor="middle" dominant-baseline="middle">Druid / HikariCP</text>
+       Vertical Layout:
+       1. Samples (Top): Height 100px
+       2. Gap: 30px
+       3. Components: Height 240px (3 rows)
+       4. Gap: 30px
+       5. Core: Height 160px
+       6. Gap: 30px
+       7. Management: Height 90px
+
+       Total SVG Height: ~860px
+    -->
+    <svg class="architecture-svg" height="860" viewBox="0 0 1120 860" width="1120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- Filters for iOS/Material depth -->
+            <filter height="120%" id="dropShadow" width="120%" x="-10%" y="-10%">
+                <feDropShadow dx="0" dy="2" flood-color="#000000" flood-opacity="0.08" stdDeviation="4"/>
+            </filter>
+            <filter height="120%" id="innerGlow" width="120%" x="-10%" y="-10%">
+                <feFlood flood-color="#FFFFFF" flood-opacity="0.3"/>
+                <feComposite in2="SourceGraphic" operator="out"/>
+                <feGaussianBlur stdDeviation="2"/>
+                <feComposite in2="SourceGraphic" operator="atop"/>
+            </filter>
+
+            <!-- Gradients -->
+            <linearGradient id="bg-samples" x1="0%" x2="0%" y1="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#F5F5F7"/>
+                <stop offset="100%" style="stop-color:#E5E5EA"/>
+            </linearGradient>
+            <linearGradient id="bg-blue" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#007AFF"/>
+                <stop offset="100%" style="stop-color:#0056B3"/>
+            </linearGradient>
+            <linearGradient id="bg-green" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#34C759"/>
+                <stop offset="100%" style="stop-color:#248A3D"/>
+            </linearGradient>
+            <linearGradient id="bg-orange" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#FF9500"/>
+                <stop offset="100%" style="stop-color:#C66900"/>
+            </linearGradient>
+            <linearGradient id="bg-purple" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#5856D6"/>
+                <stop offset="100%" style="stop-color:#3634A3"/>
+            </linearGradient>
+        </defs>
+
+        <!-- ==============================
+             Layer 1: 应用示例 (Samples)
+             Y: 0, Height: 100
+        =============================== -->
+        <g transform="translate(0, 0)">
+            <!-- Left Label -->
+            <rect fill="url(#bg-purple)" filter="url(#dropShadow)" height="100" rx="16" width="120" x="0" y="0"/>
+            <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
+                  y="55">应用示例
+            </text>
+
+            <!-- Right Content Container -->
+            <rect fill="#F2F2F7" height="100" rx="16" stroke="#E5E5EA" stroke-width="1" width="980" x="140" y="0"/>
+
+            <!-- Items Row -->
+            <g transform="translate(150, 15)">
+                <!-- 7 items, ~130px each + 10px gap -->
+                <g>
+                    <rect fill="white" filter="url(#dropShadow)" height="70" rx="10" width="125" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#333" font-size="13" font-weight="500" text-anchor="middle"
+                          x="62.5"
+                          y="35">Druid / HikariCP
+                    </text>
+                </g>
+                <g transform="translate(135, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="70" rx="10" width="125" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#333" font-size="13" font-weight="500" text-anchor="middle"
+                          x="62.5"
+                          y="35">ActiveMQ
+                    </text>
+                </g>
+                <g transform="translate(270, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="70" rx="10" width="125" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#333" font-size="13" font-weight="500" text-anchor="middle"
+                          x="62.5"
+                          y="35">RabbitMQ
+                    </text>
+                </g>
+                <g transform="translate(405, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="70" rx="10" width="125" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#333" font-size="13" font-weight="500" text-anchor="middle"
+                          x="62.5"
+                          y="35">Kafka
+                    </text>
+                </g>
+                <g transform="translate(540, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="70" rx="10" width="125" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#333" font-size="13" font-weight="500" text-anchor="middle"
+                          x="62.5"
+                          y="35">RocketMQ
+                    </text>
+                </g>
+                <g transform="translate(675, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="70" rx="10" width="125" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#333" font-size="13" font-weight="500" text-anchor="middle"
+                          x="62.5"
+                          y="35">MQTT
+                    </text>
+                </g>
+                <g transform="translate(810, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="70" rx="10" width="125" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#333" font-size="13" font-weight="500" text-anchor="middle"
+                          x="62.5"
+                          y="35">WebFlux
+                    </text>
+                </g>
+            </g>
+        </g>
+
+        <!-- ==============================
+             Layer 2: 功能组件 (Components)
+             Y: 130, Height: 240
+        =============================== -->
+        <g transform="translate(0, 130)">
+            <!-- Left Label -->
+            <rect fill="url(#bg-green)" filter="url(#dropShadow)" height="240" rx="16" width="120" x="0" y="0"/>
+            <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
+                  y="120">功能组件
+            </text>
+
+            <!-- Right Content Container -->
+            <rect fill="#F2F2F7" height="240" rx="16" stroke="#E5E5EA" stroke-width="1" width="980" x="140" y="0"/>
+
+            <!-- Inner Layout: 3 Rows -->
+            <g transform="translate(150, 15)">
+
+                <!-- Row 1: Web & Data (Green Tint) -->
+                <g>
+                    <rect fill="#E8F5E9" height="64" rx="10" stroke="#C8E6C9" stroke-width="0.5" width="960" x="0"
+                          y="0"/>
+                    <text dominant-baseline="middle" fill="#2E7D32" font-size="14" font-weight="bold" x="20" y="32">
+                        Web与数据
+                    </text>
+                    <!-- Items -->
+                    <g transform="translate(110, 12)">
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="0" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="75" y="20">
+                            WebMVC
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="170" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="245" y="20">
+                            WebFlux
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="340" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="415" y="20">
+                            Jackson
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="510" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="585" y="20">
+                            Validation
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="680" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="755" y="20">
+                            External
+                        </text>
                     </g>
-                    <g transform="translate(135, 0)">
-                        <rect x="0" y="0" width="125" height="70" rx="10" fill="white" filter="url(#dropShadow)"/>
-                        <text x="62.5" y="35" font-size="13" fill="#333" font-weight="500" text-anchor="middle" dominant-baseline="middle">ActiveMQ</text>
+                </g>
+
+                <!-- Row 2: Security (Blue Tint - visually distinct inside green theme) -->
+                <g transform="translate(0, 74)">
+                    <rect fill="#E3F2FD" height="64" rx="10" stroke="#BBDEFB" stroke-width="0.5" width="960" x="0"
+                          y="0"/>
+                    <text dominant-baseline="middle" fill="#1565C0" font-size="14" font-weight="bold" x="20" y="32">
+                        安全与权限
+                    </text>
+                    <!-- Items -->
+                    <g transform="translate(110, 12)">
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="0" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="75" y="20">
+                            SaToken
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="170" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="245" y="20">
+                            DataScope
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="340" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="415" y="20">
+                            License
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="510" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="585" y="20">
+                            Crypto (加解密)
+                        </text>
                     </g>
-                    <g transform="translate(270, 0)">
-                        <rect x="0" y="0" width="125" height="70" rx="10" fill="white" filter="url(#dropShadow)"/>
-                        <text x="62.5" y="35" font-size="13" fill="#333" font-weight="500" text-anchor="middle" dominant-baseline="middle">RabbitMQ</text>
+                </g>
+
+                <!-- Row 3: Architecture (Orange Tint) -->
+                <g transform="translate(0, 148)">
+                    <rect fill="#FFF3E0" height="64" rx="10" stroke="#FFE0B2" stroke-width="0.5" width="960" x="0"
+                          y="0"/>
+                    <text dominant-baseline="middle" fill="#EF6C00" font-size="14" font-weight="bold" x="20" y="32">
+                        架构与中间件
+                    </text>
+                    <!-- Items -->
+                    <g transform="translate(110, 12)">
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="0" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="75" y="20">
+                            COLA 架构
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="170" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="245" y="20">
+                            PF4J 插件
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="340" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="415" y="20">
+                            Akka Actor
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="510" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="585" y="20">
+                            Logs 日志
+                        </text>
+
+                        <rect fill="white" filter="url(#dropShadow)" height="40" rx="6" width="150" x="680" y="0"/>
+                        <text dominant-baseline="middle" fill="#333" font-size="13" text-anchor="middle" x="755" y="20">
+                            Kafka
+                        </text>
                     </g>
-                    <g transform="translate(405, 0)">
-                        <rect x="0" y="0" width="125" height="70" rx="10" fill="white" filter="url(#dropShadow)"/>
-                        <text x="62.5" y="35" font-size="13" fill="#333" font-weight="500" text-anchor="middle" dominant-baseline="middle">Kafka</text>
+                </g>
+
+            </g>
+        </g>
+
+        <!-- ==============================
+             Layer 3: 核心基础 (Core)
+             Y: 410, Height: 160
+        =============================== -->
+        <g transform="translate(0, 410)">
+            <!-- Left Label -->
+            <rect fill="url(#bg-blue)" filter="url(#dropShadow)" height="160" rx="16" width="120" x="0" y="0"/>
+            <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
+                  y="80">核心基础
+            </text>
+
+            <!-- Right Content Container -->
+            <rect fill="#F2F2F7" height="160" rx="16" stroke="#E5E5EA" stroke-width="1" width="980" x="140" y="0"/>
+
+            <!-- 3 Columns -->
+            <g transform="translate(150, 15)">
+                <!-- Column 1: API -->
+                <g>
+                    <rect fill="white" filter="url(#dropShadow)" height="130" rx="10" stroke="#BBDEFB"
+                          stroke-width="0.5" width="310" x="0"
+                          y="0"/>
+                    <rect fill="#E3F2FD" height="36" rx="10" width="310" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#1565C0" font-size="14" font-weight="bold"
+                          text-anchor="middle" x="155"
+                          y="22">基础 API (API Support)
+                    </text>
+
+                    <g transform="translate(15, 46)">
+                        <text fill="#555" font-size="12" x="0" y="10">• BaseController / Service / Mapper</text>
+                        <text fill="#555" font-size="12" x="0" y="32">• ApiRestResponse / Result</text>
+                        <text fill="#555" font-size="12" x="0" y="54">• ApiModule / ApiOperationLog</text>
+                        <text fill="#555" font-size="12" x="0" y="76">• Global Exception Handling</text>
                     </g>
-                    <g transform="translate(540, 0)">
-                        <rect x="0" y="0" width="125" height="70" rx="10" fill="white" filter="url(#dropShadow)"/>
-                        <text x="62.5" y="35" font-size="13" fill="#333" font-weight="500" text-anchor="middle" dominant-baseline="middle">RocketMQ</text>
+                </g>
+
+                <!-- Column 2: Objects -->
+                <g transform="translate(325, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="130" rx="10" stroke="#BBDEFB"
+                          stroke-width="0.5" width="310" x="0"
+                          y="0"/>
+                    <rect fill="#E3F2FD" height="36" rx="10" width="310" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#1565C0" font-size="14" font-weight="bold"
+                          text-anchor="middle" x="155"
+                          y="22">领域对象 (Domain Objects)
+                    </text>
+                    <g transform="translate(15, 46)">
+                        <text fill="#555" font-size="12" x="0" y="10">• AggregateRoot / DomainRepository</text>
+                        <text fill="#555" font-size="12" x="0" y="32">• DomainEvent / DomainEventPublisher</text>
+                        <text fill="#555" font-size="12" x="0" y="54">• Subject / AuthPrincipal</text>
+                        <text fill="#555" font-size="12" x="0" y="76">• Constants / Enums</text>
                     </g>
-                    <g transform="translate(675, 0)">
-                        <rect x="0" y="0" width="125" height="70" rx="10" fill="white" filter="url(#dropShadow)"/>
-                        <text x="62.5" y="35" font-size="13" fill="#333" font-weight="500" text-anchor="middle" dominant-baseline="middle">MQTT</text>
-                    </g>
-                    <g transform="translate(810, 0)">
-                        <rect x="0" y="0" width="125" height="70" rx="10" fill="white" filter="url(#dropShadow)"/>
-                        <text x="62.5" y="35" font-size="13" fill="#333" font-weight="500" text-anchor="middle" dominant-baseline="middle">WebFlux</text>
+                </g>
+
+                <!-- Column 3: Utils -->
+                <g transform="translate(650, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="130" rx="10" stroke="#BBDEFB"
+                          stroke-width="0.5" width="310" x="0"
+                          y="0"/>
+                    <rect fill="#E3F2FD" height="36" rx="10" width="310" x="0" y="0"/>
+                    <text dominant-baseline="middle" fill="#1565C0" font-size="14" font-weight="bold"
+                          text-anchor="middle" x="155"
+                          y="22">通用工具 (Utilities)
+                    </text>
+                    <g transform="translate(15, 46)">
+                        <text fill="#555" font-size="12" x="0" y="10">• WebUtils / IdempotentUtils</text>
+                        <text fill="#555" font-size="12" x="0" y="32">• DateUtils / CollectionUtils</text>
+                        <text fill="#555" font-size="12" x="0" y="54">• Sequence / RandomString</text>
+                        <text fill="#555" font-size="12" x="0" y="76">• IP2Region / UserAgent</text>
                     </g>
                 </g>
             </g>
+        </g>
 
-            <!-- ==============================
-                 Layer 2: 功能组件 (Components)
-                 Y: 130, Height: 240
-            =============================== -->
-            <g transform="translate(0, 130)">
-                <!-- Left Label -->
-                <rect x="0" y="0" width="120" height="240" rx="16" fill="url(#bg-green)" filter="url(#dropShadow)"/>
-                <text x="60" y="120" font-size="16" fill="white" font-weight="bold" text-anchor="middle" dominant-baseline="middle">功能组件</text>
-                
-                <!-- Right Content Container -->
-                <rect x="140" y="0" width="980" height="240" rx="16" fill="#F2F2F7" stroke="#E5E5EA" stroke-width="1"/>
-                
-                <!-- Inner Layout: 3 Rows -->
-                <g transform="translate(150, 15)">
-                    
-                    <!-- Row 1: Web & Data (Green Tint) -->
-                    <g>
-                        <rect x="0" y="0" width="960" height="64" rx="10" fill="#E8F5E9" stroke="#C8E6C9" stroke-width="0.5"/>
-                        <text x="20" y="32" font-size="14" fill="#2E7D32" font-weight="bold" dominant-baseline="middle">Web与数据</text>
-                        <!-- Items -->
-                        <g transform="translate(110, 12)">
-                            <rect x="0" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="75" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">WebMVC</text>
-                            
-                            <rect x="170" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="245" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">WebFlux</text>
-                            
-                            <rect x="340" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="415" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">Jackson</text>
-                            
-                            <rect x="510" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="585" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">Validation</text>
+        <!-- ==============================
+             Layer 4: 工程管理 (Management)
+             Y: 600, Height: 90
+        =============================== -->
+        <g transform="translate(0, 600)">
+            <!-- Left Label -->
+            <rect fill="url(#bg-orange)" filter="url(#dropShadow)" height="90" rx="16" width="120" x="0" y="0"/>
+            <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
+                  y="45">工程管理
+            </text>
 
-                            <rect x="680" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="755" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">External</text>
-                        </g>
-                    </g>
+            <!-- Right Content Container -->
+            <rect fill="#FFF8E1" height="90" rx="16" stroke="#FFE0B2" stroke-width="1" width="980" x="140" y="0"/>
 
-                    <!-- Row 2: Security (Blue Tint - visually distinct inside green theme) -->
-                    <g transform="translate(0, 74)">
-                        <rect x="0" y="0" width="960" height="64" rx="10" fill="#E3F2FD" stroke="#BBDEFB" stroke-width="0.5"/>
-                        <text x="20" y="32" font-size="14" fill="#1565C0" font-weight="bold" dominant-baseline="middle">安全与权限</text>
-                         <!-- Items -->
-                        <g transform="translate(110, 12)">
-                            <rect x="0" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="75" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">SaToken</text>
-                            
-                            <rect x="170" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="245" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">DataScope</text>
-                            
-                            <rect x="340" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="415" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">License</text>
-                            
-                            <rect x="510" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="585" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">Crypto (加解密)</text>
-                        </g>
-                    </g>
+            <!-- 3 Big Boxes -->
+            <g transform="translate(150, 15)">
+                <!-- BOM -->
+                <g>
+                    <rect fill="white" filter="url(#dropShadow)" height="60" rx="10" stroke="#FFCC80" stroke-width="0.5"
+                          width="310" x="0"
+                          y="0"/>
+                    <text dominant-baseline="middle" fill="#E65100" font-size="14" font-weight="bold"
+                          text-anchor="middle" x="155"
+                          y="30">ddd4j-bom (BOM依赖管理)
+                    </text>
+                </g>
 
-                    <!-- Row 3: Architecture (Orange Tint) -->
-                    <g transform="translate(0, 148)">
-                        <rect x="0" y="0" width="960" height="64" rx="10" fill="#FFF3E0" stroke="#FFE0B2" stroke-width="0.5"/>
-                        <text x="20" y="32" font-size="14" fill="#EF6C00" font-weight="bold" dominant-baseline="middle">架构与中间件</text>
-                         <!-- Items -->
-                        <g transform="translate(110, 12)">
-                            <rect x="0" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="75" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">COLA 架构</text>
-                            
-                            <rect x="170" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="245" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">PF4J 插件</text>
-                            
-                            <rect x="340" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="415" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">Akka Actor</text>
-                            
-                            <rect x="510" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="585" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">Logs 日志</text>
+                <!-- Parent -->
+                <g transform="translate(325, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="60" rx="10" stroke="#FFCC80" stroke-width="0.5"
+                          width="310" x="0"
+                          y="0"/>
+                    <text dominant-baseline="middle" fill="#E65100" font-size="14" font-weight="bold"
+                          text-anchor="middle" x="155"
+                          y="30">ddd4j-parent (Maven父工程)
+                    </text>
+                </g>
 
-                            <rect x="680" y="0" width="150" height="40" rx="6" fill="white" filter="url(#dropShadow)"/>
-                            <text x="755" y="20" font-size="13" fill="#333" text-anchor="middle" dominant-baseline="middle">Kafka</text>
-                        </g>
-                    </g>
-
+                <!-- Dependencies -->
+                <g transform="translate(650, 0)">
+                    <rect fill="white" filter="url(#dropShadow)" height="60" rx="10" stroke="#FFCC80" stroke-width="0.5"
+                          width="310" x="0"
+                          y="0"/>
+                    <text dominant-baseline="middle" fill="#E65100" font-size="14" font-weight="bold"
+                          text-anchor="middle" x="155"
+                          y="30">ddd4j-dependencies (版本控制)
+                    </text>
                 </g>
             </g>
+        </g>
 
-            <!-- ==============================
-                 Layer 3: 核心基础 (Core)
-                 Y: 400, Height: 160
-            =============================== -->
-            <g transform="translate(0, 400)">
-                <!-- Left Label -->
-                <rect x="0" y="0" width="120" height="160" rx="16" fill="url(#bg-blue)" filter="url(#dropShadow)"/>
-                <text x="60" y="80" font-size="16" fill="white" font-weight="bold" text-anchor="middle" dominant-baseline="middle">核心基础</text>
-                
-                <!-- Right Content Container -->
-                <rect x="140" y="0" width="980" height="160" rx="16" fill="#F2F2F7" stroke="#E5E5EA" stroke-width="1"/>
-                
-                <!-- 3 Columns -->
-                <g transform="translate(150, 15)">
-                    <!-- Column 1: API -->
-                    <g>
-                        <rect x="0" y="0" width="310" height="130" rx="10" fill="white" stroke="#BBDEFB" stroke-width="0.5" filter="url(#dropShadow)"/>
-                        <rect x="0" y="0" width="310" height="36" rx="10" fill="#E3F2FD"/>
-                        <text x="155" y="22" font-size="14" fill="#1565C0" font-weight="bold" text-anchor="middle" dominant-baseline="middle">基础 API (API Support)</text>
-                        
-                        <g transform="translate(15, 46)">
-                             <text x="0" y="10" font-size="12" fill="#555">• BaseController / Service / Mapper</text>
-                             <text x="0" y="32" font-size="12" fill="#555">• ApiRestResponse / Result</text>
-                             <text x="0" y="54" font-size="12" fill="#555">• ApiModule / ApiOperationLog</text>
-                             <text x="0" y="76" font-size="12" fill="#555">• Global Exception Handling</text>
-                        </g>
-                    </g>
+        <!-- ==============================
+             Layer 5: 最终架构定位 (Final Architecture Positioning)
+             Y: 720, Height: 130
+        =============================== -->
+        <g transform="translate(0, 720)">
+            <!-- Left Label -->
+            <rect fill="url(#bg-purple)" filter="url(#dropShadow)" height="130" rx="16" width="120" x="0" y="0"/>
+            <text dominant-baseline="middle" fill="white" font-size="16" font-weight="bold" text-anchor="middle" x="60"
+                  y="65">最终定位
+            </text>
 
-                    <!-- Column 2: Objects -->
-                    <g transform="translate(325, 0)">
-                        <rect x="0" y="0" width="310" height="130" rx="10" fill="white" stroke="#BBDEFB" stroke-width="0.5" filter="url(#dropShadow)"/>
-                        <rect x="0" y="0" width="310" height="36" rx="10" fill="#E3F2FD"/>
-                        <text x="155" y="22" font-size="14" fill="#1565C0" font-weight="bold" text-anchor="middle" dominant-baseline="middle">领域对象 (Domain Objects)</text>
-                         <g transform="translate(15, 46)">
-                             <text x="0" y="10" font-size="12" fill="#555">• BaseDTO / BaseEntity / BaseParam</text>
-                             <text x="0" y="32" font-size="12" fill="#555">• BizRuntimeException / BizException</text>
-                             <text x="0" y="54" font-size="12" fill="#555">• Subject / AuthPrincipal</text>
-                             <text x="0" y="76" font-size="12" fill="#555">• Constants / Enums</text>
-                        </g>
-                    </g>
+            <!-- Right Content Container -->
+            <rect fill="#F3E5F5" height="130" rx="16" stroke="#E1BEE7" stroke-width="1" width="980" x="140" y="0"/>
 
-                    <!-- Column 3: Utils -->
-                    <g transform="translate(650, 0)">
-                        <rect x="0" y="0" width="310" height="130" rx="10" fill="white" stroke="#BBDEFB" stroke-width="0.5" filter="url(#dropShadow)"/>
-                        <rect x="0" y="0" width="310" height="36" rx="10" fill="#E3F2FD"/>
-                        <text x="155" y="22" font-size="14" fill="#1565C0" font-weight="bold" text-anchor="middle" dominant-baseline="middle">通用工具 (Utilities)</text>
-                         <g transform="translate(15, 46)">
-                             <text x="0" y="10" font-size="12" fill="#555">• WebUtils / IdempotentUtils</text>
-                             <text x="0" y="32" font-size="12" fill="#555">• DateUtils / CollectionUtils</text>
-                             <text x="0" y="54" font-size="12" fill="#555">• Sequence / RandomString</text>
-                             <text x="0" y="76" font-size="12" fill="#555">• IP2Region / UserAgent</text>
-                        </g>
-                    </g>
-                </g>
+            <g transform="translate(150, 18)">
+                <text fill="#6A1B9A" font-size="13" font-weight="bold" x="0" y="0">ddd4j = 框架无关 DDD/CQRS/ES
+                    通用基础层
+                </text>
+                <text fill="#555" font-size="11" x="0" y="22">• 业务应用：ddd4j-boot（Spring）· ddd4j-quarkus ·
+                    ddd4j-javalin 三框架并列
+                </text>
+                <text fill="#555" font-size="11" x="0" y="42">• 运行时绑定层：ddd4j-runtime 聚合 ddd4j-runtime-spring /
+                    ddd4j-runtime-quarkus / ddd4j-runtime-guice
+                </text>
+                <text fill="#555" font-size="11" x="0" y="60">• 运行时 SPI：DomainEventPublisher / MQEventPublisher /
+                    DomainRepository
+                    分别由运行时适配
+                </text>
+                <text fill="#555" font-size="11" x="0" y="78">• 通用层：core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（12 种
+                    MQ）· web/auth/monitor
+                </text>
+                <text fill="#555" font-size="11" x="0" y="96">• 下方依赖：fuinorg ddd-4-java（DDD 基类）· cqrs-4-java（CQRS
+                    框架）· esc-api（EventStore）
+                </text>
+                <text fill="#555" font-size="11" x="0" y="114">• 核心 SPI：DomainEventPublisher（3 框架）·
+                    MQBrokerAdapter（13 个 MQ Broker/本地实现）· Repository（多 ORM）· ArchUnit 编译期架构守护
+                </text>
             </g>
+        </g>
 
-            <!-- ==============================
-                 Layer 4: 工程管理 (Management)
-                 Y: 590, Height: 90
-            =============================== -->
-            <g transform="translate(0, 590)">
-                <!-- Left Label -->
-                <rect x="0" y="0" width="120" height="90" rx="16" fill="url(#bg-orange)" filter="url(#dropShadow)"/>
-                <text x="60" y="45" font-size="16" fill="white" font-weight="bold" text-anchor="middle" dominant-baseline="middle">工程管理</text>
-                
-                <!-- Right Content Container -->
-                <rect x="140" y="0" width="980" height="90" rx="16" fill="#FFF8E1" stroke="#FFE0B2" stroke-width="1"/>
-                
-                <!-- 3 Big Boxes -->
-                <g transform="translate(150, 15)">
-                     <!-- BOM -->
-                     <g>
-                        <rect x="0" y="0" width="310" height="60" rx="10" fill="white" stroke="#FFCC80" stroke-width="0.5" filter="url(#dropShadow)"/>
-                        <text x="155" y="30" font-size="14" fill="#E65100" font-weight="bold" text-anchor="middle" dominant-baseline="middle">ddd4j-bom (BOM依赖管理)</text>
-                     </g>
-                     
-                     <!-- Parent -->
-                     <g transform="translate(325, 0)">
-                        <rect x="0" y="0" width="310" height="60" rx="10" fill="white" stroke="#FFCC80" stroke-width="0.5" filter="url(#dropShadow)"/>
-                        <text x="155" y="30" font-size="14" fill="#E65100" font-weight="bold" text-anchor="middle" dominant-baseline="middle">ddd4j-parent (Maven父工程)</text>
-                     </g>
+    </svg>
+</div>
 
-                     <!-- Dependencies -->
-                     <g transform="translate(650, 0)">
-                        <rect x="0" y="0" width="310" height="60" rx="10" fill="white" stroke="#FFCC80" stroke-width="0.5" filter="url(#dropShadow)"/>
-                        <text x="155" y="30" font-size="14" fill="#E65100" font-weight="bold" text-anchor="middle" dominant-baseline="middle">ddd4j-dependencies (版本控制)</text>
-                     </g>
-                </g>
-            </g>
-            
-        </svg>
-    </div>
+<!-- ============================================================
+     最终架构定位信息卡（HTML 文字版）
+     配套 SVG 架构图（上方）
+============================================================ -->
+<div class="info-card">
+    <h1 style="margin:0 0 16px; font-size: 24px; color: #1D1D1F;">Ddd4j 最终架构定位</h1>
+    <p style="color:#555; line-height:1.6; margin:0 0 20px;">
+        <strong>ddd4j 是一个框架无关的 DDD/CQRS/ES 通用基础层</strong>，目标是为 Spring Boot、Quarkus、Javalin 三种容器框架提供
+        <em>同一套纯净领域模型契约</em>，站在 fuinorg 系列（ddd-4-java + cqrs-4-java + esc-api）之上。
+    </p>
+
+    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">整体架构分层</h2>
+    <pre style="background:#F2F2F7; padding:16px; border-radius:10px; font-size:12px; line-height:1.5; overflow:auto;">
+┌─────────────────────────────────────────────────────────────────────────┐
+│                  业务应用层（用户项目）                                  │
+│  ddd4j-boot / ddd4j-quarkus / ddd4j-javalin                          │
+└──────────────────────────────┬────────────────────────────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        ▼                      ▼                      ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  ddd4j-runtime-spring    │  │  ddd4j-runtime-quarkus   │  │  ddd4j-javalin   │
+└────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘
+         └─────────────────────┼─────────────────────┘
+                               ▼
+┌────────────────────────────────────────────────────────────────────┐
+│                  ddd4j 通用基础层（本次主题）                       │
+│  core（契约）· ddd（ES/CQRS）· data（仓库 SPI）· mq（13 个 MQ）  │
+│  web · auth · monitor · kit · ddd-clean/cola（ArchUnit）         │
+└──────────────────────────────┬─────────────────────────────────────┘
+                               │
+        ┌──────────────────────┼──────────────────────┐
+        ▼                      ▼                      ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  ddd-4-java      │  │  cqrs-4-java     │  │  esc-api         │
+│  (fuinorg)       │  │  (fuinorg)       │  │  (fuinorg)       │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+        </pre>
+
+    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">ddd4j 三大核心 SPI</h2>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <tr style="background:#F2F2F7;">
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">SPI</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">职责</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">实现数量</th>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;"><code>DomainEventPublisher</code></td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">进程内领域事件发布</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">3（Spring / CDI / Guice）</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;"><code>MQBrokerAdapter</code></td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">跨进程消息发布/订阅</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">12（Kafka / RabbitMQ / RocketMQ / ActiveMQ /
+                RedisStream / MQTT / MicaMQTT / Pulsar / NATS / Disruptor / ONS ...）
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;"><code>Repository</code></td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">数据访问抽象</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">多 ORM（MyBatis-Plus / Hibernate Panache / JDBI）
+            </td>
+        </tr>
+    </table>
+
+    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">与 fuinorg 基础库的关系</h2>
+    <ul style="color:#555; line-height:1.8;">
+        <li><strong>继承</strong> ddd-4-java 的 <code>AbstractAggregateRoot</code> → ddd4j <code>DddAggregateRoot</code>（增加
+            createTime/updateTime 审计字段）
+        </li>
+        <li><strong>复用</strong> ddd-4-java 的 <code>AbstractDomainEvent</code> → ddd4j <code>DddDomainEvent</code>
+        </li>
+        <li><strong>封装</strong> cqrs-4-java 的 <code>EventStoreRepository</code> → ddd4j
+            <code>DddEventStoreRepository</code>（乐观锁冲突重试 3 次）
+        </li>
+        <li><strong>扩展</strong> cqrs-4-java 的 Command/View 抽象到 ddd4j 三框架运行时绑定层</li>
+        <li><strong>依赖</strong> esc-api 作为 EventStore 抽象接口（EventStoreDB / KurrentDB）</li>
+    </ul>
+
+    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">ddd4j 应补充的 CQRS/ES 能力（P0/P1 分级）</h2>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <tr style="background:#F2F2F7;">
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA; width:80px;">优先级</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">能力</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">实施建议</th>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Command / AggregateCommand 接口</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">抽取到 ddd4j-core 作为契约</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">CommandExecutor SPI</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">三框架各自实现</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">CommandHandler 注解 + 自动注册</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">兼容 Spring @Component / CDI Bean</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#C62828; font-weight:bold;">P0</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">MultiCommandExecutor / Result&lt;T&gt;</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">复用 fuinorg 实现</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">View / JpaView 接口</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">抽取到 ddd4j-core</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ViewManager 抽象</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-runtime-spring / ddd4j-runtime-quarkus
+                各自实现
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ProjectionPosition 投影位置持久化</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">抽取为公共 SPI</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA; color:#1565C0; font-weight:bold;">P1</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@CreateEvent / @UpdateEvent / @DeleteEvent 注解
+            </td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">复用 fuinorg</td>
+        </tr>
+    </table>
+
+    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">ddd4j 核心竞争力</h2>
+    <ul style="color:#555; line-height:1.8;">
+        <li><strong>框架无关纯净契约</strong>：core 模块 contract/context/ddd 包零框架 import</li>
+        <li><strong>13 个 MQ Broker/本地实现统一抽象</strong>：MQBrokerAdapter SPI 切换消息中间件零业务代码改动</li>
+        <li><strong>ArchUnit 编译期守护</strong>：CleanDDDLayerRules / ColaDDDLayerRules 注解驱动</li>
+        <li><strong>双轨 DDD 模型</strong>：BaseEntity（快速）/ DddAggregateRoot（纯净 ES）</li>
+        <li><strong>站在巨人肩膀上</strong>：直接复用 fuinorg ddd-4-java + cqrs-4-java + esc-api</li>
+    </ul>
+
+    <h2 style="margin:24px 0 12px; font-size: 18px; color:#1D1D1F;">三框架运行时绑定对照</h2>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <tr style="background:#F2F2F7;">
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">维度</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-runtime-spring</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-runtime-quarkus</th>
+            <th style="text-align:left; padding:10px; border-bottom:1px solid #E5E5EA;">ddd4j-javalin</th>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">DI 容器</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">ApplicationContext</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Arc (CDI)</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Guice Injector</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">事件发布</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">publishEvent()</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Event&lt;T&gt;.fire()</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">EventBus.post()</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">配置属性</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@ConfigurationProperties</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@ConfigProperty</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Provides</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Web 框架</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Spring MVC / WebFlux</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Quarkus RESTEasy (JAX-RS)</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">Javalin</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">事务</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Transactional</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Transactional (JTA)</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">手动控制</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">调度</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">SchedulingConfigurer</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">@Scheduled</td>
+            <td style="padding:10px; border-bottom:1px solid #E5E5EA;">自定义线程池</td>
+        </tr>
+    </table>
+
+    <p style="margin-top:24px; color:#888; font-size:12px;">
+        配套 Markdown 文档：<a href="architecture.md" style="color:#1565C0;">architecture.md</a> ·
+        基础库剖析：<a href="ddd-4-java-architecture.md" style="color:#1565C0;">ddd-4-java</a> ·
+        <a href="cqrs-4-java-architecture.md" style="color:#1565C0;">cqrs-4-java</a> ·
+        <a href="ddd-cqrs-4-java-example-architecture.md" style="color:#1565C0;">ddd-cqrs-4-java-example</a>
+    </p>
+</div>
 </body>
 </html>

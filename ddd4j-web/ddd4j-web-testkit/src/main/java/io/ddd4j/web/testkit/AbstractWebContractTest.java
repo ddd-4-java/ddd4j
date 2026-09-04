@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.web.testkit;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,8 +22,8 @@ public abstract class AbstractWebContractTest {
 
     @Test
     void shouldExposeStableSuccessAndCreatedEnvelopes() throws Exception {
-        assertSuccess(client().request("GET", WebContractPaths.SUCCESS, java.util.Collections.emptyMap(), null), 200);
-        assertSuccess(client().request("POST", WebContractPaths.CREATED, java.util.Collections.emptyMap(), "{}"), 201);
+        assertSuccess(client().request("GET", WebContractPaths.SUCCESS, Map.of(), null), 200);
+        assertSuccess(client().request("POST", WebContractPaths.CREATED, Map.of(), "{}"), 201);
     }
 
     @Test
@@ -54,17 +40,20 @@ public abstract class AbstractWebContractTest {
 
     @Test
     void shouldEnforceBearerAuthenticationAccordingToPolicy() throws Exception {
-        assertError(client().request("GET", WebContractPaths.PROTECTED, java.util.Collections.emptyMap(), null), 401);
+        assertError(client().request("GET", WebContractPaths.PROTECTED, Map.of(), null), 401);
         assertError(client().request("GET", WebContractPaths.PROTECTED,
-                java.util.Collections.singletonMap(WebHeaders.AUTHORIZATION, "Bearer invalid-token"), null), 401);
+                Map.of(WebHeaders.AUTHORIZATION, "Bearer invalid-token"), null), 401);
         assertSuccess(client().request("GET", WebContractPaths.PROTECTED,
-                java.util.Collections.singletonMap(WebHeaders.AUTHORIZATION, VALID_BEARER), null), 200);
-        assertSuccess(client().request("GET", WebContractPaths.PUBLIC, java.util.Collections.emptyMap(), null), 200);
+                Map.of(WebHeaders.AUTHORIZATION, VALID_BEARER), null), 200);
+        assertSuccess(client().request("GET", WebContractPaths.PUBLIC, Map.of(), null), 200);
     }
 
     @Test
     void shouldPropagateRequestHeadersAndReturnRequestId() throws Exception {
-        Map<String, String> headers = new java.util.HashMap<String,String>() {{ put(WebHeaders.REQUEST_ID, "request-contract-1"); put(WebHeaders.TRACE_ID, "trace-contract-1"); put(WebHeaders.TENANT_ID, "tenant-contract-1"); }};
+        Map<String, String> headers = Map.of(
+                WebHeaders.REQUEST_ID, "request-contract-1",
+                WebHeaders.TRACE_ID, "trace-contract-1",
+                WebHeaders.TENANT_ID, "tenant-contract-1");
         WebContractResponse response = client().request("GET", WebContractPaths.CONTEXT, headers, null);
         JsonNode data = body(response).path("data");
 
@@ -78,8 +67,8 @@ public abstract class AbstractWebContractTest {
     @Test
     void shouldNotLeakContextBetweenRequests() throws Exception {
         client().request("GET", WebContractPaths.CONTEXT,
-                java.util.Collections.singletonMap(WebHeaders.TENANT_ID, "tenant-first-request"), null);
-        WebContractResponse second = client().request("GET", WebContractPaths.CONTEXT, java.util.Collections.emptyMap(), null);
+                Map.of(WebHeaders.TENANT_ID, "tenant-first-request"), null);
+        WebContractResponse second = client().request("GET", WebContractPaths.CONTEXT, Map.of(), null);
         JsonNode tenantId = body(second).path("data").path("tenantId");
 
         assertThat(tenantId.isNull() || tenantId.isMissingNode()).isTrue();
@@ -88,14 +77,14 @@ public abstract class AbstractWebContractTest {
     @Test
     void shouldRejectDuplicateIdempotencyKey() throws Exception {
         String key = "contract-" + UUID.randomUUID();
-        Map<String, String> headers = java.util.Collections.singletonMap(WebHeaders.IDEMPOTENCY_KEY, key);
+        Map<String, String> headers = Map.of(WebHeaders.IDEMPOTENCY_KEY, key);
 
         assertSuccess(client().request("POST", WebContractPaths.IDEMPOTENT, headers, "{}"), 200);
         assertError(client().request("POST", WebContractPaths.IDEMPOTENT, headers, "{}"), 409);
     }
 
     private void assertError(String path, int expectedStatus) throws Exception {
-        assertError(client().request("GET", path, java.util.Collections.emptyMap(), null), expectedStatus);
+        assertError(client().request("GET", path, Map.of(), null), expectedStatus);
     }
 
     private void assertError(WebContractResponse response, int expectedStatus) throws Exception {

@@ -26,23 +26,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Disabled("Vert.x 4.x contract test — requires running Vert.x instance")
+@Disabled("Vert.x 5.x 内置 Jackson 2.x 与项目 Jackson 3.x 不兼容（返回纯文本错误）")
 class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
 
     private Vertx vertx;
@@ -67,7 +64,7 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         registerContractRoutes(router);
         server = vertx.createHttpServer().requestHandler(router).listen(0)
                 .toCompletionStage().toCompletableFuture().join();
-        contractClient = new VertxContractClient(server.actualPort());
+        contractClient = new VertxContractClient(HttpClient.newHttpClient(), server.actualPort());
     }
 
     @AfterEach
@@ -88,12 +85,12 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
     }
 
     private void registerContractRoutes(Router router) {
-        router.get(WebContractPaths.SUCCESS).handler(context -> context.json(R.ok(Collections.singletonMap("result", "ok"))));
-        router.get(WebContractPaths.PUBLIC).handler(context -> context.json(R.ok(Collections.singletonMap("result", "ok"))));
-        router.get(WebContractPaths.PROTECTED).handler(context -> context.json(R.ok(Collections.singletonMap("result", "ok"))));
+        router.get(WebContractPaths.SUCCESS).handler(context -> context.json(R.ok(Map.of("result", "ok"))));
+        router.get(WebContractPaths.PUBLIC).handler(context -> context.json(R.ok(Map.of("result", "ok"))));
+        router.get(WebContractPaths.PROTECTED).handler(context -> context.json(R.ok(Map.of("result", "ok"))));
         router.post(WebContractPaths.CREATED).handler(context -> {
             context.response().setStatusCode(201);
-            context.json(R.ok(Collections.singletonMap("result", "created")));
+            context.json(R.ok(Map.of("result", "created")));
         });
         router.get(WebContractPaths.CONTEXT).handler(context -> {
             Map<String, Object> requestContext = new LinkedHashMap<>();
@@ -105,21 +102,21 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
             context.json(R.ok(requestContext));
         });
         router.post(WebContractPaths.IDEMPOTENT)
-                .handler(context -> context.json(R.ok(Collections.singletonMap("result", "accepted"))));
+                .handler(context -> context.json(R.ok(Map.of("result", "accepted"))));
         router.get("/contract/errors/:type").handler(context -> context.fail(error(context.pathParam("type"))));
     }
 
     private Throwable error(String type) {
-        switch (type) {
-            case "bad-request": return new IllegalArgumentException("bad request");
-            case "forbidden": return new SecurityException("forbidden");
-            case "not-found": return new NoSuchElementException("not found");
-            case "conflict": return new IllegalStateException("conflict");
-            case "unsupported-media-type": return new WebStatusException(415, "unsupported media type");
-            case "unprocessable-entity": return new WebStatusException(422, "unprocessable entity");
-            case "too-many-requests": return new WebStatusException(429, "too many requests");
-            default: return new RuntimeException("internal failure");
-        }
+        return switch (type) {
+            case "bad-request" -> new IllegalArgumentException("bad request");
+            case "forbidden" -> new SecurityException("forbidden");
+            case "not-found" -> new NoSuchElementException("not found");
+            case "conflict" -> new IllegalStateException("conflict");
+            case "unsupported-media-type" -> new WebStatusException(415, "unsupported media type");
+            case "unprocessable-entity" -> new WebStatusException(422, "unprocessable entity");
+            case "too-many-requests" -> new WebStatusException(429, "too many requests");
+            default -> new RuntimeException("internal failure");
+        };
     }
 
     private SubjectProvider provider(Subject subject) {
@@ -131,41 +128,31 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         };
     }
 
-    private static final class VertxContractClient implements WebContractClient {
-        private final int port;
-
-        VertxContractClient(int port) {
-            this.port = port;
-        }
+    private record VertxContractClient(HttpClient httpClient, int port) implements WebContractClient {
 
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
-                URL url = new URL("http://127.0.0.1:" + port + path);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod(method);
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    conn.setRequestProperty(entry.getKey(), entry.getValue());
-                }
-                if (body != null) {
-                    conn.setDoOutput(true);
-                    try (OutputStream os = conn.getOutputStream()) {
-                        os.write(body.getBytes(StandardCharsets.UTF_8));
-                    }
-                }
-                int statusCode = conn.getResponseCode();
-                Map<String, java.util.List<String>> responseHeaders = conn.getHeaderFields();
-                String responseBody;
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-                    responseBody = reader.lines().collect(Collectors.joining("\n"));
-                } catch (Exception e) {
-                    responseBody = "";
-                }
-                conn.disconnect();
-                return new WebContractResponse(statusCode, responseHeaders, responseBody);
+                HttpRequest.Builder builder = HttpRequest.newBuilder()
+                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                headers.forEach(builder::header);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
+                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                HttpResponse<String> response = send(builder.method(method, publisher).build());
+                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Vert.x contract request interrupted", exception);
             } catch (Exception exception) {
                 throw new IllegalStateException("Vert.x contract request failed", exception);
+            }
+        }
+
+        private HttpResponse<String> send(HttpRequest request) throws IOException, InterruptedException {
+            try {
+                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException firstFailure) {
+                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             }
         }
     }

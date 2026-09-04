@@ -18,32 +18,29 @@ import io.ddd4j.web.testkit.WebContractResponse;
 import io.helidon.microprofile.tests.junit5.AddBean;
 import io.helidon.microprofile.tests.junit5.AddConfig;
 import io.helidon.microprofile.tests.junit5.HelidonTest;
-import javax.inject.Inject;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -98,15 +95,10 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
             Response response = Objects.isNull(body)
                     ? builder.method(method)
                     : builder.method(method, Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
-            try {
-                // response close handled below
+            try (response) {
                 Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
-                response.getStringHeaders().forEach((name, values) -> responseHeaders.put(name, Collections.unmodifiableList(new java.util.ArrayList<>(values))));
-                WebContractResponse contractResponse = new WebContractResponse(response.getStatus(), responseHeaders, response.readEntity(String.class));
-                response.close();
-                return contractResponse;
-            } catch (Exception processingError) {
-                throw new IllegalStateException("Helidon contract response processing failed", processingError);
+                response.getStringHeaders().forEach((name, values) -> responseHeaders.put(name, List.copyOf(values)));
+                return new WebContractResponse(response.getStatus(), responseHeaders, response.readEntity(String.class));
             }
         }
     }
@@ -116,12 +108,11 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
 
         @Override
         public Set<Class<?>> getClasses() {
-            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(
-                    ContractResource.class,
+            return Set.of(ContractResource.class,
                     Ddd4jHelidonRequestFilter.class,
                     Ddd4jHelidonResponseFilter.class,
                     Ddd4jHelidonExceptionMapper.class,
-                    Ddd4jHelidonIllegalStateExceptionMapper.class)));
+                    Ddd4jHelidonIllegalStateExceptionMapper.class);
         }
     }
 
@@ -132,19 +123,19 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
         @GET
         @Path("/success")
         public R<Map<String, String>> success() {
-            return R.ok(Collections.singletonMap("result", "ok"));
+            return R.ok(Map.of("result", "ok"));
         }
 
         @GET
         @Path("/public")
         public R<Map<String, String>> publicEndpoint() {
-            return R.ok(Collections.singletonMap("result", "ok"));
+            return R.ok(Map.of("result", "ok"));
         }
 
         @GET
         @Path("/protected")
         public R<Map<String, String>> protectedEndpoint() {
-            return R.ok(Collections.singletonMap("result", "ok"));
+            return R.ok(Map.of("result", "ok"));
         }
 
         @POST
@@ -152,7 +143,7 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
         @Consumes(MediaType.APPLICATION_JSON)
         public Response created(String ignoredBody) {
             return Response.status(Response.Status.CREATED)
-                    .entity(R.ok(Collections.singletonMap("result", "created"))).build();
+                    .entity(R.ok(Map.of("result", "created"))).build();
         }
 
         @GET
@@ -169,24 +160,22 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
         @Path("/idempotent")
         @Consumes(MediaType.APPLICATION_JSON)
         public R<Map<String, String>> idempotent(String ignoredBody) {
-            return R.ok(Collections.singletonMap("result", "accepted"));
+            return R.ok(Map.of("result", "accepted"));
         }
 
         @GET
         @Path("/errors/{type}")
         public R<Void> error(@PathParam("type") String type) {
-            RuntimeException __ex;
-            switch (type) {
-                case "bad-request": __ex = new IllegalArgumentException("bad request"); break;
-                case "forbidden": __ex = new SecurityException("forbidden"); break;
-                case "not-found": __ex = new NoSuchElementException("not found"); break;
-                case "conflict": __ex = new IllegalStateException("conflict"); break;
-                case "unsupported-media-type": __ex = new WebStatusException(415, "unsupported media type"); break;
-                case "unprocessable-entity": __ex = new WebStatusException(422, "unprocessable entity"); break;
-                case "too-many-requests": __ex = new WebStatusException(429, "too many requests"); break;
-                default: __ex = new RuntimeException("internal failure"); break;
-            }
-            throw __ex;
+            throw switch (type) {
+                case "bad-request" -> new IllegalArgumentException("bad request");
+                case "forbidden" -> new SecurityException("forbidden");
+                case "not-found" -> new NoSuchElementException("not found");
+                case "conflict" -> new IllegalStateException("conflict");
+                case "unsupported-media-type" -> new WebStatusException(415, "unsupported media type");
+                case "unprocessable-entity" -> new WebStatusException(422, "unprocessable entity");
+                case "too-many-requests" -> new WebStatusException(429, "too many requests");
+                default -> new RuntimeException("internal failure");
+            };
         }
     }
 }

@@ -2,7 +2,7 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
-import org.springframework.util.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -1170,9 +1170,9 @@ public class StrKit extends StrUtil {
      */
     public static String replaceAll(String src, String tar, String str) {
         StringBuilder sb = new StringBuilder();
-        byte bytesSrc[] = src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte bytesSrc[] = src.getBytes();
 
-        byte bytes[] = str.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte bytes[] = str.getBytes();
         int point = 0;
         for (int i = 0; i < bytes.length; i++) {
 
@@ -1252,7 +1252,7 @@ public class StrKit extends StrUtil {
             return new String[0];
         }
         List<String> ret = new ArrayList<String>();
-        byte bytes[] = src.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte bytes[] = src.getBytes();
         int curPoint = 0;
         for (int i = 0; i < bytes.length; i++) {
             if (bytes[i] == letter) {

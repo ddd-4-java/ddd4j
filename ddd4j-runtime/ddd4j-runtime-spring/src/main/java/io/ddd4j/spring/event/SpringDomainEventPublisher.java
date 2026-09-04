@@ -57,8 +57,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
             log.warn("Attempted to publish null event object");
             return;
         }
-        if (event instanceof DomainEvent<?>) {
-            DomainEvent<?> domainEvent = (DomainEvent<?>) event;
+        if (event instanceof DomainEvent<?> domainEvent) {
             publish(domainEvent);
         } else {
             log.warn("Published event is not a DomainEvent instance, " +

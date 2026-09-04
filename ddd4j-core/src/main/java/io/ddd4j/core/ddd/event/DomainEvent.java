@@ -61,9 +61,11 @@ import java.util.Set;
 @Slf4j
 @SuppressWarnings("unchecked")
 public abstract class DomainEvent<ID extends EntityId> implements Event, Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<EventType>() {
+    private static final ClassValue<EventType> EVENT_TYPES = new ClassValue<>() {
         @Override
         protected EventType computeValue(Class<?> type) {
             return new EventType(type.getSimpleName());

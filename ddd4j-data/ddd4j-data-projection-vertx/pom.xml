@@ -23,6 +23,11 @@
 
     <dependencies>
         <!-- For DDD4j -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-projection</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- Vert.x Core（事件循环/上下文/worker 线程模型；坐标实证注记：
              ddd4j-dependencies 的 io.vertx:vertx-stack-depchain 条目是
              dependencyManagement 的 <scope>compile</scope> 版本管理项（非

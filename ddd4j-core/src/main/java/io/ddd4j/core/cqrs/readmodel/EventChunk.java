@@ -17,7 +17,6 @@ package io.ddd4j.core.cqrs.readmodel;
 import io.ddd4j.kit.lang.CollKit;
 import lombok.Getter;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +43,7 @@ public class EventChunk<E> {
     }
 
     public static <E> EventChunk<E> empty(long nextEventNumber) {
-        return new EventChunk<E>(Collections.<E>emptyList(), nextEventNumber);
+        return new EventChunk<>(List.of(), nextEventNumber);
     }
 
     public boolean hasEvents() {

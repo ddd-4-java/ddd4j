@@ -1,77 +1,194 @@
+/*
+ * Copyright ( (2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.core.cqrs.eventstore.jackson;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.Event;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.time.ZonedDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+/**
+ * {@link EventPayloadSerializer} 契约测试：round-trip、源 mapper 隔离、异常包装、
+ * 默认严格模式下反序列化（含 entity-id-path/event-type 回读）。
+ *
+ * <p>注意：本版本不再使用 {@code activateDefaultTyping} 多态标记——
+ * JSON 输出<b>不含</b>{@code @class}，反序列化端必须通过
+ * {@link EventPayloadSerializer#deserialize(String, Class)} 显式传入目标类型。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
+ */
 class EventPayloadSerializerTest {
 
-    private final EventPayloadSerializer serializer = new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build());
+    /**
+     * 测试基 mapper：Jackson 2 默认开启 FAIL_ON_UNKNOWN_PROPERTIES（与 Jackson 3 相反），
+     * 此处保留默认配置并显式 findAndAddModules 注册 JavaTimeModule 以支持 java.time。
+     * Jackson 2 的 JsonMapper.builder() 默认不含 JavaTimeModule（与 3 不同）。
+     */
+    private final ObjectMapper sourceMapper = JsonMapper.builder()
+            .findAndAddModules()
+            .build();
+
+    private final EventPayloadSerializer serializer = new EventPayloadSerializer(sourceMapper);
 
     @Test
-    void serializeShouldCarryOnlyBusinessProperty() {
-        String json = serializer.serialize(new OrderCreatedEvent("order-created"));
-        assertTrue(json.contains("\"fact\":\"order-created\""));
-        assertFalse(json.contains("eventId"));
-        assertFalse(json.contains("eventTimestamp"));
-        assertFalse(json.contains("entityIdPath"));
-        assertFalse(json.contains("aggregateVersion"));
+    void roundTripRestoresConcreteEventWithZonedDateTimeTimestamp() {
+        OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2);
+        ZonedDateTime originalTimestamp = original.getEventTimestamp();
+
+        DomainEvent<?> restored = serializer.deserialize(serializer.serialize(original), OrderPlacedEvent.class);
+
+        assertThat(restored).isInstanceOf(OrderPlacedEvent.class);
+        assertThat(((OrderPlacedEvent) restored).getProductName()).isEqualTo("thinkpad");
+        assertThat(((OrderPlacedEvent) restored).getQuantity()).isEqualTo(2);
+        assertThat(restored.getEventId()).isEqualTo(original.getEventId());
+        assertThat(restored.source()).isEqualTo("order-1");
+        // Jackson 数字时间戳不携带 ZoneId（回读统一为 UTC），按 instant 精确到纳秒断言
+        assertThat(restored.getEventTimestamp().toInstant()).isEqualTo(originalTimestamp.toInstant());
     }
 
     @Test
-    void deserializeShouldRestoreBusinessProperty() {
-        String json = serializer.serialize(new OrderCreatedEvent("renamed"));
-        DomainEvent<?> event = serializer.deserialize(json, OrderCreatedEvent.class);
-        assertInstanceOf(OrderCreatedEvent.class, event);
-        assertEquals("renamed", ((OrderCreatedEvent) event).getFact());
+    void roundTripPreservesEntityIdPath() {
+        // 验证 entity-id-path 也能正确回读（修复前需要 @JsonIgnoreProperties 绕过）
+        OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2);
+
+        OrderPlacedEvent restored = (OrderPlacedEvent) serializer.deserialize(
+                serializer.serialize(original), OrderPlacedEvent.class);
+
+        // 注意：TestAggregateRootId 未注册到 EntityIdRegistry，反序列化路径走
+        // StringEntityId 兜底（保留 value，type 退化为 String）—— 这是预期行为。
+        assertThat(restored.getEntityIdPath().asString()).isEqualTo("String:order-1");
+        assertThat(restored.getEntityIdPath().last().asString()).isEqualTo("order-1");
     }
 
     @Test
-    void deserializeShouldIgnoreUnknownProperty() {
-        DomainEvent<?> event = serializer.deserialize("{\"fact\":\"ok\",\"junk\":\"ignored\"}", OrderCreatedEvent.class);
-        assertEquals("ok", ((OrderCreatedEvent) event).getFact());
+    void roundTripPreservesEventType() {
+        // 验证 event-type 也能正确回读（修复前需要 @JsonIgnoreProperties 绕过）
+        OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2);
+
+        OrderPlacedEvent restored = (OrderPlacedEvent) serializer.deserialize(
+                serializer.serialize(original), OrderPlacedEvent.class);
+
+        assertThat(restored.getEventType().asString()).isEqualTo("OrderPlacedEvent");
     }
 
     @Test
-    void causalityMetadataShouldStayOutOfPayload() {
-        OrderCreatedEvent cause = new OrderCreatedEvent("cause");
-        OrderCreatedEvent effect = new OrderCreatedEvent("effect", cause);
-        String json = serializer.serialize(effect);
-        assertFalse(json.contains("correlationId"));
-        assertFalse(json.contains("causationId"));
+    void serializedJsonDoesNotCarryPolymorphicClassMarker() {
+        // 安全收紧：序列化产物不再包含 @class 标记
+        String json = serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
+
+        assertThat(json).doesNotContain("\"@class\"");
     }
 
-    private static final class TestId implements AggregateRootId {
-        private static final EntityType TYPE = new StringEntityType("Order");
-        private final String value;
-        private TestId(String value) { this.value = value; }
-        @Override public EntityType getType() { return TYPE; }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+    @Test
+    void constructionLeavesSourceMapperUntouched() throws Exception {
+        // 先用 serializer 序列化（走 copy 副本路径），再验证 source mapper 未被污染
+        serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
+
+        String plainJson = sourceMapper.writeValueAsString(new OrderPlacedEvent("macbook", 1));
+
+        assertThat(plainJson).doesNotContain("@class");
     }
 
-    /** 业务事件样例：无参构造 + JavaBean 属性（Jackson 往返约定）。 */
-    public static final class OrderCreatedEvent extends DomainEvent<TestId> {
-        private String fact;
+    @Test
+    void mapperKeepsDefaultStrictUnknownPropertyHandling() {
+        // Jackson 2 默认开启 FAIL_ON_UNKNOWN_PROPERTIES（修复后 entity-id-path/event-type 都能通过严格校验）
+        assertThat(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
+    }
 
-        public OrderCreatedEvent() { super(); }
+    @Test
+    void deserializeThrowsIllegalStateExceptionOnMalformedJson() {
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> serializer.deserialize("{\"productName\":", OrderPlacedEvent.class));
 
-        private OrderCreatedEvent(String fact) { super(new EntityIdPath(new TestId("order-1"))); this.fact = fact; }
+        assertThat(exception).hasMessage("Failed to deserialize event");
+        assertThat(exception).hasCauseInstanceOf(JacksonException.class);
+    }
 
-        private OrderCreatedEvent(String fact, Event causingEvent) { super(new EntityIdPath(new TestId("order-1")), causingEvent); this.fact = fact; }
+    @Test
+    void constructorRejectsNullSourceMapper() {
+        assertThrows(NullPointerException.class, () -> new EventPayloadSerializer(null));
+    }
 
-        public String getFact() { return fact; }
+    /**
+     * 测试聚合根标识：满足 {@link AggregateRootId} 契约。
+     */
+    record TestAggregateRootId(String value) implements AggregateRootId {
 
-        public void setFact(String fact) { this.fact = fact; }
+        private static final EntityType TYPE = new StringEntityType("TestAggregate");
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+    }
+
+    /**
+     * 测试事件载荷（朴素样例，无任何 Jackson workaround）。
+     */
+    static class OrderPlacedEvent extends DomainEvent<TestAggregateRootId> {
+
+        private String productName;
+        private int quantity;
+
+        OrderPlacedEvent() {
+            // Jackson 回读
+            super(new EntityIdPath(new TestAggregateRootId("order-1")));
+        }
+
+        OrderPlacedEvent(String productName, int quantity) {
+            this();
+            this.productName = productName;
+            this.quantity = quantity;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
     }
 }

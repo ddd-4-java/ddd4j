@@ -34,10 +34,10 @@
             <artifactId>ddd4j-mq-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Ddd4j auth-datascope (DataScopeProvider) -->
+        <!-- Ddd4j data-datascope (DataScopeProvider) -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-datascope</artifactId>
+            <artifactId>ddd4j-data-datascope</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- OpenTelemetry API (compile-only, runtime provided by agent) -->
@@ -49,16 +49,6 @@
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-context</artifactId>
         </dependency>
-            <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-</dependencies>
+    </dependencies>
 
 </project>

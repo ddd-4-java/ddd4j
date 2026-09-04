@@ -121,7 +121,7 @@ public final class DomainModelHelper {
      * 移除 Domain Model 缓存（用于测试或热加载）。
      */
     public static void remove(Class<?> modelClass) {
-        MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType, modelClass));
+        MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType(), modelClass));
     }
 
     /**
@@ -131,26 +131,6 @@ public final class DomainModelHelper {
         MODEL_INFO_CACHE.clear();
     }
 
-    private static final class ModelMappingKey {
-        private final Class<?> modelType;
-        private final Class<?> persistenceType;
-
-        private ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
-            this.modelType = modelType;
-            this.persistenceType = persistenceType;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ModelMappingKey)) return false;
-            ModelMappingKey that = (ModelMappingKey) o;
-            return modelType.equals(that.modelType) && persistenceType.equals(that.persistenceType);
-        }
-
-        @Override
-        public int hashCode() {
-            return 31 * modelType.hashCode() + persistenceType.hashCode();
-        }
+    private record ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
     }
 }

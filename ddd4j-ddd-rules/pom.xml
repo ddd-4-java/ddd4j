@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-dependencies</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-ddd-rules</artifactId>
+    <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>DDD 架构规范聚合：Clean Architecture / COLA 等不同 DDD 架构的目录规范检查与约束。DDD
+        构建块（AggregateRoot/DomainEvent/Command/Repository）已收敛到 ddd4j-core。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <modules>
+        <!-- Clean Architecture 规范检查 -->
+        <module>ddd4j-ddd-rules-clean</module>
+        <!-- COLA 架构规范检查 -->
+        <module>ddd4j-ddd-rules-cola</module>
+    </modules>
+
+</project>

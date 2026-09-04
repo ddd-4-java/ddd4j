@@ -81,7 +81,7 @@ public class ProjectionRunner<E> {
                             ProjectionMetrics metrics) {
         this.projectionService = Objects.requireNonNull(projectionService, "projectionService must not be null");
         this.chunkReader = Objects.requireNonNull(chunkReader, "chunkReader must not be null");
-        this.metrics = (metrics != null ? metrics : NoopProjectionMetrics.INSTANCE);
+        this.metrics = Objects.requireNonNullElse(metrics, NoopProjectionMetrics.INSTANCE);
     }
 
     /**

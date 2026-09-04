@@ -1,51 +1,124 @@
 pipeline {
   agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+  }
+
+  parameters {
+    string(
+      name: 'DEPLOY_VERSION',
+      defaultValue: '',
+      description: '待发布版本。留空时优先使用 Tag，非 Tag 构建使用根 POM 的 revision。'
+    )
+    string(
+      name: 'ALIYUN_MAVEN_CREDENTIALS_ID',
+      defaultValue: 'aliyun-maven',
+      description: 'Jenkins 中保存阿里云 Maven 用户名和密码的 Username/Password 凭据 ID。'
+    )
+    booleanParam(
+      name: 'SKIP_TESTS',
+      defaultValue: false,
+      description: '紧急补发时可跳过测试；正式版本默认执行测试。'
+    )
+  }
+
+  environment {
+    MAVEN_OPTS = '-Xms512m -Xmx2048m -Dfile.encoding=UTF-8'
+  }
+
   stages {
     stage('检出') {
       steps {
-        checkout([$class: 'GitSCM',
-        branches: [[name: GIT_BUILD_REF]],
-        userRemoteConfigs: [[
-          url: GIT_REPO_URL,
-          credentialsId: CREDENTIALS_ID
-        ]]])
+        checkout scm
       }
     }
-    stage('编译') {
+
+    stage('解析发布版本') {
+      steps {
+        script {
+          String requestedVersion = params.DEPLOY_VERSION.trim()
+          String tagVersion = env.TAG_NAME?.trim()
+          String resolvedVersion
+
+          if (requestedVersion) {
+            resolvedVersion = requestedVersion
+          } else if (tagVersion) {
+            resolvedVersion = tagVersion.replaceFirst('^v', '')
+          } else {
+            resolvedVersion = sh(
+              script: 'mvn -q -DforceStdout help:evaluate -Dexpression=revision',
+              returnStdout: true
+            ).trim()
+          }
+
+          if (!resolvedVersion || resolvedVersion.contains('${')) {
+            error('无法解析发布版本，请通过 DEPLOY_VERSION 或版本 Tag 显式指定。')
+          }
+
+          env.RESOLVED_DEPLOY_VERSION = resolvedVersion
+          currentBuild.displayName = "#${env.BUILD_NUMBER} ${resolvedVersion}"
+          echo "准备发布 Maven 版本: ${resolvedVersion}"
+        }
+      }
+    }
+
+    stage('部署到阿里云 Maven 私有仓库') {
       steps {
         withCredentials([
           usernamePassword(
-            // CODING 持续集成的环境变量中内置了一个用于上传到当前项目制品库的凭证
-            credentialsId: "${CODING_ARTIFACTS_CREDENTIALS_ID}",
-            usernameVariable: 'CODING_ARTIFACTS_USERNAME',
-            passwordVariable: 'CODING_ARTIFACTS_PASSWORD'
-          )]) {
-            withEnv([
-                  "CODING_ARTIFACTS_USERNAME=${CODING_ARTIFACTS_USERNAME}",
-                  "CODING_ARTIFACTS_PASSWORD=${CODING_ARTIFACTS_PASSWORD}"
-              ]) {
-                sh 'mvn package -U -P test -Dmaven.test.skip=true -s ./settings.xml'
-              }
-            }
-          }
+            credentialsId: "${params.ALIYUN_MAVEN_CREDENTIALS_ID}",
+            usernameVariable: 'ALIYUN_MAVEN_USERNAME',
+            passwordVariable: 'ALIYUN_MAVEN_PASSWORD'
+          )
+        ]) {
+          sh '''
+            set +x
+            SETTINGS_FILE="$(mktemp)"
+            trap 'rm -f "$SETTINGS_FILE"' EXIT
+
+            cat > "$SETTINGS_FILE" <<'SETTINGS_XML'
+            <?xml version="1.0" encoding="UTF-8"?>
+            <settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+              <servers>
+                <server>
+                  <id>2624322-release-6F6h6R</id>
+                  <username>${env.ALIYUN_MAVEN_USERNAME}</username>
+                  <password>${env.ALIYUN_MAVEN_PASSWORD}</password>
+                </server>
+                <server>
+                  <id>2624322-snapshot-3EoOv3</id>
+                  <username>${env.ALIYUN_MAVEN_USERNAME}</username>
+                  <password>${env.ALIYUN_MAVEN_PASSWORD}</password>
+                </server>
+              </servers>
+            </settings>
+            SETTINGS_XML
+
+            TEST_ARGUMENT=''
+            if [ "$SKIP_TESTS" = 'true' ]; then
+              TEST_ARGUMENT='-DskipTests'
+            fi
+
+            mvn -B -U -s "$SETTINGS_FILE" \
+              -Drevision="$RESOLVED_DEPLOY_VERSION" \
+              $TEST_ARGUMENT \
+              deploy
+          '''
         }
-        stage('构建镜像并推送到 CODING Docker 制品库') {
-          steps {
-            sh "docker build -t ${CODING_DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} -f ${DOCKERFILE_PATH} ${DOCKER_BUILD_CONTEXT}"
-            sh "docker tag ${CODING_DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ${CODING_DOCKER_IMAGE_NAME}:latest"
-            useCustomStepPlugin(key: 'coding-public:artifact_docker_push', version: 'latest', params: [image:"${CODING_DOCKER_IMAGE_NAME}:latest",repo:"${DOCKER_REPO_NAME}"])
-          }
-        }
-      }
-      environment {
-        DOCKER_REPO_NAME = 'docker'
-        DOCKERFILE_PATH = 'Dockerfile'
-        DOCKER_BUILD_CONTEXT = '.'
-        SERVICE_NAME = '${DEPOT_NAME}_${GIT_LOCAL_BRANCH:-branch}'
-        DOCKER_IMAGE_VERSION = '${GIT_LOCAL_BRANCH:-branch}-${GIT_COMMIT_SHORT}'
-        CODING_DOCKER_REG_HOST = "${CCI_CURRENT_TEAM}-docker.pkg.${CCI_CURRENT_DOMAIN}"
-        CODING_DOCKER_IMAGE_NAME = "${PROJECT_NAME.toLowerCase()}/${DOCKER_REPO_NAME}/${DEPOT_NAME}"
-        CODING_MAVEN_REPO_ID = "${CCI_CURRENT_TEAM}-${PROJECT_NAME}-${MAVEN_REPO_NAME}"
-        CODING_MAVEN_REPO_URL = "${CCI_CURRENT_WEB_PROTOCOL}://${CCI_CURRENT_TEAM}-maven.pkg.${CCI_CURRENT_DOMAIN}/repository/${PROJECT_NAME}/${MAVEN_REPO_NAME}/"
       }
     }
+  }
+
+  post {
+    success {
+      echo "阿里云 Maven 私有仓库发布成功: ${env.RESOLVED_DEPLOY_VERSION}"
+    }
+    failure {
+      echo "阿里云 Maven 私有仓库发布失败: ${env.RESOLVED_DEPLOY_VERSION ?: 'unknown'}"
+    }
+  }
+}

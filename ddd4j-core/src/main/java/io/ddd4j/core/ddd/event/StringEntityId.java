@@ -27,6 +27,8 @@ import java.util.Objects;
  * {@link EntityId} 类型，避免不同聚合的字符串标识被误用。</p>
  */
 public final class StringEntityId implements EntityId {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     static final EntityType TYPE = new StringEntityType("String");

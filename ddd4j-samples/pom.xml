@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../ddd4j-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ddd4j-samples</artifactId>
+    <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 框架无关的业务内核与非 Spring Boot 运行时示例。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <properties>
+        <!-- 示例模块仅用于演示与测试，不发布到远程仓库 -->
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <modules>
+        <!-- 跨运行时共享的生产型订单业务内核 -->
+        <module>ddd4j-sample-order-domain</module>
+        <module>ddd4j-sample-order-application</module>
+        <module>ddd4j-sample-order-local</module>
+        <module>ddd4j-sample-order-testkit</module>
+        <module>ddd4j-sample-order-jdbc</module>
+        <module>ddd4j-sample-order-kafka</module>
+        <module>ddd4j-sample-order-redis</module>
+
+        <!-- 非 Boot 运行时示例：Order 充血模型、CQRS、缓存与消息边界。 -->
+        <module>ddd4j-sample-quarkus</module>
+        <module>ddd4j-sample-javalin</module>
+        <module>ddd4j-sample-micronaut</module>
+        <module>ddd4j-sample-vertx</module>
+        <module>ddd4j-sample-helidon</module>
+        <module>ddd4j-sample-dropwizard</module>
+
+        <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
+        <module>ddd4j-sample-quarkus-cqrs</module>
+        <module>ddd4j-sample-javalin-cqrs</module>
+        <module>ddd4j-sample-dropwizard-cqrs</module>
+        <module>ddd4j-sample-helidon-cqrs</module>
+        <module>ddd4j-sample-micronaut-cqrs</module>
+        <module>ddd4j-sample-vertx-cqrs</module>
+
+        <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
+        <module>ddd4j-sample-quarkus-satoken</module>
+        <module>ddd4j-sample-quarkus-shiro</module>
+        <module>ddd4j-sample-javalin-satoken</module>
+        <module>ddd4j-sample-javalin-shiro</module>
+    </modules>
+
+</project>

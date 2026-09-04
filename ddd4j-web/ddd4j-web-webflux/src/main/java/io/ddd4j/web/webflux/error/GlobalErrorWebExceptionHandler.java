@@ -1,6 +1,8 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.web.webflux.error;
 
@@ -13,7 +15,7 @@ import io.ddd4j.web.error.BaseErrorConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -67,7 +69,7 @@ public class GlobalErrorWebExceptionHandler extends BaseErrorConfiguration imple
         WebError error = translate(ex);
         logUnhandled(ex, error);
 
-        response.setStatusCode(HttpStatus.valueOf(error.status()));
+        response.setStatusCode(HttpStatusCode.valueOf(error.status()));
         response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
         byte[] bodyBytes;

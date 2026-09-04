@@ -23,19 +23,14 @@ import io.micronaut.runtime.server.EmbeddedServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -51,19 +46,19 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
         Subject subject = mock(Subject.class);
         when(subject.verify("contract-valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
 
-        Map<String, Object> properties = new LinkedHashMap<>();
-        properties.put("micronaut.server.port", -1);
-        properties.put("ddd4j.web.public-paths", Arrays.asList(
-                WebContractPaths.SUCCESS,
-                WebContractPaths.CREATED,
-                WebContractPaths.PUBLIC,
-                WebContractPaths.CONTEXT,
-                WebContractPaths.IDEMPOTENT,
-                "/contract/errors/**"));
-        properties.put("ddd4j.web.idempotency-cache-name", "micronaut-contract");
+        Map<String, Object> properties = Map.of(
+                "micronaut.server.port", -1,
+                "ddd4j.web.public-paths", List.of(
+                        WebContractPaths.SUCCESS,
+                        WebContractPaths.CREATED,
+                        WebContractPaths.PUBLIC,
+                        WebContractPaths.CONTEXT,
+                        WebContractPaths.IDEMPOTENT,
+                        "/contract/errors/**"),
+                "ddd4j.web.idempotency-cache-name", "micronaut-contract");
         server = ApplicationContext.run(EmbeddedServer.class, properties);
         BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, provider(subject));
-        contractClient = new MicronautContractClient(server.getPort());
+        contractClient = new MicronautContractClient(HttpClient.newHttpClient(), server.getPort());
     }
 
     @AfterEach
@@ -90,39 +85,23 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
         };
     }
 
-    private static final class MicronautContractClient implements WebContractClient {
-        private final int port;
-
-        MicronautContractClient(int port) {
-            this.port = port;
-        }
+    private record MicronautContractClient(HttpClient httpClient, int port) implements WebContractClient {
 
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
-                URL url = new URL("http://127.0.0.1:" + port + path);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod(method);
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    conn.setRequestProperty(entry.getKey(), entry.getValue());
-                }
-                if (body != null) {
-                    conn.setDoOutput(true);
-                    try (OutputStream os = conn.getOutputStream()) {
-                        os.write(body.getBytes(StandardCharsets.UTF_8));
-                    }
-                }
-                int statusCode = conn.getResponseCode();
-                Map<String, java.util.List<String>> responseHeaders = conn.getHeaderFields();
-                String responseBody;
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-                    responseBody = reader.lines().collect(Collectors.joining("\n"));
-                } catch (Exception e) {
-                    responseBody = "";
-                }
-                conn.disconnect();
-                return new WebContractResponse(statusCode, responseHeaders, responseBody);
+                HttpRequest.Builder builder = HttpRequest.newBuilder()
+                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                headers.forEach(builder::header);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
+                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                java.net.http.HttpResponse<String> response = httpClient.send(
+                        builder.method(method, publisher).build(),
+                        java.net.http.HttpResponse.BodyHandlers.ofString());
+                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Micronaut contract request interrupted", exception);
             } catch (Exception exception) {
                 throw new IllegalStateException("Micronaut contract request failed", exception);
             }
@@ -135,22 +114,22 @@ final class MicronautContractController {
 
     @Get("/success")
     R<Map<String, String>> success() {
-        return R.ok(Collections.singletonMap("result", "ok"));
+        return R.ok(Map.of("result", "ok"));
     }
 
     @Get("/public")
     R<Map<String, String>> publicEndpoint() {
-        return R.ok(Collections.singletonMap("result", "ok"));
+        return R.ok(Map.of("result", "ok"));
     }
 
     @Get("/protected")
     R<Map<String, String>> protectedEndpoint() {
-        return R.ok(Collections.singletonMap("result", "ok"));
+        return R.ok(Map.of("result", "ok"));
     }
 
     @Post("/created")
     HttpResponse<R<Map<String, String>>> created() {
-        return HttpResponse.created(R.ok(Collections.singletonMap("result", "created")));
+        return HttpResponse.created(R.ok(Map.of("result", "created")));
     }
 
     @Get("/context")
@@ -167,22 +146,20 @@ final class MicronautContractController {
 
     @Post("/idempotent")
     R<Map<String, String>> idempotent() {
-        return R.ok(Collections.singletonMap("result", "accepted"));
+        return R.ok(Map.of("result", "accepted"));
     }
 
     @Get("/errors/{type}")
     R<Void> error(String type) {
-        RuntimeException ex;
-        switch (type) {
-            case "bad-request": ex = new IllegalArgumentException("bad request"); break;
-            case "forbidden": ex = new SecurityException("forbidden"); break;
-            case "not-found": ex = new NoSuchElementException("not found"); break;
-            case "conflict": ex = new IllegalStateException("conflict"); break;
-            case "unsupported-media-type": ex = new WebStatusException(415, "unsupported media type"); break;
-            case "unprocessable-entity": ex = new WebStatusException(422, "unprocessable entity"); break;
-            case "too-many-requests": ex = new WebStatusException(429, "too many requests"); break;
-            default: ex = new RuntimeException("internal failure"); break;
-        }
-        throw ex;
+        throw switch (type) {
+            case "bad-request" -> new IllegalArgumentException("bad request");
+            case "forbidden" -> new SecurityException("forbidden");
+            case "not-found" -> new NoSuchElementException("not found");
+            case "conflict" -> new IllegalStateException("conflict");
+            case "unsupported-media-type" -> new WebStatusException(415, "unsupported media type");
+            case "unprocessable-entity" -> new WebStatusException(422, "unprocessable entity");
+            case "too-many-requests" -> new WebStatusException(429, "too many requests");
+            default -> new RuntimeException("internal failure");
+        };
     }
 }

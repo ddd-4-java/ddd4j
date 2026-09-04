@@ -1,17 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.web.webmvc.core;
 
 import com.fasterxml.jackson.core.JacksonException;
@@ -81,7 +67,7 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
                 //将数据包装在R对象里后转换为json串进行返回
                 return objectMapper.writeValueAsString(R.ok(data));
             } catch (JacksonException e) {
-                throw new BizRuntimeException("JSON serialization failed", e);
+                throw new BizRuntimeException(e);
             }
         }
         //否则直接包装成R对象返回

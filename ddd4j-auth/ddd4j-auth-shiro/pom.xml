@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-auth-shiro</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <description>Ddd4j Shiro Component</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <!-- For DDD4j Core -->
@@ -28,10 +30,6 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-spring</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>

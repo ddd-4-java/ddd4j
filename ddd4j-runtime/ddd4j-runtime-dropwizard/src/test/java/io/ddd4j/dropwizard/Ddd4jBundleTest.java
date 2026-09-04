@@ -2,9 +2,9 @@ package io.ddd4j.dropwizard;
 
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.i18n.I18nProvider;
-import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;

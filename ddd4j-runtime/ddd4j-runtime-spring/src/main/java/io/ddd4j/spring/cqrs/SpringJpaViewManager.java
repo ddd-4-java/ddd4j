@@ -147,7 +147,7 @@ public class SpringJpaViewManager implements ViewManager {
         if (projectionMetrics != null) {
             return projectionMetrics.getLastRunInfo(streamId)
                     .map(info -> new ProjectionStatus(streamId, nextEventNumber, isRunning(),
-                            info.getLastRunAt(), info.getLastEventCount(), info.getLastError()))
+                            info.lastRunAt(), info.lastEventCount(), info.lastError()))
                     .orElse(new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null));
         }
         return new ProjectionStatus(streamId, nextEventNumber, isRunning(), null, 0, null);

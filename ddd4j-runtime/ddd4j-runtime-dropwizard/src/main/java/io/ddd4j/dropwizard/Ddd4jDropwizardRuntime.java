@@ -13,7 +13,6 @@ import io.dropwizard.lifecycle.Managed;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Collections;
 
 /**
  * Dropwizard Managed 生命周期中的 ddd4j SPI 注册器。
@@ -26,7 +25,7 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
 
     public Ddd4jDropwizardRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus) {
-        this(publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
+        this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
     public Ddd4jDropwizardRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,

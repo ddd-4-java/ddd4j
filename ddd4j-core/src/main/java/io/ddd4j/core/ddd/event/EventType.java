@@ -25,6 +25,8 @@ import java.util.Objects;
  * 领域事件类型的稳定标识。
  */
 public final class EventType implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String value;
@@ -56,10 +58,9 @@ public final class EventType implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof EventType)) {
+        if (!(object instanceof EventType that)) {
             return false;
         }
-        EventType that = (EventType) object;
         return Objects.equals(value, that.value);
     }
 

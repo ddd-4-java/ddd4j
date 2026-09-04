@@ -102,12 +102,12 @@ public class OnsMQClient implements MQClient {
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
-        String group = StrKit.isNotEmpty(listener.getGroup()) ? listener.getGroup() : properties.getConsumerId();
-        if (!StrKit.isNotEmpty(group)) {
+        String group = StrKit.hasText(listener.getGroup()) ? listener.getGroup() : properties.getConsumerId();
+        if (!StrKit.hasText(group)) {
             throw new IllegalStateException("OnsClient requires consumerId or @MQEventListener(group=...)");
         }
-        String topic = StrKit.isNotEmpty(listener.getTopic()) ? listener.getTopic() : properties.getTopic();
-        if (!StrKit.isNotEmpty(topic)) {
+        String topic = StrKit.hasText(listener.getTopic()) ? listener.getTopic() : properties.getTopic();
+        if (!StrKit.hasText(topic)) {
             throw new IllegalStateException("OnsClient requires topic");
         }
         // ONS 支持 subscription 表达式原生 tag 过滤

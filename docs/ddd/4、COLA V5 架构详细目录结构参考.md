@@ -503,6 +503,7 @@ project-root/
 ## 🎯 **COLA v5 新特性在目录中的体现**
 
 ### 1. **扩展点机制（Extension Point）**
+
 ```java
 // 扩展点定义
 @ExtensionPoint
@@ -521,6 +522,7 @@ public class VipOrderPriceCalculateExt implements OrderPriceCalculateExtPt {
 ```
 
 ### 2. **能力（Ability）概念**
+
 ```java
 // 领域能力定义
 public interface CustomerAbility {
@@ -536,11 +538,13 @@ public class CustomerAbilityImpl implements CustomerAbility {
 ```
 
 ### 3. **CQRS强化**
+
 - 命令和查询执行器分离
 - 专门的命令对象和查询对象
 - 事件执行器支持
 
 ### 4. **组件化基础设施**
+
 - 分布式锁、限流器、熔断器等作为基础设施组件
 - 统一的配置管理
 
@@ -588,6 +592,7 @@ project-root/
 ## 🚀 **快速开始模板**
 
 COLA v5 提供了Maven Archetype：
+
 ```bash
 mvn archetype:generate \
   -DarchetypeGroupId=com.alibaba.cola \

@@ -354,7 +354,7 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
             String currentJson = bucket.get();
             V currentValue = deserialize(currentJson);
 
-            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<V>() {
+            io.ddd4j.core.cache.GetsResponse<V> resp = new io.ddd4j.core.cache.GetsResponse<>() {
                 @Override
                 public String key() {
                     return cachedKey;

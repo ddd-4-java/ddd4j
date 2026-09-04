@@ -1,0 +1,10 @@
+micronaut:
+  application:
+    name: ddd4j-sample-micronaut
+  server:
+    port: 8083
+
+ddd4j:
+  web:
+    public-paths:
+      - /api/auth/**

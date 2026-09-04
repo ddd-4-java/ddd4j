@@ -70,8 +70,7 @@ public class SecuritySubject implements Subject {
         if (Objects.nonNull(principal)) {
             return principal;
         }
-        if (auth.getPrincipal() instanceof AuthUserDetails) {
-            AuthUserDetails userDetails = (AuthUserDetails) auth.getPrincipal();
+        if (auth.getPrincipal() instanceof AuthUserDetails userDetails) {
             return (T) userDetails.getAuthPrincipal();
         }
         List<AuthPrincipal.RolePair> roles = new ArrayList<>();

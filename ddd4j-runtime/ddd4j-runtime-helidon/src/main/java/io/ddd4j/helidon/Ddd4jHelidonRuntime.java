@@ -13,7 +13,6 @@ import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Collections;
 
 /**
  * Helidon MP CDI Extension 使用的显式 ddd4j 运行时生命周期。
@@ -26,7 +25,7 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
 
     public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus) {
-        this(publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
+        this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
     public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,

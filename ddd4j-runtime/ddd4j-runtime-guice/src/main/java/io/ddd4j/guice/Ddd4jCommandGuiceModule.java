@@ -86,6 +86,6 @@ public class Ddd4jCommandGuiceModule extends AbstractModule {
     @SuppressWarnings("unchecked")
     private CommandExecutor<?> resolveExecutor(Injector injector, Key<?> key) {
         Object instance = injector.getInstance((Key<Object>) key);
-        return instance instanceof CommandExecutor ? (CommandExecutor<?>) instance : null;
+        return instance instanceof CommandExecutor<?> executor ? executor : null;
     }
 }

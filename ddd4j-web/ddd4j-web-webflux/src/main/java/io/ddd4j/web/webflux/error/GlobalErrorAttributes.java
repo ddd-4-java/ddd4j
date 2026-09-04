@@ -1,6 +1,8 @@
 /**
  * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
  * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 package io.ddd4j.web.webflux.error;
 
@@ -20,7 +22,9 @@ import java.util.Objects;
 @Component
 public class GlobalErrorAttributes {
 
-    /** 与 Boot {@code DefaultErrorAttributes.ERROR_ATTRIBUTE} 语义一致，便于 Router 与 {@link ServerWebExchange} 共用 */
+    /**
+     * 与 Boot {@code DefaultErrorAttributes.ERROR_ATTRIBUTE} 语义一致，便于 Router 与 {@link ServerWebExchange} 共用
+     */
     public static final String ERROR_ATTRIBUTE = GlobalErrorAttributes.class.getName() + ".ERROR";
 
     /**
@@ -62,7 +66,7 @@ public class GlobalErrorAttributes {
             errorAttributes.put("data", error.getMessage());
         } else if (Objects.nonNull(error)) {
             errorAttributes.put("code", HttpStatus.INTERNAL_SERVER_ERROR);
-            errorAttributes.put("data", error.getMessage() != null ? error.getMessage() : "INTERNAL SERVER ERROR");
+            errorAttributes.put("data", Objects.nonNull(error.getMessage()) ? error.getMessage() : "INTERNAL SERVER ERROR");
         } else {
             errorAttributes.put("code", HttpStatus.INTERNAL_SERVER_ERROR);
             errorAttributes.put("data", "INTERNAL SERVER ERROR");

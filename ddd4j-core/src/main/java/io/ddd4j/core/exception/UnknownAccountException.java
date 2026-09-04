@@ -30,6 +30,8 @@ import java.io.Serial;
  * @since 3.0.0
  */
 public class UnknownAccountException extends AuthenticationException {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public UnknownAccountException(String message) {
