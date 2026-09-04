@@ -11,89 +11,47 @@
     </parent>
 
     <artifactId>ddd4j-data</artifactId>
-    <description>ddd4j 数据层：BaseRepositoryImpl 四泛型封装 MyBatis Plus，充血 Model/Query，多租户</description>
+    <packaging>pom</packaging>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j 数据层聚合根：cqrs/projection/event-store 各框架实现 + crypto/external/logs/mybatis/mybatisplus/jpa/datascope 扩展（与 2.0.x/3.0.x 拓扑对齐）。</description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <!--
-        注意：ddd4j-data 在 1.0.x 行是非聚合根的 jar 模块（共享 src 提供 annotation/config/BaseRepositoryImpl 等基础），
-        cqrs/projection/event-store 子模块通过 relativePath=../pom.xml 复用本聚合 pom 作为依赖源。
-        与 2.0.x/3.0.x 不同构（它们使用 packaging=pom + ddd4j-data-core 拆分子模块）。
-        这是 1.0.x 历史的"目录结构差异"，迁移到 packaging=pom 需要新建 ddd4j-data-core 容纳共享代码——大手术。
-        暂保留原结构，并在 2.0.x/3.0.x 的非允许轴偏差表中标注。
+        2026-09-04 ddd4j-data 转为 packaging=pom 聚合根（与 2.0.x/3.0.x 对齐）：
+        原 ddd4j-data 根 src 的 19 个共享类（annotation/config/typehandlers/旧版 BaseRepositoryImpl）
+        已删除——它们是过时代码：
+        - 6 个 orm 注解已被 ddd4j-annotation/orm 取代
+        - 10 个 typehandlers 已不再使用（MyBatis-Plus 集成移至 ddd4j-data-mybatisplus 子模块）
+        - 旧版 BaseRepositoryImpl 与 ddd4j-data-mybatisplus 子模块重复
+        子模块各自自包含，无外部共享代码需求。
     -->
 
-    <dependencies>
-        <!-- For ddd4j-core -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <!-- For Spring Boot AutoConfigure -->
-<!-- For Spring TX -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-        <!-- For MyBatis Plus -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
-        </dependency>
-        <!-- For Hutool -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-        <!-- For Commons Lang3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <!-- Test -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <!--
+            2026-09-04 收敛：
+            - 仅声明 1.0.x JDK 8 行能编译的子模块（11 个）
+            - 移除 quarkus / micronaut / helidon / panache / jpa 等使用 jakarta 命名空间的模块
+              （1.0.x JDK 8 + javax 命名空间基线不兼容）
+            - 移除 11 个空壳子模块（仅 target 残留）
+        -->
+        <!-- cqrs 核心（从 2.0.x 复制补齐 2026-09-04） -->
+        <module>ddd4j-data-cqrs</module>
+        <!-- cqrs 框架桥接（仅 javalin/dropwizard/vertx，quarkus/micronaut/helidon 1.0.x 不兼容） -->
+        <module>ddd4j-data-cqrs-javalin</module>
+        <module>ddd4j-data-cqrs-dropwizard</module>
+        <module>ddd4j-data-cqrs-vertx</module>
+        <!-- projection 框架桥接（同上） -->
+        <module>ddd4j-data-projection-javalin</module>
+        <module>ddd4j-data-projection-dropwizard</module>
+        <module>ddd4j-data-projection-vertx</module>
+        <!-- 扩展（mybatis/mybatisplus/crypto/logs/external 均 javax 命名空间） -->
+        <module>ddd4j-data-mybatis</module>
+        <module>ddd4j-data-mybatisplus</module>
+        <module>ddd4j-data-crypto</module>
+        <module>ddd4j-data-logs</module>
+        <module>ddd4j-data-external</module>
+    </modules>
 
-    <build>
-        <plugins>
-            <!-- 覆盖 parent 的 surefire skip=true，本模块允许运行单元测试 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skip>false</skip>
-                    <skipTests>false</skipTests>
-                    <!-- 覆盖 parent 中含 PermSize 的 argLine（JDK 8+ 已移除该参数，否则 fork VM 无法启动） -->
-                    <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <!-- 2026-09-04：ddd4j-data 已转 packaging=pom 聚合根，移除原 jar 模块的 dependencies + build（子模块各自自管） -->
 
 </project>

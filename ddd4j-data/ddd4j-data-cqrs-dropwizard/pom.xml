@@ -23,6 +23,11 @@
 
     <dependencyManagement>
         <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-cqrs</artifactId>
+            <version>${revision}</version>
+        </dependency>
             <!-- Jersey 3.1.x 对齐（模块级覆盖）：dropwizard-bom 5.0.2 只管理
                  io.dropwizard.* 构件，org.glassfish.jersey 的版本来自
                  ddd4j-dependencies:5171-5179 的 jersey-bom（${jersey.version}=

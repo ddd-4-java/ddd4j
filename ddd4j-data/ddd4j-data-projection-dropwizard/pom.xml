@@ -58,11 +58,6 @@
 
     <dependencies>
         <!-- For DDD4j -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-projection</artifactId>
-            <version>${revision}</version>
-        </dependency>
         <!-- Dropwizard 核心（Jetty/Jersey/Jackson 装配栈，无 DI 容器；版本由
              ddd4j-dependencies:2886-2888 导入的 io.dropwizard:dropwizard-bom
              （${dropwizard-bom.version}=5.0.2）管理，刻意不声明） -->
