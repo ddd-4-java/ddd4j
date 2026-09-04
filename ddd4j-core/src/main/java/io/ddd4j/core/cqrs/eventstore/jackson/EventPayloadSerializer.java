@@ -63,6 +63,8 @@ public class EventPayloadSerializer {
      */
     public EventPayloadSerializer(ObjectMapper source) {
         this.objectMapper = Objects.requireNonNull(source, "source must not be null").copy();
+        // 对齐 2.0.x/Jackson3 语义：反序列化忽略未知字段（事件载荷向前兼容）
+        this.objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     /**

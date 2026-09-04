@@ -1,5 +1,6 @@
 package io.ddd4j.web.webflux;
 
+import java.util.Collections;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
@@ -120,12 +121,12 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
         @GetMapping({WebContractPaths.SUCCESS, WebContractPaths.PUBLIC, WebContractPaths.PROTECTED})
         R<Map<String, String>> success() {
-            return R.ok(Map.of("result", "ok"));
+            return R.ok(Collections.singletonMap("result", "ok"));
         }
 
         @PostMapping(WebContractPaths.CREATED)
         ResponseEntity<R<Map<String, String>>> created() {
-            return ResponseEntity.status(HttpStatus.CREATED).body(R.ok(Map.of("result", "created")));
+            return ResponseEntity.status(HttpStatus.CREATED).body(R.ok(Collections.singletonMap("result", "created")));
         }
 
         @GetMapping(WebContractPaths.CONTEXT)
@@ -141,27 +142,48 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
         @PostMapping(WebContractPaths.IDEMPOTENT)
         R<Map<String, String>> idempotent() {
-            return R.ok(Map.of("result", "accepted"));
+            return R.ok(Collections.singletonMap("result", "accepted"));
         }
 
         @GetMapping("/contract/errors/{type}")
         Mono<R<Void>> error(@PathVariable("type") String type) {
-            Throwable throwable = switch (type) {
-                case "bad-request" -> new IllegalArgumentException("bad request");
-                case "forbidden" -> new SecurityException("forbidden");
-                case "not-found" -> new NoSuchElementException("not found");
-                case "conflict" -> new IllegalStateException("conflict");
-                case "unsupported-media-type" -> new WebStatusException(415, "unsupported media type");
-                case "unprocessable-entity" -> new WebStatusException(422, "unprocessable entity");
-                case "too-many-requests" -> new WebStatusException(429, "too many requests");
-                default -> new RuntimeException("internal failure");
-            };
+            Throwable throwable;
+            switch (type) {
+                case "bad-request": throwable = new IllegalArgumentException("bad request"); break;
+                case "forbidden": throwable = new SecurityException("forbidden"); break;
+                case "not-found": throwable = new NoSuchElementException("not found"); break;
+                case "conflict": throwable = new IllegalStateException("conflict"); break;
+                case "unsupported-media-type": throwable = new WebStatusException(415, "unsupported media type"); break;
+                case "unprocessable-entity": throwable = new WebStatusException(422, "unprocessable entity"); break;
+                case "too-many-requests": throwable = new WebStatusException(429, "too many requests"); break;
+                default: throwable = new RuntimeException("internal failure"); break;
+            }
             return Mono.error(throwable);
         }
     }
 
-    private record WebFluxContractClient(WebTestClient webTestClient) implements WebContractClient {
+    private static final class WebFluxContractClient implements WebContractClient {
+        private final WebTestClient webTestClient;
 
+        public WebFluxContractClient(WebTestClient webTestClient) {
+            this.webTestClient = webTestClient;
+        }
+        public WebTestClient webTestClient() { return webTestClient; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof WebFluxContractClient)) return false;
+            WebFluxContractClient other = (WebFluxContractClient) o;
+            return Objects.equals(this.webTestClient, other.webTestClient);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(webTestClient);
+        }
+        @Override
+        public String toString() {
+            return "WebFluxContractClient{" + "webTestClient=" + webTestClient + "}";
+        }
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);
@@ -177,5 +199,6 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
                     ? "" : new String(responseBody, StandardCharsets.UTF_8);
             return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
         }
+    
     }
 }

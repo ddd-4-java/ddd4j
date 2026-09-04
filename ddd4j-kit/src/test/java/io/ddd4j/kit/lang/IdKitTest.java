@@ -150,8 +150,8 @@ class IdKitTest {
     @Test
     @DisplayName("getSnowflake 单例应返回同一实例")
     void getSnowflake_shouldReturnSingleton() {
-        var sf1 = IdKit.getSnowflake(WORKER_ID);
-        var sf2 = IdKit.getSnowflake(WORKER_ID);
+        Object sf1 = IdKit.getSnowflake(WORKER_ID);
+        Object sf2 = IdKit.getSnowflake(WORKER_ID);
         log.info("Snowflake singleton sample: workerId={}, instance1={}, instance2={}",
                 WORKER_ID, System.identityHashCode(sf1), System.identityHashCode(sf2));
         assertSame(sf1, sf2, "getSnowflake 应返回单例");

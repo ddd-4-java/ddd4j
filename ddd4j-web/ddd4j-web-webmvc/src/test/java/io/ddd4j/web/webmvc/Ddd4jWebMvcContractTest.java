@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
+import java.util.Objects;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -87,12 +89,12 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
 
         @GetMapping({WebContractPaths.SUCCESS, WebContractPaths.PUBLIC, WebContractPaths.PROTECTED})
         R<Map<String, String>> success() {
-            return R.ok(Map.of("result", "ok"));
+            return R.ok(Collections.singletonMap("result", "ok"));
         }
 
         @PostMapping(WebContractPaths.CREATED)
         ResponseEntity<R<Map<String, String>>> created() {
-            return ResponseEntity.status(HttpStatus.CREATED).body(R.ok(Map.of("result", "created")));
+            return ResponseEntity.status(HttpStatus.CREATED).body(R.ok(Collections.singletonMap("result", "created")));
         }
 
         @GetMapping(WebContractPaths.CONTEXT)
@@ -106,21 +108,23 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
 
         @PostMapping(WebContractPaths.IDEMPOTENT)
         R<Map<String, String>> idempotent() {
-            return R.ok(Map.of("result", "accepted"));
+            return R.ok(Collections.singletonMap("result", "accepted"));
         }
 
         @GetMapping("/contract/errors/{type}")
         R<Void> error(@PathVariable("type") String type) {
-            throw switch (type) {
-                case "bad-request" -> new IllegalArgumentException("bad request");
-                case "forbidden" -> new SecurityException("forbidden");
-                case "not-found" -> new NoSuchElementException("not found");
-                case "conflict" -> new IllegalStateException("conflict");
-                case "unsupported-media-type" -> new WebStatusException(415, "unsupported media type");
-                case "unprocessable-entity" -> new WebStatusException(422, "unprocessable entity");
-                case "too-many-requests" -> new WebStatusException(429, "too many requests");
-                default -> new RuntimeException("internal failure");
-            };
+            RuntimeException __ex;
+            switch (type) {
+                case "bad-request": __ex = new IllegalArgumentException("bad request"); break;
+                case "forbidden": __ex = new SecurityException("forbidden"); break;
+                case "not-found": __ex = new NoSuchElementException("not found"); break;
+                case "conflict": __ex = new IllegalStateException("conflict"); break;
+                case "unsupported-media-type": __ex = new WebStatusException(415, "unsupported media type"); break;
+                case "unprocessable-entity": __ex = new WebStatusException(422, "unprocessable entity"); break;
+                case "too-many-requests": __ex = new WebStatusException(429, "too many requests"); break;
+                default: __ex = new RuntimeException("internal failure"); break;
+            }
+            throw __ex;
         }
     }
 
@@ -131,10 +135,28 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
                 return subject;
             }
         };
-    }
+    }private static final class MockMvcContractClient implements WebContractClient {
+        private final MockMvc mockMvc;
 
-    private record MockMvcContractClient(MockMvc mockMvc) implements WebContractClient {
-
+        public MockMvcContractClient(MockMvc mockMvc) {
+            this.mockMvc = mockMvc;
+        }
+        public MockMvc mockMvc() { return mockMvc; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof MockMvcContractClient)) return false;
+            MockMvcContractClient other = (MockMvcContractClient) o;
+            return Objects.equals(this.mockMvc, other.mockMvc);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(mockMvc);
+        }
+        @Override
+        public String toString() {
+            return "MockMvcContractClient{" + "mockMvc=" + mockMvc + "}";
+        }
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -159,5 +181,6 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             }
             return builder;
         }
+    
     }
 }

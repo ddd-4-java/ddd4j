@@ -110,7 +110,7 @@ class PageTest {
     void stream_shouldExposeRecords() {
         Page<String> page = Page.succeed(Arrays.asList("a", "b"), 2L, 1L, 10L);
 
-        List<String> collected = page.stream().toList();
+        List<String> collected = page.stream().collect(java.util.stream.Collectors.toList());
 
         assertThat(collected).containsExactly("a", "b");
     }

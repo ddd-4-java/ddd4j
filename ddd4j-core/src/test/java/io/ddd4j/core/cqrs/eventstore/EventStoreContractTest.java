@@ -4,6 +4,7 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
+import java.util.Objects;
 import java.util.Arrays;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -81,10 +82,28 @@ public abstract class EventStoreContractTest {
 
         assertThat(events).extracting(StoredEvent::position).containsExactly(1L, 2L);
         assertThat(events).extracting(StoredEvent::aggregateId).containsExactly(ORDER_1, ORDER_2);
-    }
+    }protected static final class TestAggregateRootId implements AggregateRootId {
+        private final String value;
 
-    protected record TestAggregateRootId(String value) implements AggregateRootId {
-
+        public TestAggregateRootId(String value) {
+            this.value = value;
+        }
+        public String value() { return value; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TestAggregateRootId)) return false;
+            TestAggregateRootId other = (TestAggregateRootId) o;
+            return Objects.equals(this.value, other.value);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(value);
+        }
+        @Override
+        public String toString() {
+            return "TestAggregateRootId{" + "value=" + value + "}";
+        }
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
@@ -101,6 +120,7 @@ public abstract class EventStoreContractTest {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
+    
     }
 
     protected static final class TestEvent extends DomainEvent<TestAggregateRootId> {

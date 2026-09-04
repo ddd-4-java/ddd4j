@@ -17,7 +17,7 @@ class QLExpressEngineTest {
     void executeShouldReturnExpressionValueInsteadOfNativeWrapper() {
         QLExpressEngine engine = QLExpress.create();
 
-        Object result = engine.execute("price * quantity", Map.of("price", 20, "quantity", 3));
+        Object result = engine.execute("price * quantity", new java.util.LinkedHashMap<String, Object>() {{ put("price", 20); put("quantity", 3); }});
 
         assertThat(result).isEqualTo(60);
     }
@@ -28,7 +28,7 @@ class QLExpressEngineTest {
 
         Boolean result = engine.execute(
                 "contains(name, 'ddd4j') && startsWith(name, 'hello')",
-                Map.of("name", "hello ddd4j"),
+                Collections.singletonMap("name", "hello ddd4j"),
                 Boolean.class);
 
         assertThat(result).isTrue();
@@ -38,7 +38,7 @@ class QLExpressEngineTest {
     void invalidExpressionShouldReturnValidationFailure() {
         QLExpressEngine engine = QLExpress.create();
 
-assertThat(engine.validate("if (").valid()).isFalse());
+assertThat(engine.validate("if (").valid()).isFalse();
         assertThat(engine.validate(" ").message()).isEqualTo("表达式不能为空");
     }
 

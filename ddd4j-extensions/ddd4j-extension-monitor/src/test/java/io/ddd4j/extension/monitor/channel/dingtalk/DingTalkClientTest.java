@@ -101,7 +101,7 @@ class DingTalkClientTest {
         return java.net.URLEncoder.encode(b64, "UTF-8");
     }
 
-    private static Map<String, String> parseQuery(String query) {
+    private static Map<String, String> parseQuery(String query) throws java.io.UnsupportedEncodingException {
         Map<String, String> out = new HashMap<>();
         if (Objects.isNull(query)) {
             return out;
@@ -109,8 +109,8 @@ class DingTalkClientTest {
         for (String pair : query.split("&")) {
             int idx = pair.indexOf('=');
             if (idx > 0) {
-                out.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8),
-                        URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
+                out.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
+                        URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
             }
         }
         return out;
@@ -130,7 +130,13 @@ class DingTalkClientTest {
             URI uri = exchange.getRequestURI();
             lastQuery = uri.getRawQuery();
             try (InputStream is = exchange.getRequestBody()) {
-                lastBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+                byte[] chunk = new byte[8192];
+                int n;
+                while ((n = is.read(chunk)) != -1) {
+                    buf.write(chunk, 0, n);
+                }
+                lastBody = new String(buf.toByteArray(), StandardCharsets.UTF_8);
             }
             byte[] resp = "{\"errcode\":0,\"errmsg\":\"ok\"}".getBytes(StandardCharsets.UTF_8);
             exchange.sendResponseHeaders(200, resp.length);

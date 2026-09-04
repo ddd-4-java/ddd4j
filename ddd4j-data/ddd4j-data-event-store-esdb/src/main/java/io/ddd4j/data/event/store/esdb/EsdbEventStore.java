@@ -161,12 +161,32 @@ public class EsdbEventStore implements EventStore {
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
         try { return (Class<? extends DomainEvent<?>>) Class.forName(eventType); }
         catch (ClassNotFoundException exception) { throw new IllegalStateException("Unknown event type: " + eventType, exception); }
-    }
+    }private static final class StringAggregateRootId implements AggregateRootId {
+        private final String value;
 
-    private record StringAggregateRootId(String value) implements AggregateRootId {
+        public StringAggregateRootId(String value) {
+            this.value = value;
+        }
+        public String value() { return value; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof StringAggregateRootId)) return false;
+            StringAggregateRootId other = (StringAggregateRootId) o;
+            return Objects.equals(this.value, other.value);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(value);
+        }
+        @Override
+        public String toString() {
+            return "StringAggregateRootId{" + "value=" + value + "}";
+        }
         private static final StringEntityType TYPE = new StringEntityType("String");
         @Override public EntityType getType() { return TYPE; }
         @Override @JsonValue public String asString() { return value; }
         @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+    
     }
 }

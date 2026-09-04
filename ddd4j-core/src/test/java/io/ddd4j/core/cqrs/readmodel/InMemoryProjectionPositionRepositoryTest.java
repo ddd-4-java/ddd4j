@@ -1,5 +1,6 @@
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,7 +114,7 @@ class InMemoryProjectionPositionRepositoryTest {
     void snapshot_应返回当前存储的不可变副本() {
         repository.save(new DefaultProjectionPosition("a", 1));
 
-        var snapshot = repository.snapshot();
+        Map<String, ProjectionPosition> snapshot = repository.snapshot();
 
         repository.save(new DefaultProjectionPosition("b", 2));
 

@@ -1,5 +1,6 @@
 package io.ddd4j.core.cqrs.eventstore;
 
+import java.util.Objects;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -80,21 +81,46 @@ class StoredEventStrongTypeContractTest {
     }
 
     private static StoredEvent newStoredEventWithNullAt(int nullIndex) {
-        return switch (nullIndex) {
-            case 0 -> new StoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 1 -> new StoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 2 -> new StoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 3 -> new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
-            case 4 -> new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
-            default -> throw new IllegalArgumentException("unexpected null index: " + nullIndex);
-        };
+        switch (nullIndex) {
+            case 0:
+                return new StoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 1:
+                return new StoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 2:
+                return new StoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 3:
+                return new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
+            case 4:
+                return new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
+            default:
+                throw new IllegalArgumentException("unexpected null index: " + nullIndex);
+        }
     }
 
     /**
      * 测试聚合根标识：满足 {@link AggregateRootId} 契约。
-     */
-    record TestAggregateRootId(String value) implements AggregateRootId {
+     */static final class TestAggregateRootId implements AggregateRootId {
+        private final String value;
 
+        public TestAggregateRootId(String value) {
+            this.value = value;
+        }
+        public String value() { return value; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TestAggregateRootId)) return false;
+            TestAggregateRootId other = (TestAggregateRootId) o;
+            return Objects.equals(this.value, other.value);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(value);
+        }
+        @Override
+        public String toString() {
+            return "TestAggregateRootId{" + "value=" + value + "}";
+        }
         private static final EntityType TYPE = new StringEntityType("TestAggregate");
 
         @Override
@@ -111,6 +137,7 @@ class StoredEventStrongTypeContractTest {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
+    
     }
 
     /**

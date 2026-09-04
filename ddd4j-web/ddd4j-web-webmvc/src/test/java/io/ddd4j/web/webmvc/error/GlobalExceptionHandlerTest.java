@@ -1,6 +1,6 @@
 package io.ddd4j.web.webmvc.error;
 
-import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonParseException;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
@@ -63,7 +63,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void jsonParseException_shouldReturnParsingError() throws Exception {
-        JacksonException ex = new JsonParseException("Invalid JSON");
+        JsonProcessingException ex = new JsonParseException("Invalid JSON");
 
         ApiRestResponse<String> response = handler.jsonProcessingException(ex);
 
@@ -76,7 +76,7 @@ class GlobalExceptionHandlerTest {
         // 构建一个 ConstraintViolationException（需要 mock 比较复杂，这里仅验证空集合场景）
         // 真实场景下通过 Spring 集成测试覆盖
         try {
-            jakarta.validation.ConstraintViolationException ex = new jakarta.validation.ConstraintViolationException("validation failed", new HashSet<>());
+            javax.validation.ConstraintViolationException ex = new javax.validation.ConstraintViolationException("validation failed", new HashSet<>());
             ApiRestResponse<?> response = handler.constraintViolationException(ex);
             assertThat(response).isNotNull();
             assertThat(response.getCode()).isEqualTo(ApiCode.SC_METHOD_ARGUMENT_NOT_VALID.getCode());

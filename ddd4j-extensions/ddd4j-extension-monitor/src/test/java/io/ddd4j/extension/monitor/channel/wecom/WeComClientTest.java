@@ -84,7 +84,13 @@ class WeComClientTest {
             URI uri = exchange.getRequestURI();
             lastQuery = uri.getRawQuery();
             try (InputStream is = exchange.getRequestBody()) {
-                lastBody = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
+                byte[] chunk = new byte[8192];
+                int n;
+                while ((n = is.read(chunk)) != -1) {
+                    buf.write(chunk, 0, n);
+                }
+                lastBody = new String(buf.toByteArray(), StandardCharsets.UTF_8);
             }
             byte[] resp = "{\"errcode\":0,\"errmsg\":\"ok\"}".getBytes(StandardCharsets.UTF_8);
             exchange.sendResponseHeaders(200, resp.length);

@@ -44,7 +44,7 @@ class JavalinProjectionSchedulerIT {
 
     @BeforeEach
     void startJavalin() {
-        app = Javalin.create(cfg -> cfg.startup.showJavalinBanner = false).start(0);
+        app = Javalin.create(cfg -> { }).start(0);
     }
 
     @AfterEach
@@ -76,7 +76,7 @@ class JavalinProjectionSchedulerIT {
     }
 
     private ProjectionView<Object> createView(String name, String cron) {
-        return new ProjectionView<>() {
+        return new ProjectionView<Object>() {
             @Override
             public String getName() {
                 return name;

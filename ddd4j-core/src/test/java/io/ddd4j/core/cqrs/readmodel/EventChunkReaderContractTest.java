@@ -1,5 +1,6 @@
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.util.Objects;
 import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -119,9 +120,32 @@ class EventChunkReaderContractTest {
             }
             long next = picked.isEmpty() ? fromEventNumber : last + 1;
             return new EventChunk<>(picked, next);
-        }
+        }private static final class Numbered  {
+        private final long number;
+        private final String payload;
 
-        private record Numbered(long number, String payload) {
+        public Numbered(long number, String payload) {
+            this.number = number;
+            this.payload = payload;
         }
+        public long number() { return number; }
+        public String payload() { return payload; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Numbered)) return false;
+            Numbered other = (Numbered) o;
+            return Objects.equals(this.number, other.number) && Objects.equals(this.payload, other.payload);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(number, payload);
+        }
+        @Override
+        public String toString() {
+            return "Numbered{" + "number=" + number + ", " + "payload=" + payload + "}";
+        }
+        
+    }
     }
 }

@@ -159,7 +159,7 @@ class SaTokenSubjectVerifyTest {
         AuthPrincipal principal = principal("jwt-user");
         login(logic, principal);
         String forgedToken = cn.dev33.satoken.jwt.SaJwtUtil.createToken(logic.getLoginType(), principal.getLoginId(),
-                "default-device", 60L, Map.of("iss", "ddd4j-test", "aud", "unexpected"),
+                "default-device", 60L, new java.util.LinkedHashMap<String, Object>() {{ put("iss", "ddd4j-test"); put("aud", "unexpected"); }},
                 "ddd4j-satoken-subject-test-secret-32bytes");
         logic.saveTokenToIdMapping(forgedToken, principal.getLoginId(), 60L);
 

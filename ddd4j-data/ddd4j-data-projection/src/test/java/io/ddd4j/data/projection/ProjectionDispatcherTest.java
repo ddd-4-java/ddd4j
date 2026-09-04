@@ -187,9 +187,38 @@ class ProjectionDispatcherTest {
             calls.add(new ReadCall(streamId, fromEventNumber, chunkSize, Collections.unmodifiableList(new ArrayList<>(eventTypes))));
             EventChunk<DomainEvent<?>> chunk = script.poll();
             return chunk != null ? chunk : EventChunk.empty(fromEventNumber);
-        }
+        }static final class ReadCall  {
+        private final String streamId;
+        private final long fromEventNumber;
+        private final int chunkSize;
+        private final Collection<String> eventTypes;
 
-        record ReadCall(String streamId, long fromEventNumber, int chunkSize, Collection<String> eventTypes) {
+        public ReadCall(String streamId, long fromEventNumber, int chunkSize, Collection<String> eventTypes) {
+            this.streamId = streamId;
+            this.fromEventNumber = fromEventNumber;
+            this.chunkSize = chunkSize;
+            this.eventTypes = eventTypes;
         }
+        public String streamId() { return streamId; }
+        public long fromEventNumber() { return fromEventNumber; }
+        public int chunkSize() { return chunkSize; }
+        public Collection<String> eventTypes() { return eventTypes; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ReadCall)) return false;
+            ReadCall other = (ReadCall) o;
+            return Objects.equals(this.streamId, other.streamId) && Objects.equals(this.fromEventNumber, other.fromEventNumber) && Objects.equals(this.chunkSize, other.chunkSize) && Objects.equals(this.eventTypes, other.eventTypes);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(streamId, fromEventNumber, chunkSize, eventTypes);
+        }
+        @Override
+        public String toString() {
+            return "ReadCall{" + "streamId=" + streamId + ", " + "fromEventNumber=" + fromEventNumber + ", " + "chunkSize=" + chunkSize + ", " + "eventTypes=" + eventTypes + "}";
+        }
+        
+    }
     }
 }

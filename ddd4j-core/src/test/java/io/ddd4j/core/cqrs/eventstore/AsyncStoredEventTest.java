@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
+import java.util.Objects;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -94,22 +95,30 @@ class AsyncStoredEventTest {
     }
 
     private static AsyncStoredEvent newAsyncStoredEventWithNullAt(int nullIndex) {
-        return switch (nullIndex) {
-            case 0 -> new AsyncStoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 1 -> new AsyncStoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 2 -> new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 3 -> new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
-            case 4 -> new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
-            default -> throw new IllegalArgumentException("unexpected null index: " + nullIndex);
-        };
+        switch (nullIndex) {
+            case 0:
+                return new AsyncStoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 1:
+                return new AsyncStoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 2:
+                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 3:
+                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
+            case 4:
+                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
+            default:
+                throw new IllegalArgumentException("unexpected null index: " + nullIndex);
+        }
     }
 
     /**
      * 测试聚合根标识：满足 {@link AggregateRootId} 契约。
      */
-    record TestAggregateRootId(String value) implements AggregateRootId {
-
-        private static final EntityType TYPE = new StringEntityType("TestAggregate");
+    public static final class TestAggregateRootId implements AggregateRootId {
+        private static final EntityType TYPE = new StringEntityType("Order");
+        private final String value;
+        public TestAggregateRootId(String value) { this.value = value; }
+        public String value() { return value; }
 
         @Override
         public EntityType getType() {

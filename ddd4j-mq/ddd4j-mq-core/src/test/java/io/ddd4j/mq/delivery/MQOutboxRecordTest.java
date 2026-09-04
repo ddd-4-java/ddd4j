@@ -14,7 +14,7 @@ class MQOutboxRecordTest {
     @Test
     void pending_shouldUsePendingStateAndEnforceStableMessageIdHeader() {
         MQOutboxRecord record = MQOutboxRecord.pending("message-1", "orders.created", "{}",
-                Map.of(MQDeliveryHeaders.MESSAGE_ID, "incorrect", "tenant", "tenant-1"), Instant.EPOCH);
+                new java.util.LinkedHashMap<String, String>() {{ put(MQDeliveryHeaders.MESSAGE_ID, "incorrect"); put("tenant", "tenant-1"); }}, Instant.EPOCH);
 
         assertEquals(MQOutboxStatus.PENDING, record.status());
         assertEquals(0, record.attempts());

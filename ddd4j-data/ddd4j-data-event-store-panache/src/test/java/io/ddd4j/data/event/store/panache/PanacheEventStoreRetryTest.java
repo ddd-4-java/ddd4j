@@ -191,9 +191,28 @@ class PanacheEventStoreRetryTest {
 
         assertThat(sleeper.calls.get()).isZero();
         assertThat(eventStore.read(ORDER_TYPE, orderId)).isEmpty();
-    }
+    }static final class TestAggregateRootId implements AggregateRootId {
+        private final String value;
 
-    record TestAggregateRootId(String value) implements AggregateRootId {
+        public TestAggregateRootId(String value) {
+            this.value = value;
+        }
+        public String value() { return value; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TestAggregateRootId)) return false;
+            TestAggregateRootId other = (TestAggregateRootId) o;
+            return Objects.equals(this.value, other.value);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(value);
+        }
+        @Override
+        public String toString() {
+            return "TestAggregateRootId{" + "value=" + value + "}";
+        }
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
@@ -210,6 +229,7 @@ class PanacheEventStoreRetryTest {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
+    
     }
 
     static final class TestEvent extends DomainEvent<TestAggregateRootId> {

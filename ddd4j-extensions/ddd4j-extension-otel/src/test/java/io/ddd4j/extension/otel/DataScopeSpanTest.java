@@ -1,6 +1,6 @@
 package io.ddd4j.extension.otel;
 
-import io.ddd4j.data.datascope.DataScopeProvider;
+import io.ddd4j.auth.datascope.DataScopeProvider;
 import io.opentelemetry.api.OpenTelemetry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,10 +44,12 @@ class DataScopeSpanTest {
 
     @Test
     void evaluate_nonNullAllowedProvider_shouldCheckNullability() {
-        boolean result = DataScopeSpan.evaluate("Test", "valid-data", DataScopeProvider.nonNullAllowed());
+        boolean result = DataScopeSpan.evaluate("Test", "valid-data",
+                (dataType, data) -> java.util.Objects.nonNull(data));
         assertThat(result).isTrue();
 
-        boolean nullResult = DataScopeSpan.evaluate("Test", null, DataScopeProvider.nonNullAllowed());
+        boolean nullResult = DataScopeSpan.evaluate("Test", null,
+                (dataType, data) -> java.util.Objects.nonNull(data));
         assertThat(nullResult).isFalse();
     }
 

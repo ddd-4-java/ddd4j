@@ -86,7 +86,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         javalinApp.get(WebContractPaths.PUBLIC, context -> context.json(R.ok(Collections.singletonMap("result", "ok"))));
         javalinApp.get(WebContractPaths.PROTECTED, context -> context.json(R.ok(Collections.singletonMap("result", "ok"))));
         javalinApp.post(WebContractPaths.CREATED, context -> context.status(201)
-                .json(R.ok(Collections.singletonMap("result", "created")));
+                .json(R.ok(Collections.singletonMap("result", "created"))));
         javalinApp.get(WebContractPaths.CONTEXT, context -> {
             Map<String, Object> requestContext = new LinkedHashMap<>();
             requestContext.put("requestId", ThreadContext.get(WebContextScope.REQUEST_ID));
@@ -95,7 +95,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             context.json(R.ok(requestContext));
         });
         javalinApp.post(WebContractPaths.IDEMPOTENT,
-                context -> context.json(R.ok(Collections.singletonMap("result", "accepted")));
+                context -> context.json(R.ok(Collections.singletonMap("result", "accepted"))));
         javalinApp.get("/contract/errors/{type}", context -> {
             String type = context.pathParam("type");
             Exception ex;

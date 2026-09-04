@@ -52,7 +52,8 @@ public final class ReadinessReport {
         try {
             return contributor.check();
         } catch (Exception e) {
-            return ReadinessResult.unavailable("unknown", e.getMessage());
+            // 失败闭合（fail-closed）：不向外泄露内部异常细节
+            return ReadinessResult.unavailable("unknown", "check failed");
         }
     }
 

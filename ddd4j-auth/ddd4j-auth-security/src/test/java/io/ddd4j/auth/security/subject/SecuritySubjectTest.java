@@ -99,7 +99,7 @@ class SecuritySubjectTest {
     @Test
     void anonymousTokenIsNotAuthenticated() {
         authenticate(new AnonymousAuthenticationToken("key", "guest",
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_GUEST"));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_GUEST"))));
         SecuritySubject subject = subject();
 
         assertNull(subject.getPrincipal());
@@ -143,9 +143,9 @@ class SecuritySubjectTest {
     void principalFromAuthUserDetailsDelegate() {
         AuthPrincipal principal = principal("user-3");
         AuthUserDetails details = new AuthUserDetails("user-3", "pw", true,
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_admin")), principal;
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_admin")), principal);
         authenticate(new UsernamePasswordAuthenticationToken(details, "pw",
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_admin"));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_admin"))));
 
         assertSame(principal, subject().getPrincipal());
     }
@@ -168,7 +168,7 @@ class SecuritySubjectTest {
     @Test
     void rememberMeTokenIsRemembered() {
         authenticate(new RememberMeAuthenticationToken("key", principal("user-5"),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_admin"));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_admin"))));
 
         SecuritySubject subject = subject();
         assertTrue(subject.isAuthenticated());

@@ -1,5 +1,6 @@
 package io.ddd4j.mq.sqs;
 
+import java.util.Collections;
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -21,7 +22,7 @@ class SqsAdapterContractTest {
         Message message = Message.builder()
                 .messageId("transport-id")
                 .receiptHandle("receipt")
-                .messageAttributes(Map.of(MessageHeaders.HEADER_MESSAGE_ID,
+                .messageAttributes(Collections.singletonMap(MessageHeaders.HEADER_MESSAGE_ID,
                         MessageAttributeValue.builder().dataType("String").stringValue("stable-id").build()))
                 .build();
         SqsClient client = mock(SqsClient.class);

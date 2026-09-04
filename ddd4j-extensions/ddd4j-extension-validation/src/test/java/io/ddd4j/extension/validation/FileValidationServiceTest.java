@@ -90,7 +90,7 @@ class FileValidationServiceTest {
     }
 
     private byte[] ole(String entryName) throws IOException {
-try (POIFSFileSystem fileSystem = new POIFSFileSystem())
+try (POIFSFileSystem fileSystem = new POIFSFileSystem();
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             fileSystem.getRoot().createDocument(entryName,
                     new ByteArrayInputStream("content".getBytes(StandardCharsets.UTF_8)));

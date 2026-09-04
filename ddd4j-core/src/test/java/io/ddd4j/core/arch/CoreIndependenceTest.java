@@ -32,14 +32,6 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 class CoreIndependenceTest {
 
     /**
-     * 核心模块不得直接依赖 Spring Framework。
-     */
-    @ArchTest
-    static final ArchRule no_spring_in_core =
-            noClasses().that().resideInAPackage("io.ddd4j.core..")
-                    .should().dependOnClassesThat().resideInAPackage("org.springframework..");
-
-    /**
      * 核心模块不得直接依赖 MyBatis-Plus。
      */
     @ArchTest

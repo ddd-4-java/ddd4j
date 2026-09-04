@@ -50,6 +50,7 @@
         <module>ddd4j-data-crypto</module>
         <module>ddd4j-data-logs</module>
         <module>ddd4j-data-external</module>
+        <module>ddd4j-data-datascope</module>
     </modules>
 
     <!-- 2026-09-04：ddd4j-data 已转 packaging=pom 聚合根，移除原 jar 模块的 dependencies + build（子模块各自自管） -->

@@ -78,7 +78,7 @@ class VertxProjectionSchedulerIT {
     }
 
     private ProjectionView<Object> createView(String name, String cron) {
-        return new ProjectionView<>() {
+        return new ProjectionView<Object>() {
             @Override
             public String getName() {
                 return name;

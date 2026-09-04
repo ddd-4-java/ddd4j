@@ -1,5 +1,6 @@
 package io.ddd4j.core.cqrs.readmodel;
 
+import java.util.Objects;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
@@ -39,14 +40,33 @@ class TypedEventDispatcherTest {
         ));
 
         assertThrows(IllegalArgumentException.class, () -> dispatcher.dispatch("person.created", "wrong"));
-    }
+    }static final class PersonCreatedEvent implements TypedEvent {
+        private final String id;
 
-    record PersonCreatedEvent(String id) implements TypedEvent {
-
+        public PersonCreatedEvent(String id) {
+            this.id = id;
+        }
+        public String id() { return id; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof PersonCreatedEvent)) return false;
+            PersonCreatedEvent other = (PersonCreatedEvent) o;
+            return Objects.equals(this.id, other.id);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(id);
+        }
+        @Override
+        public String toString() {
+            return "PersonCreatedEvent{" + "id=" + id + "}";
+        }
         @Override
         public String getEventType() {
             return "person.created";
         }
+    
     }
 
     static class PersonCreatedHandler implements TypedEventHandler<PersonCreatedEvent> {

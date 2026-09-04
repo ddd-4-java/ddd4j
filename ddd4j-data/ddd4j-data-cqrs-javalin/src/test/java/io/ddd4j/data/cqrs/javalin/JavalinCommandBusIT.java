@@ -55,7 +55,7 @@ class JavalinCommandBusIT {
 
     @BeforeEach
     void startJavalin() {
-        app = Javalin.create(cfg -> cfg.startup.showJavalinBanner = false).start(0);
+        app = Javalin.create(cfg -> { }).start(0);
     }
 
     @AfterEach

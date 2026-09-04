@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.r2dbc;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
@@ -83,7 +84,7 @@ class R2dbcAsyncEventStoreTest {
         h2Factory = H2ConnectionFactory.inMemory(
                 "async_eventstore_test_" + System.nanoTime(),
                 "sa", "",
-                Map.of(H2ConnectionOption.DB_CLOSE_DELAY, "-1"));
+                Collections.singletonMap(H2ConnectionOption.DB_CLOSE_DELAY, "-1"));
         sharedConnection = Mono.from(h2Factory.create()).block();
         eventStore = new R2dbcAsyncEventStore(new SingleConnectionFactory(sharedConnection));
         EntityIdRegistry.register(TestOrderId.TYPE_NAME, TestOrderId::new);

@@ -1,5 +1,6 @@
 package io.ddd4j.mq.rabbitmq;
 
+import java.util.Collections;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import io.ddd4j.mq.message.MessageHeaders;
@@ -18,7 +19,7 @@ class RabbitMQAdapterContractTest {
     void shouldPreferStableMessageIdAndNackForRedelivery() throws Exception {
         AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
                 .messageId("native-id")
-                .headers(Map.of(MessageHeaders.HEADER_MESSAGE_ID, "stable-id"))
+                .headers(Collections.singletonMap(MessageHeaders.HEADER_MESSAGE_ID, "stable-id"))
                 .build();
         Channel channel = mock(Channel.class);
         RabbitAcknowledgment acknowledgment = new RabbitAcknowledgment(channel, 9L, "stable-id", null);

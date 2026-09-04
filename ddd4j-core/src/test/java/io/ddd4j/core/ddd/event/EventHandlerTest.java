@@ -1,5 +1,6 @@
 package io.ddd4j.core.ddd.event;
 
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -62,10 +63,28 @@ class EventHandlerTest {
 
         OrderCreatedEvent() {
             super(new EntityIdPath(new OrderId("order-1")));
+        }static final class OrderId implements EntityId {
+        private final String value;
+
+        public OrderId(String value) {
+            this.value = value;
         }
-
-        record OrderId(String value) implements EntityId {
-
+        public String value() { return value; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof OrderId)) return false;
+            OrderId other = (OrderId) o;
+            return Objects.equals(this.value, other.value);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(value);
+        }
+        @Override
+        public String toString() {
+            return "OrderId{" + "value=" + value + "}";
+        }
             private static final EntityType TYPE = new StringEntityType("Order");
 
             @Override
@@ -82,6 +101,7 @@ class EventHandlerTest {
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
             }
-        }
+        
+    }
     }
 }

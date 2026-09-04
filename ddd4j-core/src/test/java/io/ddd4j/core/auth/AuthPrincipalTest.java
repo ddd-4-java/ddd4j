@@ -61,7 +61,7 @@ class AuthPrincipalTest {
     @Test
     void setProfile_shouldCarryProfileMap() {
         AuthPrincipal principal = new AuthPrincipal()
-                .setProfile(java.util.Map.of("dept", "engineering"));
+                .setProfile(java.util.Collections.singletonMap("dept", "engineering"));
 
         assertThat(principal.getProfile()).containsEntry("dept", "engineering");
     }

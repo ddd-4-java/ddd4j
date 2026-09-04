@@ -1,5 +1,6 @@
 package io.ddd4j.mq.redisstream;
 
+import java.util.Collections;
 import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
 import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
 import io.lettuce.core.XAddArgs;
@@ -57,7 +58,7 @@ class RedisStreamBrokerAdapterTest {
         when(stream.add(any(StreamAddArgs.class))).thenReturn(new StreamMessageId(1L, 0L));
         RedissonRedisStreamOperations operations = new RedissonRedisStreamOperations(client);
 
-        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        String id = operations.add("sales.order.paid", Collections.singletonMap("payload", "body"));
         operations.createGroup("sales.order.paid", "sample");
         operations.ack("sales.order.paid", "sample", "1-0");
 
@@ -73,7 +74,7 @@ class RedisStreamBrokerAdapterTest {
         when(commands.xadd(eq("sales.order.paid"), any(XAddArgs.class), anyMap())).thenReturn("1-0");
         LettuceRedisStreamOperations operations = new LettuceRedisStreamOperations(commands);
 
-        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        String id = operations.add("sales.order.paid", Collections.singletonMap("payload", "body"));
         operations.createGroup("sales.order.paid", "sample");
         operations.ack("sales.order.paid", "sample", "1-0");
 

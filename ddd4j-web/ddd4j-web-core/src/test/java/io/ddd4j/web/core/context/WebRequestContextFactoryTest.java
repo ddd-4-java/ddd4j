@@ -47,7 +47,7 @@ class WebRequestContextFactoryTest {
     void defaultFactoryUsesDefaults() {
         WebRequestContextFactory factory = new WebRequestContextFactory();
         WebRequestContext context = factory.create(requestData(null));
-        org.junit.jupiter.api.Assertions.assertFalse(context.requestId().isBlank());
+        org.junit.jupiter.api.Assertions.assertFalse(context.requestId().trim().isEmpty());
     }
 
     private static WebRequestData requestData(String requestId) {

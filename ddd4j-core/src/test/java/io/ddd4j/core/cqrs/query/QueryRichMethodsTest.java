@@ -281,7 +281,10 @@ class QueryRichMethodsTest {
 
     @Test
     void maps_shouldDelegateToRepository() {
-        List<Map<String, Object>> expected = Arrays.asList(Map.of("id", "1", "name", "A"));
+        Map<String, Object> expectedMap = new java.util.LinkedHashMap<>();
+        expectedMap.put("id", "1");
+        expectedMap.put("name", "A");
+        List<Map<String, Object>> expected = Collections.singletonList(expectedMap);
         when(repository.maps(any())).thenReturn(expected);
 
         List<Map<String, Object>> result = query.maps();
@@ -292,7 +295,9 @@ class QueryRichMethodsTest {
 
     @Test
     void map_shouldReturnFirstElement() {
-        Map<String, Object> expected = Map.of("id", "1", "name", "A");
+        Map<String, Object> expected = new java.util.LinkedHashMap<>();
+        expected.put("id", "1");
+        expected.put("name", "A");
         when(repository.maps(any())).thenReturn(Collections.singletonList(expected));
 
         Map<String, Object> result = query.map();

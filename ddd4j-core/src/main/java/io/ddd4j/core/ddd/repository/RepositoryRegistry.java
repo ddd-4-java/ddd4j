@@ -158,10 +158,10 @@ public final class RepositoryRegistry {
             return (Repository) instance;
         }
 
-        throw new BizRuntimeException(
-                "Repository not found for aggregate {}. Register it via RepositoryRegistry.register({}, repository) " +
-                        "or ensure the framework adapter is configured.",
-                modelClass.getSimpleName(), modelClass.getSimpleName());
+        throw new IllegalStateException(
+                "Repository not found for aggregate " + modelClass.getSimpleName()
+                        + ". Register it via RepositoryRegistry.register(modelClass, repository) "
+                        + "or ensure the framework adapter is configured.");
     }
 
     /**
@@ -190,10 +190,10 @@ public final class RepositoryRegistry {
             return instance;
         }
 
-        throw new BizRuntimeException(
-                "Repository not found for query {}. Register it via RepositoryRegistry.register(modelClass, {}, repository) " +
-                        "or override Query.repository().",
-                queryClass.getSimpleName(), queryClass.getSimpleName());
+        throw new IllegalStateException(
+                "Repository not found for query " + queryClass.getSimpleName()
+                        + ". Register it via RepositoryRegistry.register(modelClass, repository) "
+                        + "or override Query.repository().");
     }
 
     /**

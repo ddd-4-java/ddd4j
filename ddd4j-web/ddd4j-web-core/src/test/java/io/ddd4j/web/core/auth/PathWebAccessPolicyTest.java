@@ -51,7 +51,7 @@ class PathWebAccessPolicyTest {
     void constructorRejectsNull() {
         assertThrows(NullPointerException.class, () -> new PathWebAccessPolicy(null, AuthenticationMode.REQUIRED));
         assertThrows(NullPointerException.class,
-                () -> new PathWebAccessPolicy(Collections.singletonList("/health"), null);
+                () -> new PathWebAccessPolicy(Collections.singletonList("/health"), null));
     }
 
     @Test

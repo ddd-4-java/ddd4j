@@ -1,5 +1,6 @@
 package io.ddd4j.web.core.observability;
 
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -19,7 +20,7 @@ class WebOtelSupportTest {
     @Test
     void startServerSpanDelegatesToOtelIntegration() {
         // OTel SDK 未配置 → 返回 invalid PropagatedSpan（非 null，桥接成功）
-        assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", Map.of("x", "y")));
+        assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", Collections.singletonMap("x", "y")));
         assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", null));
     }
 

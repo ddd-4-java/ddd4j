@@ -57,13 +57,33 @@ class EsdbEventStoreIT {
         assertThat(all).extracting(StoredEvent::version).containsExactly(1L, 2L, 3L);
         assertThat(store.read(ORDER_TYPE, id, 2, 3)).extracting(StoredEvent::version).containsExactly(2L, 3L);
         assertThat(store.readAll(0, 10)).allSatisfy(event -> assertThat(event.aggregateType()).isEqualTo(ORDER_TYPE));
-    }
+    }static final class TestId implements AggregateRootId {
+        private final String value;
 
-    record TestId(String value) implements AggregateRootId {
+        public TestId(String value) {
+            this.value = value;
+        }
+        public String value() { return value; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TestId)) return false;
+            TestId other = (TestId) o;
+            return Objects.equals(this.value, other.value);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(value);
+        }
+        @Override
+        public String toString() {
+            return "TestId{" + "value=" + value + "}";
+        }
         private static final EntityType TYPE = new StringEntityType("Order");
         @Override public EntityType getType() { return TYPE; }
         @Override public String asString() { return value; }
         @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+    
     }
     static final class TestEvent extends DomainEvent<TestId> {
         TestEvent() { super(); }

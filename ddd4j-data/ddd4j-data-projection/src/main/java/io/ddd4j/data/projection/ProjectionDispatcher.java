@@ -172,12 +172,38 @@ public class ProjectionDispatcher {
 
     /**
      * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
-     */
-    private record Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
+     */private static final class Cursor  {
+        private final long position;
+        private final EventChunk<DomainEvent<?>> chunk;
+        private final int index;
 
+        public Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
+            this.position = position;
+            this.chunk = chunk;
+            this.index = index;
+        }
+        public long position() { return position; }
+        public EventChunk<DomainEvent<?>> chunk() { return chunk; }
+        public int index() { return index; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Cursor)) return false;
+            Cursor other = (Cursor) o;
+            return Objects.equals(this.position, other.position) && Objects.equals(this.chunk, other.chunk) && Objects.equals(this.index, other.index);
+        }
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(position, chunk, index);
+        }
+        @Override
+        public String toString() {
+            return "Cursor{" + "position=" + position + ", " + "chunk=" + chunk + ", " + "index=" + index + "}";
+        }
         static Cursor start(long position) {
             return new Cursor(position, null, 0);
         }
+    
     }
 
     private void commitPosition(String streamId) {

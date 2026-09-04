@@ -1,5 +1,6 @@
 package io.ddd4j.extension.excel;
 
+import java.util.Collections;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.write.metadata.fill.FillConfig;
 import io.ddd4j.extension.excel.export.ExcelExporter;
@@ -33,7 +34,7 @@ import java.util.Map;
  * // 3. 模板填充
  * byte[] filled = ExcelKit.fill(
  *     getClass().getResourceAsStream("/templates/contract.xlsx"),
- *     Map.of("contractNo", "HT-001")
+ *     Collections.singletonMap("contractNo", "HT-001")
  * );
  *
  * // 4. 自定义样式

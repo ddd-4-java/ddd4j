@@ -46,7 +46,7 @@ class ContextLookupTest {
     @Test
     void shouldReturnEmptyForMissingService() {
         BaseContext.remove(SpiKeys.MQ_EVENT_PUBLISHER);
-        assertTrue(Contexts.get(SpiKeys.MQ_EVENT_PUBLISHER, DomainEventPublisher.class).isEmpty());
+        assertFalse(Contexts.get(SpiKeys.MQ_EVENT_PUBLISHER, DomainEventPublisher.class).isPresent());
     }
 
     @Test
