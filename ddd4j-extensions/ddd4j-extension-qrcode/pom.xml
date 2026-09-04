@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
@@ -10,32 +10,23 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ddd4j-extension-excel</artifactId>
+    <artifactId>ddd4j-extension-qrcode</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Ddd4j Excel Component — ExcelKit facade on top of Alibaba EasyExcel 4.x (pure Java, no Spring)</description>
+    <description>Ddd4j framework-neutral QR code application service based on ZXing</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
-        <!-- For EasyExcel: 复用原生注解(@ExcelProperty/@ExcelIgnore/@ColumnWidth 等)、EasyExcel、ExcelWriter、Converter、WriteHandler -->
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>easyexcel</artifactId>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
         </dependency>
-        <!-- For ddd4j-core: 复用 BizRuntimeException / I18nKit 等基础设施 -->
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-core</artifactId>
-            <version>${revision}</version>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
         </dependency>
-        <!-- For Apache Commons: ExceptionUtils / StringUtils -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <!-- For Apache Commons IO: IOUtils / ByteArrayXXXStream 等 -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
         </dependency>
             <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -49,4 +40,20 @@
         </dependency>
 </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                    <skipTests>false</skipTests>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -42,6 +42,11 @@
         <!-- <module>ddd4j-mq-tdmq</module> 2026-09-04 迁往 ddd4j-mq/（2.0.x SPI 版） -->
         <module>ddd4j-extension-akka</module>
         <module>ddd4j-extension-excel</module>
+        <module>ddd4j-extension-license</module>
+        <module>ddd4j-extension-validation</module>
+        <module>ddd4j-extension-qrcode</module>
+        <module>ddd4j-extension-otel</module>
+        <module>ddd4j-extension-monitor</module>
         <module>ddd4j-extension-jackson</module>
         <module>ddd4j-extension-pf4j</module>
         <!-- Boot starter 绑定：Phase 3 由 ddd4j-boot-extension-qlexpress 构建 -->
