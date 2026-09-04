@@ -92,8 +92,6 @@
         <module>ddd4j-mq</module>
         <!-- 监控告警：钉钉/企微机器人 + 日志告警（独立 jar 模块） -->
         <module>ddd4j-monitor</module>
-        <!-- 示例与端到端集成（与 2.0.x/3.0.x 对齐） -->
-        <module>ddd4j-samples</module>
         <!-- 纯 DDD 轨道：ddd4j 原生 DDD/CQRS/Event Sourcing，领域层零 MyBatis Plus 依赖（1.0.x 独有） -->
         <module>ddd4j-ddd</module>
         <!-- 扩展组件聚合根：仅 7 模块（与 2.0.x 对齐）+ 3 个 1.0.x 独有保留 -->

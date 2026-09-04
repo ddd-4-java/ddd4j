@@ -17,18 +17,23 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <!--
-        ddd4j-web 子模块分两批：
-        （1）当前已具备 pom.xml + 源码（可编译）：core / webflux / webmvc / validation
-        （2）2.0.x/3.0.x 拓扑占位（无 pom.xml，需后续从 2.0.x 复制）：
-            javalin / vertx / micronaut / helidon / dropwizard / quarkus / testkit
-        当前仅在 modules 中声明（1），保证 Maven 构建通过；
-        （2）目录保留作为拓扑对齐锚点，等补完 pom 后再加入。
+        ddd4j-web 子模块：
+        2026-09-04 把根目录的 6 个 ddd4j-web-{javalin,vertx,micronaut,helidon,dropwizard,testkit}
+        真实代码模块迁入 ddd4j-web/ 聚合根（parent 改 ddd4j-web），与 2.0.x/3.0.x 拓扑对齐。
+        ddd4j-web-quarkus 删除（仅 .flattened-pom.xml 残留，无用户代码）；
+        1.0.x 行不启用 Quarkus 集成（Quarkus 需要 JDK 17+）。
     -->
     <modules>
         <module>ddd4j-web-core</module>
+        <module>ddd4j-web-javalin</module>
+        <module>ddd4j-web-vertx</module>
+        <module>ddd4j-web-micronaut</module>
+        <module>ddd4j-web-helidon</module>
+        <module>ddd4j-web-dropwizard</module>
         <module>ddd4j-web-webflux</module>
         <module>ddd4j-web-webmvc</module>
         <module>ddd4j-web-validation</module>
+        <module>ddd4j-web-testkit</module>
     </modules>
 
 </project>
