@@ -31,7 +31,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
-import io.javalin.json.JavalinJackson3;
+import io.javalin.json.JavalinJackson;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
@@ -93,7 +93,7 @@ public final class TestSupport {
         // 6) 启动 Javalin
         Javalin app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
-            cfg.jsonMapper(new JavalinJackson3());
+            cfg.jsonMapper(new JavalinJackson());
 
             // Shiro 是线程级 Subject；
             // 每个请求进入前，根据请求头中的 token（即 sessionId）从 SessionManager 取出会话，

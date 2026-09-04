@@ -23,7 +23,7 @@ import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
 import io.ddd4j.web.testkit.WebContractResponse;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson3;
+import io.javalin.json.JavalinJackson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -58,7 +58,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
                 new WebIdempotencyLifecycle(new CacheIdempotencyGuard("javalin-contract")));
         app = Javalin.create(config -> {
             config.startup.showJavalinBanner = false;
-            config.jsonMapper(new JavalinJackson3());
+            config.jsonMapper(new JavalinJackson());
             ddd4jWeb.configure(config);
             registerContractRoutes(config.routes);
         }).start(0);
