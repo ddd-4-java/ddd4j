@@ -50,7 +50,7 @@ jobs:
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
           # 凭据连通性自检（直接用 secrets，避免解析 settings）
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$ALIYUN_USER:$ALIYUN_PASS" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/1.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
           echo "credential check: HTTP $HTTP_CODE (user len ${#ALIYUN_USER})"
           # 确认 settings 的 server 段凭据与 secrets 一致（id 匹配时 Maven 才会带鉴权）
           grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
@@ -61,7 +61,7 @@ jobs:
           echo "--- settings servers (masked) ---"
           sed 's/<password>[^<]*</<password>***</' ~/.m2/settings.xml | grep -B1 -A2 "<server>" | head -30
           echo "--- direct maven resolve test ---"
-          ./mvnw -U -Denforcer.skip=true -B dependency:get -Dartifact=io.github.easy4j:spring-extension:3.0.x.20260630-SNAPSHOT -DremoteRepositories=2624322-snapshot-3EoOv3::default::https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3 2>&1 | tail -5 || true
+          ./mvnw -U -Denforcer.skip=true -B dependency:get -Dartifact=io.github.easy4j:spring-extension:1.0.x.20260630-SNAPSHOT -DremoteRepositories=2624322-snapshot-3EoOv3::default::https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3 2>&1 | tail -5 || true
       - name: Verify BOM publication contract
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
@@ -106,7 +106,7 @@ jobs:
           USER_NAME=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
           PASS_WORD=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/1.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
           echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
@@ -142,7 +142,7 @@ jobs:
           USER_NAME=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
           PASS_WORD=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/1.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
           echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
@@ -205,7 +205,7 @@ jobs:
           USER_NAME=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>\([^<]*\)<\/username>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
           PASS_WORD=$(sed -n 's/.*<id>2624322-snapshot-3EoOv3<\/id>\s*<username>[^<]*<\/username>\s*<password>\([^<]*\)<\/password>.*/\1/p' "$HOME/.m2/settings.xml" | head -1)
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$USER_NAME:$PASS_WORD" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/github/easy4j/spring-extension/1.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo "curl-failed")
           echo "Aliyun packages credential check: HTTP $HTTP_CODE (username length: ${#USER_NAME})"
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
