@@ -107,7 +107,7 @@ jobs:
             REPO_URL="2624322-snapshot-3eoov3"
           fi
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$ALIYUN_USER:$ALIYUN_PASS" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/github/easy4j/spring-extension/2.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
           echo "Aliyun ${REPO} credential check: HTTP $HTTP_CODE (user len ${#ALIYUN_USER})"
           if [[ "$HTTP_CODE" != "200" ]]; then
             echo "::error::Aliyun ${REPO} auth failed (HTTP $HTTP_CODE)" >&2
