@@ -33,6 +33,10 @@ import java.util.Objects;
     private final String method;
     private final String path;
 
+/**
+ * HTTP 请求在 ddd4j 内部的框架无关表示。
+ */
+
     public WebRequestContext(String requestId, String traceId, String tenantId, String authorization,
                              Locale locale, String clientIp, String method, String path) {
         this.requestId = StrKit.isBlank(requestId) ? null : requestId;

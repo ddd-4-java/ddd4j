@@ -23,6 +23,12 @@ package io.ddd4j.web.core.health;
 
     private final boolean ready;
 
+/**
+ * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
+ *
+ * @param ready 当前应用是否可接收流量
+ */
+
     public ReadinessResponse(boolean ready) {
         this.ready = ready;
     }

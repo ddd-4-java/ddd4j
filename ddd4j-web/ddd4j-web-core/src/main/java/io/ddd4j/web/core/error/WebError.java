@@ -28,6 +28,10 @@ import java.io.Serializable;
     private final String message;
     private final Object data;
 
+/**
+ * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
+ */
+
     public WebError(int status, Serializable code, String message, Object data) {
         this.status = status;
         this.code = code;

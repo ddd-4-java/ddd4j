@@ -23,6 +23,10 @@ public final class QLExpressValidationResult {
     private final boolean valid;
     private final String message;
 
+/**
+ * 表达式语法校验结果。
+ */
+
     private QLExpressValidationResult(boolean valid, String message) {
         this.valid = valid;
         this.message = message;

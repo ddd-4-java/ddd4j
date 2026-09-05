@@ -23,6 +23,10 @@ package io.ddd4j.web.core.context;
     private final String path;
     private final Throwable cause;
 
+/**
+ * 可由运行时事件总线观测的框架无关 HTTP 请求失败事件。
+ */
+
     public WebRequestFailure(String method, String path, Throwable cause) {
         this.method = method;
         this.path = path;

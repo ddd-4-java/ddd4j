@@ -38,6 +38,12 @@ public final class MQDeliveryPolicy {
     private final Duration maxBackoff;
     private final double jitterFactor;
 
+/**
+ * 可靠消息的租约和退避策略。
+ *
+ * <p>默认值采用 60 秒租约、12 次最多尝试，以及 1 秒到 5 分钟的指数退避。
+ */
+
     public MQDeliveryPolicy(Duration leaseDuration, int maxAttempts, Duration initialBackoff,
                             Duration maxBackoff, double jitterFactor) {
         Objects.requireNonNull(leaseDuration, "leaseDuration must not be null");

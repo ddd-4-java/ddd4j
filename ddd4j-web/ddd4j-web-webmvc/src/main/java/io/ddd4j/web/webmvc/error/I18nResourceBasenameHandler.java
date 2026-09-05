@@ -26,6 +26,12 @@ public class I18nResourceBasenameHandler implements ResourceBasenameHandler {
      * @throws IOException 资源访问异常
      */
 
+/**
+ * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
+ * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public String handle(Resource resource) throws IOException {
 
         URL url = resource.getURL();

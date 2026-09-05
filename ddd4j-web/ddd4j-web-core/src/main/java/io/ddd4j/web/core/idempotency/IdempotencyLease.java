@@ -33,6 +33,17 @@ import java.util.Objects;
     private final String ownerToken;
     private final Duration ttl;
 
+/**
+ * 一次幂等请求获取到的租约。
+ *
+ * <p>ownerToken 用于保证过期请求不能完成或释放后续请求重新获取的同一个幂等键。
+ * 调用方只应将实例交回创建它的 {@link IdempotencyGuard}。
+ *
+ * @param key        存储键
+ * @param ownerToken 此次获取的唯一所有者标识
+ * @param ttl        租约有效期
+ */
+
     public IdempotencyLease(String key, String ownerToken, Duration ttl) {
         this.key = Objects.requireNonNull(key, "key must not be null");
         this.ownerToken = ownerToken;

@@ -21,6 +21,12 @@ import java.util.Objects;
 public class GlobalErrorAttributes {
 
     /** 与 Boot {@code DefaultErrorAttributes.ERROR_ATTRIBUTE} 语义一致，便于 Router 与 {@link ServerWebExchange} 共用 */
+/**
+ * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
+ * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public static final String ERROR_ATTRIBUTE = GlobalErrorAttributes.class.getName() + ".ERROR";
 
     /**

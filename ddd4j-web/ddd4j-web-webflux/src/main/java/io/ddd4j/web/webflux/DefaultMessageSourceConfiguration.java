@@ -35,6 +35,12 @@ import java.util.Objects;
  * MessageSource 与属性源默认配置（Boot 条件装配已迁出至 ddd4j-boot 轨）。
  */
 @Configuration(proxyBeanMethods = false)
+/**
+ * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
+ * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class DefaultMessageSourceConfiguration {
 
     /**

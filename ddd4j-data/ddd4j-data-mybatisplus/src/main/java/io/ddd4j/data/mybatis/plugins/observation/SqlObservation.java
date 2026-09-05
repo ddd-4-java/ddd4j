@@ -30,6 +30,15 @@ public final class SqlObservation {
     private final long elapsedNanos;
     private final Throwable error;
 
+/**
+ * MyBatis-Plus SQL 执行观测数据。
+ *
+ * @param statementId MappedStatement 标识
+ * @param sql 已执行的 SQL
+ * @param elapsedNanos 耗时，单位为纳秒
+ * @param error 执行异常，可为空
+ */
+
     public SqlObservation(String statementId, String sql, long elapsedNanos, Throwable error) {
         this.statementId = statementId;
         this.sql = sql;

@@ -45,6 +45,25 @@ public final class ProjectionStatus {
     private final int lastEventCount;
     private final String lastError;
 
+/**
+ * 投影视图实时状态快照（不可变值对象）。
+ *
+ * <p>由 {@link ViewManager#getProjectionStatus(String)} 返回，供运维 / 监控层
+ * 查询单个投影视图的当前进度与健康状况。
+ *
+ * <p>各运行时实现可覆写 {@code getProjectionStatus()} 返回真实状态；
+ * 未覆写时 {@link ViewManager} 的 default 实现返回基线状态（nextEventNumber=0）。
+ *
+ * @param streamId        投影流 ID
+ * @param nextEventNumber 下一个待处理事件号（0-based）
+ * @param running         视图管理器是否处于运行状态
+ * @param lastRunAt       上次运行完成时间（nullable，首次未运行时为 null）
+ * @param lastEventCount  上次运行处理的事件数量（0 表示空或未运行）
+ * @param lastError       上次运行失败的错误信息（nullable，成功时为 null）
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
+
     public ProjectionStatus(String streamId, long nextEventNumber, boolean running,
                             Instant lastRunAt, int lastEventCount, String lastError) {
         Objects.requireNonNull(streamId, "streamId must not be null");

@@ -28,6 +28,10 @@ public final class WebContractResponse {
     private final Map<String, List<String>> headers;
     private final String body;
 
+/**
+ * Web 契约测试使用的最小响应快照。
+ */
+
     public WebContractResponse(int status, Map<String, List<String>> headers, String body) {
         this.status = status;
         this.headers = headers;

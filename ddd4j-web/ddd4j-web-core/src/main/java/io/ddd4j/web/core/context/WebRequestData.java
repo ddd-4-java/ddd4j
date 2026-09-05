@@ -32,6 +32,10 @@ import java.util.Locale;
     private final String method;
     private final String path;
 
+/**
+ * Web 框架采集到的原始请求元数据。
+ */
+
     public WebRequestData(String requestId, String traceId, String tenantId, String authorization,
                           Locale locale, String forwardedFor, String realIp, String remoteAddress,
                           String method, String path) {

@@ -61,6 +61,12 @@ public class ServerVendorProperties {
     private String title;
 
     @Override
+/**
+ * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
+ * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
     public String toString() {
         return "ServiceVendor{" + "province='" + province + '\'' + ", city='" + city + '\'' + ", desc='" + desc + '\''
                 + '}';
