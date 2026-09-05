@@ -85,6 +85,11 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <!-- Easy4J HiTool Core：ByteUnitFormat 字节单位格式化（与 1.0.x 对齐） -->
+        <dependency>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>hitool-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>

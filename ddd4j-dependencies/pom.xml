@@ -3158,6 +3158,11 @@
                 <version>${easy4j-hitool.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>hitool-core</artifactId>
+                <version>${easy4j-hitool.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.hive</groupId>
                 <artifactId>hive-exec</artifactId>
                 <version>${hive.version}</version>
