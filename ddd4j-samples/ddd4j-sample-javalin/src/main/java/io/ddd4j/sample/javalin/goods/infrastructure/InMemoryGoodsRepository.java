@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.goods.infrastructure;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import io.ddd4j.core.api.Page;
@@ -82,7 +81,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         return rows.values().stream()
                 .filter(p -> status.equals(p.getStatus()))
                 .map(this::copy)
-                .collect(Collectors.collect(java.util.stream.Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     // ========================= Repository =========================
@@ -94,7 +93,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
 
     @Override
     public List<Goods> findAll() {
-        return rows.values().stream().map(this::copy).collect(Collectors.collect(java.util.stream.Collectors.toList()));
+        return rows.values().stream().map(this::copy).collect(Collectors.toList());
     }
 
     @Override
@@ -169,7 +168,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
                 .filter(p -> matches(p, goodsQuery))
                 .sorted(orderBy(goodsQuery))
                 .map(this::copy)
-                .collect(Collectors.collect(java.util.stream.Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     private boolean matches(Goods goods, GoodsQuery query) {

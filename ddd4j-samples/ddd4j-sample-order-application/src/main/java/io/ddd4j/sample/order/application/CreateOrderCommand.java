@@ -1,4 +1,8 @@
-package io.ddd4j.sample.order.application;public final class CreateOrderCommand {
+package io.ddd4j.sample.order.application;
+
+import java.util.Objects;
+
+public final class CreateOrderCommand {
         private final String orderNo;
         private final String buyerId;
         private final String buyerName;

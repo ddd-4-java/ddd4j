@@ -3,7 +3,7 @@ package io.ddd4j.data.logs.aspect;
 import cn.hutool.core.lang.Snowflake;
 import com.google.common.base.Stopwatch;
 import io.ddd4j.core.constant.XHeaders;
-import io.ddd4j.data.logs.aspect.ApiOperationLogProvider;
+import io.ddd4j.data.logs.ApiOperationLogProvider;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.webmvc.util.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;

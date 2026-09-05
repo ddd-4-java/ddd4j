@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -107,7 +108,7 @@ public class OrderApplicationService {
     }
 
     private void persist(Order order) {
-        List<DomainEvent<?>> events = List.copyOf(order.domainEvents());
+        List<DomainEvent<?>> events = new ArrayList<>(order.domainEvents());
         transaction.execute(() -> {
             repository.save(order);
             outbox.append(events.stream().map(event -> new OutboxMessage(UUID.randomUUID().toString(), order.id(),

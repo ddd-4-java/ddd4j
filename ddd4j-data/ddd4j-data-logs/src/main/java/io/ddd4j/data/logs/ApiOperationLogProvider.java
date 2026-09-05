@@ -1,4 +1,4 @@
-package io.ddd4j.data.logs.aspect;
+package io.ddd4j.data.logs;
 
 import com.google.common.base.Stopwatch;
 import io.swagger.v3.oas.annotations.Operation;

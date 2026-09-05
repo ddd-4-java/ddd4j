@@ -1,6 +1,5 @@
 package io.ddd4j.sample.order.domain;
 
-import java.util.Locale.ROOT;
 import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
 

@@ -1,18 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.ddd4j.extension.monitor.channel.dingtalk;
 
 import lombok.extern.slf4j.Slf4j;
@@ -72,19 +57,11 @@ public class DingTalkClient {
         this.accessToken = accessToken;
         this.secret = secret;
         this.baseUrl = baseUrl;
-     /**
-
-/** @return 配置的 access_token */
-
-       }
+    }
 
     /** @return 配置的 access_token */
     public String accessToken() {
-        return acces    /**
-
-/** @return 配置的加签密钥 */
-
-    sToken;
+        return accessToken;
     }
 
     /** @return 配置的加签密钥 */
@@ -92,11 +69,7 @@ public class DingTalkClient {
         return secret;
     }
 
-    /** @return 当前生效的     /**
-
-/** @return 当前生效的 webhook 基础地址（含 {@code ?access_token=}） */
-
-    webhook 基础地址（含 {@code ?access_token=}） */
+    /** @return 当前生效的 webhook 基础地址（含 {@code ?access_token=}） */
     public String baseUrl() {
         return baseUrl;
     }
@@ -104,13 +77,7 @@ public class DingTalkClient {
     /**
      * 发送 markdown 格式消息。
      *
-     * @param msg 完整的 JSON payload，可通过 {@code     /**
-     * 发送 markdown 格式消息。
-     *
      * @param msg 完整的 JSON payload，可通过 {@code Sender.renderMessage(Message)} 构造
-     */
-
-Sender.renderMessage(Message)} 构造
      */
     public void sendMarkdown(String msg) {
         try {

@@ -64,38 +64,13 @@ public final class JavalinSample {
             spiScope.close();
             throw exception;
         }
-    }public final class JavalinApplication {
-        private final Javalin app;
-        private final String token;
-        private final SpiRegistrationScope spiScope;
+    }
 
-        public JavalinApplication (Javalin app, String token, SpiRegistrationScope spiScope) {
+    public record JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope)
+            implements AutoCloseable {
+
+        public JavalinApplication {
             Objects.requireNonNull(app, "app must not be null");
-            Objects.requireNonNull(token, "token must not be null");
-            Objects.requireNonNull(spiScope, "spiScope must not be null");
-        }
-
-        @Override
-        public void close() {
-            try {
-                app.stop();
-            this.app = app;
-            this.token = token;
-            this.spiScope = spiScope;
-        
-
-        }
-
-        public Javalin app() { return app; }
-        public String token() { return token; }
-        public SpiRegistrationScope spiScope() { return spiScope; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        JavalinApplication other = (JavalinApplication) o;
-            return Objects.equals(this.app, other.app) && Objects.equals(this.token, other.token) && Objects.equals(this
-           Objects.requireNonNull(app, "app must not be null");
             Objects.requireNonNull(token, "token must not be null");
             Objects.requireNonNull(spiScope, "spiScope must not be null");
         }
@@ -108,6 +83,5 @@ public final class JavalinSample {
                 spiScope.close();
             }
         }
-    
     }
 }
