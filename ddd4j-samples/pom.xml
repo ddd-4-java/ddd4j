@@ -13,16 +13,15 @@
     <artifactId>ddd4j-samples</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 框架无关的业务内核与非 Spring Boot 运行时示例。</description>
+    <description>ddd4j framework-agnostic business kernel and non-Spring Boot runtime examples.</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <!-- 示例模块仅用于演示与测试，不发布到远程仓库 -->
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <modules>
-        <!-- 跨运行时共享的生产型订单业务内核 -->
+        <!-- Shared production-style order business kernel across runtimes -->
         <module>ddd4j-sample-order-domain</module>
         <module>ddd4j-sample-order-application</module>
         <module>ddd4j-sample-order-local</module>
@@ -31,27 +30,22 @@
         <module>ddd4j-sample-order-kafka</module>
         <module>ddd4j-sample-order-redis</module>
 
-        <!-- 非 Boot 运行时示例：Order 充血模型、CQRS、缓存与消息边界。 -->
-        <!-- <module>ddd4j-sample-quarkus</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-javalin</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-micronaut</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-vertx</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
-        <!-- <module>ddd4j-sample-helidon</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
-        <!-- <module>ddd4j-sample-dropwizard</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
-
-        <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
-        <!-- <module>ddd4j-sample-quarkus-cqrs</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-javalin-cqrs</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-dropwizard-cqrs</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
-        <!-- <module>ddd4j-sample-helidon-cqrs</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
-        <!-- <module>ddd4j-sample-micronaut-cqrs</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-vertx-cqrs</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
-
-        <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
-        <!-- <module>ddd4j-sample-quarkus-satoken</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-quarkus-shiro</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-javalin-satoken</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
-        <!-- <module>ddd4j-sample-javalin-shiro</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- Framework constraint samples (JDK17+ only, aligned with 2.0.x/3.0.x) -->
+        <!-- <module>ddd4j-sample-quarkus</module> -->
+        <!-- <module>ddd4j-sample-micronaut</module> -->
+        <!-- <module>ddd4j-sample-vertx</module> -->
+        <!-- <module>ddd4j-sample-helidon</module> -->
+        <!-- <module>ddd4j-sample-dropwizard</module> -->
+        <!-- <module>ddd4j-sample-quarkus-cqrs</module> -->
+        <!-- <module>ddd4j-sample-javalin-cqrs</module> -->
+        <!-- <module>ddd4j-sample-dropwizard-cqrs</module> -->
+        <!-- <module>ddd4j-sample-helidon-cqrs</module> -->
+        <!-- <module>ddd4j-sample-micronaut-cqrs</module> -->
+        <!-- <module>ddd4j-sample-vertx-cqrs</module> -->
+        <!-- <module>ddd4j-sample-quarkus-satoken</module> -->
+        <!-- <module>ddd4j-sample-quarkus-shiro</module> -->
+        <!-- <module>ddd4j-sample-javalin-satoken</module> -->
+        <!-- <module>ddd4j-sample-javalin-shiro</module> -->
     </modules>
 
 </project>
