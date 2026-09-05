@@ -12,14 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 
 /**
  * 太平洋网络 IP 地址解析模板

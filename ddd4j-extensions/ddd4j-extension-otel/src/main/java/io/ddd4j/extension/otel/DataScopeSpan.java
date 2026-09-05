@@ -32,7 +32,7 @@ public final class DataScopeSpan {
      * @param provider DataScopeProvider 实例
      * @return 是否允许访问
      */
-    public static boolean evaluate(String dataType, Object data, io.ddd4j.auth.datascope.DataScopeProvider provider) {
+    public static boolean evaluate(String dataType, Object data, io.ddd4j.data.datascope.DataScopeProvider provider) {
         if (!Ddd4jOtel.isAvailable()) {
             return provider.hasPermissions(dataType, data);
         }

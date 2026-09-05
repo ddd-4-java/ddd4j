@@ -1,6 +1,6 @@
 package io.ddd4j.extension.otel;
 
-import io.ddd4j.auth.datascope.DataScopeProvider;
+import io.ddd4j.data.datascope.DataScopeProvider;
 import io.opentelemetry.api.OpenTelemetry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

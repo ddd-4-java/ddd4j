@@ -53,14 +53,37 @@ public class JpaEventStore implements EventStore {
     private static final String ENTITY = "StoredEventEntity";
 
     private final EntityManager entityManager;
+    private final JpaStoredEventRepository repository;
     private final EventPayloadSerializer serializer;
 
+    /**
+     * 创建 JPA 事件存储。
+     *
+     * <p>使用默认的 {@link JpaStoredEventRepositoryImpl} 作为仓储实现。
+     *
+     * @param entityManager JPA 实体管理器（由调用方管理生命周期）
+     * @throws NullPointerException entityManager 为 null 时抛出
+     */
     public JpaEventStore(EntityManager entityManager) {
-        this(entityManager, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+        this(entityManager, new JpaStoredEventRepositoryImpl(entityManager),
+                new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
-    public JpaEventStore(EntityManager entityManager, EventPayloadSerializer serializer) {
+    /**
+     * 创建 JPA 事件存储（自定义仓储）。
+     *
+     * @param entityManager JPA 实体管理器
+     * @param repository    事件仓储实现
+     * @throws NullPointerException 任一参数为 null 时抛出
+     */
+    public JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository) {
+        this(entityManager, repository, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+    }
+
+    public JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
+                         EventPayloadSerializer serializer) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
+        this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
     }
 

@@ -1,7 +1,6 @@
 package io.ddd4j.web.webmvc.error;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -74,9 +73,6 @@ public class GlobalExceptionHandler {
     @Autowired
     private NestedMessageSource messageSource;
 
-    private NestedMessageSource getMessageSource() {
-        return messageSource;
-    }
     @Autowired
     private ServerI18nProperties serverI18NProperties;
 
@@ -269,9 +265,9 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      */
-    @ExceptionHandler({JsonParseException.class, JsonProcessingException.class})
+    @ExceptionHandler({JacksonException.class, JacksonException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiRestResponse<String> jsonProcessingException(JsonProcessingException ex) {
+    public ApiRestResponse<String> jsonProcessingException(JacksonException ex) {
         this.logException(ex);
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request.param", ex.getMessage());

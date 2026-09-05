@@ -113,15 +113,32 @@ public class JdbiEventStore implements EventStore {
     private final Jdbi jdbi;
     private final EventPayloadSerializer serializer;
     /** uk_position 唯一约束冲突自动重试（并发 append 全局 position 兜底，回填自 3.0.x）。 */
-    private final EventStoreRetry retry = new EventStoreRetry();
+    private final EventStoreRetry retry;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
+    /**
+     * 创建 JDBI 事件存储。
+     *
+     * @param jdbi JDBI 实例（集成方装配，可包连接池 DataSource）
+     * @throws NullPointerException jdbi 为 null 时抛出
+     */
     public JdbiEventStore(Jdbi jdbi) {
-        this(jdbi, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+        this(jdbi, new EventStoreRetry(), new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
-    public JdbiEventStore(Jdbi jdbi, EventPayloadSerializer serializer) {
+    /**
+     * 创建 JDBI 事件存储（指定重试策略；主要供测试使用）。
+     *
+     * @param jdbi  JDBI 实例
+     * @param retry 重试策略
+     */
+    public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry) {
+        this(jdbi, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+    }
+
+    public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry, EventPayloadSerializer serializer) {
         this.jdbi = Objects.requireNonNull(jdbi, "jdbi must not be null");
+        this.retry = Objects.requireNonNull(retry, "retry must not be null");
         this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
     }
 

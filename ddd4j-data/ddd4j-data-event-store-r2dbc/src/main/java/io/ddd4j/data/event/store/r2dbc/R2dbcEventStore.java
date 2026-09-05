@@ -119,11 +119,16 @@ public class R2dbcEventStore implements AsyncEventStore {
     private final EventPayloadSerializer serializer;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
+    /**
+     * 使用指定连接工厂创建事件存储。
+     *
+     * @param connectionFactory R2DBC 连接工厂
+     */
     public R2dbcEventStore(ConnectionFactory connectionFactory) {
         this(connectionFactory, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
-    public R2dbcEventStore(ConnectionFactory connectionFactory, EventPayloadSerializer serializer) {
+    R2dbcEventStore(ConnectionFactory connectionFactory, EventPayloadSerializer serializer) {
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "connectionFactory must not be null");
         this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
     }

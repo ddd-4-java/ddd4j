@@ -16,12 +16,6 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-datascope</artifactId>
-            <version>${revision}</version>
-            <scope>test</scope>
-        </dependency>
         <!-- Ddd4j core (ThreadContext, Subject, AuthPrincipal) -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -40,10 +34,10 @@
             <artifactId>ddd4j-mq-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Ddd4j auth-datascope (DataScopeProvider) -->
+        <!-- Ddd4j data-datascope (DataScopeProvider) -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-auth-datascope</artifactId>
+            <artifactId>ddd4j-data-datascope</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- OpenTelemetry API (compile-only, runtime provided by agent) -->

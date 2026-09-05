@@ -15,6 +15,8 @@
 package io.ddd4j.web.dropwizard;
 
 import io.ddd4j.web.core.auth.AuthenticationMode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import java.util.List;
 /**
  * 可作为业务 Dropwizard {@code Configuration} 嵌套属性的 ddd4j Web 配置。
  */
+@Getter
+@Setter
 public class Ddd4jDropwizardWebConfiguration {
 
     private List<String> publicPaths = new ArrayList<>(Arrays.asList("/health", "/healthcheck/**"));
@@ -32,17 +36,4 @@ public class Ddd4jDropwizardWebConfiguration {
     private boolean idempotencyEnabled = true;
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
-
-    public List<String> getPublicPaths() { return publicPaths; }
-    public void setPublicPaths(List<String> publicPaths) { this.publicPaths = publicPaths; }
-    public AuthenticationMode getDefaultAuthenticationMode() { return defaultAuthenticationMode; }
-    public void setDefaultAuthenticationMode(AuthenticationMode mode) { this.defaultAuthenticationMode = mode; }
-    public boolean isTrustForwardedHeaders() { return trustForwardedHeaders; }
-    public void setTrustForwardedHeaders(boolean trust) { this.trustForwardedHeaders = trust; }
-    public boolean isIdempotencyEnabled() { return idempotencyEnabled; }
-    public void setIdempotencyEnabled(boolean enabled) { this.idempotencyEnabled = enabled; }
-    public String getIdempotencyCacheName() { return idempotencyCacheName; }
-    public void setIdempotencyCacheName(String name) { this.idempotencyCacheName = name; }
-    public Duration getIdempotencyTtl() { return idempotencyTtl; }
-    public void setIdempotencyTtl(Duration ttl) { this.idempotencyTtl = ttl; }
 }

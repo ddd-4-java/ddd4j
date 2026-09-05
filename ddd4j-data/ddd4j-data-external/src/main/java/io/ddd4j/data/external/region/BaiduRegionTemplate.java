@@ -14,14 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 
 /**
  * 百度地图 IP 定位模板
@@ -52,6 +51,7 @@ public class BaiduRegionTemplate {
      * 构造函数（无缓存）
      *
      * @param ak         百度地图AK密钥
+     * @param httpClient HTTP 客户端
      */
     public BaiduRegionTemplate(String ak) {
         this(ak, RegionCache.none());
