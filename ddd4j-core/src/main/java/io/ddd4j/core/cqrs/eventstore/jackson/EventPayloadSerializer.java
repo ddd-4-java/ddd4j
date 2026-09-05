@@ -75,18 +75,7 @@ public class EventPayloadSerializer {
      *
      * @param event 领域事件
      * @return 不含多态标记的 JSON 文本
-     * @thr    /**
-     * 序列化领域事件。
-     *
-     * <p>输出 JSON 中<b>不</b>包含 {@code @class} 多态标记——
-     * 反序列化端必须通过 {@link #deserialize(String, Class)} 显式传入目标类型。
-     *
-     * @param event 领域事件
-     * @return 不含多态标记的 JSON 文本
      * @throws IllegalStateException 序列化失败
-     */
-
-ows IllegalStateException 序列化失败
      */
     public String serialize(DomainEvent<?> event) {
         try {

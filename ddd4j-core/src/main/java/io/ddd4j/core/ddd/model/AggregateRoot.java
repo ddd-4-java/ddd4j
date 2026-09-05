@@ -153,11 +153,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
 
     private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
-    // ========================= 充血持久化（    /**
-     * 批量保存。
-     */
-
-实例方法） =========================
+    // ========================= 充血持久化（实例方法） =========================
 
     /**
      * 批量保存。
@@ -174,15 +170,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
     }
 
     /**
-     * 批量更新    /**
      * 批量更新（仅更新，不插入；逐条委托 {@link Repository#updateById(Object)}）。
-     */
-
-（仅更/**
-     * 批量更新（仅更新，不插入；逐条委托 {@link Repository#updateById(Object)}）。
-     */
-
-    新，不插入；逐条委托 {@link Repository#updateById(Object)}）。
      */
     public static <M extends AggregateRoot<?>> boolean update(List<M> models) {
         if (Objects.isNull(models) || models.isEmpty()) {
@@ -191,11 +179,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
         Repository repo = RepositoryRegistry.repository(models.get(0).getClass());
         for (AggregateRoot m : models) {
             repo.updateById(m);
-            /**
-     * 按查询条件删除。
-     */
-
-}
+        }
         return true;
     }
 
@@ -205,11 +189,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
     public static <Q extends Query> boolean delete(Q query) {
         query.with();
         Repository repo = RepositoryRegistry.repositoryForQuery(query.getClass());
-        return ((Repository) repo)    /**
-     * 按 ID 查找。
-     */
-
-.deleteByQuery(query);
+        return ((Repository) repo).deleteByQuery(query);
     }
 
     /**
@@ -218,11 +198,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
     public static <M extends AggregateRoot<?>, ID extends Serializable>
     Optional<M> get(Class<M> modelClass, ID id) {
         Repository repo = RepositoryRegistry.repository(modelClass);
-        r    /**
-     * 查找第一个。
-     */
-
-eturn repo.findById(id);
+        return repo.findById(id);
     }
 
     /**
@@ -230,11 +206,7 @@ eturn repo.findById(id);
      */
     public static <M extends AggregateRoot<?>> Optional<M> one(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
-        return ((Repos    /**
-     * 列出全部。
-     */
-
-itory) repo).findFirst();
+        return ((Repository) repo).findFirst();
     }
 
     /**
@@ -242,11 +214,7 @@ itory) repo).findFirst();
      */
     public static <M extends AggregateRoot<?>> List<M> list(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
-        return ((Repositor    /**
-     * 分页查询。
-     */
-
-y) repo).findAll();
+        return ((Repository) repo).findAll();
     }
 
     // ========================= 充血持久化（静态批量） =========================
@@ -257,11 +225,7 @@ y) repo).findAll();
     public static <M extends AggregateRoot<?>, Q extends Query>
     Page<M> page(Class<M> modelClass, Q query) {
         query.with();
-        Repository repo    /**
-     * 计数。
-     */
-
- = RepositoryRegistry.repository(modelClass);
+        Repository repo = RepositoryRegistry.repository(modelClass);
         return ((Repository) repo).page(query);
     }
 
@@ -270,22 +234,14 @@ y) repo).findAll();
      */
     public static <Q extends Query> int count(Class<? extends AggregateRoot<?>> modelClass, Q query) {
         query.with();
-        Repository repo = Reposi    /**
-     * 是否存在。
-     */
-
-toryRegistry.repository(modelClass);
+        Repository repo = RepositoryRegistry.repository(modelClass);
         return (int) ((Repository) repo).count(query);
     }
 
     /**
      * 是否存在。
      */
-    public static <Q extends Query> boolean exist(Class<? extends     /**
-     * 充血保存。
-     */
-
-AggregateRoot<?>> modelClass, Q query) {
+    public static <Q extends Query> boolean exist(Class<? extends AggregateRoot<?>> modelClass, Q query) {
         return count(modelClass, query) > 0;
     }
 
@@ -293,11 +249,7 @@ AggregateRoot<?>> modelClass, Q query) {
 
     /**
      * 充血保存。
-      /**
-     * 充血更新（仅按主键更新，不插入；委托 {@link Repository#updateById(Object)}）。
      */
-
-   */
     public <M extends AggregateRoot<ID>> M save() {
         return (M) repository().save(this);
     }
@@ -305,27 +257,15 @@ AggregateRoot<?>> modelClass, Q query) {
     /**
      * 充血更新（仅按主键更新，不插入；委托 {@link Repository#updateById(Object)}）。
      */
-    public     /**
-     * 充血保存或更新（主键存在则更新，否则插入；委托 {@link Repository#insertOrUpdate(Object)}）。
-     */
-
-<M extends AggregateRoot<ID>> M update() {
+    public <M extends AggregateRoot<ID>> M update() {
         return (M) repository().updateById(this);
     }
 
     /**
-     * 充血保存或更新（主键存在则更新，否则插入；委托 {@link Repo    /**
-     * 充血删除。
-     */
-
-sitory#insertOrUpdate(Object)}）。
+     * 充血保存或更新（主键存在则更新，否则插入；委托 {@link Repository#insertOrUpdate(Object)}）。
      */
     public <M extends AggregateRoot<ID>> M saveOrUpdate() {
-            /**
-     * 充血条件更新（按查询条件更新）。
-     */
-
-return (M) repository().insertOrUpdate(this);
+        return (M) repository().insertOrUpdate(this);
     }
 
     /**
@@ -342,11 +282,7 @@ return (M) repository().insertOrUpdate(this);
         query.with();
         Repository repo = repository();
         if (Objects.nonNull(repo)) {
-                /**
-     * 充血聚合填充（从其他聚合补充数据）。
-     */
-
-return ((Repository) repo).update(this, query);
+            return ((Repository) repo).update(this, query);
         }
         throw new BizRuntimeException("Repository does not support update(query)");
     }
@@ -354,33 +290,21 @@ return ((Repository) repo).update(this, query);
     /**
      * 充血聚合填充（从其他聚合补充数据）。
      */
-    public <Q extends Query> void fill(Q     /**
-     * 注册领域事件。
-     */
-
-query) {
+    public <Q extends Query> void fill(Q query) {
         Repository repo = repository();
         if (Objects.nonNull(repo)) {
             ((Repository) repo).fill(query, this);
         }
     }
 
-    // ========================= 事件管理 =====================    /**
-     * 返回未提交的领域事件（不可变视图）。
-     */
-
-====
+    // ========================= 事件管理 =========================
 
     /**
      * 注册领域事件。
      */
     protected void registerEvent(DomainEvent<?> event) {
         Objects.requireNonNull(event, "event must not be null");
-       /**
-     * 返回并清空未提交的领域事件。
-     */
-
-     mutableDomainEvents().add(event);
+        mutableDomainEvents().add(event);
     }
 
     /**
@@ -393,16 +317,8 @@ query) {
     /**
      * 返回并清空未提交的领域事件。
      */
-    p    /**
-     * 清空未提交的领域事件。
-     */
-
-ublic List<DomainEvent<?>> pullDomainEvents() {
-        List<DomainEvent<?>> events = Collections.unmodifiableList(new Ar    /**
-     * 是否存在未提交的领域事件。
-     */
-
-rayList<>(mutableDomainEvents()));
+    public List<DomainEvent<?>> pullDomainEvents() {
+        List<DomainEvent<?>> events = Collections.unmodifiableList(new ArrayList<>(mutableDomainEvents()));
         clearDomainEvents();
         return events;
     }
@@ -449,40 +365,7 @@ rayList<>(mutableDomainEvents()));
      * </ul>
      *
      * @param event 领域事件
-     * @param <    /**
-     * 应用领域事件（2.0.x 语义）。
-     *
-     * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
-     * 并返回事件本身。找不到处理器时抛 {@link IllegalStateException}。
-     *
-     * @param event 领域事件
-     * @return 传入的事件（链式调用便利）
-     * @throws IllegalStateExcepti/**
-     * 应用领域事件：通过 ClassValue 缓存的反射路由到聚合内部的 {@code on<EventTypeSimpleName>} 方法。
-     *
-     * <p>例如 {@code OrderCreatedEvent} 路由到 {@code onOrderCreated(OrderCreatedEvent event)}。
-     * 若聚合未定义对应的 handler 方法，则静默忽略（不影响聚合状态）。
-     *
-     * <p>注意：{@code apply} 仅用于事件溯源回放（从历史事件重建聚合状态），
-     * 不会将事件注册到未提交事件缓冲区。业务方法应使用 {@link #registerEvent(DomainEvent)}。
-     *
-     * <h3>异常处理</h3>
-     * <p>反射调用精确捕获两类异常：
-     * <ul>
-     *   <li>{@link InvocationTargetException} — handler 自身抛出的异常解包后透传，
-     *       运行时异常直接抛出，受检异常包装为 {@link BizRuntimeException}</li>
-     *   <li>{@link IllegalAccessException} — 通常为 JDK 17+ 模块系统未开放反射访问，
-     *       错误消息明确指引解决方案（{@code --add-opens} 或 {@code module-info.java opens}）</li>
-     * </ul>
-     *
-     * @param event 领域事件
      * @param <E>   事件类型
-     */
-
-    on 找不到对应事件类型的处理器，或反射调用失败
-     */
-
-E>   事件类型
      */
     /**
      * 应用领域事件（2.0.x 语义）。
@@ -558,43 +441,7 @@ E>   事件类型
     }
 
     /**
-     * 从历史事件列表重建聚合状态（    /**
      * 从历史事件列表重建聚合状态（事件溯源核心方法）。
-     *
-     * <p>按顺序依次调用 {@link #apply(DomainEvent)}，使聚合状态恢复到最新版本。
-     * 典型用法：从 EventStore 读取事件后，调用此方法重建聚合根。
-     *
-     * <pre>{@code
-     * Order order = new Order(); // 空聚合
-     * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
-     * .map(StoredEvent::event)
-     * .map(e -> (DomainEvent<?>) e)
-     * .toList();
-     * order.loadFromHistory(history);
-     * }</pre>
-     *
-    /**
-     * 从历史事件列表重建聚合状态（事件溯源核心方法）。
-     *
-     * <p>按顺序依次调用 {@link #apply(DomainEvent)}，使聚合状态恢复到最新版本。
-     * 典型用法：从 EventStore 读取事件后，调用此方法重建聚合根。
-     *
-     * <pre>{@code
-     * Order order = new Order(); // 空聚合
-     * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
-     *         .map(StoredEvent::event)
-     *         .map(e -> (DomainEvent<?>) e)
-     *         .toList();
-     * order.loadFromHistory(history);
-     * }</pre>
-     *
-     * @param events 历史事件列表（按版本升序）
-     */
-
-     * @param events 历史事件列表（按版本升序）
-     */
-
-事件溯源核心方法）。
      *
      * <p>按顺序依次调用 {@link #apply(DomainEvent)}，使聚合状态恢复到最新版本。
      * 典型用法：从 EventStore 读取事件后，调用此方法重建聚合根。
