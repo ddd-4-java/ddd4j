@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.vertx.cqrs.command;
 
-import java.util.Collections;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -41,7 +40,7 @@ public class CreateOrderCommandHandler implements CommandExecutor<CreateOrderCom
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Collections.singleton(CreateOrderCommand.class);
+        return Set.of(CreateOrderCommand.class);
     }
 
     @Override

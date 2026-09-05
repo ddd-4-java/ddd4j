@@ -31,7 +31,7 @@ public class OrderApplicationService {
      */
     public Order createDraft(CreateOrderCommand command) {
         Objects.requireNonNull(command, "command must not be null");
-        Order order = Order.draft(command.getOrderNo(), command.getBuyerId(), command.getBuyerName());
+        Order order = Order.draft(command.orderNo(), command.buyerId(), command.buyerName());
         repository.save(order);
         return order;
     }
@@ -124,33 +124,8 @@ public class OrderApplicationService {
      * @param orderNo   订单编号
      * @param buyerId   买家 ID
      * @param buyerName 买家显示名称
-     */public final class CreateOrderCommand {
-        private final String orderNo;
-        private final String buyerId;
-        private final String buyerName;
-
-        public CreateOrderCommand(String orderNo, String buyerId, String buyerName) {
-            this.orderNo = orderNo;
-            this.buyerId = buyerId;
-            this.buyerName = buyerName;
-        }
-        public String orderNo() { return orderNo; }
-        public String buyerId() { return buyerId; }
-        public String buyerName() { return buyerName; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        CreateOrderCommand other = (CreateOrderCommand) o;
-            return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(orderNo, buyerId, buyerName); }
-        @Override
-        public String toString() {
-            return "CreateOrderCommand{" + "orderNo=" + orderNo + ", " + "buyerId=" + buyerId + ", " + "buyerName=" + buyerName + "}";
-        }
-    
+     */
+    public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) {
     }
 
     /**
@@ -161,38 +136,8 @@ public class OrderApplicationService {
      * @param goodsName 商品名称
      * @param quantity  购买数量
      * @param unitPrice 单价
-     */public final class AddOrderLineCommand {
-        private final String orderId;
-        private final String goodsId;
-        private final String goodsName;
-        private final int quantity;
-        private final BigDecimal unitPrice;
-
-        public AddOrderLineCommand(String orderId, String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
-            this.orderId = orderId;
-            this.goodsId = goodsId;
-            this.goodsName = goodsName;
-            this.quantity = quantity;
-            this.unitPrice = unitPrice;
-        }
-        public String orderId() { return orderId; }
-        public String goodsId() { return goodsId; }
-        public String goodsName() { return goodsName; }
-        public int quantity() { return quantity; }
-        public BigDecimal unitPrice() { return unitPrice; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        AddOrderLineCommand other = (AddOrderLineCommand) o;
-            return Objects.equals(this.orderId, other.orderId) && Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && Objects.equals(this.quantity, other.quantity) && Objects.equals(this.unitPrice, other.unitPrice);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(orderId, goodsId, goodsName, quantity, unitPrice); }
-        @Override
-        public String toString() {
-            return "AddOrderLineCommand{" + "orderId=" + orderId + ", " + "goodsId=" + goodsId + ", " + "goodsName=" + goodsName + ", " + "quantity=" + quantity + ", " + "unitPrice=" + unitPrice + "}";
-        }
-    
+     */
+    public record AddOrderLineCommand(String orderId, String goodsId, String goodsName, int quantity,
+                                      BigDecimal unitPrice) {
     }
 }

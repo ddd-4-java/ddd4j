@@ -91,26 +91,9 @@ public class EventSourcingOrderRepository implements OrderRepository {
     /**
      * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
      * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
-     */private final class OrderAggregateId {
-        private final String value;
+     */
+    private record OrderAggregateId(String value) implements AggregateRootId {
 
-        public OrderAggregateId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        OrderAggregateId other = (OrderAggregateId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(value); }
-        @Override
-        public String toString() {
-            return "OrderAggregateId{" + "value=" + value + "}";
-        }
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
@@ -127,7 +110,6 @@ public class EventSourcingOrderRepository implements OrderRepository {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
-    
     }
 
     private static AggregateRootId aggregateId(String value) {

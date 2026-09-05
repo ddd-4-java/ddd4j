@@ -32,7 +32,7 @@ public class GoodsResource {
             post("/api/goods", ctx -> {
                 CreateGoodsRequest req = ctx.bodyAsClass(CreateGoodsRequest.class);
                 Goods goods = applicationService.create(
-                        req.getCode(), req.getName(), req.getPrice(), req.getStock());
+                        req.code(), req.name(), req.price(), req.stock());
                 ctx.status(201).json(R.ok(goods));
             });
 
@@ -41,7 +41,7 @@ public class GoodsResource {
                 Long id = Long.parseLong(ctx.pathParam("id"));
                 UpdateGoodsRequest req = ctx.bodyAsClass(UpdateGoodsRequest.class);
                 Goods goods = applicationService.update(
-                        GoodsId.of(id), req.getName(), req.getPrice());
+                        GoodsId.of(id), req.name(), req.price());
                 ctx.json(R.ok(goods));
             });
 

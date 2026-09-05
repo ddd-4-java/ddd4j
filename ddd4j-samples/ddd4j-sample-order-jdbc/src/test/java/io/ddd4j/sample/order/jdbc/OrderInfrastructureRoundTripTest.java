@@ -1,6 +1,5 @@
 package io.ddd4j.sample.order.jdbc;
 
-import java.util.Collections;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redis.testcontainers.RedisContainer;
 import io.ddd4j.mq.delivery.MQDeliveryPolicy;
@@ -103,7 +102,7 @@ class OrderInfrastructureRoundTripTest {
                     new RedisIdempotencyPort(jedis), transaction);
             TransactionalOutboxPublisher publisher = new TransactionalOutboxPublisher(transaction,
                     new OutboxPublisher(outbox, new KafkaIntegrationEventPublisher(producer, objectMapper, TOPIC)));
-            consumer.subscribe(Collections.singletonList(TOPIC));
+            consumer.subscribe(List.of(TOPIC));
 
             Order created = applicationService.create(new CreateOrderCommand("ORDER-IT-001", "buyer-1", "Alice"));
             applicationService.addLine(new AddOrderLineCommand(created.id(), "goods-1", "DDD Book", 2,

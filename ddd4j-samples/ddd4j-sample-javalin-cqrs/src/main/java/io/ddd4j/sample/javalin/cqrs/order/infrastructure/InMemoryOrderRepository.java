@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.cqrs.order.infrastructure;
 
-import java.util.stream.Collectors;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
@@ -57,13 +56,13 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     @Override
     public List<Order> findAll() {
-        return rows.values().stream().map(this::toModel).collect(java.util.stream.Collectors.toList());
+        return rows.values().stream().map(this::toModel).toList();
     }
 
     @Override
     public Order save(Order aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.getId(), toPersistenceObject(aggregate));
+        rows.put(aggregate.id(), toPersistenceObject(aggregate));
         return aggregate;
     }
 
@@ -83,7 +82,7 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
                 .orElseGet(List::of)
                 .stream()
                 .map(this::toLineModel)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
         return new Order(
                 persistenceObject.getId(),
                 persistenceObject.getOrderNo(),
@@ -99,14 +98,14 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         Objects.requireNonNull(model, "model must not be null");
         Money totalAmount = model.totalAmount();
         return OrderPO.builder()
-                .id(model.getId())
-                .orderNo(model.getOrderNo())
-                .buyerId(model.getBuyerId())
-                .buyerName(model.getBuyerName())
-                .status(model.getStatus().getName())
-                .totalAmount(totalAmount.getAmount())
-                .currency(totalAmount.getCurrency())
-                .lines(model.lines().stream().map(this::toLinePersistenceObject).collect(java.util.stream.Collectors.toList()))
+                .id(model.id())
+                .orderNo(model.orderNo())
+                .buyerId(model.buyerId())
+                .buyerName(model.buyerName())
+                .status(model.status().name())
+                .totalAmount(totalAmount.amount())
+                .currency(totalAmount.currency())
+                .lines(model.lines().stream().map(this::toLinePersistenceObject).toList())
                 .build();
     }
 
@@ -124,12 +123,12 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
     private OrderLinePO toLinePersistenceObject(OrderLine model) {
         Objects.requireNonNull(model, "model must not be null");
         return OrderLinePO.builder()
-                .id(model.getId())
+                .id(model.id())
                 .goodsId(model.goodsId())
                 .goodsName(model.goodsName())
                 .quantity(model.quantity())
-                .unitPrice(model.unitPrice().getAmount())
-                .currency(model.unitPrice().getCurrency())
+                .unitPrice(model.unitPrice().amount())
+                .currency(model.unitPrice().currency())
                 .build();
     }
 }

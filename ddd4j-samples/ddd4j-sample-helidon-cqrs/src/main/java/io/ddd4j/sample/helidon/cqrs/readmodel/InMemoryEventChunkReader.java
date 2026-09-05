@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.helidon.cqrs.readmodel;
 
-import java.util.stream.Collectors;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -48,7 +47,7 @@ public class InMemoryEventChunkReader implements EventChunkReader<Object> {
         }
         List<Object> payloads = storedEvents.stream()
                 .map(e -> (Object) e.payload())
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
         long nextPos = storedEvents.get(storedEvents.size() - 1).position() + 1;
         return new EventChunk<>(payloads, nextPos);
     }

@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.cqrs.cache;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import io.ddd4j.cache.CacheKit;
@@ -83,7 +82,7 @@ public class GoodsCacheService {
         log.debug("Cache miss: GOODS_LIST status={}", status);
         List<Goods> list = new ArrayList<>();
         for (Goods goods : goodsRepository.findAll()) {
-            if (status.equalsIgnoreCase(goods.getStatus().getName())) {
+            if (status.equalsIgnoreCase(goods.getStatus().name())) {
                 list.add(goods);
             }
         }

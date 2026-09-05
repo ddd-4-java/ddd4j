@@ -95,26 +95,8 @@ public final class DropwizardOrderResource {
         private String goodsName;
         private int quantity;
         private BigDecimal unitPrice;
-    }public final class TokenResponse {
-        private final String token;
+    }
 
-        public TokenResponse(String token) {
-            this.token = token;
-        }
-        public String token() { return token; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        TokenResponse other = (TokenResponse) o;
-            return Objects.equals(this.token, other.token);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(token); }
-        @Override
-        public String toString() {
-            return "TokenResponse{" + "token=" + token + "}";
-        }
-    
+    public record TokenResponse(String token) {
     }
 }

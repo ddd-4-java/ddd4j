@@ -58,9 +58,9 @@ class GoodsControllerTest {
         GoodsController goodsController = new GoodsController(goodsService);
 
         app = Javalin.create(cfg -> {
-            cfg.showJavalinBanner = false;
+            cfg.startup.showJavalinBanner = false;
             cfg.jsonMapper(new JavalinJackson());
-            cfg.router.apiBuilder(goodsController::routes);
+            cfg.routes.apiBuilder(goodsController::routes);
         });
         app.start(0);
         baseUrl = "http://localhost:" + app.port();

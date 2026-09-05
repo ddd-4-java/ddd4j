@@ -85,7 +85,7 @@ public class GoodsController {
         post("/api/goods", ctx -> {
             CreateGoodsRequest req = ctx.bodyAsClass(CreateGoodsRequest.class);
             Goods goods = applicationService.create(
-                    req.getCode(), req.getName(), req.getPrice(), req.getStock());
+                    req.code(), req.name(), req.price(), req.stock());
             ctx.status(201).json(R.ok(goods));
         });
 
@@ -94,7 +94,7 @@ public class GoodsController {
             Long id = ctx.pathParamAsClass("id", Long.class).get();
             UpdateGoodsRequest req = ctx.bodyAsClass(UpdateGoodsRequest.class);
             Goods goods = applicationService.update(
-                    GoodsId.of(id), req.getName(), req.getPrice());
+                    GoodsId.of(id), req.name(), req.price());
             ctx.json(R.ok(goods));
         });
 
@@ -149,63 +149,13 @@ public class GoodsController {
 
     /**
      * 创建商品请求。
-     */public final class CreateGoodsRequest {
-        private final String code;
-        private final String name;
-        private final BigDecimal price;
-        private final Integer stock;
-
-        public CreateGoodsRequest(String code, String name, BigDecimal price, Integer stock) {
-            this.code = code;
-            this.name = name;
-            this.price = price;
-            this.stock = stock;
-        }
-        public String code() { return code; }
-        public String name() { return name; }
-        public BigDecimal price() { return price; }
-        public Integer stock() { return stock; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        CreateGoodsRequest other = (CreateGoodsRequest) o;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price) && Objects.equals(this.stock, other.stock);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(code, name, price, stock); }
-        @Override
-        public String toString() {
-            return "CreateGoodsRequest{" + "code=" + code + ", " + "name=" + name + ", " + "price=" + price + ", " + "stock=" + stock + "}";
-        }
-    
+     */
+    public record CreateGoodsRequest(String code, String name, BigDecimal price, Integer stock) {
     }
 
     /**
      * 更新商品请求。
-     */public final class UpdateGoodsRequest {
-        private final String name;
-        private final BigDecimal price;
-
-        public UpdateGoodsRequest(String name, BigDecimal price) {
-            this.name = name;
-            this.price = price;
-        }
-        public String name() { return name; }
-        public BigDecimal price() { return price; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        UpdateGoodsRequest other = (UpdateGoodsRequest) o;
-            return Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(name, price); }
-        @Override
-        public String toString() {
-            return "UpdateGoodsRequest{" + "name=" + name + ", " + "price=" + price + "}";
-        }
-    
+     */
+    public record UpdateGoodsRequest(String name, BigDecimal price) {
     }
 }

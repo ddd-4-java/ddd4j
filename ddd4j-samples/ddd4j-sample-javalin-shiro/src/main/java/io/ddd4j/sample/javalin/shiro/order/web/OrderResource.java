@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.shiro.order.web;
 
-import java.util.stream.Collectors;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.shiro.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.javalin.shiro.order.application.CreateOrderCommand;
@@ -56,7 +55,7 @@ public class OrderResource {
             post("/orders", ctx -> {
                 CreateOrderRequest req = ctx.bodyAsClass(CreateOrderRequest.class);
                 Order order = orderApplicationService.createDraft(
-                        new CreateOrderCommand(req.getOrderNo(), req.getBuyerId(), req.getBuyerName())
+                        new CreateOrderCommand(req.orderNo(), req.buyerId(), req.buyerName())
                 );
                 ctx.status(201).json(R.ok("order created", OrderResponse.from(order)));
             });
@@ -109,7 +108,7 @@ public class OrderResource {
             get("/orders", ctx -> {
                 List<OrderResponse> items = orderApplicationService.listAll().stream()
                         .map(OrderResponse::from)
-                        .collect(java.util.stream.Collectors.toList());
+                        .toList();
                 ctx.json(R.ok(items));
             });
 
@@ -117,36 +116,14 @@ public class OrderResource {
             get("/orders/{id}/discount", ctx -> {
                 String id = ctx.pathParam("id");
                 Money discounted = orderApplicationService.previewDiscount(id);
-                ctx.json(R.ok(new DiscountView(discounted.getAmount().toPlainString(), discounted.getCurrency())));
+                ctx.json(R.ok(new DiscountView(discounted.amount().toPlainString(), discounted.currency())));
             });
         };
     }
 
     /**
      * 折扣预览响应。
-     */public final class DiscountView {
-        private final String amount;
-        private final String currency;
-
-        public DiscountView(String amount, String currency) {
-            this.amount = amount;
-            this.currency = currency;
-        }
-        public String amount() { return amount; }
-        public String currency() { return currency; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        DiscountView other = (DiscountView) o;
-            return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(amount, currency); }
-        @Override
-        public String toString() {
-            return "DiscountView{" + "amount=" + amount + ", " + "currency=" + currency + "}";
-        }
-    
+     */
+    public record DiscountView(String amount, String currency) {
     }
 }

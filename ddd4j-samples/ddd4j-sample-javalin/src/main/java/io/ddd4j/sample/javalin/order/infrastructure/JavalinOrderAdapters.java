@@ -36,7 +36,7 @@ public final class JavalinOrderAdapters
     @Override
     public void save(Order order) {
         Order aggregate = Objects.requireNonNull(order, "order must not be null");
-        orders.put(aggregate.getId(), aggregate);
+        orders.put(aggregate.id(), aggregate);
     }
 
     @Override
@@ -47,7 +47,7 @@ public final class JavalinOrderAdapters
     @Override
     public Optional<Order> findByOrderNo(String orderNo) {
         return orders.values().stream()
-                .filter(order -> Objects.equals(order.getOrderNo(), orderNo))
+                .filter(order -> Objects.equals(order.orderNo(), orderNo))
                 .findFirst();
     }
 
@@ -63,7 +63,7 @@ public final class JavalinOrderAdapters
 
     @Override
     public void append(List<OutboxMessage> messages) {
-        messages.forEach(message -> outbox.put(message.getId(), message));
+        messages.forEach(message -> outbox.put(message.id(), message));
     }
 
     @Override
@@ -83,7 +83,7 @@ public final class JavalinOrderAdapters
 
     @Override
     public void project(OrderReadModel order) {
-        readModels.put(order.getId(), order);
+        readModels.put(order.id(), order);
     }
 
     @Override
@@ -95,10 +95,10 @@ public final class JavalinOrderAdapters
     public List<OrderReadModel> query(OrderQuery query) {
         OrderQuery criteria = Objects.requireNonNull(query, "query must not be null");
         return readModels.values().stream()
-                .filter(order -> Objects.isNull(criteria.getBuyerId())
-                        || Objects.equals(criteria.getBuyerId(), order.getBuyerId()))
-                .filter(order -> Objects.isNull(criteria.getStatus())
-                        || Objects.equals(criteria.getStatus(), order.getStatus()))
+                .filter(order -> Objects.isNull(criteria.buyerId())
+                        || Objects.equals(criteria.buyerId(), order.buyerId()))
+                .filter(order -> Objects.isNull(criteria.status())
+                        || Objects.equals(criteria.status(), order.status()))
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
                 .toList();

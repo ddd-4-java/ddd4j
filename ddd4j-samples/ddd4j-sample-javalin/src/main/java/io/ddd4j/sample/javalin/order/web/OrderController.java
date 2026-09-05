@@ -1,18 +1,3 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.ddd4j.sample.javalin.order.web;
 
 import io.ddd4j.core.api.R;
@@ -48,7 +33,7 @@ public final class OrderController {
         post("/api/orders", context -> {
             CreateOrderRequest request = context.bodyAsClass(CreateOrderRequest.class);
             Order order = applicationService.create(new CreateOrderCommand(
-                    request.getOrderNo(), request.getBuyerId(), request.getBuyerName()));
+                    request.orderNo(), request.buyerId(), request.buyerName()));
             context.status(201).json(R.ok(toResponse(order)));
         });
         get("/api/orders/by-no", context -> context.json(R.ok(applicationService.findByOrderNo(
@@ -89,73 +74,17 @@ public final class OrderController {
 
     private static OrderResponse toResponse(Order order) {
         Money total = order.totalAmount();
-        return new OrderResponse(order.getId(), order.getOrderNo(), order.getBuyerId(), order.getBuyerName(),
-                order.getStatus(), total.getAmount(), total.getCurrency(), order.lines().size());
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
+                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
-    public final class CreateOrderRequest {
-    private final String orderNo;
-    private final String buyerId;
-    private final String buyerName;
-
-    public CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
-        this.orderNo = orderNo;
-        this.buyerId = buyerId;
-        this.buyerName = buyerName;
+    public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
     }
 
-    public String getOrderNo() { return orderNo; }
-    public String getBuyerId() { return buyerId; }
-    public String getBuyerName() { return buyerName; }
-}
-
-    public final class AddOrderLineRequest {
-    private final String goodsId;
-    private final String goodsName;
-    private final int quantity;
-    private final BigDecimal unitPrice;
-
-    public AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
-        this.goodsId = goodsId;
-        this.goodsName = goodsName;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
+    public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
     }
 
-    public String getGoodsId() { return goodsId; }
-    public String getGoodsName() { return goodsName; }
-    public int getQuantity() { return quantity; }
-    public BigDecimal getUnitPrice() { return unitPrice; }
-}
-
-    public final class OrderResponse {
-    private final String id;
-    private final String orderNo;
-    private final String buyerId;
-    private final String buyerName;
-    private final OrderStatus status;
-    private final BigDecimal totalAmount;
-    private final String currency;
-    private final int lineCount;
-
-    public OrderResponse(String id, String orderNo, String buyerId, String buyerName, OrderStatus status, BigDecimal totalAmount, String currency, int lineCount) {
-        this.id = id;
-        this.orderNo = orderNo;
-        this.buyerId = buyerId;
-        this.buyerName = buyerName;
-        this.status = status;
-        this.totalAmount = totalAmount;
-        this.currency = currency;
-        this.lineCount = lineCount;
+    public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,
+                                OrderStatus status, BigDecimal totalAmount, String currency, int lineCount) {
     }
-
-    public String getId() { return id; }
-    public String getOrderNo() { return orderNo; }
-    public String getBuyerId() { return buyerId; }
-    public String getBuyerName() { return buyerName; }
-    public OrderStatus getStatus() { return status; }
-    public BigDecimal getTotalAmount() { return totalAmount; }
-    public String getCurrency() { return currency; }
-    public int getLineCount() { return lineCount; }
-}
 }

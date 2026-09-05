@@ -1,6 +1,5 @@
 package io.ddd4j.sample.order.application;
 
-import java.util.stream.Collectors;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.sample.order.domain.Money;
 import io.ddd4j.sample.order.domain.Order;
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -108,11 +106,11 @@ public class OrderApplicationService {
     }
 
     private void persist(Order order) {
-        List<DomainEvent<?>> events = new ArrayList<>(order.domainEvents());
+        List<DomainEvent<?>> events = List.copyOf(order.domainEvents());
         transaction.execute(() -> {
             repository.save(order);
             outbox.append(events.stream().map(event -> new OutboxMessage(UUID.randomUUID().toString(), order.id(),
-                    event.getClass().getName(), event, Instant.now())).collect(java.util.stream.Collectors.toList()));
+                    event.getClass().getName(), event, Instant.now())).toList());
             readModels.project(toReadModel(order));
         });
         order.clearDomainEvents();

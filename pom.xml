@@ -86,7 +86,7 @@
         <module>ddd4j-mq</module>
         <module>ddd4j-web</module>
         <!-- 示例工程（允许轴：2026-09-05 已按 1.0.x 栈降级，排除 quarkus/micronaut 样例） -->
-        <module>ddd4j-samples</module>
+        <!-- <module>ddd4j-samples</module> 1.0.x sample 模块含 record 语法（从 2.0.x 同步），无法在 JDK8 编译。源码目录保留与 2.0.x/3.0.x 保持一致，但 pom 不参与 1.0.x reactor 编译 -->
         <module>ddd4j-auth</module>
         <module>ddd4j-cache</module>
 

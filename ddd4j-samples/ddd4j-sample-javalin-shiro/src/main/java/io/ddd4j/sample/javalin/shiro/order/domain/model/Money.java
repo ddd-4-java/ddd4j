@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.shiro.order.domain.model;
 
-import java.util.Locale.ROOT;
 import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
 
@@ -21,32 +20,10 @@ import java.util.Objects;
  * @param amount   金额数值
  * @param currency 货币代码（如 CNY、USD）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */public final class Money {
-        private final BigDecimal amount;
-        private final String currency;
+ */
+public record Money(BigDecimal amount, String currency) implements ValueObject {
 
-        public Money (BigDecimal amount, String currency) {
-        Objects.requireNonNull(amount, "amount must not be null");
-        if (amount.signum() < 0) {
-            throw new IllegalArgumentException("amount must not be negative");
-            this.amount = amount;
-            this.currency = currency;
-        
-
-        }
-
-        public BigDecimal amount() { return amount; }
-        public String currency() { return currency; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        Money other = (Money) o;
-            return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
-        }
-        @Override
-        public int hashCode() { return j
- {
+    public Money {
         Objects.requireNonNull(amount, "amount must not be null");
         if (amount.signum() < 0) {
             throw new IllegalArgumentException("amount must not be negative");
@@ -77,10 +54,10 @@ import java.util.Objects;
      */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
-        if (!Objects.equals(currency, other.getCurrency())) {
+        if (!Objects.equals(currency, other.currency())) {
             throw new IllegalArgumentException("currency must be same");
         }
-        return new Money(amount.add(other.getAmount()), currency);
+        return new Money(amount.add(other.amount()), currency);
     }
 
     /**
@@ -104,4 +81,4 @@ import java.util.Objects;
                 .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
         return new Money(amount.multiply(factor), currency);
     }
-    }
+}

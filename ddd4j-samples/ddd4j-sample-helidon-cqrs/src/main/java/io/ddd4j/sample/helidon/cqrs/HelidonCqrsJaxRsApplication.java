@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
-import java.util.Collections;
 import io.ddd4j.sample.helidon.cqrs.web.OrderResource;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
@@ -28,6 +27,6 @@ public class HelidonCqrsJaxRsApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        return Collections.singleton(OrderResource.class);
+        return Set.of(OrderResource.class);
     }
 }

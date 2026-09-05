@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
-import java.util.stream.Collectors;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.PermissionRepository;
@@ -22,11 +21,11 @@ public class InMemoryPermissionRepository implements PermissionRepository {
 
     private static PermissionRow toRow(Permission permission) {
         PermissionRow row = new PermissionRow();
-        row.permissionId = permission.getId();
+        row.permissionId = permission.id();
         row.permissionCode = permission.getPermissionCode();
         row.permissionName = permission.getPermissionName();
         row.module = permission.getModule();
-        row.status = permission.getStatus().getName();
+        row.status = permission.getStatus().name();
         return row;
     }
 
@@ -62,20 +61,20 @@ public class InMemoryPermissionRepository implements PermissionRepository {
         return rows.values().stream()
                 .filter(r -> Objects.equals(module, r.module))
                 .map(InMemoryPermissionRepository::toModel)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<Permission> findAll() {
         return rows.values().stream()
                 .map(InMemoryPermissionRepository::toModel)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
     @Override
     public Permission save(Permission aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.getId(), toRow(aggregate));
+        rows.put(aggregate.id(), toRow(aggregate));
         return aggregate;
     }
 

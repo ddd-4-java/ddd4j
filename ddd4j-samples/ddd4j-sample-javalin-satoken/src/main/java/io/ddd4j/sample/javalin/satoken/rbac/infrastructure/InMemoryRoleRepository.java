@@ -1,7 +1,5 @@
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 import java.util.Objects;
 
 import io.ddd4j.kit.lang.CollKit;
@@ -24,11 +22,11 @@ public class InMemoryRoleRepository implements RoleRepository {
 
     private static RoleRow toRow(Role role) {
         RoleRow row = new RoleRow();
-        row.roleId = role.getId();
+        row.roleId = role.id();
         row.roleCode = role.getRoleCode();
         row.roleName = role.getRoleName();
         row.description = role.getDescription();
-        row.status = role.getStatus().getName();
+        row.status = role.getStatus().name();
         row.permissionIds = new ArrayList<>(role.getPermissionIds());
         return row;
     }
@@ -64,13 +62,13 @@ public class InMemoryRoleRepository implements RoleRepository {
     public List<Role> findAll() {
         return rows.values().stream()
                 .map(InMemoryRoleRepository::toModel)
-                .collect(java.util.stream.Collectors.toList());
+                .toList();
     }
 
     @Override
     public Role save(Role aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.getId(), toRow(aggregate));
+        rows.put(aggregate.id(), toRow(aggregate));
         return aggregate;
     }
 

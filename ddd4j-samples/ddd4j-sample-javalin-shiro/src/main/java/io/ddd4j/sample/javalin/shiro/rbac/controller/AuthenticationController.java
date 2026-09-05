@@ -1,7 +1,5 @@
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
-import java.util.LinkedHashSet;
-import java.util.Collections;
 import java.util.Objects;
 
 import com.google.inject.Inject;
@@ -78,7 +76,7 @@ public class AuthenticationController {
      */
     public void logout(Context ctx) {
         SubjectKit.logout();
-        ctx.json(R.ok(Collections.singletonMap("success", true)));
+        ctx.json(R.ok(Map.of("success", true)));
     }
 
     /**
@@ -87,7 +85,7 @@ public class AuthenticationController {
     public void me(Context ctx) {
         AuthPrincipal principal = SubjectKit.getPrincipal();
         if (Objects.isNull(principal)) {
-            ctx.json(R.ok(Collections.singletonMap("authenticated", false)));
+            ctx.json(R.ok(Map.of("authenticated", false)));
             return;
         }
 
@@ -138,7 +136,7 @@ public class AuthenticationController {
     public void kickout(Context ctx) {
         String userId = ctx.formParam("userId");
         SubjectKit.kickout(userId);
-        ctx.json(R.ok(Collections.singletonMap("kicked", userId)));
+        ctx.json(R.ok(Map.of("kicked", userId)));
     }
 
     /**
@@ -148,30 +146,9 @@ public class AuthenticationController {
         ctx.json(R.ok(Map.of("login", SubjectKit.isLogin())));
     }
 
-    // ============================ DTO ============================public final class LoginRequest {
-        private final String loginId;
-        private final String password;
+    // ============================ DTO ============================
 
-        public LoginRequest(String loginId, String password) {
-            this.loginId = loginId;
-            this.password = password;
-        }
-        public String loginId() { return loginId; }
-        public String password() { return password; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-        LoginRequest other = (LoginRequest) o;
-            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.password, other.password);
-        }
-        @Override
-        public int hashCode() { return java.util.Objects.hash(loginId, password); }
-        @Override
-        public String toString() {
-            return "LoginRequest{" + "loginId=" + loginId + ", " + "password=" + password + "}";
-        }
-    
+    public record LoginRequest(String loginId, String password) {
     }
 
 }

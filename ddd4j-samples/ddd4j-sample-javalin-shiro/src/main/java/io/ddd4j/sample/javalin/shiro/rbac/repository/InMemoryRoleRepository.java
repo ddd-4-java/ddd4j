@@ -28,7 +28,7 @@ public class InMemoryRoleRepository {
      * 新增或更新角色。
      */
     public Role save(Role role) {
-        store.put(role.getCode(), role);
+        store.put(role.code(), role);
         return role;
     }
 

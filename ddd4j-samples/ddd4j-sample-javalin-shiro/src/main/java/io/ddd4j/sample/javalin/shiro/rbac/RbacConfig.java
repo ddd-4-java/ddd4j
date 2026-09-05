@@ -1,7 +1,5 @@
 package io.ddd4j.sample.javalin.shiro.rbac;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -57,13 +55,13 @@ public final class RbacConfig {
         // ==================== 种子用户 ====================
         // admin：admin 角色
         rbacService.saveUser(new User("admin", "admin123", "管理员",
-                Collections.singleton("admin"), Collections.singleton()));
+                Set.of("admin"), Set.of()));
         // zhangsan：user 角色（业务授权：直接拥有 order:pay）
         rbacService.saveUser(new User("zhangsan", "pass123", "张三",
-                Collections.singleton("user"), Collections.singleton("order:pay")));
+                Set.of("user"), Set.of("order:pay")));
         // lisi：user 角色（无额外权限）
         rbacService.saveUser(new User("lisi", "pass123", "李四",
-                Collections.singleton("user"), Collections.singleton()));
+                Set.of("user"), Set.of()));
     }
 
     /**
@@ -79,30 +77,30 @@ public final class RbacConfig {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
                 if (Objects.isNull(principal)) {
-                    return Collections.emptyList();
+                    return List.of();
                 }
                 Object loginId = principal.getLoginId();
                 if (Objects.isNull(loginId)) {
-                    return Collections.emptyList();
+                    return List.of();
                 }
                 return userRepository.findByLoginId(String.valueOf(loginId))
                         .map(rbacServicePerms(roleRepository))
-                        .orElse(Collections.emptyList());
+                        .orElse(List.of());
             }
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
                 if (Objects.isNull(principal)) {
-                    return Collections.emptyList();
+                    return List.of();
                 }
                 Object loginId = principal.getLoginId();
                 if (Objects.isNull(loginId)) {
-                    return Collections.emptyList();
+                    return List.of();
                 }
                 return userRepository.findByLoginId(String.valueOf(loginId))
                         .map(User::roles)
-                        .map(roles -> (List<String>) Collections.unmodifiableList(new ArrayList<>(roles)))
-                        .orElse(Collections.emptyList());
+                        .map(roles -> (List<String>) List.copyOf(roles))
+                        .orElse(List.of());
             }
         };
     }
@@ -117,7 +115,7 @@ public final class RbacConfig {
                 roleRepository.findByCode(roleCode)
                         .ifPresent(role -> allPerms.addAll(role.permissions()));
             }
-            return Collections.unmodifiableList(new ArrayList<>(allPerms));
+            return List.copyOf(allPerms);
         };
     }
 

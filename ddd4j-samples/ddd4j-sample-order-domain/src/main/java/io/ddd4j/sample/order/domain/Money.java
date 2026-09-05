@@ -8,11 +8,9 @@ import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 
-public final class Money implements ValueObject {
-    private final BigDecimal amount;
-    private final String currency;
+public record Money(BigDecimal amount, String currency) implements ValueObject {
 
-    public Money(BigDecimal amount, String currency) {
+    public Money {
         Objects.requireNonNull(amount, "amount must not be null");
         if (amount.signum() < 0) {
             throw new IllegalArgumentException("amount must not be negative");
@@ -20,27 +18,8 @@ public final class Money implements ValueObject {
         if (StrKit.isBlank(currency)) {
             throw new IllegalArgumentException("currency must not be blank");
         }
-        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
-        this.currency = currency.trim().toUpperCase(Locale.ROOT);
-    }
-
-    public BigDecimal amount() { return amount; }
-    public String currency() { return currency; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Money other = (Money) o;
-        return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
-    }
-
-    @Override
-    public int hashCode() { return Objects.hash(amount, currency); }
-
-    @Override
-    public String toString() {
-        return "Money{" + "amount=" + amount + ", " + "currency=" + currency + "}";
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+        currency = currency.trim().toUpperCase(Locale.ROOT);
     }
 
     public static Money cny(BigDecimal amount) {

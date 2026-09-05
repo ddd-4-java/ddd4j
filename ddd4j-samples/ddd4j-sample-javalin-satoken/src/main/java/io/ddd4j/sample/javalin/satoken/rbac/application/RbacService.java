@@ -1,7 +1,5 @@
 package io.ddd4j.sample.javalin.satoken.rbac.application;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 
 import io.ddd4j.core.auth.AuthPrincipal;

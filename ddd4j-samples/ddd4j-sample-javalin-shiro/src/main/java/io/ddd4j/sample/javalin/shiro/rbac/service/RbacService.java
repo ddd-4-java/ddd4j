@@ -1,7 +1,5 @@
 package io.ddd4j.sample.javalin.shiro.rbac.service;
 
-import java.util.LinkedHashSet;
-import java.util.Collections;
 import java.util.Objects;
 
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Permission;
@@ -134,8 +132,8 @@ public class RbacService {
         Role existing = roleRepository.findByCode(code)
                 .orElseThrow(() -> new NoSuchElementException("role not found: " + code));
         Role updated = new Role(
-                existing.getCode(),
-                Objects.nonNull(name) ? name : existing.getName(),
+                existing.code(),
+                Objects.nonNull(name) ? name : existing.name(),
                 Objects.nonNull(permissionCodes) ? permissionCodes : existing.permissions());
         return roleRepository.save(updated);
     }

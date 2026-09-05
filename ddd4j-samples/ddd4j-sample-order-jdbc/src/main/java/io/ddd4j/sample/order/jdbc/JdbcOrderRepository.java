@@ -1,6 +1,5 @@
 package io.ddd4j.sample.order.jdbc;
 
-import java.math.BigDecimal;
 import io.ddd4j.sample.order.domain.Money;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderLine;

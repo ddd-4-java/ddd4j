@@ -20,7 +20,7 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-bom</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>${dropwizard-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
