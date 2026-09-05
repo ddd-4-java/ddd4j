@@ -20,6 +20,7 @@ import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -91,10 +92,15 @@ public final class ExcelImporter {
      * @return 全部数据
      */
     public static <T> List<T> readAll(InputStream in, Class<T> head) {
-        try {
-            return EasyExcel.read(in).head(head).sheet().doReadSync();
-        } catch (Exception e) {
-            throw new BizRuntimeException(500, "excel.import.readall.failed", e);
+        try (in) {
+            try {
+                return EasyExcel.read(in).head(head).sheet().doReadSync();
+            } catch (Exception e) {
+                throw new BizRuntimeException(500, "excel.import.readall.failed", e);
+            }
+        } catch (IOException ex) {
+            log.error("excel.import.readall.failed", ex);
         }
+        return Collections.emptyList();
     }
 }

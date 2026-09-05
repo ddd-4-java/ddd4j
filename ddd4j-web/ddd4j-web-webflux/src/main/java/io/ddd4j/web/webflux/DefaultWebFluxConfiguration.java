@@ -104,8 +104,9 @@ public class DefaultWebFluxConfiguration {
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
      */
     @Bean
-    /**", "/webjars/**"});
-        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+    public Ddd4jWebFluxReadinessController ddd4jWebFluxReadinessController(
+            RuntimeReadinessRegistry readinessRegistry) {
+        return new Ddd4jWebFluxReadinessController(readinessRegistry);
     }
 
     @Bean

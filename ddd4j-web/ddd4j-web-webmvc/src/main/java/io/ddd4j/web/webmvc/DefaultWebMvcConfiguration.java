@@ -160,8 +160,9 @@ public class DefaultWebMvcConfiguration {
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
      */
     @Bean
-    /**", "/webjars/**"});
-        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+    public Ddd4jWebMvcReadinessController ddd4jWebMvcReadinessController(
+            RuntimeReadinessRegistry readinessRegistry) {
+        return new Ddd4jWebMvcReadinessController(readinessRegistry);
     }
 
     @Bean
