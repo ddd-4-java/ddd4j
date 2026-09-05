@@ -100,6 +100,15 @@ public interface I18nProvider {
         private Internals() {
         }
 
+/**
+     * 按 SLF4J 风格 {@code {}} 占位符按出现顺序替换参数。
+     * <p>当 args 为空或 null 时原样返回 message。
+     *
+     * @param message 原始消息（可能含 {@code {}} 占位符）
+     * @param args    替换参数
+     * @return 替换后的消息
+     */
+
         static String formatSlfStyle(String message, Object... args) {
         if (Objects.isNull(args) || args.length == 0) {
             return message;

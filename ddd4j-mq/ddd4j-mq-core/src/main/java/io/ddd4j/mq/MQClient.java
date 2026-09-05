@@ -516,6 +516,10 @@ sb.append("(");
         private LogHolder() {
         }
 
+/**
+     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
+     */
+
         private static Logger logger() {
             return log;
         }

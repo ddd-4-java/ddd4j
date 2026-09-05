@@ -359,6 +359,14 @@ public class GlobalExceptionHandler {
         return this.bindException(ex, ex.getBindingResult());
     }
 
+/**
+     * 400 (Bad Request)
+     *
+     * @see javax.validation.Valid
+     * @see org.springframework.validation.Validator
+     * @see org.springframework.validation.DataBinder
+     */
+
     protected ApiRestResponse<?> bindException(Exception ex, BindingResult result) {
         if (result.getErrorCount() > 0) {
             List<Map<String, String>> errorList = Lists.newArrayList();
