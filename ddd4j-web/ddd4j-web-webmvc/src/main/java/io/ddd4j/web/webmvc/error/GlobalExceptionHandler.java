@@ -13,7 +13,7 @@ import io.ddd4j.core.exception.BizCheckedException;
 import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
-import io.ddd4j.core.util.WebUtils;
+import io.ddd4j.web.webmvc.util.WebUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.*;
 import lombok.Getter;
@@ -57,7 +57,9 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import io.ddd4j.kit.web.IpKit;
 
+import java.util.Locale;
 /**
  * 异常增强，以JSON的形式返回给客服端
  * 异常增强类型：NullPointerException,RunTimeException,ClassCastException,
@@ -66,11 +68,15 @@ import java.util.*;
 @ControllerAdvice
 @ResponseBody
 @Slf4j
-public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptionHandler {
+public class GlobalExceptionHandler {
 
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
+
+    private NestedMessageSource getMessageSource() {
+        return messageSource;
+    }
     @Autowired
     private ServerI18nProperties serverI18NProperties;
 
@@ -933,6 +939,16 @@ public class GlobalExceptionHandler extends io.ddd4j.core.exception.BaseExceptio
             return getMessageSource().getMessage(i18nCode, args, message, locale);
         }
         return message;
+    }
+
+
+
+    protected void logException(Exception ex) {
+        HttpServletRequest request = WebUtils.getHttpServletRequest();
+        if (Objects.nonNull(request)) {
+            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), IpKit.getRemoteAddr(request));
+        }
+        log.error(ex.getMessage(), ex);
     }
 
 }

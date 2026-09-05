@@ -16,7 +16,7 @@ package io.ddd4j.web.webmvc.core;
 
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.utils.JsonKit;
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.spring.util.BeanKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
