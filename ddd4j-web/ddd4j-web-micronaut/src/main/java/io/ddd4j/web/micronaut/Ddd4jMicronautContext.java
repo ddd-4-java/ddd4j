@@ -61,4 +61,12 @@ import java.util.Optional;
         subject.ifPresent(ThreadContext::bind);
         return scope;
     }
+
+    public WebRequestContext getRequestContext() {
+        return requestContext;
+    }
+
+    public Optional<Subject> getSubject() {
+        return subject;
+    }
 }

@@ -73,4 +73,16 @@ result = 31 * result + request.hashCode();
     public String toString() {
         return "AuthFailedEvent{" + request + ", " + reason + ", " + occurredAt + '}';
     }
+
+    public AuthRequest getRequest() {
+        return request;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public Instant getOccurredAt() {
+        return occurredAt;
+    }
 }

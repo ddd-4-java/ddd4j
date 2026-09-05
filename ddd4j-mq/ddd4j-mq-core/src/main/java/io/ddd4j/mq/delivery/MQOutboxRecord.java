@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.ddd4j.mq.delivery;
 
 import io.ddd4j.kit.lang.StrKit;
@@ -125,5 +140,49 @@ public final class MQOutboxRecord {
                                          Map<String, String> headers, Instant availableAt) {
         return new MQOutboxRecord(messageId, destination, payload, headers, MQOutboxStatus.PENDING,
                 availableAt, null, null, 0, null, null);
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public MQOutboxStatus getStatus() {
+        return status;
+    }
+
+    public Instant getAvailableAt() {
+        return availableAt;
+    }
+
+    public String getLeaseOwner() {
+        return leaseOwner;
+    }
+
+    public Instant getLeaseUntil() {
+        return leaseUntil;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public String getLastError() {
+        return lastError;
+    }
+
+    public Instant getPublishedAt() {
+        return publishedAt;
     }
 }

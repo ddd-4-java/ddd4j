@@ -119,4 +119,16 @@ public final class PropertyRef implements Serializable {
     public String toString() {
         return "PropertyRef{" + space + ", " + ownerType + ", " + property + '}';
     }
+
+    public PropertySpace getSpace() {
+        return space;
+    }
+
+    public Class<?> getOwnerType() {
+        return ownerType;
+    }
+
+    public String getProperty() {
+        return property;
+    }
 }

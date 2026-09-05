@@ -89,4 +89,20 @@ result = 31 * result + request.hashCode();
     public String toString() {
         return "AuthSucceededEvent{" + request + ", " + principal + ", " + token + ", " + occurredAt + '}';
     }
+
+    public AuthRequest getRequest() {
+        return request;
+    }
+
+    public AuthPrincipal getPrincipal() {
+        return principal;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public Instant getOccurredAt() {
+        return occurredAt;
+    }
 }
