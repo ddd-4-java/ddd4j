@@ -1,7 +1,6 @@
 package io.ddd4j.web.webmvc.error;
 
 import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.ApiRestResponse;
@@ -12,6 +11,7 @@ import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.kit.web.IpKit;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import io.ddd4j.web.webmvc.util.WebUtils;
+import hitool.core.format.ByteUnitFormat;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.*;
 import lombok.Getter;
@@ -263,7 +263,7 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      */
-    @ExceptionHandler({JacksonException.class, JacksonException.class})
+    @ExceptionHandler(JacksonException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiRestResponse<String> jsonProcessingException(JacksonException ex) {
         this.logException(ex);
@@ -445,7 +445,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", cn.hutool.core.io.unit.DataSizeUtil.format(ex.getMaxUploadSize(), cn.hutool.core.io.unit.DataUnit.KILOBYTES));
+        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", ByteUnitFormat.B.to(ByteUnitFormat.K, ex.getMaxUploadSize()));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);
@@ -460,7 +460,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizePerFileExceededException(MaxUploadSizePerFileExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", cn.hutool.core.io.unit.DataSizeUtil.format(ex.getMaxUploadSizePerFile(), cn.hutool.core.io.unit.DataUnit.KILOBYTES));
+        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", ByteUnitFormat.B.to(ByteUnitFormat.K, ex.getMaxUploadSizePerFile()));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);

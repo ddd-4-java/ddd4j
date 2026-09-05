@@ -4119,6 +4119,12 @@
                 <artifactId>hitool</artifactId>
                 <version>${easy4j-hitool.version}</version>
             </dependency>
+            <!-- Easy4J HiTool Core：字节单位格式化（ByteUnitFormat）等核心工具。 -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>hitool-core</artifactId>
+                <version>${easy4j-hitool.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-exec -->
             <!-- Hive Exec：Apache Hive 查询执行引擎（MapReduce/Tez/Spark 任务执行）。 -->
             <dependency>
