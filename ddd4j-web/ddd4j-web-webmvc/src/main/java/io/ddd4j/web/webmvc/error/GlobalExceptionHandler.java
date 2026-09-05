@@ -922,11 +922,7 @@ public class GlobalExceptionHandler {
             String message = this.getLocaleMessage(ex, "sys.error", defaultMessage);
             return ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse(message);
         }
-        return ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse(defau    /**
-     * 异常信息国际化
-     */
-
-ltMessage);
+        return ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse(defaultMessage);
     }
 
     /**

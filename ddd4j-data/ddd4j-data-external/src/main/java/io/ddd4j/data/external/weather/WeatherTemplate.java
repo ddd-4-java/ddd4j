@@ -66,14 +66,7 @@ public class WeatherTemplate {
     }
 
     /**
-     * 获取指定城市的天气信息（带缓存，未命中时自动查询远程接口）。    /**
      * 获取指定城市的天气信息（带缓存，未命中时自动查询远程接口）。
-     *
-     * @param cityCode 城市代码
-     * @return 天气 JSON 数据，未找到返回 null
-     */
-
-
      *
      * @param cityCode 城市代码
      * @return 天气 JSON 数据，未找到返回 null

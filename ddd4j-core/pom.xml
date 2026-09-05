@@ -159,7 +159,7 @@
         </dependency>
         <!-- For Hitool -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>hitool-core</artifactId>
         </dependency>
         <!-- For Spring Biz -->

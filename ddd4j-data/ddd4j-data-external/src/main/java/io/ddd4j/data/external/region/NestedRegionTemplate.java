@@ -66,15 +66,7 @@ public class NestedRegionTemplate {
      * @param ipAddress  IP 地址
      * @return 地区枚举
      */
-        /**
-     * 获取地区枚举（优先使用地区代码，失败则通过 IP 解析）
-     *
-     * @param regionCode 地区代码
-     * @param ipAddress  IP 地址
-     * @return 地区枚举
-     */
-
-public RegionEnum getRegion(String regionCode, String ipAddress) {
+    public RegionEnum getRegion(String regionCode, String ipAddress) {
         RegionEnum regionEnum = this.getRegionByCode(regionCode);
         if (!regionEnum.isValidRegion()) {
             regionEnum = this.getRegionByIp(ipAddress);
@@ -89,14 +81,7 @@ public RegionEnum getRegion(String regionCode, String ipAddress) {
      * @param regionCode 地区代码（code2/code3）
      * @return 地区枚举
      */
-        /**
-     * 根据地区代码获取地区枚举
-     *
-     * @param regionCode 地区代码（code2/code3）
-     * @return 地区枚举
-     */
-
-public RegionEnum getRegionByCode(String regionCode) {
+    public RegionEnum getRegionByCode(String regionCode) {
         RegionEnum regionEnum = RegionEnum.getByCode2(regionCode);
         log.debug("Get Region : {} By regionCode : {}, is Valid : {} ", regionEnum.name(), regionCode, regionEnum.isValidRegion());
         if (!regionEnum.isValidRegion()) {
@@ -112,14 +97,7 @@ public RegionEnum getRegionByCode(String regionCode) {
      * @param ipAddress IPv4 地址
      * @return 地区枚举
      */
-        /**
-     * 根据 IP 地址获取地区枚举
-     *
-     * @param ipAddress IPv4 地址
-     * @return 地区枚举
-     */
-
-public RegionEnum getRegionByIp(String ipAddress) {
+    public RegionEnum getRegionByIp(String ipAddress) {
         try {
             // 1、去除参数两头空白
             ipAddress = trimWhitespace(ipAddress);
@@ -156,14 +134,7 @@ public RegionEnum getRegionByIp(String ipAddress) {
     }
 
     /**
-     * 根据 IP 地址    /**
      * 根据 IP 地址获取位置信息
-     *
-     * @param ipAddress IPv4 地址
-     * @return 位置信息字符串
-     */
-
-获取位置信息
      *
      * @param ipAddress IPv4 地址
      * @return 位置信息字符串
@@ -189,14 +160,7 @@ public RegionEnum getRegionByIp(String ipAddress) {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        retu    /**
-     * 根据 IP 地址获取地区地址对象
-     *
-     * @param ipAddress IPv4 地址
-     * @return 地区地址对象
-     */
-
-rn XdbSearcher.NOT_MATCH;
+        return XdbSearcher.NOT_MATCH;
     }
 
     /**
@@ -226,15 +190,7 @@ rn XdbSearcher.NOT_MATCH;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-     /**
-     * 判断是否为大陆 IP（优先使用地区代码）
-     *
-     * @param regionCode 地区代码
-     * @param ipAddress  IP 地址
-     * @return true 如果是大陆地区
-     */
-
-       return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
+        return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
     }
 
     /**
@@ -251,14 +207,7 @@ rn XdbSearcher.NOT_MATCH;
                 return this.isMainlandIp(ipAddress);
             }
             return regionEnum.isChinaMainland();
-        } catch (Exce    /**
-     * 判断是否为大陆 IP
-     *
-     * @param ipAddress IP 地址
-     * @return true 如果是大陆地区
-     */
-
-ption e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         return Boolean.FALSE;

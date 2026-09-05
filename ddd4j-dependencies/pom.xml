@@ -258,7 +258,7 @@
         <httpconn.version>1.0.1.RELEASE</httpconn.version>
         <httputils.version>1.0.0.RELEASE</httputils.version>
         <htmlparser.version>2.1</htmlparser.version>
-        <hitool.version>1.0.2.RELEASE</hitool.version>
+        <hitool.version>1.0.x.20260630-SNAPSHOT</hitool.version>
         <hive.version>4.2.0</hive.version>
         <hutool.version>5.8.47</hutool.version>
         <hystrix.version>1.5.18</hystrix.version>
@@ -2978,7 +2978,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>hitool-core</artifactId>
                 <version>${hitool.version}</version>
                 <exclusions>
@@ -2989,7 +2989,7 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>hitool-crypto</artifactId>
                 <version>${hitool.version}</version>
                 <exclusions>
@@ -3000,7 +3000,7 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>hitool-mail</artifactId>
                 <version>${hitool.version}</version>
                 <exclusions>

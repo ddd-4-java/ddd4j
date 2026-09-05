@@ -106,15 +106,7 @@ public class PconlineRegionTemplate {
      * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=183.128.136.82
      *
      * @param ip
-     * @return {"ip":"110.137.48.237","pro":"","proCode":"999999","city":"","cityCode":"0","region":"","regionCode":"0    /**
-     * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=183.128.136.82
-     *
-     * @param ip
      * @return {"ip":"110.137.48.237","pro":"","proCode":"999999","city":"","cityCode":"0","region":"","regionCode":"0","addr":" 印度尼西亚","regionNames":"","err":"noprovince"}
-     * @throws ExecutionException
-     */
-
-","addr":" 印度尼西亚","regionNames":"","err":"noprovince"}
      * @throws ExecutionException
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
@@ -156,14 +148,7 @@ public class PconlineRegionTemplate {
                 Thread.currentThread().interrupt();
             }
             log.error("IP : {} >> Location Query Error：{}", ip, e.getMessage());
-      /**
-     * 根据 IP 地址获取地区地址对象
-     *
-     * @param ip IPv4 地址
-     * @return 地区地址对象
-     */
-
-      }
+        }
         return Optional.empty();
     }
 
@@ -209,14 +194,7 @@ public class PconlineRegionTemplate {
             return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
         } catch (Exception e) {
             log.error("IP : {} >> Country/Region Parser Error：{}", ip, e.getMessage());
-            return Xdb    /**
-     * 根据 IP 地址获取地区枚举
-     *
-     * @param ip IPv4 地址
-     * @return 地区枚举
-     */
-
-Searcher.NOT_MATCH_REGION_ADDRESS;
+            return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
         }
     }
 
