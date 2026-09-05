@@ -1,5 +1,6 @@
 package io.ddd4j.sample.order.jdbc;
 
+import java.math.BigDecimal;
 import io.ddd4j.sample.order.application.OrderReadModel;
 import io.ddd4j.sample.order.application.OrderReadModelPort;
 import io.ddd4j.sample.order.domain.OrderQuery;

@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.order.infrastructure;
 
+import java.util.stream.Collectors;
 import io.ddd4j.sample.order.application.IdempotencyPort;
 import io.ddd4j.sample.order.application.OrderReadModel;
 import io.ddd4j.sample.order.application.OrderReadModelPort;
@@ -53,7 +54,7 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<Order> findAll(int offset, int limit) {
-        return orders.values().stream().skip(offset).limit(limit).toList();
+        return orders.values().stream().skip(offset).limit(limit).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -68,7 +69,7 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<OutboxMessage> pending(int limit) {
-        return new ArrayList<>(outbox.values()).stream().limit(limit).toList();
+        return new ArrayList<>(outbox.values()).stream().limit(limit).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -101,7 +102,7 @@ public final class JavalinOrderAdapters
                         || Objects.equals(criteria.status(), order.status()))
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

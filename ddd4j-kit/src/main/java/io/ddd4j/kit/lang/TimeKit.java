@@ -6,8 +6,7 @@ import lombok.experimental.UtilityClass;
 /**
  * 本地时间工具类
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
 public class TimeKit extends LocalDateTimeUtil {

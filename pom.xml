@@ -85,6 +85,8 @@
         <module>ddd4j-metrics</module>
         <module>ddd4j-mq</module>
         <module>ddd4j-web</module>
+        <!-- 示例工程（允许轴：2026-09-05 已按 1.0.x 栈降级，排除 quarkus/micronaut 样例） -->
+        <module>ddd4j-samples</module>
         <module>ddd4j-auth</module>
         <module>ddd4j-cache</module>
 

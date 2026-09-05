@@ -32,24 +32,24 @@
         <module>ddd4j-sample-order-redis</module>
 
         <!-- 非 Boot 运行时示例：Order 充血模型、CQRS、缓存与消息边界。 -->
-        <module>ddd4j-sample-quarkus</module>
+        <!-- <module>ddd4j-sample-quarkus</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
         <module>ddd4j-sample-javalin</module>
-        <module>ddd4j-sample-micronaut</module>
+        <!-- <module>ddd4j-sample-micronaut</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
         <module>ddd4j-sample-vertx</module>
         <module>ddd4j-sample-helidon</module>
         <module>ddd4j-sample-dropwizard</module>
 
         <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
-        <module>ddd4j-sample-quarkus-cqrs</module>
+        <!-- <module>ddd4j-sample-quarkus-cqrs</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
         <module>ddd4j-sample-javalin-cqrs</module>
         <module>ddd4j-sample-dropwizard-cqrs</module>
         <module>ddd4j-sample-helidon-cqrs</module>
-        <module>ddd4j-sample-micronaut-cqrs</module>
+        <!-- <module>ddd4j-sample-micronaut-cqrs</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
         <module>ddd4j-sample-vertx-cqrs</module>
 
         <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
-        <module>ddd4j-sample-quarkus-satoken</module>
-        <module>ddd4j-sample-quarkus-shiro</module>
+        <!-- <module>ddd4j-sample-quarkus-satoken</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
+        <!-- <module>ddd4j-sample-quarkus-shiro</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
         <module>ddd4j-sample-javalin-satoken</module>
         <module>ddd4j-sample-javalin-shiro</module>
     </modules>

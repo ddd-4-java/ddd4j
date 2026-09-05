@@ -1,5 +1,7 @@
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import java.util.Objects;
 
 import io.ddd4j.kit.lang.CollKit;
@@ -62,7 +64,7 @@ public class InMemoryRoleRepository implements RoleRepository {
     public List<Role> findAll() {
         return rows.values().stream()
                 .map(InMemoryRoleRepository::toModel)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

@@ -1,10 +1,25 @@
 package io.ddd4j.core.cqrs.eventstore;
 
 /**
- * 类名白名单过滤器 SPI（回填自 3.0.x ee5d56a7）。
+ * 类名过滤 SPI：决定从不可信输入（事件存储）反序列化的类名是否允许加载。
  *
- * <p>{@link EventDeserializer#isValidClassName} 仅做格式校验（防异常输入），
- * 本过滤器做业务白名单（防合法但恶意的类）。
+ * <p>用于加固 {@link EventDeserializer}：在 {@code Class.forName} 之前调用，
+ * 业务方可通过实现该接口限制允许加载的根包前缀，超出范围的类名视为不可信，
+ * 由 {@link EventDeserializer} 回退为 {@code Map} 反序列化（保留数据可读性）。
+ *
+ * <h3>实现约定</h3>
+ * <ul>
+ *   <li>实现必须是线程安全的——{@link EventDeserializer} 在反序列化热路径调用</li>
+ *   <li>不允许返回 {@code null}；拒绝类名时返回 {@code false}</li>
+ *   <li>默认实现见 {@link EventDeserializer#defaultFilter()}</li>
+ * </ul>
+ *
+ * <h3>注册方式</h3>
+ * <p>通过 {@link EventDeserializer#setFilter(ClassNameFilter)} 设置进程级过滤器；
+ * 单 JVM 仅允许一个过滤器，后注册覆盖前注册。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
  */
 @FunctionalInterface
 public interface ClassNameFilter {

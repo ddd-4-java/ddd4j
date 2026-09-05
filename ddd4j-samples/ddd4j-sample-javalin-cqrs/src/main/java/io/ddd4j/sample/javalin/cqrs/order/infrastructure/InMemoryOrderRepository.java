@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.cqrs.order.infrastructure;
 
+import java.util.stream.Collectors;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
@@ -56,7 +57,7 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     @Override
     public List<Order> findAll() {
-        return rows.values().stream().map(this::toModel).toList();
+        return rows.values().stream().map(this::toModel).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -82,7 +83,7 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
                 .orElseGet(List::of)
                 .stream()
                 .map(this::toLineModel)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
         return new Order(
                 persistenceObject.getId(),
                 persistenceObject.getOrderNo(),
@@ -105,7 +106,7 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
                 .status(model.status().name())
                 .totalAmount(totalAmount.amount())
                 .currency(totalAmount.currency())
-                .lines(model.lines().stream().map(this::toLinePersistenceObject).toList())
+                .lines(model.lines().stream().map(this::toLinePersistenceObject).collect(java.util.stream.Collectors.toList()))
                 .build();
     }
 

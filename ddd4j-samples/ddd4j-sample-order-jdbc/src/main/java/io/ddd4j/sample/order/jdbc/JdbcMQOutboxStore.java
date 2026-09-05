@@ -1,5 +1,6 @@
 package io.ddd4j.sample.order.jdbc;
 
+import java.util.Collections;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.delivery.MQDeliveryPolicy;
 import io.ddd4j.mq.delivery.MQOutboxRecord;
@@ -127,7 +128,7 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
                     int attempts = rows.getInt("attempts") + 1;
                     lease(messageId, leaseOwner, leaseUntil, attempts);
                     records.add(new MQOutboxRecord(messageId, rows.getString("event_type"), rows.getString("payload"),
-                            Map.of(MQDeliveryHeaders.MESSAGE_ID, messageId), MQOutboxStatus.LEASED,
+                            Collections.singletonMap(MQDeliveryHeaders.MESSAGE_ID, messageId), MQOutboxStatus.LEASED,
                             rows.getTimestamp("available_at").toInstant(), leaseOwner, leaseUntil, attempts,
                             rows.getString("last_error"), toInstant(rows, "published_at")));
                 }

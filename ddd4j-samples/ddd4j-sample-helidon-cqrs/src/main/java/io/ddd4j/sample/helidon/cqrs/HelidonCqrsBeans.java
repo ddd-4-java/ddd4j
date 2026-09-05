@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
@@ -86,7 +87,7 @@ public class HelidonCqrsBeans {
     @Produces
     @ApplicationScoped
     CommandBus commandBus(CreateOrderCommandHandler commandHandler) {
-        return new DefaultCommandBus(List.of(commandHandler));
+        return new DefaultCommandBus(Collections.singletonList(commandHandler));
     }
 
     @Produces

@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import java.util.Collections;
 import java.util.Objects;
 
 import io.ddd4j.core.api.R;
@@ -68,7 +69,7 @@ public class AuthorizationController {
             delete("/admin/users/{id}", ctx -> {
                 String id = ctx.pathParam("id");
                 rbacService.deleteUser(id);
-                ctx.json(R.ok(Map.of("deleted", id)));
+                ctx.json(R.ok(Collections.singletonMap("deleted", id)));
             });
 
             // POST /admin/users/{id}/roles —— 给用户分配角色（全量替换）
@@ -113,7 +114,7 @@ public class AuthorizationController {
             delete("/admin/roles/{id}", ctx -> {
                 String id = ctx.pathParam("id");
                 rbacService.deleteRole(id);
-                ctx.json(R.ok(Map.of("deleted", id)));
+                ctx.json(R.ok(Collections.singletonMap("deleted", id)));
             });
 
             // POST /admin/roles/{id}/permissions —— 给角色分配权限（全量替换）
@@ -158,36 +159,224 @@ public class AuthorizationController {
             delete("/admin/permissions/{id}", ctx -> {
                 String id = ctx.pathParam("id");
                 rbacService.deletePermission(id);
-                ctx.json(R.ok(Map.of("deleted", id)));
+                ctx.json(R.ok(Collections.singletonMap("deleted", id)));
             });
         };
     }
 
-    // ============================ 请求/响应 DTO ============================
+    // ============================ 请求/响应 DTO ============================public final class CreateUserRequest {
+        private final String userId;
+        private final String username;
+        private final String password;
+        private final String realName;
 
-    public record CreateUserRequest(String userId, String username, String password, String realName) {
-    }
+        public CreateUserRequest(String userId, String username, String password, String realName) {
+            this.userId = userId;
+            this.username = username;
+            this.password = password;
+            this.realName = realName;
+        }
+        public String userId() { return userId; }
+        public String username() { return username; }
+        public String password() { return password; }
+        public String realName() { return realName; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        CreateUserRequest other = (CreateUserRequest) o;
+            return Objects.equals(this.userId, other.userId) && Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password) && Objects.equals(this.realName, other.realName);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(userId, username, password, realName); }
+        @Override
+        public String toString() {
+            return "CreateUserRequest{" + "userId=" + userId + ", " + "username=" + username + ", " + "password=" + password + ", " + "realName=" + realName + "}";
+        }
+    
+    }public final class UpdateUserRequest {
+        private final String realName;
+        private final String password;
+        private final User.Status status;
 
-    public record UpdateUserRequest(String realName, String password, User.Status status) {
-    }
+        public UpdateUserRequest(String realName, String password, User.Status status) {
+            this.realName = realName;
+            this.password = password;
+            this.status = status;
+        }
+        public String realName() { return realName; }
+        public String password() { return password; }
+        public User.Status status() { return status; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        UpdateUserRequest other = (UpdateUserRequest) o;
+            return Objects.equals(this.realName, other.realName) && Objects.equals(this.password, other.password) && Objects.equals(this.status, other.status);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(realName, password, status); }
+        @Override
+        public String toString() {
+            return "UpdateUserRequest{" + "realName=" + realName + ", " + "password=" + password + ", " + "status=" + status + "}";
+        }
+    
+    }public final class AssignRolesRequest {
+        private final List<String> roleIds;
 
-    public record AssignRolesRequest(List<String> roleIds) {
-    }
+        public AssignRolesRequest(List<String> roleIds) {
+            this.roleIds = roleIds;
+        }
+        public List<String> roleIds() { return roleIds; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        AssignRolesRequest other = (AssignRolesRequest) o;
+            return Objects.equals(this.roleIds, other.roleIds);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(roleIds); }
+        @Override
+        public String toString() {
+            return "AssignRolesRequest{" + "roleIds=" + roleIds + "}";
+        }
+    
+    }public final class CreateRoleRequest {
+        private final String roleId;
+        private final String roleCode;
+        private final String roleName;
+        private final String description;
 
-    public record CreateRoleRequest(String roleId, String roleCode, String roleName, String description) {
-    }
+        public CreateRoleRequest(String roleId, String roleCode, String roleName, String description) {
+            this.roleId = roleId;
+            this.roleCode = roleCode;
+            this.roleName = roleName;
+            this.description = description;
+        }
+        public String roleId() { return roleId; }
+        public String roleCode() { return roleCode; }
+        public String roleName() { return roleName; }
+        public String description() { return description; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        CreateRoleRequest other = (CreateRoleRequest) o;
+            return Objects.equals(this.roleId, other.roleId) && Objects.equals(this.roleCode, other.roleCode) && Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(roleId, roleCode, roleName, description); }
+        @Override
+        public String toString() {
+            return "CreateRoleRequest{" + "roleId=" + roleId + ", " + "roleCode=" + roleCode + ", " + "roleName=" + roleName + ", " + "description=" + description + "}";
+        }
+    
+    }public final class UpdateRoleRequest {
+        private final String roleName;
+        private final String description;
+        private final Role.Status status;
 
-    public record UpdateRoleRequest(String roleName, String description, Role.Status status) {
-    }
+        public UpdateRoleRequest(String roleName, String description, Role.Status status) {
+            this.roleName = roleName;
+            this.description = description;
+            this.status = status;
+        }
+        public String roleName() { return roleName; }
+        public String description() { return description; }
+        public Role.Status status() { return status; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        UpdateRoleRequest other = (UpdateRoleRequest) o;
+            return Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description) && Objects.equals(this.status, other.status);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(roleName, description, status); }
+        @Override
+        public String toString() {
+            return "UpdateRoleRequest{" + "roleName=" + roleName + ", " + "description=" + description + ", " + "status=" + status + "}";
+        }
+    
+    }public final class AssignPermissionsRequest {
+        private final List<String> permissionIds;
 
-    public record AssignPermissionsRequest(List<String> permissionIds) {
-    }
+        public AssignPermissionsRequest(List<String> permissionIds) {
+            this.permissionIds = permissionIds;
+        }
+        public List<String> permissionIds() { return permissionIds; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        AssignPermissionsRequest other = (AssignPermissionsRequest) o;
+            return Objects.equals(this.permissionIds, other.permissionIds);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(permissionIds); }
+        @Override
+        public String toString() {
+            return "AssignPermissionsRequest{" + "permissionIds=" + permissionIds + "}";
+        }
+    
+    }public final class CreatePermissionRequest {
+        private final String permissionId;
+        private final String permissionCode;
+        private final String permissionName;
+        private final String module;
 
-    public record CreatePermissionRequest(String permissionId, String permissionCode, String permissionName,
-                                          String module) {
-    }
+        public CreatePermissionRequest(String permissionId, String permissionCode, String permissionName, String module) {
+            this.permissionId = permissionId;
+            this.permissionCode = permissionCode;
+            this.permissionName = permissionName;
+            this.module = module;
+        }
+        public String permissionId() { return permissionId; }
+        public String permissionCode() { return permissionCode; }
+        public String permissionName() { return permissionName; }
+        public String module() { return module; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        CreatePermissionRequest other = (CreatePermissionRequest) o;
+            return Objects.equals(this.permissionId, other.permissionId) && Objects.equals(this.permissionCode, other.permissionCode) && Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(permissionId, permissionCode, permissionName, module); }
+        @Override
+        public String toString() {
+            return "CreatePermissionRequest{" + "permissionId=" + permissionId + ", " + "permissionCode=" + permissionCode + ", " + "permissionName=" + permissionName + ", " + "module=" + module + "}";
+        }
+    
+    }public final class UpdatePermissionRequest {
+        private final String permissionName;
+        private final String module;
+        private final Permission.Status status;
 
-    public record UpdatePermissionRequest(String permissionName, String module, Permission.Status status) {
+        public UpdatePermissionRequest(String permissionName, String module, Permission.Status status) {
+            this.permissionName = permissionName;
+            this.module = module;
+            this.status = status;
+        }
+        public String permissionName() { return permissionName; }
+        public String module() { return module; }
+        public Permission.Status status() { return status; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        UpdatePermissionRequest other = (UpdatePermissionRequest) o;
+            return Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module) && Objects.equals(this.status, other.status);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(permissionName, module, status); }
+        @Override
+        public String toString() {
+            return "UpdatePermissionRequest{" + "permissionName=" + permissionName + ", " + "module=" + module + ", " + "status=" + status + "}";
+        }
+    
     }
 
 }

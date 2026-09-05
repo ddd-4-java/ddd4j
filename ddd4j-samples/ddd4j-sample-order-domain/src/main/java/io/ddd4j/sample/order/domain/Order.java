@@ -1,5 +1,6 @@
 package io.ddd4j.sample.order.domain;
 
+import java.util.Collections;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.order.domain.event.OrderCancelledEvent;
@@ -41,7 +42,7 @@ public final class Order extends AggregateRoot<String> {
 
     public static Order draft(String orderNo, String buyerId, String buyerName) {
         Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName,
-                OrderStatus.DRAFT, List.of());
+                OrderStatus.DRAFT, Collections.emptyList());
         order.registerEvent(new OrderCreatedEvent(order.id));
         return order;
     }
@@ -68,7 +69,7 @@ public final class Order extends AggregateRoot<String> {
     }
 
     public List<OrderLine> lines() {
-        return List.copyOf(lines);
+        return Collections.unmodifiableList(new ArrayList<>(lines));
     }
 
     public Money totalAmount() {

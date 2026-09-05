@@ -23,9 +23,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Micronaut request context holder for ddd4j web integration.
- */
-public final class Ddd4jMicronautContext {
+ * 通过 Micronaut PropagatedContext 传播 ddd4j 请求上下文。
+ */public final class Ddd4jMicronautContext {
 
     private static final ThreadLocal<Ddd4jMicronautContext> CURRENT = new ThreadLocal<>();
 

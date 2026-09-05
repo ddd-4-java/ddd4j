@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.satoken.rbac;
 
+import java.util.Collections;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
@@ -69,13 +70,13 @@ public final class RbacConfig {
 
         // 3) 创建用户并分配角色
         User admin = new User("10001", "admin", "admin", "管理员", User.Status.ENABLED);
-        admin.assignRoles(new HashSet<>(List.of("R001")));
+        admin.assignRoles(new HashSet<>(Collections.singletonList("R001")));
 
         User user = new User("10002", "user", "user", "张三", User.Status.ENABLED);
-        user.assignRoles(new HashSet<>(List.of("R002")));
+        user.assignRoles(new HashSet<>(Collections.singletonList("R002")));
 
         User disabled = new User("10003", "disabled", "disabled", "李四（已禁用）", User.Status.DISABLED);
-        disabled.assignRoles(new HashSet<>(List.of("R002")));
+        disabled.assignRoles(new HashSet<>(Collections.singletonList("R002")));
 
         userRepository.save(admin);
         userRepository.save(user);

@@ -38,7 +38,7 @@ import java.io.Serializable;
  * }
  *
  * // 聚合根维度（ddd4j Repository）
- * List<Agent> agents = agentRepository.batchSave(Arrays.asList(a1, a2));
+ * List<Agent> agents = agentRepository.batchSave(List.of(a1, a2));
  * Optional<Agent> a = agentRepository.findById(id);
  *
  * // PO 维度（继承自父类的批量方法）

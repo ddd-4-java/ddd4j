@@ -282,6 +282,7 @@
         <javax.jws-api.version>1.1</javax.jws-api.version>
         <javax-servlet.version>4.0.1</javax-servlet.version>
         <javax-validation.version>2.0.1.Final</javax-validation.version>
+        <yasson.version>1.0.8</yasson.version>
         <jakarta-inject.version>2.0.1</jakarta-inject.version>
         <javax-websocket.version>1.1</javax-websocket.version>
         <jandex.version>3.6.0</jandex.version>
@@ -3491,6 +3492,11 @@
                 <artifactId>javax.inject</artifactId>
                 <version>1</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse</groupId>
+                <artifactId>yasson</artifactId>
+                <version>${yasson.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.octo.captcha</groupId>
@@ -6392,6 +6398,16 @@
                 <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-database-postgresql</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.redis</groupId>
+                <artifactId>testcontainers-redis</artifactId>
+                <version>${testcontainers-redis.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
             <!-- Thumbnailator是一个用来生成图像缩略图的 Java类库，通过很简单的代码即可生成图片缩略图，也可直接对一整个目录的图片生成缩略图。 -->

@@ -45,11 +45,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Micronaut 3 Filter 请求上下文、Bearer Subject 与幂等适配器。
+ * Micronaut 4 Filter Method 请求上下文、Bearer Subject 与幂等适配器。
  *
  * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
- */
-@Filter("/**")
+ */@Filter("/**")
 public final class Ddd4jMicronautWebFilter implements HttpFilter {
 
     private final WebRequestContextFactory contextFactory;

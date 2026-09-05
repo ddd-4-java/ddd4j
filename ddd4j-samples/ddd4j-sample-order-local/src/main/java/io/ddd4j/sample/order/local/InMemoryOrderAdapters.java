@@ -1,5 +1,6 @@
 package io.ddd4j.sample.order.local;
 
+import java.util.stream.Collectors;
 import io.ddd4j.sample.order.application.IdempotencyPort;
 import io.ddd4j.sample.order.application.OrderReadModel;
 import io.ddd4j.sample.order.application.OrderReadModelPort;
@@ -58,7 +59,7 @@ public final class InMemoryOrderAdapters implements OrderRepository, OutboxPort,
 
     @Override
     public List<Order> findAll(int offset, int limit) {
-        return orders.values().stream().skip(offset).limit(limit).toList();
+        return orders.values().stream().skip(offset).limit(limit).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -73,7 +74,7 @@ public final class InMemoryOrderAdapters implements OrderRepository, OutboxPort,
 
     @Override
     public List<OutboxMessage> pending(int limit) {
-        return new ArrayList<>(pending.values()).stream().limit(limit).toList();
+        return new ArrayList<>(pending.values()).stream().limit(limit).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -104,7 +105,7 @@ public final class InMemoryOrderAdapters implements OrderRepository, OutboxPort,
                 .filter(order -> Objects.isNull(criteria.status()) || criteria.status() == order.status())
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

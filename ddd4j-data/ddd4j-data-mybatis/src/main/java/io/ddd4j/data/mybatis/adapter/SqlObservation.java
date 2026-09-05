@@ -5,7 +5,11 @@ import java.util.List;
 /**
  * 原生 MyBatis SQL 执行观测数据。
  *
- * 2026-09-05：record 降级为 JDK8 兼容 class。
+ * @param statementId MappedStatement 标识
+ * @param sql 已执行的 SQL
+ * @param sortedParams 已排序的参数快照
+ * @param elapsedNanos 耗时，单位为纳秒
+ * @param error 执行异常，可为空
  */
 public final class SqlObservation {
 

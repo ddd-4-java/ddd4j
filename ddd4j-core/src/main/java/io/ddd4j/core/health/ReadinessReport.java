@@ -7,7 +7,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 就绪度汇总报告。
+ * 多个 {@link ReadinessContributor} 的聚合结果。
+ *
+ * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
+ * 原始异常应由 Runtime 的日志或观测系统记录。
+ *
+ * @param ready   是否可接收流量
+ * @param results 每个已执行 Contributor 的结果
  */
 public final class ReadinessReport {
 
@@ -15,7 +21,6 @@ public final class ReadinessReport {
     private final List<ReadinessResult> results;
 
     public ReadinessReport(boolean ready, List<ReadinessResult> results) {
-        Objects.requireNonNull(results, "results must not be null");
         this.ready = ready;
         this.results = Collections.unmodifiableList(new ArrayList<>(
                 results != null ? results : Collections.<ReadinessResult>emptyList()));
@@ -50,10 +55,13 @@ public final class ReadinessReport {
 
     private static ReadinessResult checkContributor(ReadinessContributor contributor) {
         try {
-            return contributor.check();
-        } catch (Exception e) {
-            // 失败闭合（fail-closed）：不向外泄露内部异常细节
-            return ReadinessResult.unavailable("unknown", "check failed");
+            ReadinessResult result = contributor.check();
+            if (result != null) {
+                return result;
+            }
+            return ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "empty result");
+        } catch (RuntimeException exception) {
+            return ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "check failed");
         }
     }
 

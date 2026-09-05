@@ -68,14 +68,44 @@ public class OrderCQRSQueryController {
 
     /**
      * 订单响应 record。
-     */
-    public record OrderResponse(
-            String id,
-            String orderNo,
-            String buyerId,
-            String buyerName,
-            String status,
-            Money totalAmount,
-            int lineCount) {
+     */public final class OrderResponse {
+        private final String id;
+        private final String orderNo;
+        private final String buyerId;
+        private final String buyerName;
+        private final String status;
+        private final Money totalAmount;
+        private final int lineCount;
+
+        public OrderResponse(String id, String orderNo, String buyerId, String buyerName, String status, Money totalAmount, int lineCount) {
+            this.id = id;
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+            this.status = status;
+            this.totalAmount = totalAmount;
+            this.lineCount = lineCount;
+        }
+        public String id() { return id; }
+        public String orderNo() { return orderNo; }
+        public String buyerId() { return buyerId; }
+        public String buyerName() { return buyerName; }
+        public String status() { return status; }
+        public Money totalAmount() { return totalAmount; }
+        public int lineCount() { return lineCount; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        OrderResponse other = (OrderResponse) o;
+            return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && Objects.equals(this.lineCount, other.lineCount);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(id, orderNo, buyerId, buyerName, status, totalAmount, lineCount); }
+        @Override
+        public String toString() {
+            return "OrderResponse{" + "id=" + id + ", " + "orderNo=" + orderNo + ", " + "buyerId=" + buyerId + ", " + "buyerName=" + buyerName + ", " + "status=" + status + ", " + "totalAmount=" + totalAmount + ", " + "lineCount=" + lineCount + "}";
+        }
+    
     }
 }

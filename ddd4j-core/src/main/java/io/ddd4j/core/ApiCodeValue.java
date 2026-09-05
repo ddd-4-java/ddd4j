@@ -1,7 +1,18 @@
 package io.ddd4j.core;
 
 /**
- * @author wandl
+ * API 错误码常量定义。
+ * <p>
+ * 定义框架核心的 API 数字错误码，包括：
+ * <ul>
+ *   <li>通用状态码：{@link #SC_SUCCESS}、{@link #SC_FAIL}</li>
+ *   <li>认证相关：{@link #SC_AUTHC_FAIL} ~ {@link #SC_AUTHC_BAD_CREDENTIALS}</li>
+ *   <li>授权相关：{@link #SC_AUTHZ_FAIL} ~ {@link #SC_AUTHZ_THIRD_PARTY_SERVICE}</li>
+ * </ul>
+ * <p>
+ * 与 {@link ApiCode} 枚举配合使用，组成标准错误码体系。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class ApiCodeValue {
 

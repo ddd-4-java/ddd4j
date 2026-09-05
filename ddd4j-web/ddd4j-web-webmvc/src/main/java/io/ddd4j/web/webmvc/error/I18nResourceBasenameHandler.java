@@ -11,6 +11,10 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * 国际化资源 basename 解析器。
+ * <p>从资源路径中提取 i18n bundle 的 basename，用于 {@link org.springframework.context.MessageSource} 动态加载。</p>
+ */
 public class I18nResourceBasenameHandler implements ResourceBasenameHandler {
 
     @Override

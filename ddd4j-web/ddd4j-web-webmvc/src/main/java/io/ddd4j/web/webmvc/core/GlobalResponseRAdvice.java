@@ -81,7 +81,7 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
                 //将数据包装在R对象里后转换为json串进行返回
                 return objectMapper.writeValueAsString(R.ok(data));
             } catch (JacksonException e) {
-                throw new BizRuntimeException("JSON serialization failed", e);
+                throw new BizRuntimeException(e);
             }
         }
         //否则直接包装成R对象返回

@@ -6,8 +6,7 @@ import lombok.experimental.UtilityClass;
 /**
  * Stream流工具类
  *
- * @author Jensen
- * @公众号 架构师修行录
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @UtilityClass
 public class StreamKit extends StreamUtil {

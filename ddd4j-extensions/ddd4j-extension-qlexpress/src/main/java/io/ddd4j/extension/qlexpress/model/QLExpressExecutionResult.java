@@ -3,9 +3,12 @@ package io.ddd4j.extension.qlexpress.model;
 /**
  * 不抛出异常的表达式执行结果。
  *
- * 2026-09-05：record 降级为 JDK8 兼容 class。
- *
- * @param <T> 结果类型
+ * @param success      是否成功
+ * @param value        表达式原始结果值
+ * @param errorCode    异常类型
+ * @param errorMessage 异常消息
+ * @param elapsedNanos 执行耗时，单位纳秒
+ * @param <T>           结果类型
  */
 public final class QLExpressExecutionResult<T> {
 

@@ -2,8 +2,6 @@ package io.ddd4j.extension.qlexpress.model;
 
 /**
  * 表达式语法校验结果。
- *
- * 2026-09-05：record 降级为 JDK8 兼容 class。
  */
 public final class QLExpressValidationResult {
 

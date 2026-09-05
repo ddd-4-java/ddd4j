@@ -1,5 +1,6 @@
 package io.ddd4j.sample.order.application;
 
+import java.util.stream.Collectors;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.sample.order.domain.Money;
 import io.ddd4j.sample.order.domain.Order;
@@ -110,7 +111,7 @@ public class OrderApplicationService {
         transaction.execute(() -> {
             repository.save(order);
             outbox.append(events.stream().map(event -> new OutboxMessage(UUID.randomUUID().toString(), order.id(),
-                    event.getClass().getName(), event, Instant.now())).toList());
+                    event.getClass().getName(), event, Instant.now())).collect(java.util.stream.Collectors.toList()));
             readModels.project(toReadModel(order));
         });
         order.clearDomainEvents();

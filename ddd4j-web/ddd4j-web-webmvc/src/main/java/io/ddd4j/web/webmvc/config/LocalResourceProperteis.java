@@ -8,6 +8,10 @@ import com.google.common.collect.Maps;
 
 import java.util.Map;
 
+/**
+ * 本地资源配置属性。
+ * <p>用于配置本地静态资源的存储路径和映射关系。</p>
+ */
 public class LocalResourceProperteis {
 
     // 本地存储路径

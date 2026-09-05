@@ -12,8 +12,9 @@ import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Objects;
 
 /**

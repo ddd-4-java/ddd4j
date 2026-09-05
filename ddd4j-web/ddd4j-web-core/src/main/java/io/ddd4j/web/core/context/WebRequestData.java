@@ -4,10 +4,7 @@ import java.util.Locale;
 
 /**
  * Web 框架采集到的原始请求元数据。
- *
- * <p>2026-09-04：从 2.0.x record 形式翻译为 JDK 8 兼容的传统 class（1.0.x 行适配）。</p>
- */
-public final class WebRequestData {
+ */public final class WebRequestData {
 
     private final String requestId;
     private final String traceId;

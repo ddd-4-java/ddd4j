@@ -7,10 +7,7 @@ import java.util.Objects;
 
 /**
  * HTTP 请求在 ddd4j 内部的框架无关表示。
- *
- * <p>2026-09-04：从 2.0.x record 形式翻译为 JDK 8 兼容的传统 class（1.0.x 行适配）。</p>
- */
-public final class WebRequestContext {
+ */public final class WebRequestContext {
 
     private final String requestId;
     private final String traceId;

@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.vertx.cqrs;
 
+import java.util.Collections;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.command.Result;
@@ -39,7 +40,7 @@ public class VertxCqrsApplication {
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
-    public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
+    public static final CommandBus COMMAND_BUS = new DefaultCommandBus(Collections.singletonList(COMMAND_HANDLER));
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
     public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
     public static final InMemoryViewManager VIEW_MANAGER = createViewManager();

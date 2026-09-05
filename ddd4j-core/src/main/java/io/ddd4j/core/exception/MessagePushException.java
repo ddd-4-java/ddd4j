@@ -4,6 +4,15 @@ package io.ddd4j.core.exception;
 import io.ddd4j.core.ApiCode;
 import io.ddd4j.core.CustomApiCode;
 
+
+/**
+ * 消息推送异常。
+ * <p>
+ * 当站内信、推送通知等消息推送操作失败时抛出。
+ * 继承 {@link BizRuntimeException}，支持国际化消息和业务错误码。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public class MessagePushException extends BizRuntimeException {
 
     public MessagePushException(Integer code, String message) {

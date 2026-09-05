@@ -2,6 +2,15 @@ package io.ddd4j.core.subject;
 
 import io.ddd4j.core.util.SubjectKit;
 
+
+/**
+ * Subject 工厂 SPI（三鉴权各自实现）。
+ *
+ * <p>各鉴权实现（sa-token / shiro / security）提供此接口的实现，
+ * 由框架适配层在启动时通过 {@link SubjectKit#register(SubjectProvider)} 注册。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 public interface SubjectProvider {
 
     default Subject getSubject() {

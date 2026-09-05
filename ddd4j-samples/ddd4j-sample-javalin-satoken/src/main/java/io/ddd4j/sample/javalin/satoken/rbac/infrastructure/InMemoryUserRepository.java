@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
+import java.util.stream.Collectors;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
@@ -69,14 +70,14 @@ public class InMemoryUserRepository implements UserRepository {
         return rows.values().stream()
                 .filter(r -> Objects.equals(status.name(), r.status))
                 .map(InMemoryUserRepository::toModel)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public List<User> findAll() {
         return rows.values().stream()
                 .map(InMemoryUserRepository::toModel)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     // ============================ 模型与行转换 ============================

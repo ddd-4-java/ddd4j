@@ -9,8 +9,8 @@ public class DataScopeAutoConfiguration {
 
     @Bean
     public DataScopeProvider dataScopeProvider() {
-        // 默认提供者：沿用既有语义——非空数据视为有权限
-        return (dataType, data) -> java.util.Objects.nonNull(data);
+        return new DataScopeProvider() {
+        };
     }
 
     @Bean

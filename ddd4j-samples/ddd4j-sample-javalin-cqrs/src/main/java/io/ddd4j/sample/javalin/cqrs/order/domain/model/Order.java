@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.cqrs.order.domain.model;
 
+import java.util.Collections;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.cqrs.order.domain.event.*;
@@ -77,7 +78,7 @@ public class Order extends AggregateRoot<String> {
      * @return 草稿订单
      */
     public static Order draft(String orderNo, String buyerId, String buyerName) {
-        Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, List.of());
+        Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, Collections.emptyList());
         order.registerEvent(new OrderCreatedEvent(order.id()));
         return order;
     }
@@ -109,7 +110,7 @@ public class Order extends AggregateRoot<String> {
      * @return 订单行列表
      */
     public List<OrderLine> lines() {
-        return List.copyOf(lines);
+        return Collections.unmodifiableList(new ArrayList<>(lines));
     }
 
     /**

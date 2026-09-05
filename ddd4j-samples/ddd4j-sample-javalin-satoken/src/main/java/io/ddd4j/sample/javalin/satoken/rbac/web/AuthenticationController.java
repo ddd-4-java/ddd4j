@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import java.util.Collections;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.SubjectKit;
@@ -75,7 +76,7 @@ public class AuthenticationController {
             get("/auth/me", ctx -> {
                 AuthPrincipal principal = rbacService.me();
                 if (Objects.isNull(principal)) {
-                    ctx.json(R.ok(Map.of("authenticated", false)));
+                    ctx.json(R.ok(Collections.singletonMap("authenticated", false)));
                     return;
                 }
                 Map<String, Object> data = new HashMap<>();
@@ -199,18 +200,93 @@ public class AuthenticationController {
         };
     }
 
-    // ============================ 请求 DTO ============================
+    // ============================ 请求 DTO ============================public final class LoginRequest {
+        private final String username;
+        private final String password;
 
-    public record LoginRequest(String username, String password) {
-    }
+        public LoginRequest(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+        public String username() { return username; }
+        public String password() { return password; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        LoginRequest other = (LoginRequest) o;
+            return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(username, password); }
+        @Override
+        public String toString() {
+            return "LoginRequest{" + "username=" + username + ", " + "password=" + password + "}";
+        }
+    
+    }public final class KickoutRequest {
+        private final String userId;
 
-    public record KickoutRequest(String userId) {
-    }
+        public KickoutRequest(String userId) {
+            this.userId = userId;
+        }
+        public String userId() { return userId; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        KickoutRequest other = (KickoutRequest) o;
+            return Objects.equals(this.userId, other.userId);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(userId); }
+        @Override
+        public String toString() {
+            return "KickoutRequest{" + "userId=" + userId + "}";
+        }
+    
+    }public final class RoleCheckRequest {
+        private final String role;
 
-    public record RoleCheckRequest(String role) {
-    }
+        public RoleCheckRequest(String role) {
+            this.role = role;
+        }
+        public String role() { return role; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        RoleCheckRequest other = (RoleCheckRequest) o;
+            return Objects.equals(this.role, other.role);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(role); }
+        @Override
+        public String toString() {
+            return "RoleCheckRequest{" + "role=" + role + "}";
+        }
+    
+    }public final class PermissionCheckRequest {
+        private final String permission;
 
-    public record PermissionCheckRequest(String permission) {
+        public PermissionCheckRequest(String permission) {
+            this.permission = permission;
+        }
+        public String permission() { return permission; }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+        PermissionCheckRequest other = (PermissionCheckRequest) o;
+            return Objects.equals(this.permission, other.permission);
+        }
+        @Override
+        public int hashCode() { return java.util.Objects.hash(permission); }
+        @Override
+        public String toString() {
+            return "PermissionCheckRequest{" + "permission=" + permission + "}";
+        }
+    
     }
 
 }

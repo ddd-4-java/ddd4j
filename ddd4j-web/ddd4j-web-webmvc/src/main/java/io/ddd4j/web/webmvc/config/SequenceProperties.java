@@ -8,6 +8,10 @@ import cn.hutool.core.date.SystemClock;
 import lombok.Data;
 
 @Data
+/**
+ * 序列号配置属性（雪花算法）。
+ * <p>配置雪花算法 ID 生成器的相关参数，如是否使用系统时钟、允许时间回拨量等。</p>
+ */
 public class SequenceProperties {
 
     public static final String PREFIX = "sequence";

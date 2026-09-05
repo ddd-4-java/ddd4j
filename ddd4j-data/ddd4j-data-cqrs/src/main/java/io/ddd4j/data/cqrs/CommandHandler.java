@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * public class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
  *     &#64;Override
  *     public Set<Class<? extends Command>> supportedCommands() {
- *         return Collections.singleton(CreateOrderCommand.class);
+ *         return Set.of(CreateOrderCommand.class);
  *     }
  *
  *     &#64;Override
@@ -45,8 +45,7 @@ import java.lang.annotation.Target;
  * @see CommandRegistry
  * @see io.ddd4j.core.cqrs.command.CommandExecutor
  * @since 2.0.x
- */
-@Documented
+ */@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface CommandHandler {

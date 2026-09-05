@@ -34,7 +34,7 @@ import java.util.Map;
  * // 3. 模板填充
  * byte[] filled = ExcelKit.fill(
  *     getClass().getResourceAsStream("/templates/contract.xlsx"),
- *     Collections.singletonMap("contractNo", "HT-001")
+ *     Map.of("contractNo", "HT-001")
  * );
  *
  * // 4. 自定义样式

@@ -13,6 +13,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Objects;
 
 @Configuration(proxyBeanMethods = false)
+/**
+ * 雪花算法 ID 生成器默认配置。
+ * <p>基于 Hutool {@link Snowflake} 实现分布式全局唯一 ID 生成。</p>
+ */
 public class DefaultSequenceConfiguration {
 
     @Bean

@@ -77,12 +77,10 @@ public final class ExcelImporter {
      * @return 全部数据
      */
     public static <T> List<T> readAll(InputStream in, Class<T> head) {
-        // 注意：调用方负责关闭 InputStream（JDK8 try-with-vars 不可用）
         try {
             return EasyExcel.read(in).head(head).sheet().doReadSync();
         } catch (Exception e) {
-            log.error("excel.import.readall.failed", e);
+            throw new BizRuntimeException(500, "excel.import.readall.failed", e);
         }
-        return Collections.emptyList();
     }
 }

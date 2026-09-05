@@ -7,7 +7,11 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 单个就绪贡献者的检查结果。
+ * 单个依赖的就绪检查结果。
+ *
+ * @param name    稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}
+ * @param ready   是否可接受流量
+ * @param details 可安全暴露的诊断信息，禁止放入密码、令牌或连接串
  */
 public final class ReadinessResult {
 
@@ -30,7 +34,8 @@ public final class ReadinessResult {
     }
 
     public static ReadinessResult unavailable(String name, String reason) {
-        return new ReadinessResult(name, false, Collections.singletonMap("reason", reason));
+        return new ReadinessResult(name, false,
+                StrKit.isBlank(reason) ? Collections.<String, String>emptyMap() : Collections.singletonMap("reason", reason));
     }
 
     public String getName() { return name; }

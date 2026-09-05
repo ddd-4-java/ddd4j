@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.satoken.order.domain.service;
 
+import java.math.BigDecimal;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Money;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
 import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;

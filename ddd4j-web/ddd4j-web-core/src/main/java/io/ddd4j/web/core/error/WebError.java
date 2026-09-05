@@ -6,10 +6,7 @@ import java.io.Serializable;
 
 /**
  * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
- *
- * <p>2026-09-04：从 2.0.x record 形式翻译为 JDK 8 兼容的传统 class（1.0.x 行适配）。</p>
- */
-public final class WebError {
+ */public final class WebError {
 
     private final int status;
     private final Serializable code;
