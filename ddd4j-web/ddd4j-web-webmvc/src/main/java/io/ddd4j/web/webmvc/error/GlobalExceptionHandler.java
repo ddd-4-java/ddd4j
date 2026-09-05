@@ -88,10 +88,6 @@ public class GlobalExceptionHandler {
     @Autowired
     private ServerI18nProperties serverI18NProperties;
 
-    private static String formatKilobytes(long bytes) {
-        return String.format("%.0f KB", bytes / 1024.0d);
-    }
-
     // --- 4xx Client Error ---
 
     /**
@@ -463,7 +459,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", formatKilobytes(ex.getMaxUploadSize()));
+        String defaultMessage = String.format("所有文件超过允许的最大限制: %s", cn.hutool.core.io.unit.DataSizeUtil.format(ex.getMaxUploadSize(), cn.hutool.core.io.unit.DataUnit.KILOBYTES));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);
@@ -478,7 +474,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ApiRestResponse<String> maxUploadSizePerFileExceededException(MaxUploadSizePerFileExceededException ex) {
         this.logException(ex);
-        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", formatKilobytes(ex.getMaxUploadSizePerFile()));
+        String defaultMessage = String.format("单个文件超过允许的最大限制: %s", cn.hutool.core.io.unit.DataSizeUtil.format(ex.getMaxUploadSizePerFile(), cn.hutool.core.io.unit.DataUnit.KILOBYTES));
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "bad.request", defaultMessage);
             return ApiCode.SC_REQUEST_TOO_LONG.toResponse(message);
