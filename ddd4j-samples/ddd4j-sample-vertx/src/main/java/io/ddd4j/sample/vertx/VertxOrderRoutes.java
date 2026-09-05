@@ -106,7 +106,9 @@ public final class VertxOrderRoutes {
     private static void respond(RoutingContext context, int status, Object response) {
         context.response().setStatusCode(status).putHeader("Content-Type", JSON_CONTENT_TYPE)
                 .end(Json.encode(response));
-    }public final class TokenResponse {
+    }
+
+    public static final class TokenResponse {
         private final String token;
 
         public TokenResponse(String token) {
@@ -117,7 +119,7 @@ public final class VertxOrderRoutes {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-        TokenResponse other = (TokenResponse) o;
+            TokenResponse other = (TokenResponse) o;
             return Objects.equals(this.token, other.token);
         }
         @Override

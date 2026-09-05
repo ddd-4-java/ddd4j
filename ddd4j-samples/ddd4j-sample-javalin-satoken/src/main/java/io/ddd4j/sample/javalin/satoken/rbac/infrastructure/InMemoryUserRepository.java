@@ -29,11 +29,11 @@ public class InMemoryUserRepository implements UserRepository {
 
     private static UserRow toRow(User user) {
         UserRow row = new UserRow();
-        row.userId = user.id();
+        row.userId = user.getId();
         row.username = user.getUsername();
         row.password = user.getPassword();
         row.realName = user.getRealName();
-        row.status = user.getStatus().name();
+        row.status = user.getStatus().getName();
         row.roleIds = new ArrayList<>(user.getRoleIds());
         return row;
     }
@@ -68,7 +68,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public List<User> findByStatus(User.Status status) {
         return rows.values().stream()
-                .filter(r -> Objects.equals(status.name(), r.status))
+                .filter(r -> Objects.equals(status.getName(), r.status))
                 .map(InMemoryUserRepository::toModel)
                 .collect(java.util.stream.Collectors.toList());
     }
@@ -85,7 +85,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public User save(User aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.id(), toRow(aggregate));
+        rows.put(aggregate.getId(), toRow(aggregate));
         return aggregate;
     }
 

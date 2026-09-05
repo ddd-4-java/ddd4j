@@ -56,7 +56,7 @@ public class OrderResource {
             post("/orders", ctx -> {
                 CreateOrderRequest req = ctx.bodyAsClass(CreateOrderRequest.class);
                 Order order = orderApplicationService.createDraft(
-                        new CreateOrderCommand(req.orderNo(), req.buyerId(), req.buyerName())
+                        new CreateOrderCommand(req.getOrderNo(), req.getBuyerId(), req.getBuyerName())
                 );
                 ctx.status(201).json(R.ok("order created", OrderResponse.from(order)));
             });
@@ -117,7 +117,7 @@ public class OrderResource {
             get("/orders/{id}/discount", ctx -> {
                 String id = ctx.pathParam("id");
                 Money discounted = orderApplicationService.previewDiscount(id);
-                ctx.json(R.ok(new DiscountView(discounted.amount().toPlainString(), discounted.currency())));
+                ctx.json(R.ok(new DiscountView(discounted.getAmount().toPlainString(), discounted.getCurrency())));
             });
         };
     }

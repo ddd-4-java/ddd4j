@@ -51,7 +51,7 @@ public class Order extends AggregateRoot<String> {
 
     public static Order draft(String orderNo, String buyerId, String buyerName) {
         Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, Collections.emptyList());
-        order.registerEvent(new OrderCreatedEvent(order.id()));
+        order.registerEvent(new OrderCreatedEvent(order.getId()));
         return order;
     }
 

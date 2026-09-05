@@ -87,13 +87,18 @@ public class GoodsController {
         if (tokens.length != 2) {
             return;
         }
-        SFunction<Goods, ?> property = switch (tokens[0]) {
-            case "id" -> Goods::id;
-            case "createTime" -> Goods::getCreateTime;
-            case "updateTime" -> Goods::getUpdateTime;
-            case "price" -> Goods::getPrice;
-            default -> null;
-        };
+        SFunction<Goods, ?> property;
+        if (Objects.equals(tokens[0], "id")) {
+            property = Goods::id;
+        } else if (Objects.equals(tokens[0], "createTime")) {
+            property = Goods::getCreateTime;
+        } else if (Objects.equals(tokens[0], "updateTime")) {
+            property = Goods::getUpdateTime;
+        } else if (Objects.equals(tokens[0], "price")) {
+            property = Goods::getPrice;
+        } else {
+            property = null;
+        }
         if (Objects.isNull(property)) {
             return;
         }
@@ -112,7 +117,7 @@ public class GoodsController {
         post("/api/goods", ctx -> {
             CreateGoodsRequest req = ctx.bodyAsClass(CreateGoodsRequest.class);
             Goods goods = applicationService.create(
-                    req.code(), req.name(), req.price(), req.stock());
+                    req.getCode(), req.getName(), req.getPrice(), req.getStock());
             ctx.status(201).json(R.ok(goods));
         });
 
@@ -121,7 +126,7 @@ public class GoodsController {
             Long id = ctx.pathParamAsClass("id", Long.class).get();
             UpdateGoodsRequest req = ctx.bodyAsClass(UpdateGoodsRequest.class);
             Goods goods = applicationService.update(
-                    GoodsId.of(id), req.name(), req.price());
+                    GoodsId.of(id), req.getName(), req.getPrice());
             ctx.json(R.ok(goods));
         });
 
@@ -177,12 +182,40 @@ public class GoodsController {
     /**
      * 创建商品请求。
      */
-    public record CreateGoodsRequest(String code, String name, BigDecimal price, Integer stock) {
+    public static final class CreateGoodsRequest {
+
+        private final String code;
+        private final String name;
+        private final BigDecimal price;
+        private final Integer stock;
+
+        public CreateGoodsRequest(String code, String name, BigDecimal price, Integer stock) {
+            this.code = code;
+            this.name = name;
+            this.price = price;
+            this.stock = stock;
+        }
+
+        public String getCode() { return code; }
+        public String getName() { return name; }
+        public BigDecimal getPrice() { return price; }
+        public Integer getStock() { return stock; }
     }
 
     /**
      * 更新商品请求。
      */
-    public record UpdateGoodsRequest(String name, BigDecimal price) {
+    public static final class UpdateGoodsRequest {
+
+        private final String name;
+        private final BigDecimal price;
+
+        public UpdateGoodsRequest(String name, BigDecimal price) {
+            this.name = name;
+            this.price = price;
+        }
+
+        public String getName() { return name; }
+        public BigDecimal getPrice() { return price; }
     }
 }

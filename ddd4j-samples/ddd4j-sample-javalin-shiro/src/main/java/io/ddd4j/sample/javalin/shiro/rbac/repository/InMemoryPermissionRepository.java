@@ -28,7 +28,7 @@ public class InMemoryPermissionRepository {
      * 新增或更新权限。
      */
     public Permission save(Permission permission) {
-        store.put(permission.code(), permission);
+        store.put(permission.getCode(), permission);
         return permission;
     }
 

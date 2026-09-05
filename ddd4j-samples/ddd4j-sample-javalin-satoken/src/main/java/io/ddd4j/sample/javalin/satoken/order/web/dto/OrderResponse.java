@@ -60,13 +60,13 @@ import java.util.List;
                 .map(OrderLineResponse::from)
                 .collect(java.util.stream.Collectors.toList());
         return new OrderResponse(
-                order.id(),
-                order.orderNo(),
-                order.buyerId(),
-                order.buyerName(),
-                order.status(),
-                total.amount().toPlainString(),
-                total.currency(),
+                order.getId(),
+                order.getOrderNo(),
+                order.getBuyerId(),
+                order.getBuyerName(),
+                order.getStatus(),
+                total.getAmount().toPlainString(),
+                total.getCurrency(),
                 lineResponses
         );
     }public final class OrderLineResponse {
@@ -106,12 +106,12 @@ import java.util.List;
         }
         public static OrderLineResponse from(OrderLine line) {
             return new OrderLineResponse(
-                    line.id(),
+                    line.getId(),
                     line.goodsId(),
                     line.goodsName(),
                     line.quantity(),
-                    line.unitPrice().amount().toPlainString(),
-                    line.unitPrice().currency()
+                    line.unitPrice().getAmount().toPlainString(),
+                    line.unitPrice().getCurrency()
             );
         }
     

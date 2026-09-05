@@ -34,8 +34,8 @@ public class OrderApplicationService {
 
     public Order createDraft(CreateOrderCommand command) {
         Objects.requireNonNull(command, "command must not be null");
-        log.info("Creating draft order: orderNo={}, buyerId={}", command.orderNo(), command.buyerId());
-        Order order = Order.draft(command.orderNo(), command.buyerId(), command.buyerName());
+        log.info("Creating draft order: orderNo={}, buyerId={}", command.getOrderNo(), command.getBuyerId());
+        Order order = Order.draft(command.getOrderNo(), command.getBuyerId(), command.getBuyerName());
         repository.save(order);
         publishDomainEvents(order);
         return order;

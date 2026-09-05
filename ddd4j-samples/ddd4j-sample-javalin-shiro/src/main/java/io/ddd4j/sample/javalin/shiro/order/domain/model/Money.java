@@ -77,10 +77,10 @@ import java.util.Objects;
      */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
-        if (!Objects.equals(currency, other.currency())) {
+        if (!Objects.equals(currency, other.getCurrency())) {
             throw new IllegalArgumentException("currency must be same");
         }
-        return new Money(amount.add(other.amount()), currency);
+        return new Money(amount.add(other.getAmount()), currency);
     }
 
     /**

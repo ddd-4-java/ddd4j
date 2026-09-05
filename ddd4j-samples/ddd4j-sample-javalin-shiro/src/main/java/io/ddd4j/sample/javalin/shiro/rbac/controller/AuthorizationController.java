@@ -68,11 +68,11 @@ public class AuthorizationController {
     }
 
     private static RoleView toRoleView(Role role) {
-        return new RoleView(role.code(), role.name(), new LinkedHashSet<>(role.permissions()));
+        return new RoleView(role.getCode(), role.getName(), new LinkedHashSet<>(role.permissions()));
     }
 
     private static PermissionView toPermissionView(Permission permission) {
-        return new PermissionView(permission.code(), permission.description());
+        return new PermissionView(permission.getCode(), permission.description());
     }
 
     /**
@@ -173,7 +173,7 @@ public class AuthorizationController {
             return;
         }
         CreateRoleRequest req = ctx.bodyAsClass(CreateRoleRequest.class);
-        Role role = rbacService.createRole(req.code(), req.name(), toSet(req.permissions()));
+        Role role = rbacService.createRole(req.getCode(), req.getName(), toSet(req.permissions()));
         ctx.status(201).json(R.ok("role created", toRoleView(role)));
     }
 
@@ -186,7 +186,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         UpdateRoleRequest req = ctx.bodyAsClass(UpdateRoleRequest.class);
-        Role role = rbacService.updateRole(code, req.name(),
+        Role role = rbacService.updateRole(code, req.getName(),
                 Objects.nonNull(req.permissions()) ? toSet(req.permissions()) : null);
         ctx.json(R.ok("role updated", toRoleView(role)));
     }
@@ -225,7 +225,7 @@ public class AuthorizationController {
             return;
         }
         CreatePermissionRequest req = ctx.bodyAsClass(CreatePermissionRequest.class);
-        Permission perm = rbacService.createPermission(req.code(), req.description());
+        Permission perm = rbacService.createPermission(req.getCode(), req.description());
         ctx.status(201).json(R.ok("permission created", toPermissionView(perm)));
     }
 

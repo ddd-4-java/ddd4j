@@ -63,7 +63,7 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
     @Override
     public Order save(Order aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.id(), toPersistenceObject(aggregate));
+        rows.put(aggregate.getId(), toPersistenceObject(aggregate));
         return aggregate;
     }
 
@@ -99,13 +99,13 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         Objects.requireNonNull(model, "model must not be null");
         Money totalAmount = model.totalAmount();
         return OrderPO.builder()
-                .id(model.id())
-                .orderNo(model.orderNo())
-                .buyerId(model.buyerId())
-                .buyerName(model.buyerName())
-                .status(model.status().name())
-                .totalAmount(totalAmount.amount())
-                .currency(totalAmount.currency())
+                .id(model.getId())
+                .orderNo(model.getOrderNo())
+                .buyerId(model.getBuyerId())
+                .buyerName(model.getBuyerName())
+                .status(model.getStatus().getName())
+                .totalAmount(totalAmount.getAmount())
+                .currency(totalAmount.getCurrency())
                 .lines(model.lines().stream().map(this::toLinePersistenceObject).collect(java.util.stream.Collectors.toList()))
                 .build();
     }
@@ -124,12 +124,12 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
     private OrderLinePO toLinePersistenceObject(OrderLine model) {
         Objects.requireNonNull(model, "model must not be null");
         return OrderLinePO.builder()
-                .id(model.id())
+                .id(model.getId())
                 .goodsId(model.goodsId())
                 .goodsName(model.goodsName())
                 .quantity(model.quantity())
-                .unitPrice(model.unitPrice().amount())
-                .currency(model.unitPrice().currency())
+                .unitPrice(model.unitPrice().getAmount())
+                .currency(model.unitPrice().getCurrency())
                 .build();
     }
 }

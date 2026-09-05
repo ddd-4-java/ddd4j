@@ -37,9 +37,9 @@ public class OrderDomainService {
         Objects.requireNonNull(buyerId, "buyerId must not be null");
         Objects.requireNonNull(total, "total must not be null");
         Money discounted = total;
-        if (total.amount().compareTo(new java.math.BigDecimal("1000")) >= 0) {
+        if (total.getAmount().compareTo(new java.math.BigDecimal("1000")) >= 0) {
             discounted = discounted.discount(10);
-        } else if (total.amount().compareTo(new java.math.BigDecimal("500")) >= 0) {
+        } else if (total.getAmount().compareTo(new java.math.BigDecimal("500")) >= 0) {
             discounted = discounted.discount(5);
         }
         long historicalCount = orderRepository.findById(buyerId).isPresent() ? 1 : 0;
@@ -54,6 +54,6 @@ public class OrderDomainService {
      */
     public Money previewDiscount(Order order) {
         Objects.requireNonNull(order, "order must not be null");
-        return calculateDiscount(order.buyerId(), order.totalAmount());
+        return calculateDiscount(order.getBuyerId(), order.totalAmount());
     }
 }

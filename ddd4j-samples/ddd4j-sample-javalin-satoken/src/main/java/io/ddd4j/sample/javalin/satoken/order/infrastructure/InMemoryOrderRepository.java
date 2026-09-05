@@ -32,20 +32,20 @@ public class InMemoryOrderRepository implements OrderRepository {
 
     private static OrderRow toRow(Order order) {
         OrderRow row = new OrderRow();
-        row.id = order.id();
-        row.orderNo = order.orderNo();
-        row.buyerId = order.buyerId();
-        row.buyerName = order.buyerName();
-        row.status = order.status().name();
+        row.id = order.getId();
+        row.orderNo = order.getOrderNo();
+        row.buyerId = order.getBuyerId();
+        row.buyerName = order.getBuyerName();
+        row.status = order.getStatus().getName();
         row.lines = new ArrayList<>();
         for (OrderLine line : order.lines()) {
             OrderLineRow lr = new OrderLineRow();
-            lr.id = line.id();
+            lr.id = line.getId();
             lr.goodsId = line.goodsId();
             lr.goodsName = line.goodsName();
             lr.quantity = line.quantity();
-            lr.unitPrice = line.unitPrice().amount();
-            lr.currency = line.unitPrice().currency();
+            lr.unitPrice = line.unitPrice().getAmount();
+            lr.currency = line.unitPrice().getCurrency();
             row.lines.add(lr);
         }
         return row;
@@ -91,7 +91,7 @@ public class InMemoryOrderRepository implements OrderRepository {
     @Override
     public Order save(Order aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.id(), toRow(aggregate));
+        rows.put(aggregate.getId(), toRow(aggregate));
         return aggregate;
     }
 

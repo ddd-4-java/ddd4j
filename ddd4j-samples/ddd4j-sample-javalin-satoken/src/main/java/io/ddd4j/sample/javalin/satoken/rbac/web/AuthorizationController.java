@@ -49,7 +49,7 @@ public class AuthorizationController {
             post("/admin/users", ctx -> {
                 CreateUserRequest req = ctx.bodyAsClass(CreateUserRequest.class);
                 User user = rbacService.createUser(req.userId(), req.username(), req.password(), req.realName());
-                ctx.status(201).json(R.ok(Map.of("userId", user.id())));
+                ctx.status(201).json(R.ok(Map.of("userId", user.getId())));
             });
 
             // GET /admin/users —— 用户列表
@@ -61,8 +61,8 @@ public class AuthorizationController {
             // PUT /admin/users/{id} —— 更新用户
             put("/admin/users/{id}", ctx -> {
                 UpdateUserRequest req = ctx.bodyAsClass(UpdateUserRequest.class);
-                User updated = rbacService.updateUser(ctx.pathParam("id"), req.realName(), req.password(), req.status());
-                ctx.json(R.ok(Map.of("userId", updated.id())));
+                User updated = rbacService.updateUser(ctx.pathParam("id"), req.realName(), req.password(), req.getStatus());
+                ctx.json(R.ok(Map.of("userId", updated.getId())));
             });
 
             // DELETE /admin/users/{id} —— 删除用户
@@ -77,7 +77,7 @@ public class AuthorizationController {
                 String id = ctx.pathParam("id");
                 AssignRolesRequest req = ctx.bodyAsClass(AssignRolesRequest.class);
                 User user = rbacService.assignRolesToUser(id, new HashSet<>(req.roleIds()));
-                ctx.json(R.ok(Map.of("userId", user.id(), "roleIds", user.getRoleIds())));
+                ctx.json(R.ok(Map.of("userId", user.getId(), "roleIds", user.getRoleIds())));
             });
 
             // GET /admin/users/{id}/permissions —— 获取用户所有权限（含角色继承）
@@ -94,7 +94,7 @@ public class AuthorizationController {
             post("/admin/roles", ctx -> {
                 CreateRoleRequest req = ctx.bodyAsClass(CreateRoleRequest.class);
                 Role role = rbacService.createRole(req.roleId(), req.roleCode(), req.roleName(), req.description());
-                ctx.status(201).json(R.ok(Map.of("roleId", role.id())));
+                ctx.status(201).json(R.ok(Map.of("roleId", role.getId())));
             });
 
             // GET /admin/roles —— 角色列表
@@ -106,8 +106,8 @@ public class AuthorizationController {
             // PUT /admin/roles/{id} —— 更新角色
             put("/admin/roles/{id}", ctx -> {
                 UpdateRoleRequest req = ctx.bodyAsClass(UpdateRoleRequest.class);
-                Role updated = rbacService.updateRole(ctx.pathParam("id"), req.roleName(), req.description(), req.status());
-                ctx.json(R.ok(Map.of("roleId", updated.id())));
+                Role updated = rbacService.updateRole(ctx.pathParam("id"), req.roleName(), req.description(), req.getStatus());
+                ctx.json(R.ok(Map.of("roleId", updated.getId())));
             });
 
             // DELETE /admin/roles/{id} —— 删除角色
@@ -122,7 +122,7 @@ public class AuthorizationController {
                 String id = ctx.pathParam("id");
                 AssignPermissionsRequest req = ctx.bodyAsClass(AssignPermissionsRequest.class);
                 Role role = rbacService.assignPermissionsToRole(id, new HashSet<>(req.permissionIds()));
-                ctx.json(R.ok(Map.of("roleId", role.id(), "permissionIds", role.getPermissionIds())));
+                ctx.json(R.ok(Map.of("roleId", role.getId(), "permissionIds", role.getPermissionIds())));
             });
 
             // GET /admin/roles/{id}/permissions —— 获取角色的权限编码集合
@@ -139,7 +139,7 @@ public class AuthorizationController {
                 CreatePermissionRequest req = ctx.bodyAsClass(CreatePermissionRequest.class);
                 Permission permission = rbacService.createPermission(req.permissionId(), req.permissionCode(),
                         req.permissionName(), req.module());
-                ctx.status(201).json(R.ok(Map.of("permissionId", permission.id())));
+                ctx.status(201).json(R.ok(Map.of("permissionId", permission.getId())));
             });
 
             // GET /admin/permissions —— 权限列表
@@ -151,8 +151,8 @@ public class AuthorizationController {
             // PUT /admin/permissions/{id} —— 更新权限
             put("/admin/permissions/{id}", ctx -> {
                 UpdatePermissionRequest req = ctx.bodyAsClass(UpdatePermissionRequest.class);
-                Permission updated = rbacService.updatePermission(ctx.pathParam("id"), req.permissionName(), req.module(), req.status());
-                ctx.json(R.ok(Map.of("permissionId", updated.id())));
+                Permission updated = rbacService.updatePermission(ctx.pathParam("id"), req.permissionName(), req.module(), req.getStatus());
+                ctx.json(R.ok(Map.of("permissionId", updated.getId())));
             });
 
             // DELETE /admin/permissions/{id} —— 删除权限

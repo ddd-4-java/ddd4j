@@ -134,8 +134,8 @@ public class RbacService {
         Role existing = roleRepository.findByCode(code)
                 .orElseThrow(() -> new NoSuchElementException("role not found: " + code));
         Role updated = new Role(
-                existing.code(),
-                Objects.nonNull(name) ? name : existing.name(),
+                existing.getCode(),
+                Objects.nonNull(name) ? name : existing.getName(),
                 Objects.nonNull(permissionCodes) ? permissionCodes : existing.permissions());
         return roleRepository.save(updated);
     }

@@ -32,26 +32,26 @@
         <module>ddd4j-sample-order-redis</module>
 
         <!-- 非 Boot 运行时示例：Order 充血模型、CQRS、缓存与消息边界。 -->
-        <!-- <module>ddd4j-sample-quarkus</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
-        <!-- <module>ddd4j-sample-javalin</module> 待 JDK8 降级 -->
-        <!-- <module>ddd4j-sample-micronaut</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
-        <!-- <module>ddd4j-sample-vertx</module> 2.0.x 同步含 JDK17+ 语法，待降级 -->
-        <!-- <module>ddd4j-sample-helidon</module> 2.0.x 同步含 JDK17+ 语法，待降级 -->
-        <!-- <module>ddd4j-sample-dropwizard</module> 2.0.x 同步含 JDK17+ 语法，待降级 -->
+        <!-- <module>ddd4j-sample-quarkus</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-javalin</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-micronaut</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-vertx</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
+        <!-- <module>ddd4j-sample-helidon</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
+        <!-- <module>ddd4j-sample-dropwizard</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
 
         <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
-        <!-- <module>ddd4j-sample-quarkus-cqrs</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
-        <!-- <module>ddd4j-sample-javalin-cqrs</module> 待 JDK8 降级 -->
-        <!-- <module>ddd4j-sample-dropwizard-cqrs</module> 2.0.x 同步含 JDK17+ 语法，待降级 -->
-        <!-- <module>ddd4j-sample-helidon-cqrs</module> 2.0.x 同步含 JDK17+ 语法，待降级 -->
-        <!-- <module>ddd4j-sample-micronaut-cqrs</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
-        <!-- <module>ddd4j-sample-vertx-cqrs</module> 2.0.x 同步含 JDK17+ 语法，待降级 -->
+        <!-- <module>ddd4j-sample-quarkus-cqrs</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-javalin-cqrs</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-dropwizard-cqrs</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
+        <!-- <module>ddd4j-sample-helidon-cqrs</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
+        <!-- <module>ddd4j-sample-micronaut-cqrs</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-vertx-cqrs</module> 与 2.0.x/3.0.x 源目录一致；1.0.x 中 web framework 适配器用 JDK8 不支持 API -->
 
         <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
-        <!-- <module>ddd4j-sample-quarkus-satoken</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
-        <!-- <module>ddd4j-sample-quarkus-shiro</module> JDK17+ 基线不兼容 1.0.x，原因见 docs/1.0.x-module-differences.md -->
-        <!-- <module>ddd4j-sample-javalin-satoken</module> 待 JDK8 降级 -->
-        <!-- <module>ddd4j-sample-javalin-shiro</module> 待 JDK8 降级 -->
+        <!-- <module>ddd4j-sample-quarkus-satoken</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-quarkus-shiro</module> 框架本身要求 JDK17+（quarkus/micronaut），与 1.0.x JDK8 基线不兼容；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-javalin-satoken</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
+        <!-- <module>ddd4j-sample-javalin-shiro</module> 1.0.x 用 Javalin 4.6.8（JDK8 兼容），完整 Javalin 5+ 功能见 2.0.x/3.0.x；源码目录保留与 2.0.x/3.0.x 一致 -->
     </modules>
 
 </project>

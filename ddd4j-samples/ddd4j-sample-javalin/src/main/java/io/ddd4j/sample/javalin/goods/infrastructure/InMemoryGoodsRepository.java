@@ -50,8 +50,8 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     @Override
     public Goods save(Goods aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        Objects.requireNonNull(aggregate.id(), "id must not be null");
-        rows.put(aggregate.id(), copy(aggregate));
+        Objects.requireNonNull(aggregate.getId(), "id must not be null");
+        rows.put(aggregate.getId(), copy(aggregate));
         return copy(aggregate);
     }
 
@@ -145,7 +145,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     public boolean deleteByQuery(Query<Goods> query) {
         Objects.requireNonNull(query, "query must not be null");
         List<Goods> matched = filter(query);
-        matched.forEach(p -> rows.remove(p.id()));
+        matched.forEach(p -> rows.remove(p.getId()));
         return !matched.isEmpty();
     }
 
@@ -203,16 +203,21 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         for (LambdaCondition orderBy : orderByConditions) {
             String field = orderBy.property();
             boolean desc = "DESC".equalsIgnoreCase(orderBy.operator());
-            Comparator<Goods> current = switch (field) {
-                case "id" -> Comparator.comparing(Goods::id);
-                case "createTime" -> Comparator.comparing(Goods::getCreateTime,
+            Comparator<Goods> current;
+            if (Objects.equals(field, "id")) {
+                current = Comparator.comparing(Goods::id);
+            } else if (Objects.equals(field, "createTime")) {
+                current = Comparator.comparing(Goods::getCreateTime,
                         Comparator.nullsLast(Comparator.naturalOrder()));
-                case "updateTime" -> Comparator.comparing(Goods::getUpdateTime,
+            } else if (Objects.equals(field, "updateTime")) {
+                current = Comparator.comparing(Goods::getUpdateTime,
                         Comparator.nullsLast(Comparator.naturalOrder()));
-                case "price" -> Comparator.comparing(Goods::getPrice,
+            } else if (Objects.equals(field, "price")) {
+                current = Comparator.comparing(Goods::getPrice,
                         Comparator.nullsLast(Comparator.naturalOrder()));
-                default -> null;
-            };
+            } else {
+                current = null;
+            }
             if (Objects.isNull(current)) {
                 continue;
             }

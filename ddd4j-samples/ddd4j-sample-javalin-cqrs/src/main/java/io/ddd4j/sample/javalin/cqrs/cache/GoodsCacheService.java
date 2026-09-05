@@ -83,7 +83,7 @@ public class GoodsCacheService {
         log.debug("Cache miss: GOODS_LIST status={}", status);
         List<Goods> list = new ArrayList<>();
         for (Goods goods : goodsRepository.findAll()) {
-            if (status.equalsIgnoreCase(goods.getStatus().name())) {
+            if (status.equalsIgnoreCase(goods.getStatus().getName())) {
                 list.add(goods);
             }
         }

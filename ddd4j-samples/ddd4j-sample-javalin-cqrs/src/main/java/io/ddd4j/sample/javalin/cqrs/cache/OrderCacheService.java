@@ -65,7 +65,7 @@ public class OrderCacheService {
         stats.put("total", all.size());
         Map<String, Long> byStatus = new HashMap<>();
         for (Order o : all) {
-            byStatus.merge(o.status().name(), 1L, Long::sum);
+            byStatus.merge(o.getStatus().getName(), 1L, Long::sum);
         }
         stats.put("byStatus", byStatus);
         CacheKit.put(BIZ_ORDER_STATS, STATS_KEY, stats);
@@ -84,7 +84,7 @@ public class OrderCacheService {
         }
         log.debug("Cache miss: BUYER_ORDER_COUNT buyerId={}, computing...", buyerId);
         long count = repository.findAll().stream()
-                .filter(o -> Objects.equals(buyerId, o.buyerId()))
+                .filter(o -> Objects.equals(buyerId, o.getBuyerId()))
                 .count();
         CacheKit.put(BIZ_BUYER_ORDER_COUNT, cacheKey, count);
         return count;
@@ -115,7 +115,7 @@ public class OrderCacheService {
         if (Objects.isNull(order)) {
             return;
         }
-        CacheKit.put(BIZ_ORDER_DETAIL, order.id(), order);
+        CacheKit.put(BIZ_ORDER_DETAIL, order.getId(), order);
         CacheKit.invalidate(BIZ_ORDER_STATS, STATS_KEY);
     }
 

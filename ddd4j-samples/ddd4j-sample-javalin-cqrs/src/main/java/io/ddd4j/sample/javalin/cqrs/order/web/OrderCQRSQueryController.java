@@ -56,11 +56,11 @@ public class OrderCQRSQueryController {
 
     private R<OrderResponse> toResponse(Order order) {
         return R.ok(new OrderResponse(
-                order.id(),
-                order.orderNo(),
-                order.buyerId(),
-                order.buyerName(),
-                order.status().name(),
+                order.getId(),
+                order.getOrderNo(),
+                order.getBuyerId(),
+                order.getBuyerName(),
+                order.getStatus().getName(),
                 order.totalAmount(),
                 order.lines().size()
         ));

@@ -22,11 +22,11 @@ public class InMemoryPermissionRepository implements PermissionRepository {
 
     private static PermissionRow toRow(Permission permission) {
         PermissionRow row = new PermissionRow();
-        row.permissionId = permission.id();
+        row.permissionId = permission.getId();
         row.permissionCode = permission.getPermissionCode();
         row.permissionName = permission.getPermissionName();
         row.module = permission.getModule();
-        row.status = permission.getStatus().name();
+        row.status = permission.getStatus().getName();
         return row;
     }
 
@@ -75,7 +75,7 @@ public class InMemoryPermissionRepository implements PermissionRepository {
     @Override
     public Permission save(Permission aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.id(), toRow(aggregate));
+        rows.put(aggregate.getId(), toRow(aggregate));
         return aggregate;
     }
 

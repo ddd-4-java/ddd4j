@@ -46,11 +46,11 @@ public class OrderController {
     private static OrderResponse toResponse(Order order) {
         Money total = order.totalAmount();
         return new OrderResponse(
-                order.id(),
-                order.orderNo(),
-                order.buyerId(),
-                order.buyerName(),
-                order.status().name(),
+                order.getId(),
+                order.getOrderNo(),
+                order.getBuyerId(),
+                order.getBuyerName(),
+                order.getStatus().getName(),
                 total,
                 order.lines().size());
     }
@@ -72,7 +72,7 @@ public class OrderController {
         post("/api/orders", ctx -> {
             CreateOrderRequest req = ctx.bodyAsClass(CreateOrderRequest.class);
             Order order = applicationService.createDraft(
-                    new CreateOrderCommand(req.orderNo(), req.buyerId(), req.buyerName()));
+                    new CreateOrderCommand(req.getOrderNo(), req.getBuyerId(), req.getBuyerName()));
             ctx.status(201).json(R.ok(toResponse(order)));
         });
 

@@ -24,11 +24,11 @@ public class InMemoryRoleRepository implements RoleRepository {
 
     private static RoleRow toRow(Role role) {
         RoleRow row = new RoleRow();
-        row.roleId = role.id();
+        row.roleId = role.getId();
         row.roleCode = role.getRoleCode();
         row.roleName = role.getRoleName();
         row.description = role.getDescription();
-        row.status = role.getStatus().name();
+        row.status = role.getStatus().getName();
         row.permissionIds = new ArrayList<>(role.getPermissionIds());
         return row;
     }
@@ -70,7 +70,7 @@ public class InMemoryRoleRepository implements RoleRepository {
     @Override
     public Role save(Role aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
-        rows.put(aggregate.id(), toRow(aggregate));
+        rows.put(aggregate.getId(), toRow(aggregate));
         return aggregate;
     }
 
