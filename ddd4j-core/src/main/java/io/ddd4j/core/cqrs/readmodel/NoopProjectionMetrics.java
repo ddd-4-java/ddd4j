@@ -25,6 +25,10 @@ package io.ddd4j.core.cqrs.readmodel;
  * @since 3.0.x
  */
 public final class NoopProjectionMetrics implements ProjectionMetrics {
+    /**
+     * 全局单例。
+     */
+
     public static final NoopProjectionMetrics INSTANCE = new NoopProjectionMetrics();
     private NoopProjectionMetrics() { }
 }

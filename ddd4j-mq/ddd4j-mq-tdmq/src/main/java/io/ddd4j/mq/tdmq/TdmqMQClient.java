@@ -240,6 +240,10 @@ public class TdmqMQClient implements MQClient {
         private final byte[] payload;
         private final java.util.function.Consumer<Boolean> ackCallback;
 
+    /**
+     * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
+     */
+
         public DeliveredMessage(String messageId, String correlationId, byte[] payload,
                                 java.util.function.Consumer<Boolean> ackCallback) {
             this.messageId = messageId;

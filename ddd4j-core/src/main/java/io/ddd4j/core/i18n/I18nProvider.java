@@ -53,6 +53,14 @@ public interface I18nProvider {
      */
     I18nProvider DEFAULT = new I18nProvider() {
         @Override
+    /**
+     * 获取国际化消息
+     *
+     * @param key  消息 key
+     * @param args 格式化参数
+     * @return 国际化后的消息
+     */
+
         public String getMessage(String key, Object... args) {
         if (StrKit.isBlank(key)) {
             return null;
