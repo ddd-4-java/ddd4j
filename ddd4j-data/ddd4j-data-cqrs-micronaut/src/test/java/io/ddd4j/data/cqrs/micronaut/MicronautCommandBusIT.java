@@ -1,8 +1,8 @@
 package io.ddd4j.data.cqrs.micronaut;
 
 import java.util.Collections;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Arrays;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;

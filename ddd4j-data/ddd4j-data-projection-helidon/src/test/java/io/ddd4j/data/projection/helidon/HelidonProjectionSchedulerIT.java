@@ -60,7 +60,7 @@ class HelidonProjectionSchedulerIT {
     }
 
     private ProjectionView<Object> createView(String name, String cron) {
-        return new ProjectionView<Object>() {
+        return new ProjectionView<>() {
             @Override
             public String getName() {
                 return name;

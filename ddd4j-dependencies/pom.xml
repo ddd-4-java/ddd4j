@@ -242,7 +242,7 @@
         <hibernate5.version>5.6.15.Final</hibernate5.version>
         <javax-persistence.version>2.2</javax-persistence.version>
         <!-- 2026-09-04 补：ddd4j-data-jpa 使用 jakarta.persistence 命名空间（与 spring-boot 3.x 兼容） -->
-        <jakarta-persistence.version>3.1.0</jakarta-persistence.version>
+        <jakarta-persistence.version>3.0.0</jakarta-persistence.version>
         <jakarta-servlet.version>6.0.0</jakarta-servlet.version>
         <jakarta-validation.version>3.0.2</jakarta-validation.version>
         <jdbi3.version>3.39.0</jdbi3.version>
@@ -282,6 +282,7 @@
         <javax.jws-api.version>1.1</javax.jws-api.version>
         <javax-servlet.version>4.0.1</javax-servlet.version>
         <javax-validation.version>2.0.1.Final</javax-validation.version>
+        <jakarta-inject.version>2.0.1</jakarta-inject.version>
         <javax-websocket.version>1.1</javax-websocket.version>
         <jandex.version>3.6.0</jandex.version>
         <janino.version>3.1.12</janino.version>
@@ -3479,6 +3480,16 @@
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>${javax-validation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.inject</groupId>
+                <artifactId>jakarta.inject-api</artifactId>
+                <version>${jakarta-inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
             </dependency>
 
             <dependency>

@@ -38,8 +38,8 @@
                  兼容（本模块 IT 全绿）；刻意不拆线对齐（拆 5.14 需连 junit-platform
                  一起退到 1.14.0，父链单属性设计下不可局部覆写，收益不抵成本）。 -->
             <dependency>
-                <groupId>io.micronaut.platform</groupId>
-                <artifactId>micronaut-platform</artifactId>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-bom</artifactId>
                 <version>${micronaut.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -48,6 +48,21 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>

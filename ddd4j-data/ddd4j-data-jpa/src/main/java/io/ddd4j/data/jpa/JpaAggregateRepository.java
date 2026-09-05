@@ -148,11 +148,11 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
 
     @Override
     public Optional<M> findFirst() {
-        return Optional.ofNullable(entityManager
-                        .createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
-                        .setMaxResults(1)
-                        .getSingleResultOrNull())
-                .map(this::toModel);
+        java.util.List<P> __ps = entityManager
+                .createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
+                .setMaxResults(1)
+                .getResultList();
+        return __ps.isEmpty() ? java.util.Optional.empty() : java.util.Optional.ofNullable(this.toModel(__ps.get(0)));
     }
 
     @Override
@@ -207,10 +207,10 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         Root<P> root = criteriaQuery.from(persistenceClass);
         applyWhere(criteriaQuery, buildPredicates(criteriaBuilder, root, query));
         applyOrder(criteriaQuery, criteriaBuilder, root, query);
-        return Optional.ofNullable(entityManager.createQuery(criteriaQuery)
-                        .setMaxResults(1)
-                        .getSingleResultOrNull())
-                .map(this::toModel);
+        java.util.List<P> __rs = entityManager.createQuery(criteriaQuery)
+                .setMaxResults(1)
+                .getResultList();
+        return __rs.isEmpty() ? java.util.Optional.empty() : java.util.Optional.ofNullable(this.toModel(__rs.get(0)));
     }
 
     @Override
@@ -259,7 +259,7 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         if (predicates.isEmpty()) {
             throw new IllegalArgumentException("Refusing to delete without query predicates");
         }
-        criteriaDelete.where(predicates.toArray(Predicate[]::new));
+        criteriaDelete.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(criteriaDelete).executeUpdate() > 0;
     }
 
@@ -322,21 +322,50 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
                                 List<Predicate> predicates, LambdaCondition condition) {
         String property = persistenceProperty(condition);
         switch (condition.operator()) {
-            case "=" -> predicates.add(criteriaBuilder.equal(root.get(property), condition.value()));
-            case "<>" -> predicates.add(criteriaBuilder.notEqual(root.get(property), condition.value()));
-            case ">" -> predicates.add(criteriaBuilder.greaterThan(root.get(property), (Comparable) condition.value()));
-            case ">=" -> predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(property), (Comparable) condition.value()));
-            case "<" -> predicates.add(criteriaBuilder.lessThan(root.get(property), (Comparable) condition.value()));
-            case "<=" -> predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(property), (Comparable) condition.value()));
-            case "LIKE" -> predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value() + "%"));
-            case "LIKE_LEFT" -> predicates.add(criteriaBuilder.like(root.get(property), condition.value() + "%"));
-            case "LIKE_RIGHT" -> predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value()));
-            case "NOT_LIKE" -> predicates.add(criteriaBuilder.notLike(root.get(property), "%" + condition.value() + "%"));
-            case "IN" -> predicates.add(root.get(property).in(toCollection(condition.value())));
-            case "NOT_IN" -> predicates.add(root.get(property).in(toCollection(condition.value())).not());
-            case "IS_NULL" -> predicates.add(criteriaBuilder.isNull(root.get(property)));
-            case "IS_NOT_NULL" -> predicates.add(criteriaBuilder.isNotNull(root.get(property)));
-            default -> throw new IllegalArgumentException("Unsupported query operator: " + condition.operator());
+            case "=":
+                predicates.add(criteriaBuilder.equal(root.get(property), condition.value()));
+                break;
+            case "<>":
+                predicates.add(criteriaBuilder.notEqual(root.get(property), condition.value()));
+                break;
+            case ">":
+                predicates.add(criteriaBuilder.greaterThan(root.get(property), (Comparable) condition.value()));
+                break;
+            case ">=":
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(property), (Comparable) condition.value()));
+                break;
+            case "<":
+                predicates.add(criteriaBuilder.lessThan(root.get(property), (Comparable) condition.value()));
+                break;
+            case "<=":
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(property), (Comparable) condition.value()));
+                break;
+            case "LIKE":
+                predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value() + "%"));
+                break;
+            case "LIKE_LEFT":
+                predicates.add(criteriaBuilder.like(root.get(property), condition.value() + "%"));
+                break;
+            case "LIKE_RIGHT":
+                predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value()));
+                break;
+            case "NOT_LIKE":
+                predicates.add(criteriaBuilder.notLike(root.get(property), "%" + condition.value() + "%"));
+                break;
+            case "IN":
+                predicates.add(root.get(property).in(toCollection(condition.value())));
+                break;
+            case "NOT_IN":
+                predicates.add(root.get(property).in(toCollection(condition.value())).not());
+                break;
+            case "IS_NULL":
+                predicates.add(criteriaBuilder.isNull(root.get(property)));
+                break;
+            case "IS_NOT_NULL":
+                predicates.add(criteriaBuilder.isNotNull(root.get(property)));
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported query operator: " + condition.operator());
         }
     }
 
@@ -375,16 +404,19 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
 
     private void applyWhere(CriteriaQuery<?> criteriaQuery, List<Predicate> predicates) {
         if (!predicates.isEmpty()) {
-            criteriaQuery.where(predicates.toArray(Predicate[]::new));
+            criteriaQuery.where(predicates.toArray(new Predicate[0]));
         }
     }
 
     private Collection<?> toCollection(Object value) {
-        if (value instanceof Collection<?> collection) {
-            return collection;
+        if (value instanceof Collection<?>) {
+            return (Collection<?>) value;
         }
-        if (value instanceof String string && StrKit.isNotEmpty(string)) {
-            return Arrays.asList(string.split(","));
+        if (value instanceof String) {
+            String string = (String) value;
+            if (StrKit.isNotEmpty(string)) {
+                return Arrays.asList(string.split(","));
+            }
         }
         return Collections.emptyList();
     }

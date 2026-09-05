@@ -11,46 +11,44 @@
     </parent>
 
     <artifactId>ddd4j-data-event-store-jpa</artifactId>
-    <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层 - EventStore JPA 持久化实现：
-        基于 jakarta.persistence API 实现 core 的 EventStore SPI
-        （io.ddd4j.core.cqrs.eventstore.EventStore），
-        提供 StoredEvent 实体的乐观锁追加、按流读取与全局位置分页拉取。
-        框架无关（纯 JPA），适用于任意 Jakarta EE 容器。
-    </description>
-    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+    <packaging>jar</packaging>
+
+    <name>ddd4j-data-event-store-jpa</name>
+    <description>EventStore 的 javax.persistence（JPA 2.2 / Hibernate 5.x）适配器：程序化事务、乐观锁 + 唯一约束双保险、TEXT payload schema</description>
 
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.hiwepy</groupId>
+                    <artifactId>mybatis-plus-enhance</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!-- JPA 2.2 API（javax 命名空间，运行时由容器或 Hibernate 5.x 提供） -->
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-kit</artifactId>
-            <version>${revision}</version>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <scope>provided</scope>
         </dependency>
-        <!-- JPA API -->
+        <!-- 测试：Hibernate 5.6（最后的 javax.persistence 线，JDK8 兼容）+ H2 -->
         <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-        </dependency>
-
-        <!-- ======== Test ======== -->
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
+            <!-- 覆盖全局 h2.version=2.4.240（Java 11 字节码）：2.2.224 为最后的 Java 8 版本 -->
+            <version>2.2.224</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -58,41 +56,40 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- PostgreSQL 容器轨：TC 2.0.5 JDK8 兼容（字节码 0x34=52） -->
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <!-- 未在 ddd4j-dependencies 中管理，显式钉版本 -->
+            <version>42.7.4</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+            <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+</dependencies>
 
     <build>
         <plugins>
+            <!-- 覆盖 parent 的 surefire skip=true，本模块运行契约测试 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
+                    <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
         </plugins>

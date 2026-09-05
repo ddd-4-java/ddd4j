@@ -2,8 +2,8 @@ package io.ddd4j.data.projection.jpa;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,5 @@
 package io.ddd4j.data.event.store.panache;
 
-import java.util.Arrays;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -69,33 +68,15 @@ class PanacheEventStorePostgresIT {
         assertThat(dataType).isEqualTo("text");
 
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
-        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new OrderCreatedEvent(orderId)), 0L);
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0L);
 
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
         assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).payload())
                 .isInstanceOf(OrderCreatedEvent.class);
-    }private static final class TestAggregateRootId implements AggregateRootId {
-        private final String value;
+    }
 
-        public TestAggregateRootId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TestAggregateRootId)) return false;
-            TestAggregateRootId other = (TestAggregateRootId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-        @Override
-        public String toString() {
-            return "TestAggregateRootId{" + "value=" + value + "}";
-        }
+    private record TestAggregateRootId(String value) implements AggregateRootId {
+
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
@@ -112,7 +93,6 @@ class PanacheEventStorePostgresIT {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
-    
     }
 
     static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {

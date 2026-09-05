@@ -4,7 +4,6 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
-import java.util.Arrays;
 import com.eventstore.dbclient.AppendToStreamOptions;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventDataBuilder;
@@ -29,7 +28,8 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
-import io.ddd4j.kit.lang.JsonKit;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import java.nio.charset.StandardCharsets;
@@ -75,7 +75,8 @@ public class EsdbEventStore implements EventStore {
         try {
             client.appendToStream(streamName, AppendToStreamOptions.get().expectedRevision(toExpectedRevision(expectedVersion)), data).join();
         } catch (CompletionException exception) {
-            if (exception.getCause() instanceof WrongExpectedVersionException conflict) {
+            if (exception.getCause() instanceof WrongExpectedVersionException) {
+                WrongExpectedVersionException conflict = (WrongExpectedVersionException) exception.getCause();
                 throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion,
                         toEventCount(conflict.getActualVersion()));
             }
@@ -89,9 +90,9 @@ public class EsdbEventStore implements EventStore {
         try {
             ReadResult result = client.readStream(streamName, ReadStreamOptions.get().forwards().fromStart()
                     .maxCount(EventStoreConstants.ESDB_DEFAULT_READ_LIMIT)).join();
-            return result.getEvents().stream().map(event -> toStoredEvent(event, aggregateType, aggregateId)).toList();
+            return result.getEvents().stream().map(event -> toStoredEvent(event, aggregateType, aggregateId)).collect(java.util.stream.Collectors.toList());
         } catch (CompletionException exception) {
-            if (exception.getCause() instanceof StreamNotFoundException) return Arrays.asList();
+            if (exception.getCause() instanceof StreamNotFoundException) return java.util.Arrays.asList();
             throw new IllegalStateException("Failed to read events from stream: " + streamName, exception.getCause());
         }
     }
@@ -99,7 +100,7 @@ public class EsdbEventStore implements EventStore {
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
         return read(aggregateType, aggregateId).stream()
-                .filter(event -> event.version() >= fromVersion && event.version() <= toVersion).toList();
+                .filter(event -> event.version() >= fromVersion && event.version() <= toVersion).collect(java.util.stream.Collectors.toList());
     }
 
     @Override
@@ -147,7 +148,14 @@ public class EsdbEventStore implements EventStore {
 
     private StoredEvent toStoredEvent(ResolvedEvent resolved, String expectedType, AggregateRootId expectedId) {
         RecordedEvent recorded = resolved.getEvent();
-        Map<String, Object> metadata = JsonKit.toMap(new String(recorded.getUserMetadata(), StandardCharsets.UTF_8));
+        Map<String, Object> metadata;
+        try {
+            metadata = new com.fasterxml.jackson.databind.ObjectMapper().readValue(
+                new String(recorded.getUserMetadata(), StandardCharsets.UTF_8),
+                new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse ESDB event metadata", e);
+        }
         String aggregateType = expectedType == null ? String.valueOf(metadata.get("aggregateType")) : expectedType;
         AggregateRootId aggregateId = expectedId == null
                 ? new StringAggregateRootId(String.valueOf(metadata.get("aggregateId"))) : expectedId;
@@ -161,32 +169,17 @@ public class EsdbEventStore implements EventStore {
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
         try { return (Class<? extends DomainEvent<?>>) Class.forName(eventType); }
         catch (ClassNotFoundException exception) { throw new IllegalStateException("Unknown event type: " + eventType, exception); }
-    }private static final class StringAggregateRootId implements AggregateRootId {
-        private final String value;
+    }
 
-        public StringAggregateRootId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof StringAggregateRootId)) return false;
-            StringAggregateRootId other = (StringAggregateRootId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-        @Override
-        public String toString() {
-            return "StringAggregateRootId{" + "value=" + value + "}";
-        }
+    private static final class StringAggregateRootId implements AggregateRootId {
         private static final StringEntityType TYPE = new StringEntityType("String");
+        private final String value;
+        StringAggregateRootId(String value) { this.value = value; }
         @Override public EntityType getType() { return TYPE; }
         @Override @JsonValue public String asString() { return value; }
         @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
-    
+        @Override public boolean equals(Object o) { return this == o || (o instanceof StringAggregateRootId && java.util.Objects.equals(value, ((StringAggregateRootId)o).value)); }
+        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
+        @Override public String toString() { return "StringAggregateRootId{" + value + "}"; }
     }
 }

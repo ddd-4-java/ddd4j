@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
-        <artifactId>ddd4j-dependencies</artifactId>
+        <artifactId>ddd4j-data</artifactId>
         <version>${revision}</version>
-        <relativePath>../ddd4j-dependencies/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ddd4j-data-event-store-r2dbc</artifactId>

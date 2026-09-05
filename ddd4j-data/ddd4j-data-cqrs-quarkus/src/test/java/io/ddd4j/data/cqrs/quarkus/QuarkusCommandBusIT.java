@@ -1,9 +1,5 @@
 package io.ddd4j.data.cqrs.quarkus;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Collections;
-import java.util.ArrayList;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -61,7 +57,7 @@ class QuarkusCommandBusIT {
 
     @Test
     void 装配期冲突_整批拒绝应传播为Bean创建失败() {
-        Instance<CommandExecutor<?>> conflicting = new FixedInstance<>(Arrays.asList(
+        Instance<CommandExecutor<?>> conflicting = new FixedInstance<>(List.of(
                 new ExclusiveConflictHandler(), new OverlappingMultiTypeHandler()));
 
         IllegalStateException exception = catchThrowableOfType(
@@ -95,7 +91,7 @@ class QuarkusCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Collections.singleton(ConflictCommand.class);
+            return Set.of(ConflictCommand.class);
         }
 
         @Override
@@ -113,7 +109,7 @@ class QuarkusCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(ConflictCommand.class, CompanionCommand.class)));
+            return Set.of(ConflictCommand.class, CompanionCommand.class);
         }
 
         @Override
@@ -133,7 +129,7 @@ class QuarkusCommandBusIT {
         private final List<T> elements;
 
         FixedInstance(List<T> elements) {
-            this.elements = Collections.unmodifiableList(new ArrayList<>(elements));
+            this.elements = List.copyOf(elements);
         }
 
         @Override

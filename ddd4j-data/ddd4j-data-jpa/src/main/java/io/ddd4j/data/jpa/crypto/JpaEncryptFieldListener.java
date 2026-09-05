@@ -84,10 +84,13 @@ public class JpaEncryptFieldListener {
             try {
                 field.setAccessible(true);
                 Object value = field.get(entity);
-                if (value instanceof String str && StrKit.isNotEmpty(str)) {
-                    String encrypted = fieldCryptoHandler.encrypt(str);
-                    field.set(entity, encrypted);
-                    log.debug("Encrypted field {}: {} -> {}", field.getName(), str, encrypted);
+                if (value instanceof String) {
+                    String str = (String) value;
+                    if (StrKit.isNotEmpty(str)) {
+                        String encrypted = fieldCryptoHandler.encrypt(str);
+                        field.set(entity, encrypted);
+                        log.debug("Encrypted field {}: {} -> {}", field.getName(), str, encrypted);
+                    }
                 }
             } catch (Exception e) {
                 log.error("Failed to encrypt field {}: {}", field.getName(), e.getMessage());
@@ -103,10 +106,13 @@ public class JpaEncryptFieldListener {
             try {
                 field.setAccessible(true);
                 Object value = field.get(entity);
-                if (value instanceof String str && StrKit.isNotEmpty(str)) {
-                    String decrypted = fieldCryptoHandler.decrypt(str);
-                    field.set(entity, decrypted);
-                    log.debug("Decrypted field {}: {} -> {}", field.getName(), str, decrypted);
+                if (value instanceof String) {
+                    String str = (String) value;
+                    if (StrKit.isNotEmpty(str)) {
+                        String decrypted = fieldCryptoHandler.decrypt(str);
+                        field.set(entity, decrypted);
+                        log.debug("Decrypted field {}: {} -> {}", field.getName(), str, decrypted);
+                    }
                 }
             } catch (Exception e) {
                 log.error("Failed to decrypt field {}: {}", field.getName(), e.getMessage());
@@ -126,7 +132,7 @@ public class JpaEncryptFieldListener {
     private List<Field> getEncryptFields(Class<?> clazz) {
         return FieldUtils.getAllFieldsList(clazz).stream()
                 .filter(field -> Objects.nonNull(field.getAnnotation(EncryptField.class)))
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**

@@ -28,8 +28,8 @@
                  -cqrs-quarkus 实证的模式预防父链混版——模块级 import 优先于父链管理项生效，使本模块的
                  Micronaut 全家桶整链由平台 BOM 对齐。 -->
             <dependency>
-                <groupId>io.micronaut.platform</groupId>
-                <artifactId>micronaut-platform</artifactId>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-bom</artifactId>
                 <version>${micronaut.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -38,6 +38,21 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>

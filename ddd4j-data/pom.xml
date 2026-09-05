@@ -28,31 +28,46 @@
 
     <modules>
         <!--
-            2026-09-04 收敛：
-            - 仅声明 1.0.x JDK 8 行能编译的子模块（11 个）
-            - 移除 quarkus / micronaut / helidon / panache / jpa 等使用 jakarta 命名空间的模块
-              （1.0.x JDK 8 + javax 命名空间基线不兼容）
-            - 移除 11 个空壳子模块（仅 target 残留）
+            2026-09-05 补全：19 个子模块从 1240dd4c（pre-sync JDK8/javax 线）恢复并纳入 reactor。
+            仍排除（允许轴）：
+            - Quarkus 需 JDK17+，panache 为 Quarkus 专属：
+              ddd4j-data-cqrs-quarkus / ddd4j-data-projection-quarkus /
+              ddd4j-data-event-store-panache / ddd4j-data-projection-panache
+            - Helidon 适配器：helidon-common-service-loader 2.6.14 构件为 Java 11 字节码
+              （major 55），JDK 8 无法编译：
+              ddd4j-data-cqrs-helidon / ddd4j-data-projection-helidon
         -->
-        <!-- cqrs 核心（从 2.0.x 复制补齐 2026-09-04） -->
+        <!-- cqrs 核心 -->
         <module>ddd4j-data-cqrs</module>
-        <!-- cqrs 框架桥接（仅 javalin/dropwizard/vertx，quarkus/micronaut/helidon 1.0.x 不兼容） -->
+        <!-- cqrs 框架桥接 -->
         <module>ddd4j-data-cqrs-javalin</module>
         <module>ddd4j-data-cqrs-dropwizard</module>
         <module>ddd4j-data-cqrs-vertx</module>
-        <!-- projection 框架桥接（同上） -->
+        <module>ddd4j-data-cqrs-spring</module>
+        <module>ddd4j-data-cqrs-micronaut</module>
+        <!-- event-store（javax.persistence / JDBI3 线） -->
+        <module>ddd4j-data-event-store-jpa</module>
+        <module>ddd4j-data-event-store-jdbi</module>
+        <module>ddd4j-data-event-store-esdb</module>
+        <module>ddd4j-data-event-store-r2dbc</module>
+        <!-- projection 核心 + 框架桥接 + 持久化 -->
+        <module>ddd4j-data-projection</module>
         <module>ddd4j-data-projection-javalin</module>
         <module>ddd4j-data-projection-dropwizard</module>
         <module>ddd4j-data-projection-vertx</module>
-        <!-- 扩展（mybatis/mybatisplus/crypto/logs/external 均 javax 命名空间） -->
+        <module>ddd4j-data-projection-spring</module>
+        <module>ddd4j-data-projection-micronaut</module>
+        <module>ddd4j-data-projection-jpa</module>
+        <module>ddd4j-data-projection-jdbi</module>
+        <module>ddd4j-data-projection-r2dbc</module>
+        <!-- 扩展 -->
         <module>ddd4j-data-mybatis</module>
         <module>ddd4j-data-mybatisplus</module>
         <module>ddd4j-data-crypto</module>
         <module>ddd4j-data-logs</module>
         <module>ddd4j-data-external</module>
         <module>ddd4j-data-datascope</module>
+        <module>ddd4j-data-jpa</module>
     </modules>
-
-    <!-- 2026-09-04：ddd4j-data 已转 packaging=pom 聚合根，移除原 jar 模块的 dependencies + build（子模块各自自管） -->
 
 </project>

@@ -4,8 +4,6 @@
  */
 package io.ddd4j.data.event.store.panache;
 
-import java.util.Collections;
-import java.util.Arrays;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
@@ -67,7 +65,7 @@ class PanacheEventStoreTest {
         TestAggregateRootId orderId = new TestAggregateRootId("order-1");
         OrderCreatedEvent event = new OrderCreatedEvent(orderId);
 
-        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(event), 0);
+        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0);
 
         List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
         assertThat(events).hasSize(1);
@@ -82,12 +80,12 @@ class PanacheEventStoreTest {
     void readWithVersionRangeAndConflictShouldFollowCoreContract() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-2");
         eventStore.append(ORDER_TYPE, orderId,
-                Arrays.asList(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0);
+                List.of(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0);
 
         assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
                 .extracting(StoredEvent::version)
                 .containsExactly(1L, 2L);
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, Arrays.asList(new OrderCreatedEvent(orderId)), 0))
+        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0))
                 .isInstanceOf(AggregateVersionConflictException.class);
     }
 
@@ -95,35 +93,16 @@ class PanacheEventStoreTest {
     void readAllShouldRemainPositionOrderedAcrossAggregateTypes() {
         TestAggregateRootId firstId = new TestAggregateRootId("order-3");
         TestAggregateRootId secondId = new TestAggregateRootId("order-4");
-        eventStore.append(ORDER_TYPE, firstId, Arrays.asList(new OrderCreatedEvent(firstId)), 0);
-        eventStore.append("Invoice", secondId, Arrays.asList(new OrderCreatedEvent(secondId)), 0);
+        eventStore.append(ORDER_TYPE, firstId, List.of(new OrderCreatedEvent(firstId)), 0);
+        eventStore.append("Invoice", secondId, List.of(new OrderCreatedEvent(secondId)), 0);
 
         List<StoredEvent> events = eventStore.readAll(0, 10);
         assertThat(events).hasSize(2);
         assertThat(events.get(0).position()).isLessThan(events.get(1).position());
         assertThat(eventStore.readAll(events.get(1).position(), 10)).hasSize(1);
-    }static final class TestAggregateRootId implements AggregateRootId {
-        private final String value;
+    }
 
-        public TestAggregateRootId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TestAggregateRootId)) return false;
-            TestAggregateRootId other = (TestAggregateRootId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-        @Override
-        public String toString() {
-            return "TestAggregateRootId{" + "value=" + value + "}";
-        }
+    record TestAggregateRootId(String value) implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
@@ -140,7 +119,6 @@ class PanacheEventStoreTest {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
-    
     }
 
     static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {

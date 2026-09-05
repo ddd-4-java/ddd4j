@@ -40,11 +40,11 @@ class ProjectionPositionJdbiIT {
      * 与 -jpa/-panache 模块同构的 DDL（列集 parity：{@code stream_id} VARCHAR(250)
      * 自然主键＋{@code next_event_number} BIGINT 非空计数）。
      */
-    private static final String DDL = """
-            create table if not exists ddd4j_projection_position (
-                stream_id varchar(250) not null primary key,
-                next_event_number bigint not null
-            )""";
+    private static final String DDL =
+            "create table if not exists ddd4j_projection_position (" +
+            "  stream_id varchar(250) not null primary key," +
+            "  next_event_number bigint not null" +
+            ")";
 
     private static Jdbi jdbi;
 

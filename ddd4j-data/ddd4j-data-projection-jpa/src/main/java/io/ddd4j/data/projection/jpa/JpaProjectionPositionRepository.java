@@ -61,7 +61,7 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
         return repository.findAll().stream()
                 .map(entity -> (ProjectionPosition) new DefaultProjectionPosition(
                         entity.getStreamId(), entity.getNextEventNumber()))
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -120,6 +120,6 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
         }
         return repository.findById(streamId)
                 .map(ProjectionPositionEntity::getNextEventNumber)
-                .get();
+                .orElseThrow(() -> new IllegalStateException("mandatory"));
     }
 }

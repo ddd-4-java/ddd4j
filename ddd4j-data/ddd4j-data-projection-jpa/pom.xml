@@ -24,7 +24,7 @@
              BOM 刻意不管理 Spring Boot（ddd4j 不依赖 Boot 运行时），故此处局部显式钉版，
              取 3.4.4 = Spring 6.2 线（与 ddd4j 2.0.x 匹配；Boot 4.x/Spring 7 线勿用），
              与 ddd4j-data-event-store-jpa（Task 4.1/4.2）同款模式。 -->
-        <spring-boot-it.version>3.4.4</spring-boot-it.version>
+        <spring-boot-it.version>2.7.18</spring-boot-it.version>
     </properties>
 
     <dependencies>
@@ -52,14 +52,14 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>3.5.13</version>
+            <version>2.7.18</version>
         </dependency>
         <!-- Spring Data Commons：与 spring-data-jpa 3.5.13 同版显式钉（防 BOM 4.0.x
              管理项覆盖传递版本造成混版） -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
-            <version>3.5.13</version>
+            <version>2.7.18</version>
         </dependency>
         <!-- Jakarta Persistence API（实体映射）：显式钉 3.1.0 与 Hibernate 6.6 / Boot 3.4-3.5 线
              一致。BOM 管理的 3.2.0 会与 Hibernate 6.6 的 SessionFactory 在 Spring EMF 代理上
@@ -101,6 +101,16 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
