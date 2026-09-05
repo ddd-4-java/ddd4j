@@ -104,6 +104,41 @@ public class DefaultWebFluxConfiguration {
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
      */
     @Bean
+    /**", "/webjars/**"});
+        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+    }
+
+    @Bean
+    public WebRequestContextFactory webRequestContextFactory(Environment environment) {
+        boolean trustForwardedHeaders = environment.getProperty("ddd4j.web.trust-forwarded-headers",
+                Boolean.class, false);
+        ClientIpResolver clientIpResolver = trustForwardedHeaders
+                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
+        return new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
+    }
+
+    @Bean
+    public WebRequestLifecycle webRequestLifecycle(BearerSubjectAuthenticator authenticator,
+                                                   WebAccessPolicy accessPolicy) {
+        return new WebRequestLifecycle(authenticator, accessPolicy);
+    }
+
+    @Bean
+    public WebIdempotencyLifecycle webIdempotencyLifecycle() {
+        return new WebIdempotencyLifecycle(new CacheIdempotencyGuard());
+    }
+
+    @Bean
+    public Ddd4jWebFluxFilter ddd4jWebFluxFilter(WebRequestContextFactory contextFactory,
+                                                 WebRequestLifecycle requestLifecycle,
+                                                 WebIdempotencyLifecycle idempotencyLifecycle) {
+        return new Ddd4jWebFluxFilter(contextFactory, requestLifecycle, idempotencyLifecycle);
+    }
+
+    /**
+     * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
+     */
+
     public Ddd4jWebFluxReadinessController ddd4jWebFluxReadinessController(
             RuntimeReadinessRegistry readinessRegistry) {
         return new Ddd4jWebFluxReadinessController(readinessRegistry);

@@ -82,7 +82,13 @@ public enum BusinessType {
      *
      * @return 包含所有业务类型键值对的列表
      */
-    public static List<Map<String, String>> toList() {
+        /**
+     * 将所有业务类型转换为 Map 列表
+     *
+     * @return 包含所有业务类型键值对的列表
+     */
+
+public static List<Map<String, String>> toList() {
         List<Map<String, String>> typeList = new LinkedList<Map<String, String>>();
         for (BusinessType typeEnum : BusinessType.values()) {
             typeList.add(typeEnum.toMap());
@@ -95,7 +101,13 @@ public enum BusinessType {
      *
      * @return 业务类型键
      */
-    public String getKey() {
+        /**
+     * 获取业务类型标识键
+     *
+     * @return 业务类型键
+     */
+
+public String getKey() {
         return key;
     }
 
@@ -104,7 +116,13 @@ public enum BusinessType {
      *
      * @param key 业务类型键
      */
-    public void setKey(String key) {
+        /**
+     * 设置业务类型标识键
+     *
+     * @param key 业务类型键
+     */
+
+public void setKey(String key) {
         this.key = key;
     }
 
@@ -113,7 +131,13 @@ public enum BusinessType {
      *
      * @return 业务类型描述
      */
-    public String getDesc() {
+        /**
+     * 获取业务类型描述
+     *
+     * @return 业务类型描述
+     */
+
+public String getDesc() {
         return desc;
     }
 
@@ -122,7 +146,13 @@ public enum BusinessType {
      *
      * @param desc 业务类型描述
      */
-    public void setDesc(String desc) {
+        /**
+     * 设置业务类型描述
+     *
+     * @param desc 业务类型描述
+     */
+
+public void setDesc(String desc) {
         this.desc = desc;
     }
 
@@ -132,7 +162,14 @@ public enum BusinessType {
      * @param relation 待比较的业务类型
      * @return 若相同返回 true，否则返回 false
      */
-    public boolean equals(BusinessType relation) {
+        /**
+     * 比较当前业务类型是否与指定类型相同
+     *
+     * @param relation 待比较的业务类型
+     * @return 若相同返回 true，否则返回 false
+     */
+
+public boolean equals(BusinessType relation) {
         return this.compareTo(relation) == 0;
     }
 
@@ -141,7 +178,13 @@ public enum BusinessType {
      *
      * @return 包含 "key" 和 "desc" 的 Map
      */
-    public Map<String, String> toMap() {
+        /**
+     * 将当前业务类型转换为包含键值对的 Map
+     *
+     * @return 包含 "key" 和 "desc" 的 Map
+     */
+
+public Map<String, String> toMap() {
         Map<String, String> typeMap = new HashMap<String, String>();
         typeMap.put("key", this.getKey());
         typeMap.put("desc", this.getDesc());

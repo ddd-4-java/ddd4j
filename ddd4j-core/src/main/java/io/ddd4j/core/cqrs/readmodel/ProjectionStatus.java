@@ -69,7 +69,17 @@ public final class ProjectionStatus {
     public int getLastEventCount() { return lastEventCount; }
     public String getLastError() { return lastError; }
 
-    public static ProjectionStatus baseline(String streamId, boolean running) {
+        /**
+     * 创建基线状态（nextEventNumber=0，无运行历史）。
+     *
+     * <p>适用于未跟踪的视图或 {@link ViewManager} default 实现。
+     *
+     * @param streamId 投影流 ID
+     * @param running  是否处于运行状态
+     * @return 基线状态
+     */
+
+public static ProjectionStatus baseline(String streamId, boolean running) {
         return new ProjectionStatus(streamId, 0L, running, null, 0, null);
     }
 

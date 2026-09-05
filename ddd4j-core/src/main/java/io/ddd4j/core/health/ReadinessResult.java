@@ -44,11 +44,26 @@ public final class ReadinessResult {
                 details != null ? details : Collections.<String, String>emptyMap());
     }
 
-    public static ReadinessResult ready(String name) {
+        /**
+     * 创建可接收流量的结果。
+     *
+     * @param name 依赖标识
+     * @return 就绪结果
+     */
+
+public static ReadinessResult ready(String name) {
         return new ReadinessResult(name, true, Collections.<String, String>emptyMap());
     }
 
-    public static ReadinessResult unavailable(String name, String reason) {
+        /**
+     * 创建不可接收流量的结果。
+     *
+     * @param name   依赖标识
+     * @param reason 可安全暴露的失败原因
+     * @return 未就绪结果
+     */
+
+public static ReadinessResult unavailable(String name, String reason) {
         return new ReadinessResult(name, false,
                 StrKit.isBlank(reason) ? Collections.<String, String>emptyMap() : Collections.singletonMap("reason", reason));
     }

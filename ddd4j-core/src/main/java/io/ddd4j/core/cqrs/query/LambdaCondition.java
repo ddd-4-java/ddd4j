@@ -62,7 +62,11 @@ public final class LambdaCondition implements Serializable {
         return propertyRef.property();
     }
 
-    public static LambdaCondition asc(PropertyRef property) {
+        /**
+     * 排序条件构造器。
+     */
+
+public static LambdaCondition asc(PropertyRef property) {
         return new LambdaCondition(property, StrPool.ASC, null);
     }
 
@@ -70,7 +74,11 @@ public final class LambdaCondition implements Serializable {
         return new LambdaCondition(property, StrPool.DESC, null);
     }
 
-    public boolean isOrderBy() {
+        /**
+     * 是否为排序条件。
+     */
+
+public boolean isOrderBy() {
         return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
     }
 

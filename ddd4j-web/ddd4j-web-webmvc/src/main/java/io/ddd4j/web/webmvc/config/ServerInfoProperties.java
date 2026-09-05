@@ -32,6 +32,17 @@ public class ServerInfoProperties {
     private String version;
 
     @Override
+    /**
+ * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
+ * All Rights Reserved.
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+
+    /**
+     * 服务节点 UID
+     */
+
     public String toString() {
         return "ServiceInfo{" + "name='" + name + '\'' + ", version='" + version + '\'' + '}';
     }

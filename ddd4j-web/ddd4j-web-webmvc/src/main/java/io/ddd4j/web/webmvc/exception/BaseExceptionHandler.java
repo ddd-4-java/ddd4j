@@ -44,21 +44,33 @@ public abstract class BaseExceptionHandler {
     /**
      * 清除当前请求
      */
-    public static void clearCurrentRequest() {
+        /**
+     * 清除当前请求
+     */
+
+public static void clearCurrentRequest() {
         REQUEST_HOLDER.remove();
     }
 
     /**
      * 获取当前请求
      */
-    protected static HttpServletRequest getCurrentRequest() {
+        /**
+     * 获取当前请求
+     */
+
+protected static HttpServletRequest getCurrentRequest() {
         return REQUEST_HOLDER.get();
     }
 
     /**
      * 设置当前请求（由框架适配层调用）
      */
-    public static void setCurrentRequest(HttpServletRequest request) {
+        /**
+     * 设置当前请求（由框架适配层调用）
+     */
+
+public static void setCurrentRequest(HttpServletRequest request) {
         REQUEST_HOLDER.set(request);
     }
 

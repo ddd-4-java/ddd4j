@@ -49,7 +49,14 @@ public final class ReadinessReport {
         return results;
     }
 
-    public static ReadinessReport check(Collection<? extends ReadinessContributor> contributors) {
+        /**
+     * 执行并汇总贡献者。
+     *
+     * @param contributors 依赖检查器集合
+     * @return 聚合就绪报告
+     */
+
+public static ReadinessReport check(Collection<? extends ReadinessContributor> contributors) {
         List<ReadinessResult> results = new ArrayList<>();
         Collection<? extends ReadinessContributor> safe = contributors != null
                 ? contributors : Collections.<ReadinessContributor>emptyList();

@@ -18,6 +18,14 @@ import java.net.URL;
 public class I18nResourceBasenameHandler implements ResourceBasenameHandler {
 
     @Override
+    /**
+     * 处理资源，提取国际化 basename。
+     *
+     * @param resource 资源对象
+     * @return 解析后的 basename 字符串
+     * @throws IOException 资源访问异常
+     */
+
     public String handle(Resource resource) throws IOException {
 
         URL url = resource.getURL();

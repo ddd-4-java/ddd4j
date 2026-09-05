@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.ddd4j.extension.monitor.channel.feishu;
 
 import io.ddd4j.kit.lang.JsonKit;
@@ -51,11 +66,19 @@ public class FeishuClient {
         this.secret = secret;
     }
 
-    /** @return 配置的 webhook 完整 URL */
+     /**
+
+/** @return 配置的 webhook 完整 URL */
+
+       /** @return 配置的 webhook 完整 URL */
     public String webhookUrl() {
         return webhookUrl;
     }
+    /**
 
+/** @return 配置的加签密钥（无则为空字符串） */
+
+    
     /** @return 配置的加签密钥（无则为空字符串） */
     public String secret() {
         return secret;
@@ -70,7 +93,19 @@ public class FeishuClient {
      *   <li>{@code sign = URLEncoder.encode(Base64(HmacSHA256(stringToSign)))}</li>
      * </ul>
      *
+     *     /**
+     * 发送一条 JSON 消息。
+     *
+     * <p>若 {@code secret} 非空，会按飞书签名协议在 URL 上拼接 {@code timestamp} 与 {@code sign}：
+     * <ul>
+     * <li>{@code stringToSign = "{timestamp}\n{secret}"}</li>
+     * <li>{@code sign = URLEncoder.encode(Base64(HmacSHA256(stringToSign)))}</li>
+     * </ul>
+     *
      * @param msg 已构好的 JSON payload
+     */
+
+@param msg 已构好的 JSON payload
      */
     public void send(String msg) {
         try {
