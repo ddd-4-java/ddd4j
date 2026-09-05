@@ -47,8 +47,28 @@ import java.io.Serializable;
  * @since 3.0.0
  */
 public interface EventSourcingRepository<M extends AggregateRoot<ID>, ID extends Serializable> {
+    /**
+     * 读取聚合根指定历史版本。
+     *
+     * @param aggregateId 聚合根标识
+     * @param version     历史版本号
+     * @return 聚合根
+     */
+
     M read(ID aggregateId);
     M read(ID aggregateId, int version);
+    /**
+     * 新建聚合根（追加事件流）。
+     *
+     * @param aggregate 聚合根（必须为新创建）
+     */
+
     void add(M aggregate);
+    /**
+     * 更新聚合根（追加未提交事件到事件流）。
+     *
+     * @param aggregate 聚合根
+     */
+
     void update(M aggregate);
 }

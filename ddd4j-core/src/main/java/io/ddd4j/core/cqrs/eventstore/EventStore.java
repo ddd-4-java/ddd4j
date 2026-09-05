@@ -50,8 +50,52 @@ import java.util.List;
  * @since 2.0.x
  */
 public interface EventStore {
+    /**
+     * 追加事件到聚合流。
+     *
+     * <p>实现须完成乐观锁校验（expectedVersion＋事件数 == nextVersion 的一致性断言在实现内部做），
+     * 并为每个事件分配全局递增 {@code position} 后持久化。
+     *
+     * @param aggregateType   聚合类型
+     * @param aggregateId     聚合 ID
+     * @param events          要追加的事件（非空列表）
+     * @param expectedVersion 期望的当前版本号（乐观锁，空流为 0）
+     * @throws AggregateVersionConflictException 版本冲突
+     */
+
     void append(String aggregateType, AggregateRootId aggregateId, List<? extends DomainEvent<?>> events, long expectedVersion);
+
+    /**
+     * 读取聚合全部事件。
+     *
+     * <p>流不存在时返回空列表（读侧轻量状态探测思想，不单列 exists/state 方法）。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合 ID
+     * @return 按版本升序的持久化事件；无事件时为空列表
+     */
     List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId);
+
+    /**
+     * 读取指定版本区间的事件。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合 ID
+     * @param fromVersion   起始版本号（含）
+     * @param toVersion     结束版本号（含）
+     * @return 版本区间内的持久化事件，按版本升序
+     */
     List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion);
+    /**
+     * 读取全局事件流（用于 projection）。
+     *
+     * <p>{@code position} 是跨所有聚合流全局递增的序号，投影以「上次处理到的 position」
+     * 为断线续传位点，循环调用本方法直至读取数小于 {@code limit}。
+     *
+     * @param fromPosition 起始 position（含）
+     * @param limit        最大读取数量
+     * @return position 升序的持久化事件
+     */
+
     List<StoredEvent> readAll(long fromPosition, int limit);
 }

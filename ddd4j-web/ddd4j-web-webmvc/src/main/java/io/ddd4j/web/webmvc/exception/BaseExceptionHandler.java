@@ -48,10 +48,9 @@ public abstract class BaseExceptionHandler {
      * 清除当前请求
      */
 
-/**
- * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
- * All Rights Reserved.
- */
+    /**
+     * 清除当前请求
+     */
 public static void clearCurrentRequest() {
         REQUEST_HOLDER.remove();
     }

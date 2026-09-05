@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
- * All Rights Reserved.
- */
 package io.ddd4j.web.webmvc.error;
 
 import org.apache.commons.io.FilenameUtils;
@@ -26,12 +22,13 @@ public class I18nResourceBasenameHandler implements ResourceBasenameHandler {
      * @throws IOException 资源访问异常
      */
 
-/**
- * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
- * All Rights Reserved.
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+    /**
+     * 处理资源，提取国际化 basename。
+     *
+     * @param resource 资源对象
+     * @return 解析后的 basename 字符串
+     * @throws IOException 资源访问异常
+     */
     public String handle(Resource resource) throws IOException {
 
         URL url = resource.getURL();

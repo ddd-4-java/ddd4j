@@ -463,7 +463,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
      * List<DomainEvent<?>> history = eventStore.read(orderId).stream()
      *         .map(StoredEvent::event)
      *         .map(e -> (DomainEvent<?>) e)
-     *         .collect(Collectors.toList());
+     *         .toList();
      * order.loadFromHistory(history);
      * }</pre>
      *

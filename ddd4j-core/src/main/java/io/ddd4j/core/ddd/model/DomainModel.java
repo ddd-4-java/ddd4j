@@ -29,5 +29,11 @@ import java.io.Serializable;
  * @since 2.0.x
  */
 public interface DomainModel<ID extends Serializable> extends Serializable {
+    /**
+     * Returns the domain identity.
+     *
+     * @return domain identity
+     */
+
     ID id();
 }

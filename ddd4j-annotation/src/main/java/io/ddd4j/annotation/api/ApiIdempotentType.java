@@ -45,12 +45,13 @@ public enum ApiIdempotentType {
      * @throws NoSuchElementException 如果未找到匹配的枚举值
      */
 
-/**
- * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
- * All Rights Reserved.
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
+    /**
+     * 根据字符串名称（忽略大小写）获取对应的幂等方式枚举
+     *
+     * @param type 幂等方式名称字符串
+     * @return 匹配的 ApiIdempotentType 枚举
+     * @throws NoSuchElementException 如果未找到匹配的枚举值
+     */
 
     public static ApiIdempotentType valueOfIgnoreCase(String type) {
 

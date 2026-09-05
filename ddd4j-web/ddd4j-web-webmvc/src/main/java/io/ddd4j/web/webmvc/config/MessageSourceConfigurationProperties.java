@@ -30,7 +30,9 @@ import java.util.List;
 @Data
 public class MessageSourceConfigurationProperties {
 
-    /** 资源 bundle 基名列表，默认 {@code messages} */
+    /**
+     * 资源 bundle 基名列表，默认 {@code messages}
+     */
     private List<String> basename = new ArrayList<String>(Collections.singletonList("messages"));
 
     /** 默认编码 */

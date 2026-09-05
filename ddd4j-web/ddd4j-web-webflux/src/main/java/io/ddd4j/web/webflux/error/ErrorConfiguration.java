@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2018 Hiwepy (http://hiwepy.io).
- * All Rights Reserved.
- */
 package io.ddd4j.web.webflux.error;
 
 import org.springframework.stereotype.Component;

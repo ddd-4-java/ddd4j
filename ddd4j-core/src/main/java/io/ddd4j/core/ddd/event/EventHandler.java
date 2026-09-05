@@ -48,6 +48,10 @@ import java.lang.annotation.Target;
  */@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EventHandler {
-    /** 历史回放时是否忽略该处理器。 */
+    /**
+     * 标记此处理器不参与历史事件回放（{@code loadFromHistory} 时跳过）。
+     *
+     * @return {@code true} 表示回放时跳过此处理器
+     */
     boolean ignoreOnReplay() default false;
 }
