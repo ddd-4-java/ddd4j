@@ -42,6 +42,10 @@ public class ServerInfoProperties {
     private String version;
 
     @Override
+    /**
+     * 服务节点 UID
+     */
+
     public String toString() {
         return "ServiceInfo{" + "name='" + name + '\'' + ", version='" + version + '\'' + '}';
     }

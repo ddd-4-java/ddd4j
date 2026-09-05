@@ -108,6 +108,12 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
         @Override
+/**
+     * 事件处理器方法缓存（ClassValue 二级索引）。
+     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
+     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
+     */
+
         protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
             return new ClassValue<>() {
                 @Override
