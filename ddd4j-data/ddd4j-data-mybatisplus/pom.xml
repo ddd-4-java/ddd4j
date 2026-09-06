@@ -159,6 +159,13 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
+                    <!-- 只匹配 *Test.java（单元测试），排除需要 Docker 的集成测试 -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/MybatisAggregateRepositoryMySQLTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

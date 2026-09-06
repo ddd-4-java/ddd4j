@@ -16,6 +16,7 @@ package io.ddd4j.core.ddd.repository;
 
 import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.exception.BizRuntimeException;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -36,7 +37,7 @@ class RepositoryRegistryTest {
         repository.save(aggregate);
         assertEquals(aggregate, RepositoryRegistry.repository(TestAggregate.class).findById(aggregate.id()).get());
         RepositoryRegistry.unregister(TestAggregate.class);
-        assertThrows(IllegalStateException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
+        assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
     }
     private static final class TestAggregate extends AggregateRoot<StringEntityId> {
         private final StringEntityId id; private TestAggregate(StringEntityId id) { this.id = id; }

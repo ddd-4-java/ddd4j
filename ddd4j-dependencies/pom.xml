@@ -2899,11 +2899,6 @@
                 <version>${h2.version}</version>
             </dependency>
             <!-- 1.0.x 事件存储适配器（javax.persistence 线 / JDBI3） -->
-            <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>javax.persistence-api</artifactId>
-                <version>${javax-persistence.version}</version>
-            </dependency>
             <!-- 2026-09-04 补：ddd4j-data-jpa 等使用 jakarta 命名空间（与 spring-boot 3.x 兼容） -->
             <dependency>
                 <groupId>jakarta.persistence</groupId>

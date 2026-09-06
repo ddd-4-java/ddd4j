@@ -86,10 +86,9 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
-                    <!-- 同时匹配 *Test.java（单元测试）和 *IT.java（集成测试） -->
+                    <!-- 只匹配 *Test.java（单元测试），*IT.java 由 failsafe 插件处理 -->
                     <includes>
                         <include>**/*Test.java</include>
-                        <include>**/*IT.java</include>
                     </includes>
                 </configuration>
             </plugin>
