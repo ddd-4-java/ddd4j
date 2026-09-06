@@ -107,7 +107,7 @@ jobs:
             REPO_URL="2624322-snapshot-3eoov3"
           fi
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "$ALIYUN_USER:$ALIYUN_PASS" \
-            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/github/easy4j/spring-extension/3.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
+            "https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/github/easy4j/spring-extension/1.0.x.20260630-SNAPSHOT/maven-metadata.xml" || echo curl-failed)
           echo "Aliyun ${REPO} credential check: HTTP $HTTP_CODE (user len ${#ALIYUN_USER})"
           if [[ "$HTTP_CODE" != "200" ]]; then
             echo "::error::Aliyun ${REPO} auth failed (HTTP $HTTP_CODE)" >&2
@@ -141,6 +141,39 @@ jobs:
             echo "::error::Repository is 'release' but version $VERSION is still -SNAPSHOT" >&2
             echo "::error::To deploy a release, first run a release version bump commit" >&2
             exit 1
+          fi
+          # 首次部署：先部署 ddd4j 父 POM（避免 maven-metadata.xml 缺失）
+          if [[ "$REPO" == "snapshot" ]]; then
+            echo "[首次部署] 先部署 ddd4j 父 POM 创建 maven-metadata.xml"
+            set +e
+            # 使用 curl 直接上传预创建的 maven-metadata.xml 来初始化仓库
+            # 这避免了 deploy 步骤读取不存在的 maven-metadata.xml 的问题
+            MAVEN_METADATA_URL="https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/ddd4j/ddd4j/1.0.x.20260630-SNAPSHOT/maven-metadata.xml"
+            MAVEN_METADATA_CONTENT='<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>io.ddd4j</groupId>
+  <artifactId>ddd4j</artifactId>
+  <version>1.0.x.20260630-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20260906.000000</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20260906000000</lastUpdated>
+  </versioning>
+</metadata>'
+            echo "${MAVEN_METADATA_CONTENT}" > /tmp/maven-metadata.xml
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "${ALIYUN_USER}:${ALIYUN_PASS}" \
+              -X PUT -H "Content-Type: application/xml" \
+              --data-binary @/tmp/maven-metadata.xml \
+              "${MAVEN_METADATA_URL}" 2>&1)
+            echo "Maven metadata.xml 上传: HTTP $HTTP_CODE"
+            set -e
+            if [[ "${HTTP_CODE}" == "201" || "${HTTP_CODE}" == "200" ]]; then
+              echo "[首次部署] maven-metadata.xml 已上传"
+            else
+              echo "::warning::maven-metadata.xml 上传失败（HTTP $HTTP_CODE，可能已存在），继续部署其他模块"
+            fi
           fi
           # 部署到 Aliyun
           ./mvnw -U -Denforcer.skip=true -B $DRY_RUN_ARG -DskipTests \
