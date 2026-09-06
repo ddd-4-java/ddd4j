@@ -120,6 +120,8 @@ jobs:
       - name: Deploy to Aliyun
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+          ALIYUN_USER: ${{ secrets.ALIYUN_PACKAGES_USERNAME }}
+          ALIYUN_PASS: ${{ secrets.ALIYUN_PACKAGES_PASSWORD }}
         shell: bash
         run: |
           DRY_RUN_ARG=""
