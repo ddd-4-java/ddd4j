@@ -72,8 +72,10 @@ jobs:
         run: ./scripts/verify-release-worktree.sh
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
+      - name: Install reactor dependencies
+        run: ./mvnw -U -Denforcer.skip=true -B clean install -DskipTests -DskipITs
       - name: Run unit and adapter contracts
-        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs
+        run: ./mvnw -Denforcer.skip=true -B test -DskipITs
       - name: Verify build did not write generated files to source control
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
