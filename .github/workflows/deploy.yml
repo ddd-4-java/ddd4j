@@ -149,11 +149,12 @@ jobs:
             # 使用 curl 直接上传预创建的 maven-metadata.xml 来初始化仓库
             # 这避免了 deploy 步骤读取不存在的 maven-metadata.xml 的问题
             MAVEN_METADATA_URL="https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/${REPO_URL}/io/ddd4j/ddd4j/1.0.x.20260630-SNAPSHOT/maven-metadata.xml"
-            MAVEN_METADATA_CONTENT='<?xml version="1.0" encoding="UTF-8"?>
+            cat > /tmp/maven-metadata.xml << 'EOF_MAVEN_META'
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>io.ddd4j</groupId>
   <artifactId>ddd4j</artifactId>
-  <version>1.0.x.20260630-SNAPSHOT</version>
+  <version>REPLACE_VERSION</version>
   <versioning>
     <snapshot>
       <timestamp>20260906.000000</timestamp>
@@ -161,8 +162,9 @@ jobs:
     </snapshot>
     <lastUpdated>20260906000000</lastUpdated>
   </versioning>
-</metadata>'
-            echo "${MAVEN_METADATA_CONTENT}" > /tmp/maven-metadata.xml
+</metadata>
+EOF_MAVEN_META
+            sed -i "s|REPLACE_VERSION|${VERSION}|" /tmp/maven-metadata.xml
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "${ALIYUN_USER}:${ALIYUN_PASS}" \
               -X PUT -H "Content-Type: application/xml" \
               --data-binary @/tmp/maven-metadata.xml \
