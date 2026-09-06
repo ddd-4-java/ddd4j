@@ -167,8 +167,9 @@ jobs:
             set -e
             echo "[首次部署] 父 POM 和 maven-metadata.xml 上传完成"
           fi
-          # 部署到 Aliyun
+          # 部署到 Aliyun（使用 uniqueVersion=false 跳过 maven-metadata.xml 检查）
           ./mvnw -U -Denforcer.skip=true -B $DRY_RUN_ARG -DskipTests \
+            -DuniqueVersion=false \
             deploy
 
       - name: Generate deploy report
