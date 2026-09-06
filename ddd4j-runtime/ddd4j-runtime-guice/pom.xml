@@ -45,12 +45,6 @@
             <artifactId>ddd4j-data-logs</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- For Servlet Api -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>

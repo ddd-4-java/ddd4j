@@ -17,7 +17,6 @@ package io.ddd4j.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import io.ddd4j.data.logs.ApiOperationLogProvider;
-import io.ddd4j.data.logs.DefaultApiOperationLogProvider;
 import javax.inject.Singleton;
 
 /**
@@ -32,13 +31,14 @@ import javax.inject.Singleton;
 public class Ddd4jLogsGuiceModule extends AbstractModule {
 
     /**
-     * 提供 API 操作日志提供者。
+     * 提供 API 操作日志提供者（使用接口默认空实现）。
+     * <p>业务方可覆盖此绑定以注入自定义实现（如 {@code DefaultApiOperationLogProvider}）。
      *
      * @return ApiOperationLogProvider 实例
      */
     @Provides
     @Singleton
     public ApiOperationLogProvider apiOperationLogProvider() {
-        return new DefaultApiOperationLogProvider();
+        return new ApiOperationLogProvider() {};
     }
 }
