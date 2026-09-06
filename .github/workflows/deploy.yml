@@ -150,7 +150,7 @@ jobs:
               deploy:deploy-file \
               -DpomFile=pom.xml \
               -Dfile=pom.xml \
-              -Durl="${ALIYUN_REPO_URL}" \
+              -Durl="https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3" \
               -DrepositoryId=2624322-snapshot-3EoOv3 \
               -Dpackaging=pom 2>&1 | tail -5
             set -e
