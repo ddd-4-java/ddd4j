@@ -53,6 +53,15 @@ public final class ProjectionRunInfo {
     public int getLastEventCount() { return lastEventCount; }
     public String getLastError() { return lastError; }
 
+    /** 返回最近运行时间，与 bean getter 保持同一值。 */
+    public Instant lastRunAt() { return lastRunAt; }
+
+    /** 返回最近处理事件数。 */
+    public int lastEventCount() { return lastEventCount; }
+
+    /** 返回最近错误信息，成功时可为空。 */
+    public String lastError() { return lastError; }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,7 +82,7 @@ public final class ProjectionRunInfo {
 
     @Override
     public String toString() {
-        return "ProjectionRunInfo{lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount
-                + ", lastError=" + lastError + '}';
+        return "ProjectionRunInfo[lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount
+                + ", lastError=" + lastError + ']';
     }
 }

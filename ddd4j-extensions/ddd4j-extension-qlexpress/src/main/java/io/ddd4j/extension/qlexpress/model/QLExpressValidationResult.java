@@ -15,6 +15,8 @@
 
 package io.ddd4j.extension.qlexpress.model;
 
+import java.util.Objects;
+
 /**
  * 表达式语法校验结果。
  */
@@ -27,7 +29,7 @@ public final class QLExpressValidationResult {
  * 表达式语法校验结果。
  */
 
-    private QLExpressValidationResult(boolean valid, String message) {
+    public QLExpressValidationResult(boolean valid, String message) {
         this.valid = valid;
         this.message = message;
     }
@@ -49,5 +51,30 @@ public final class QLExpressValidationResult {
 
     public String getMessage() {
         return message;
+    }
+
+    /** 按校验状态与消息比较结果，匹配 record 的值语义。 */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof QLExpressValidationResult)) {
+            return false;
+        }
+        QLExpressValidationResult that = (QLExpressValidationResult) object;
+        return valid == that.valid && Objects.equals(message, that.message);
+    }
+
+    /** 返回与 record 组件顺序一致的哈希。 */
+    @Override
+    public int hashCode() {
+        return 31 * Boolean.hashCode(valid) + Objects.hashCode(message);
+    }
+
+    /** 返回跨版本一致的校验结果文本。 */
+    @Override
+    public String toString() {
+        return "QLExpressValidationResult[valid=" + valid + ", message=" + message + ']';
     }
 }

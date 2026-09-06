@@ -16,6 +16,7 @@
 package io.ddd4j.data.mybatis.adapter;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 原生 MyBatis SQL 执行观测数据。
@@ -80,5 +81,40 @@ public final class SqlObservation {
 
     public Throwable getError() {
         return error;
+    }
+
+    /** 按全部观测字段判断值相等，保证跨版本去重语义一致。 */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof SqlObservation)) {
+            return false;
+        }
+        SqlObservation that = (SqlObservation) object;
+        return elapsedNanos == that.elapsedNanos
+                && Objects.equals(statementId, that.statementId)
+                && Objects.equals(sql, that.sql)
+                && Objects.equals(sortedParams, that.sortedParams)
+                && Objects.equals(error, that.error);
+    }
+
+    /** 按 record 组件顺序计算哈希，引用字段允许为空。 */
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(statementId);
+        result = 31 * result + Objects.hashCode(sql);
+        result = 31 * result + Objects.hashCode(sortedParams);
+        result = 31 * result + Long.hashCode(elapsedNanos);
+        return 31 * result + Objects.hashCode(error);
+    }
+
+    /** 返回与其他版本 record 相同的观测文本。 */
+    @Override
+    public String toString() {
+        return "SqlObservation[statementId=" + statementId + ", sql=" + sql
+                + ", sortedParams=" + sortedParams + ", elapsedNanos=" + elapsedNanos
+                + ", error=" + error + ']';
     }
 }

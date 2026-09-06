@@ -16,6 +16,7 @@
 package io.ddd4j.mq.redisstream;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 跨 Jedis、Redisson 和 Lettuce 的统一 Redis Stream 记录模型。
@@ -57,23 +58,31 @@ public final class RedisStreamRecord {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RedisStreamRecord)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RedisStreamRecord)) {
+            return false;
+        }
         RedisStreamRecord that = (RedisStreamRecord) o;
-        return stream.equals(that.stream) && id.equals(that.id) && fields.equals(that.fields);
+        return Objects.equals(stream, that.stream)
+                && Objects.equals(id, that.id)
+                && Objects.equals(fields, that.fields)
+                && Objects.equals(nativeMessage, that.nativeMessage);
     }
 
     @Override
     public int hashCode() {
-        int result = stream.hashCode();
-        result = 31 * result + id.hashCode();
-        result = 31 * result + fields.hashCode();
-        return result;
+        int result = Objects.hashCode(stream);
+        result = 31 * result + Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(fields);
+        return 31 * result + Objects.hashCode(nativeMessage);
     }
 
     @Override
     public String toString() {
-        return "RedisStreamRecord{stream=" + stream + ", id=" + id + ", fields=" + fields + '}';
+        return "RedisStreamRecord[stream=" + stream + ", id=" + id + ", fields=" + fields
+                + ", nativeMessage=" + nativeMessage + ']';
     }
 
     public String getStream() {
