@@ -153,10 +153,6 @@
             <artifactId>mybatis-plus</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.hiwepy</groupId>
-            <artifactId>mybatis-plus-enhance</artifactId>
-        </dependency>
         <!-- For Hitool -->
         <dependency>
             <groupId>io.github.easy4j</groupId>
