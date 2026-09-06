@@ -144,23 +144,28 @@ jobs:
             echo "::error::To deploy a release, first run a release version bump commit" >&2
             exit 1
           fi
-          # 首次部署：用 curl 上传父 POM（避免 maven-metadata.xml 缺失）
+          # 首次部署：用 curl 上传父 POM 和 maven-metadata.xml
           if [[ "$REPO" == "snapshot" ]]; then
-            echo "[首次部署] 用 curl 上传父 POM"
+            echo "[首次部署] 用 curl 上传父 POM 和 maven-metadata.xml"
             set +e
-            # 上传 POM 文件
-            POM_URL="https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/ddd4j/ddd4j/2.0.x.20260630-SNAPSHOT/ddd4j-2.0.x.20260630-SNAPSHOT.pom"
+            BASE_URL="https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/ddd4j/ddd4j/2.0.x.20260630-SNAPSHOT"
+            # 1. 上传 POM 文件
+            POM_URL="${BASE_URL}/ddd4j-2.0.x.20260630-SNAPSHOT.pom"
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "${ALIYUN_USER}:${ALIYUN_PASS}" \
               -X PUT -H "Content-Type: application/xml" \
               --data-binary @pom.xml \
               "${POM_URL}" 2>&1)
             echo "父 POM 上传: HTTP $HTTP_CODE"
+            # 2. 上传 maven-metadata.xml（使用 printf 避免 YAML 解析问题）
+            METADATA_URL="${BASE_URL}/maven-metadata.xml"
+            printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<metadata>' '  <groupId>io.ddd4j</groupId>' '  <artifactId>ddd4j</artifactId>' '  <version>2.0.x.20260630-SNAPSHOT</version>' '  <versioning>' '    <snapshot>' '      <timestamp>20260907.000000</timestamp>' '      <buildNumber>1</buildNumber>' '    </snapshot>' '    <lastUpdated>20260907000000</lastUpdated>' '  </versioning>' '</metadata>' > /tmp/maven-metadata.xml
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "${ALIYUN_USER}:${ALIYUN_PASS}" \
+              -X PUT -H "Content-Type: application/xml" \
+              --data-binary @/tmp/maven-metadata.xml \
+              "${METADATA_URL}" 2>&1)
+            echo "maven-metadata.xml 上传: HTTP $HTTP_CODE"
             set -e
-            if [[ "${HTTP_CODE}" == "201" || "${HTTP_CODE}" == "200" ]]; then
-              echo "[首次部署] 父 POM 上传成功"
-            else
-              echo "::warning::父 POM 上传失败（HTTP $HTTP_CODE），继续部署其他模块"
-            fi
+            echo "[首次部署] 父 POM 和 maven-metadata.xml 上传完成"
           fi
           # 部署到 Aliyun
           ./mvnw -U -Denforcer.skip=true -B $DRY_RUN_ARG -DskipTests \
