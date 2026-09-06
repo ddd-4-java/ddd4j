@@ -142,19 +142,23 @@ jobs:
             echo "::error::To deploy a release, first run a release version bump commit" >&2
             exit 1
           fi
-          # 首次部署：先用 deploy:deploy-file 上传父 POM（避免 maven-metadata.xml 缺失）
+          # 首次部署：用 curl 上传父 POM（避免 maven-metadata.xml 缺失）
           if [[ "$REPO" == "snapshot" ]]; then
-            echo "[首次部署] 先用 deploy:deploy-file 上传父 POM"
+            echo "[首次部署] 用 curl 上传父 POM"
             set +e
-            ./mvnw -Denforcer.skip=true -B -N \
-              deploy:deploy-file \
-              -DpomFile=pom.xml \
-              -Dfile=pom.xml \
-              -Durl="https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3" \
-              -DrepositoryId=2624322-snapshot-3EoOv3 \
-              -Dpackaging=pom 2>&1 | tail -5
+            # 上传 POM 文件
+            POM_URL="https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3/io/ddd4j/ddd4j/1.0.x.20260630-SNAPSHOT/ddd4j-1.0.x.20260630-SNAPSHOT.pom"
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -u "${ALIYUN_USER}:${ALIYUN_PASS}" \
+              -X PUT -H "Content-Type: application/xml" \
+              --data-binary @pom.xml \
+              "${POM_URL}" 2>&1)
+            echo "父 POM 上传: HTTP $HTTP_CODE"
             set -e
-            echo "[首次部署] 父 POM 上传完成（或已存在）"
+            if [[ "${HTTP_CODE}" == "201" || "${HTTP_CODE}" == "200" ]]; then
+              echo "[首次部署] 父 POM 上传成功"
+            else
+              echo "::warning::父 POM 上传失败（HTTP $HTTP_CODE），继续部署其他模块"
+            fi
           fi
           # 部署到 Aliyun
           ./mvnw -U -Denforcer.skip=true -B $DRY_RUN_ARG -DskipTests \
