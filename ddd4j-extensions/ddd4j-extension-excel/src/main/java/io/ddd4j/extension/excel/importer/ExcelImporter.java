@@ -92,14 +92,16 @@ public final class ExcelImporter {
      * @return 全部数据
      */
     public static <T> List<T> readAll(InputStream in, Class<T> head) {
-        try (in) {
+        try (InputStream stream = in) {
             try {
-                return EasyExcel.read(in).head(head).sheet().doReadSync();
+                return EasyExcel.read(stream).head(head).sheet().doReadSync();
             } catch (Exception e) {
                 throw new BizRuntimeException(500, "excel.import.readall.failed", e);
             }
         } catch (IOException ex) {
-            log.error("excel.import.readall.failed", ex);
+            // stream close() failure after a BizRuntimeException would otherwise
+            // shadow the original error and silently return an empty list.
+            log.warn("excel.import.readall.close.failed", ex);
         }
         return Collections.emptyList();
     }

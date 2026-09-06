@@ -173,42 +173,6 @@ public class DefaultWebMvcConfiguration {
         return new Ddd4jWebMvcReadinessController(readinessRegistry);
     }
 
-    @Bean
-    public WebRequestContextFactory webRequestContextFactory(Environment environment) {
-        boolean trustForwardedHeaders = environment.getProperty("ddd4j.web.trust-forwarded-headers",
-                Boolean.class, false);
-        ClientIpResolver clientIpResolver = trustForwardedHeaders
-                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
-        return new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
-    }
-
-    @Bean
-    public WebRequestLifecycle webRequestLifecycle(BearerSubjectAuthenticator authenticator,
-                                                   WebAccessPolicy accessPolicy) {
-        return new WebRequestLifecycle(authenticator, accessPolicy);
-    }
-
-    @Bean
-    public WebIdempotencyLifecycle webIdempotencyLifecycle() {
-        return new WebIdempotencyLifecycle(new CacheIdempotencyGuard());
-    }
-
-    @Bean
-    public Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor(WebRequestContextFactory contextFactory,
-                                                         WebRequestLifecycle requestLifecycle,
-                                                         WebIdempotencyLifecycle idempotencyLifecycle) {
-        return new Ddd4jWebMvcInterceptor(contextFactory, requestLifecycle, idempotencyLifecycle);
-    }
-
-    /**
-     * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
-     */
-
-    public Ddd4jWebMvcReadinessController ddd4jWebMvcReadinessController(
-            RuntimeReadinessRegistry readinessRegistry) {
-        return new Ddd4jWebMvcReadinessController(readinessRegistry);
-    }
-
     /**
      * 自定义 WebMVC 配置器。
      */
