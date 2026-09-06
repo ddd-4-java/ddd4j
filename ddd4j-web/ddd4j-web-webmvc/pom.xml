@@ -72,6 +72,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- For Servlet Api -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- For Spring Web MVC -->
         <dependency>
             <groupId>org.springframework</groupId>
