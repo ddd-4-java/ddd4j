@@ -142,6 +142,19 @@ jobs:
             echo "::error::To deploy a release, first run a release version bump commit" >&2
             exit 1
           fi
+          # 首次部署：先部署 ddd4j 父 POM（避免 maven-metadata.xml 缺失）
+          if [[ "$REPO" == "snapshot" ]]; then
+            echo "[首次部署] 先部署 ddd4j 父 POM 创建 maven-metadata.xml"
+            set +e
+            ./mvnw -U -Denforcer.skip=true -B -DskipTests -N -pl . deploy 2>&1 | tail -5
+            PARENT_RC=$?
+            set -e
+            if [[ ${PARENT_RC} -eq 0 ]]; then
+              echo "[首次部署] 父 POM 部署成功"
+            else
+              echo "::warning::父 POM 部署失败（可能已存在），继续部署其他模块"
+            fi
+          fi
           # 部署到 Aliyun
           ./mvnw -U -Denforcer.skip=true -B $DRY_RUN_ARG -DskipTests \
             deploy
