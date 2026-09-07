@@ -22,7 +22,6 @@ import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.AggregateVersion;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
@@ -34,7 +33,7 @@ import org.jdbi.v3.core.statement.StatementContext;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -185,7 +184,6 @@ public class JdbiEventStore implements EventStore {
                 long version = expectedVersion;
                 for (DomainEvent<?> event : events) {
                     version++;
-                    event.setAggregateVersion(new AggregateVersion(version));
                     handle.createUpdate(INSERT_SQL)
                             .bind("aggregateId", aggregateId.asString())
                             .bind("aggregateType", aggregateType)
@@ -273,7 +271,7 @@ public class JdbiEventStore implements EventStore {
                     new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
                     rs.getLong(EventStoreConstants.COLUMN_VERSION),
                     rs.getLong(EventStoreConstants.COLUMN_POSITION),
-                    ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.systemDefault()),
+                    ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneOffset.UTC),
                     payload,
                     EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
                     EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));

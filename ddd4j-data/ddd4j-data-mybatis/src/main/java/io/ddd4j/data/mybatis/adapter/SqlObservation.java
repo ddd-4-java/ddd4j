@@ -85,14 +85,14 @@ public final class SqlObservation {
 
     /** 按全部观测字段判断值相等，保证跨版本去重语义一致。 */
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(object instanceof SqlObservation)) {
+        if (!(o instanceof SqlObservation)) {
             return false;
         }
-        SqlObservation that = (SqlObservation) object;
+        SqlObservation that = (SqlObservation) o;
         return elapsedNanos == that.elapsedNanos
                 && Objects.equals(statementId, that.statementId)
                 && Objects.equals(sql, that.sql)

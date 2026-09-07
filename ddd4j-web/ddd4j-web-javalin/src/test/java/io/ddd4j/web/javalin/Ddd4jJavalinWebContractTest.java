@@ -41,6 +41,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -159,13 +160,21 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
                     }
                 }
                 int statusCode = conn.getResponseCode();
-                Map<String, java.util.List<String>> responseHeaders = conn.getHeaderFields();
+                Map<String, java.util.List<String>> responseHeaders = new LinkedHashMap<>();
+                for (Map.Entry<String, java.util.List<String>> entry : conn.getHeaderFields().entrySet()) {
+                    if (Objects.nonNull(entry.getKey())) {
+                        responseHeaders.put(entry.getKey(), entry.getValue());
+                    }
+                }
                 String responseBody;
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-                    responseBody = reader.lines().collect(Collectors.joining("\n"));
-                } catch (Exception e) {
+                InputStream responseStream = statusCode >= 400 ? conn.getErrorStream() : conn.getInputStream();
+                if (Objects.isNull(responseStream)) {
                     responseBody = "";
+                } else {
+                    try (BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
+                        responseBody = reader.lines().collect(Collectors.joining("\n"));
+                    }
                 }
                 conn.disconnect();
                 return new WebContractResponse(statusCode, responseHeaders, responseBody);

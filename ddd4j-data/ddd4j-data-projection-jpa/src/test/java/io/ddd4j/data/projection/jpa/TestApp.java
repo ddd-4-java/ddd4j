@@ -18,6 +18,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * 集成测试引导应用（Task 7.2，H2 内存库 IT 用）。
@@ -37,6 +38,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @EntityScan(basePackages = "io.ddd4j.data.projection.jpa")
+@EnableJpaRepositories(basePackages = "io.ddd4j.data.projection.jpa")
 @ComponentScan(basePackages = "io.ddd4j.data.projection.jpa")
 class TestApp {
 }

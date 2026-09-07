@@ -12,34 +12,11 @@
 
     <artifactId>ddd4j-data-projection-dropwizard</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影调度 Dropwizard 5 适配：DropwizardProjectionScheduler 以静态 create(Environment, Collection, ProjectionRunner)
-        工厂实现 ViewScheduler SPI（JDK ScheduledExecutorService + CronExpression——与 Quarkus 模式同款），
-        DropwizardProjectionViewManager 以静态 create 工厂实现 ViewManager SPI（遍历 views 按 cron 调度，
-        triggerOnce 驱动 ProjectionRunner.runAll），零新框架抽象——投影契约全部复用 ddd4j-core。
-    </description>
+    <description>ddd4j 投影调度 Dropwizard 5 适配：DropwizardProjectionScheduler 以静态 create(Environment, Collection, ProjectionRunner) 工厂实现 ViewScheduler SPI（JDK ScheduledExecutorService + CronExpression——与 Quarkus 模式同款）， DropwizardProjectionViewManager 以静态 create 工厂实现 ViewManager SPI（遍历 views 按 cron 调度， triggerOnce 驱动 ProjectionRunner.runAll），零新框架抽象——投影契约全部复用 ddd4j-core。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Jersey 3.1.x 对齐（模块级覆盖）：dropwizard-bom 5.0.2 只管理
-                 io.dropwizard.* 构件，org.glassfish.jersey 的版本来自
-                 ddd4j-dependencies:5171-5179 的 jersey-bom（${jersey.version}=
-                 3.1.11，与 dropwizard-dependencies 5.0.2 同线）；但
-                 ddd4j-dependencies:3936-3943 先行以 BOM 形式导入了
-                 org.apache.hadoop:hadoop-mapreduce-client:3.5.0（其父
-                 hadoop-project 以 jersey2.version=2.46 管理 Jersey 2.x 子集
-                 —— javax.ws.rs 旧命名空间），first-wins 下 2.46 会劫持
-                 jersey-common/server/client 等子集，与 Dropwizard 5 的
-                 jakarta 线（jakarta.ws.rs 3.1）混链即 NoClassDefFoundError。
-                 本模块级再导入同线 jersey-bom 即可整族对齐 3.1.11（当前 pom
-                 的 dependencyManagement 优先于父级导入），零全局副作用。 -->
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Dropwizard Metrics 整族对齐（同因 hadoop-mapreduce-client BOM 劫持）：
                  hadoop-project 3.5.0 另以 4.0.1 管理 io.dropwizard.metrics:metrics-core
                  （及 jmx/healthchecks 子集），先于 ddd4j 全局管理生效 → dropwizard-core
@@ -97,6 +74,44 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-legacy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>${javax-el-implementation.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Dropwizard 2 使用 SLF4J 1.7 SPI，测试后端必须保留 Logback 1.2。 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

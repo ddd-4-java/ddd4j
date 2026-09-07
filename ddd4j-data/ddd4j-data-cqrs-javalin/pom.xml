@@ -12,12 +12,7 @@
 
     <artifactId>ddd4j-data-cqrs-javalin</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j CQRS Javalin 适配：JavalinCommandBus 以静态 create(Javalin, Collection)
-        工厂继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）。
-        Javalin 不内置 DI 容器——执行器由集成方以 JDK ServiceLoader 风格（META-INF/services）
-        或手动扫描供入 create 工厂的 Collection 参数，工厂内经 CommandRegistry 整批注册。
-        事务刻意不引入（Javalin 无事务管理栈，由集成方在 handler/执行器内自管）。
-    </description>
+    <description>ddd4j CQRS Javalin 适配：JavalinCommandBus 以静态 create(Javalin, Collection) 工厂继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）。 Javalin 不内置 DI 容器——执行器由集成方以 JDK ServiceLoader 风格（META-INF/services） 或手动扫描供入 create 工厂的 Collection 参数，工厂内经 CommandRegistry 整批注册。 事务刻意不引入（Javalin 无事务管理栈，由集成方在 handler/执行器内自管）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>

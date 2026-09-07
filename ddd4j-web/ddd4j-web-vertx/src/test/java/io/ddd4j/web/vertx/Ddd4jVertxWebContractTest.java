@@ -38,9 +38,9 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -56,7 +56,6 @@ import java.util.stream.Collectors;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Disabled("Vert.x 4.x contract test — requires running Vert.x instance")
 class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
 
     private Vertx vertx;
@@ -163,18 +162,27 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
                 }
                 if (body != null) {
                     conn.setDoOutput(true);
+                    conn.setRequestProperty("Content-Type", "application/json");
                     try (OutputStream os = conn.getOutputStream()) {
                         os.write(body.getBytes(StandardCharsets.UTF_8));
                     }
                 }
                 int statusCode = conn.getResponseCode();
-                Map<String, java.util.List<String>> responseHeaders = conn.getHeaderFields();
+                Map<String, java.util.List<String>> responseHeaders = new LinkedHashMap<>();
+                for (Map.Entry<String, java.util.List<String>> entry : conn.getHeaderFields().entrySet()) {
+                    if (Objects.nonNull(entry.getKey())) {
+                        responseHeaders.put(entry.getKey(), entry.getValue());
+                    }
+                }
                 String responseBody;
-                try (BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-                    responseBody = reader.lines().collect(Collectors.joining("\n"));
-                } catch (Exception e) {
+                InputStream responseStream = statusCode >= 400 ? conn.getErrorStream() : conn.getInputStream();
+                if (Objects.isNull(responseStream)) {
                     responseBody = "";
+                } else {
+                    try (BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(responseStream, StandardCharsets.UTF_8))) {
+                        responseBody = reader.lines().collect(Collectors.joining("\n"));
+                    }
                 }
                 conn.disconnect();
                 return new WebContractResponse(statusCode, responseHeaders, responseBody);

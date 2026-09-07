@@ -15,6 +15,7 @@
 
 package io.ddd4j.data.mybatis.plugins.observation;
 
+import java.util.Objects;
 /**
  * MyBatis-Plus SQL 执行观测数据。
  *
@@ -69,5 +70,33 @@ public final class SqlObservation {
 
     public Throwable getError() {
         return error;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SqlObservation)) {
+            return false;
+        }
+        SqlObservation that = (SqlObservation) o;
+        return Objects.equals(statementId, that.statementId)
+                && Objects.equals(sql, that.sql)
+                && elapsedNanos == that.elapsedNanos
+                && Objects.equals(error, that.error);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(statementId);
+        result = 31 * result + Objects.hashCode(sql);
+        result = 31 * result + (int) (elapsedNanos ^ (elapsedNanos >>> 32));
+        result = 31 * result + Objects.hashCode(error);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "SqlObservation[statementId=" + statementId + ", sql=" + sql + ", elapsedNanos=" + elapsedNanos + ", error=" + error + "]";
     }
 }

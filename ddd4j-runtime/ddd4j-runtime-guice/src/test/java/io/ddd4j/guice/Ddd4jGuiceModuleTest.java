@@ -80,6 +80,17 @@ class Ddd4jGuiceModuleTest {
     }
 
     @Test
+    void mybatisGuiceModuleBindsRepositories() {
+        Injector injector = Guice.createInjector(new Ddd4jMybatisGuiceModule(new NoopDataSource())
+                .addMapper(MapperStub.class)
+                .bindRepository(RepositoryStub.class, MapperStub.class));
+
+        assertNotNull(injector);
+        assertNotNull(injector.getInstance(RepositoryStub.class));
+        assertSame(injector.getInstance(RepositoryStub.class), injector.getInstance(RepositoryStub.class));
+    }
+
+    @Test
     void cryptoAndLogsModulesProvideBindings() {
         Injector injector = Guice.createInjector(new Ddd4jCryptoGuiceModule(), new Ddd4jLogsGuiceModule());
 
@@ -230,6 +241,24 @@ class Ddd4jGuiceModuleTest {
         io.ddd4j.guice.subject.GuiceSubjectProvider emptyProvider = new io.ddd4j.guice.subject.GuiceSubjectProvider();
         Guice.createInjector().injectMembers(emptyProvider);
         assertNull(emptyProvider.getSubject());
+    }
+
+    @Test
+    void mybatisModuleBuildsFactoryAndInjectsMappers() {
+        Ddd4jMybatisGuiceModule module = new Ddd4jMybatisGuiceModule(new NoopDataSource())
+                .addMapper(MapperStub.class)
+                .bindRepository(RepositoryStub.class, MapperStub.class);
+        Injector injector = Guice.createInjector(module);
+
+        org.apache.ibatis.session.SqlSessionFactory factory =
+                injector.getInstance(org.apache.ibatis.session.SqlSessionFactory.class);
+        assertNotNull(factory);
+        org.apache.ibatis.session.SqlSession session =
+                injector.getInstance(org.apache.ibatis.session.SqlSession.class);
+        assertNotNull(session);
+
+        module.initRepositories(injector);
+        session.close();
     }
 
     @Test

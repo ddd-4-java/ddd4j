@@ -65,4 +65,30 @@ import java.util.Objects;
     public Duration getTtl() {
         return ttl;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof IdempotencyLease)) {
+            return false;
+        }
+        IdempotencyLease that = (IdempotencyLease) o;
+        return Objects.equals(key, that.key)
+                && Objects.equals(ownerToken, that.ownerToken)
+                && Objects.equals(ttl, that.ttl);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(key);
+        result = 31 * result + Objects.hashCode(ownerToken);
+        result = 31 * result + Objects.hashCode(ttl);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "IdempotencyLease[key=" + key + ", ownerToken=" + ownerToken + ", ttl=" + ttl + "]";
+    }
 }

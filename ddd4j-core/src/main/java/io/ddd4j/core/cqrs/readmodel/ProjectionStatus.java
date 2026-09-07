@@ -88,6 +88,13 @@ public final class ProjectionStatus {
     public int getLastEventCount() { return lastEventCount; }
     public String getLastError() { return lastError; }
 
+    public String streamId() { return streamId; }
+    public long nextEventNumber() { return nextEventNumber; }
+    public boolean running() { return running; }
+    public Instant lastRunAt() { return lastRunAt; }
+    public int lastEventCount() { return lastEventCount; }
+    public String lastError() { return lastError; }
+
         /**
      * 创建基线状态（nextEventNumber=0，无运行历史）。
      *

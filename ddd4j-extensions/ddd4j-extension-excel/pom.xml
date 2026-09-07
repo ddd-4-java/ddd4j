@@ -47,6 +47,12 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-</dependencies>
+        <!-- 测试期承接 POI 等组件的 Log4j API 输出，不传递到生产消费者。 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

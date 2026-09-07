@@ -48,7 +48,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <!-- 覆盖全局 h2.version=2.4.240（Java 11 字节码）：2.2.224 为最后的 Java 8 版本 -->
-            <version>2.2.224</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -71,7 +70,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <!-- 未在 ddd4j-dependencies 中管理，显式钉版本 -->
-            <version>42.7.4</version>
             <scope>test</scope>
         </dependency>
             <dependency>

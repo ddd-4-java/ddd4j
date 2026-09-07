@@ -128,8 +128,11 @@ public final class MQOutboxRecord {
 
     @Override
     public String toString() {
-        return "MQOutboxRecord{messageId=" + messageId + ", destination=" + destination
-                + ", status=" + status + ", attempts=" + attempts + '}';
+        return "MQOutboxRecord[messageId=" + messageId + ", destination=" + destination
+                + ", payload=" + payload + ", headers=" + headers + ", status=" + status
+                + ", availableAt=" + availableAt + ", leaseOwner=" + leaseOwner
+                + ", leaseUntil=" + leaseUntil + ", attempts=" + attempts
+                + ", lastError=" + lastError + ", publishedAt=" + publishedAt + ']';
     }
 
     /**

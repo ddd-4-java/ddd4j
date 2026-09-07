@@ -12,12 +12,7 @@
 
     <artifactId>ddd4j-data-projection-r2dbc</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影位置 R2DBC 响应式实现（WebFlux/Vert.x 等响应式运行时）：
-        纯 io.r2dbc.spi Connection API 落地 core 的 ProjectionPositionRepository SPI
-        （接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义），双面 API——
-        响应式方法（Mono/Flux）供响应式运行时直组，同步桥接方法满足 core SPI；
-        单条 MERGE INTO 原子 upsert（H2 实证语法）。
-    </description>
+    <description>ddd4j 投影位置 R2DBC 响应式实现（WebFlux/Vert.x 等响应式运行时）： 纯 io.r2dbc.spi Connection API 落地 core 的 ProjectionPositionRepository SPI （接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义），双面 API—— 响应式方法（Mono/Flux）供响应式运行时直组，同步桥接方法满足 core SPI； 单条 MERGE INTO 原子 upsert（H2 实证语法）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
@@ -44,6 +39,13 @@
         <dependency>
             <groupId>io.r2dbc</groupId>
             <artifactId>r2dbc-h2</artifactId>
+            <!-- JDK8/H2 2.2 兼容组合，与 event-store-r2dbc 测试栈一致。 -->
+            <version>${r2dbc-h2-jdk8.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Reactor 测试（StepVerifier 断言 Mono/Flux 信号序列；版本随 reactor-bom） -->

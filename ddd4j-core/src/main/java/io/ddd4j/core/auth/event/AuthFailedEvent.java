@@ -73,15 +73,15 @@ public final class AuthFailedEvent {
     @Override
     public int hashCode() {
         int result = Objects.hashCode(request);
-result = 31 * result + request.hashCode();
-        result = 31 * result + reason.hashCode();
-        result = 31 * result + occurredAt.hashCode();
+        result = 31 * result + Objects.hashCode(reason);
+        result = 31 * result + Objects.hashCode(occurredAt);
         return result;
     }
 
     @Override
     public String toString() {
-        return "AuthFailedEvent{" + request + ", " + reason + ", " + occurredAt + '}';
+        return "AuthFailedEvent[request=" + request + ", reason=" + reason
+                + ", occurredAt=" + occurredAt + ']';
     }
 
     public AuthRequest getRequest() {

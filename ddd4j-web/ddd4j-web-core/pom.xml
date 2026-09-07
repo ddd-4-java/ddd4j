@@ -35,6 +35,24 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- WebContextScopeTest 需要可读写 MDC 的测试 provider。 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- WebOtelSupportTest 验证反射桥接存在时的真实调用路径。 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-extension-otel</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>

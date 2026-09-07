@@ -47,6 +47,7 @@ class ProjectionJpaModuleIndependenceTest {
                     .should().onlyDependOnClassesThat().resideInAnyPackage(
                             "io.ddd4j..",
                             "java..",
+                            "javax..",
                             "jakarta..",
                             "org.springframework..",
                             "org.hibernate..",

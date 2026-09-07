@@ -15,6 +15,7 @@
 
 package io.ddd4j.web.core.health;
 
+import java.util.Objects;
 /**
  * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
  *
@@ -46,5 +47,27 @@ package io.ddd4j.web.core.health;
 
     public boolean isReady() {
         return ready;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ReadinessResponse)) {
+            return false;
+        }
+        ReadinessResponse that = (ReadinessResponse) o;
+        return ready == that.ready;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (ready ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ReadinessResponse[ready=" + ready + "]";
     }
 }

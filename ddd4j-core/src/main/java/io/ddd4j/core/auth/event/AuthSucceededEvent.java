@@ -96,16 +96,16 @@ public final class AuthSucceededEvent {
     @Override
     public int hashCode() {
         int result = Objects.hashCode(request);
-result = 31 * result + request.hashCode();
-        result = 31 * result + principal.hashCode();
-        result = 31 * result + token.hashCode();
-        result = 31 * result + occurredAt.hashCode();
+        result = 31 * result + Objects.hashCode(principal);
+        result = 31 * result + Objects.hashCode(token);
+        result = 31 * result + Objects.hashCode(occurredAt);
         return result;
     }
 
     @Override
     public String toString() {
-        return "AuthSucceededEvent{" + request + ", " + principal + ", " + token + ", " + occurredAt + '}';
+        return "AuthSucceededEvent[request=" + request + ", principal=" + principal
+                + ", token=" + token + ", occurredAt=" + occurredAt + ']';
     }
 
     public AuthRequest getRequest() {

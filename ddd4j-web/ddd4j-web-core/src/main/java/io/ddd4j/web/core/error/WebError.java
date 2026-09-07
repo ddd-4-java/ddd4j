@@ -15,6 +15,7 @@
 
 package io.ddd4j.web.core.error;
 
+import java.util.Objects;
 import io.ddd4j.core.api.R;
 
 import java.io.Serializable;
@@ -62,5 +63,33 @@ import java.io.Serializable;
 
     public Object getData() {
         return data;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebError)) {
+            return false;
+        }
+        WebError that = (WebError) o;
+        return status == that.status
+                && Objects.equals(code, that.code)
+                && Objects.equals(message, that.message)
+                && Objects.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = status;
+        result = 31 * result + Objects.hashCode(code);
+        result = 31 * result + Objects.hashCode(message);
+        result = 31 * result + Objects.hashCode(data);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "WebError[status=" + status + ", code=" + code + ", message=" + message + ", data=" + data + "]";
     }
 }

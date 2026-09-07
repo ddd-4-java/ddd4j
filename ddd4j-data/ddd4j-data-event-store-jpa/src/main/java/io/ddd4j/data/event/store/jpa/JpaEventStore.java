@@ -21,7 +21,6 @@ import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.AggregateVersion;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
@@ -30,7 +29,6 @@ import io.ddd4j.core.ddd.event.StringEntityType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
-import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -122,7 +120,6 @@ public class JpaEventStore implements EventStore {
             long version = expectedVersion;
             for (DomainEvent<?> event : events) {
                 version++;
-                event.setAggregateVersion(new AggregateVersion(version));
                 StoredEventEntity entity = new StoredEventEntity();
                 entity.setAggregateType(aggregateType);
                 entity.setAggregateId(aggregateId.asString());
@@ -133,7 +130,7 @@ public class JpaEventStore implements EventStore {
                 entity.setCorrelationId(event.getCorrelationId() == null ? null : event.getCorrelationId().asString());
                 entity.setCausationId(event.getCausationId() == null ? null : event.getCausationId().asString());
                 entity.setPayload(serializer.serialize(event));
-                entity.setTimestamp(Instant.now());
+                entity.setTimestamp(event.getEventTimestamp().toInstant());
                 entityManager.persist(entity);
             }
             entityManager.flush();

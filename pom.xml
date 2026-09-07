@@ -593,6 +593,10 @@
                         <configuration>
                             <skip>false</skip>
                             <skipTests>false</skipTests>
+                            <systemPropertyVariables>
+                                <!-- 跳过 ServiceLoader 扫描，避免 sample 自带 provider 形成多绑定告警。 -->
+                                <slf4j.provider>org.apache.logging.slf4j.SLF4JServiceProvider</slf4j.provider>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

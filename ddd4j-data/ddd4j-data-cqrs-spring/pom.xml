@@ -12,19 +12,15 @@
 
     <artifactId>ddd4j-data-cqrs-spring</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j CQRS Spring 适配（Spring WebMVC/WebFlux）：
-        SpringCommandBus 以 @Component 继承 ddd4j-core DefaultCommandBus（ADR-0004：
-        命令分发唯一入口，零新框架抽象），构造期经 ApplicationContext.getBeansOfType
-        收集 CommandExecutor Bean 注册 CommandRegistry，类级 @Transactional 包 execute。
-    </description>
+    <description>ddd4j CQRS Spring 适配（Spring WebMVC/WebFlux）： SpringCommandBus 以 @Component 继承 ddd4j-core DefaultCommandBus（ADR-0004： 命令分发唯一入口，零新框架抽象），构造期经 ApplicationContext.getBeansOfType 收集 CommandExecutor Bean 注册 CommandRegistry，类级 @Transactional 包 execute。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <!-- 仅测试栈：@SpringBootTest 真实容器所用的 Spring Boot starter 版本（与 -event-store-jpa
              的 Task 4.1 决策一致）。BOM 刻意不管理 Spring Boot（4.1+4.2 实证全仓无 BOM 管理），
-             故此处局部显式钉版，取 3.4.4 = Spring 6.2 线（与 ddd4j-dependencies 管理的
+             版本由 ddd4j-dependencies 集中钉定，取 3.4.4 = Spring 6.2 线（与 ddd4j-dependencies 管理的
              spring-framework 6.2.x 匹配；Boot 4.x/Spring 7 线勿用），test 作用域不进入对外依赖面。 -->
-        <spring-boot-it.version>3.4.4</spring-boot-it.version>
+        <spring-boot-it.version>${spring-boot3-it.version}</spring-boot-it.version>
     </properties>
 
     <dependencies>

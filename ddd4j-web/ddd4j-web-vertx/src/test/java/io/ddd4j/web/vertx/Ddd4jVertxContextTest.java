@@ -17,16 +17,15 @@ package io.ddd4j.web.vertx;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.web.core.context.WebRequestContext;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.RoutingContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
 
+import java.lang.reflect.Proxy;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -35,23 +34,50 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class Ddd4jVertxContextTest {
 
     private static final String REQUEST_KEY = Ddd4jVertxContext.class.getName() + ".request";
     private static final String SUBJECT_KEY = Ddd4jVertxContext.class.getName() + ".subject";
 
-    @Mock
     private RoutingContext context;
 
-    @Mock
+    private Map<String, Object> contextValues;
+
     private Vertx vertx;
+
+    @BeforeEach
+    void setUpRoutingContext() {
+        contextValues = new HashMap<>();
+        vertx = (Vertx) Proxy.newProxyInstance(
+                Vertx.class.getClassLoader(), new Class<?>[]{Vertx.class},
+                (proxy, method, arguments) -> {
+                    if ("executeBlocking".equals(method.getName())
+                            && arguments[0] instanceof Callable) {
+                        try {
+                            return Future.succeededFuture(((Callable<?>) arguments[0]).call());
+                        } catch (Exception exception) {
+                            return Future.failedFuture(exception);
+                        }
+                    }
+                    return null;
+                });
+        context = (RoutingContext) Proxy.newProxyInstance(
+                RoutingContext.class.getClassLoader(), new Class<?>[]{RoutingContext.class},
+                (proxy, method, arguments) -> {
+                    if ("get".equals(method.getName())) {
+                        return contextValues.get(arguments[0]);
+                    }
+                    if ("put".equals(method.getName())) {
+                        contextValues.put((String) arguments[0], arguments[1]);
+                        return proxy;
+                    }
+                    if ("vertx".equals(method.getName())) {
+                        return vertx;
+                    }
+                    return null;
+                });
+    }
 
     private static WebRequestContext requestContext() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
@@ -61,21 +87,20 @@ class Ddd4jVertxContextTest {
     @Test
     void requestReturnsStoredContext() {
         WebRequestContext stored = requestContext();
-        when(context.get(REQUEST_KEY)).thenReturn(stored);
+        contextValues.put(REQUEST_KEY, stored);
 
         assertEquals(Optional.of(stored), Ddd4jVertxContext.request(context));
     }
 
     @Test
     void requestReturnsEmptyWhenAbsent() {
-        when(context.get(REQUEST_KEY)).thenReturn(null);
         assertFalse(Ddd4jVertxContext.request(context).isPresent());
     }
 
     @Test
     void subjectReturnsStoredSubject() {
-        Subject subject = mock(Subject.class);
-        when(context.get(SUBJECT_KEY)).thenReturn(subject);
+        Subject subject = subjectStub();
+        contextValues.put(SUBJECT_KEY, subject);
 
         assertEquals(Optional.of(subject), Ddd4jVertxContext.subject(context));
     }
@@ -88,16 +113,7 @@ class Ddd4jVertxContextTest {
 
     @Test
     void executeBlockingRunsTaskWithBoundRequest() {
-        when(context.get(REQUEST_KEY)).thenReturn(requestContext());
-        when(context.vertx()).thenReturn(vertx);
-        when(vertx.executeBlocking(any(Callable.class))).thenAnswer(invocation -> {
-            Callable<String> callable = invocation.getArgument(0);
-            try {
-                return Future.succeededFuture(callable.call());
-            } catch (Exception e) {
-                return Future.failedFuture(e);
-            }
-        });
+        contextValues.put(REQUEST_KEY, requestContext());
 
         Future<String> future = Ddd4jVertxContext.executeBlocking(context, () -> "done");
 
@@ -120,28 +136,19 @@ class Ddd4jVertxContextTest {
     void bindRequestStoresRequest() {
         WebRequestContext stored = requestContext();
         Ddd4jVertxContext.bindRequest(context, stored);
-        verify(context).put(REQUEST_KEY, stored);
+        assertEquals(stored, contextValues.get(REQUEST_KEY));
     }
 
     @Test
     void bindSubjectStoresSubject() {
-        Subject subject = mock(Subject.class);
+        Subject subject = subjectStub();
         Ddd4jVertxContext.bindSubject(context, subject);
-        verify(context).put(SUBJECT_KEY, subject);
+        assertEquals(subject, contextValues.get(SUBJECT_KEY));
     }
 
     @Test
     void executeBlockingPropagatesTaskFailure() {
-        when(context.get(REQUEST_KEY)).thenReturn(requestContext());
-        when(context.vertx()).thenReturn(vertx);
-        when(vertx.executeBlocking(any(Callable.class))).thenAnswer(invocation -> {
-            Callable<String> callable = invocation.getArgument(0);
-            try {
-                return Future.succeededFuture(callable.call());
-            } catch (Exception e) {
-                return Future.failedFuture(e);
-            }
-        });
+        contextValues.put(REQUEST_KEY, requestContext());
 
         Future<String> future = Ddd4jVertxContext.executeBlocking(context, () -> {
             throw new IllegalStateException("task failed");
@@ -149,5 +156,19 @@ class Ddd4jVertxContextTest {
 
         assertTrue(future.failed());
         assertEquals("task failed", future.cause().getMessage());
+    }
+
+    private Subject subjectStub() {
+        return (Subject) Proxy.newProxyInstance(
+                Subject.class.getClassLoader(), new Class<?>[]{Subject.class},
+                (proxy, method, arguments) -> {
+                    if ("equals".equals(method.getName())) {
+                        return proxy == arguments[0];
+                    }
+                    if ("hashCode".equals(method.getName())) {
+                        return System.identityHashCode(proxy);
+                    }
+                    return null;
+                });
     }
 }

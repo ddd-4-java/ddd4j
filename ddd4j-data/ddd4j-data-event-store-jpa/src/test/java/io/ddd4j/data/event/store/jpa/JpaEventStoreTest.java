@@ -163,6 +163,36 @@ class JpaEventStoreTest {
         assertEquals(0, eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing")).size());
     }
 
+    @Test
+    void appendMustNotMutateInputAggregateVersion() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-input");
+        OrderCreatedEvent event = new OrderCreatedEvent("input");
+
+        assertNull(event.getAggregateVersion());
+        eventStore.append(ORDER_TYPE, orderId, Collections.<DomainEvent<?>>singletonList(event), 0);
+
+        assertNull(event.getAggregateVersion());
+    }
+
+    @Test
+    void readAllLimitMustBePositive() {
+        assertThrows(IllegalArgumentException.class, () -> eventStore.readAll(0, 0));
+    }
+
+    @Test
+    void persistedTimestampMustComeFromEvent() throws Exception {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-time");
+        OrderCreatedEvent event = new OrderCreatedEvent("time");
+        java.time.ZonedDateTime expected = java.time.ZonedDateTime.parse("2024-01-02T03:04:05Z");
+        java.lang.reflect.Field field = DomainEvent.class.getDeclaredField("eventTimestamp");
+        field.setAccessible(true);
+        field.set(event, expected);
+
+        eventStore.append(ORDER_TYPE, orderId, Collections.<DomainEvent<?>>singletonList(event), 0);
+
+        assertEquals(expected.toInstant(), eventStore.read(ORDER_TYPE, orderId).get(0).timestamp().toInstant());
+    }
+
     private static final class TestAggregateRootId implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("Order");

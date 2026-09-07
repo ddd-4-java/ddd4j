@@ -106,8 +106,8 @@ public final class Ddd4jJavalinWeb {
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
-    public void configure(Javalin app) {
-        Javalin javalinApp = Objects.requireNonNull(app, "app must not be null");
+    public void configure(Javalin config) {
+        Javalin javalinApp = Objects.requireNonNull(config, "config must not be null");
         javalinApp.before(this::openContext);
         javalinApp.after(this::completeContext);
         javalinApp.exception(Exception.class, this::handleException);

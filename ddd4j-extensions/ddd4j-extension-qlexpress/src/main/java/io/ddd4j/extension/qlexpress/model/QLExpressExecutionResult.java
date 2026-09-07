@@ -15,6 +15,7 @@
 
 package io.ddd4j.extension.qlexpress.model;
 
+import java.util.Objects;
 /**
  * 不抛出异常的表达式执行结果。
  *
@@ -33,7 +34,7 @@ public final class QLExpressExecutionResult<T> {
     private final String errorMessage;
     private final long elapsedNanos;
 
-    private QLExpressExecutionResult(boolean success, T value, String errorCode,
+    public QLExpressExecutionResult(boolean success, T value, String errorCode,
                                      String errorMessage, long elapsedNanos) {
         this.success = success;
         this.value = value;
@@ -75,5 +76,35 @@ public final class QLExpressExecutionResult<T> {
 
     public long getElapsedNanos() {
         return elapsedNanos;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof QLExpressExecutionResult)) {
+            return false;
+        }
+        QLExpressExecutionResult<?> that = (QLExpressExecutionResult<?>) o;
+        return success == that.success
+                && Objects.equals(value, that.value)
+                && Objects.equals(errorCode, that.errorCode)
+                && Objects.equals(errorMessage, that.errorMessage)
+                && elapsedNanos == that.elapsedNanos;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (success ? 1231 : 1237);
+        result = 31 * result + Objects.hashCode(value);
+        result = 31 * result + Objects.hashCode(errorCode);
+        result = 31 * result + Objects.hashCode(errorMessage);
+        result = 31 * result + (int) (elapsedNanos ^ (elapsedNanos >>> 32));
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "QLExpressExecutionResult[success=" + success + ", value=" + value + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage + ", elapsedNanos=" + elapsedNanos + "]";
     }
 }

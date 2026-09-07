@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -70,7 +71,7 @@ public final class JavalinSample {
             OrderController controller = new OrderController(service);
             Javalin app = Javalin.create(config -> {
                 config.showJavalinBanner = false;
-                config.jsonMapper(new JavalinJackson());
+                config.jsonMapper(new JavalinJackson(JsonMapper.builder().findAndAddModules().build()));
             });
             new Ddd4jJavalinWeb().configure(app);
             app.routes(controller::routes);

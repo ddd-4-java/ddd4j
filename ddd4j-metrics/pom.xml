@@ -12,11 +12,7 @@
 
     <artifactId>ddd4j-metrics</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 可观测性抽象：
-        基于 OpenTelemetry API 提供框架无关的指标适配器
-        （如 ProjectionMetrics → OTel Meter 的实现），
-        供各运行时按需接入。
-    </description>
+    <description>ddd4j 可观测性抽象：基于 OpenTelemetry API 提供框架无关的指标适配器（如 ProjectionMetrics → OTel Meter 的实现），供各运行时按需接入。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
@@ -34,22 +30,17 @@
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-api</artifactId>
-            <version>1.57.0</version>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-sdk-testing</artifactId>
-            <version>1.57.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-sdk</artifactId>
-            <version>1.57.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- OpenTelemetry SDK Testing（版本由 opentelemetry-bom 管理，用于 InMemoryMetricReader 真实断言） -->
-
         <!-- JUnit 5 / AssertJ（测试断言栈） -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

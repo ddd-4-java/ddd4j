@@ -89,4 +89,40 @@ import java.util.Objects;
     public String getPath() {
         return path;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof WebRequestContext)) {
+            return false;
+        }
+        WebRequestContext that = (WebRequestContext) o;
+        return Objects.equals(requestId, that.requestId)
+                && Objects.equals(traceId, that.traceId)
+                && Objects.equals(tenantId, that.tenantId)
+                && Objects.equals(authorization, that.authorization)
+                && Objects.equals(locale, that.locale)
+                && Objects.equals(clientIp, that.clientIp)
+                && Objects.equals(method, that.method)
+                && Objects.equals(path, that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(requestId);
+        result = 31 * result + Objects.hashCode(traceId);
+        result = 31 * result + Objects.hashCode(tenantId);
+        result = 31 * result + Objects.hashCode(authorization);
+        result = 31 * result + Objects.hashCode(locale);
+        result = 31 * result + Objects.hashCode(clientIp);
+        result = 31 * result + Objects.hashCode(method);
+        result = 31 * result + Objects.hashCode(path);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "WebRequestContext[requestId=" + requestId + ", traceId=" + traceId + ", tenantId=" + tenantId + ", authorization=" + authorization + ", locale=" + locale + ", clientIp=" + clientIp + ", method=" + method + ", path=" + path + "]";
+    }
 }

@@ -55,14 +55,14 @@ public final class QLExpressValidationResult {
 
     /** 按校验状态与消息比较结果，匹配 record 的值语义。 */
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(object instanceof QLExpressValidationResult)) {
+        if (!(o instanceof QLExpressValidationResult)) {
             return false;
         }
-        QLExpressValidationResult that = (QLExpressValidationResult) object;
+        QLExpressValidationResult that = (QLExpressValidationResult) o;
         return valid == that.valid && Objects.equals(message, that.message);
     }
 

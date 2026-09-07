@@ -226,6 +226,32 @@ public class IdKit extends IdUtil {
             this.timeOffset = timeOffset;
             this.randomSequenceLimit = randomSequenceLimit;
         }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) {
+                return true;
+            }
+            if (!(object instanceof SnowflakeOptions)) {
+                return false;
+            }
+            SnowflakeOptions that = (SnowflakeOptions) object;
+            return workerId == that.workerId
+                    && dataCenterId == that.dataCenterId
+                    && useSystemClock == that.useSystemClock
+                    && timeOffset == that.timeOffset
+                    && randomSequenceLimit == that.randomSequenceLimit;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (workerId ^ (workerId >>> 32));
+            result = 31 * result + (int) (dataCenterId ^ (dataCenterId >>> 32));
+            result = 31 * result + (useSystemClock ? 1231 : 1237);
+            result = 31 * result + (int) (timeOffset ^ (timeOffset >>> 32));
+            result = 31 * result + (int) (randomSequenceLimit ^ (randomSequenceLimit >>> 32));
+            return result;
+        }
     }
 
     /**

@@ -12,19 +12,13 @@
 
     <artifactId>ddd4j-data-cqrs-dropwizard</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j CQRS Dropwizard 2.1.12 适配：DropwizardCommandBus 以静态 create(Application, Collection)
-        工厂继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）。
-        Dropwizard 不内置 DI 容器——执行器由集成方以 JDK ServiceLoader 风格（META-INF/services）
-        或手动扫描供入 create 工厂的 Collection 参数，工厂内经 CommandRegistry 整批注册；
-        集成点为 Application.run（manual-registration 模式，与 javalin/vertx 对称）。
-        事务刻意不引入（Dropwizard 无声明式事务栈，由集成方在资源/执行器内自管）。
-    </description>
+    <description>ddd4j CQRS Dropwizard 2.1.12 适配：DropwizardCommandBus 以静态 create(Application, Collection) 工厂继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）。 Dropwizard 不内置 DI 容器——执行器由集成方以 JDK ServiceLoader 风格（META-INF/services） 或手动扫描供入 create 工厂的 Collection 参数，工厂内经 CommandRegistry 整批注册； 集成点为 Application.run（manual-registration 模式，与 javalin/vertx 对称）。 事务刻意不引入（Dropwizard 无声明式事务栈，由集成方在资源/执行器内自管）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <dropwizard-metrics.version>4.2.25</dropwizard-metrics.version>
-        <jersey.version>2.41</jersey.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <dropwizard-metrics.version>${dropwizard2-metrics.version}</dropwizard-metrics.version>
+        <jersey.version>${dropwizard2-jersey.version}</jersey.version>
+        <slf4j.version>${slf4j-legacy.version}</slf4j.version>
     </properties>
 
     <dependencyManagement>
@@ -129,7 +123,17 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>3.0.1-b12</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Dropwizard 2 使用 SLF4J 1.7 SPI，测试后端必须保留 Logback 1.2。 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

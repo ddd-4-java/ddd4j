@@ -85,5 +85,32 @@ public final class BearerSubjectAuthenticator {
         public String getToken() { return token; }
         public AuthPrincipal getPrincipal() { return principal; }
         public Subject getSubject() { return subject; }
+
+        @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+                return true;
+            }
+        if (!(o instanceof Authentication)) {
+                return false;
+            }
+        Authentication that = (Authentication) o;
+            return Objects.equals(token, that.token)
+                    && Objects.equals(principal, that.principal)
+                    && Objects.equals(subject, that.subject);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hashCode(token);
+            result = 31 * result + Objects.hashCode(principal);
+            result = 31 * result + Objects.hashCode(subject);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Authentication[token=" + token + ", principal=" + principal + ", subject=" + subject + "]";
+        }
     }
 }

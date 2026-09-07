@@ -270,6 +270,36 @@ public class TdmqMQClient implements MQClient {
         public String correlationId() { return correlationId; }
         public byte[] payload() { return payload; }
         public java.util.function.Consumer<Boolean> ackCallback() { return ackCallback; }
+
+        @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+                return true;
+            }
+        if (!(o instanceof DeliveredMessage)) {
+                return false;
+            }
+        DeliveredMessage that = (DeliveredMessage) o;
+            return Objects.equals(messageId, that.messageId)
+                    && Objects.equals(correlationId, that.correlationId)
+                    && Objects.equals(payload, that.payload)
+                    && Objects.equals(ackCallback, that.ackCallback);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hashCode(messageId);
+            result = 31 * result + Objects.hashCode(correlationId);
+            result = 31 * result + Objects.hashCode(payload);
+            result = 31 * result + Objects.hashCode(ackCallback);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "DeliveredMessage[messageId=" + messageId + ", correlationId=" + correlationId
+                    + ", payload=" + payload + ", ackCallback=" + ackCallback + "]";
+        }
     }
 
     /**
