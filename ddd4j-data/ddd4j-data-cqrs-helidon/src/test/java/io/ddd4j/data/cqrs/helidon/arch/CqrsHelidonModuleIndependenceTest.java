@@ -45,7 +45,7 @@ class CqrsHelidonModuleIndependenceTest {
 
     /**
      * Helidon 适配器依赖允许清单：仅 JDK（java..）、io.ddd4j 家族模块
-     * （命令契约与路由来自 ddd4j-core／ddd4j-data-cqrs）、Jakarta API
+     * （命令契约与路由来自 ddd4j-core）、Jakarta API
      * （jakarta..，@Singleton/@Inject 注入刻板——Helidon SE 核心即用 jakarta.inject
      * 而非 CDI）与 Helidon 全家桶（io.helidon..，HelidonServiceLoader 收集）。
      */

@@ -15,7 +15,7 @@
 package io.ddd4j.quarkus.health;
 
 import io.ddd4j.core.health.ReadinessResult;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.junit.jupiter.api.Test;
 

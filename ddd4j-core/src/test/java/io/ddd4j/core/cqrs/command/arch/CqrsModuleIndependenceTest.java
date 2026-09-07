@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.cqrs.arch;
+package io.ddd4j.core.cqrs.command.arch;
 
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
@@ -23,7 +23,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 /**
- * ddd4j-data-cqrs 模块独立性自检：确保框架无关的 CQRS 命令侧 SPI
+ * ddd4j-core 中 CQRS 命令侧包的独立性自检：确保框架无关的 CQRS 命令侧 SPI
  * （{@code @CommandHandler} 发现注解 + {@code CommandRegistry} 注册中心）
  * 不被任何运行时框架污染（ADR-0004：命令契约与路由复用 ddd4j-core）。
  *
@@ -40,7 +40,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-@AnalyzeClasses(packages = "io.ddd4j.data.cqrs", importOptions = {ImportOption.DoNotIncludeTests.class})
+@AnalyzeClasses(packages = "io.ddd4j.core.cqrs.command", importOptions = {ImportOption.DoNotIncludeTests.class})
 class CqrsModuleIndependenceTest {
 
     /**
@@ -48,7 +48,7 @@ class CqrsModuleIndependenceTest {
      */
     @ArchTest
     static final ArchRule no_spring_in_cqrs_module =
-            noClasses().that().resideInAPackage("io.ddd4j.data.cqrs..")
+            noClasses().that().resideInAPackage("io.ddd4j.core.cqrs.command..")
                     .should().dependOnClassesThat().resideInAPackage("org.springframework..");
 
     /**
@@ -56,7 +56,7 @@ class CqrsModuleIndependenceTest {
      */
     @ArchTest
     static final ArchRule no_quarkus_in_cqrs_module =
-            noClasses().that().resideInAPackage("io.ddd4j.data.cqrs..")
+            noClasses().that().resideInAPackage("io.ddd4j.core.cqrs.command..")
                     .should().dependOnClassesThat().resideInAPackage("io.quarkus..");
 
     /**
@@ -66,7 +66,7 @@ class CqrsModuleIndependenceTest {
      */
     @ArchTest
     static final ArchRule cqrs_deps_allowlist =
-            classes().that().resideInAPackage("io.ddd4j.data.cqrs..")
+            classes().that().resideInAPackage("io.ddd4j.core.cqrs.command..")
                     .should().onlyDependOnClassesThat().resideInAnyPackage(
                             "io.ddd4j..",
                             "java..",

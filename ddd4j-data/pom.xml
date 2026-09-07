@@ -18,7 +18,6 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <modules>
-        <module>ddd4j-data-cqrs</module>
         <module>ddd4j-data-cqrs-dropwizard</module>
         <module>ddd4j-data-cqrs-helidon</module>
         <module>ddd4j-data-cqrs-javalin</module>

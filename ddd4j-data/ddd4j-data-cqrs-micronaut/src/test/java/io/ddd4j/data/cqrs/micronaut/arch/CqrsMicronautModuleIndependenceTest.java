@@ -44,7 +44,7 @@ class CqrsMicronautModuleIndependenceTest {
 
     /**
      * Micronaut 适配器依赖允许清单：仅 JDK（java..）、io.ddd4j 家族模块
-     * （命令契约与路由来自 ddd4j-core／ddd4j-data-cqrs）、Jakarta API
+     * （命令契约与路由来自 ddd4j-core）、Jakarta API
      * （jakarta..，@Singleton/@Inject 注入刻板）与 Micronaut 全家桶
      * （io.micronaut..，BeanContext 收集）。
      */

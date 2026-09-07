@@ -12,10 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.cqrs;
-
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
+package io.ddd4j.core.cqrs.command;
 
 import java.util.Collection;
 import java.util.Collections;

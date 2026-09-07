@@ -12,9 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.cqrs;
-
-import io.ddd4j.core.cqrs.command.Command;
+package io.ddd4j.core.cqrs.command;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

@@ -14,7 +14,7 @@
  */
 package io.ddd4j.web.webmvc;
 
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.health.ReadinessEndpoint;
 import io.ddd4j.web.core.health.ReadinessResponse;
 import org.springframework.http.ResponseEntity;

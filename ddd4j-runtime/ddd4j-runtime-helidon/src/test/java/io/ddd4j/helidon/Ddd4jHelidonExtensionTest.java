@@ -63,7 +63,7 @@ class Ddd4jHelidonExtensionTest {
         extension.registerReadinessRegistry(afterBeanDiscovery);
 
         verify(afterBeanDiscovery).addBean();
-        verify(configurator).addType(io.ddd4j.runtime.health.RuntimeReadinessRegistry.class);
+        verify(configurator).addType(io.ddd4j.core.health.RuntimeReadinessRegistry.class);
     }
 
     @Test

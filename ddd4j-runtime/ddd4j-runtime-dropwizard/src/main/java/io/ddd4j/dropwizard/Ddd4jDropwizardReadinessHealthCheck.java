@@ -16,7 +16,7 @@ package io.ddd4j.dropwizard;
 
 import com.codahale.metrics.health.HealthCheck;
 import io.ddd4j.core.health.ReadinessReport;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 
 import java.util.Objects;
 

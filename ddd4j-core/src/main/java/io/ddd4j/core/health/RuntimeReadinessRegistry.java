@@ -12,10 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.runtime.health;
-
-import io.ddd4j.core.health.ReadinessContributor;
-import io.ddd4j.core.health.ReadinessReport;
+package io.ddd4j.core.health;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +20,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Runtime 对应用 ReadinessContributor 的无框架注册与查询入口。
+ * Core 提供的应用 ReadinessContributor 无框架注册与查询入口。
  *
  * <p>此类不注册 HTTP 端点，也不感知数据库、缓存或消息客户端。具体 Runtime 可以从其容器收集
  * Contributor，或由应用在构建 Runtime 时显式传入。

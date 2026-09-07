@@ -14,7 +14,7 @@
  */
 package io.ddd4j.data.cqrs.micronaut;
 
-import io.ddd4j.data.cqrs.CommandRegistry;
+import io.ddd4j.core.cqrs.command.CommandRegistry;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
 

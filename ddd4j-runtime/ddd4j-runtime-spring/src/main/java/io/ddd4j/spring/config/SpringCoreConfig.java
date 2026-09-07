@@ -15,7 +15,7 @@
 package io.ddd4j.spring.config;
 
 import io.ddd4j.core.health.ReadinessContributor;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.spring.context.SpringContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.biz.context.SpringContextAwareContext;

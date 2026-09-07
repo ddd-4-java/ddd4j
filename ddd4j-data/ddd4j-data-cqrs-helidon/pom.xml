@@ -22,12 +22,12 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
-        <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-cqrs</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- For DDD4j -->
         <!-- Helidon Common Service Loader（Helidon SE 的服务发现原语：对 JDK ServiceLoader
              的优先级排序/排除包装，本模块不开 MicroProfile CDI——SE 线的 Bean 装配即
              ServiceLoader 风格。版本由 ddd4j-dependencies:4032 导入的

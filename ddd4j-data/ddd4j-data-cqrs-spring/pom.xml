@@ -28,12 +28,12 @@
     </properties>
 
     <dependencies>
-        <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-cqrs</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- For DDD4j -->
         <!-- Spring Context：@Component 刻板 + ApplicationContext 收集（版本由 ddd4j-dependencies
              导入的 spring-framework-bom 管理 = Spring 6.2 线，刻意不声明） -->
         <dependency>

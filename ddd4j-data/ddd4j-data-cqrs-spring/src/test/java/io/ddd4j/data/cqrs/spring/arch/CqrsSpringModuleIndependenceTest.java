@@ -43,7 +43,7 @@ class CqrsSpringModuleIndependenceTest {
 
     /**
      * Spring 适配器依赖允许清单：仅 JDK（java..）、io.ddd4j 家族模块
-     * （命令契约与路由来自 ddd4j-core／ddd4j-data-cqrs）与 Spring Framework
+     * （命令契约与路由来自 ddd4j-core）与 Spring Framework
      * （spring-context／spring-tx 刻板与收集）。
      */
     @ArchTest
