@@ -84,6 +84,15 @@ Surefire XML 汇总：
 
 3.0.x 为三个包含 `@QuarkusTest` 的库模块增加构建期 `generate-code-tests`，避免 Maven 3 WorkspaceLoader 解析 Maven 4.1 POM；Panache 模块同时将 Hibernate 7.4.5、Agroal 3.2.1 与 JAXB4 对齐到 Quarkus 3.38.2 平台。
 
+## 依赖边界发布门禁
+
+首次本地 SNAPSHOT deploy 暴露了此前 `-Denforcer.skip=true` 隐藏的两类发布门禁问题：
+
+- 1.0.x 的 `ddd4j-data-mybatis`、`ddd4j-data-mybatisplus`、`ddd4j-data-jpa` 通过 `ddd4j-core`、`ddd4j-kit`、`ddd4j-annotation` 传入 Spring。三个纯数据模块对这些明确的传递边增加 Spring exclusions，未修改生产源码、公开 API 或参数。RED 为 `/tmp/ddd4j-line1-mybatis-enforcer-red.log`；最终全 Reactor validate 为 `/tmp/ddd4j-line1-full-validate-boundary-final.log`，87/87 `BUILD SUCCESS`；三个模块及依赖回归 `/tmp/ddd4j-line1-boundary-modules-regression.log` 全绿。
+- 3.0.x 使用 Maven 4.1 模型，Maven Enforcer 3.6.3 的 `bannedDependencies` 在依赖收集阶段抛出 `Invalid Collect Request`，无法执行规则判定。`ddd4j-data-jpa`、`ddd4j-data-mybatis`、`ddd4j-data-mybatisplus` 改为在 validate 阶段先由 `maven-dependency-plugin:tree` 输出禁用的 Spring/MyBatis-Spring 传递依赖，再由 `maven-antrun-plugin` 在输出文件非空时失败。该实现保留了原 `searchTransitive=true` 的边界语义。原始 RED 为 `/tmp/ddd4j-line3-data-jpa-enforcer-repro.log`；临时注入 `spring-core` 的反向验证 `/tmp/ddd4j-line3-data-jpa-boundary-negative.log` 按预期失败，移除临时依赖后 `/tmp/ddd4j-line3-data-jpa-boundary-restored-green.log` 通过；最终全 Reactor validate `/tmp/ddd4j-line3-full-validate-maven4-boundary.log` 为 121/121 `BUILD SUCCESS`，三个模块回归 `/tmp/ddd4j-line3-boundary-modules-regression.log` 全绿。
+
+这两项修复发生在根 Reactor 全量测试之后，因此完成证明由既有全量测试、最新全 Reactor validate 和受影响模块回归共同组成，不把旧全量日志冒充为修改后的重新执行结果。
+
 全局 `verify-java-style.sh` 仍会命中仓库既有 PF4J、旧 logger、sample `System.out` 和旧 null 写法；它不属于本次三线结构/API/EventStore/全 reactor 的行为门禁。最终三线 `git diff --check` 另行执行并记录。
 
 最终审查结论为 `Ready to merge: Yes`，无 Critical/Important。三线 `git diff --check` 均通过；结构/API final12、EventStore final9、value final5 与测试日志共同构成本轮最终证据。1.0 `Ddd4jVertxWebContractTest` 已移除失效的 `@Disabled` 并真实执行 6/6；SLF4J/Log4j provider、旧 binding 与 `StaticLoggerBinder` 错误扫描为 0。当前根 Reactor 的 6 个 skipped 均为既有 `Ddd4jDropwizardWebContractTest @Disabled`；Redis/Kafka/NATS/RabbitMQ 外部服务测试在本机 Docker 可用时已实际运行。三线全部 POM 的 `<description>...</description>` 已统一为单行。
