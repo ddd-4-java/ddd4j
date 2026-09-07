@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 import org.dromara.mica.mqtt.codec.message.MqttPublishMessage;
-import org.dromara.mica.mqtt.codec.properties.UserProperties;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -98,11 +97,14 @@ public class MicaMqttMQClient implements MQClient {
             String topic = resolveTopic(event, mqProperties);
             try {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
-                boolean sent = publish(client, topic, body, event);
+                // mica-mqtt 2.6.6 的 PublishBuilder 会把 UserProperties 再展开成
+                // 编码器不接受的单项 UserProperty。消息 ID 已在事件载荷中，
+                // 因此出站使用无属性发布路径，入站仍兼容读取标准与旧 Header。
+                boolean sent = client.publish(topic, body, qos());
                 if (!sent) {
                     log.warn("Publish mica-mqtt [{}] failed (connection lost), reconnecting and retrying", topic);
                     client.reconnect();
-                    sent = publish(client, topic, body, event);
+                    sent = client.publish(topic, body, qos());
                 }
                 if (!sent) {
                     throw new IllegalStateException("Publish mica-mqtt event failed: " + topic);
@@ -113,19 +115,6 @@ public class MicaMqttMQClient implements MQClient {
             }
             log.info("Publish MQ [{}]: {}", topic, payload);
         };
-    }
-
-    private boolean publish(MqttClient client, String topic, byte[] body, MQEvent event) {
-        if (StrKit.isEmpty(event.getMsgId())) {
-            return client.publish(topic, body, qos());
-        }
-        return client.publish(topic, body, qos(), builder -> builder.properties(mqttProperties -> {
-            // mica-mqtt 2.6.6 编码器要求 USER_PROPERTY 使用聚合对象，
-            // 其 addUserProperty 便捷方法生成单项对象并会在编码阶段触发 ClassCastException。
-            UserProperties userProperties = new UserProperties();
-            userProperties.add(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-            mqttProperties.getProperties().add(userProperties);
-        }));
     }
 
     // ========================= 消费者 =========================
