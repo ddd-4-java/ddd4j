@@ -15,6 +15,7 @@
 package io.ddd4j.sample.order.jdbc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.redis.testcontainers.RedisContainer;
 import io.ddd4j.mq.delivery.MQDeliveryPolicy;
 import io.ddd4j.mq.delivery.MQOutboxRecord;
@@ -105,7 +106,7 @@ class OrderInfrastructureRoundTripTest {
     void shouldPersistProjectPublishAndDeduplicatePayment() {
         JdbcOrderTransactionPort transaction = new JdbcOrderTransactionPort(dataSource);
         JdbcOrderRepository repository = new JdbcOrderRepository(transaction);
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         JdbcOutboxPort outbox = new JdbcOutboxPort(transaction, objectMapper);
         JdbcOrderReadModelPort readModels = new JdbcOrderReadModelPort(transaction);
 
