@@ -4,6 +4,8 @@
 # Log file
 *.log
 logs/
+!ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/
+!ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/**
 log.*/
 
 # BlueJ files

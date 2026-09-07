@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 阶段 6（ADR-0004）：本类是命令分发的唯一实现，运行时适配器
  * （{@code ddd4j-data-cqrs-spring}／{@code ddd4j-data-cqrs-quarkus}／...）
  * 以<b>继承</b>方式组装——先在自身构造器内完成执行器收集与
- * {@code io.ddd4j.data.cqrs.CommandRegistry} 注册，再以
+ * {@code io.ddd4j.core.cqrs.command.CommandRegistry} 注册，再以
  * {@code super(registry.executors())} 传入本类；适配器不复制路由逻辑，
  * 也不应 override {@link #execute}（事务等横切用类级注解让容器代理处理）。
  *

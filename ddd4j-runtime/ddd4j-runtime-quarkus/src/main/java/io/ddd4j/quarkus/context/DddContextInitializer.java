@@ -21,7 +21,7 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.quarkus.Ddd4jQuarkusRuntime;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;

@@ -43,7 +43,7 @@ class CqrsJavalinModuleIndependenceTest {
 
     /**
      * Javalin 适配器依赖允许清单：仅 JDK（java..）、io.ddd4j 家族模块
-     * （命令契约与路由来自 ddd4j-core／ddd4j-data-cqrs）、Jakarta API
+     * （命令契约与路由来自 ddd4j-core）、Jakarta API
      * （jakarta..，声明性刻板保留面）与 Javalin 全家桶（io.javalin..，
      * create 工厂的装配锚点）。
      */

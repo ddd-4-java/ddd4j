@@ -20,6 +20,7 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.webmvc.annotation.FeignHeader;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.Ordered;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -92,7 +93,8 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
             }
 
             if (feignHeader.autoFillSystemId() && (Objects.isNull(webSystemId) || !org.springframework.util.StringUtils.hasLength(webSystemId))) {
-                String systemId = (Objects.isNull(ThreadContext.get(SYSTEM_ID)) || ThreadContext.<String>get(SYSTEM_ID).isEmpty()) ? "0" : ThreadContext.get(SYSTEM_ID);
+                String systemId = ThreadContext.get(SYSTEM_ID);
+                systemId = StringUtils.hasLength(systemId) ? systemId : "0";
                 for (String headerSystemId : HEADER_SYSTEM_IDS) {
                     template.header(headerSystemId, systemId);
                 }

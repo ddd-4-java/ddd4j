@@ -12,10 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.runtime.health;
+package io.ddd4j.core.health;
 
-import io.ddd4j.core.health.ReadinessContributor;
-import io.ddd4j.core.health.ReadinessResult;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

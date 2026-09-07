@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 重点守护：register 的 <b>整批拒绝</b>（all-or-nothing）语义——多类型 handler
  * 任一事件类型冲突时，全部类型均不落库，不产生半注册状态；未注册类型的
  * {@code findHandler} 返回 {@link Optional#empty()}（兜底策略归
- * {@link ProjectionDispatcher}）。语义与 ddd4j-data-cqrs 的
+ * {@link ProjectionDispatcher}）。语义与 ddd4j-core 中 CommandRegistry 的
  * {@code CommandRegistry} 同源（ADR-0004）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

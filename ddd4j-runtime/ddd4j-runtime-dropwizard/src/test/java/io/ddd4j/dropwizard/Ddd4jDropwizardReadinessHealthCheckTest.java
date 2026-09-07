@@ -16,7 +16,7 @@ package io.ddd4j.dropwizard;
 
 import com.codahale.metrics.health.HealthCheck;
 import io.ddd4j.core.health.ReadinessResult;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

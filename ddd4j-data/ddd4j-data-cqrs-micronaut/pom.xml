@@ -48,12 +48,12 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-cqrs</artifactId>
+            <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- For DDD4j -->
         <!-- Micronaut Core（核心工具/Environment；平台 BOM 管理无版本 = ${micronaut.core.version} 线） -->
         <dependency>
             <groupId>io.micronaut</groupId>

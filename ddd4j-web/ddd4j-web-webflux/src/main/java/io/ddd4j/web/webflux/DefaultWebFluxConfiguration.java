@@ -29,7 +29,7 @@ import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.ddd4j.web.webflux.config.LocalResourceProperteis;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import org.springframework.extension.web.server.ReactiveRequestContextFilter;
 import org.springframework.extension.web.server.i18n.XHeaderLocaleContextResolver;
 import org.springframework.context.annotation.Bean;

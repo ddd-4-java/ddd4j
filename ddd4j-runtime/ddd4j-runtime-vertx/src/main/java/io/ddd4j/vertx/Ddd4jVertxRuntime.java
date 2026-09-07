@@ -27,7 +27,7 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKitRegistrationScope;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 

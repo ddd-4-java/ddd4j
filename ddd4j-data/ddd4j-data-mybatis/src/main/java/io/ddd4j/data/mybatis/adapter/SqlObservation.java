@@ -30,4 +30,14 @@ public record SqlObservation(String statementId, String sql, List<String> sorted
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
+    /** 返回语句标识，兼容 bean 调用方。 */
+    public String getStatementId() { return statementId; }
+    /** 返回 SQL。 */
+    public String getSql() { return sql; }
+    /** 返回参数快照。 */
+    public List<String> getSortedParams() { return sortedParams; }
+    /** 返回执行耗时（纳秒）。 */
+    public long getElapsedNanos() { return elapsedNanos; }
+    /** 返回执行异常。 */
+    public Throwable getError() { return error; }
 }

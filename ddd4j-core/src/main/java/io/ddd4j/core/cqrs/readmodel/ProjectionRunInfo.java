@@ -30,4 +30,10 @@ public record ProjectionRunInfo(
         int lastEventCount,
         String lastError
 ) {
+    /** 返回最近运行时间，兼容 bean 调用方。 */
+    public Instant getLastRunAt() { return lastRunAt; }
+    /** 返回最近处理事件数。 */
+    public int getLastEventCount() { return lastEventCount; }
+    /** 返回最近错误信息。 */
+    public String getLastError() { return lastError; }
 }

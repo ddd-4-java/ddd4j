@@ -12,11 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.cqrs;
+package io.ddd4j.core.cqrs.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -31,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * {@link CommandHandler} 注解契约测试：守护发现机制赖以成立的元注解配置——
+ * 该框架无关契约现由 ddd4j-core 直接承载。
  * 运行时适配器（阶段 6 Task 6.3+）靠反射扫描读取 {@code value}，
  * 误改 Retention／Target 会让扫描静默失效（照
  * {@code io.ddd4j.core.ddd.event.EventHandlerTest} 的守护模式）。

@@ -14,7 +14,7 @@
  */
 package io.ddd4j.data.cqrs.sample;
 
-import io.ddd4j.data.cqrs.CommandRegistry;
+import io.ddd4j.core.cqrs.command.CommandRegistry;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;

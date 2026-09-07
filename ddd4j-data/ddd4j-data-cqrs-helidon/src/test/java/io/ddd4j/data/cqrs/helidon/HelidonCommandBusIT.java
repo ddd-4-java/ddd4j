@@ -17,7 +17,7 @@ package io.ddd4j.data.cqrs.helidon;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.data.cqrs.CommandRegistry;
+import io.ddd4j.core.cqrs.command.CommandRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -213,7 +213,7 @@ public class GlobalExceptionHandler {
             String message = this.getLocaleMessage(ex, "bad.request.header", defaultMessage);
             return ApiCode.SC_MISSING_REQUEST_HEADER.toResponse(message);
         }
-        return ApiCode.SC_MISSING_REQUEST_PARAM.toResponse(defaultMessage);
+        return ApiCode.SC_MISSING_REQUEST_HEADER.toResponse(defaultMessage);
     }
 
     /**

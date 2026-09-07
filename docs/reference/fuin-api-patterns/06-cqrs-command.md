@@ -78,7 +78,7 @@ public interface CommandExecutor<CONTEXT, RESULT, CMD extends Command> {
 
 ## 落地计划
 
-- [ ] 阶段 6（Task 6.2）：ddd4j-data-cqrs 的 `@CommandHandler` 注解＋`CommandRegistry` 复用 ddd4j-core 既有 `CommandBus`/`CommandExecutor`，不另起 fuin 式三参契约。
+- [x] 阶段 6（Task 6.2）：ddd4j-core 的 `@CommandHandler` 注解＋`CommandRegistry` 复用既有 `CommandBus`/`CommandExecutor`，不另起 fuin 式三参契约。
 - [ ] 阶段 6：spring／quarkus／micronaut／helidon／javalin／vertx／dropwizard 7 个运行时适配器统一继承 `DefaultCommandBus`（如 SpringCommandBus 叠加 `@Transactional`＋自动扫描）。
 - [ ] 阶段 3（Task 3.2）：聚合并发冲突走 RuntimeException（不做受检 throws），错误码进 `Result.fail` 编码体系。
 - [ ] Task 1.10：ADR-0004（0004-command-bus-design）引用本文档「总线内置＋Class 路由＋无受检异常」三项超出结论。

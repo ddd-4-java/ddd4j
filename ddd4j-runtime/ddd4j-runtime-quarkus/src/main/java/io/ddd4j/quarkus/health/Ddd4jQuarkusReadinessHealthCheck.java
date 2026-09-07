@@ -15,7 +15,7 @@
 package io.ddd4j.quarkus.health;
 
 import io.ddd4j.core.health.ReadinessReport;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.health.HealthCheck;

@@ -26,4 +26,8 @@ public record QLExpressValidationResult(boolean valid, String message) {
     public static QLExpressValidationResult invalid(String message) {
         return new QLExpressValidationResult(false, message);
     }
+    /** 返回校验状态，兼容 bean 调用方。 */
+    public boolean isValid() { return valid; }
+    /** 返回校验消息。 */
+    public String getMessage() { return message; }
 }

@@ -16,7 +16,7 @@ package io.ddd4j.web.javalin;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;

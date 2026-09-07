@@ -6,9 +6,9 @@
 
 ## 从 2.0.x 吸收的能力（本次合并进入 3.0.x）
 
-### 新模块（20 个）
-- **CQRS 命令侧**（8）：`ddd4j-data-cqrs`（@CommandHandler 发现 + CommandRegistry）+
-  spring / quarkus / micronaut / vertx / helidon / javalin / dropwizard 七容器适配
+### 新增能力
+- **CQRS 命令侧**：`ddd4j-core` 内置 @CommandHandler 发现 + CommandRegistry，配套
+  spring / quarkus / micronaut / vertx / helidon / javalin / dropwizard 七容器适配模块
   （SpringCommandBus 等，各带 `*CommandBusIT` 集成测试）。
 - **投影（读侧）**（12）：`ddd4j-data-projection`（ProjectionHandler SPI + Registry + Dispatcher）+
   jpa / jdbi / r2dbc / panache 持久化实现 + spring / quarkus / micronaut / vertx / helidon / javalin / dropwizard

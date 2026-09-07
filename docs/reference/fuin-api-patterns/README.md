@@ -11,6 +11,6 @@
 | 03 | domain-event.md | DomainEvent 接口 + 元数据 | ddd4j-core DomainEvent 已对齐 |
 | 04 | event-sourcing-repository.md | EventStoreRepository 接口 | ddd4j-data-event-store 新增 |
 | 05 | event-store.md | EventStore append/read/slice | ddd4j-data-event-store 新增 |
-| 06 | cqrs-command.md | CommandExecutor/MultiCommandExecutor | ddd4j-data-cqrs 新增 |
+| 06 | cqrs-command.md | CommandExecutor/MultiCommandExecutor | ddd4j-core CQRS 注册能力 |
 | 07 | cqrs-projection.md | QryProjectionService/SpringJpaViewManager | ddd4j-data-projection 新增 |
 | 08 | architecture-test.md | ArchUnit 模块边界规则 | ddd4j-core + ddd4j-data ArchUnit |

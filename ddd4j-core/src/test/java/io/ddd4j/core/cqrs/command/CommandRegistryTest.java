@@ -12,11 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.data.cqrs;
+package io.ddd4j.core.cqrs.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -28,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link CommandRegistry} 注册与路由契约测试。
+ * 该框架无关契约现由 ddd4j-core 直接承载。
  * <p>
  * 重点守护 brief 修正项（相对计划 sketch 的语义收紧）：register 的
  * <b>整批拒绝</b>（all-or-nothing）语义——多类型执行器任一命令类型冲突时，

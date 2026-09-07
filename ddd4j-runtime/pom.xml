@@ -17,7 +17,6 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <subprojects>
-        <subproject>ddd4j-runtime-support</subproject>
         <subproject>ddd4j-runtime-testkit</subproject>
         <subproject>ddd4j-runtime-spring</subproject>
         <subproject>ddd4j-runtime-quarkus</subproject>
