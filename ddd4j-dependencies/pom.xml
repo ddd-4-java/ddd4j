@@ -6279,6 +6279,11 @@
                 <version>${rocketmq-client.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-remoting</artifactId>
+                <version>${rocketmq-client.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>rocketmq-extension</artifactId>
                 <version>${easy4j-rocketmq-extension.version}</version>
