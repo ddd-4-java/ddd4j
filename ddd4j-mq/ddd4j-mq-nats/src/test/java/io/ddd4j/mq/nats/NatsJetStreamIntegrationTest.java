@@ -46,6 +46,7 @@ class NatsJetStreamIntegrationTest {
         NatsProperties properties = new NatsProperties();
         properties.setServers("nats://" + NATS.getHost() + ":" + NATS.getMappedPort(4222));
         properties.setConnectionName("ddd4j-nats-it");
+        properties.setConnectTimeoutMillis(10_000L);
 
         try (Connection connection = properties.connect()) {
             String suffix = Long.toUnsignedString(System.nanoTime());

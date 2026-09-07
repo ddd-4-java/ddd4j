@@ -14,7 +14,7 @@
  */
 package io.ddd4j.data.event.store.r2dbc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncEventStore;
@@ -134,12 +134,12 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     /**
-     * 创建异步事件存储（默认使用 {@code new ObjectMapper()} 的 payload 序列化器）。
+     * 创建异步事件存储（默认发现并注册 Jackson 模块以支持 {@code java.time}）。
      *
      * @param connectionFactory R2DBC 连接工厂（集成方装配，可为 r2dbc-pool 池化）
      */
     public R2dbcAsyncEventStore(ConnectionFactory connectionFactory) {
-        this(connectionFactory, new EventPayloadSerializer(new ObjectMapper()));
+        this(connectionFactory, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     /**

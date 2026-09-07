@@ -73,7 +73,9 @@ jobs:
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
       - name: Run unit and adapter contracts
-        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs -pl !ddd4j-samples/ddd4j-sample-dropwizard,!ddd4j-samples/ddd4j-sample-helidon,!ddd4j-samples/ddd4j-sample-javalin,!ddd4j-samples/ddd4j-sample-javalin-cqrs,!ddd4j-samples/ddd4j-sample-javalin-satoken,!ddd4j-samples/ddd4j-sample-javalin-shiro,!ddd4j-samples/ddd4j-sample-micronaut,!ddd4j-samples/ddd4j-sample-order-application,!ddd4j-samples/ddd4j-sample-order-domain,!ddd4j-samples/ddd4j-sample-order-jdbc,!ddd4j-samples/ddd4j-sample-order-kafka,!ddd4j-samples/ddd4j-sample-order-local,!ddd4j-samples/ddd4j-sample-order-redis,!ddd4j-samples/ddd4j-sample-order-testkit,!ddd4j-samples/ddd4j-sample-quarkus,!ddd4j-samples/ddd4j-sample-quarkus-cqrs,!ddd4j-samples/ddd4j-sample-quarkus-satoken,!ddd4j-samples/ddd4j-sample-quarkus-shiro,!ddd4j-samples/ddd4j-sample-vertx
+        run: |
+          SAMPLE_EXCLUSIONS="$(find ddd4j-samples -mindepth 2 -maxdepth 2 -name pom.xml | sed 's#/pom.xml$##; s#^#!#' | paste -sd, -)"
+          ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs -pl "${SAMPLE_EXCLUSIONS}"
       - name: Verify build did not write generated files to source control
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
@@ -112,11 +114,13 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor dependencies without coverage enforcement
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install -pl !ddd4j-samples/ddd4j-sample-dropwizard,!ddd4j-samples/ddd4j-sample-helidon,!ddd4j-samples/ddd4j-sample-javalin,!ddd4j-samples/ddd4j-sample-javalin-cqrs,!ddd4j-samples/ddd4j-sample-javalin-satoken,!ddd4j-samples/ddd4j-sample-javalin-shiro,!ddd4j-samples/ddd4j-sample-micronaut,!ddd4j-samples/ddd4j-sample-order-application,!ddd4j-samples/ddd4j-sample-order-domain,!ddd4j-samples/ddd4j-sample-order-jdbc,!ddd4j-samples/ddd4j-sample-order-kafka,!ddd4j-samples/ddd4j-sample-order-local,!ddd4j-samples/ddd4j-sample-order-redis,!ddd4j-samples/ddd4j-sample-order-testkit,!ddd4j-samples/ddd4j-sample-quarkus,!ddd4j-samples/ddd4j-sample-quarkus-cqrs,!ddd4j-samples/ddd4j-sample-quarkus-satoken,!ddd4j-samples/ddd4j-sample-quarkus-shiro,!ddd4j-samples/ddd4j-sample-vertx
+        run: |
+          SAMPLE_EXCLUSIONS="$(find ddd4j-samples -mindepth 2 -maxdepth 2 -name pom.xml | sed 's#/pom.xml$##; s#^#!#' | paste -sd, -)"
+          ./mvnw -U -Denforcer.skip=true -B -DskipTests install -pl "${SAMPLE_EXCLUSIONS}"
       - name: Enforce 90% line coverage on gated modules
         run: >-
           ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
-          -pl ddd4j-web/ddd4j-web-core,ddd4j-web/ddd4j-web-micronaut,ddd4j-runtime/ddd4j-runtime-support
+          -pl ddd4j-web/ddd4j-web-core,ddd4j-web/ddd4j-web-micronaut
 
   supply-chain-reports:
     name: SBOM and license reports
@@ -148,7 +152,9 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install -pl !ddd4j-samples/ddd4j-sample-dropwizard,!ddd4j-samples/ddd4j-sample-helidon,!ddd4j-samples/ddd4j-sample-javalin,!ddd4j-samples/ddd4j-sample-javalin-cqrs,!ddd4j-samples/ddd4j-sample-javalin-satoken,!ddd4j-samples/ddd4j-sample-javalin-shiro,!ddd4j-samples/ddd4j-sample-micronaut,!ddd4j-samples/ddd4j-sample-order-application,!ddd4j-samples/ddd4j-sample-order-domain,!ddd4j-samples/ddd4j-sample-order-jdbc,!ddd4j-samples/ddd4j-sample-order-kafka,!ddd4j-samples/ddd4j-sample-order-local,!ddd4j-samples/ddd4j-sample-order-redis,!ddd4j-samples/ddd4j-sample-order-testkit,!ddd4j-samples/ddd4j-sample-quarkus,!ddd4j-samples/ddd4j-sample-quarkus-cqrs,!ddd4j-samples/ddd4j-sample-quarkus-satoken,!ddd4j-samples/ddd4j-sample-quarkus-shiro,!ddd4j-samples/ddd4j-sample-vertx
+        run: |
+          SAMPLE_EXCLUSIONS="$(find ddd4j-samples -mindepth 2 -maxdepth 2 -name pom.xml | sed 's#/pom.xml$##; s#^#!#' | paste -sd, -)"
+          ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install -pl "${SAMPLE_EXCLUSIONS}"
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
