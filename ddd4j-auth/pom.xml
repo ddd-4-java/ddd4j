@@ -25,6 +25,7 @@
         <module>ddd4j-auth-shiro</module>
         <module>ddd4j-auth-datascope</module>
         <module>ddd4j-auth-license</module>
+        <module>ddd4j-auth-spring</module>
     </modules>
 
 </project>
