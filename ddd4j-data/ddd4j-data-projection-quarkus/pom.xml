@@ -12,13 +12,7 @@
 
     <artifactId>ddd4j-data-projection-quarkus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影调度 Quarkus CDI 适配（Quarkus 运行时）：
-        QuarkusProjectionScheduler 以 @ApplicationScoped 实现 ViewScheduler SPI
-        （ScheduledExecutorService + CronExpression 兜底——Quarkus 3.x 编程式调度
-        不可用时退化为 JDK 调度），QuarkusProjectionViewManager 以 @ApplicationScoped
-        实现 ViewManager SPI（ArC Instance 收集 ProjectionView Bean + ProjectionRunner
-        驱动 runOnce），零新框架抽象——投影契约全部复用 ddd4j-core。
-    </description>
+    <description>ddd4j 投影调度 Quarkus CDI 适配（Quarkus 运行时）： QuarkusProjectionScheduler 以 @ApplicationScoped 实现 ViewScheduler SPI （ScheduledExecutorService + CronExpression 兜底——Quarkus 3.x 编程式调度 不可用时退化为 JDK 调度），QuarkusProjectionViewManager 以 @ApplicationScoped 实现 ViewManager SPI（ArC Instance 收集 ProjectionView Bean + ProjectionRunner 驱动 runOnce），零新框架抽象——投影契约全部复用 ddd4j-core。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencyManagement>
@@ -63,6 +57,22 @@
 
     <build>
         <plugins>
+            <!-- Maven 4.1 构建期生成测试 application model，避免 @QuarkusTest
+                 回退到仅支持 Maven 3 POM 的运行时 WorkspaceLoader。 -->
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- surefire 默认不含 *IT.java；本模块的 @QuarkusTest 集成测试随 test
                  阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
             <plugin>
@@ -73,6 +83,10 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

@@ -30,4 +30,44 @@ public record WebRequestData(
         String remoteAddress,
         String method,
         String path) {
+
+    public String getAuthorization() {
+            return authorization;
+        }
+
+    public String getForwardedFor() {
+            return forwardedFor;
+        }
+
+    public Locale getLocale() {
+            return locale;
+        }
+
+    public String getMethod() {
+            return method;
+        }
+
+    public String getPath() {
+            return path;
+        }
+
+    public String getRealIp() {
+            return realIp;
+        }
+
+    public String getRemoteAddress() {
+            return remoteAddress;
+        }
+
+    public String getRequestId() {
+            return requestId;
+        }
+
+    public String getTenantId() {
+            return tenantId;
+        }
+
+    public String getTraceId() {
+            return traceId;
+        }
 }

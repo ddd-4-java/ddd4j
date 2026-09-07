@@ -70,6 +70,39 @@ class JdbiEventStoreTest {
                 .isInstanceOf(AggregateVersionConflictException.class);
     }
 
+    @Test
+    void appendMustNotMutateInputAggregateVersion() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-input");
+        OrderCreatedEvent event = new OrderCreatedEvent(orderId);
+
+        org.junit.jupiter.api.Assertions.assertNull(event.getAggregateVersion());
+        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0);
+
+        org.junit.jupiter.api.Assertions.assertNull(event.getAggregateVersion());
+    }
+
+    @Test
+    void readAllLimitMustBePositive() {
+        org.junit.jupiter.api.Assertions.assertThrows(
+                IllegalArgumentException.class, () -> eventStore.readAll(0, 0));
+    }
+
+    @Test
+    void persistedTimestampMustComeFromEvent() throws Exception {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-time");
+        OrderCreatedEvent event = new OrderCreatedEvent(orderId);
+        java.time.ZonedDateTime expected = java.time.ZonedDateTime.parse("2024-01-02T03:04:05Z");
+        java.lang.reflect.Field field = DomainEvent.class.getDeclaredField("eventTimestamp");
+        field.setAccessible(true);
+        field.set(event, expected);
+
+        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0);
+
+        java.time.ZonedDateTime actual = eventStore.read(ORDER_TYPE, orderId).get(0).timestamp();
+        assertThat(actual.toInstant()).isEqualTo(expected.toInstant());
+        assertThat(actual.getZone()).isEqualTo(java.time.ZoneOffset.UTC);
+    }
+
     record TestAggregateRootId(String value) implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
 

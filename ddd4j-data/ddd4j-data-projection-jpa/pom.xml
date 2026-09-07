@@ -12,17 +12,13 @@
 
     <artifactId>ddd4j-data-projection-jpa</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影位置 JPA 实现（Spring WebMVC/WebFlux 等 Spring 系运行时）：
-        基于 Spring Data JPA 落地 core 的 ProjectionPositionRepository SPI（接口在
-        io.ddd4j.core.cqrs.readmodel，本模块不重定义），ProjectionPositionEntity +
-        SpringDataProjectionPositionRepository + JpaProjectionPositionRepository 组装。
-    </description>
+    <description>ddd4j 投影位置 JPA 实现（Spring WebMVC/WebFlux 等 Spring 系运行时）： 基于 Spring Data JPA 落地 core 的 ProjectionPositionRepository SPI（接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义），ProjectionPositionEntity + SpringDataProjectionPositionRepository + JpaProjectionPositionRepository 组装。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <!-- 仅本模块的 Spring Data JPA 与 H2 集成测试栈使用。
              3.0.x 基于 Spring Framework 7，因此必须使用同线的 Boot 4。 -->
-        <spring-boot-it.version>4.0.8</spring-boot-it.version>
+        <spring-boot-it.version>${spring-boot4-it.version}</spring-boot-it.version>
     </properties>
 
     <dependencyManagement>

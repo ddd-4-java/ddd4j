@@ -14,12 +14,12 @@
     <artifactId>ddd4j-sample-javalin-shiro</artifactId>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Javalin + Guice + Apache Shiro 鉴权示例：演示无 DI 容器框架下 SubjectKit 统一鉴权入口（底层为 Shiro）
-    </description>
+    <description>Javalin + Guice + Apache Shiro 鉴权示例：演示无 DI 容器框架下 SubjectKit 统一鉴权入口（底层为 Shiro）</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <shiro.version>2.0.6</shiro.version>
+        <shiro.version>${shiro-sample.version}</shiro.version>
+        <jetty.version>${javalin-jetty.version}</jetty.version>
     </properties>
 
     <dependencies>
@@ -110,17 +110,14 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>12.1.5</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>12.1.5</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-io</artifactId>
-            <version>12.1.5</version>
         </dependency>
 
         <!-- ================= Lombok ================= -->
@@ -138,7 +135,6 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.2.1</version>
         </dependency>
         <!-- jackson-annotations 是 Jackson 2/3 共用的注解包（com.fasterxml.jackson.annotation）：
              tools.jackson jackson-bom 3.2.1 要求 2.22（新增 @JsonApplyView，序列化时按需加载），
@@ -148,7 +144,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.22</version>
         </dependency>
 </dependencies>
 

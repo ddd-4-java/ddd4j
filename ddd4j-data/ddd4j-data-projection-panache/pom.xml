@@ -12,12 +12,7 @@
 
     <artifactId>ddd4j-data-projection-panache</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影位置 Quarkus Panache 实现（Quarkus 运行时）：
-        基于 Quarkus Hibernate ORM Panache（active record 公有字段风格）落地 core 的
-        ProjectionPositionRepository SPI（接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义），
-        PanacheProjectionPositionEntity + QuarkusProjectionPositionRepository 组装，
-        与 ddd4j-data-projection-jpa 共用同款 ddd4j_projection_position 表结构。
-    </description>
+    <description>ddd4j 投影位置 Quarkus Panache 实现（Quarkus 运行时）： 基于 Quarkus Hibernate ORM Panache（active record 公有字段风格）落地 core 的 ProjectionPositionRepository SPI（接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义）， PanacheProjectionPositionEntity + QuarkusProjectionPositionRepository 组装， 与 ddd4j-data-projection-jpa 共用同款 ddd4j_projection_position 表结构。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencyManagement>
@@ -36,6 +31,53 @@
                 <version>${quarkus.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- 父级 Hibernate 6 平台会分别抢占可选构件；显式按 Quarkus 3.38.2
+                 平台版本统一 core/graalvm/jcache，防止跨 classloader 混装。 -->
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${quarkus-hibernate-orm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-graalvm</artifactId>
+                <version>${quarkus-hibernate-orm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-jcache</artifactId>
+                <version>${quarkus-hibernate-orm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.agroal</groupId>
+                <artifactId>agroal-api</artifactId>
+                <version>${quarkus-agroal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.agroal</groupId>
+                <artifactId>agroal-pool</artifactId>
+                <version>${quarkus-agroal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.agroal</groupId>
+                <artifactId>agroal-narayana</artifactId>
+                <version>${quarkus-agroal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${quarkus-jaxb-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${quarkus-jaxb-runtime.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>txw2</artifactId>
+                <version>${quarkus-jaxb-runtime.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -73,6 +115,22 @@
 
     <build>
         <plugins>
+            <!-- Maven 4.1 构建期生成测试 application model，避免 @QuarkusTest
+                 回退到仅支持 Maven 3 POM 的运行时 WorkspaceLoader。 -->
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- surefire 默认不含 *IT.java；本模块的 @QuarkusTest 集成测试（H2 内存库）
                  随 test 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
             <plugin>
@@ -83,6 +141,10 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

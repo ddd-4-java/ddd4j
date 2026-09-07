@@ -12,12 +12,7 @@
 
     <artifactId>ddd4j-data-event-store-esdb</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层 - EventStoreDB 持久化实现：
-        基于 com.eventstore:db-client-java（EventStoreDB gRPC 客户端）实现 core 的
-        EventStore SPI（io.ddd4j.core.cqrs.eventstore.EventStore），
-        将聚合事件流映射到 EventStoreDB 流（stream = aggregateId，
-        expectedVersion → 期望修订号，position → 全局提交位置）。
-    </description>
+    <description>ddd4j 数据层 - EventStoreDB 持久化实现： 基于 com.eventstore:db-client-java（EventStoreDB gRPC 客户端）实现 core 的 EventStore SPI（io.ddd4j.core.cqrs.eventstore.EventStore）， 将聚合事件流映射到 EventStoreDB 流（stream = aggregateId， expectedVersion → 期望修订号，position → 全局提交位置）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>

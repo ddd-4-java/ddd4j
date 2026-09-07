@@ -12,11 +12,7 @@
 
     <artifactId>ddd4j-data-cqrs-quarkus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j CQRS Quarkus（ArC）适配：QuarkusCommandBus 以 @ApplicationScoped 继承
-        ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象），
-        构造期经 CDI Instance&lt;CommandExecutor&gt; 流式收集注册 CommandRegistry，
-        类级 @ActivateRequestContext 包 execute。
-    </description>
+    <description>ddd4j CQRS Quarkus（ArC）适配：QuarkusCommandBus 以 @ApplicationScoped 继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）， 构造期经 CDI Instance&lt;CommandExecutor&gt; 流式收集注册 CommandRegistry， 类级 @ActivateRequestContext 包 execute。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencyManagement>
@@ -61,6 +57,22 @@
 
     <build>
         <plugins>
+            <!-- Maven 4.1 构建期生成测试 application model，避免 @QuarkusTest
+                 回退到仅支持 Maven 3 POM 的运行时 WorkspaceLoader。 -->
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- surefire 默认不含 *IT.java；本模块的 @QuarkusTest 集成测试随 test
                  阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
             <plugin>
@@ -71,6 +83,10 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

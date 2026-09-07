@@ -13,10 +13,7 @@
     <artifactId>ddd4j-auth</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 认证/授权抽象聚合：satoken/security/shiro/datascope/license 鉴权与权限框架实现。
-        Subject 契约（Subject/SubjectKit/SubjectProvider/AuthRequest/SubjectDataProvider/SubjectStrategy）
-        定义在 ddd4j-core。运行环境（Spring/Quarkus/Javalin）的鉴权桥接通过 ddd4j-runtime-* 提供，不属于本聚合。
-    </description>
+    <description>ddd4j 认证/授权抽象聚合：satoken/security/shiro/datascope/license 鉴权与权限框架实现。 Subject 契约（Subject/SubjectKit/SubjectProvider/AuthRequest/SubjectDataProvider/SubjectStrategy） 定义在 ddd4j-core。运行环境（Spring/Quarkus/Javalin）的鉴权桥接通过 ddd4j-runtime-* 提供，不属于本聚合。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <subprojects>

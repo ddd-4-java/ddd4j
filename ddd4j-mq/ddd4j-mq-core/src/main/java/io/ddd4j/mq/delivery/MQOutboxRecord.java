@@ -73,4 +73,48 @@ public record MQOutboxRecord(
         return new MQOutboxRecord(messageId, destination, payload, headers, MQOutboxStatus.PENDING,
                 availableAt, null, null, 0, null, null);
     }
+
+    public int getAttempts() {
+            return attempts;
+        }
+
+    public Instant getAvailableAt() {
+            return availableAt;
+        }
+
+    public String getDestination() {
+            return destination;
+        }
+
+    public Map<String, String> getHeaders() {
+            return headers;
+        }
+
+    public String getLastError() {
+            return lastError;
+        }
+
+    public String getLeaseOwner() {
+            return leaseOwner;
+        }
+
+    public Instant getLeaseUntil() {
+            return leaseUntil;
+        }
+
+    public String getMessageId() {
+            return messageId;
+        }
+
+    public String getPayload() {
+            return payload;
+        }
+
+    public Instant getPublishedAt() {
+            return publishedAt;
+        }
+
+    public MQOutboxStatus getStatus() {
+            return status;
+        }
 }

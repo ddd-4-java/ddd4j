@@ -75,6 +75,10 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
         this.port = port;
     }
 
+    public FlksecCryptoStrategy(ObjectMapper objectMapper, String address, String port) {
+        this(objectMapper, HttpClient.newHttpClient(), address, port);
+    }
+
     /**
      * 获取加解密方式
      *

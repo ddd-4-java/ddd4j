@@ -25,4 +25,24 @@ package io.ddd4j.mq.delivery;
  */
 public record MQOutboxDispatchResult(int claimed, int published, int rescheduled, int dead,
                                      int confirmationLost) {
+
+    public int getClaimed() {
+            return claimed;
+        }
+
+    public int getConfirmationLost() {
+            return confirmationLost;
+        }
+
+    public int getDead() {
+            return dead;
+        }
+
+    public int getPublished() {
+            return published;
+        }
+
+    public int getRescheduled() {
+            return rescheduled;
+        }
 }

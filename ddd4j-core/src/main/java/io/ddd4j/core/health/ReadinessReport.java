@@ -57,4 +57,12 @@ public record ReadinessReport(boolean ready, List<ReadinessResult> results) {
             return ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "check failed");
         }
     }
+
+    public List<ReadinessResult> getResults() {
+            return results;
+        }
+
+    public boolean isReady() {
+            return ready;
+        }
 }

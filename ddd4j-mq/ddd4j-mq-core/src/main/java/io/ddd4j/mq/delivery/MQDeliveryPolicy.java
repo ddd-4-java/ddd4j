@@ -108,4 +108,24 @@ public record MQDeliveryPolicy(
         }
         return Math.min(initialMillis * multiplier, maxMillis);
     }
+
+    public Duration getInitialBackoff() {
+            return initialBackoff;
+        }
+
+    public double getJitterFactor() {
+            return jitterFactor;
+        }
+
+    public Duration getLeaseDuration() {
+            return leaseDuration;
+        }
+
+    public int getMaxAttempts() {
+            return maxAttempts;
+        }
+
+    public Duration getMaxBackoff() {
+            return maxBackoff;
+        }
 }

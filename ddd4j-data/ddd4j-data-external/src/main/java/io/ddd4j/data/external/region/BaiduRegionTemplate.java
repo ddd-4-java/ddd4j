@@ -67,6 +67,14 @@ public class BaiduRegionTemplate {
         this(ak, httpClient, RegionCache.none());
     }
 
+    public BaiduRegionTemplate(String ak) {
+        this(ak, HttpClient.newHttpClient(), RegionCache.none());
+    }
+
+    public BaiduRegionTemplate(String ak, RegionCache regionCache) {
+        this(ak, HttpClient.newHttpClient(), regionCache);
+    }
+
     /**
      * 构造函数
      *

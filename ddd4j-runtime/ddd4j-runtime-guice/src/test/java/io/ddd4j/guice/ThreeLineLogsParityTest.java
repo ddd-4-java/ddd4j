@@ -14,10 +14,6 @@
  */
 package io.ddd4j.guice;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Guice;
 import io.ddd4j.core.constant.Constants;
@@ -25,11 +21,19 @@ import io.ddd4j.data.logs.ApiOperationLogProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,9 +44,16 @@ class ThreeLineLogsParityTest {
     void guiceDefaultProviderEmitsSuccessAndFailureAccessLogs() throws Exception {
         ApiOperationLogProvider provider = Guice.createInjector(new Ddd4jLogsGuiceModule())
                 .getInstance(ApiOperationLogProvider.class);
-        Logger logger = (Logger) LoggerFactory.getLogger("io.ddd4j.data.logs.DefaultApiOperationLogProvider");
+        Logger logger = (Logger) LogManager.getLogger("io.ddd4j.data.logs.DefaultApiOperationLogProvider");
         Level previous = logger.getLevel();
-        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        List<LogEvent> events = new ArrayList<>();
+        AbstractAppender appender = new AbstractAppender(
+                "three-line-logs", null, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                events.add(event.toImmutable());
+            }
+        };
         appender.start();
         logger.addAppender(appender);
         logger.setLevel(Level.INFO);
@@ -64,16 +75,18 @@ class ThreeLineLogsParityTest {
                     });
             Operation operation = method.getAnnotation(Operation.class);
             provider.afterReturing(point, operation, "ok", Stopwatch.createStarted());
-            assertTrue(appender.list.stream().anyMatch(event -> event.getLevel() == Level.INFO
+            assertTrue(events.stream().anyMatch(event -> event.getLevel() == Level.INFO
                     && Objects.nonNull(event.getMarker())
                     && Constants.ACCESS_MARKER.equals(event.getMarker().getName())
-                    && event.getFormattedMessage().contains("Success")), "successful callback must log");
-            appender.list.clear();
+                    && event.getMessage().getFormattedMessage().contains("Success")),
+                    "successful callback must log");
+            events.clear();
             provider.afterThrowing(point, operation, new IllegalStateException("parity-failure"), Stopwatch.createStarted());
-            assertTrue(appender.list.stream().anyMatch(event -> event.getLevel() == Level.ERROR
-                    && event.getFormattedMessage().contains("parity-failure")), "failure callback must log");
+            assertTrue(events.stream().anyMatch(event -> event.getLevel() == Level.ERROR
+                    && event.getMessage().getFormattedMessage().contains("parity-failure")),
+                    "failure callback must log");
         } finally {
-            logger.detachAppender(appender);
+            logger.removeAppender(appender);
             logger.setLevel(previous);
             appender.stop();
         }

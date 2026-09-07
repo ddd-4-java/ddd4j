@@ -15,10 +15,10 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <helidon.version>3.2.18</helidon.version>
-        <helidon.cdi.version>3.0.0</helidon.cdi.version>
-        <helidon.annotation.version>2.0.0</helidon.annotation.version>
-        <helidon.jersey.version>3.0.18</helidon.jersey.version>
+        <helidon.version>${helidon-bom.version}</helidon.version>
+        <helidon.cdi.version>${helidon-jakarta-cdi.version}</helidon.cdi.version>
+        <helidon.annotation.version>${helidon-jakarta-annotation.version}</helidon.annotation.version>
+        <helidon.jersey.version>${helidon-jersey.version}</helidon.jersey.version>
     </properties>
 
     <dependencyManagement>
@@ -81,6 +81,11 @@
         <dependency>
             <groupId>io.helidon.microprofile.tests</groupId>
             <artifactId>helidon-microprofile-tests-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

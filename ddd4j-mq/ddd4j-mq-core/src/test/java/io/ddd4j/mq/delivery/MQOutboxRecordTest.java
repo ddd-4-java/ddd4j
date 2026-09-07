@@ -17,6 +17,7 @@ package io.ddd4j.mq.delivery;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,5 +42,16 @@ class MQOutboxRecordTest {
                 Map.of(), Instant.EPOCH));
         assertThrows(IllegalArgumentException.class, () -> MQOutboxRecord.pending("message-1", " ", "{}",
                 Map.of(), Instant.EPOCH));
+    }
+
+    @Test
+    void toString_shouldMatchRecordValueSemanticsForEveryComponent() {
+        MQOutboxRecord record = MQOutboxRecord.pending(
+                "message-1", "orders.created", "{}", Collections.emptyMap(), Instant.EPOCH);
+
+        assertEquals("MQOutboxRecord[messageId=message-1, destination=orders.created, payload={}, "
+                + "headers={ddd4j-message-id=message-1}, status=PENDING, availableAt=1970-01-01T00:00:00Z, "
+                + "leaseOwner=null, leaseUntil=null, attempts=0, lastError=null, publishedAt=null]",
+                record.toString());
     }
 }

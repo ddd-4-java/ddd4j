@@ -29,4 +29,8 @@ public record ReadinessResponse(boolean ready) {
     public int httpStatus() {
         return ready ? 200 : 503;
     }
+
+    public boolean isReady() {
+            return ready;
+        }
 }

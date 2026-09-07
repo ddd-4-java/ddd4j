@@ -219,6 +219,9 @@ public class JpaEventStore implements EventStore {
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
+        if (limit <= 0) {
+            throw new IllegalArgumentException("limit must be positive");
+        }
         EntityTransaction tx = entityManager.getTransaction();
         tx.begin();
         try {

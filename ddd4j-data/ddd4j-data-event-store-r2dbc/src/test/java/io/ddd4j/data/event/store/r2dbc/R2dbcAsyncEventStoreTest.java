@@ -254,6 +254,22 @@ class R2dbcAsyncEventStoreTest {
                 .verify();
     }
 
+    @Test
+    void persistedTimestampMustComeFromEvent() throws Exception {
+        TestOrderId orderId = new TestOrderId("order-time");
+        OrderCreatedEvent event = new OrderCreatedEvent(orderId, "customer-time");
+        java.time.ZonedDateTime expected = java.time.ZonedDateTime.parse("2024-01-02T03:04:05Z");
+        java.lang.reflect.Field field = DomainEvent.class.getDeclaredField("eventTimestamp");
+        field.setAccessible(true);
+        field.set(event, expected);
+
+        eventStore.append(AGGREGATE_TYPE, orderId, Flux.just(event), 0).block();
+
+        StepVerifier.create(eventStore.read(AGGREGATE_TYPE, orderId).next())
+                .assertNext(stored -> assertThat(stored.timestamp().toInstant()).isEqualTo(expected.toInstant()))
+                .verifyComplete();
+    }
+
     // =================== 测试事件类 ===================
 
     /**

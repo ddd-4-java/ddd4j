@@ -43,4 +43,16 @@ public record FileValidationResult(boolean valid, FileValidationFailure failure,
     public static FileValidationResult invalid(FileValidationFailure failure, DetectedFileType detectedType) {
         return new FileValidationResult(false, failure, detectedType);
     }
+
+    public DetectedFileType getDetectedType() {
+            return detectedType;
+        }
+
+    public FileValidationFailure getFailure() {
+            return failure;
+        }
+
+    public boolean isValid() {
+            return valid;
+        }
 }
