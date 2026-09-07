@@ -59,4 +59,16 @@ public record LambdaCondition(PropertyRef propertyRef, String operator, Object v
     public boolean isOrderBy() {
         return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
     }
+
+    public String getOperator() {
+            return operator;
+        }
+
+    public PropertyRef getPropertyRef() {
+            return propertyRef;
+        }
+
+    public Object getValue() {
+            return value;
+        }
 }

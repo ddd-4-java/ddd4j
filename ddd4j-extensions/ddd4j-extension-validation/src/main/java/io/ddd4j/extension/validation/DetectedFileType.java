@@ -21,4 +21,12 @@ package io.ddd4j.extension.validation;
  * @param mimeType 真实 MIME 类型
  */
 public record DetectedFileType(String extension, String mimeType) {
+
+    public String getExtension() {
+            return extension;
+        }
+
+    public String getMimeType() {
+            return mimeType;
+        }
 }

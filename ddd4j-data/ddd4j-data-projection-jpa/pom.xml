@@ -12,19 +12,15 @@
 
     <artifactId>ddd4j-data-projection-jpa</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影位置 JPA 实现（Spring WebMVC/WebFlux 等 Spring 系运行时）：
-        基于 Spring Data JPA 落地 core 的 ProjectionPositionRepository SPI（接口在
-        io.ddd4j.core.cqrs.readmodel，本模块不重定义），ProjectionPositionEntity +
-        SpringDataProjectionPositionRepository + JpaProjectionPositionRepository 组装。
-    </description>
+    <description>ddd4j 投影位置 JPA 实现（Spring WebMVC/WebFlux 等 Spring 系运行时）： 基于 Spring Data JPA 落地 core 的 ProjectionPositionRepository SPI（接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义），ProjectionPositionEntity + SpringDataProjectionPositionRepository + JpaProjectionPositionRepository 组装。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
         <!-- 仅测试栈：H2 内存库 IT 所用的 Spring Boot starter 版本。
-             BOM 刻意不管理 Spring Boot（ddd4j 不依赖 Boot 运行时），故此处局部显式钉版，
+             BOM 刻意不管理 Spring Boot（ddd4j 不依赖 Boot 运行时），版本由 ddd4j-dependencies 集中钉定，
              取 3.4.4 = Spring 6.2 线（与 ddd4j 2.0.x 匹配；Boot 4.x/Spring 7 线勿用），
              与 ddd4j-data-event-store-jpa（Task 4.1/4.2）同款模式。 -->
-        <spring-boot-it.version>3.4.4</spring-boot-it.version>
+        <spring-boot-it.version>${spring-boot3-it.version}</spring-boot-it.version>
     </properties>
 
     <dependencies>
@@ -52,14 +48,12 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>3.5.13</version>
         </dependency>
         <!-- Spring Data Commons：与 spring-data-jpa 3.5.13 同版显式钉（防 BOM 4.0.x
              管理项覆盖传递版本造成混版） -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
-            <version>3.5.13</version>
         </dependency>
         <!-- Jakarta Persistence API（实体映射）：显式钉 3.1.0 与 Hibernate 6.6 / Boot 3.4-3.5 线
              一致。BOM 管理的 3.2.0 会与 Hibernate 6.6 的 SessionFactory 在 Spring EMF 代理上
@@ -67,7 +61,7 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version>
+            <version>${spring6-jakarta-persistence.version}</version>
         </dependency>
 
         <!-- ======== Test ======== -->
@@ -94,7 +88,6 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.6.40.Final</version>
             <scope>test</scope>
         </dependency>
         <!-- H2 内存库（IT 数据源；版本由 ddd4j-dependencies 的 h2.version 管理） -->

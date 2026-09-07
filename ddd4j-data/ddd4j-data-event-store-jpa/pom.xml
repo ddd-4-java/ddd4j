@@ -12,12 +12,7 @@
 
     <artifactId>ddd4j-data-event-store-jpa</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层 - EventStore JPA 持久化实现：
-        基于 jakarta.persistence API 实现 core 的 EventStore SPI
-        （io.ddd4j.core.cqrs.eventstore.EventStore），
-        提供 StoredEvent 实体的乐观锁追加、按流读取与全局位置分页拉取。
-        框架无关（纯 JPA），适用于任意 Jakarta EE 容器。
-    </description>
+    <description>ddd4j 数据层 - EventStore JPA 持久化实现： 基于 jakarta.persistence API 实现 core 的 EventStore SPI （io.ddd4j.core.cqrs.eventstore.EventStore）， 提供 StoredEvent 实体的乐观锁追加、按流读取与全局位置分页拉取。 框架无关（纯 JPA），适用于任意 Jakarta EE 容器。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
@@ -25,6 +20,10 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>

@@ -27,4 +27,20 @@ public record SqlObservation(String statementId, String sql, long elapsedNanos, 
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
+
+    public long getElapsedNanos() {
+            return elapsedNanos;
+        }
+
+    public Throwable getError() {
+            return error;
+        }
+
+    public String getSql() {
+            return sql;
+        }
+
+    public String getStatementId() {
+            return statementId;
+        }
 }

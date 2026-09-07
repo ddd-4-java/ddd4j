@@ -30,7 +30,7 @@ import org.jdbi.v3.core.Jdbi;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -227,7 +227,8 @@ public class JdbiEventStore implements EventStore {
                                 .bind("correlationId", event.getCorrelationId() == null ? null : event.getCorrelationId().asString())
                                 .bind("causationId", event.getCausationId() == null ? null : event.getCausationId().asString())
                                 .bind("payload", serializer.serialize(event))
-                                .bind("timestamp", event.getEventTimestamp().toLocalDateTime())
+                                .bind("timestamp", event.getEventTimestamp()
+                                        .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                                 .execute();
                         position++;
                     }
@@ -280,6 +281,9 @@ public class JdbiEventStore implements EventStore {
      */
     @Override
     public List<StoredEvent> readAll(long fromPosition, int limit) {
+        if (limit <= 0) {
+            throw new IllegalArgumentException("limit must be positive");
+        }
         ensureInitialized();
         return jdbi.withHandle(handle -> handle.createQuery(READ_ALL_SQL)
                 .bind("fromPosition", fromPosition)
@@ -329,7 +333,7 @@ public class JdbiEventStore implements EventStore {
                 new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
                 rs.getLong(EventStoreConstants.COLUMN_VERSION),
                 rs.getLong(EventStoreConstants.COLUMN_POSITION),
-                timestamp.atZone(ZoneId.systemDefault()),
+                timestamp.atZone(ZoneOffset.UTC),
                 event,
                 EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
                 EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));

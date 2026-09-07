@@ -43,63 +43,63 @@ public interface AggregateController {
     @PostMapping("/{model}/page")
     default Page<? extends AggregateRoot<?>> postPage(@PathVariable("model") String model,
                                                       @RequestBody Map<String, Object> body) {
-        return query(model, body).page();
+        return AggregateControllerSupport.query(model, body).page();
     }
 
     @GetMapping("/{model}/page")
     default Page<? extends AggregateRoot<?>> getPage(@PathVariable("model") String model,
                                                      @RequestParam Map<String, Object> params) {
-        return query(model, params).page();
+        return AggregateControllerSupport.query(model, params).page();
     }
 
     @PostMapping("/{model}/list")
     default List<? extends AggregateRoot<?>> postList(@PathVariable("model") String model,
                                                       @RequestBody Map<String, Object> body) {
-        return query(model, body).list();
+        return AggregateControllerSupport.query(model, body).list();
     }
 
     @GetMapping("/{model}/list")
     default List<? extends AggregateRoot<?>> getList(@PathVariable("model") String model,
                                                      @RequestParam Map<String, Object> params) {
-        return query(model, params).list();
+        return AggregateControllerSupport.query(model, params).list();
     }
 
     @GetMapping("/{model}/detail")
     default AggregateRoot<?> detail(@PathVariable("model") String model,
                                     @RequestParam Map<String, Object> params) {
-        return query(model, params).first();
+        return AggregateControllerSupport.query(model, params).first();
     }
 
     @GetMapping("/{model}/detail/{id}")
     default AggregateRoot<?> detail(@PathVariable("model") String model,
                                     @PathVariable("id") String id) {
-        return (AggregateRoot<?>) repository(model).findById(id).orElse(null);
+        return (AggregateRoot<?>) AggregateControllerSupport.repository(model).findById(id).orElse(null);
     }
 
     @GetMapping("/{model}/exist")
     default Boolean exist(@PathVariable("model") String model,
                           @RequestParam Map<String, Object> params) {
-        return query(model, params).exist();
+        return AggregateControllerSupport.query(model, params).exist();
     }
 
     @GetMapping("/{model}/count")
     default Long count(@PathVariable("model") String model,
                        @RequestParam Map<String, Object> params) {
-        return query(model, params).count();
+        return AggregateControllerSupport.query(model, params).count();
     }
 
     @PostMapping("/{model}/create")
     default AggregateRoot<?> create(@PathVariable("model") String model,
                                     @RequestBody Map<String, Object> body) {
-        AggregateRoot<?> aggregate = aggregate(model, body);
-        return (AggregateRoot<?>) repository(model).save(aggregate);
+        AggregateRoot<?> aggregate = AggregateControllerSupport.aggregate(model, body);
+        return (AggregateRoot<?>) AggregateControllerSupport.repository(model).save(aggregate);
     }
 
     @PostMapping("/{model}/saveBatch")
     default void saveBatch(@PathVariable("model") String model,
                            @RequestBody List<Map<String, Object>> body) {
-        Repository repository = repository(model);
-        for (AggregateRoot<?> aggregate : aggregates(model, body)) {
+        Repository repository = AggregateControllerSupport.repository(model);
+        for (AggregateRoot<?> aggregate : AggregateControllerSupport.aggregates(model, body)) {
             repository.save(aggregate);
         }
     }
@@ -107,15 +107,15 @@ public interface AggregateController {
     @PostMapping({"/{model}/update", "/{model}/modify"})
     default void update(@PathVariable("model") String model,
                         @RequestBody Map<String, Object> body) {
-        AggregateRoot<?> aggregate = aggregate(model, body);
-        repository(model).save(aggregate);
+        AggregateRoot<?> aggregate = AggregateControllerSupport.aggregate(model, body);
+        AggregateControllerSupport.repository(model).save(aggregate);
     }
 
     @PostMapping({"/{model}/updateBatch", "/{model}/modifyBatch"})
     default void updateBatch(@PathVariable("model") String model,
                              @RequestBody List<Map<String, Object>> body) {
-        Repository repository = repository(model);
-        for (AggregateRoot<?> aggregate : aggregates(model, body)) {
+        Repository repository = AggregateControllerSupport.repository(model);
+        for (AggregateRoot<?> aggregate : AggregateControllerSupport.aggregates(model, body)) {
             repository.save(aggregate);
         }
     }
@@ -123,33 +123,41 @@ public interface AggregateController {
     @PostMapping("/{model}/save")
     default AggregateRoot<?> save(@PathVariable("model") String model,
                                   @RequestBody Map<String, Object> body) {
-        AggregateRoot<?> aggregate = aggregate(model, body);
-        return (AggregateRoot<?>) repository(model).save(aggregate);
+        AggregateRoot<?> aggregate = AggregateControllerSupport.aggregate(model, body);
+        return (AggregateRoot<?>) AggregateControllerSupport.repository(model).save(aggregate);
     }
 
     @PostMapping({"/{model}/delete/{id}", "/{model}/remove/{id}"})
     default void delete(@PathVariable("model") String model,
                         @PathVariable("id") String id) {
-        repository(model).deleteById(id);
+        AggregateControllerSupport.repository(model).deleteById(id);
     }
 
     @PostMapping("/{model}/remove")
     default void removeByQuery(@PathVariable("model") String model,
                                @RequestBody Map<String, Object> body) {
-        Query<?> query = query(model, body);
-        Repository richRepository = richRepository(model);
+        Query<?> query = AggregateControllerSupport.query(model, body);
+        Repository richRepository = AggregateControllerSupport.richRepository(model);
         richRepository.deleteByQuery(query);
     }
 
-    private Repository repository(String model) {
+}
+
+@SuppressWarnings({"rawtypes", "unchecked"})
+final class AggregateControllerSupport {
+
+    private AggregateControllerSupport() {
+    }
+
+    static Repository repository(String model) {
         return RepositoryRegistry.repository((Class) modelClass(model));
     }
 
-    private Repository richRepository(String model) {
+    static Repository richRepository(String model) {
         return repository(model);
     }
 
-    private Query<?> query(String model, Map<String, Object> source) {
+    static Query<?> query(String model, Map<String, Object> source) {
         Class<? extends Query> queryClass = queryClass(model);
         Query<?> query = BeanKit.ofMap(source, queryClass);
         if (Objects.nonNull(query)) {
@@ -158,7 +166,7 @@ public interface AggregateController {
         return newInstance(queryClass);
     }
 
-    private AggregateRoot<?> aggregate(String model, Map<String, Object> source) {
+    static AggregateRoot<?> aggregate(String model, Map<String, Object> source) {
         Class<? extends AggregateRoot<?>> modelClass = modelClass(model);
         AggregateRoot<?> aggregate = BeanKit.ofMap(source, modelClass);
         if (Objects.nonNull(aggregate)) {
@@ -167,7 +175,7 @@ public interface AggregateController {
         return newInstance(modelClass);
     }
 
-    private List<AggregateRoot<?>> aggregates(String model, List<Map<String, Object>> source) {
+    static List<AggregateRoot<?>> aggregates(String model, List<Map<String, Object>> source) {
         List<AggregateRoot<?>> aggregates = new ArrayList<>();
         if (Objects.isNull(source)) {
             return aggregates;
@@ -178,23 +186,25 @@ public interface AggregateController {
         return aggregates;
     }
 
-    private Class<? extends AggregateRoot<?>> modelClass(String model) {
+    static Class<? extends AggregateRoot<?>> modelClass(String model) {
         Object mapped = MappingKit.get("MODEL_NAME", model);
-        if (mapped instanceof Class<?> mappedClass && AggregateRoot.class.isAssignableFrom(mappedClass)) {
-            return (Class<? extends AggregateRoot<?>>) mappedClass;
+        if (mapped instanceof Class
+                && AggregateRoot.class.isAssignableFrom((Class<?>) mapped)) {
+            return (Class<? extends AggregateRoot<?>>) mapped;
         }
         throw new BizRuntimeException("Aggregate model mapping not found for {}", model);
     }
 
-    private Class<? extends Query> queryClass(String model) {
+    static Class<? extends Query> queryClass(String model) {
         Object mapped = MappingKit.get("MODEL_QUERY", modelClass(model));
-        if (mapped instanceof Class<?> mappedClass && Query.class.isAssignableFrom(mappedClass)) {
-            return (Class<? extends Query>) mappedClass;
+        if (mapped instanceof Class
+                && Query.class.isAssignableFrom((Class<?>) mapped)) {
+            return (Class<? extends Query>) mapped;
         }
         throw new BizRuntimeException("Query mapping not found for model {}", model);
     }
 
-    private <T> T newInstance(Class<T> type) {
+    static <T> T newInstance(Class<T> type) {
         try {
             return type.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {

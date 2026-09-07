@@ -13,9 +13,7 @@
     <artifactId>ddd4j-extensions</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Ddd4j
-        跨领域扩展聚合：akka/excel/jackson/pf4j/qlexpress。基础包（ddd4j-core/ddd4j-kit/ddd4j-monitor）已提升为顶层模块，业务模块（auth/data/mq/web）已重组为独立聚合层。
-    </description>
+    <description>Ddd4j 跨领域扩展聚合：akka/excel/jackson/pf4j/qlexpress。基础包（ddd4j-core/ddd4j-kit/ddd4j-monitor）已提升为顶层模块，业务模块（auth/data/mq/web）已重组为独立聚合层。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <modules>

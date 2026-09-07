@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.cqrs;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
@@ -95,7 +96,7 @@ public final class TestSupport {
 
         Javalin app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
-            cfg.jsonMapper(new JavalinJackson());
+            cfg.jsonMapper(new JavalinJackson(JsonMapper.builder().findAndAddModules().build(), false));
             cfg.routes.apiBuilder(() -> {
                 orderController.routes();
                 orderQueryController.routes();

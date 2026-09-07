@@ -26,4 +26,20 @@ public record WebError(int status, Serializable code, String message, Object dat
     public R<Object> toResponse() {
         return R.fail(code, message, data);
     }
+
+    public Serializable getCode() {
+            return code;
+        }
+
+    public Object getData() {
+            return data;
+        }
+
+    public String getMessage() {
+            return message;
+        }
+
+    public int getStatus() {
+            return status;
+        }
 }

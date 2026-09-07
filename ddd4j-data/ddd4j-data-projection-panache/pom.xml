@@ -12,12 +12,7 @@
 
     <artifactId>ddd4j-data-projection-panache</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影位置 Quarkus Panache 实现（Quarkus 运行时）：
-        基于 Quarkus Hibernate ORM Panache（active record 公有字段风格）落地 core 的
-        ProjectionPositionRepository SPI（接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义），
-        PanacheProjectionPositionEntity + QuarkusProjectionPositionRepository 组装，
-        与 ddd4j-data-projection-jpa 共用同款 ddd4j_projection_position 表结构。
-    </description>
+    <description>ddd4j 投影位置 Quarkus Panache 实现（Quarkus 运行时）： 基于 Quarkus Hibernate ORM Panache（active record 公有字段风格）落地 core 的 ProjectionPositionRepository SPI（接口在 io.ddd4j.core.cqrs.readmodel，本模块不重定义）， PanacheProjectionPositionEntity + QuarkusProjectionPositionRepository 组装， 与 ddd4j-data-projection-jpa 共用同款 ddd4j_projection_position 表结构。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencyManagement>

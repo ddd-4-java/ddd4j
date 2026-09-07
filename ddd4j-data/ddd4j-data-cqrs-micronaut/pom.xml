@@ -12,12 +12,7 @@
 
     <artifactId>ddd4j-data-cqrs-micronaut</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j CQRS Micronaut 适配：MicronautCommandBus 以 @Singleton 继承
-        ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象），
-        构造期经 BeanContext.getBeansOfType 收集 CommandExecutor Bean 注册 CommandRegistry。
-        事务刻意不引入（micronaut-data 的 io.micronaut.transaction.annotation.Transactional
-        由集成方标注在 service bean 上，总线只做纯分发路由）。
-    </description>
+    <description>ddd4j CQRS Micronaut 适配：MicronautCommandBus 以 @Singleton 继承 ddd4j-core DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）， 构造期经 BeanContext.getBeansOfType 收集 CommandExecutor Bean 注册 CommandRegistry。 事务刻意不引入（micronaut-data 的 io.micronaut.transaction.annotation.Transactional 由集成方标注在 service bean 上，总线只做纯分发路由）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencyManagement>

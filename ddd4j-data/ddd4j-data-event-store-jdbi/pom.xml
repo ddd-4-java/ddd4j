@@ -12,10 +12,7 @@
 
     <artifactId>ddd4j-data-event-store-jdbi</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 事件存储 JDBI 实现（Javalin/Vert.x 等轻量运行时）：
-        SQL-first 的纯 jdbi3-core 落地（无注解 SQL Object、零容器依赖），提供
-        EventStore SPI 的关系型实现（JdbiEventStore）。
-    </description>
+    <description>ddd4j 事件存储 JDBI 实现（Javalin/Vert.x 等轻量运行时）： SQL-first 的纯 jdbi3-core 落地（无注解 SQL Object、零容器依赖），提供 EventStore SPI 的关系型实现（JdbiEventStore）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>

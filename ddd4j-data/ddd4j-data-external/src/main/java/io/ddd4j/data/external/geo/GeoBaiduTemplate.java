@@ -74,6 +74,10 @@ public class GeoBaiduTemplate {
         this.ak = ak;
     }
 
+    public GeoBaiduTemplate(String ak) {
+        this(HttpClient.newHttpClient(), ak);
+    }
+
     public static void main(String[] args) throws IOException {
 
         GeoBaiduTemplate template = new GeoBaiduTemplate(HttpClient.newHttpClient(), "");

@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.cqrs;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.Objects;
 
 import io.ddd4j.cache.CacheKit;
@@ -125,6 +126,8 @@ public class JavalinCqrsApplication {
         // 7. 启动 Javalin
         Javalin app = Javalin.create(javalinConfig -> {
             javalinConfig.startup.showJavalinBanner = false;
+            javalinConfig.jsonMapper(new io.javalin.json.JavalinJackson(
+                    JsonMapper.builder().findAndAddModules().build(), false));
             javalinConfig.routes.apiBuilder(() -> {
                 orderController.routes();
                 orderQueryController.routes();

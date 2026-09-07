@@ -34,7 +34,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -51,9 +51,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <ul>
  *   <li>共享同一张表 {@code DDD4J_EVENT_STORE}（建表语句与同步实现一致，含
  *       {@code aggregate_type} 列）；position 全局递增，跨两轨单调不冲突</li>
- *   <li><b>aggregate_id 编码不同</b>：本实现写入
- *       {@code aggregateId.asTypedString()}（{@code Type:value}），同步轨道写入纯
- *       {@code asString()}——同一聚合请勿混用两条轨道</li>
+ *   <li>同步 {@code R2dbcEventStore} 是本实现的阻塞适配器，两种调用方式共享
+ *       {@code aggregateId.asTypedString()} 编码与同一套持久化逻辑</li>
  *   <li>读取时经 {@link EntityIdRegistry} 还原 typed id：自定义 id 类型需先
  *       {@code EntityIdRegistry.register(...)}（{@code StringEntityId} 已默认注册）；
  *       未注册类型在 {@link #readAll(long, int)} 中显式报错而非静默降级</li>
@@ -314,7 +313,8 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
                 bindNullable(statement, 7, event.getCausationId() == null ? null : event.getCausationId().asString());
                 chain = chain.then(Mono.from(statement
                                 .bind(8, payloadSerializer.serialize(event))
-                                .bind(9, LocalDateTime.now())
+                                .bind(9, event.getEventTimestamp()
+                                        .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
                                 .execute())
                         .flatMap(result -> Mono.from(result.getRowsUpdated()))
                         .then());
@@ -362,7 +362,7 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
                 parseAggregateId(aggregateIdString),
                 version,
                 position,
-                ZonedDateTime.of(timestamp, ZoneId.systemDefault()),
+                ZonedDateTime.of(timestamp, ZoneOffset.UTC),
                 event,
                 EventId.valueOf(row.get(EventStoreConstants.COLUMN_CORRELATION_ID, String.class)),
                 EventId.valueOf(row.get(EventStoreConstants.COLUMN_CAUSATION_ID, String.class)));

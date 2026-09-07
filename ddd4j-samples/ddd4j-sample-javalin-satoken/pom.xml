@@ -17,6 +17,10 @@
     <description>Javalin + Guice + Sa-Token 鉴权示例：演示无 DI 容器框架下 SubjectKit 统一鉴权入口</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
+    <properties>
+        <jetty.version>${javalin-jetty.version}</jetty.version>
+    </properties>
+
     <dependencies>
         <!-- ddd4j core：核心 DDD/CQRS 抽象（API、Page、Repository、AggregateRoot 等） -->
         <dependency>
@@ -103,17 +107,14 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>12.1.5</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>12.1.5</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-io</artifactId>
-            <version>12.1.5</version>
         </dependency>
         <!-- Jackson：Javalin 默认 JSON 序列化（J3 中 jsr310 已内置于 databind） -->
         <dependency>
@@ -134,7 +135,6 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.2.1</version>
         </dependency>
 </dependencies>
 

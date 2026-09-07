@@ -90,6 +90,14 @@ public class PconlineRegionTemplate {
         this(httpClient, RegionCache.none());
     }
 
+    public PconlineRegionTemplate() {
+        this(HttpClient.newHttpClient(), RegionCache.none());
+    }
+
+    public PconlineRegionTemplate(RegionCache regionCache) {
+        this(HttpClient.newHttpClient(), regionCache);
+    }
+
     /**
      * 构造函数
      *

@@ -28,4 +28,16 @@ import java.time.Instant;
  * @since 3.0.0
  */
 public record AuthFailedEvent(AuthRequest request, String reason, Instant occurredAt) {
+
+    public Instant getOccurredAt() {
+            return occurredAt;
+        }
+
+    public String getReason() {
+            return reason;
+        }
+
+    public AuthRequest getRequest() {
+            return request;
+        }
 }

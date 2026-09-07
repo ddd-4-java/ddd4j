@@ -37,6 +37,10 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
             <!-- Javalin 7 的 JavalinJackson3 依赖 Jackson 3（tools.jackson）：2.0.x 线整体为
              Jackson 2（com.fasterxml，DDD 事件序列化走 core EventPayloadSerializer），
              仅 Javalin HTTP 层的 JSON 编解码用 J3，双 Jackson 共存是本线既定形态。
@@ -44,7 +48,6 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.2.1</version>
         </dependency>
 </dependencies>
 </project>

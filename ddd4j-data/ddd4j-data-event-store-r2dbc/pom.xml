@@ -12,10 +12,7 @@
 
     <artifactId>ddd4j-data-event-store-r2dbc</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 事件存储 R2DBC 响应式实现（WebFlux/Vert.x 等响应式运行时）：
-        纯 io.r2dbc.spi Connection API 落地（零 Spring，beginTransaction/commit/rollback
-        真响应式事务），提供 AsyncEventStore SPI 的实现（R2dbcEventStore）。
-    </description>
+    <description>ddd4j 事件存储 R2DBC 响应式实现（WebFlux/Vert.x 等响应式运行时）： 纯 io.r2dbc.spi Connection API 落地（零 Spring，beginTransaction/commit/rollback 真响应式事务），提供 AsyncEventStore SPI 的实现（R2dbcEventStore）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>

@@ -35,4 +35,24 @@ public record QLExpressExecutionResult<T>(boolean success, T value, String error
                                                           long elapsedNanos) {
         return new QLExpressExecutionResult<>(false, null, errorCode, errorMessage, elapsedNanos);
     }
+
+    public long getElapsedNanos() {
+            return elapsedNanos;
+        }
+
+    public String getErrorCode() {
+            return errorCode;
+        }
+
+    public String getErrorMessage() {
+            return errorMessage;
+        }
+
+    public T getValue() {
+            return value;
+        }
+
+    public boolean isSuccess() {
+            return success;
+        }
 }

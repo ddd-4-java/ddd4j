@@ -298,6 +298,21 @@
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
         <helidon-bom.version>3.2.18</helidon-bom.version>
+        <helidon-jersey.version>3.0.18</helidon-jersey.version>
+        <helidon-jakarta-annotation.version>2.0.0</helidon-jakarta-annotation.version>
+        <helidon-jakarta-cdi.version>3.0.0</helidon-jakarta-cdi.version>
+        <helidon-jakarta-inject.version>2.0.0</helidon-jakarta-inject.version>
+        <helidon-jakarta-interceptor.version>2.0.0</helidon-jakarta-interceptor.version>
+        <helidon-jakarta-ws-rs.version>3.0.0</helidon-jakarta-ws-rs.version>
+        <javax-validation-api.version>2.0.1.Final</javax-validation-api.version>
+        <jackson3.version>3.2.1</jackson3.version>
+        <javalin-jetty.version>12.1.5</javalin-jetty.version>
+        <jnats-compat.version>2.20.5</jnats-compat.version>
+        <quarkus-failsafe-plugin.version>3.2.5</quarkus-failsafe-plugin.version>
+        <quarkus-surefire-plugin.version>3.2.5</quarkus-surefire-plugin.version>
+        <shiro-sample.version>2.0.6</shiro-sample.version>
+        <spring-boot3-it.version>3.4.4</spring-boot3-it.version>
+        <spring6-jakarta-persistence.version>3.1.0</spring6-jakarta-persistence.version>
         <hibernate-validator.version>8.0.4.Final</hibernate-validator.version>
         <hibernate.version>6.6.40.Final</hibernate.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
@@ -4861,6 +4876,16 @@
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>${jakarta.ws.rs-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${javax-validation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson3.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
             <!-- Jakarta XML Binding API：Jakarta 版 JAXB（XML 与 Java 对象绑定）API。 -->
@@ -10432,13 +10457,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-        <!-- SLF4J Simple：SLF4J 的简单控制台日志实现（测试用）。 -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
         </dependency>
         <!-- ======== Test ======== -->
         <!-- AssertJ（流式断言） -->

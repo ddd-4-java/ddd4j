@@ -33,4 +33,16 @@ public record WebContractResponse(int status, Map<String, List<String>> headers,
                 .map(values -> values.get(0))
                 .findFirst();
     }
+
+    public String getBody() {
+            return body;
+        }
+
+    public Map<String, List<String>> getHeaders() {
+            return headers;
+        }
+
+    public int getStatus() {
+            return status;
+        }
 }

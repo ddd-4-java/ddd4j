@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.goods.web;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.Objects;
 
 import io.ddd4j.core.constant.SpiKeys;
@@ -73,7 +74,7 @@ class GoodsControllerTest {
 
         app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
-            cfg.jsonMapper(new JavalinJackson());
+            cfg.jsonMapper(new JavalinJackson(JsonMapper.builder().findAndAddModules().build(), false));
             cfg.routes.apiBuilder(goodsController::routes);
         });
         app.start(0);

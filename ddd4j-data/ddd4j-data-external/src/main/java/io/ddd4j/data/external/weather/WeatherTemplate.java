@@ -76,6 +76,10 @@ public class WeatherTemplate {
         this.httpClient = httpClient;
     }
 
+    public WeatherTemplate() {
+        this(HttpClient.newHttpClient());
+    }
+
     /**
      * 获取指定城市的天气信息（带缓存，未命中时自动查询远程接口）。
      *
