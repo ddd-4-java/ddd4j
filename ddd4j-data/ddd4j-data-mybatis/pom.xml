@@ -63,27 +63,41 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>collect-forbidden-spring-dependencies</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>tree</goal>
+                        </goals>
+                        <configuration>
+                            <includes>org.springframework:*,org.springframework.*:*,org.mybatis:mybatis-spring</includes>
+                            <outputFile>${project.build.directory}/forbidden-spring-dependencies.txt</outputFile>
+                            <appendOutput>false</appendOutput>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>ban-spring-dependencies</id>
                         <phase>validate</phase>
                         <goals>
-                            <goal>enforce</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <rules>
-                                <bannedDependencies>
-                                    <searchTransitive>true</searchTransitive>
-                                    <excludes>
-                                        <exclude>org.springframework:*</exclude>
-                                        <exclude>org.springframework.*:*</exclude>
-                                        <exclude>org.mybatis:mybatis-spring</exclude>
-                                    </excludes>
-                                    <message>ddd4j-data-mybatis 必须保持 Spring 无关，Spring 集成应由独立适配模块提供。
-                                    </message>
-                                </bannedDependencies>
-                            </rules>
+                            <target>
+                                <condition property="forbidden.spring.dependencies.present">
+                                    <length file="${project.build.directory}/forbidden-spring-dependencies.txt"
+                                            length="0" when="greater"/>
+                                </condition>
+                                <fail if="forbidden.spring.dependencies.present"
+                                      message="ddd4j-data-mybatis 必须保持 Spring/MyBatis-Spring 无关，Spring 集成应由独立适配模块提供。"/>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
