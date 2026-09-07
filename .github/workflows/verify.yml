@@ -28,14 +28,14 @@ jobs:
           fail_level: error
 
   unit-and-contract:
-    name: Java 21 unit and contract
+    name: Java 8 unit and contract
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '8'
           cache: maven
           overwrite-settings: true
       - name: Configure Easy4J Maven repositories
@@ -90,7 +90,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '8'
           cache: maven
           overwrite-settings: true
       # 两步法：先全 reactor 安装依赖（不激活 coverage，避免未达标依赖模块触发 check），
@@ -128,7 +128,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '8'
           cache: maven
           overwrite-settings: true
       - name: Configure Easy4J Maven repositories
@@ -191,7 +191,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '8'
           cache: maven
           overwrite-settings: true
       - name: Configure Easy4J Maven repositories

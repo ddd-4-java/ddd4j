@@ -283,7 +283,7 @@
                                         <message>
                                             <![CDATA[You are running an older version of Maven. This application requires at least Maven ${maven.version}.]]>
                                         </message>
-                                        <version>[${maven.version}.0,)</version>
+                                        <version>[${maven.version},)</version>
                                     </requireMavenVersion>
                                     <requireJavaVersion>
                                         <message>
