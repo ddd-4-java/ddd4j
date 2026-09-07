@@ -29,7 +29,7 @@
         <java.version>17</java.version>
         <lombok.version>1.18.46</lombok.version>
         <!-- Maven Plugin versions -->
-        <maven.version>3.15.0</maven.version>
+        <maven.version>3.9.16</maven.version>
         <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-dependency-check-plugin.version>12.2.2</maven-dependency-check-plugin.version>
@@ -279,7 +279,7 @@
                                         <message>
                                             <![CDATA[You are running an older version of Maven. This application requires at least Maven ${maven.version}.]]>
                                         </message>
-                                        <version>[${maven.version}.0,)</version>
+                                        <version>[${maven.version},)</version>
                                     </requireMavenVersion>
                                     <requireJavaVersion>
                                         <message>
