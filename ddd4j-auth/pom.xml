@@ -25,6 +25,7 @@
         <subproject>ddd4j-auth-shiro</subproject>
         <subproject>ddd4j-auth-datascope</subproject>
         <subproject>ddd4j-auth-license</subproject>
+        <subproject>ddd4j-auth-spring</subproject>
     </subprojects>
 
 </project>
