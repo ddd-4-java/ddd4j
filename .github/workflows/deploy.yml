@@ -160,7 +160,7 @@ jobs:
             echo "- Branch: ${{ inputs.branch }}"
             echo "- Target repository: ${{ steps.repo.outputs.repo }}"
             echo "- Dry run: ${{ inputs.dry_run }}"
-            echo "- Commit: ${{ github.sha }}"
+            echo "- Commit: $(git rev-parse HEAD)"
             echo "- Run: ${{ github.run_id }}"
             echo "- Time: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           } > "${REPORT_DIR}/deploy-report.md"

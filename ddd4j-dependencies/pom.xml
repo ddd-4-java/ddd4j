@@ -76,7 +76,7 @@
         <camel.version>4.20.0</camel.version>
         <cglib.version>3.3.0</cglib.version>
         <classgraph.version>4.8.184</classgraph.version>
-        <cola.version>5.0.0</cola.version>
+        <cola.version>4.3.2</cola.version>
         <commons-attributes.version>2.2</commons-attributes.version>
         <commons-attributes-api.version>2.2</commons-attributes-api.version>
         <commons-attributes-compiler.version>2.2</commons-attributes-compiler.version>
