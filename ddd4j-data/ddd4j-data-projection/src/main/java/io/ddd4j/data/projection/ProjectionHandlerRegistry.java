@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * （all-or-nothing）语义：任一事件类型已被其他 handler 注册即抛
  * {@link IllegalStateException}（消息含事件类型全限定名），且本 handler 声明的
  * 所有类型（包括无冲突者）均不落库——多类型 handler 中途冲突不会留下
- * 「前几个类型已落库」的半注册状态。该语义与 ddd4j-data-cqrs 的
+ * 「前几个类型已落库」的半注册状态。该语义与 ddd4j-core 中 CommandRegistry 的
  * {@code CommandRegistry}（ADR-0004 对 fuin 先例的保留决策）同源：
  * 冲突在装配期暴露，注册中心保持长生命周期共享组件的一致性。
  *

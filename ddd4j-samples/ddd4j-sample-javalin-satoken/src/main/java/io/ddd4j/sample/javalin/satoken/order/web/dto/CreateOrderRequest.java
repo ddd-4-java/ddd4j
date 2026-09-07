@@ -14,10 +14,24 @@
  */
 package io.ddd4j.sample.javalin.satoken.order.web.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * 创建订单 REST 请求。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateOrderRequest {
+    private String orderNo;
+    private String buyerId;
+    private String buyerName;
+
+    public String orderNo() { return orderNo; }
+    public String buyerId() { return buyerId; }
+    public String buyerName() { return buyerName; }
 }

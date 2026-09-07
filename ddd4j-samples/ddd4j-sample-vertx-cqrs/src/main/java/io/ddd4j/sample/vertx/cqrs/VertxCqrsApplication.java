@@ -23,12 +23,14 @@ import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommandHandler;
 import io.ddd4j.sample.vertx.cqrs.readmodel.InMemoryEventChunkReader;
 import io.ddd4j.sample.vertx.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.vertx.cqrs.readmodel.OrderSummaryView;
+import io.ddd4j.sample.vertx.cqrs.readmodel.OrderSummaryViewEntity;
 import io.ddd4j.sample.vertx.cqrs.repository.EventSourcingOrderRepository;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
-import java.util.List;
+import java.util.Collections;
 
 /**
  * Vert.x CQRS 集成示例启动入口。
@@ -39,7 +41,7 @@ public class VertxCqrsApplication {
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
-    public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
+    public static final CommandBus COMMAND_BUS = new DefaultCommandBus(Collections.singletonList(COMMAND_HANDLER));
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
     public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
     public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
@@ -56,7 +58,7 @@ public class VertxCqrsApplication {
 
         // POST /orders -> 创建订单
         router.post("/orders").handler(ctx -> {
-            var body = ctx.body().asJsonObject();
+            JsonObject body = ctx.body().asJsonObject();
             String orderNo = body.getString("orderNo");
             String buyerId = body.getString("buyerId");
             String buyerName = body.getString("buyerName");
@@ -79,7 +81,7 @@ public class VertxCqrsApplication {
         // GET /orders/:id -> 查询订单摘要
         router.get("/orders/:id").handler(ctx -> {
             String id = ctx.pathParam("id");
-            var entity = READ_VIEW.findById(id);
+            OrderSummaryViewEntity entity = READ_VIEW.findById(id);
             if (entity == null) {
                 ctx.response().setStatusCode(404).end();
                 return;

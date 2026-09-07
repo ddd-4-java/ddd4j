@@ -40,7 +40,7 @@ public class CreateOrderCommandHandler implements CommandExecutor<CreateOrderCom
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(CreateOrderCommand.class);
+        return java.util.Collections.singleton(CreateOrderCommand.class);
     }
 
     @Override

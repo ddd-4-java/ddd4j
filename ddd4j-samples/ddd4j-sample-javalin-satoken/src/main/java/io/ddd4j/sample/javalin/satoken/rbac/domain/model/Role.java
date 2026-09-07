@@ -76,7 +76,7 @@ public class Role extends AggregateRoot<String> {
         this.roleCode = roleCode;
         this.roleName = roleName;
         this.description = description;
-        this.status = Objects.requireNonNullElse(status, Status.ENABLED);
+        this.status = Objects.nonNull(status) ? status : Status.ENABLED;
         this.createdAt = Instant.now();
     }
 

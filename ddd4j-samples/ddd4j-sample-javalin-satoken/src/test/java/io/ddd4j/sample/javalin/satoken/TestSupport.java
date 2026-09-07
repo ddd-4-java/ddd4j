@@ -52,7 +52,7 @@ import io.ddd4j.sample.javalin.satoken.rbac.web.AuthenticationController;
 import io.ddd4j.sample.javalin.satoken.rbac.web.AuthorizationController;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
-import io.javalin.json.JavalinJackson;
+import io.javalin.plugin.json.JavalinJackson;
 
 /**
  * 测试基础设施：手动创建 Guice 注入器并启动 Javalin。
@@ -109,24 +109,22 @@ public final class TestSupport {
 
         // 6) 启动 Javalin
         Javalin app = Javalin.create(cfg -> {
-            cfg.startup.showJavalinBanner = false;
+            cfg.showJavalinBanner = false;
             cfg.jsonMapper(new JavalinJackson());
-            // sa-token 需要在线程中维护 SaTokenContext 才能读写 token；
-            // 测试侧在每个请求前后初始化/清理 mock 上下文，并把 Javalin 的 header/cookie 拷贝到 mock request 中。
-            cfg.routes.before(ctx -> {
-                SaTokenContextMockUtil.setMockContext();
-                SaRequestForMock req = (SaRequestForMock) SaHolder.getRequest();
-                ctx.headerMap().forEach(req.headerMap::put);
-                ctx.cookieMap().forEach((k, v) -> req.cookieMap.put(k, v));
-            });
-            cfg.routes.after(ctx -> SaTokenContextMockUtil.clearContext());
-            cfg.routes.apiBuilder(() -> {
-                authController.routes().addEndpoints();
-                ApiBuilder.path("rbac", authzController.routes());
-                orderResource.routes().addEndpoints();
-                goodsQueryResource.routes().addEndpoints();
-                goodsResource.routes().addEndpoints();
-            });
+        });
+        app.before(ctx -> {
+            SaTokenContextMockUtil.setMockContext();
+            SaRequestForMock req = (SaRequestForMock) SaHolder.getRequest();
+            ctx.headerMap().forEach(req.headerMap::put);
+            ctx.cookieMap().forEach((key, value) -> req.cookieMap.put(key, value));
+        });
+        app.after(ctx -> SaTokenContextMockUtil.clearContext());
+        app.routes(() -> {
+            authController.routes().addEndpoints();
+            ApiBuilder.path("rbac", authzController.routes());
+            orderResource.routes().addEndpoints();
+            goodsQueryResource.routes().addEndpoints();
+            goodsResource.routes().addEndpoints();
         });
         app.start(0);
         return app;

@@ -15,7 +15,7 @@
 package io.ddd4j.micronaut.health;
 
 import io.ddd4j.core.health.ReadinessResult;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
 import org.junit.jupiter.api.Test;

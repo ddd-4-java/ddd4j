@@ -14,8 +14,22 @@
  */
 package io.ddd4j.sample.order.application;
 
+import lombok.Value;
+
 import java.time.Instant;
 
-public record OutboxMessage(String id, String aggregateId, String eventType, Object payload,
-                            Instant occurredAt) {
+/** Outbox 消息，Java 8 等价实现保留 record 值语义。 */
+@Value
+public class OutboxMessage {
+    String id;
+    String aggregateId;
+    String eventType;
+    Object payload;
+    Instant occurredAt;
+
+    public String id() { return id; }
+    public String aggregateId() { return aggregateId; }
+    public String eventType() { return eventType; }
+    public Object payload() { return payload; }
+    public Instant occurredAt() { return occurredAt; }
 }

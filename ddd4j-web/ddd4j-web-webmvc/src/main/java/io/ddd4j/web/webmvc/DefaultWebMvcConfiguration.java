@@ -30,7 +30,7 @@ import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.extension.web.servlet.i18n.XHeaderLocaleResolver;

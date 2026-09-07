@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -51,11 +65,20 @@ public final class ValueContractProbe {
         require(a.equals(b), name + " equal fields must compare equal");
         require(new HashSet<Object>(Arrays.asList(a, b)).size() == 1, name + " must deduplicate by value");
         require(a.hashCode() == b.hashCode(), name + " equal values must hash equally");
-        for (String[] pair : getters) {
+        for (int index = 0; index < values.length; index++) {
+            Object[] changed = values.clone();
+            changed[index] = differentValue(types[index], values[index]);
+            Object other = ctor.newInstance(changed);
+            require(!a.equals(other) && !other.equals(a), name + " field " + index + " must participate in equality");
+        }
+        require(!a.equals(null) && !a.equals("unrelated"), name + " must reject null/unrelated values");
+        for (int index = 0; index < getters.length; index++) {
+            String[] pair = getters[index];
             try {
                 Object component = type.getMethod(pair[0]).invoke(a);
                 Object bean = type.getMethod(pair[1]).invoke(a);
                 require(Objects.equals(component, bean), name + " accessor aliases must agree: " + pair[0]);
+                require(Objects.equals(values[index], component), name + " accessor must expose constructor input: " + pair[0]);
             } catch (NoSuchMethodException ex) {
                 require(false, name + " missing public accessor " + ex.getMessage());
             }
@@ -71,7 +94,11 @@ public final class ValueContractProbe {
         }
         List<String> api = new ArrayList<String>();
         for (Constructor<?> c : type.getConstructors()) {
-            api.add("constructor" + Arrays.toString(c.getParameterTypes()));
+            List<String> names = new ArrayList<String>();
+            for (java.lang.reflect.Parameter parameter : c.getParameters()) {
+                names.add(parameter.getName());
+            }
+            api.add("constructor" + Arrays.toString(c.getParameterTypes()) + ":" + names);
         }
         for (Method m : type.getDeclaredMethods()) {
             if (Modifier.isPublic(m.getModifiers()) && !m.isSynthetic()) {
@@ -89,5 +116,15 @@ public final class ValueContractProbe {
             System.err.println("FAIL " + message);
         }
     }
-}
 
+    private static Object differentValue(Class<?> type, Object value) {
+        if (type == boolean.class) { return !((Boolean) value); }
+        if (type == int.class) { return ((Integer) value) + 1; }
+        if (type == long.class) { return ((Long) value) + 1L; }
+        if (type == Instant.class) { return Instant.ofEpochSecond(1); }
+        if (type == List.class) { return Collections.singletonList("different"); }
+        if (type == Map.class) { return Collections.singletonMap("different", "value"); }
+        if (type == Throwable.class) { return new IllegalStateException("different"); }
+        return "different";
+    }
+}

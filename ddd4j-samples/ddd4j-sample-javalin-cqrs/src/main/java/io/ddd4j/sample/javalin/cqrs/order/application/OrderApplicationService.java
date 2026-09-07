@@ -17,6 +17,7 @@ package io.ddd4j.sample.javalin.cqrs.order.application;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
+import lombok.Value;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -139,7 +140,15 @@ public class OrderApplicationService {
      * @param buyerId   买家 ID
      * @param buyerName 买家显示名称
      */
-    public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) {
+    @Value
+    public static class CreateOrderCommand {
+        String orderNo;
+        String buyerId;
+        String buyerName;
+
+        public String orderNo() { return orderNo; }
+        public String buyerId() { return buyerId; }
+        public String buyerName() { return buyerName; }
     }
 
     /**
@@ -151,7 +160,18 @@ public class OrderApplicationService {
      * @param quantity  购买数量
      * @param unitPrice 单价
      */
-    public record AddOrderLineCommand(String orderId, String goodsId, String goodsName, int quantity,
-                                      BigDecimal unitPrice) {
+    @Value
+    public static class AddOrderLineCommand {
+        String orderId;
+        String goodsId;
+        String goodsName;
+        int quantity;
+        BigDecimal unitPrice;
+
+        public String orderId() { return orderId; }
+        public String goodsId() { return goodsId; }
+        public String goodsName() { return goodsName; }
+        public int quantity() { return quantity; }
+        public BigDecimal unitPrice() { return unitPrice; }
     }
 }

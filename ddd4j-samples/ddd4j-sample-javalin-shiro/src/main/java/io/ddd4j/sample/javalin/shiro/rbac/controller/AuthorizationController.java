@@ -24,11 +24,16 @@ import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 授权管理控制器：用户 / 角色 / 权限的 CRUD。
@@ -96,7 +101,7 @@ public class AuthorizationController {
             return;
         }
         Collection<User> users = rbacService.listUsers();
-        ctx.json(R.ok(users.stream().map(AuthorizationController::toUserView).toList()));
+        ctx.json(R.ok(users.stream().map(AuthorizationController::toUserView).collect(Collectors.toList())));
     }
 
     // ============================ Role CRUD ============================
@@ -160,7 +165,7 @@ public class AuthorizationController {
         }
         String loginId = ctx.pathParam("id");
         rbacService.deleteUser(loginId);
-        ctx.json(R.ok("user deleted", Map.of("loginId", loginId)));
+        ctx.json(R.ok("user deleted", Java8Maps.of("loginId", loginId)));
     }
 
     // ============================ Permission CRUD ============================
@@ -174,7 +179,7 @@ public class AuthorizationController {
             return;
         }
         Collection<Role> roles = rbacService.listRoles();
-        ctx.json(R.ok(roles.stream().map(AuthorizationController::toRoleView).toList()));
+        ctx.json(R.ok(roles.stream().map(AuthorizationController::toRoleView).collect(Collectors.toList())));
     }
 
     /**
@@ -214,7 +219,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deleteRole(code);
-        ctx.json(R.ok("role deleted", Map.of("code", code)));
+        ctx.json(R.ok("role deleted", Java8Maps.of("code", code)));
     }
 
     /**
@@ -226,7 +231,7 @@ public class AuthorizationController {
             return;
         }
         Collection<Permission> perms = rbacService.listPermissions();
-        ctx.json(R.ok(perms.stream().map(AuthorizationController::toPermissionView).toList()));
+        ctx.json(R.ok(perms.stream().map(AuthorizationController::toPermissionView).collect(Collectors.toList())));
     }
 
     /**
@@ -250,7 +255,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deletePermission(code);
-        ctx.json(R.ok("permission deleted", Map.of("code", code)));
+        ctx.json(R.ok("permission deleted", Java8Maps.of("code", code)));
     }
 
     /**
@@ -266,38 +271,59 @@ public class AuthorizationController {
 
     // ============================ DTO 视图对象 ============================
 
-    public record CreateUserRequest(String loginId,
-                                    String password,
-                                    String displayName,
-                                    String[] roles,
-                                    String[] permissions) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class CreateUserRequest {
+        private String loginId; private String password; private String displayName;
+        private String[] roles; private String[] permissions;
+        public String loginId() { return loginId; } public String password() { return password; }
+        public String displayName() { return displayName; } public String[] roles() { return roles; }
+        public String[] permissions() { return permissions; }
     }
 
-    public record UpdateUserRequest(String displayName,
-                                    String password,
-                                    String[] roles,
-                                    String[] permissions) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class UpdateUserRequest {
+        private String displayName; private String password; private String[] roles; private String[] permissions;
+        public String displayName() { return displayName; } public String password() { return password; }
+        public String[] roles() { return roles; } public String[] permissions() { return permissions; }
     }
 
-    public record CreateRoleRequest(String code, String name, String[] permissions) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class CreateRoleRequest {
+        private String code; private String name; private String[] permissions;
+        public String code() { return code; } public String name() { return name; }
+        public String[] permissions() { return permissions; }
     }
 
-    public record UpdateRoleRequest(String name, String[] permissions) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class UpdateRoleRequest {
+        private String name; private String[] permissions;
+        public String name() { return name; } public String[] permissions() { return permissions; }
     }
 
-    public record CreatePermissionRequest(String code, String description) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class CreatePermissionRequest {
+        private String code; private String description;
+        public String code() { return code; } public String description() { return description; }
     }
 
-    public record UserView(String loginId,
-                           String displayName,
-                           Set<String> roles,
-                           Set<String> permissions) {
+    @Value
+    public static class UserView {
+        String loginId; String displayName; Set<String> roles; Set<String> permissions;
+        public String loginId() { return loginId; } public String displayName() { return displayName; }
+        public Set<String> roles() { return roles; } public Set<String> permissions() { return permissions; }
     }
 
-    public record RoleView(String code, String name, Set<String> permissions) {
+    @Value
+    public static class RoleView {
+        String code; String name; Set<String> permissions;
+        public String code() { return code; } public String name() { return name; }
+        public Set<String> permissions() { return permissions; }
     }
 
-    public record PermissionView(String code, String description) {
+    @Value
+    public static class PermissionView {
+        String code; String description;
+        public String code() { return code; } public String description() { return description; }
     }
 
 }

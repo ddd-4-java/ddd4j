@@ -24,6 +24,9 @@ import io.ddd4j.sample.javalin.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.goods.domain.GoodsStatus;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.Context;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -101,13 +104,24 @@ public class GoodsController {
         if (tokens.length != 2) {
             return;
         }
-        SFunction<Goods, ?> property = switch (tokens[0]) {
-            case "id" -> Goods::id;
-            case "createTime" -> Goods::getCreateTime;
-            case "updateTime" -> Goods::getUpdateTime;
-            case "price" -> Goods::getPrice;
-            default -> null;
-        };
+        SFunction<Goods, ?> property;
+        switch (tokens[0]) {
+            case "id":
+                property = Goods::id;
+                break;
+            case "createTime":
+                property = Goods::getCreateTime;
+                break;
+            case "updateTime":
+                property = Goods::getUpdateTime;
+                break;
+            case "price":
+                property = Goods::getPrice;
+                break;
+            default:
+                property = null;
+                break;
+        }
         if (Objects.isNull(property)) {
             return;
         }
@@ -126,7 +140,7 @@ public class GoodsController {
         post("/api/goods", ctx -> {
             CreateGoodsRequest req = ctx.bodyAsClass(CreateGoodsRequest.class);
             Goods goods = applicationService.create(
-                    req.code(), req.name(), req.price(), req.stock());
+                    req.getCode(), req.getName(), req.getPrice(), req.getStock());
             ctx.status(201).json(R.ok(goods));
         });
 
@@ -135,7 +149,7 @@ public class GoodsController {
             Long id = ctx.pathParamAsClass("id", Long.class).get();
             UpdateGoodsRequest req = ctx.bodyAsClass(UpdateGoodsRequest.class);
             Goods goods = applicationService.update(
-                    GoodsId.of(id), req.name(), req.price());
+                    GoodsId.of(id), req.getName(), req.getPrice());
             ctx.json(R.ok(goods));
         });
 
@@ -191,12 +205,24 @@ public class GoodsController {
     /**
      * 创建商品请求。
      */
-    public record CreateGoodsRequest(String code, String name, BigDecimal price, Integer stock) {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateGoodsRequest {
+        private String code;
+        private String name;
+        private BigDecimal price;
+        private Integer stock;
     }
 
     /**
      * 更新商品请求。
      */
-    public record UpdateGoodsRequest(String name, BigDecimal price) {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateGoodsRequest {
+        private String name;
+        private BigDecimal price;
     }
 }

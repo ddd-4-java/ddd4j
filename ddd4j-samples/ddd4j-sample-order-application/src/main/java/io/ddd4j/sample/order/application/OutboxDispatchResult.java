@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.order.application;
 
+import lombok.Value;
+
 /**
  * 单次 Outbox 发布批次的结果。
  *
@@ -21,5 +23,13 @@ package io.ddd4j.sample.order.application;
  * @param published 已确认消息数
  * @param failed 保留重试的失败消息数
  */
-public record OutboxDispatchResult(int attempted, int published, int failed) {
+@Value
+public class OutboxDispatchResult {
+    int attempted;
+    int published;
+    int failed;
+
+    public int attempted() { return attempted; }
+    public int published() { return published; }
+    public int failed() { return failed; }
 }

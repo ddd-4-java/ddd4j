@@ -37,7 +37,7 @@ import io.ddd4j.sample.javalin.cqrs.order.infrastructure.InMemoryOrderRepository
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderCQRSQueryController;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderController;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
+import io.javalin.plugin.json.JavalinJackson;
 
 import java.util.Collection;
 
@@ -94,14 +94,14 @@ public final class TestSupport {
         GoodsReadController goodsReadController = new GoodsReadController(goodsCacheService, goodsRepository);
 
         Javalin app = Javalin.create(cfg -> {
-            cfg.startup.showJavalinBanner = false;
+            cfg.showJavalinBanner = false;
             cfg.jsonMapper(new JavalinJackson());
-            cfg.routes.apiBuilder(() -> {
-                orderController.routes();
-                orderQueryController.routes();
-                goodsController.routes();
-                goodsReadController.routes();
-            });
+        });
+        app.routes(() -> {
+            orderController.routes();
+            orderQueryController.routes();
+            goodsController.routes();
+            goodsReadController.routes();
         });
         app.start(0);
         return app;

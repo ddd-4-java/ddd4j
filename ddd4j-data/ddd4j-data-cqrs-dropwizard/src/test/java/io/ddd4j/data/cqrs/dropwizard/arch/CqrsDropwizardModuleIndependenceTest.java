@@ -48,7 +48,7 @@ class CqrsDropwizardModuleIndependenceTest {
 
     /**
      * Dropwizard 适配器依赖允许清单：仅 JDK（java..）、io.ddd4j 家族模块
-     * （命令契约与路由来自 ddd4j-core／ddd4j-data-cqrs）、Jakarta API
+     * （命令契约与路由来自 ddd4j-core）、Jakarta API
      * （jakarta..，Dropwizard 5 的 Jakarta EE 10 声明面）与 Dropwizard 全家桶
      * （io.dropwizard..，create 工厂的装配锚点）。
      */

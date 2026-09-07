@@ -96,21 +96,14 @@ public class JavalinSaTokenApplication {
 
         // ==================== 6. 启动 Javalin 并注册路由 ====================
         Javalin app = Javalin.create(javalinConfig -> {
-            javalinConfig.startup.showJavalinBanner = false;
-            javalinConfig.routes.apiBuilder(() -> {
-                // ========== Authentication 路由（/auth/*） ==========
-                authController.routes().addEndpoints();
-
-                // ========== Authorization 路由（/rbac/admin/*，RBAC 管理） ==========
-                ApiBuilder.path("rbac", authzController.routes());
-
-                // ========== Order 路由（EndpointGroup） ==========
-                orderResource.routes().addEndpoints();
-
-                // ========== Goods 路由（写侧 + 读侧） ==========
-                goodsQueryResource.routes().addEndpoints();
-                goodsResource.routes().addEndpoints();
-            });
+            javalinConfig.showJavalinBanner = false;
+        });
+        app.routes(() -> {
+            authController.routes().addEndpoints();
+            ApiBuilder.path("rbac", authzController.routes());
+            orderResource.routes().addEndpoints();
+            goodsQueryResource.routes().addEndpoints();
+            goodsResource.routes().addEndpoints();
         });
 
         app.start(PORT);

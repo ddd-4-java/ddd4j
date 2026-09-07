@@ -40,6 +40,7 @@ import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
 import io.ddd4j.sample.javalin.shiro.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthenticationController;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController;
+import io.ddd4j.sample.javalin.shiro.rbac.controller.Java8Maps;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryPermissionRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryRoleRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
@@ -124,8 +125,9 @@ public class JavalinShiroApplication {
 
         // ==================== 5. 启动 Javalin 并注册路由 ====================
         Javalin app = Javalin.create(javalinConfig -> {
-            javalinConfig.startup.showJavalinBanner = false;
-            javalinConfig.routes.apiBuilder(() -> {
+            javalinConfig.showJavalinBanner = false;
+        });
+        app.routes(() -> {
                 // ========== Authentication 路由 ==========
                 ApiBuilder.post("/auth/login", authController::login);
                 ApiBuilder.post("/auth/logout", authController::logout);
@@ -162,7 +164,7 @@ public class JavalinShiroApplication {
                         return;
                     }
                     String id = ctx.pathParam("id");
-                    ctx.json(R.ok("order pay authorized", java.util.Map.of(
+                    ctx.json(R.ok("order pay authorized", Java8Maps.of(
                             "orderId", id,
                             "byUser", String.valueOf(SubjectKit.getLoginId()))));
                 });
@@ -173,7 +175,6 @@ public class JavalinShiroApplication {
                 // Goods 路由（写侧 + 读侧合并到 /api/goods 命名空间）
                 goodsQueryResource.routes().addEndpoints();
                 goodsResource.routes().addEndpoints();
-            });
         });
 
         app.start(PORT);

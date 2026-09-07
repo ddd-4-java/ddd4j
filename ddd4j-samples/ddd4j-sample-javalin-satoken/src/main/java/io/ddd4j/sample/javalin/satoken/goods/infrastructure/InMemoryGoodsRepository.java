@@ -26,7 +26,6 @@ import io.ddd4j.sample.javalin.satoken.goods.domain.Goods;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsStatus;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,11 +35,10 @@ import java.util.stream.Collectors;
 /**
  * 基于内存的商品仓储实现（第三轨：Model/Query 快速 CRUD 模式）。
  *
- * <p>Quarkus 下用 {@link ApplicationScoped} 取代 Spring 的 {@code @Repository} / {@code @Component}。
+ * <p>Javalin 运行时由应用入口手动装配仓储。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@ApplicationScoped
 public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Long> {
 
     private final ConcurrentMap<Long, Goods> rows = new ConcurrentHashMap<>();
@@ -82,7 +80,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     @Override
     public List<Goods> findByStatus(GoodsStatus status) {
         if (Objects.isNull(status)) {
-            return List.of();
+            return Collections.emptyList();
         }
         return rows.values().stream()
                 .filter(p -> status.equals(p.getStatus()))
@@ -200,16 +198,17 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         for (LambdaCondition orderBy : orderByConditions) {
             String field = orderBy.property();
             boolean desc = "DESC".equalsIgnoreCase(orderBy.operator());
-            Comparator<Goods> current = switch (field) {
-                case "id" -> Comparator.comparing(Goods::id);
-                case "createTime" -> Comparator.comparing(Goods::getCreateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                case "updateTime" -> Comparator.comparing(Goods::getUpdateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                case "price" -> Comparator.comparing(Goods::getPrice,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                default -> null;
-            };
+            Comparator<Goods> current;
+            switch (field) {
+                case "id": current = Comparator.comparing(Goods::id); break;
+                case "createTime": current = Comparator.comparing(Goods::getCreateTime,
+                        Comparator.nullsLast(Comparator.naturalOrder())); break;
+                case "updateTime": current = Comparator.comparing(Goods::getUpdateTime,
+                        Comparator.nullsLast(Comparator.naturalOrder())); break;
+                case "price": current = Comparator.comparing(Goods::getPrice,
+                        Comparator.nullsLast(Comparator.naturalOrder())); break;
+                default: current = null; break;
+            }
             if (Objects.isNull(current)) {
                 continue;
             }

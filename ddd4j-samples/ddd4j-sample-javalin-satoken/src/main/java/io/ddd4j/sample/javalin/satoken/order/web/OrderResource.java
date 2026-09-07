@@ -24,9 +24,11 @@ import io.ddd4j.sample.javalin.satoken.order.web.dto.AddOrderLineRequest;
 import io.ddd4j.sample.javalin.satoken.order.web.dto.CreateOrderRequest;
 import io.ddd4j.sample.javalin.satoken.order.web.dto.OrderResponse;
 import io.javalin.apibuilder.EndpointGroup;
+import lombok.Value;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.post;
@@ -122,7 +124,7 @@ public class OrderResource {
             get("/orders", ctx -> {
                 List<OrderResponse> items = orderApplicationService.listAll().stream()
                         .map(OrderResponse::from)
-                        .toList();
+                        .collect(Collectors.toList());
                 ctx.json(R.ok(items));
             });
 
@@ -138,6 +140,12 @@ public class OrderResource {
     /**
      * 折扣预览响应。
      */
-    public record DiscountView(String amount, String currency) {
+    @Value
+    public static class DiscountView {
+        String amount;
+        String currency;
+
+        public String amount() { return amount; }
+        public String currency() { return currency; }
     }
 }

@@ -125,7 +125,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
      * 注册拦截器。
      */
     public void addInterceptors(InterceptorRegistry registry) {
-        if (Objects.nonNull(baseWebInterceptors) && baseWebInterceptors.isEmpty()) {
+        if (Objects.nonNull(baseWebInterceptors) && !baseWebInterceptors.isEmpty()) {
             baseWebInterceptors.forEach(baseInterceptor -> {
                 log.debug("Loading {}", baseInterceptor.getClass().getSimpleName());
                 registry.addInterceptor(baseInterceptor).addPathPatterns(baseInterceptor.pathPatterns()).excludePathPatterns(baseInterceptor.excludePathPatterns());

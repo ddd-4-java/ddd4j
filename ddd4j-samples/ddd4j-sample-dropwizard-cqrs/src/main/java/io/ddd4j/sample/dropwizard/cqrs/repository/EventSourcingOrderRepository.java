@@ -21,6 +21,7 @@ import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderRepository;
+import lombok.Value;
 
 
 import java.util.ArrayList;
@@ -92,7 +93,10 @@ public class EventSourcingOrderRepository implements OrderRepository {
      * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
      * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
      */
-    private record OrderAggregateId(String value) implements AggregateRootId {
+    @Value
+    private static class OrderAggregateId implements AggregateRootId {
+
+        String value;
 
         private static final EntityType TYPE = new StringEntityType("Order");
 

@@ -53,12 +53,11 @@ public class GoodsQuery extends Query<Goods> {
             }
             boolean desc = "DESC".equalsIgnoreCase(tokens[1]);
             switch (tokens[0]) {
-                case "id" -> applyOrder(desc, Goods::id);
-                case "createTime" -> applyOrder(desc, Goods::getCreateTime);
-                case "updateTime" -> applyOrder(desc, Goods::getUpdateTime);
-                case "price" -> applyOrder(desc, Goods::getPrice);
-                default -> {
-                }
+                case "id": applyOrder(desc, Goods::id); break;
+                case "createTime": applyOrder(desc, Goods::getCreateTime); break;
+                case "updateTime": applyOrder(desc, Goods::getUpdateTime); break;
+                case "price": applyOrder(desc, Goods::getPrice); break;
+                default: break;
             }
         }
         return this;

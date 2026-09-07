@@ -16,15 +16,21 @@ package io.ddd4j.sample.order.domain;
 
 import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
+import lombok.Value;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 
-public record Money(BigDecimal amount, String currency) implements ValueObject {
+/** 货币金额值对象，Java 8 等价实现保留 record 的值语义与组件访问器。 */
+@Value
+public class Money implements ValueObject {
 
-    public Money {
+    BigDecimal amount;
+    String currency;
+
+    public Money(BigDecimal amount, String currency) {
         Objects.requireNonNull(amount, "amount must not be null");
         if (amount.signum() < 0) {
             throw new IllegalArgumentException("amount must not be negative");
@@ -32,8 +38,16 @@ public record Money(BigDecimal amount, String currency) implements ValueObject {
         if (StrKit.isBlank(currency)) {
             throw new IllegalArgumentException("currency must not be blank");
         }
-        amount = amount.setScale(2, RoundingMode.HALF_UP);
-        currency = currency.trim().toUpperCase(Locale.ROOT);
+        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
+        this.currency = currency.trim().toUpperCase(Locale.ROOT);
+    }
+
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    public String currency() {
+        return currency;
     }
 
     public static Money cny(BigDecimal amount) {

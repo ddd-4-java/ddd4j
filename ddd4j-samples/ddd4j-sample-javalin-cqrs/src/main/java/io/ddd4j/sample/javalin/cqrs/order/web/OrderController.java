@@ -21,6 +21,9 @@ import io.ddd4j.sample.javalin.cqrs.order.application.OrderApplicationService.Cr
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.javalin.apibuilder.EndpointGroup;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -86,7 +89,7 @@ public class OrderController {
         post("/api/orders", ctx -> {
             CreateOrderRequest req = ctx.bodyAsClass(CreateOrderRequest.class);
             Order order = applicationService.createDraft(
-                    new CreateOrderCommand(req.orderNo(), req.buyerId(), req.buyerName()));
+                    new CreateOrderCommand(req.getOrderNo(), req.getBuyerId(), req.getBuyerName()));
             ctx.status(201).json(R.ok(toResponse(order)));
         });
 
@@ -95,7 +98,7 @@ public class OrderController {
             String orderId = ctx.pathParam("id");
             AddOrderLineRequest req = ctx.bodyAsClass(AddOrderLineRequest.class);
             Order order = applicationService.addLine(new AddOrderLineCommand(
-                    orderId, req.goodsId(), req.goodsName(), req.quantity(), req.unitPrice()));
+                    orderId, req.getGoodsId(), req.getGoodsName(), req.getQuantity(), req.getUnitPrice()));
             ctx.json(R.ok(toResponse(order)));
         });
 
@@ -138,20 +141,28 @@ public class OrderController {
     /**
      * 订单响应（避免将充血领域模型直接序列化，保留聚合内字段语义）。
      */
-    public record OrderResponse(
-            String id,
-            String orderNo,
-            String buyerId,
-            String buyerName,
-            String status,
-            Money totalAmount,
-            int lineCount) {
+    @Data
+    @AllArgsConstructor
+    public static class OrderResponse {
+        private final String id;
+        private final String orderNo;
+        private final String buyerId;
+        private final String buyerName;
+        private final String status;
+        private final Money totalAmount;
+        private final int lineCount;
     }
 
     /**
      * 创建订单请求。
      */
-    public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateOrderRequest {
+        private String orderNo;
+        private String buyerId;
+        private String buyerName;
     }
 
     // ========================= 映射 =========================
@@ -159,6 +170,13 @@ public class OrderController {
     /**
      * 添加订单行请求。
      */
-    public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddOrderLineRequest {
+        private String goodsId;
+        private String goodsName;
+        private int quantity;
+        private BigDecimal unitPrice;
     }
 }

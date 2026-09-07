@@ -18,6 +18,7 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.PermissionRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -70,19 +71,19 @@ public class InMemoryPermissionRepository implements PermissionRepository {
     @Override
     public List<Permission> findByModule(String module) {
         if (StrKit.isBlank(module)) {
-            return List.of();
+            return Collections.emptyList();
         }
         return rows.values().stream()
                 .filter(r -> Objects.equals(module, r.module))
                 .map(InMemoryPermissionRepository::toModel)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public List<Permission> findAll() {
         return rows.values().stream()
                 .map(InMemoryPermissionRepository::toModel)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

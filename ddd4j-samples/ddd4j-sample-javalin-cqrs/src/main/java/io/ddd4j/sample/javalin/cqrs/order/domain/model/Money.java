@@ -16,6 +16,7 @@ package io.ddd4j.sample.javalin.cqrs.order.domain.model;
 
 import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
+import lombok.Value;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,9 +32,13 @@ import java.util.Objects;
  * @param currency 货币代码（如 CNY、USD）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record Money(BigDecimal amount, String currency) implements ValueObject {
+@Value
+public class Money implements ValueObject {
 
-    public Money {
+    BigDecimal amount;
+    String currency;
+
+    public Money(BigDecimal amount, String currency) {
         Objects.requireNonNull(amount, "amount must not be null");
         if (amount.signum() < 0) {
             throw new IllegalArgumentException("amount must not be negative");
@@ -41,8 +46,16 @@ public record Money(BigDecimal amount, String currency) implements ValueObject {
         if (StrKit.isBlank(currency)) {
             throw new IllegalArgumentException("currency must not be blank");
         }
-        amount = amount.setScale(2, RoundingMode.HALF_UP);
-        currency = currency.trim().toUpperCase(Locale.ROOT);
+        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
+        this.currency = currency.trim().toUpperCase(Locale.ROOT);
+    }
+
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    public String currency() {
+        return currency;
     }
 
     /**

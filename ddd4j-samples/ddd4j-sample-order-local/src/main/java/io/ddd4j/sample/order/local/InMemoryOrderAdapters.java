@@ -26,12 +26,14 @@ import io.ddd4j.sample.order.domain.OrderRepository;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * 单进程订单适配器，用于本地开发、Web 示例与无外部中间件的契约验证。
@@ -72,7 +74,8 @@ public final class InMemoryOrderAdapters implements OrderRepository, OutboxPort,
 
     @Override
     public List<Order> findAll(int offset, int limit) {
-        return orders.values().stream().skip(offset).limit(limit).toList();
+        return Collections.unmodifiableList(orders.values().stream()
+                .skip(offset).limit(limit).collect(Collectors.toList()));
     }
 
     @Override
@@ -87,7 +90,8 @@ public final class InMemoryOrderAdapters implements OrderRepository, OutboxPort,
 
     @Override
     public List<OutboxMessage> pending(int limit) {
-        return new ArrayList<>(pending.values()).stream().limit(limit).toList();
+        return Collections.unmodifiableList(new ArrayList<>(pending.values()).stream()
+                .limit(limit).collect(Collectors.toList()));
     }
 
     @Override
@@ -118,7 +122,7 @@ public final class InMemoryOrderAdapters implements OrderRepository, OutboxPort,
                 .filter(order -> Objects.isNull(criteria.status()) || criteria.status() == order.status())
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
-                .toList();
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     @Override

@@ -212,7 +212,7 @@
         <guice.version>5.1.0</guice.version>
         <!-- ==================================================================================
              容器框架版本定义（Stage E 后续批次移植用）：为 data-cqrs/projection/web/runtime/sample 各
-             框架线（javalin/vertx/micronaut/helidon/dropwizard）预先锁定 JDK8 可用的最后大版本。
+             框架线（javalin/vertx/micronaut/dropwizard）预先锁定 JDK8 可用的最后大版本。
              本批次只定义版本属性 + BOM import，不添加任何依赖，避免影响现网模块。
              版本均经 Maven Central maven-metadata 核实为对应线的最新补丁（2026-09-02）。
              ================================================================================== -->
@@ -222,8 +222,6 @@
         <vertx.version>4.5.33</vertx.version>
         <!-- Micronaut 3.10.10：Micronaut 4 弃用 JDK8（BOM=micronaut-bom） -->
         <micronaut.version>3.10.10</micronaut.version>
-        <!-- Helidon 2.6.14：Helidon 3 弃用 JDK8，2.x 为 javax 线（BOM=helidon-bom） -->
-        <helidon.version>2.6.14</helidon.version>
         <!-- Dropwizard 2.1.12：Dropwizard 3+ 弃用 JDK8，2.x 为 javax/jetty9 线（BOM=dropwizard-bom；
              io.dropwizard.metrics 与本框架无关，见上方 dropwizard-metrics.version） -->
         <dropwizard-bom.version>2.1.12</dropwizard-bom.version>
@@ -668,6 +666,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- 在本层先导入既定 Spring 基线，防止后续 BOM 把组件拆成不同补丁版本。 -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/com.eventstore/db-client-java -->
             <!-- EventStoreDB Client：EventStoreDB（事件溯源数据库）的 gRPC Java 客户端。
                  5.4.5 字节码 major=52=Java 8 已实测；io.kurrent:kurrentdb-client 是更名后新 GAV（包名不兼容，勿混用）。 -->
@@ -5157,14 +5163,6 @@
                 <groupId>io.micronaut</groupId>
                 <artifactId>micronaut-bom</artifactId>
                 <version>${micronaut.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.helidon/helidon-bom -->
-            <dependency>
-                <groupId>io.helidon</groupId>
-                <artifactId>helidon-bom</artifactId>
-                <version>${helidon.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -15,6 +15,7 @@
 package io.ddd4j.sample.order.jdbc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.redis.testcontainers.RedisContainer;
 import io.ddd4j.mq.delivery.MQDeliveryPolicy;
 import io.ddd4j.mq.delivery.MQOutboxRecord;
@@ -53,11 +54,16 @@ import redis.clients.jedis.JedisPooled;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,9 +72,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 共享订单业务内核的真实基础设施闭环测试。
  *
  * <p>使用 PostgreSQL、Redis 与 Kafka 容器验证同一订单事务内的写模型、读模型和 Outbox，及其后续的
- * broker ACK 发布与支付幂等。无 Docker 时由 Testcontainers 自动跳过。
+ * broker ACK 发布与支付幂等。该门禁要求 Docker 可用，不允许静默跳过。
  */
-@Testcontainers(disabledWithoutDocker = true)
+@Testcontainers
 class OrderInfrastructureRoundTripTest {
 
     private static final String TOPIC = "ddd4j-sample-order-it";
@@ -96,8 +102,8 @@ class OrderInfrastructureRoundTripTest {
         Flyway.configure().dataSource(source).locations("classpath:db/migration").load().migrate();
         dataSource = source;
 
-        try (Admin admin = Admin.create(Map.of("bootstrap.servers", KAFKA.getBootstrapServers()))) {
-            admin.createTopics(List.of(new NewTopic(TOPIC, 1, (short) 1))).all().get();
+        try (Admin admin = Admin.create(Collections.singletonMap("bootstrap.servers", KAFKA.getBootstrapServers()))) {
+            admin.createTopics(Collections.singletonList(new NewTopic(TOPIC, 1, (short) 1))).all().get();
         }
     }
 
@@ -105,7 +111,7 @@ class OrderInfrastructureRoundTripTest {
     void shouldPersistProjectPublishAndDeduplicatePayment() {
         JdbcOrderTransactionPort transaction = new JdbcOrderTransactionPort(dataSource);
         JdbcOrderRepository repository = new JdbcOrderRepository(transaction);
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         JdbcOutboxPort outbox = new JdbcOutboxPort(transaction, objectMapper);
         JdbcOrderReadModelPort readModels = new JdbcOrderReadModelPort(transaction);
 
@@ -116,7 +122,7 @@ class OrderInfrastructureRoundTripTest {
                     new RedisIdempotencyPort(jedis), transaction);
             TransactionalOutboxPublisher publisher = new TransactionalOutboxPublisher(transaction,
                     new OutboxPublisher(outbox, new KafkaIntegrationEventPublisher(producer, objectMapper, TOPIC)));
-            consumer.subscribe(List.of(TOPIC));
+            consumer.subscribe(Collections.singletonList(TOPIC));
 
             Order created = applicationService.create(new CreateOrderCommand("ORDER-IT-001", "buyer-1", "Alice"));
             applicationService.addLine(new AddOrderLineCommand(created.id(), "goods-1", "DDD Book", 2,
@@ -151,8 +157,8 @@ class OrderInfrastructureRoundTripTest {
         String failedId = "lease-failed-" + UUID.randomUUID();
 
         transaction.execute(() -> {
-            store.append(MQOutboxRecord.pending(publishedId, "orders.created", "{}", Map.of(), now));
-            store.append(MQOutboxRecord.pending(failedId, "orders.created", "{}", Map.of(), now));
+            store.append(MQOutboxRecord.pending(publishedId, "orders.created", "{}", Collections.emptyMap(), now));
+            store.append(MQOutboxRecord.pending(failedId, "orders.created", "{}", Collections.emptyMap(), now));
         });
 
         List<MQOutboxRecord> claimed = store.claim("test-instance", now.plusSeconds(1), 10, policy);
@@ -168,7 +174,7 @@ class OrderInfrastructureRoundTripTest {
             MQOutboxRecord record = retry.stream()
                     .filter(candidate -> candidate.messageId().equals(failedId))
                     .findFirst()
-                    .orElseThrow();
+                    .orElseThrow(() -> new NoSuchElementException("retry record not found: " + failedId));
             assertThat(record.attempts()).isEqualTo(attempt);
             assertThat(store.reschedule(failedId, "test-instance", attemptTime,
                     "broker unavailable", policy)).isTrue();
@@ -178,29 +184,30 @@ class OrderInfrastructureRoundTripTest {
     }
 
     private Map<String, Object> producerProperties() {
-        return Map.of(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers(),
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName(),
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName(),
-                ProducerConfig.ACKS_CONFIG, "all"
-        );
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.ACKS_CONFIG, "all");
+        return properties;
     }
 
     private Map<String, Object> consumerProperties() {
-        return Map.of(
-                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers(),
-                ConsumerConfig.GROUP_ID_CONFIG, "ddd4j-order-it-" + UUID.randomUUID(),
-                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
-                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName(),
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName()
-        );
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "ddd4j-order-it-" + UUID.randomUUID());
+        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        return properties;
     }
 
     private List<String> readOutboxStatus() {
         JdbcOrderTransactionPort transaction = new JdbcOrderTransactionPort(dataSource);
         return transaction.query(connection -> {
-            try (var statement = connection.prepareStatement("SELECT status FROM sample_order_outbox ORDER BY occurred_at");
-                 var rows = statement.executeQuery()) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "SELECT status FROM sample_order_outbox ORDER BY occurred_at");
+                 ResultSet rows = statement.executeQuery()) {
                 ArrayList<String> statuses = new ArrayList<>();
                 while (rows.next()) {
                     statuses.add(rows.getString(1));

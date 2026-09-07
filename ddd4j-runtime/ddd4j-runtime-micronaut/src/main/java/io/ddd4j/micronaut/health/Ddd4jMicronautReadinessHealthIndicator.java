@@ -16,7 +16,7 @@ package io.ddd4j.micronaut.health;
 
 import java.util.Collections;
 import io.ddd4j.core.health.ReadinessReport;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.async.publisher.Publishers;
 import io.micronaut.health.HealthStatus;

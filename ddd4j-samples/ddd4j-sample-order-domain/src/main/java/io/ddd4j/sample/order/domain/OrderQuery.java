@@ -14,10 +14,40 @@
  */
 package io.ddd4j.sample.order.domain;
 
-public record OrderQuery(String buyerId, OrderStatus status, int page, int size) {
-    public OrderQuery {
+import lombok.Value;
+
+/** 订单查询条件，Java 8 等价实现保留 record 的值语义与组件访问器。 */
+@Value
+public class OrderQuery {
+
+    String buyerId;
+    OrderStatus status;
+    int page;
+    int size;
+
+    public OrderQuery(String buyerId, OrderStatus status, int page, int size) {
         if (page < 1 || size < 1 || size > 100) {
             throw new IllegalArgumentException("page must be positive and size must be between 1 and 100");
         }
+        this.buyerId = buyerId;
+        this.status = status;
+        this.page = page;
+        this.size = size;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public OrderStatus status() {
+        return status;
+    }
+
+    public int page() {
+        return page;
+    }
+
+    public int size() {
+        return size;
     }
 }

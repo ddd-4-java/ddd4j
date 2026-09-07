@@ -1525,6 +1525,22 @@
                 <spring.profiles.active>local</spring.profiles.active>
             </properties>
         </profile>
+        <!-- 显式运行 samples 全部测试，覆盖父 POM 历史默认跳过设置。 -->
+        <profile>
+            <id>sample-verification</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <skipTests>false</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
     </profiles>
 

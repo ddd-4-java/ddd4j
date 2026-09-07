@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.satoken.goods.web.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 /**
@@ -21,5 +25,17 @@ import java.math.BigDecimal;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record CreateGoodsRequest(String code, String name, BigDecimal price, Integer stock) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateGoodsRequest {
+    private String code;
+    private String name;
+    private BigDecimal price;
+    private Integer stock;
+
+    public String code() { return code; }
+    public String name() { return name; }
+    public BigDecimal price() { return price; }
+    public Integer stock() { return stock; }
 }

@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -141,7 +142,7 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
                     int attempts = rows.getInt("attempts") + 1;
                     lease(messageId, leaseOwner, leaseUntil, attempts);
                     records.add(new MQOutboxRecord(messageId, rows.getString("event_type"), rows.getString("payload"),
-                            Map.of(MQDeliveryHeaders.MESSAGE_ID, messageId), MQOutboxStatus.LEASED,
+                            Collections.singletonMap(MQDeliveryHeaders.MESSAGE_ID, messageId), MQOutboxStatus.LEASED,
                             rows.getTimestamp("available_at").toInstant(), leaseOwner, leaseUntil, attempts,
                             rows.getString("last_error"), toInstant(rows, "published_at")));
                 }

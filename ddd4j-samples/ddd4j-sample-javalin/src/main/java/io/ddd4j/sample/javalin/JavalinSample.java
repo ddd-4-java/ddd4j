@@ -30,9 +30,11 @@ import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
 import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.web.javalin.Ddd4jJavalinWeb;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
+import io.javalin.plugin.json.JavalinJackson;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 
 /** Javalin runtime wiring for the shared production-style Order sample. */
@@ -54,7 +56,7 @@ public final class JavalinSample {
         String token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
                 .setLoginId("sample-user")
                 .setUserId("sample-user")
-                .setPerms(java.util.Set.of("order:read", "order:write"))));
+                .setPerms(new HashSet<>(Arrays.asList("order:read", "order:write")))));
 
         SpiRegistrationScope spiScope = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, eventPublisher)
@@ -67,11 +69,11 @@ public final class JavalinSample {
             OrderApplicationService service = new OrderApplicationService(adapters, adapters, adapters, adapters);
             OrderController controller = new OrderController(service);
             Javalin app = Javalin.create(config -> {
-                config.startup.showJavalinBanner = false;
+                config.showJavalinBanner = false;
                 config.jsonMapper(new JavalinJackson());
-                new Ddd4jJavalinWeb().configure(config);
-                config.routes.apiBuilder(controller::routes);
             });
+            new Ddd4jJavalinWeb().configure(app);
+            app.routes(controller::routes);
             app.start(port);
             return new JavalinApplication(app, token, spiScope);
         } catch (RuntimeException exception) {
@@ -80,13 +82,28 @@ public final class JavalinSample {
         }
     }
 
-    public record JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope)
-            implements AutoCloseable {
+    public static final class JavalinApplication implements AutoCloseable {
 
-        public JavalinApplication {
-            Objects.requireNonNull(app, "app must not be null");
-            Objects.requireNonNull(token, "token must not be null");
-            Objects.requireNonNull(spiScope, "spiScope must not be null");
+        private final Javalin app;
+        private final String token;
+        private final SpiRegistrationScope spiScope;
+
+        public JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope) {
+            this.app = Objects.requireNonNull(app, "app must not be null");
+            this.token = Objects.requireNonNull(token, "token must not be null");
+            this.spiScope = Objects.requireNonNull(spiScope, "spiScope must not be null");
+        }
+
+        public Javalin app() {
+            return app;
+        }
+
+        public String token() {
+            return token;
+        }
+
+        public SpiRegistrationScope spiScope() {
+            return spiScope;
         }
 
         @Override

@@ -17,14 +17,10 @@ package io.ddd4j.sample.javalin.cqrs.goods.web;
 import java.util.Objects;
 
 import io.ddd4j.sample.javalin.cqrs.TestSupport;
+import io.ddd4j.sample.javalin.cqrs.TestHttpClient;
+import io.ddd4j.sample.javalin.cqrs.TestHttpClient.HttpResponse;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,14 +37,14 @@ class GoodsControllerTest {
     private static final String QUERY = "/api/goods/query";
 
     private static Javalin app;
-    private static HttpClient httpClient;
+    private static TestHttpClient httpClient;
     private static String baseUrl;
 
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
         baseUrl = "http://localhost:" + app.port();
-        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+        httpClient = new TestHttpClient();
     }
 
     @AfterAll
@@ -82,33 +78,23 @@ class GoodsControllerTest {
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.postJson(baseUrl + path, body);
     }
 
     private HttpResponse<String> putJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                        .header("Content-Type", "application/json")
-                        .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.putJson(baseUrl + path, body);
     }
 
     private HttpResponse<String> put(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                        .PUT(HttpRequest.BodyPublishers.noBody()).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.put(baseUrl + path);
     }
 
     private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.get(baseUrl + path);
     }
 
     private HttpResponse<String> delete(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.delete(baseUrl + path);
     }
 
     // =================== 1) 创建 ====================

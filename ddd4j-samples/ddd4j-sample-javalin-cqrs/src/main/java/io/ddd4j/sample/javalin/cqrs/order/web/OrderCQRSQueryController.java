@@ -18,7 +18,10 @@ import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.cache.OrderCacheService;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -45,7 +48,11 @@ public class OrderCQRSQueryController {
         get("/api/orders/query/list", ctx -> {
             int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
             int pageSize = ctx.queryParamAsClass("pageSize", Integer.class).getOrDefault(10);
-            ctx.json(R.ok(Map.of("page", page, "pageSize", pageSize, "note", "see /api/orders/query/stats")));
+            Map<String, Object> result = new HashMap<>();
+            result.put("page", page);
+            result.put("pageSize", pageSize);
+            result.put("note", "see /api/orders/query/stats");
+            ctx.json(R.ok(result));
         });
 
         // GET /api/orders/query/stats
@@ -55,7 +62,10 @@ public class OrderCQRSQueryController {
         get("/api/orders/query/buyer/{buyerId}/count", ctx -> {
             String buyerId = ctx.pathParam("buyerId");
             long count = orderCacheService.getBuyerOrderCount(buyerId);
-            ctx.json(R.ok(Map.of("buyerId", buyerId, "count", count)));
+            Map<String, Object> result = new HashMap<>();
+            result.put("buyerId", buyerId);
+            result.put("count", count);
+            ctx.json(R.ok(result));
         });
 
         // GET /api/orders/query/detail/{id}
@@ -83,13 +93,15 @@ public class OrderCQRSQueryController {
     /**
      * 订单响应 record。
      */
-    public record OrderResponse(
-            String id,
-            String orderNo,
-            String buyerId,
-            String buyerName,
-            String status,
-            Money totalAmount,
-            int lineCount) {
+    @Data
+    @AllArgsConstructor
+    public static class OrderResponse {
+        private final String id;
+        private final String orderNo;
+        private final String buyerId;
+        private final String buyerName;
+        private final String status;
+        private final Money totalAmount;
+        private final int lineCount;
     }
 }

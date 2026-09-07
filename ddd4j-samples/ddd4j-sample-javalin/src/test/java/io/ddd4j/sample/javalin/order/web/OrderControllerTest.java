@@ -15,17 +15,16 @@
 package io.ddd4j.sample.javalin.order.web;
 
 import io.ddd4j.sample.javalin.JavalinSample;
+import io.ddd4j.sample.javalin.TestHttpClient;
+import io.ddd4j.sample.javalin.TestHttpClient.HttpResponse;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.context.WebHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,13 +35,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class OrderControllerTest {
 
     private static JavalinSample.JavalinApplication application;
-    private static HttpClient client;
+    private static TestHttpClient client;
     private static String baseUrl;
 
     @BeforeAll
     static void start() {
         application = JavalinSample.start(0);
-        client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+        client = new TestHttpClient();
         baseUrl = "http://localhost:" + application.app().port();
     }
 
@@ -55,8 +54,7 @@ class OrderControllerTest {
 
     @Test
     void protectedRouteRequiresBearerToken() throws Exception {
-        HttpResponse<String> response = client.send(HttpRequest.newBuilder(URI.create(baseUrl + "/api/orders"))
-                .GET().build(), HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.get(baseUrl + "/api/orders", TestHttpClient.noHeaders());
         assertEquals(401, response.statusCode());
     }
 
@@ -102,29 +100,26 @@ class OrderControllerTest {
     void requestIdIsReturnedAndContextDoesNotLeak() throws Exception {
         HttpResponse<String> first = get("/api/orders");
         HttpResponse<String> second = get("/api/orders");
-        String firstRequestId = first.headers().firstValue(WebHeaders.REQUEST_ID).orElseThrow();
-        String secondRequestId = second.headers().firstValue(WebHeaders.REQUEST_ID).orElseThrow();
+        String firstRequestId = first.header(WebHeaders.REQUEST_ID);
+        String secondRequestId = second.header(WebHeaders.REQUEST_ID);
         assertTrue(StrKit.isNotBlank(firstRequestId));
         assertTrue(StrKit.isNotBlank(secondRequestId));
         assertNotEquals(firstRequestId, secondRequestId);
     }
 
     private static HttpResponse<String> get(String path) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token())
-                .GET().build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
+        Map<String, String> headers = new HashMap<>();
+        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
+        return client.get(baseUrl + path, headers);
     }
 
     private static HttpResponse<String> post(String path, String body, String idempotencyKey) throws Exception {
-        HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
+        Map<String, String> headers = new HashMap<>();
+        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
         if (Objects.nonNull(idempotencyKey)) {
-            request.header(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
+            headers.put(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
         }
-        return client.send(request.POST(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return client.postJson(baseUrl + path, body, headers);
     }
 
     private static String extract(String json, String field) {

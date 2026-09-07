@@ -124,13 +124,13 @@ public class JavalinCqrsApplication {
 
         // 7. 启动 Javalin
         Javalin app = Javalin.create(javalinConfig -> {
-            javalinConfig.startup.showJavalinBanner = false;
-            javalinConfig.routes.apiBuilder(() -> {
-                orderController.routes();
-                orderQueryController.routes();
-                goodsController.routes();
-                goodsReadController.routes();
-            });
+            javalinConfig.showJavalinBanner = false;
+        });
+        app.routes(() -> {
+            orderController.routes();
+            orderQueryController.routes();
+            goodsController.routes();
+            goodsReadController.routes();
         });
 
         DomainEventPublisher publisher = Contexts.getOrThrow(

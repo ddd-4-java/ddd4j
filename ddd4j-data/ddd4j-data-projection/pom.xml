@@ -15,7 +15,7 @@
     <description>ddd4j 投影侧框架集成 SPI：ProjectionHandler 业务入口 + ProjectionHandlerRegistry 注册中心
         + ProjectionDispatcher 分发门面。投影契约（ProjectionService/EventChunkReader/
         ProjectionPositionRepository 等 16 个抽象）全部复用 ddd4j-core，本模块不重定义任何契约；
-        运行时调度器在 ddd4j-data-projection-{spring,quarkus,micronaut,helidon,javalin,vertx,dropwizard}。
+        1.0.x 运行时调度器位于 ddd4j-data-projection-{spring,micronaut,javalin,vertx,dropwizard}。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 

@@ -18,23 +18,30 @@ import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderStatus;
+import lombok.Value;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 订单 REST 响应。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,
-                            OrderStatus status, String totalAmount, String currency,
-                            List<OrderLineResponse> lines) {
+@Value
+public class OrderResponse {
+    String id; String orderNo; String buyerId; String buyerName; OrderStatus status;
+    String totalAmount; String currency; List<OrderLineResponse> lines;
+    public String id() { return id; } public String orderNo() { return orderNo; }
+    public String buyerId() { return buyerId; } public String buyerName() { return buyerName; }
+    public OrderStatus status() { return status; } public String totalAmount() { return totalAmount; }
+    public String currency() { return currency; } public List<OrderLineResponse> lines() { return lines; }
 
     public static OrderResponse from(Order order) {
         Money total = order.totalAmount();
         List<OrderLineResponse> lineResponses = order.lines().stream()
                 .map(OrderLineResponse::from)
-                .toList();
+                .collect(Collectors.toList());
         return new OrderResponse(
                 order.id(),
                 order.orderNo(),
@@ -47,8 +54,12 @@ public record OrderResponse(String id, String orderNo, String buyerId, String bu
         );
     }
 
-    public record OrderLineResponse(String id, String goodsId, String goodsName,
-                                    int quantity, String unitPrice, String currency) {
+    @Value
+    public static class OrderLineResponse {
+        String id; String goodsId; String goodsName; int quantity; String unitPrice; String currency;
+        public String id() { return id; } public String goodsId() { return goodsId; }
+        public String goodsName() { return goodsName; } public int quantity() { return quantity; }
+        public String unitPrice() { return unitPrice; } public String currency() { return currency; }
 
         public static OrderLineResponse from(OrderLine line) {
             return new OrderLineResponse(

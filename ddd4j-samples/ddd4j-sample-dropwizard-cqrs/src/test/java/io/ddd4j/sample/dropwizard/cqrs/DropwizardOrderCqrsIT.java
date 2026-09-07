@@ -15,16 +15,17 @@
 package io.ddd4j.sample.dropwizard.cqrs;
 
 import io.ddd4j.sample.dropwizard.cqrs.web.OrderResource;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,13 +39,26 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <p>{@link OrderResource} 访问 {@link DropwizardCqrsApplication} 中的
  * 共享静态组件，测试通过 {@code @BeforeEach} 重置读模型状态。
  */
-@ExtendWith(DropwizardExtensionsSupport.class)
 @DisplayName("Dropwizard Order CQRS 集成测试")
 class DropwizardOrderCqrsIT {
 
+    private static boolean resourcesStarted;
     private static final ResourceExtension RESOURCES = ResourceExtension.builder()
             .addResource(new OrderResource())
             .build();
+
+    @BeforeAll
+    static void startResources() throws Throwable {
+        RESOURCES.before();
+        resourcesStarted = true;
+    }
+
+    @AfterAll
+    static void stopResources() throws Throwable {
+        if (resourcesStarted) {
+            RESOURCES.after();
+        }
+    }
 
     @BeforeEach
     void cleanUp() {
@@ -56,7 +70,7 @@ class DropwizardOrderCqrsIT {
     void createOrder_returns201() {
         Response response = RESOURCES.target("/orders")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(Map.of("orderNo", "ORD-001", "buyerId", "B001", "buyerName", "Alice")));
+                .post(Entity.json(orderRequest("ORD-001", "B001", "Alice")));
 
         assertThat(response.getStatus()).isEqualTo(201);
         Map<String, Object> body = response.readEntity(Map.class);
@@ -69,7 +83,7 @@ class DropwizardOrderCqrsIT {
     void getOrder_fromReadModel() {
         Response createResp = RESOURCES.target("/orders")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(Map.of("orderNo", "ORD-002", "buyerId", "B002", "buyerName", "Bob")));
+                .post(Entity.json(orderRequest("ORD-002", "B002", "Bob")));
         String orderId = (String) createResp.readEntity(Map.class).get("orderId");
 
         // 触发投影（使用 Application 共享的 ViewManager）
@@ -89,12 +103,20 @@ class DropwizardOrderCqrsIT {
     void createOrder_idempotent() {
         RESOURCES.target("/orders")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(Map.of("orderNo", "ORD-003", "buyerId", "B003", "buyerName", "Charlie")));
+                .post(Entity.json(orderRequest("ORD-003", "B003", "Charlie")));
 
         Response response = RESOURCES.target("/orders")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(Map.of("orderNo", "ORD-003", "buyerId", "B003", "buyerName", "Charlie")));
+                .post(Entity.json(orderRequest("ORD-003", "B003", "Charlie")));
 
         assertThat(response.getStatus()).isEqualTo(409);
+    }
+
+    private static Map<String, Object> orderRequest(String orderNo, String buyerId, String buyerName) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("orderNo", orderNo);
+        request.put("buyerId", buyerId);
+        request.put("buyerName", buyerName);
+        return request;
     }
 }

@@ -12,7 +12,7 @@
 
     <artifactId>ddd4j-data-projection-spring</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 投影调度 Spring 适配（Spring WebMVC/WebFlux + Helidon-Spring）：
+    <description>ddd4j 投影调度 Spring 适配（Spring WebMVC/WebFlux）：
         SpringProjectionScheduler 以 @Component + SmartLifecycle 实现 ViewScheduler SPI
         （TaskScheduler.schedule + CronTrigger 注册定时任务），SpringProjectionViewManager
         以 @Component 实现 ViewManager SPI（收集 ProjectionView Bean + ProjectionRunner 驱动

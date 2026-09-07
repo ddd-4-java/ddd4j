@@ -18,8 +18,6 @@ import io.ddd4j.sample.javalin.satoken.order.domain.model.Money;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
 import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.javalin.satoken.order.domain.service.OrderDomainService;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -28,19 +26,16 @@ import java.util.Objects;
 /**
  * 订单应用服务：编排业务用例，领域规则下沉到 Order 聚合中。
  *
- * <p>Quarkus CDI 管理（{@link ApplicationScoped}），
- * 通过构造器注入 {@link OrderRepository} 与 {@link OrderDomainService}。
+ * <p>Javalin 入口通过构造器装配 {@link OrderRepository} 与 {@link OrderDomainService}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-@ApplicationScoped
 public class OrderApplicationService {
 
     private final OrderRepository repository;
     private final OrderDomainService domainService;
 
-    @Inject
     public OrderApplicationService(OrderRepository repository, OrderDomainService domainService) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.domainService = Objects.requireNonNull(domainService, "domainService must not be null");

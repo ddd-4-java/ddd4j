@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.web.webmvc;
 
 import feign.Contract;
@@ -17,13 +31,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.handler.MappedInterceptor;
+import org.springframework.web.util.ServletRequestPathUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static io.ddd4j.core.constant.ContextConstants.SYSTEM_ID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,19 +54,30 @@ class ThreeLineWebParityTest {
     }
 
     @Test
-    void nonEmptyInterceptorsAreRegisteredWithTheirPaths() {
+    void nonEmptyInterceptorsAreRegisteredWithTheirPaths() throws Exception {
         BaseWebInterceptor interceptor = new BaseWebInterceptor() {
             @Override public int getOrder() { return 0; }
             @Override public String[] pathPatterns() { return new String[]{"/protected/**"}; }
+            @Override public String[] excludePathPatterns() { return new String[]{"/protected/skipped"}; }
         };
-        BaseWebConfig config = new BaseWebConfig(Collections.singletonList(interceptor),
+        BaseWebInterceptor second = new BaseWebInterceptor() {
+            @Override public int getOrder() { return 1; }
+        };
+        BaseWebConfig config = new BaseWebConfig(java.util.Arrays.asList(interceptor, second),
                 new BaseCoreProperties(), Collections.emptyList());
         RecordingRegistry registry = new RecordingRegistry();
         config.addInterceptors(registry);
-        assertEquals(1, registry.entries().size(), "non-empty interceptor list must be registered");
+        assertEquals(2, registry.entries().size(), "all non-empty interceptors must be registered");
         MappedInterceptor mapped = (MappedInterceptor) registry.entries().get(0);
         assertSame(interceptor, mapped.getInterceptor());
-        assertArrayEquals(new String[]{"/protected/**"}, mapped.getPathPatterns());
+        assertArrayEquals(new String[]{"/protected/**"}, includedPatterns(mapped));
+        assertSame(second, ((MappedInterceptor) registry.entries().get(1)).getInterceptor());
+        MockHttpServletRequest included = new MockHttpServletRequest("GET", "/protected/ok");
+        ServletRequestPathUtils.parseAndCache(included);
+        assertTrue(mapped.matches(included));
+        MockHttpServletRequest excluded = new MockHttpServletRequest("GET", "/protected/skipped");
+        ServletRequestPathUtils.parseAndCache(excluded);
+        assertFalse(mapped.matches(excluded));
     }
 
     @Test
@@ -64,15 +92,16 @@ class ThreeLineWebParityTest {
     void systemIdDefaultsForNullAndEmptyButPreservesAValue() throws Exception {
         for (String value : new String[]{null, "", "tenant-system"}) {
             ThreadContext.clear();
-            if (value != null) {
-                ThreadContext.set(SYSTEM_ID, value);
+            if (Objects.nonNull(value)) {
+                ThreadContext.put(SYSTEM_ID, value);
             }
             RequestTemplate template = new RequestTemplate();
             template.methodMetadata(new Contract.Default().parseAndValidateMetadata(HeaderClient.class).get(0));
             template.feignTarget(new Target.HardCodedTarget<HeaderClient>(HeaderClient.class, "parity", "http://localhost"));
             new FeignHeaderInterceptor().apply(template);
-            String expected = value == null || value.isEmpty() ? "0" : "tenant-system";
+            String expected = Objects.isNull(value) || value.isEmpty() ? "0" : "tenant-system";
             for (String name : FeignHeaderInterceptor.HEADER_SYSTEM_IDS) {
+                assertNotNull(template.headers().get(name), name + " must be present");
                 assertEquals(Collections.singletonList(expected), new java.util.ArrayList<String>(template.headers().get(name)), name);
             }
         }
@@ -100,6 +129,15 @@ class ThreeLineWebParityTest {
 
     private void headerEndpoint(String value) { }
 
+    private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
+        // Spring 7 移除了旧 getter，测试观察同一注册结果。
+        try {
+            return (String[]) MappedInterceptor.class.getMethod("getIncludePathPatterns").invoke(interceptor);
+        } catch (NoSuchMethodException exception) {
+            return (String[]) MappedInterceptor.class.getMethod("getPathPatterns").invoke(interceptor);
+        }
+    }
+
     interface HeaderClient {
         @RequestLine("GET /")
         @FeignHeader(autoFillTenantId = false, useWebRequestHeader = false)
@@ -110,4 +148,3 @@ class ThreeLineWebParityTest {
         List<Object> entries() { return getInterceptors(); }
     }
 }
-

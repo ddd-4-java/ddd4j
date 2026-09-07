@@ -24,7 +24,7 @@ import io.ddd4j.runtime.testkit.RuntimeContract;
 import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 import io.ddd4j.spring.config.SpringCoreConfig;
-import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 class SpringRuntimeContractTest extends AbstractRuntimeContractTest {

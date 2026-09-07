@@ -22,11 +22,13 @@ import io.ddd4j.sample.javalin.cqrs.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.OrderStatus;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * 基于内存的订单仓库实现（第二轨：充血模型）。
@@ -70,7 +72,7 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     @Override
     public List<Order> findAll() {
-        return rows.values().stream().map(this::toModel).toList();
+        return rows.values().stream().map(this::toModel).collect(Collectors.toList());
     }
 
     @Override
@@ -93,10 +95,10 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
     public Order toModel(OrderPO persistenceObject) {
         Objects.requireNonNull(persistenceObject, "persistenceObject must not be null");
         List<OrderLine> lines = Optional.ofNullable(persistenceObject.getLines())
-                .orElseGet(List::of)
+                .orElseGet(Collections::emptyList)
                 .stream()
                 .map(this::toLineModel)
-                .toList();
+                .collect(Collectors.toList());
         return new Order(
                 persistenceObject.getId(),
                 persistenceObject.getOrderNo(),
@@ -119,7 +121,7 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
                 .status(model.status().name())
                 .totalAmount(totalAmount.amount())
                 .currency(totalAmount.currency())
-                .lines(model.lines().stream().map(this::toLinePersistenceObject).toList())
+                .lines(model.lines().stream().map(this::toLinePersistenceObject).collect(Collectors.toList()))
                 .build();
     }
 

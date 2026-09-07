@@ -17,14 +17,10 @@ package io.ddd4j.sample.javalin.cqrs.order.web;
 import java.util.Objects;
 
 import io.ddd4j.sample.javalin.cqrs.TestSupport;
+import io.ddd4j.sample.javalin.cqrs.TestHttpClient;
+import io.ddd4j.sample.javalin.cqrs.TestHttpClient.HttpResponse;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,14 +35,14 @@ class OrderControllerTest {
     private static final String PREFIX = "/api/orders";
 
     private static Javalin app;
-    private static HttpClient httpClient;
+    private static TestHttpClient httpClient;
     private static String baseUrl;
 
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
         baseUrl = "http://localhost:" + app.port();
-        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+        httpClient = new TestHttpClient();
     }
 
     @AfterAll
@@ -74,15 +70,11 @@ class OrderControllerTest {
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.postJson(baseUrl + path, body);
     }
 
     private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.get(baseUrl + path);
     }
 
     // =================== 1) createDraft ====================

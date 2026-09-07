@@ -15,9 +15,24 @@
 package io.ddd4j.sample.order.application;
 
 import io.ddd4j.sample.order.domain.OrderStatus;
+import lombok.Value;
 
 import java.math.BigDecimal;
 
-public record OrderReadModel(String id, String orderNo, String buyerId, String buyerName,
-                             OrderStatus status, BigDecimal totalAmount) {
+/** 订单读模型，Java 8 等价实现保留 record 值语义。 */
+@Value
+public class OrderReadModel {
+    String id;
+    String orderNo;
+    String buyerId;
+    String buyerName;
+    OrderStatus status;
+    BigDecimal totalAmount;
+
+    public String id() { return id; }
+    public String orderNo() { return orderNo; }
+    public String buyerId() { return buyerId; }
+    public String buyerName() { return buyerName; }
+    public OrderStatus status() { return status; }
+    public BigDecimal totalAmount() { return totalAmount; }
 }

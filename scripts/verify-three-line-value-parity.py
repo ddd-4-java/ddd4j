@@ -29,22 +29,26 @@ def main():
         destination = args.output / ("classes-" + str(index + 1))
         destination.mkdir(exist_ok=True)
         files = [root / p for p in SOURCES]
+        source_hashes = {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in SOURCES}
         command = [str(jdk / "bin/javac"), "-encoding", "UTF-8", "-proc:none", "-parameters",
                    "-d", str(destination), *map(str, files), str(probe)]
         compile_result = subprocess.run(command, capture_output=True, text=True)
         result = {"root": str(root), "jdk": str(jdk), "compile_command": command,
                   "head": subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip(),
-                  "source_hashes": {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in SOURCES},
+                  "source_hashes": source_hashes,
                   "compile_exit": compile_result.returncode, "compile_stderr": compile_result.stderr}
         if compile_result.returncode == 0:
             execution = subprocess.run([str(jdk / "bin/java"), "-cp", str(destination), "ValueContractProbe"],
                                        capture_output=True, text=True)
             result.update(run_exit=execution.returncode, stdout=execution.stdout, stderr=execution.stderr)
+        result["source_stable"] = all(
+            (root / p).is_file() and hashlib.sha256((root / p).read_bytes()).hexdigest() == digest
+            for p, digest in source_hashes.items())
         results.append(result)
         print("JDK " + version + ": compile=" + str(result["compile_exit"]) + " run=" + str(result.get("run_exit")))
         if result.get("stderr"):
             print(result["stderr"], file=sys.stderr)
-    passed = all(r["compile_exit"] == 0 and r.get("run_exit") == 0 for r in results)
+    passed = all(r["compile_exit"] == 0 and r.get("run_exit") == 0 and r["source_stable"] for r in results)
     identical = len({r.get("stdout", "") for r in results}) == 1
     (args.output / "results.json").write_text(json.dumps(
         {"passed": passed and identical, "public_api_and_values_identical": identical, "runs": results},
@@ -55,4 +59,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

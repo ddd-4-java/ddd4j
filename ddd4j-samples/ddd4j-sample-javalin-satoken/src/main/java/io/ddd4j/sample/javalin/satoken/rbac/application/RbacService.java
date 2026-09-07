@@ -72,7 +72,7 @@ public class RbacService implements SubjectDataProvider {
     public String login(String username, String password) {
         Objects.requireNonNull(username, "username must not be null");
         Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isEmpty()) {
+        if (!userOpt.isPresent()) {
             return null;
         }
         User user = userOpt.get();
@@ -323,7 +323,7 @@ public class RbacService implements SubjectDataProvider {
         Objects.requireNonNull(principal, "principal must not be null");
         Object userId = principal.getUserId();
         if (Objects.isNull(userId)) {
-            return List.of();
+            return Collections.emptyList();
         }
         return new ArrayList<>(listPermissionCodesOfUser(String.valueOf(userId)));
     }
@@ -333,7 +333,7 @@ public class RbacService implements SubjectDataProvider {
         Objects.requireNonNull(principal, "principal must not be null");
         Object userId = principal.getUserId();
         if (Objects.isNull(userId)) {
-            return List.of();
+            return Collections.emptyList();
         }
         return new ArrayList<>(listRoleCodesOfUser(String.valueOf(userId)));
     }

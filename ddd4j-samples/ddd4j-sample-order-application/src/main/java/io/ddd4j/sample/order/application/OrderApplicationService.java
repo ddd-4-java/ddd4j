@@ -23,10 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class OrderApplicationService {
@@ -120,11 +123,13 @@ public class OrderApplicationService {
     }
 
     private void persist(Order order) {
-        List<DomainEvent<?>> events = List.copyOf(order.domainEvents());
+        List<DomainEvent<?>> events = Collections.unmodifiableList(new ArrayList<>(order.domainEvents()));
         transaction.execute(() -> {
             repository.save(order);
-            outbox.append(events.stream().map(event -> new OutboxMessage(UUID.randomUUID().toString(), order.id(),
-                    event.getClass().getName(), event, Instant.now())).toList());
+            outbox.append(Collections.unmodifiableList(events.stream()
+                    .map(event -> new OutboxMessage(UUID.randomUUID().toString(), order.id(),
+                            event.getClass().getName(), event, Instant.now()))
+                    .collect(Collectors.toList())));
             readModels.project(toReadModel(order));
         });
         order.clearDomainEvents();

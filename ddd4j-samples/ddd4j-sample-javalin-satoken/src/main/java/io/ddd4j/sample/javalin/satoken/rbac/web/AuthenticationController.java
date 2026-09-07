@@ -19,6 +19,9 @@ import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.javalin.apibuilder.EndpointGroup;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +92,7 @@ public class AuthenticationController {
             get("/auth/me", ctx -> {
                 AuthPrincipal principal = rbacService.me();
                 if (Objects.isNull(principal)) {
-                    ctx.json(R.ok(Map.of("authenticated", false)));
+                    ctx.json(R.ok(Java8Maps.of("authenticated", false)));
                     return;
                 }
                 Map<String, Object> data = new HashMap<>();
@@ -103,13 +106,13 @@ public class AuthenticationController {
             });
 
             // GET /auth/status —— 登录状态
-            get("/auth/status", ctx -> ctx.json(R.ok(Map.of("login", rbacService.isLogin()))));
+            get("/auth/status", ctx -> ctx.json(R.ok(Java8Maps.of("login", rbacService.isLogin()))));
 
             // POST /auth/kickout —— 踢人下线
             post("/auth/kickout", ctx -> {
                 KickoutRequest req = ctx.bodyAsClass(KickoutRequest.class);
                 rbacService.kickout(req.userId());
-                ctx.json(R.ok(Map.of("kicked", req.userId())));
+                ctx.json(R.ok(Java8Maps.of("kicked", req.userId())));
             });
 
             // ============================ 2) 角色鉴权（SubjectKit.hasRole）============================
@@ -122,7 +125,7 @@ public class AuthenticationController {
                 }
                 RoleCheckRequest req = ctx.bodyAsClass(RoleCheckRequest.class);
                 boolean has = rbacService.hasRole(req.role());
-                ctx.json(R.ok(Map.of("role", req.role(), "has", has)));
+                ctx.json(R.ok(Java8Maps.of("role", req.role(), "has", has)));
             });
 
             // GET /auth/admin —— 仅 admin 角色可访问（演示后端强制角色权限拦截）
@@ -135,7 +138,7 @@ public class AuthenticationController {
                     ctx.status(403).json(R.fail(403, "no role: admin"));
                     return;
                 }
-                ctx.json(R.ok(Map.of("message", "admin area accessed", "userId", SubjectKit.getUserId())));
+                ctx.json(R.ok(Java8Maps.of("message", "admin area accessed", "userId", SubjectKit.getUserId())));
             });
 
             // GET /auth/manager —— 仅 manager 角色可访问
@@ -148,7 +151,7 @@ public class AuthenticationController {
                     ctx.status(403).json(R.fail(403, "no role: manager"));
                     return;
                 }
-                ctx.json(R.ok(Map.of("message", "manager area accessed", "userId", SubjectKit.getUserId())));
+                ctx.json(R.ok(Java8Maps.of("message", "manager area accessed", "userId", SubjectKit.getUserId())));
             });
 
             // ============================ 3) 权限鉴权（SubjectKit.hasPermission）============================
@@ -161,7 +164,7 @@ public class AuthenticationController {
                 }
                 PermissionCheckRequest req = ctx.bodyAsClass(PermissionCheckRequest.class);
                 boolean has = rbacService.hasPermission(req.permission());
-                ctx.json(R.ok(Map.of("permission", req.permission(), "has", has)));
+                ctx.json(R.ok(Java8Maps.of("permission", req.permission(), "has", has)));
             });
 
             // GET /auth/users —— 需要 user:list 权限
@@ -174,7 +177,7 @@ public class AuthenticationController {
                     ctx.status(403).json(R.fail(403, "no permission: user:list"));
                     return;
                 }
-                ctx.json(R.ok(Map.of("message", "user list accessed with permission", "userId", SubjectKit.getUserId())));
+                ctx.json(R.ok(Java8Maps.of("message", "user list accessed with permission", "userId", SubjectKit.getUserId())));
             });
 
             // POST /auth/orders/{id}/pay —— 业务接口鉴权：订单支付需要 order:pay 权限
@@ -188,7 +191,7 @@ public class AuthenticationController {
                     return;
                 }
                 String id = ctx.pathParam("id");
-                ctx.json(R.ok(Map.of("message", "order paid", "orderId", id, "userId", SubjectKit.getUserId())));
+                ctx.json(R.ok(Java8Maps.of("message", "order paid", "orderId", id, "userId", SubjectKit.getUserId())));
             });
 
             // ============================ 4) 组合鉴权（角色 + 权限，AND 模式）============================
@@ -208,23 +211,37 @@ public class AuthenticationController {
                     return;
                 }
                 String id = ctx.pathParam("id");
-                ctx.json(R.ok(Map.of("success", true, "deleted", id, "userId", SubjectKit.getUserId())));
+                ctx.json(R.ok(Java8Maps.of("success", true, "deleted", id, "userId", SubjectKit.getUserId())));
             });
         };
     }
 
     // ============================ 请求 DTO ============================
 
-    public record LoginRequest(String username, String password) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class LoginRequest {
+        private String username;
+        private String password;
+        public String username() { return username; }
+        public String password() { return password; }
     }
 
-    public record KickoutRequest(String userId) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class KickoutRequest {
+        private String userId;
+        public String userId() { return userId; }
     }
 
-    public record RoleCheckRequest(String role) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class RoleCheckRequest {
+        private String role;
+        public String role() { return role; }
     }
 
-    public record PermissionCheckRequest(String permission) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class PermissionCheckRequest {
+        private String permission;
+        public String permission() { return permission; }
     }
 
 }

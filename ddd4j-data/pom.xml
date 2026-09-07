@@ -35,8 +35,7 @@
             - Helidon 适配器 ×2：helidon-common-service-loader 2.6.14 构件为 Java 11 字节码
               （major 55），JDK 8 无法编译（cqrs-helidon / projection-helidon）
         -->
-        <!-- cqrs 核心 -->
-        <module>ddd4j-data-cqrs</module>
+        <!-- CQRS 框架无关契约与注册表已收敛到 ddd4j-core -->
         <!-- cqrs 框架桥接 -->
         <module>ddd4j-data-cqrs-javalin</module>
         <module>ddd4j-data-cqrs-dropwizard</module>

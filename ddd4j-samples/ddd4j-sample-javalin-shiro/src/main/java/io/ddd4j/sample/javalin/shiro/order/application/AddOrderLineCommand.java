@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.application;
 
+import lombok.Value;
+
 import java.math.BigDecimal;
 
 /**
@@ -26,6 +28,10 @@ import java.math.BigDecimal;
  * @param unitPrice 单价
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record AddOrderLineCommand(String orderId, String goodsId, String goodsName, int quantity,
-                                  BigDecimal unitPrice) {
+@Value
+public class AddOrderLineCommand {
+    String orderId; String goodsId; String goodsName; int quantity; BigDecimal unitPrice;
+    public String orderId() { return orderId; } public String goodsId() { return goodsId; }
+    public String goodsName() { return goodsName; } public int quantity() { return quantity; }
+    public BigDecimal unitPrice() { return unitPrice; }
 }

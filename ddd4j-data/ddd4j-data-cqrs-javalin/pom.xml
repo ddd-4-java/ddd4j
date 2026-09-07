@@ -22,6 +22,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -40,11 +45,6 @@
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-cqrs</artifactId>
-            <version>${revision}</version>
         </dependency>
         <!-- For DDD4j -->
         <!-- Javalin 核心（轻量 Web 框架，无 DI 容器；版本由 ddd4j-dependencies:6426 导入的

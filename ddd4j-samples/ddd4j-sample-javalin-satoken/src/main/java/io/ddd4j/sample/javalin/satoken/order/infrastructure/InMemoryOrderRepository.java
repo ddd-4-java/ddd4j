@@ -20,25 +20,25 @@ import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderStatus;
 import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * 基于内存的订单仓储实现（演示用）。
  *
  * <p>使用 {@link ConcurrentHashMap} 存储订单聚合的内部字段映射。
- * Quarkus 下用 {@link ApplicationScoped} 取代 Spring 的 {@code @Repository}。
+ * Javalin 运行时由应用入口手动装配。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@ApplicationScoped
 public class InMemoryOrderRepository implements OrderRepository {
 
     private final ConcurrentMap<String, OrderRow> rows = new ConcurrentHashMap<>();
@@ -65,10 +65,10 @@ public class InMemoryOrderRepository implements OrderRepository {
     }
 
     private static Order toModel(OrderRow row) {
-        List<OrderLine> lines = Optional.ofNullable(row.lines).orElseGet(List::of).stream()
+        List<OrderLine> lines = Optional.ofNullable(row.lines).orElseGet(Collections::emptyList).stream()
                 .map(lr -> new OrderLine(lr.id, lr.goodsId, lr.goodsName, lr.quantity,
                         new Money(lr.unitPrice, lr.currency)))
-                .toList();
+                .collect(Collectors.toList());
         return new Order(row.id, row.orderNo, row.buyerId, row.buyerName,
                 OrderStatus.valueOf(row.status), lines);
     }
@@ -96,7 +96,7 @@ public class InMemoryOrderRepository implements OrderRepository {
     public List<Order> findAll() {
         return rows.values().stream()
                 .map(InMemoryOrderRepository::toModel)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // ============================ 模型与行转换 ============================

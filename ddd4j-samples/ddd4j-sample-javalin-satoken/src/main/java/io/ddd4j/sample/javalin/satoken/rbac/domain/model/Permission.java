@@ -70,7 +70,7 @@ public class Permission extends AggregateRoot<String> {
         this.permissionCode = permissionCode;
         this.permissionName = permissionName;
         this.module = module;
-        this.status = Objects.requireNonNullElse(status, Status.ENABLED);
+        this.status = Objects.nonNull(status) ? status : Status.ENABLED;
         this.createdAt = Instant.now();
     }
 

@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.web.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 /**
@@ -21,5 +25,8 @@ import java.math.BigDecimal;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record UpdateGoodsRequest(String name, BigDecimal price) {
+@Data @NoArgsConstructor @AllArgsConstructor
+public class UpdateGoodsRequest {
+    private String name; private BigDecimal price;
+    public String name() { return name; } public BigDecimal price() { return price; }
 }

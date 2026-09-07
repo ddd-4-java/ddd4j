@@ -19,7 +19,7 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <shiro.version>2.0.6</shiro.version>
+        <shiro.version>1.13.0</shiro.version>
     </properties>
 
     <dependencies>
@@ -56,71 +56,10 @@
             <version>${shiro.version}</version>
         </dependency>
 
-        <!-- Javalin（含 Jetty 9.x，与 ddd4j 强制 Jetty 12 冲突，需要排除并显式引入 Jetty 12） -->
+        <!-- 1.0.x uses Javalin 4 with its Java 8 compatible Jetty 9 runtime. -->
         <dependency>
             <groupId>io.javalin</groupId>
             <artifactId>javalin</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-util</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-http</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-alpn</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-alpn-java-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-alpn-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-alpn-java-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-continuation</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-jmx</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>12.1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <version>12.1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-io</artifactId>
-            <version>12.1.5</version>
         </dependency>
         <!-- Jackson：Javalin 默认 JSON 序列化（J3 中 jsr310 已内置于 databind） -->
         <dependency>
@@ -136,16 +75,7 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>runtime</scope>
         </dependency>
-            <!-- Javalin 7 的 JavalinJackson3 依赖 Jackson 3（tools.jackson）：2.0.x 线整体为
-             Jackson 2（com.fasterxml，DDD 事件序列化走 core EventPayloadSerializer），
-             仅 Javalin HTTP 层的 JSON 编解码用 J3，双 Jackson 共存是本线既定形态。
-             J3 无 BOM 管理（tools.jackson BOM 未发布到 Central），模块级显式钉版。 -->
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>3.2.1</version>
-        </dependency>
-</dependencies>
+    </dependencies>
 
     <build>
         <plugins>

@@ -25,21 +25,17 @@ import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;
 import io.ddd4j.sample.javalin.goods.infrastructure.InMemoryGoodsRepository;
+import io.ddd4j.sample.javalin.TestHttpClient;
+import io.ddd4j.sample.javalin.TestHttpClient.HttpResponse;
 import io.ddd4j.sample.javalin.spi.AnonymousSubjectProvider;
 import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
 import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
+import io.javalin.plugin.json.JavalinJackson;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GoodsControllerTest {
 
     private static Javalin app;
-    private static HttpClient httpClient;
+    private static TestHttpClient httpClient;
     private static String baseUrl;
 
     @BeforeAll
@@ -72,13 +68,13 @@ class GoodsControllerTest {
         GoodsController goodsController = new GoodsController(goodsService);
 
         app = Javalin.create(cfg -> {
-            cfg.startup.showJavalinBanner = false;
+            cfg.showJavalinBanner = false;
             cfg.jsonMapper(new JavalinJackson());
-            cfg.routes.apiBuilder(goodsController::routes);
         });
+        app.routes(goodsController::routes);
         app.start(0);
         baseUrl = "http://localhost:" + app.port();
-        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+        httpClient = new TestHttpClient();
     }
 
     @AfterAll
@@ -106,34 +102,25 @@ class GoodsControllerTest {
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.postJson(baseUrl + path, body, TestHttpClient.noHeaders());
     }
 
     private HttpResponse<String> putJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
-                        .header("Content-Type", "application/json")
-                        .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.putJson(baseUrl + path, body, TestHttpClient.noHeaders());
     }
 
     private HttpResponse<String> put(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).PUT(HttpRequest.BodyPublishers.noBody()).build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.put(baseUrl + path, TestHttpClient.noHeaders());
     }
 
     private HttpResponse<String> delete(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.delete(baseUrl + path, TestHttpClient.noHeaders());
     }
 
     // ---------- 1) create ----------
 
     private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
-                HttpResponse.BodyHandlers.ofString());
+        return httpClient.get(baseUrl + path, TestHttpClient.noHeaders());
     }
 
     @Test

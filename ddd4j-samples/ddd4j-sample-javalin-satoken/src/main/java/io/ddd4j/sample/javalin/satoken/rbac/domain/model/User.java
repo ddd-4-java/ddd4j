@@ -79,7 +79,7 @@ public class User extends AggregateRoot<String> {
         this.username = username;
         this.password = password;
         this.realName = realName;
-        this.status = Objects.requireNonNullElse(status, Status.ENABLED);
+        this.status = Objects.nonNull(status) ? status : Status.ENABLED;
         this.createdAt = Instant.now();
     }
 

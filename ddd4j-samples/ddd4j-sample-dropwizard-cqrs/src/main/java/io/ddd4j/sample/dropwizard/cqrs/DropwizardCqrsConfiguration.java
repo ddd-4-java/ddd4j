@@ -14,7 +14,7 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs;
 
-import io.dropwizard.core.Configuration;
+import io.dropwizard.Configuration;
 
 /**
  * Dropwizard CQRS 配置。

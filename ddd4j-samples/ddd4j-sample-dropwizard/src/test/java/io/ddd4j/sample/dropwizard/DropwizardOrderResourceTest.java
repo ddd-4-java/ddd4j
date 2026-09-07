@@ -30,34 +30,33 @@ import io.ddd4j.web.dropwizard.Ddd4jDropwizardIllegalStateExceptionMapper;
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardRequestFilter;
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardResponseFilter;
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.Invocation;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.List;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardOrderResourceTest {
 
     private static final String IDEMPOTENCY_CACHE_NAME = "ddd4j-web-idempotency";
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
+    private static boolean resourcesStarted;
 
     private static final InMemorySubjectProvider SUBJECT_PROVIDER = new InMemorySubjectProvider(
             new InMemorySubject(event -> {
-            }));
+    }));
     private static final Ddd4jDropwizardRuntime RUNTIME = new Ddd4jDropwizardRuntime(
-            new DropwizardDomainEventPublisher(List.of()), SUBJECT_PROVIDER, I18nProvider.DEFAULT,
-            new DefaultCommandBus(List.of()));
+            new DropwizardDomainEventPublisher(Collections.emptyList()), SUBJECT_PROVIDER, I18nProvider.DEFAULT,
+            new DefaultCommandBus(Collections.emptyList()));
     private static final InMemoryOrderAdapters ADAPTERS = new InMemoryOrderAdapters();
     private static final OrderApplicationService APPLICATION_SERVICE = new OrderApplicationService(ADAPTERS, ADAPTERS,
             ADAPTERS, ADAPTERS, ADAPTERS);
@@ -72,15 +71,23 @@ class DropwizardOrderResourceTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeAll
-    static void startRuntime() {
+    static void startRuntime() throws Throwable {
+        RESOURCES.before();
+        resourcesStarted = true;
         CacheKit.build(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
         RUNTIME.start();
     }
 
     @AfterAll
-    static void closeRuntime() {
-        RUNTIME.close();
-        CacheKit.unregister(IDEMPOTENCY_CACHE_NAME);
+    static void closeRuntime() throws Throwable {
+        try {
+            RUNTIME.close();
+            CacheKit.unregister(IDEMPOTENCY_CACHE_NAME);
+        } finally {
+            if (resourcesStarted) {
+                RESOURCES.after();
+            }
+        }
     }
 
     @Test
@@ -114,7 +121,7 @@ class DropwizardOrderResourceTest {
 
     private static Ddd4jDropwizardWebConfiguration webConfiguration() {
         Ddd4jDropwizardWebConfiguration configuration = new Ddd4jDropwizardWebConfiguration();
-        configuration.setPublicPaths(List.of("/health", "/healthcheck/**", "/api/auth/**"));
+        configuration.setPublicPaths(Arrays.asList("/health", "/healthcheck/**", "/api/auth/**"));
         return configuration;
     }
 
@@ -139,8 +146,8 @@ class DropwizardOrderResourceTest {
     }
 
     private String readAndClose(Response response) {
-        try (response) {
-            return response.readEntity(String.class);
+        try (Response actual = response) {
+            return actual.readEntity(String.class);
         }
     }
 }

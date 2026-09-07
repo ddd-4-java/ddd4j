@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Javalin sample infrastructure boundary.
@@ -67,7 +68,7 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<Order> findAll(int offset, int limit) {
-        return orders.values().stream().skip(offset).limit(limit).toList();
+        return orders.values().stream().skip(offset).limit(limit).collect(Collectors.toList());
     }
 
     @Override
@@ -82,7 +83,7 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<OutboxMessage> pending(int limit) {
-        return new ArrayList<>(outbox.values()).stream().limit(limit).toList();
+        return new ArrayList<>(outbox.values()).stream().limit(limit).collect(Collectors.toList());
     }
 
     @Override
@@ -115,7 +116,7 @@ public final class JavalinOrderAdapters
                         || Objects.equals(criteria.status(), order.status()))
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

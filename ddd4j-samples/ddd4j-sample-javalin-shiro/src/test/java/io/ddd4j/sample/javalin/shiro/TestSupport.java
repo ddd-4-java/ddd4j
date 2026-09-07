@@ -39,13 +39,14 @@ import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
 import io.ddd4j.sample.javalin.shiro.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthenticationController;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController;
+import io.ddd4j.sample.javalin.shiro.rbac.controller.Java8Maps;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryPermissionRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryRoleRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
-import io.javalin.json.JavalinJackson;
+import io.javalin.plugin.json.JavalinJackson;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
@@ -106,14 +107,12 @@ public final class TestSupport {
 
         // 6) 启动 Javalin
         Javalin app = Javalin.create(cfg -> {
-            cfg.startup.showJavalinBanner = false;
+            cfg.showJavalinBanner = false;
             cfg.jsonMapper(new JavalinJackson());
+        });
 
-            // Shiro 是线程级 Subject；
-            // 每个请求进入前，根据请求头中的 token（即 sessionId）从 SessionManager 取出会话，
-            // 再用 Subject.Builder 构造带 principal 的 Subject 并绑定到 ThreadContext，
-            // 让 SecurityUtils.getSubject() 能取回登录态。
-            cfg.routes.before(ctx -> {
+        // Shiro 是线程级 Subject；每个请求进入前按 token 恢复并绑定 Subject。
+        app.before(ctx -> {
                 ThreadContext.remove();
                 String token = ctx.header("Authorization");
                 if (Objects.nonNull(token) && token.startsWith("Bearer ")) {
@@ -141,10 +140,10 @@ public final class TestSupport {
                     } catch (Exception ignored) {
                     }
                 }
-            });
-            cfg.routes.after(ctx -> ThreadContext.remove());
+        });
+        app.after(ctx -> ThreadContext.remove());
 
-            cfg.routes.apiBuilder(() -> {
+        app.routes(() -> {
                 // Authentication
                 ApiBuilder.post("/auth/login", authController::login);
                 ApiBuilder.post("/auth/logout", authController::logout);
@@ -175,7 +174,7 @@ public final class TestSupport {
                         return;
                     }
                     String id = c.pathParam("id");
-                    c.json(io.ddd4j.core.api.R.ok(java.util.Map.of(
+                    c.json(io.ddd4j.core.api.R.ok(Java8Maps.of(
                             "orderId", id,
                             "byUser", String.valueOf(SubjectKit.getLoginId()))));
                 });
@@ -183,7 +182,6 @@ public final class TestSupport {
                 orderResource.routes().addEndpoints();
                 goodsQueryResource.routes().addEndpoints();
                 goodsResource.routes().addEndpoints();
-            });
         });
 
         // 启动前清理任何残留 Shiro 状态

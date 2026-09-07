@@ -240,7 +240,7 @@ public class RbacService {
             return;
         }
         for (String code : roleCodes) {
-            if (roleRepository.findByCode(code).isEmpty()) {
+            if (!roleRepository.findByCode(code).isPresent()) {
                 throw new NoSuchElementException("role not found: " + code);
             }
         }

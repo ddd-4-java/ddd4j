@@ -24,6 +24,9 @@ import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
@@ -77,7 +80,7 @@ public class AuthenticationController {
         request.setPrincipal(principal);
         String token = SubjectKit.login(request);
 
-        Map<String, Object> result = Map.of(
+        Map<String, Object> result = Java8Maps.of(
                 "token", token,
                 "principal", principal,
                 "roles", user.roles(),
@@ -90,7 +93,7 @@ public class AuthenticationController {
      */
     public void logout(Context ctx) {
         SubjectKit.logout();
-        ctx.json(R.ok(Map.of("success", true)));
+        ctx.json(R.ok(Java8Maps.of("success", true)));
     }
 
     /**
@@ -99,7 +102,7 @@ public class AuthenticationController {
     public void me(Context ctx) {
         AuthPrincipal principal = SubjectKit.getPrincipal();
         if (Objects.isNull(principal)) {
-            ctx.json(R.ok(Map.of("authenticated", false)));
+            ctx.json(R.ok(Java8Maps.of("authenticated", false)));
             return;
         }
 
@@ -113,11 +116,11 @@ public class AuthenticationController {
             permissions = rbacService.computeEffectivePermissions(user);
         } catch (NoSuchElementException e) {
             // 已登录但 RBAC 中不存在（数据漂移场景），使用 Principal 中的信息兜底
-            roles = Set.of();
+            roles = Collections.emptySet();
             permissions = principal.getPerms();
         }
 
-        Map<String, Object> result = Map.of(
+        Map<String, Object> result = Java8Maps.of(
                 "authenticated", true,
                 "loginId", principal.getLoginId(),
                 "userId", principal.getUserId(),
@@ -132,7 +135,7 @@ public class AuthenticationController {
     public void checkPermission(Context ctx) {
         String permission = ctx.queryParam("permission");
         boolean has = SubjectKit.hasPermission(permission);
-        ctx.json(R.ok(Map.of("permission", permission, "has", has)));
+        ctx.json(R.ok(Java8Maps.of("permission", permission, "has", has)));
     }
 
     /**
@@ -141,7 +144,7 @@ public class AuthenticationController {
     public void checkRole(Context ctx) {
         String role = ctx.queryParam("role");
         boolean has = SubjectKit.hasRole(role);
-        ctx.json(R.ok(Map.of("role", role, "has", has)));
+        ctx.json(R.ok(Java8Maps.of("role", role, "has", has)));
     }
 
     /**
@@ -150,19 +153,24 @@ public class AuthenticationController {
     public void kickout(Context ctx) {
         String userId = ctx.formParam("userId");
         SubjectKit.kickout(userId);
-        ctx.json(R.ok(Map.of("kicked", userId)));
+        ctx.json(R.ok(Java8Maps.of("kicked", userId)));
     }
 
     /**
      * GET /auth/status —— 登录状态：SubjectKit.isLogin()
      */
     public void status(Context ctx) {
-        ctx.json(R.ok(Map.of("login", SubjectKit.isLogin())));
+        ctx.json(R.ok(Java8Maps.of("login", SubjectKit.isLogin())));
     }
 
     // ============================ DTO ============================
 
-    public record LoginRequest(String loginId, String password) {
+    @Data @NoArgsConstructor @AllArgsConstructor
+    public static class LoginRequest {
+        private String loginId;
+        private String password;
+        public String loginId() { return loginId; }
+        public String password() { return password; }
     }
 
 }

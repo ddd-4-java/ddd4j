@@ -39,9 +39,10 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import lombok.Value;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
@@ -64,7 +65,7 @@ public final class VertxOrderRoutes {
         router.route().handler(BodyHandler.create());
         new Ddd4jVertxWeb(new WebRequestContextFactory(),
                 new WebRequestLifecycle(new BearerSubjectAuthenticator(),
-                        new PathWebAccessPolicy(List.of("/health", "/api/auth/**"),
+                        new PathWebAccessPolicy(Arrays.asList("/health", "/api/auth/**"),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode).install(router);
         router.get("/health").handler(context -> respond(context, 200, R.ok("UP")));
@@ -122,6 +123,8 @@ public final class VertxOrderRoutes {
                 .end(Json.encode(response));
     }
 
-    public record TokenResponse(String token) {
+    @Value
+    public static class TokenResponse {
+        String token;
     }
 }

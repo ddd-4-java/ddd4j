@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.web.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 /**
@@ -21,5 +25,9 @@ import java.math.BigDecimal;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
+@Data @NoArgsConstructor @AllArgsConstructor
+public class AddOrderLineRequest {
+    private String goodsId; private String goodsName; private int quantity; private BigDecimal unitPrice;
+    public String goodsId() { return goodsId; } public String goodsName() { return goodsName; }
+    public int quantity() { return quantity; } public BigDecimal unitPrice() { return unitPrice; }
 }

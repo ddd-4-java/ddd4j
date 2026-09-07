@@ -18,8 +18,6 @@ import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
 import io.ddd4j.sample.javalin.shiro.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -34,13 +32,11 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-@ApplicationScoped
 public class OrderApplicationService {
 
     private final OrderRepository repository;
     private final OrderDomainService domainService;
 
-    @Inject
     public OrderApplicationService(OrderRepository repository, OrderDomainService domainService) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.domainService = Objects.requireNonNull(domainService, "domainService must not be null");

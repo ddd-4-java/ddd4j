@@ -76,7 +76,7 @@ public class InMemoryRoleRepository implements RoleRepository {
     public List<Role> findAll() {
         return rows.values().stream()
                 .map(InMemoryRoleRepository::toModel)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

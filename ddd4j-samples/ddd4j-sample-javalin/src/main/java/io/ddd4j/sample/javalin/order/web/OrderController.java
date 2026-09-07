@@ -25,6 +25,9 @@ import io.ddd4j.sample.order.domain.OrderQuery;
 import io.ddd4j.sample.order.domain.OrderStatus;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.error.WebStatusException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Locale;
@@ -47,7 +50,7 @@ public final class OrderController {
         post("/api/orders", context -> {
             CreateOrderRequest request = context.bodyAsClass(CreateOrderRequest.class);
             Order order = applicationService.create(new CreateOrderCommand(
-                    request.orderNo(), request.buyerId(), request.buyerName()));
+                    request.getOrderNo(), request.getBuyerId(), request.getBuyerName()));
             context.status(201).json(R.ok(toResponse(order)));
         });
         get("/api/orders/by-no", context -> context.json(R.ok(applicationService.findByOrderNo(
@@ -66,7 +69,7 @@ public final class OrderController {
         post("/api/orders/{id}/lines", context -> {
             AddOrderLineRequest request = context.bodyAsClass(AddOrderLineRequest.class);
             Order order = applicationService.addLine(new AddOrderLineCommand(context.pathParam("id"),
-                    request.goodsId(), request.goodsName(), request.quantity(), request.unitPrice()));
+                    request.getGoodsId(), request.getGoodsName(), request.getQuantity(), request.getUnitPrice()));
             context.json(R.ok(toResponse(order)));
         });
         post("/api/orders/{id}/pay", context -> {
@@ -92,13 +95,35 @@ public final class OrderController {
                 order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
-    public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateOrderRequest {
+        private String orderNo;
+        private String buyerId;
+        private String buyerName;
     }
 
-    public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddOrderLineRequest {
+        private String goodsId;
+        private String goodsName;
+        private int quantity;
+        private BigDecimal unitPrice;
     }
 
-    public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,
-                                OrderStatus status, BigDecimal totalAmount, String currency, int lineCount) {
+    @Data
+    @AllArgsConstructor
+    public static class OrderResponse {
+        private final String id;
+        private final String orderNo;
+        private final String buyerId;
+        private final String buyerName;
+        private final OrderStatus status;
+        private final BigDecimal totalAmount;
+        private final String currency;
+        private final int lineCount;
     }
 }

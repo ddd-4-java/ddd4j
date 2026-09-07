@@ -25,8 +25,8 @@ if [[ ${AGGREGATE_RC} -ne 0 ]]; then
     "ddd4j-core" "ddd4j-kit" "ddd4j-cache" "ddd4j-annotation" "ddd4j-auth" "ddd4j-data"
     "ddd4j-extensions/ddd4j-extension-monitor" "ddd4j-extensions/ddd4j-extension-otel" "ddd4j-extensions/ddd4j-extension-validation"
     "ddd4j-mq/ddd4j-mq-core" "ddd4j-mq/ddd4j-mq-activemq" "ddd4j-mq/ddd4j-mq-kafka" "ddd4j-mq/ddd4j-mq-rabbitmq" "ddd4j-mq/ddd4j-mq-rocketmq" "ddd4j-mq/ddd4j-mq-mqtt-mica"
-    "ddd4j-runtime/ddd4j-runtime-core" "ddd4j-runtime/ddd4j-runtime-spring" "ddd4j-runtime/ddd4j-runtime-vertx" "ddd4j-runtime/ddd4j-runtime-helidon" "ddd4j-runtime/ddd4j-runtime-micronaut" "ddd4j-runtime/ddd4j-runtime-dropwizard" "ddd4j-runtime/ddd4j-runtime-support"
-    "ddd4j-web/ddd4j-web-core" "ddd4j-web/ddd4j-web-vertx" "ddd4j-web/ddd4j-web-micronaut" "ddd4j-web/ddd4j-web-dropwizard" "ddd4j-web/ddd4j-web-webmvc" "ddd4j-web/ddd4j-web-quarkus" "ddd4j-web/ddd4j-web-helidon" "ddd4j-web/ddd4j-web-javalin"
+    "ddd4j-runtime/ddd4j-runtime-core" "ddd4j-runtime/ddd4j-runtime-spring" "ddd4j-runtime/ddd4j-runtime-vertx" "ddd4j-runtime/ddd4j-runtime-micronaut" "ddd4j-runtime/ddd4j-runtime-dropwizard"
+    "ddd4j-web/ddd4j-web-core" "ddd4j-web/ddd4j-web-vertx" "ddd4j-web/ddd4j-web-micronaut" "ddd4j-web/ddd4j-web-dropwizard" "ddd4j-web/ddd4j-web-webmvc" "ddd4j-web/ddd4j-web-quarkus" "ddd4j-web/ddd4j-web-javalin"
   )
   for module in "${CORE_MODULES[@]}"; do
     safe_name="${module//\//-}"

@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.satoken.order.application;
 
+import lombok.Value;
+
 /**
  * 创建订单命令。
  *
@@ -22,5 +24,13 @@ package io.ddd4j.sample.javalin.satoken.order.application;
  * @param buyerName 买家显示名称
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) {
+@Value
+public class CreateOrderCommand {
+    String orderNo;
+    String buyerId;
+    String buyerName;
+
+    public String orderNo() { return orderNo; }
+    public String buyerId() { return buyerId; }
+    public String buyerName() { return buyerName; }
 }

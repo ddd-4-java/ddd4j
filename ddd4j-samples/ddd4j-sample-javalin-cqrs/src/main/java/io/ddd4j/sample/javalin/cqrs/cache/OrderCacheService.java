@@ -92,9 +92,9 @@ public class OrderCacheService {
     public long getBuyerOrderCount(String buyerId) {
         String cacheKey = "buyer:" + buyerId;
         Object cached = CacheKit.get(BIZ_BUYER_ORDER_COUNT, cacheKey);
-        if (cached instanceof Long count) {
+        if (cached instanceof Long) {
             log.debug("Cache hit: BUYER_ORDER_COUNT buyerId={}", buyerId);
-            return count;
+            return (Long) cached;
         }
         log.debug("Cache miss: BUYER_ORDER_COUNT buyerId={}, computing...", buyerId);
         long count = repository.findAll().stream()

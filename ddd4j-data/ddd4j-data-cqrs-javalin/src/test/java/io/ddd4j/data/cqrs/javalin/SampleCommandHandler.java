@@ -18,7 +18,7 @@ import java.util.Collections;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.data.cqrs.CommandHandler;
+import io.ddd4j.core.cqrs.command.CommandHandler;
 
 import java.util.Set;
 
