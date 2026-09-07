@@ -8405,6 +8405,12 @@
                 <artifactId>rocketmq-common</artifactId>
                 <version>${rocketmq-client.version}</version>
             </dependency>
+            <!-- Apache RocketMQ Remoting：与 Client 保持同版本，避免运行期方法签名不一致。 -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-remoting</artifactId>
+                <version>${rocketmq-client.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/rocketmq-extension -->
             <!-- Easy4J RocketMQ Extension：Easy4J 对 RocketMQ 的扩展增强。 -->
             <dependency>
