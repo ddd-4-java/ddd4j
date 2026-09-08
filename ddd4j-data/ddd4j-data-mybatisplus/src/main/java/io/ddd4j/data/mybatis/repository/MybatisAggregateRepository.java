@@ -578,7 +578,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
                 (sqlSession, entity) -> {
                     MapperMethod.ParamMap<P> param = new MapperMethod.ParamMap<>();
                     param.put(Constants.ENTITY, entity);
-                    sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
+                    return sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
                 });
     }
 
@@ -591,7 +591,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<P> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
-            sqlSession.update(sqlStatement, param);
+            return sqlSession.update(sqlStatement, param);
         });
     }
 
