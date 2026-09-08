@@ -184,6 +184,10 @@ Javalin 测试 provider 已统一声明为无版本、test scope 的 slf4j-simpl
 
 Dropwizard 响应过滤器此前没有读取请求过滤器已保存的 OTel Scope，也没有结束 span 或移除 OTel 属性，正常响应后即会污染线程。三线现以 finally 统一结束 span 并关闭/移除 Scope；真实 Scope 测试各 1 项、完整 Dropwizard Web contract 各 6 项全部通过。1.0 因 Dropwizard LoggingUtil 保留 Logback test provider，但具体模块的两个显式版本已删除，版本继续由 ddd4j-dependencies 管理；无版本配置重跑通过。
 
+Vert.x 原先同样丢弃 OTel Scope；若把 Scope 简单持有到 response end，event-loop 等待 executeBlocking 时仍可能把请求 span 暴露给其他请求。三线现只在每次 `routingContext.next()` 或 failure 回调的同步边界激活并同线程关闭，end handler 只结束一次 span；幂等关闭继续放在 worker。真实 HTTP 测试确认 handler 内 span 有效、下一 event-loop tick 无残留，三线各 1 项通过；完整 Vert.x Web contract 各 6 项通过且零跳过。
+
+Quarkus Web 仅存在于 2.0/3.0，实际接入 RESTEasy Reactive 请求/响应过滤器、认证、幂等、异常与 HTTP contract。失败注入证明原响应过滤器在幂等 complete 抛错时会跳过 OTel Scope 清理，无 Bearer 的请求过滤器提前失败也会依赖未保证执行的 response filter 清理。两线分别以 response finally 和 request catch 闭合 session/span/Scope/属性，Scope 测试各 2 项、完整 Quarkus Web contract 各 6 项通过。模块内 Quarkus BOM、Quarkus Maven Plugin、Jandex Plugin 的三个显式版本已删除并继续由 ddd4j-dependencies 管理，删除后测试通过。
+
 ## 证据边界与后续工作
 
 ### BOM 与企业 parent

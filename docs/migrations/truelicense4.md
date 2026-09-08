@@ -1,5 +1,12 @@
 # TrueLicense 4.x 迁移指南
 
+> 2026-09-08 回归复核：后续依赖对齐曾把旧 TrueLicense 1.33 坐标重新加入三条
+> `ddd4j-dependencies` 和组件矩阵。本轮已删除这些回退项。三条线重新执行目标迁移测试，均为
+> 20/20 通过；`ddd4j-auth-license` 与独立的 `ddd4j-extension-license` 联合回归均为 27/27 通过。
+> Fresh runtime dependency tree 仅包含 `global.namespace.truelicense:*:4.1.4`。三线结构/API
+> 校验显示 auth-license 无任何差异；校验整体仍被 1.0.x Micronaut Web 新增内部类这一无关红项阻塞，
+> 不得据此宣称全仓三线完全一致。
+
 ## 迁移范围
 
 `ddd4j-auth-license` 的三条维护线已从旧坐标

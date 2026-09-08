@@ -186,6 +186,24 @@ Dropwizard 请求过滤器已经把 span 与 Scope 保存为 request property，
 
 三线真实 Scope 测试各 1 项、完整 `Ddd4jDropwizardWebContractTest` 各 6 项全部通过，零失败、零错误、零跳过。模块新增 OTel SDK 仅为 test scope、无版本。1.0 Dropwizard 测试因 Dropwizard `LoggingUtil` 直接需要 Logback 而保留 classic/core test scope，但两个模块内 `${logback-slf4j2.version}` 已删除，实际 1.3.14 版本由 `ddd4j-dependencies` 统一管理；移除显式版本后 Scope 测试再次通过。
 
+## Vert.x event-loop OTel 短作用域修复（2026-09-08）
+
+Vert.x `contextHandler` 原先激活 span 后丢弃 Scope，并把清理延迟到响应结束之外；由于 event-loop 会在请求等待 `executeBlocking` 时继续处理其他请求，简单把 Scope 保存到 response end 仍会造成请求间串线。真实 HTTP 红测在业务 handler 中看到有效 span，并在下一次 event-loop tick 仍看到同一 span，证明泄漏跨越异步边界。
+
+三线现使用相同的短作用域策略：仅在同步调用 `routingContext.next()` 和 failure 响应处理的 event-loop 回调内激活 span，并在同一线程 finally 关闭；span 对象继续保存在 RoutingContext，由 end handler 仅结束一次。failureHandler 不再提前结束，避免 failure 与 finish 双重 end；幂等 Scope 仍在 worker 关闭，并增加幂等关闭与 complete 异常后的 finally 清理。
+
+真实 Vert.x HTTP Scope 测试在 JDK 8/17/21 三线各 1 项通过：业务 handler 有有效 span，下一 event-loop tick 无残留。随后三线完整 `Ddd4jVertxWebContractTest` 各 6 项通过、零失败、零错误、零跳过。OTel SDK 仅为 test scope、无版本。2.0/3.0 仍输出无 SLF4J provider 与 macOS Netty DNS native provider 提示，属于待收敛的测试运行环境项。
+
+## Quarkus Web 实际覆盖与异常清理（2026-09-08）
+
+1.0 按既有 Quarkus 例外没有 `ddd4j-web-quarkus`；2.0/3.0 实际模块包含 RESTEasy Reactive request/response filter、公共 WebRequestContext、Bearer 认证、幂等会话、异常映射、访问日志和 QuarkusTest HTTP 契约。因此 Quarkus 能力存在，但不能从 1.0 CodeGraph 缺少该目录推断为三线共同能力。
+
+2.0/3.0 响应过滤器原先顺序调用 `session.complete` 后才结束 span、关闭 OTel Scope 和移除属性。失败注入让 `IdempotencyGuard.complete` 抛异常，修复前 WebContextScope 因公共会话修复已恢复，但 OTel Scope 仍留在线程。两线现以 finally 统一结束 span、关闭 Scope 并移除全部属性，保留原异常向上传播。
+
+进一步验证无 Bearer 凭据的 request-filter 提前失败：原 catch 只记录异常并重新抛出，依赖后续 response filter 清理；直接调用请求过滤器后当前线程仍保留 OTel Scope。两线现于 catch 中关闭可能已创建的 session、按公共异常翻译状态结束 span、关闭 Scope、移除全部属性，再重新抛出原异常；清理异常以 suppressed 保留，不覆盖主失败。
+
+两线失败注入 Scope 测试现各 2 项、完整 `Ddd4jQuarkusWebContractTest` 各 6 项全部通过，零失败、零错误、零跳过。模块新增 OTel SDK 仅为 test scope。另删除了具体模块内的 Quarkus BOM、Quarkus Maven Plugin 和 Jandex Plugin 三处版本声明；版本均由 `ddd4j-dependencies` 集中依赖/插件管理，删除后两线测试再次通过。
+
 ## 源码证据位置
 
 - Cloud HTTP：`ddd4j-cloud-cmpt-data/.../TenantContextHolderFilter.java`

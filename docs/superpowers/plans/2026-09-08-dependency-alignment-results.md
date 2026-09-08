@@ -17,7 +17,7 @@
 - Java8 默认 SLF4J2 + Logback1.3 配对；Dropwizard2、Boot2相关测试保留显式 `logback-legacy.version`。父 POM 的 Expressly 改为匹配 javax EL 的 GlassFish 实现。
 - 三条线的 `<properties>` 统一为全局、第三方依赖、Maven依赖三段，并在每段按自然字母顺序排列。2.0.x/3.0.x 的 `easy4j-*.version` 前缀已全部移除；冲突的 `com.github.hiwepy` 旧坐标和旧属性已删除，仅保留当前 `io.github.easy4j` 组件及对应 2.0.x/3.0.x 版本。
 - 删除全部临时 `alignment.*` 属性。`hitool-crypto`、`hitool-mail` 改用本线 `${hitool.version}`；补填的 `mybatis-spring-boot-starter`、`jooq-plus`、`mybatis-plus-enhance`、旧 `shiro-redis`、旧 `spring-javassist`、`ip2region-spring-boot-starter` 从 ddd4j 通用依赖清单删除。Spring Boot starter 归属对应 ddd4j-boot 版本线。
-- Boot BOM 基础组件回迁：三线统一管理 `de.schlichtherle.truelicense:truelicense-core/xml:1.33`；JDK8 增加 `io.github.easy4j:zxing-extension:1.0.x` 与 `com.baomidou:mybatis-plus-spring:3.5.9`，JDK17/21 沿用已验证的 ZXing 2.0.x 与 MyBatis-Plus 3.5.16。Boot 2.7 BOM 已删除这些非 Spring Boot 属性和直接声明。
+- Boot BOM 基础组件对齐：JDK8 增加 `io.github.easy4j:zxing-extension:1.0.x` 与 `com.baomidou:mybatis-plus-spring:3.5.9`，JDK17/21 沿用已验证的 ZXing 2.0.x 与 MyBatis-Plus 3.5.16。该批次曾错误回迁 `de.schlichtherle.truelicense:truelicense-core/xml:1.33`，现已由已批准的 TrueLicense 4.x 迁移规格纠正，三条 BOM 不再管理旧坐标。Boot 2.7 BOM 已删除这些非 Spring Boot 属性和直接声明。
 
 ### 代表性版本矩阵
 

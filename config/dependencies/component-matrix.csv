@@ -336,8 +336,6 @@ commons-logging:commons-logging,1.4.0,bytecode-pass,1.4.0,bytecode-pass,1.4.0,by
 commons-net:commons-net,3.13.0,bytecode-pass,3.13.0,bytecode-pass,3.13.0,bytecode-pass,
 commons-pool:commons-pool,1.6,bytecode-pass,1.6,bytecode-pass,1.6,bytecode-pass,
 commons-validator:commons-validator,1.10.1,bytecode-pass,1.10.1,bytecode-pass,1.10.1,bytecode-pass,
-de.schlichtherle.truelicense:truelicense-core,1.33,bytecode-pass,1.33,bytecode-pass,1.33,bytecode-pass,
-de.schlichtherle.truelicense:truelicense-xml,1.33,bytecode-pass,1.33,bytecode-pass,1.33,bytecode-pass,
 eu.bitwalker:UserAgentUtils,1.21,bytecode-pass,1.21,bytecode-pass,1.21,bytecode-pass,
 fr.opensagres.xdocreport.sfntly:sfntly,1.0.0,bytecode-pass,1.0.0,bytecode-pass,1.0.0,bytecode-pass,
 fr.opensagres.xdocreport:fr.opensagres.odfdom.converter.core,2.0.6,bytecode-pass,2.1.0,bytecode-pass,2.1.0,bytecode-pass,
