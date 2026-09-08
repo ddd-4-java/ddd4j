@@ -381,7 +381,7 @@
         <logback-legacy.version>1.2.13</logback-legacy.version>
         <!-- SLF4J 2 测试通道：仅供 Dropwizard LoggingUtil 兼容测试使用。 -->
         <logback-slf4j2.version>1.3.14</logback-slf4j2.version>
-        <logback.version>1.3.14</logback.version>
+        <logback.version>1.2.12</logback.version>
         <lombok.version>1.18.46</lombok.version>
         <lz4-java.version>1.8.1</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
@@ -555,7 +555,7 @@
         <skywalking-toolkit.version>9.7.0</skywalking-toolkit.version>
         <skywalking.version>10.0.1</skywalking.version>
         <slf4j-legacy.version>1.7.36</slf4j-legacy.version>
-        <slf4j.version>2.0.18</slf4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <!-- Dropwizard 2 / Spring Boot 2 测试通道仍使用 SLF4J 1.7 SPI。 -->
         <sms4j.version>3.3.5</sms4j.version>
         <smslib.version>3.5.4</smslib.version>
