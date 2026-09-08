@@ -61,6 +61,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-testkit</artifactId>
             <version>${revision}</version>

@@ -122,21 +122,27 @@ public final class Ddd4jJavalinWeb {
         Object span = WebOtelSupport.startServerSpan(
                 context.method().name(), context.path(), headers);
         context.attribute(OTEL_SPAN_ATTR, span);
-        WebOtelSupport.activate(span);
-
-        WebRequestContext requestContext = createContext(context);
-        RequestState state = new RequestState(WebContextScope.open(requestContext));
-        context.attribute(STATE_ATTRIBUTE, state);
-        context.header(WebHeaders.REQUEST_ID, requestContext.requestId());
-        context.header(WebHeaders.TRACE_ID, requestContext.traceId());
+        AutoCloseable otelScope = WebOtelSupport.activate(span);
+        RequestState state = null;
         try {
+            WebRequestContext requestContext = createContext(context);
+            state = new RequestState(WebContextScope.open(requestContext), otelScope);
+            context.attribute(STATE_ATTRIBUTE, state);
+            context.header(WebHeaders.REQUEST_ID, requestContext.requestId());
+            context.header(WebHeaders.TRACE_ID, requestContext.traceId());
             requestLifecycle.authenticate(requestContext)
                     .ifPresent(authentication -> ThreadContext.bind(authentication.subject()));
+            RequestState activeState = state;
             idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(requestContext,
-                    context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(state::idempotencyScope);
+                        context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(activeState::idempotencyScope);
         } catch (RuntimeException exception) {
             WebOtelSupport.recordError(span, exception);
-            closeContext(context, false);
+            if (Objects.nonNull(state)) {
+                state.close(false);
+                context.attribute(STATE_ATTRIBUTE, null);
+            } else {
+                closeScope(otelScope);
+            }
             throw exception;
         }
     }
@@ -202,13 +208,23 @@ public final class Ddd4jJavalinWeb {
         return StrKit.isBlank(language) ? Locale.getDefault() : Locale.forLanguageTag(language.split(",", 2)[0]);
     }
 
+    private static void closeScope(AutoCloseable scope) {
+        try {
+            scope.close();
+        } catch (Throwable ignored) {
+        }
+    }
+
     private static final class RequestState {
 
         private final WebContextScope contextScope;
+        private final AutoCloseable otelScope;
         private WebIdempotencyLifecycle.Scope idempotencyScope;
+        private boolean closed;
 
-        private RequestState(WebContextScope contextScope) {
+        private RequestState(WebContextScope contextScope, AutoCloseable otelScope) {
             this.contextScope = contextScope;
+            this.otelScope = otelScope;
         }
 
         private void idempotencyScope(WebIdempotencyLifecycle.Scope scope) {
@@ -216,13 +232,27 @@ public final class Ddd4jJavalinWeb {
         }
 
         private void close(boolean successful) {
-            if (Objects.nonNull(idempotencyScope)) {
-                if (successful) {
-                    idempotencyScope.complete();
-                }
-                idempotencyScope.close();
+            if (closed) {
+                return;
             }
-            contextScope.close();
+            try {
+                if (Objects.nonNull(idempotencyScope)) {
+                    try {
+                        if (successful) {
+                            idempotencyScope.complete();
+                        }
+                    } finally {
+                        idempotencyScope.close();
+                    }
+                }
+            } finally {
+                try {
+                    contextScope.close();
+                } finally {
+                    closeScope(otelScope);
+                    closed = true;
+                }
+            }
         }
     }
 }

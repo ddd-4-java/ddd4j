@@ -63,10 +63,11 @@ public final class WebOtelSupport {
         Method isAvail = null;
         try {
             cls = Class.forName("io.ddd4j.extension.otel.WebOtelIntegration");
+            Class<?> spanClass = Class.forName("io.opentelemetry.api.trace.Span");
             startSpan = cls.getMethod("startServerSpan", String.class, String.class, Map.class);
-            act = cls.getMethod("activate", Object.class);
-            recErr = cls.getMethod("recordError", Object.class, Throwable.class);
-            endSpan = cls.getMethod("endServerSpan", Object.class, int.class);
+            act = cls.getMethod("activate", spanClass);
+            recErr = cls.getMethod("recordError", spanClass, Throwable.class);
+            endSpan = cls.getMethod("endServerSpan", spanClass, int.class);
             inject = cls.getMethod("injectResponseContext", Map.class);
             isAvail = cls.getMethod("isAvailable");
         } catch (Throwable ignored) {

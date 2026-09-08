@@ -107,6 +107,15 @@ public final class WebOtelIntegration {
     }
 
     /**
+     * 判断 OpenTelemetry SDK 是否已配置并可用于创建有效 Span。
+     *
+     * @return SDK 可用时返回 true
+     */
+    public static boolean isAvailable() {
+        return Ddd4jOtel.isAvailable();
+    }
+
+    /**
      * 通用 helper：从 HttpHeaders 风格（Map）提取。
      */
     public static Map<String, String> asHeaders(Map<String, String> headers) {

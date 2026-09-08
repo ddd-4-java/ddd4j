@@ -89,7 +89,6 @@ public final class Ddd4jMicronautWebFilter {
         Map<String, String> headers = extractRequestHeaders(request);
         Object span = WebOtelSupport.startServerSpan(
                 request.getMethodName(), request.getPath(), headers);
-        WebOtelSupport.activate(span);
 
         WebRequestContext requestContext = createContext(request);
         Optional<Authentication> authentication = requestLifecycle.authenticate(requestContext);
@@ -97,7 +96,14 @@ public final class Ddd4jMicronautWebFilter {
                 authentication.map(Authentication::subject)));
         Optional<WebIdempotencyLifecycle.Scope> idempotencyScope = idempotencyLifecycle.flatMap(lifecycle ->
                 lifecycle.open(requestContext, request.getHeaders().get(WebHeaders.IDEMPOTENCY_KEY)));
-        return Flux.from(continuation.proceed())
+        Publisher<MutableHttpResponse<?>> downstream;
+        AutoCloseable otelScope = WebOtelSupport.activate(span);
+        try {
+            downstream = continuation.proceed();
+        } finally {
+            closeScope(otelScope);
+        }
+        return Flux.from(downstream)
                 .doOnNext(response -> {
                     addResponseHeaders(response, requestContext);
                     closeIdempotency(idempotencyScope, response.getStatus().getCode() < 400);
@@ -114,6 +120,13 @@ public final class Ddd4jMicronautWebFilter {
                     WebOtelSupport.endServerSpan(span, 500);
                     closeIdempotency(idempotencyScope, false);
                 });
+    }
+
+    private static void closeScope(AutoCloseable scope) {
+        try {
+            scope.close();
+        } catch (Throwable ignored) {
+        }
     }
 
     private static Map<String, String> extractRequestHeaders(HttpRequest<?> request) {
