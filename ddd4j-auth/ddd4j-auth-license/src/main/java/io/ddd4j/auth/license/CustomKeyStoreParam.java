@@ -14,55 +14,68 @@
  */
 package io.ddd4j.auth.license;
 
-import de.schlichtherle.license.AbstractKeyStoreParam;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
+
+import org.springframework.util.StringUtils;
 
 /**
  * 自定义KeyStoreParam，用于将公私钥存储文件存放到其他磁盘位置而不是项目中。现场使用的时候公钥大部分都不会放在项目中的
  */
-public class CustomKeyStoreParam extends AbstractKeyStoreParam {
+public class CustomKeyStoreParam {
+
+    public static final String LEGACY_SIGNATURE_ALGORITHM = "SHA1withDSA";
 
     /**
      * 公钥/私钥在磁盘上的存储路径
      */
-    private String storePath;
-    private String alias;
-    private String storePwd;
-    private String keyPwd;
+    private final String storePath;
+    private final String alias;
+    private final String storePwd;
+    private final String keyPwd;
+    private final String signatureAlgorithm;
 
-    public CustomKeyStoreParam(Class clazz, String resource, String alias, String storePwd, String keyPwd) {
-        super(clazz, resource);
-        this.storePath = resource;
-        this.alias = alias;
-        this.storePwd = storePwd;
+    public CustomKeyStoreParam(Class<?> clazz, String resource, String alias, String storePwd, String keyPwd) {
+        this(clazz, resource, alias, storePwd, keyPwd, LEGACY_SIGNATURE_ALGORITHM);
+    }
+
+    public CustomKeyStoreParam(Class<?> clazz, String resource, String alias, String storePwd, String keyPwd,
+                               String signatureAlgorithm) {
+        Objects.requireNonNull(clazz, "clazz");
+        this.storePath = Objects.requireNonNull(resource, "resource");
+        this.alias = Objects.requireNonNull(alias, "alias");
+        this.storePwd = Objects.requireNonNull(storePwd, "storePwd");
         this.keyPwd = keyPwd;
+        if (!StringUtils.hasText(signatureAlgorithm)) {
+            throw new IllegalArgumentException("signatureAlgorithm must not be blank");
+        }
+        this.signatureAlgorithm = signatureAlgorithm;
     }
 
 
-    @Override
     public String getAlias() {
         return alias;
     }
 
-    @Override
     public String getStorePwd() {
         return storePwd;
     }
 
-    @Override
     public String getKeyPwd() {
         return keyPwd;
+    }
+
+    public String getSignatureAlgorithm() {
+        return signatureAlgorithm;
     }
 
     /**
      * AbstractKeyStoreParam里面的getStream()方法默认文件是存储的项目中。
      * 用于将公私钥存储文件存放到其他磁盘位置而不是项目中
      */
-    @Override
     public InputStream getStream() throws IOException {
         return new FileInputStream(new File(storePath));
     }

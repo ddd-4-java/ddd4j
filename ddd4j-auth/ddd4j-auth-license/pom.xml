@@ -14,10 +14,10 @@
     <description>Ddd4j License Component</description>
 
     <dependencies>
-        <!-- For TrueLicense -->
+        <!-- TrueLicense V1 file-format compatibility on the Apache-2.0 4.x runtime. -->
         <dependency>
-            <groupId>de.schlichtherle.truelicense</groupId>
-            <artifactId>truelicense-core</artifactId>
+            <groupId>global.namespace.truelicense</groupId>
+            <artifactId>truelicense-v1</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -32,7 +32,33 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- Compile dependencies -->
 </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <systemPropertyVariables>
+                        <java.util.prefs.PreferencesFactory>io.ddd4j.auth.license.LicenseTestPreferencesFactory</java.util.prefs.PreferencesFactory>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

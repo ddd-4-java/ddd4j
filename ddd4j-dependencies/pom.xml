@@ -599,7 +599,7 @@
         <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
         <token-bucket.version>1.7</token-bucket.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <truelicense.version>1.33</truelicense.version>
+        <truelicense.version>4.1.4</truelicense.version>
         <tika.version>3.2.3</tika.version>
         <twilio.version>10.8.0</twilio.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
@@ -6553,11 +6553,20 @@
                 <version>${tika.version}</version>
             </dependency>
 
-            <!-- 使用参考: https://blog.csdn.net/wuyuxing24/article/details/99692762-->
-            <!-- https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-core -->
+            <!-- TrueLicense 4.x：Apache-2.0 许可；truelicense-v1 仅用于兼容既有 1.x 文件格式。 -->
             <dependency>
-                <groupId>de.schlichtherle.truelicense</groupId>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-api</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>global.namespace.truelicense</groupId>
                 <artifactId>truelicense-core</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-v1</artifactId>
                 <version>${truelicense.version}</version>
             </dependency>
 

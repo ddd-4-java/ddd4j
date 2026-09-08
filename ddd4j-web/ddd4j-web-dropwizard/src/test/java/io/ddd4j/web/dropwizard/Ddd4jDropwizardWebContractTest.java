@@ -36,7 +36,6 @@ import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
 import io.ddd4j.web.testkit.WebContractResponse;
-import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -48,9 +47,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,8 +61,6 @@ import java.util.Collections;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Disabled("Dropwizard testing JUnit 5 版本不兼容（NoSuchMethodError: ReflectionUtils.makeAccessible）")
-@ExtendWith(DropwizardExtensionsSupport.class)
 class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
 
     private static final Ddd4jDropwizardRequestFilter REQUEST_FILTER = new Ddd4jDropwizardRequestFilter(
@@ -81,6 +78,17 @@ class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
             .build();
 
     private final WebContractClient contractClient = new DropwizardContractClient();
+
+    // Dropwizard 2 的扩展扫描依赖旧版 JUnit 内部反射 API，直接使用公开资源生命周期。
+    @BeforeAll
+    static void startResources() throws Throwable {
+        RESOURCES.before();
+    }
+
+    @AfterAll
+    static void stopResources() throws Throwable {
+        RESOURCES.after();
+    }
 
     @BeforeEach
     void setUp() {

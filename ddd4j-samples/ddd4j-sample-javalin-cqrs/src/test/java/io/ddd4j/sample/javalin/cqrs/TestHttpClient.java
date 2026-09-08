@@ -50,6 +50,8 @@ public final class TestHttpClient {
     private HttpResponse<String> execute(String method, String url, String body) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(method);
+        // 每个用例重启随机端口服务器，测试请求不跨服务器生命周期复用连接。
+        connection.setRequestProperty("Connection", "close");
         connection.setConnectTimeout(5000);
         connection.setReadTimeout(5000);
         if (Objects.nonNull(body)) {

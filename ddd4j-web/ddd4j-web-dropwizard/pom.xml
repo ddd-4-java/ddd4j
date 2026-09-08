@@ -27,6 +27,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Jersey 2 运行时仍使用 javax.inject；Jakarta Inject 2 不提供该命名空间。 -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

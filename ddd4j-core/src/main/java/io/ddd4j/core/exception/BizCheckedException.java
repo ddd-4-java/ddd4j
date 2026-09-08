@@ -105,7 +105,7 @@ public class BizCheckedException extends Exception {
     }
 
     public BizCheckedException(Throwable e) {
-        this(e.getMessage());
+        this(e.getMessage(), e);
     }
 
     public static BizCheckedException e(String message) {

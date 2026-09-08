@@ -48,4 +48,9 @@ public class LicenseProperties {
      */
     private String publicKeysStorePath;
 
+    /**
+     * 许可证签名算法；默认兼容 TrueLicense 1.33。
+     */
+    private String signatureAlgorithm = CustomKeyStoreParam.LEGACY_SIGNATURE_ALGORITHM;
+
 }

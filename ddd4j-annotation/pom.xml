@@ -14,11 +14,6 @@
     <description>ddd4j 注解层：DDD 构造型注解 + API 注解，零框架依赖（仅 spring-context）</description>
 
     <dependencies>
-        <!-- 仅依赖 spring-context（提供 @Service/@Repository/@Component 元注解） -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

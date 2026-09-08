@@ -55,7 +55,7 @@ def production_sources(paths: set[str]) -> set[str]:
 
 
 def normalize_descriptor(value: str) -> str:
-    value = re.sub(r"L(?:com/fasterxml|tools)/jackson/[^;]+;", "LJACKSON;", value)
+    value = re.sub(r"L(?:com/fasterxml|tools)/jackson/", "LJACKSON/", value)
     replacements = {
         "Ljavax/validation/": "LVALIDATION/",
         "Ljakarta/validation/": "LVALIDATION/",
@@ -114,7 +114,8 @@ def javap_api(classes: dict[str, pathlib.Path]) -> set[str]:
         def finish_method() -> None:
             nonlocal pending, parameter_names, reading_parameters
             if pending:
-                result.add(pending + "|params=" + ",".join(parameter_names))
+                names = parameter_names if any(parameter_names) else []
+                result.add(pending + "|params=" + ",".join(names))
             pending = ""
             parameter_names = []
             reading_parameters = False
@@ -131,7 +132,7 @@ def javap_api(classes: dict[str, pathlib.Path]) -> set[str]:
                 else:
                     if line.startswith("Name"):
                         continue
-                    parameter_names.append(line.split()[0])
+                    parameter_names.append("" if line.startswith("<no name>") else line.split()[0])
                     continue
             if not line or line in {"{", "}"} or line.startswith("Compiled from"):
                 continue
@@ -171,8 +172,7 @@ def compile_roots(roots: list[pathlib.Path], output: pathlib.Path) -> list[dict[
     for index, (root, jdk_version) in enumerate(zip(roots, JDK_VERSIONS), 1):
         jdk = pathlib.Path(run("/usr/libexec/java_home", "-v", jdk_version).strip())
         executable = root / "mvnw" if index == 3 else pathlib.Path("mvn")
-        command = [str(executable), "-B", "-ntp", "-DskipTests", "-Denforcer.skip=true",
-                   "-Dmaven.compiler.parameters=true", "clean", "compile"]
+        command = [str(executable), "-B", "-ntp", "clean", "compile"]
         environment = os.environ.copy()
         environment["JAVA_HOME"] = str(jdk)
         environment["PATH"] = str(jdk / "bin") + os.pathsep + environment["PATH"]
@@ -229,7 +229,7 @@ def codegraph_conflicts(left: set[str], right: set[str]) -> list[dict[str, objec
 def allowed_api_difference(entry: str) -> bool:
     http_client_constructors = {
         ("ddd4j-data/ddd4j-data-crypto|io/ddd4j/data/crypto/strategy/FlksecCryptoStrategy",
-         "(LJACKSON;Ljava/net/http/HttpClient;Ljava/lang/String;Ljava/lang/String;)V"),
+         "(LJACKSON/databind/ObjectMapper;Ljava/net/http/HttpClient;Ljava/lang/String;Ljava/lang/String;)V"),
         ("ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/geo/GeoBaiduTemplate",
          "(Ljava/net/http/HttpClient;Ljava/lang/String;)V"),
         ("ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/region/BaiduRegionTemplate",

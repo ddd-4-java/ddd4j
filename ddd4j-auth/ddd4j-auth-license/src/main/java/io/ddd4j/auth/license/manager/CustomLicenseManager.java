@@ -14,135 +14,251 @@
  */
 package io.ddd4j.auth.license.manager;
 
-import de.schlichtherle.license.*;
-import de.schlichtherle.xml.GenericCertificate;
-import de.schlichtherle.xml.XMLConstants;
-import io.ddd4j.auth.license.LicenseExtraModel;
-import lombok.extern.slf4j.Slf4j;
+import global.namespace.fun.io.api.Source;
+import global.namespace.truelicense.api.ConsumerLicenseManager;
+import global.namespace.truelicense.api.ConsumerLicenseManagerBuilder;
+import global.namespace.truelicense.api.License;
+import global.namespace.truelicense.api.LicenseFunctionComposition;
+import global.namespace.truelicense.api.LicenseManagementContext;
+import global.namespace.truelicense.api.LicenseManagementException;
+import global.namespace.truelicense.api.LicenseValidationException;
+import global.namespace.truelicense.api.VendorLicenseManager;
+import global.namespace.truelicense.api.VendorLicenseManagerBuilder;
+import global.namespace.truelicense.api.auth.AuthenticationChildBuilder;
+import global.namespace.truelicense.api.crypto.EncryptionChildBuilder;
+import global.namespace.truelicense.api.i18n.Message;
+import global.namespace.truelicense.api.passwd.Password;
+import global.namespace.truelicense.api.passwd.PasswordProtection;
+import global.namespace.truelicense.v1.V1;
+import io.ddd4j.auth.license.CustomKeyStoreParam;
+import org.springframework.util.StringUtils;
 
-import java.beans.XMLDecoder;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.prefs.Preferences;
+
+import static global.namespace.fun.io.bios.BIOS.file;
+import static global.namespace.fun.io.bios.BIOS.preferences;
 
 /**
- * 自定义LicenseManager，用于增加额外的信息校验(除了LicenseManager的校验，我们还可以在这个类里面添加额外的校验信息)
+ * 基于 TrueLicense 4.x 组合 API 的 V1 格式许可证管理器。
  */
-@Slf4j
-public class CustomLicenseManager extends LicenseManager {
+public class CustomLicenseManager {
 
-    public CustomLicenseManager(LicenseParam param) {
-        super(param);
+    private final ConsumerLicenseManager consumer;
+    private final boolean userPreferences;
+    private final VendorLicenseManager vendor;
+    private boolean verificationInvalidated;
+
+    public CustomLicenseManager(String subject, CustomKeyStoreParam keyStoreParam, Preferences preferences) {
+        requireText(subject, "subject");
+        Objects.requireNonNull(keyStoreParam, "keyStoreParam");
+        Objects.requireNonNull(preferences, "preferences");
+        this.userPreferences = preferences.isUserNode();
+        this.vendor = vendor(subject, keyStoreParam);
+        this.consumer = consumer(subject, keyStoreParam, preferences);
     }
 
     /**
-     * 复写create方法
+     * 生成许可证并写入指定文件。
      */
-    @Override
-    protected synchronized byte[] create(LicenseContent content, LicenseNotary notary) throws Exception {
-        initialize(content);
-        this.validateCreate(content);
-        final GenericCertificate certificate = notary.sign(content);
-        return getPrivacyGuard().cert2key(certificate);
+    public synchronized void store(License content, File target) throws LicenseManagementException {
+        vendor.generateKeyFrom(Objects.requireNonNull(content, "content"))
+                .saveTo(file(Objects.requireNonNull(target, "target")));
     }
 
     /**
-     * 复写install方法，其中validate方法调用本类中的validate方法，校验IP地址、Mac地址等其他信息
+     * 安装许可证，随后立即执行业务校验并加载许可证正文。
      */
-    @Override
-    protected synchronized LicenseContent install(final byte[] key, final LicenseNotary notary) throws Exception {
-        final GenericCertificate certificate = getPrivacyGuard().key2cert(key);
-        notary.verify(certificate);
-        final LicenseContent content = (LicenseContent) this.load(certificate.getEncoded());
-        this.validate(content);
-        setLicenseKey(key);
-        setCertificate(certificate);
-
-        return content;
-    }
-
-    /**
-     * 复写verify方法，调用本类中的validate方法，校验IP地址、Mac地址等其他信息
-     */
-    @Override
-    protected synchronized LicenseContent verify(final LicenseNotary notary) throws Exception {
-
-        // Load license key from preferences,
-        final byte[] key = getLicenseKey();
-        if (null == key) {
-            throw new NoLicenseInstalledException(getLicenseParam().getSubject());
-        }
-
-        GenericCertificate certificate = getPrivacyGuard().key2cert(key);
-        notary.verify(certificate);
-        final LicenseContent content = (LicenseContent) this.load(certificate.getEncoded());
-        this.validate(content);
-        setCertificate(certificate);
-
-        return content;
-    }
-
-    /**
-     * 校验生成证书的参数信息
-     */
-    protected synchronized void validateCreate(final LicenseContent content) throws LicenseContentException {
-        final LicenseParam param = getLicenseParam();
-        final Date now = new Date();
-        final Date notBefore = content.getNotBefore();
-        final Date notAfter = content.getNotAfter();
-        if (null != notAfter && now.after(notAfter)) {
-            throw new LicenseContentException("证书失效时间不能早于当前时间");
-        }
-        if (null != notBefore && null != notAfter && notAfter.before(notBefore)) {
-            throw new LicenseContentException("证书生效时间不能晚于证书失效时间");
-        }
-        final String consumerType = content.getConsumerType();
-        if (null == consumerType) {
-            throw new LicenseContentException("用户类型不能为空");
-        }
-    }
-
-
-    /**
-     * 复写validate方法，用于增加我们额外的校验信息
-     */
-    @Override
-    protected synchronized void validate(final LicenseContent content) throws LicenseContentException {
-        //1. 首先调用父类的validate方法
-        super.validate(content);
-        //2. 然后校验自定义的License参数，去校验我们的license信息
-        LicenseExtraModel expectedCheckModel = (LicenseExtraModel) content.getExtra();
-        // 做我们自定义的校验
-    }
-
-
-    /**
-     * 重写XMLDecoder解析XML
-     */
-    private Object load(String encoded) {
-        BufferedInputStream inputStream = null;
-        XMLDecoder decoder = null;
+    public synchronized License install(File source) throws LicenseManagementException {
+        verificationInvalidated = true;
         try {
-            inputStream = new BufferedInputStream(new ByteArrayInputStream(encoded.getBytes(XMLConstants.XML_CHARSET)));
-            decoder = new XMLDecoder(new BufferedInputStream(inputStream, XMLConstants.DEFAULT_BUFSIZE), null, null);
-            return decoder.readObject();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (decoder != null) {
-                    decoder.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (Exception e) {
-                log.error("XMLDecoder解析XML失败", e);
+            consumer.install(file(Objects.requireNonNull(source, "source")));
+            consumer.verify();
+            License installed = consumer.load();
+            verificationInvalidated = false;
+            return installed;
+        } catch (LicenseManagementException exception) {
+            cleanupFailedInstallation(exception);
+            throw exception;
+        } catch (RuntimeException | Error exception) {
+            cleanupFailedInstallation(exception);
+            throw exception;
+        }
+    }
+
+    /**
+     * 校验并返回当前已安装的许可证正文。
+     */
+    public synchronized License verify() throws LicenseManagementException {
+        if (verificationInvalidated) {
+            throw invalidatedException();
+        }
+        consumer.verify();
+        return consumer.load();
+    }
+
+    /**
+     * 卸载当前许可证。
+     */
+    public synchronized void uninstall() throws LicenseManagementException {
+        verificationInvalidated = true;
+        consumer.uninstall();
+    }
+
+    /**
+     * 保留旧生成端的时间约束：允许签发尚未生效的许可证，但拒绝已过期或反向时间区间。
+     */
+    protected synchronized void validateCreate(License content) throws LicenseValidationException {
+        Objects.requireNonNull(content, "content");
+        Date now = new Date();
+        Date notBefore = content.getNotBefore();
+        Date notAfter = content.getNotAfter();
+        if (Objects.nonNull(notAfter) && now.after(notAfter)) {
+            throw validationException("证书失效时间不能早于当前时间");
+        }
+        if (Objects.nonNull(notBefore) && Objects.nonNull(notAfter) && notAfter.before(notBefore)) {
+            throw validationException("证书生效时间不能晚于证书失效时间");
+        }
+        if (Objects.isNull(content.getConsumerType())) {
+            throw validationException("用户类型不能为空");
+        }
+    }
+
+    /**
+     * 消费端扩展校验钩子。当前无额外硬件约束。
+     */
+    protected synchronized void validate(License content) throws LicenseValidationException {
+        Objects.requireNonNull(content, "content");
+    }
+
+    private VendorLicenseManager vendor(String subject, CustomKeyStoreParam keyStoreParam) {
+        LicenseManagementContext context = V1.builder()
+                .subject(subject)
+                .validation(this::validateCreate)
+                .validationComposition(LicenseFunctionComposition.override)
+                .build();
+        VendorLicenseManagerBuilder builder = context.vendor();
+        AuthenticationChildBuilder<? extends VendorLicenseManagerBuilder> authentication = builder.authentication()
+                .algorithm(keyStoreParam.getSignatureAlgorithm())
+                .alias(keyStoreParam.getAlias())
+                .loadFrom(keyStoreSource(keyStoreParam))
+                .storeProtection(passwordProtection(keyStoreParam.getStorePwd()));
+        if (StringUtils.hasText(keyStoreParam.getKeyPwd())) {
+            authentication.keyProtection(passwordProtection(keyStoreParam.getKeyPwd()));
+        }
+        builder = authentication.up();
+        EncryptionChildBuilder<? extends VendorLicenseManagerBuilder> encryption = builder.encryption()
+                .protection(passwordProtection(keyStoreParam.getStorePwd()));
+        return encryption.up().build();
+    }
+
+    private ConsumerLicenseManager consumer(String subject, CustomKeyStoreParam keyStoreParam,
+                                            Preferences preferencesNode) {
+        LicenseManagementContext context = V1.builder()
+                .subject(subject)
+                .cachePeriodMillis(0L)
+                .validation(this::validateConsumer)
+                .build();
+        ConsumerLicenseManagerBuilder builder = context.consumer();
+        AuthenticationChildBuilder<? extends ConsumerLicenseManagerBuilder> authentication = builder.authentication()
+                .algorithm(keyStoreParam.getSignatureAlgorithm())
+                .alias(keyStoreParam.getAlias())
+                .loadFrom(keyStoreSource(keyStoreParam))
+                .storeProtection(passwordProtection(keyStoreParam.getStorePwd()));
+        builder = authentication.up();
+        EncryptionChildBuilder<? extends ConsumerLicenseManagerBuilder> encryption = builder.encryption()
+                .protection(passwordProtection(keyStoreParam.getStorePwd()));
+        return encryption.up().storeIn(preferences(preferencesNode, subject)).build();
+    }
+
+    private static Source keyStoreSource(CustomKeyStoreParam keyStoreParam) {
+        return () -> keyStoreParam::getStream;
+    }
+
+    private void validateConsumer(License content) throws LicenseValidationException {
+        Objects.requireNonNull(content, "content");
+        String consumerType = content.getConsumerType();
+        int consumerAmount = content.getConsumerAmount();
+        if (userPreferences) {
+            if (!"user".equalsIgnoreCase(consumerType)) {
+                throw validationException("用户偏好节点只接受user类型许可证");
+            }
+            if (consumerAmount != 1) {
+                throw validationException("用户偏好节点只接受单用户许可证");
+            }
+        } else {
+            if (Objects.isNull(consumerType)) {
+                throw validationException("用户类型不能为空");
+            }
+            if (consumerAmount <= 0) {
+                throw validationException("用户数量必须为正数");
             }
         }
-
-        return null;
+        validate(content);
     }
 
+    private void cleanupFailedInstallation(Throwable primary) {
+        try {
+            consumer.uninstall();
+        } catch (LicenseManagementException | RuntimeException | Error cleanupException) {
+            primary.addSuppressed(cleanupException);
+        }
+    }
+
+    private static LicenseManagementException invalidatedException() {
+        return new LicenseManagementException(
+                new IllegalStateException("license manager verification state has been invalidated"));
+    }
+
+    private static PasswordProtection passwordProtection(String value) {
+        Objects.requireNonNull(value, "password");
+        return usage -> new Password() {
+            private final char[] characters = value.toCharArray();
+
+            @Override
+            public char[] characters() {
+                return characters;
+            }
+
+            @Override
+            public void close() {
+                Arrays.fill(characters, (char) 0);
+            }
+        };
+    }
+
+    private static LicenseValidationException validationException(String text) {
+        return new LicenseValidationException(new PlainMessage(text));
+    }
+
+    private static void requireText(String value, String name) {
+        if (!StringUtils.hasText(value)) {
+            throw new IllegalArgumentException(name + " must not be blank");
+        }
+    }
+
+    private static final class PlainMessage implements Message {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String text;
+
+        private PlainMessage(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+
+        @Override
+        public String toString(Locale locale) {
+            return text;
+        }
+    }
 }

@@ -32,6 +32,10 @@ class WebErrorTest {
         assertEquals("PARAM", error.code());
         assertEquals("bad request", error.message());
         assertEquals("detail", error.data());
+        assertEquals(400, error.getStatus());
+        assertEquals("PARAM", error.getCode());
+        assertEquals("bad request", error.getMessage());
+        assertEquals("detail", error.getData());
     }
 
     @Test

@@ -16,7 +16,7 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
-import org.springframework.util.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

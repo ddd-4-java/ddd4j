@@ -37,6 +37,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- For DDD4j -->
         <dependency>
             <groupId>io.ddd4j</groupId>

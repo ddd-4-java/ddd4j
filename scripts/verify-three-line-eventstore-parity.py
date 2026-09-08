@@ -20,7 +20,15 @@ SHARED_TESTS = (
     "JdbiEventStoreTest#appendMustNotMutateInputAggregateVersion"
     "+readAllLimitMustBePositive+persistedTimestampMustComeFromEvent,"
     "JpaEventStoreTest#appendMustNotMutateInputAggregateVersion"
-    "+readAllLimitMustBePositive+persistedTimestampMustComeFromEvent,"
+    "+readAllLimitMustBePositive+persistedTimestampMustComeFromEvent"
+    "+failedBatchMustPreserveCommittedStateAndAllowNextAppend"
+    "+participatingAppendMustLeaveCommitToCaller"
+    "+participatingOperationsMustRejectWithoutCallerTransaction"
+    "+participatingEmptyAppendMustRejectWithoutCallerTransaction"
+    "+participatingAppendsMustShareCallerTransactionAndCommitTogether"
+    "+participatingFailedBatchMustMarkCallerTransactionRollbackOnly"
+    "+participatingAppendMustPreserveCommitFlushMode"
+    "+participatingCustomRepositoryMustControlPositionAndPersistence,"
     "R2dbcAsyncEventStoreTest#readAllLimitMustBePositive+persistedTimestampMustComeFromEvent"
 )
 EXPECTED = {
@@ -30,6 +38,14 @@ EXPECTED = {
     ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "appendMustNotMutateInputAggregateVersion"),
     ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "readAllLimitMustBePositive"),
     ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "persistedTimestampMustComeFromEvent"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "failedBatchMustPreserveCommittedStateAndAllowNextAppend"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "participatingAppendMustLeaveCommitToCaller"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "participatingOperationsMustRejectWithoutCallerTransaction"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "participatingEmptyAppendMustRejectWithoutCallerTransaction"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "participatingAppendsMustShareCallerTransactionAndCommitTogether"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "participatingFailedBatchMustMarkCallerTransactionRollbackOnly"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "participatingAppendMustPreserveCommitFlushMode"),
+    ("io.ddd4j.data.event.store.jpa.JpaEventStoreTest", "participatingCustomRepositoryMustControlPositionAndPersistence"),
     ("io.ddd4j.data.event.store.r2dbc.R2dbcAsyncEventStoreTest", "readAllLimitMustBePositive"),
     ("io.ddd4j.data.event.store.r2dbc.R2dbcAsyncEventStoreTest", "persistedTimestampMustComeFromEvent"),
 }
@@ -60,14 +76,19 @@ def observed_tests(root: pathlib.Path, suffix: str,
             continue
         document = element_tree.parse(report)
         suite = document.getroot()
+        marker = f"({suffix})"
+        if suite.attrib.get("name", "") != f"{class_name}{marker}":
+            invalid_reports.append(f"wrong-suffix:{relative}")
+            continue
         if any(int(suite.attrib.get(key, "0")) != 0 for key in ("failures", "errors", "skipped")):
             invalid_reports.append(f"non-green:{relative}")
             continue
         for case in document.iter("testcase"):
             actual_class = case.attrib.get("classname", "")
-            marker = f"({suffix})"
-            if actual_class.endswith(marker):
-                actual_class = actual_class[:-len(marker)]
+            if not actual_class.endswith(marker):
+                invalid_reports.append(f"wrong-suffix:{relative}")
+                break
+            actual_class = actual_class[:-len(marker)]
             key = (actual_class, case.attrib.get("name", ""))
             failed = any(child.tag in {"failure", "error", "skipped"} for child in case)
             if key in EXPECTED and not failed:
@@ -90,7 +111,7 @@ def main() -> int:
         command = [
             str(executable), "-B", "-ntp", "-Pparity-verification",
             "-pl", MODULES, "-am", f"-Dtest={SHARED_TESTS}",
-            "-Dsurefire.failIfNoSpecifiedTests=false", "-Denforcer.skip=true",
+            "-Dsurefire.failIfNoSpecifiedTests=false",
         ]
         suffix = f"ddd4j-parity-line-{index}-{time.time_ns()}"
         command.extend([f"-Dsurefire.reportNameSuffix={suffix}", "test"])
