@@ -17,6 +17,7 @@
 - Java8 默认 SLF4J2 + Logback1.3 配对；Dropwizard2、Boot2相关测试保留显式 `logback-legacy.version`。父 POM 的 Expressly 改为匹配 javax EL 的 GlassFish 实现。
 - 三条线的 `<properties>` 统一为全局、第三方依赖、Maven依赖三段，并在每段按自然字母顺序排列。2.0.x/3.0.x 的 `easy4j-*.version` 前缀已全部移除；冲突的 `com.github.hiwepy` 旧坐标和旧属性已删除，仅保留当前 `io.github.easy4j` 组件及对应 2.0.x/3.0.x 版本。
 - 删除全部临时 `alignment.*` 属性。`hitool-crypto`、`hitool-mail` 改用本线 `${hitool.version}`；补填的 `mybatis-spring-boot-starter`、`jooq-plus`、`mybatis-plus-enhance`、旧 `shiro-redis`、旧 `spring-javassist`、`ip2region-spring-boot-starter` 从 ddd4j 通用依赖清单删除。Spring Boot starter 归属对应 ddd4j-boot 版本线。
+- Boot BOM 基础组件回迁：三线统一管理 `de.schlichtherle.truelicense:truelicense-core/xml:1.33`；JDK8 增加 `io.github.easy4j:zxing-extension:1.0.x` 与 `com.baomidou:mybatis-plus-spring:3.5.9`，JDK17/21 沿用已验证的 ZXing 2.0.x 与 MyBatis-Plus 3.5.16。Boot 2.7 BOM 已删除这些非 Spring Boot 属性和直接声明。
 
 ### 代表性版本矩阵
 
@@ -41,15 +42,15 @@
 
 ## 严格门禁结果
 
-固定原始基线为 1,314 个组件、1,338 个 type/classifier 变体。当前矩阵有 1,345 组坐标/变体，形成 4,035 条“组件 × JDK”记录：
+固定原始基线为 1,314 个组件、1,338 个 type/classifier 变体。当前矩阵有 1,347 组坐标/变体，形成 4,041 条“组件 × JDK”记录：
 
 | 状态 | 条目数 | 含义 |
 |---|---:|---|
-| bytecode-pass | 3,470 | 已检查基础 class 主版本；不代表传递依赖、框架或所有业务行为通过 |
+| bytecode-pass | 3,478 | 已检查基础 class 主版本；不代表传递依赖、框架或所有业务行为通过 |
 | replacement | 62 | 有明确证据的坐标迁移或模块合并 |
 | excluded | 8 | 经边界确认不属于 ddd4j 通用依赖的旧组件 |
 | pom | 34 | 聚合 POM 类型 |
-| absent | 240 | 主要是较新版本线才引入的组件/变体，未要求机械向下复制 |
+| absent | 238 | 主要是较新版本线才引入的组件/变体，未要求机械向下复制 |
 | unsupported | 20 | 当前选型受 JDK 限制或仍需组合验证 |
 | manual-migration | 6 | 旧 starter 在17/21两条线需要真正的框架迁移 |
 | unverified-artifact | 195 | 尚未取得当前版本/分类器的完整产物检查结果 |

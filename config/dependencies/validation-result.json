@@ -419,12 +419,12 @@
     "JDK 17: us.fatehi:schemacrawler-utility:17.11.3",
     "JDK 21: us.fatehi:schemacrawler-utility:17.11.3"
   ],
-  "rows": 4035,
+  "rows": 4041,
   "unique_unverified_coordinates": 81,
   "source_pom_sha256": {
-    "8": "ba2fa790977799973bc6c6cc01fdc127d9bdc5a930cb263917fd981a71b344e8",
-    "17": "1a83c7f4164cf80180c83efef9a09fc3f37c00931854dd81ca2d6c2e6d1d6e29",
-    "21": "ba8ca53726b9b998a7f7724d84d2e956a90fc27c0337f778fd5c9495d1fa68d2"
+    "8": "96035c62a5ccf0685de98b00897e6965aef4a9d1b10f10afabef6b26a4ad44b5",
+    "17": "e0e19c9b1a615ad25c61ff4be558bab774566c3b8c68df139b057235497f446c",
+    "21": "0ed5e330119a36bb4420cdd260a0daf446cb5f066cecb7d79e92dbb10cf6d00d"
   },
   "status": "incomplete",
   "scope": "Explicit managed components; effective BOM coverage and base bytecode only, not full transitive/runtime compatibility."
