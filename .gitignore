@@ -189,3 +189,6 @@ demos/**/*.mp4
 
 # 本地 dreamina CLI 采集输出
 .cli-audit/
+
+# 三线依赖清单与兼容证据需要纳入版本管理。
+!config/dependencies/*.json

@@ -14,67 +14,127 @@
  */
 package io.ddd4j.web.core.observability;
 
+import io.ddd4j.extension.otel.Ddd4jOtel;
+import io.ddd4j.extension.otel.HttpSpan;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.data.SpanData;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * 测试期 classpath 已含 ddd4j-extension-otel：验证 WebOtelSupport 反射桥接到
- * 真实 WebOtelIntegration 的路径（无 OTel SDK 时为 invalid-span/noop 降级）。
- */
 class WebOtelSupportTest {
 
-    @Test
-    void startServerSpanDelegatesToOtelIntegration() {
-        // OTel SDK 未配置 → 返回 invalid PropagatedSpan（非 null，桥接成功）
-        assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", Map.of("x", "y")));
-        assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", null));
+    private InMemorySpanExporter exporter;
+    private SdkTracerProvider tracerProvider;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        resetOpenTelemetry();
+        exporter = InMemorySpanExporter.create();
+        tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(exporter))
+                .build();
+        OpenTelemetrySdk.builder()
+                .setTracerProvider(tracerProvider)
+                .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
+                .buildAndRegisterGlobal();
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        if (tracerProvider != null) {
+            tracerProvider.close();
+        }
+        if (exporter != null) {
+            exporter.close();
+        }
+        resetOpenTelemetry();
     }
 
     @Test
-    void activateReturnsClosableScope() {
-        AutoCloseable scope = WebOtelSupport.activate(null);
-        assertNotNull(scope);
-        assertDoesNotThrow(() -> scope.close());
+    void startAndActivateDelegateToRealOtelIntegration() throws Exception {
+        assertTrue(WebOtelSupport.isAvailable());
+        Object spanObject = WebOtelSupport.startServerSpan("GET", "/api", new HashMap<>());
+        assertTrue(spanObject instanceof Span);
+        Span span = (Span) spanObject;
+        assertTrue(span.getSpanContext().isValid());
 
+        try (AutoCloseable scope = WebOtelSupport.activate(span)) {
+            assertSame(span, Span.current());
+        }
+
+        assertFalse(Span.current().getSpanContext().isValid());
+        WebOtelSupport.endServerSpan(span, 200);
+    }
+
+    @Test
+    void errorAndStatusAreExportedThroughReflectionBridge() {
         Object span = WebOtelSupport.startServerSpan("POST", "/orders", new HashMap<>());
-        AutoCloseable scopeWithSpan = WebOtelSupport.activate(span);
-        assertNotNull(scopeWithSpan);
-        assertDoesNotThrow(() -> scopeWithSpan.close());
+
+        WebOtelSupport.recordError(span, new IllegalStateException("failed"));
+        WebOtelSupport.endServerSpan(span, 503);
+
+        List<SpanData> spans = exporter.getFinishedSpanItems();
+        assertEquals(1, spans.size());
+        SpanData data = spans.get(0);
+        assertEquals(StatusCode.ERROR, data.getStatus().getStatusCode());
+        assertEquals("503", data.getAttributes().get(HttpSpan.ATTR_HTTP_STATUS));
+        assertFalse(data.getEvents().isEmpty());
     }
 
     @Test
-    void recordErrorDelegatesWithoutThrowing() {
+    void responseContextIsInjectedThroughReflectionBridge() throws Exception {
         Object span = WebOtelSupport.startServerSpan("GET", "/api", new HashMap<>());
-        assertDoesNotThrow(() -> WebOtelSupport.recordError(span, new IllegalStateException("x")));
-        assertDoesNotThrow(() -> WebOtelSupport.recordError(null, null));
-    }
-
-    @Test
-    void endServerSpanDelegatesWithoutThrowing() {
-        Object span = WebOtelSupport.startServerSpan("GET", "/api", new HashMap<>());
-        assertDoesNotThrow(() -> WebOtelSupport.endServerSpan(span, 200));
-        assertDoesNotThrow(() -> WebOtelSupport.endServerSpan(null, 500));
-    }
-
-    @Test
-    void injectResponseContextDelegatesWithoutThrowing() {
         Map<String, String> headers = new HashMap<>();
-        assertDoesNotThrow(() -> WebOtelSupport.injectResponseContext(headers));
+
+        try (AutoCloseable scope = WebOtelSupport.activate(span)) {
+            WebOtelSupport.injectResponseContext(headers);
+        }
+        WebOtelSupport.endServerSpan(span, 200);
+
+        assertNotNull(headers.get("traceparent"));
+        assertTrue(headers.get("traceparent").startsWith("00-"));
+    }
+
+    @Test
+    void nullInputsRemainSafe() {
+        assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", null));
+        assertDoesNotThrow(() -> WebOtelSupport.activate(null).close());
+        assertDoesNotThrow(() -> WebOtelSupport.recordError(null, null));
+        assertDoesNotThrow(() -> WebOtelSupport.endServerSpan(null, 500));
         assertDoesNotThrow(() -> WebOtelSupport.injectResponseContext(null));
     }
 
-    @Test
-    void isAvailableReflectsOtelSdkState() {
-        // 无 OTel SDK 配置时 Ddd4jOtel.isAvailable() == false，桥接应如实透传
-        boolean available = WebOtelSupport.isAvailable();
-        assertTrue(available == false || available == true, "桥接返回布尔值");
-        assertFalse(available);
+    private static void resetOpenTelemetry() throws Exception {
+        GlobalOpenTelemetry.resetForTest();
+        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
+            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            ((AtomicReference<?>) field.get(null)).set(null);
+        }
+        Field available = Ddd4jOtel.class.getDeclaredField("available");
+        available.setAccessible(true);
+        available.setBoolean(null, false);
     }
 }

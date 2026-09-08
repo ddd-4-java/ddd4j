@@ -172,13 +172,19 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         }
 
         private void close(boolean successful) {
-            if (Objects.nonNull(idempotencyScope)) {
-                if (successful) {
-                    idempotencyScope.complete();
+            try {
+                if (Objects.nonNull(idempotencyScope)) {
+                    try {
+                        if (successful) {
+                            idempotencyScope.complete();
+                        }
+                    } finally {
+                        idempotencyScope.close();
+                    }
                 }
-                idempotencyScope.close();
+            } finally {
+                contextScope.close();
             }
-            contextScope.close();
         }
     }
 }

@@ -66,10 +66,13 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
     }
 
     public void complete(boolean successful) {
-        if (successful) {
-            idempotencyScope.ifPresent(WebIdempotencyLifecycle.Scope::complete);
+        try {
+            if (successful) {
+                idempotencyScope.ifPresent(WebIdempotencyLifecycle.Scope::complete);
+            }
+        } finally {
+            close();
         }
-        close();
     }
 
     @Override
