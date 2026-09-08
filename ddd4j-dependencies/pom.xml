@@ -690,6 +690,7 @@
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <truelicense.version>4.1.4</truelicense.version>
         <tika-bom.version>3.3.2</tika-bom.version>
+        <tio.version>3.8.6.v20240801-RELEASE</tio.version>
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
         <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
@@ -9982,6 +9983,12 @@
                 <version>${tika-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- t-io（mqtt-server sample 引用；org.tio 坐标已死，Central 仅存 org.t-io） -->
+            <dependency>
+                <groupId>org.t-io</groupId>
+                <artifactId>tio-core</artifactId>
+                <version>${tio.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.unboundid/unboundid-ldapsdk -->
             <!-- UnboundID LDAP SDK：高性能纯 Java LDAP 客户端 SDK（比 JNDI 更快更易用）。 -->
