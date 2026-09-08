@@ -27,13 +27,18 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.context.WebContextScope;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpFilter;
 import io.micronaut.http.filter.FilterChain;
+import io.micronaut.scheduling.instrument.Instrumentation;
+import io.micronaut.scheduling.instrument.InvocationInstrumenter;
+import io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
@@ -83,20 +88,29 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         Map<String, String> headers = extractRequestHeaders(request);
         Object span = WebOtelSupport.startServerSpan(
                 request.getMethodName(), request.getPath(), headers);
-        WebOtelSupport.activate(span);
 
         WebRequestContext requestContext = createContext(request);
         Optional<Authentication> authentication = requestLifecycle.authenticate(requestContext);
+        Ddd4jMicronautContext micronautContext;
         if (authentication.isPresent()) {
-            Ddd4jMicronautContext.set(new Ddd4jMicronautContext(requestContext,
-                    Optional.of(authentication.get().subject())));
+            micronautContext = new Ddd4jMicronautContext(requestContext,
+                    Optional.of(authentication.get().subject()));
         } else {
-            Ddd4jMicronautContext.set(new Ddd4jMicronautContext(requestContext, Optional.empty()));
+            micronautContext = new Ddd4jMicronautContext(requestContext, Optional.empty());
         }
+        request.setAttribute(Ddd4jMicronautContext.REQUEST_ATTRIBUTE, micronautContext);
+        Ddd4jMicronautContext.set(micronautContext);
         Optional<WebIdempotencyLifecycle.Scope> idempotencyScope = idempotencyLifecycle.flatMap(lifecycle ->
                 lifecycle.open(requestContext, request.getHeaders().get(WebHeaders.IDEMPOTENCY_KEY)));
         try {
-            return Flux.from(chain.proceed(request))
+            Publisher<? extends HttpResponse<?>> downstream;
+            AutoCloseable otelScope = WebOtelSupport.activate(span);
+            try {
+                downstream = chain.proceed(request);
+            } finally {
+                closeScope(otelScope);
+            }
+            return Flux.from(downstream)
                     .doOnNext(response -> {
                         addResponseHeaders(response, requestContext);
                         closeIdempotency(idempotencyScope, response.getStatus().getCode() < 400);
@@ -122,6 +136,13 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
             closeIdempotency(idempotencyScope, false);
             Ddd4jMicronautContext.clear();
             throw exception;
+        }
+    }
+
+    private static void closeScope(AutoCloseable scope) {
+        try {
+            scope.close();
+        } catch (Throwable ignored) {
         }
     }
 
@@ -167,5 +188,33 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
             }
             idempotencyScope.close();
         });
+    }
+
+    @Singleton
+    static final class ContextPropagationFactory implements ReactiveInvocationInstrumenterFactory {
+
+        @Override
+        public InvocationInstrumenter newReactiveInvocationInstrumenter() {
+            Optional<Ddd4jMicronautContext> current = Ddd4jMicronautContext.current();
+            if (!current.isPresent()) {
+                return null;
+            }
+            Ddd4jMicronautContext captured = current.get();
+            return () -> {
+                Ddd4jMicronautContext previous = Ddd4jMicronautContext.currentThreadContext();
+                WebContextScope contextScope = captured.openContext();
+                Ddd4jMicronautContext.set(captured);
+                return new Instrumentation() {
+                    @Override
+                    public void close(boolean cleanup) {
+                        try {
+                            contextScope.close();
+                        } finally {
+                            Ddd4jMicronautContext.restore(previous);
+                        }
+                    }
+                };
+            };
+        }
     }
 }

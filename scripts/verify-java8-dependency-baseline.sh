@@ -11,8 +11,8 @@ if ! rg -q '<junit-jupiter.version>5\.' ddd4j-dependencies/pom.xml; then
   exit 1
 fi
 
-if ! rg -q '<logback.version>1\.2\.' ddd4j-dependencies/pom.xml; then
-  echo "JDK 8 branch must use a Logback 1.2.x runtime, not Logback 1.5.x." >&2
+if ! rg -q '<logback.version>1\.3\.' ddd4j-dependencies/pom.xml; then
+  echo "JDK 8 branch must use a Logback 1.3.x runtime for SLF4J 2, not Logback 1.5.x." >&2
   exit 1
 fi
 

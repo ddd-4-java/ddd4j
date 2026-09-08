@@ -134,15 +134,14 @@ public final class Ddd4jVertxWeb {
                     routingContext.normalizedPath(),
                     headers);
             routingContext.put(OTEL_SPAN_KEY, span);
-            WebOtelSupport.activate(span);
+            routingContext.put(STATE_KEY, new RequestState());
+            routingContext.addEndHandler(ignored -> finish(routingContext));
 
             WebRequestContext requestContext = createContext(routingContext);
-            routingContext.put(STATE_KEY, new RequestState());
             Ddd4jVertxContext.bindRequest(routingContext, requestContext);
             routingContext.response().putHeader(WebHeaders.REQUEST_ID, requestContext.requestId());
             routingContext.response().putHeader(WebHeaders.TRACE_ID, requestContext.traceId());
-            routingContext.addEndHandler(ignored -> finish(routingContext));
-            routingContext.next();
+            runWithSpan(span, routingContext::next);
         };
     }
 
@@ -160,7 +159,7 @@ public final class Ddd4jVertxWeb {
                                 Ddd4jVertxContext.bindSubject(routingContext, authentication.subject()));
                         RequestState state = routingContext.get(STATE_KEY);
                         authenticationResult.idempotencyScope().ifPresent(state::idempotencyScope);
-                        routingContext.next();
+                        runWithSpan(routingContext.get(OTEL_SPAN_KEY), routingContext::next);
                     }));
         };
     }
@@ -183,13 +182,14 @@ public final class Ddd4jVertxWeb {
             Object span = routingContext.get(OTEL_SPAN_KEY);
             if (Objects.nonNull(span)) {
                 WebOtelSupport.recordError(span, failure);
-                WebOtelSupport.endServerSpan(span, error.status());
             }
-            if (!routingContext.response().ended()) {
-                routingContext.response().setStatusCode(error.status())
-                        .putHeader("Content-Type", "application/json")
-                        .end(jsonEncoder.apply(error.toResponse()));
-            }
+            runWithSpan(span, () -> {
+                if (!routingContext.response().ended()) {
+                    routingContext.response().setStatusCode(error.status())
+                            .putHeader("Content-Type", "application/json")
+                            .end(jsonEncoder.apply(error.toResponse()));
+                }
+            });
         };
     }
 
@@ -236,20 +236,27 @@ public final class Ddd4jVertxWeb {
             return;
         }
         boolean successful = !state.failed && context.response().getStatusCode() < 400;
-        context.vertx().executeBlocking(() -> {
-            state.close(successful);
-            return null;
-        }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
-
-        // OTel: 结束 span
         Object span = context.remove(OTEL_SPAN_KEY);
         if (Objects.nonNull(span)) {
             int status = context.response().getStatusCode() > 0
                     ? context.response().getStatusCode() : 200;
-            if (state.failed) {
-                WebOtelSupport.recordError(span, new RuntimeException("request failed"));
-            }
             WebOtelSupport.endServerSpan(span, status);
+        }
+        context.vertx().executeBlocking(() -> {
+            state.close(successful);
+            return null;
+        }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
+    }
+
+    private static void runWithSpan(Object span, Runnable action) {
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        try {
+            action.run();
+        } finally {
+            try {
+                scope.close();
+            } catch (Throwable ignored) {
+            }
         }
     }
 
@@ -277,6 +284,7 @@ public final class Ddd4jVertxWeb {
 
         private WebIdempotencyLifecycle.Scope idempotencyScope;
         private boolean failed;
+        private boolean idempotencyClosed;
 
         private void idempotencyScope(WebIdempotencyLifecycle.Scope scope) {
             this.idempotencyScope = scope;
@@ -287,13 +295,20 @@ public final class Ddd4jVertxWeb {
         }
 
         private void close(boolean successful) {
-            if (Objects.isNull(idempotencyScope)) {
+            if (idempotencyClosed) {
                 return;
             }
-            if (successful) {
-                idempotencyScope.complete();
+            try {
+                if (Objects.nonNull(idempotencyScope) && successful) {
+                    idempotencyScope.complete();
+                }
+            } finally {
+                if (Objects.nonNull(idempotencyScope)) {
+                    idempotencyScope.close();
+                }
+                idempotencyClosed = true;
             }
-            idempotencyScope.close();
         }
+
     }
 }

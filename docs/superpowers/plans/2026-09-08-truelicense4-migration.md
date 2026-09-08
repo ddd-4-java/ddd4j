@@ -62,7 +62,7 @@ content必须由4.x V1.builder().subject(subject).build().licenseFactory()创建
 
 **Interfaces:** 消费Task1的新API、测试、坐标；交付三线fresh dependency tree、SBOM/license gate、API对比。
 
-- [ ] Step 1: 三线运行auth-license默认test（无-Dtest）和extension-license既有测试，记录真实数/失败/skips。
-- [ ] Step 2: 用现有仓库许可证脚本/配置执行涉及模块的许可检查与SBOM，证明无de.schlichtherle.truelicense 1.33运行依赖，保留上游Apache2来源。
-- [ ] Step 3: 新鲜字节码API对比及源码结构检查，逐项解释本次三线同步公开API变更；编译高层旧调用示例和新低层调用示例。
-- [ ] Step 4: 最终独立审查、三线git diff --check，更新证据，不宣称与本次无关的Shiro全量失败已解决或整体生产就绪。
+- [x] Step 1: 三线运行auth-license默认test（无-Dtest）和extension-license既有测试，记录真实数/失败/skips。
+- [x] Step 2: 用现有仓库许可证脚本/配置执行涉及模块的许可检查与SBOM，证明无de.schlichtherle.truelicense 1.33运行依赖，保留上游Apache2来源。
+- [x] Step 3: 新鲜字节码API对比及源码结构检查，逐项解释本次三线同步公开API变更；编译高层旧调用示例和新低层调用示例。
+- [x] Step 4: 最终独立审查、三线git diff --check，更新证据，不宣称与本次无关的Shiro全量失败已解决或整体生产就绪。

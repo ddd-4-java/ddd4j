@@ -18,6 +18,7 @@ import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
@@ -36,11 +37,15 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.runtime.server.EmbeddedServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.time.Duration;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -54,6 +59,8 @@ import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
@@ -74,6 +81,7 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
                 WebContractPaths.PUBLIC,
                 WebContractPaths.CONTEXT,
                 WebContractPaths.IDEMPOTENT,
+                "/contract/async-context",
                 "/contract/errors/**"));
         properties.put("ddd4j.web.idempotency-cache-name", "micronaut-contract");
         server = ApplicationContext.run(EmbeddedServer.class, properties);
@@ -94,6 +102,15 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
     @Override
     protected WebContractClient client() {
         return contractClient;
+    }
+
+    @Test
+    void shouldPropagateTenantAcrossReactorScheduler() {
+        WebContractResponse response = contractClient.request("GET", "/contract/async-context",
+                Collections.singletonMap("X-Tenant-Id", "tenant-async"), null);
+
+        assertEquals(200, response.status(), response.body());
+        assertTrue(response.body().contains("tenant-async"));
     }
 
     private SubjectProvider provider(Subject subject) {
@@ -192,6 +209,19 @@ final class MicronautContractController {
     @Post("/idempotent")
     R<Map<String, String>> idempotent() {
         return R.ok(Collections.singletonMap("result", "accepted"));
+    }
+
+    @Get("/async-context")
+    Mono<R<Map<String, Object>>> asyncContext() {
+        return Mono.delay(Duration.ofMillis(10)).publishOn(Schedulers.boundedElastic()).map(ignored -> {
+            String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
+            if (Objects.isNull(tenantId)) {
+                throw new IllegalStateException("Micronaut async tenant context is missing");
+            }
+            Map<String, Object> data = new LinkedHashMap<>();
+            data.put("tenantId", tenantId);
+            return R.ok(data);
+        });
     }
 
     @Get("/errors/{type}")

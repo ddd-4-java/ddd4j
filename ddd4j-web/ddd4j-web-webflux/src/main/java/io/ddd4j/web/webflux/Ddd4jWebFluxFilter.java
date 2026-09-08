@@ -80,48 +80,38 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        // OTel: 提取上游 TraceContext 并开启 SERVER span
-        Map<String, String> headers = extractHeaders(exchange);
-        Object span = WebOtelSupport.startServerSpan(
-                exchange.getRequest().getMethod().name(),
-                exchange.getRequest().getPath().value(),
-                headers);
-        exchange.getAttributes().put(OTEL_SPAN_KEY, span);
-        AutoCloseable scope = WebOtelSupport.activate(span);
-        exchange.getAttributes().put(OTEL_SPAN_KEY + ".scope", scope);
-
         return Mono.defer(() -> {
-            WebRequestContext requestContext = createContext(exchange);
-            exchange.getResponse().getHeaders().set(WebHeaders.REQUEST_ID, requestContext.requestId());
-            exchange.getResponse().getHeaders().set(WebHeaders.TRACE_ID, requestContext.traceId());
-            Mono<Optional<Authentication>> authentication = Mono.fromCallable(
-                    () -> requestLifecycle.authenticate(requestContext)).subscribeOn(blockingScheduler);
-            Mono<Optional<WebIdempotencyLifecycle.Scope>> idempotency = Mono.fromCallable(
-                    () -> openIdempotency(requestContext, exchange)).subscribeOn(blockingScheduler);
-            return authentication.flatMap(result -> idempotency.flatMap(idem -> invoke(exchange, chain,
-                    requestContext, result, idem)));
-        }).doFinally(signalType -> {
-            // OTel: 结束 span
-            Object s = exchange.getAttributes().remove(OTEL_SPAN_KEY);
-            if (Objects.nonNull(s)) {
-                int status = Objects.nonNull(exchange.getResponse().getStatusCode())
-                        ? exchange.getResponse().getStatusCode().value() : 200;
-                WebOtelSupport.endServerSpan(s, status);
-            }
-            Object sc = exchange.getAttributes().remove(OTEL_SPAN_KEY + ".scope");
-            if (sc instanceof AutoCloseable) {
-                try {
-                    ((AutoCloseable) sc).close();
-                } catch (Throwable ignored) {
+            Map<String, String> headers = extractHeaders(exchange);
+            Object span = WebOtelSupport.startServerSpan(
+                    exchange.getRequest().getMethod().name(),
+                    exchange.getRequest().getPath().value(),
+                    headers);
+            exchange.getAttributes().put(OTEL_SPAN_KEY, span);
+            return Mono.defer(() -> {
+                WebRequestContext requestContext = createContext(exchange);
+                exchange.getResponse().getHeaders().set(WebHeaders.REQUEST_ID, requestContext.requestId());
+                exchange.getResponse().getHeaders().set(WebHeaders.TRACE_ID, requestContext.traceId());
+                Mono<Optional<Authentication>> authentication = Mono.fromCallable(
+                        () -> requestLifecycle.authenticate(requestContext)).subscribeOn(blockingScheduler);
+                Mono<Optional<WebIdempotencyLifecycle.Scope>> idempotency = Mono.fromCallable(
+                        () -> openIdempotency(requestContext, exchange)).subscribeOn(blockingScheduler);
+                return authentication.flatMap(result -> idempotency.flatMap(idem -> invoke(exchange, chain,
+                        requestContext, result, idem, span)));
+            }).doFinally(signalType -> {
+                Object currentSpan = exchange.getAttributes().remove(OTEL_SPAN_KEY);
+                if (Objects.nonNull(currentSpan)) {
+                    int status = Objects.nonNull(exchange.getResponse().getStatusCode())
+                            ? exchange.getResponse().getStatusCode().value() : 200;
+                    WebOtelSupport.endServerSpan(currentSpan, status);
                 }
-            }
+            });
         });
     }
 
     private static Map<String, String> extractHeaders(ServerWebExchange exchange) {
         Map<String, String> headers = new HashMap<>();
         exchange.getRequest().getHeaders().forEach((k, v) -> {
-            if (Objects.nonNull(v) && v.isEmpty()) {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
                 headers.put(k, v.get(0));
             }
         });
@@ -130,9 +120,15 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
 
     private Mono<Void> invoke(ServerWebExchange exchange, WebFilterChain chain, WebRequestContext requestContext,
                               Optional<Authentication> authentication,
-                              Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
-        Mono<Void> invocation = chain.filter(exchange)
-                .contextWrite(context -> context.put(Ddd4jWebFluxContext.REQUEST_CONTEXT_KEY, requestContext));
+                              Optional<WebIdempotencyLifecycle.Scope> idempotencyScope, Object span) {
+        Mono<Void> invocation;
+        AutoCloseable otelScope = WebOtelSupport.activate(span);
+        try {
+            invocation = chain.filter(exchange)
+                    .contextWrite(context -> context.put(Ddd4jWebFluxContext.REQUEST_CONTEXT_KEY, requestContext));
+        } finally {
+            closeScope(otelScope);
+        }
         if (authentication.isPresent()) {
             invocation = invocation.contextWrite(context -> context.put(Ddd4jWebFluxContext.SUBJECT_KEY,
                     authentication.get().subject()));
@@ -146,6 +142,13 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 ignored -> complete(scope),
                 (ignored, throwable) -> release(scope),
                 ignored -> release(scope));
+    }
+
+    private static void closeScope(AutoCloseable scope) {
+        try {
+            scope.close();
+        } catch (Throwable ignored) {
+        }
     }
 
     private Optional<WebIdempotencyLifecycle.Scope> openIdempotency(WebRequestContext context,

@@ -18,17 +18,17 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.web.core.context.WebContextScope;
 import io.ddd4j.web.core.context.WebRequestContext;
+import io.micronaut.http.context.ServerRequestContext;
 
 import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 通过 Micronaut PropagatedContext 传播 ddd4j 请求上下文。
- */public final class Ddd4jMicronautContext {
-
-/**
- * 通过 Micronaut PropagatedContext 传播 ddd4j 请求上下文。
+ * 通过 Micronaut 3 请求上下文与 Reactor 调用插桩传播 ddd4j 请求状态。
  */
+public final class Ddd4jMicronautContext {
+
+    static final String REQUEST_ATTRIBUTE = Ddd4jMicronautContext.class.getName();
 
     private static final ThreadLocal<Ddd4jMicronautContext> CURRENT = new ThreadLocal<>();
 
@@ -49,7 +49,12 @@ import java.util.Optional;
     }
 
     public static Optional<Ddd4jMicronautContext> current() {
-        return Optional.ofNullable(CURRENT.get());
+        Ddd4jMicronautContext current = CURRENT.get();
+        if (Objects.nonNull(current)) {
+            return Optional.of(current);
+        }
+        return ServerRequestContext.currentRequest()
+                .flatMap(request -> request.getAttribute(REQUEST_ATTRIBUTE, Ddd4jMicronautContext.class));
     }
 
     public static void set(Ddd4jMicronautContext context) {
@@ -58,6 +63,18 @@ import java.util.Optional;
 
     public static void clear() {
         CURRENT.remove();
+    }
+
+    static Ddd4jMicronautContext currentThreadContext() {
+        return CURRENT.get();
+    }
+
+    static void restore(Ddd4jMicronautContext previous) {
+        if (Objects.isNull(previous)) {
+            clear();
+        } else {
+            set(previous);
+        }
     }
 
     public WebContextScope openContext() {

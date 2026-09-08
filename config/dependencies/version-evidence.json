@@ -1,0 +1,418 @@
+[
+  {
+    "property": "antlr4-tool.version",
+    "jdk": 8,
+    "version": "4.9.3",
+    "max_base_class_jdk": 7,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/antlr/antlr4/4.9.3/antlr4-4.9.3.jar",
+    "sha256": "386fec520b8962fe37f448af383920ea33d7a532314b36d7ba9ccec1ba95eb37"
+  },
+  {
+    "property": "appium.version",
+    "jdk": 8,
+    "version": "8.6.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/io/appium/java-client/8.6.0/java-client-8.6.0.jar",
+    "sha256": "7cd9d68498159d3311a6c21bb3124016ddb5145558eac5f277ba4fa3233a46fd"
+  },
+  {
+    "property": "aspectj-tools.version",
+    "jdk": 8,
+    "version": "1.9.7",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/aspectj/aspectjtools/1.9.7/aspectjtools-1.9.7.jar",
+    "sha256": "04644968c5b1c9d1431ec54437355649305cf577bad0dde698b0398c47ba4292"
+  },
+  {
+    "property": "async-http-client.version",
+    "jdk": 8,
+    "version": "2.12.4",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/asynchttpclient/async-http-client/2.12.4/async-http-client-2.12.4.jar",
+    "sha256": "973578ec9cc18df4a70d6de06c62d44b0392bcbeffb137fe679d8691e7cedaaf"
+  },
+  {
+    "property": "axiom.version",
+    "jdk": 8,
+    "version": "1.4.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/apache/ws/commons/axiom/axiom-api/1.4.0/axiom-api-1.4.0.jar",
+    "sha256": "3bc96fa1e977be387f01ec983c60c8a9dd7ead7fbbb5b37297e6a5c72462d795"
+  },
+  {
+    "property": "buji-pac4j.version",
+    "jdk": 8,
+    "version": "4.1.1",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/io/buji/buji-pac4j/4.1.1/buji-pac4j-4.1.1.jar",
+    "sha256": "189e38f4b8cd1d68e25df4463836149e030dd2ab5e3d776b0abbecd2b00fd3b0"
+  },
+  {
+    "property": "cas-client.version",
+    "jdk": 8,
+    "version": "3.6.4",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/jasig/cas/client/cas-client-core/3.6.4/cas-client-core-3.6.4.jar",
+    "sha256": "daab2af8636eac3939a8931469de7c1dea6ecb25516cea9a704a23c7ace48939"
+  },
+  {
+    "property": "cxf.version",
+    "jdk": 8,
+    "version": "3.5.11",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/apache/cxf/cxf-core/3.5.11/cxf-core-3.5.11.jar",
+    "sha256": "02aa5e8214fe458616a6b91ecd8bb74bb9e17d8bdae76e38ba376b3df08765d0"
+  },
+  {
+    "property": "derby.version",
+    "jdk": 8,
+    "version": "10.14.2.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar",
+    "sha256": "2c40eb581e5221ab33c7c796979b49ce404e7e393357c58f7bcdb30a09efca72"
+  },
+  {
+    "property": "docx4j.version",
+    "jdk": 8,
+    "version": "8.3.15",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/docx4j/docx4j-core/8.3.15/docx4j-core-8.3.15.jar",
+    "sha256": "a57df25f7ce1372cd58a4aac6ff5be76e0e0576dcfb675e56cfbc3a662389e39"
+  },
+  {
+    "property": "docx4j-importxhtml.version",
+    "jdk": 8,
+    "version": "8.3.15",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/docx4j/docx4j-ImportXHTML/8.3.15/docx4j-ImportXHTML-8.3.15.jar",
+    "sha256": "0fd0a3f8508da8ea6e75c410fdd46117810b2fe2482f3cf9b2c32c0047ca9fac"
+  },
+  {
+    "property": "dom4j2.version",
+    "jdk": 8,
+    "version": "2.1.5",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/dom4j/dom4j/2.1.5/dom4j-2.1.5.jar",
+    "sha256": "c45367e490d6c818d4c990bf9682e7766822d66324b6087e14d50e940383fa75"
+  },
+  {
+    "property": "formio.version",
+    "jdk": 8,
+    "version": "1.6.9",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/net/formio/formio/1.6.9/formio-1.6.9.jar",
+    "sha256": "ade835e50c227f096b969373896d1ce93fe2b4c5dbd1273e6265cb4304abc6d0"
+  },
+  {
+    "property": "google-crypto-tink.version",
+    "jdk": 8,
+    "version": "1.10.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/google/crypto/tink/tink/1.10.0/tink-1.10.0.jar",
+    "sha256": "729d6558ac4df5a91ea97c62689c8ab9e4ff5417eec4d9b2c5d33d0a344d7b24"
+  },
+  {
+    "property": "grizzly.version",
+    "jdk": 8,
+    "version": "2.4.4",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/glassfish/grizzly/grizzly-http/2.4.4/grizzly-http-2.4.4.jar",
+    "sha256": "e73dc6d771734ed6c5560f51a9915ddc70f182cde570299752711d9ee7d0a833"
+  },
+  {
+    "property": "hsqldb.version",
+    "jdk": 8,
+    "version": "2.5.2",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.5.2/hsqldb-2.5.2.jar",
+    "sha256": "e4aa39c5afb318e8effdec80a0e6de7c9dacc453c1cf7666c515f29a16658dac"
+  },
+  {
+    "property": "hikaricp.version",
+    "jdk": 8,
+    "version": "4.0.3",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/zaxxer/HikariCP/4.0.3/HikariCP-4.0.3.jar",
+    "sha256": "7c024aeff1c1063576d74453513f9de6447d8e624d17f8e27f30a2e97688c6c9"
+  },
+  {
+    "property": "hive.version",
+    "jdk": 8,
+    "version": "3.1.3",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/apache/hive/hive-jdbc/3.1.3/hive-jdbc-3.1.3.jar",
+    "sha256": "f9fa451cf20598013df335e4328b9580fdec0c3fd72d7149dd2ceadb043be7c6"
+  },
+  {
+    "property": "icu4j.version",
+    "jdk": 8,
+    "version": "76.1",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/ibm/icu/icu4j/76.1/icu4j-76.1.jar",
+    "sha256": "732cdf18121b1642899da1f5e37e52cc7f48e3ec07fa737105d4603976781b33"
+  },
+  {
+    "property": "influxdb-client-java.version",
+    "jdk": 8,
+    "version": "6.12.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/influxdb/influxdb-client-java/6.12.0/influxdb-client-java-6.12.0.jar",
+    "sha256": "30879ee2d7aa44a6a8be409662638034d075473c7ca5872d3a64a2c1a4c59a06"
+  },
+  {
+    "property": "istack.version",
+    "jdk": 8,
+    "version": "3.0.12",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/sun/istack/istack-commons-runtime/3.0.12/istack-commons-runtime-3.0.12.jar",
+    "sha256": "27d85fc134c9271d5c79d3300fc4669668f017e72409727c428f54f2417f04cd"
+  },
+  {
+    "property": "javamelody.version",
+    "jdk": 8,
+    "version": "1.99.4",
+    "max_base_class_jdk": 7,
+    "artifact_url": "https://repo.maven.apache.org/maven2/net/bull/javamelody/javamelody-core/1.99.4/javamelody-core-1.99.4.jar",
+    "sha256": "143462a855e7adb17a1bd0fadea9c8054e73de811dfb50d4cf5e20ba8337766a"
+  },
+  {
+    "property": "javers.version",
+    "jdk": 8,
+    "version": "6.14.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/javers/javers-spring/6.14.0/javers-spring-6.14.0.jar",
+    "sha256": "75e88cf945a7748122d8e46013511dbe47836399eb81683c56eeaec9adc30d5b"
+  },
+  {
+    "property": "jcifs.version",
+    "jdk": 8,
+    "version": "2.1.40",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/codelibs/jcifs/2.1.40/jcifs-2.1.40.jar",
+    "sha256": "61e09cabd12276184084ed5364ba243ca213ba3aca5af9c1aeef08d1313b2dcc"
+  },
+  {
+    "property": "jooq.version",
+    "jdk": 8,
+    "version": "3.14.16",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/jooq/jooq/3.14.16/jooq-3.14.16.jar",
+    "sha256": "0e201ce5e45eaa9d25509c298e2cfcc3db1cf92fa4bef6e158f786cc56fd73fb"
+  },
+  {
+    "property": "jgroups.version",
+    "jdk": 8,
+    "version": "4.2.30.Final",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/jgroups/jgroups/4.2.30.Final/jgroups-4.2.30.Final.jar",
+    "sha256": "57a7ba778c46353281debcba02297dd0a347d64866c69e0f0e7bb444696a382b"
+  },
+  {
+    "property": "kisso.version",
+    "jdk": 8,
+    "version": "3.8.3",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/baomidou/kisso/3.8.3/kisso-3.8.3.jar",
+    "sha256": "77f9128c4061bf5b6102e06493e905f9b7ded06490359bb0e0690d41b92a6a6e"
+  },
+  {
+    "property": "mybatis-typehandlers-extra.version",
+    "jdk": 8,
+    "version": "1.0.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/mybatis/mybatis-typehandlers-threeten-extra/1.0.0/mybatis-typehandlers-threeten-extra-1.0.0.jar",
+    "sha256": "2013722635bd6d628f4e31dc5a492dbb655dfaf4955fd6952e61738091a24ba0"
+  },
+  {
+    "property": "mybatis-caffeine.version",
+    "jdk": 8,
+    "version": "1.0.1",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/mybatis/caches/mybatis-caffeine/1.0.1/mybatis-caffeine-1.0.1.jar",
+    "sha256": "d6812985fa3c2e55398766bc892e82fd2340bab45093b45e014f0a1fcbaafaef"
+  },
+  {
+    "property": "mybatis-freemarker.version",
+    "jdk": 8,
+    "version": "1.2.4",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/mybatis/scripting/mybatis-freemarker/1.2.4/mybatis-freemarker-1.2.4.jar",
+    "sha256": "3eb4286cff3a29c3f1bcef48ee60cb27eed39b544b1f381f145ddabbd0bc3ef4"
+  },
+  {
+    "property": "mybatis-velocity.version",
+    "jdk": 8,
+    "version": "2.1.2",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/mybatis/scripting/mybatis-velocity/2.1.2/mybatis-velocity-2.1.2.jar",
+    "sha256": "8cb4a4bed3f364a385e87fa2d5d40160145032cb4c76e20059d3350e234febea"
+  },
+  {
+    "property": "mybatis-thymeleaf.version",
+    "jdk": 8,
+    "version": "1.0.4",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/mybatis/scripting/mybatis-thymeleaf/1.0.4/mybatis-thymeleaf-1.0.4.jar",
+    "sha256": "8005713d21dba72e83415ff75b9566142eab7dcbfe9151b4fae07608e9e90541"
+  },
+  {
+    "property": "mybatis-tk.version",
+    "jdk": 8,
+    "version": "4.3.2",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/tk/mybatis/mapper/4.3.2/mapper-4.3.2.jar",
+    "sha256": "1924c74750c35a7a45ad02d6fedb5a39dc1be8d0410c5a038dfd9a59fae51091"
+  },
+  {
+    "property": "mybatis-r2dbc.version",
+    "jdk": 8,
+    "version": "1.2.5.RELEASE",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/pro/chenggang/mybatis-r2dbc/1.2.5.RELEASE/mybatis-r2dbc-1.2.5.RELEASE.jar",
+    "sha256": "1bc962ff7b2fb28a67b59b6897e268f6e95ec0d176682cb94a5e9ac7af3be047"
+  },
+  {
+    "property": "spring-boot-starter-mybatis.version",
+    "jdk": 8,
+    "version": "2.3.2",
+    "max_base_class_jdk": 0,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/mybatis/spring/boot/mybatis-spring-boot-starter/2.3.2/mybatis-spring-boot-starter-2.3.2.jar",
+    "sha256": "38bc1f950f2c9134a0b2010ee8dec326f3c1824fbf2dda2b6c3b351ce1b5bb4b"
+  },
+  {
+    "property": "ons-client.version",
+    "jdk": 8,
+    "version": "1.8.8.Final",
+    "max_base_class_jdk": 7,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/aliyun/openservices/ons-client/1.8.8.Final/ons-client-1.8.8.Final.jar",
+    "sha256": "b51f404867e2c2c76341a23ae36be3dddd195189522b47b103f76145e9336b39"
+  },
+  {
+    "property": "owasp-csrfguard.version",
+    "jdk": 8,
+    "version": "4.3.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/owasp/csrfguard/4.3.0/csrfguard-4.3.0.jar",
+    "sha256": "6ad7cf3074f335dbd39f11ac2fb0970b0274480f0c1c5e322ef9141ac929dc06"
+  },
+  {
+    "property": "pac4j.version",
+    "jdk": 8,
+    "version": "4.5.10",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/pac4j/pac4j-core/4.5.10/pac4j-core-4.5.10.jar",
+    "sha256": "e74a55b6a30bdd4d5c14f83947e5906797a5dd792fa1d7c5af1a0782aa6c9b03"
+  },
+  {
+    "property": "pf4j-spring.version",
+    "jdk": 8,
+    "version": "0.8.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/pf4j/pf4j-spring/0.8.0/pf4j-spring-0.8.0.jar",
+    "sha256": "8a2052be2c9ae56eff97ddc68f0d677eddd27830be5f52f9390ee1df0e7f4eb6"
+  },
+  {
+    "property": "resilience4j.version",
+    "jdk": 8,
+    "version": "1.7.1",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/io/github/resilience4j/resilience4j-core/1.7.1/resilience4j-core-1.7.1.jar",
+    "sha256": "3153a2c96c3e3b31122a7fa8ca8ea1ab0f305bf82d096c291b7416443fff6491"
+  },
+  {
+    "property": "quartz.version",
+    "jdk": 8,
+    "version": "2.3.2",
+    "max_base_class_jdk": 7,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/quartz-scheduler/quartz/2.3.2/quartz-2.3.2.jar",
+    "sha256": "639c6a675bc472e1568df9d8c954ff702da6f83ed27da0ff9a7bd12ed73b8bf0"
+  },
+  {
+    "property": "schemacrawler.version",
+    "jdk": 8,
+    "version": "16.9.5",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/us/fatehi/schemacrawler/16.9.5/schemacrawler-16.9.5.jar",
+    "sha256": "7e011e828b96dba2b25d687fd261401e08d9c649fac8cff2e6e91e8df0f84ac1"
+  },
+  {
+    "property": "shedlock.version",
+    "jdk": 8,
+    "version": "4.48.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/net/javacrumbs/shedlock/shedlock-spring/4.48.0/shedlock-spring-4.48.0.jar",
+    "sha256": "fa5185bb4c2fe60634d08103f2b7df56fcf6a9af9402ce8f12caf626807180e0"
+  },
+  {
+    "property": "snmp4j.version",
+    "jdk": 8,
+    "version": "2.8.18",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/snmp4j/snmp4j/2.8.18/snmp4j-2.8.18.jar",
+    "sha256": "77a9e71d9f6113830a10378ed42c5a4ea1545d02bfefecbe6328a1590fc422db"
+  },
+  {
+    "property": "snmp4j-agent.version",
+    "jdk": 8,
+    "version": "2.7.9",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/snmp4j/snmp4j-agent/2.7.9/snmp4j-agent-2.7.9.jar",
+    "sha256": "cd6073f3eba2e19fb1ac67d7a69e62aac71eb72dbe661b900cfc54987a2d7fc8"
+  },
+  {
+    "property": "spring-plugin.version",
+    "jdk": 8,
+    "version": "2.0.0.RELEASE",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/springframework/plugin/spring-plugin-core/2.0.0.RELEASE/spring-plugin-core-2.0.0.RELEASE.jar",
+    "sha256": "6e6d026d6b572495533692173a264c6959f48d5ef7f3d6faf4555a577d4a38d2"
+  },
+  {
+    "property": "swagger2markup.version",
+    "jdk": 8,
+    "version": "1.3.3",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/io/github/swagger2markup/swagger2markup/1.3.3/swagger2markup-1.3.3.jar",
+    "sha256": "022cc110d5f07dec095bf3f8814168587b38f5b6b25a792ec3a17c9f31ddf983"
+  },
+  {
+    "property": "tablesaw.version",
+    "jdk": 8,
+    "version": "0.43.1",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/tech/tablesaw/tablesaw-core/0.43.1/tablesaw-core-0.43.1.jar",
+    "sha256": "1f6e3ee0b44776e7cfdce9c24804c0c55b4b2269c1b2425e9b12049dfb5d7e43"
+  },
+  {
+    "property": "tika.version",
+    "jdk": 8,
+    "version": "2.9.4",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/apache/tika/tika-core/2.9.4/tika-core-2.9.4.jar",
+    "sha256": "cc5aab129dd70190e92740ae97605c0b5563df8d6b66b1af97b8c59f588a2fd4"
+  },
+  {
+    "property": "wildfly-openssl.version",
+    "jdk": 8,
+    "version": "1.1.3.Final",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/wildfly/openssl/wildfly-openssl/1.1.3.Final/wildfly-openssl-1.1.3.Final.jar",
+    "sha256": "4e7d50a877822ba7561fa6a0109691b30b23a784eba3f3f8fbbf5ea866500786"
+  },
+  {
+    "property": "xdocreport.version",
+    "jdk": 8,
+    "version": "2.0.6",
+    "max_base_class_jdk": 7,
+    "artifact_url": "https://repo.maven.apache.org/maven2/fr/opensagres/xdocreport/fr.opensagres.xdocreport.core/2.0.6/fr.opensagres.xdocreport.core-2.0.6.jar",
+    "sha256": "dafd9a2766461df439b3d6b47827c255f17fc4df5fef3c53ca670bc0331407c6"
+  },
+  {
+    "property": "xxl-job.version",
+    "jdk": 8,
+    "version": "2.5.0",
+    "max_base_class_jdk": 8,
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/xuxueli/xxl-job-core/2.5.0/xxl-job-core-2.5.0.jar",
+    "sha256": "66d05bcea7254d102b77e476cc79f431bc4992ccf016ce74eef900794330833f"
+  }
+]

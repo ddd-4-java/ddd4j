@@ -14,6 +14,8 @@
  */
 package io.ddd4j.web.core.context;
 
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.error.WebStatusException;
@@ -21,6 +23,7 @@ import io.ddd4j.web.core.idempotency.IdempotencyGuard;
 import io.ddd4j.web.core.idempotency.IdempotencyLease;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,8 +33,10 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +44,11 @@ class SynchronousWebRequestSessionTest {
 
     @Mock
     private IdempotencyGuard guard;
+
+    @AfterEach
+    void clearContext() {
+        ThreadContext.clear();
+    }
 
     private static WebRequestContext request() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
@@ -101,5 +111,21 @@ class SynchronousWebRequestSessionTest {
 
         assertThrows(WebStatusException.class, () -> SynchronousWebRequestSession.open(
                 unauthenticated, requiredLifecycle, null, null));
+    }
+
+    @Test
+    void completeFailureRestoresOuterThreadContext() {
+        ThreadContext.set(ContextConstants.TENANT_ID, "outer-tenant");
+        when(guard.acquireLease(any(String.class), any(Duration.class)))
+                .thenReturn(Optional.of(new IdempotencyLease("k", null, Duration.ofMinutes(5))));
+        doThrow(new IllegalStateException("complete failed"))
+                .when(guard).complete(any(IdempotencyLease.class));
+        WebIdempotencyLifecycle idempotencyLifecycle = new WebIdempotencyLifecycle(guard);
+        SynchronousWebRequestSession session = SynchronousWebRequestSession.open(
+                request(), lifecycle(), idempotencyLifecycle, "order-1");
+
+        assertEquals("tenant-a", ThreadContext.get(ContextConstants.TENANT_ID));
+        assertThrows(IllegalStateException.class, () -> session.complete(true));
+        assertEquals("outer-tenant", ThreadContext.get(ContextConstants.TENANT_ID));
     }
 }

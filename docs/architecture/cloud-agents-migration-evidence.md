@@ -160,6 +160,30 @@ BOM 工作树已按实际聚合树补齐非 sample JAR 管理项；三个独立�
 - 新框架：`ddd4j-core/src/main/java/io/ddd4j/core/context/ThreadContext.java`
 - 新 MQ：`ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/` 与 `ddd4j-mq-rabbitmq/.../RabbitMQClient.java`
 
+### 租户上下文与 Feign 传播复核（2026-09-08）
+
+详细证据已整理到 `docs/architecture/cloud-tenant-context-contract-audit.md`。当前结论不是“键名相同即可迁移”：`ddd4j-cloud` 的过滤器只在正常返回后 clear，无效 token 和异常路径会遗留状态；`MallCompletableFuture` 复制 tenant/system/security/request 后不恢复；Feign 随后可能把污染租户继续转发。另确认 `AbstractServiceFeignRequestInterceptor` 从 before 生命周期错误调用 after 默认方法，绕过接口默认注册逻辑。
+
+新版 `ThreadContext.open()` 与 `WebContextScope` 已提供快照恢复和 MDC 恢复基础，但 `WebRequestContext.tenantId` 只承载输入，不验证身份来源。`cloud-agents` 实际仍使用旧 `com.dddframework` ThreadContext，且既有 MQ/异步代码同时存在 remove 与手工 previous-value 恢复两种语义。因此后续必须先统一闭合作用域，再分别验证 HTTP 身份信任、线程复用、MQ 缺租户、Feign 转发与多容器生命周期；本轮没有修改或迁移 `cloud-agents`。
+
+后续同调用链审查已发现并修复新版同步请求的异常清理缺口：`SynchronousWebRequestSession.complete` 与 WebMVC `RequestState.close` 在幂等完成回调抛异常时会跳过上下文恢复。新增三线相同回归先稳定复现内层租户遗留，再以 `try/finally` 保证租约关闭和外层上下文恢复；JDK 8/17/21 的请求会话各 6 项、WebMVC 拦截器各 2 项均通过且零跳过。该聚焦结果不覆盖响应式、MQ 或 Feign 的线程复用场景，也不替代完整回归。
+
+WebFlux 入口随后发现一项仅存在于 1.0 的方法体漂移：请求头列表非空时条件写反，导致传给 OTel 的 header Map 为空；2.0/3.0 已是正确实现。三线新增相同 `traceparent` 与多值头采集测试，1.0 红测复现后把条件统一，JDK 8/17/21 各 3 项通过且零跳过。这证明签名一致不能替代同输入行为验证；当前仅证明请求头采集，不扩大为跨进程链路追踪验收。
+
+真实 OTel SDK 测试继续发现：`WebOtelSupport` 用 Object 参数反射查找实际接收 Span 的方法，导致 activate 及其后的错误记录、结束、响应注入方法静默未绑定；修正真实反射签名后，又暴露 WebFlux 在 Publisher 组装阶段激活 Scope、终止线程关闭的跨线程所有权错误。三线已统一为订阅时建 span、`chain.filter` 边界同线程短暂激活/关闭、终止时结束 span，公开 API 不变。三线 WebFlux 聚焦测试现各 4 项通过；跨 scheduler 自动传播及跨进程导出仍是待验证项。
+
+反射协议的第六项随后也由真实测试暴露：`WebOtelSupport` 查找并在文档中承诺 `WebOtelIntegration.isAvailable()`，扩展实现却缺少该方法。三线现已补齐相同公开静态方法。原先只验证“不抛异常”的 WebOtelSupportTest 已替换为 SDK 与内存导出器测试，实际确认有效 span/Scope、异常事件、HTTP 503 ERROR 状态与属性、结束导出和响应 traceparent；三线各 4 项通过且零跳过。测试 SDK 依赖均为 test scope、无模块内版本号。
+
+其余框架调用者审查首先确认 Micronaut 3/4 都丢弃 `activate(span)` 返回的 Scope。线程池内真实 SDK 红测证明过滤器返回和 Publisher 结束后工作线程仍持有请求 span。三线已按各自 Filter API 把 Scope 缩到 `chain.proceed`/`continuation.proceed` 同线程边界并在 finally 关闭；JDK 8/17/21 各 1 项通过。1.0 的原始 ThreadLocal 请求上下文与 2.0/3.0 PropagatedContext 仍未统一，本次结果只关闭 OTel Scope 泄漏。
+
+随后用真实 HTTP 请求在控制器内执行 `Mono.delay + publishOn`，并从业务 `ThreadContext.TENANT_ID` 读取租户。2.0/3.0 的 Micronaut 4 路径通过，1.0 首次返回 409 与 `Micronaut async tenant context is missing`。1.0 已使用 Micronaut 3 的 ServerRequestContext 与 ReactiveInvocationInstrumenterFactory 在每个 Reactor 回调打开/恢复 WebContextScope；修复后三线 scheduler 用例通过，三线完整 Micronaut Web contract 各 7 项全部通过且零跳过。实现没有增加独立模块或公开 API。
+
+Javalin 随后确认同类 OTel 泄漏：before 激活后丢弃 Scope，after/exception 仅结束 span。真实服务器在 ddd4j after 之后仍观察到有效请求 span。三线已把 OTel Scope 合入 RequestState，并以嵌套 finally 保证幂等、WebContext 和 OTel 均关闭；JDK 8/17/21 的真实 Scope 测试各 1 项、完整 Javalin Web contract 各 6 项全部通过。Javalin 6/7 仅测试注册语法不同，行为断言一致。
+
+Javalin 测试 provider 已统一声明为无版本、test scope 的 slf4j-simple，1.0 的版本只补在 ddd4j-dependencies。2.0 初次重跑报告多项集中版本缺失，但当前源码 effective POM 对全部 24 个报错坐标都有已解析版本，最终定位为本地仓库中同版本 BOM 过期；本地安装当前 BOM 后 Reactor 恢复。三线 Scope 测试均通过且 provider 提示消失，2.0 完整 Javalin contract 6 项也重新通过。该 install 仅更新本地 Maven 仓库，不代表私服发布。
+
+Dropwizard 响应过滤器此前没有读取请求过滤器已保存的 OTel Scope，也没有结束 span 或移除 OTel 属性，正常响应后即会污染线程。三线现以 finally 统一结束 span 并关闭/移除 Scope；真实 Scope 测试各 1 项、完整 Dropwizard Web contract 各 6 项全部通过。1.0 因 Dropwizard LoggingUtil 保留 Logback test provider，但具体模块的两个显式版本已删除，版本继续由 ddd4j-dependencies 管理；无版本配置重跑通过。
+
 ## 证据边界与后续工作
 
 ### BOM 与企业 parent
@@ -367,6 +391,13 @@ Satoken 测试生命周期隔离：该 AuthorizationControllerTest 每个用例�
 
 Cloud core 的 CheckedException/ValidateCodeException 仍导入旧 `io.ddd4j.boot.core.ApiCode`、`CustomApiCode`、`exception.BizCheckedException`/`BizRuntimeException`，WebUtils 还继承旧 `io.ddd4j.boot.core.utils.WebUtils`。Boot 2.4.x Git 树未发现这些文件，暂未验证传递依赖是否另行提供旧兼容类。CheckedException 有九个重载构造器，包含 code、i18nCode、args、message、cause，并提供默认 code=500 的工厂方法；不能仅重命名 import 后假定异常响应和国际化语义一致。下一步应以这些构造器、继承关系和 HTTP 异常翻译结果作为兼容输入，查找新底座对应能力，决定兼容桥接或调用方适配，而不是补版本号后删除编译失败的旧 API。
 
+后续方法级核验已确认：两类Cloud异常只替换为新Core包后，在JDK8/17/21均能保留全部
+构造器、参数及工厂方法并编译通过；Boot13线及已构建Boot Core JAR确实没有旧类型。
+但HTTP语义不等价：新默认翻译器把400100业务码映射为HTTP500/code400100、空code映射
+HTTP500/code500、IllegalStateException映射409；Cloud自身R.failed对空code使用-1。
+因此import适配可行，响应策略仍需Cloud应用级契约。完整证据见
+`docs/architecture/cloud-exception-contract-audit.md`。
+
 ### JPA 显式事务参与 Task 5 最终证据（2026-09-08）
 
 三线 EventStore 差分脚本在原有 9 项 Jdbi/JPA/R2DBC 断言上新增 7 项同名
@@ -453,3 +484,11 @@ EventChunkReader、broker confirm/持久确认或 cloud-agents 迁移；本次�
 随后以127.0.0.1随机端口、正式控制器进行最小HTTP集成对照：三线正确密码走正式provider
 均500，测试替代provider均200，错误密码均401。详见[HTTP登录对照](shiro-http-login-audit.md)。
 该差异来自独立JVM/独立关闭连接的对照，不代表已定位旧404/EOF；也没有启动完整样例应用。
+
+### TrueLicense 对迁移目标的边界
+
+三条ddd4j线已完成TrueLicense4.1.4迁移，但框架消费侧尚未闭合。只读维护线审计确认：Boot13线
+仍重复引入1.33并未透传signatureAlgorithm；Quarkus3.3/4.0使用独立extension-license却仍带
+无用1.33；Javalin6.7/7.1/7.2无旧依赖，Cloud无直接许可证集成。旧BMGW ddd4j和cloud-agents
+当前也没有许可证相关源码/POM/配置匹配，所以这不是替代旧系统的行为对等阻塞，而是新能力的
+依赖合规阻塞。完整证据见 `docs/migrations/truelicense4-framework-consumer-audit.md`。

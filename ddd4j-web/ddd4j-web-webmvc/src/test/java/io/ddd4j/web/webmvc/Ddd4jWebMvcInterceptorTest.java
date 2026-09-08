@@ -16,15 +16,23 @@ package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
 import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.idempotency.IdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Ddd4jWebMvcInterceptorTest {
@@ -48,5 +56,39 @@ class Ddd4jWebMvcInterceptorTest {
 
         interceptor.afterCompletion(request, response, new Object(), null);
         assertTrue(ThreadContext.getResources().isEmpty());
+    }
+
+    @Test
+    void shouldRestoreContextWhenIdempotencyCompletionFails() {
+        IdempotencyGuard guard = new IdempotencyGuard() {
+            @Override
+            public boolean acquire(String key, Duration ttl) {
+                return true;
+            }
+
+            @Override
+            public void complete(String key) {
+                throw new IllegalStateException("complete failed");
+            }
+
+            @Override
+            public void release(String key) {
+            }
+        };
+        Ddd4jWebMvcInterceptor interceptor = new Ddd4jWebMvcInterceptor(
+                new WebRequestContextFactory(),
+                new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()),
+                new WebIdempotencyLifecycle(guard));
+        ThreadContext.set("tenant-id", "outer-tenant");
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/orders");
+        request.addHeader(WebHeaders.TENANT_ID, "inner-tenant");
+        request.addHeader(WebHeaders.IDEMPOTENCY_KEY, "order-1");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        assertTrue(interceptor.preHandle(request, response, new Object()));
+        assertEquals("inner-tenant", ThreadContext.get("tenant-id"));
+        assertThrows(IllegalStateException.class,
+                () -> interceptor.afterCompletion(request, response, new Object(), null));
+        assertEquals("outer-tenant", ThreadContext.get("tenant-id"));
     }
 }
