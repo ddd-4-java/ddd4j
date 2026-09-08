@@ -116,4 +116,32 @@ class RabbitMQContainerIntegrationTest {
         properties.setVirtualHost("/");
         return properties;
     }
+
+    @Test
+    void producerMustReportClosedConnectionInsteadOfReturningSuccess() throws Exception {
+        RabbitMQProperties properties = brokerProperties();
+        properties.setExchange(EXCHANGE);
+        Connection connection = properties.connectionFactory().newConnection();
+        try {
+            RabbitMQClient client = new RabbitMQClient(connection) {
+                @Override
+                public io.ddd4j.mq.event.MQEventSerialization serialization() {
+                    return new io.ddd4j.mq.serialization.JsonMQEventSerialization();
+                }
+            };
+            java.util.function.Consumer<io.ddd4j.mq.event.MQEvent> producer = client.initProducer(properties);
+            io.ddd4j.mq.event.MQEvent event = new io.ddd4j.mq.event.MQEvent();
+            event.setMsgId("closed-connection-message");
+            event.setTopic("closed-connection");
+            connection.close();
+
+            IllegalStateException failure = org.junit.jupiter.api.Assertions.assertThrows(
+                    IllegalStateException.class, () -> producer.accept(event));
+            assertTrue(failure.getCause() instanceof com.rabbitmq.client.ShutdownSignalException);
+        } finally {
+            if (connection.isOpen()) {
+                connection.close();
+            }
+        }
+    }
 }

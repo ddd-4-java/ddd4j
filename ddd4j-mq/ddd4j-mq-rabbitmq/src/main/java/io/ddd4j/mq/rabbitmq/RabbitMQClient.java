@@ -119,7 +119,8 @@ public class RabbitMQClient implements MQClient {
                     channel.basicPublish(exchange, topic, properties, payload.getBytes(StandardCharsets.UTF_8));
                     log.info("Publish MQ [{}]: {}", topic, payload);
                 } catch (Exception e) {
-                    log.error("Publish MQ [{}]: {} failed!", topic, payload, e);
+                    // 将失败交还调用方，避免 Outbox 将失败发送标记为已发布。
+                    throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
                 }
             };
         } catch (IOException e) {

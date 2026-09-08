@@ -41,6 +41,36 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 class Ddd4jGuiceModuleTest {
 
+    @Test
+    void projectionRunnerMustUseExplicitReaderBinding() {
+        io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object> reader = (stream, from, size, types) ->
+                new io.ddd4j.core.cqrs.readmodel.EventChunk<Object>(
+                        java.util.Collections.singletonList("event"), from + 1);
+        Injector injector = Guice.createInjector(new Ddd4jGuiceModule(), new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {})
+                        .toInstance(reader);
+            }
+        });
+        try {
+            java.util.List<Object> handled = new java.util.ArrayList<>();
+            io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object> runner = injector.getInstance(
+                    Key.get(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() {}));
+            runner.runOnce(new io.ddd4j.core.cqrs.readmodel.ProjectionView<Object>() {
+                public String getName() { return "custom-reader"; }
+                public String getCron() { return "* * * * *"; }
+                public java.util.Collection<String> getEventTypes() { return java.util.Collections.emptyList(); }
+                public void handleEvents(java.util.Collection<Object> events) { handled.addAll(events); }
+            });
+            assertEquals(java.util.Collections.singletonList("event"), handled);
+            assertEquals(1L, injector.getInstance(io.ddd4j.core.cqrs.readmodel.ProjectionService.class)
+                    .readProjectionPosition("custom-reader"));
+        } finally {
+            injector.getInstance(Ddd4jGuiceRuntime.class).close();
+        }
+    }
+
     @AfterEach
     void tearDown() {
         CacheKit.unregister("guice-local-1");

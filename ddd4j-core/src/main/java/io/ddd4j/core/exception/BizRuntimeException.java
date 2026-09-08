@@ -110,7 +110,7 @@ public class BizRuntimeException extends RuntimeException {
     }
 
     public BizRuntimeException(Throwable e) {
-        this(e.getMessage());
+        this(e.getMessage(), e);
     }
 
     public static BizRuntimeException e(String message) {

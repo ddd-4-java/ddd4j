@@ -15,6 +15,7 @@
 package io.ddd4j.data.event.store.jpa;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
 import jakarta.persistence.NoResultException;
 import java.util.List;
 import java.util.Objects;
@@ -116,6 +117,8 @@ public class JpaStoredEventRepositoryImpl implements JpaStoredEventRepository {
             Long maxPosition = entityManager.createQuery(
                             "SELECT COALESCE(MAX(e.position), 0) FROM StoredEventEntity e",
                             Long.class)
+                    // 位置查询必须看到本事务之前保存的事件，不改变 EntityManager 的 flush 模式。
+                    .setFlushMode(FlushModeType.AUTO)
                     .getSingleResult();
             return (maxPosition != null ? maxPosition : 0L) + 1L;
         } catch (NoResultException e) {

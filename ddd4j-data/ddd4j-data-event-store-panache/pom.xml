@@ -15,6 +15,56 @@
     <description>ddd4j 数据层 - EventStore Quarkus Panache 实现（2.0.x 逻辑移植）： 基于 quarkus-hibernate-orm-panache 实现 core 的 EventStore SPI （io.ddd4j.core.cqrs.eventstore.EventStore）， 共享表 DDD4J_EVENT_STORE（与 -jpa/-r2dbc/-esdb 同 schema）。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- 保持本 Quarkus 模块的 ORM/JPA 运行时整链由 Quarkus 3.38.2 BOM 管理。 -->
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Maven 4/Quarkus test application model also resolves deployment-side optional
+                 artifacts; align them to the centralized Quarkus platform properties. -->
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${quarkus-hibernate-orm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-graalvm</artifactId>
+                <version>${quarkus-hibernate-orm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-jcache</artifactId>
+                <version>${quarkus-hibernate-orm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.agroal</groupId>
+                <artifactId>agroal-api</artifactId>
+                <version>${quarkus-agroal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.agroal</groupId>
+                <artifactId>agroal-pool</artifactId>
+                <version>${quarkus-agroal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${quarkus-jaxb-runtime.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>txw2</artifactId>
+                <version>${quarkus-jaxb-runtime.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -33,8 +83,19 @@
 
         <!-- ======== Test ======== -->
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-event-store-jpa</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -76,6 +137,22 @@
 
     <build>
         <plugins>
+            <!-- Maven 4.1 构建期生成测试 application model，避免 @QuarkusTest
+                 回退到仅支持 Maven 3 POM 的运行时 WorkspaceLoader。 -->
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-code</goal>
+                            <goal>generate-code-tests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -89,6 +166,14 @@
                         <classpathDependencyExclude>com.tngtech.archunit:archunit-junit5-api</classpathDependencyExclude>
                         <classpathDependencyExclude>com.tngtech.archunit:archunit</classpathDependencyExclude>
                     </classpathDependencyExcludes>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <maven.home>${maven.home}</maven.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>

@@ -24,7 +24,7 @@ public class DefaultLicenseAutoConfiguration {
     @Bean(initMethod = "installLicense", destroyMethod = "unInstallLicense")
     public LicenseVerify licenseVerify(LicenseProperties properties) {
         return new LicenseVerify(properties.getSubject(), properties.getPublicAlias(), properties.getStorePass(),
-                properties.getLicensePath(), properties.getPublicKeysStorePath());
+                properties.getLicensePath(), properties.getPublicKeysStorePath(), properties.getSignatureAlgorithm());
     }
 
 }

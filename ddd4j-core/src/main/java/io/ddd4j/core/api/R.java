@@ -101,7 +101,7 @@ public class R<T> implements IR {
      * 失败响应（cloud 兼容别名，等价于 {@link #fail(T)}）。
      */
     public static <T> R<T> failed(T data) {
-        return fail(Objects.nonNull(data) ? ResultCode.FAIL.getCode() : ResultCode.FAIL.getCode(), ResultCode.FAIL.getDesc());
+        return fail(ResultCode.FAIL.getCode(), ResultCode.FAIL.getDesc(), data);
     }
 
     /**
