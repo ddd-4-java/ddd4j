@@ -31,6 +31,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * 基于 JPA 的 {@link EventStore} 实现（CQRS 写侧持久化）。
@@ -39,9 +40,11 @@ import java.util.Objects;
  * EventStore SPI 语义：乐观锁校验、事件序列化/反序列化、事务边界管理。
  *
  * <h3>事务管理</h3>
- * <p>本实现使用编程式事务管理（{@link EntityTransaction}），在 {@code append}
+ * <p>默认构造器使用编程式事务管理（{@link EntityTransaction}），在 {@code append}
  * 方法内开启事务，冲突或异常时整体回滚。调用方无需（也不应）在外层包裹事务。
  * {@code read} / {@code readAll} 同样在本方法内开启只读事务，保证读隔离性。
+ * 通过 {@link #participating(EntityManager)} 显式创建的实例只参与调用方已开启的
+ * RESOURCE_LOCAL 事务，不负责提交、回滚或清理持久化上下文。
  *
  * <h3>payload 序列化</h3>
  * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
@@ -57,6 +60,8 @@ public class JpaEventStore implements EventStore {
     private final EntityManager entityManager;
     private final JpaStoredEventRepository repository;
     private final EventPayloadSerializer serializer;
+    private final TransactionMode transactionMode;
+    private final Runnable markRollbackOnly;
 
     /**
      * 创建 JPA 事件存储。
@@ -84,9 +89,86 @@ public class JpaEventStore implements EventStore {
 
     public JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
                          EventPayloadSerializer serializer) {
+        this(entityManager, repository, serializer, TransactionMode.INDEPENDENT);
+    }
+
+    private JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
+                          EventPayloadSerializer serializer, TransactionMode transactionMode) {
+        this(entityManager, repository, serializer, transactionMode, null);
+    }
+
+    private JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
+                          EventPayloadSerializer serializer, TransactionMode transactionMode,
+                          Runnable markRollbackOnly) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
+        this.transactionMode = Objects.requireNonNull(transactionMode, "transactionMode must not be null");
+        this.markRollbackOnly = transactionMode == TransactionMode.MANAGED
+                ? Objects.requireNonNull(markRollbackOnly, "markRollbackOnly must not be null") : markRollbackOnly;
+    }
+
+    /**
+     * 创建参与调用方 RESOURCE_LOCAL 事务的事件存储。
+     *
+     * @param entityManager 调用方事务绑定的实体管理器
+     * @return 仅参与当前活动事务的事件存储
+     */
+    public static JpaEventStore participating(EntityManager entityManager) {
+        return participating(entityManager, new JpaStoredEventRepositoryImpl(entityManager),
+                new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+    }
+
+    /**
+     * 创建参与调用方 RESOURCE_LOCAL 事务的事件存储（自定义仓储与序列化器）。
+     *
+     * @param entityManager 调用方事务绑定的实体管理器
+     * @param repository    使用同一事务资源的事件仓储
+     * @param serializer    事件载荷序列化器
+     * @return 仅参与当前活动事务的事件存储
+     */
+    public static JpaEventStore participating(EntityManager entityManager,
+                                               JpaStoredEventRepository repository,
+                                               EventPayloadSerializer serializer) {
+        return new JpaEventStore(entityManager, repository, serializer, TransactionMode.PARTICIPATING);
+    }
+
+    /**
+     * 创建参与容器管理事务的事件存储。
+     *
+     * <p>实例构造不要求事务已经激活；每次操作通过
+     * {@link EntityManager#isJoinedToTransaction()} 校验当前实体管理器已经加入事务。
+     *
+     * @param entityManager    调用方事务绑定的实体管理器
+     * @param markRollbackOnly 标记当前容器事务只能回滚的回调
+     * @return 仅参与当前容器管理事务的事件存储
+     */
+    public static JpaEventStore participatingManaged(EntityManager entityManager, Runnable markRollbackOnly) {
+        Objects.requireNonNull(entityManager, "entityManager must not be null");
+        Objects.requireNonNull(markRollbackOnly, "markRollbackOnly must not be null");
+        return participatingManaged(entityManager, new JpaStoredEventRepositoryImpl(entityManager),
+                new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()), markRollbackOnly);
+    }
+
+    /**
+     * 创建参与容器管理事务的事件存储（自定义仓储与序列化器）。
+     *
+     * @param entityManager    调用方事务绑定的实体管理器
+     * @param repository       使用同一事务资源的事件仓储
+     * @param serializer       事件载荷序列化器
+     * @param markRollbackOnly 标记当前容器事务只能回滚的回调
+     * @return 仅参与当前容器管理事务的事件存储
+     */
+    public static JpaEventStore participatingManaged(EntityManager entityManager,
+                                                      JpaStoredEventRepository repository,
+                                                      EventPayloadSerializer serializer,
+                                                      Runnable markRollbackOnly) {
+        Objects.requireNonNull(entityManager, "entityManager must not be null");
+        Objects.requireNonNull(repository, "repository must not be null");
+        Objects.requireNonNull(serializer, "serializer must not be null");
+        Objects.requireNonNull(markRollbackOnly, "markRollbackOnly must not be null");
+        return new JpaEventStore(entityManager, repository, serializer, TransactionMode.MANAGED,
+                markRollbackOnly);
     }
 
     /**
@@ -96,12 +178,12 @@ public class JpaEventStore implements EventStore {
      * {@link IllegalStateException}。同一聚合的 append 操作在同一事务内完成，
      * 冲突时整体回滚，不留半截流。
      *
-     * <p>事务边界：本方法内开启编程式事务，调用方无需额外包裹。
+     * <p>事务边界：默认模式在本方法内开启编程式事务；显式参与模式复用调用方事务。
      *
      * <h3>批量插入</h3>
-     * <p>循环构造 entity 后，先 {@link EntityManager#flush()} 触发 Hibernate 批量 INSERT，
-     * 再 {@link EntityManager#clear()} 清空 persistence context。
-     * 顺序很关键：先 flush 再 clear 才能让 Hibernate 把所有 INSERT 合并为批量 SQL。
+     * <p>循环构造 entity 后，先 {@link EntityManager#flush()} 触发 Hibernate 批量 INSERT；
+     * 仅默认独立模式再通过 {@link EntityManager#clear()} 清空 persistence context。
+     * 默认独立模式的顺序很关键：先 flush 再 clear 才能让 Hibernate 把所有 INSERT 合并为批量 SQL。
      *
      * <p>批量插入需配合 Hibernate 配置生效：
      * <pre>{@code
@@ -118,14 +200,16 @@ public class JpaEventStore implements EventStore {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         Objects.requireNonNull(events, "events must not be null");
-        if (events.isEmpty()) {
+        if (events.isEmpty() && transactionMode == TransactionMode.INDEPENDENT) {
             return;
         }
-
-        EntityTransaction tx = entityManager.getTransaction();
-        try {
-            tx.begin();
-            entityManager.clear();
+        executeInTransaction(() -> {
+            if (events.isEmpty()) {
+                return null;
+            }
+            if (transactionMode == TransactionMode.INDEPENDENT) {
+                entityManager.clear();
+            }
 
             long currentVersion = repository.findCurrentVersion(aggregateType, aggregateId.asString());
             if (currentVersion != expectedVersion) {
@@ -149,18 +233,14 @@ public class JpaEventStore implements EventStore {
                 repository.save(entity);
             }
 
-            // 触发 Hibernate 批量 INSERT：先 flush 把所有未刷盘的 SQL 发到 DB，
-            // 再 clear 释放 persistence context 中的 entity（避免 OOM）。
+            // 触发 Hibernate 批量 INSERT：先 flush 把所有未刷盘的 SQL 发到 DB；
+            // 仅独立模式再 clear 释放 persistence context 中的 entity（避免 OOM）。
             entityManager.flush();
-            entityManager.clear();
-
-            tx.commit();
-        } catch (RuntimeException e) {
-            if (tx.isActive()) {
-                tx.rollback();
+            if (transactionMode == TransactionMode.INDEPENDENT) {
+                entityManager.clear();
             }
-            throw e;
-        }
+            return null;
+        });
     }
 
     /**
@@ -173,43 +253,22 @@ public class JpaEventStore implements EventStore {
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
-        EntityTransaction tx = entityManager.getTransaction();
-        tx.begin();
-        try {
-            List<StoredEvent> result = repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(
+        return executeInTransaction(() -> repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(
                             aggregateType, aggregateId.asString())
                     .stream()
                     .map(this::toStoredEvent)
-                    .toList();
-            tx.commit();
-            return result;
-        } catch (RuntimeException e) {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-            throw e;
-        }
+                    .toList());
     }
 
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
-        EntityTransaction tx = entityManager.getTransaction();
-        tx.begin();
-        try {
-            List<StoredEvent> result = repository.findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
+        return executeInTransaction(() -> repository
+                .findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
                             aggregateType, aggregateId.asString(), fromVersion, toVersion)
                     .stream()
                     .map(this::toStoredEvent)
-                    .toList();
-            tx.commit();
-            return result;
-        } catch (RuntimeException e) {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-            throw e;
-        }
+                    .toList());
     }
 
     /**
@@ -222,13 +281,28 @@ public class JpaEventStore implements EventStore {
         if (limit <= 0) {
             throw new IllegalArgumentException("limit must be positive");
         }
+        return executeInTransaction(() -> repository
+                .findByPositionGreaterThanEqualOrderByPositionAsc(fromPosition, limit)
+                .stream()
+                .map(this::toStoredEvent)
+                .toList());
+    }
+
+    private <T> T executeInTransaction(Supplier<T> operation) {
+        if (transactionMode == TransactionMode.PARTICIPATING) {
+            return executeParticipating(operation);
+        }
+        if (transactionMode == TransactionMode.MANAGED) {
+            return executeManaged(operation);
+        }
+
         EntityTransaction tx = entityManager.getTransaction();
-        tx.begin();
+        if (tx.isActive()) {
+            throw new IllegalStateException("JpaEventStore requires an EntityManager without an active transaction");
+        }
         try {
-            List<StoredEvent> result = repository.findByPositionGreaterThanEqualOrderByPositionAsc(fromPosition, limit)
-                    .stream()
-                    .map(this::toStoredEvent)
-                    .toList();
+            tx.begin();
+            T result = operation.get();
             tx.commit();
             return result;
         } catch (RuntimeException e) {
@@ -236,6 +310,41 @@ public class JpaEventStore implements EventStore {
                 tx.rollback();
             }
             throw e;
+        }
+    }
+
+    private <T> T executeParticipating(Supplier<T> operation) {
+        EntityTransaction tx = entityManager.getTransaction();
+        if (!tx.isActive()) {
+            throw new IllegalStateException("An active caller transaction is required");
+        }
+        try {
+            return operation.get();
+        } catch (RuntimeException | Error failure) {
+            preserveRollbackMarkingFailure(failure, tx::setRollbackOnly);
+            throw failure;
+        }
+    }
+
+    private <T> T executeManaged(Supplier<T> operation) {
+        if (!entityManager.isJoinedToTransaction()) {
+            throw new IllegalStateException("An EntityManager joined to the caller transaction is required");
+        }
+        try {
+            return operation.get();
+        } catch (RuntimeException | Error failure) {
+            preserveRollbackMarkingFailure(failure, markRollbackOnly);
+            throw failure;
+        }
+    }
+
+    private void preserveRollbackMarkingFailure(Throwable failure, Runnable rollbackMarker) {
+        try {
+            rollbackMarker.run();
+        } catch (RuntimeException | Error markingFailure) {
+            if (markingFailure != failure) {
+                failure.addSuppressed(markingFailure);
+            }
         }
     }
 
@@ -278,6 +387,12 @@ public class JpaEventStore implements EventStore {
         } catch (ClassNotFoundException exception) {
             throw new IllegalStateException("Unknown event type: " + eventType, exception);
         }
+    }
+
+    private enum TransactionMode {
+        INDEPENDENT,
+        PARTICIPATING,
+        MANAGED
     }
 
     private record StringAggregateRootId(String value) implements AggregateRootId {

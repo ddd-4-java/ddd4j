@@ -88,6 +88,8 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
+            <!-- 测试栈选择集中管理的 Hibernate 6；不覆盖 Quarkus 运行时的 BOM。 -->
+            <version>${hibernate.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- H2 内存库（IT 数据源；版本由 ddd4j-dependencies 的 h2.version 管理） -->

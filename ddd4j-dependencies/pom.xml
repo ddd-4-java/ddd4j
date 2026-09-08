@@ -639,7 +639,8 @@
         <spring-batch.version>6.0.4</spring-batch.version>
         <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
-        <spring-data-bom.version>2025.1.6</spring-data-bom.version>
+        <!-- Spring 6.2 使用 Spring Data 3.5；2025.1 引入的 Data 4 面向 Spring 7。 -->
+        <spring-data-bom.version>2025.0.13</spring-data-bom.version>
         <spring-framework.version>6.2.19</spring-framework.version>
         <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
@@ -687,7 +688,7 @@
         <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
         <tongweb.version>7.0.E.6_P5</tongweb.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <truelicense.version>1.33</truelicense.version>
+        <truelicense.version>4.1.4</truelicense.version>
         <tika-bom.version>3.3.2</tika-bom.version>
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
@@ -9956,21 +9957,20 @@
                 <artifactId>trogdor</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
-            <!-- 使用参考: https://blog.csdn.net/wuyuxing24/article/details/99692762-->
-            <!-- 使用参考: https://blog.csdn.net/wuyuxing24/article/details/99692762 -->
-            <!-- https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-core -->
-            <!-- TrueLicense Core：Java 软件许可证管理框架（生成、验证、管理软件许可密钥）。 -->
+            <!-- TrueLicense 4.x：Apache-2.0 许可；truelicense-v1 仅用于兼容既有 1.x 文件格式。 -->
             <dependency>
-                <groupId>de.schlichtherle.truelicense</groupId>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-api</artifactId>
+                <version>${truelicense.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>global.namespace.truelicense</groupId>
                 <artifactId>truelicense-core</artifactId>
                 <version>${truelicense.version}</version>
             </dependency>
-            <!-- truelicense-xml（ddd4j-boot-auth-license 引用） -->
-            <!-- Source: https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-xml -->
-            <!-- TrueLicense XML：TrueLicense 的 XML 格式许可证序列化模块。 -->
             <dependency>
-                <groupId>de.schlichtherle.truelicense</groupId>
-                <artifactId>truelicense-xml</artifactId>
+                <groupId>global.namespace.truelicense</groupId>
+                <artifactId>truelicense-v1</artifactId>
                 <version>${truelicense.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-bom -->

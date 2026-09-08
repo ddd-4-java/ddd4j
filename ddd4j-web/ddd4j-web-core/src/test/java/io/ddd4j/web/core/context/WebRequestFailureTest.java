@@ -29,5 +29,8 @@ class WebRequestFailureTest {
         assertEquals("POST", failure.method());
         assertEquals("/api/orders", failure.path());
         assertSame(cause, failure.cause());
+        assertEquals("POST", failure.getMethod());
+        assertEquals("/api/orders", failure.getPath());
+        assertSame(cause, failure.getCause());
     }
 }

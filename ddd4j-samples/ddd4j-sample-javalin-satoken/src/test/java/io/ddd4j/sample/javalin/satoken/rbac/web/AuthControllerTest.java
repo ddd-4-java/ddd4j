@@ -73,6 +73,8 @@ class AuthControllerTest {
         app.stop();
         app = TestSupport.start();
         baseUrl = "http://localhost:" + app.port();
+        // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
+        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
     // ------------------- HTTP 助手 -------------------

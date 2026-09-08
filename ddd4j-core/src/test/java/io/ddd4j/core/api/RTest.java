@@ -26,6 +26,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RTest {
 
     @Test
+    void failed_withString_shouldTreatArgumentAsMessage() {
+        R<Object> response = R.failed("quota exceeded");
+        assertThat(response.getMsg()).isEqualTo("quota exceeded");
+        assertThat(response.getData()).isNull();
+        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+    }
+
+    @Test
+    void failed_withNullObject_shouldKeepFailureMetadata() {
+        R<Object> response = R.failed((Object) null);
+        assertThat(response.getData()).isNull();
+        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(response.getMsg()).isEqualTo(ResultCode.FAIL.getDesc());
+    }
+
+    @Test
+    void failed_withObjectData_shouldPreservePayload() {
+        java.util.Map<String, String> payload = java.util.Collections.singletonMap("reason", "quota");
+        R<java.util.Map<String, String>> response = R.failed(payload);
+        assertThat(response.getData()).isSameAs(payload);
+        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(response.getMsg()).isEqualTo(ResultCode.FAIL.getDesc());
+        assertThat(response.isOk()).isFalse();
+    }
+
+    @Test
     void ok_shouldReturnSuccessCodeAndNullData() {
         R<String> r = R.ok();
 

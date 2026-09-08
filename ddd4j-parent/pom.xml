@@ -49,7 +49,6 @@
         <!-- Docker 登录用户名 -->
         <docker.registry.username>ddd4j</docker.registry.username>
         <!-- Docker 登录凭证只能由受保护 CI 环境变量注入，禁止存放在源码。 -->
-        <docker.registry.password>${env.DDD4J_DOCKER_REGISTRY_PASSWORD}</docker.registry.password>
         <!-- buildx builder 名称（与 Jenkins 保持一致） -->
         <docker.buildx.builder.name>ddd4j-builder</docker.buildx.builder.name>
         <!-- buildkit 镜像（与 Jenkins 保持一致） -->
@@ -1281,9 +1280,7 @@
                                 <executable>sh</executable>
                                 <arguments>
                                     <argument>-c</argument>
-                                    <argument>echo '${docker.registry.password}' | docker login -u
-                                        ${docker.registry.username} --password-stdin https://${docker.registry.host}
-                                    </argument>
+                                    <argument>test -n "$DDD4J_DOCKER_REGISTRY_PASSWORD" || { echo "DDD4J_DOCKER_REGISTRY_PASSWORD is required" &gt;&amp;2; exit 1; }; printf '%s' "$DDD4J_DOCKER_REGISTRY_PASSWORD" | docker login -u "${docker.registry.username}" --password-stdin "https://${docker.registry.host}"</argument>
                                 </arguments>
                             </configuration>
                         </execution>

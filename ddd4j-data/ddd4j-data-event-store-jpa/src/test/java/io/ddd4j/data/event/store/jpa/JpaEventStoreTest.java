@@ -14,9 +14,11 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
+import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -172,6 +174,288 @@ class JpaEventStoreTest {
         eventStore.append(ORDER_TYPE, orderId, Collections.<DomainEvent<?>>singletonList(event), 0);
 
         assertNull(event.getAggregateVersion());
+    }
+
+    @Test
+    void batchAppendMustWorkWithCommitFlushMode() {
+        entityManager.setFlushMode(jakarta.persistence.FlushModeType.COMMIT);
+        TestAggregateRootId orderId = new TestAggregateRootId("commit-flush-batch");
+        eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(
+                new OrderCreatedEvent("first"), new OrderCreatedEvent("second")), 0);
+        entityManager.clear();
+        List<StoredEvent> stored = eventStore.read(ORDER_TYPE, orderId);
+        assertEquals(2, stored.size());
+        assertTrue(stored.get(0).position() < stored.get(1).position());
+        assertEquals(jakarta.persistence.FlushModeType.COMMIT, entityManager.getFlushMode());
+    }
+
+    @Test
+    void customRepositoryMustControlVersionConflict() {
+        JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
+            @Override
+            public long findCurrentVersion(String aggregateType, String aggregateId) {
+                return 7L;
+            }
+        };
+        EventStore customized = new JpaEventStore(entityManager, custom);
+        AggregateVersionConflictException conflict = assertThrows(AggregateVersionConflictException.class,
+                () -> customized.append(ORDER_TYPE, new TestAggregateRootId("custom-repository"),
+                        Collections.singletonList(new OrderCreatedEvent("event")), 0));
+        assertEquals(7L, conflict.actualVersion());
+        assertEquals(0L, conflict.expectedVersion());
+    }
+
+    @Test
+    void customRepositoryMustControlPositionAndPersistence() {
+        JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
+            @Override
+            public long nextPosition() {
+                return 42L;
+            }
+
+            @Override
+            public void save(StoredEventEntity entity) {
+                entity.setAggregateId("routed-stream");
+                super.save(entity);
+            }
+        };
+        EventStore customized = new JpaEventStore(entityManager, custom);
+        customized.append(ORDER_TYPE, new TestAggregateRootId("source-stream"),
+                Collections.singletonList(new OrderCreatedEvent("custom-persistence")), 0);
+        entityManager.clear();
+
+        assertTrue(eventStore.read(ORDER_TYPE, new TestAggregateRootId("source-stream")).isEmpty());
+        List<StoredEvent> stored = eventStore.read(ORDER_TYPE, new TestAggregateRootId("routed-stream"));
+        assertEquals(1, stored.size());
+        assertEquals(42L, stored.get(0).position());
+        assertEquals("custom-persistence", ((OrderCreatedEvent) stored.get(0).payload()).getFact());
+    }
+
+    @Test
+    void customRepositoryMustControlAllReadPaths() {
+        TestAggregateRootId orderId = new TestAggregateRootId("filtered-stream");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.singletonList(new OrderCreatedEvent("stored")), 0);
+        assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
+        JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
+            @Override
+            public List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(
+                    String aggregateType, String aggregateId) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
+                    String aggregateType, String aggregateId, long fromVersion, long toVersion) {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<StoredEventEntity> findByPositionGreaterThanEqualOrderByPositionAsc(
+                    long fromPosition, int limit) {
+                return Collections.emptyList();
+            }
+        };
+        EventStore customized = new JpaEventStore(entityManager, custom);
+        assertTrue(customized.read(ORDER_TYPE, orderId).isEmpty());
+        assertTrue(customized.read(ORDER_TYPE, orderId, 1, 1).isEmpty());
+        assertTrue(customized.readAll(0, 10).isEmpty());
+        assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
+    }
+
+    @Test
+    void failedBatchMustPreserveCommittedStateAndAllowNextAppend() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-rollback");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.singletonList(new OrderCreatedEvent("committed")), 0);
+
+        assertThrows(RuntimeException.class, () -> eventStore.append(ORDER_TYPE, orderId,
+                Arrays.<DomainEvent<?>>asList(new OrderCreatedEvent("must-rollback"), null), 1));
+        entityManager.clear();
+
+        List<StoredEvent> afterFailure = eventStore.read(ORDER_TYPE, orderId);
+        assertEquals(1, afterFailure.size());
+        assertEquals("committed", ((OrderCreatedEvent) afterFailure.get(0).payload()).getFact());
+        assertEquals(1L, afterFailure.get(0).version());
+
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.singletonList(new OrderCreatedEvent("after-failure")), 1);
+        entityManager.clear();
+        List<StoredEvent> recovered = eventStore.read(ORDER_TYPE, orderId);
+        assertEquals(2, recovered.size());
+        assertEquals("after-failure", ((OrderCreatedEvent) recovered.get(1).payload()).getFact());
+        assertEquals(2L, recovered.get(1).version());
+    }
+
+    @Test
+    void rejectedNestedAppendMustNotRollbackCallerTransaction() {
+        EntityTransaction callerTransaction = entityManager.getTransaction();
+        callerTransaction.begin();
+        try {
+            assertThrows(IllegalStateException.class, () -> eventStore.append(ORDER_TYPE,
+                    new TestAggregateRootId("caller-transaction"),
+                    Collections.singletonList(new OrderCreatedEvent("rejected")), 0));
+            assertTrue(callerTransaction.isActive(), "EventStore must not rollback a caller-owned transaction");
+            assertThrows(IllegalStateException.class, () -> eventStore.read(ORDER_TYPE,
+                    new TestAggregateRootId("caller-transaction")));
+            assertTrue(callerTransaction.isActive());
+            assertThrows(IllegalStateException.class, () -> eventStore.read(ORDER_TYPE,
+                    new TestAggregateRootId("caller-transaction"), 1, 2));
+            assertTrue(callerTransaction.isActive());
+            assertThrows(IllegalStateException.class, () -> eventStore.readAll(0, 10));
+            assertTrue(callerTransaction.isActive());
+        } finally {
+            if (callerTransaction.isActive()) {
+                callerTransaction.rollback();
+            }
+        }
+    }
+
+    @Test
+    void participatingAppendMustLeaveCommitToCaller() {
+        JpaEventStore participating = JpaEventStore.participating(entityManager);
+        TestAggregateRootId orderId = new TestAggregateRootId("external-commit");
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            participating.append(ORDER_TYPE, orderId,
+                    Collections.singletonList(new OrderCreatedEvent("pending")), 0);
+            assertTrue(tx.isActive());
+            assertEquals(1, participating.read(ORDER_TYPE, orderId).size());
+
+            tx.rollback();
+            entityManager.clear();
+            assertTrue(eventStore.read(ORDER_TYPE, orderId).isEmpty());
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+        }
+    }
+
+    @Test
+    void participatingOperationsMustRejectWithoutCallerTransaction() {
+        JpaEventStore participating = JpaEventStore.participating(entityManager);
+        TestAggregateRootId orderId = new TestAggregateRootId("missing-caller-transaction");
+
+        assertThrows(IllegalStateException.class, () -> participating.append(ORDER_TYPE, orderId,
+                Collections.singletonList(new OrderCreatedEvent("rejected")), 0));
+        assertThrows(IllegalStateException.class, () -> participating.read(ORDER_TYPE, orderId));
+        assertThrows(IllegalStateException.class, () -> participating.read(ORDER_TYPE, orderId, 1, 2));
+        assertThrows(IllegalStateException.class, () -> participating.readAll(0, 10));
+    }
+
+    @Test
+    void participatingEmptyAppendMustRejectWithoutCallerTransaction() {
+        JpaEventStore participating = JpaEventStore.participating(entityManager);
+
+        assertThrows(IllegalStateException.class, () -> participating.append(ORDER_TYPE,
+                new TestAggregateRootId("empty-batch"), Collections.emptyList(), 0));
+    }
+
+    @Test
+    void participatingAppendsMustShareCallerTransactionAndCommitTogether() {
+        JpaEventStore participating = JpaEventStore.participating(entityManager);
+        TestAggregateRootId orderId = new TestAggregateRootId("shared-caller-transaction");
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            participating.append(ORDER_TYPE, orderId,
+                    Collections.singletonList(new OrderCreatedEvent("first")), 0);
+            assertTrue(tx.isActive());
+            participating.append(ORDER_TYPE, orderId,
+                    Collections.singletonList(new OrderCreatedEvent("second")), 1);
+            assertTrue(tx.isActive());
+
+            tx.commit();
+            entityManager.clear();
+            List<StoredEvent> stored = eventStore.read(ORDER_TYPE, orderId);
+            assertEquals(2, stored.size());
+            assertEquals("first", ((OrderCreatedEvent) stored.get(0).payload()).getFact());
+            assertEquals("second", ((OrderCreatedEvent) stored.get(1).payload()).getFact());
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+        }
+    }
+
+    @Test
+    void participatingFailedBatchMustMarkCallerTransactionRollbackOnly() {
+        JpaEventStore participating = JpaEventStore.participating(entityManager);
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            assertThrows(RuntimeException.class, () -> participating.append(ORDER_TYPE,
+                    new TestAggregateRootId("rollback-only"),
+                    Arrays.<DomainEvent<?>>asList(new OrderCreatedEvent("partial"), null), 0));
+            assertTrue(tx.isActive());
+            assertTrue(tx.getRollbackOnly());
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+        }
+    }
+
+    @Test
+    void participatingAppendMustPreserveCommitFlushMode() {
+        jakarta.persistence.FlushModeType originalFlushMode = entityManager.getFlushMode();
+        entityManager.setFlushMode(jakarta.persistence.FlushModeType.COMMIT);
+        JpaEventStore participating = JpaEventStore.participating(entityManager);
+        TestAggregateRootId orderId = new TestAggregateRootId("participating-commit-flush");
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            participating.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(
+                    new OrderCreatedEvent("first"), new OrderCreatedEvent("second")), 0);
+
+            assertEquals(2, participating.read(ORDER_TYPE, orderId).size());
+            assertEquals(jakarta.persistence.FlushModeType.COMMIT, entityManager.getFlushMode());
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            entityManager.setFlushMode(originalFlushMode);
+        }
+    }
+
+    @Test
+    void participatingCustomRepositoryMustControlPositionAndPersistence() {
+        JpaStoredEventRepository custom = new JpaStoredEventRepositoryImpl(entityManager) {
+            @Override
+            public long nextPosition() {
+                return 84L;
+            }
+
+            @Override
+            public void save(StoredEventEntity entity) {
+                entity.setAggregateId("participating-routed-stream");
+                super.save(entity);
+            }
+        };
+        JpaEventStore participating = JpaEventStore.participating(entityManager, custom,
+                new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
+        EntityTransaction tx = entityManager.getTransaction();
+        tx.begin();
+        try {
+            participating.append(ORDER_TYPE, new TestAggregateRootId("participating-source-stream"),
+                    Collections.singletonList(new OrderCreatedEvent("custom-participating")), 0);
+            assertTrue(tx.isActive());
+            tx.commit();
+            entityManager.clear();
+
+            assertTrue(eventStore.read(ORDER_TYPE,
+                    new TestAggregateRootId("participating-source-stream")).isEmpty());
+            List<StoredEvent> stored = eventStore.read(ORDER_TYPE,
+                    new TestAggregateRootId("participating-routed-stream"));
+            assertEquals(1, stored.size());
+            assertEquals(84L, stored.get(0).position());
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+        }
     }
 
     @Test

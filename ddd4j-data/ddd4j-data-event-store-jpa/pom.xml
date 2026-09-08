@@ -40,6 +40,13 @@
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
+            <!-- 测试栈选择集中管理的 Hibernate 6；不覆盖 Quarkus 运行时的 BOM。 -->
+            <version>${hibernate.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -92,6 +99,10 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>

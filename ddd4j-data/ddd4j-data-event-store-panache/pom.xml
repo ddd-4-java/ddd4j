@@ -55,6 +55,12 @@
         </dependency>
 
         <!-- ======== Test ======== -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-event-store-jpa</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Quarkus JUnit 5 集成（@QuarkusTest 引导；3.31+ 由 quarkus-junit5 重定位至 quarkus-junit，BOM 管理） -->
         <dependency>
             <groupId>io.quarkus</groupId>
