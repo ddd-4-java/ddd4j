@@ -52,6 +52,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <quarkus.native.builder-image>mandrel</quarkus.native.builder-image>
         <quarkus.version>3.38.2</quarkus.version>
         <!-- 版本号规则：3.0.x 适配 JDK 21（对应 easy4j 3.0.x.20260630-SNAPSHOT 组件线） -->
         <revision>3.0.x.20260630-SNAPSHOT</revision>

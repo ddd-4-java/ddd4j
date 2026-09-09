@@ -7439,12 +7439,6 @@
                 <version>3.38.2</version>
             </dependency>
             <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-bom-quarkus-platform-properties</artifactId>
-                <version>3.38.2</version>
-                <type>properties</type>
-            </dependency>
-            <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-core</artifactId>
                 <version>4.5.32</version>

@@ -9,6 +9,14 @@ from pathlib import Path
 
 
 DDD4J_WARNING = re.compile(r"effective model for 'io\.ddd4j:")
+QUARKUS_NATIVE_BUILDER = "-Dquarkus.native.builder-image=mandrel"
+
+
+def verify_quarkus_config(config_path):
+    config = Path(config_path).read_text(encoding="utf-8").splitlines()
+    if QUARKUS_NATIVE_BUILDER not in (line.strip() for line in config):
+        return ["Quarkus native builder image is not configured"]
+    return []
 
 
 def has_imported_bom(source_pom):
@@ -39,8 +47,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("log", type=Path)
     parser.add_argument("--source-pom", type=Path, required=True)
+    parser.add_argument("--maven-config", type=Path, required=True)
     args = parser.parse_args()
     errors = verify(args.log, args.source_pom)
+    errors.extend(verify_quarkus_config(args.maven_config))
     if errors:
         print("\n".join(errors))
         return 1

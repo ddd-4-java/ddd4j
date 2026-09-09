@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from verify_maven4_model_contract import verify
+from verify_maven4_model_contract import verify, verify_quarkus_config
 
 
 class Maven4ModelContractTest(unittest.TestCase):
@@ -47,6 +47,19 @@ class Maven4ModelContractTest(unittest.TestCase):
         pom = self.write("pom.xml", "<project><dependencyManagement/></project>")
 
         self.assertEqual([], verify(log, pom))
+
+    def test_requires_explicit_quarkus_native_builder_configuration(self):
+        missing = self.write("maven.config", "-DskipTests=false\n")
+        configured = self.write(
+            "maven.config",
+            "-Dquarkus.native.builder-image=mandrel\n",
+        )
+
+        self.assertEqual(
+            ["Quarkus native builder image is not configured"],
+            verify_quarkus_config(missing),
+        )
+        self.assertEqual([], verify_quarkus_config(configured))
 
 
 if __name__ == "__main__":
