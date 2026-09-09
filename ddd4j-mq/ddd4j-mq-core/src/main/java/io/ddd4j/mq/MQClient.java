@@ -217,14 +217,10 @@ public interface MQClient extends AutoCloseable {
             MQProperties properties = properties();
             if (Objects.nonNull(properties) && properties.isPersist()) {
                 MQEventStorer storer = BaseContext.get(MQ_STORER);
-                if (Objects.nonNull(storer)) {
-                    try {
-                        storer.store(event);
-                    } catch (Exception e) {
-                        logger().error("Persist MQ failed [{}]: {}", listener.getRouteExpression(this.defaultConcat()),
-                                serialization().serialize(event), e);
-                    }
+                if (Objects.isNull(storer)) {
+                    throw new IllegalStateException("persist=true requires an MQEventStorer");
                 }
+                storer.store(event);
             }
             // 反射调用 @MQEventListener 标注的监听方法
             listener.getMethod().invoke(listener.getBean(), event);
