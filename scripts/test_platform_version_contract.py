@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from verify_platform_version_contract import verify
+from verify_platform_version_contract import verify, verify_source_authority
 
 
 def effective_pom(dependencies):
@@ -18,6 +18,17 @@ def effective_pom(dependencies):
 
 
 class PlatformVersionContractTest(unittest.TestCase):
+
+    def test_rejects_ecosystem_starters_in_platform_source_bom(self):
+        path = self.write(effective_pom([
+            ("com.baomidou", "mybatis-plus-spring-boot4-starter", "3.5.17"),
+            ("io.github.resilience4j", "resilience4j-spring-boot2", "2.4.0"),
+        ]))
+
+        errors = verify_source_authority(path)
+
+        self.assertTrue(any("mybatis-plus-spring-boot4-starter" in error for error in errors))
+        self.assertTrue(any("resilience4j-spring-boot2" in error for error in errors))
 
     def write(self, content):
         temporary = tempfile.TemporaryDirectory()

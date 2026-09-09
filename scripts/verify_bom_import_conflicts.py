@@ -9,6 +9,8 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 
+from verify_platform_version_contract import verify_source_authority
+
 
 WARNING_PATTERN = re.compile(
     r"Ignored POM import for: "
@@ -87,13 +89,19 @@ def verify(log_path, allowlist_path, effective_pom=None):
     return errors
 
 
-def main():
+def build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("log", type=Path)
     parser.add_argument("--allowlist", type=Path, required=True)
-    parser.add_argument("--effective-pom", type=Path)
-    args = parser.parse_args()
+    parser.add_argument("--effective-pom", type=Path, required=True)
+    parser.add_argument("--source-pom", type=Path, required=True)
+    return parser
+
+
+def main():
+    args = build_parser().parse_args()
     errors = verify(args.log, args.allowlist, args.effective_pom)
+    errors.extend(verify_source_authority(args.source_pom))
     if errors:
         print("\n".join(errors))
         return 1

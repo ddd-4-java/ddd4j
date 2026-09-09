@@ -7718,26 +7718,6 @@
                 <artifactId>hitool-mail</artifactId>
                 <version>${hitool.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dromara.mica-mqtt</groupId>
-                <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
-                <version>${mica-mqtt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring-boot2</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring-cloud2</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -19,6 +19,13 @@ FORBIDDEN = {
     ("de.schlichtherle.truelicense", "truelicense-xml"),
 }
 
+FORBIDDEN_ECOSYSTEM_COORDINATES = {
+    ("com.baomidou", "mybatis-plus-spring-boot4-starter"),
+    ("org.dromara.mica-mqtt", "mica-mqtt-client-spring-boot-starter"),
+    ("io.github.resilience4j", "resilience4j-spring-boot2"),
+    ("io.github.resilience4j", "resilience4j-spring-cloud2"),
+}
+
 
 def managed_versions(path):
     root = ET.parse(path).getroot()
@@ -48,11 +55,22 @@ def verify(path, expected, forbidden):
     return errors
 
 
+def verify_source_authority(path):
+    managed = managed_versions(path)
+    return [
+        f"platform BOM must not manage ecosystem coordinate {':'.join(coordinate)}"
+        for coordinate in sorted(FORBIDDEN_ECOSYSTEM_COORDINATES & managed.keys())
+    ]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("effective_pom", type=Path)
+    parser.add_argument("--source-pom", type=Path)
     args = parser.parse_args()
     errors = verify(args.effective_pom, EXPECTED, FORBIDDEN)
+    if args.source_pom:
+        errors.extend(verify_source_authority(args.source_pom))
     if errors:
         print("\n".join(errors))
         return 1

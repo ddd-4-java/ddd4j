@@ -2,12 +2,18 @@
 
 import tempfile
 import unittest
+from contextlib import redirect_stderr
+from io import StringIO
 from pathlib import Path
 
-from verify_bom_import_conflicts import parse_conflicts, verify
+from verify_bom_import_conflicts import build_parser, parse_conflicts, verify
 
 
 class BomImportConflictTest(unittest.TestCase):
+
+    def test_cli_requires_effective_pom_evidence(self):
+        with redirect_stderr(StringIO()), self.assertRaises(SystemExit):
+            build_parser().parse_args(["maven.log", "--allowlist", "allowlist.tsv"])
 
     def write(self, name, content):
         temporary = tempfile.TemporaryDirectory()
