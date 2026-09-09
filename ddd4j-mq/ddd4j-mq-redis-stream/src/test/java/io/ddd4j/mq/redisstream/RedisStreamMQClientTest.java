@@ -14,14 +14,24 @@
  */
 package io.ddd4j.mq.redisstream;
 
-import java.util.Collections;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.event.MQEventSerialization;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link RedisStreamMQClient} 客户端基础属性测试。
@@ -45,6 +55,11 @@ class RedisStreamMQClientTest {
     void setUp() {
         properties = new RedisStreamMQProperties();
         clientWithInjectedJedis = new RedisStreamMQClient((redis.clients.jedis.UnifiedJedis) null);
+    }
+
+    @AfterEach
+    void clearContext() {
+        BaseContext.clear();
     }
 
     @Test
@@ -90,7 +105,31 @@ class RedisStreamMQClientTest {
 
     @Test
     void messageId_shouldPreferStableHeaderAndReadLegacyHeader() {
-        assertEquals("stable-id", RedisStreamMQClient.messageId(new java.util.LinkedHashMap<String, String>() {{ put(MessageHeaders.HEADER_MESSAGE_ID, "stable-id"); put(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id"); }}));
-        assertEquals("legacy-id", RedisStreamMQClient.messageId(Collections.singletonMap(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id")));
+        Map<String, String> headers = new HashMap<>();
+        headers.put(MessageHeaders.HEADER_MESSAGE_ID, "stable-id");
+        headers.put(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id");
+        assertEquals("stable-id", RedisStreamMQClient.messageId(headers));
+        assertEquals("legacy-id", RedisStreamMQClient.messageId(Collections.singletonMap(
+                MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id")));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void publish_shouldPropagateXaddFailure() {
+        redis.clients.jedis.UnifiedJedis jedis = mock(redis.clients.jedis.UnifiedJedis.class);
+        when(jedis.xadd(anyString(), any(redis.clients.jedis.StreamEntryID.class), anyMap()))
+                .thenThrow(new IllegalStateException("redis unavailable"));
+        RedisStreamMQClient client = new RedisStreamMQClient(jedis);
+        MQProperties mqProperties = new MQProperties();
+        mqProperties.setEnabled(true);
+        mqProperties.setBroker("redisStream");
+        client.init(Collections.<MQListener>emptyList(), mqProperties, new MQEventSerialization() {
+            @Override public <T> T serialize(Object event) { return (T) "{}"; }
+            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+        }, null);
+        MQEvent event = new MQEvent();
+        event.setTopic("orders");
+
+        assertThrows(IllegalStateException.class, event::publish);
     }
 }

@@ -65,6 +65,19 @@ class RedisStreamBrokerAdapterTest {
     }
 
     @Test
+    void nackWithRequeueShouldLeaveEntryPendingAndMarkItHandled() {
+        UnifiedJedis jedis = mock(UnifiedJedis.class);
+        StreamEntryID id = new StreamEntryID("2-0");
+        RedisStreamAcknowledgment acknowledgment = new RedisStreamAcknowledgment(
+                jedis, "orders", "workers", id, "msg-2", null);
+
+        acknowledgment.nack(true);
+
+        verify(jedis, never()).xack(anyString(), anyString(), any(StreamEntryID.class));
+        assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
     void redissonOperationsShouldMapStreamCommands() {
         RedissonClient client = mock(RedissonClient.class);
         RStream<String, String> stream = mock(RStream.class);
