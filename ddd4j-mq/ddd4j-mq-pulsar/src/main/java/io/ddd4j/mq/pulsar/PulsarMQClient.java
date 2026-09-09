@@ -155,7 +155,8 @@ public class PulsarMQClient implements MQClient {
                     if (Objects.nonNull(tag)) {
                         builder.property(tagHeaderKey(), tag);
                     }
-                    builder.sendAsync();
+                    // Outbox 只有在 Pulsar broker 确认后才能标记发布成功。
+                    builder.sendAsync().get();
                     logger().info("Publish MQ [{}]: {}", physical, serialization().serialize(event));
                 } catch (Exception ex) {
                     throw new IllegalStateException("Publish Pulsar event failed", ex);
