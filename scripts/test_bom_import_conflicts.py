@@ -64,6 +64,32 @@ com.fasterxml.jackson.core\tjackson-core\t2.21.2\t2.13.5\t2.21.2\tddd4j-dependen
         self.assertTrue(any("unlisted BOM conflict" in error for error in errors))
         self.assertTrue(any("stale allowlist entry" in error for error in errors))
 
+    def test_rejects_wrong_final_version_or_incomplete_justification(self):
+        log = self.write("maven.log", self.warning())
+        effective = self.write(
+            "effective.xml",
+            """\
+<project xmlns="http://maven.apache.org/POM/4.1.0"><dependencyManagement><dependencies>
+<dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-core</artifactId>
+<version>2.21.2</version></dependency>
+</dependencies></dependencyManagement></project>
+""",
+        )
+        allowlist = self.write(
+            "allowlist.tsv",
+            """\
+group_id\tartifact_id\tcurrent_version\tignored_version\tfinal_version\tauthority\treason
+com.fasterxml.jackson.core\tjackson-core\t2.21.2\t2.13.5\t2.13.5\t\t
+""",
+        )
+
+        errors = verify(log, allowlist, effective)
+
+        self.assertTrue(any("final version 2.13.5 does not match effective 2.21.2" in error
+                            for error in errors))
+        self.assertTrue(any("authority must be ddd4j-dependencies" in error for error in errors))
+        self.assertTrue(any("reason must not be empty" in error for error in errors))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -5,6 +5,7 @@ import argparse
 import csv
 import re
 import sys
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -44,16 +45,45 @@ def load_allowlist(path):
         rows = csv.DictReader(source, delimiter="\t")
         return {
             Conflict(row["group_id"], row["artifact_id"], row["current_version"],
-                     row["ignored_version"])
+                     row["ignored_version"]): row
             for row in rows
         }
 
 
-def verify(log_path, allowlist_path):
+def managed_versions(path):
+    root = ET.parse(path).getroot()
+    namespace = {"m": root.tag.split("}")[0][1:]}
+    return {
+        (
+            dependency.findtext("m:groupId", default="", namespaces=namespace),
+            dependency.findtext("m:artifactId", default="", namespaces=namespace),
+        ): dependency.findtext("m:version", default="", namespaces=namespace)
+        for dependency in root.findall(
+            "m:dependencyManagement/m:dependencies/m:dependency", namespace
+        )
+    }
+
+
+def verify(log_path, allowlist_path, effective_pom=None):
     conflicts = parse_conflicts(log_path)
-    allowed = load_allowlist(allowlist_path)
+    rows = load_allowlist(allowlist_path)
+    allowed = set(rows)
     errors = [f"unlisted BOM conflict: {conflict}" for conflict in sorted(conflicts - allowed)]
     errors.extend(f"stale allowlist entry: {conflict}" for conflict in sorted(allowed - conflicts))
+    if effective_pom:
+        effective = managed_versions(effective_pom)
+        for conflict in sorted(conflicts & allowed):
+            row = rows[conflict]
+            actual = effective.get((conflict.group_id, conflict.artifact_id))
+            if row["final_version"] != actual:
+                errors.append(
+                    f"{conflict.group_id}:{conflict.artifact_id} final version "
+                    f"{row['final_version']} does not match effective {actual}"
+                )
+            if row["authority"] != "ddd4j-dependencies":
+                errors.append(f"{conflict.group_id}:{conflict.artifact_id} authority must be ddd4j-dependencies")
+            if not row["reason"].strip():
+                errors.append(f"{conflict.group_id}:{conflict.artifact_id} reason must not be empty")
     return errors
 
 
@@ -61,8 +91,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("log", type=Path)
     parser.add_argument("--allowlist", type=Path, required=True)
+    parser.add_argument("--effective-pom", type=Path)
     args = parser.parse_args()
-    errors = verify(args.log, args.allowlist)
+    errors = verify(args.log, args.allowlist, args.effective_pom)
     if errors:
         print("\n".join(errors))
         return 1
