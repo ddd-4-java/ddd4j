@@ -110,6 +110,43 @@ class DisruptorAdapterContractTest {
     }
 
     @Test
+    void shouldDeliverUsingConfiguredNamespaceWhenListenerAndEventNamespacesAreEmpty() throws Exception {
+        DisruptorMQProperties properties = new DisruptorMQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("disruptor");
+        properties.setNamespace("production");
+        properties.setBufferSize(8);
+        RecordingListener target = new RecordingListener();
+        MQListener listener = MQListener.builder()
+                .bean(target)
+                .method(RecordingListener.class.getMethod("onEvent", MQEvent.class))
+                .namespace("")
+                .topic("orders")
+                .supports(Collections.singletonList("*"))
+                .build();
+        MQEvent original = new MQEvent();
+        original.setNamespace("");
+        original.setTopic("orders");
+        original.setMsgId("global-namespace-id");
+        try (DisruptorMQClient client = new DisruptorMQClient(properties)) {
+            client.init(Collections.singletonList(listener), properties, new JsonMQEventSerialization(), null);
+            client.initProducer(properties).accept(original);
+            DisruptorEvent queued = client.getRingBuffer().get(client.getRingBuffer().getCursor());
+            assertTrue(target.delivered.await(5, TimeUnit.SECONDS),
+                    "Listener must inherit configured namespace for queued route " + queued.getRouteExpression());
+            assertEquals("production.orders", queued.getRouteExpression());
+            assertEquals("global-namespace-id", queued.getMessageId());
+        } finally {
+            BaseContext.clear();
+        }
+        assertEquals("", listener.getNamespace());
+        assertEquals(1, target.calls.get());
+        assertNotSame(original, target.received);
+        assertEquals("orders", target.received.getTopic());
+        assertEquals("global-namespace-id", target.received.getMsgId());
+    }
+
+    @Test
     void shouldRetainStableMessageIdWhenNackRequeuesLocally() {
         DisruptorEvent event = new DisruptorEvent();
         event.setMessageId("stable-id");
