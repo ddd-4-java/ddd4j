@@ -16,6 +16,7 @@ package io.ddd4j.data.mybatis.repository.impl;
 
 import java.util.Arrays;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
@@ -79,5 +80,23 @@ public abstract class BaseRepositoryImpl<MP extends BaseMapper<P>, M extends Agg
      */
     protected BaseRepositoryImpl() {
         super();
+    }
+
+    @Override
+    protected Class<M> resolveModelClass() {
+        return (Class<M>) ReflectionKit.getSuperClassGenericType(
+                this.getClass(), BaseRepositoryImpl.class, 1);
+    }
+
+    @Override
+    protected Class<P> resolvePersistenceObjectClass() {
+        return (Class<P>) ReflectionKit.getSuperClassGenericType(
+                this.getClass(), BaseRepositoryImpl.class, 2);
+    }
+
+    @Override
+    protected Class<? extends Query<M>> resolveQueryClass() {
+        return (Class<? extends Query<M>>) ReflectionKit.getSuperClassGenericType(
+                this.getClass(), BaseRepositoryImpl.class, 3);
     }
 }
