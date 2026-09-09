@@ -571,7 +571,7 @@
         <spring-boot-starter-ip2region.version>3.3.x.20241003.RELEASE</spring-boot-starter-ip2region.version>
         <!-- 第三方 Boot starter 版本（Phase 2 迁出 boot 轨前暂 pin） -->
         <spring-boot-starter-mybatis.version>2.3.2</spring-boot-starter-mybatis.version>
-        <spring-boot-starter-redistpl-plus.version>2.7.x.20240823.RELEASE</spring-boot-starter-redistpl-plus.version>
+        <spring-boot-starter-redistpl-plus.version>2.7.x.20260630-SNAPSHOT</spring-boot-starter-redistpl-plus.version>
         <spring-boot-starter-security-biz.version>2.7.x.20241003.RELEASE</spring-boot-starter-security-biz.version>
         <spring-boot-starter-security-jwt.version>2.7.x.20241003.RELEASE</spring-boot-starter-security-jwt.version>
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
@@ -585,7 +585,7 @@
         <spring-plugin.version>2.0.0.RELEASE</spring-plugin.version>
         <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <spring-security.version>5.8.16</spring-security.version>
-        <springdoc.version>2.7.0</springdoc.version>
+        <springdoc.version>1.8.0</springdoc.version>
         <springfox.version>3.0.0</springfox.version>
         <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
         <sshd-pam.version>0.11.1-atlassian-1</sshd-pam.version>
@@ -6132,9 +6132,9 @@
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.github.hiwepy/ip2region-spring-boot-starter -->
 
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/redistpl-plus-spring-boot-starter -->
+            <!-- https://github.com/easy-4-java/redistpl-plus-spring-boot-starter -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>redistpl-plus-spring-boot-starter</artifactId>
                 <version>${spring-boot-starter-redistpl-plus.version}</version>
             </dependency>

@@ -46,7 +46,7 @@
         </dependency>
         <!-- For Redis -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>redistpl-plus-spring-boot-starter</artifactId>
         </dependency>
         <!-- Compile dependencies -->
