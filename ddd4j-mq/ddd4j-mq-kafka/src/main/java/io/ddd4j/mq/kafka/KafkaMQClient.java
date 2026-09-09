@@ -28,6 +28,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.common.TopicPartition;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -35,6 +36,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -55,6 +57,8 @@ import java.util.function.Consumer;
  */
 @Slf4j(topic = "### DDD4J-MQ : KafkaMQClient ###")
 public class KafkaMQClient implements MQClient {
+
+    private static final long DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS = 30_000L;
 
     /**
      * KafkaMQProperties 用于懒构造
@@ -118,9 +122,14 @@ public class KafkaMQClient implements MQClient {
                 record.headers().add(MessageHeaders.HEADER_MESSAGE_ID,
                         mqEvent.getMsgId().getBytes(StandardCharsets.UTF_8));
             }
-            // 异步 send 回调（非阻塞发布、统一 ack/nack 收口）
-            producer1.send(record, Objects.nonNull(callback) ? callback : new SendCallback(topic, payload));
-            log.info("Publish MQ [{}]: {}", topic, payload);
+            try {
+                // Outbox 只有在 broker 确认后才能标记成功；异步回调不能作为同步发布契约。
+                producer1.send(record, Objects.nonNull(callback) ? callback : new SendCallback(topic, payload))
+                        .get(DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+                log.info("Publish MQ [{}]: {}", topic, payload);
+            } catch (Exception exception) {
+                throw new IllegalStateException("Publish Kafka event failed: " + mqEvent.getMsgId(), exception);
+            }
         };
     }
 
@@ -190,32 +199,42 @@ public class KafkaMQClient implements MQClient {
             while (!Thread.currentThread().isInterrupted()) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
                 for (ConsumerRecord<String, String> record : records) {
-                    String payload = record.value();
-                    MQEvent mqEvent = serialization().deserialize(payload, mqListener.payloadType());
-                    if (Objects.isNull(mqEvent)) {
-                        consumer.commitSync();
-                        log.warn("Consume MQ [{}] failed: the mqEvent is null", mqListener.getRouteExpression(this.defaultConcat()));
-                        continue;
-                    }
-                    if (!TagMatcher.match(mqEvent.getTag(), mqListener.getTags())) {
-                        continue;
-                    }
-                    KafkaMessageAcknowledgment ack = new KafkaMessageAcknowledgment(consumer, record);
-                    try {
-                        consume(mqListener, mqEvent, ack);
-                        if (!ack.isAcknowledged() && !mqProperties.isAutoAck()) {
-                            consumer.commitSync();
-                        }
-                    } catch (Throwable e) {
-                        log.error("Consume MQ [{}] failed: {}", mqListener.getTopic(), serialization().serialize(mqEvent), e);
-                        if (!mqProperties.isAutoAck()) {
-                            consumer.commitSync();
-                        }
-                    }
+                    handleRecord(mqListener, mqProperties, consumer, record);
                 }
             }
         });
         return true;
+    }
+
+    /**
+     * 处理单条 Kafka 记录。成功或明确过滤后提交当前偏移；失败时回退 position，禁止提交丢失消息。
+     */
+    void handleRecord(MQListener listener, MQProperties mqProperties,
+                      org.apache.kafka.clients.consumer.Consumer<String, String> consumer,
+                      ConsumerRecord<String, String> record) {
+        String payload = record.value();
+        KafkaMessageAcknowledgment acknowledgment = new KafkaMessageAcknowledgment(consumer, record);
+        try {
+            MQEvent event = serialization().deserialize(payload, listener.payloadType());
+            if (Objects.isNull(event)) {
+                acknowledgment.ackSingle();
+                log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
+                return;
+            }
+            if (!TagMatcher.match(event.getTag(), listener.getTags())) {
+                acknowledgment.ackSingle();
+                return;
+            }
+            consume(listener, event, acknowledgment);
+            if (!acknowledgment.isAcknowledged()) {
+                acknowledgment.ackSingle();
+            }
+        } catch (Throwable exception) {
+            log.error("Consume MQ [{}] failed: {}", listener.getTopic(), payload, exception);
+            if (!acknowledgment.isAcknowledged()) {
+                consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
+            }
+        }
     }
 
     // ========================= 消费者 =========================
