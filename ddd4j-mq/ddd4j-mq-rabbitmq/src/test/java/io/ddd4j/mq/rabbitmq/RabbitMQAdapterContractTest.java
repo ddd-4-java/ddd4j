@@ -16,6 +16,9 @@ package io.ddd4j.mq.rabbitmq;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class RabbitMQAdapterContractTest {
 
@@ -42,5 +46,36 @@ class RabbitMQAdapterContractTest {
 
         verify(channel).basicNack(9L, false, true);
         assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    void shouldPublishPersistentMessageAndWaitForBrokerConfirm() throws Exception {
+        Channel channel = mock(Channel.class);
+        Connection connection = mock(Connection.class);
+        when(connection.createChannel()).thenReturn(channel);
+        RabbitMQProperties properties = new RabbitMQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("rabbit");
+        properties.setExchange("events");
+        properties.setDurable(true);
+        RabbitMQClient client = new RabbitMQClient(connection);
+        MQEventSerialization serialization = new MQEventSerialization() {
+            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
+            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+        };
+        client.init(java.util.List.of(), properties, serialization, null);
+        MQEvent event = new MQEvent();
+        event.setMsgId("message-1");
+        event.setTopic("orders");
+
+        event.publish();
+
+        verify(channel).confirmSelect();
+        org.mockito.ArgumentCaptor<AMQP.BasicProperties> captor =
+                org.mockito.ArgumentCaptor.forClass(AMQP.BasicProperties.class);
+        verify(channel).basicPublish(org.mockito.ArgumentMatchers.eq("events"),
+                org.mockito.ArgumentMatchers.anyString(), captor.capture(), org.mockito.ArgumentMatchers.any());
+        assertEquals(2, captor.getValue().getDeliveryMode());
+        verify(channel).waitForConfirmsOrDie(properties.getPublisherConfirmTimeoutMillis());
     }
 }
