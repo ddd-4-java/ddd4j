@@ -73,6 +73,43 @@ class DisruptorAdapterContractTest {
     }
 
     @Test
+    void shouldDeliverUsingConfiguredNamespaceWhenEventNamespaceIsAbsent() throws Exception {
+        DisruptorMQProperties properties = new DisruptorMQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("disruptor");
+        properties.setNamespace("production");
+        properties.setBufferSize(8);
+        RecordingListener target = new RecordingListener();
+        MQListener listener = MQListener.builder()
+                .bean(target)
+                .method(RecordingListener.class.getMethod("onEvent", MQEvent.class))
+                .namespace("production")
+                .topic("orders")
+                .supports(Collections.singletonList("*"))
+                .build();
+        MQEvent original = new MQEvent();
+        original.setTopic("orders");
+        original.setMsgId("configured-namespace-id");
+        try (DisruptorMQClient client = new DisruptorMQClient(properties)) {
+            client.init(Collections.singletonList(listener), properties, new JsonMQEventSerialization(), null);
+            client.initProducer(properties).accept(original);
+            DisruptorEvent queued = client.getRingBuffer().get(client.getRingBuffer().getCursor());
+            assertTrue(target.delivered.await(5, TimeUnit.SECONDS),
+                    "Expected listener route production.orders but queued " + queued.getRouteExpression());
+            assertEquals("production", queued.getNamespace());
+            assertEquals("orders", queued.getTopic());
+            assertEquals("production.orders", queued.getRouteExpression());
+            assertEquals("configured-namespace-id", queued.getMessageId());
+        } finally {
+            BaseContext.clear();
+        }
+        assertEquals(1, target.calls.get());
+        assertNotSame(original, target.received);
+        assertEquals("orders", target.received.getTopic());
+        assertEquals("configured-namespace-id", target.received.getMsgId());
+    }
+
+    @Test
     void shouldRetainStableMessageIdWhenNackRequeuesLocally() {
         DisruptorEvent event = new DisruptorEvent();
         event.setMessageId("stable-id");
