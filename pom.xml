@@ -460,6 +460,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
+            <!-- SNAPSHOT 私仓发布同样附加 javadoc，不依赖 release profile。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
             <!-- 安装插件：将项目输出构件安装到本地仓库 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
