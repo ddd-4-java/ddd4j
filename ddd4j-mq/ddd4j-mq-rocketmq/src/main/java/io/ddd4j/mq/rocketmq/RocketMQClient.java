@@ -164,16 +164,23 @@ public class RocketMQClient implements MQClient {
                         msg.putUserProperty(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
                     }
                     String key = partitionKey(event);
+                    org.apache.rocketmq.client.producer.SendResult sendResult;
                     if (StrKit.isEmpty(key)) {
-                        finalProducer.send(msg, Objects.nonNull(callback) ? callback : new SendLogCallback(topic, payload));
+                        sendResult = finalProducer.send(msg);
                     } else {
                         // 同 key 进同 queue：MessageQueueSelector 按 key 哈希选 queue，保证顺序
-                        finalProducer.send(msg, SELECTOR_BY_KEY, key,
-                                Objects.nonNull(callback) ? callback : new SendLogCallback(topic, payload));
+                        sendResult = finalProducer.send(msg, SELECTOR_BY_KEY, key);
+                    }
+                    if (Objects.nonNull(callback)) {
+                        callback.onSuccess(sendResult);
                     }
                     log.info("Publish MQ [{}]: {}", topic, payload);
                 } catch (Exception e) {
                     log.error("Publish MQ [{}]: {} failed!", topic, payload, e);
+                    if (Objects.nonNull(callback)) {
+                        callback.onException(e);
+                    }
+                    throw new IllegalStateException("Publish RocketMQ event failed: " + event.getMsgId(), e);
                 }
             };
         } catch (MQClientException e) {
