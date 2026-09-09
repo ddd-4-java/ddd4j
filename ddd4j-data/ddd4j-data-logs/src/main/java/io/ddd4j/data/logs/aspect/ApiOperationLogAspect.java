@@ -86,33 +86,39 @@ public class ApiOperationLogAspect {
         try {
 
             // 2、开启日志记录
-            logProvider.doBefore(pjd, apiOperation);
+            invokeSafely(() -> logProvider.doBefore(pjd, apiOperation), "before");
 
             // 3、执行代理方法
-            Object result = null;
-            try {
-                result = pjd.proceed();
-                return result;
-            } finally {
-                if (stopWatch.isRunning()) {
-                    stopWatch.stop();
-                }
-                // 4、记录访问日志
-                logProvider.afterReturing(pjd, apiOperation, result, stopWatch);
-            }
+            Object result = pjd.proceed();
+            stop(stopWatch);
+            Object returned = result;
+            invokeSafely(() -> logProvider.afterReturing(pjd, apiOperation, returned, stopWatch), "returning");
+            return result;
         } catch (Throwable ex) {
             log.debug("Method invoke error !", ex);
             try {
-                if (stopWatch.isRunning()) {
-                    stopWatch.stop();
-                }
+                stop(stopWatch);
                 return logProvider.wrapThrowing(pjd, apiOperation, ex, stopWatch);
             } finally {
                 // 5、记录异常日志
-                logProvider.afterThrowing(pjd, apiOperation, ex, stopWatch);
+                invokeSafely(() -> logProvider.afterThrowing(pjd, apiOperation, ex, stopWatch), "throwing");
             }
         } finally {
             MDC.clear();
+        }
+    }
+
+    private void stop(Stopwatch stopwatch) {
+        if (stopwatch.isRunning()) {
+            stopwatch.stop();
+        }
+    }
+
+    private void invokeSafely(Runnable callback, String phase) {
+        try {
+            callback.run();
+        } catch (RuntimeException exception) {
+            log.warn("API operation log callback failed: phase={}", phase, exception);
         }
     }
 
