@@ -123,7 +123,7 @@ public class DisruptorMQClient implements MQClient {
                 // 保留原始路由分量，由 DisruptorEvent 统一拼接一次。
                 e.setTopic(event.getTopic());
                 e.setTag(event.getTag());             // private 字段走 setter
-                e.setNamespace(event.getNamespace());
+                e.setNamespace(namespace(event, mqProperties));
                 e.setMessageId(event.getMsgId());
                 e.setPayload(payload);                // private 字段走 setter
                 e.setSequence(sequence);
