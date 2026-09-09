@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 EXPECTED = {
+    ("io.quarkus", "quarkus-hibernate-orm-panache"): "3.38.2",
     ("org.springframework.security", "spring-security-core"): "7.1.0",
     ("org.testcontainers", "testcontainers-localstack"): "2.0.5",
     ("io.github.easy4j", "zxing-extension"): "3.0.x.20260630-SNAPSHOT",

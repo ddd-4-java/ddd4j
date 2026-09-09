@@ -7415,6 +7415,11 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-hibernate-orm-panache</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-junit</artifactId>
                 <version>3.38.2</version>
             </dependency>
