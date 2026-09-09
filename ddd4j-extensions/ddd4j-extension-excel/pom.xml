@@ -6,8 +6,7 @@
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-extensions</artifactId>
-        <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>3.0.x.20260630-SNAPSHOT</version>
     </parent>
 
     <artifactId>ddd4j-extension-excel</artifactId>

@@ -6,8 +6,7 @@
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j</artifactId>
-        <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>3.0.x.20260630-SNAPSHOT</version>
     </parent>
 
     <artifactId>ddd4j-dependencies</artifactId>
@@ -786,13 +785,6 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-bom</artifactId>
-                <version>${activemq.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-console</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
@@ -967,13 +959,6 @@
                 <version>${archunit.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>artemis-bom</artifactId>
-                <version>${artemis.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>${asm.version}</version>
@@ -997,13 +982,6 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-bom</artifactId>
-                <version>${assertj.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
@@ -1256,20 +1234,6 @@
                 <version>${binlog4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>bom</artifactId>
-                <version>${awssdk.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-bom</artifactId>
-                <version>${brave.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>io.buji</groupId>
                 <artifactId>buji-pac4j</artifactId>
                 <version>${buji-pac4j.version}</version>
@@ -1415,16 +1379,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>codex-java-sdk</artifactId>
                 <version>${codex-java-sdk.version}</version>
-            </dependency>
-            <!-- For Alibaba Cola -->
-            <!-- https://mvnrepository.com/artifact/com.alibaba.cola/cola-components-bom -->
-            <!-- Alibaba COLA Components BOM：阿里 COLA 架构的组件版本清单，提供 COLA 架构所需全套组件。 -->
-            <dependency>
-                <groupId>com.alibaba.cola</groupId>
-                <artifactId>cola-components-bom</artifactId>
-                <version>${cola.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>commons-attributes</groupId>
@@ -2077,13 +2031,6 @@
                 <version>${db-meta.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.debezium</groupId>
-                <artifactId>debezium-bom</artifactId>
-                <version>${debezium.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>io.spring.gradle</groupId>
                 <artifactId>dependency-management-plugin</artifactId>
                 <version>${dependency-management-plugin.version}</version>
@@ -2219,13 +2166,6 @@
                 <version>${docx4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>docx4j-template-bom</artifactId>
-                <version>${docx4j-template.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${dom4j2.version}</version>
@@ -2260,15 +2200,6 @@
                 <artifactId>dreamina-java-sdk</artifactId>
                 <version>${dreamina-java-sdk.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.dropwizard/dropwizard-bom -->
-            <!-- Dropwizard BOM：Dropwizard REST 微服务框架的版本清单。 -->
-            <dependency>
-                <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-bom</artifactId>
-                <version>${dropwizard-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>com.izettle</groupId>
                 <artifactId>dropwizard-metrics-influxdb</artifactId>
@@ -2298,13 +2229,6 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>dynamic-datasource-spring</artifactId>
                 <version>${dynamic-datasource.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dromara.dynamictp</groupId>
-                <artifactId>dynamic-tp-dependencies</artifactId>
-                <version>${dynamic-tp.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
@@ -2814,27 +2738,6 @@
                 <version>${google-api-services-androidpublisher.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.auth</groupId>
-                <artifactId>google-auth-library-bom</artifactId>
-                <version>${google-auth-library.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>google-cloud-translate-bom</artifactId>
-                <version>${google-cloud-translate.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.http-client</groupId>
-                <artifactId>google-http-client-bom</artifactId>
-                <version>${google-http-client.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.google.oauth-client</groupId>
                 <artifactId>google-oauth-client</artifactId>
                 <version>${google-oauth-client.version}</version>
@@ -2956,20 +2859,6 @@
                 <artifactId>grizzly-websockets-server</artifactId>
                 <version>${grizzly.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.groovy</groupId>
-                <artifactId>groovy-bom</artifactId>
-                <version>${groovy.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-bom</artifactId>
-                <version>${grpc-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- gRPC 核心工件显式钉版（= grpc-bom 同版）：debezium-bom/dropwizard-bom 等更早
                  import 的 BOM 会把 grpc-core/api 压到 1.56.x（无 ForwardingChannelBuilder2），
                  与 grpc-netty-shaded 1.82.1 混版导致 esdb 客户端 NoClassDefFoundError；
@@ -3058,13 +2947,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-mapreduce-client</artifactId>
-                <version>${hadoop.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
@@ -3124,23 +3006,9 @@
                 <version>${hdrhistogram.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.helidon</groupId>
-                <artifactId>helidon-bom</artifactId>
-                <version>${helidon-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>hermes-java-sdk</artifactId>
                 <version>${hermes-java-sdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-platform</artifactId>
-                <version>${hibernate.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
@@ -3407,13 +3275,6 @@
                 <version>${hystrix.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.iceberg</groupId>
-                <artifactId>iceberg-bom</artifactId>
-                <version>${iceberg.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.ibm.icu</groupId>
                 <artifactId>icu4j</artifactId>
                 <version>${icu4j.version}</version>
@@ -3529,13 +3390,6 @@
                 <version>${angus-mail.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-bom</artifactId>
-                <version>${infinispan.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.influxdb</groupId>
                 <artifactId>influxdb-client-java</artifactId>
                 <version>${influxdb-client-java.version}</version>
@@ -3544,13 +3398,6 @@
                 <groupId>org.influxdb</groupId>
                 <artifactId>influxdb-java</artifactId>
                 <version>${influxdb-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.spring.initializr</groupId>
-                <artifactId>initializr-bom</artifactId>
-                <version>${spring-initializr.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
@@ -3581,14 +3428,6 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>2.22</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/tools.jackson/jackson-bom -->
-            <dependency>
-                <groupId>tools.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>tools.jackson.core</groupId>
@@ -3747,13 +3586,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.cassandra</groupId>
-                <artifactId>java-driver-bom</artifactId>
-                <version>${cassandra-driver.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cassandra</groupId>
                 <artifactId>java-driver-core</artifactId>
                 <version>${cassandra-driver.version}</version>
             </dependency>
@@ -3878,13 +3710,6 @@
                 <version>${javers.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-bom</artifactId>
-                <version>${glassfish-jaxb.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
                 <version>${jaxen.version}</version>
@@ -3955,13 +3780,6 @@
                 <version>${scijava-jep.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.alicp.jetcache</groupId>
                 <artifactId>jetcache-anno</artifactId>
                 <version>${jetcache.version}</version>
@@ -4026,13 +3844,6 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util</artifactId>
                 <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
@@ -4118,13 +3929,6 @@
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-bom</artifactId>
-                <version>${jooq.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.jooq</groupId>
@@ -4220,13 +4024,6 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit-jupiter.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- 修复 test classpath 混版：io.debezium:debezium-bom:3.6.0.Final 在本 POM 的 BOM import
                  序列中排位靠前（先 import 的 BOM 在 Maven 4 中优先），其内部把 junit-jupiter 聚合器
@@ -4435,13 +4232,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-bom</artifactId>
-                <version>${kotlin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
                 <version>${kotlin-stdlib.version}</version>
             </dependency>
@@ -4449,20 +4239,6 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
                 <version>${kotlin-stdlib.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-coroutines-bom</artifactId>
-                <version>${kotlin-coroutines.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-serialization-bom</artifactId>
-                <version>${kotlin-serialization.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.kurrent</groupId>
@@ -4483,13 +4259,6 @@
                 <groupId>com.googlecode.libphonenumber</groupId>
                 <artifactId>libphonenumber</artifactId>
                 <version>${libphonenumber.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-libraries-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
@@ -4592,13 +4361,6 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-appserver</artifactId>
                 <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-bom</artifactId>
-                <version>${log4j2.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -4832,70 +4594,8 @@
             </dependency>
             <dependency>
                 <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-bom</artifactId>
-                <version>${micrometer.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-stackdriver</artifactId>
                 <version>${micrometer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-tracing-bom</artifactId>
-                <version>${micrometer-tracing.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- BOMs 必须置于 micronaut-platform 之前，Maven 4 中先声明优先 -->
-            <!-- Javalin BOM（控制 Jetty 版本） -->
-            <dependency>
-                <groupId>io.javalin</groupId>
-                <artifactId>javalin-bom</artifactId>
-                <version>${javalin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Jetty BOM -->
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring-framework.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-bom</artifactId>
-                <version>${spring-security.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-bom -->
-            <dependency>
-                <groupId>io.projectreactor</groupId>
-                <artifactId>reactor-bom</artifactId>
-                <version>${reactor-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.micronaut.platform</groupId>
-                <artifactId>micronaut-platform</artifactId>
-                <version>${micronaut.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.milvus</groupId>
@@ -4906,13 +4606,6 @@
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-bom</artifactId>
-                <version>${mockito.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- 修复 test classpath 混版：debezium-bom:3.6.0.Final（先 import，优先级更高）把
                  mockito-core 钉到 ${version.mockito}=5.19.0，压过了后导入的 mockito-bom(${mockito.version})，
@@ -4939,13 +4632,6 @@
                 <version>${mongo-java-driver.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongodb-driver-bom</artifactId>
-                <version>${mongodb.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
                 <artifactId>mssql-jdbc</artifactId>
                 <version>${mssql-jdbc.version}</version>
@@ -4969,13 +4655,6 @@
                 <groupId>org.mybatis.scripting</groupId>
                 <artifactId>mybatis-freemarker</artifactId>
                 <version>${mybatis-freemarker.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mybatis.generator</groupId>
-                <artifactId>mybatis-generator</artifactId>
-                <version>${mybatis-generator.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.mybatis.caches</groupId>
@@ -5121,13 +4800,6 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>${netty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -5456,20 +5128,6 @@
                 <version>${objenesis.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.oracle.database.jdbc</groupId>
-                <artifactId>ojdbc-bom</artifactId>
-                <version>${oracle-database.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>okhttp-bom</artifactId>
-                <version>${okhttp.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>okhttp3-extension</artifactId>
                 <version>${okhttp3-extension.version}</version>
@@ -5555,13 +5213,6 @@
                 <groupId>io.github.openhtmltopdf</groupId>
                 <artifactId>openhtmltopdf-mathml-support</artifactId>
                 <version>${openhtmltopdf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentelemetry</groupId>
-                <artifactId>opentelemetry-bom</artifactId>
-                <version>${opentelemetry.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.eventstore</groupId>
@@ -5953,13 +5604,6 @@
                 <version>${libphonenumber-prefixmapper.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>prometheus-metrics-bom</artifactId>
-                <version>${prometheus-client.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
                 <version>${protobuf-java.version}</version>
@@ -5988,13 +5632,6 @@
                 <groupId>com.cloudhopper.proxool</groupId>
                 <artifactId>proxool-cglib</artifactId>
                 <version>${proxool.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.pulsar</groupId>
-                <artifactId>pulsar-bom</artifactId>
-                <version>${pulsar.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.pulsar</groupId>
@@ -6042,13 +5679,6 @@
                 <version>1.3</version>
             </dependency>
             <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
@@ -6057,13 +5687,6 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz-jobs</artifactId>
                 <version>${quartz.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.querydsl</groupId>
-                <artifactId>querydsl-bom</artifactId>
-                <version>${querydsl.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.r2dbc</groupId>
@@ -6252,13 +5875,6 @@
             </dependency>
             <dependency>
                 <groupId>io.rest-assured</groupId>
-                <artifactId>rest-assured-bom</artifactId>
-                <version>${rest-assured.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured-common</artifactId>
                 <version>${rest-assured.version}</version>
             </dependency>
@@ -6288,13 +5904,6 @@
                 <version>${rocketmq-extension.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.rsocket</groupId>
-                <artifactId>rsocket-bom</artifactId>
-                <version>${rsocket.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>io.reactivex.rxjava2</groupId>
                 <artifactId>rxjava</artifactId>
                 <version>${rxjava2.version}</version>
@@ -6308,13 +5917,6 @@
                 <groupId>io.reactivex</groupId>
                 <artifactId>rxjava</artifactId>
                 <version>${rxjava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-bom</artifactId>
-                <version>${sa-token.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.messaging.saaj</groupId>
@@ -6500,13 +6102,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>security-jwt-extension</artifactId>
                 <version>${security-jwt-extension.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-bom</artifactId>
-                <version>${selenium.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.sendgrid</groupId>
@@ -6784,13 +6379,6 @@
                 <version>${prometheus-simpleclient.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_bom</artifactId>
-                <version>${prometheus-simpleclient.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>simulator</artifactId>
                 <version>${caffeine-simulator.version}</version>
@@ -6802,22 +6390,8 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-bom</artifactId>
-                <version>${slf4j.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.smallrye.reactive</groupId>
-                <artifactId>smallrye-reactive-messaging-bom</artifactId>
-                <version>${smallrye-reactive-messaging-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
@@ -6893,13 +6467,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-bytebuddy</artifactId>
                 <version>${spring-bytebuddy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-bom</artifactId>
-                <version>${spring-data-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
@@ -7219,13 +6786,6 @@
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-localstack</artifactId>
                 <version>${testcontainers-bom.version}</version>
             </dependency>
@@ -7273,13 +6833,6 @@
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf-spring6</artifactId>
                 <version>${thymeleaf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tika</groupId>
-                <artifactId>tika-bom</artifactId>
-                <version>${tika-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- t-io（mqtt-server sample 引用；org.tio 坐标已死，Central 仅存 org.t-io） -->
             <dependency>
@@ -7661,13 +7214,6 @@
                 <version>${zip4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.zipkin.reporter2</groupId>
-                <artifactId>zipkin-reporter-bom</artifactId>
-                <version>${zipkin-reporter.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.101tec</groupId>
                 <artifactId>zkclient</artifactId>
                 <version>${zkclient.version}</version>
@@ -7699,13 +7245,6 @@
                 <artifactId>mybatis-plus-spring</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-bom</artifactId>
-                <version>${resilience4j.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- 三线组件清单补齐：版本按当前 JDK 线集中管理。 -->
             <dependency>
@@ -7717,6 +7256,328 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>hitool-mail</artifactId>
                 <version>${hitool.version}</version>
+            </dependency>
+            <!-- Explicit versions formerly supplied only by imported ecosystem BOMs. -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-apikey</artifactId>
+                <version>1.45.0</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-core</artifactId>
+                <version>1.45.0</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-jwt</artifactId>
+                <version>1.45.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.21.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>2.21.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-core</artifactId>
+                <version>5.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-testing</artifactId>
+                <version>5.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.helidon.common</groupId>
+                <artifactId>helidon-common-service-loader</artifactId>
+                <version>3.2.18</version>
+            </dependency>
+            <dependency>
+                <groupId>io.helidon.common.testing</groupId>
+                <artifactId>helidon-common-testing-junit5</artifactId>
+                <version>3.2.18</version>
+            </dependency>
+            <dependency>
+                <groupId>io.helidon.microprofile.cdi</groupId>
+                <artifactId>helidon-microprofile-cdi</artifactId>
+                <version>3.2.18</version>
+            </dependency>
+            <dependency>
+                <groupId>io.helidon.microprofile.health</groupId>
+                <artifactId>helidon-microprofile-health</artifactId>
+                <version>3.2.18</version>
+            </dependency>
+            <dependency>
+                <groupId>io.helidon.microprofile.server</groupId>
+                <artifactId>helidon-microprofile-server</artifactId>
+                <version>3.2.18</version>
+            </dependency>
+            <dependency>
+                <groupId>io.helidon.microprofile.tests</groupId>
+                <artifactId>helidon-microprofile-tests-junit5</artifactId>
+                <version>3.2.18</version>
+            </dependency>
+            <dependency>
+                <groupId>io.javalin</groupId>
+                <artifactId>javalin</artifactId>
+                <version>7.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>1.10.4</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-context</artifactId>
+                <version>4.10.26</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-http-client</artifactId>
+                <version>4.10.26</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-http-server</artifactId>
+                <version>4.10.26</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-http-server-netty</artifactId>
+                <version>4.10.26</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-jackson-databind</artifactId>
+                <version>4.10.26</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-management</artifactId>
+                <version>4.10.26</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-runtime</artifactId>
+                <version>4.10.26</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut.test</groupId>
+                <artifactId>micronaut-test-junit5</artifactId>
+                <version>4.10.3</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-api</artifactId>
+                <version>1.62.0</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-context</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-testing</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-core</artifactId>
+                <version>3.8.6</version>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-test</artifactId>
+                <version>3.8.6</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-arc</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-core</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-junit</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-quartz</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-rest</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-rest-jackson</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-smallrye-health</artifactId>
+                <version>3.38.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom-quarkus-platform-properties</artifactId>
+                <version>3.38.2</version>
+                <type>properties</type>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-core</artifactId>
+                <version>4.5.32</version>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-junit5</artifactId>
+                <version>4.5.32</version>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-web</artifactId>
+                <version>4.5.32</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.enterprise</groupId>
+                <artifactId>jakarta.enterprise.cdi-api</artifactId>
+                <version>4.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>artemis-jakarta-client</artifactId>
+                <version>2.44.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pulsar</groupId>
+                <artifactId>pulsar-client</artifactId>
+                <version>4.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.microprofile.config</groupId>
+                <artifactId>microprofile-config-api</artifactId>
+                <version>3.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>4.0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>7.2.6.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-core</artifactId>
+                <version>3.49.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>7.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>7.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>7.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-websocket</artifactId>
+                <version>7.0.8</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>4.0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>7.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>7.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>1.20.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>1.20.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-junit-jupiter</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-kafka</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-mysql</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-postgresql</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-rabbitmq</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>sqs</artifactId>
+                <version>2.30.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

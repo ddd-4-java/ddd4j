@@ -7,8 +7,7 @@
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-samples</artifactId>
-        <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>3.0.x.20260630-SNAPSHOT</version>
     </parent>
 
     <artifactId>ddd4j-sample-quarkus-cqrs</artifactId>
@@ -25,19 +24,6 @@
         <surefire-plugin.version>${quarkus-surefire-plugin.version}</surefire-plugin.version>
         <failsafe-plugin.version>${quarkus-failsafe-plugin.version}</failsafe-plugin.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- 显式引入 Quarkus BOM，统一管控 quarkus-* 版本 -->
-            <dependency>
-                <groupId>${quarkus.platform.group-id}</groupId>
-                <artifactId>${quarkus.platform.artifact-id}</artifactId>
-                <version>${quarkus.platform.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- ================= ddd4j 核心依赖 ================= -->
