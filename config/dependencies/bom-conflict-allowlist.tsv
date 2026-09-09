@@ -1,1 +1,450 @@
 group_id	artifact_id	current_version	ignored_version	final_version	authority	reason
+com.fasterxml.jackson.core	jackson-core	2.21.2	2.13.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-core	2.21.2	2.18.6	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-core	2.21.2	2.21.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-core	2.22.0	2.13.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-core	2.22.0	2.21.2	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-databind	2.21.2	2.13.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-databind	2.21.2	2.18.6	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-databind	2.21.2	2.21.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-databind	2.22.0	2.13.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.core	jackson-databind	2.22.0	2.21.2	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.core imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.dataformat	jackson-dataformat-yaml	2.21.2	2.21.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.dataformat imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.dataformat	jackson-dataformat-yaml	2.22.0	2.21.2	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.dataformat imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.datatype	jackson-datatype-joda	2.22.0	2.21.2	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.datatype imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.datatype	jackson-datatype-jsr310	2.21.2	2.21.5	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.datatype imported BOM overlap retained; platform effective version is authoritative
+com.fasterxml.jackson.datatype	jackson-datatype-jsr310	2.22.0	2.21.2	2.21.2	ddd4j-dependencies	com.fasterxml.jackson.datatype imported BOM overlap retained; platform effective version is authoritative
+com.github.spotbugs	spotbugs-annotations	4.8.6	4.9.7	4.8.6	ddd4j-dependencies	com.github.spotbugs imported BOM overlap retained; platform effective version is authoritative
+com.google.api.grpc	proto-google-common-protos	1.17.0	2.72.0	1.17.0	ddd4j-dependencies	com.google.api.grpc imported BOM overlap retained; platform effective version is authoritative
+com.google.api.grpc	proto-google-common-protos	2.71.0	1.17.0	1.17.0	ddd4j-dependencies	com.google.api.grpc imported BOM overlap retained; platform effective version is authoritative
+com.google.cloud	google-cloud-pubsub	1.151.0	1.142.0	1.151.0	ddd4j-dependencies	com.google.cloud imported BOM overlap retained; platform effective version is authoritative
+com.google.cloud	google-cloud-storage	2.52.0	2.69.0	2.52.0	ddd4j-dependencies	com.google.cloud imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-android	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-apache-v2	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-apache-v5	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-appengine	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-findbugs	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-gson	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-jackson2	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-protobuf	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-test	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.google.http-client	google-http-client-xml	1.47.1	2.1.0	1.47.1	ddd4j-dependencies	com.google.http-client imported BOM overlap retained; platform effective version is authoritative
+com.oracle.database.jdbc	ojdbc11	23.26.2.0.0	23.26.1.0.0	23.26.1.0.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+com.oracle.database.nls	orai18n	23.26.2.0.0	23.26.1.0.0	23.26.1.0.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+com.oracle.database.xml	xdb	23.26.2.0.0	23.26.1.0.0	23.26.1.0.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+com.oracle.database.xml	xmlparserv2	23.26.2.0.0	23.26.1.0.0	23.26.1.0.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+com.sun.xml.bind	jaxb-impl	2.4.0-b180830.0438	4.0.6	4.0.6	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.dropwizard.metrics	metrics-core	4.0.1	3.2.4	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.dropwizard.metrics	metrics-core	4.0.1	4.2.20	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.dropwizard.metrics	metrics-core	4.2.39	3.2.4	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.dropwizard.metrics	metrics-core	4.2.39	4.0.1	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.dropwizard.metrics	metrics-core	4.2.39	4.2.20	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.dropwizard.metrics	metrics-healthchecks	4.2.39	4.0.1	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.dropwizard.metrics	metrics-jmx	4.2.39	4.0.1	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.dropwizard.metrics	metrics-servlets	4.2.39	4.0.1	4.0.1	ddd4j-dependencies	io.dropwizard.metrics imported BOM overlap retained; platform effective version is authoritative
+io.fabric8	kube-api-test	7.8.0	7.6.1	7.6.1	ddd4j-dependencies	io.fabric8 imported BOM overlap retained; platform effective version is authoritative
+io.fabric8	kubernetes-client	7.8.0	7.6.1	7.6.1	ddd4j-dependencies	io.fabric8 imported BOM overlap retained; platform effective version is authoritative
+io.grpc	grpc-all	1.81.0	1.82.1	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-all	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-alts	1.81.0	1.82.1	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-alts	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-auth	1.81.0	1.82.1	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-auth	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-benchmarks	1.81.0	1.82.1	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-benchmarks	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-census	1.81.0	1.82.1	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-census	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-context-override-opentelemetry	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-gcp-csm-observability	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-gcp-observability	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-googleapis	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-grpclb	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-inprocess	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-interop-testing	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-netty	1.56.1	1.81.0	1.56.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-netty	1.56.1	1.82.1	1.56.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-netty	1.81.0	1.56.1	1.56.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-okhttp	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-opentelemetry	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-rls	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-s2a	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-services	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-servlet	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-servlet-jakarta	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-testing	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-testing-proto	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-util	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	grpc-xds	1.82.1	1.81.0	1.82.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.grpc	protoc-gen-grpc-java	1.82.1	1.81.0	1.81.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	context-propagation	1.2.1	1.2.0	1.2.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-commons	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-core	1.10.4	1.16.1	1.10.4	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-core	1.16.1	1.10.4	1.10.4	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-core	1.17.0	1.16.1	1.10.4	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-jakarta9	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-java11	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-java21	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-jetty11	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-jetty12	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-observation	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-observation-test	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-appoptics	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-atlas	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-azure-monitor	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-cloudwatch2	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-datadog	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-dynatrace	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-elastic	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-ganglia	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-graphite	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-health	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-humio	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-influx	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-jmx	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-kairos	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-new-relic	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-opentsdb	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-otlp	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-prometheus	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-prometheus-simpleclient	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-signalfx	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-statsd	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-registry-wavefront	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.micrometer	micrometer-test	1.17.0	1.16.1	1.16.1	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.opentelemetry	opentelemetry-api	1.62.0	1.25.0	1.62.0	ddd4j-dependencies	io.opentelemetry imported BOM overlap retained; platform effective version is authoritative
+io.projectreactor	reactor-core	3.8.6	3.7.12	3.8.6	ddd4j-dependencies	io.projectreactor imported BOM overlap retained; platform effective version is authoritative
+io.projectreactor	reactor-test	3.8.6	3.7.12	3.8.6	ddd4j-dependencies	io.projectreactor imported BOM overlap retained; platform effective version is authoritative
+io.smallrye	smallrye-open-api-core	4.3.5	2.1.2	2.1.2	ddd4j-dependencies	io.smallrye imported BOM overlap retained; platform effective version is authoritative
+io.strimzi	strimzi-test-container	0.115.0	0.115.0	0.115.0	ddd4j-dependencies	io.strimzi imported BOM overlap retained; platform effective version is authoritative
+io.zipkin.brave	brave	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-context-jfr	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-context-log4j12	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-context-log4j2	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-context-slf4j	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-dubbo	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-grpc	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-http	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-http-tests	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-http-tests-jakarta	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-httpasyncclient	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-httpclient	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-httpclient5	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-jakarta-jms	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-jaxrs2	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-jdbi3	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-jersey-server	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-jersey-server-jakarta	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-jms	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-jms-jakarta	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-kafka-clients	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-kafka-streams	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-messaging	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-mongodb	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-mysql	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-mysql6	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-mysql8	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-netty-codec-http	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-okhttp3	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-rpc	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-servlet	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-servlet-jakarta	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-spring-rabbit	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-instrumentation-spring-web	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+io.zipkin.brave	brave-tests	6.3.1	6.3.0	6.3.0	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+net.java.dev.jna	jna	5.2.0	5.18.1	5.2.0	ddd4j-dependencies	net.java.dev.jna imported BOM overlap retained; platform effective version is authoritative
+org.apache.activemq	activemq-all	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-amqp	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-blueprint	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-broker	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-client	6.1.6	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-client	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-http	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-jaas	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-jdbc-store	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-jms-pool	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-kahadb-store	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-karaf	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-log4j-appender	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-mqtt	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-openwire-generator	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-openwire-legacy	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-osgi	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-pool	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-ra	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-rar	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-run	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-runtime-config	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-shiro	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-stomp	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-web	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-web-console	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	activemq-web-demo	6.1.8	6.2.0	6.2.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-amqp-protocol	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-boot	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-cdi-client	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-cli	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-commons	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-console	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-core-client	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-core-client-all	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-core-client-osgi	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-dto	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-features	features:2.43.0	features:2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-hornetq-protocol	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-hqclient-protocol	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-cdi-client	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-client	2.41.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-client	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-client-all	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-openwire-protocol	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-ra	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-server	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jakarta-service-extensions	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jdbc-store	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jms-client	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jms-client-all	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jms-client-osgi	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-jms-server	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-journal	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-lockmanager-api	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-lockmanager-ri	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-mqtt-protocol	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-openwire-protocol	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-ra	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-selector	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-server	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-server-osgi	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-service-extensions	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-stomp-protocol	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-web	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.activemq	artemis-website	2.43.0	2.44.0	2.44.0	ddd4j-dependencies	ActiveMQ and Quarkus BOM overlap; platform effective version is authoritative
+org.apache.groovy	groovy	4.0.17	4.0.28	4.0.17	ddd4j-dependencies	org.apache.groovy imported BOM overlap retained; platform effective version is authoritative
+org.apache.groovy	groovy	4.0.17	5.0.3	4.0.17	ddd4j-dependencies	org.apache.groovy imported BOM overlap retained; platform effective version is authoritative
+org.apache.groovy	groovy-json	4.0.17	4.0.28	4.0.17	ddd4j-dependencies	org.apache.groovy imported BOM overlap retained; platform effective version is authoritative
+org.apache.groovy	groovy-json	4.0.17	5.0.3	4.0.17	ddd4j-dependencies	org.apache.groovy imported BOM overlap retained; platform effective version is authoritative
+org.apache.groovy	groovy-jsr223	4.0.17	5.0.3	4.0.17	ddd4j-dependencies	org.apache.groovy imported BOM overlap retained; platform effective version is authoritative
+org.apache.groovy	groovy-sql	5.0.3	4.0.28	5.0.3	ddd4j-dependencies	org.apache.groovy imported BOM overlap retained; platform effective version is authoritative
+org.apache.groovy	groovy-templates	5.0.3	4.0.28	5.0.3	ddd4j-dependencies	org.apache.groovy imported BOM overlap retained; platform effective version is authoritative
+org.eclipse.jetty	jetty-servlet	9.4.12.v20180830	9.4.58.v20250814	9.4.12.v20180830	ddd4j-dependencies	org.eclipse.jetty imported BOM overlap retained; platform effective version is authoritative
+org.eclipse.jetty	jetty-util-ajax	9.4.58.v20250814	12.1.5	9.4.58.v20250814	ddd4j-dependencies	org.eclipse.jetty imported BOM overlap retained; platform effective version is authoritative
+org.eclipse.jetty	jetty-util-ajax	9.4.58.v20250814	12.1.8	9.4.58.v20250814	ddd4j-dependencies	org.eclipse.jetty imported BOM overlap retained; platform effective version is authoritative
+org.eclipse.persistence	org.eclipse.persistence.moxy	2.7.6	2.7.14	2.7.6	ddd4j-dependencies	org.eclipse.persistence imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jaxb	jaxb-runtime	2.3.9	4.0.2	4.0.6	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+org.glassfish.jaxb	jaxb-runtime	2.3.9	4.0.6	4.0.6	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+org.glassfish.jersey.containers	jersey-container-servlet	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.containers imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.containers	jersey-container-servlet	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.containers imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.containers	jersey-container-servlet	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.containers imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.containers	jersey-container-servlet-core	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.containers imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.containers	jersey-container-servlet-core	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.containers imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.containers	jersey-container-servlet-core	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.containers imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-client	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-client	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-client	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-common	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-common	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-common	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-server	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-server	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.core	jersey-server	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.core imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.inject	jersey-hk2	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.inject imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.inject	jersey-hk2	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.inject imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.inject	jersey-hk2	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.inject imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.media	jersey-media-jaxb	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.media imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.media	jersey-media-jaxb	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.media imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.media	jersey-media-jaxb	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.media imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.media	jersey-media-json-jettison	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.media imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.media	jersey-media-json-jettison	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.media imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.media	jersey-media-json-jettison	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.media imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.test-framework	jersey-test-framework-core	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.test-framework imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.test-framework	jersey-test-framework-core	3.0.18	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.test-framework imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.test-framework	jersey-test-framework-core	3.1.11	2.46	2.46	ddd4j-dependencies	org.glassfish.jersey.test-framework imported BOM overlap retained; platform effective version is authoritative
+org.glassfish.jersey.test-framework.providers	jersey-test-framework-provider-jetty	2.46	3.1.11	2.46	ddd4j-dependencies	org.glassfish.jersey.test-framework.providers imported BOM overlap retained; platform effective version is authoritative
+org.graalvm.sdk	graal-sdk	23.1.2	25.0.0	25.0.0	ddd4j-dependencies	org.graalvm.sdk imported BOM overlap retained; platform effective version is authoritative
+org.graalvm.sdk	graal-sdk	25.0.0	24.2.2	25.0.0	ddd4j-dependencies	org.graalvm.sdk imported BOM overlap retained; platform effective version is authoritative
+org.graalvm.sdk	nativeimage	23.1.2	25.0.0	25.0.0	ddd4j-dependencies	org.graalvm.sdk imported BOM overlap retained; platform effective version is authoritative
+org.hibernate.orm	hibernate-core	7.2.6.Final	6.6.40.Final	7.2.6.Final	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+org.hibernate.orm	hibernate-core	7.4.5.Final	7.2.6.Final	7.2.6.Final	ddd4j-dependencies	Platform and imported ecosystem BOM overlap; platform effective version is authoritative
+org.infinispan	infinispan-client-hotrod	16.0.14	16.1.3	16.1.3	ddd4j-dependencies	org.infinispan imported BOM overlap retained; platform effective version is authoritative
+org.infinispan	infinispan-client-hotrod	16.1.3	15.2.4.Final	16.1.3	ddd4j-dependencies	org.infinispan imported BOM overlap retained; platform effective version is authoritative
+org.infinispan	infinispan-client-hotrod	16.1.3	16.0.3	16.1.3	ddd4j-dependencies	org.infinispan imported BOM overlap retained; platform effective version is authoritative
+org.infinispan	infinispan-component-annotations	16.0.14	16.1.3	16.1.3	ddd4j-dependencies	org.infinispan imported BOM overlap retained; platform effective version is authoritative
+org.infinispan	infinispan-component-annotations	16.1.3	16.0.3	16.1.3	ddd4j-dependencies	org.infinispan imported BOM overlap retained; platform effective version is authoritative
+org.infinispan	infinispan-core	16.1.3	15.2.4.Final	16.1.3	ddd4j-dependencies	org.infinispan imported BOM overlap retained; platform effective version is authoritative
+org.infinispan	infinispan-core	16.1.3	16.0.3	16.1.3	ddd4j-dependencies	org.infinispan imported BOM overlap retained; platform effective version is authoritative
+org.infinispan.protostream	protostream-processor	6.0.6	6.0.2	6.0.6	ddd4j-dependencies	org.infinispan.protostream imported BOM overlap retained; platform effective version is authoritative
+org.infinispan.protostream	protostream-processor	6.0.7	6.0.6	6.0.6	ddd4j-dependencies	org.infinispan.protostream imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlin	kotlin-compiler-embeddable	2.2.21	1.9.25	2.2.21	ddd4j-dependencies	org.jetbrains.kotlin imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlin	kotlin-reflect	2.2.21	1.9.25	2.2.21	ddd4j-dependencies	org.jetbrains.kotlin imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlin	kotlin-test	2.2.21	1.9.25	2.2.21	ddd4j-dependencies	org.jetbrains.kotlin imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlinx	kotlinx-coroutines-core	1.10.2	1.8.1	1.10.2	ddd4j-dependencies	org.jetbrains.kotlinx imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlinx	kotlinx-coroutines-jdk8	1.10.2	1.8.1	1.10.2	ddd4j-dependencies	org.jetbrains.kotlinx imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlinx	kotlinx-coroutines-reactive	1.10.2	1.8.1	1.10.2	ddd4j-dependencies	org.jetbrains.kotlinx imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlinx	kotlinx-coroutines-reactor	1.10.2	1.8.1	1.10.2	ddd4j-dependencies	org.jetbrains.kotlinx imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlinx	kotlinx-coroutines-rx2	1.10.2	1.8.1	1.10.2	ddd4j-dependencies	org.jetbrains.kotlinx imported BOM overlap retained; platform effective version is authoritative
+org.jetbrains.kotlinx	kotlinx-coroutines-slf4j	1.10.2	1.8.1	1.10.2	ddd4j-dependencies	org.jetbrains.kotlinx imported BOM overlap retained; platform effective version is authoritative
+org.mongodb	mongodb-driver-sync	5.6.5	5.6.2	5.6.2	ddd4j-dependencies	org.mongodb imported BOM overlap retained; platform effective version is authoritative
+org.openjdk.jmh	jmh-core	1.37	1.20	1.37	ddd4j-dependencies	org.openjdk.jmh imported BOM overlap retained; platform effective version is authoritative
+org.openjdk.jmh	jmh-core	1.37	1.36	1.37	ddd4j-dependencies	org.openjdk.jmh imported BOM overlap retained; platform effective version is authoritative
+org.openjdk.jmh	jmh-generator-annprocess	1.37	1.20	1.37	ddd4j-dependencies	org.openjdk.jmh imported BOM overlap retained; platform effective version is authoritative
+org.openjdk.jmh	jmh-generator-annprocess	1.37	1.36	1.37	ddd4j-dependencies	org.openjdk.jmh imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-activemq	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-azure	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-cassandra	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-chromadb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-clickhouse	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-cockroachdb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-consul	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-couchbase	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-cratedb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-database-commons	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-databend	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-db2	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-elasticsearch	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-gcloud	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-grafana	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-hivemq	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-influxdb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-jdbc	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-junit-jupiter	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-k3s	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-k6	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-kafka	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-ldap	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-mariadb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-milvus	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-minio	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-mockserver	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-mongodb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-mssqlserver	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-mysql	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-neo4j	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-nginx	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-oceanbase	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-ollama	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-openfga	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-oracle-free	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-oracle-xe	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-orientdb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-pinecone	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-postgresql	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-presto	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-pulsar	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-qdrant	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-questdb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-r2dbc	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-rabbitmq	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-redpanda	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-scylladb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-selenium	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-solace	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-solr	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-spock	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-tidb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-timeplus	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-toxiproxy	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-trino	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-typesense	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-vault	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-weaviate	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+org.testcontainers	testcontainers-yugabytedb	2.0.5	2.0.3	2.0.3	ddd4j-dependencies	org.testcontainers imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	acm	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	acmpca	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	amplify	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	annotations	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	apache-client	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	apigateway	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	apigatewaymanagementapi	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	apigatewayv2	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	applicationautoscaling	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	applicationdiscovery	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	appmesh	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	appstream	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	appsync	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	arns	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	athena	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	auth	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	auth-crt	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	autoscaling	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	autoscalingplans	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	aws-cbor-protocol	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	aws-core	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	aws-crt-client	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	aws-json-protocol	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	aws-query-protocol	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	aws-xml-protocol	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	backup	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	batch	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	budgets	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	checksums	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	checksums-spi	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	chime	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloud9	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	clouddirectory	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudformation	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudfront	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudhsm	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudhsmv2	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudsearch	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudsearchdomain	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudtrail	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudwatch	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudwatch-metric-publisher	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudwatchevents	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cloudwatchlogs	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codebuild	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codecommit	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codedeploy	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codegen	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codegen-lite	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codegen-lite-maven-plugin	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codegen-maven-plugin	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	codepipeline	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cognitoidentity	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cognitoidentityprovider	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	cognitosync	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	comprehend	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	comprehendmedical	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	config	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	connect	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	costandusagereport	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	costexplorer	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	databasemigration	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	datapipeline	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	datasync	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	dax	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	devicefarm	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	directconnect	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	directory	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	dlm	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	docdb	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	dynamodb	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	dynamodb-enhanced	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	ec2	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	endpoints-spi	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	http-auth	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	http-auth-aws	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	http-auth-aws-crt	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	http-auth-aws-eventstream	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	http-auth-spi	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	http-client-spi	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	iam-policy-builder	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	identity-spi	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	json-utils	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	netty-nio-client	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	profiles	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	protocol-core	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	regions	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	retries	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	retries-spi	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	s3	2.30.0	2.26.30	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	s3-event-notifications	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	s3-transfer-manager	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	sdk-core	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	secretsmanager	2.30.0	2.31.66	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	smithy-rpcv2-protocol	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	third-party-jackson-core	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	third-party-jackson-dataformat-cbor	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	url-connection-client	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
+software.amazon.awssdk	utils	2.31.66	2.30.0	2.30.0	ddd4j-dependencies	software.amazon.awssdk imported BOM overlap retained; platform effective version is authoritative
