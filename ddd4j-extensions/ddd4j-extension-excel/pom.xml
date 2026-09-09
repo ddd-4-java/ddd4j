@@ -18,7 +18,7 @@
     <dependencies>
         <!-- For EasyExcel: 复用原生注解(@ExcelProperty/@ExcelIgnore/@ColumnWidth 等)、EasyExcel、ExcelWriter、Converter、WriteHandler -->
         <dependency>
-            <groupId>com.alibaba</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>easyexcel</artifactId>
         </dependency>
         <!-- For ddd4j-core: 复用 BizRuntimeException / I18nKit 等基础设施 -->

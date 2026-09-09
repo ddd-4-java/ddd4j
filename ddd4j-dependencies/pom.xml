@@ -189,7 +189,7 @@
         <dynamic-tp.version>1.2.2-x</dynamic-tp.version>
         <easy-captcha.version>1.0.2</easy-captcha.version>
         <easydoc.version>3.0.x.20260630-SNAPSHOT</easydoc.version>
-        <easyexcel.version>4.0.3</easyexcel.version>
+        <easyexcel.version>5.0.1</easyexcel.version>
         <easypdf.version>3.0.x.20260630-SNAPSHOT</easypdf.version>
         <easypoi.version>4.5.0</easypoi.version>
         <echarts.version>3.0.0.6</echarts.version>
@@ -2313,7 +2313,7 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
             </dependency>
