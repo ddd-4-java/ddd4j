@@ -8,7 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -27,7 +27,7 @@ class MQClientPersistenceContractTest {
         AtomicBoolean invoked = new AtomicBoolean();
         MQClient client = client();
         MQProperties properties = properties();
-        client.init(List.of(), properties, serialization(), null);
+        client.init(Collections.<MQListener>emptyList(), properties, serialization(), null);
 
         assertThrows(IllegalStateException.class,
                 () -> client.consume(listener(invoked), event(), null));
@@ -39,7 +39,7 @@ class MQClientPersistenceContractTest {
         AtomicBoolean invoked = new AtomicBoolean();
         MQClient client = client();
         MQProperties properties = properties();
-        client.init(List.of(), properties, serialization(), event -> {
+        client.init(Collections.<MQListener>emptyList(), properties, serialization(), event -> {
             throw new IllegalStateException("store unavailable");
         });
 
@@ -75,7 +75,7 @@ class MQClientPersistenceContractTest {
         Handler handler = new Handler(invoked);
         Method method = Handler.class.getMethod("handle", MQEvent.class);
         return MQListener.builder().bean(handler).method(method).topic("orders").tags("*")
-                .supports(List.of("*")).group("test").namespace("").separator(".").build();
+                .supports(Collections.singletonList("*")).group("test").namespace("").separator(".").build();
     }
 
     private MQEvent event() {
