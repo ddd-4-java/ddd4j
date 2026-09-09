@@ -683,7 +683,6 @@
         <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
         <tongweb.version>7.0.E.6_P5</tongweb.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
-        <truelicense-legacy.version>1.33</truelicense-legacy.version>
         <truelicense.version>4.1.4</truelicense.version>
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
@@ -9923,18 +9922,6 @@
                 <artifactId>trogdor</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
-            <!-- TrueLicense 1.x 旧坐标：供仍依赖 de.schlichtherle 命名空间的调用方兼容。 -->
-            <dependency>
-                <groupId>de.schlichtherle.truelicense</groupId>
-                <artifactId>truelicense-core</artifactId>
-                <version>${truelicense-legacy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.schlichtherle.truelicense</groupId>
-                <artifactId>truelicense-xml</artifactId>
-                <version>${truelicense-legacy.version}</version>
-            </dependency>
-
             <!-- TrueLicense 4.x：Apache-2.0 许可；truelicense-v1 仅用于兼容既有 1.x 文件格式。 -->
             <dependency>
                 <groupId>global.namespace.truelicense</groupId>
