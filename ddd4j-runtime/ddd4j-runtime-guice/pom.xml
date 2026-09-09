@@ -21,10 +21,10 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- 跨版本日志回归使用 JDK8 可运行的 Log4j2 SLF4J2 provider。 -->
+        <!-- 跨版本日志回归使用与 SLF4J 1.7 匹配的 Log4j2 provider。 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
+            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

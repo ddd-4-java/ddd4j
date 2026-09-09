@@ -37,13 +37,8 @@
         </dependency>
         <!-- WebContextScopeTest 需要可读写 MDC 的测试 provider。 -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- WebOtelSupportTest 验证反射桥接存在时的真实调用路径。 -->

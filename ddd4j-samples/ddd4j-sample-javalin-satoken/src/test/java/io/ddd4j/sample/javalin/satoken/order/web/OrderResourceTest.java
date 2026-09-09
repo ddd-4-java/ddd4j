@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class OrderResourceTest {
 
     private static Javalin app;

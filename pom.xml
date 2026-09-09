@@ -21,6 +21,8 @@
     </scm>
 
     <properties>
+        <argLine> </argLine>
+        <skipTests>false</skipTests>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <revision>1.0.x.20260630-SNAPSHOT</revision>
@@ -393,10 +395,9 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        <!-- 跳过单元测试 -->
-                        <skip>true</skip>
-                        <skipTests>true</skipTests>
-                        <argLine>-Xmx1024m -Dfile.encoding=UTF-8</argLine>
+                        <!-- 默认执行测试，调用方仍可通过 -DskipTests 跳过。 -->
+                        <skipTests>${skipTests}</skipTests>
+                        <argLine>@{argLine} -Xmx1024m -Dfile.encoding=UTF-8</argLine>
                         <additionalClasspathElements>
                             <additionalClasspathElement>${basedir}/target/test-classes</additionalClasspathElement>
                         </additionalClasspathElements>

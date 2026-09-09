@@ -255,8 +255,12 @@ def allowed_api_difference(entry: str) -> bool:
 
 
 def allowed_class_difference(entry: str) -> bool:
-    """仅放行由 JDK8 语法降级产生、且不属于公开 API 的私有辅助类。"""
-    return entry.endswith(("$Internals", "$StoredEventRowMapper"))
+    """仅放行 JDK/框架版本适配产生、且不属于公开 API 的私有辅助类。"""
+    return entry.endswith((
+        "$Internals",
+        "$StoredEventRowMapper",
+        "Ddd4jMicronautWebFilter$ContextPropagationFactory",
+    ))
 
 
 def allowed_codegraph_conflict(conflict: dict[str, object]) -> bool:

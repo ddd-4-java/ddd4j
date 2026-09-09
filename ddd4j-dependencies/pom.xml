@@ -177,7 +177,7 @@
         <dubbo.version>3.3.6</dubbo.version>
         <dynamic-tp.version>1.2.2</dynamic-tp.version>
         <easy-captcha.version>1.0.2</easy-captcha.version>
-        <easyexcel.version>4.0.3</easyexcel.version>
+        <easyexcel.version>5.0.1</easyexcel.version>
         <easypoi.version>4.5.0</easypoi.version>
         <echarts.version>3.0.0.6</echarts.version>
         <elasticsearch-client.version>9.2.1</elasticsearch-client.version>
@@ -748,6 +748,11 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
 
@@ -2369,9 +2374,9 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/com.alibaba/easyexcel -->
+            <!-- https://mvnrepository.com/artifact/io.github.easy4j/easyexcel -->
             <dependency>
-                <groupId>com.alibaba</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
             </dependency>
