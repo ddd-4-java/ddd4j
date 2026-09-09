@@ -14,14 +14,37 @@
  */
 package io.ddd4j.mq.nats;
 
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.event.MQEventSerialization;
+import io.ddd4j.mq.listener.MQListener;
+import io.nats.client.Connection;
+import io.nats.client.JetStream;
 import io.nats.client.Message;
+import io.nats.client.impl.Headers;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class NatsAcknowledgmentContractTest {
+
+    @AfterEach
+    void clearContext() {
+        BaseContext.clear();
+    }
 
     @Test
     void shouldMapNackToJetStreamNakForRedelivery() {
@@ -32,5 +55,28 @@ class NatsAcknowledgmentContractTest {
 
         verify(message).nak();
         assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldFailInsteadOfFallingBackToNonDurableCorePublish() throws Exception {
+        Connection connection = mock(Connection.class);
+        JetStream jetStream = mock(JetStream.class);
+        when(connection.jetStream()).thenReturn(jetStream);
+        doThrow(new IOException("jetstream unavailable"))
+                .when(jetStream).publish(anyString(), any(Headers.class), any(byte[].class));
+        NatsMQClient client = new NatsMQClient(connection);
+        MQProperties properties = new MQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("nats");
+        client.init(Collections.<MQListener>emptyList(), properties, new MQEventSerialization() {
+            @Override public <T> T serialize(Object event) { return (T) "{}"; }
+            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+        }, null);
+        MQEvent event = new MQEvent();
+        event.setTopic("orders");
+
+        assertThrows(IllegalStateException.class, event::publish);
+        verify(connection, never()).publish(anyString(), any(Headers.class), any(byte[].class));
     }
 }
