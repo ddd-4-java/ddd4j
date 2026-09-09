@@ -119,6 +119,7 @@ public class MqttMQClient implements MQClient {
         String topic = resolveTopic(listener, mqProperties);
         String includeTag = TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null);
         String subscribeTopic = Objects.isNull(includeTag) ? topic : topic + "/#";
+        client.setManualAcks(true);
         client.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
@@ -132,10 +133,12 @@ public class MqttMQClient implements MQClient {
                     MQEvent event = serialization().deserialize(payload, listener.payloadType());
                     if (Objects.isNull(event)) {
                         log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
+                        client.messageArrivedComplete(message.getId(), message.getQos());
                         return;
                     }
                     // 应用层 tag 过滤（优先 user property 中的 tag，回落到 topic 末段）
                     if (!TagMatcher.match(readTag(message, arrivedTopic), listener.getTags())) {
+                        client.messageArrivedComplete(message.getId(), message.getQos());
                         return;
                     }
                     MqttAcknowledgment ack = new MqttAcknowledgment(message, arrivedTopic);
@@ -143,6 +146,7 @@ public class MqttMQClient implements MQClient {
                     if (!ack.isAcknowledged()) {
                         ack.ackSingle();
                     }
+                    client.messageArrivedComplete(message.getId(), message.getQos());
                 } catch (Throwable ex) {
                     log.error("Consume MQTT [{}] failed", listener.getRouteExpression(defaultConcat()), ex);
                 }
