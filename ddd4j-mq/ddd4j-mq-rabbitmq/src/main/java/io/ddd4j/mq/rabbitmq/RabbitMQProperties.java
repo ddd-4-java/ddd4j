@@ -51,6 +51,10 @@ public class RabbitMQProperties extends MQProperties {
      * 是否在注册时自动声明 queue / binding
      */
     private boolean autoDeclare = true;
+    /** 发布后是否等待 broker confirm。 */
+    private boolean publisherConfirmRequired = true;
+    /** broker confirm 最长等待时间。 */
+    private long publisherConfirmTimeoutMillis = 5000L;
 
     /**
      * 基于本配置（含父类 username/password）创建原生 {@link ConnectionFactory}。

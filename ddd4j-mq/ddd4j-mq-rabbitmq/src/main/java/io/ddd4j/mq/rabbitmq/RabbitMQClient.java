@@ -100,6 +100,11 @@ public class RabbitMQClient implements MQClient {
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
             Channel channel = connection().createChannel();
+            RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
+                    ? (RabbitMQProperties) mqProperties : properties;
+            if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
+                channel.confirmSelect();
+            }
             String exchange = mqProperties.getExchange();
             return event -> {
                 String payload = serialization().serialize(event);
@@ -114,9 +119,13 @@ public class RabbitMQClient implements MQClient {
                     }
                     AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
                             .messageId(event.getMsgId())
+                            .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
                             .headers(headers)
                             .build();
                     channel.basicPublish(exchange, topic, properties, payload.getBytes(StandardCharsets.UTF_8));
+                    if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
+                        channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
+                    }
                     log.info("Publish MQ [{}]: {}", topic, payload);
                 } catch (Exception e) {
                     // 将失败交还调用方，避免 Outbox 将失败发送标记为已发布。
@@ -155,7 +164,9 @@ public class RabbitMQClient implements MQClient {
                 }
             }
         }
-        channel.queueDeclare(queue, true, false, false, null);
+        RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
+                ? (RabbitMQProperties) mqProperties : properties;
+        channel.queueDeclare(queue, Objects.isNull(rabbitProperties) || rabbitProperties.isDurable(), false, false, null);
         String exchange = mqProperties.getExchange();
         for (String routingKey : routingKeys) {
             channel.queueBind(queue, exchange, routingKey);
