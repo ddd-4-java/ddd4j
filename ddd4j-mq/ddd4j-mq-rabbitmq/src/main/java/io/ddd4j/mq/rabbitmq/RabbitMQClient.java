@@ -116,12 +116,12 @@ public class RabbitMQClient implements MQClient {
                     synchronized (channel) {
                         returned.set(null);
                         Map<String, Object> headers = new HashMap<>();
-                    if (Objects.nonNull(event.getMsgId())) {
-                        headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-                    }
-                    if (Objects.nonNull(event.getTenantId())) {
-                        headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
-                    }
+                        if (Objects.nonNull(event.getMsgId())) {
+                            headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                        }
+                        if (Objects.nonNull(event.getTenantId())) {
+                            headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                        }
                         AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
                                 .messageId(event.getMsgId())
                                 .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
