@@ -31,10 +31,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -74,6 +77,9 @@ public class KafkaMQClient implements MQClient {
     private Callback callback;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
+    /** 初始化和关闭共用客户端锁；关闭标记供消费者线程读取。 */
+    private volatile boolean closed;
+    private final List<ConsumerWorker> consumerWorkers = new ArrayList<>();
 
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
@@ -119,7 +125,8 @@ public class KafkaMQClient implements MQClient {
     // ========================= 生产者 =========================
 
     @Override
-    public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+    public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+        ensureOpen();
         if (Objects.isNull(producer) && Objects.nonNull(this.properties)) {
             this.producer = new KafkaProducer<>(properties.producerProperties());
             Producer<String, String> ownedProducer = this.producer;
@@ -132,6 +139,7 @@ public class KafkaMQClient implements MQClient {
         }
         Producer<String, String> producer1 = this.producer;
         return mqEvent -> {
+            ensureOpen();
             String payload = serialization().serialize(mqEvent);
             String topic = resolveTopic(mqEvent, mqProperties);
             String key = partitionKey(mqEvent);
@@ -196,52 +204,121 @@ public class KafkaMQClient implements MQClient {
     }
 
     @Override
-    public boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
+    public synchronized boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
+        ensureOpen();
         if (Objects.isNull(properties)) {
             return false;
         }
         Properties props = properties.consumerProperties(buildGroupId(mqListener));
         props.put("bootstrap.servers", properties.getBootstrapServers());
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
-        ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-            Thread t = new Thread(r, "ddd4j-kafka-" + mqListener.getMethod().getName());
-            t.setDaemon(true);
-            return t;
-        });
-        lifecycle.register("kafka-consumer-" + mqListener.getMethod().getName(), () -> {
-            executor.shutdownNow();
-            consumer.wakeup();
-            try {
-                executor.awaitTermination(5, TimeUnit.SECONDS);
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-            }
+        ConsumerWorker worker = new ConsumerWorker(consumer, mqListener, mqProperties);
+        try {
+            consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
+            consumerWorkers.add(worker);
+            worker.executor.execute(worker);
+        } catch (RuntimeException exception) {
+            consumerWorkers.remove(worker);
+            worker.executor.shutdown();
             consumer.close();
-        });
-        executor.submit(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                    for (ConsumerRecord<String, String> record : records) {
-                        handleRecord(mqListener, mqProperties, consumer, record);
-                    }
-                } catch (org.apache.kafka.common.errors.WakeupException exception) {
-                    if (!Thread.currentThread().isInterrupted()) {
-                        throw exception;
-                    }
-                }
-            }
-        });
+            throw exception;
+        }
         return true;
     }
 
+    /** 关闭客户端持有的消费者与执行器；注入的 producer 仍由调用方负责关闭。 */
     @Override
     public void close() {
-        try {
-            lifecycle.close();
-        } finally {
-            startupStatus.stopped();
+        List<ConsumerWorker> workers;
+        Producer<String, String> ownedProducer;
+        synchronized (this) {
+            if (closed) {
+                return;
+            }
+            closed = true;
+            workers = new ArrayList<>(consumerWorkers);
+            consumerWorkers.clear();
+            ownedProducer = Objects.nonNull(properties) ? producer : null;
+        }
+        // wakeup 是 KafkaConsumer 允许跨线程调用的停止信号，close 在消费线程 finally 内执行。
+        for (ConsumerWorker worker : workers) {
+            worker.executor.shutdown();
+            if (!worker.executor.isTerminated()) {
+                worker.consumer.wakeup();
+            }
+        }
+        for (ConsumerWorker worker : workers) {
+            if (Thread.currentThread() == worker.thread) {
+                continue;
+            }
+            try {
+                if (!worker.executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    worker.executor.shutdownNow();
+                    log.warn("Kafka consumer did not finish shutdown within 10 seconds");
+                }
+            } catch (InterruptedException exception) {
+                worker.executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+        if (Objects.nonNull(ownedProducer)) {
+            ownedProducer.close();
+        }
+    }
+
+    /** 防止关闭后重新创建资源或复用发布入口。 */
+    private void ensureOpen() {
+        if (closed) {
+            throw new IllegalStateException("KafkaMQClient is closed");
+        }
+    }
+
+    /** 消费者及其专属执行器的所有权记录；确保异常退出也能释放底层资源。 */
+    private final class ConsumerWorker implements Runnable {
+        private final KafkaConsumer<String, String> consumer;
+        private final MQListener listener;
+        private final MQProperties mqProperties;
+        private final ExecutorService executor;
+        private volatile Thread thread;
+
+        private ConsumerWorker(KafkaConsumer<String, String> consumer, MQListener listener,
+                               MQProperties mqProperties) {
+            this.consumer = consumer;
+            this.listener = listener;
+            this.mqProperties = mqProperties;
+            this.executor = Executors.newSingleThreadExecutor(r -> {
+                Thread workerThread = new Thread(r, "ddd4j-kafka-" + listener.getMethod().getName());
+                workerThread.setDaemon(true);
+                return workerThread;
+            });
+        }
+
+        @Override
+        public void run() {
+            thread = Thread.currentThread();
+            try {
+                while (!closed && !thread.isInterrupted()) {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                    for (ConsumerRecord<String, String> record : records) {
+                        if (closed) {
+                            break;
+                        }
+                        handleRecord(listener, mqProperties, consumer, record);
+                    }
+                }
+            } catch (WakeupException exception) {
+                if (!closed) {
+                    log.error("Kafka consumer unexpectedly woken up", exception);
+                }
+            } catch (RuntimeException exception) {
+                log.error("Kafka consumer stopped unexpectedly", exception);
+            } finally {
+                try {
+                    consumer.close();
+                } finally {
+                    executor.shutdown();
+                }
+            }
         }
     }
 
@@ -268,6 +345,9 @@ public class KafkaMQClient implements MQClient {
             if (!acknowledgment.isAcknowledged()) {
                 acknowledgment.ackSingle();
             }
+        } catch (WakeupException exception) {
+            // 关闭信号可能在提交偏移时触发，交给消费循环退出并关闭，不能按业务失败重试。
+            throw exception;
         } catch (Throwable exception) {
             log.error("Consume MQ [{}] failed: {}", listener.getTopic(), payload, exception);
             if (!acknowledgment.isAcknowledged()) {
@@ -282,9 +362,11 @@ public class KafkaMQClient implements MQClient {
      * 构造 consumer group.id（兜底）。
      */
     private String buildGroupId(MQListener listener) {
-        return StrKit.isNotEmpty(listener.getGroup())
-                ? listener.getGroup()
-                : "ddd4j-" + listener.getMethod().getName();
+        if (StrKit.isNotBlank(listener.getGroup())) {
+            return listener.getGroup();
+        }
+        String prefix = Objects.nonNull(properties) ? properties.getGroupIdPrefix() : null;
+        return (StrKit.isNotBlank(prefix) ? prefix : "ddd4j") + "-" + listener.getMethod().getName();
     }
 
     /**
