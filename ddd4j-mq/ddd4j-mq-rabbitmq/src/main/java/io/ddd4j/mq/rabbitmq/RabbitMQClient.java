@@ -19,6 +19,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.Return;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
@@ -105,26 +106,36 @@ public class RabbitMQClient implements MQClient {
             if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
                 channel.confirmSelect();
             }
+            AtomicReference<Return> returned = new AtomicReference<>();
+            channel.addReturnListener(returned::set);
             String exchange = mqProperties.getExchange();
             return event -> {
                 String payload = serialization().serialize(event);
                 String topic = resolveTopic(event, mqProperties);
                 try {
-                    Map<String, Object> headers = new HashMap<>();
+                    synchronized (channel) {
+                        returned.set(null);
+                        Map<String, Object> headers = new HashMap<>();
                     if (Objects.nonNull(event.getMsgId())) {
                         headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
                     }
                     if (Objects.nonNull(event.getTenantId())) {
                         headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
                     }
-                    AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
-                            .messageId(event.getMsgId())
-                            .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
-                            .headers(headers)
-                            .build();
-                    channel.basicPublish(exchange, topic, properties, payload.getBytes(StandardCharsets.UTF_8));
-                    if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
-                        channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
+                        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
+                                .messageId(event.getMsgId())
+                                .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
+                                .headers(headers)
+                                .build();
+                        channel.basicPublish(exchange, topic, true, properties, payload.getBytes(StandardCharsets.UTF_8));
+                        if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
+                            channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
+                        }
+                        Return brokerReturn = returned.getAndSet(null);
+                        if (Objects.nonNull(brokerReturn)) {
+                            throw new IllegalStateException("RabbitMQ message was returned as unroutable: "
+                                    + brokerReturn.getReplyText() + " [" + brokerReturn.getRoutingKey() + "]");
+                        }
                     }
                     log.info("Publish MQ [{}]: {}", topic, payload);
                 } catch (Exception e) {
