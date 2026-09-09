@@ -27,6 +27,7 @@ import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -66,7 +67,14 @@ public class DisruptorMQClient implements MQClient {
     /**
      * 已注册监听器列表（{@link #initConsumer} 时累加，{@link #onEvent} 在 RingBuffer 回调里遍历）。
      */
-    private final List<MQListener> listeners = new CopyOnWriteArrayList<>();
+    private final List<RegisteredListener> listeners = new CopyOnWriteArrayList<>();
+
+    /** 保留原监听器和注册时按配置解析的有效路由，避免修改共享监听器对象。 */
+    @RequiredArgsConstructor
+    private static final class RegisteredListener {
+        private final MQListener listener;
+        private final String routeKey;
+    }
 
     private Disruptor<DisruptorEvent> disruptor;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
@@ -137,7 +145,7 @@ public class DisruptorMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         Objects.requireNonNull(listener, "listener");
-        listeners.add(listener);
+        listeners.add(new RegisteredListener(listener, resolveTopic(listener, mqProperties)));
         log.info("Registered Disruptor consumer: bean={}, method={}",
                 listener.getMethod().getDeclaringClass().getSimpleName(),
                 listener.getMethod().getName());
@@ -149,7 +157,7 @@ public class DisruptorMQClient implements MQClient {
      *
      * <p>匹配流程（统一遵循 {@code namespace.topic[.tag]} 路由模型）：
      * <ol>
-     *   <li>route key 精确匹配：event 的 routeExpression vs listener 的 routeExpression</li>
+     *   <li>route key 精确匹配：event 的 routeExpression vs 注册时解析的 listener 有效路由</li>
      *   <li>{@link TagMatcher} 二次过滤（应对 listener.tags 表达式如 {@code "paid || shipped"}）</li>
      *   <li>反序列化 + 反射调用（{@link MQClient#consume} 默认方法）</li>
      * </ol>
@@ -158,10 +166,11 @@ public class DisruptorMQClient implements MQClient {
     private void onEvent(DisruptorEvent event, long sequence, boolean endOfBatch) {
         String eventRouteKey = event.getRouteExpression();   // namespace.topic[.tag]
         String eventTag = event.getTag();
-        for (MQListener listener : listeners) {
+        for (RegisteredListener registered : listeners) {
+            MQListener listener = registered.listener;
             try {
-                // 1. route key 精确匹配（统一规则：event.getRouteExpression() == resolveRouteKey(listener)）
-                if (!eventRouteKey.equals(resolveRouteKey(listener))) {
+                // 1. 按注册时解析的有效路由匹配，包含全局 namespace 回退。
+                if (!eventRouteKey.equals(registered.routeKey)) {
                     continue;
                 }
                 // 2. TagMatcher 二次过滤（应对 listener.tags 表达式）
