@@ -416,7 +416,7 @@
         <mybatis-plus-ext.version>1.7.4-RELEASE</mybatis-plus-ext.version>
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
-        <mybatis-plus.version>3.5.9</mybatis-plus.version> <!-- JDK8 兼容线（3.5.9 起 jsqlparser 拆分为 -4.9 变体，仍支持 JDK8；原 3.5.8 上限因 extension.repository API 缺失而上调 2026-09-05） -->
+        <mybatis-plus.version>3.5.17</mybatis-plus.version> <!-- JDK8 使用 boot-starter 与 jsqlparser-4.9；3.5.17 发布产物的基础字节码已核验为 Java 8。 -->
         <mybatis-r2dbc.version>1.2.5.RELEASE</mybatis-r2dbc.version>
         <mybatis-redis.version>1.0.0</mybatis-redis.version>
         <mybatis-spring.version>2.1.2</mybatis-spring.version>
