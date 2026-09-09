@@ -15,6 +15,7 @@
 package io.ddd4j.web.quarkus;
 
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
 import io.ddd4j.web.core.context.ClientIpResolver;
 import io.ddd4j.web.core.context.RequestIdGenerator;
@@ -95,46 +96,67 @@ public class Ddd4jQuarkusWebFilter {
         request.setProperty(OTEL_SPAN_PROPERTY, span);
         request.setProperty(OTEL_SCOPE_PROPERTY, scope);
 
+        SynchronousWebRequestSession session = null;
         try {
             WebRequestContext context = createContext(request);
-            SynchronousWebRequestSession session = SynchronousWebRequestSession.open(context, requestLifecycle,
+            session = SynchronousWebRequestSession.open(context, requestLifecycle,
                     idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
             request.setProperty(CONTEXT_PROPERTY, context);
             request.setProperty(SESSION_PROPERTY, session);
         } catch (RuntimeException exception) {
             WebOtelSupport.recordError(span, exception);
+            if (Objects.nonNull(session)) {
+                try {
+                    session.complete(false);
+                } catch (RuntimeException cleanupFailure) {
+                    exception.addSuppressed(cleanupFailure);
+                }
+            }
+            int status = new DefaultWebExceptionTranslator().translate(exception).status();
+            WebOtelSupport.endServerSpan(span, status);
+            closeScope(scope);
+            request.removeProperty(OTEL_SPAN_PROPERTY);
+            request.removeProperty(OTEL_SCOPE_PROPERTY);
+            request.removeProperty(CONTEXT_PROPERTY);
+            request.removeProperty(SESSION_PROPERTY);
             throw exception;
         }
     }
 
     @ServerResponseFilter(priority = Priorities.USER)
     public void response(ContainerRequestContext request, ContainerResponseContext response) {
-        Object contextValue = request.getProperty(CONTEXT_PROPERTY);
-        if (contextValue instanceof WebRequestContext context) {
-            response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
-            response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
-        }
-        Object sessionValue = request.getProperty(SESSION_PROPERTY);
-        boolean successful = response.getStatus() < 400;
-        if (sessionValue instanceof SynchronousWebRequestSession session) {
-            session.complete(successful);
-        }
-        // OTel: 结束 span
         Object span = request.getProperty(OTEL_SPAN_PROPERTY);
-        if (Objects.nonNull(span)) {
-            WebOtelSupport.endServerSpan(span, response.getStatus());
-            request.removeProperty(OTEL_SPAN_PROPERTY);
-        }
         Object scope = request.getProperty(OTEL_SCOPE_PROPERTY);
-        if (scope instanceof AutoCloseable) {
+        try {
+            Object contextValue = request.getProperty(CONTEXT_PROPERTY);
+            if (contextValue instanceof WebRequestContext context) {
+                response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
+                response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
+            }
+            Object sessionValue = request.getProperty(SESSION_PROPERTY);
+            boolean successful = response.getStatus() < 400;
+            if (sessionValue instanceof SynchronousWebRequestSession session) {
+                session.complete(successful);
+            }
+        } finally {
+            if (Objects.nonNull(span)) {
+                WebOtelSupport.endServerSpan(span, response.getStatus());
+            }
+            closeScope(scope);
+            request.removeProperty(OTEL_SPAN_PROPERTY);
+            request.removeProperty(OTEL_SCOPE_PROPERTY);
+            request.removeProperty(CONTEXT_PROPERTY);
+            request.removeProperty(SESSION_PROPERTY);
+        }
+    }
+
+    private static void closeScope(Object scope) {
+        if (scope instanceof AutoCloseable closeable) {
             try {
-                ((AutoCloseable) scope).close();
+                closeable.close();
             } catch (Throwable ignored) {
             }
-            request.removeProperty(OTEL_SCOPE_PROPERTY);
         }
-        request.removeProperty(CONTEXT_PROPERTY);
-        request.removeProperty(SESSION_PROPERTY);
     }
 
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {

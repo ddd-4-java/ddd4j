@@ -14,18 +14,6 @@
     <description>ddd4j Web - Quarkus 实现：JAX-RS 资源基类、异常映射、请求日志与响应构建。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -54,6 +42,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-testkit</artifactId>
             <version>${revision}</version>
@@ -66,7 +59,6 @@
             <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus.version}</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -81,7 +73,6 @@
             <plugin>
                 <groupId>io.smallrye</groupId>
                 <artifactId>jandex-maven-plugin</artifactId>
-                <version>${maven-jandex-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>

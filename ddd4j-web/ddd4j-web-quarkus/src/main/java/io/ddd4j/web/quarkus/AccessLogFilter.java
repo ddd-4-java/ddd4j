@@ -14,6 +14,8 @@
  */
 package io.ddd4j.web.quarkus;
 
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
 import io.vertx.core.http.HttpServerRequest;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
@@ -46,7 +48,7 @@ public class AccessLogFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String method = requestContext.getMethod();
         String path = requestContext.getUriInfo().getPath();
-        String tenantId = WebUtils.getTenantId(request);
+        String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
         String address = request.remoteAddress().hostAddress();
 
         if ("POST".equalsIgnoreCase(method) || "DELETE".equalsIgnoreCase(method) || "GET".equalsIgnoreCase(method)) {
