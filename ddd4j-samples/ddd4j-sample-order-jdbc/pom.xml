@@ -14,6 +14,7 @@
     <properties>
         <testcontainers.version>${testcontainers-jdk8.version}</testcontainers.version>
         <commons-lang3.version>${commons-lang3-jdk8.version}</commons-lang3.version>
+        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
     <dependencyManagement>
         <dependencies>

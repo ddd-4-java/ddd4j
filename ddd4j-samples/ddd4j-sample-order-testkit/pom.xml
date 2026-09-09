@@ -11,6 +11,9 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Reusable Order contract fixtures for every runtime sample.</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
