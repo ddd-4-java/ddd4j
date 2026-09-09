@@ -97,6 +97,9 @@ public class NatsMQClient implements MQClient {
                     JetStream jetStream = conn.jetStream();
                     jetStream.publish(subject, headers, body);
                 } catch (IOException | JetStreamApiException ex) {
+                    if (properties.isJetStreamRequired()) {
+                        throw ex;
+                    }
                     conn.publish(subject, headers, body);
                 }
             } catch (Exception ex) {
@@ -123,6 +126,9 @@ public class NatsMQClient implements MQClient {
             jetStream.subscribe(subject, dispatcher, msg -> onMessage(msg, listener), false, options);
             log.info("Registered NATS JetStream listener: subject={}, durable={}", subject, listener.getGroup());
         } catch (Exception ex) {
+            if (properties.isJetStreamRequired()) {
+                throw new IllegalStateException("NATS JetStream subscription is required: " + subject, ex);
+            }
             log.warn("JetStream subscribe failed for subject={}, falling back to core NATS: {}",
                     subject, ex.getMessage());
             Dispatcher dispatcher = conn.createDispatcher(msg -> onMessage(msg, listener));
