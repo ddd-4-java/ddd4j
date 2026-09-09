@@ -120,7 +120,8 @@ public class DisruptorMQClient implements MQClient {
             long sequence = ringBuffer.next();
             try {
                 DisruptorEvent e = ringBuffer.get(sequence);
-                e.setTopic(topic);
+                // 保留原始路由分量，由 DisruptorEvent 统一拼接一次。
+                e.setTopic(event.getTopic());
                 e.setTag(event.getTag());             // private 字段走 setter
                 e.setNamespace(event.getNamespace());
                 e.setMessageId(event.getMsgId());
