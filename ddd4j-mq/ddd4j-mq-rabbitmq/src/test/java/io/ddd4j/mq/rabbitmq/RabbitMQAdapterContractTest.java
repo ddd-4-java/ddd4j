@@ -36,6 +36,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 class RabbitMQAdapterContractTest {
@@ -124,5 +125,31 @@ class RabbitMQAdapterContractTest {
         event.setTopic("orders");
 
         assertThrows(IllegalStateException.class, event::publish);
+    }
+
+    @Test
+    void shouldCloseOwnedChannelButNotInjectedConnectionOnlyOnce() throws Exception {
+        Channel channel = mock(Channel.class);
+        Connection connection = mock(Connection.class);
+        when(connection.createChannel()).thenReturn(channel);
+        when(channel.isOpen()).thenReturn(true);
+        RabbitMQProperties properties = new RabbitMQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("rabbit");
+        RabbitMQClient client = new RabbitMQClient(connection);
+        client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties,
+                new MQEventSerialization() {
+                    @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
+                    @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+                }, null);
+        MQEvent event = new MQEvent();
+        event.setTopic("orders");
+        event.publish();
+
+        client.close();
+        client.close();
+
+        verify(channel).close();
+        verify(connection, never()).close();
     }
 }

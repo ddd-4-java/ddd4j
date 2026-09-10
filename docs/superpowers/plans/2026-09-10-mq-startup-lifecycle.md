@@ -15,7 +15,7 @@
 - 三线保持相同对象名、FQCN、公开方法和参数；仅Java语法和依赖版本允许不同。
 - 保留 `MQClient.init/initProducer/initConsumer/start/close` 签名。
 - `MQEventListener.required()` 默认 `true`。
-- 保留 `MQListener`现有七参数构造器，新增八参数构造器。
+- 保留 `MQListener`现有八参数构造器，新增含 `required` 的九参数构造器。
 - 外部注入资源默认不关闭；适配器自行创建的资源必须关闭。
 - 必选初始化失败必须回滚并抛异常；可选失败必须进入DEGRADED且Readiness不可用。
 - 所有关闭路径必须幂等，并在单项关闭失败后继续释放其余资源。
@@ -60,7 +60,7 @@
 - Add: `MQEventListener.required() -> boolean`, default true。
 - Add: `MQClient.lifecycle() -> MQClientLifecycle`, default unmanaged。
 - Add: `MQClient.startupStatus() -> MQStartupStatus`, default unmanaged。
-- Preserve: legacy seven-argument `MQListener` constructor。
+- Preserve: legacy eight-argument `MQListener` constructor。
 
 - [ ] 写producer失败、必选false、必选异常、可选失败继续、publisher回滚测试。
 - [ ] 运行核心测试确认旧实现fail-open导致失败。

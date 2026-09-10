@@ -121,4 +121,11 @@ public @interface MQEventListener {
      * @return 分隔符，空串表示使用 Broker 默认值
      */
     String separator() default "";
+
+    /**
+     * 是否为应用启动所必需的消费者。
+     *
+     * @return true表示初始化失败必须阻断应用启动
+     */
+    boolean required() default true;
 }

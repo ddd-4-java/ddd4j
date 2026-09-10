@@ -25,6 +25,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -74,10 +76,8 @@ public class RabbitMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RabbitMQProperties properties;
-    /**
-     * 所有已创建的生产者 channel，用于 close() 时统一关闭。
-     */
-    private final CopyOnWriteArrayList<Channel> producerChannels = new CopyOnWriteArrayList<>();
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("rabbit");
 
     /**
      * 构造方法 1：注入原生 connection（runtime 自动装配用）。
@@ -100,6 +100,16 @@ public class RabbitMQClient implements MQClient {
         return "rabbit";
     }
 
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
     // ========================= 生产者 =========================
 
     @Override
@@ -115,7 +125,7 @@ public class RabbitMQClient implements MQClient {
                 if (confirmRequired) {
                     ch.confirmSelect();
                 }
-                producerChannels.add(ch);
+                lifecycle.register("rabbit-producer-channel", () -> closeChannel(ch));
                 return ch;
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to create RabbitMQ producer channel", e);
@@ -167,6 +177,7 @@ public class RabbitMQClient implements MQClient {
         Connection connection = connection();
         // 消费者使用独立 channel（长生命周期，basicConsume 需要保持打开）
         Channel channel = connection.createChannel();
+        lifecycle.register("rabbit-consumer-channel", () -> closeChannel(channel));
         // 队列名=group.namespace.className.methodName
         String queue = listener.getGroup() + "." + listener.getNamespace() + "."
                 + listener.getMethod().getDeclaringClass().getSimpleName() + "."
@@ -251,11 +262,13 @@ public class RabbitMQClient implements MQClient {
                 }
             }
         };
-        Executors.newSingleThreadExecutor(r -> {
+        ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "ddd4j-rabbit-" + listener.getMethod().getName());
             t.setDaemon(true);
             return t;
-        }).submit(() -> {
+        });
+        lifecycle.register("rabbit-consumer-executor", executor::shutdownNow);
+        executor.submit(() -> {
             try {
                 channel.basicConsume(queue, mqProperties.isAutoAck(), deliverCallback, consumerTag -> {
                 });
@@ -287,23 +300,11 @@ public class RabbitMQClient implements MQClient {
 
     @Override
     public void close() {
-        for (Channel ch : producerChannels) {
-            try {
-                if (Objects.nonNull(ch) && ch.isOpen()) {
-                    ch.close();
-                }
-            } catch (IOException | TimeoutException ignore) {
-            }
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
         }
-        producerChannels.clear();
-        Connection c = connectionRef.get();
-        if (Objects.nonNull(c) && c.isOpen()) {
-            try {
-                c.close();
-            } catch (IOException ignore) {
-            }
-        }
-        MQClient.super.close();
     }
 
     // ========================= 连接管理（双构造共享的最小辅助）=========================
@@ -316,6 +317,7 @@ public class RabbitMQClient implements MQClient {
                 Connection nc = factory.newConnection();
                 if (connectionRef.compareAndSet(null, nc)) {
                     c = nc;
+                    lifecycle.register("rabbit-connection", () -> closeConnection(nc));
                 } else {
                     c = connectionRef.get();
                     try {
@@ -328,5 +330,25 @@ public class RabbitMQClient implements MQClient {
             }
         }
         return c;
+    }
+
+    private static void closeChannel(Channel channel) {
+        try {
+            if (channel.isOpen()) {
+                channel.close();
+            }
+        } catch (IOException | TimeoutException exception) {
+            throw new IllegalStateException("Close RabbitMQ channel failed", exception);
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        try {
+            if (connection.isOpen()) {
+                connection.close();
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("Close RabbitMQ connection failed", exception);
+        }
     }
 }

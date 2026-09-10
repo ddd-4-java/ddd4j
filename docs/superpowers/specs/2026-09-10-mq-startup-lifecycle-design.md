@@ -11,7 +11,7 @@
 
 1. 保留 `MQClient.init(...)`、`initProducer(...)`、`initConsumer(...)`、`start()` 和 `close()` 的现有公开签名。
 2. `MQEventListener`仅增加 `boolean required() default true`，已有监听器默认成为必选消费者。
-3. `MQListener`增加对应 `required` 属性，同时显式保留当前七参数公开构造器并新增八参数构造器，避免Lombok重新生成构造器导致二进制破坏。
+3. `MQListener`增加对应 `required` 属性，同时显式保留当前八参数公开构造器并新增含 `required` 的九参数构造器，避免Lombok重新生成构造器导致二进制破坏。
 4. 1.0.x使用Java 8兼容实现；2.0.x使用Java 17；3.0.x使用Java 21，但不因语法升级改变生命周期语义。
 5. 关闭操作必须幂等；调用两次或在部分初始化后调用不得抛出“已关闭”类异常。
 
