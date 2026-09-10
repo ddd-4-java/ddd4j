@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- 允许许可证：`Apache-2.0`、`MIT`、`BSD-2-Clause`、`BSD-3-Clause`、`EPL-2.0`、`ISC`、具有官方证据的 `CDDL-1.1`。
+- 允许许可证：`Apache-2.0`、`MIT`、`BSD-2-Clause`、`BSD-3-Clause`、`EPL-2.0`、`ISC`、具有官方证据的 `CDDL-1.1` 和 `MulanPSL-2.0`。
 - 选择记录必须精确到 `groupId:artifactId:version`。
 - 官方证据必须使用固定版本POM、LICENSE、tag或commit URL。
 - 禁止 group/artifact级宽泛白名单、正则坐标、空理由和漂移分支URL。
@@ -35,7 +35,7 @@
 
 - [ ] **Step 1: 写解析和策略失败测试**
 
-覆盖完整版本坐标、允许单许可证、多许可证选择、CDDL选择、缺失证据、漂移URL、版本不匹配、陈旧条目、未知许可证和空报告。
+覆盖完整版本坐标、允许单许可证、多许可证选择、CDDL/MulanPSL选择、缺失证据、漂移URL、版本不匹配、陈旧条目、未知许可证和空报告。
 
 - [ ] **Step 2: 验证红灯**
 
@@ -77,7 +77,7 @@ Expected: PASS。
 
 - [ ] **Step 1: 写schema失败测试**
 
-要求所有字段非空、坐标含版本、SPDX属于允许集合、证据类型只允许 `POM/LICENSE/UPSTREAM_SOURCE`。
+要求所有字段非空、坐标含版本、SPDX属于允许集合、证据类型只允许 `POM/LICENSE/UPSTREAM_SOURCE`；MulanPSL选择必须提供OSI、SPDX或上游固定版本证据。
 
 - [ ] **Step 2: 验证旧TSV失败**
 
