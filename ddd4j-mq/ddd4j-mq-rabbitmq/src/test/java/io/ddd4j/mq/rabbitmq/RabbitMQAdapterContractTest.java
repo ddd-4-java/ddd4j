@@ -78,7 +78,10 @@ class RabbitMQAdapterContractTest {
 
         event.publish();
 
+        // ThreadLocal channel: confirmSelect called once during channel init
         verify(channel).confirmSelect();
+        // addReturnListener called per-publish (ThreadLocal pattern)
+        verify(channel).addReturnListener(any(ReturnCallback.class));
         org.mockito.ArgumentCaptor<AMQP.BasicProperties> captor =
                 org.mockito.ArgumentCaptor.forClass(AMQP.BasicProperties.class);
         verify(channel).basicPublish(eq("events"), anyString(), eq(true), captor.capture(), any());

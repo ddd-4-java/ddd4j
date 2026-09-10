@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -73,6 +74,10 @@ public class RabbitMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RabbitMQProperties properties;
+    /**
+     * 所有已创建的生产者 channel，用于 close() 时统一关闭。
+     */
+    private final CopyOnWriteArrayList<Channel> producerChannels = new CopyOnWriteArrayList<>();
 
     /**
      * 构造方法 1：注入原生 connection（runtime 自动装配用）。
@@ -99,53 +104,60 @@ public class RabbitMQClient implements MQClient {
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        try {
-            Channel channel = connection().createChannel();
-            RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
-                    ? (RabbitMQProperties) mqProperties : properties;
-            if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
-                channel.confirmSelect();
-            }
-            AtomicReference<Return> returned = new AtomicReference<>();
-            channel.addReturnListener(returned::set);
-            String exchange = mqProperties.getExchange();
-            return event -> {
-                String payload = serialization().serialize(event);
-                String topic = resolveTopic(event, mqProperties);
-                try {
-                    synchronized (channel) {
-                        returned.set(null);
-                        Map<String, Object> headers = new HashMap<>();
-                        if (Objects.nonNull(event.getMsgId())) {
-                            headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-                        }
-                        if (Objects.nonNull(event.getTenantId())) {
-                            headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
-                        }
-                        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
-                                .messageId(event.getMsgId())
-                                .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
-                                .headers(headers)
-                                .build();
-                        channel.basicPublish(exchange, topic, true, properties, payload.getBytes(StandardCharsets.UTF_8));
-                        if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
-                            channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
-                        }
-                        Return brokerReturn = returned.getAndSet(null);
-                        if (Objects.nonNull(brokerReturn)) {
-                            throw new IllegalStateException("RabbitMQ message was returned as unroutable: "
-                                    + brokerReturn.getReplyText() + " [" + brokerReturn.getRoutingKey() + "]");
-                        }
-                    }
-                    log.info("Publish MQ [{}]: {}", topic, payload);
-                } catch (Exception e) {
-                    // 将失败交还调用方，避免 Outbox 将失败发送标记为已发布。
-                    throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
+        RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
+                ? (RabbitMQProperties) mqProperties : properties;
+        boolean confirmRequired = Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired();
+        // 每线程独立 channel：Connection 线程安全，Channel 非线程安全。
+        // 避免 synchronized(channel) 将并发发布串行化为单线程吞吐。
+        ThreadLocal<Channel> channelLocal = ThreadLocal.withInitial(() -> {
+            try {
+                Channel ch = connection().createChannel();
+                if (confirmRequired) {
+                    ch.confirmSelect();
                 }
-            };
-        } catch (IOException e) {
-            throw new IllegalStateException("Init RabbitMQ producer failed", e);
-        }
+                producerChannels.add(ch);
+                return ch;
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to create RabbitMQ producer channel", e);
+            }
+        });
+        String exchange = mqProperties.getExchange();
+        return event -> {
+            String payload = serialization().serialize(event);
+            String topic = resolveTopic(event, mqProperties);
+            try {
+                // channelLocal.get() 可能在连接已关闭时抛出 AlreadyClosedException，
+                // 必须纳入统一异常包装，保证调用方始终收到 IllegalStateException。
+                Channel channel = channelLocal.get();
+                AtomicReference<Return> returned = new AtomicReference<>();
+                channel.addReturnListener(returned::set);
+                Map<String, Object> headers = new HashMap<>();
+                if (Objects.nonNull(event.getMsgId())) {
+                    headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                }
+                if (Objects.nonNull(event.getTenantId())) {
+                    headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                }
+                AMQP.BasicProperties props = new AMQP.BasicProperties.Builder()
+                        .messageId(event.getMsgId())
+                        .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
+                        .headers(headers)
+                        .build();
+                channel.basicPublish(exchange, topic, true, props, payload.getBytes(StandardCharsets.UTF_8));
+                if (confirmRequired) {
+                    channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
+                }
+                Return brokerReturn = returned.getAndSet(null);
+                if (Objects.nonNull(brokerReturn)) {
+                    throw new IllegalStateException("RabbitMQ message was returned as unroutable: "
+                            + brokerReturn.getReplyText() + " [" + brokerReturn.getRoutingKey() + "]");
+                }
+                log.info("Publish MQ [{}]: {}", topic, payload);
+            } catch (Exception e) {
+                // 将失败交还调用方，避免 Outbox 将失败发送标记为已发布。
+                throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
+            }
+        };
     }
 
     // ========================= 消费者 =========================
@@ -269,6 +281,29 @@ public class RabbitMQClient implements MQClient {
             }
         }
         return properties.getMessageId();
+    }
+
+    // ========================= 生命周期 =========================
+
+    @Override
+    public void close() {
+        for (Channel ch : producerChannels) {
+            try {
+                if (Objects.nonNull(ch) && ch.isOpen()) {
+                    ch.close();
+                }
+            } catch (IOException | TimeoutException ignore) {
+            }
+        }
+        producerChannels.clear();
+        Connection c = connectionRef.get();
+        if (Objects.nonNull(c) && c.isOpen()) {
+            try {
+                c.close();
+            } catch (IOException ignore) {
+            }
+        }
+        MQClient.super.close();
     }
 
     // ========================= 连接管理（双构造共享的最小辅助）=========================
