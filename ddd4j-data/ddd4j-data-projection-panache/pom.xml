@@ -55,7 +55,7 @@
         <!-- Quarkus JUnit 5 集成（@QuarkusTest 引导；3.31+ 由 quarkus-junit5 重定位至 quarkus-junit，BOM 管理） -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit5</artifactId>
+            <artifactId>quarkus-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Quarkus H2 JDBC 驱动（@QuarkusTest 内存库 IT 用，BOM 管理，Docker 无关） -->
