@@ -128,7 +128,7 @@ public class KafkaMQClient implements MQClient {
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         ensureOpen();
         if (Objects.isNull(producer) && Objects.nonNull(this.properties)) {
-            this.producer = new KafkaProducer<>(properties.producerProperties());
+            this.producer = createProducer(properties.producerProperties());
             Producer<String, String> ownedProducer = this.producer;
             lifecycle.register("kafka-producer-close", ownedProducer::close);
             lifecycle.register("kafka-producer-flush", ownedProducer::flush);
@@ -157,6 +157,11 @@ public class KafkaMQClient implements MQClient {
                 throw new IllegalStateException("Publish Kafka event failed: " + mqEvent.getMsgId(), exception);
             }
         };
+    }
+
+    /** 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。 */
+    Producer<String, String> createProducer(Properties props) {
+        return new KafkaProducer<>(props);
     }
 
     /**
@@ -211,12 +216,13 @@ public class KafkaMQClient implements MQClient {
         }
         Properties props = properties.consumerProperties(buildGroupId(mqListener));
         props.put("bootstrap.servers", properties.getBootstrapServers());
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        org.apache.kafka.clients.consumer.Consumer<String, String> consumer = createConsumer(props);
         ConsumerWorker worker = new ConsumerWorker(consumer, mqListener, mqProperties);
         try {
             consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
             consumerWorkers.add(worker);
             worker.executor.execute(worker);
+            lifecycle.register("kafka-consumer-" + mqListener.getMethod().getName(), worker::close);
         } catch (RuntimeException exception) {
             consumerWorkers.remove(worker);
             worker.executor.shutdown();
@@ -226,43 +232,34 @@ public class KafkaMQClient implements MQClient {
         return true;
     }
 
+    /** 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。 */
+    org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(Properties props) {
+        return new KafkaConsumer<>(props);
+    }
+
+    /** 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。 */
+    ExecutorService createConsumerExecutor(MQListener listener) {
+        return Executors.newSingleThreadExecutor(r -> {
+            Thread workerThread = new Thread(r, "ddd4j-kafka-" + listener.getMethod().getName());
+            workerThread.setDaemon(true);
+            return workerThread;
+        });
+    }
+
     /** 关闭客户端持有的消费者与执行器；注入的 producer 仍由调用方负责关闭。 */
     @Override
     public void close() {
-        List<ConsumerWorker> workers;
-        Producer<String, String> ownedProducer;
         synchronized (this) {
             if (closed) {
                 return;
             }
             closed = true;
-            workers = new ArrayList<>(consumerWorkers);
             consumerWorkers.clear();
-            ownedProducer = Objects.nonNull(properties) ? producer : null;
         }
-        // wakeup 是 KafkaConsumer 允许跨线程调用的停止信号，close 在消费线程 finally 内执行。
-        for (ConsumerWorker worker : workers) {
-            worker.executor.shutdown();
-            if (!worker.executor.isTerminated()) {
-                worker.consumer.wakeup();
-            }
-        }
-        for (ConsumerWorker worker : workers) {
-            if (Thread.currentThread() == worker.thread) {
-                continue;
-            }
-            try {
-                if (!worker.executor.awaitTermination(10, TimeUnit.SECONDS)) {
-                    worker.executor.shutdownNow();
-                    log.warn("Kafka consumer did not finish shutdown within 10 seconds");
-                }
-            } catch (InterruptedException exception) {
-                worker.executor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        }
-        if (Objects.nonNull(ownedProducer)) {
-            ownedProducer.close();
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
         }
     }
 
@@ -275,22 +272,37 @@ public class KafkaMQClient implements MQClient {
 
     /** 消费者及其专属执行器的所有权记录；确保异常退出也能释放底层资源。 */
     private final class ConsumerWorker implements Runnable {
-        private final KafkaConsumer<String, String> consumer;
+        private final org.apache.kafka.clients.consumer.Consumer<String, String> consumer;
         private final MQListener listener;
         private final MQProperties mqProperties;
         private final ExecutorService executor;
         private volatile Thread thread;
 
-        private ConsumerWorker(KafkaConsumer<String, String> consumer, MQListener listener,
+        private ConsumerWorker(org.apache.kafka.clients.consumer.Consumer<String, String> consumer, MQListener listener,
                                MQProperties mqProperties) {
             this.consumer = consumer;
             this.listener = listener;
             this.mqProperties = mqProperties;
-            this.executor = Executors.newSingleThreadExecutor(r -> {
-                Thread workerThread = new Thread(r, "ddd4j-kafka-" + listener.getMethod().getName());
-                workerThread.setDaemon(true);
-                return workerThread;
-            });
+            this.executor = createConsumerExecutor(listener);
+        }
+
+        private void close() {
+            executor.shutdown();
+            if (!executor.isTerminated()) {
+                consumer.wakeup();
+            }
+            if (Thread.currentThread() == thread) {
+                return;
+            }
+            try {
+                if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                    log.warn("Kafka consumer did not finish shutdown within 10 seconds");
+                }
+            } catch (InterruptedException exception) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
         }
 
         @Override
