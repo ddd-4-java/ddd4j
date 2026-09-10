@@ -20,6 +20,8 @@ import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import jakarta.jms.*;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +55,8 @@ public class ActiveMQClient implements MQClient {
      * 共享 connection（第一个 init* 时懒构造）
      */
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("activemq");
 
     /**
      * 双构造 1：注入外部已配置好的 ActiveMQConnectionFactory（runtime 集成用）。
@@ -94,6 +98,16 @@ public class ActiveMQClient implements MQClient {
         return "activemq";
     }
 
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
     // ========================= 消费者 =========================
 
     @Override
@@ -102,6 +116,7 @@ public class ActiveMQClient implements MQClient {
             // Producer-only session：AUTO_ACKNOWLEDGE 参数对 producer 无意义（JMS ack 模式仅对 consumer 生效），
             // 避免 ACK 语义被框架自动接管导致手动 ack 失效。
             final Session session = getConnection().createSession(false, Session.AUTO_ACKNOWLEDGE);
+            lifecycle.register("activemq-producer-session", () -> closeSession(session));
             return mqEvent -> {
                 String payload = serialization().serialize(mqEvent);
                 String topic = resolveTopic(mqEvent, mqProperties);
@@ -139,11 +154,13 @@ public class ActiveMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         final Session session = getConnection().createSession(false, Session.CLIENT_ACKNOWLEDGE);
+        lifecycle.register("activemq-consumer-session", () -> closeSession(session));
         String topic = resolveTopic(listener, mqProperties);
         // broker 端 tag 过滤：把 MQEventListener.tags 表达式翻译成 JMS Message Selector，
         // 不匹配的消息在 broker 端就过滤掉，不投递到 listener（broker 端精确过滤）。
         String selector = tagsToSelector(listener.getTags());
         MessageConsumer consumer = session.createConsumer(ActivemqKit.createDestination(session, topic), selector);
+        lifecycle.register("activemq-consumer", () -> closeConsumer(consumer));
         consumer.setMessageListener(message -> {
             try {
                 MQEvent event = serialization().deserialize(ActivemqKit.extractPayload(message), listener.payloadType());
@@ -182,6 +199,7 @@ public class ActiveMQClient implements MQClient {
                 Connection nc = connectionFactory.createConnection();
                 nc.start();
                 connectionRef.set(nc);
+                lifecycle.register("activemq-connection", () -> closeConnection(nc));
                 connection = nc;
             } catch (JMSException ex) {
                 throw new IllegalStateException("Open ActiveMQ connection failed", ex);
@@ -189,6 +207,39 @@ public class ActiveMQClient implements MQClient {
         }
         log.info("Get ActiveMQ connection: {}", connection);
         return connection;
+    }
+
+    @Override
+    public void close() {
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
+    }
+
+    private static void closeConsumer(MessageConsumer consumer) {
+        try {
+            consumer.close();
+        } catch (JMSException exception) {
+            throw new IllegalStateException("Close ActiveMQ consumer failed", exception);
+        }
+    }
+
+    private static void closeSession(Session session) {
+        try {
+            session.close();
+        } catch (JMSException exception) {
+            throw new IllegalStateException("Close ActiveMQ session failed", exception);
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        try {
+            connection.close();
+        } catch (JMSException exception) {
+            throw new IllegalStateException("Close ActiveMQ connection failed", exception);
+        }
     }
 
     /**

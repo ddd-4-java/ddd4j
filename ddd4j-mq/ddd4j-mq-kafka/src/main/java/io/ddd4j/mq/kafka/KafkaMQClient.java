@@ -19,6 +19,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -69,6 +72,8 @@ public class KafkaMQClient implements MQClient {
      */
     private Producer<String, String> producer;
     private Callback callback;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
 
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
@@ -93,6 +98,16 @@ public class KafkaMQClient implements MQClient {
         return "kafka";
     }
 
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
     /**
      * Kafka topic 用 {@code "_"} 拼接 namespace（与 ActiveMQ 的 {@code "."} 区分）。
      */
@@ -107,6 +122,9 @@ public class KafkaMQClient implements MQClient {
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (Objects.isNull(producer) && Objects.nonNull(this.properties)) {
             this.producer = new KafkaProducer<>(properties.producerProperties());
+            Producer<String, String> ownedProducer = this.producer;
+            lifecycle.register("kafka-producer-close", ownedProducer::close);
+            lifecycle.register("kafka-producer-flush", ownedProducer::flush);
             // 启动时通过 AdminClient 确保 topic 存在
             if (properties.isAutoCreateTopics()) {
                 ensureTopic(mqProperties.getNamespace(), mqProperties.getDefaultTopic());
@@ -186,19 +204,45 @@ public class KafkaMQClient implements MQClient {
         props.put("bootstrap.servers", properties.getBootstrapServers());
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
-        Executors.newSingleThreadExecutor(r -> {
+        ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "ddd4j-kafka-" + mqListener.getMethod().getName());
             t.setDaemon(true);
             return t;
-        }).submit(() -> {
+        });
+        lifecycle.register("kafka-consumer-" + mqListener.getMethod().getName(), () -> {
+            executor.shutdownNow();
+            consumer.wakeup();
+            try {
+                executor.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+            }
+            consumer.close();
+        });
+        executor.submit(() -> {
             while (!Thread.currentThread().isInterrupted()) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                for (ConsumerRecord<String, String> record : records) {
-                    handleRecord(mqListener, mqProperties, consumer, record);
+                try {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                    for (ConsumerRecord<String, String> record : records) {
+                        handleRecord(mqListener, mqProperties, consumer, record);
+                    }
+                } catch (org.apache.kafka.common.errors.WakeupException exception) {
+                    if (!Thread.currentThread().isInterrupted()) {
+                        throw exception;
+                    }
                 }
             }
         });
         return true;
+    }
+
+    @Override
+    public void close() {
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
     /**

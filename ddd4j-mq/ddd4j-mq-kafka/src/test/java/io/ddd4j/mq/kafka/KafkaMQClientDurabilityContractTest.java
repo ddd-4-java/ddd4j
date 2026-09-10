@@ -92,6 +92,19 @@ class KafkaMQClientDurabilityContractTest {
         verify(consumer, never()).commitSync();
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldNotCloseExternallyInjectedProducer() {
+        Producer<String, String> producer = mock(Producer.class);
+        KafkaMQClient client = new KafkaMQClient(producer, null);
+
+        client.close();
+        client.close();
+
+        verify(producer, never()).flush();
+        verify(producer, never()).close();
+    }
+
     private MQProperties properties() {
         MQProperties properties = new MQProperties();
         properties.setEnabled(true);
