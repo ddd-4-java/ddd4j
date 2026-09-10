@@ -19,6 +19,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import io.nats.client.*;
@@ -27,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -46,6 +49,8 @@ public class NatsMQClient implements MQClient {
 
     private final NatsProperties properties;
     private final AtomicReference<Connection> connectionRef = new AtomicReference<>();
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("nats");
 
     /**
      * 双构造 1：注入已初始化的原生 NATS {@link Connection}（用于 runtime 集成自动注入）。
@@ -72,6 +77,9 @@ public class NatsMQClient implements MQClient {
     public String impl() {
         return "nats";
     }
+
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
 
     /**
      * NATS 无原生 broker-side tag selector，仅 subject 通配 → 强制应用层 {@link TagMatcher} 过滤。
@@ -116,16 +124,21 @@ public class NatsMQClient implements MQClient {
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection conn = connection();
         String subject = resolveTopic(listener, mqProperties);
+        int checkpoint = lifecycle.checkpoint();
         try {
             JetStream jetStream = conn.jetStream();
             Dispatcher dispatcher = conn.createDispatcher(msg -> {
             });
+            lifecycle.register("nats-dispatcher-" + subject, () -> conn.closeDispatcher(dispatcher));
             PushSubscribeOptions options = PushSubscribeOptions.builder()
                     .durable(listener.getGroup())
                     .build();
-            jetStream.subscribe(subject, dispatcher, msg -> onMessage(msg, listener), false, options);
+            io.nats.client.Subscription subscription =
+                    jetStream.subscribe(subject, dispatcher, msg -> onMessage(msg, listener), false, options);
+            lifecycle.register("nats-subscription-" + subject, subscription::unsubscribe);
             log.info("Registered NATS JetStream listener: subject={}, durable={}", subject, listener.getGroup());
         } catch (Exception ex) {
+            lifecycle.rollback(checkpoint);
             if (properties.isJetStreamRequired()) {
                 throw new IllegalStateException("NATS JetStream subscription is required: " + subject, ex);
             }
@@ -133,6 +146,7 @@ public class NatsMQClient implements MQClient {
                     subject, ex.getMessage());
             Dispatcher dispatcher = conn.createDispatcher(msg -> onMessage(msg, listener));
             dispatcher.subscribe(subject);
+            lifecycle.register("nats-dispatcher-" + subject, () -> conn.closeDispatcher(dispatcher));
             log.info("Registered NATS core listener: subject={}", subject);
         }
         return true;
@@ -181,8 +195,31 @@ public class NatsMQClient implements MQClient {
         if (Objects.isNull(c)) {
             c = properties.connect();
             connectionRef.set(c);
+            Connection ownedConnection = c;
+            lifecycle.register("nats-connection-close", () -> closeConnection(ownedConnection));
+            lifecycle.register("nats-connection-drain", () -> drainConnection(ownedConnection));
         }
         return c;
+    }
+
+    @Override
+    public void close() {
+        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+    }
+
+    private static void drainConnection(Connection connection) {
+        try {
+            connection.drain(Duration.ofSeconds(5)).get();
+        } catch (Exception exception) {
+            throw new IllegalStateException("Drain NATS connection failed", exception);
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        try { connection.close(); } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Close NATS connection interrupted", exception);
+        }
     }
 
     static Headers messageHeaders(MQEvent event) {

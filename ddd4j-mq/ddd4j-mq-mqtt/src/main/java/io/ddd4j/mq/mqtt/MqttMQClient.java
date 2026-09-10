@@ -18,6 +18,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -47,6 +49,8 @@ public class MqttMQClient implements MQClient {
 
     private final MqttMQProperties properties;
     private final AtomicReference<org.eclipse.paho.client.mqttv3.MqttClient> clientRef = new AtomicReference<>();
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("mqtt");
 
     /**
      * 双构造 1：注入已初始化的原生 Paho 客户端（用于 runtime 集成自动注入）。
@@ -73,6 +77,9 @@ public class MqttMQClient implements MQClient {
     public String impl() {
         return "mqtt";
     }
+
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
 
     @Override
     public String defaultConcat() {
@@ -157,6 +164,7 @@ public class MqttMQClient implements MQClient {
             }
         });
         client.subscribe(subscribeTopic, qos());
+        lifecycle.register("mqtt-subscription-" + subscribeTopic, () -> unsubscribe(client, subscribeTopic));
         return true;
     }
 
@@ -190,10 +198,35 @@ public class MqttMQClient implements MQClient {
                     properties.getServerUri(), properties.newClientId());
             nc.connect(properties.connectOptions());
             clientRef.set(nc);
+            lifecycle.register("mqtt-client-close", () -> closeClient(nc));
+            lifecycle.register("mqtt-client-disconnect", () -> disconnectClient(nc));
             c = nc;
         } catch (Exception ex) {
             throw new IllegalStateException("Open MQTT connection failed", ex);
         }
         return c;
+    }
+
+    @Override
+    public void close() {
+        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+    }
+
+    private static void unsubscribe(org.eclipse.paho.client.mqttv3.MqttClient client, String topic) {
+        try { client.unsubscribe(topic); } catch (Exception exception) {
+            throw new IllegalStateException("Unsubscribe MQTT topic failed", exception);
+        }
+    }
+
+    private static void disconnectClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
+        try { if (client.isConnected()) { client.disconnect(); } } catch (Exception exception) {
+            throw new IllegalStateException("Disconnect MQTT client failed", exception);
+        }
+    }
+
+    private static void closeClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
+        try { client.close(); } catch (Exception exception) {
+            throw new IllegalStateException("Close MQTT client failed", exception);
+        }
     }
 }

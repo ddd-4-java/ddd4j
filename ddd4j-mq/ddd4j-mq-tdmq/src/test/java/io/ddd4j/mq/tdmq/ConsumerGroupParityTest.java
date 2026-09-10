@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /** 通过真实订阅入口观察 group，不访问外部 Broker。 */
@@ -42,5 +43,21 @@ class ConsumerGroupParityTest {
         } finally {
             client.close();
         }
+    }
+
+
+    @Test
+    void closesEverySubscriptionOnlyOnce() {
+        TdmqProperties properties = new TdmqProperties();
+        AtomicInteger closeCount = new AtomicInteger();
+        TdmqMQClient client = new TdmqMQClient(properties);
+        client.setBrokerSubscriber((topic, tags, group, handler) -> closeCount::incrementAndGet);
+        client.initConsumer(MQListener.builder().group("group").topic("topic").tags("*").build(),
+                new MQProperties());
+
+        client.close();
+        client.close();
+
+        assertEquals(1, closeCount.get());
     }
 }

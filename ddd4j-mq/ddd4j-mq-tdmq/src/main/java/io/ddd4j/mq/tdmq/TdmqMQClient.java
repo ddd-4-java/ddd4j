@@ -19,6 +19,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -50,6 +52,8 @@ public class TdmqMQClient implements MQClient {
             new java.util.concurrent.ConcurrentHashMap<>();
     private BrokerPublisher brokerPublisher;
     private BrokerSubscriber brokerSubscriber;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("tdmq");
 
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
@@ -85,6 +89,9 @@ public class TdmqMQClient implements MQClient {
     public String impl() {
         return "tdmq";
     }
+
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
 
     // ========================= 生产者 =========================
 
@@ -162,6 +169,7 @@ public class TdmqMQClient implements MQClient {
                     }
                 });
         subscriptions.add(subscription);
+        lifecycle.register("tdmq-subscription-" + group, subscription::close);
         logger().info("Registered TDMQ listener: topic={}, tags={}, group={}", topic, tagExpression, group);
         return true;
     }
@@ -175,15 +183,11 @@ public class TdmqMQClient implements MQClient {
 
     @Override
     public void close() {
-        for (Subscription subscription : subscriptions) {
-            try {
-                subscription.close();
-            } catch (Exception ex) {
-                logger().warn("Close TDMQ subscription failed", ex);
-            }
+        try { lifecycle.close(); } finally {
+            subscriptions.clear();
+            topicSubscribers.clear();
+            startupStatus.stopped();
         }
-        subscriptions.clear();
-        topicSubscribers.clear();
     }
 
     // ========================= 业务侧适配接口 =========================

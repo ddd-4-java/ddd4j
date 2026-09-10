@@ -15,10 +15,14 @@
 package io.ddd4j.mq.ons;
 
 import com.aliyun.openservices.ons.api.Message;
+import com.aliyun.openservices.ons.api.Producer;
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 class OnsMessageHeaderTest {
 
@@ -32,5 +36,15 @@ class OnsMessageHeaderTest {
         Message legacyMessage = new Message();
         legacyMessage.putUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id");
         assertEquals("legacy-id", OnsMQClient.messageId(legacyMessage));
+    }
+
+    @Test
+    void shouldNotShutdownInjectedProducer() {
+        Producer producer = mock(Producer.class);
+        OnsMQClient client = new OnsMQClient(producer, new OnsProperties());
+        client.initProducer(new io.ddd4j.mq.MQProperties());
+        client.close();
+        client.close();
+        verify(producer, never()).shutdown();
     }
 }

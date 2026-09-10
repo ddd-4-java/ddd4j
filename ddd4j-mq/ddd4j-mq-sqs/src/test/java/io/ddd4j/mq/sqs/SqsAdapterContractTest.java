@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
 class SqsAdapterContractTest {
 
@@ -47,5 +48,16 @@ class SqsAdapterContractTest {
 
         verify(client).changeMessageVisibility(any(java.util.function.Consumer.class));
         assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    void shouldNotCloseInjectedClient() {
+        SqsClient client = mock(SqsClient.class);
+        SqsMQClient adapter = new SqsMQClient(client);
+
+        adapter.close();
+        adapter.close();
+
+        verify(client, never()).close();
     }
 }

@@ -18,6 +18,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +50,8 @@ public class PulsarMQClient implements MQClient {
     private final List<org.apache.pulsar.client.api.Consumer<?>> consumers = new CopyOnWriteArrayList<>();
     private final ConcurrentMap<String, Producer<byte[]>> producers = new ConcurrentHashMap<>();
     private PulsarClient client;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("pulsar");
 
     /**
      * 构造 1：传入配置，{@link #initProducer} 中通过 PulsarClient.builder().build() 创建原生客户端。
@@ -91,6 +95,9 @@ public class PulsarMQClient implements MQClient {
         return "pulsar";
     }
 
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+
     // ========================= 生产者 =========================
 
     /**
@@ -132,6 +139,8 @@ public class PulsarMQClient implements MQClient {
         try {
             if (Objects.isNull(this.client)) {
                 this.client = properties.client();
+                PulsarClient ownedClient = this.client;
+                lifecycle.register("pulsar-client", () -> closePulsarClient(ownedClient));
             }
             return event -> {
                 try {
@@ -172,10 +181,12 @@ public class PulsarMQClient implements MQClient {
     private Producer<byte[]> producer(String topic) throws Exception {
         return producers.computeIfAbsent(topic, t -> {
             try {
-                return client.newProducer(Schema.BYTES)
+                Producer<byte[]> producer = client.newProducer(Schema.BYTES)
                         .topic(t)
                         .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
                         .create();
+                lifecycle.register("pulsar-producer-" + t, () -> closeProducer(producer));
+                return producer;
             } catch (Exception ex) {
                 throw new IllegalStateException("Create Pulsar producer failed: " + t, ex);
             }
@@ -238,6 +249,7 @@ public class PulsarMQClient implements MQClient {
                 })
                 .subscribe();
         consumers.add(consumer);
+        lifecycle.register("pulsar-consumer-" + subscriptionName, () -> closeConsumer(consumer));
         return true;
     }
 
@@ -250,28 +262,28 @@ public class PulsarMQClient implements MQClient {
 
     @Override
     public void close() {
-        for (org.apache.pulsar.client.api.Consumer<?> c : new ArrayList<>(consumers)) {
-            try {
-                c.close();
-            } catch (Exception ex) {
-                logger().warn("Close Pulsar consumer failed", ex);
-            }
+        try { lifecycle.close(); } finally {
+            consumers.clear();
+            producers.clear();
+            startupStatus.stopped();
         }
-        consumers.clear();
-        for (Producer<byte[]> p : producers.values()) {
-            try {
-                p.close();
-            } catch (Exception ex) {
-                logger().warn("Close Pulsar producer failed", ex);
-            }
+    }
+
+    private static void closeConsumer(org.apache.pulsar.client.api.Consumer<?> consumer) {
+        try { consumer.close(); } catch (Exception exception) {
+            throw new IllegalStateException("Close Pulsar consumer failed", exception);
         }
-        producers.clear();
-        if (Objects.nonNull(client)) {
-            try {
-                client.close();
-            } catch (Exception ex) {
-                logger().warn("Close Pulsar client failed", ex);
-            }
+    }
+
+    private static void closeProducer(Producer<byte[]> producer) {
+        try { producer.flush(); producer.close(); } catch (Exception exception) {
+            throw new IllegalStateException("Close Pulsar producer failed", exception);
+        }
+    }
+
+    private static void closePulsarClient(PulsarClient client) {
+        try { client.close(); } catch (Exception exception) {
+            throw new IllegalStateException("Close Pulsar client failed", exception);
         }
     }
 }

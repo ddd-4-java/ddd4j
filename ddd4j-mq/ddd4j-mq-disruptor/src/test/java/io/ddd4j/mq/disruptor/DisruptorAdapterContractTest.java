@@ -35,4 +35,11 @@ class DisruptorAdapterContractTest {
         assertTrue(acknowledgment.isAcknowledged());
         assertEquals("stable-id", ringBuffer.get(ringBuffer.getCursor()).getMessageId());
     }
+
+    @Test
+    void shouldCloseOwnedDisruptorOnlyOnce() {
+        DisruptorMQClient client = new DisruptorMQClient(new DisruptorMQProperties());
+        client.close();
+        client.close();
+    }
 }

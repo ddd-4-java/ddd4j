@@ -31,6 +31,8 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -131,5 +133,9 @@ class RedisStreamMQClientTest {
         event.setTopic("orders");
 
         assertThrows(IllegalStateException.class, event::publish);
+
+        client.close();
+        client.close();
+        verify(jedis, never()).close();
     }
 }
