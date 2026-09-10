@@ -13,17 +13,18 @@
 1. 许可证判定必须精确到 Maven `groupId:artifactId:version`。
 2. 双许可证或多许可证必须明确选择其中一个兼容分支，禁止仅因表达式包含未知许可证而整体拒绝。
 3. 允许在具有官方证据时选择 `CDDL-1.1`。
-4. 允许的基础许可证集合为：
+4. 自动允许的宽松许可证集合为：
    - `Apache-2.0`
    - `MIT`
    - `BSD-2-Clause`
    - `BSD-3-Clause`
-   - `EPL-2.0`
    - `ISC`
-   - `CDDL-1.1`
    - `MulanPSL-2.0`
-5. `GPL-2.0-with-classpath-exception` 只能作为官方声明表达式的一部分记录；默认优先选择同一坐标提供的 Apache、EPL 或 CDDL 分支。
-6. 没有兼容分支、官方证据不足或许可证真实不兼容的依赖必须升级、替换或移除，不得白名单放行。
+   - `UPL-1.0`、`W3C`、`Bouncy-Castle`、`CC0-1.0`、`MIT-0` 和 Public Domain
+5. `EPL-1.0/2.0`、`MPL-1.1/2.0`、`CDDL-1.0/1.1` 作为未修改的独立第三方 JAR 有条件允许；不得复制、修改、fork 或静态合并其覆盖源码，发布时保留许可证、NOTICE、版权和上游源码地址。
+6. `GPL-2.0-with-classpath-exception` 只能作为官方声明表达式的一部分记录；多许可证默认优先选择同一坐标提供的 Apache、EPL、MPL 或 CDDL 分支。
+7. GPL、AGPL、LGPL、SSPL、BUSL、Commons Clause、Non-Commercial、Commercial-only、WTFPL 和 Unknown 默认禁止。
+8. 没有兼容分支、官方证据不足或许可证真实不兼容的依赖必须升级、替换或移除，不得白名单放行。
 
 ## 3. 证据模型
 
@@ -102,8 +103,8 @@ flowchart TD
 
 - 单一允许许可证。
 - 官方声明的多许可证中明确选择一个允许分支。
-- 有官方证据的 `CDDL-1.1` 精确版本选择。
-- 有官方证据的 `MulanPSL-2.0` 精确版本选择。
+- 未修改独立 JAR 形式的 EPL、MPL 和 CDDL 依赖，并生成分发义务记录。
+- `MulanPSL-2.0` 等已批准宽松许可证。
 
 ## 7. 测试策略
 
