@@ -36,10 +36,17 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Pulsar 原生客户端（版本由 pulsar-bom 4.2.2 统一管理） -->
+        <!-- Pulsar 原生客户端（版本由 ddd4j-dependencies 集中管理）。 -->
         <dependency>
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-client</artifactId>
+            <exclusions>
+                <!-- 旧 Pulsar 引入的 JCIP 注解无可靠许可证元数据，运行时不需要该注解包。 -->
+                <exclusion>
+                    <groupId>net.jcip</groupId>
+                    <artifactId>jcip-annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

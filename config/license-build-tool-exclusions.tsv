@@ -7,3 +7,4 @@ javax.jms:javax.jms-api:2.0.1	Servlet container provided dependency (CDDL)
 javax.servlet:javax.servlet-api:4.0.1	Servlet container provided dependency (CDDL)
 javax.servlet:javax.servlet-api:3.0.1	Servlet container provided dependency (CDDL)
 javax.websocket:javax.websocket-api:1.1	Servlet container provided dependency (CDDL)
+com.mysql:mysql-connector-j:9.7.0	Test-scoped database driver absent from published SBOM
