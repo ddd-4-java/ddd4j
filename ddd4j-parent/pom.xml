@@ -119,6 +119,20 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <pluginManagement>
             <plugins>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
@@ -330,33 +344,6 @@
                             <nonFilteredFileExtension>otf</nonFilteredFileExtension>
                         </nonFilteredFileExtensions>
                     </configuration>
-                    <!-- 配置文件变量替换 -->
-                    <executions>
-                        <execution>
-                            <id>default-resources</id>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>target/classes</outputDirectory>
-                                <resources>
-                                    <resource>
-                                        <directory>src/main/java</directory>
-                                        <includes>
-                                            <include>**/*.xml</include>
-                                            <include>**/*.properties</include>
-                                        </includes>
-                                        <filtering>true</filtering>
-                                    </resource>
-                                    <resource>
-                                        <directory>src/main/resources/</directory>
-                                        <filtering>true</filtering>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
                 <plugin>
