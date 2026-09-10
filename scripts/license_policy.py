@@ -15,7 +15,12 @@ ALLOWED_SPDX = {
     "Apache-2.0", "MIT", "MIT-0", "BSD-2-Clause", "BSD-3-Clause", "ISC",
     "MulanPSL-2.0", "UPL-1.0", "W3C", "Bouncy-Castle", "CC0-1.0",
     "Public-Domain", "EPL-1.0", "EPL-2.0", "MPL-1.1", "MPL-2.0",
-    "CDDL-1.0", "CDDL-1.1", "EDL-1.0",
+    "CDDL-1.0", "CDDL-1.1", "EDL-1.0", "LGPL-2.1-or-later",
+    "GPL-2.0-with-classpath-exception",
+}
+CONDITIONAL_SPDX = {
+    "EPL-1.0", "EPL-2.0", "MPL-1.1", "MPL-2.0", "CDDL-1.0", "CDDL-1.1",
+    "LGPL-2.1-or-later", "GPL-2.0-with-classpath-exception",
 }
 SELECTION_COLUMNS = (
     "coordinate", "declared_expression", "selected_spdx", "evidence_url",
@@ -50,8 +55,14 @@ def normalize_license(value):
         return None
     if "affero" in normalized or "agpl" in normalized:
         return "AGPL"
-    if "lesser general public" in normalized or "lgpl" in normalized:
-        return "LGPL"
+    if "classpath exception" in normalized or "gpl2 w/ cpe" in normalized:
+        return "GPL-2.0-with-classpath-exception"
+    if "cddl-1.0" in normalized:
+        return "CDDL-1.0"
+    if "cddl" in normalized or "common development and distribution license" in normalized:
+        return "CDDL-1.1"
+    if "lesser general public" in normalized or "gnu library general public" in normalized or "lgpl" in normalized:
+        return "LGPL-2.1-or-later"
     if "general public license" in normalized or normalized.startswith("gpl") or re.search(r"\bgpl\b", normalized):
         return "GPL"
     if "mulan" in normalized and ("version 2" in normalized or "2.0" in normalized):
@@ -60,12 +71,9 @@ def normalize_license(value):
         return "BSD-3-Clause"
     if normalized == "bsd-2-clause":
         return "BSD-2-Clause"
-    if normalized in {"modified bsd", "bsd license"}:
+    if (normalized in {"modified bsd", "bsd license", "the bsd license", "bsd licence",
+                       "bsd license 3", "new bsd license"}):
         return "BSD-3-Clause"
-    if "cddl-1.0" in normalized:
-        return "CDDL-1.0"
-    if "cddl" in normalized or "common development and distribution license" in normalized:
-        return "CDDL-1.1"
     if "edl 1.0" in normalized or "eclipse distribution license" in normalized:
         return "EDL-1.0"
     if "epl 1.0" in normalized or "epl-1.0" in normalized:
@@ -224,8 +232,10 @@ def verify_policy(inventory, selections, sbom_coordinates=None, build_tool_exclu
         errors.append(f"stale selection not present in inventory: {coordinate}")
     for entry in inventory:
         normalized = tuple(normalize_license(value) for value in entry.declared_licenses)
+        normalized_set = set(normalized)
         requires_selection = (
             any(value not in ALLOWED_SPDX for value in normalized)
+            or (len(normalized_set) > 1 and bool(normalized_set & CONDITIONAL_SPDX))
         )
         selection = selections.get(entry.coordinate)
         exclusion_reason = build_tool_exclusions.get(entry.coordinate, "")

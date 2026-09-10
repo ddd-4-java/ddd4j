@@ -21,9 +21,9 @@
    - `ISC`
    - `MulanPSL-2.0`
    - `UPL-1.0`、`W3C`、`Bouncy-Castle`、`CC0-1.0`、`MIT-0` 和 Public Domain
-5. `EPL-1.0/2.0`、`MPL-1.1/2.0`、`CDDL-1.0/1.1` 作为未修改的独立第三方 JAR 有条件允许；不得复制、修改、fork 或静态合并其覆盖源码，发布时保留许可证、NOTICE、版权和上游源码地址。
+5. `EPL-1.0/2.0`、`MPL-1.1/2.0`、`CDDL-1.0/1.1`、`LGPL-2.1` 和 `GPL-2.0-with-classpath-exception` 作为未修改的独立第三方 JAR 有条件允许；不得复制、修改、fork 或静态合并其覆盖源码，发布时保留许可证、NOTICE、版权和上游源码地址，并满足对应替换/重新链接义务。
 6. `GPL-2.0-with-classpath-exception` 只能作为官方声明表达式的一部分记录；多许可证默认优先选择同一坐标提供的 Apache、EPL、MPL 或 CDDL 分支。
-7. GPL、AGPL、LGPL、SSPL、BUSL、Commons Clause、Non-Commercial、Commercial-only、WTFPL 和 Unknown 默认禁止。
+7. 无 Classpath Exception 的 GPL、AGPL、SSPL、BUSL、Commons Clause、Non-Commercial、Commercial-only、WTFPL 和 Unknown 默认禁止。
 8. 没有兼容分支、官方证据不足或许可证真实不兼容的依赖必须升级、替换或移除，不得白名单放行。
 
 ## 3. 证据模型

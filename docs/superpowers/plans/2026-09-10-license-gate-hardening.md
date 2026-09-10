@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- 自动允许宽松许可证；EPL/MPL/CDDL仅以未修改独立JAR形式有条件允许；GPL/AGPL/LGPL及非商业、商业专有、未知许可证默认阻断。
+- 自动允许宽松许可证；EPL/MPL/CDDL/LGPL及GPL Classpath Exception仅以未修改独立JAR形式有条件允许；普通GPL/AGPL及非商业、商业专有、未知许可证默认阻断。
 - 选择记录必须精确到 `groupId:artifactId:version`。
 - 官方证据必须使用固定版本POM、LICENSE、tag或commit URL。
 - 禁止 group/artifact级宽泛白名单、正则坐标、空理由和漂移分支URL。
