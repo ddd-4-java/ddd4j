@@ -19,6 +19,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
@@ -84,6 +86,8 @@ public class RedisStreamMQClient implements MQClient {
      * lazy 构造的 Jedis（volatile 保证发布可见性）。
      */
     private volatile UnifiedJedis lazyJedis;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("redisStream");
 
     public RedisStreamMQClient(UnifiedJedis jedis) {
         this.injectedJedis = jedis;
@@ -109,6 +113,8 @@ public class RedisStreamMQClient implements MQClient {
                 if (Objects.isNull(j)) {
                     j = properties.newJedis();
                     lazyJedis = j;
+                    UnifiedJedis ownedJedis = j;
+                    lifecycle.register("redis-stream-client", ownedJedis::close);
                 }
             }
         }
@@ -119,6 +125,9 @@ public class RedisStreamMQClient implements MQClient {
     public String impl() {
         return "redisStream";
     }
+
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
 
     /**
      * Redis Stream 默认拼接符 {@code :}（Redis 命名习惯）。
@@ -161,6 +170,7 @@ public class RedisStreamMQClient implements MQClient {
         if (Objects.nonNull(this.properties)) {
             consumerJedis = this.properties.newJedis();
             ownedConsumerClients.add(consumerJedis);
+            lifecycle.register("redis-stream-consumer-client", consumerJedis::close);
         } else {
             consumerJedis = jedis();
         }
@@ -210,6 +220,7 @@ public class RedisStreamMQClient implements MQClient {
             return t;
         });
         consumerExecutors.add(executor);
+        lifecycle.register("redis-stream-consumer-executor", executor::shutdownNow);
         executor.submit(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
@@ -282,17 +293,11 @@ public class RedisStreamMQClient implements MQClient {
 
     @Override
     public void close() {
-        for (ExecutorService executor : consumerExecutors) {
-            executor.shutdownNow();
-        }
-        consumerExecutors.clear();
-        for (UnifiedJedis client : ownedConsumerClients) {
-            client.close();
-        }
-        ownedConsumerClients.clear();
-        if (Objects.nonNull(lazyJedis)) {
-            lazyJedis.close();
+        try { lifecycle.close(); } finally {
+            consumerExecutors.clear();
+            ownedConsumerClients.clear();
             lazyJedis = null;
+            startupStatus.stopped();
         }
     }
 

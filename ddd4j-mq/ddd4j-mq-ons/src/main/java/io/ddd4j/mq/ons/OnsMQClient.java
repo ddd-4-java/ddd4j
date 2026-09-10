@@ -22,6 +22,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,8 @@ public class OnsMQClient implements MQClient {
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
     private volatile Producer producer;
     private volatile boolean producerStarted;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
 
     /**
      * 构造 1：传入配置，{@link #initProducer}/{@link #initConsumer} 中通过 ONSFactory 创建原生客户端。
@@ -78,14 +82,20 @@ public class OnsMQClient implements MQClient {
         return "ons";
     }
 
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+
     // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
-            Producer p = Objects.nonNull(producer) ? producer
-                    : ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId()));
+            boolean owned = Objects.isNull(producer);
+            Producer p = owned ? ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId())) : producer;
             p.start();
+            if (owned) {
+                lifecycle.register("ons-producer", p::shutdown);
+            }
             this.producer = p;
             this.producerStarted = true;
             return event -> {
@@ -166,6 +176,7 @@ public class OnsMQClient implements MQClient {
         });
         consumer.start();
         consumers.add(consumer);
+        lifecycle.register("ons-consumer-" + group, consumer::shutdown);
         return true;
     }
 
@@ -178,21 +189,10 @@ public class OnsMQClient implements MQClient {
 
     @Override
     public void close() {
-        for (com.aliyun.openservices.ons.api.Consumer c : new ArrayList<>(consumers)) {
-            try {
-                c.shutdown();
-            } catch (Exception ex) {
-                logger().warn("Shutdown ONS consumer failed", ex);
-            }
-        }
-        consumers.clear();
-        if (producerStarted && Objects.nonNull(producer)) {
-            try {
-                producer.shutdown();
-            } catch (Exception ex) {
-                logger().warn("Shutdown ONS producer failed", ex);
-            }
+        try { lifecycle.close(); } finally {
+            consumers.clear();
             producerStarted = false;
+            startupStatus.stopped();
         }
     }
 

@@ -20,6 +20,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +49,8 @@ public class MicaMqttMQClient implements MQClient {
 
     private final MicaMqttProperties properties;
     private final AtomicReference<MqttClient> clientRef = new AtomicReference<>();
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("mqtt-mica");
 
     /**
      * 双构造 1：注入已初始化的原生 mica-mqtt 客户端（用于 runtime 集成自动注入）。
@@ -73,6 +77,9 @@ public class MicaMqttMQClient implements MQClient {
     public String impl() {
         return "mqtt-mica";
     }
+
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
 
     @Override
     public String defaultConcat() {
@@ -157,6 +164,8 @@ public class MicaMqttMQClient implements MQClient {
                 log.error("Consume mica-mqtt [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
             }
         });
+        lifecycle.register("mica-mqtt-subscription-" + subscribeTopic,
+                () -> client.unSubscribe(subscribeTopic));
         return true;
     }
 
@@ -176,7 +185,23 @@ public class MicaMqttMQClient implements MQClient {
         }
         c = properties.client();
         clientRef.set(c);
+        MqttClient ownedClient = c;
+        lifecycle.register("mica-mqtt-stop", () -> {
+            if (!ownedClient.stop()) {
+                throw new IllegalStateException("Stop mica MQTT client failed");
+            }
+        });
+        lifecycle.register("mica-mqtt-disconnect", () -> {
+            if (ownedClient.isConnected() && !ownedClient.disconnect()) {
+                throw new IllegalStateException("Disconnect mica MQTT client failed");
+            }
+        });
         return c;
+    }
+
+    @Override
+    public void close() {
+        try { lifecycle.close(); } finally { startupStatus.stopped(); }
     }
 
     static String messageId(MqttPublishMessage message) {

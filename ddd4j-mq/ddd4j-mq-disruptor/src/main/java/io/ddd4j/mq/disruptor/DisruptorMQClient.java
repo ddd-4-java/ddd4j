@@ -23,6 +23,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +69,8 @@ public class DisruptorMQClient implements MQClient {
     private final List<MQListener> listeners = new CopyOnWriteArrayList<>();
 
     private Disruptor<DisruptorEvent> disruptor;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("disruptor");
 
     @Getter
     private RingBuffer<DisruptorEvent> ringBuffer;
@@ -102,6 +106,9 @@ public class DisruptorMQClient implements MQClient {
     public String impl() {
         return "disruptor";
     }
+
+    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override public MQStartupStatus startupStatus() { return startupStatus; }
 
     // ========================= 消费者 =========================
 
@@ -195,6 +202,7 @@ public class DisruptorMQClient implements MQClient {
         d.handleEventsWith(this::onEvent);
         ringBuffer = d.start();
         this.disruptor = d;
+        lifecycle.register("disruptor", () -> shutdown(d));
         log.info("Disruptor RingBuffer started: bufferSize={}, waitStrategy={}",
                 bufferSize, waitStrategy.getClass().getSimpleName());
     }
@@ -204,9 +212,15 @@ public class DisruptorMQClient implements MQClient {
      */
     @Override
     public void close() {
-        if (Objects.nonNull(disruptor)) {
+        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+    }
+
+    private static void shutdown(Disruptor<DisruptorEvent> disruptor) {
+        try {
             disruptor.shutdown();
-            log.info("DisruptorMQClient shutdown");
+        } catch (RuntimeException exception) {
+            disruptor.halt();
+            throw exception;
         }
     }
 }
