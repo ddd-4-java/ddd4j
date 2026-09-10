@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -97,8 +98,11 @@ public class Ddd4jMQRegistrarConfiguration {
                     .findFirst()
                     .orElse(null);
             if (Objects.isNull(selected)) {
+                Map<String, String> details = new LinkedHashMap<>();
+                details.put("state", "MISSING");
+                details.put("reason", "configured MQ client not found");
                 return new ReadinessResult("mq-" + properties.getBroker(), false,
-                        Map.of("state", "MISSING", "reason", "configured MQ client not found"));
+                        details);
             }
             return new MQReadinessContributor(selected.startupStatus()).check();
         };

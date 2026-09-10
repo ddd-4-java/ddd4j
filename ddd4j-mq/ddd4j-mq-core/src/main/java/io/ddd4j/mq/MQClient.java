@@ -134,10 +134,16 @@ public interface MQClient extends AutoCloseable {
         try {
             producer = initProducer(properties);
         } catch (RuntimeException exception) {
-            MQListenerInitializationFailure failure = failure(null, true, exception);
+            MQListenerInitializationFailure failure = new MQListenerInitializationFailure(
+                    impl(), "", "", "producer", true, exception.getClass().getSimpleName());
             startupStatus.failed(failure);
-            MQInitializationException initializationException = initializationException(failure, exception);
-            rollback(lifecycle, checkpoint, initializationException);
+            MQInitializationException initializationException = new MQInitializationException(
+                    failure.broker(), failure.topic(), failure.group(), failure.listenerMethod(), exception);
+            try {
+                lifecycle.rollback(checkpoint);
+            } catch (RuntimeException rollbackFailure) {
+                initializationException.addSuppressed(rollbackFailure);
+            }
             throw initializationException;
         }
         if (Objects.nonNull(producer)) {
@@ -162,12 +168,26 @@ public interface MQClient extends AutoCloseable {
                 }
                 success++;
             } catch (Exception e) {
-                MQListenerInitializationFailure failure = failure(listener, listener.isRequired(), e);
+                String topic = Objects.toString(listener.getTopic(), "");
+                String group = Objects.toString(listener.getGroup(), "");
+                String method = Objects.isNull(listener.getMethod()) ? "producer"
+                        : listener.getMethod().getDeclaringClass().getName() + "#" + listener.getMethod().getName();
+                MQListenerInitializationFailure failure = new MQListenerInitializationFailure(
+                        impl(), topic, group, method, listener.isRequired(), e.getClass().getSimpleName());
                 if (listener.isRequired()) {
                     startupStatus.failed(failure);
-                    MQInitializationException initializationException = initializationException(failure, e);
-                    rollback(lifecycle, checkpoint, initializationException);
-                    unregisterPublisher(producer);
+                    MQInitializationException initializationException = new MQInitializationException(
+                            failure.broker(), failure.topic(), failure.group(), failure.listenerMethod(), e);
+                    try {
+                        lifecycle.rollback(checkpoint);
+                    } catch (RuntimeException rollbackFailure) {
+                        initializationException.addSuppressed(rollbackFailure);
+                    }
+                    Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
+                    if (Objects.nonNull(publishers)
+                            && publishers.remove(impl(), producer) && publishers.isEmpty()) {
+                        BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
+                    }
                     throw initializationException;
                 }
                 startupStatus.degraded(failure);
@@ -247,40 +267,6 @@ public interface MQClient extends AutoCloseable {
             lifecycle().close();
         } finally {
             startupStatus().stopped();
-        }
-    }
-
-    private MQListenerInitializationFailure failure(MQListener listener, boolean required,
-                                                     Throwable exception) {
-        String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
-        String group = Objects.isNull(listener) ? "" : Objects.toString(listener.getGroup(), "");
-        String method = Objects.isNull(listener) || Objects.isNull(listener.getMethod())
-                ? "producer" : listener.getMethod().getDeclaringClass().getName() + "#"
-                + listener.getMethod().getName();
-        return new MQListenerInitializationFailure(impl(), topic, group, method, required,
-                exception.getClass().getSimpleName());
-    }
-
-    private MQInitializationException initializationException(MQListenerInitializationFailure failure,
-                                                               Throwable cause) {
-        return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
-                failure.listenerMethod(), cause);
-    }
-
-    private void rollback(MQClientLifecycle lifecycle, int checkpoint,
-                          MQInitializationException initializationException) {
-        try {
-            lifecycle.rollback(checkpoint);
-        } catch (RuntimeException rollbackFailure) {
-            initializationException.addSuppressed(rollbackFailure);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void unregisterPublisher(Consumer<MQEvent> producer) {
-        Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
-        if (Objects.nonNull(publishers) && publishers.remove(impl(), producer) && publishers.isEmpty()) {
-            BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
         }
     }
 
