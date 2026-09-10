@@ -21,12 +21,15 @@ import io.ddd4j.mq.event.MQEventStorer;
 import io.ddd4j.mq.listener.MQListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 应用上下文就绪后驱动 {@link MQClient} 装配的桥接器（对标 base-mq {@code BaseMQConfig}）。
@@ -43,21 +46,22 @@ import java.util.Objects;
  *   <li>{@link MQClient#start} 统一启动各 broker 的消费线程</li>
  * </ol>
  *
- * <p>整体 try/catch 不中断应用启动（与 base-mq 行为一致），单个 broker 失败仅记录日志。
- * 注意：仅处理根上下文事件，避免父子容器重复装配。
+ * <p>客户端初始化或启动失败时立即终止 Spring 上下文启动，并关闭已经创建的 MQ 资源。
+ * 注意：仅处理根上下文事件，避免父子容器重复装配；销毁操作幂等且按客户端注册顺序逆序执行。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MQListenerRegistrar {
+public class MQListenerRegistrar implements DisposableBean {
 
     private final MQListenerBeanPostProcessor beanPostProcessor;
     private final List<MQClient> mqClients;
     private final MQProperties properties;
     private final MQEventSerialization serialization;
     private final ObjectProvider<MQEventStorer<?>> storerProvider;
+    private final AtomicBoolean destroyed = new AtomicBoolean();
 
     /**
      * 上下文就绪后装配所有 {@link MQClient}。
@@ -90,10 +94,42 @@ public class MQListenerRegistrar {
                 client.init(listeners, properties, serialization, storer);
                 client.start();
             } catch (Exception ex) {
-                log.error("Initialize MQ client [{}] failed", client.impl(), ex);
+                ApplicationContextException startupFailure = new ApplicationContextException(
+                        "Initialize MQ client [" + client.impl() + "] failed", ex);
+                try {
+                    destroy();
+                } catch (Exception closeFailure) {
+                    startupFailure.addSuppressed(closeFailure);
+                }
+                throw startupFailure;
             }
         }
         log.info("ddd4j-mq assembly completed: {} listener(s) registered, {} client(s) available",
                 total, mqClients.size());
+    }
+
+    /**
+     * 逆序关闭所有客户端。单个客户端关闭失败不会阻止其余客户端释放资源。
+     */
+    @Override
+    public void destroy() throws Exception {
+        if (!destroyed.compareAndSet(false, true) || Objects.isNull(mqClients)) {
+            return;
+        }
+        Exception aggregate = null;
+        for (int index = mqClients.size() - 1; index >= 0; index--) {
+            MQClient client = mqClients.get(index);
+            try {
+                client.close();
+            } catch (Exception closeFailure) {
+                if (Objects.isNull(aggregate)) {
+                    aggregate = new IllegalStateException("Close MQ clients failed");
+                }
+                aggregate.addSuppressed(closeFailure);
+            }
+        }
+        if (Objects.nonNull(aggregate)) {
+            throw aggregate;
+        }
     }
 }

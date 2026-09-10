@@ -24,6 +24,10 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.event.MQEventStorer;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQInitializationException;
+import io.ddd4j.mq.lifecycle.MQListenerInitializationFailure;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -115,6 +119,10 @@ public interface MQClient extends AutoCloseable {
             return;
         }
         Logger log = logger();
+        MQClientLifecycle lifecycle = lifecycle();
+        MQStartupStatus startupStatus = startupStatus();
+        int checkpoint = lifecycle.checkpoint();
+        startupStatus.starting();
         // 注册配置与依赖到 BaseContext
         BaseContext.inject(MQEvent.MQ_PROPERTIES, properties);
         BaseContext.inject(MQ_SERIALIZATION, serialization);
@@ -122,7 +130,16 @@ public interface MQClient extends AutoCloseable {
             BaseContext.inject(MQ_STORER, storer);
         }
         // 初始化生产者，注册到 publishers Map（key=impl()，允许多 broker 共存）
-        Consumer<MQEvent> producer = initProducer(properties);
+        Consumer<MQEvent> producer;
+        try {
+            producer = initProducer(properties);
+        } catch (RuntimeException exception) {
+            MQListenerInitializationFailure failure = failure(null, true, exception);
+            startupStatus.failed(failure);
+            MQInitializationException initializationException = initializationException(failure, exception);
+            rollback(lifecycle, checkpoint, initializationException);
+            throw initializationException;
+        }
         if (Objects.nonNull(producer)) {
             log.info("Initializing MQEventPublisher for [{}]", impl());
             Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
@@ -135,15 +152,37 @@ public interface MQClient extends AutoCloseable {
         // 初始化消费者
         log.info("Initializing MQEventListener for [{}]", impl());
         int success = 0;
-        for (MQListener listener : listeners) {
+        List<MQListener> safeListeners = Objects.isNull(listeners)
+                ? Collections.emptyList() : listeners;
+        for (MQListener listener : safeListeners) {
+            int listenerCheckpoint = lifecycle.checkpoint();
             try {
-                if (initConsumer(listener, properties)) {
-                    success++;
+                if (!initConsumer(listener, properties)) {
+                    throw new IllegalStateException("MQ consumer initialization returned false");
                 }
+                success++;
             } catch (Exception e) {
-                log.error("Listen MQ [{}] failed!", listener.getRouteExpression(this.defaultConcat()), e);
+                MQListenerInitializationFailure failure = failure(listener, listener.isRequired(), e);
+                if (listener.isRequired()) {
+                    startupStatus.failed(failure);
+                    MQInitializationException initializationException = initializationException(failure, e);
+                    rollback(lifecycle, checkpoint, initializationException);
+                    unregisterPublisher(producer);
+                    throw initializationException;
+                }
+                startupStatus.degraded(failure);
+                try {
+                    lifecycle.rollback(listenerCheckpoint);
+                } catch (RuntimeException rollbackFailure) {
+                    log.warn("Optional MQ listener [{}] rollback failed: {}",
+                            listener.getRouteExpression(this.defaultConcat()),
+                            rollbackFailure.getClass().getSimpleName());
+                }
+                log.warn("Optional MQ listener [{}] initialization failed: {}",
+                        listener.getRouteExpression(this.defaultConcat()), failure.reason());
             }
         }
+        startupStatus.ready();
         log.info("MQ [{}] listening {} listener(s)", impl(), success);
 
     }
@@ -183,9 +222,66 @@ public interface MQClient extends AutoCloseable {
     default void start() {
     }
 
+    /**
+     * 返回当前客户端拥有资源的生命周期。
+     *
+     * @return 生命周期；第三方实现默认不受托管
+     */
+    default MQClientLifecycle lifecycle() {
+        return MQClientLifecycle.unmanaged();
+    }
+
+    /**
+     * 返回当前客户端的结构化启动状态。
+     *
+     * @return 启动状态；第三方实现默认不受托管
+     */
+    default MQStartupStatus startupStatus() {
+        return MQStartupStatus.unmanaged();
+    }
+
     @Override
     default void close() {
         logger().info("Shutting down MQClient [{}]", impl());
+        try {
+            lifecycle().close();
+        } finally {
+            startupStatus().stopped();
+        }
+    }
+
+    private MQListenerInitializationFailure failure(MQListener listener, boolean required,
+                                                     Throwable exception) {
+        String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
+        String group = Objects.isNull(listener) ? "" : Objects.toString(listener.getGroup(), "");
+        String method = Objects.isNull(listener) || Objects.isNull(listener.getMethod())
+                ? "producer" : listener.getMethod().getDeclaringClass().getName() + "#"
+                + listener.getMethod().getName();
+        return new MQListenerInitializationFailure(impl(), topic, group, method, required,
+                exception.getClass().getSimpleName());
+    }
+
+    private MQInitializationException initializationException(MQListenerInitializationFailure failure,
+                                                               Throwable cause) {
+        return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
+                failure.listenerMethod(), cause);
+    }
+
+    private void rollback(MQClientLifecycle lifecycle, int checkpoint,
+                          MQInitializationException initializationException) {
+        try {
+            lifecycle.rollback(checkpoint);
+        } catch (RuntimeException rollbackFailure) {
+            initializationException.addSuppressed(rollbackFailure);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void unregisterPublisher(Consumer<MQEvent> producer) {
+        Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
+        if (Objects.nonNull(publishers) && publishers.remove(impl(), producer) && publishers.isEmpty()) {
+            BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
+        }
     }
 
     /**

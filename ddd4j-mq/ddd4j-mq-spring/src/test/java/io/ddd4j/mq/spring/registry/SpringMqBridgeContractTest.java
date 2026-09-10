@@ -20,6 +20,7 @@ import io.ddd4j.mq.event.MQEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Spring 模块只发现并装配监听器，不承载 broker 报文；ddd4j-message-id 由实际 adapter 负责。
@@ -37,6 +38,7 @@ class SpringMqBridgeContractTest {
 
         assertEquals(1, processor.getListeners().size());
         assertEquals("orders", processor.getListeners().get(0).getTopic());
+        assertTrue(processor.getListeners().get(0).isRequired());
     }
 
     static final class OrderListener {

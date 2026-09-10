@@ -19,6 +19,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +86,8 @@ public class RocketMQClient implements MQClient {
      * 异步发送回调（可为 null，则用内置兜底）。
      */
     private SendCallback callback;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("rocket");
 
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
@@ -127,6 +131,16 @@ public class RocketMQClient implements MQClient {
     }
 
     @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
+    @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         try {
             if (Objects.isNull(producer) && Objects.nonNull(this.properties)) {
@@ -144,6 +158,7 @@ public class RocketMQClient implements MQClient {
                 }
                 p.start();
                 this.producer = p;
+                lifecycle.register("rocket-producer", p::shutdown);
                 log.info("Init RocketMQ producer with {}", this.properties);
             }
             DefaultMQProducer finalProducer = this.producer;
@@ -281,7 +296,17 @@ public class RocketMQClient implements MQClient {
         });
         log.info("Listen MQ [{}]: topic={}, tags={}", impl(), topic, subscription);
         consumer.start();
+        lifecycle.register("rocket-consumer-" + listener.getGroup(), consumer::shutdown);
         return true;
+    }
+
+    @Override
+    public void close() {
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
     // ========================= 消费者 =========================

@@ -14,16 +14,23 @@
  */
 package io.ddd4j.mq.activemq;
 
+import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
+import javax.jms.Connection;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.Session;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.nullable;
 
 class ActiveMQAdapterContractTest {
 
@@ -50,5 +57,44 @@ class ActiveMQAdapterContractTest {
         when(message.getStringProperty(sanitizedKey)).thenReturn("legacy-id");
 
         assertEquals("legacy-id", ActiveMQClient.messageId(message));
+    }
+
+    @Test
+    void shouldCloseConsumerSessionAndConnectionInReverseOrderOnlyOnce() throws Exception {
+        ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
+        Connection connection = mock(Connection.class);
+        Session session = mock(Session.class);
+        javax.jms.Topic destination = mock(javax.jms.Topic.class);
+        MessageConsumer consumer = mock(MessageConsumer.class);
+        when(factory.createConnection()).thenReturn(connection);
+        when(connection.createSession(false, Session.CLIENT_ACKNOWLEDGE)).thenReturn(session);
+        when(session.createTopic("events")).thenReturn(destination);
+        when(session.createConsumer(org.mockito.ArgumentMatchers.eq(destination), nullable(String.class)))
+                .thenReturn(consumer);
+
+        ActiveMQClient client = new ActiveMQClient(factory);
+        MQListener listener = MQListener.builder()
+                .bean(this)
+                .method(getClass().getDeclaredMethod("listenerMethod"))
+                .group("group")
+                .namespace("")
+                .topic("events")
+                .tags("")
+                .supports(java.util.Collections.emptyList())
+                .separator("-")
+                .build();
+        client.initConsumer(listener, new MQProperties());
+
+        client.close();
+        client.close();
+
+        org.mockito.InOrder order = inOrder(consumer, session, connection);
+        order.verify(consumer).close();
+        order.verify(session).close();
+        order.verify(connection).close();
+    }
+
+    @SuppressWarnings("unused")
+    private void listenerMethod() {
     }
 }

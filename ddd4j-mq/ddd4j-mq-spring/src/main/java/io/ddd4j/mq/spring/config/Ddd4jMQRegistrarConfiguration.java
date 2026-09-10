@@ -14,10 +14,13 @@
  */
 package io.ddd4j.mq.spring.config;
 
+import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.health.ReadinessResult;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.event.MQEventStorer;
+import io.ddd4j.mq.lifecycle.MQReadinessContributor;
 import io.ddd4j.mq.spring.registry.MQListenerBeanPostProcessor;
 import io.ddd4j.mq.spring.registry.MQListenerRegistrar;
 import org.springframework.beans.factory.ObjectProvider;
@@ -25,6 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * ddd4j MQ 监听器装配配置（纯 Spring）。
@@ -77,5 +82,25 @@ public class Ddd4jMQRegistrarConfiguration {
             MQEventSerialization serialization,
             ObjectProvider<MQEventStorer<?>> storerProvider) {
         return new MQListenerRegistrar(beanPostProcessor, mqClients, properties, serialization, storerProvider);
+    }
+
+    /** 将当前启用的 MQ 客户端状态接入框架统一 Readiness。 */
+    @Bean
+    public ReadinessContributor mqReadinessContributor(List<MQClient> mqClients, MQProperties properties) {
+        return () -> {
+            if (!properties.isEnabled()) {
+                return ReadinessResult.ready("mq-disabled");
+            }
+            MQClient selected = mqClients.stream()
+                    .filter(Objects::nonNull)
+                    .filter(client -> Objects.equals(properties.getBroker(), client.impl()))
+                    .findFirst()
+                    .orElse(null);
+            if (Objects.isNull(selected)) {
+                return new ReadinessResult("mq-" + properties.getBroker(), false,
+                        Map.of("state", "MISSING", "reason", "configured MQ client not found"));
+            }
+            return new MQReadinessContributor(selected.startupStatus()).check();
+        };
     }
 }

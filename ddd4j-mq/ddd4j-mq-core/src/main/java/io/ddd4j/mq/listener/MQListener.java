@@ -19,7 +19,6 @@ import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.util.TagMatcher;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,9 +39,7 @@ import java.util.Objects;
  * @since 2.0.x
  */
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @SuppressWarnings("unchecked")
 public class MQListener {
 
@@ -78,6 +75,35 @@ public class MQListener {
      * namespace/topic/tag 拼接符，为空时由各 broker 决定默认值
      */
     private String separator;
+    /**
+     * 是否为应用启动所必需的消费者。
+     */
+    private boolean required = true;
+
+    public static class MQListenerBuilder {
+        private boolean required = true;
+    }
+
+    /** 保留历史八参数构造器。 */
+    public MQListener(Object bean, Method method, String group, String namespace, String topic,
+                      String tags, List<String> supports, String separator) {
+        this(bean, method, group, namespace, topic, tags, supports, separator, true);
+    }
+
+    /** 包含启动必要性的完整构造器。 */
+    @Builder
+    public MQListener(Object bean, Method method, String group, String namespace, String topic,
+                      String tags, List<String> supports, String separator, boolean required) {
+        this.bean = bean;
+        this.method = method;
+        this.group = group;
+        this.namespace = namespace;
+        this.topic = topic;
+        this.tags = tags;
+        this.supports = supports;
+        this.separator = separator;
+        this.required = required;
+    }
 
     /**
      * 从注解与方法元数据构建监听器定义。
@@ -92,6 +118,7 @@ public class MQListener {
                 .tags(ann.tags())
                 .supports(Arrays.asList(ann.supports()))
                 .separator(ann.separator())
+                .required(ann.required())
                 .build();
     }
 

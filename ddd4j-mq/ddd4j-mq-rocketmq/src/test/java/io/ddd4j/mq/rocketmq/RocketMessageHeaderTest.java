@@ -16,9 +16,13 @@ package io.ddd4j.mq.rocketmq;
 
 import io.ddd4j.mq.message.MessageHeaders;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 class RocketMessageHeaderTest {
 
@@ -32,5 +36,16 @@ class RocketMessageHeaderTest {
         MessageExt legacyMessage = new MessageExt();
         legacyMessage.putUserProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id");
         assertEquals("legacy-id", RocketMQClient.messageId(legacyMessage));
+    }
+
+    @Test
+    void shouldNotShutdownExternallyInjectedProducer() {
+        DefaultMQProducer producer = mock(DefaultMQProducer.class);
+        RocketMQClient client = new RocketMQClient(producer);
+
+        client.close();
+        client.close();
+
+        verify(producer, never()).shutdown();
     }
 }

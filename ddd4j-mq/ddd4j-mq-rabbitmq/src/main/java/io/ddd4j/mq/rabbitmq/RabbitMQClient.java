@@ -25,6 +25,8 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.lifecycle.MQClientLifecycle;
+import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -73,6 +76,8 @@ public class RabbitMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RabbitMQProperties properties;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("rabbit");
 
     /**
      * 构造方法 1：注入原生 connection（runtime 自动装配用）。
@@ -95,57 +100,74 @@ public class RabbitMQClient implements MQClient {
         return "rabbit";
     }
 
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
     // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        try {
-            Channel channel = connection().createChannel();
-            RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
-                    ? (RabbitMQProperties) mqProperties : properties;
-            if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
-                channel.confirmSelect();
-            }
-            AtomicReference<Return> returned = new AtomicReference<>();
-            channel.addReturnListener(returned::set);
-            String exchange = mqProperties.getExchange();
-            return event -> {
-                String payload = serialization().serialize(event);
-                String topic = resolveTopic(event, mqProperties);
-                try {
-                    synchronized (channel) {
-                        returned.set(null);
-                        Map<String, Object> headers = new HashMap<>();
-                        if (Objects.nonNull(event.getMsgId())) {
-                            headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-                        }
-                        if (Objects.nonNull(event.getTenantId())) {
-                            headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
-                        }
-                        AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
-                                .messageId(event.getMsgId())
-                                .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
-                                .headers(headers)
-                                .build();
-                        channel.basicPublish(exchange, topic, true, properties, payload.getBytes(StandardCharsets.UTF_8));
-                        if (Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired()) {
-                            channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
-                        }
-                        Return brokerReturn = returned.getAndSet(null);
-                        if (Objects.nonNull(brokerReturn)) {
-                            throw new IllegalStateException("RabbitMQ message was returned as unroutable: "
-                                    + brokerReturn.getReplyText() + " [" + brokerReturn.getRoutingKey() + "]");
-                        }
-                    }
-                    log.info("Publish MQ [{}]: {}", topic, payload);
-                } catch (Exception e) {
-                    // 将失败交还调用方，避免 Outbox 将失败发送标记为已发布。
-                    throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
+        RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
+                ? (RabbitMQProperties) mqProperties : properties;
+        boolean confirmRequired = Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired();
+        // 每线程独立 channel：Connection 线程安全，Channel 非线程安全。
+        // 避免 synchronized(channel) 将并发发布串行化为单线程吞吐。
+        ThreadLocal<Channel> channelLocal = ThreadLocal.withInitial(() -> {
+            try {
+                Channel ch = connection().createChannel();
+                if (confirmRequired) {
+                    ch.confirmSelect();
                 }
-            };
-        } catch (IOException e) {
-            throw new IllegalStateException("Init RabbitMQ producer failed", e);
-        }
+                lifecycle.register("rabbit-producer-channel", () -> closeChannel(ch));
+                return ch;
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to create RabbitMQ producer channel", e);
+            }
+        });
+        String exchange = mqProperties.getExchange();
+        return event -> {
+            String payload = serialization().serialize(event);
+            String topic = resolveTopic(event, mqProperties);
+            try {
+                // channelLocal.get() 可能在连接已关闭时抛出 AlreadyClosedException，
+                // 必须纳入统一异常包装，保证调用方始终收到 IllegalStateException。
+                Channel channel = channelLocal.get();
+                AtomicReference<Return> returned = new AtomicReference<>();
+                channel.addReturnListener(returned::set);
+                Map<String, Object> headers = new HashMap<>();
+                if (Objects.nonNull(event.getMsgId())) {
+                    headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                }
+                if (Objects.nonNull(event.getTenantId())) {
+                    headers.put(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                }
+                AMQP.BasicProperties props = new AMQP.BasicProperties.Builder()
+                        .messageId(event.getMsgId())
+                        .deliveryMode(Objects.nonNull(rabbitProperties) && rabbitProperties.isDurable() ? 2 : 1)
+                        .headers(headers)
+                        .build();
+                channel.basicPublish(exchange, topic, true, props, payload.getBytes(StandardCharsets.UTF_8));
+                if (confirmRequired) {
+                    channel.waitForConfirmsOrDie(rabbitProperties.getPublisherConfirmTimeoutMillis());
+                }
+                Return brokerReturn = returned.getAndSet(null);
+                if (Objects.nonNull(brokerReturn)) {
+                    throw new IllegalStateException("RabbitMQ message was returned as unroutable: "
+                            + brokerReturn.getReplyText() + " [" + brokerReturn.getRoutingKey() + "]");
+                }
+                log.info("Publish MQ [{}]: {}", topic, payload);
+            } catch (Exception e) {
+                // 将失败交还调用方，避免 Outbox 将失败发送标记为已发布。
+                throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
+            }
+        };
     }
 
     // ========================= 消费者 =========================
@@ -155,6 +177,7 @@ public class RabbitMQClient implements MQClient {
         Connection connection = connection();
         // 消费者使用独立 channel（长生命周期，basicConsume 需要保持打开）
         Channel channel = connection.createChannel();
+        lifecycle.register("rabbit-consumer-channel", () -> closeChannel(channel));
         // 队列名=group.namespace.className.methodName
         String queue = listener.getGroup() + "." + listener.getNamespace() + "."
                 + listener.getMethod().getDeclaringClass().getSimpleName() + "."
@@ -239,11 +262,13 @@ public class RabbitMQClient implements MQClient {
                 }
             }
         };
-        Executors.newSingleThreadExecutor(r -> {
+        ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "ddd4j-rabbit-" + listener.getMethod().getName());
             t.setDaemon(true);
             return t;
-        }).submit(() -> {
+        });
+        lifecycle.register("rabbit-consumer-executor", executor::shutdownNow);
+        executor.submit(() -> {
             try {
                 channel.basicConsume(queue, mqProperties.isAutoAck(), deliverCallback, consumerTag -> {
                 });
@@ -271,6 +296,17 @@ public class RabbitMQClient implements MQClient {
         return properties.getMessageId();
     }
 
+    // ========================= 生命周期 =========================
+
+    @Override
+    public void close() {
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
+    }
+
     // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     private Connection connection() {
@@ -281,6 +317,7 @@ public class RabbitMQClient implements MQClient {
                 Connection nc = factory.newConnection();
                 if (connectionRef.compareAndSet(null, nc)) {
                     c = nc;
+                    lifecycle.register("rabbit-connection", () -> closeConnection(nc));
                 } else {
                     c = connectionRef.get();
                     try {
@@ -293,5 +330,25 @@ public class RabbitMQClient implements MQClient {
             }
         }
         return c;
+    }
+
+    private static void closeChannel(Channel channel) {
+        try {
+            if (channel.isOpen()) {
+                channel.close();
+            }
+        } catch (IOException | TimeoutException exception) {
+            throw new IllegalStateException("Close RabbitMQ channel failed", exception);
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        try {
+            if (connection.isOpen()) {
+                connection.close();
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("Close RabbitMQ connection failed", exception);
+        }
     }
 }
