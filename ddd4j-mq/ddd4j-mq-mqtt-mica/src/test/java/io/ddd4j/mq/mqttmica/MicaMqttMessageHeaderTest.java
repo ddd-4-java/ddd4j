@@ -19,8 +19,12 @@ import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.codec.message.MqttPublishMessage;
 import org.dromara.mica.mqtt.codec.properties.UserProperties;
 import org.junit.jupiter.api.Test;
+import org.dromara.mica.mqtt.core.client.MqttClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * MicaMqtt 用户属性读取测试。
@@ -56,5 +60,15 @@ class MicaMqttMessageHeaderTest {
                 })
                 .build();
         assertEquals("legacy-id", MicaMqttMQClient.messageId(legacyMessage));
+    }
+
+    @Test
+    void shouldNotStopInjectedClient() {
+        MqttClient client = mock(MqttClient.class);
+        MicaMqttMQClient adapter = new MicaMqttMQClient(client);
+        adapter.close();
+        adapter.close();
+        verify(client, never()).disconnect();
+        verify(client, never()).stop();
     }
 }

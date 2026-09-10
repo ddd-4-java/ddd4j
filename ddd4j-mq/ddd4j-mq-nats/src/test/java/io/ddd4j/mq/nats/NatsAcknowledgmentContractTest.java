@@ -78,5 +78,10 @@ class NatsAcknowledgmentContractTest {
 
         assertThrows(IllegalStateException.class, event::publish);
         verify(connection, never()).publish(anyString(), any(Headers.class), any(byte[].class));
+
+        client.close();
+        client.close();
+        verify(connection, never()).close();
+        verify(connection, never()).drain(any(java.time.Duration.class));
     }
 }

@@ -96,5 +96,11 @@ class PulsarAdapterContractTest {
         event.setTopic("orders");
 
         assertThrows(IllegalStateException.class, event::publish);
+
+        client.close();
+        client.close();
+        verify(producer).flush();
+        verify(producer).close();
+        verify(pulsarClient, org.mockito.Mockito.never()).close();
     }
 }

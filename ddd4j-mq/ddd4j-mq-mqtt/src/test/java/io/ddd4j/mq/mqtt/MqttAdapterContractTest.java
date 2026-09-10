@@ -80,6 +80,12 @@ class MqttAdapterContractTest {
 
         verify(mqttClient).setManualAcks(true);
         verify(mqttClient, never()).messageArrivedComplete(anyInt(), anyInt());
+
+        client.close();
+        client.close();
+        verify(mqttClient).unsubscribe("orders");
+        verify(mqttClient, never()).disconnect();
+        verify(mqttClient, never()).close();
     }
 
     public static final class FailingHandler {
