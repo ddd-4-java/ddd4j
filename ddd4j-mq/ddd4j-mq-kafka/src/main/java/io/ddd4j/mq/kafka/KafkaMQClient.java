@@ -228,8 +228,13 @@ public class KafkaMQClient implements MQClient {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                    for (ConsumerRecord<String, String> record : records) {
-                        handleRecord(mqListener, mqProperties, consumer, record);
+                    try {
+                        for (ConsumerRecord<String, String> record : records) {
+                            handleRecord(mqListener, mqProperties, consumer, record);
+                        }
+                    } catch (BatchRetryException exception) {
+                        // handleRecord 已 seek 回退 offset；跳出当前批次，下一次 poll 重新投递。
+                        log.debug("Kafka batch interrupted for retry: {}", exception.getMessage());
                     }
                 } catch (org.apache.kafka.common.errors.WakeupException exception) {
                     if (!Thread.currentThread().isInterrupted()) {
@@ -277,6 +282,8 @@ public class KafkaMQClient implements MQClient {
             log.error("Consume MQ [{}] failed: {}", listener.getTopic(), payload, exception);
             if (!acknowledgment.isAcknowledged()) {
                 consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
+                // seek 回退 offset 后必须中断当前批次循环，否则同批次后续 record 会被重复消费。
+                throw new BatchRetryException("seek to " + record.offset() + " for retry", exception);
             }
         }
     }
@@ -290,6 +297,16 @@ public class KafkaMQClient implements MQClient {
         return StrKit.isNotEmpty(listener.getGroup())
                 ? listener.getGroup()
                 : "ddd4j-" + listener.getMethod().getName();
+    }
+
+    /**
+     * 标记当前 poll 批次需要重试（handleRecord seek 回退后抛出）。
+     * 仅在消费者循环内部使用，不逃逸到外部调用方。
+     */
+    static final class BatchRetryException extends RuntimeException {
+        BatchRetryException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 
     /**
