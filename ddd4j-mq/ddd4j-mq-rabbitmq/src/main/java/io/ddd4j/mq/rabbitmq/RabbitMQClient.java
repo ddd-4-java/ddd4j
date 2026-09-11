@@ -119,12 +119,17 @@ public class RabbitMQClient implements MQClient {
         boolean confirmRequired = Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired();
         // 每线程独立 channel：Connection 线程安全，Channel 非线程安全。
         // 避免 synchronized(channel) 将并发发布串行化为单线程吞吐。
+        // ReturnListener 必须在 channel 创建时注册一次（addReturnListener 是追加语义），
+        // 不能在每次 publish 时调用，否则监听器无限累积。
+        ThreadLocal<AtomicReference<Return>> channelReturnHolder =
+                ThreadLocal.withInitial(AtomicReference::new);
         ThreadLocal<Channel> channelLocal = ThreadLocal.withInitial(() -> {
             try {
                 Channel ch = connection().createChannel();
                 if (confirmRequired) {
                     ch.confirmSelect();
                 }
+                ch.addReturnListener(ret -> channelReturnHolder.get().set(ret));
                 lifecycle.register("rabbit-producer-channel", () -> closeChannel(ch));
                 return ch;
             } catch (IOException e) {
@@ -139,8 +144,8 @@ public class RabbitMQClient implements MQClient {
                 // channelLocal.get() 可能在连接已关闭时抛出 AlreadyClosedException，
                 // 必须纳入统一异常包装，保证调用方始终收到 IllegalStateException。
                 Channel channel = channelLocal.get();
-                AtomicReference<Return> returned = new AtomicReference<>();
-                channel.addReturnListener(returned::set);
+                AtomicReference<Return> returned = channelReturnHolder.get();
+                returned.set(null);
                 Map<String, Object> headers = new HashMap<>();
                 if (Objects.nonNull(event.getMsgId())) {
                     headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
