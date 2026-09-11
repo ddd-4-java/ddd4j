@@ -63,7 +63,8 @@ class KafkaMQClientDurabilityContractTest {
         Method method = FailingHandler.class.getMethod("handle", MQEvent.class);
         MQListener listener = MQListener.of(handler, method, method.getAnnotation(MQEventListener.class));
 
-        client.handleRecord(listener, properties, consumer, record);
+        assertThrows(KafkaMQClient.BatchRetryException.class,
+                () -> client.handleRecord(listener, properties, consumer, record));
 
         verify(consumer).seek(new TopicPartition("orders", 2), 17L);
         verify(consumer, never()).commitSync();
@@ -86,7 +87,8 @@ class KafkaMQClientDurabilityContractTest {
         MQListener listener = MQListener.of(new FailingHandler(), method,
                 method.getAnnotation(MQEventListener.class));
 
-        client.handleRecord(listener, properties, consumer, record);
+        assertThrows(KafkaMQClient.BatchRetryException.class,
+                () -> client.handleRecord(listener, properties, consumer, record));
 
         verify(consumer).seek(new TopicPartition("orders", 1), 9L);
         verify(consumer, never()).commitSync();
