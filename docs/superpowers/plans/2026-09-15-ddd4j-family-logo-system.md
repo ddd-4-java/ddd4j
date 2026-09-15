@@ -4,7 +4,7 @@
 
 **Goal:** Deliver a browser-reviewable theme comparison and a deterministic six-project SVG/PNG logo family without overwriting existing brand assets.
 
-**Architecture:** Keep one vector-first DDD/COLA mother geometry and generate six project variants by changing only the technology glyph, suffix, and approved theme tokens. The central comparison HTML embeds the same geometry and validates family resemblance, project distinction, light/dark rendering, grayscale behavior, and small-size legibility before assets are distributed to each repository.
+**Architecture:** Keep one vector-first DDD/COLA mother geometry made from three solid isometric planes separated by one white Y-shaped gap. Generate six project variants by changing only the right-plane technology glyph, suffix, and approved theme tokens. The central comparison HTML embeds the same geometry and validates family resemblance, project distinction, light/dark rendering, grayscale behavior, and small-size legibility before assets are distributed to each repository.
 
 **Tech Stack:** Static HTML/CSS/SVG, JavaScript-free visual comparison, deterministic SVG masters, browser screenshots, PNG exports.
 
@@ -15,7 +15,8 @@
 - Preserve all existing logos, covers, content images, README edits, and untracked user assets.
 - Shared colors are `#10233F`, `#2457D6`, `#2AB7CA`, `#F7FAFF`, and `#D8E5F5`.
 - Project defaults are ddd4j `#2457D6`, Boot `#5B8F3A`, Javalin `#E66A2C`, Quarkus `#A54078`, Web3 `#6A4DD8`, and Cloud `#1687A7`.
-- Every icon uses one `0 0 512 512` mother geometry and one 30-degree isometric perspective.
+- Every icon uses one `0 0 512 512` mother geometry, three solid planes, one COLA negative-space gap, and one 30-degree isometric perspective.
+- No icon may add an orbit, external nodes, nested frames, decorative pedestal, gradient, or secondary floating glyph.
 - Each project receives new `-v2` files; no existing asset path is replaced.
 - Icons must remain distinguishable at 128px, 48px, and 24px and inside a circular avatar crop.
 
@@ -73,11 +74,11 @@
 
 - [ ] **Step 2: Implement the shared mother geometry**
 
-  Create three isometric cubes, the COLA layered aperture, one shared orbit, and fixed avatar safe area. Keep geometry identical across all six descriptors.
+  Create three solid isometric planes with a single Y-shaped COLA gap and fixed avatar safe area. Keep geometry identical across all six descriptors. Do not add an orbit, nested aperture, nodes, pedestal, gradient, or shadow.
 
 - [ ] **Step 3: Implement six glyphs**
 
-  Add: Java steam plus keystone; Spring leaf plus start arc; Javalin sail plus request trail; Quarkus Q aperture plus native spark; Web3 coin, chain nodes, and lock; Cloud leaf, cloud arc, and service nodes.
+  Add one concise glyph per project: Java cup/steam on one foundation line; Spring leaf with one start point; Javalin sail with one tail line; Quarkus Q cut; Web3 coin with an embedded lock; Cloud outline with an embedded Spring leaf.
 
 - [ ] **Step 4: Generate review SVGs**
 

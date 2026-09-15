@@ -1,5 +1,20 @@
 # Ddd4j — 框架无关的 DDD/CQRS/ES 通用基础层
 
+<p align="center">
+  <img src="assets/ddd4j-hero.png" alt="ddd4j：DDD、CQRS、事件溯源与可靠消息投递" width="100%" />
+</p>
+
+<p align="center">
+  <strong>用框架无关的领域契约，把业务模型、命令、事件、投影与可靠投递连成一条可演进的 Java 路径。</strong><br>
+  面向 DDD、CQRS、Event Sourcing、多框架运行时与生产级消息交付的通用基础层。
+</p>
+
+<p align="center">
+  <a href="README.en.md">English</a> ·
+  <a href="ddd4j-samples/README.md">示例工程</a> ·
+  <a href="docs/superpowers/specs/2026-07-15-current-source-architecture-design.md">源码架构</a>
+</p>
+
 > Rust 语义移植与 82 项兼容矩阵见 [ddd4r 迁移入口](./docs/DDD4R_MIGRATION.md)。
 
 **Ddd4j** 是一个**不与任何具体容器框架强绑定**的 DDD 项目脚手架，为 [ddd4j-boot](https://github.com/hiwepy/ddd4j-boot)
@@ -10,7 +25,7 @@
 **Eric Evans** 和 **Vaughn Vernon** 的 DDD 经典理论；API 形态参考了 [ddd-4-java](https://github.com/fuinorg/ddd-4-java)
 与 [cqrs-4-java](https://github.com/fuinorg/cqrs-4-java)（参考来源，不依赖）。
 
-### 🎯 核心定位
+## 核心定位
 
 | 维度       | 定位                                                                                                                                                            |
 |----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -19,6 +34,14 @@
 | **消费方**  | ddd4j-boot（Spring Boot）/ ddd4j-quarkus / ddd4j-javalin                                                                                                        |
 | **底层依赖** | 零第三方 DDD 框架依赖，DDD/CQRS/ES 抽象全部由 ddd4j-core 自研                                                                    |
 | **铁律**   | core/annotation/mq-core 等基础契约层零 `@AutoConfiguration` · 零 `spring.factories` · 零 starter；Spring/Web/Auth/Extensions 等适配层只保留显式 `@Configuration`/`@Component` 胶水 |
+
+## 一眼看懂
+
+<p align="center">
+  <img src="assets/ddd4j-architecture.png" alt="ddd4j：命令、聚合、事件存储、读模型、Outbox 与消息客户端的可靠运行时链路" width="100%" />
+</p>
+
+> **运行时主链路**：Command → Aggregate → Event Store → Projection / Query View；领域事件与业务写同事务进入 Outbox，再由 Dispatcher 安全发布到消息基础设施。
 
 ### 🏗️ 三层架构分离
 

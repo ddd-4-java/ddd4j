@@ -93,8 +93,7 @@
     .icon-shell { --accent: #2457D6; }
     .icon-shell .accent { fill: var(--accent); }
     .icon-shell .accent-stroke { stroke: var(--accent); }
-    .dark .icon-shell .ink { fill: #F7FAFF; }
-    .dark .icon-shell .orbit { stroke: #6FE5F0; }
+    .dark .icon-shell .paper-stroke { stroke: #F7FAFF; }
     @media (max-width: 900px) {
       header, .mother-card { grid-template-columns: 1fr; }
       .shared-colors, .product-grid { grid-template-columns: repeat(2, 1fr); }
@@ -117,60 +116,41 @@
 <body>
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
-    <linearGradient id="coreTop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4F86FF"/><stop offset="1" stop-color="#2457D6"/></linearGradient>
-    <linearGradient id="coreSide" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2457D6"/><stop offset="1" stop-color="#183E9E"/></linearGradient>
-    <linearGradient id="cyanSide" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#56D8E5"/><stop offset="1" stop-color="#1687A7"/></linearGradient>
     <symbol id="family-base" viewBox="0 0 512 512">
-      <circle class="orbit" cx="256" cy="246" r="210" fill="none" stroke="#2AB7CA" stroke-width="11" opacity=".42"/>
-      <path d="M256 70 373 137 256 205 139 137Z" fill="url(#coreTop)" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
-      <path d="M139 137 256 205 256 339 139 271Z" fill="url(#coreSide)" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
-      <path class="accent" d="M373 137 256 205 256 339 373 271Z" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
-      <path d="M256 205 139 137 139 271 256 339 373 271 373 137Z" fill="none" stroke="#D8E5F5" stroke-width="7" stroke-linejoin="round"/>
-      <path d="M256 228 321 190 321 250 256 289 191 250 191 190Z" fill="none" stroke="#F7FAFF" stroke-width="12" stroke-linejoin="round" opacity=".92"/>
-      <path d="M256 247 294 225 294 242 256 265 218 242 218 225Z" fill="none" stroke="#2AB7CA" stroke-width="8" stroke-linejoin="round"/>
-      <circle cx="139" cy="271" r="13" fill="#2AB7CA" stroke="#fff" stroke-width="5"/>
-      <circle cx="373" cy="271" r="13" class="accent" stroke="#fff" stroke-width="5"/>
-      <path d="M132 374Q256 426 380 374" fill="none" stroke="#10233F" stroke-width="16" stroke-linecap="round"/>
-      <path d="M170 403H342" fill="none" stroke="#2AB7CA" stroke-width="8" stroke-linecap="round"/>
+      <path d="M256 74 390 150 256 226 122 150Z" fill="#2457D6" stroke="#fff" stroke-width="12" stroke-linejoin="round"/>
+      <path d="M122 166 244 235 244 380 122 311Z" fill="#2AB7CA" stroke="#fff" stroke-width="12" stroke-linejoin="round"/>
+      <path class="accent" d="M390 166 268 235 268 380 390 311Z" stroke="#fff" stroke-width="12" stroke-linejoin="round"/>
     </symbol>
     <symbol id="glyph-ddd4j" viewBox="0 0 512 512">
-      <g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round">
-        <path d="M302 179c-15-18 14-23 0-43"/><path d="M329 176c-13-16 12-21 1-39"/>
+      <g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round">
+        <path d="M315 230c-13-14 12-18 0-32"/><path d="M340 226c-11-12 10-16 1-28"/>
       </g>
-      <path d="M294 192h57v28c0 20-12 33-28 33s-29-13-29-33Z" fill="#fff" opacity=".96"/>
-      <path d="M350 198h8c18 0 18 28 0 29h-8" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-      <path d="M187 369h138l-18 28H205Z" fill="#2457D6" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M303 239h51v21c0 18-10 29-25 29-16 0-26-11-26-29Z" fill="#fff"/>
+      <path d="M353 244h7c16 0 16 23 0 24h-7" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+      <path d="M296 315h74" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
     </symbol>
     <symbol id="glyph-boot" viewBox="0 0 512 512">
-      <path d="M291 238c44-3 67-25 72-71-48 2-76 25-72 71Z" fill="#fff"/>
-      <path d="M303 224c18-14 34-29 48-46" fill="none" stroke="#5B8F3A" stroke-width="8" stroke-linecap="round"/>
-      <path d="M306 261a39 39 0 1 0 44 0" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
-      <path d="M328 246v31" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+      <path d="M301 278c39-3 62-25 66-67-44 2-69 24-66 67Z" fill="#fff"/>
+      <path d="M310 269c17-14 31-28 45-43" fill="none" stroke="#5B8F3A" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="336" cy="307" r="10" fill="#fff"/>
     </symbol>
     <symbol id="glyph-javalin" viewBox="0 0 512 512">
-      <path d="M301 236 338 160l25 76Z" fill="#fff"/>
-      <path d="M298 242h71c-17 25-39 37-66 35Z" fill="#10233F" opacity=".9"/>
-      <path d="M283 292c31 18 65 18 98-1" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
-      <path d="M391 292h28m-8-10 10 10-10 10" fill="none" stroke="#E66A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M302 285 337 207l30 78Z" fill="#fff"/>
+      <path d="M300 293h70c-17 18-39 27-65 23Z" fill="#fff" opacity=".72"/>
+      <path d="M301 326c22 9 45 9 68 0" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
     </symbol>
     <symbol id="glyph-quarkus" viewBox="0 0 512 512">
-      <circle cx="328" cy="220" r="48" fill="none" stroke="#fff" stroke-width="13"/>
-      <path d="m357 249 25 25" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
-      <path d="m381 151 7 19 19 7-19 7-7 19-7-19-19-7 19-7Z" fill="#fff"/>
-      <path d="M303 220h50" stroke="#A54078" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="332" cy="269" r="48" fill="none" stroke="#fff" stroke-width="15"/>
+      <path d="m360 298 24 24" stroke="#fff" stroke-width="15" stroke-linecap="round"/>
     </symbol>
     <symbol id="glyph-web3" viewBox="0 0 512 512">
-      <path d="m328 160 44 25v51l-44 25-44-25v-51Z" fill="none" stroke="#fff" stroke-width="10"/>
-      <circle cx="328" cy="210" r="14" fill="#fff"/>
-      <path d="M290 268h76M300 268v26M356 268v26" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-      <rect x="314" y="278" width="29" height="27" rx="6" fill="#fff"/>
-      <path d="M318 278v-8a11 11 0 0 1 22 0v8" fill="none" stroke="#fff" stroke-width="7"/>
+      <path d="m332 211 48 28v56l-48 28-48-28v-56Z" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round"/>
+      <circle cx="332" cy="261" r="11" fill="#fff"/>
+      <path d="M332 272v23" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
     </symbol>
     <symbol id="glyph-cloud" viewBox="0 0 512 512">
-      <path d="M286 222c0-20 16-36 36-36 16 0 29 9 34 23 20-4 37 10 37 29 0 17-13 30-31 30h-67c-18 0-31-11-31-27 0-12 9-23 22-26Z" fill="#fff"/>
-      <path d="M295 299h66M305 299v20M328 299v20M351 299v20" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
-      <circle cx="305" cy="326" r="7" fill="#fff"/><circle cx="328" cy="326" r="7" fill="#fff"/><circle cx="351" cy="326" r="7" fill="#fff"/>
-      <path d="M296 220c26-3 39-17 42-42-27 2-43 15-42 42Z" fill="#1687A7"/>
+      <path d="M298 294c-15 0-25-10-25-23 0-11 8-20 19-22 3-22 20-38 43-38 18 0 33 10 40 25 18 0 31 12 31 28 0 17-13 30-31 30Z" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round"/>
+      <path d="M315 277c27-2 43-17 46-46-30 2-48 17-46 46Z" fill="#fff"/>
     </symbol>
   </defs>
 </svg>
@@ -180,7 +160,7 @@
     <div>
       <div class="eyebrow">DDD4J Family / Brand System 01</div>
       <h1>同一个架构母体，六种组件身份。</h1>
-      <p class="lead">这不是六个互不相关的 Logo。三枚等距立方体始终代表 DDD 的领域、应用与基础设施；中央 COLA 分层切面始终表达边界与依赖方向；右侧技术面才承载组件差异。</p>
+      <p class="lead">这不是六个互不相关的 Logo。三个等距块面代表 DDD 的领域、应用与基础设施；块面之间的白色 Y 形负空间表达 COLA 分层边界；右下主题块只保留一个组件特征符号。</p>
     </div>
     <aside class="system-badge">
       <strong>Bright Architecture</strong>
@@ -189,13 +169,13 @@
   </header>
 
   <section>
-    <div class="section-head"><div><div class="index">01 / Mother Geometry</div><h2>不可变的家族母体</h2></div><p class="section-note">任何子项目都不能更换容器、透视、光源和主轮廓。差异只能发生在右侧技术面和主题色。</p></div>
+    <div class="section-head"><div><div class="index">01 / Mother Geometry</div><h2>极简的家族母体</h2></div><p class="section-note">任何子项目都不更换三块面、白色间隙和等距透视。差异只发生在右下主题块与其中的单一技术符号。</p></div>
     <div class="mother-card">
       <svg class="mother-icon icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6" aria-label="ddd4j family mother geometry"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg>
       <div class="principles">
-        <div class="principle"><b>3</b><div><strong>DDD 三立方体</strong><span>领域、应用、基础设施形成稳定三角，不再为每个项目重新发明图形。</span></div></div>
-        <div class="principle"><b>C</b><div><strong>COLA 分层切面</strong><span>中央双层负形表达整洁边界、分层协作和由内向外的依赖约束。</span></div></div>
-        <div class="principle"><b>1</b><div><strong>一个技术面</strong><span>右侧面承载 Java、Spring、Javalin、Quarkus、Web3 或 Cloud 的专属语义。</span></div></div>
+        <div class="principle"><b>3</b><div><strong>DDD 三块面</strong><span>领域、应用、基础设施共用一个开放六边轮廓，不增加外框和外环。</span></div></div>
+        <div class="principle"><b>C</b><div><strong>COLA 负空间</strong><span>块面之间唯一的白色 Y 形间隙同时表达分层、边界和依赖方向。</span></div></div>
+        <div class="principle"><b>1</b><div><strong>一个技术符号</strong><span>右下块面只放 Java、Spring、Javalin、Quarkus、Web3 或 Cloud 的一个主形。</span></div></div>
       </div>
     </div>
   </section>
@@ -214,12 +194,12 @@
   <section>
     <div class="section-head"><div><div class="index">03 / Project Themes</div><h2>六组件主题色与符号</h2></div><p class="section-note">主题色只表达组件身份；技术符号进入统一母体，不再独立漂浮或改变 Logo 风格。</p></div>
     <div class="product-grid">
-      <article class="product" style="--accent:#2457D6;--dark:#183E9E;--soft:#EEF4FF"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j</h3><code>#2457D6</code></div><p>DDD / COLA / Java / 基石托座</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
-      <article class="product" style="--accent:#5B8F3A;--dark:#3E6726;--soft:#F1F8EC"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#5B8F3A"><use href="#family-base"/><use href="#glyph-boot"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-boot</h3><code>#5B8F3A</code></div><p>DDD / COLA / Spring 叶片 / 启动弧</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
-      <article class="product" style="--accent:#E66A2C;--dark:#AD451A;--soft:#FFF3EC"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#E66A2C"><use href="#family-base"/><use href="#glyph-javalin"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-javalin</h3><code>#E66A2C</code></div><p>DDD / COLA / 帆形 / 轻量请求流线</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
-      <article class="product" style="--accent:#A54078;--dark:#782B57;--soft:#FBEEF5"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#A54078"><use href="#family-base"/><use href="#glyph-quarkus"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-quarkus</h3><code>#A54078</code></div><p>DDD / COLA / Q 切面 / Native 星芒</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
-      <article class="product" style="--accent:#6A4DD8;--dark:#4932A2;--soft:#F2EFFF"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-web3</h3><code>#6A4DD8</code></div><p>DDD / COLA / 代币六边形 / 链接节点 / 锁</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
-      <article class="product" style="--accent:#1687A7;--dark:#0F6078;--soft:#EAF8FB"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#1687A7"><use href="#family-base"/><use href="#glyph-cloud"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-cloud</h3><code>#1687A7</code></div><p>DDD / COLA / Spring 叶片 / 云弧 / 服务节点</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#2457D6;--dark:#183E9E;--soft:#EEF4FF"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j</h3><code>#2457D6</code></div><p>DDD / COLA / Java 杯形 / 一条基石线</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#5B8F3A;--dark:#3E6726;--soft:#F1F8EC"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#5B8F3A"><use href="#family-base"/><use href="#glyph-boot"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-boot</h3><code>#5B8F3A</code></div><p>DDD / COLA / Spring 叶片 / 启动点</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#E66A2C;--dark:#AD451A;--soft:#FFF3EC"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#E66A2C"><use href="#family-base"/><use href="#glyph-javalin"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-javalin</h3><code>#E66A2C</code></div><p>DDD / COLA / Javalin 帆形 / 轻量尾线</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#A54078;--dark:#782B57;--soft:#FBEEF5"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#A54078"><use href="#family-base"/><use href="#glyph-quarkus"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-quarkus</h3><code>#A54078</code></div><p>DDD / COLA / Quarkus Q 切口</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#6A4DD8;--dark:#4932A2;--soft:#F2EFFF"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-web3</h3><code>#6A4DD8</code></div><p>DDD / COLA / 六边形代币 / 内嵌锁孔</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#1687A7;--dark:#0F6078;--soft:#EAF8FB"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#1687A7"><use href="#family-base"/><use href="#glyph-cloud"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-cloud</h3><code>#1687A7</code></div><p>DDD / COLA / 云轮廓 / 内嵌 Spring 叶片</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
     </div>
   </section>
 
@@ -233,7 +213,7 @@
   </section>
 
   <section>
-    <div class="section-head"><div><div class="index">05 / Size Gate</div><h2>头像与小尺寸门禁</h2></div><p class="section-note">24px 仍保留三立方体轮廓和技术符号主形；详细分层线可以自然弱化，但不能换图。</p></div>
+    <div class="section-head"><div><div class="index">05 / Size Gate</div><h2>头像与小尺寸门禁</h2></div><p class="section-note">24px 仍保留三块面轮廓、COLA 白色间隙和技术符号主形；不为小尺寸另造一套图形。</p></div>
     <div class="sizes">
       <article class="size-card" style="--size:128px"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg><strong>128px</strong></article>
       <article class="size-card" style="--size:48px"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg><strong>48px</strong></article>
@@ -260,7 +240,7 @@
   </section>
 
   <footer>
-    <strong>当前状态：主题色与母体结构比较稿。</strong><br>
+    <strong>当前状态：第二版极简主题色与母体结构比较稿。</strong><br>
     本页用于确认家族关系、色彩语义和小尺寸策略，不会覆盖六个仓库中的现有 Logo。确认后由同一 SVG 母版生成六个项目的 icon / horizontal logo / transparent PNG `-v2` 文件。
   </footer>
 </main>
