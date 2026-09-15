@@ -961,6 +961,72 @@
                 <artifactId>anyline-data-jdbc-mysql</artifactId>
                 <version>${anyline.version}</version>
             </dependency>
+            <!-- AnyLine 异构数据源与 AI/RAG 适配（图库/列存/时序/OLAP/LLM 编排/向量库） -->
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-neo4j</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-hbase</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-influxdb</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-jdbc-starrocks</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-jdbc-doris</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-dify</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-coze</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-ragflow</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-chroma</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-milvus</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-pinecone</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-qdrant</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.anyline</groupId>
+                <artifactId>anyline-data-weaviate</artifactId>
+                <version>${anyline.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.anyline/anyline-environment-spring-data-jdbc -->
             <dependency>
                 <groupId>org.anyline</groupId>
