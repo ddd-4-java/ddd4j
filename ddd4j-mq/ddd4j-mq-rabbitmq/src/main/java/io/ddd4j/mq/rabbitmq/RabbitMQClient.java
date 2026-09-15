@@ -39,8 +39,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -117,34 +121,49 @@ public class RabbitMQClient implements MQClient {
         RabbitMQProperties rabbitProperties = mqProperties instanceof RabbitMQProperties
                 ? (RabbitMQProperties) mqProperties : properties;
         boolean confirmRequired = Objects.nonNull(rabbitProperties) && rabbitProperties.isPublisherConfirmRequired();
-        // 每线程独立 channel：Connection 线程安全，Channel 非线程安全。
-        // 避免 synchronized(channel) 将并发发布串行化为单线程吞吐。
-        // ReturnListener 必须在 channel 创建时注册一次（addReturnListener 是追加语义），
-        // 不能在每次 publish 时调用，否则监听器无限累积。
-        ThreadLocal<AtomicReference<Return>> channelReturnHolder =
-                ThreadLocal.withInitial(AtomicReference::new);
-        ThreadLocal<Channel> channelLocal = ThreadLocal.withInitial(() -> {
+        // 有界 channel 池：Connection 线程安全，Channel 非线程安全。
+        // 用 BlockingQueue 而非 ThreadLocal 是为了在 Java 21+ 虚拟线程场景下避免
+        // 「每虚拟线程独占一个 channel」导致的 fd / broker 连接数爆炸。池容量由
+        // RabbitMQProperties.producerChannelPoolSize 控制（默认 32），超出后发布线程
+        // 阻塞等待池中已有 channel（吞吐降级而非崩溃）；这比单 channel + synchronized
+        // 把所有发布串行化为单线程吞吐要好。
+        // 每个 channel 注册一个 ReturnListener（addReturnListener 是追加语义，只能注册一次），
+        // 写入该 channel 专属的返回状态 holder。由于任何时刻 channel 仅被一个发布借用，
+        // holder 的 set(null) → basicPublish → getAndSet(null) 是安全的。
+        int poolSize = Objects.nonNull(rabbitProperties) ? rabbitProperties.getProducerChannelPoolSize() : 32;
+        BlockingQueue<Channel> channelPool = new ArrayBlockingQueue<>(poolSize);
+        Map<Channel, AtomicReference<Return>> channelReturnHolder = new ConcurrentHashMap<>();
+        for (int i = 0; i < poolSize; i++) {
             try {
                 Channel ch = connection().createChannel();
                 if (confirmRequired) {
                     ch.confirmSelect();
                 }
-                ch.addReturnListener(ret -> channelReturnHolder.get().set(ret));
-                lifecycle.register("rabbit-producer-channel", () -> closeChannel(ch));
-                return ch;
+                AtomicReference<Return> holder = new AtomicReference<>();
+                channelReturnHolder.put(ch, holder);
+                ch.addReturnListener(holder::set);
+                channelPool.offer(ch);
+                lifecycle.register("rabbit-producer-channel-" + i, () -> closeChannel(ch));
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to create RabbitMQ producer channel", e);
             }
-        });
+        }
         String exchange = mqProperties.getExchange();
         return event -> {
             String payload = serialization().serialize(event);
             String topic = resolveTopic(event, mqProperties);
+            Channel channel = null;
             try {
-                // channelLocal.get() 可能在连接已关闭时抛出 AlreadyClosedException，
-                // 必须纳入统一异常包装，保证调用方始终收到 IllegalStateException。
-                Channel channel = channelLocal.get();
-                AtomicReference<Return> returned = channelReturnHolder.get();
+                // 从池中借用 channel，poll 超时则让 Outbox 重试而非无限等待。
+                // 连接已关闭时 poll 会抛 AlreadyClosedException，统一包装为 IllegalStateException。
+                long borrowTimeoutMillis = Objects.nonNull(rabbitProperties)
+                        ? rabbitProperties.getPublisherConfirmTimeoutMillis() : 5000L;
+                channel = channelPool.poll(borrowTimeoutMillis, TimeUnit.MILLISECONDS);
+                if (Objects.isNull(channel)) {
+                    throw new IllegalStateException(
+                            "RabbitMQ producer channel pool exhausted within " + borrowTimeoutMillis + "ms");
+                }
+                AtomicReference<Return> returned = channelReturnHolder.get(channel);
                 returned.set(null);
                 Map<String, Object> headers = new HashMap<>();
                 if (Objects.nonNull(event.getMsgId())) {
@@ -168,8 +187,12 @@ public class RabbitMQClient implements MQClient {
                             + brokerReturn.getReplyText() + " [" + brokerReturn.getRoutingKey() + "]");
                 }
                 log.info("Publish MQ [{}]: {}", topic, payload);
+                channelPool.offer(channel);
+                channel = null;
             } catch (Exception e) {
-                // 将失败交还调用方，避免 Outbox 将失败发送标记为已发布。
+                // channel 异常（连接关闭、IO 错误）时**丢弃**而非归还——已损坏的 channel
+                // 会污染后续借用。Outbox 拿到 IllegalStateException 后会重试，
+                // broker 恢复后由外部组件触发 {@link #close} 重建池。
                 throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
             }
         };
