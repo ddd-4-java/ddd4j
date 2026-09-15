@@ -99,6 +99,13 @@ public class KafkaMQProperties extends MQProperties {
     }
 
     /**
+     * 发布确认等待超时（ms）。Outbox 模式下 publish 会同步阻塞至 broker ack 或超时；
+     * 超时后会抛 IllegalStateException 让上层 Outbox 重试，避免无限阻塞耗尽线程池。
+     * 默认 30s，与 Kafka {@code REQUEST_TIMEOUT_MS_CONFIG} 保持一致。
+     */
+    private long publishAckTimeoutMillis = 30_000L;
+
+    /**
      * Consumer 配置
      */
     public Properties consumerProperties(String groupId) {
