@@ -160,7 +160,8 @@ public class PulsarMQClient implements MQClient {
                         builder.property(tagHeaderKey(), tag);
                     }
                     // Outbox 只有在 Pulsar broker 确认后才能标记发布成功。
-                    builder.sendAsync().get();
+                    // 用 properties.operationTimeoutMs 作 wait 超时，避免 broker 卡顿时无限阻塞。
+                    builder.sendAsync().get(properties.getOperationTimeoutMs(), TimeUnit.MILLISECONDS);
                     logger().info("Publish MQ [{}]: {}", physical, serialization().serialize(event));
                 } catch (Exception ex) {
                     throw new IllegalStateException("Publish Pulsar event failed", ex);

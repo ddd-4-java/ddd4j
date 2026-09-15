@@ -55,6 +55,14 @@ public class RabbitMQProperties extends MQProperties {
     private boolean publisherConfirmRequired = true;
     /** broker confirm 最长等待时间。 */
     private long publisherConfirmTimeoutMillis = 5000L;
+    /**
+     * 生产者 channel 池大小上限。Channel 非线程安全，因此 ddd4j-mq 用 {@code ThreadLocal} 让
+     * 每个发布线程独占一个 channel。在 Java 21+ 虚拟线程场景下，每个虚拟线程都会创建独立
+     * channel，可能触发 broker 连接数 / fd 上限。本字段将上限锁定为固定值：
+     * 超出后虚拟线程回退为阻塞等待池中已有 channel（仍保持线程安全，吞吐降级而非崩溃）。
+     * 默认 32 足够覆盖常规 HTTP/Web 工作负载。
+     */
+    private int producerChannelPoolSize = 32;
 
     /**
      * 基于本配置（含父类 username/password）创建原生 {@link ConnectionFactory}。

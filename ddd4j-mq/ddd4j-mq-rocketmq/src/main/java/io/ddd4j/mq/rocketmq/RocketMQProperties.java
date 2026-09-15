@@ -49,6 +49,12 @@ public class RocketMQProperties extends MQProperties {
      * 消费者是否自动启动。
      */
     private boolean autoStartConsumers = true;
+    /**
+     * 发送消息超时（ms）。publish 会阻塞至 broker ack 或此超时后抛
+     * {@code RemotingTooMuchRequestException} 让上层 Outbox 重试，避免 broker 卡顿时无限阻塞。
+     * 默认 10s 与 RocketMQ 客户端默认一致。
+     */
+    private int sendMsgTimeoutMillis = 10_000;
 
     /**
      * 基于本配置创建原生生产者（含 nameServer）。
@@ -58,6 +64,7 @@ public class RocketMQProperties extends MQProperties {
         if (StrKit.isNotEmpty(nameServer)) {
             producer.setNamesrvAddr(nameServer);
         }
+        producer.setSendMsgTimeout(sendMsgTimeoutMillis);
         return producer;
     }
 

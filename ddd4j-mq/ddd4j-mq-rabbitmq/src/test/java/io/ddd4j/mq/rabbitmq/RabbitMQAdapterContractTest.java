@@ -59,9 +59,16 @@ class RabbitMQAdapterContractTest {
 
     @Test
     void shouldPublishPersistentMessageAndWaitForBrokerConfirm() throws Exception {
-        Channel channel = mock(Channel.class);
+        // 池创建 N 个 channel（默认 32），故 confirmSelect 也调用 N 次。
+        // 每个 createChannel() 返回不同的 mock Channel（真实 broker 行为）。
+        int poolSize = 32;
         Connection connection = mock(Connection.class);
-        when(connection.createChannel()).thenReturn(channel);
+        java.util.List<Channel> channels = new java.util.ArrayList<>();
+        for (int i = 0; i < poolSize; i++) {
+            channels.add(mock(Channel.class));
+        }
+        final java.util.concurrent.atomic.AtomicInteger createIdx = new java.util.concurrent.atomic.AtomicInteger();
+        when(connection.createChannel()).thenAnswer(inv -> channels.get(createIdx.getAndIncrement() % poolSize));
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setEnabled(true);
         properties.setBroker("rabbit");
@@ -79,37 +86,46 @@ class RabbitMQAdapterContractTest {
 
         event.publish();
 
-        // ThreadLocal channel: confirmSelect called once during channel init
-        verify(channel).confirmSelect();
-        // addReturnListener called per-publish (ThreadLocal pattern)
-        verify(channel).addReturnListener(any(ReturnCallback.class));
+        for (Channel ch : channels) {
+            verify(ch).confirmSelect();
+        }
+        // 取到真正被借用的 channel（第一个 borrow 的就是 pool[0]）
+        Channel borrowed = channels.get(0);
         org.mockito.ArgumentCaptor<AMQP.BasicProperties> captor =
                 org.mockito.ArgumentCaptor.forClass(AMQP.BasicProperties.class);
-        verify(channel).basicPublish(eq("events"), anyString(), eq(true), captor.capture(), any());
+        verify(borrowed).basicPublish(eq("events"), anyString(), eq(true), captor.capture(), any());
         assertEquals(2, captor.getValue().getDeliveryMode());
-        verify(channel).waitForConfirmsOrDie(properties.getPublisherConfirmTimeoutMillis());
+        verify(borrowed).waitForConfirmsOrDie(properties.getPublisherConfirmTimeoutMillis());
     }
 
     @Test
     void shouldRejectMessageReturnedAsUnroutable() throws Exception {
-        Channel channel = mock(Channel.class);
+        // 池化后每个 channel 独立注册自己的 ReturnListener 与 return holder。
+        // 这里把每个 channel 的 listener 收集起来，发布时从借到的 channel 找出对应回调触发 NO_ROUTE。
+        int poolSize = 32;
         Connection connection = mock(Connection.class);
-        when(connection.createChannel()).thenReturn(channel);
-        AtomicReference<ReturnCallback> returnCallback = new AtomicReference<>();
-        doAnswer(invocation -> {
-            returnCallback.set(invocation.getArgument(0));
-            return null;
-        }).when(channel).addReturnListener(any(ReturnCallback.class));
-        doAnswer(invocation -> {
-            ReturnCallback callback = returnCallback.get();
-            if (callback != null) {
-                AMQP.BasicProperties returnedProperties = new AMQP.BasicProperties.Builder()
-                        .messageId("message-unroutable")
-                        .build();
-                callback.handle(new Return(312, "NO_ROUTE", "events", "orders", returnedProperties, new byte[0]));
-            }
-            return null;
-        }).when(channel).waitForConfirmsOrDie(5000L);
+        java.util.Map<Channel, ReturnCallback> listenerByChannel = new java.util.concurrent.ConcurrentHashMap<>();
+        java.util.List<Channel> channels = new java.util.ArrayList<>();
+        for (int i = 0; i < poolSize; i++) {
+            Channel ch = mock(Channel.class);
+            doAnswer(invocation -> {
+                listenerByChannel.put(ch, invocation.getArgument(0));
+                return null;
+            }).when(ch).addReturnListener(any(ReturnCallback.class));
+            doAnswer(invocation -> {
+                ReturnCallback callback = listenerByChannel.get(ch);
+                if (callback != null) {
+                    AMQP.BasicProperties returnedProperties = new AMQP.BasicProperties.Builder()
+                            .messageId("message-unroutable")
+                            .build();
+                    callback.handle(new Return(312, "NO_ROUTE", "events", "orders", returnedProperties, new byte[0]));
+                }
+                return null;
+            }).when(ch).waitForConfirmsOrDie(5000L);
+            channels.add(ch);
+        }
+        final java.util.concurrent.atomic.AtomicInteger createIdx = new java.util.concurrent.atomic.AtomicInteger();
+        when(connection.createChannel()).thenAnswer(inv -> channels.get(createIdx.getAndIncrement() % poolSize));
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setEnabled(true);
         properties.setBroker("rabbit");
@@ -120,6 +136,8 @@ class RabbitMQAdapterContractTest {
             @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
         };
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties, serialization, null);
+        // 池创建时为每个 channel 注册 listener
+        org.junit.jupiter.api.Assertions.assertEquals(poolSize, listenerByChannel.size());
         MQEvent event = new MQEvent();
         event.setMsgId("message-unroutable");
         event.setTopic("orders");
@@ -128,11 +146,17 @@ class RabbitMQAdapterContractTest {
     }
 
     @Test
-    void shouldCloseOwnedChannelButNotInjectedConnectionOnlyOnce() throws Exception {
-        Channel channel = mock(Channel.class);
+    void shouldCloseOwnedChannelsButNotInjectedConnectionOnlyOnce() throws Exception {
+        int poolSize = 32;
         Connection connection = mock(Connection.class);
-        when(connection.createChannel()).thenReturn(channel);
-        when(channel.isOpen()).thenReturn(true);
+        java.util.List<Channel> channels = new java.util.ArrayList<>();
+        for (int i = 0; i < poolSize; i++) {
+            Channel ch = mock(Channel.class);
+            when(ch.isOpen()).thenReturn(true);
+            channels.add(ch);
+        }
+        final java.util.concurrent.atomic.AtomicInteger createIdx = new java.util.concurrent.atomic.AtomicInteger();
+        when(connection.createChannel()).thenAnswer(inv -> channels.get(createIdx.getAndIncrement() % poolSize));
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setEnabled(true);
         properties.setBroker("rabbit");
@@ -149,7 +173,10 @@ class RabbitMQAdapterContractTest {
         client.close();
         client.close();
 
-        verify(channel).close();
+        // 池里每个 channel 都被关闭一次（lifecycle 注册了 N 个）。
+        for (Channel ch : channels) {
+            verify(ch).close();
+        }
         verify(connection, never()).close();
     }
 }

@@ -64,6 +64,13 @@ import java.util.function.Consumer;
 public class KafkaMQClient implements MQClient {
 
     private static final long DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS = 30_000L;
+    /**
+     * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
+     * 无 properties 时回落到默认 30s。
+     */
+    private long publishAckTimeoutMillis() {
+        return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
+    }
 
     /**
      * KafkaMQProperties 用于懒构造
@@ -148,8 +155,14 @@ public class KafkaMQClient implements MQClient {
             try {
                 // Outbox 只有在 broker 确认后才能标记成功；异步回调不能作为同步发布契约。
                 producer1.send(record, Objects.nonNull(callback) ? callback : new SendCallback(topic, payload))
-                        .get(DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+                        .get(publishAckTimeoutMillis(), TimeUnit.MILLISECONDS);
                 log.info("Publish MQ [{}]: {}", topic, payload);
+            } catch (java.util.concurrent.TimeoutException timeout) {
+                // 超时意味着 broker 在配置窗口内未确认。Outbox 会标记这条为失败并重试，
+                // 这里打 WARN 而不是 ERROR，避免与真正的 broker 故障混淆——重试通常能恢复。
+                log.warn("Publish MQ [{}] ack timeout after {}ms: {}", topic, publishAckTimeoutMillis(), mqEvent.getMsgId());
+                throw new IllegalStateException("Publish Kafka event ack timeout after "
+                        + publishAckTimeoutMillis() + "ms: " + mqEvent.getMsgId(), timeout);
             } catch (Exception exception) {
                 throw new IllegalStateException("Publish Kafka event failed: " + mqEvent.getMsgId(), exception);
             }
