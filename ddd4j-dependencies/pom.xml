@@ -586,6 +586,8 @@
         <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <spring-security.version>5.8.16</spring-security.version>
         <springdoc.version>1.8.0</springdoc.version>
+        <!-- springfox 2.x（Swagger 1.6 生态）：Boot 2.x 线专用；springfox.version(3.0.0) 为 Boot 3 线 springdoc 配套 -->
+        <springfox-swagger2.version>2.10.5</springfox-swagger2.version>
         <springfox.version>3.0.0</springfox.version>
         <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
         <sshd-pam.version>0.11.1-atlassian-1</sshd-pam.version>
@@ -755,6 +757,21 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-jdk14</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
 
@@ -6162,6 +6179,17 @@
                 <groupId>org.springframework.plugin</groupId>
                 <artifactId>spring-plugin-core</artifactId>
                 <version>${spring-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.plugin</groupId>
+                <artifactId>spring-plugin-metadata</artifactId>
+                <version>${spring-plugin.version}</version>
+            </dependency>
+            <!-- springfox 已停更（2020），锁定 Boot 2.x 生态最后可用线；swagger 1.x 模型经 ${swagger1.version} 供给 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox-swagger2.version}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/io.spring.initializr/initializr-bom -->
