@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ddd4j 六组件主题色与 Logo 系统比较稿</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #10233F;
+      --core: #2457D6;
+      --cyan: #2AB7CA;
+      --surface: #F7FAFF;
+      --line: #D8E5F5;
+      --muted: #5D6B82;
+      --paper: #FFFFFF;
+      --shadow: 0 18px 54px rgba(16, 35, 63, .11);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 4%, rgba(42, 183, 202, .14), transparent 28rem),
+        radial-gradient(circle at 88% 8%, rgba(36, 87, 214, .13), transparent 32rem),
+        var(--surface);
+    }
+    main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 64px 0 96px; }
+    header { display: grid; grid-template-columns: 1.4fr .6fr; gap: 36px; align-items: end; }
+    .eyebrow, .index { color: var(--core); font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 14px 0 18px; max-width: 820px; font-size: clamp(38px, 6vw, 72px); line-height: .98; letter-spacing: -.055em; }
+    .lead { max-width: 760px; margin: 0; color: var(--muted); font-size: 18px; line-height: 1.75; }
+    .system-badge { padding: 22px; border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.76); box-shadow: var(--shadow); }
+    .system-badge strong { display: block; margin-bottom: 8px; font-size: 18px; }
+    .system-badge p { margin: 0; color: var(--muted); line-height: 1.6; }
+    section { margin-top: 72px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 24px; }
+    h2 { margin: 6px 0 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -.035em; }
+    .section-note { max-width: 520px; margin: 0; color: var(--muted); line-height: 1.6; }
+    .mother-card {
+      display: grid; grid-template-columns: minmax(280px, .82fr) 1.18fr; gap: 34px; align-items: center;
+      padding: 36px; border: 1px solid var(--line); border-radius: 32px; background: rgba(255,255,255,.88); box-shadow: var(--shadow);
+    }
+    .mother-icon { width: min(100%, 340px); margin: auto; }
+    .principles { display: grid; gap: 14px; }
+    .principle { display: grid; grid-template-columns: 38px 1fr; gap: 14px; padding: 16px; border-radius: 18px; background: #F1F6FF; }
+    .principle b { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; color: white; background: var(--core); }
+    .principle strong { display: block; margin-bottom: 4px; }
+    .principle span { color: var(--muted); line-height: 1.45; }
+    .shared-colors, .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .token, .product { overflow: hidden; border: 1px solid var(--line); border-radius: 24px; background: var(--paper); box-shadow: 0 10px 30px rgba(16,35,63,.06); }
+    .token-swatch { height: 92px; background: var(--color); }
+    .token-body { padding: 18px; }
+    .token-body strong { display: block; font-size: 17px; }
+    code { color: var(--muted); font-family: "SFMono-Regular", Consolas, monospace; }
+    .product { --accent: #2457D6; --dark: #183E9E; --soft: #EEF4FF; }
+    .product-preview { position: relative; min-height: 260px; display: grid; place-items: center; padding: 22px; background: linear-gradient(145deg, white, var(--soft)); }
+    .product-preview svg { width: 210px; height: 210px; }
+    .product-body { padding: 20px; border-top: 1px solid var(--line); }
+    .product-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+    .product-title h3 { margin: 0; font-size: 21px; letter-spacing: -.02em; }
+    .product-title code { color: var(--accent); font-weight: 800; }
+    .product-body p { min-height: 48px; margin: 10px 0 16px; color: var(--muted); line-height: 1.5; }
+    .ramp { display: grid; grid-template-columns: 1fr 1fr 1fr; overflow: hidden; height: 38px; border-radius: 10px; }
+    .ramp i:nth-child(1) { background: var(--soft); }
+    .ramp i:nth-child(2) { background: var(--accent); }
+    .ramp i:nth-child(3) { background: var(--dark); }
+    .comparison { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .stage { min-height: 330px; padding: 22px; border-radius: 26px; border: 1px solid var(--line); }
+    .stage.light { background: #fff; }
+    .stage.dark { color: #fff; background: #0B1220; border-color: #263A59; }
+    .stage.gray { background: #ECEFF3; filter: grayscale(1); }
+    .stage h3 { margin: 0 0 18px; font-size: 15px; }
+    .mini-family { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .mini-family svg { width: 100%; max-height: 120px; }
+    .sizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .size-card { display: grid; place-items: center; min-height: 190px; padding: 20px; border: 1px solid var(--line); border-radius: 24px; background: white; }
+    .size-card svg { width: var(--size); height: var(--size); }
+    .size-card strong { align-self: end; margin-top: 14px; }
+    .status-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .status { padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: white; }
+    .status i { display: block; width: 34px; height: 8px; margin-bottom: 13px; border-radius: 99px; background: var(--status); }
+    .status span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+    .mapping { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .mapping-card { padding: 26px; border: 1px solid var(--line); border-radius: 26px; background: white; }
+    .mapping-card h3 { margin: 0 0 10px; }
+    .mapping-card p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .mapping-strip { display: flex; gap: 7px; margin-top: 20px; }
+    .mapping-strip i { flex: 1; height: 12px; border-radius: 99px; background: var(--tone); }
+    footer { margin-top: 72px; padding-top: 28px; border-top: 1px solid var(--line); color: var(--muted); line-height: 1.7; }
+    svg { overflow: visible; }
+    .icon-shell { --accent: #2457D6; }
+    .icon-shell .accent { fill: var(--accent); }
+    .icon-shell .accent-stroke { stroke: var(--accent); }
+    .dark .icon-shell .ink { fill: #F7FAFF; }
+    .dark .icon-shell .orbit { stroke: #6FE5F0; }
+    @media (max-width: 900px) {
+      header, .mother-card { grid-template-columns: 1fr; }
+      .shared-colors, .product-grid { grid-template-columns: repeat(2, 1fr); }
+      .comparison, .mapping { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      main { width: min(100% - 24px, 1180px); padding-top: 36px; }
+      header { gap: 22px; }
+      .system-badge, .mother-card { padding: 20px; }
+      section { margin-top: 52px; }
+      .section-head { display: block; }
+      .section-note { margin-top: 12px; }
+      .shared-colors, .product-grid, .sizes, .status-row { grid-template-columns: 1fr; }
+      .product-preview { min-height: 235px; }
+      .sizes { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .size-card { min-height: 130px; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
+  <defs>
+    <linearGradient id="coreTop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4F86FF"/><stop offset="1" stop-color="#2457D6"/></linearGradient>
+    <linearGradient id="coreSide" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2457D6"/><stop offset="1" stop-color="#183E9E"/></linearGradient>
+    <linearGradient id="cyanSide" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#56D8E5"/><stop offset="1" stop-color="#1687A7"/></linearGradient>
+    <symbol id="family-base" viewBox="0 0 512 512">
+      <circle class="orbit" cx="256" cy="246" r="210" fill="none" stroke="#2AB7CA" stroke-width="11" opacity=".42"/>
+      <path d="M256 70 373 137 256 205 139 137Z" fill="url(#coreTop)" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M139 137 256 205 256 339 139 271Z" fill="url(#coreSide)" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
+      <path class="accent" d="M373 137 256 205 256 339 373 271Z" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M256 205 139 137 139 271 256 339 373 271 373 137Z" fill="none" stroke="#D8E5F5" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M256 228 321 190 321 250 256 289 191 250 191 190Z" fill="none" stroke="#F7FAFF" stroke-width="12" stroke-linejoin="round" opacity=".92"/>
+      <path d="M256 247 294 225 294 242 256 265 218 242 218 225Z" fill="none" stroke="#2AB7CA" stroke-width="8" stroke-linejoin="round"/>
+      <circle cx="139" cy="271" r="13" fill="#2AB7CA" stroke="#fff" stroke-width="5"/>
+      <circle cx="373" cy="271" r="13" class="accent" stroke="#fff" stroke-width="5"/>
+      <path d="M132 374Q256 426 380 374" fill="none" stroke="#10233F" stroke-width="16" stroke-linecap="round"/>
+      <path d="M170 403H342" fill="none" stroke="#2AB7CA" stroke-width="8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="glyph-ddd4j" viewBox="0 0 512 512">
+      <g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round">
+        <path d="M302 179c-15-18 14-23 0-43"/><path d="M329 176c-13-16 12-21 1-39"/>
+      </g>
+      <path d="M294 192h57v28c0 20-12 33-28 33s-29-13-29-33Z" fill="#fff" opacity=".96"/>
+      <path d="M350 198h8c18 0 18 28 0 29h-8" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+      <path d="M187 369h138l-18 28H205Z" fill="#2457D6" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="glyph-boot" viewBox="0 0 512 512">
+      <path d="M291 238c44-3 67-25 72-71-48 2-76 25-72 71Z" fill="#fff"/>
+      <path d="M303 224c18-14 34-29 48-46" fill="none" stroke="#5B8F3A" stroke-width="8" stroke-linecap="round"/>
+      <path d="M306 261a39 39 0 1 0 44 0" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+      <path d="M328 246v31" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="glyph-javalin" viewBox="0 0 512 512">
+      <path d="M301 236 338 160l25 76Z" fill="#fff"/>
+      <path d="M298 242h71c-17 25-39 37-66 35Z" fill="#10233F" opacity=".9"/>
+      <path d="M283 292c31 18 65 18 98-1" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+      <path d="M391 292h28m-8-10 10 10-10 10" fill="none" stroke="#E66A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="glyph-quarkus" viewBox="0 0 512 512">
+      <circle cx="328" cy="220" r="48" fill="none" stroke="#fff" stroke-width="13"/>
+      <path d="m357 249 25 25" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+      <path d="m381 151 7 19 19 7-19 7-7 19-7-19-19-7 19-7Z" fill="#fff"/>
+      <path d="M303 220h50" stroke="#A54078" stroke-width="10" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="glyph-web3" viewBox="0 0 512 512">
+      <path d="m328 160 44 25v51l-44 25-44-25v-51Z" fill="none" stroke="#fff" stroke-width="10"/>
+      <circle cx="328" cy="210" r="14" fill="#fff"/>
+      <path d="M290 268h76M300 268v26M356 268v26" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+      <rect x="314" y="278" width="29" height="27" rx="6" fill="#fff"/>
+      <path d="M318 278v-8a11 11 0 0 1 22 0v8" fill="none" stroke="#fff" stroke-width="7"/>
+    </symbol>
+    <symbol id="glyph-cloud" viewBox="0 0 512 512">
+      <path d="M286 222c0-20 16-36 36-36 16 0 29 9 34 23 20-4 37 10 37 29 0 17-13 30-31 30h-67c-18 0-31-11-31-27 0-12 9-23 22-26Z" fill="#fff"/>
+      <path d="M295 299h66M305 299v20M328 299v20M351 299v20" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="305" cy="326" r="7" fill="#fff"/><circle cx="328" cy="326" r="7" fill="#fff"/><circle cx="351" cy="326" r="7" fill="#fff"/>
+      <path d="M296 220c26-3 39-17 42-42-27 2-43 15-42 42Z" fill="#1687A7"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main>
+  <header>
+    <div>
+      <div class="eyebrow">DDD4J Family / Brand System 01</div>
+      <h1>同一个架构母体，六种组件身份。</h1>
+      <p class="lead">这不是六个互不相关的 Logo。三枚等距立方体始终代表 DDD 的领域、应用与基础设施；中央 COLA 分层切面始终表达边界与依赖方向；右侧技术面才承载组件差异。</p>
+    </div>
+    <aside class="system-badge">
+      <strong>Bright Architecture</strong>
+      <p>继承 `_org-readmes` Bright Aurora 的明亮、空气感和等距结构，同时收紧为可复用、可缩放、可验证的组件品牌语法。</p>
+    </aside>
+  </header>
+
+  <section>
+    <div class="section-head"><div><div class="index">01 / Mother Geometry</div><h2>不可变的家族母体</h2></div><p class="section-note">任何子项目都不能更换容器、透视、光源和主轮廓。差异只能发生在右侧技术面和主题色。</p></div>
+    <div class="mother-card">
+      <svg class="mother-icon icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6" aria-label="ddd4j family mother geometry"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg>
+      <div class="principles">
+        <div class="principle"><b>3</b><div><strong>DDD 三立方体</strong><span>领域、应用、基础设施形成稳定三角，不再为每个项目重新发明图形。</span></div></div>
+        <div class="principle"><b>C</b><div><strong>COLA 分层切面</strong><span>中央双层负形表达整洁边界、分层协作和由内向外的依赖约束。</span></div></div>
+        <div class="principle"><b>1</b><div><strong>一个技术面</strong><span>右侧面承载 Java、Spring、Javalin、Quarkus、Web3 或 Cloud 的专属语义。</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><div class="index">02 / Shared Tokens</div><h2>家族共享色</h2></div><p class="section-note">母体蓝、COLA 青和深墨蓝在六个项目中保持一致，先建立家族识别，再使用组件色。</p></div>
+    <div class="shared-colors">
+      <article class="token"><div class="token-swatch" style="--color:#10233F"></div><div class="token-body"><strong>Family Ink</strong><code>#10233F</code></div></article>
+      <article class="token"><div class="token-swatch" style="--color:#2457D6"></div><div class="token-body"><strong>Family Core</strong><code>#2457D6</code></div></article>
+      <article class="token"><div class="token-swatch" style="--color:#2AB7CA"></div><div class="token-body"><strong>Family COLA</strong><code>#2AB7CA</code></div></article>
+      <article class="token"><div class="token-swatch" style="--color:#F7FAFF"></div><div class="token-body"><strong>Family Surface</strong><code>#F7FAFF</code></div></article>
+      <article class="token"><div class="token-swatch" style="--color:#D8E5F5"></div><div class="token-body"><strong>Family Line</strong><code>#D8E5F5</code></div></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><div class="index">03 / Project Themes</div><h2>六组件主题色与符号</h2></div><p class="section-note">主题色只表达组件身份；技术符号进入统一母体，不再独立漂浮或改变 Logo 风格。</p></div>
+    <div class="product-grid">
+      <article class="product" style="--accent:#2457D6;--dark:#183E9E;--soft:#EEF4FF"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j</h3><code>#2457D6</code></div><p>DDD / COLA / Java / 基石托座</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#5B8F3A;--dark:#3E6726;--soft:#F1F8EC"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#5B8F3A"><use href="#family-base"/><use href="#glyph-boot"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-boot</h3><code>#5B8F3A</code></div><p>DDD / COLA / Spring 叶片 / 启动弧</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#E66A2C;--dark:#AD451A;--soft:#FFF3EC"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#E66A2C"><use href="#family-base"/><use href="#glyph-javalin"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-javalin</h3><code>#E66A2C</code></div><p>DDD / COLA / 帆形 / 轻量请求流线</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#A54078;--dark:#782B57;--soft:#FBEEF5"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#A54078"><use href="#family-base"/><use href="#glyph-quarkus"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-quarkus</h3><code>#A54078</code></div><p>DDD / COLA / Q 切面 / Native 星芒</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#6A4DD8;--dark:#4932A2;--soft:#F2EFFF"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-web3</h3><code>#6A4DD8</code></div><p>DDD / COLA / 代币六边形 / 链接节点 / 锁</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+      <article class="product" style="--accent:#1687A7;--dark:#0F6078;--soft:#EAF8FB"><div class="product-preview"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#1687A7"><use href="#family-base"/><use href="#glyph-cloud"/></svg></div><div class="product-body"><div class="product-title"><h3>ddd4j-cloud</h3><code>#1687A7</code></div><p>DDD / COLA / Spring 叶片 / 云弧 / 服务节点</p><div class="ramp"><i></i><i></i><i></i></div></div></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><div class="index">04 / Surface Test</div><h2>明亮、深色与灰度</h2></div><p class="section-note">颜色不是唯一识别手段。移除色彩后，母体仍一致，技术符号仍能区分组件。</p></div>
+    <div class="comparison">
+      <article class="stage light"><h3>Light Surface</h3><div class="mini-family"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#E66A2C"><use href="#family-base"/><use href="#glyph-javalin"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#1687A7"><use href="#family-base"/><use href="#glyph-cloud"/></svg></div></article>
+      <article class="stage dark"><h3>Dark Surface</h3><div class="mini-family"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#5B8F3A"><use href="#family-base"/><use href="#glyph-boot"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#A54078"><use href="#family-base"/><use href="#glyph-quarkus"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg></div></article>
+      <article class="stage gray"><h3>Grayscale</h3><div class="mini-family"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#2457D6"><use href="#family-base"/><use href="#glyph-ddd4j"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#E66A2C"><use href="#family-base"/><use href="#glyph-javalin"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#1687A7"><use href="#family-base"/><use href="#glyph-cloud"/></svg></div></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><div class="index">05 / Size Gate</div><h2>头像与小尺寸门禁</h2></div><p class="section-note">24px 仍保留三立方体轮廓和技术符号主形；详细分层线可以自然弱化，但不能换图。</p></div>
+    <div class="sizes">
+      <article class="size-card" style="--size:128px"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg><strong>128px</strong></article>
+      <article class="size-card" style="--size:48px"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg><strong>48px</strong></article>
+      <article class="size-card" style="--size:24px"><svg class="icon-shell" viewBox="0 0 512 512" style="--accent:#6A4DD8"><use href="#family-base"/><use href="#glyph-web3"/></svg><strong>24px</strong></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><div class="index">06 / Semantic Guard</div><h2>组件色不是状态色</h2></div><p class="section-note">与 Agent 系列一致：主题色表达产品身份，运行状态必须同时使用独立图标、文字和状态颜色。</p></div>
+    <div class="status-row">
+      <article class="status" style="--status:#16A34A"><i></i><strong>成功</strong><span>#16A34A · 不借用 Boot 主题绿</span></article>
+      <article class="status" style="--status:#D97706"><i></i><strong>警告</strong><span>#D97706 · 不借用 Javalin 橙</span></article>
+      <article class="status" style="--status:#DC2626"><i></i><strong>错误</strong><span>#DC2626 · 不借用 Quarkus 莓紫</span></article>
+      <article class="status" style="--status:#64748B"><i></i><strong>未知</strong><span>#64748B · 中性状态</span></article>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head"><div><div class="index">07 / Cover Mapping</div><h2>封面与内容图如何继承</h2></div><p class="section-note">现有封面与内容图不重画。只替换 Logo、主题光和少量强调部件，保留已经确认的构图。</p></div>
+    <div class="mapping">
+      <article class="mapping-card"><h3>封面图</h3><p>家族 Core Blue 保持主结构；组件主题色只占标题后缀、技术符号、流线和关键按钮约 20%。背景继续使用明亮 Aurora。</p><div class="mapping-strip"><i style="--tone:#10233F"></i><i style="--tone:#2457D6"></i><i style="--tone:#2AB7CA"></i><i style="--tone:#E66A2C"></i></div></article>
+      <article class="mapping-card"><h3>内容图</h3><p>DDD/COLA 节点保持共享蓝青体系；框架、链路或云端适配节点使用对应项目主题色，状态节点仍使用独立状态色。</p><div class="mapping-strip"><i style="--tone:#2457D6"></i><i style="--tone:#2AB7CA"></i><i style="--tone:#6A4DD8"></i><i style="--tone:#16A34A"></i></div></article>
+    </div>
+  </section>
+
+  <footer>
+    <strong>当前状态：主题色与母体结构比较稿。</strong><br>
+    本页用于确认家族关系、色彩语义和小尺寸策略，不会覆盖六个仓库中的现有 Logo。确认后由同一 SVG 母版生成六个项目的 icon / horizontal logo / transparent PNG `-v2` 文件。
+  </footer>
+</main>
+</body>
+</html>

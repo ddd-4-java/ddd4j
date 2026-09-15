@@ -69,7 +69,7 @@
 
 ## 主题色比较稿
 
-创建 `docs/branding/ddd4j-family-theme-comparison.html`，内容包括：
+创建 `docs/branding/主题色比较稿.html`，内容包括：
 
 1. 家族关系与母体说明。
 2. 家族共享色和六组件主题色完整色表。

@@ -24,25 +24,25 @@
 ### Task 1: Theme comparison HTML
 
 **Files:**
-- Create: `docs/branding/ddd4j-family-theme-comparison.html`
+- Create: `docs/branding/主题色比较稿.html`
 
 **Interfaces:**
 - Consumes: color tokens and semantic mappings from the approved spec.
 - Produces: one self-contained HTML review artifact with inline SVG previews and no external dependencies.
 
-- [ ] **Step 1: Create the self-contained comparison page**
+- [x] **Step 1: Create the self-contained comparison page**
 
   Build a responsive static page containing the family rationale, shared color table, six project color cards, full-size icon prototypes, light/dark/gray previews, 128/48/24px tests, state-color separation, and cover/content color mapping.
 
-- [ ] **Step 2: Validate source contracts**
+- [x] **Step 2: Validate source contracts**
 
   Run:
 
   ```bash
   rg -n '#10233F|#2457D6|#2AB7CA|#5B8F3A|#E66A2C|#A54078|#6A4DD8|#1687A7' \
-    docs/branding/ddd4j-family-theme-comparison.html
+    docs/branding/主题色比较稿.html
   rg -n 'ddd4j-boot|ddd4j-javalin|ddd4j-quarkus|ddd4j-web3|ddd4j-cloud' \
-    docs/branding/ddd4j-family-theme-comparison.html
+    docs/branding/主题色比较稿.html
   ```
 
   Expected: every approved token and all six project names are present.
