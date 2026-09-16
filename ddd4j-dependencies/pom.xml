@@ -255,7 +255,6 @@
         <helidon-jakarta-ws-rs.version>3.0.0</helidon-jakarta-ws-rs.version>
         <helidon-jersey.version>3.0.18</helidon-jersey.version>
         <hermes-java-sdk.version>2.0.x.20260630-SNAPSHOT</hermes-java-sdk.version>
-        <hermes-java-sdk.version>2.0.x.20260630-SNAPSHOT</hermes-java-sdk.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hibernate-validator.version>8.0.4.Final</hibernate-validator.version>
         <hibernate.version>6.6.40.Final</hibernate.version>
@@ -877,11 +876,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>dreamina-java-sdk</artifactId>
                 <version>${dreamina-java-sdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>hermes-java-sdk</artifactId>
-                <version>${hermes-java-sdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
