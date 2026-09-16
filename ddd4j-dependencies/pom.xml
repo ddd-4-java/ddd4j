@@ -711,7 +711,7 @@
         <webjars.swagger-ui.version>5.32.8</webjars.swagger-ui.version>
         <wechatpay-java.version>0.2.17</wechatpay-java.version>
         <weixin-emoji.version>1.0.2</weixin-emoji.version>
-        <weixin-java.version>4.8.4-20260626.095153</weixin-java.version>
+        <weixin-java.version>4.8.5.B</weixin-java.version>
         <weixin-qrcode.version>1.2</weixin-qrcode.version>
         <wildfly-openssl.version>2.3.0.Final</wildfly-openssl.version>
         <wkhtmltopdf-invoker.version>3.0.x.20260630-SNAPSHOT</wkhtmltopdf-invoker.version>
