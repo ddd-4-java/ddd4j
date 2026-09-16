@@ -84,7 +84,10 @@
         <cglib.version>3.3.0</cglib.version>
         <checker-framework.version>3.55.1</checker-framework.version>
         <classgraph.version>4.8.184</classgraph.version>
+        <claudecode-java-sdk.version>1.0.x.20260630-SNAPSHOT</claudecode-java-sdk.version>
+        <codex-java-sdk.version>1.0.x.20260630-SNAPSHOT</codex-java-sdk.version>
         <cola.version>4.3.2</cola.version>
+        <comfy-java-sdk.version>1.0.x.20260630-SNAPSHOT</comfy-java-sdk.version>
         <commons-attributes-api.version>2.2</commons-attributes-api.version>
         <commons-attributes-compiler.version>2.2</commons-attributes-compiler.version>
         <commons-attributes.version>2.2</commons-attributes.version>
@@ -164,6 +167,7 @@
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer.version>5.5.1</dozer.version>
+        <dreamina-java-sdk.version>1.0.x.20260630-SNAPSHOT</dreamina-java-sdk.version>
         <dropwizard2-jersey.version>2.41</dropwizard2-jersey.version>
         <dropwizard2-metrics.version>4.2.25</dropwizard2-metrics.version>
         <!-- Dropwizard 2.1.12：Dropwizard 3+ 弃用 JDK8，2.x 为 javax/jetty9 线（BOM=dropwizard-bom；
@@ -236,6 +240,7 @@
         <hazelcast.version>5.6.0</hazelcast.version>
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
+        <hermes-java-sdk.version>1.0.x.20260630-SNAPSHOT</hermes-java-sdk.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <!-- 1.0.x 事件存储适配器：javax.persistence 线（Hibernate 5.6 为最后的 javax 版，JDK8 兼容） -->
         <hibernate5.version>5.6.15.Final</hibernate5.version>
@@ -359,6 +364,7 @@
         <!-- Kafka 4.x requires JDK11; feature/1.0.x uses the JDK8-compatible client line. -->
         <kafka.version>3.9.2</kafka.version>
         <kaptcha.version>0.0.9</kaptcha.version>
+        <kimi-java-sdk.version>1.0.x.20260630-SNAPSHOT</kimi-java-sdk.version>
         <kingbase8.version>8.6.0</kingbase8.version>
         <kisso.version>3.8.3</kisso.version>
         <knife4j.version>4.5.0</knife4j.version>
@@ -437,6 +443,9 @@
         <objenesis.version>3.5</objenesis.version>
         <okhttp.version>4.12.0</okhttp.version>
         <ons-client.version>1.8.8.Final</ons-client.version>
+        <openclaw-java-sdk.version>1.0.x.20260630-SNAPSHOT</openclaw-java-sdk.version>
+        <opencli-java-sdk.version>1.0.x.20260630-SNAPSHOT</opencli-java-sdk.version>
+        <opencode-java-sdk.version>1.0.x.20260630-SNAPSHOT</opencode-java-sdk.version>
         <openhtmltopdf.version>1.1.75</openhtmltopdf.version>
         <opentelemetry.version>1.57.0</opentelemetry.version>
         <opentest4j.version>1.3.0</opentest4j.version>
@@ -710,6 +719,51 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>claudecode-java-sdk</artifactId>
+                <version>${claudecode-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>codex-java-sdk</artifactId>
+                <version>${codex-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>comfy-java-sdk</artifactId>
+                <version>${comfy-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>dreamina-java-sdk</artifactId>
+                <version>${dreamina-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>hermes-java-sdk</artifactId>
+                <version>${hermes-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>kimi-java-sdk</artifactId>
+                <version>${kimi-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>openclaw-java-sdk</artifactId>
+                <version>${openclaw-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>opencli-java-sdk</artifactId>
+                <version>${opencli-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>opencode-java-sdk</artifactId>
+                <version>${opencode-java-sdk.version}</version>
+            </dependency>
             <!-- 在本层先导入既定 Spring 基线，防止后续 BOM 把组件拆成不同补丁版本。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
