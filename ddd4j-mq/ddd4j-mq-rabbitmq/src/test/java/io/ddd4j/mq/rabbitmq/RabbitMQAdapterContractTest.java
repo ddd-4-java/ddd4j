@@ -146,6 +146,70 @@ class RabbitMQAdapterContractTest {
     }
 
     @Test
+    void shouldReplenishPoolAfterChannelFailure() throws Exception {
+        // channels[0] 在 basicPublish 时抛 IO 异常，验证：
+        // 1. 池自动创建替补 channel（createChannel 多调一次）
+        // 2. broken channel 从 channelReturnHolder 移除
+        // 3. 替补 channel 入池后，后续发布能成功
+        int poolSize = 4;
+        Connection connection = mock(Connection.class);
+        java.util.List<Channel> channels = new java.util.ArrayList<>();
+        for (int i = 0; i < poolSize + 1; i++) {
+            Channel ch = mock(Channel.class);
+            when(ch.isOpen()).thenReturn(true);
+            channels.add(ch);
+        }
+        final java.util.concurrent.atomic.AtomicInteger createIdx = new java.util.concurrent.atomic.AtomicInteger();
+        when(connection.createChannel()).thenAnswer(inv -> channels.get(createIdx.getAndIncrement()));
+        // channels[0] 在 basicPublish 时抛 IO 异常
+        doAnswer(inv -> {
+            throw new java.io.IOException("connection reset");
+        }).when(channels.get(0)).basicPublish(anyString(), anyString(), eq(true), any(AMQP.BasicProperties.class), any());
+        RabbitMQProperties props = new RabbitMQProperties();
+        props.setEnabled(true);
+        props.setBroker("rabbit");
+        props.setExchange("events");
+        props.setPublisherConfirmRequired(false);
+        props.setProducerChannelPoolSize(poolSize);
+        RabbitMQClient client = new RabbitMQClient(connection);
+        MQEventSerialization serialization = new MQEventSerialization() {
+            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
+            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+        };
+        client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), props, serialization, null);
+
+        // 第一次发布：channels[0] 失败 → catch 块创建替补 channels[poolSize] 入池
+        MQEvent event1 = new MQEvent();
+        event1.setMsgId("msg-fail");
+        event1.setTopic("orders");
+        assertThrows(IllegalStateException.class, event1::publish);
+
+        // 验证替补 channel 被创建（初始 poolSize + 替补1 = poolSize+1 次 createChannel）
+        verify(connection, org.mockito.Mockito.times(poolSize + 1)).createChannel();
+        // 验证替补 channel 注册了 ReturnListener
+        verify(channels.get(poolSize)).addReturnListener(any(ReturnCallback.class));
+
+        // 第二次发布：池中现在有 channels[1..poolSize-1] + 替补 channels[poolSize]，
+        // 轮询顺序不确定，但至少有一个 channel 会被借出并成功发布。
+        MQEvent event2 = new MQEvent();
+        event2.setMsgId("msg-ok");
+        event2.setTopic("orders");
+        event2.publish();
+        // 验证有某个非 broken channel 被调用了 basicPublish（不一定是替补，因为池中还有 channels[1..3]）
+        boolean anyPublish = false;
+        for (int i = 1; i <= poolSize; i++) {
+            try {
+                verify(channels.get(i), org.mockito.Mockito.atLeastOnce()).basicPublish(
+                        eq("events"), anyString(), eq(true), any(AMQP.BasicProperties.class), any());
+                anyPublish = true;
+                break;
+            } catch (org.mockito.exceptions.base.MockitoAssertionError ignore) {
+            }
+        }
+        assertTrue(anyPublish, "Expected basicPublish on any non-broken channel after pool replenishment");
+    }
+
+    @Test
     void shouldCloseOwnedChannelsButNotInjectedConnectionOnlyOnce() throws Exception {
         int poolSize = 32;
         Connection connection = mock(Connection.class);

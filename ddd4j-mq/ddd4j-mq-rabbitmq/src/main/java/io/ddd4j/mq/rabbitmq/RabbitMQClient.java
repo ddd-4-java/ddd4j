@@ -133,8 +133,9 @@ public class RabbitMQClient implements MQClient {
         int poolSize = Objects.nonNull(rabbitProperties) ? rabbitProperties.getProducerChannelPoolSize() : 32;
         BlockingQueue<Channel> channelPool = new ArrayBlockingQueue<>(poolSize);
         Map<Channel, AtomicReference<Return>> channelReturnHolder = new ConcurrentHashMap<>();
-        for (int i = 0; i < poolSize; i++) {
-            try {
+        int created = 0;
+        try {
+            for (; created < poolSize; created++) {
                 Channel ch = connection().createChannel();
                 if (confirmRequired) {
                     ch.confirmSelect();
@@ -143,10 +144,16 @@ public class RabbitMQClient implements MQClient {
                 channelReturnHolder.put(ch, holder);
                 ch.addReturnListener(holder::set);
                 channelPool.offer(ch);
-                lifecycle.register("rabbit-producer-channel-" + i, () -> closeChannel(ch));
-            } catch (IOException e) {
-                throw new IllegalStateException("Failed to create RabbitMQ producer channel", e);
+                lifecycle.register("rabbit-producer-channel-" + created, () -> closeChannel(ch));
             }
+        } catch (IOException e) {
+            // 部分初始化失败：清理已创建的 channel 避免孤立资源
+            Channel leaked;
+            while ((leaked = channelPool.poll()) != null) {
+                closeChannel(leaked);
+            }
+            channelReturnHolder.clear();
+            throw new IllegalStateException("Failed to create RabbitMQ producer channel (created " + created + " of " + poolSize + ")", e);
         }
         String exchange = mqProperties.getExchange();
         return event -> {
@@ -191,8 +198,22 @@ public class RabbitMQClient implements MQClient {
                 channel = null;
             } catch (Exception e) {
                 // channel 异常（连接关闭、IO 错误）时**丢弃**而非归还——已损坏的 channel
-                // 会污染后续借用。Outbox 拿到 IllegalStateException 后会重试，
-                // broker 恢复后由外部组件触发 {@link #close} 重建池。
+                // 会污染后续借用。尝试创建替补 channel 维持池容量，避免反复失败后池耗尽。
+                channelReturnHolder.remove(channel);
+                try {
+                    Channel replacement = connection().createChannel();
+                    if (confirmRequired) {
+                        replacement.confirmSelect();
+                    }
+                    AtomicReference<Return> newHolder = new AtomicReference<>();
+                    channelReturnHolder.put(replacement, newHolder);
+                    replacement.addReturnListener(newHolder::set);
+                    channelPool.offer(replacement);
+                    log.info("Replaced broken RabbitMQ channel in pool (poolSize={})", channelPool.size());
+                } catch (Exception replaceEx) {
+                    log.warn("Failed to replace broken RabbitMQ channel in pool (poolSize={}): {}",
+                            channelPool.size(), replaceEx.getMessage());
+                }
                 throw new IllegalStateException("Publish RabbitMQ message failed: " + event.getMsgId(), e);
             }
         };
