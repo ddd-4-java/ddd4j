@@ -627,7 +627,7 @@
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
         <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
-        <undertow.version>2.3.20.Final</undertow.version>
+        <undertow.version>2.3.21.Final</undertow.version>
         <unirest-java.version>4.10.0</unirest-java.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
         <velocity.version>2.4.1</velocity.version>
