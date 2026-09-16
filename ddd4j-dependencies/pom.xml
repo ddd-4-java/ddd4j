@@ -92,8 +92,11 @@
         <checker-framework.version>3.55.1</checker-framework.version>
         <classgraph.version>4.8.184</classgraph.version>
         <classmate.version>1.7.1</classmate.version>
+        <claudecode-java-sdk.version>2.0.x.20260630-SNAPSHOT</claudecode-java-sdk.version>
         <clickhouse.version>0.9.8</clickhouse.version>
+        <codex-java-sdk.version>2.0.x.20260630-SNAPSHOT</codex-java-sdk.version>
         <cola.version>5.0.0</cola.version>
+        <comfy-java-sdk.version>2.0.x.20260630-SNAPSHOT</comfy-java-sdk.version>
         <commons-attributes-api.version>2.2</commons-attributes-api.version>
         <commons-attributes-compiler.version>2.2</commons-attributes-compiler.version>
         <commons-attributes.version>2.2</commons-attributes.version>
@@ -176,6 +179,7 @@
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer.version>5.5.1</dozer.version>
+        <dreamina-java-sdk.version>2.0.x.20260630-SNAPSHOT</dreamina-java-sdk.version>
         <dropwizard-bom.version>5.0.2</dropwizard-bom.version>
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
@@ -250,6 +254,7 @@
         <helidon-jakarta-interceptor.version>2.0.0</helidon-jakarta-interceptor.version>
         <helidon-jakarta-ws-rs.version>3.0.0</helidon-jakarta-ws-rs.version>
         <helidon-jersey.version>3.0.18</helidon-jersey.version>
+        <hermes-java-sdk.version>2.0.x.20260630-SNAPSHOT</hermes-java-sdk.version>
         <hermes-java-sdk.version>2.0.x.20260630-SNAPSHOT</hermes-java-sdk.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hibernate-validator.version>8.0.4.Final</hibernate-validator.version>
@@ -378,6 +383,7 @@
         <kafka.version>4.3.1</kafka.version>
         <kaptcha.version>0.0.9</kaptcha.version>
         <keycloak.version>26.0.11</keycloak.version>
+        <kimi-java-sdk.version>2.0.x.20260630-SNAPSHOT</kimi-java-sdk.version>
         <kingbase8.version>8.6.0</kingbase8.version>
         <kisso.version>3.9.5</kisso.version>
         <knife4j.version>4.5.0</knife4j.version>
@@ -458,6 +464,9 @@
         <okhttp3-metrics-prometheus.version>2.0.x.20260630-SNAPSHOT</okhttp3-metrics-prometheus.version>
         <okhttp.version>4.12.0</okhttp.version>
         <ons-client.version>2.0.11.Final</ons-client.version>
+        <openclaw-java-sdk.version>2.0.x.20260630-SNAPSHOT</openclaw-java-sdk.version>
+        <opencli-java-sdk.version>2.0.x.20260630-SNAPSHOT</opencli-java-sdk.version>
+        <opencode-java-sdk.version>2.0.x.20260630-SNAPSHOT</opencode-java-sdk.version>
         <opencv-sdk.version>2.0.x.20260630-SNAPSHOT</opencv-sdk.version>
         <openhtmltopdf.version>1.1.75</openhtmltopdf.version>
         <opensearch.version>3.9.0</opensearch.version>
@@ -849,6 +858,36 @@
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/alibaba-dingtalk-service-sdk -->
             <!-- 阿里云钉钉开放平台 SDK：用于发送工作通知、群消息、OA 审批、回调加解密等企业 IM 集成能力。 -->
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>claudecode-java-sdk</artifactId>
+                <version>${claudecode-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>codex-java-sdk</artifactId>
+                <version>${codex-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>comfy-java-sdk</artifactId>
+                <version>${comfy-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>dreamina-java-sdk</artifactId>
+                <version>${dreamina-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>hermes-java-sdk</artifactId>
+                <version>${hermes-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>kimi-java-sdk</artifactId>
+                <version>${kimi-java-sdk.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.aliyun</groupId>
                 <artifactId>alibaba-dingtalk-service-sdk</artifactId>
@@ -4872,6 +4911,21 @@
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>${jakarta.ws.rs-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>openclaw-java-sdk</artifactId>
+                <version>${openclaw-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>opencli-java-sdk</artifactId>
+                <version>${opencli-java-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>opencode-java-sdk</artifactId>
+                <version>${opencode-java-sdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
