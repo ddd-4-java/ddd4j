@@ -729,7 +729,7 @@
         <xnio-netty-transport.version>0.1.10.Final</xnio-netty-transport.version>
         <xnio.version>3.8.17.Final</xnio.version>
         <xstream.version>1.4.21</xstream.version>
-        <xxl-job.version>3.4.2</xxl-job.version>
+        <xxl-job.version>3.3.2</xxl-job.version>
         <xxljob-extension.version>2.0.x.20260630-SNAPSHOT</xxljob-extension.version>
         <yasson.version>3.0.4</yasson.version>
         <zip4j.version>2.11.6</zip4j.version>
