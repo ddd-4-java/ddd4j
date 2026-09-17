@@ -686,7 +686,10 @@
         <tika-bom.version>3.3.2</tika-bom.version>
         <tio.version>3.8.6.v20240801-RELEASE</tio.version>
         <token-bucket.version>1.7</token-bucket.version>
-        <tomcat.version>11.0.15</tomcat.version>
+        <!-- 11.0.25：修复 2026 年披露的 16 条 Tomcat CVE（CVE-2026-24734/24880/29145/34483/
+             65905/65182/68525/43512~43515/41284/41293/25854/32990/34487 等，含请求走私与
+             OCSP 绕过），OSV 按 tomcat-embed-core 11.0.15 实测命中并逐条核对修复门槛 -->
+        <tomcat.version>11.0.25</tomcat.version>
         <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
         <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
         <tongweb.version>7.0.E.6_P5</tongweb.version>
