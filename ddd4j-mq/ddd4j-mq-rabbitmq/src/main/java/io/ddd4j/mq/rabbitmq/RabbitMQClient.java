@@ -198,8 +198,8 @@ public class RabbitMQClient implements MQClient {
                 channel = null;
             } catch (Exception e) {
                 // channel 异常（连接关闭、IO 错误）时**丢弃**而非归还——已损坏的 channel
-                // 会污染后续借用。尝试创建替补 channel 维持池容量，避免反复失败后池耗尽。
-                channelReturnHolder.remove(channel);
+                // 会污染后续借用。先尝试创建替补 channel，成功后才移除旧 channel 的 holder，
+                // 保证池容量不缩减；替补失败时才 remove（此时旧 channel 已从池中取出，不会被误用）。
                 try {
                     Channel replacement = connection().createChannel();
                     if (confirmRequired) {
@@ -209,8 +209,15 @@ public class RabbitMQClient implements MQClient {
                     channelReturnHolder.put(replacement, newHolder);
                     replacement.addReturnListener(newHolder::set);
                     channelPool.offer(replacement);
+                    lifecycle.register("rabbit-producer-channel-replaced", () -> closeChannel(replacement));
+                    // 替补创建成功后才移除旧 channel 的 return holder
+                    channelReturnHolder.remove(channel);
                     log.info("Replaced broken RabbitMQ channel in pool (poolSize={})", channelPool.size());
                 } catch (Exception replaceEx) {
+                    // 替补也失败：旧 channel 已损坏，仅移除其 return holder
+                    // 此时旧 channel 未归还池中（在 borrow 时已取出），池净减1
+                    // 但不会级联缩减——只有当前这一个 channel 被移除
+                    channelReturnHolder.remove(channel);
                     log.warn("Failed to replace broken RabbitMQ channel in pool (poolSize={}): {}",
                             channelPool.size(), replaceEx.getMessage());
                 }
