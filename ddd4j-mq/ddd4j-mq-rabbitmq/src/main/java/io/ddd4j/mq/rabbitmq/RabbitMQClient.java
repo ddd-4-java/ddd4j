@@ -209,7 +209,7 @@ public class RabbitMQClient implements MQClient {
                     channelReturnHolder.put(replacement, newHolder);
                     replacement.addReturnListener(newHolder::set);
                     channelPool.offer(replacement);
-                    lifecycle.register("rabbit-producer-channel-replaced", () -> closeChannel(replacement));
+                    lifecycle.register("rabbit-producer-channel-replaced-" + System.identityHashCode(replacement), () -> closeChannel(replacement));
                     // 替补创建成功后才移除旧 channel 的 return holder
                     channelReturnHolder.remove(channel);
                     log.info("Replaced broken RabbitMQ channel in pool (poolSize={})", channelPool.size());
