@@ -44,18 +44,17 @@ echo -e "${YELLOW}① 校验所有子模块使用 \${revision} 版本占位符${
 fail_count=0
 total_modules=0
 
-for pom in $(find . -name "pom.xml" -not -path "*/target/*" -not -path "*/node_modules/*" -not -path "*/.flattened-pom.xml"); do
+while IFS= read -r pom; do
     total_modules=$((total_modules + 1))
     # 找所有 ddd4j-* 工件的版本号
     bad_versions=$(grep -E "<artifactId>ddd4j-" "$pom" 2>/dev/null | \
         grep -A1 "</artifactId>" | grep "<version>" | \
-        grep -vE "\\\${revision}|\\\${project.version}" | \
-        wc -l)
+        grep -vcE "\\\${revision}|\\\${project.version}")
     if [ "$bad_versions" -gt 0 ]; then
         echo -e "${RED}  ❌ $pom 包含 $bad_versions 个硬编码 ddd4j-* 版本${NC}"
         fail_count=$((fail_count + 1))
     fi
-done
+done < <(find . -name "pom.xml" -not -path "*/target/*" -not -path "*/node_modules/*" -not -path "*/.flattened-pom.xml")
 
 echo ""
 echo -e "${YELLOW}② 校验关键 ddd4j-* 工件在 BOM 中存在（警告级，非阻塞）${NC}"
