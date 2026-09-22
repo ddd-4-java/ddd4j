@@ -4,7 +4,7 @@ set -uo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHECKSTYLE_CONFIG="${ROOT_DIR}/tools/checkstyle/need-braces-checkstyle.xml"
 
-cd "${ROOT_DIR}"
+cd "${ROOT_DIR}" || exit
 
 JAVA_FILES=()
 while IFS= read -r file; do
