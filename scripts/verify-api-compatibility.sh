@@ -80,7 +80,7 @@ fi
 failures=0
 for current_jar in "${current_jars[@]}"; do
     jar_name="$(basename "${current_jar}")"
-    artifact_id="${jar_name%-${CURRENT_VERSION}.jar}"
+    artifact_id="${jar_name%-"${CURRENT_VERSION}".jar}"
     if [[ "${artifact_id}" == "${jar_name}" ]]; then
         echo "[FAIL] Cannot derive artifactId from ${current_jar}." >&2
         failures=$((failures + 1))
