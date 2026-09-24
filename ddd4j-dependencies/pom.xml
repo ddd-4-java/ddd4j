@@ -70,7 +70,7 @@
         <bcmail.version>${bcprov.version}</bcmail.version>
         <bcpg.version>${bcprov.version}</bcpg.version>
         <bcpkix.version>${bcprov.version}</bcpkix.version>
-        <bcprov.version>1.84</bcprov.version>
+        <bcprov.version>1.86</bcprov.version>
         <bctls.version>${bcprov.version}</bctls.version>
         <beetl.version>3.21.2.RELEASE</beetl.version>
         <berkeley-je.version>18.3.12</berkeley-je.version>
