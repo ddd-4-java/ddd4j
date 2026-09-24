@@ -3,8 +3,12 @@
 > **文档说明**：ddd4j 提供的领域抽象与契约。覆盖战术设计要素（聚合、实体、值对象、领域事件、仓储、查询）、CQRS 抽象（Command / View / Projection）、EventStore 抽象、上下文边界与跨进程事件契约。
 >
 > **版本**：V1.0.0
-> **最后更新**：2026-09-18
-> **对齐代码 HEAD**：`41f690b7`
+> **最后更新**：2026-09-24
+> **对齐代码 HEAD**：`41f690b7`（1.0.x）/ `60984788`（2.0.x）/ `1471e2ca`（3.0.x）
+>
+> **在决策链中的位置**：**Domain** = **Domain**（做什么）→ Tech Plan（怎么做）→ Product Plan（什么时候做、谁来做）→ Architecture（在哪里做）。
+> - 下游：[`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) — 如何实现这些抽象
+> - 终态：[`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) — 抽象落到哪些模块
 
 ---
 
@@ -299,6 +303,7 @@ ddd4j 默认推荐**异步事件 + Outbox + MQ**。
 
 - [`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) · 系统架构
 - [`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) · 当前技术方案
+- [`6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md) · **三轨版本矩阵 · 升级路径 · 技术兼容性矩阵**
 - [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构
 - [`docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md`](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md) · 架构边界规范
 - [`docs/ddd/DDD%20思维导图.md`](./docs/ddd/DDD%20思维导图.md) · DDD 战略+战术

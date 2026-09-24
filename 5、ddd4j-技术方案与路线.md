@@ -3,8 +3,13 @@
 > **文档说明**：ddd4j 当前阶段的工程方案与路线图。覆盖三轨版本治理、MQ 启动生命周期、License Gate Hardening、ArchUnit 边界持续守护四个并行技术方向。每条方案给出选型理由、任务分解、ADR、风险与回滚点。
 >
 > **版本**：V1.0.0
-> **最后更新**：2026-09-18
-> **对齐代码 HEAD**：`41f690b7`
+> **最后更新**：2026-09-24
+> **对齐代码 HEAD**：`41f690b7`（1.0.x）/ `60984788`（2.0.x）/ `1471e2ca`（3.0.x）
+>
+> **在决策链中的位置**：**Tech Plan** = Domain（做什么）→ **Tech Plan**（怎么做）→ Product Plan（什么时候做、谁来做）→ Architecture（在哪里做）。
+> - 上游：[`7、ddd4j-领域模型设计.md`](./7、ddd4j-领域模型设计.md) — 抽象与契约
+> - 下游：[`6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md) — 何时做、谁来做
+> - 终态：[`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) — 在哪里做
 
 ---
 
@@ -298,6 +303,7 @@ gantt
 ## 9. 相关文档
 
 - [`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) · 系统架构
+- [`6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md) · **三轨版本矩阵 · 升级路径 · 技术兼容性矩阵**
 - [`7、ddd4j-领域模型设计.md`](./7、ddd4j-领域模型设计.md) · 领域模型
 - [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构 + 三线差异表
 - [`docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](./docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md) · MQ 启动生命周期实施计划

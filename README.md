@@ -415,6 +415,7 @@ order-service/
 |:---|:---|
 | [8、ddd4j-Architecture.zh_CN.md](./8、ddd4j-Architecture.zh_CN.md) | 系统架构设计（分层、运行时、依赖、安全、部署） |
 | [5、ddd4j-技术方案与路线.md](./5、ddd4j-技术方案与路线.md) | 当前进行中的 MQ 启动生命周期 + License Gate Hardening 技术方案 |
+| [6、ddd4j-产品与版本规划.md](./6、ddd4j-产品与版本规划.md) | **三轨版本治理 · 升级路径 · 技术兼容性矩阵 · 支持窗口** |
 | [7、ddd4j-领域模型设计.md](./7、ddd4j-领域模型设计.md) | 限界上下文、聚合、事件契约 |
 | [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) | 1.0.x 版本级架构与三线差异表 |
 | [docs/superpowers/specs/2026-07-15-current-source-architecture-design.md](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md) | 当前源码架构导览（CodeGraph） |

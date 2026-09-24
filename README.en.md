@@ -282,6 +282,7 @@ Dependency direction: `adapter → app → domain ← infrastructure`.
 |:---|:---|
 | [8、ddd4j-Architecture.zh_CN.md](./8、ddd4j-Architecture.zh_CN.md) | System architecture (layers, runtime, deps, security, deployment) |
 | [5、ddd4j-技术方案与路线.md](./5、ddd4j-技术方案与路线.md) | Current technical plan: MQ startup lifecycle + License Gate Hardening + three-line alignment |
+| [6、ddd4j-产品与版本规划.md](./6、ddd4j-产品与版本规划.md) | **Three-line governance · upgrade paths · tech compatibility matrix · support window** |
 | [7、ddd4j-领域模型设计.md](./7、ddd4j-领域模型设计.md) | Bounded contexts, aggregates, event contracts |
 | [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) | 1.0.x version-level architecture with three-line diff table |
 | [docs/superpowers/specs/2026-07-15-current-source-architecture-design.md](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md) | Current source-code architecture tour (CodeGraph) |
