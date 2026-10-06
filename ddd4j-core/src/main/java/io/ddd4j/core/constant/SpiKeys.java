@@ -53,7 +53,7 @@ public final class SpiKeys {
      */
     public static final String I18N_PROVIDER = PREFIX + "i18n.I18nProvider";
     /**
-     * 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.cqrs.query.CommandExecutorRegistry}
+     * 命令执行器注册表 SPI key，对应 {@code io.ddd4j.core.cqrs.command.CommandRegistry}
      */
     public static final String COMMAND_EXECUTOR_REGISTRY = PREFIX + "cqrs.CommandExecutorRegistry";
     /**
