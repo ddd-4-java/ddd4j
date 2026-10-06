@@ -45,8 +45,8 @@
         <docker.registry.host>registry.ddd4j.io</docker.registry.host>
         <!-- Docker 登录用户名 -->
         <docker.registry.username>ddd4j</docker.registry.username>
-        <!-- Docker 登录密码（$ 需要转义为 $$） -->
-        <docker.registry.password>$$L3fhAhD9e9#nDYV</docker.registry.password>
+        <!-- Docker 登录密码（通过环境变量 DOCKER_REGISTRY_PASSWORD 注入，禁止明文入库） -->
+        <docker.registry.password>${env.DOCKER_REGISTRY_PASSWORD}</docker.registry.password>
         <!-- buildx builder 名称（与 Jenkins 保持一致） -->
         <docker.buildx.builder.name>ddd4j-builder</docker.buildx.builder.name>
         <!-- buildkit 镜像（与 Jenkins 保持一致） -->
