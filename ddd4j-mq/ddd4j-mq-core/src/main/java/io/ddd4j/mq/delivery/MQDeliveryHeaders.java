@@ -18,6 +18,10 @@ package io.ddd4j.mq.delivery;
  * 可靠投递的跨 Broker 标准消息头。
  *
  * <p>所有生产端都必须写入 {@link #MESSAGE_ID}；消费端据此实现 Inbox 去重。
+ *
+ * <p>因果元数据 header（{@link #CORRELATION_ID}/{@link #CAUSATION_ID}）是对外冻结契约：
+ * header 为权威来源，payload 内嵌字段为迁移期镜像（对应 OpenSpec change
+ * {@code promote-causality-to-broker-headers}，Requirement: Causality in broker headers）。
  */
 public final class MQDeliveryHeaders {
 
@@ -25,6 +29,20 @@ public final class MQDeliveryHeaders {
      * 稳定的业务消息标识，不能使用 broker 分配的瞬时投递标识替代。
      */
     public static final String MESSAGE_ID = "ddd4j-message-id";
+
+    /**
+     * 因果链关联 ID broker header（冻结命名，header 权威值）。
+     *
+     * <p>任意语言的消费方可直接从 broker headers 提取，无需解析 payload。
+     */
+    public static final String CORRELATION_ID = "X-Correlation-Id";
+
+    /**
+     * 因果链因果 ID broker header（冻结命名，header 权威值）。
+     *
+     * <p>任意语言的消费方可直接从 broker headers 提取，无需解析 payload。
+     */
+    public static final String CAUSATION_ID = "X-Causation-Id";
 
     private MQDeliveryHeaders() {
     }

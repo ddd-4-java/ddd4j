@@ -15,16 +15,20 @@
 package io.ddd4j.mq.event;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -106,12 +110,52 @@ public class MQEvent implements Serializable {
      * 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定
      */
     private String namespace;
+    /**
+     * 因果链关联 ID，broker header {@code X-Correlation-Id} 的权威值来源。
+     *
+     * <p>{@code @JsonIgnore}：外层载体 JSON 不重复承载因果元数据，
+     * payload 内嵌字段（既有 {@code correlation-id}）才是迁移期镜像（Requirement: Causality in broker headers）。
+     */
+    @JsonIgnore
+    protected String correlationId;
+    /**
+     * 因果链因果 ID，broker header {@code X-Causation-Id} 的权威值来源。
+     *
+     * <p>{@code @JsonIgnore}：同 {@link #correlationId}，外层 JSON 不双写。
+     */
+    @JsonIgnore
+    protected String causationId;
 
     /**
      * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。
      */
     public boolean supports(List<String> supports) {
         return supports.contains(match());
+    }
+
+    /**
+     * 返回 broker header 视图：跨语言消费方可直接提取的权威元数据。
+     *
+     * <p>key 采用冻结命名的 broker header（message-id / {@code X-Correlation-Id} / {@code X-Causation-Id}），
+     * 各 broker 适配实现遍历本 Map 写入原生消息头。仅包含非空项，无因果元数据时不产生因果 header。
+     *
+     * <p>对应 spec Requirement: Causality in broker headers（OpenSpec change
+     * {@code promote-causality-to-broker-headers}）。
+     *
+     * @return 不可变 broker header 视图（key 为 header 名，value 为 header 值）
+     */
+    public Map<String, String> headerMap() {
+        Map<String, String> headers = new LinkedHashMap<String, String>();
+        if (StrKit.isNotEmpty(msgId)) {
+            headers.put(MQDeliveryHeaders.MESSAGE_ID, msgId);
+        }
+        if (StrKit.isNotEmpty(correlationId)) {
+            headers.put(MQDeliveryHeaders.CORRELATION_ID, correlationId);
+        }
+        if (StrKit.isNotEmpty(causationId)) {
+            headers.put(MQDeliveryHeaders.CAUSATION_ID, causationId);
+        }
+        return Collections.unmodifiableMap(headers);
     }
 
     /**

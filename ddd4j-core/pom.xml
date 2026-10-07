@@ -75,6 +75,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <!-- 测试期 slf4j 绑定：TraceContextBridge 的 MDC 双写单测依赖真实 MDC 实现
+             （slf4j-simple 的 MDC 为 NOP 适配器，须用 logback-classic） -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- For Jackson JSR310（LocalDateTime 序列化） -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>

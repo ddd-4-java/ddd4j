@@ -21,7 +21,6 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
-import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -35,6 +34,7 @@ import org.apache.kafka.common.TopicPartition;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -143,9 +143,11 @@ public class KafkaMQClient implements MQClient {
             String topic = resolveTopic(mqEvent, mqProperties);
             String key = partitionKey(mqEvent);
             ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, payload);
-            if (Objects.nonNull(mqEvent.getMsgId())) {
-                record.headers().add(MessageHeaders.HEADER_MESSAGE_ID,
-                        mqEvent.getMsgId().getBytes(StandardCharsets.UTF_8));
+            // broker header 双写：header 权威、payload 镜像；非 Java 消费方从 headers 直接提取因果元数据
+            // （对应 spec Requirement: Causality in broker headers）
+            for (Map.Entry<String, String> headerEntry : mqEvent.headerMap().entrySet()) {
+                record.headers().add(headerEntry.getKey(),
+                        headerEntry.getValue().getBytes(StandardCharsets.UTF_8));
             }
             try {
                 // Outbox 只有在 broker 确认后才能标记成功；异步回调不能作为同步发布契约。
