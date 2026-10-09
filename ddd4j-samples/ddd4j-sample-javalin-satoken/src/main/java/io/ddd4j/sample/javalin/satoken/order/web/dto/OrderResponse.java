@@ -39,15 +39,6 @@ public class OrderResponse {
     String currency;
     List<OrderLineResponse> lines;
 
-    public String id() { return id; }
-    public String orderNo() { return orderNo; }
-    public String buyerId() { return buyerId; }
-    public String buyerName() { return buyerName; }
-    public OrderStatus status() { return status; }
-    public String totalAmount() { return totalAmount; }
-    public String currency() { return currency; }
-    public List<OrderLineResponse> lines() { return lines; }
-
     public static OrderResponse from(Order order) {
         Money total = order.totalAmount();
         List<OrderLineResponse> lineResponses = order.lines().stream()
@@ -65,6 +56,38 @@ public class OrderResponse {
         );
     }
 
+    public String id() {
+        return id;
+    }
+
+    public String orderNo() {
+        return orderNo;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
+
+    public OrderStatus status() {
+        return status;
+    }
+
+    public String totalAmount() {
+        return totalAmount;
+    }
+
+    public String currency() {
+        return currency;
+    }
+
+    public List<OrderLineResponse> lines() {
+        return lines;
+    }
+
     @Value
     public static class OrderLineResponse {
         String id;
@@ -73,13 +96,6 @@ public class OrderResponse {
         int quantity;
         String unitPrice;
         String currency;
-
-        public String id() { return id; }
-        public String goodsId() { return goodsId; }
-        public String goodsName() { return goodsName; }
-        public int quantity() { return quantity; }
-        public String unitPrice() { return unitPrice; }
-        public String currency() { return currency; }
 
         public static OrderLineResponse from(OrderLine line) {
             return new OrderLineResponse(
@@ -90,6 +106,30 @@ public class OrderResponse {
                     line.unitPrice().amount().toPlainString(),
                     line.unitPrice().currency()
             );
+        }
+
+        public String id() {
+            return id;
+        }
+
+        public String goodsId() {
+            return goodsId;
+        }
+
+        public String goodsName() {
+            return goodsName;
+        }
+
+        public int quantity() {
+            return quantity;
+        }
+
+        public String unitPrice() {
+            return unitPrice;
+        }
+
+        public String currency() {
+            return currency;
         }
     }
 }

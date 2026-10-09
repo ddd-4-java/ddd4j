@@ -25,9 +25,28 @@ import java.math.BigDecimal;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateGoodsRequest {
-    private String code; private String name; private BigDecimal price; private Integer stock;
-    public String code() { return code; } public String name() { return name; }
-    public BigDecimal price() { return price; } public Integer stock() { return stock; }
+    private String code;
+    private String name;
+    private BigDecimal price;
+    private Integer stock;
+
+    public String code() {
+        return code;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public BigDecimal price() {
+        return price;
+    }
+
+    public Integer stock() {
+        return stock;
+    }
 }

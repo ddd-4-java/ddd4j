@@ -18,18 +18,17 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKitRegistrationScope;
-import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * Micronaut 容器与 ddd4j 全局 SPI 的生命周期桥梁。

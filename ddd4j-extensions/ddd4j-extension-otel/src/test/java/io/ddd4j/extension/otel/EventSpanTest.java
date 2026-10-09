@@ -19,11 +19,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import java.util.Arrays;
 
 /**
  * {@link EventSpan} 领域事件/CQRS span 测试（无 SDK 依赖，纯行为验证）。

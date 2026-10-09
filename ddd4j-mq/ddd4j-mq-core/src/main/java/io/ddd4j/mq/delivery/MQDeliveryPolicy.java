@@ -38,11 +38,11 @@ public final class MQDeliveryPolicy {
     private final Duration maxBackoff;
     private final double jitterFactor;
 
-/**
- * 可靠消息的租约和退避策略。
- *
- * <p>默认值采用 60 秒租约、12 次最多尝试，以及 1 秒到 5 分钟的指数退避。
- */
+    /**
+     * 可靠消息的租约和退避策略。
+     *
+     * <p>默认值采用 60 秒租约、12 次最多尝试，以及 1 秒到 5 分钟的指数退避。
+     */
 
     public MQDeliveryPolicy(Duration leaseDuration, int maxAttempts, Duration initialBackoff,
                             Duration maxBackoff, double jitterFactor) {
@@ -69,6 +69,16 @@ public final class MQDeliveryPolicy {
         this.initialBackoff = initialBackoff;
         this.maxBackoff = maxBackoff;
         this.jitterFactor = jitterFactor;
+    }
+
+    /**
+     * 返回生产环境默认投递策略。
+     *
+     * @return 默认策略
+     */
+    public static MQDeliveryPolicy productionDefault() {
+        return new MQDeliveryPolicy(DEFAULT_LEASE_DURATION, DEFAULT_MAX_ATTEMPTS,
+                DEFAULT_INITIAL_BACKOFF, DEFAULT_MAX_BACKOFF, DEFAULT_JITTER_FACTOR);
     }
 
     public Duration leaseDuration() {
@@ -121,20 +131,10 @@ public final class MQDeliveryPolicy {
     }
 
     /**
-     * 返回生产环境默认投递策略。
-     *
-     * @return 默认策略
-     */
-    public static MQDeliveryPolicy productionDefault() {
-        return new MQDeliveryPolicy(DEFAULT_LEASE_DURATION, DEFAULT_MAX_ATTEMPTS,
-                DEFAULT_INITIAL_BACKOFF, DEFAULT_MAX_BACKOFF, DEFAULT_JITTER_FACTOR);
-    }
-
-    /**
      * 计算某次失败后的下一次可投递时间。
      *
-     * @param attempts 已完成的发送尝试次数，从 1 开始
-     * @param failedAt 失败发生时间
+     * @param attempts           已完成的发送尝试次数，从 1 开始
+     * @param failedAt           失败发生时间
      * @param randomUnitInterval [0, 1] 的随机值，由调用方提供以保持测试可重复
      * @return 带抖动的下一次可投递时间
      */

@@ -14,9 +14,6 @@
  */
 package io.ddd4j.data.cqrs.javalin;
 
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -26,10 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -69,7 +63,8 @@ class JavalinCommandBusIT {
 
     @BeforeEach
     void startJavalin() {
-        app = Javalin.create(cfg -> { }).start(0);
+        app = Javalin.create(cfg -> {
+        }).start(0);
     }
 
     @AfterEach

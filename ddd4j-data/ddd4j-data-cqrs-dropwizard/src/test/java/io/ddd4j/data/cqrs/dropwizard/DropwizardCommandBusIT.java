@@ -14,27 +14,21 @@
  */
 package io.ddd4j.data.cqrs.dropwizard;
 
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -95,16 +89,6 @@ class DropwizardCommandBusIT {
     }
 
     /**
-     * 每用例独立装配总线（构造即快照、无共享可变状态），保持用例间隔离。
-     * 发现轨为真实 JDK {@link ServiceLoader}（{@link #discover}）。
-     *
-     * @return 经真实 ServiceLoader 发现装配的总线
-     */
-    private DropwizardCommandBus assemble() {
-        return DropwizardCommandBus.create(support.getApplication(), discover());
-    }
-
-    /**
      * 真实发现轨：迭代 test classpath 的
      * {@code META-INF/services/io.ddd4j.core.cqrs.command.CommandExecutor} 声明成
      * 候选集合（本方法即 raw 泛型收口点，集成方同款接法见
@@ -138,6 +122,16 @@ class DropwizardCommandBusIT {
         adminConnector.setPort(0);
         serverFactory.setAdminConnectors(Collections.singletonList(adminConnector));
         return configuration;
+    }
+
+    /**
+     * 每用例独立装配总线（构造即快照、无共享可变状态），保持用例间隔离。
+     * 发现轨为真实 JDK {@link ServiceLoader}（{@link #discover}）。
+     *
+     * @return 经真实 ServiceLoader 发现装配的总线
+     */
+    private DropwizardCommandBus assemble() {
+        return DropwizardCommandBus.create(support.getApplication(), discover());
     }
 
     @Test

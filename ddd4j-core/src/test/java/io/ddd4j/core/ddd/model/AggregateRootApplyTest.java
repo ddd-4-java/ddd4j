@@ -14,24 +14,14 @@
  */
 package io.ddd4j.core.ddd.model;
 
-import java.util.Objects;
-import java.util.Arrays;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventHandler;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link AggregateRoot#apply(DomainEvent)} 与 {@link AggregateRoot#loadFromHistory(List)}
@@ -136,29 +126,37 @@ class AggregateRootApplyTest {
 
         OrderCreatedEvent() {
             super(new EntityIdPath(new OrderId("order-1")));
-        }static final class OrderId implements EntityId {
-        private final String value;
+        }
 
-        public OrderId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof OrderId)) return false;
-            OrderId other = (OrderId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-        @Override
-        public String toString() {
-            return "OrderId{" + "value=" + value + "}";
-        }
+        static final class OrderId implements EntityId {
             private static final EntityType TYPE = new StringEntityType("Order");
+            private final String value;
+
+            public OrderId(String value) {
+                this.value = value;
+            }
+
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (!(o instanceof OrderId)) return false;
+                OrderId other = (OrderId) o;
+                return Objects.equals(this.value, other.value);
+            }
+
+            @Override
+            public int hashCode() {
+                return java.util.Objects.hash(value);
+            }
+
+            @Override
+            public String toString() {
+                return "OrderId{" + "value=" + value + "}";
+            }
 
             @Override
             public EntityType getType() {
@@ -174,8 +172,8 @@ class AggregateRootApplyTest {
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
             }
-        
-    }
+
+        }
     }
 
     static class OrderNotifiedEvent extends DomainEvent<OrderCreatedEvent.OrderId> {

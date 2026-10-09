@@ -31,7 +31,15 @@ public class CreateOrderRequest {
     private String buyerId;
     private String buyerName;
 
-    public String orderNo() { return orderNo; }
-    public String buyerId() { return buyerId; }
-    public String buyerName() { return buyerName; }
+    public String orderNo() {
+        return orderNo;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
 }

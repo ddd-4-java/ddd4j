@@ -14,12 +14,7 @@
  */
 package io.ddd4j.core.cqrs.command;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -67,8 +62,8 @@ public class CommandRegistry {
      * {@link IllegalStateException}，且本执行器声明的所有类型都不落库。
      *
      * @param executor 命令执行器，非空
-     * @throws NullPointerException     executor 为 null
-     * @throws IllegalStateException    任一命令类型已被注册（消息含命令类型全限定名）
+     * @throws NullPointerException  executor 为 null
+     * @throws IllegalStateException 任一命令类型已被注册（消息含命令类型全限定名）
      */
     public void register(CommandExecutor<?> executor) {
         CommandExecutor<?> actual = Objects.requireNonNull(executor, "executor must not be null");
@@ -107,7 +102,7 @@ public class CommandRegistry {
      * @param commandType 命令类型，非空
      * @param <C>         命令类型泛型
      * @return 对应执行器；未注册返回 {@code null}（未注册命令的报错由
-     *         {@link io.ddd4j.core.cqrs.command.CommandBus} 层负责抛出）
+     * {@link io.ddd4j.core.cqrs.command.CommandBus} 层负责抛出）
      * @throws NullPointerException commandType 为 null
      */
     @SuppressWarnings("unchecked")

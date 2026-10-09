@@ -33,15 +33,15 @@ public final class ProjectionRunInfo {
     private final int lastEventCount;
     private final String lastError;
 
-/**
- * 投影最近一次运行的快照信息（由 {@link ProjectionMetrics} 实现方记录）。
- *
- * @param lastRunAt      上次运行完成时间
- * @param lastEventCount 上次运行处理的事件数量
- * @param lastError      上次运行失败的错误信息（成功时为 null）
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
+    /**
+     * 投影最近一次运行的快照信息（由 {@link ProjectionMetrics} 实现方记录）。
+     *
+     * @param lastRunAt      上次运行完成时间
+     * @param lastEventCount 上次运行处理的事件数量
+     * @param lastError      上次运行失败的错误信息（成功时为 null）
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
 
     public ProjectionRunInfo(Instant lastRunAt, int lastEventCount, String lastError) {
         this.lastRunAt = lastRunAt;
@@ -49,18 +49,38 @@ public final class ProjectionRunInfo {
         this.lastError = lastError;
     }
 
-    public Instant getLastRunAt() { return lastRunAt; }
-    public int getLastEventCount() { return lastEventCount; }
-    public String getLastError() { return lastError; }
+    public Instant getLastRunAt() {
+        return lastRunAt;
+    }
 
-    /** 返回最近运行时间，与 bean getter 保持同一值。 */
-    public Instant lastRunAt() { return lastRunAt; }
+    public int getLastEventCount() {
+        return lastEventCount;
+    }
 
-    /** 返回最近处理事件数。 */
-    public int lastEventCount() { return lastEventCount; }
+    public String getLastError() {
+        return lastError;
+    }
 
-    /** 返回最近错误信息，成功时可为空。 */
-    public String lastError() { return lastError; }
+    /**
+     * 返回最近运行时间，与 bean getter 保持同一值。
+     */
+    public Instant lastRunAt() {
+        return lastRunAt;
+    }
+
+    /**
+     * 返回最近处理事件数。
+     */
+    public int lastEventCount() {
+        return lastEventCount;
+    }
+
+    /**
+     * 返回最近错误信息，成功时可为空。
+     */
+    public String lastError() {
+        return lastError;
+    }
 
     @Override
     public boolean equals(Object o) {

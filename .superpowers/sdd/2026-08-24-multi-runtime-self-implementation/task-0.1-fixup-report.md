@@ -50,8 +50,8 @@ index 0cd8121c..451d9db4 100644
 ### Pre-edit dead-property check
 
 `grep -rn "fuin-cqrs4j" --include=*.{xml,gradle,properties,java,kt}` across the repo
-returned exactly one hit: the property's own definition at line 85. Confirmed dead
-(zero consumers), so deletion is build-safe.
+returned exactly one hit: the property's own definition at line 85. Confirmed dead (zero consumers), so deletion is
+build-safe.
 
 ### Grep gate (Task 9.2 prerequisite)
 

@@ -16,11 +16,7 @@ package io.ddd4j.sample.dropwizard.cqrs;
 
 import io.ddd4j.sample.dropwizard.cqrs.web.OrderResource;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -42,10 +38,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Dropwizard Order CQRS 集成测试")
 class DropwizardOrderCqrsIT {
 
-    private static boolean resourcesStarted;
     private static final ResourceExtension RESOURCES = ResourceExtension.builder()
             .addResource(new OrderResource())
             .build();
+    private static boolean resourcesStarted;
 
     @BeforeAll
     static void startResources() throws Throwable {
@@ -58,6 +54,14 @@ class DropwizardOrderCqrsIT {
         if (resourcesStarted) {
             RESOURCES.after();
         }
+    }
+
+    private static Map<String, Object> orderRequest(String orderNo, String buyerId, String buyerName) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("orderNo", orderNo);
+        request.put("buyerId", buyerId);
+        request.put("buyerName", buyerName);
+        return request;
     }
 
     @BeforeEach
@@ -110,13 +114,5 @@ class DropwizardOrderCqrsIT {
                 .post(Entity.json(orderRequest("ORD-003", "B003", "Charlie")));
 
         assertThat(response.getStatus()).isEqualTo(409);
-    }
-
-    private static Map<String, Object> orderRequest(String orderNo, String buyerId, String buyerName) {
-        Map<String, Object> request = new HashMap<>();
-        request.put("orderNo", orderNo);
-        request.put("buyerId", buyerId);
-        request.put("buyerName", buyerName);
-        return request;
     }
 }

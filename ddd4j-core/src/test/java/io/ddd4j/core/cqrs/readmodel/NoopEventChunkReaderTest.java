@@ -14,11 +14,10 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
-import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -14,8 +14,6 @@
  */
 package io.ddd4j.data.projection.javalin;
 
-import java.util.Collections;
-import java.util.Arrays;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.AfterEach;
@@ -23,9 +21,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,7 +56,8 @@ class JavalinProjectionSchedulerIT {
 
     @BeforeEach
     void startJavalin() {
-        app = Javalin.create(cfg -> { }).start(0);
+        app = Javalin.create(cfg -> {
+        }).start(0);
     }
 
     @AfterEach
@@ -118,7 +117,8 @@ class JavalinProjectionSchedulerIT {
                 JavalinProjectionScheduler.create(app, Arrays.asList(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 

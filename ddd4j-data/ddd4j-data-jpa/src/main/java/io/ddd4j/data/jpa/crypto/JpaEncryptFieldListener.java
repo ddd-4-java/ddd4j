@@ -14,9 +14,9 @@
  */
 package io.ddd4j.data.jpa.crypto;
 
-import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.data.crypto.annotation.EncryptField;
 import io.ddd4j.data.crypto.handler.Ddd4jFieldCryptoHandler;
+import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.kit.lang.StrKit;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.PrePersist;
@@ -73,6 +73,36 @@ public class JpaEncryptFieldListener {
 
     public JpaEncryptFieldListener(Ddd4jFieldCryptoHandler fieldCryptoHandler) {
         this.fieldCryptoHandler = fieldCryptoHandler;
+    }
+
+    /**
+     * 通过 {@link ServiceLoader} 延迟发现 {@link CryptoStrategy} 实现。
+     *
+     * <p>首次调用时扫描 classpath，结果缓存在 {@link #cachedHandler}。
+     * 未发现任何实现时返回 {@code null}（加解密静默跳过）。</p>
+     *
+     * @return 加解密 Handler；未配置 {@link CryptoStrategy} 时返回 {@code null}
+     */
+    private static Ddd4jFieldCryptoHandler resolveHandler() {
+        if (Objects.isNull(cachedHandler)) {
+            synchronized (JpaEncryptFieldListener.class) {
+                if (Objects.isNull(cachedHandler)) {
+                    ServiceLoader<CryptoStrategy> loader = ServiceLoader.load(CryptoStrategy.class);
+                    CryptoStrategy strategy = null;
+                    for (CryptoStrategy candidate : loader) {
+                        strategy = candidate;
+                        log.info("Discovered CryptoStrategy via ServiceLoader: {}", candidate.getClass().getName());
+                        break;
+                    }
+                    cachedHandler = Objects.nonNull(strategy) ? new Ddd4jFieldCryptoHandler(strategy) : null;
+                    if (Objects.isNull(cachedHandler)) {
+                        log.warn("No CryptoStrategy found via ServiceLoader; @EncryptField will be skipped. " +
+                                "Register a CryptoStrategy implementation in META-INF/services/ to enable encryption.");
+                    }
+                }
+            }
+        }
+        return cachedHandler;
     }
 
     @PrePersist
@@ -147,35 +177,5 @@ public class JpaEncryptFieldListener {
         return FieldUtils.getAllFieldsList(clazz).stream()
                 .filter(field -> Objects.nonNull(field.getAnnotation(EncryptField.class)))
                 .collect(java.util.stream.Collectors.toList());
-    }
-
-    /**
-     * 通过 {@link ServiceLoader} 延迟发现 {@link CryptoStrategy} 实现。
-     *
-     * <p>首次调用时扫描 classpath，结果缓存在 {@link #cachedHandler}。
-     * 未发现任何实现时返回 {@code null}（加解密静默跳过）。</p>
-     *
-     * @return 加解密 Handler；未配置 {@link CryptoStrategy} 时返回 {@code null}
-     */
-    private static Ddd4jFieldCryptoHandler resolveHandler() {
-        if (Objects.isNull(cachedHandler)) {
-            synchronized (JpaEncryptFieldListener.class) {
-                if (Objects.isNull(cachedHandler)) {
-                    ServiceLoader<CryptoStrategy> loader = ServiceLoader.load(CryptoStrategy.class);
-                    CryptoStrategy strategy = null;
-                    for (CryptoStrategy candidate : loader) {
-                        strategy = candidate;
-                        log.info("Discovered CryptoStrategy via ServiceLoader: {}", candidate.getClass().getName());
-                        break;
-                    }
-                    cachedHandler = Objects.nonNull(strategy) ? new Ddd4jFieldCryptoHandler(strategy) : null;
-                    if (Objects.isNull(cachedHandler)) {
-                        log.warn("No CryptoStrategy found via ServiceLoader; @EncryptField will be skipped. " +
-                                "Register a CryptoStrategy implementation in META-INF/services/ to enable encryption.");
-                    }
-                }
-            }
-        }
-        return cachedHandler;
     }
 }

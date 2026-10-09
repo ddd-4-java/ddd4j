@@ -38,7 +38,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 
-/** Javalin runtime wiring for the shared production-style Order sample. */
+/**
+ * Javalin runtime wiring for the shared production-style Order sample.
+ */
 @Slf4j
 public final class JavalinSample {
 

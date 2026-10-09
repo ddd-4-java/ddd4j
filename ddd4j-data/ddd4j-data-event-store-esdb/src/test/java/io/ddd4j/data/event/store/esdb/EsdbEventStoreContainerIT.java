@@ -19,17 +19,12 @@ import com.eventstore.dbclient.EventStoreDBConnectionString;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.DockerClientFactory;
-import org.testcontainers.containers.GenericContainer;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -55,6 +50,7 @@ class EsdbEventStoreContainerIT {
     private static final String ORDER_TYPE = "Order";
 
     private static EventStoreDBClient client;
+    private EventStore store;
 
     @BeforeAll
     static void createClient() throws Exception {
@@ -100,8 +96,6 @@ class EsdbEventStoreContainerIT {
             client.shutdown();
         }
     }
-
-    private EventStore store;
 
     @BeforeEach
     void setUp() {

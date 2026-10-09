@@ -14,17 +14,15 @@
  */
 package io.ddd4j.sample.javalin.cqrs;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-/** JDK 8 HTTP client for CQRS sample integration tests. */
+/**
+ * JDK 8 HTTP client for CQRS sample integration tests.
+ */
 public final class TestHttpClient {
 
     public HttpResponse<String> get(String url) throws IOException {
@@ -86,7 +84,12 @@ public final class TestHttpClient {
             this.body = body;
         }
 
-        public int statusCode() { return statusCode; }
-        public T body() { return body; }
+        public int statusCode() {
+            return statusCode;
+        }
+
+        public T body() {
+            return body;
+        }
     }
 }

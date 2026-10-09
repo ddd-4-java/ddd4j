@@ -16,7 +16,6 @@ package io.ddd4j.data.event.store.r2dbc;
 
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.utility.DockerImageName;
 
 /**
  * PostgreSQL 容器进程级单例夹具（同一 JVM 内全部 IT 共享一个容器，仅启动一次）。

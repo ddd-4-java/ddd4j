@@ -14,16 +14,11 @@
  */
 package io.ddd4j.data.mybatis.repository;
 
-import java.util.Collections;
-import java.util.Arrays;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,10 +26,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -272,15 +271,15 @@ class MybatisAggregateRepositoryCrudTest {
 
     // =================== 辅助类 ===================
 
+    interface OrderMapper extends BaseMapper<OrderPO> {
+    }
+
     static final class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
         TestRepository(OrderMapper mapper) {
             super(mapper, Order.class, OrderPO.class);
         }
-    }
-
-    interface OrderMapper extends BaseMapper<OrderPO> {
     }
 
     static final class OrderQuery extends Query<Order> {

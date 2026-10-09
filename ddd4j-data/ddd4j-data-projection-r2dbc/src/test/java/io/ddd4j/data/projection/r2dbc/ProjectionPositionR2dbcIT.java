@@ -16,8 +16,8 @@ package io.ddd4j.data.projection.r2dbc;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactories;
+import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.Statement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +52,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("R2dbcProjectionPositionRepository 纯 r2dbc-h2 + H2 全量契约 IT")
 class ProjectionPositionR2dbcIT {
 
-    /** 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。 */
+    /**
+     * 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。
+     */
     private static final String ORDER_SUMMARY = "order-summary";
 
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
@@ -63,9 +65,9 @@ class ProjectionPositionR2dbcIT {
      */
     private static final String DDL =
             "create table if not exists ddd4j_projection_position (" +
-            "  stream_id varchar(250) not null primary key," +
-            "  next_event_number bigint not null" +
-            ")";
+                    "  stream_id varchar(250) not null primary key," +
+                    "  next_event_number bigint not null" +
+                    ")";
 
     private static ConnectionFactory connectionFactory;
 
@@ -75,6 +77,24 @@ class ProjectionPositionR2dbcIT {
     static void setUpDatabase() {
         connectionFactory = ConnectionFactories.get("r2dbc:h2:mem:///projectionit;DB_CLOSE_DELAY=-1");
         StepVerifier.create(executeUpdate(DDL, statement -> statement)).verifyComplete();
+    }
+
+    /**
+     * 直连执行 DML（建表／清表）：连接以 {@code Mono.usingWhen} 托管，完成信号即成功。
+     *
+     * @param sql    DML 语句（占位符 {@code $n}）
+     * @param binder 占位符绑参
+     * @return 完成信号
+     */
+    private static Mono<Void> executeUpdate(String sql, UnaryOperator<Statement> binder) {
+        return Mono.usingWhen(
+                connectionFactory.create(),
+                connection -> Mono.from(binder.apply(connection.createStatement(sql)).execute())
+                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                        .then(),
+                connection -> Mono.from(connection.close()),
+                (connection, ex) -> Mono.from(connection.close()),
+                connection -> Mono.from(connection.close()));
     }
 
     @BeforeEach
@@ -185,23 +205,5 @@ class ProjectionPositionR2dbcIT {
         assertThat(positions.findAll()).isEmpty();
         positions.deleteByStreamId(ORDER_SUMMARY);
         assertThat(positions.findAll()).isEmpty();
-    }
-
-    /**
-     * 直连执行 DML（建表／清表）：连接以 {@code Mono.usingWhen} 托管，完成信号即成功。
-     *
-     * @param sql    DML 语句（占位符 {@code $n}）
-     * @param binder 占位符绑参
-     * @return 完成信号
-     */
-    private static Mono<Void> executeUpdate(String sql, UnaryOperator<Statement> binder) {
-        return Mono.usingWhen(
-                connectionFactory.create(),
-                connection -> Mono.from(binder.apply(connection.createStatement(sql)).execute())
-                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
-                        .then(),
-                connection -> Mono.from(connection.close()),
-                (connection, ex) -> Mono.from(connection.close()),
-                connection -> Mono.from(connection.close()));
     }
 }

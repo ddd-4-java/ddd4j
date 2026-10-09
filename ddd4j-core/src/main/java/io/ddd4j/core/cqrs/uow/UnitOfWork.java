@@ -45,28 +45,9 @@ import java.util.function.Supplier;
 @Slf4j
 public final class UnitOfWork implements AutoCloseable {
 
-    /**
-     * 工作单元状态机：{@code ACTIVE} → {@code COMMITTED}／{@code ROLLED_BACK}（终态）。
-     */
-    public enum State {
-        /**
-         * 活动边界（可提交／可回滚）。
-         */
-        ACTIVE,
-        /**
-         * 终态：已提交，提交回调已生效。
-         */
-        COMMITTED,
-        /**
-         * 终态：已回滚，回滚回调已生效。
-         */
-        ROLLED_BACK
-    }
-
     private final List<Runnable> commitActions = new ArrayList<>();
     private final List<Runnable> rollbackActions = new ArrayList<>();
     private State state = State.ACTIVE;
-
     private UnitOfWork() {
     }
 
@@ -134,7 +115,7 @@ public final class UnitOfWork implements AutoCloseable {
      * @param work 边界内工作
      * @param <T>  结果类型
      * @return 工作结果
-     * @throws RuntimeException 工作抛出的原始异常（原样传播，不替换不吞掉）
+     * @throws RuntimeException      工作抛出的原始异常（原样传播，不替换不吞掉）
      * @throws IllegalStateException 边界非 {@code ACTIVE}
      */
     public <T> T execute(Supplier<T> work) {
@@ -195,5 +176,23 @@ public final class UnitOfWork implements AutoCloseable {
         if (state != State.ACTIVE) {
             throw new IllegalStateException("UnitOfWork is already terminated: " + state);
         }
+    }
+
+    /**
+     * 工作单元状态机：{@code ACTIVE} → {@code COMMITTED}／{@code ROLLED_BACK}（终态）。
+     */
+    public enum State {
+        /**
+         * 活动边界（可提交／可回滚）。
+         */
+        ACTIVE,
+        /**
+         * 终态：已提交，提交回调已生效。
+         */
+        COMMITTED,
+        /**
+         * 终态：已回滚，回滚回调已生效。
+         */
+        ROLLED_BACK
     }
 }

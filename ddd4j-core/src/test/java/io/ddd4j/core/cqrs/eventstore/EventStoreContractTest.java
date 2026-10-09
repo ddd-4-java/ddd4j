@@ -4,16 +4,12 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
-import java.util.Objects;
-import java.util.Arrays;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -82,13 +78,20 @@ public abstract class EventStoreContractTest {
 
         assertThat(events).extracting(StoredEvent::position).containsExactly(1L, 2L);
         assertThat(events).extracting(StoredEvent::aggregateId).containsExactly(ORDER_1, ORDER_2);
-    }protected static final class TestAggregateRootId implements AggregateRootId {
+    }
+
+    protected static final class TestAggregateRootId implements AggregateRootId {
+        private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
 
         public TestAggregateRootId(String value) {
             this.value = value;
         }
-        public String value() { return value; }
+
+        public String value() {
+            return value;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -96,15 +99,16 @@ public abstract class EventStoreContractTest {
             TestAggregateRootId other = (TestAggregateRootId) o;
             return Objects.equals(this.value, other.value);
         }
+
         @Override
         public int hashCode() {
             return java.util.Objects.hash(value);
         }
+
         @Override
         public String toString() {
             return "TestAggregateRootId{" + "value=" + value + "}";
         }
-        private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
         public EntityType getType() {
@@ -120,7 +124,7 @@ public abstract class EventStoreContractTest {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
-    
+
     }
 
     protected static final class TestEvent extends DomainEvent<TestAggregateRootId> {

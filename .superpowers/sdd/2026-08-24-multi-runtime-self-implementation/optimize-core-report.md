@@ -13,11 +13,11 @@
 - 新增包 `io.ddd4j.core.cqrs.eventstore`，含 3 个源文件 + 2 个测试文件
 - `EventStore` 接口：`append`/`read`/`readAll` 三方法，与 sample 拷贝完全一致
 - `StoredEvent` record：`(String aggregateId, long version, Object event, long position, Instant timestamp)`
-- `InMemoryEventStore`：synchronized append + 乐观版本校验 + `ConcurrentSkipListMap` 实现 O(limit) readAll（优化 M19）
+- `InMemoryEventStore`：synchronized append + 乐观版本校验 + `ConcurrentSkipListMap` 实现 O (limit) readAll（优化 M19）
 - `EventStoreContractTest`：11 个抽象契约测试，供所有持久化实现复用
 - `InMemoryEventStoreTest`：继承契约测试
 
-### T2: ProjectionRunner.runAll() 异常隔离
+### T2: ProjectionRunner.runAll () 异常隔离
 
 **状态**: 完成 | **Commit**: `b87bff7f`
 
@@ -35,7 +35,7 @@
 - apply 不注册事件到未提交缓冲区（仅用于回放）
 - 7 个测试：路由命中、无 handler 忽略、loadFromHistory 顺序重建、null/empty 安全
 
-### T4: RepositoryRegistry.clear()
+### T4: RepositoryRegistry.clear ()
 
 **状态**: 完成 | **Commit**: `9b18ed21`
 
@@ -54,13 +54,13 @@
 
 ## 测试结果
 
-| 模块 | 测试数 | 通过 | 失败 | 错误 |
-|------|--------|------|------|------|
-| ddd4j-core | 256 | 256 | 0 | 0 |
-| ddd4j-sample-dropwizard-cqrs | 3 | 3 | 0 | 0 |
-| ddd4j-sample-helidon-cqrs | 3 | 3 | 0 | 0 |
-| ddd4j-sample-micronaut-cqrs | 1 | 1 | 0 | 0 |
-| ddd4j-sample-vertx-cqrs | 3 | 3 | 0 | 0 |
+| 模块                         | 测试数 | 通过 | 失败 | 错误 |
+|------------------------------|--------|------|------|------|
+| ddd4j-core                   | 256    | 256  | 0    | 0    |
+| ddd4j-sample-dropwizard-cqrs | 3      | 3    | 0    | 0    |
+| ddd4j-sample-helidon-cqrs    | 3      | 3    | 0    | 0    |
+| ddd4j-sample-micronaut-cqrs  | 1      | 1    | 0    | 0    |
+| ddd4j-sample-vertx-cqrs      | 3      | 3    | 0    | 0    |
 
 ## Commit 列表
 
@@ -79,6 +79,7 @@ b87bff7f fix(core): ProjectionRunner.runAll() exception isolation per view
 
 ## 遗留问题
 
-1. **EventSourcingRepository 实现**：T1 仅补了 EventStore 基础设施，`EventSourcingRepository` 接口的默认实现（从 EventStore 拉事件 → loadFromHistory）待下一轮完成
+1. **EventSourcingRepository 实现**：T1 仅补了 EventStore 基础设施，`EventSourcingRepository` 接口的默认实现（从 EventStore
+   拉事件 → loadFromHistory）待下一轮完成
 2. **sample 本地 CommandBus/ViewManager/ProjectionView**：本轮未动（任务说明明确为下一轮工作）
 3. **并行 agent 冲突**：T4 commit 曾被并行 agent 的 rebase 覆盖，已重新提交

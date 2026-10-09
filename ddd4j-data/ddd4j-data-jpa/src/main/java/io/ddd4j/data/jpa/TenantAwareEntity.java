@@ -14,11 +14,7 @@
  */
 package io.ddd4j.data.jpa;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 

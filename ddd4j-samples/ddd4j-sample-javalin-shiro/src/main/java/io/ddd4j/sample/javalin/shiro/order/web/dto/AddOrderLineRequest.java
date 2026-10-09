@@ -25,9 +25,28 @@ import java.math.BigDecimal;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AddOrderLineRequest {
-    private String goodsId; private String goodsName; private int quantity; private BigDecimal unitPrice;
-    public String goodsId() { return goodsId; } public String goodsName() { return goodsName; }
-    public int quantity() { return quantity; } public BigDecimal unitPrice() { return unitPrice; }
+    private String goodsId;
+    private String goodsName;
+    private int quantity;
+    private BigDecimal unitPrice;
+
+    public String goodsId() {
+        return goodsId;
+    }
+
+    public String goodsName() {
+        return goodsName;
+    }
+
+    public int quantity() {
+        return quantity;
+    }
+
+    public BigDecimal unitPrice() {
+        return unitPrice;
+    }
 }

@@ -14,11 +14,7 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.DefaultEventSourcingRepository;
 import org.junit.jupiter.api.Test;
@@ -32,12 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -64,6 +55,21 @@ class EventStoreAppendCapacityBaselineIT {
     private static final int SAMPLES = 2_000;
     private static final int BATCH_SIZE = 10;
 
+    private static BaselineOrderId id(String value) {
+        return new BaselineOrderId(value);
+    }
+
+    // ========================= 测量路径 =========================
+
+    private static long percentile(long[] sorted, double p) {
+        int index = (int) Math.ceil(p / 100.0 * sorted.length) - 1;
+        return sorted[Math.max(0, Math.min(sorted.length - 1, index))];
+    }
+
+    private static double percentOverhead(double baselineMean, double enabledMean) {
+        return baselineMean <= 0 ? 0 : (enabledMean - baselineMean) / baselineMean * 100.0;
+    }
+
     @Test
     void appendCapacityBaselineShouldBeMeasuredAndRecorded() throws IOException {
         // 第一轮全量执行仅作预热（丢弃），消除 JIT 预热次序偏差；第二轮为正式采样
@@ -87,8 +93,6 @@ class EventStoreAppendCapacityBaselineIT {
             assertTrue(metric.samples.length == SAMPLES, "sample count must match");
         }
     }
-
-    // ========================= 测量路径 =========================
 
     /**
      * 单事件追加：先建流（不计入测量），再测量向<b>已存在流</b>追加 1 个事件的耗时
@@ -166,6 +170,8 @@ class EventStoreAppendCapacityBaselineIT {
         return repository.read(id);
     }
 
+    // ========================= 统计与渲染 =========================
+
     private List<DomainEvent<?>> batchEvents(AggregateRootId aggregateId) {
         List<DomainEvent<?>> events = new ArrayList<>(BATCH_SIZE);
         for (int i = 0; i < BATCH_SIZE; i++) {
@@ -178,12 +184,6 @@ class EventStoreAppendCapacityBaselineIT {
         return new InMemoryEventStore();
     }
 
-    private static BaselineOrderId id(String value) {
-        return new BaselineOrderId(value);
-    }
-
-    // ========================= 统计与渲染 =========================
-
     /**
      * 解析仓库根 docs 输出路径（surefire 工作目录为模块目录，仓库根 docs 在其上级）。
      */
@@ -191,11 +191,6 @@ class EventStoreAppendCapacityBaselineIT {
         Path moduleDir = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
         Path repoRoot = moduleDir.endsWith("ddd4j-core") ? moduleDir.getParent() : moduleDir;
         return repoRoot.resolve(Paths.get("docs", "performance", "eventstore-append-baseline.json"));
-    }
-
-    private static long percentile(long[] sorted, double p) {
-        int index = (int) Math.ceil(p / 100.0 * sorted.length) - 1;
-        return sorted[Math.max(0, Math.min(sorted.length - 1, index))];
     }
 
     /**
@@ -238,10 +233,6 @@ class EventStoreAppendCapacityBaselineIT {
         json.append("  }\n");
         json.append("}\n");
         return json.toString();
-    }
-
-    private static double percentOverhead(double baselineMean, double enabledMean) {
-        return baselineMean <= 0 ? 0 : (enabledMean - baselineMean) / baselineMean * 100.0;
     }
 
     /**
@@ -288,7 +279,9 @@ class EventStoreAppendCapacityBaselineIT {
 
     // ========================= 测试夹具 =========================
 
-    /** 基线聚合标识。 */
+    /**
+     * 基线聚合标识。
+     */
     static final class BaselineOrderId implements AggregateRootId, Serializable {
 
         private static final EntityType TYPE = new StringEntityType(AGGREGATE_TYPE);
@@ -324,7 +317,9 @@ class EventStoreAppendCapacityBaselineIT {
         }
     }
 
-    /** 基线事件。 */
+    /**
+     * 基线事件。
+     */
     public static final class BaselineEvent extends DomainEvent<BaselineOrderId> {
 
         public BaselineEvent() {
@@ -336,7 +331,9 @@ class EventStoreAppendCapacityBaselineIT {
         }
     }
 
-    /** 基线聚合根。 */
+    /**
+     * 基线聚合根。
+     */
     static final class BaselineOrder extends AggregateRoot<String> {
 
         private String id;

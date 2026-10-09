@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
-import java.util.Objects;
-
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -165,12 +163,20 @@ public class AuthenticationController {
 
     // ============================ DTO ============================
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class LoginRequest {
         private String loginId;
         private String password;
-        public String loginId() { return loginId; }
-        public String password() { return password; }
+
+        public String loginId() {
+            return loginId;
+        }
+
+        public String password() {
+            return password;
+        }
     }
 
 }

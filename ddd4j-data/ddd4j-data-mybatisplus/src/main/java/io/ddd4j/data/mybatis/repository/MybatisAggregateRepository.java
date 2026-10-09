@@ -50,8 +50,8 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
 import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.kit.lang.MappingKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +66,6 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -110,34 +109,20 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         extends AbstractRepository<MP, P>
         implements DomainObjectMapper<M, P>, Repository<M, ID> {
 
-    @Slf4j
-    private static final class ApplicationLog {
-
-        private ApplicationLog() {
-        }
-
-        private static Logger logger() {
-            return log;
-        }
-    }
-
     /**
      * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@link #setBaseMapper} 或构造器手动注入）。
      * 对应 MyBatis-Plus {@code CrudRepository.@Autowired M baseMapper} 的非 Spring 版本。
      */
     @Setter
     protected MP baseMapper;
-
     private Class<M> modelClass;
     private Class<P> persistenceObjectClass;
     private Class<? extends Query<M>> queryClass;
-
     /**
      * Domain Model 元数据（充血查询翻译：Domain 字段名 → PO 列名）。
      * 由 {@link DomainModelHelper} 缓存。
      */
     private DomainModelInfo<M> domainModelInfo;
-
     /**
      * PO 元数据（auto-fill、bizKey、tenantId、tableLogic 等），委托 MP {@code TableInfoHelper}。
      */
@@ -336,10 +321,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         this.baseMapper = Objects.requireNonNull(mapper, "mapper must not be null");
     }
 
-    // ========================= MyBatis-Plus 原生 Wrapper API（CQRS 查询优势） =========================
-    // 以下方法暴露 MyBatis-Plus 的 QueryWrapper / LambdaQueryWrapper / UpdateWrapper / LambdaUpdateWrapper，
-    // 让业务方在需要复杂条件查询时直接使用原生链式 API，自动注入租户/系统隔离条件。
-
     /**
      * 创建带租户/系统隔离的 {@link QueryWrapper}（CQRS 读侧复杂查询入口）。
      *
@@ -359,6 +340,10 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     public QueryWrapper<P> queryWrapper() {
         return getDefaultWrapper(false);
     }
+
+    // ========================= MyBatis-Plus 原生 Wrapper API（CQRS 查询优势） =========================
+    // 以下方法暴露 MyBatis-Plus 的 QueryWrapper / LambdaQueryWrapper / UpdateWrapper / LambdaUpdateWrapper，
+    // 让业务方在需要复杂条件查询时直接使用原生链式 API，自动注入租户/系统隔离条件。
 
     /**
      * 创建带租户/系统隔离的 {@link QueryWrapper}（忽略租户隔离）。
@@ -476,7 +461,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return new LambdaUpdateChainWrapper<>(getBaseMapper());
     }
 
-
     protected Class<M> modelClass() {
         return Objects.requireNonNull(modelClass, "modelClass must not be null");
     }
@@ -485,8 +469,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Objects.requireNonNull(persistenceObjectClass, "persistenceObjectClass must not be null");
     }
 
-    // ========================= IRepository 抽象方法实现（替代 CrudRepository 父类，去 Spring 依赖） =========================
-
     /**
      * IRepository 抽象方法：单条 insert or update。
      */
@@ -494,6 +476,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     public boolean saveOrUpdate(P entity) {
         return getBaseMapper().insertOrUpdate(entity);
     }
+
+    // ========================= IRepository 抽象方法实现（替代 CrudRepository 父类，去 Spring 依赖） =========================
 
     /**
      * IRepository 抽象方法：{@link Wrapper} 查询单条（throwEx 决定抛异常还是返回 null）。
@@ -536,8 +520,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return SqlHelper.retBool(getBaseMapper().deleteById(id, useFill));
     }
 
-    // ========================= CrudRepository 批量方法（PO 维度，无 Spring 依赖） =========================
-
     /**
      * 批量插入（对应 MyBatis-Plus {@code CrudRepository.saveBatch}，去 Spring 版本）。
      * <p>JdbcBatch 执行 INSERT_ONE，事务由 {@code @Transactional} 在子类或调用方控制。
@@ -547,6 +529,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         String sqlStatement = getSqlStatement(SqlMethod.INSERT_ONE);
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
     }
+
+    // ========================= CrudRepository 批量方法（PO 维度，无 Spring 依赖） =========================
 
     /**
      * 批量保存或更新（PO 维度）。
@@ -1156,6 +1140,17 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             field.set(persistenceObject, LocalDateTime.now());
         } else if (field.getType().equals(LocalDate.class) && Objects.isNull(field.get(persistenceObject))) {
             field.set(persistenceObject, LocalDate.now());
+        }
+    }
+
+    @Slf4j
+    private static final class ApplicationLog {
+
+        private ApplicationLog() {
+        }
+
+        private static Logger logger() {
+            return log;
         }
     }
 

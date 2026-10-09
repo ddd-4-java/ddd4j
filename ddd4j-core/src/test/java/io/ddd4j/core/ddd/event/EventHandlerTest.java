@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.ddd.event;
 
-import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -22,12 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EventHandlerTest {
 
@@ -77,29 +73,37 @@ class EventHandlerTest {
 
         OrderCreatedEvent() {
             super(new EntityIdPath(new OrderId("order-1")));
-        }static final class OrderId implements EntityId {
-        private final String value;
+        }
 
-        public OrderId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof OrderId)) return false;
-            OrderId other = (OrderId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-        @Override
-        public String toString() {
-            return "OrderId{" + "value=" + value + "}";
-        }
+        static final class OrderId implements EntityId {
             private static final EntityType TYPE = new StringEntityType("Order");
+            private final String value;
+
+            public OrderId(String value) {
+                this.value = value;
+            }
+
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (!(o instanceof OrderId)) return false;
+                OrderId other = (OrderId) o;
+                return Objects.equals(this.value, other.value);
+            }
+
+            @Override
+            public int hashCode() {
+                return java.util.Objects.hash(value);
+            }
+
+            @Override
+            public String toString() {
+                return "OrderId{" + "value=" + value + "}";
+            }
 
             @Override
             public EntityType getType() {
@@ -115,7 +119,7 @@ class EventHandlerTest {
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
             }
-        
-    }
+
+        }
     }
 }

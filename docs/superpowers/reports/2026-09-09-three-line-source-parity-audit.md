@@ -6,17 +6,18 @@
 
 审计基线：
 
-| 线 | SHA | JDK |
-|---|---|---|
-| 1.0.x | ec2414658d8b87b1164d6d909349890676a14050 | 8 |
-| 2.0.x | 4f48862c4385cf182cf6cf9f31976b3eb4bcac3a | 17 |
-| 3.0.x | 0006f19e07a058dad4b4b0196b7958b61adb4465 | 21 |
+| 线    | SHA                                      | JDK |
+|-------|------------------------------------------|-----|
+| 1.0.x | ec2414658d8b87b1164d6d909349890676a14050 | 8   |
+| 2.0.x | 4f48862c4385cf182cf6cf9f31976b3eb4bcac3a | 17  |
+| 3.0.x | 0006f19e07a058dad4b4b0196b7958b61adb4465 | 21  |
 
 三份普通 clone 分别建立独立 CodeGraph 索引，索引均为 up to date。没有使用现有脏工作区的索引。
 
 ## 严格门禁口径
 
-只排除 ddd4j-samples、Quarkus 和 Quarkus 专属 Panache。允许 JDK 语法、Maven 依赖、Jackson 2/3 差异。不再排除 Helidon，不再放行 Micronaut/Javalin 公共 API 差异。
+只排除 ddd4j-samples、Quarkus 和 Quarkus 专属 Panache。允许 JDK 语法、Maven 依赖、Jackson 2/3 差异。不再排除 Helidon，不再放行
+Micronaut/Javalin 公共 API 差异。
 
 每条线先执行对应 JDK 的 clean compile，然后比较：
 
@@ -31,10 +32,10 @@
 
 ## 结构树
 
-| 比较 | 模块 | 生产 Java | fresh class |
-|---|---:|---:|---:|
-| 1.0 ↔ 2.0 | 86 ↔ 90 | 808 ↔ 821 | 913 ↔ 924 |
-| 2.0 ↔ 3.0 | 90 ↔ 90 | 821 ↔ 821 | 924 ↔ 924 |
+| 比较      |    模块 | 生产 Java | fresh class |
+|-----------|--------:|----------:|------------:|
+| 1.0 ↔ 2.0 | 86 ↔ 90 | 808 ↔ 821 |   913 ↔ 924 |
+| 2.0 ↔ 3.0 | 90 ↔ 90 | 821 ↔ 821 |   924 ↔ 924 |
 
 初始严格口径下，1.0.x 缺少四个模块；结合后续 JDK 字节码证据，这些模块在本文末尾重分类为必要兼容差异：
 
@@ -59,8 +60,9 @@
 
 - 非允许 class 差异：1/15
 - 非允许公开 JVM API 差异：19/74
-- CodeGraph 明确参数冲突：Ddd4jJavalinWeb.configure(Javalin) 与 configure(JavalinConfig)
-- Micronaut 入口分别为 doFilter(HttpRequest, FilterChain) 与 filter(HttpRequest, FilterContinuation, MutablePropagatedContext)
+- CodeGraph 明确参数冲突：Ddd4jJavalinWeb.configure (Javalin) 与 configure (JavalinConfig)
+- Micronaut 入口分别为 doFilter (HttpRequest, FilterChain) 与 filter (HttpRequest, FilterContinuation,
+  MutablePropagatedContext)
 - Dropwizard 类型包从 io.dropwizard.* 迁到 io.dropwizard.core.*
 - Spring 扩展类型从 org.springframework.biz.* 迁到 org.springframework.extension.*
 
@@ -70,11 +72,11 @@ JDK 8 缺少 java.net.http.HttpClient 构造器属于允许的 JDK 差异，按 
 
 CodeGraph 方法源码范围归一化比较：
 
-| 比较 | 共同显式方法 | 单边方法键 | 方法体 token 不同 |
-|---|---:|---:|---:|
-| 1.0 ↔ 2.0 | 5,846 | 422 / 32 | 231 |
-| 2.0 ↔ 3.0 | 5,863 | 15 / 3 | 13 |
-| 1.0 ↔ 3.0 | 5,831 | 437 / 35 | 240 |
+| 比较      | 共同显式方法 | 单边方法键 | 方法体 token 不同 |
+|-----------|-------------:|-----------:|------------------:|
+| 1.0 ↔ 2.0 |        5,846 |   422 / 32 |               231 |
+| 2.0 ↔ 3.0 |        5,863 |     15 / 3 |                13 |
+| 1.0 ↔ 3.0 |        5,831 |   437 / 35 |               240 |
 
 2.0 ↔ 3.0 的 13 个方法体差异中，12 个位于 Jackson 2/3 适配；另有一个未经允许的重复 JacksonException 异常映射。
 
@@ -84,15 +86,15 @@ CodeGraph 方法源码范围归一化比较：
 - Micronaut 请求上下文由 ThreadLocal/插桩变为 PropagatedContext；
 - Javalin 注册入口和请求 API 不同；
 - WebMVC BaseExceptionHandler 分别读取原始 remote address 和 IpKit.getRemoteAddr；
-- Micronaut remote host 在一条线回退 unknown，另一条线回退 getHostString()。
+- Micronaut remote host 在一条线回退 unknown，另一条线回退 getHostString ()。
 
 完整 git diff --no-index：
 
-| 比较 | 检查文件 | 改变文件 | 生产 Java | POM | 新增路径 |
-|---|---:|---:|---:|---:|---:|
-| 1.0 ↔ 2.0 | 912 | 366 | 280 | 86 | 17 |
-| 2.0 ↔ 3.0 | 912 | 131 | 43 | 88 | 0 |
-| 1.0 ↔ 3.0 | 912 | 387 | 296 | 91 | 17 |
+| 比较      | 检查文件 | 改变文件 | 生产 Java | POM | 新增路径 |
+|-----------|---------:|---------:|----------:|----:|---------:|
+| 1.0 ↔ 2.0 |      912 |      366 |       280 |  86 |       17 |
+| 2.0 ↔ 3.0 |      912 |      131 |        43 |  88 |        0 |
+| 1.0 ↔ 3.0 |      912 |      387 |       296 |  91 |       17 |
 
 这些 patch 是原始证据，未将依赖差异误报为逻辑一致。
 
@@ -137,14 +139,15 @@ CodeGraph 方法源码范围归一化比较：
 
 本机实际产物字节码证明：
 
-| 组件 | 低线版本 | 高线版本 | 基础 class major |
-|---|---|---|---|
-| Javalin | 4.6.8 | 7.1.0/7.2.2 | 52 / 61 |
-| Micronaut | 3.10.10 | 4.10.x | 52 / 61 |
-| Dropwizard | 2.1.12 | 5.0.2 | 52 / 61 |
-| Helidon 使用构件 | 无 | 3.2.18 | 61 |
+| 组件             | 低线版本 | 高线版本    | 基础 class major |
+|------------------|----------|-------------|------------------|
+| Javalin          | 4.6.8    | 7.1.0/7.2.2 | 52 / 61          |
+| Micronaut        | 3.10.10  | 4.10.x      | 52 / 61          |
+| Dropwizard       | 2.1.12   | 5.0.2       | 52 / 61          |
+| Helidon 使用构件 | 无       | 3.2.18      | 61               |
 
-major 52 对应 Java 8，major 61 对应 Java 17。因此 1.0.x 不能直接使用高线框架构件；Helidon 四模块缺失属于当前组件选型下的 JDK 约束差异，而不是已证明的业务删减。
+major 52 对应 Java 8，major 61 对应 Java 17。因此 1.0.x 不能直接使用高线框架构件；Helidon 四模块缺失属于当前组件选型下的
+JDK 约束差异，而不是已证明的业务删减。
 
 重分类后仍不能直接放行的方法体差异：
 

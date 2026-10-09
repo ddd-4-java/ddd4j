@@ -57,6 +57,21 @@ class FeishuClientTest {
     private HttpServer server;
     private int port;
 
+    private static Map<String, String> parseQuery(String query) throws java.io.UnsupportedEncodingException {
+        Map<String, String> out = new HashMap<>();
+        if (Objects.isNull(query)) {
+            return out;
+        }
+        for (String pair : query.split("&")) {
+            int idx = pair.indexOf('=');
+            if (idx > 0) {
+                out.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
+                        URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+            }
+        }
+        return out;
+    }
+
     @BeforeEach
     void startServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
@@ -125,21 +140,6 @@ class FeishuClientTest {
         // 无签名 → 无 query
         assertThat(Recorder.lastQuery).isNull();
         assertThat(Recorder.lastBody).contains("\"msg_type\":\"text\"");
-    }
-
-    private static Map<String, String> parseQuery(String query) throws java.io.UnsupportedEncodingException {
-        Map<String, String> out = new HashMap<>();
-        if (Objects.isNull(query)) {
-            return out;
-        }
-        for (String pair : query.split("&")) {
-            int idx = pair.indexOf('=');
-            if (idx > 0) {
-                out.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
-                        URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-            }
-        }
-        return out;
     }
 
     static class Recorder implements HttpHandler {

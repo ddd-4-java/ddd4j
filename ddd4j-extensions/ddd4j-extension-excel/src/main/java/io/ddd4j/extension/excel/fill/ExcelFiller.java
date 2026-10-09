@@ -16,8 +16,8 @@ package io.ddd4j.extension.excel.fill;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.metadata.fill.FillConfig;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.fill.FillConfig;
 import io.ddd4j.core.exception.BizRuntimeException;
 
 import java.io.ByteArrayInputStream;
@@ -94,7 +94,7 @@ public final class ExcelFiller {
      * @return 填充后的 xlsx 字节
      */
     public static byte[] fillList(InputStream template, List<?> list, FillConfig fillConfig) {
-try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              InputStream tpl = toNonClosingStream(template);
              ExcelWriter writer = EasyExcel.write(out).withTemplate(tpl).build()) {
             WriteSheet sheet = EasyExcel.writerSheet().build();
@@ -120,7 +120,7 @@ try (ByteArrayOutputStream out = new ByteArrayOutputStream();
      * @return 填充后的 xlsx 字节
      */
     public static byte[] fillComposite(InputStream template, Map<String, Object> vars, List<?> list) {
-try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              InputStream tpl = toNonClosingStream(template);
              ExcelWriter writer = EasyExcel.write(out).withTemplate(tpl).build()) {
             WriteSheet sheet = EasyExcel.writerSheet().build();
@@ -140,7 +140,7 @@ try (ByteArrayOutputStream out = new ByteArrayOutputStream();
      * @return 填充后的 xlsx 字节
      */
     public static byte[] fillListInBatches(InputStream template, List<List<?>> batches) {
-try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              InputStream tpl = toNonClosingStream(template);
              ExcelWriter writer = EasyExcel.write(out).withTemplate(tpl).build()) {
             WriteSheet sheet = EasyExcel.writerSheet().build();

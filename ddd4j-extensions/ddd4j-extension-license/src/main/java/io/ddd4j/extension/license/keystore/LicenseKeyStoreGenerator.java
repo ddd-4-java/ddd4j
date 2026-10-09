@@ -20,10 +20,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -105,16 +105,26 @@ public class LicenseKeyStoreGenerator {
         List<String> cmd = new ArrayList<>();
         cmd.add(keytoolBinary());
         cmd.add("-genkeypair");
-        cmd.add("-alias"); cmd.add(param.getPrivateAlias());
-        cmd.add("-keyalg"); cmd.add(param.getKeyAlgorithm());
-        cmd.add("-keysize"); cmd.add(String.valueOf(param.getKeySize()));
-        cmd.add("-sigalg"); cmd.add(sigAlgOf(param.getKeyAlgorithm()));
-        cmd.add("-validity"); cmd.add(String.valueOf(param.getValidityDays()));
-        cmd.add("-dname"); cmd.add(param.getDname());
-        cmd.add("-storetype"); cmd.add("JKS");
-        cmd.add("-keystore"); cmd.add(param.getPrivateKeysStorePath());
-        cmd.add("-storepass"); cmd.add(param.getStorePass());
-        cmd.add("-keypass"); cmd.add(param.getKeyPass());
+        cmd.add("-alias");
+        cmd.add(param.getPrivateAlias());
+        cmd.add("-keyalg");
+        cmd.add(param.getKeyAlgorithm());
+        cmd.add("-keysize");
+        cmd.add(String.valueOf(param.getKeySize()));
+        cmd.add("-sigalg");
+        cmd.add(sigAlgOf(param.getKeyAlgorithm()));
+        cmd.add("-validity");
+        cmd.add(String.valueOf(param.getValidityDays()));
+        cmd.add("-dname");
+        cmd.add(param.getDname());
+        cmd.add("-storetype");
+        cmd.add("JKS");
+        cmd.add("-keystore");
+        cmd.add(param.getPrivateKeysStorePath());
+        cmd.add("-storepass");
+        cmd.add(param.getStorePass());
+        cmd.add("-keypass");
+        cmd.add(param.getKeyPass());
         return cmd;
     }
 
@@ -125,10 +135,14 @@ public class LicenseKeyStoreGenerator {
         List<String> cmd = new ArrayList<>();
         cmd.add(keytoolBinary());
         cmd.add("-exportcert");
-        cmd.add("-alias"); cmd.add(param.getPrivateAlias());
-        cmd.add("-keystore"); cmd.add(param.getPrivateKeysStorePath());
-        cmd.add("-storepass"); cmd.add(param.getStorePass());
-        cmd.add("-file"); cmd.add(certPath);
+        cmd.add("-alias");
+        cmd.add(param.getPrivateAlias());
+        cmd.add("-keystore");
+        cmd.add(param.getPrivateKeysStorePath());
+        cmd.add("-storepass");
+        cmd.add(param.getStorePass());
+        cmd.add("-file");
+        cmd.add(certPath);
         cmd.add("-rfc");
         return cmd;
     }
@@ -140,10 +154,14 @@ public class LicenseKeyStoreGenerator {
         List<String> cmd = new ArrayList<>();
         cmd.add(keytoolBinary());
         cmd.add("-importcert");
-        cmd.add("-alias"); cmd.add(param.getPublicAlias());
-        cmd.add("-file"); cmd.add(certPath);
-        cmd.add("-keystore"); cmd.add(param.getPublicKeysStorePath());
-        cmd.add("-storepass"); cmd.add(param.getStorePass());
+        cmd.add("-alias");
+        cmd.add(param.getPublicAlias());
+        cmd.add("-file");
+        cmd.add(certPath);
+        cmd.add("-keystore");
+        cmd.add(param.getPublicKeysStorePath());
+        cmd.add("-storepass");
+        cmd.add(param.getStorePass());
         cmd.add("-noprompt");
         return cmd;
     }

@@ -14,13 +14,13 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
-import java.util.Objects;
-
-import io.ddd4j.sample.javalin.cqrs.TestSupport;
 import io.ddd4j.sample.javalin.cqrs.TestHttpClient;
 import io.ddd4j.sample.javalin.cqrs.TestHttpClient.HttpResponse;
+import io.ddd4j.sample.javalin.cqrs.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
+
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 

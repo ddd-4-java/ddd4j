@@ -14,16 +14,10 @@
  */
 package io.ddd4j.guice.cqrs;
 
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.HashMap;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 

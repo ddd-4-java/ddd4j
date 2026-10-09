@@ -18,15 +18,14 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKitRegistrationScope;
-import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.dropwizard.lifecycle.Managed;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Collections;
 
 /**
@@ -39,7 +38,7 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
     private final RuntimeReadinessRegistry readinessRegistry;
 
     public Ddd4jDropwizardRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                                 I18nProvider i18nProvider, CommandBus commandBus) {
+                                  I18nProvider i18nProvider, CommandBus commandBus) {
         this(publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
     }
 

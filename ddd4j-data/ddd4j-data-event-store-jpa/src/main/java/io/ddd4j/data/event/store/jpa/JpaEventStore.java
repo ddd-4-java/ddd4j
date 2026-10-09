@@ -15,16 +15,11 @@
 package io.ddd4j.data.event.store.jpa;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
-
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventId;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -137,8 +132,8 @@ public class JpaEventStore implements EventStore {
      * @return 仅参与当前活动事务的事件存储
      */
     public static JpaEventStore participating(EntityManager entityManager,
-                                               JpaStoredEventRepository repository,
-                                               EventPayloadSerializer serializer) {
+                                              JpaStoredEventRepository repository,
+                                              EventPayloadSerializer serializer) {
         return new JpaEventStore(entityManager, repository, serializer, TransactionMode.PARTICIPATING);
     }
 
@@ -169,9 +164,9 @@ public class JpaEventStore implements EventStore {
      * @return 仅参与当前容器管理事务的事件存储
      */
     public static JpaEventStore participatingManaged(EntityManager entityManager,
-                                                      JpaStoredEventRepository repository,
-                                                      EventPayloadSerializer serializer,
-                                                      Runnable markRollbackOnly) {
+                                                     JpaStoredEventRepository repository,
+                                                     EventPayloadSerializer serializer,
+                                                     Runnable markRollbackOnly) {
         Objects.requireNonNull(entityManager, "entityManager must not be null");
         Objects.requireNonNull(repository, "repository must not be null");
         Objects.requireNonNull(serializer, "serializer must not be null");
@@ -226,10 +221,10 @@ public class JpaEventStore implements EventStore {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         return executeInTransaction(() -> repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(
-                            aggregateType, aggregateId.asString())
-                    .stream()
-                    .map(this::toStoredEvent)
-                    .collect(java.util.stream.Collectors.toList()));
+                        aggregateType, aggregateId.asString())
+                .stream()
+                .map(this::toStoredEvent)
+                .collect(java.util.stream.Collectors.toList()));
     }
 
     @Override
@@ -237,10 +232,10 @@ public class JpaEventStore implements EventStore {
                                   long fromVersion, long toVersion) {
         return executeInTransaction(() -> repository
                 .findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
-                            aggregateType, aggregateId.asString(), fromVersion, toVersion)
-                    .stream()
-                    .map(this::toStoredEvent)
-                    .collect(java.util.stream.Collectors.toList()));
+                        aggregateType, aggregateId.asString(), fromVersion, toVersion)
+                .stream()
+                .map(this::toStoredEvent)
+                .collect(java.util.stream.Collectors.toList()));
     }
 
     @Override
@@ -321,7 +316,7 @@ public class JpaEventStore implements EventStore {
         // H2 不支持 grouped select 的 FOR UPDATE）；空表无行可锁时由
         // uk_position 唯一约束兜底并发冲突。
         List<Long> maxRows = entityManager.createQuery(
-                "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
+                        "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
                 .setMaxResults(1)
                 .setLockMode(javax.persistence.LockModeType.PESSIMISTIC_WRITE)
                 .getResultList();
@@ -357,7 +352,9 @@ public class JpaEventStore implements EventStore {
         MANAGED
     }
 
-    /** 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。 */
+    /**
+     * 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。
+     */
     private static final class StringAggregateRootId implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("String");

@@ -18,17 +18,11 @@ import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.dropwizard.cqrs.DropwizardCqrsApplication;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.dropwizard.cqrs.readmodel.OrderSummaryViewEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
@@ -41,6 +35,13 @@ import java.util.Map;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class OrderResource {
+
+    private static Map<String, Object> response(boolean success, String key, Object value) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", success);
+        response.put(key, value);
+        return response;
+    }
 
     @POST
     public Response createOrder(CreateOrderRequest request) {
@@ -67,13 +68,6 @@ public class OrderResource {
             return Response.status(404).build();
         }
         return Response.ok(entity).build();
-    }
-
-    private static Map<String, Object> response(boolean success, String key, Object value) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", success);
-        response.put(key, value);
-        return response;
     }
 
     @Data

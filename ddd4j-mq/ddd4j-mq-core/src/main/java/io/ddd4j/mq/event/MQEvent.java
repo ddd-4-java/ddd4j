@@ -27,12 +27,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -107,10 +102,6 @@ public class MQEvent implements Serializable {
      */
     protected String broker;
     /**
-     * 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定
-     */
-    private String namespace;
-    /**
      * 因果链关联 ID，broker header {@code X-Correlation-Id} 的权威值来源。
      *
      * <p>{@code @JsonIgnore}：外层载体 JSON 不重复承载因果元数据，
@@ -125,6 +116,10 @@ public class MQEvent implements Serializable {
      */
     @JsonIgnore
     protected String causationId;
+    /**
+     * 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定
+     */
+    private String namespace;
 
     /**
      * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。

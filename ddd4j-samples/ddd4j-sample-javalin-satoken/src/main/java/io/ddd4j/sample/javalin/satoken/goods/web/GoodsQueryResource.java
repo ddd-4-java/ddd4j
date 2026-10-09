@@ -14,9 +14,8 @@
  */
 package io.ddd4j.sample.javalin.satoken.goods.web;
 
-import io.ddd4j.kit.lang.StrKit;
-
 import io.ddd4j.core.api.R;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.satoken.goods.domain.Goods;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsQuery;

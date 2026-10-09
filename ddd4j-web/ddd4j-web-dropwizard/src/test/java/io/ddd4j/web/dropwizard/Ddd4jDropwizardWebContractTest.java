@@ -24,39 +24,29 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
 import io.ddd4j.web.testkit.WebContractResponse;
 import io.dropwizard.testing.junit5.ResourceExtension;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Collections;
+import javax.ws.rs.*;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.*;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -192,14 +182,30 @@ class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
         public R<Void> error(@PathParam("type") String type) {
             RuntimeException __ex;
             switch (type) {
-                case "bad-request": __ex = new IllegalArgumentException("bad request"); break;
-                case "forbidden": __ex = new SecurityException("forbidden"); break;
-                case "not-found": __ex = new NoSuchElementException("not found"); break;
-                case "conflict": __ex = new IllegalStateException("conflict"); break;
-                case "unsupported-media-type": __ex = new WebStatusException(415, "unsupported media type"); break;
-                case "unprocessable-entity": __ex = new WebStatusException(422, "unprocessable entity"); break;
-                case "too-many-requests": __ex = new WebStatusException(429, "too many requests"); break;
-                default: __ex = new RuntimeException("internal failure"); break;
+                case "bad-request":
+                    __ex = new IllegalArgumentException("bad request");
+                    break;
+                case "forbidden":
+                    __ex = new SecurityException("forbidden");
+                    break;
+                case "not-found":
+                    __ex = new NoSuchElementException("not found");
+                    break;
+                case "conflict":
+                    __ex = new IllegalStateException("conflict");
+                    break;
+                case "unsupported-media-type":
+                    __ex = new WebStatusException(415, "unsupported media type");
+                    break;
+                case "unprocessable-entity":
+                    __ex = new WebStatusException(422, "unprocessable entity");
+                    break;
+                case "too-many-requests":
+                    __ex = new WebStatusException(429, "too many requests");
+                    break;
+                default:
+                    __ex = new RuntimeException("internal failure");
+                    break;
             }
             throw __ex;
         }

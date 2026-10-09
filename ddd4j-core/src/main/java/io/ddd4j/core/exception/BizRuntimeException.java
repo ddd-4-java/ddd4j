@@ -14,8 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.CustomApiCode;
+import io.ddd4j.core.api.CustomApiCode;
 import io.ddd4j.core.util.I18nKit;
 import lombok.Getter;
 
@@ -83,7 +82,7 @@ public class BizRuntimeException extends RuntimeException {
         super(I18nKit.get(message), cause);
     }
 
-    public BizRuntimeException(ApiCode code, String i18nCode) {
+    public BizRuntimeException(CustomApiCode code, String i18nCode) {
         super(I18nKit.get(i18nCode, code.getReason()));
         this.code = code.getCode();
         this.i18nCode = i18nCode;

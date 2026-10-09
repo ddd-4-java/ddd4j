@@ -41,6 +41,22 @@ import java.util.List;
 public class TestModels {
 
     /**
+     * 构造测试数据。
+     *
+     * @param n 行数
+     * @return UserVO 列表
+     */
+    public static List<UserVO> sampleUsers(int n) {
+        List<UserVO> list = new ArrayList<>(n);
+        for (int i = 1; i <= n; i++) {
+            list.add(new UserVO((long) i, "用户" + i,
+                    LocalDate.of(1990, 1, 1).plusDays(i),
+                    new Date()));
+        }
+        return list;
+    }
+
+    /**
      * 用户导出/导入 VO（覆盖常见类型）。
      */
     @Data
@@ -63,21 +79,5 @@ public class TestModels {
         @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
         @ColumnWidth(25)
         private Date createTime;
-    }
-
-    /**
-     * 构造测试数据。
-     *
-     * @param n 行数
-     * @return UserVO 列表
-     */
-    public static List<UserVO> sampleUsers(int n) {
-        List<UserVO> list = new ArrayList<>(n);
-        for (int i = 1; i <= n; i++) {
-            list.add(new UserVO((long) i, "用户" + i,
-                    LocalDate.of(1990, 1, 1).plusDays(i),
-                    new Date()));
-        }
-        return list;
     }
 }

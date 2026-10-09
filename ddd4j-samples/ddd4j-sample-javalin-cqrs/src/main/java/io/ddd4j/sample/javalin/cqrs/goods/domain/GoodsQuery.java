@@ -17,6 +17,7 @@ package io.ddd4j.sample.javalin.cqrs.goods.domain;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -119,7 +120,7 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    private void applyOrder(boolean desc, io.ddd4j.core.util.SFunction<Goods, ?> property) {
+    private void applyOrder(boolean desc, SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
             return;

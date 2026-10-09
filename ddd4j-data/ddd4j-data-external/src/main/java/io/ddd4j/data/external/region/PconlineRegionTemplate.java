@@ -14,19 +14,18 @@
  */
 package io.ddd4j.data.external.region;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson2.JSONObject;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.URI;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 
 /**
  * 太平洋网络 IP 地址解析模板

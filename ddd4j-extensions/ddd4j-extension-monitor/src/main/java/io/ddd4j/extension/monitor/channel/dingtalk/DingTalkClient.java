@@ -18,10 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Base64;
 
 /**
@@ -73,17 +71,34 @@ public class DingTalkClient {
         this.baseUrl = baseUrl;
     }
 
-    /** @return 配置的 access_token */
+    /**
+     * 计算钉钉机器人加签。
+     */
+    private static String getSign(long timestamp, String secret) throws Exception {
+        String stringToSign = timestamp + "\n" + secret;
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
+        return URLEncoder.encode(new String(Base64.getEncoder().encode(signData)), "UTF-8");
+    }
+
+    /**
+     * @return 配置的 access_token
+     */
     public String accessToken() {
         return accessToken;
     }
 
-    /** @return 配置的加签密钥 */
+    /**
+     * @return 配置的加签密钥
+     */
     public String secret() {
         return secret;
     }
 
-    /** @return 当前生效的 webhook 基础地址（含 {@code ?access_token=}） */
+    /**
+     * @return 当前生效的 webhook 基础地址（含 {@code ?access_token=}）
+     */
     public String baseUrl() {
         return baseUrl;
     }
@@ -107,16 +122,5 @@ public class DingTalkClient {
         } catch (Exception e) {
             log.error("【发送钉钉群消息】error: {}", e.getMessage(), e);
         }
-    }
-
-    /**
-     * 计算钉钉机器人加签。
-     */
-    private static String getSign(long timestamp, String secret) throws Exception {
-        String stringToSign = timestamp + "\n" + secret;
-        Mac mac = Mac.getInstance("HmacSHA256");
-        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-        byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
-        return URLEncoder.encode(new String(Base64.getEncoder().encode(signData)), "UTF-8");
     }
 }

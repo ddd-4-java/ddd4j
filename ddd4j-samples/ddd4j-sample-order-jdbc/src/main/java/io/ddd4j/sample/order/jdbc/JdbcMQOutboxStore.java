@@ -14,12 +14,8 @@
  */
 package io.ddd4j.sample.order.jdbc;
 
-import io.ddd4j.mq.delivery.MQDeliveryHeaders;
-import io.ddd4j.mq.delivery.MQDeliveryPolicy;
-import io.ddd4j.mq.delivery.MQOutboxRecord;
-import io.ddd4j.mq.delivery.MQOutboxStatus;
-import io.ddd4j.mq.delivery.MQOutboxStore;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.delivery.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,7 +25,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -126,7 +121,7 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
     }
 
     private List<MQOutboxRecord> claimInCurrentTransaction(String leaseOwner, Instant now, int limit,
-                                                            MQDeliveryPolicy policy) {
+                                                           MQDeliveryPolicy policy) {
         String sql = "SELECT id, event_type, payload, available_at, attempts, last_error, published_at "
                 + "FROM sample_order_outbox WHERE (status = 'PENDING' AND available_at <= ?) "
                 + "OR (status = 'LEASED' AND lease_until <= ?) ORDER BY available_at FOR UPDATE SKIP LOCKED LIMIT ?";

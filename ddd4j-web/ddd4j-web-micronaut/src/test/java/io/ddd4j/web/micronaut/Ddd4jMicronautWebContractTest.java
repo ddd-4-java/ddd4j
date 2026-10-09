@@ -17,8 +17,8 @@ package io.ddd4j.web.micronaut;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
-import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
@@ -45,22 +45,17 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.time.Duration;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.time.Duration;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
@@ -228,14 +223,30 @@ final class MicronautContractController {
     R<Void> error(String type) {
         RuntimeException ex;
         switch (type) {
-            case "bad-request": ex = new IllegalArgumentException("bad request"); break;
-            case "forbidden": ex = new SecurityException("forbidden"); break;
-            case "not-found": ex = new NoSuchElementException("not found"); break;
-            case "conflict": ex = new IllegalStateException("conflict"); break;
-            case "unsupported-media-type": ex = new WebStatusException(415, "unsupported media type"); break;
-            case "unprocessable-entity": ex = new WebStatusException(422, "unprocessable entity"); break;
-            case "too-many-requests": ex = new WebStatusException(429, "too many requests"); break;
-            default: ex = new RuntimeException("internal failure"); break;
+            case "bad-request":
+                ex = new IllegalArgumentException("bad request");
+                break;
+            case "forbidden":
+                ex = new SecurityException("forbidden");
+                break;
+            case "not-found":
+                ex = new NoSuchElementException("not found");
+                break;
+            case "conflict":
+                ex = new IllegalStateException("conflict");
+                break;
+            case "unsupported-media-type":
+                ex = new WebStatusException(415, "unsupported media type");
+                break;
+            case "unprocessable-entity":
+                ex = new WebStatusException(422, "unprocessable entity");
+                break;
+            case "too-many-requests":
+                ex = new WebStatusException(429, "too many requests");
+                break;
+            default:
+                ex = new RuntimeException("internal failure");
+                break;
         }
         throw ex;
     }

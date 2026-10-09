@@ -15,17 +15,18 @@
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
 import io.ddd4j.sample.javalin.satoken.TestSupport;
+import io.ddd4j.sample.javalin.satoken.http.HttpClient;
+import io.ddd4j.sample.javalin.satoken.http.HttpRequest;
+import io.ddd4j.sample.javalin.satoken.http.HttpResponse;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
 
 import java.net.URI;
-import io.ddd4j.sample.javalin.satoken.http.HttpClient;
-import io.ddd4j.sample.javalin.satoken.http.HttpRequest;
-import io.ddd4j.sample.javalin.satoken.http.HttpResponse;
-import java.util.Objects;
 import java.time.Duration;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link AuthorizationController} RBAC 授权管理路由集成测试。

@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.satoken.goods.infrastructure;
 
-import java.util.Objects;
-
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;
@@ -200,14 +198,24 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
             boolean desc = "DESC".equalsIgnoreCase(orderBy.operator());
             Comparator<Goods> current;
             switch (field) {
-                case "id": current = Comparator.comparing(Goods::id); break;
-                case "createTime": current = Comparator.comparing(Goods::getCreateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder())); break;
-                case "updateTime": current = Comparator.comparing(Goods::getUpdateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder())); break;
-                case "price": current = Comparator.comparing(Goods::getPrice,
-                        Comparator.nullsLast(Comparator.naturalOrder())); break;
-                default: current = null; break;
+                case "id":
+                    current = Comparator.comparing(Goods::id);
+                    break;
+                case "createTime":
+                    current = Comparator.comparing(Goods::getCreateTime,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                case "updateTime":
+                    current = Comparator.comparing(Goods::getUpdateTime,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                case "price":
+                    current = Comparator.comparing(Goods::getPrice,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                default:
+                    current = null;
+                    break;
             }
             if (Objects.isNull(current)) {
                 continue;

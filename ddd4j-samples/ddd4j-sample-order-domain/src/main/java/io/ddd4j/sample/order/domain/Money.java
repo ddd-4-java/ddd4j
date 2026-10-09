@@ -23,7 +23,9 @@ import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 
-/** 货币金额值对象，Java 8 等价实现保留 record 的值语义与组件访问器。 */
+/**
+ * 货币金额值对象，Java 8 等价实现保留 record 的值语义与组件访问器。
+ */
 @Value
 public class Money implements ValueObject {
 
@@ -42,20 +44,20 @@ public class Money implements ValueObject {
         this.currency = currency.trim().toUpperCase(Locale.ROOT);
     }
 
-    public BigDecimal amount() {
-        return amount;
-    }
-
-    public String currency() {
-        return currency;
-    }
-
     public static Money cny(BigDecimal amount) {
         return new Money(amount, "CNY");
     }
 
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
+    }
+
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    public String currency() {
+        return currency;
     }
 
     public Money add(Money other) {

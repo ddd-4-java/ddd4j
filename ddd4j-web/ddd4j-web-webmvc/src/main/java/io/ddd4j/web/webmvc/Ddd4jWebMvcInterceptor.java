@@ -17,23 +17,14 @@ package io.ddd4j.web.webmvc;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
-import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.*;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -65,6 +56,21 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
         this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
+    }
+
+    private static Map<String, String> extractHeaders(HttpServletRequest request) {
+        Map<String, String> headers = new HashMap<>();
+        Enumeration<String> names = request.getHeaderNames();
+        if (Objects.nonNull(names)) {
+            while (names.hasMoreElements()) {
+                String name = names.nextElement();
+                String value = request.getHeader(name);
+                if (Objects.nonNull(value)) {
+                    headers.put(name, value);
+                }
+            }
+        }
+        return headers;
     }
 
     @Override
@@ -128,21 +134,6 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
             }
             request.removeAttribute(OTEL_SPAN_ATTRIBUTE + ".scope");
         }
-    }
-
-    private static Map<String, String> extractHeaders(HttpServletRequest request) {
-        Map<String, String> headers = new HashMap<>();
-        Enumeration<String> names = request.getHeaderNames();
-        if (Objects.nonNull(names)) {
-            while (names.hasMoreElements()) {
-                String name = names.nextElement();
-                String value = request.getHeader(name);
-                if (Objects.nonNull(value)) {
-                    headers.put(name, value);
-                }
-            }
-        }
-        return headers;
     }
 
     private WebRequestContext createContext(HttpServletRequest request) {

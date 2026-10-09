@@ -1,10 +1,12 @@
 ### Task 0.1：删除 ddd4j-dependencies/pom.xml 中 fuin 死依赖块
 
 **Files:**
+
 - Modify: `ddd4j/ddd4j-dependencies/pom.xml:274-275`（删除 2 个 version 属性）
 - Modify: `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`（删除 8 个 dependency 块）
 
 **Interfaces:**
+
 - 消费：无
 - 产出：干净的 `ddd4j-dependencies/pom.xml` BOM
 
@@ -22,6 +24,7 @@ Read `ddd4j/ddd4j-dependencies/pom.xml:274-275`，确认内容为：
 - [ ] **Step 2: 删除 8 个 fuin dependency 块**
 
 Read `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`，确认内容包含 8 个 fuin 依赖块：
+
 - `org.fuin.ddd4j:ddd-4-java-core / esc / jsonb / jackson / jaxb`（5 个）
 - `org.fuin.cqrs4j:cqrs-4-java-core / jsonb / jackson`（3 个）
 
@@ -29,7 +32,8 @@ Read `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`，确认内容包含 8 个 fui
 
 - [ ] **Step 3: 验证编译**
 
-Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-dependencies install -DskipTests`
+Run:
+`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-dependencies install -DskipTests`
 
 Expected: BUILD SUCCESS
 

@@ -22,21 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EventStoreRetryTest {
-
-    /** 桩 Sleeper：仅记录调用次数与延迟，不真正睡眠。 */
-    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
-        final List<Long> calls = new ArrayList<Long>();
-
-        @Override
-        public void sleep(long millis) {
-            calls.add(millis);
-        }
-    }
 
     @Test
     void firstAttemptSuccess_doesNotSleep() throws Exception {
@@ -126,5 +114,17 @@ class EventStoreRetryTest {
         RecordingSleeper sleeper = new RecordingSleeper();
         assertThrows(IllegalArgumentException.class, () -> new EventStoreRetry(0, 1L, sleeper));
         assertThrows(IllegalArgumentException.class, () -> new EventStoreRetry(3, -1L, sleeper));
+    }
+
+    /**
+     * 桩 Sleeper：仅记录调用次数与延迟，不真正睡眠。
+     */
+    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
+        final List<Long> calls = new ArrayList<Long>();
+
+        @Override
+        public void sleep(long millis) {
+            calls.add(millis);
+        }
     }
 }

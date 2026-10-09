@@ -20,9 +20,9 @@ import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebBundle;
 import io.dropwizard.Application;
+import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.lifecycle.Managed;
 
 /**
  * 共享 Order 业务内核的 Dropwizard 启动入口。

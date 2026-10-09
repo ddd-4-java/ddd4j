@@ -15,8 +15,7 @@
 package io.ddd4j.core.exception;
 
 
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.CustomApiCode;
+import io.ddd4j.core.api.CustomApiCode;
 
 
 /**
@@ -49,7 +48,7 @@ public class MessagePushException extends BizRuntimeException {
         super(message, cause);
     }
 
-    public MessagePushException(ApiCode code, String i18nCode) {
+    public MessagePushException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

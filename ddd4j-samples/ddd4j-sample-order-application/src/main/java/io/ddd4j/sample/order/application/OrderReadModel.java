@@ -19,7 +19,9 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 
-/** 订单读模型，Java 8 等价实现保留 record 值语义。 */
+/**
+ * 订单读模型，Java 8 等价实现保留 record 值语义。
+ */
 @Value
 public class OrderReadModel {
     String id;
@@ -29,10 +31,27 @@ public class OrderReadModel {
     OrderStatus status;
     BigDecimal totalAmount;
 
-    public String id() { return id; }
-    public String orderNo() { return orderNo; }
-    public String buyerId() { return buyerId; }
-    public String buyerName() { return buyerName; }
-    public OrderStatus status() { return status; }
-    public BigDecimal totalAmount() { return totalAmount; }
+    public String id() {
+        return id;
+    }
+
+    public String orderNo() {
+        return orderNo;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
+
+    public OrderStatus status() {
+        return status;
+    }
+
+    public BigDecimal totalAmount() {
+        return totalAmount;
+    }
 }

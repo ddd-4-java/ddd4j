@@ -19,8 +19,8 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.RoutingContext;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
@@ -29,11 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class Ddd4jVertxContextTest {
 
@@ -45,6 +41,11 @@ class Ddd4jVertxContextTest {
     private Map<String, Object> contextValues;
 
     private Vertx vertx;
+
+    private static WebRequestContext requestContext() {
+        return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
+                Locale.CHINA, "127.0.0.1", "GET", "/api");
+    }
 
     @BeforeEach
     void setUpRoutingContext() {
@@ -77,11 +78,6 @@ class Ddd4jVertxContextTest {
                     }
                     return null;
                 });
-    }
-
-    private static WebRequestContext requestContext() {
-        return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
-                Locale.CHINA, "127.0.0.1", "GET", "/api");
     }
 
     @Test

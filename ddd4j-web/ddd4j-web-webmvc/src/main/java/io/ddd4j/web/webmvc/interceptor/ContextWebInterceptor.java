@@ -17,10 +17,10 @@ package io.ddd4j.web.webmvc.interceptor;
 import io.ddd4j.core.auth.session.SessionContext;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 import java.util.Objects;
 

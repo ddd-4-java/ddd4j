@@ -14,13 +14,13 @@
  */
 package io.ddd4j.extension.license.manager;
 
-import java.util.Collections;
 import io.ddd4j.extension.license.LicenseExtraModel;
 import io.ddd4j.extension.license.LicenseInfo;
 import io.ddd4j.extension.license.machine.DefaultLicenseMachineInfoProvider;
 import io.ddd4j.extension.license.machine.LicenseMachineInfoProvider;
 import io.ddd4j.kit.lang.StrKit;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;

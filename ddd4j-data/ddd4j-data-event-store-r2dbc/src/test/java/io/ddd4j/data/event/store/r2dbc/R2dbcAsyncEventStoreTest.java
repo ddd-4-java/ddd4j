@@ -16,26 +16,11 @@ package io.ddd4j.data.event.store.r2dbc;
 
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityIdRegistry;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.Event;
-import io.ddd4j.core.ddd.event.EventId;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import io.r2dbc.h2.CloseableConnectionFactory;
 import io.r2dbc.h2.H2ConnectionFactory;
 import io.r2dbc.h2.H2ConnectionOption;
-import io.r2dbc.spi.Batch;
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactory;
-import io.r2dbc.spi.ConnectionFactoryMetadata;
-import io.r2dbc.spi.ConnectionMetadata;
-import io.r2dbc.spi.IsolationLevel;
-import io.r2dbc.spi.Statement;
-import io.r2dbc.spi.TransactionDefinition;
-import io.r2dbc.spi.ValidationDepth;
+import io.r2dbc.spi.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,8 +30,6 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

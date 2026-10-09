@@ -70,7 +70,7 @@ class MybatisAggregateRepositoryMySQLTest {
     @BeforeAll
     static void setUp() throws Exception {
         // 1. 建表
-try (Connection conn = MYSQL.createConnection("");
+        try (Connection conn = MYSQL.createConnection("");
              Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS orders ("
                     + "id VARCHAR(64) PRIMARY KEY, "
@@ -157,15 +157,15 @@ try (Connection conn = MYSQL.createConnection("");
 
     // =================== 测试夹具 ===================
 
+    interface OrderMapper extends BaseMapper<OrderPO> {
+    }
+
     static final class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
         TestRepository(OrderMapper mapper) {
             super(mapper, Order.class, OrderPO.class);
         }
-    }
-
-    interface OrderMapper extends BaseMapper<OrderPO> {
     }
 
     static final class OrderQuery extends Query<Order> {

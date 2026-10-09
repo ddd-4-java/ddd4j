@@ -16,9 +16,6 @@ package io.ddd4j.web.webmvc.util;
 
 import cn.hutool.json.JSONUtil;
 import io.ddd4j.core.constant.XHeaders;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
@@ -27,6 +24,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Objects;
@@ -80,7 +80,7 @@ public class WebKit {
      * 根据名称获取 Cookie。
      *
      * @param request 当前请求
-     * @param name Cookie 名称
+     * @param name    Cookie 名称
      * @return 匹配的 Cookie，不存在时返回 null
      */
     public static Cookie getCookie(HttpServletRequest request, String name) {

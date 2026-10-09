@@ -35,15 +35,25 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Page<T> implements Iterable<T> {
-    // 列表数据
+    /**
+     * 列表数据
+     */
     private List<T> records;
-    // 总记录数
+    /**
+     * 总记录数
+     */
     private long total;
-    // 回写当前页
+    /**
+     * 回写当前页
+     */
     private long current = 1L;
-    // 回写每页大小
+    /**
+     * 回写每页大小
+     */
     private long size = 10L;
-    // 扩展字段
+    /**
+     * 扩展字段
+     */
     private Map<String, Object> extras;
 
     /**
@@ -85,12 +95,12 @@ public class Page<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : null;
+        return Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : Collections.emptyIterator();
     }
 
     @Override
     public Spliterator<T> spliterator() {
-        return Objects.nonNull(this.records) ? this.records.spliterator() : null;
+        return Objects.nonNull(this.records) ? this.records.spliterator() : Spliterators.emptySpliterator();
     }
 
     @Override
@@ -127,7 +137,9 @@ public class Page<T> implements Iterable<T> {
      * @return true 表示添加成功
      */
     public boolean add(T t) {
-        return Objects.nonNull(this.records) && this.records.add(t);
+        if (Objects.isNull(this.records)) return false;
+        this.records.add(t);
+        return true;
     }
 
     /**
@@ -137,7 +149,8 @@ public class Page<T> implements Iterable<T> {
      * @return true 表示移除成功
      */
     public boolean remove(Object o) {
-        return Objects.nonNull(this.records) && this.records.remove(o);
+        if (Objects.isNull(this.records)) return false;
+        return this.records.remove(o);
     }
 
     /**
@@ -151,35 +164,39 @@ public class Page<T> implements Iterable<T> {
      * 向当前页添加指定集合中的所有元素。
      */
     public boolean addAll(Collection<? extends T> c) {
-        return Objects.nonNull(this.records) && this.records.addAll(c);
+        if (Objects.isNull(this.records)) return false;
+        return this.records.addAll(c);
     }
 
     /**
      * 从当前页移除指定集合中的所有元素。
      */
     public boolean removeAll(Collection<?> c) {
-        return Objects.nonNull(this.records) && this.records.removeAll(c);
+        if (Objects.isNull(this.records)) return false;
+        return this.records.removeAll(c);
     }
 
     /**
      * 按条件移除当前页中的元素。
      */
     public boolean removeIf(Predicate<? super T> filter) {
-        return Objects.nonNull(this.records) && this.records.removeIf(filter);
+        if (Objects.isNull(this.records)) return false;
+        return this.records.removeIf(filter);
     }
 
     /**
      * 仅保留当前页中包含在指定集合中的元素。
      */
     public boolean retainAll(Collection<?> c) {
-        return Objects.nonNull(this.records) && this.records.retainAll(c);
+        if (Objects.isNull(this.records)) return false;
+        return this.records.retainAll(c);
     }
 
     /**
      * 获取当前页数据的流。
      */
     public Stream<T> stream() {
-        return Objects.nonNull(this.records) ? this.records.stream() : new ArrayList<T>().stream();
+        return Objects.nonNull(this.records) ? this.records.stream() : Stream.empty();
     }
 
     public Page<T> peek(Consumer<? super T> action) {

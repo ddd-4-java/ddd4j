@@ -42,11 +42,13 @@ public interface ProjectionPositionRepository {
      */
 
     Optional<ProjectionPosition> findByStreamId(String streamId);
+
     /**
      * 列出全部投影位置。
      */
 
     List<ProjectionPosition> findAll();
+
     /**
      * 保存或更新投影位置。
      *
@@ -55,6 +57,7 @@ public interface ProjectionPositionRepository {
      */
 
     ProjectionPosition save(ProjectionPosition position);
+
     /**
      * 删除指定投影位置。
      *
@@ -62,6 +65,7 @@ public interface ProjectionPositionRepository {
      */
 
     void deleteByStreamId(String streamId);
+
     /**
      * 重置指定投影位置到 0（重新拉取全量事件）。
      *

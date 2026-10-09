@@ -21,14 +21,14 @@
 
 ## 六个组件的专属语义
 
-| 组件 | 共享语义 | 专属技术符号 | 视觉含义 |
-| --- | --- | --- | --- |
-| `ddd4j` | DDD + COLA | Java 杯形与蒸汽，收束在一条基石线内 | Java DDD 基础构件与架构基石 |
-| `ddd4j-boot` | DDD + COLA | Spring 叶片与一个启动点组成单一轮廓 | Spring Boot 自动装配与启动 |
-| `ddd4j-javalin` | DDD + COLA | Javalin 帆形与一条轻量尾线 | 轻量 HTTP 服务与快速路由 |
-| `ddd4j-quarkus` | DDD + COLA | 单一 Q 形切口 | Quarkus Native 与快速启动 |
-| `ddd4j-web3` | DDD + COLA | 六边形代币内嵌锁孔 | 加密货币、链上账本与可信边界 |
-| `ddd4j-cloud` | DDD + COLA | 云轮廓内嵌一枚 Spring 叶片 | Spring Cloud 分布式服务体系 |
+| 组件            | 共享语义   | 专属技术符号                        | 视觉含义                     |
+|-----------------|------------|-------------------------------------|------------------------------|
+| `ddd4j`         | DDD + COLA | Java 杯形与蒸汽，收束在一条基石线内 | Java DDD 基础构件与架构基石  |
+| `ddd4j-boot`    | DDD + COLA | Spring 叶片与一个启动点组成单一轮廓 | Spring Boot 自动装配与启动   |
+| `ddd4j-javalin` | DDD + COLA | Javalin 帆形与一条轻量尾线          | 轻量 HTTP 服务与快速路由     |
+| `ddd4j-quarkus` | DDD + COLA | 单一 Q 形切口                       | Quarkus Native 与快速启动    |
+| `ddd4j-web3`    | DDD + COLA | 六边形代币内嵌锁孔                  | 加密货币、链上账本与可信边界 |
+| `ddd4j-cloud`   | DDD + COLA | 云轮廓内嵌一枚 Spring 叶片          | Spring Cloud 分布式服务体系  |
 
 技术符号采用原创几何抽象，不直接复制第三方商标；应能表达生态含义，同时保持 ddd4j 母体主导。
 
@@ -36,24 +36,24 @@
 
 ### 家族共享色
 
-| Token | 色值 | 用途 |
-| --- | --- | --- |
-| `family-ink` | `#10233F` | 字标、深色轮廓、暗面 |
-| `family-core` | `#2457D6` | DDD 核心立方体、母品牌主色 |
-| `family-cyan` | `#2AB7CA` | COLA 分层线、连接与高光 |
-| `family-surface` | `#F7FAFF` | 明亮背景 |
-| `family-line` | `#D8E5F5` | 安全边框与弱分隔 |
+| Token            | 色值      | 用途                       |
+|------------------|-----------|----------------------------|
+| `family-ink`     | `#10233F` | 字标、深色轮廓、暗面       |
+| `family-core`    | `#2457D6` | DDD 核心立方体、母品牌主色 |
+| `family-cyan`    | `#2AB7CA` | COLA 分层线、连接与高光    |
+| `family-surface` | `#F7FAFF` | 明亮背景                   |
+| `family-line`    | `#D8E5F5` | 安全边框与弱分隔           |
 
 ### 组件主题色
 
-| 组件 | 名称 | Default | Dark | Soft |
-| --- | --- | --- | --- | --- |
-| `ddd4j` | 基石蓝 | `#2457D6` | `#183E9E` | `#EEF4FF` |
-| `ddd4j-boot` | 装配绿 | `#5B8F3A` | `#3E6726` | `#F1F8EC` |
-| `ddd4j-javalin` | 轻量橙 | `#E66A2C` | `#AD451A` | `#FFF3EC` |
+| 组件            | 名称     | Default   | Dark      | Soft      |
+|-----------------|----------|-----------|-----------|-----------|
+| `ddd4j`         | 基石蓝   | `#2457D6` | `#183E9E` | `#EEF4FF` |
+| `ddd4j-boot`    | 装配绿   | `#5B8F3A` | `#3E6726` | `#F1F8EC` |
+| `ddd4j-javalin` | 轻量橙   | `#E66A2C` | `#AD451A` | `#FFF3EC` |
 | `ddd4j-quarkus` | 原生莓紫 | `#A54078` | `#782B57` | `#FBEEF5` |
-| `ddd4j-web3` | 账本紫 | `#6A4DD8` | `#4932A2` | `#F2EFFF` |
-| `ddd4j-cloud` | 云端青 | `#1687A7` | `#0F6078` | `#EAF8FB` |
+| `ddd4j-web3`    | 账本紫   | `#6A4DD8` | `#4932A2` | `#F2EFFF` |
+| `ddd4j-cloud`   | 云端青   | `#1687A7` | `#0F6078` | `#EAF8FB` |
 
 产品主题色只表达组件身份。成功、警告、错误、未知状态继续使用独立状态色，不能由产品色代替。
 
@@ -83,14 +83,14 @@
 
 新资产不得覆盖现有 Logo，先以 `-v2` 文件名交付：
 
-| 仓库 | 新 Logo 目录 |
-| --- | --- |
-| `ddd4j` | `assets/branding/` |
-| `ddd4j-boot` | `docs/assets/branding/` |
-| `ddd4j-javalin` | `docs/assets/brand/` |
+| 仓库            | 新 Logo 目录            |
+|-----------------|-------------------------|
+| `ddd4j`         | `assets/branding/`      |
+| `ddd4j-boot`    | `docs/assets/branding/` |
+| `ddd4j-javalin` | `docs/assets/brand/`    |
 | `ddd4j-quarkus` | `docs/assets/branding/` |
-| `ddd4j-web3` | `assets/branding/` |
-| `ddd4j-cloud` | `docs/assets/branding/` |
+| `ddd4j-web3`    | `assets/branding/`      |
+| `ddd4j-cloud`   | `docs/assets/branding/` |
 
 每个目录交付 `<project>-icon-v2.svg`、`<project>-icon-v2.png`、`<project>-logo-v2.svg`、
 `<project>-logo-v2.png`。用户确认整组后，才允许替换 README 或封面图引用。

@@ -14,10 +14,9 @@
  */
 package io.ddd4j.extension.excel.importer;
 
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -75,7 +74,8 @@ class ImportResultTest {
 
     @Test
     void batchReadListener_should_throw_for_invalid_batch_size() {
-        assertThatThrownBy(() -> new BatchReadListener<>(0, list -> {}))
+        assertThatThrownBy(() -> new BatchReadListener<>(0, list -> {
+        }))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

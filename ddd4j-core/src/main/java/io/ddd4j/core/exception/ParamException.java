@@ -14,8 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.CustomApiCode;
+import io.ddd4j.core.api.CustomApiCode;
 
 
 /**
@@ -48,7 +47,7 @@ public class ParamException extends BizRuntimeException {
         super(message, cause);
     }
 
-    public ParamException(ApiCode code, String i18nCode) {
+    public ParamException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

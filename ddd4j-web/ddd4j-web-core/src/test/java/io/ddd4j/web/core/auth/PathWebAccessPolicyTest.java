@@ -14,12 +14,11 @@
  */
 package io.ddd4j.web.core.auth;
 
-import java.util.Collections;
 import io.ddd4j.web.core.context.WebRequestContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

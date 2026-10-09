@@ -14,8 +14,6 @@
  */
 package io.ddd4j.extension.qlexpress.runtime;
 
-import java.util.Collections;
-import java.util.HashSet;
 import com.alibaba.qlexpress4.CheckOptions;
 import com.alibaba.qlexpress4.Express4Runner;
 import com.alibaba.qlexpress4.InitOptions;
@@ -29,10 +27,7 @@ import io.ddd4j.extension.qlexpress.model.QLExpressExecutionResult;
 import io.ddd4j.extension.qlexpress.model.QLExpressValidationResult;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 基于 Runner 快照的默认表达式引擎。
@@ -58,6 +53,24 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
             this.functions.putAll(initialFunctions);
         }
         this.runner = createRunner();
+    }
+
+    private static NamedQLFunction requireFunction(NamedQLFunction function) {
+        NamedQLFunction checked = Objects.requireNonNull(function, "function 不能为空");
+        requireFunctionName(checked.name());
+        return checked;
+    }
+
+    private static void requireFunctionName(String functionName) {
+        if (!StrKit.hasText(functionName)) {
+            throw new IllegalArgumentException("functionName 不能为空");
+        }
+    }
+
+    private static void requireExpression(String expression) {
+        if (!StrKit.hasText(expression)) {
+            throw new IllegalArgumentException("expression 不能为空");
+        }
     }
 
     @Override
@@ -189,23 +202,5 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
             }
         }
         return newRunner;
-    }
-
-    private static NamedQLFunction requireFunction(NamedQLFunction function) {
-        NamedQLFunction checked = Objects.requireNonNull(function, "function 不能为空");
-        requireFunctionName(checked.name());
-        return checked;
-    }
-
-    private static void requireFunctionName(String functionName) {
-        if (!StrKit.hasText(functionName)) {
-            throw new IllegalArgumentException("functionName 不能为空");
-        }
-    }
-
-    private static void requireExpression(String expression) {
-        if (!StrKit.hasText(expression)) {
-            throw new IllegalArgumentException("expression 不能为空");
-        }
     }
 }

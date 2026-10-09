@@ -15,23 +15,24 @@
 
 package io.ddd4j.web.core.error;
 
-import java.util.Objects;
 import io.ddd4j.core.api.R;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
- */public final class WebError {
+ */
+public final class WebError {
 
     private final int status;
     private final Serializable code;
     private final String message;
     private final Object data;
 
-/**
- * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
- */
+    /**
+     * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
+     */
 
     public WebError(int status, Serializable code, String message, Object data) {
         this.status = status;
@@ -44,10 +45,21 @@ import java.io.Serializable;
         return R.fail(code, message, data);
     }
 
-    public int status() { return status; }
-    public Serializable code() { return code; }
-    public String message() { return message; }
-    public Object data() { return data; }
+    public int status() {
+        return status;
+    }
+
+    public Serializable code() {
+        return code;
+    }
+
+    public String message() {
+        return message;
+    }
+
+    public Object data() {
+        return data;
+    }
 
     public int getStatus() {
         return status;
@@ -64,6 +76,7 @@ import java.io.Serializable;
     public Object getData() {
         return data;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

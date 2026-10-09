@@ -1,11 +1,13 @@
 ### Task 0.2：删除 ProjectionService.java 注释中的 fuin 引用
 
 **Files:**
+
 - Modify: `ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java:5-6`
 
 - [ ] **Step 1: 定位 fuin 引用**
 
-Run: `grep -n "org.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java`
+Run:
+`grep -n "org.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java`
 
 Expected: 命中 `org.fuin.*` 引用
 

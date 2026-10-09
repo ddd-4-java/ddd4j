@@ -1,10 +1,12 @@
 ### Task 2.1：添加 @EventHandler 注解
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java`
 - Test: `ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java`
 
 **Interfaces:**
+
 - 消费：Task 1.2（参考文档）
 - 产出：`@EventHandler` 注解 API
 
@@ -47,7 +49,8 @@ class EventHandlerTest {
 
 - [ ] **Step 2: 跑测试确认失败**
 
-Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
+Run:
+`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: FAIL with "cannot find symbol class EventHandler"
 
@@ -101,7 +104,8 @@ public @interface EventHandler {
 
 - [ ] **Step 4: 跑测试确认通过**
 
-Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
+Run:
+`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: PASS
 
@@ -121,13 +125,24 @@ git commit -m "feat(core): 新增 @EventHandler 注解"
 
 ## Controller context (beyond the plan text)
 
-- Reference doc for this feature: `docs/reference/fuin-api-patterns/01-aggregate-root.md` — read it. It documents fuin's defects this annotation design deliberately fixes: `getIgnoredEvents()` is `protected final` despite javadoc claiming overridable (→ we use a method-level `ignoreOnReplay()` attribute instead); `MethodExecutor` has no Method cache and a `same()` bug at :192 (→ Task 2.2 will use ClassValue caching).
-- ddd4j-core current state: `AggregateRoot` has `registerEvent/domainEvents/pullDomainEvents/clearDomainEvents` (no apply/loadFromHistory yet — that's Task 2.2, do NOT implement it now). `DomainEvent<ID extends EntityId>` abstract class exists with eventId/correlationId/causationId fields.
-- The plan's test sketch references `OrderCreatedEvent.OrderId` as a record implementing `EntityId` — verify EntityId's actual method surface (`io.ddd4j.core.ddd.event.EntityId`) before writing the test; adapt the test to the real interface (e.g. if EntityId extends AsStringCapable or has more methods, the record must implement them). Trust the real source over the plan sketch.
-- Test file location: `ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java` (same package as the annotation — test needs package access).
-- TDD is mandatory: capture RED (compile failure counts as RED for a new class — use `./mvnw -pl ddd4j-core test-compile` output as the RED evidence) then GREEN evidence in your report.
+- Reference doc for this feature: `docs/reference/fuin-api-patterns/01-aggregate-root.md` — read it. It documents fuin's
+  defects this annotation design deliberately fixes: `getIgnoredEvents()` is `protected final` despite javadoc claiming
+  overridable (→ we use a method-level `ignoreOnReplay()` attribute instead); `MethodExecutor` has no Method cache and a
+  `same()` bug at :192 (→ Task 2.2 will use ClassValue caching).
+- ddd4j-core current state: `AggregateRoot` has `registerEvent/domainEvents/pullDomainEvents/clearDomainEvents` (no
+  apply/loadFromHistory yet — that's Task 2.2, do NOT implement it now). `DomainEvent<ID extends EntityId>` abstract
+  class exists with eventId/correlationId/causationId fields.
+- The plan's test sketch references `OrderCreatedEvent.OrderId` as a record implementing `EntityId` — verify EntityId's
+  actual method surface (`io.ddd4j.core.ddd.event.EntityId`) before writing the test; adapt the test to the real
+  interface (e.g. if EntityId extends AsStringCapable or has more methods, the record must implement them). Trust the
+  real source over the plan sketch.
+- Test file location: `ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java` (same package as the
+  annotation — test needs package access).
+- TDD is mandatory: capture RED (compile failure counts as RED for a new class — use
+  `./mvnw -pl ddd4j-core test-compile` output as the RED evidence) then GREEN evidence in your report.
 - Commit message: `feat(core): 新增 @EventHandler 注解`
-- Working dir: /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j; branch feature/2.0.x; latest commit is the post-rebase HEAD (36809966 or later — check git log).
+- Working dir: /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j; branch feature/2.0.x; latest commit
+  is the post-rebase HEAD (36809966 or later — check git log).
 
 ## Out of scope
 
@@ -137,4 +152,6 @@ git commit -m "feat(core): 新增 @EventHandler 注解"
 
 ## Report
 
-Write to `.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.1-report.md` (TDD RED/GREEN evidence with commands+output, files changed, EntityId surface note, self-review). Reply ≤15 lines: Status / commit / one-line test summary / concerns / report path.
+Write to `.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.1-report.md` (TDD RED/GREEN evidence with
+commands+output, files changed, EntityId surface note, self-review). Reply ≤15 lines: Status / commit / one-line test
+summary / concerns / report path.

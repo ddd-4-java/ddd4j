@@ -14,12 +14,7 @@
  */
 package io.ddd4j.data.projection;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
@@ -140,8 +135,8 @@ public class ProjectionDispatcher {
      * @param event   领域事件，非空
      * @param handler 订阅该事件的 handler，非空
      * @return 应用并提交完成后的 future（同步完成）
-     * @throws NullPointerException     event 或 handler 为 null
-     * @throws RuntimeException         handler 应用失败时原样传播（位置不推进）
+     * @throws NullPointerException event 或 handler 为 null
+     * @throws RuntimeException     handler 应用失败时原样传播（位置不推进）
      */
     public CompletableFuture<Void> dispatchOne(DomainEvent<?> event, ProjectionHandler handler) {
         DomainEvent<?> actualEvent = Objects.requireNonNull(event, "event must not be null");
@@ -184,30 +179,6 @@ public class ProjectionDispatcher {
         }
     }
 
-    /**
-     * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
-     */
-    private static final class Cursor {
-        private final long position;
-        private final EventChunk<DomainEvent<?>> chunk;
-        private final int index;
-        Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
-            this.position = position;
-            this.chunk = chunk;
-            this.index = index;
-        }
-        public long position() { return position; }
-        public EventChunk<DomainEvent<?>> chunk() { return chunk; }
-        public int index() { return index; }
-        @Override public boolean equals(Object o) { return this == o || (o instanceof Cursor && position == ((Cursor)o).position && java.util.Objects.equals(chunk, ((Cursor)o).chunk) && index == ((Cursor)o).index); }
-        @Override public int hashCode() { return java.util.Objects.hash(position, chunk, index); }
-        @Override public String toString() { return "Cursor{position=" + position + ", chunk=" + chunk + ", index=" + index + "}"; }
-
-        static Cursor start(long position) {
-            return new Cursor(position, null, 0);
-        }
-    }
-
     private void commitPosition(String streamId) {
         ProjectionPosition current = positions.findByStreamId(streamId)
                 .orElseGet(() -> DefaultProjectionPosition.zero(streamId));
@@ -227,5 +198,51 @@ public class ProjectionDispatcher {
         return handler.eventTypes().stream()
                 .map(Class::getSimpleName)
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
+     */
+    private static final class Cursor {
+        private final long position;
+        private final EventChunk<DomainEvent<?>> chunk;
+        private final int index;
+
+        Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
+            this.position = position;
+            this.chunk = chunk;
+            this.index = index;
+        }
+
+        static Cursor start(long position) {
+            return new Cursor(position, null, 0);
+        }
+
+        public long position() {
+            return position;
+        }
+
+        public EventChunk<DomainEvent<?>> chunk() {
+            return chunk;
+        }
+
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || (o instanceof Cursor && position == ((Cursor) o).position && java.util.Objects.equals(chunk, ((Cursor) o).chunk) && index == ((Cursor) o).index);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(position, chunk, index);
+        }
+
+        @Override
+        public String toString() {
+            return "Cursor{position=" + position + ", chunk=" + chunk + ", index=" + index + "}";
+        }
     }
 }

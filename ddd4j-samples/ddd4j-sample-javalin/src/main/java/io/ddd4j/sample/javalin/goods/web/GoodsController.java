@@ -15,7 +15,7 @@
 package io.ddd4j.sample.javalin.goods.web;
 
 import io.ddd4j.core.api.R;
-import io.ddd4j.core.util.SFunction;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;

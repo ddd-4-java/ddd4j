@@ -14,10 +14,10 @@
  */
 package io.ddd4j.sample.javalin.order.web;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.JavalinSample;
 import io.ddd4j.sample.javalin.TestHttpClient;
 import io.ddd4j.sample.javalin.TestHttpClient.HttpResponse;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.context.WebHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,9 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class OrderControllerTest {
 
@@ -50,6 +48,31 @@ class OrderControllerTest {
         if (Objects.nonNull(application)) {
             application.close();
         }
+    }
+
+    private static HttpResponse<String> get(String path) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
+        return client.get(baseUrl + path, headers);
+    }
+
+    private static HttpResponse<String> post(String path, String body, String idempotencyKey) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
+        if (Objects.nonNull(idempotencyKey)) {
+            headers.put(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
+        }
+        return client.postJson(baseUrl + path, body, headers);
+    }
+
+    private static String extract(String json, String field) {
+        String prefix = "\"" + field + "\":\"";
+        int start = json.indexOf(prefix);
+        if (start < 0) {
+            throw new IllegalArgumentException("field not found: " + field);
+        }
+        int valueStart = start + prefix.length();
+        return json.substring(valueStart, json.indexOf('"', valueStart));
     }
 
     @Test
@@ -105,30 +128,5 @@ class OrderControllerTest {
         assertTrue(StrKit.isNotBlank(firstRequestId));
         assertTrue(StrKit.isNotBlank(secondRequestId));
         assertNotEquals(firstRequestId, secondRequestId);
-    }
-
-    private static HttpResponse<String> get(String path) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
-        return client.get(baseUrl + path, headers);
-    }
-
-    private static HttpResponse<String> post(String path, String body, String idempotencyKey) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
-        if (Objects.nonNull(idempotencyKey)) {
-            headers.put(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
-        }
-        return client.postJson(baseUrl + path, body, headers);
-    }
-
-    private static String extract(String json, String field) {
-        String prefix = "\"" + field + "\":\"";
-        int start = json.indexOf(prefix);
-        if (start < 0) {
-            throw new IllegalArgumentException("field not found: " + field);
-        }
-        int valueStart = start + prefix.length();
-        return json.substring(valueStart, json.indexOf('"', valueStart));
     }
 }

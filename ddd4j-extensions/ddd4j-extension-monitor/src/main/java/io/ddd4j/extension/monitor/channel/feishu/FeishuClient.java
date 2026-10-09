@@ -14,16 +14,13 @@
  */
 package io.ddd4j.extension.monitor.channel.feishu;
 
-import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 
 /**
  * 飞书自定义机器人 Webhook 客户端。
@@ -58,19 +55,23 @@ public class FeishuClient {
      * 默认构造函数（典型用法）。
      *
      * @param webhookUrl 飞书机器人 webhook 完整地址，含 hook token
-     * @param secret      加签密钥（"不勾选签名校验"时可为 null 或空字符串）
+     * @param secret     加签密钥（"不勾选签名校验"时可为 null 或空字符串）
      */
     public FeishuClient(String webhookUrl, String secret) {
         this.webhookUrl = webhookUrl;
         this.secret = secret;
     }
 
-    /** @return 配置的 webhook 完整 URL */
+    /**
+     * @return 配置的 webhook 完整 URL
+     */
     public String webhookUrl() {
         return webhookUrl;
     }
 
-    /** @return 配置的加签密钥（无则为空字符串） */
+    /**
+     * @return 配置的加签密钥（无则为空字符串）
+     */
     public String secret() {
         return secret;
     }

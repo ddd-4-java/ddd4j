@@ -75,6 +75,9 @@ class MybatisAggregateRepositoryTest {
                 .hasMessageContaining("PERSISTENCE", OtherOrderPO.class.getName(), OrderPO.class.getName());
     }
 
+    interface OrderMapper extends BaseMapper<OrderPO> {
+    }
+
     static final class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
@@ -85,9 +88,6 @@ class MybatisAggregateRepositoryTest {
         QueryWrapper<OrderPO> wrapper(Query<Order> query) {
             return getBaseWrapper(query);
         }
-    }
-
-    interface OrderMapper extends BaseMapper<OrderPO> {
     }
 
     static final class OrderQuery extends Query<Order> {

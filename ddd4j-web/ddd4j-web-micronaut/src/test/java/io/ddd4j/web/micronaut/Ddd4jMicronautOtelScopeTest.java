@@ -35,11 +35,11 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,6 +48,29 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class Ddd4jMicronautOtelScopeTest {
+
+    private static HttpRequest<?> request() {
+        HttpRequest<?> request = mock(HttpRequest.class);
+        io.micronaut.http.HttpHeaders headers = mock(io.micronaut.http.HttpHeaders.class);
+        when(request.getMethodName()).thenReturn("GET");
+        when(request.getPath()).thenReturn("/test");
+        when(request.getHeaders()).thenReturn(headers);
+        when(request.getLocale()).thenReturn(Optional.of(Locale.getDefault()));
+        when(request.getRemoteAddress()).thenReturn(new InetSocketAddress("127.0.0.1", 8080));
+        return request;
+    }
+
+    private static void resetOpenTelemetry() throws Exception {
+        GlobalOpenTelemetry.resetForTest();
+        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
+            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            ((AtomicReference<?>) field.get(null)).set(null);
+        }
+        Field available = Ddd4jOtel.class.getDeclaredField("available");
+        available.setAccessible(true);
+        available.setBoolean(null, false);
+    }
 
     @Test
     void filterMustCloseOtelScopeOnCallingThread() throws Exception {
@@ -84,28 +107,5 @@ class Ddd4jMicronautOtelScopeTest {
             tracerProvider.close();
             resetOpenTelemetry();
         }
-    }
-
-    private static HttpRequest<?> request() {
-        HttpRequest<?> request = mock(HttpRequest.class);
-        io.micronaut.http.HttpHeaders headers = mock(io.micronaut.http.HttpHeaders.class);
-        when(request.getMethodName()).thenReturn("GET");
-        when(request.getPath()).thenReturn("/test");
-        when(request.getHeaders()).thenReturn(headers);
-        when(request.getLocale()).thenReturn(Optional.of(Locale.getDefault()));
-        when(request.getRemoteAddress()).thenReturn(new InetSocketAddress("127.0.0.1", 8080));
-        return request;
-    }
-
-    private static void resetOpenTelemetry() throws Exception {
-        GlobalOpenTelemetry.resetForTest();
-        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
-            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            ((AtomicReference<?>) field.get(null)).set(null);
-        }
-        Field available = Ddd4jOtel.class.getDeclaredField("available");
-        available.setAccessible(true);
-        available.setBoolean(null, false);
     }
 }

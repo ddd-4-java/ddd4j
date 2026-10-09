@@ -14,8 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.CustomApiCode;
+import io.ddd4j.core.api.CustomApiCode;
 
 /**
  * 加解密操作异常。
@@ -47,7 +46,7 @@ public class CryptoException extends BizRuntimeException {
         super(message, cause);
     }
 
-    public CryptoException(ApiCode code, String i18nCode) {
+    public CryptoException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

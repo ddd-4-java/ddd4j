@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac;
 
-import java.util.Objects;
-
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
@@ -24,12 +22,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryRoleRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 初始化配置：演示账号/角色/权限种子数据 + 注册 SubjectDataProvider。

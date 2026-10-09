@@ -22,13 +22,13 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -46,11 +46,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
@@ -124,14 +120,22 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
 
     private Throwable error(String type) {
         switch (type) {
-            case "bad-request": return new IllegalArgumentException("bad request");
-            case "forbidden": return new SecurityException("forbidden");
-            case "not-found": return new NoSuchElementException("not found");
-            case "conflict": return new IllegalStateException("conflict");
-            case "unsupported-media-type": return new WebStatusException(415, "unsupported media type");
-            case "unprocessable-entity": return new WebStatusException(422, "unprocessable entity");
-            case "too-many-requests": return new WebStatusException(429, "too many requests");
-            default: return new RuntimeException("internal failure");
+            case "bad-request":
+                return new IllegalArgumentException("bad request");
+            case "forbidden":
+                return new SecurityException("forbidden");
+            case "not-found":
+                return new NoSuchElementException("not found");
+            case "conflict":
+                return new IllegalStateException("conflict");
+            case "unsupported-media-type":
+                return new WebStatusException(415, "unsupported media type");
+            case "unprocessable-entity":
+                return new WebStatusException(422, "unprocessable entity");
+            case "too-many-requests":
+                return new WebStatusException(429, "too many requests");
+            default:
+                return new RuntimeException("internal failure");
         }
     }
 

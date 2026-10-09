@@ -2,8 +2,8 @@
 
 - Status: **DONE** — commit `490d41d9` on `feature/2.0.x`（父提交 36809966）
 - Files:
-  - Create: `ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java`
-  - Test: `ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java`
+    - Create: `ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java`
+    - Test: `ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java`
 
 ## TDD Evidence
 
@@ -39,12 +39,18 @@ Command: `./mvnw -pl ddd4j-core -am test -Dtest=EventHandlerTest -Dsurefire.fail
 
 Command: `./mvnw -pl ddd4j-core -am test`
 
-- ddd4j-core 自身：**240 tests / 42 classes**（原 237 + 本任务新增 3），除下述 1 个预先存在的环境性失败外全部通过；ArchUnit CoreIndependenceTest 通过（注解仅依赖 `java.lang.annotation`，零新依赖）。
-- **预先存在的失败（与本任务无关，已用干净 HEAD 复现证明）**：`io.ddd4j.core.ddd.event.DomainEventJsonTest.shouldSerializeEventMetadataAsStableScalarValues` 报
+- ddd4j-core 自身： **240 tests / 42 classes**（原 237 + 本任务新增 3），除下述 1 个预先存在的环境性失败外全部通过；ArchUnit
+  CoreIndependenceTest 通过（注解仅依赖 `java.lang.annotation`，零新依赖）。
+- **预先存在的失败（与本任务无关，已用干净 HEAD 复现证明）**：
+  `io.ddd4j.core.ddd.event.DomainEventJsonTest.shouldSerializeEventMetadataAsStableScalarValues` 报
   `InvalidDefinitionException: Java 8 date/time type java.time.ZonedDateTime not supported by default: add Module "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"`。
-  - 证明方法：将本任务两个新文件移出后，在 HEAD 36809966 上单独运行该测试，报同样的错误；随后恢复文件。
-  - 根因：commit 939eaa6d 修复该测试时依赖「jsr310 已在 test classpath（继承自当时本地安装的 ddd4j-kit:2.0.x.20260630-SNAPSHOT 旧 pom，其中仍声明 jackson-datatype-jsr310）」。rebase 把 revision 升为 20260730 后旧安装 pom 不再匹配；`-am` 反应堆用当前源码的 ddd4j-kit pom（Jackson 2→3→2 迁移期间 2193145e 删掉了 jsr310 声明，注释还停留在「J3 内置」），而 Jackson 2 的 databind 并不内置 jsr310。整个仓库任何 pom 均未声明 jsr310。
-  - 建议修复（超出本任务边界，本任务 brief 明令不改 ddd4j-core/pom.xml）：给 ddd4j-core（或恢复 ddd4j-kit）声明 `jackson-datatype-jsr310` test/compile 依赖。建议由控制器开独立任务处理。
+    - 证明方法：将本任务两个新文件移出后，在 HEAD 36809966 上单独运行该测试，报同样的错误；随后恢复文件。
+    - 根因：commit 939eaa6d 修复该测试时依赖「jsr310 已在 test classpath（继承自当时本地安装的 ddd4j-kit:
+      2.0.x.20260630-SNAPSHOT 旧 pom，其中仍声明 jackson-datatype-jsr310）」。rebase 把 revision 升为 20260730 后旧安装 pom
+      不再匹配；`-am` 反应堆用当前源码的 ddd4j-kit pom（Jackson 2→3→2 迁移期间 2193145e 删掉了 jsr310 声明，注释还停留在「J3
+      内置」），而 Jackson 2 的 databind 并不内置 jsr310。整个仓库任何 pom 均未声明 jsr310。
+    - 建议修复（超出本任务边界，本任务 brief 明令不改 ddd4j-core/pom.xml）：给 ddd4j-core（或恢复 ddd4j-kit）声明
+      `jackson-datatype-jsr310` test/compile 依赖。建议由控制器开独立任务处理。
 
 ## EntityId surface note（计划草图 → 真实接口的适配）
 
@@ -129,9 +135,9 @@ After（注释纠正 + test 作用域 jsr310，无显式 version）：
 - `help:evaluate -Dexpression=jackson.version`（ddd4j-core）→ `2.22.2`。
 - 但 effective 解析（`dependency:tree '-Dincludes=com.fasterxml.jackson*'`）实际 winner 是链上
   另一处更后位的管理，全家族对齐为：databind `2.21.2`(compile)、jackson-core `2.21.2`(compile)、
-  annotations `2.21`(compile)、**jsr310 `2.21.2`(test，直接依赖)**——databind 与 jsr310 严格同版。
+  annotations `2.21`(compile)、 **jsr310 `2.21.2`(test，直接依赖)**——databind 与 jsr310 严格同版。
   这正说明省略 version 是唯一正确做法：若按 brief 备选方案硬编码 `${jackson.version}`(2.22.2)，
-  jsr310 会与 databind(2.21.2) 形成 2.22.2/2.21.2 错配。
+  jsr310 会与 databind (2.21.2) 形成 2.22.2/2.21.2 错配。
 - 主代码作用域不受影响：jsr310 仅 test，`dependency:tree` 中为直接子节点 `:test`，compile scope 无它。
 
 ### 测试结果

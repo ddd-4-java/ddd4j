@@ -15,24 +15,16 @@
 package io.ddd4j.data.event.store.jpa;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
-import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import io.ddd4j.data.event.store.jpa.fixture.TransactionBusinessEntity;
 import io.ddd4j.data.event.store.jpa.fixture.TransactionOutboxEntity;
 import org.hibernate.cfg.Configuration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -50,12 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * PostgreSQL 容器轨：验证 JPA EventStore 的真实 DDL、持久化与读回。
@@ -67,37 +54,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers(disabledWithoutDocker = true)
 class JpaEventStorePostgresIT {
 
-    private static final String ORDER_TYPE = "Order";
-
     @Container
     static final PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine");
-
+    private static final String ORDER_TYPE = "Order";
     private static EntityManagerFactory entityManagerFactory;
-
-    @Test
-    void positionLookupMustLeaveCallerTransactionsActive() {
-        EntityManager first = entityManagerFactory.createEntityManager();
-        EntityManager second = entityManagerFactory.createEntityManager();
-        try {
-            first.getTransaction().begin();
-            second.getTransaction().begin();
-            long firstCandidate = new JpaStoredEventRepositoryImpl(first).nextPosition();
-            long secondCandidate = new JpaStoredEventRepositoryImpl(second).nextPosition();
-            org.junit.jupiter.api.Assertions.assertTrue(first.getTransaction().isActive());
-            org.junit.jupiter.api.Assertions.assertTrue(second.getTransaction().isActive());
-            // 诊断输出不作为原子分配断言；记录两个尚未提交的事务所读候选值。
-            System.out.println("POSITION_CANDIDATES=" + firstCandidate + "," + secondCandidate);
-        } finally {
-            if (first.getTransaction().isActive()) {
-                first.getTransaction().rollback();
-            }
-            if (second.getTransaction().isActive()) {
-                second.getTransaction().rollback();
-            }
-            first.close();
-            second.close();
-        }
-    }
     private EntityManager entityManager;
     private EventStore eventStore;
 
@@ -143,6 +103,31 @@ class JpaEventStorePostgresIT {
     static void closeEntityManagerFactory() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
+        }
+    }
+
+    @Test
+    void positionLookupMustLeaveCallerTransactionsActive() {
+        EntityManager first = entityManagerFactory.createEntityManager();
+        EntityManager second = entityManagerFactory.createEntityManager();
+        try {
+            first.getTransaction().begin();
+            second.getTransaction().begin();
+            long firstCandidate = new JpaStoredEventRepositoryImpl(first).nextPosition();
+            long secondCandidate = new JpaStoredEventRepositoryImpl(second).nextPosition();
+            org.junit.jupiter.api.Assertions.assertTrue(first.getTransaction().isActive());
+            org.junit.jupiter.api.Assertions.assertTrue(second.getTransaction().isActive());
+            // 诊断输出不作为原子分配断言；记录两个尚未提交的事务所读候选值。
+            System.out.println("POSITION_CANDIDATES=" + firstCandidate + "," + secondCandidate);
+        } finally {
+            if (first.getTransaction().isActive()) {
+                first.getTransaction().rollback();
+            }
+            if (second.getTransaction().isActive()) {
+                second.getTransaction().rollback();
+            }
+            first.close();
+            second.close();
         }
     }
 
@@ -382,7 +367,9 @@ class JpaEventStorePostgresIT {
         }
     }
 
-    /** 业务事件样例：无参构造 + JavaBean 属性（Jackson payload 序列化约定）。 */
+    /**
+     * 业务事件样例：无参构造 + JavaBean 属性（Jackson payload 序列化约定）。
+     */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         private String fact;

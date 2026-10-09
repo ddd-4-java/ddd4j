@@ -14,10 +14,10 @@
  */
 package io.ddd4j.mq.listener;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Builder;
 import lombok.Data;
@@ -80,17 +80,17 @@ public class MQListener {
      */
     private boolean required = true;
 
-    public static class MQListenerBuilder {
-        private boolean required = true;
-    }
-
-    /** 保留历史八参数构造器。 */
+    /**
+     * 保留历史八参数构造器。
+     */
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator) {
         this(bean, method, group, namespace, topic, tags, supports, separator, true);
     }
 
-    /** 包含启动必要性的完整构造器。 */
+    /**
+     * 包含启动必要性的完整构造器。
+     */
     @Builder
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator, boolean required) {
@@ -174,6 +174,10 @@ public class MQListener {
             return base;
         }
         return base + sep + firstTag;
+    }
+
+    public static class MQListenerBuilder {
+        private boolean required = true;
     }
 
 }

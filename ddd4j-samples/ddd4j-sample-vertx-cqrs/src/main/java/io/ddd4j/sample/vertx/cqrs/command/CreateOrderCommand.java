@@ -30,7 +30,15 @@ public class CreateOrderCommand implements Command {
     String buyerId;
     String buyerName;
 
-    public String orderNo() { return orderNo; }
-    public String buyerId() { return buyerId; }
-    public String buyerName() { return buyerName; }
+    public String orderNo() {
+        return orderNo;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
 }
