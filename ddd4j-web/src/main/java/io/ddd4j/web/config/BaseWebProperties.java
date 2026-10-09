@@ -1,4 +1,3 @@
-
 package io.ddd4j.web.config;
 
 import lombok.Data;

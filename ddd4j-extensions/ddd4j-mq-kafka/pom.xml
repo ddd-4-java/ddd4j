@@ -56,11 +56,11 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
         <!-- Compile dependencies -->
-<dependency>
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-<dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${mq.testcontainers.version}</version>

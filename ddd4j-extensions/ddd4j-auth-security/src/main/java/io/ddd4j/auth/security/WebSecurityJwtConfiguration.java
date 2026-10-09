@@ -52,7 +52,7 @@ public class WebSecurityJwtConfiguration {
     public JwtPayloadRepository jwtPayloadRepository(SignedWithSecretKeyJWTRepository secretKeyJWTRepository,
                                                      RedisOperationTemplate redisOperationTemplate,
                                                      JwtIssueProperteis jwtIssueProperteis) {
-        if (SignatureAlgorithm.HS256.getValue().equalsIgnoreCase(jwtIssueProperteis.getAlgorithm())){
+        if (SignatureAlgorithm.HS256.getValue().equalsIgnoreCase(jwtIssueProperteis.getAlgorithm())) {
             return new JwtHs256PayloadRepository(secretKeyJWTRepository, redisOperationTemplate, jwtIssueProperteis);
         }
         return new JwtRs256PayloadRepository(secretKeyJWTRepository, redisOperationTemplate, jwtIssueProperteis);

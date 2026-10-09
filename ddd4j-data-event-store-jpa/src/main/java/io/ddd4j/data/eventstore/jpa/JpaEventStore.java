@@ -206,7 +206,7 @@ public class JpaEventStore implements EventStore {
         // H2 不支持 grouped select 的 FOR UPDATE）；空表无行可锁时由
         // uk_position 唯一约束兜底并发冲突。
         List<Long> maxRows = entityManager.createQuery(
-                "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
+                        "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
                 .setMaxResults(1)
                 .setLockMode(javax.persistence.LockModeType.PESSIMISTIC_WRITE)
                 .getResultList();
@@ -236,7 +236,9 @@ public class JpaEventStore implements EventStore {
         }
     }
 
-    /** 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。 */
+    /**
+     * 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。
+     */
     private static final class StringAggregateRootId implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("String");

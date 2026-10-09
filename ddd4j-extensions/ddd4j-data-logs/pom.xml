@@ -21,6 +21,6 @@
             <version>${revision}</version>
         </dependency>
         <!-- For AOP -->
-</dependencies>
+    </dependencies>
 
 </project>

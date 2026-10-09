@@ -12,7 +12,9 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.dozermapper.core.Mapper;
 import io.ddd4j.core.entity.PaginationEntity;
 import io.ddd4j.core.mybatis.mapper.BaseMapper;
+
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.Getter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,14 +38,14 @@ import java.util.List;
  *
  * @param <M> {@link BaseMapper} 实现
  * @param <T> {@link IBaseService} 持有的实体对象
- * @deprecated 自 3.4.x 起，ddd4j 重构为纯 DDD 脚手架。本类继承 MyBatis Plus 的
- *             {@link ServiceImpl}，耦合 ORM 框架。
- *             <p>
- *             <b>替代方案</b>：在基础设施层实现 {@link io.ddd4j.core.contract.Repository}，
- *             用 MyBatis Plus 的 Mapper 作为内部实现细节，不暴露到领域层。
- *             <p>
- *             本类将在 5.0.x 版本移除。
  * @author <a href="https://github.com/wandl">wandl</a>
+ * @deprecated 自 3.4.x 起，ddd4j 重构为纯 DDD 脚手架。本类继承 MyBatis Plus 的
+ * {@link ServiceImpl}，耦合 ORM 框架。
+ * <p>
+ * <b>替代方案</b>：在基础设施层实现 {@link io.ddd4j.core.contract.Repository}，
+ * 用 MyBatis Plus 的 Mapper 作为内部实现细节，不暴露到领域层。
+ * <p>
+ * 本类将在 5.0.x 版本移除。
  */
 @Deprecated
 public class BaseServiceImpl<M extends BaseMapper<T>, T extends Model<?>> extends ServiceImpl<M, T> implements InitializingBean,

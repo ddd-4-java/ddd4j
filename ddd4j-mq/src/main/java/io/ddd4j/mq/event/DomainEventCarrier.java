@@ -17,10 +17,14 @@ public class DomainEventCarrier extends MQEvent {
 
     private static final long serialVersionUID = 1L;
 
-    /** 领域事件完全限定类名，消费端据此选择反序列化目标类型。 */
+    /**
+     * 领域事件完全限定类名，消费端据此选择反序列化目标类型。
+     */
     private final String domainEventType;
 
-    /** 领域事件 JSON 序列化结果。 */
+    /**
+     * 领域事件 JSON 序列化结果。
+     */
     private final String payload;
 
     /**

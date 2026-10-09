@@ -1,8 +1,10 @@
 package io.ddd4j.web.validation.constraintvalidators;
 
 import io.ddd4j.web.validation.constraints.AllowableValues;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;

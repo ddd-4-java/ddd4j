@@ -9,11 +9,13 @@ import io.ddd4j.mq.consume.MQConsumerHandler;
 import io.ddd4j.mq.contract.MQMessage;
 import io.ddd4j.mq.registry.MQListenerDefinition;
 import io.ddd4j.mq.registry.MQListenerEndpointNaming;
+
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -22,10 +24,13 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.config.SimpleJmsListenerEndpoint;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.MessageListener;
+
 import org.springframework.jms.listener.SessionAwareMessageListener;
 import org.springframework.messaging.support.MessageBuilder;
+
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;

@@ -69,7 +69,8 @@ public class JacksonKit {
             // 4、如果 value 是 其他对象类型，则使用 convertValue 方法将对象转换成 valueType 类型
             return OBJECT_MAPPER.convertValue(value, valueType);
         } catch (JsonProcessingException e) {
-            throw new NestedRuntimeException(e.getMessage()) {};
+            throw new NestedRuntimeException(e.getMessage()) {
+            };
         }
     }
 

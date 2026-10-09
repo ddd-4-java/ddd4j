@@ -26,7 +26,10 @@ final class EventStoreRetry {
 
     EventStoreRetry() {
         this(DEFAULT_MAX_ATTEMPTS, BASE_DELAY_MILLIS, new Sleeper() {
-            @Override public void sleep(long millis) throws InterruptedException { Thread.sleep(millis); }
+            @Override
+            public void sleep(long millis) throws InterruptedException {
+                Thread.sleep(millis);
+            }
         });
     }
 
@@ -148,7 +151,9 @@ final class EventStoreRetry {
         return false;
     }
 
-    /** 通过类名匹配识别 cause 链中的特定异常（避免硬依赖 Hibernate）。 */
+    /**
+     * 通过类名匹配识别 cause 链中的特定异常（避免硬依赖 Hibernate）。
+     */
     private static boolean containsCauseByName(Throwable t, String simpleClassName) {
         Throwable current = t;
         while (current != null) {
@@ -163,13 +168,17 @@ final class EventStoreRetry {
         return false;
     }
 
-    /** 单次尝试的业务逻辑。 */
+    /**
+     * 单次尝试的业务逻辑。
+     */
     @FunctionalInterface
     interface RetryableAction<T> {
         T run() throws Exception;
     }
 
-    /** 睡眠抽象（测试注入用）。 */
+    /**
+     * 睡眠抽象（测试注入用）。
+     */
     interface Sleeper {
         void sleep(long millis) throws InterruptedException;
     }

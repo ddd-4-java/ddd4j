@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisOperationTemplate;
 import java.security.Key;
 import java.util.Base64;
 
-public class JwtHs256PayloadRepository  extends AbstractJwtPayloadRepository implements InitializingBean {
+public class JwtHs256PayloadRepository extends AbstractJwtPayloadRepository implements InitializingBean {
 
     private Key secretKey;
 

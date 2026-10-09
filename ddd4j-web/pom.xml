@@ -54,7 +54,7 @@
             <artifactId>spring-messaging</artifactId>
             <optional>true</optional>
         </dependency>
-<!-- OpenFeign（可选，用于 FeignHeaderInterceptor 的 RequestInterceptor） -->
+        <!-- OpenFeign（可选，用于 FeignHeaderInterceptor 的 RequestInterceptor） -->
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>

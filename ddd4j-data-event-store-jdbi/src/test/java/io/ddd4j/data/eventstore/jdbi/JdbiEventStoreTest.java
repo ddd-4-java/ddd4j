@@ -162,7 +162,9 @@ class JdbiEventStoreTest {
         }
     }
 
-    /** 业务事件样例：无参构造 + JavaBean 属性（payload 序列化约定）。 */
+    /**
+     * 业务事件样例：无参构造 + JavaBean 属性（payload 序列化约定）。
+     */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         private String fact;

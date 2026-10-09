@@ -67,13 +67,13 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermittedAny(Object loginId, String... permissions) {
         // 如果没有指定权限，那么直接跳过
-        if(permissions == null || permissions.length == 0) {
+        if (permissions == null || permissions.length == 0) {
             return Boolean.FALSE;
         }
         // 开始校验
         List<String> permissionList = StpUtil.getPermissionList(loginId);
         for (String permission : permissions) {
-            if(SaStrategy.instance.hasElement.apply(permissionList, permission)) {
+            if (SaStrategy.instance.hasElement.apply(permissionList, permission)) {
                 return Boolean.TRUE;
             }
         }
@@ -88,13 +88,13 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean isPermittedAll(Object loginId, String... permissions) {
         // 如果没有指定权限，那么直接跳过
-        if(permissions == null || permissions.length == 0) {
+        if (permissions == null || permissions.length == 0) {
             return Boolean.FALSE;
         }
         // 开始校验
         List<String> permissionList = StpUtil.getPermissionList(loginId);
         for (String permission : permissions) {
-            if(!SaStrategy.instance.hasElement.apply(permissionList, permission)) {
+            if (!SaStrategy.instance.hasElement.apply(permissionList, permission)) {
                 return Boolean.FALSE;
             }
         }
@@ -143,13 +143,13 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasAnyRole(Object loginId, String... roleIdentifiers) {
         // 如果没有指定权限，那么直接跳过
-        if(roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (roleIdentifiers == null || roleIdentifiers.length == 0) {
             return Boolean.FALSE;
         }
         // 开始校验
         List<String> roleList = StpUtil.getRoleList(loginId);
         for (String role : roleIdentifiers) {
-            if(SaStrategy.instance.hasElement.apply(roleList, role)) {
+            if (SaStrategy.instance.hasElement.apply(roleList, role)) {
                 // 有的话提前退出
                 return Boolean.TRUE;
             }
@@ -165,13 +165,13 @@ public class SaTokenSubject implements Subject {
     @Override
     public boolean hasAllRole(Object loginId, String... roleIdentifiers) {
         // 如果没有指定权限，那么直接跳过
-        if(roleIdentifiers == null || roleIdentifiers.length == 0) {
+        if (roleIdentifiers == null || roleIdentifiers.length == 0) {
             return Boolean.FALSE;
         }
         // 开始校验
         List<String> roleList = StpUtil.getRoleList(loginId);
         for (String role : roleIdentifiers) {
-            if(!SaStrategy.instance.hasElement.apply(roleList, role)) {
+            if (!SaStrategy.instance.hasElement.apply(roleList, role)) {
                 // 任意一个没有的话提前退出
                 return Boolean.FALSE;
             }
@@ -206,6 +206,7 @@ public class SaTokenSubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 登录账号 Id
      */
     @Override
@@ -215,6 +216,7 @@ public class SaTokenSubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 登录用户 Id
      */
     @Override
@@ -224,6 +226,7 @@ public class SaTokenSubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 所属组织 Id
      */
     @Override
@@ -233,6 +236,7 @@ public class SaTokenSubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 角色 Id
      */
     @Override
@@ -242,6 +246,7 @@ public class SaTokenSubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @param tokenValue 指定的 Token 值
      * @param key        键值
      * @return 对应的扩展数据

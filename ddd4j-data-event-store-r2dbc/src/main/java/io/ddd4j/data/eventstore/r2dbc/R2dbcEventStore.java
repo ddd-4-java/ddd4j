@@ -183,7 +183,9 @@ public class R2dbcEventStore implements AsyncEventStore {
                 statement -> statement.bind(0, fromPosition).bind(1, limit)));
     }
 
-    /** 在事务内执行查询并流式映射行：行流消费完毕后提交，异常回滚。 */
+    /**
+     * 在事务内执行查询并流式映射行：行流消费完毕后提交，异常回滚。
+     */
     private Flux<StoredEvent> query(String sql, Function<Statement, Statement> binder) {
         return Flux.usingWhen(
                 Mono.from(connectionFactory.create()),
@@ -216,7 +218,9 @@ public class R2dbcEventStore implements AsyncEventStore {
                 })));
     }
 
-    /** 逐事件分配版本与全局位置后按序执行 INSERT（concat 保证顺序与位置单调递增）。 */
+    /**
+     * 逐事件分配版本与全局位置后按序执行 INSERT（concat 保证顺序与位置单调递增）。
+     */
     private Mono<Void> executeInserts(Connection connection, String aggregateType,
                                       AggregateRootId aggregateId,
                                       List<? extends DomainEvent<?>> events,
@@ -254,7 +258,9 @@ public class R2dbcEventStore implements AsyncEventStore {
         return Flux.concat(inserts).then();
     }
 
-    /** 回滚失败不掩盖原异常。 */
+    /**
+     * 回滚失败不掩盖原异常。
+     */
     private Mono<Void> rollback(Connection connection) {
         return Mono.from(connection.rollbackTransaction())
                 .onErrorResume(rollbackError -> Mono.<Void>empty());
@@ -271,7 +277,9 @@ public class R2dbcEventStore implements AsyncEventStore {
                 .doOnSuccess(v -> initialized.compareAndSet(false, true));
     }
 
-    /** 行 → {@link StoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。 */
+    /**
+     * 行 → {@link StoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。
+     */
     private StoredEvent mapRow(Row row) {
         String eventType = row.get(EventStoreConstants.COLUMN_EVENT_TYPE, String.class);
         DomainEvent<?> payload = serializer.deserialize(
@@ -300,7 +308,9 @@ public class R2dbcEventStore implements AsyncEventStore {
         }
     }
 
-    /** 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。 */
+    /**
+     * 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。
+     */
     private static final class StringAggregateRootId implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("String");

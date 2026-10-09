@@ -11,27 +11,41 @@ import lombok.Data;
 @Builder
 public class AcknowledgmentContext {
 
-    /** 投递标签 */
+    /**
+     * 投递标签
+     */
     private long deliveryTag;
 
-    /** 消息 ID */
+    /**
+     * 消息 ID
+     */
     private String messageId;
 
-    /** 关联 ID */
+    /**
+     * 关联 ID
+     */
     private String correlationId;
 
-    /** Broker 类型 */
+    /**
+     * Broker 类型
+     */
     @Builder.Default
     private MQBrokerType brokerType = MQBrokerType.NONE;
 
-    /** 通道/连接是否打开 */
+    /**
+     * 通道/连接是否打开
+     */
     @Builder.Default
     private boolean open = true;
 
-    /** 是否已确认 */
+    /**
+     * 是否已确认
+     */
     @Builder.Default
     private boolean acknowledged = false;
 
-    /** Broker 原生句柄（Channel、Acknowledgment 等），供 unwrap 使用 */
+    /**
+     * Broker 原生句柄（Channel、Acknowledgment 等），供 unwrap 使用
+     */
     private Object nativeHandle;
 }

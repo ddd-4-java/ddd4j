@@ -10,7 +10,9 @@ import java.util.Locale;
 public enum MQBrokerType {
 
     NONE,
-    /** 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。 */
+    /**
+     * 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。
+     */
     DISRUPTOR,
     RABBIT,
     KAFKA,
@@ -19,9 +21,13 @@ public enum MQBrokerType {
     REDIS_STREAM,
     ACTIVEMQ,
     NATS,
-    /** Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。 */
+    /**
+     * Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。
+     */
     MQTT,
-    /** mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。 */
+    /**
+     * mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。
+     */
     MQTT_MICA,
     ONS,
     TDMQ,

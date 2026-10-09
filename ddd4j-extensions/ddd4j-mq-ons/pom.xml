@@ -41,7 +41,7 @@
             <artifactId>ons-client</artifactId>
         </dependency>
 
-<dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${mq.testcontainers.version}</version>

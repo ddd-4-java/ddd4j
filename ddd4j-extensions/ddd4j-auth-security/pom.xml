@@ -21,7 +21,7 @@
             <version>${revision}</version>
         </dependency>
         <!-- For Spring Security -->
-<dependency>
+        <dependency>
             <groupId>com.github.hiwepy</groupId>
             <artifactId>security-biz-spring-boot-starter</artifactId>
         </dependency>

@@ -20,6 +20,6 @@
             <artifactId>easyexcel</artifactId>
         </dependency>
         <!-- For Spring Boot Autoconfigure -->
-</dependencies>
+    </dependencies>
 
 </project>

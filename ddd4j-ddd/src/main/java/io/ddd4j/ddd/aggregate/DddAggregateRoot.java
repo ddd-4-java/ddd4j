@@ -32,10 +32,14 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 @Getter
 public abstract class DddAggregateRoot<ID extends AggregateRootId> extends AggregateRoot<ID> {
 
-    /** 创建时间（审计字段，无 ORM 注解） */
+    /**
+     * 创建时间（审计字段，无 ORM 注解）
+     */
     protected LocalDateTime createTime;
 
-    /** 更新时间（审计字段，无 ORM 注解） */
+    /**
+     * 更新时间（审计字段，无 ORM 注解）
+     */
     protected LocalDateTime updateTime;
 
     /**

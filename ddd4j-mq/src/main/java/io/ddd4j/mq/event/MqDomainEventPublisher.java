@@ -20,7 +20,9 @@ import java.util.Objects;
 @Slf4j
 public class MqDomainEventPublisher implements DomainEventPublisher {
 
-    /** 领域事件统一 tag，便于消费者批量订阅。 */
+    /**
+     * 领域事件统一 tag，便于消费者批量订阅。
+     */
     public static final String DOMAIN_EVENT_TAG = "domain-event";
 
     private final MQEventSerialization serialization;

@@ -1,6 +1,7 @@
 package io.ddd4j.extension.pf4j.point.authc;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.pf4j.PluginRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,14 @@ public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
     private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
 
-    /** Authorization Header 名称 */
+    /**
+     * Authorization Header 名称
+     */
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
-    /** Bearer Token 前缀 */
+    /**
+     * Bearer Token 前缀
+     */
     public static final String BEARER_PREFIX = "Bearer ";
 
     @Override

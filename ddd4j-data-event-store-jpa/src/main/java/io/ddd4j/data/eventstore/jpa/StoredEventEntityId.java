@@ -3,7 +3,9 @@ package io.ddd4j.data.eventstore.jpa;
 import java.io.Serializable;
 import java.util.Objects;
 
-/** {@link StoredEventEntity} 的复合主键（aggregate_type + aggregate_id + version）。 */
+/**
+ * {@link StoredEventEntity} 的复合主键（aggregate_type + aggregate_id + version）。
+ */
 public class StoredEventEntityId implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,17 +23,29 @@ public class StoredEventEntityId implements Serializable {
         this.version = version;
     }
 
-    public String getAggregateType() { return aggregateType; }
+    public String getAggregateType() {
+        return aggregateType;
+    }
 
-    public void setAggregateType(String aggregateType) { this.aggregateType = aggregateType; }
+    public void setAggregateType(String aggregateType) {
+        this.aggregateType = aggregateType;
+    }
 
-    public String getAggregateId() { return aggregateId; }
+    public String getAggregateId() {
+        return aggregateId;
+    }
 
-    public void setAggregateId(String aggregateId) { this.aggregateId = aggregateId; }
+    public void setAggregateId(String aggregateId) {
+        this.aggregateId = aggregateId;
+    }
 
-    public long getVersion() { return version; }
+    public long getVersion() {
+        return version;
+    }
 
-    public void setVersion(long version) { this.version = version; }
+    public void setVersion(long version) {
+        this.version = version;
+    }
 
     @Override
     public boolean equals(Object object) {

@@ -3,9 +3,11 @@ package io.ddd4j.mq.activemq.acknowledgment;
 import io.ddd4j.mq.acknowledgment.MessageAcknowledgment;
 import io.ddd4j.mq.acknowledgment.UnsupportedAckOperationException;
 import io.ddd4j.mq.registry.MQBrokerType;
+
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -18,10 +20,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public final class ActiveMQMessageAcknowledgment implements MessageAcknowledgment {
 
-    /** MQMessage headers 中存放 JMS Message 的键 */
+    /**
+     * MQMessage headers 中存放 JMS Message 的键
+     */
     public static final String HEADER_JMS_MESSAGE = "jms.message";
 
-    /** MQMessage headers 中存放 JMS Session 的键 */
+    /**
+     * MQMessage headers 中存放 JMS Session 的键
+     */
     public static final String HEADER_JMS_SESSION = "jms.session";
 
     private final Message jmsMessage;
