@@ -1,6 +1,6 @@
 package io.ddd4j.auth.spring.shiro;
 
-import io.ddd4j.core.ApiRestResponse;
+import io.ddd4j.core.api.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -24,20 +24,20 @@ public class ShiroExceptionHandler {
 
     @ExceptionHandler({UnknownAccountException.class, IncorrectCredentialsException.class,
             AuthenticationException.class})
-    public ResponseEntity<ApiRestResponse<String>> authenticationException(Exception exception) {
+    public ResponseEntity<R<String>> authenticationException(Exception exception) {
         log.warn("Shiro 认证异常：{}", exception.getMessage());
-        return new ResponseEntity<>(ApiRestResponse.of(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(R.fail(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LockedAccountException.class)
-    public ResponseEntity<ApiRestResponse<String>> lockedAccountException(LockedAccountException exception) {
+    public ResponseEntity<R<String>> lockedAccountException(LockedAccountException exception) {
         log.warn("Shiro 账号锁定：{}", exception.getMessage());
-        return new ResponseEntity<>(ApiRestResponse.of(403, "账号已被锁定"), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(R.fail(403, "账号已被锁定"), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({UnauthorizedException.class, AuthorizationException.class})
-    public ResponseEntity<ApiRestResponse<String>> authorizationException(Exception exception) {
+    public ResponseEntity<R<String>> authorizationException(Exception exception) {
         log.warn("Shiro 授权异常：{}", exception.getMessage());
-        return new ResponseEntity<>(ApiRestResponse.of(403, "无权限访问"), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(R.fail(403, "无权限访问"), HttpStatus.FORBIDDEN);
     }
 }

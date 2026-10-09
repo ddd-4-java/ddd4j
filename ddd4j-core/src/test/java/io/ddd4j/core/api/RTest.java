@@ -30,15 +30,15 @@ class RTest {
         R<Object> response = R.failed("quota exceeded");
         assertThat(response.getMsg()).isEqualTo("quota exceeded");
         assertThat(response.getData()).isNull();
-        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
     }
 
     @Test
     void failed_withNullObject_shouldKeepFailureMetadata() {
         R<Object> response = R.failed((Object) null);
         assertThat(response.getData()).isNull();
-        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
-        assertThat(response.getMsg()).isEqualTo(ResultCode.FAIL.getDesc());
+        assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
+        assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
     }
 
     @Test
@@ -46,8 +46,8 @@ class RTest {
         java.util.Map<String, String> payload = java.util.Collections.singletonMap("reason", "quota");
         R<java.util.Map<String, String>> response = R.failed(payload);
         assertThat(response.getData()).isSameAs(payload);
-        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
-        assertThat(response.getMsg()).isEqualTo(ResultCode.FAIL.getDesc());
+        assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
+        assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
         assertThat(response.isOk()).isFalse();
     }
 
@@ -55,8 +55,8 @@ class RTest {
     void ok_shouldReturnSuccessCodeAndNullData() {
         R<String> r = R.ok();
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.OK.getCode());
-        assertThat(r.getMsg()).isEqualTo(ResultCode.OK.getDesc());
+        assertThat(r.getCode()).isEqualTo(ApiCode.OK.getCode());
+        assertThat(r.getMsg()).isEqualTo(ApiCode.OK.getDesc());
         assertThat(r.getData()).isNull();
         assertThat(r.isOk()).isTrue();
         assertThat(r.isEmpty()).isTrue();
@@ -66,7 +66,7 @@ class RTest {
     void ok_withData_shouldCarryPayload() {
         R<String> r = R.ok("hello");
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.OK.getCode());
+        assertThat(r.getCode()).isEqualTo(ApiCode.OK.getCode());
         assertThat(r.getData()).isEqualTo("hello");
         assertThat(r.isOk()).isTrue();
         assertThat(r.isEmpty()).isFalse();
@@ -85,7 +85,7 @@ class RTest {
     void fail_shouldReturnFailCode() {
         R<String> r = R.fail();
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(r.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(r.isOk()).isFalse();
     }
 
@@ -93,7 +93,7 @@ class RTest {
     void fail_withMsg_shouldCarryMessage() {
         R<String> r = R.fail("boom");
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(r.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(r.getMsg()).isEqualTo("boom");
         assertThat(r.isOk()).isFalse();
     }
@@ -115,7 +115,7 @@ class RTest {
 
     @Test
     void isOk_shouldAcceptSuccessCodeToo() {
-        R<String> r = new R<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getDesc(), "data");
+        R<String> r = new R<>(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getDesc(), "data");
 
         assertThat(r.isOk()).isTrue();
     }

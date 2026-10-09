@@ -24,14 +24,14 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -57,28 +57,6 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
     private Javalin app;
     private WebContractClient contractClient;
-
-    WebContractClient {
-
-        @Override
-        public WebContractResponse request (String method, String path, Map < String, String > headers, String body){
-            try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
-                headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(),
-                        HttpResponse.BodyHandlers.ofString());
-                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Javalin contract request interrupted", exception);
-            } catch (Exception exception) {
-                throw new IllegalStateException("Javalin contract request failed", exception);
-            }
-        }
-    }
 
     @BeforeEach
     void setUp() {
@@ -146,14 +124,34 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         });
     }
 
-        private SubjectProvider provider(Subject subject) {
+    private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override
             public Subject getSubject() {
                 return subject;
             }
         };
-    } implements
+    }
 
-private record JavalinContractClient(HttpClient httpClient, int port)
+    private record JavalinContractClient(HttpClient httpClient, int port) implements WebContractClient {
+
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            try {
+                HttpRequest.Builder builder = HttpRequest.newBuilder()
+                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                headers.forEach(builder::header);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
+                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(),
+                        HttpResponse.BodyHandlers.ofString());
+                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Javalin contract request interrupted", exception);
+            } catch (Exception exception) {
+                throw new IllegalStateException("Javalin contract request failed", exception);
+            }
+        }
+    }
 }

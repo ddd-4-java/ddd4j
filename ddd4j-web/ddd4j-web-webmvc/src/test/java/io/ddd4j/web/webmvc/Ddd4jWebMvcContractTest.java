@@ -24,14 +24,14 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -65,34 +65,6 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
 
     private WebContractClient contractClient;
 
-    WebContractClient {
-
-        @Override
-        public WebContractResponse request (String method, String path, Map < String, String > headers, String body){
-            try {
-                MockHttpServletResponse response = mockMvc.perform(requestBuilder(method, path, headers, body))
-                        .andReturn().getResponse();
-                Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
-                response.getHeaderNames().forEach(name -> responseHeaders.put(name, response.getHeaders(name)));
-                return new WebContractResponse(response.getStatus(), responseHeaders,
-                        response.getContentAsString());
-            } catch (Exception exception) {
-                throw new IllegalStateException("WebMVC contract request failed", exception);
-            }
-        }
-
-        private MockHttpServletRequestBuilder requestBuilder (String method, String path,
-                Map < String, String > headers, String body){
-            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path);
-            builder.accept(MediaType.APPLICATION_JSON);
-            headers.forEach(builder::header);
-            if (StringUtils.hasLength(body)) {
-                builder.contentType(MediaType.APPLICATION_JSON).content(body);
-            }
-            return builder;
-        }
-    }
-
     @BeforeEach
     void setUp() {
         CacheKit.build("webmvc-contract", 300L);
@@ -123,17 +95,6 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
     protected WebContractClient client() {
         return contractClient;
     }
-
-    private SubjectProvider provider(Subject subject) {
-        return new SubjectProvider() {
-            @Override
-            public Subject getSubject() {
-                return subject;
-            }
-        };
-    }
-
-    private record MockMvcContractClient(MockMvc mockMvc) implements
 
     @RestController
     static class ContractController {
@@ -174,6 +135,43 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
                 case "too-many-requests" -> new WebStatusException(429, "too many requests");
                 default -> new RuntimeException("internal failure");
             };
+        }
+    }
+
+    private SubjectProvider provider(Subject subject) {
+        return new SubjectProvider() {
+            @Override
+            public Subject getSubject() {
+                return subject;
+            }
+        };
+    }
+
+    private record MockMvcContractClient(MockMvc mockMvc) implements WebContractClient {
+
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            try {
+                MockHttpServletResponse response = mockMvc.perform(requestBuilder(method, path, headers, body))
+                        .andReturn().getResponse();
+                Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
+                response.getHeaderNames().forEach(name -> responseHeaders.put(name, response.getHeaders(name)));
+                return new WebContractResponse(response.getStatus(), responseHeaders,
+                        response.getContentAsString());
+            } catch (Exception exception) {
+                throw new IllegalStateException("WebMVC contract request failed", exception);
+            }
+        }
+
+        private MockHttpServletRequestBuilder requestBuilder(String method, String path,
+                                                             Map<String, String> headers, String body) {
+            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path);
+            builder.accept(MediaType.APPLICATION_JSON);
+            headers.forEach(builder::header);
+            if (StringUtils.hasLength(body)) {
+                builder.contentType(MediaType.APPLICATION_JSON).content(body);
+            }
+            return builder;
         }
     }
 }

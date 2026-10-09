@@ -23,13 +23,13 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -56,7 +56,11 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -65,25 +69,6 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     private AnnotationConfigApplicationContext applicationContext;
     private WebContractClient contractClient;
-
-    WebContractClient {
-
-        @Override
-        public WebContractResponse request (String method, String path, Map < String, String > headers, String body){
-            WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);
-            headers.forEach(request::header);
-            if (StringUtils.hasLength(body)) {
-                request.contentType(MediaType.APPLICATION_JSON).bodyValue(body);
-            }
-            EntityExchangeResult<byte[]> result = request.exchange().expectBody().returnResult();
-            Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
-            result.getResponseHeaders().forEach(responseHeaders::put);
-            byte[] responseBody = result.getResponseBody();
-            String responseText = Objects.isNull(responseBody)
-                    ? "" : new String(responseBody, StandardCharsets.UTF_8);
-            return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
-        }
-    }
 
     @BeforeEach
     void setUp() {
@@ -119,9 +104,7 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         };
     }
 
-private record WebFluxContractClient(WebTestClient webTestClient)
-
-        @Configuration(proxyBeanMethods = false)
+    @Configuration(proxyBeanMethods = false)
     @EnableWebFlux
     static class ContractConfiguration {
 
@@ -144,7 +127,7 @@ private record WebFluxContractClient(WebTestClient webTestClient)
             return new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),
                     new DefaultWebExceptionTranslator());
         }
-    } implements
+    }
 
     @RestController
     static class ContractController {
@@ -188,6 +171,25 @@ private record WebFluxContractClient(WebTestClient webTestClient)
                 default -> new RuntimeException("internal failure");
             };
             return Mono.error(throwable);
+        }
+    }
+
+    private record WebFluxContractClient(WebTestClient webTestClient) implements WebContractClient {
+
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);
+            headers.forEach(request::header);
+            if (StringUtils.hasLength(body)) {
+                request.contentType(MediaType.APPLICATION_JSON).bodyValue(body);
+            }
+            EntityExchangeResult<byte[]> result = request.exchange().expectBody().returnResult();
+            Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
+            result.getResponseHeaders().forEach(responseHeaders::put);
+            byte[] responseBody = result.getResponseBody();
+            String responseText = Objects.isNull(responseBody)
+                    ? "" : new String(responseBody, StandardCharsets.UTF_8);
+            return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
         }
     }
 }

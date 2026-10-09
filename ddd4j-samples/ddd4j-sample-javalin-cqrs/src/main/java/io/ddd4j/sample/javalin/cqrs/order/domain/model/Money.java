@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.domain.model;
 
+import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
@@ -21,7 +22,16 @@ import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 
-ValueObject {
+/**
+ * 金额值对象（第二轨：充血模型）。
+ *
+ * <p>作为 {@link Order} 与 {@link OrderLine} 共用的值对象，封装金额不可变性、币种一致性与精度归一化。
+ *
+ * @param amount   金额数值
+ * @param currency 货币代码（如 CNY、USD）
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+public record Money(BigDecimal amount, String currency) implements ValueObject {
 
     public Money {
         Objects.requireNonNull(amount, "amount must not be null");
@@ -41,7 +51,7 @@ ValueObject {
      * @param amount 金额字符串
      * @return Money 实例
      */
-    public static Money cny (String amount){
+    public static Money cny(String amount) {
         return new Money(new BigDecimal(Objects.requireNonNull(amount, "amount must not be null")), "CNY");
     }
 
@@ -51,7 +61,7 @@ ValueObject {
      * @param amount 金额
      * @return Money 实例
      */
-    public static Money cny (BigDecimal amount){
+    public static Money cny(BigDecimal amount) {
         return new Money(Objects.requireNonNull(amount, "amount must not be null"), "CNY");
     }
 
@@ -61,7 +71,7 @@ ValueObject {
      * @param currency 货币代码
      * @return 零金额实例
      */
-    public static Money zero (String currency){
+    public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
     }
 
@@ -72,7 +82,7 @@ ValueObject {
      * @return 相加后的金额
      * @throws IllegalArgumentException 如果货币代码不一致
      */
-    public Money add (Money other){
+    public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
         if (!Objects.equals(currency, other.currency())) {
             throw new IllegalArgumentException("currency must be same");
@@ -87,21 +97,10 @@ ValueObject {
      * @return 相乘后的金额
      * @throws IllegalArgumentException 如果因子为负数
      */
-    public Money multiply ( int factor){
+    public Money multiply(int factor) {
         if (factor < 0) {
             throw new IllegalArgumentException("factor must not be negative");
         }
         return new Money(amount.multiply(BigDecimal.valueOf(factor)), currency);
     }
-} implements
-
-/**
- * 金额值对象（第二轨：充血模型）。
- *
- * <p>作为 {@link Order} 与 {@link OrderLine} 共用的值对象，封装金额不可变性、币种一致性与精度归一化。
- *
- * @param amount   金额数值
- * @param currency 货币代码（如 CNY、USD）
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */
-public record Money(BigDecimal amount, String currency)
+}

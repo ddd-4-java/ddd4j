@@ -16,7 +16,7 @@ package io.ddd4j.core.cqrs.query;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.core.util.SFunction;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.text.StrPool;
 

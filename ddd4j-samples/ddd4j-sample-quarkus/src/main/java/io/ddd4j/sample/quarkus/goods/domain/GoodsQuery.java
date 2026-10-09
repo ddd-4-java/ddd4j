@@ -17,7 +17,7 @@ package io.ddd4j.sample.quarkus.goods.domain;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.util.SFunction;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;

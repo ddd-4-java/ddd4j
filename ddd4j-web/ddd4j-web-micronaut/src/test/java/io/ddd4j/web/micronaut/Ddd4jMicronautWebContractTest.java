@@ -17,8 +17,8 @@ package io.ddd4j.web.micronaut;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
-import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
@@ -45,38 +45,21 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.time.Duration;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
     private EmbeddedServer server;
     private WebContractClient contractClient;
-
-    WebContractClient {
-
-        @Override
-        public WebContractResponse request (String method, String path, Map < String, String > headers, String body){
-            try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
-                headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                java.net.http.HttpResponse<String> response = httpClient.send(
-                        builder.method(method, publisher).build(),
-                        java.net.http.HttpResponse.BodyHandlers.ofString());
-                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Micronaut contract request interrupted", exception);
-            } catch (Exception exception) {
-                throw new IllegalStateException("Micronaut contract request failed", exception);
-            }
-        }
-    }
 
     @BeforeEach
     void setUp() {
@@ -124,16 +107,37 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
         assertTrue(response.body().contains("tenant-async"));
     }
 
-        private SubjectProvider provider(Subject subject) {
+    private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override
             public Subject getSubject() {
                 return subject;
             }
         };
-    } implements
+    }
 
-private record MicronautContractClient(HttpClient httpClient, int port)
+    private record MicronautContractClient(HttpClient httpClient, int port) implements WebContractClient {
+
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            try {
+                HttpRequest.Builder builder = HttpRequest.newBuilder()
+                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                headers.forEach(builder::header);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
+                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                java.net.http.HttpResponse<String> response = httpClient.send(
+                        builder.method(method, publisher).build(),
+                        java.net.http.HttpResponse.BodyHandlers.ofString());
+                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Micronaut contract request interrupted", exception);
+            } catch (Exception exception) {
+                throw new IllegalStateException("Micronaut contract request failed", exception);
+            }
+        }
+    }
 }
 
 @Controller("/contract")

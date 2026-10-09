@@ -18,7 +18,7 @@ import feign.Contract;
 import feign.RequestLine;
 import feign.RequestTemplate;
 import feign.Target;
-import io.ddd4j.core.ApiRestResponse;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.webmvc.annotation.FeignHeader;
@@ -150,9 +150,9 @@ class ThreeLineWebParityTest {
                 new MethodParameter(ThreeLineWebParityTest.class.getDeclaredMethod("headerEndpoint", String.class), 0));
         for (boolean enabled : new boolean[]{false, true}) {
             properties.setEnabled(enabled);
-            ApiRestResponse<String> response = handler.missingRequestHeaderException(exception);
+            R<String> response = handler.missingRequestHeaderException(exception);
             assertEquals(400, response.getCode());
-            assertEquals(enabled ? "localized header message" : "缺少请求头: [X-Parity].", response.getMessage());
+            assertEquals(enabled ? "localized header message" : "缺少请求头: [X-Parity].", response.getMsg());
         }
     }
 

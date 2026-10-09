@@ -15,7 +15,7 @@
 package io.ddd4j.web.webmvc.core;
 
 import io.ddd4j.core.api.R;
-import io.ddd4j.core.api.ResultCode;
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.ValidateException;
 import io.ddd4j.core.util.ExceptionKit;
@@ -53,7 +53,7 @@ public class GlobalRestExceptionAdvice {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         List<String> errList = e.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
         log.error("请求参数校验失败：{} {}\n**StackTraces:** {}", errList, model, projectStackTrace);
-        return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), String.join(",", errList));
+        return R.fail(ApiCode.BAD_REQUEST.getCode(), String.join(",", errList));
     }
 
     /**
@@ -63,7 +63,7 @@ public class GlobalRestExceptionAdvice {
     public R<String> validatorException(HttpServletRequest request, ValidateException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("请求参数校验失败：{}\n**StackTraces:** {}", e.getMessage(), projectStackTrace);
-        return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), e.getMessage());
+        return R.fail(ApiCode.BAD_REQUEST.getCode(), e.getMessage());
     }
 
     /**
@@ -74,7 +74,7 @@ public class GlobalRestExceptionAdvice {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("请求参数校验失败：{}\n**StackTraces:** {}", fieldError.getDefaultMessage(), projectStackTrace);
-        return R.fail(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), fieldError.getDefaultMessage());
+        return R.fail(ApiCode.BAD_REQUEST.getCode(), fieldError.getDefaultMessage());
     }
 
     /**
@@ -103,7 +103,7 @@ public class GlobalRestExceptionAdvice {
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("空指针异常\n**StackTraces:** {}", projectStackTrace);
-        return R.fail(ResultCode.FAIL.getCode(), e.getMessage());
+        return R.fail(ApiCode.FAIL.getCode(), e.getMessage());
     }
 
     /**
@@ -113,7 +113,7 @@ public class GlobalRestExceptionAdvice {
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("运行时异常\n**StackTraces:** {}", projectStackTrace);
-        return R.fail(ResultCode.FAIL.getCode(), e.getMessage());
+        return R.fail(ApiCode.FAIL.getCode(), e.getMessage());
     }
 
 }

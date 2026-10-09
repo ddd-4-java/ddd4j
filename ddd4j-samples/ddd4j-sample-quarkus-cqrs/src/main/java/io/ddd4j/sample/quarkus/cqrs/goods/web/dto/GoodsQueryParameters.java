@@ -14,7 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.cqrs.goods.web.dto;
 
-import io.ddd4j.core.util.SFunction;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsQuery;

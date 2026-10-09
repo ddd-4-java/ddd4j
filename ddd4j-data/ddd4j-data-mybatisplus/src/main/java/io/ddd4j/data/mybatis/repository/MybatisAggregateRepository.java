@@ -50,7 +50,7 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
 import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.core.util.MappingKit;
+import io.ddd4j.kit.lang.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Setter;

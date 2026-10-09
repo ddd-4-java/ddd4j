@@ -111,7 +111,7 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    private void applyOrder(boolean desc, io.ddd4j.core.util.SFunction<Goods, ?> property) {
+    private void applyOrder(boolean desc, io.ddd4j.kit.lang.SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
             return;

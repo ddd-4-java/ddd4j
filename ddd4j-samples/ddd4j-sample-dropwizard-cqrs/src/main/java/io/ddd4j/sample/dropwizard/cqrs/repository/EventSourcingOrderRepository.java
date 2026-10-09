@@ -14,15 +14,20 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.repository;
 
+import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderRepository;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -34,49 +39,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventSourcingOrderRepository implements OrderRepository {
 
-    /**
-     * 聚合类型（当前 core EventStore SPI 需显式 aggregateType 定位流）。
-     */
+    /** 聚合类型（当前 core EventStore SPI 需显式 aggregateType 定位流）。 */
     private static final String AGGREGATE_TYPE = "Order";
 
     private final InMemoryEventStore eventStore;
 
-    /**
-     * orderNo -> aggregateId 映射（幂等性检查）。
-     */
+    /** orderNo -> aggregateId 映射（幂等性检查）。 */
     private final Map<String, String> orderNoIndex = new ConcurrentHashMap<>();
 
-    /**
-     * orderId -> Order 缓存（简化实现，避免从事件重建）。
-     */
+    /** orderId -> Order 缓存（简化实现，避免从事件重建）。 */
     private final Map<String, Order> orderCache = new ConcurrentHashMap<>();
 
     public EventSourcingOrderRepository(InMemoryEventStore eventStore) {
         this.eventStore = Objects.requireNonNull(eventStore, "eventStore must not be null");
-    }
-
-    AggregateRootId {
-
-        private static final EntityType TYPE = new StringEntityType("Order");
-
-        @Override
-        public EntityType getType () {
-            return TYPE;
-        }
-
-        @Override
-        public String asString () {
-            return value;
-        }
-
-        @Override
-        public String asTypedString () {
-            return TYPE.asString() + ":" + value;
-        }
-    }
-
-    private static AggregateRootId aggregateId(String value) {
-        return new OrderAggregateId(value);
     }
 
     @Override
@@ -103,19 +78,41 @@ public class EventSourcingOrderRepository implements OrderRepository {
                 .flatMap(this::findById);
     }
 
-        @Override
+    @Override
     public List<Order> findAll(int offset, int limit) {
         throw new UnsupportedOperationException("findAll not supported in event sourcing repository");
-    } implements
+    }
 
     @Override
     public long count() {
         return orderNoIndex.size();
     }
 
-/**
+    /**
      * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
      * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
      */
-    private record OrderAggregateId(String value)
+    private record OrderAggregateId(String value) implements AggregateRootId {
+
+        private static final EntityType TYPE = new StringEntityType("Order");
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+    }
+
+    private static AggregateRootId aggregateId(String value) {
+        return new OrderAggregateId(value);
+    }
 }
