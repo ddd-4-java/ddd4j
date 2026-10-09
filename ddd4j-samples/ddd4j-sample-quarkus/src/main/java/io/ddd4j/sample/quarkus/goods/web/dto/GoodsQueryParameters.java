@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;
 
-/** HTTP query parameters translated into the framework-independent goods query. */
+/**
+ * HTTP query parameters translated into the framework-independent goods query.
+ */
 @Getter
 @Setter
 public class GoodsQueryParameters {

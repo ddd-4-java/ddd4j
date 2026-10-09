@@ -307,7 +307,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         clearDomainEvents();
     }
 
-    /** 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），apply 用。 */
+    /**
+     * 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），apply 用。
+     */
     private static final ClassValue<Map<Class<?>, Method>> AGGREGATE_HANDLER_CACHE = new ClassValue<>() {
         @Override
         protected Map<Class<?>, Method> computeValue(Class<?> aggregateType) {
@@ -317,7 +319,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         }
     };
 
-    /** 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），loadFromHistory 用（跳过 ignoreOnReplay）。 */
+    /**
+     * 处理器缓存（聚合类 → (事件类型 → {@code @EventHandler} Method）），loadFromHistory 用（跳过 ignoreOnReplay）。
+     */
     private static final ClassValue<Map<Class<?>, Method>> AGGREGATE_REPLAY_CACHE = new ClassValue<>() {
         @Override
         protected Map<Class<?>, Method> computeValue(Class<?> aggregateType) {

@@ -9,7 +9,9 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
-/** Maps Quarkus request failures to the shared ddd4j HTTP error contract. */
+/**
+ * Maps Quarkus request failures to the shared ddd4j HTTP error contract.
+ */
 @Provider
 public class DefaultExceptionHandler extends BaseErrorConfiguration implements ExceptionMapper<RuntimeException> {
 

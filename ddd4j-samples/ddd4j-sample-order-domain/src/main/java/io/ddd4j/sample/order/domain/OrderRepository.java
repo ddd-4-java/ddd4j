@@ -5,8 +5,12 @@ import java.util.Optional;
 
 public interface OrderRepository {
     void save(Order order);
+
     Optional<Order> findById(String orderId);
+
     Optional<Order> findByOrderNo(String orderNo);
+
     List<Order> findAll(int offset, int limit);
+
     long count();
 }

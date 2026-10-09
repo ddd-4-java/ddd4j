@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/** Stable HTTP representation that keeps the domain model independent of JSON concerns. */
+/**
+ * Stable HTTP representation that keeps the domain model independent of JSON concerns.
+ */
 public record GoodsResponse(Long id, String code, String name, BigDecimal price, Integer stock,
                             GoodsStatus status, LocalDateTime createTime, LocalDateTime updateTime) {
 

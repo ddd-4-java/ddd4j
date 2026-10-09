@@ -21,17 +21,17 @@ FORBIDDEN_PATTERN='AFFERO|AGPL|GENERAL PUBLIC LICENSE|\bGPL\b|LGPL|LESSER GENERA
 VIOLATIONS_FILE="${LICENSE_FILE%.txt}-policy-violations.txt"
 RAW_VIOLATIONS_FILE="${VIOLATIONS_FILE}.raw"
 
-grep -E "${FORBIDDEN_PATTERN}" "${LICENSE_FILE}" > "${RAW_VIOLATIONS_FILE}" || true
-: > "${VIOLATIONS_FILE}"
+grep -E "${FORBIDDEN_PATTERN}" "${LICENSE_FILE}" >"${RAW_VIOLATIONS_FILE}" || true
+: >"${VIOLATIONS_FILE}"
 
 while IFS= read -r violation; do
-  coordinate="$(sed -E 's/.*\(([A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+:[^ ]+) - .*/\1/' <<< "${violation}")"
+  coordinate="$(sed -E 's/.*\(([A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+:[^ ]+) - .*/\1/' <<<"${violation}")"
   selection=""
   if [[ -f "${SELECTIONS_FILE}" ]]; then
     selection="$(awk -F $'\t' -v coordinate="${coordinate}" '$1 == coordinate { print $2 }' "${SELECTIONS_FILE}")"
   fi
 
-  if [[ -n "${selection}" ]] && grep -Eq "${selection}" <<< "${violation}"; then
+  if [[ -n "${selection}" ]] && grep -Eq "${selection}" <<<"${violation}"; then
     echo "[PASS] Selected compatible license for ${coordinate}: ${selection}"
     continue
   fi
@@ -41,7 +41,7 @@ while IFS= read -r violation; do
     build_tool_reason="$(awk -F $'\t' -v coordinate="${coordinate}" '$1 == coordinate { print $2 }' "${BUILD_TOOL_EXCLUSIONS_FILE}")"
   fi
   if [[ -n "${build_tool_reason}" ]]; then
-    IFS=':' read -r group_id artifact_id version <<< "${coordinate}"
+    IFS=':' read -r group_id artifact_id version <<<"${coordinate}"
     component_ref="pkg:maven/${group_id//.//}/${artifact_id}@${version}"
     if ! grep -Fq "${component_ref}" "${SBOM_FILE}"; then
       echo "[PASS] Excluded build-tool-only component absent from SBOM: ${coordinate} (${build_tool_reason})"
@@ -55,8 +55,8 @@ while IFS= read -r violation; do
     fi
   fi
 
-  echo "${violation}" >> "${VIOLATIONS_FILE}"
-done < "${RAW_VIOLATIONS_FILE}"
+  echo "${violation}" >>"${VIOLATIONS_FILE}"
+done <"${RAW_VIOLATIONS_FILE}"
 
 if [[ -s "${VIOLATIONS_FILE}" ]]; then
   echo "[FAIL] License policy violations were found:" >&2

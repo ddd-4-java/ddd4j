@@ -61,7 +61,7 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
-                        config.getIdempotencyTtl()) : null;
+                config.getIdempotencyTtl()) : null;
     }
 
     public Ddd4jDropwizardRequestFilter(WebRequestContextFactory contextFactory,

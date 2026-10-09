@@ -16,6 +16,7 @@ package io.ddd4j.data.event.store.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+
 import java.util.List;
 import java.util.Objects;
 

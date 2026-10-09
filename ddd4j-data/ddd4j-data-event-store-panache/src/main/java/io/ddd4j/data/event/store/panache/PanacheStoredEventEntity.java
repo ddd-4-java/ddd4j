@@ -22,6 +22,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+
 import java.time.Instant;
 
 /**
@@ -49,46 +50,66 @@ import java.time.Instant;
 @IdClass(PanacheStoredEventId.class)
 public class PanacheStoredEventEntity extends PanacheEntityBase {
 
-    /** 聚合类型（复合主键之一）。 */
+    /**
+     * 聚合类型（复合主键之一）。
+     */
     @Id
     @Column(name = EventStoreConstants.COLUMN_AGGREGATE_TYPE, nullable = false, length = 255)
     public String aggregateType;
 
-    /** 聚合根标识（复合主键之一）。 */
+    /**
+     * 聚合根标识（复合主键之一）。
+     */
     @Id
     @Column(name = EventStoreConstants.COLUMN_AGGREGATE_ID, nullable = false, length = 255)
     public String aggregateId;
 
-    /** 聚合内版本号（复合主键之一，从 0 起递增）。 */
+    /**
+     * 聚合内版本号（复合主键之一，从 0 起递增）。
+     */
     @Id
     @Column(name = EventStoreConstants.COLUMN_VERSION, nullable = false)
     public long version;
 
-    /** 全局流位置（应用层分配，唯一约束）。 */
+    /**
+     * 全局流位置（应用层分配，唯一约束）。
+     */
     @Column(name = EventStoreConstants.COLUMN_POSITION, nullable = false, unique = true)
     public long position;
 
-    /** 事件类型全限定名（用于反序列化还原）。 */
+    /**
+     * 事件类型全限定名（用于反序列化还原）。
+     */
     @Column(name = EventStoreConstants.COLUMN_EVENT_TYPE, nullable = false, length = 512)
     public String eventType;
 
-    /** 事件 ID（可选）。 */
+    /**
+     * 事件 ID（可选）。
+     */
     @Column(name = EventStoreConstants.COLUMN_EVENT_ID, length = 64)
     public String eventId;
 
-    /** 序列化事件载荷（可与其余 EventStore adapter 共享的 JSON TEXT）。 */
+    /**
+     * 序列化事件载荷（可与其余 EventStore adapter 共享的 JSON TEXT）。
+     */
     @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false, columnDefinition = "TEXT")
     public String payload;
 
-    /** 关联事件标识（可选）。 */
+    /**
+     * 关联事件标识（可选）。
+     */
     @Column(name = EventStoreConstants.COLUMN_CORRELATION_ID, length = 64)
     public String correlationId;
 
-    /** 因果事件标识（可选）。 */
+    /**
+     * 因果事件标识（可选）。
+     */
     @Column(name = EventStoreConstants.COLUMN_CAUSATION_ID, length = 64)
     public String causationId;
 
-    /** 事件存储时间。 */
+    /**
+     * 事件存储时间。
+     */
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     public Instant timestamp;
 

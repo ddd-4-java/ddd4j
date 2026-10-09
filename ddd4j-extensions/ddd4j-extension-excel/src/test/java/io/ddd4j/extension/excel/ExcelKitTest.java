@@ -124,7 +124,8 @@ class ExcelKitTest {
         EasyExcel.write(out).head(head).sheet("S").doWrite(content);
 
         // 准备一个 Date 字段的 VO 读取
-        record DateVO(@com.alibaba.excel.annotation.ExcelProperty("日期") java.util.Date d) {}
+        record DateVO(@com.alibaba.excel.annotation.ExcelProperty("日期") java.util.Date d) {
+        }
 
         // when
         ImportResult<DateVO> result;

@@ -19,7 +19,9 @@ import java.util.Objects;
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
-/** HTTP translation layer for the shared Order application. */
+/**
+ * HTTP translation layer for the shared Order application.
+ */
 public final class OrderController {
 
     private final OrderApplicationService applicationService;

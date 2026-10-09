@@ -154,7 +154,7 @@ class QuarkusCommandBusIT {
 
         @Override
         public <U extends T> Instance<U> select(jakarta.enterprise.util.TypeLiteral<U> subtype,
-                Annotation... qualifiers) {
+                                                Annotation... qualifiers) {
             throw new UnsupportedOperationException("fixed test instance");
         }
 
