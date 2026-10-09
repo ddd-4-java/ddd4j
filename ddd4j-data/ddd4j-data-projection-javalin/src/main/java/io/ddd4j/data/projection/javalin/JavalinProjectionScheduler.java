@@ -80,8 +80,8 @@ public class JavalinProjectionScheduler implements ViewScheduler {
      * @return 调度器实例
      */
     public static JavalinProjectionScheduler create(Javalin app,
-                                                     Collection<ProjectionView<?>> views,
-                                                     ProjectionRunner<?> runner) {
+                                                    Collection<ProjectionView<?>> views,
+                                                    ProjectionRunner<?> runner) {
         Objects.requireNonNull(app, "app must not be null");
         Objects.requireNonNull(views, "views must not be null");
         Objects.requireNonNull(runner, "runner must not be null");

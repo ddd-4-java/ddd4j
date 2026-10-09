@@ -418,6 +418,7 @@ class SaTokenSubjectLifecycleTest {
         // 非 JWT 模式下传入任意 token 应被拒
         assertNull(subject().verify("no-such-token"));
     }
+
     @Test
     void loginMapsReplacedOverflowMode() {
         AuthSessionConfig sessionConfig = new AuthSessionConfig();

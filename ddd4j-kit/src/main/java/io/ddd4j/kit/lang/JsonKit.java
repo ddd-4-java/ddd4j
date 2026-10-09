@@ -378,8 +378,8 @@ public class JsonKit {
 
     private static Object getNodeValue(JsonNode childNode) {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
-                                                                     childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
-                                                                                                                    childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
+                childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
+                        childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
     private static JsonSerializer<LocalDate> localDateSerializer(DateTimeFormatter formatter) {

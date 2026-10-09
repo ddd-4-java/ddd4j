@@ -8,7 +8,9 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
+
 import java.util.List;
+
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +21,9 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** PostgreSQL 容器轨：验证 JDBI EventStore 的真实 DDL、持久化与读取。 */
+/**
+ * PostgreSQL 容器轨：验证 JDBI EventStore 的真实 DDL、持久化与读取。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class JdbiEventStorePostgresIT {
 

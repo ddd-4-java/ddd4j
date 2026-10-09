@@ -265,13 +265,13 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
             return Mono.empty();
         }
         return Mono.usingWhen(
-                connectionFactory.create(),
-                connection -> Mono.from(connection.createStatement(CREATE_TABLE_SQL).execute())
-                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
-                        .then(),
-                connection -> Mono.from(connection.close()),
-                (connection, error) -> Mono.from(connection.close()),
-                connection -> Mono.from(connection.close()))
+                        connectionFactory.create(),
+                        connection -> Mono.from(connection.createStatement(CREATE_TABLE_SQL).execute())
+                                .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                                .then(),
+                        connection -> Mono.from(connection.close()),
+                        (connection, error) -> Mono.from(connection.close()),
+                        connection -> Mono.from(connection.close()))
                 .doOnSuccess(v -> initialized.set(true));
     }
 

@@ -8,7 +8,9 @@ import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+
 import java.util.List;
+
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +21,9 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** PostgreSQL 容器轨：验证 Panache EventStore 的共享 TEXT schema 与事件往返。 */
+/**
+ * PostgreSQL 容器轨：验证 Panache EventStore 的共享 TEXT schema 与事件往返。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class PanacheEventStorePostgresIT {
 

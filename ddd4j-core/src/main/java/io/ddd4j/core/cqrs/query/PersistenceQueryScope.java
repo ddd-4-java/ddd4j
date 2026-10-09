@@ -150,7 +150,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
     }
 
     private PersistenceQueryScope<M, P> condition(boolean condition, SFunction<P, ?> property,
-                                                   String operator, Object value) {
+                                                  String operator, Object value) {
         query.addCondition(condition, reference(property), operator, value);
         return this;
     }

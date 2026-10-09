@@ -51,7 +51,7 @@ public final class Ddd4jVertxWeb {
     public Ddd4jVertxWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, new RuntimeReadinessRegistry());
     }
@@ -64,7 +64,7 @@ public final class Ddd4jVertxWeb {
     public Ddd4jVertxWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, readinessRegistry);
     }

@@ -59,7 +59,7 @@ public class Ddd4jQuarkusWebFilter {
         this.requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(), config.accessPolicy());
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
-                        config.getIdempotencyTtl()) : null;
+                config.getIdempotencyTtl()) : null;
     }
 
     Ddd4jQuarkusWebFilter(WebRequestContextFactory contextFactory,

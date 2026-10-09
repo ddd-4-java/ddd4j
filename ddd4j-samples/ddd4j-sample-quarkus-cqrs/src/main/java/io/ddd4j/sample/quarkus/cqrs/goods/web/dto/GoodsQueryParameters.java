@@ -13,7 +13,9 @@ import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;
 
-/** HTTP 查询参数到领域查询对象的显式适配器。 */
+/**
+ * HTTP 查询参数到领域查询对象的显式适配器。
+ */
 @Getter
 @Setter
 public class GoodsQueryParameters {

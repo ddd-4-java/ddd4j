@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.Objects;
 
 /**

@@ -42,7 +42,9 @@ public final class EntityIdRegistry {
 
     private static final Map<String, Function<String, EntityId>> FACTORIES = new ConcurrentHashMap<>();
 
-    /** 内置 StringEntityId 类型名（与 {@link StringEntityId} 内部 TYPE 常量一致）。 */
+    /**
+     * 内置 StringEntityId 类型名（与 {@link StringEntityId} 内部 TYPE 常量一致）。
+     */
     private static final String STRING_ENTITY_TYPE = "String";
 
     static {

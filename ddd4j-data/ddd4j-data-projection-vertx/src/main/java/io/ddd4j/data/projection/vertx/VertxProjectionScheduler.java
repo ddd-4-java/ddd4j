@@ -69,8 +69,8 @@ public class VertxProjectionScheduler implements ViewScheduler {
      * @return 调度器实例
      */
     public static VertxProjectionScheduler create(Vertx vertx,
-                                                   Collection<ProjectionView<?>> views,
-                                                   ProjectionRunner<?> runner) {
+                                                  Collection<ProjectionView<?>> views,
+                                                  ProjectionRunner<?> runner) {
         Objects.requireNonNull(vertx, "vertx must not be null");
         Objects.requireNonNull(views, "views must not be null");
         Objects.requireNonNull(runner, "runner must not be null");

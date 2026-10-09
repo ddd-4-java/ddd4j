@@ -45,8 +45,8 @@ public class VertxProjectionViewManager implements ViewManager {
     private volatile boolean running = false;
 
     private VertxProjectionViewManager(ViewScheduler scheduler,
-                                        ProjectionRunner<?> runner,
-                                        Collection<ProjectionView<?>> views) {
+                                       ProjectionRunner<?> runner,
+                                       Collection<ProjectionView<?>> views) {
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler must not be null");
         this.runner = Objects.requireNonNull(runner, "runner must not be null");
         this.views = Objects.requireNonNull(views, "views must not be null");
@@ -65,8 +65,8 @@ public class VertxProjectionViewManager implements ViewManager {
      * @return 已完成装配的视图管理器
      */
     public static VertxProjectionViewManager create(Vertx vertx,
-                                                     Collection<ProjectionView<?>> views,
-                                                     ProjectionRunner<?> runner) {
+                                                    Collection<ProjectionView<?>> views,
+                                                    ProjectionRunner<?> runner) {
         Objects.requireNonNull(vertx, "vertx must not be null");
         Objects.requireNonNull(views, "views must not be null");
         Objects.requireNonNull(runner, "runner must not be null");

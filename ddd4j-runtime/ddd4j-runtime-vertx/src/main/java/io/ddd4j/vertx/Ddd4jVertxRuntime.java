@@ -34,13 +34,13 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
     private final RuntimeReadinessRegistry readinessRegistry;
 
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                            I18nProvider i18nProvider, CommandBus commandBus) {
+                             I18nProvider i18nProvider, CommandBus commandBus) {
         this(vertx, publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                            I18nProvider i18nProvider, CommandBus commandBus,
-                            Collection<? extends ReadinessContributor> readinessContributors) {
+                             I18nProvider i18nProvider, CommandBus commandBus,
+                             Collection<? extends ReadinessContributor> readinessContributors) {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
         this.registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, publisher)

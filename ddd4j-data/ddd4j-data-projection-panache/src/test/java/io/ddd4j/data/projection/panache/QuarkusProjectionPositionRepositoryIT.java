@@ -33,7 +33,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @QuarkusTest
 class QuarkusProjectionPositionRepositoryIT {
 
-    /** 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。 */
+    /**
+     * 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。
+     */
     private static final String ORDER_SUMMARY = "order-summary";
 
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";

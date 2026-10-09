@@ -45,8 +45,8 @@ public class MicronautProjectionViewManager implements ViewManager {
     @Inject
     @SuppressWarnings("unchecked")
     public MicronautProjectionViewManager(ViewScheduler scheduler,
-                                           ProjectionRunner<?> runner,
-                                           BeanContext context) {
+                                          ProjectionRunner<?> runner,
+                                          BeanContext context) {
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler must not be null");
         this.runner = Objects.requireNonNull(runner, "runner must not be null");
         this.views = (Collection<ProjectionView<?>>) (Collection<?>) context.getBeansOfType(ProjectionView.class);
