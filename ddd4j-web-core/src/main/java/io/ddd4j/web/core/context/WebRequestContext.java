@@ -46,22 +46,54 @@ public final class WebRequestContext {
         this.path = StrKit.isBlank(path) ? "/" : path;
     }
 
-    public String requestId() { return requestId; }
-    public String traceId() { return traceId; }
-    public String tenantId() { return tenantId; }
-    public String authorization() { return authorization; }
-    public Locale locale() { return locale; }
-    public String clientIp() { return clientIp; }
-    public String method() { return method; }
-    public String path() { return path; }
-
-    @Override public boolean equals(Object o) {
-        return this == o || (o instanceof WebRequestContext &&
-                Objects.equals(requestId,((WebRequestContext)o).requestId) && Objects.equals(traceId,((WebRequestContext)o).traceId) &&
-                Objects.equals(tenantId,((WebRequestContext)o).tenantId) && Objects.equals(authorization,((WebRequestContext)o).authorization) &&
-                Objects.equals(locale,((WebRequestContext)o).locale) && Objects.equals(clientIp,((WebRequestContext)o).clientIp) &&
-                Objects.equals(method,((WebRequestContext)o).method) && Objects.equals(path,((WebRequestContext)o).path));
+    public String requestId() {
+        return requestId;
     }
-    @Override public int hashCode() { return Objects.hash(requestId,traceId,tenantId,authorization,locale,clientIp,method,path); }
-    @Override public String toString() { return "WebRequestContext{requestId="+requestId+",path="+path+"}"; }
+
+    public String traceId() {
+        return traceId;
+    }
+
+    public String tenantId() {
+        return tenantId;
+    }
+
+    public String authorization() {
+        return authorization;
+    }
+
+    public Locale locale() {
+        return locale;
+    }
+
+    public String clientIp() {
+        return clientIp;
+    }
+
+    public String method() {
+        return method;
+    }
+
+    public String path() {
+        return path;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o instanceof WebRequestContext &&
+                Objects.equals(requestId, ((WebRequestContext) o).requestId) && Objects.equals(traceId, ((WebRequestContext) o).traceId) &&
+                Objects.equals(tenantId, ((WebRequestContext) o).tenantId) && Objects.equals(authorization, ((WebRequestContext) o).authorization) &&
+                Objects.equals(locale, ((WebRequestContext) o).locale) && Objects.equals(clientIp, ((WebRequestContext) o).clientIp) &&
+                Objects.equals(method, ((WebRequestContext) o).method) && Objects.equals(path, ((WebRequestContext) o).path));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(requestId, traceId, tenantId, authorization, locale, clientIp, method, path);
+    }
+
+    @Override
+    public String toString() {
+        return "WebRequestContext{requestId=" + requestId + ",path=" + path + "}";
+    }
 }

@@ -49,7 +49,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * }
  * </pre>
  *
- * @param <ROOT_ID> 聚合根标识类型
+ * @param <ROOT_ID>   聚合根标识类型
  * @param <ENTITY_ID> 命令目标的实体标识类型
  * @author wandl
  * @see AbstractAggregateCommand

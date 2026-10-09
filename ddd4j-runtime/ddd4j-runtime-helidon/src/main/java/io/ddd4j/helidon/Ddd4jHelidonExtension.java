@@ -24,6 +24,7 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.context.spi.CreationalContext;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

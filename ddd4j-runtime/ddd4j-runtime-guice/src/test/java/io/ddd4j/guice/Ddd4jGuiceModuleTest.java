@@ -181,6 +181,7 @@ class Ddd4jGuiceModuleTest {
             return false;
         }
     }
+
     @Test
     void providesMethodsInstantiateOnDemand() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());

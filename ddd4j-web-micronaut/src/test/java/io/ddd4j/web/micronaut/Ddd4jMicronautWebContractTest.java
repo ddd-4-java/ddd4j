@@ -174,14 +174,30 @@ final class MicronautContractController {
     R<Void> error(String type) {
         Exception ex;
         switch (type) {
-            case "bad-request": ex = new IllegalArgumentException("bad request"); break;
-            case "forbidden": ex = new SecurityException("forbidden"); break;
-            case "not-found": ex = new NoSuchElementException("not found"); break;
-            case "conflict": ex = new IllegalStateException("conflict"); break;
-            case "unsupported-media-type": ex = new WebStatusException(415, "unsupported media type"); break;
-            case "unprocessable-entity": ex = new WebStatusException(422, "unprocessable entity"); break;
-            case "too-many-requests": ex = new WebStatusException(429, "too many requests"); break;
-            default: ex = new RuntimeException("internal failure"); break;
+            case "bad-request":
+                ex = new IllegalArgumentException("bad request");
+                break;
+            case "forbidden":
+                ex = new SecurityException("forbidden");
+                break;
+            case "not-found":
+                ex = new NoSuchElementException("not found");
+                break;
+            case "conflict":
+                ex = new IllegalStateException("conflict");
+                break;
+            case "unsupported-media-type":
+                ex = new WebStatusException(415, "unsupported media type");
+                break;
+            case "unprocessable-entity":
+                ex = new WebStatusException(422, "unprocessable entity");
+                break;
+            case "too-many-requests":
+                ex = new WebStatusException(429, "too many requests");
+                break;
+            default:
+                ex = new RuntimeException("internal failure");
+                break;
         }
         throw ex;
     }

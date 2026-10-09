@@ -18,7 +18,9 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
 import io.micronaut.context.event.ApplicationEventPublisher;
+
 import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

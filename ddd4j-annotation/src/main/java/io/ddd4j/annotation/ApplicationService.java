@@ -6,9 +6,10 @@ import java.lang.annotation.*;
 
 /**
  * DDD注解-应用层服务
+ *
  * @author mingjie
- * @since 2022/3/20
  * @see <a href="https://github.com/smingjie/bbq-ddd">bbq-ddd</a>
+ * @since 2022/3/20
  */
 @DDDAnnotation
 @Documented

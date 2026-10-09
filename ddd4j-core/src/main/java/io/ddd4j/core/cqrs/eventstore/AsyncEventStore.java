@@ -96,7 +96,7 @@ public interface AsyncEventStore {
      * @return 版本区间内的持久化事件流，按版本升序
      */
     Flux<AsyncStoredEvent> read(String aggregateType, AggregateRootId aggregateId,
-                           long fromVersion, long toVersion);
+                                long fromVersion, long toVersion);
 
     /**
      * 读取全局事件流（用于 projection）。

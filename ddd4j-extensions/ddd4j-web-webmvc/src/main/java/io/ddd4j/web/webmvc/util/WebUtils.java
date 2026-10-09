@@ -15,6 +15,7 @@
 package io.ddd4j.web.webmvc.util;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

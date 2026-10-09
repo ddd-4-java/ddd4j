@@ -127,6 +127,7 @@ public class SecuritySubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 登录账号 Id
      */
     @Override
@@ -136,6 +137,7 @@ public class SecuritySubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 登录用户 Id
      */
     @Override
@@ -145,6 +147,7 @@ public class SecuritySubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 所属组织 Id
      */
     @Override
@@ -154,6 +157,7 @@ public class SecuritySubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @return 角色 Id
      */
     @Override
@@ -163,6 +167,7 @@ public class SecuritySubject implements Subject {
 
     /**
      * 复写默认实现，提高效率
+     *
      * @param tokenValue 指定的 Token 值
      * @param key        键值
      * @return 对应的扩展数据

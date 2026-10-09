@@ -19,9 +19,11 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.DeliveryOptions;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -64,7 +64,11 @@ public abstract class AbstractWebContractTest {
 
     @Test
     void shouldPropagateRequestHeadersAndReturnRequestId() throws Exception {
-        Map<String, String> headers = new java.util.HashMap<String,String>() {{ put(WebHeaders.REQUEST_ID, "request-contract-1"); put(WebHeaders.TRACE_ID, "trace-contract-1"); put(WebHeaders.TENANT_ID, "tenant-contract-1"); }};
+        Map<String, String> headers = new java.util.HashMap<String, String>() {{
+            put(WebHeaders.REQUEST_ID, "request-contract-1");
+            put(WebHeaders.TRACE_ID, "trace-contract-1");
+            put(WebHeaders.TENANT_ID, "tenant-contract-1");
+        }};
         WebContractResponse response = client().request("GET", WebContractPaths.CONTEXT, headers, null);
         JsonNode data = body(response).path("data");
 

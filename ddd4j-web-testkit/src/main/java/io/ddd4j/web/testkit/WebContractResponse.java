@@ -19,9 +19,17 @@ public final class WebContractResponse {
         this.body = body;
     }
 
-    public int status() { return status; }
-    public Map<String, List<String>> headers() { return headers; }
-    public String body() { return body; }
+    public int status() {
+        return status;
+    }
+
+    public Map<String, List<String>> headers() {
+        return headers;
+    }
+
+    public String body() {
+        return body;
+    }
 
     public Optional<String> firstHeader(String name) {
         Objects.requireNonNull(name, "name must not be null");
@@ -33,12 +41,21 @@ public final class WebContractResponse {
                 .findFirst();
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         return this == o || (o instanceof WebContractResponse
-                && status == ((WebContractResponse)o).status
-                && Objects.equals(headers, ((WebContractResponse)o).headers)
-                && Objects.equals(body, ((WebContractResponse)o).body));
+                && status == ((WebContractResponse) o).status
+                && Objects.equals(headers, ((WebContractResponse) o).headers)
+                && Objects.equals(body, ((WebContractResponse) o).body));
     }
-    @Override public int hashCode() { return Objects.hash(status, headers, body); }
-    @Override public String toString() { return "WebContractResponse{status=" + status + "}"; }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, headers, body);
+    }
+
+    @Override
+    public String toString() {
+        return "WebContractResponse{status=" + status + "}";
+    }
 }

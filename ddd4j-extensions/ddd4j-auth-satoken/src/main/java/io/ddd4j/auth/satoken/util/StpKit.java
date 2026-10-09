@@ -41,6 +41,7 @@ public class StpKit {
     public static Long getLoginIdAsLong() {
         return StpUtil.getLoginIdAsLong();
     }
+
     /**
      * 获取当前会话账号id, 并转换为 String 类型
      *
@@ -49,6 +50,7 @@ public class StpKit {
     public static String getLoginIdAsString() {
         return StpUtil.getLoginIdAsString();
     }
+
     /**
      * 获取当前会话账号id, 并转换为 int 类型
      *
@@ -65,9 +67,11 @@ public class StpKit {
     public static Long getUserIdAsLong() {
         return getExtraAs(SaConstants.PAYLOAD_USER_ID, Functions.TO_LONG);
     }
+
     public static String getUserIdAsString() {
         return getExtraAs(SaConstants.PAYLOAD_USER_ID, Functions.TO_STRING);
     }
+
     public static Integer getUserIdAsInteger() {
         return getExtraAs(SaConstants.PAYLOAD_USER_ID, Functions.TO_INTEGER);
     }

@@ -13,8 +13,12 @@ class PropertyRefTest {
         assertEquals(TestAggregate.class, property.getOwnerType());
         assertEquals("name", property.getProperty());
     }
+
     private static final class TestAggregate {
         private final String name = "name";
-        public String getName() { return name; }
+
+        public String getName() {
+            return name;
+        }
     }
 }

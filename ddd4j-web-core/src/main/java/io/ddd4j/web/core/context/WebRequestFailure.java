@@ -21,13 +21,37 @@ public final class WebRequestFailure {
     private final String method;
     private final String path;
     private final Throwable cause;
+
     public WebRequestFailure(String method, String path, Throwable cause) {
-        this.method = method; this.path = path; this.cause = cause;
+        this.method = method;
+        this.path = path;
+        this.cause = cause;
     }
-    public String method() { return method; }
-    public String path() { return path; }
-    public Throwable cause() { return cause; }
-    @Override public boolean equals(Object o) { return this == o || (o instanceof WebRequestFailure && java.util.Objects.equals(method,((WebRequestFailure)o).method()) && java.util.Objects.equals(path,((WebRequestFailure)o).path()) && java.util.Objects.equals(cause,((WebRequestFailure)o).cause())); }
-    @Override public int hashCode() { return java.util.Objects.hash(method,path,cause); }
-    @Override public String toString() { return "WebRequestFailure{method="+method+",path="+path+"}"; }
+
+    public String method() {
+        return method;
+    }
+
+    public String path() {
+        return path;
+    }
+
+    public Throwable cause() {
+        return cause;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o instanceof WebRequestFailure && java.util.Objects.equals(method, ((WebRequestFailure) o).method()) && java.util.Objects.equals(path, ((WebRequestFailure) o).path()) && java.util.Objects.equals(cause, ((WebRequestFailure) o).cause()));
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(method, path, cause);
+    }
+
+    @Override
+    public String toString() {
+        return "WebRequestFailure{method=" + method + ",path=" + path + "}";
+    }
 }

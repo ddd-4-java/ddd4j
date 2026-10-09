@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +53,9 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
 
     private static final Logger log = LoggerFactory.getLogger(GuiceJdbcProjectionPositionRepository.class);
 
-    /** 统一表名，与 Spring/Quarkus 运行时一致 */
+    /**
+     * 统一表名，与 Spring/Quarkus 运行时一致
+     */
     private static final String TABLE_NAME = ProjectionConstants.TABLE_NAME;
 
     private static final String UPSERT_UPDATE =

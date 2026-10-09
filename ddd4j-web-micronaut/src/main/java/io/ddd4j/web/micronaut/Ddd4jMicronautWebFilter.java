@@ -67,7 +67,7 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? Optional.of(new WebIdempotencyLifecycle(
-                        new CacheIdempotencyGuard(config.getIdempotencyCacheName()), config.getIdempotencyTtl()))
+                new CacheIdempotencyGuard(config.getIdempotencyCacheName()), config.getIdempotencyTtl()))
                 : Optional.empty();
     }
 

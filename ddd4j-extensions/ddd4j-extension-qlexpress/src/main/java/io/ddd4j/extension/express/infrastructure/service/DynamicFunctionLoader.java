@@ -6,7 +6,9 @@ import com.alibaba.qlexpress4.runtime.QContext;
 import com.alibaba.qlexpress4.runtime.function.CustomFunction;
 import io.ddd4j.extension.express.application.service.RuleManagementService;
 import io.ddd4j.extension.express.domain.model.entity.RuleDefinition;
+
 import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -19,13 +21,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 动态函数加载器
  * 基础设施层：负责从数据库动态加载自定义函数规则并注册到QLExpress
- * 
+ *
  * <p>支持两种类型的函数规则：
  * <ul>
  *   <li>CLASS类型：通过反射加载类方法</li>
  *   <li>SCRIPT类型：脚本函数（未来扩展）</li>
  * </ul>
- * 
+ *
  * <p>只加载 ruleType 为 FUNCTION 的规则
  */
 @Component
@@ -35,12 +37,12 @@ public class DynamicFunctionLoader {
 
     private final Express4Runner expressRunner;
     private final RuleManagementService ruleManagementService;
-    
+
     // 已加载的函数缓存，避免重复加载
     private final Map<String, CustomFunction> loadedFunctions = new ConcurrentHashMap<>();
 
     public DynamicFunctionLoader(Express4Runner expressRunner,
-                                RuleManagementService ruleManagementService) {
+                                 RuleManagementService ruleManagementService) {
         this.expressRunner = expressRunner;
         this.ruleManagementService = ruleManagementService;
     }
@@ -106,7 +108,7 @@ public class DynamicFunctionLoader {
 
         try {
             Class<?> clazz = Class.forName(functionClass);
-            
+
             // 如果实现了CustomFunction接口，直接使用
             if (CustomFunction.class.isAssignableFrom(clazz)) {
                 CustomFunction customFunction = (CustomFunction) clazz.getDeclaredConstructor().newInstance();
@@ -122,8 +124,8 @@ public class DynamicFunctionLoader {
                     CustomFunction wrapper = createMethodWrapper(clazz, method);
                     expressRunner.addFunction(rule.getRuleCode(), wrapper);
                     loadedFunctions.put(rule.getRuleCode(), wrapper);
-                    log.info("加载静态方法函数成功: {} -> {}.{}", 
-                        rule.getRuleCode(), functionClass, methodName);
+                    log.info("加载静态方法函数成功: {} -> {}.{}",
+                            rule.getRuleCode(), functionClass, methodName);
                 } else {
                     log.warn("函数方法名为空: {}", rule.getRuleCode());
                 }
@@ -137,10 +139,10 @@ public class DynamicFunctionLoader {
 
     /**
      * 创建方法包装器
-     * 
+     *
      * <p>将静态方法包装为 CustomFunction，用于动态加载函数规则。
-     * 
-     * @param clazz 函数类
+     *
+     * @param clazz  函数类
      * @param method 静态方法
      * @return 包装后的 CustomFunction
      */
@@ -160,7 +162,7 @@ public class DynamicFunctionLoader {
             }
         };
     }
-    
+
     /**
      * 获取参数值（兼容不同的 QLExpress 版本）
      */
@@ -195,7 +197,7 @@ public class DynamicFunctionLoader {
     public void reloadFunction(String ruleCode) {
         // 先移除旧函数
         loadedFunctions.remove(ruleCode);
-        
+
         // 重新加载
         ruleManagementService.getRuleByCode(ruleCode).ifPresent(this::loadFunction);
     }

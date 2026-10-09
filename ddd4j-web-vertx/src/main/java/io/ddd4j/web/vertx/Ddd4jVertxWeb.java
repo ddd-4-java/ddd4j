@@ -43,6 +43,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +69,7 @@ public final class Ddd4jVertxWeb {
     public Ddd4jVertxWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, new RuntimeReadinessRegistry());
     }
@@ -81,7 +82,7 @@ public final class Ddd4jVertxWeb {
     public Ddd4jVertxWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, readinessRegistry);
     }
@@ -267,9 +268,13 @@ public final class Ddd4jVertxWeb {
 
         }
 
-        Optional<BearerSubjectAuthenticator.Authentication> authentication() { return authentication; }
+        Optional<BearerSubjectAuthenticator.Authentication> authentication() {
+            return authentication;
+        }
 
-        Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() { return idempotencyScope; }
+        Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() {
+            return idempotencyScope;
+        }
 
     }
 

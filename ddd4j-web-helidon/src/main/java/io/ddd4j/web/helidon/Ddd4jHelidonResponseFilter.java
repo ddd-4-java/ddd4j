@@ -17,6 +17,7 @@ package io.ddd4j.web.helidon;
 import io.ddd4j.web.core.context.SynchronousWebRequestSession;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.context.WebRequestContext;
+
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;

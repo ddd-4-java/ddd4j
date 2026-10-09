@@ -43,7 +43,7 @@ public class BizCheckedException extends NestedCheckedException {
     public BizCheckedException(String message, Throwable cause) {
         super(message, cause);
     }
- 
+
     public BizCheckedException(ApiCode code, String i18nCode) {
         super(code.getReason());
         this.code = code.getCode();

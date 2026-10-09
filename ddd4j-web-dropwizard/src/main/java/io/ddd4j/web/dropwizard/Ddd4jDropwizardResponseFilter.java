@@ -17,6 +17,7 @@ package io.ddd4j.web.dropwizard;
 import io.ddd4j.web.core.context.SynchronousWebRequestSession;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.context.WebRequestContext;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;

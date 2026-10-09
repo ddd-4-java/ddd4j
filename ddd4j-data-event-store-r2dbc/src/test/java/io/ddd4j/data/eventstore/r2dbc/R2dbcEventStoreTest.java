@@ -130,12 +130,12 @@ class R2dbcEventStoreTest {
         String dataType = Mono.usingWhen(
                         Mono.from(connectionFactory.create()),
                         connection -> Mono.from(connection.createStatement(
-                                        "select data_type from information_schema.columns"
-                                                + " where upper(table_name) = $1"
-                                                + " and upper(column_name) = $2")
-                                .bind(0, EventStoreConstants.TABLE_NAME.toUpperCase())
-                                .bind(1, EventStoreConstants.COLUMN_PAYLOAD.toUpperCase())
-                                .execute())
+                                                "select data_type from information_schema.columns"
+                                                        + " where upper(table_name) = $1"
+                                                        + " and upper(column_name) = $2")
+                                        .bind(0, EventStoreConstants.TABLE_NAME.toUpperCase())
+                                        .bind(1, EventStoreConstants.COLUMN_PAYLOAD.toUpperCase())
+                                        .execute())
                                 .flatMap(result -> Mono.from(result.map((row, metadata) ->
                                         row.get(0, String.class)))),
                         connection -> Mono.from(connection.close()))
@@ -171,7 +171,9 @@ class R2dbcEventStoreTest {
         }
     }
 
-    /** 业务事件样例：无参构造 + JavaBean 属性（payload 序列化约定）。 */
+    /**
+     * 业务事件样例：无参构造 + JavaBean 属性（payload 序列化约定）。
+     */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         private String fact;

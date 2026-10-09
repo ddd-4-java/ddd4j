@@ -21,7 +21,7 @@
             <version>${revision}</version>
         </dependency>
         <!-- For Spring Boot AutoConfigure -->
-<!-- For Spring TX -->
+        <!-- For Spring TX -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>

@@ -18,14 +18,31 @@ class MqDomainEventPublisherTest {
 
     private static final class TestId implements AggregateRootId {
         private final String value;
-        private TestId(String value) { this.value = value; }
-        @Override public EntityType getType() { return new io.ddd4j.core.ddd.event.StringEntityType("Order"); }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return getType().asString() + ":" + value; }
+
+        private TestId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return new io.ddd4j.core.ddd.event.StringEntityType("Order");
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return getType().asString() + ":" + value;
+        }
     }
 
     private static final class OrderCreated extends DomainEvent<TestId> {
-        private OrderCreated(EntityIdPath path) { super(path); }
+        private OrderCreated(EntityIdPath path) {
+            super(path);
+        }
     }
 
     @Test
@@ -33,13 +50,21 @@ class MqDomainEventPublisherTest {
     void publish_convertsToCarrierAndForwards() {
         final AtomicReference<MQEvent> published = new AtomicReference<MQEvent>();
         MQEventPublisher publisher = new MQEventPublisher() {
-            @Override public <T extends MQEvent> void publish(T event, io.ddd4j.mq.contract.MQDestination destination) {
+            @Override
+            public <T extends MQEvent> void publish(T event, io.ddd4j.mq.contract.MQDestination destination) {
                 published.set(event);
             }
         };
         MQEventSerialization serialization = new MQEventSerialization() {
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
-            @Override public <T> T serialize(Object src) { return (T) "{\"orderId\":42}"; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            public <T> T serialize(Object src) {
+                return (T) "{\"orderId\":42}";
+            }
         };
         MqDomainEventPublisher domainPublisher = new MqDomainEventPublisher(serialization, publisher);
 
@@ -55,13 +80,21 @@ class MqDomainEventPublisherTest {
     @Test
     void publish_nullEvent_noop() {
         MQEventPublisher publisher = new MQEventPublisher() {
-            @Override public <T extends MQEvent> void publish(T event, io.ddd4j.mq.contract.MQDestination destination) {
+            @Override
+            public <T extends MQEvent> void publish(T event, io.ddd4j.mq.contract.MQDestination destination) {
                 throw new AssertionError("must not be called");
             }
         };
         MQEventSerialization serialization = new MQEventSerialization() {
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
-            @Override public <T> T serialize(Object src) { return null; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            public <T> T serialize(Object src) {
+                return null;
+            }
         };
         new MqDomainEventPublisher(serialization, publisher).publish((DomainEvent<TestId>) null);
     }

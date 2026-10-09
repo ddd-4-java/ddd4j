@@ -31,12 +31,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-/** ESDB 强类型 EventStore 的单元契约。 */
+/**
+ * ESDB 强类型 EventStore 的单元契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class EsdbEventStoreTest {
     private static final String ORDER_TYPE = "Order";
-    @Mock EventStoreDBClient client;
-    @Captor ArgumentCaptor<String> streamCaptor;
+    @Mock
+    EventStoreDBClient client;
+    @Captor
+    ArgumentCaptor<String> streamCaptor;
 
     @Test
     void expectedRevisionShouldFollowCoreCurrentVersionContract() {
@@ -50,6 +54,7 @@ class EsdbEventStoreTest {
         f.completeExceptionally(ex);
         return f;
     }
+
     @Test
     void appendShouldUseAggregateTypeInStreamAndPreserveCoreEventIdentity() {
         TestId id = new TestId("order-1");
@@ -90,17 +95,49 @@ class EsdbEventStoreTest {
     static final class TestId implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
-        TestId(String value) { this.value = value; }
-        @Override public EntityType getType() { return TYPE; }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
-        @Override public boolean equals(Object o) { return this == o || (o instanceof TestId && java.util.Objects.equals(value, ((TestId)o).value)); }
-        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
-        @Override public String toString() { return "TestId{" + value + "}"; }
+
+        TestId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || (o instanceof TestId && java.util.Objects.equals(value, ((TestId) o).value));
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hashCode(value);
+        }
+
+        @Override
+        public String toString() {
+            return "TestId{" + value + "}";
+        }
     }
 
     static final class TestEvent extends DomainEvent<TestId> {
-        TestEvent() { super(); }
-        TestEvent(TestId id) { super(new EntityIdPath(id)); }
+        TestEvent() {
+            super();
+        }
+
+        TestEvent(TestId id) {
+            super(new EntityIdPath(id));
+        }
     }
 }

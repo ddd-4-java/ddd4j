@@ -26,15 +26,46 @@ public final class WebError {
     private final Serializable code;
     private final String message;
     private final Object data;
+
     public WebError(int status, Serializable code, String message, Object data) {
-        this.status = status; this.code = code; this.message = message; this.data = data;
+        this.status = status;
+        this.code = code;
+        this.message = message;
+        this.data = data;
     }
-    public int status() { return status; }
-    public Serializable code() { return code; }
-    public String message() { return message; }
-    public Object data() { return data; }
-    public R<Object> toResponse() { return R.fail(code, message, data); }
-    @Override public boolean equals(Object o) { return this == o || (o instanceof WebError && status==((WebError)o).status() && java.util.Objects.equals(code,((WebError)o).code()) && java.util.Objects.equals(message,((WebError)o).message()) && java.util.Objects.equals(data,((WebError)o).data())); }
-    @Override public int hashCode() { return java.util.Objects.hash(status,code,message,data); }
-    @Override public String toString() { return "WebError{status="+status+",code="+code+",message="+message+"}"; }
+
+    public int status() {
+        return status;
+    }
+
+    public Serializable code() {
+        return code;
+    }
+
+    public String message() {
+        return message;
+    }
+
+    public Object data() {
+        return data;
+    }
+
+    public R<Object> toResponse() {
+        return R.fail(code, message, data);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o instanceof WebError && status == ((WebError) o).status() && java.util.Objects.equals(code, ((WebError) o).code()) && java.util.Objects.equals(message, ((WebError) o).message()) && java.util.Objects.equals(data, ((WebError) o).data()));
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(status, code, message, data);
+    }
+
+    @Override
+    public String toString() {
+        return "WebError{status=" + status + ",code=" + code + ",message=" + message + "}";
+    }
 }

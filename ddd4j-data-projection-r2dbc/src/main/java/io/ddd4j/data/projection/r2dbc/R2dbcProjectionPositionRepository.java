@@ -54,7 +54,9 @@ import java.util.function.UnaryOperator;
  */
 public class R2dbcProjectionPositionRepository implements ProjectionPositionRepository {
 
-    /** 行读取列集（与表契约一致：自然主键＋位置计数）。 */
+    /**
+     * 行读取列集（与表契约一致：自然主键＋位置计数）。
+     */
     private static final String SELECT_COLUMNS =
             "select stream_id, next_event_number from ddd4j_projection_position";
 
@@ -194,8 +196,8 @@ public class R2dbcProjectionPositionRepository implements ProjectionPositionRepo
      */
     private Mono<ProjectionPosition> upsert(String streamId, long nextEventNumber) {
         return executeUpdate(MERGE_SQL, statement -> statement
-                        .bind(0, streamId)
-                        .bind(1, nextEventNumber))
+                .bind(0, streamId)
+                .bind(1, nextEventNumber))
                 .thenReturn(new DefaultProjectionPosition(streamId, nextEventNumber));
     }
 

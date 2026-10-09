@@ -30,24 +30,74 @@ public final class WebRequestData {
     private final String remoteAddress;
     private final String method;
     private final String path;
+
     public WebRequestData(String requestId, String traceId, String tenantId, String authorization,
-                           Locale locale, String forwardedFor, String realIp, String remoteAddress,
-                           String method, String path) {
-        this.requestId=requestId; this.traceId=traceId; this.tenantId=tenantId;
-        this.authorization=authorization; this.locale=locale; this.forwardedFor=forwardedFor;
-        this.realIp=realIp; this.remoteAddress=remoteAddress; this.method=method; this.path=path;
+                          Locale locale, String forwardedFor, String realIp, String remoteAddress,
+                          String method, String path) {
+        this.requestId = requestId;
+        this.traceId = traceId;
+        this.tenantId = tenantId;
+        this.authorization = authorization;
+        this.locale = locale;
+        this.forwardedFor = forwardedFor;
+        this.realIp = realIp;
+        this.remoteAddress = remoteAddress;
+        this.method = method;
+        this.path = path;
     }
-    public String requestId() { return requestId; }
-    public String traceId() { return traceId; }
-    public String tenantId() { return tenantId; }
-    public String authorization() { return authorization; }
-    public Locale locale() { return locale; }
-    public String forwardedFor() { return forwardedFor; }
-    public String realIp() { return realIp; }
-    public String remoteAddress() { return remoteAddress; }
-    public String method() { return method; }
-    public String path() { return path; }
-    @Override public boolean equals(Object o) { return this==o || (o instanceof WebRequestData && java.util.Objects.equals(requestId,((WebRequestData)o).requestId()) && java.util.Objects.equals(traceId,((WebRequestData)o).traceId()) && java.util.Objects.equals(tenantId,((WebRequestData)o).tenantId()) && java.util.Objects.equals(authorization,((WebRequestData)o).authorization()) && java.util.Objects.equals(locale,((WebRequestData)o).locale()) && java.util.Objects.equals(forwardedFor,((WebRequestData)o).forwardedFor()) && java.util.Objects.equals(realIp,((WebRequestData)o).realIp()) && java.util.Objects.equals(remoteAddress,((WebRequestData)o).remoteAddress()) && java.util.Objects.equals(method,((WebRequestData)o).method()) && java.util.Objects.equals(path,((WebRequestData)o).path())); }
-    @Override public int hashCode() { return java.util.Objects.hash(requestId,traceId,tenantId,authorization,locale,forwardedFor,realIp,remoteAddress,method,path); }
-    @Override public String toString() { return "WebRequestData{path="+path+",method="+method+"}"; }
+
+    public String requestId() {
+        return requestId;
+    }
+
+    public String traceId() {
+        return traceId;
+    }
+
+    public String tenantId() {
+        return tenantId;
+    }
+
+    public String authorization() {
+        return authorization;
+    }
+
+    public Locale locale() {
+        return locale;
+    }
+
+    public String forwardedFor() {
+        return forwardedFor;
+    }
+
+    public String realIp() {
+        return realIp;
+    }
+
+    public String remoteAddress() {
+        return remoteAddress;
+    }
+
+    public String method() {
+        return method;
+    }
+
+    public String path() {
+        return path;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o instanceof WebRequestData && java.util.Objects.equals(requestId, ((WebRequestData) o).requestId()) && java.util.Objects.equals(traceId, ((WebRequestData) o).traceId()) && java.util.Objects.equals(tenantId, ((WebRequestData) o).tenantId()) && java.util.Objects.equals(authorization, ((WebRequestData) o).authorization()) && java.util.Objects.equals(locale, ((WebRequestData) o).locale()) && java.util.Objects.equals(forwardedFor, ((WebRequestData) o).forwardedFor()) && java.util.Objects.equals(realIp, ((WebRequestData) o).realIp()) && java.util.Objects.equals(remoteAddress, ((WebRequestData) o).remoteAddress()) && java.util.Objects.equals(method, ((WebRequestData) o).method()) && java.util.Objects.equals(path, ((WebRequestData) o).path()));
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(requestId, traceId, tenantId, authorization, locale, forwardedFor, realIp, remoteAddress, method, path);
+    }
+
+    @Override
+    public String toString() {
+        return "WebRequestData{path=" + path + ",method=" + method + "}";
+    }
 }

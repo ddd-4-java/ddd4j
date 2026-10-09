@@ -20,6 +20,7 @@ import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -33,16 +33,51 @@ public class Ddd4jDropwizardWebConfiguration {
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
-    public List<String> getPublicPaths() { return publicPaths; }
-    public void setPublicPaths(List<String> publicPaths) { this.publicPaths = publicPaths; }
-    public AuthenticationMode getDefaultAuthenticationMode() { return defaultAuthenticationMode; }
-    public void setDefaultAuthenticationMode(AuthenticationMode mode) { this.defaultAuthenticationMode = mode; }
-    public boolean isTrustForwardedHeaders() { return trustForwardedHeaders; }
-    public void setTrustForwardedHeaders(boolean trust) { this.trustForwardedHeaders = trust; }
-    public boolean isIdempotencyEnabled() { return idempotencyEnabled; }
-    public void setIdempotencyEnabled(boolean enabled) { this.idempotencyEnabled = enabled; }
-    public String getIdempotencyCacheName() { return idempotencyCacheName; }
-    public void setIdempotencyCacheName(String name) { this.idempotencyCacheName = name; }
-    public Duration getIdempotencyTtl() { return idempotencyTtl; }
-    public void setIdempotencyTtl(Duration ttl) { this.idempotencyTtl = ttl; }
+    public List<String> getPublicPaths() {
+        return publicPaths;
+    }
+
+    public void setPublicPaths(List<String> publicPaths) {
+        this.publicPaths = publicPaths;
+    }
+
+    public AuthenticationMode getDefaultAuthenticationMode() {
+        return defaultAuthenticationMode;
+    }
+
+    public void setDefaultAuthenticationMode(AuthenticationMode mode) {
+        this.defaultAuthenticationMode = mode;
+    }
+
+    public boolean isTrustForwardedHeaders() {
+        return trustForwardedHeaders;
+    }
+
+    public void setTrustForwardedHeaders(boolean trust) {
+        this.trustForwardedHeaders = trust;
+    }
+
+    public boolean isIdempotencyEnabled() {
+        return idempotencyEnabled;
+    }
+
+    public void setIdempotencyEnabled(boolean enabled) {
+        this.idempotencyEnabled = enabled;
+    }
+
+    public String getIdempotencyCacheName() {
+        return idempotencyCacheName;
+    }
+
+    public void setIdempotencyCacheName(String name) {
+        this.idempotencyCacheName = name;
+    }
+
+    public Duration getIdempotencyTtl() {
+        return idempotencyTtl;
+    }
+
+    public void setIdempotencyTtl(Duration ttl) {
+        this.idempotencyTtl = ttl;
+    }
 }

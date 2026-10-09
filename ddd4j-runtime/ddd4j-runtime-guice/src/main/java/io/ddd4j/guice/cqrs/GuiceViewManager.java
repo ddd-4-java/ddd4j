@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,20 +44,34 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
 
     private static final Logger log = LoggerFactory.getLogger(GuiceViewManager.class);
 
-    /** default thread pool size */
+    /**
+     * default thread pool size
+     */
     private static final int DEFAULT_THREAD_POOL_SIZE = GuiceConstants.DEFAULT_THREAD_POOL_SIZE;
 
-    /** projection position repository (optional, for real status queries) */
+    /**
+     * projection position repository (optional, for real status queries)
+     */
     private final ProjectionPositionRepository positionRepository;
-    /** projection metrics (optional, for backfilling runtime status fields) */
+    /**
+     * projection metrics (optional, for backfilling runtime status fields)
+     */
     private final ProjectionMetrics projectionMetrics;
-    /** running state flag */
+    /**
+     * running state flag
+     */
     private final AtomicBoolean running = new AtomicBoolean(false);
-    /** scheduled view task handle map */
+    /**
+     * scheduled view task handle map
+     */
     private final ConcurrentMap<String, ScheduledFuture<?>> handles = new ConcurrentHashMap<>();
-    /** thread pool size */
+    /**
+     * thread pool size
+     */
     private final int threadPoolSize;
-    /** scheduler thread pool */
+    /**
+     * scheduler thread pool
+     */
     private ScheduledExecutorService executor;
 
     /**
@@ -80,7 +95,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     /**
      * Create a new GuiceViewManager with specified thread pool size and position repository.
      *
-     * @param threadPoolSize    thread pool size for the scheduler
+     * @param threadPoolSize     thread pool size for the scheduler
      * @param positionRepository projection position repository; null disables real status queries
      * @throws IllegalArgumentException if threadPoolSize is less than 1
      */
@@ -91,7 +106,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     /**
      * Create a new GuiceViewManager with specified thread pool size, position repository, and projection metrics.
      *
-     * @param threadPoolSize    thread pool size for the scheduler
+     * @param threadPoolSize     thread pool size for the scheduler
      * @param positionRepository projection position repository; null disables real status queries
      * @param projectionMetrics  projection metrics; null disables runtime status backfill
      * @throws IllegalArgumentException if threadPoolSize is less than 1

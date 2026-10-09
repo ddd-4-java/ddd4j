@@ -20,6 +20,6 @@
             <artifactId>truelicense-core</artifactId>
         </dependency>
         <!-- Compile dependencies -->
-</dependencies>
+    </dependencies>
 
 </project>

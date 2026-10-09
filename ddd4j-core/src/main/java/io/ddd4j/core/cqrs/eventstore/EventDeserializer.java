@@ -20,11 +20,15 @@ import java.util.regex.Pattern;
  */
 public final class EventDeserializer {
 
-    /** 合法的 Java 全限定类名：至少一个包段，每段以字母/下划线/$开头。 */
+    /**
+     * 合法的 Java 全限定类名：至少一个包段，每段以字母/下划线/$开头。
+     */
     private static final Pattern VALID_CLASS_NAME =
             Pattern.compile("^[a-zA-Z_$][a-zA-Z0-9_$]*(\\.[a-zA-Z_$][a-zA-Z0-9_$]*)+$");
 
-    /** 进程级类名过滤器（默认放行，业务方可注册更严格的实现）。 */
+    /**
+     * 进程级类名过滤器（默认放行，业务方可注册更严格的实现）。
+     */
     private static volatile ClassNameFilter filter = defaultFilter();
 
     private EventDeserializer() {
@@ -38,7 +42,10 @@ public final class EventDeserializer {
      */
     public static ClassNameFilter defaultFilter() {
         return new ClassNameFilter() {
-            @Override public boolean allows(String className) { return true; }
+            @Override
+            public boolean allows(String className) {
+                return true;
+            }
         };
     }
 
@@ -55,7 +62,9 @@ public final class EventDeserializer {
         EventDeserializer.filter = filter;
     }
 
-    /** 获取当前进程级类名过滤器（永不为 {@code null}）。 */
+    /**
+     * 获取当前进程级类名过滤器（永不为 {@code null}）。
+     */
     public static ClassNameFilter filter() {
         return filter;
     }

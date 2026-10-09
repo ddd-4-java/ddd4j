@@ -19,7 +19,7 @@ class WebOtelSupportTest {
     @Test
     void startServerSpanDelegatesToOtelIntegration() {
         // OTel SDK 未配置 → 返回 invalid PropagatedSpan（非 null，桥接成功）
-        java.util.Map<String,String> headers = new java.util.HashMap<>();
+        java.util.Map<String, String> headers = new java.util.HashMap<>();
         headers.put("x", "y");
         assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", headers));
         assertNotNull(WebOtelSupport.startServerSpan("GET", "/api", null));

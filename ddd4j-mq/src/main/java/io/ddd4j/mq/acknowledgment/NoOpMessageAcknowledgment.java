@@ -12,7 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class NoOpMessageAcknowledgment implements MessageAcknowledgment {
 
-    /** 单例占位确认器（无 Broker 场景）。 */
+    /**
+     * 单例占位确认器（无 Broker 场景）。
+     */
     public static final NoOpMessageAcknowledgment INSTANCE = new NoOpMessageAcknowledgment();
 
     private final long deliveryTag;

@@ -24,6 +24,7 @@ import io.ddd4j.web.testkit.WebContractPaths;
 import io.ddd4j.web.testkit.WebContractResponse;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -33,6 +34,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -166,14 +168,30 @@ class Ddd4jDropwizardWebContractTest extends AbstractWebContractTest {
         public R<Void> error(@PathParam("type") String type) {
             Exception __ex;
             switch (type) {
-                case "bad-request": __ex = new IllegalArgumentException("bad request"); break;
-                case "forbidden": __ex = new SecurityException("forbidden"); break;
-                case "not-found": __ex = new NoSuchElementException("not found"); break;
-                case "conflict": __ex = new IllegalStateException("conflict"); break;
-                case "unsupported-media-type": __ex = new WebStatusException(415, "unsupported media type"); break;
-                case "unprocessable-entity": __ex = new WebStatusException(422, "unprocessable entity"); break;
-                case "too-many-requests": __ex = new WebStatusException(429, "too many requests"); break;
-                default: __ex = new RuntimeException("internal failure"); break;
+                case "bad-request":
+                    __ex = new IllegalArgumentException("bad request");
+                    break;
+                case "forbidden":
+                    __ex = new SecurityException("forbidden");
+                    break;
+                case "not-found":
+                    __ex = new NoSuchElementException("not found");
+                    break;
+                case "conflict":
+                    __ex = new IllegalStateException("conflict");
+                    break;
+                case "unsupported-media-type":
+                    __ex = new WebStatusException(415, "unsupported media type");
+                    break;
+                case "unprocessable-entity":
+                    __ex = new WebStatusException(422, "unprocessable entity");
+                    break;
+                case "too-many-requests":
+                    __ex = new WebStatusException(429, "too many requests");
+                    break;
+                default:
+                    __ex = new RuntimeException("internal failure");
+                    break;
             }
             throw __ex;
         }

@@ -21,6 +21,7 @@ import io.ddd4j.guice.cqrs.GuiceJdbcProjectionPositionRepository;
 
 import javax.sql.DataSource;
 import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

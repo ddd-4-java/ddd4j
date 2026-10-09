@@ -21,11 +21,29 @@ package io.ddd4j.web.core.health;
  */
 public final class ReadinessResponse {
     private final boolean ready;
-    public ReadinessResponse(boolean ready) { this.ready = ready; }
-    public boolean ready() { return ready; }
-    @Override public boolean equals(Object o) { return this==o || (o instanceof ReadinessResponse && ready==((ReadinessResponse)o).ready()); }
-    @Override public int hashCode() { return java.util.Objects.hash(ready); }
-    @Override public String toString() { return "ReadinessResponse{ready="+ready+"}"; }
+
+    public ReadinessResponse(boolean ready) {
+        this.ready = ready;
+    }
+
+    public boolean ready() {
+        return ready;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o instanceof ReadinessResponse && ready == ((ReadinessResponse) o).ready());
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(ready);
+    }
+
+    @Override
+    public String toString() {
+        return "ReadinessResponse{ready=" + ready + "}";
+    }
 
 
     /**

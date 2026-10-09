@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** 基于执行器快照的默认命令路由实现。 */
+/**
+ * 基于执行器快照的默认命令路由实现。
+ */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultCommandBus implements CommandBus {
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors =

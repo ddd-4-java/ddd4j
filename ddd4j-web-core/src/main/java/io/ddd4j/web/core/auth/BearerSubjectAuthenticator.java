@@ -22,6 +22,7 @@ import io.ddd4j.core.subject.SubjectProvider;
 
 import java.util.Objects;
 import java.util.Optional;
+
 import io.ddd4j.web.core.error.WebStatusException;
 
 /**
@@ -68,12 +69,38 @@ public final class BearerSubjectAuthenticator {
         private final String token;
         private final AuthPrincipal principal;
         private final Subject subject;
-        public Authentication(String token, AuthPrincipal principal, Subject subject) { this.token=token; this.principal=principal; this.subject=subject; }
-        public String token() { return token; }
-        public AuthPrincipal principal() { return principal; }
-        public Subject subject() { return subject; }
-        @Override public boolean equals(Object o) { return this==o || (o instanceof Authentication && java.util.Objects.equals(token,((Authentication)o).token()) && java.util.Objects.equals(principal,((Authentication)o).principal()) && java.util.Objects.equals(subject,((Authentication)o).subject())); }
-        @Override public int hashCode() { return java.util.Objects.hash(token,principal,subject); }
-        @Override public String toString() { return "Authentication{token="+token+"}"; }
+
+        public Authentication(String token, AuthPrincipal principal, Subject subject) {
+            this.token = token;
+            this.principal = principal;
+            this.subject = subject;
+        }
+
+        public String token() {
+            return token;
+        }
+
+        public AuthPrincipal principal() {
+            return principal;
+        }
+
+        public Subject subject() {
+            return subject;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || (o instanceof Authentication && java.util.Objects.equals(token, ((Authentication) o).token()) && java.util.Objects.equals(principal, ((Authentication) o).principal()) && java.util.Objects.equals(subject, ((Authentication) o).subject()));
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(token, principal, subject);
+        }
+
+        @Override
+        public String toString() {
+            return "Authentication{token=" + token + "}";
+        }
     }
 }

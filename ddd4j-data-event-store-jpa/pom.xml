@@ -14,7 +14,9 @@
     <packaging>jar</packaging>
 
     <name>ddd4j-data-event-store-jpa</name>
-    <description>EventStore 的 javax.persistence（JPA 2.2 / Hibernate 5.x）适配器：程序化事务、乐观锁 + 唯一约束双保险、TEXT payload schema</description>
+    <description>EventStore 的 javax.persistence（JPA 2.2 / Hibernate 5.x）适配器：程序化事务、乐观锁 + 唯一约束双保险、TEXT
+        payload schema
+    </description>
 
     <dependencies>
         <dependency>

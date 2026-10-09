@@ -16,8 +16,10 @@ package io.ddd4j.helidon.health;
 
 import io.ddd4j.core.health.ReadinessReport;
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;

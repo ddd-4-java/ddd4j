@@ -149,7 +149,7 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
     }
 
     private Optional<WebIdempotencyLifecycle.Scope> openIdempotency(WebRequestContext context,
-                                                                     ServerWebExchange exchange) {
+                                                                    ServerWebExchange exchange) {
         return idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(context,
                 exchange.getRequest().getHeaders().getFirst(WebHeaders.IDEMPOTENCY_KEY)));
     }

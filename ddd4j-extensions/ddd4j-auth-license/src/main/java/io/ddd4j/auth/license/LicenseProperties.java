@@ -1,4 +1,3 @@
-
 package io.ddd4j.auth.license;
 
 import lombok.Data;

@@ -18,6 +18,7 @@ import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
 
 import java.util.Objects;
 import java.util.Optional;
+
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
@@ -40,10 +41,14 @@ public final class WebRequestLifecycle {
         AuthenticationMode mode = Objects.requireNonNull(accessPolicy.authenticationMode(requestContext),
                 "access policy must return an authentication mode");
         switch (mode) {
-            case DISABLED: return Optional.empty();
-            case OPTIONAL: return authenticator.authenticateOptional(requestContext.authorization());
-            case REQUIRED: return Optional.of(authenticator.authenticateSubject(requestContext.authorization()));
-            default: throw new IllegalStateException("unexpected auth mode: " + mode);
+            case DISABLED:
+                return Optional.empty();
+            case OPTIONAL:
+                return authenticator.authenticateOptional(requestContext.authorization());
+            case REQUIRED:
+                return Optional.of(authenticator.authenticateSubject(requestContext.authorization()));
+            default:
+                throw new IllegalStateException("unexpected auth mode: " + mode);
         }
     }
 }

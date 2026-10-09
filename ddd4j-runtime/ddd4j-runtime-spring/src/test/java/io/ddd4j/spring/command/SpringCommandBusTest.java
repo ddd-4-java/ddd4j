@@ -105,7 +105,9 @@ class SpringCommandBusTest {
 
     // ========== 测试用命令和执行器 ==========
 
-    /** 测试命令 */
+    /**
+     * 测试命令
+     */
     static class TestCommand implements Command {
         private final String value;
 
@@ -118,7 +120,9 @@ class SpringCommandBusTest {
         }
     }
 
-    /** 另一个测试命令 */
+    /**
+     * 另一个测试命令
+     */
     static class AnotherCommand implements Command {
         private final String value;
 
@@ -131,11 +135,15 @@ class SpringCommandBusTest {
         }
     }
 
-    /** 未注册的命令 */
+    /**
+     * 未注册的命令
+     */
     static class UnknownCommand implements Command {
     }
 
-    /** TestCommand 执行器 */
+    /**
+     * TestCommand 执行器
+     */
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
         @Override
@@ -149,7 +157,9 @@ class SpringCommandBusTest {
         }
     }
 
-    /** AnotherCommand 执行器 */
+    /**
+     * AnotherCommand 执行器
+     */
     static class AnotherCommandExecutor implements CommandExecutor<AnotherCommand> {
 
         @Override
@@ -163,7 +173,9 @@ class SpringCommandBusTest {
         }
     }
 
-    /** 测试配置 */
+    /**
+     * 测试配置
+     */
     @Configuration
     static class TestConfig {
 

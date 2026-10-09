@@ -14,7 +14,8 @@
     <packaging>jar</packaging>
 
     <name>ddd4j-ddd</name>
-    <description>DDD 基础设施层：基于 ddd4j 原生 JDK8 DDD/CQRS/Event Sourcing 轨道，领域层零 MyBatis Plus 依赖</description>
+    <description>DDD 基础设施层：基于 ddd4j 原生 JDK8 DDD/CQRS/Event Sourcing 轨道，领域层零 MyBatis Plus 依赖
+    </description>
 
     <!-- 强制 JUnit 子模块版本对齐（修复 spring-biz 传递的 5.8.2 与 SB 3.4 的 6.0.1 冲突） -->
     <dependencyManagement>

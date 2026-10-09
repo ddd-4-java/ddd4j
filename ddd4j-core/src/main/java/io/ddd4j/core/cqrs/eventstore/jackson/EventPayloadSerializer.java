@@ -36,15 +36,30 @@ import java.util.Objects;
  */
 public final class EventPayloadSerializer {
 
-    /** 忽略 {@link DomainEvent} 基类派生 getter 的 mixin——元数据以存储列为准。 */
+    /**
+     * 忽略 {@link DomainEvent} 基类派生 getter 的 mixin——元数据以存储列为准。
+     */
     private abstract static class DomainEventMixin {
-        @JsonIgnore abstract io.ddd4j.core.ddd.event.EventId getEventId();
-        @JsonIgnore abstract io.ddd4j.core.ddd.event.EventType getEventType();
-        @JsonIgnore abstract java.time.ZonedDateTime getEventTimestamp();
-        @JsonIgnore abstract io.ddd4j.core.ddd.event.EventId getCorrelationId();
-        @JsonIgnore abstract io.ddd4j.core.ddd.event.EventId getCausationId();
-        @JsonIgnore abstract io.ddd4j.core.ddd.event.EntityIdPath getEntityIdPath();
-        @JsonIgnore abstract io.ddd4j.core.ddd.event.AggregateVersion getAggregateVersion();
+        @JsonIgnore
+        abstract io.ddd4j.core.ddd.event.EventId getEventId();
+
+        @JsonIgnore
+        abstract io.ddd4j.core.ddd.event.EventType getEventType();
+
+        @JsonIgnore
+        abstract java.time.ZonedDateTime getEventTimestamp();
+
+        @JsonIgnore
+        abstract io.ddd4j.core.ddd.event.EventId getCorrelationId();
+
+        @JsonIgnore
+        abstract io.ddd4j.core.ddd.event.EventId getCausationId();
+
+        @JsonIgnore
+        abstract io.ddd4j.core.ddd.event.EntityIdPath getEntityIdPath();
+
+        @JsonIgnore
+        abstract io.ddd4j.core.ddd.event.AggregateVersion getAggregateVersion();
     }
 
     private final ObjectMapper objectMapper;
@@ -60,7 +75,9 @@ public final class EventPayloadSerializer {
         this.objectMapper = mapper;
     }
 
-    /** 使用默认配置创建序列化器。 */
+    /**
+     * 使用默认配置创建序列化器。
+     */
     public EventPayloadSerializer() {
         this(new ObjectMapper());
     }

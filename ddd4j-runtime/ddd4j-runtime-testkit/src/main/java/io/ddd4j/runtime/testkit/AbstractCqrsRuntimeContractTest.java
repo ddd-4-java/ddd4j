@@ -180,7 +180,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
     // ========== 测试桩命令 ==========
 
-    /** 测试命令 A。 */
+    /**
+     * 测试命令 A。
+     */
     public static final class CmdA implements Command {
         private final String payload;
 
@@ -193,7 +195,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
         }
     }
 
-    /** 测试命令 B。 */
+    /**
+     * 测试命令 B。
+     */
     public static final class CmdB implements Command {
         private final int value;
 
@@ -206,13 +210,17 @@ public abstract class AbstractCqrsRuntimeContractTest {
         }
     }
 
-    /** 未注册命令。 */
+    /**
+     * 未注册命令。
+     */
     public static final class UnregisteredCmd implements Command {
     }
 
     // ========== 测试桩执行器 ==========
 
-    /** CmdA 执行器桩。 */
+    /**
+     * CmdA 执行器桩。
+     */
     public static final class StubExecutorA implements CommandExecutor<CmdA> {
 
         private final AtomicBoolean invoked = new AtomicBoolean(false);
@@ -234,7 +242,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
         }
     }
 
-    /** CmdB 执行器桩。 */
+    /**
+     * CmdB 执行器桩。
+     */
     public static final class StubExecutorB implements CommandExecutor<CmdB> {
 
         private final AtomicBoolean invoked = new AtomicBoolean(false);

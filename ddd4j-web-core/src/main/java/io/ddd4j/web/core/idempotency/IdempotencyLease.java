@@ -31,13 +31,39 @@ public final class IdempotencyLease {
     private final String key;
     private final String ownerToken;
     private final Duration ttl;
-    public IdempotencyLease(String key, String ownerToken, Duration ttl) { this.key=java.util.Objects.requireNonNull(key,"key must not be null"); this.ownerToken=ownerToken; this.ttl=java.util.Objects.requireNonNull(ttl,"ttl must not be null"); }
-    public String key() { return key; }
-    public String ownerToken() { return ownerToken; }
-    public Duration ttl() { return ttl; }
-    @Override public boolean equals(Object o) { return this==o || (o instanceof IdempotencyLease && java.util.Objects.equals(key,((IdempotencyLease)o).key()) && java.util.Objects.equals(ownerToken,((IdempotencyLease)o).ownerToken()) && java.util.Objects.equals(ttl,((IdempotencyLease)o).ttl())); }
-    @Override public int hashCode() { return java.util.Objects.hash(key,ownerToken,ttl); }
-    @Override public String toString() { return "IdempotencyLease{key="+key+"}"; }
+
+    public IdempotencyLease(String key, String ownerToken, Duration ttl) {
+        this.key = java.util.Objects.requireNonNull(key, "key must not be null");
+        this.ownerToken = ownerToken;
+        this.ttl = java.util.Objects.requireNonNull(ttl, "ttl must not be null");
+    }
+
+    public String key() {
+        return key;
+    }
+
+    public String ownerToken() {
+        return ownerToken;
+    }
+
+    public Duration ttl() {
+        return ttl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || (o instanceof IdempotencyLease && java.util.Objects.equals(key, ((IdempotencyLease) o).key()) && java.util.Objects.equals(ownerToken, ((IdempotencyLease) o).ownerToken()) && java.util.Objects.equals(ttl, ((IdempotencyLease) o).ttl()));
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(key, ownerToken, ttl);
+    }
+
+    @Override
+    public String toString() {
+        return "IdempotencyLease{key=" + key + "}";
+    }
 
 
 }
