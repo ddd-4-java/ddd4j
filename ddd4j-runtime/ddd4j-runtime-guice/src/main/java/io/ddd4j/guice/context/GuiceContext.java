@@ -44,13 +44,13 @@ import java.util.concurrent.CountDownLatch;
 public class GuiceContext {
 
     /**
-     * 初始化等待信号
-     */
-    private static volatile CountDownLatch initSignal = new CountDownLatch(1);
-    /**
      * 自定义属性存储
      */
     private static final Map<String, Object> ATTRIBUTES = new ConcurrentHashMap<>();
+    /**
+     * 初始化等待信号
+     */
+    private static volatile CountDownLatch initSignal = new CountDownLatch(1);
     /**
      * Guice 注入器实例
      */

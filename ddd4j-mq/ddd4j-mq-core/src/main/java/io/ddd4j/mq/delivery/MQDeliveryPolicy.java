@@ -62,7 +62,7 @@ public record MQDeliveryPolicy(
      *
      * @return 默认策略
      */
-    public static MQDeliveryPolicy productionDefault() {
+    public static MQDeliveryPolicy productionDefault () {
         return new MQDeliveryPolicy(DEFAULT_LEASE_DURATION, DEFAULT_MAX_ATTEMPTS,
                 DEFAULT_INITIAL_BACKOFF, DEFAULT_MAX_BACKOFF, DEFAULT_JITTER_FACTOR);
     }
@@ -75,7 +75,7 @@ public record MQDeliveryPolicy(
      * @param randomUnitInterval [0, 1] 的随机值，由调用方提供以保持测试可重复
      * @return 带抖动的下一次可投递时间
      */
-    public Instant nextAvailableAt(int attempts, Instant failedAt, double randomUnitInterval) {
+    public Instant nextAvailableAt ( int attempts, Instant failedAt,double randomUnitInterval){
         Objects.requireNonNull(failedAt, "failedAt must not be null");
         if (attempts < 1) {
             throw new IllegalArgumentException("attempts must be greater than zero");
@@ -94,11 +94,11 @@ public record MQDeliveryPolicy(
      * @param attempts 已完成的发送尝试次数
      * @return 是否耗尽重试次数
      */
-    public boolean exhausted(int attempts) {
+    public boolean exhausted ( int attempts){
         return attempts >= maxAttempts;
     }
 
-    private long exponentialBackoffMillis(int attempts) {
+    private long exponentialBackoffMillis ( int attempts){
         long maxMillis = maxBackoff.toMillis();
         long initialMillis = initialBackoff.toMillis();
         int exponent = Math.min(attempts - 1, 62);
@@ -109,23 +109,23 @@ public record MQDeliveryPolicy(
         return Math.min(initialMillis * multiplier, maxMillis);
     }
 
-    public Duration getInitialBackoff() {
-            return initialBackoff;
-        }
+    public Duration getInitialBackoff () {
+        return initialBackoff;
+    }
 
-    public double getJitterFactor() {
-            return jitterFactor;
-        }
+    public double getJitterFactor () {
+        return jitterFactor;
+    }
 
-    public Duration getLeaseDuration() {
-            return leaseDuration;
-        }
+    public Duration getLeaseDuration () {
+        return leaseDuration;
+    }
 
-    public int getMaxAttempts() {
-            return maxAttempts;
-        }
+    public int getMaxAttempts () {
+        return maxAttempts;
+    }
 
-    public Duration getMaxBackoff() {
-            return maxBackoff;
-        }
+    public Duration getMaxBackoff () {
+        return maxBackoff;
+    }
 }

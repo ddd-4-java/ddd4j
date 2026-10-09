@@ -17,6 +17,7 @@ package io.ddd4j.web.webmvc.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.kit.lang.JsonKit;
+import io.ddd4j.web.webmvc.converter.CustomHttpMessageConverter;
 import io.ddd4j.web.webmvc.core.GlobalRequestAdvice;
 import io.ddd4j.web.webmvc.core.GlobalResponseRAdvice;
 import io.ddd4j.web.webmvc.core.GlobalRestExceptionAdvice;
@@ -31,7 +32,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.DateFormatter;
-import io.ddd4j.web.webmvc.converter.CustomHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 

@@ -14,38 +14,22 @@
  */
 package io.ddd4j.mq.rabbitmq;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
-import com.rabbitmq.client.Return;
+import com.rabbitmq.client.*;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -99,10 +83,51 @@ public class RabbitMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "RabbitMQ Properties is required");
     }
 
+    /**
+     * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 AMQP 原生 messageId。
+     */
+    static String messageId(AMQP.BasicProperties properties) {
+        Map<String, Object> headers = properties.getHeaders();
+        if (Objects.nonNull(headers)) {
+            Object headerValue = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
+            if (Objects.isNull(headerValue)) {
+                headerValue = headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+            }
+            if (Objects.nonNull(headerValue)) {
+                return headerValue.toString();
+            }
+        }
+        return properties.getMessageId();
+    }
+
+    private static void closeChannel(Channel channel) {
+        try {
+            if (channel.isOpen()) {
+                channel.close();
+            }
+        } catch (IOException | TimeoutException exception) {
+            throw new IllegalStateException("Close RabbitMQ channel failed", exception);
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        try {
+            if (connection.isOpen()) {
+                connection.close();
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("Close RabbitMQ connection failed", exception);
+        }
+    }
+
+    // ========================= 生产者 =========================
+
     @Override
     public String impl() {
         return "rabbit";
     }
+
+    // ========================= 消费者 =========================
 
     @Override
     public MQClientLifecycle lifecycle() {
@@ -114,7 +139,7 @@ public class RabbitMQClient implements MQClient {
         return startupStatus;
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 生命周期 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -226,7 +251,7 @@ public class RabbitMQClient implements MQClient {
         };
     }
 
-    // ========================= 消费者 =========================
+    // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -335,25 +360,6 @@ public class RabbitMQClient implements MQClient {
         return true;
     }
 
-    /**
-     * 优先读取 ddd4j 标准消息 ID，兼容旧键，最后回退到 AMQP 原生 messageId。
-     */
-    static String messageId(AMQP.BasicProperties properties) {
-        Map<String, Object> headers = properties.getHeaders();
-        if (Objects.nonNull(headers)) {
-            Object headerValue = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
-            if (Objects.isNull(headerValue)) {
-                headerValue = headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
-            }
-            if (Objects.nonNull(headerValue)) {
-                return headerValue.toString();
-            }
-        }
-        return properties.getMessageId();
-    }
-
-    // ========================= 生命周期 =========================
-
     @Override
     public void close() {
         try {
@@ -362,8 +368,6 @@ public class RabbitMQClient implements MQClient {
             startupStatus.stopped();
         }
     }
-
-    // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     private Connection connection() {
         Connection c = connectionRef.get();
@@ -386,25 +390,5 @@ public class RabbitMQClient implements MQClient {
             }
         }
         return c;
-    }
-
-    private static void closeChannel(Channel channel) {
-        try {
-            if (channel.isOpen()) {
-                channel.close();
-            }
-        } catch (IOException | TimeoutException exception) {
-            throw new IllegalStateException("Close RabbitMQ channel failed", exception);
-        }
-    }
-
-    private static void closeConnection(Connection connection) {
-        try {
-            if (connection.isOpen()) {
-                connection.close();
-            }
-        } catch (IOException exception) {
-            throw new IllegalStateException("Close RabbitMQ connection failed", exception);
-        }
     }
 }

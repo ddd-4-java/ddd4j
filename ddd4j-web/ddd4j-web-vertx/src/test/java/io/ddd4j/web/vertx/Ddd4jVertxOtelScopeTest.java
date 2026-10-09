@@ -33,16 +33,26 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class Ddd4jVertxOtelScopeTest {
+
+    private static void resetOpenTelemetry() throws Exception {
+        GlobalOpenTelemetry.resetForTest();
+        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
+            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            ((AtomicReference<?>) field.get(null)).set(null);
+        }
+        Field available = Ddd4jOtel.class.getDeclaredField("available");
+        available.setAccessible(true);
+        available.setBoolean(null, false);
+    }
 
     @Test
     void responseEndMustCloseOtelScopeOnEventLoop() throws Exception {
@@ -87,17 +97,5 @@ class Ddd4jVertxOtelScopeTest {
             tracerProvider.close();
             resetOpenTelemetry();
         }
-    }
-
-    private static void resetOpenTelemetry() throws Exception {
-        GlobalOpenTelemetry.resetForTest();
-        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
-            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            ((AtomicReference<?>) field.get(null)).set(null);
-        }
-        Field available = Ddd4jOtel.class.getDeclaredField("available");
-        available.setAccessible(true);
-        available.setBoolean(null, false);
     }
 }

@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac;
 
-import java.util.Objects;
-
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
@@ -26,6 +24,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**

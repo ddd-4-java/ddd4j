@@ -68,53 +68,53 @@ public record MQOutboxRecord(
      * @param availableAt 首次可投递时间
      * @return 待发布记录
      */
-    public static MQOutboxRecord pending(String messageId, String destination, String payload,
-                                         Map<String, String> headers, Instant availableAt) {
+    public static MQOutboxRecord pending (String messageId, String destination, String payload,
+            Map < String, String > headers, Instant availableAt){
         return new MQOutboxRecord(messageId, destination, payload, headers, MQOutboxStatus.PENDING,
                 availableAt, null, null, 0, null, null);
     }
 
-    public int getAttempts() {
-            return attempts;
-        }
+    public int getAttempts () {
+        return attempts;
+    }
 
-    public Instant getAvailableAt() {
-            return availableAt;
-        }
+    public Instant getAvailableAt () {
+        return availableAt;
+    }
 
-    public String getDestination() {
-            return destination;
-        }
+    public String getDestination () {
+        return destination;
+    }
 
-    public Map<String, String> getHeaders() {
-            return headers;
-        }
+    public Map<String, String> getHeaders () {
+        return headers;
+    }
 
-    public String getLastError() {
-            return lastError;
-        }
+    public String getLastError () {
+        return lastError;
+    }
 
-    public String getLeaseOwner() {
-            return leaseOwner;
-        }
+    public String getLeaseOwner () {
+        return leaseOwner;
+    }
 
-    public Instant getLeaseUntil() {
-            return leaseUntil;
-        }
+    public Instant getLeaseUntil () {
+        return leaseUntil;
+    }
 
-    public String getMessageId() {
-            return messageId;
-        }
+    public String getMessageId () {
+        return messageId;
+    }
 
-    public String getPayload() {
-            return payload;
-        }
+    public String getPayload () {
+        return payload;
+    }
 
-    public Instant getPublishedAt() {
-            return publishedAt;
-        }
+    public Instant getPublishedAt () {
+        return publishedAt;
+    }
 
-    public MQOutboxStatus getStatus() {
-            return status;
-        }
+    public MQOutboxStatus getStatus () {
+        return status;
+    }
 }

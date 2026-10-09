@@ -7,7 +7,8 @@
 
 ## 1. 目标与范围
 
-ddd4j 是一个**框架无关的 DDD/CQRS/ES 通用基础层**，为 Spring Boot、Quarkus、Javalin、Micronaut、Vert.x、Helidon、Dropwizard 等容器框架提供同一套纯净领域模型契约。
+ddd4j 是一个 **框架无关的 DDD/CQRS/ES 通用基础层**，为 Spring Boot、Quarkus、Javalin、Micronaut、Vert.x、Helidon、Dropwizard
+等容器框架提供同一套纯净领域模型契约。
 
 **核心需求**：
 
@@ -51,22 +52,22 @@ ddd4j 是一个**框架无关的 DDD/CQRS/ES 通用基础层**，为 Spring Boot
 
 ## 3. 模块结构
 
-| 模块 | 角色 | 关键产物 |
-|------|------|----------|
-| `ddd4j-bom` | BOM 版本管理 | 外部项目引用统一版本 |
-| `ddd4j-dependencies` | 第三方依赖集中管理 | Spring 6.x / Jackson 2.22 / Reactor 等 |
-| `ddd4j-annotation` | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository` |
-| `ddd4j-core` | **纯 Java 契约层** | `AggregateRoot` `Repository<M,P,ID>` `Query<T>` `Page` `R` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
-| `ddd4j-kit` | 工具箱 | 继承式增强 Hutool，Cache/Lang/Web 工具 |
-| `ddd4j-ddd-rules` | DDD 架构规范检查 | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit） |
-| `ddd4j-data` | 数据层抽象 | 三 ORM 轨道 + 加密/数据权限/外部服务/日志 |
-| `ddd4j-mq` | 消息队列抽象 | `MQBrokerAdapter` SPI + Spring 桥接 + 13 个 Broker 实现 |
-| `ddd4j-web` | Web 层抽象 | 8 类 Web 适配器 |
-| `ddd4j-auth` | 认证授权抽象 | `Subject` SPI + Sa-Token/Security/Shiro 实现 |
-| `ddd4j-cache` | 缓存抽象 | 缓存 SPI 及多实现 |
-| `ddd4j-runtime` | 多框架运行时绑定 | Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit |
-| `ddd4j-extensions` | 跨领域扩展 | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation |
-| `ddd4j-samples` | 示例工程 | 共享 Order 业务内核 + 多运行时示例 |
+| 模块                 | 角色                | 关键产物                                                                                                     |
+|----------------------|---------------------|--------------------------------------------------------------------------------------------------------------|
+| `ddd4j-bom`          | BOM 版本管理        | 外部项目引用统一版本                                                                                         |
+| `ddd4j-dependencies` | 第三方依赖集中管理  | Spring 6.x / Jackson 2.22 / Reactor 等                                                                       |
+| `ddd4j-annotation`   | DDD 注解 + API 注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository`                                   |
+| `ddd4j-core`         | **纯 Java 契约层**  | `AggregateRoot` `Repository<M,P,ID>` `Query<T>` `Page` `R` `DomainEvent` `DddAggregateRoot` `DddDomainEvent` |
+| `ddd4j-kit`          | 工具箱              | 继承式增强 Hutool，Cache/Lang/Web 工具                                                                       |
+| `ddd4j-ddd-rules`    | DDD 架构规范检查    | `CleanDDDLayerRules` `ColaDDDLayerRules`（ArchUnit）                                                         |
+| `ddd4j-data`         | 数据层抽象          | 三 ORM 轨道 + 加密/数据权限/外部服务/日志                                                                    |
+| `ddd4j-mq`           | 消息队列抽象        | `MQBrokerAdapter` SPI + Spring 桥接 + 13 个 Broker 实现                                                      |
+| `ddd4j-web`          | Web 层抽象          | 8 类 Web 适配器                                                                                              |
+| `ddd4j-auth`         | 认证授权抽象        | `Subject` SPI + Sa-Token/Security/Shiro 实现                                                                 |
+| `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及多实现                                                                                            |
+| `ddd4j-runtime`      | 多框架运行时绑定    | Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit                               |
+| `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                   |
+| `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核 + 多运行时示例                                                                           |
 
 ## 4. 核心契约层
 
@@ -98,26 +99,26 @@ ddd4j 是一个**框架无关的 DDD/CQRS/ES 通用基础层**，为 Spring Boot
 
 ## 5. 运行时绑定
 
-| 框架 | 运行时绑定 | DI 容器 | 事件发布 |
-|------|-----------|---------|---------|
-| Spring Boot | `ddd4j-runtime-spring` | `ApplicationContext` | `AppCtx.publishEvent()` |
-| Quarkus | `ddd4j-runtime-quarkus` | Arc (CDI) | `Event<T>.fire()` |
-| Javalin | `ddd4j-runtime-guice` | Guice Injector | `EventBus.post()` |
-| Micronaut | `ddd4j-runtime-micronaut` | Micronaut Context | `publishEvent()` |
-| Vert.x | `ddd4j-runtime-vertx` | 显式 Runtime | Vert.x EventBus |
-| Helidon | `ddd4j-runtime-helidon` | CDI / BeanManager | CDI Event |
-| Dropwizard | `ddd4j-runtime-dropwizard` | 显式 Bundle | Listener 集合 |
+| 框架        | 运行时绑定                 | DI 容器              | 事件发布                |
+|-------------|----------------------------|----------------------|-------------------------|
+| Spring Boot | `ddd4j-runtime-spring`     | `ApplicationContext` | `AppCtx.publishEvent()` |
+| Quarkus     | `ddd4j-runtime-quarkus`    | Arc (CDI)            | `Event<T>.fire()`       |
+| Javalin     | `ddd4j-runtime-guice`      | Guice Injector       | `EventBus.post()`       |
+| Micronaut   | `ddd4j-runtime-micronaut`  | Micronaut Context    | `publishEvent()`        |
+| Vert.x      | `ddd4j-runtime-vertx`      | 显式 Runtime         | Vert.x EventBus         |
+| Helidon     | `ddd4j-runtime-helidon`    | CDI / BeanManager    | CDI Event               |
+| Dropwizard  | `ddd4j-runtime-dropwizard` | 显式 Bundle          | Listener 集合           |
 
 ## 6. ArchUnit 架构边界守护
 
-| 规则 | 说明 |
-|------|------|
-| `no_autoconfiguration_in_ddd4j` | ddd4j 全模块不得包含 `@AutoConfiguration` |
-| `no_spring_in_core_modules` | core / kit / annotation 不得依赖 `org.springframework.*` |
-| `no_spring_messaging_in_mq_core` | mq-core 不得依赖 `org.springframework.messaging.*` |
-| `no_spring_factories_in_core` | core 不得引用 `AutoConfiguration.imports` |
-| `no_hutool_all_in_core` | core 不得依赖 hutool 全量包 |
-| `core_no_mybatis` | core 不得依赖 `com.baomidou.*` |
-| `core_no_servlet` | core 不得依赖 `jakarta.servlet.*` |
-| `core_no_validator` | core 不得依赖 `org.hibernate.validator.*` |
-| `core_no_aspectj` | core 不得依赖 `org.aspectj.*` |
+| 规则                             | 说明                                                     |
+|----------------------------------|----------------------------------------------------------|
+| `no_autoconfiguration_in_ddd4j`  | ddd4j 全模块不得包含 `@AutoConfiguration`                |
+| `no_spring_in_core_modules`      | core / kit / annotation 不得依赖 `org.springframework.*` |
+| `no_spring_messaging_in_mq_core` | mq-core 不得依赖 `org.springframework.messaging.*`       |
+| `no_spring_factories_in_core`    | core 不得引用 `AutoConfiguration.imports`                |
+| `no_hutool_all_in_core`          | core 不得依赖 hutool 全量包                              |
+| `core_no_mybatis`                | core 不得依赖 `com.baomidou.*`                           |
+| `core_no_servlet`                | core 不得依赖 `jakarta.servlet.*`                        |
+| `core_no_validator`              | core 不得依赖 `org.hibernate.validator.*`                |
+| `core_no_aspectj`                | core 不得依赖 `org.aspectj.*`                            |

@@ -14,8 +14,8 @@
  */
 package io.ddd4j.web.dropwizard;
 
-import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 

@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** 可复用的二维码外框模板。 */
+/**
+ * 可复用的二维码外框模板。
+ */
 @Getter
 public final class QrCodeFrame {
 
@@ -43,8 +45,8 @@ public final class QrCodeFrame {
     public static final class Builder {
         private final int width;
         private final int height;
-        private String backgroundColor = "#FFFFFF";
         private final List<QrCodeFrameElement> elements = new ArrayList<>();
+        private String backgroundColor = "#FFFFFF";
 
         private Builder(int width, int height) {
             this.width = width;

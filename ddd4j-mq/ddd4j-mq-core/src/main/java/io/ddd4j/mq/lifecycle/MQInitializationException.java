@@ -4,7 +4,9 @@
  */
 package io.ddd4j.mq.lifecycle;
 
-/** 必选MQ能力初始化失败。 */
+/**
+ * 必选MQ能力初始化失败。
+ */
 public final class MQInitializationException extends IllegalStateException {
 
     private final String broker;
@@ -22,12 +24,35 @@ public final class MQInitializationException extends IllegalStateException {
         this.listenerMethod = listenerMethod;
     }
 
-    public String broker() { return broker; }
-    public String topic() { return topic; }
-    public String group() { return group; }
-    public String listenerMethod() { return listenerMethod; }
-    public String getBroker() { return broker; }
-    public String getTopic() { return topic; }
-    public String getGroup() { return group; }
-    public String getListenerMethod() { return listenerMethod; }
+    public String broker() {
+        return broker;
+    }
+
+    public String topic() {
+        return topic;
+    }
+
+    public String group() {
+        return group;
+    }
+
+    public String listenerMethod() {
+        return listenerMethod;
+    }
+
+    public String getBroker() {
+        return broker;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public String getListenerMethod() {
+        return listenerMethod;
+    }
 }

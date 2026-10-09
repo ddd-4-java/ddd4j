@@ -22,18 +22,17 @@ import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.event.MQEventStorer;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQInitializationException;
 import io.ddd4j.mq.lifecycle.MQListenerInitializationFailure;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 
 import java.util.*;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -241,7 +240,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     private MQListenerInitializationFailure failure(MQListener listener, boolean required,
-                                                     Throwable exception) {
+                                                    Throwable exception) {
         String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
         String group = Objects.isNull(listener) ? "" : Objects.toString(listener.getGroup(), "");
         String method = Objects.isNull(listener) || Objects.isNull(listener.getMethod())
@@ -252,7 +251,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     private MQInitializationException initializationException(MQListenerInitializationFailure failure,
-                                                               Throwable cause) {
+                                                              Throwable cause) {
         return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
                 failure.listenerMethod(), cause);
     }
@@ -590,6 +589,19 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
+     * Partition/路由策略枚举（broker 可读取此枚举决定 partitionKey 取值）。
+     *
+     * <p>NONE：不设 key（轮询路由，性能最佳但无顺序保证）。
+     * <p>TAG：按 event.tag（同 tag 顺序）。
+     * <p>TENANT：按 event.tenantId（同租户顺序）。
+     * <p>TAG_TENANT：按 tag+tenant 复合 key（推荐，最常用）。
+     * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
+     */
+    enum PartitionKeyStrategy {
+        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
+    }
+
+    /**
      * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
      */
     @Slf4j(topic = "### DDD4J-MQ ###")
@@ -601,18 +613,5 @@ public interface MQClient extends AutoCloseable {
         private static Logger logger() {
             return log;
         }
-    }
-
-    /**
-     * Partition/路由策略枚举（broker 可读取此枚举决定 partitionKey 取值）。
-     *
-     * <p>NONE：不设 key（轮询路由，性能最佳但无顺序保证）。
-     * <p>TAG：按 event.tag（同 tag 顺序）。
-     * <p>TENANT：按 event.tenantId（同租户顺序）。
-     * <p>TAG_TENANT：按 tag+tenant 复合 key（推荐，最常用）。
-     * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
-     */
-    enum PartitionKeyStrategy {
-        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
     }
 }

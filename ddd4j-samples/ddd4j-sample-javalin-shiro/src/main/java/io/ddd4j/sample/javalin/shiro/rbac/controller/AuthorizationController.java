@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
-import java.util.Objects;
-
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.util.SubjectKit;
@@ -25,10 +23,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 授权管理控制器：用户 / 角色 / 权限的 CRUD。

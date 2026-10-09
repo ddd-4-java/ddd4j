@@ -83,29 +83,6 @@ final class LicenseTestSupport {
                 "-noprompt");
     }
 
-    CustomKeyStoreParam privateKeyStoreParam() {
-        return new CustomKeyStoreParam(LicenseTestSupport.class, privateKeyStore.toString(), ALIAS,
-                STORE_PASSWORD, KEY_PASSWORD, SIGNATURE_ALGORITHM);
-    }
-
-    CustomKeyStoreParam publicKeyStoreParam() {
-        return new CustomKeyStoreParam(LicenseTestSupport.class, publicKeyStore.toString(), ALIAS,
-                STORE_PASSWORD, null, SIGNATURE_ALGORITHM);
-    }
-
-    CustomKeyStoreParam samePasswordKeyStoreParam() {
-        return new CustomKeyStoreParam(LicenseTestSupport.class, samePasswordKeyStore.toString(), ALIAS,
-                STORE_PASSWORD, STORE_PASSWORD, SIGNATURE_ALGORITHM);
-    }
-
-    String privateKeyStorePath() {
-        return privateKeyStore.toString();
-    }
-
-    String publicKeyStorePath() {
-        return publicKeyStore.toString();
-    }
-
     private static void runKeytool(String... arguments) throws Exception {
         File executable = new File(new File(System.getProperty("java.home"), "bin"), "keytool");
         List<String> command = new ArrayList<>();
@@ -128,5 +105,28 @@ final class LicenseTestSupport {
             outputStream.write(buffer, 0, count);
         }
         return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
+    }
+
+    CustomKeyStoreParam privateKeyStoreParam() {
+        return new CustomKeyStoreParam(LicenseTestSupport.class, privateKeyStore.toString(), ALIAS,
+                STORE_PASSWORD, KEY_PASSWORD, SIGNATURE_ALGORITHM);
+    }
+
+    CustomKeyStoreParam publicKeyStoreParam() {
+        return new CustomKeyStoreParam(LicenseTestSupport.class, publicKeyStore.toString(), ALIAS,
+                STORE_PASSWORD, null, SIGNATURE_ALGORITHM);
+    }
+
+    CustomKeyStoreParam samePasswordKeyStoreParam() {
+        return new CustomKeyStoreParam(LicenseTestSupport.class, samePasswordKeyStore.toString(), ALIAS,
+                STORE_PASSWORD, STORE_PASSWORD, SIGNATURE_ALGORITHM);
+    }
+
+    String privateKeyStorePath() {
+        return privateKeyStore.toString();
+    }
+
+    String publicKeyStorePath() {
+        return publicKeyStore.toString();
     }
 }

@@ -19,9 +19,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -392,8 +392,8 @@ public class JsonKit {
 
     private static Object getNodeValue(JsonNode childNode) {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
-                                                                     childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
-                                                                                                                    childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
+                childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
+                        childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
     }
 
     private static JsonSerializer<LocalDate> localDateSerializer(DateTimeFormatter formatter) {

@@ -24,8 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 class FileValidationServiceTest {
 
     private final FileValidationService service = new FileValidationService();
@@ -105,7 +103,7 @@ class FileValidationServiceTest {
 
     private byte[] ole(String entryName) throws IOException {
         try (POIFSFileSystem fileSystem = new POIFSFileSystem();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             fileSystem.getRoot().createDocument(entryName,
                     new ByteArrayInputStream("content".getBytes(StandardCharsets.UTF_8)));
             fileSystem.writeFilesystem(outputStream);

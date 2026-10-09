@@ -17,12 +17,12 @@ package io.ddd4j.metrics;
 import io.ddd4j.core.constant.ProjectionConstants;
 import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.kit.text.StrPool;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.DoubleHistogram;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
-import io.opentelemetry.api.OpenTelemetry;
 
 import java.util.Objects;
 
@@ -56,18 +56,26 @@ import java.util.Objects;
  */
 public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
 
-    /** streamId attribute key。 */
-    private static final AttributeKey<String> STREAM_ID = AttributeKey.stringKey(ProjectionConstants.OTel_ATTR_STREAM_ID);
-
-    /** 运行次数指标名称。 */
+    /**
+     * 运行次数指标名称。
+     */
     static final String METRIC_RUN_COUNT = ProjectionConstants.OTel_METRIC_RUN_COUNT;
-    /** 事件计数指标名称。 */
+    /**
+     * 事件计数指标名称。
+     */
     static final String METRIC_EVENT_COUNT = ProjectionConstants.OTel_METRIC_EVENT_COUNT;
-    /** 运行耗时指标名称（毫秒）。 */
+    /**
+     * 运行耗时指标名称（毫秒）。
+     */
     static final String METRIC_RUN_DURATION = ProjectionConstants.OTel_METRIC_RUN_DURATION;
-    /** 运行错误指标名称。 */
+    /**
+     * 运行错误指标名称。
+     */
     static final String METRIC_RUN_ERROR = ProjectionConstants.OTel_METRIC_RUN_ERROR;
-
+    /**
+     * streamId attribute key。
+     */
+    private static final AttributeKey<String> STREAM_ID = AttributeKey.stringKey(ProjectionConstants.OTel_ATTR_STREAM_ID);
     private final LongCounter runCounter;
     private final LongCounter eventCounter;
     private final DoubleHistogram durationHistogram;
@@ -99,7 +107,7 @@ public class OpenTelemetryProjectionMetrics implements ProjectionMetrics {
     /**
      * 便捷构造：从 {@link OpenTelemetry} 实例获取 Meter。
      *
-     * @param openTelemetry OTel 实例；不允许 null
+     * @param openTelemetry        OTel 实例；不允许 null
      * @param instrumentationScope 仪表化作用域名称；不允许 null
      * @throws NullPointerException 任一参数为 null 时抛出
      */

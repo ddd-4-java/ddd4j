@@ -16,8 +16,6 @@ package io.ddd4j.mq.activemq.util;
 
 import io.ddd4j.kit.lang.StrKit;
 
-import jakarta.jms.*;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 

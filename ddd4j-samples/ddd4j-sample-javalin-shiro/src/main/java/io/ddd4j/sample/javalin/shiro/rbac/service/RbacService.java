@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.service;
 
-import java.util.Objects;
-
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Permission;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;

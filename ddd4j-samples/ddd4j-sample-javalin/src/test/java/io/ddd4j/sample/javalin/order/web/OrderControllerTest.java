@@ -14,8 +14,8 @@
  */
 package io.ddd4j.sample.javalin.order.web;
 
-import io.ddd4j.sample.javalin.JavalinSample;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.javalin.JavalinSample;
 import io.ddd4j.web.core.context.WebHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,9 +29,7 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class OrderControllerTest {
 
@@ -51,6 +49,34 @@ class OrderControllerTest {
         if (Objects.nonNull(application)) {
             application.close();
         }
+    }
+
+    private static HttpResponse<String> get(String path) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token())
+                .GET().build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private static HttpResponse<String> post(String path, String body, String idempotencyKey) throws Exception {
+        HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .header("Content-Type", "application/json")
+                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
+        if (Objects.nonNull(idempotencyKey)) {
+            request.header(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
+        }
+        return client.send(request.POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                HttpResponse.BodyHandlers.ofString());
+    }
+
+    private static String extract(String json, String field) {
+        String prefix = "\"" + field + "\":\"";
+        int start = json.indexOf(prefix);
+        if (start < 0) {
+            throw new IllegalArgumentException("field not found: " + field);
+        }
+        int valueStart = start + prefix.length();
+        return json.substring(valueStart, json.indexOf('"', valueStart));
     }
 
     @Test
@@ -107,33 +133,5 @@ class OrderControllerTest {
         assertTrue(StrKit.isNotBlank(firstRequestId));
         assertTrue(StrKit.isNotBlank(secondRequestId));
         assertNotEquals(firstRequestId, secondRequestId);
-    }
-
-    private static HttpResponse<String> get(String path) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token())
-                .GET().build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private static HttpResponse<String> post(String path, String body, String idempotencyKey) throws Exception {
-        HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .header("Content-Type", "application/json")
-                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
-        if (Objects.nonNull(idempotencyKey)) {
-            request.header(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
-        }
-        return client.send(request.POST(HttpRequest.BodyPublishers.ofString(body)).build(),
-                HttpResponse.BodyHandlers.ofString());
-    }
-
-    private static String extract(String json, String field) {
-        String prefix = "\"" + field + "\":\"";
-        int start = json.indexOf(prefix);
-        if (start < 0) {
-            throw new IllegalArgumentException("field not found: " + field);
-        }
-        int valueStart = start + prefix.length();
-        return json.substring(valueStart, json.indexOf('"', valueStart));
     }
 }

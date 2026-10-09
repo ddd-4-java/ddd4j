@@ -38,19 +38,19 @@ import java.time.Instant;
  */
 public record AuthSucceededEvent(AuthRequest request, AuthPrincipal principal, String token, Instant occurredAt) {
 
-    public Instant getOccurredAt() {
-            return occurredAt;
-        }
+    public Instant getOccurredAt () {
+        return occurredAt;
+    }
 
-    public AuthPrincipal getPrincipal() {
-            return principal;
-        }
+    public AuthPrincipal getPrincipal () {
+        return principal;
+    }
 
-    public AuthRequest getRequest() {
-            return request;
-        }
+    public AuthRequest getRequest () {
+        return request;
+    }
 
-    public String getToken() {
-            return token;
-        }
+    public String getToken () {
+        return token;
+    }
 }

@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
@@ -32,10 +32,9 @@ import redis.clients.jedis.resps.StreamEntry;
 import redis.clients.jedis.resps.StreamGroupInfo;
 
 import java.util.*;
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -82,12 +81,12 @@ public class RedisStreamMQClient implements MQClient {
      * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
      */
     private final RedisStreamMQProperties properties;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("redisStream");
     /**
      * lazy 构造的 Jedis（volatile 保证发布可见性）。
      */
     private volatile UnifiedJedis lazyJedis;
-    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
-    private final MQStartupStatus startupStatus = new MQStartupStatus("redisStream");
 
     public RedisStreamMQClient(UnifiedJedis jedis) {
         this.injectedJedis = jedis;
@@ -97,6 +96,18 @@ public class RedisStreamMQClient implements MQClient {
     public RedisStreamMQClient(RedisStreamMQProperties properties) {
         this.injectedJedis = null;
         this.properties = properties;
+    }
+
+    private static boolean hasEntries(List<Map.Entry<String, List<StreamEntry>>> messages) {
+        return Objects.nonNull(messages) && messages.stream()
+                .anyMatch(entry -> Objects.nonNull(entry.getValue()) && !entry.getValue().isEmpty());
+    }
+
+    static String messageId(Map<String, String> fields) {
+        String messageId = fields.get(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : fields.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
     /**
@@ -126,8 +137,19 @@ public class RedisStreamMQClient implements MQClient {
         return "redisStream";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    // ========================= 生产者 =========================
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
+    // ========================= 消费者 =========================
 
     /**
      * Redis Stream 默认拼接符 {@code :}（Redis 命名习惯）。
@@ -136,8 +158,6 @@ public class RedisStreamMQClient implements MQClient {
     public String defaultConcat() {
         return ":";
     }
-
-    // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties properties) {
@@ -161,8 +181,6 @@ public class RedisStreamMQClient implements MQClient {
             }
         };
     }
-
-    // ========================= 消费者 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
@@ -286,26 +304,16 @@ public class RedisStreamMQClient implements MQClient {
         return true;
     }
 
-    private static boolean hasEntries(List<Map.Entry<String, List<StreamEntry>>> messages) {
-        return Objects.nonNull(messages) && messages.stream()
-                .anyMatch(entry -> Objects.nonNull(entry.getValue()) && !entry.getValue().isEmpty());
-    }
-
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             consumerExecutors.clear();
             ownedConsumerClients.clear();
             lazyJedis = null;
             startupStatus.stopped();
         }
-    }
-
-    static String messageId(Map<String, String> fields) {
-        String messageId = fields.get(MessageHeaders.HEADER_MESSAGE_ID);
-        return StrKit.isNotEmpty(messageId)
-                ? messageId
-                : fields.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
 }

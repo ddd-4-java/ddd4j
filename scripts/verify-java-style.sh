@@ -13,8 +13,8 @@ done < <(find . \
   \( -path '*/src/main/java/*' -o -path '*/src/test/java/*' \) \
   -type f -name '*.java' \
   ! -path '*/target/*' \
-  ! -path '*/.idea/*' \
-  | sort)
+  ! -path '*/.idea/*' |
+  sort)
 
 if [[ "${#JAVA_FILES[@]}" -eq 0 ]]; then
   echo "No Java files found under src/main/java or src/test/java."
@@ -36,7 +36,7 @@ run_guard() {
   local pattern="$2"
   shift 2
 
-  if rg -n --pcre2 "${pattern}" "$@" "${JAVA_FILES[@]}" > "${TMP_MATCHES}"; then
+  if rg -n --pcre2 "${pattern}" "$@" "${JAVA_FILES[@]}" >"${TMP_MATCHES}"; then
     echo "[FAIL] ${description}"
     cat "${TMP_MATCHES}"
     FAILED=1
@@ -58,7 +58,7 @@ run_guard "forbid direct logger factory usage in application code" 'LoggerFactor
   --glob '!**/src/test/**' \
   --glob '!**/src/main/java/**/RobotLogbackAppendService.java'
 
-cat > "${TMP_POM}" <<EOF
+cat >"${TMP_POM}" <<EOF
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">

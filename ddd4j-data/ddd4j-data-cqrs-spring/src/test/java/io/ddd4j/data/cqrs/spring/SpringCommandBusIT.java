@@ -16,13 +16,9 @@ package io.ddd4j.data.cqrs.spring;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.command.CommandRegistry;
-import io.ddd4j.data.cqrs.sample.SampleCommand;
-import io.ddd4j.data.cqrs.sample.SampleCommandHandler;
-import io.ddd4j.data.cqrs.sample.TestApp;
-import io.ddd4j.data.cqrs.sample.TxProbeCommand;
-import io.ddd4j.data.cqrs.sample.TxProbeCommandHandler;
+import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.data.cqrs.sample.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.support.AopUtils;

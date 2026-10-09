@@ -26,11 +26,11 @@ public record ReadinessResponse(boolean ready) {
      *
      * @return 就绪时为 200，未就绪时为 503
      */
-    public int httpStatus() {
+    public int httpStatus () {
         return ready ? 200 : 503;
     }
 
-    public boolean isReady() {
-            return ready;
-        }
+    public boolean isReady () {
+        return ready;
+    }
 }

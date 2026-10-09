@@ -1,46 +1,58 @@
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.mq.MQProperties;
 import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQStartupState;
-import org.apache.kafka.clients.producer.MockProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.RecordMetadata;
+import io.ddd4j.mq.listener.MQListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.management.ManagementFactory;
-import javax.management.ObjectName;
-import java.util.Set;
-import java.util.List;
 import java.util.Collections;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Kafka 消费组解析和客户端资源所有权的回归契约。 */
+/**
+ * Kafka 消费组解析和客户端资源所有权的回归契约。
+ */
 class KafkaMQClientLifecycleContractTest {
+    private static KafkaMQProperties properties() {
+        KafkaMQProperties properties = new KafkaMQProperties() {
+            @Override
+            public java.util.Properties producerProperties() {
+                java.util.Properties result = super.producerProperties();
+                result.put("max.block.ms", "100");
+                return result;
+            }
+        };
+        properties.setBootstrapServers("127.0.0.1:1");
+        properties.setAutoCreateTopics(false);
+        return properties;
+    }
+
+    private static MQListener listener() throws Exception {
+        Method method = Handler.class.getMethod("onLifecycleEvent", MQEvent.class);
+        return MQListener.of(new Handler(), method, method.getAnnotation(MQEventListener.class));
+    }
+
     @AfterEach
     void clearContext() {
         BaseContext.clear();
@@ -219,28 +231,10 @@ class KafkaMQClientLifecycleContractTest {
         producer.close();
     }
 
-    private static KafkaMQProperties properties() {
-        KafkaMQProperties properties = new KafkaMQProperties() {
-            @Override
-            public java.util.Properties producerProperties() {
-                java.util.Properties result = super.producerProperties();
-                result.put("max.block.ms", "100");
-                return result;
-            }
-        };
-        properties.setBootstrapServers("127.0.0.1:1");
-        properties.setAutoCreateTopics(false);
-        return properties;
-    }
-
-    private static MQListener listener() throws Exception {
-        Method method = Handler.class.getMethod("onLifecycleEvent", MQEvent.class);
-        return MQListener.of(new Handler(), method, method.getAnnotation(MQEventListener.class));
-    }
-
     public static final class Handler {
         @MQEventListener(topic = "orders")
-        public void onLifecycleEvent(MQEvent event) { }
+        public void onLifecycleEvent(MQEvent event) {
+        }
     }
 
     private static final class AsyncCallbackProducer extends MockProducer<String, String> {

@@ -22,12 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GuiceViewManagerTest {
 
@@ -86,14 +81,16 @@ class GuiceViewManagerTest {
     @Test
     void scheduleWithEmptyCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.schedule("view-2", "", () -> {});
+            manager.schedule("view-2", "", () -> {
+            });
         });
     }
 
     @Test
     void scheduleWithInvalidCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.schedule("view-3", "0/not-a-number", () -> {});
+            manager.schedule("view-3", "0/not-a-number", () -> {
+            });
         });
     }
 
@@ -116,7 +113,8 @@ class GuiceViewManagerTest {
     @Test
     void scheduleWithUnsupportedCronFormatThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.schedule("view-6", "0 0 2 * * ?", () -> {});
+            manager.schedule("view-6", "0 0 2 * * ?", () -> {
+            });
         });
     }
 
@@ -137,10 +135,12 @@ class GuiceViewManagerTest {
     @Test
     void scheduleAtFixedRateWithInvalidIntervalThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.scheduleAtFixedRate("view-8", 0, () -> {});
+            manager.scheduleAtFixedRate("view-8", 0, () -> {
+            });
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.scheduleAtFixedRate("view-9", -1, () -> {});
+            manager.scheduleAtFixedRate("view-9", -1, () -> {
+            });
         });
     }
 

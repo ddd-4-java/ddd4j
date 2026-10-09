@@ -40,35 +40,35 @@ public record WebRequestContext(
         path = StrKit.isBlank(path) ? "/" : path;
     }
 
-    public String getAuthorization() {
-            return authorization;
-        }
+    public String getAuthorization () {
+        return authorization;
+    }
 
-    public String getClientIp() {
-            return clientIp;
-        }
+    public String getClientIp () {
+        return clientIp;
+    }
 
-    public Locale getLocale() {
-            return locale;
-        }
+    public Locale getLocale () {
+        return locale;
+    }
 
-    public String getMethod() {
-            return method;
-        }
+    public String getMethod () {
+        return method;
+    }
 
-    public String getPath() {
-            return path;
-        }
+    public String getPath () {
+        return path;
+    }
 
-    public String getRequestId() {
-            return requestId;
-        }
+    public String getRequestId () {
+        return requestId;
+    }
 
-    public String getTenantId() {
-            return tenantId;
-        }
+    public String getTenantId () {
+        return tenantId;
+    }
 
-    public String getTraceId() {
-            return traceId;
-        }
+    public String getTraceId () {
+        return traceId;
+    }
 }

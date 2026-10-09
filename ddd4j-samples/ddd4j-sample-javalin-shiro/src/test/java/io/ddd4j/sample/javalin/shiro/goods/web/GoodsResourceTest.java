@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.web;
 
-import java.util.Objects;
-
 import io.ddd4j.sample.javalin.shiro.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -25,6 +23,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -16,21 +16,10 @@ package io.ddd4j.auth.shiro.subject;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
-import io.ddd4j.core.exception.AccountDisabledException;
-import io.ddd4j.core.exception.AccountLockedException;
-import io.ddd4j.core.exception.BadCredentialsException;
-import io.ddd4j.core.exception.CredentialsExpiredException;
-import io.ddd4j.core.exception.NotLoggedInException;
-import io.ddd4j.core.exception.SessionExpiredException;
+import io.ddd4j.core.exception.*;
 import io.ddd4j.core.exception.UnknownAccountException;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.mgt.DefaultSecurityManager;
@@ -42,14 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ShiroSubjectTest {
 

@@ -43,7 +43,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-/** JAX-RS translation layer for the shared Order application. */
+/**
+ * JAX-RS translation layer for the shared Order application.
+ */
 @Path("/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
 public class OrderResource {
@@ -54,6 +56,12 @@ public class OrderResource {
     public OrderResource(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService,
                 "applicationService must not be null");
+    }
+
+    private static OrderResponse toResponse(Order order) {
+        Money total = order.totalAmount();
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
+                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
     @POST
@@ -116,12 +124,6 @@ public class OrderResource {
     @Path("/{id}/cancel")
     public R<OrderResponse> cancel(@PathParam("id") String id) {
         return R.ok(toResponse(applicationService.cancel(id)));
-    }
-
-    private static OrderResponse toResponse(Order order) {
-        Money total = order.totalAmount();
-        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
-                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {

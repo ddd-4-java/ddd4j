@@ -26,9 +26,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DisruptorAdapterContractTest {
 
@@ -166,7 +164,16 @@ class DisruptorAdapterContractTest {
         assertEquals(republishedSequence, ringBuffer.getCursor());
     }
 
-    /** 记录真实消费者反序列化后的事件。 */
+    @Test
+    void shouldCloseOwnedDisruptorOnlyOnce() {
+        DisruptorMQClient client = new DisruptorMQClient(new DisruptorMQProperties());
+        client.close();
+        client.close();
+    }
+
+    /**
+     * 记录真实消费者反序列化后的事件。
+     */
     public static class RecordingListener {
         private final CountDownLatch delivered = new CountDownLatch(1);
         private final AtomicInteger calls = new AtomicInteger();
@@ -177,12 +184,5 @@ class DisruptorAdapterContractTest {
             calls.incrementAndGet();
             delivered.countDown();
         }
-    }
-
-    @Test
-    void shouldCloseOwnedDisruptorOnlyOnce() {
-        DisruptorMQClient client = new DisruptorMQClient(new DisruptorMQProperties());
-        client.close();
-        client.close();
     }
 }

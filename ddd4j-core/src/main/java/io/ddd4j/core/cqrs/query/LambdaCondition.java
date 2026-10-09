@@ -16,8 +16,49 @@ package io.ddd4j.core.cqrs.query;
 
 import io.ddd4j.kit.text.StrPool;
 
-import java.io.Serializable;
 import java.util.Objects;
+
+Serializable {
+
+    public LambdaCondition {
+        Objects.requireNonNull(propertyRef, "propertyRef must not be null");
+        Objects.requireNonNull(operator, "operator must not be null");
+    }
+
+    public String property () {
+        return propertyRef.property();
+    }
+
+    /**
+     * 排序条件构造器。
+     */
+    public static LambdaCondition asc (PropertyRef property){
+        return new LambdaCondition(property, StrPool.ASC, null);
+    }
+
+    public static LambdaCondition desc (PropertyRef property){
+        return new LambdaCondition(property, StrPool.DESC, null);
+    }
+
+    /**
+     * 是否为排序条件。
+     */
+    public boolean isOrderBy () {
+        return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
+    }
+
+    public String getOperator () {
+        return operator;
+    }
+
+    public PropertyRef getPropertyRef () {
+        return propertyRef;
+    }
+
+    public Object getValue () {
+        return value;
+    }
+} implements
 
 /**
  * Lambda 查询条件记录（ORM 无关）。
@@ -31,44 +72,4 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public record LambdaCondition(PropertyRef propertyRef, String operator, Object value) implements Serializable {
-
-    public LambdaCondition {
-        Objects.requireNonNull(propertyRef, "propertyRef must not be null");
-        Objects.requireNonNull(operator, "operator must not be null");
-    }
-
-    public String property() {
-        return propertyRef.property();
-    }
-
-    /**
-     * 排序条件构造器。
-     */
-    public static LambdaCondition asc(PropertyRef property) {
-        return new LambdaCondition(property, StrPool.ASC, null);
-    }
-
-    public static LambdaCondition desc(PropertyRef property) {
-        return new LambdaCondition(property, StrPool.DESC, null);
-    }
-
-    /**
-     * 是否为排序条件。
-     */
-    public boolean isOrderBy() {
-        return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
-    }
-
-    public String getOperator() {
-            return operator;
-        }
-
-    public PropertyRef getPropertyRef() {
-            return propertyRef;
-        }
-
-    public Object getValue() {
-            return value;
-        }
-}
+public record LambdaCondition(PropertyRef propertyRef, String operator, Object value)

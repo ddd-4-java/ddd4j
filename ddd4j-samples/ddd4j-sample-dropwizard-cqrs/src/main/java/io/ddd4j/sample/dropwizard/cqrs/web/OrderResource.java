@@ -18,15 +18,10 @@ import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.dropwizard.cqrs.DropwizardCqrsApplication;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.dropwizard.cqrs.readmodel.OrderSummaryViewEntity;
-
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
 import java.util.Map;
 
 /**

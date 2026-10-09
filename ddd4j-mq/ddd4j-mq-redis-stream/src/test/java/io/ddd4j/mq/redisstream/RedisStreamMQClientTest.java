@@ -30,10 +30,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link RedisStreamMQClient} 客户端基础属性测试。
@@ -126,8 +123,15 @@ class RedisStreamMQClientTest {
         mqProperties.setEnabled(true);
         mqProperties.setBroker("redisStream");
         client.init(Collections.<MQListener>emptyList(), mqProperties, new MQEventSerialization() {
-            @Override public <T> T serialize(Object event) { return (T) "{}"; }
-            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
         }, null);
         MQEvent event = new MQEvent();
         event.setTopic("orders");

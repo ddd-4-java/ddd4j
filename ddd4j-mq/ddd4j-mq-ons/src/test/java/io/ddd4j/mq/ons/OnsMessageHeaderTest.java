@@ -20,9 +20,7 @@ import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class OnsMessageHeaderTest {
 

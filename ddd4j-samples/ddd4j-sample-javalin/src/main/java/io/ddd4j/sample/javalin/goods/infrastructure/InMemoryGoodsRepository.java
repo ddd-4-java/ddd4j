@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.goods.infrastructure;
 
-import java.util.Objects;
-
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;

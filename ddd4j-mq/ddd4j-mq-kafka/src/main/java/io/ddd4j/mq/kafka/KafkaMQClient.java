@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +35,9 @@ import org.apache.kafka.common.errors.WakeupException;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.concurrent.Executors;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -66,28 +62,21 @@ public class KafkaMQClient implements MQClient {
 
     private static final long DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS = 30_000L;
     /**
-     * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
-     * 无 properties 时回落到默认 30s。
-     */
-    private long publishAckTimeoutMillis() {
-        return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
-    }
-
-    /**
      * KafkaMQProperties 用于懒构造
      */
     private final KafkaMQProperties properties;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
+    private final List<ConsumerWorker> consumerWorkers = new ArrayList<>();
     /**
      * 已注入或懒构造的 Kafka producer
      */
     private Producer<String, String> producer;
     private Callback callback;
-    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
-    private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
-    /** 初始化和关闭共用客户端锁；关闭标记供消费者线程读取。 */
+    /**
+     * 初始化和关闭共用客户端锁；关闭标记供消费者线程读取。
+     */
     private volatile boolean closed;
-    private final List<ConsumerWorker> consumerWorkers = new ArrayList<>();
-
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      */
@@ -104,6 +93,14 @@ public class KafkaMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
         this.producer = null;
         this.callback = callback;
+    }
+
+    /**
+     * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
+     * 无 properties 时回落到默认 30s。
+     */
+    private long publishAckTimeoutMillis() {
+        return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
     }
 
     @Override
@@ -172,7 +169,9 @@ public class KafkaMQClient implements MQClient {
         };
     }
 
-    /** 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。 */
+    /**
+     * 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。
+     */
     Producer<String, String> createProducer(Properties props) {
         return new KafkaProducer<>(props);
     }
@@ -245,12 +244,16 @@ public class KafkaMQClient implements MQClient {
         return true;
     }
 
-    /** 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。 */
+    /**
+     * 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。
+     */
     org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(Properties props) {
         return new KafkaConsumer<>(props);
     }
 
-    /** 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。 */
+    /**
+     * 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。
+     */
     ExecutorService createConsumerExecutor(MQListener listener) {
         return Executors.newSingleThreadExecutor(r -> {
             Thread workerThread = new Thread(r, "ddd4j-kafka-" + listener.getMethod().getName());
@@ -259,7 +262,9 @@ public class KafkaMQClient implements MQClient {
         });
     }
 
-    /** 关闭客户端持有的消费者与执行器；注入的 producer 仍由调用方负责关闭。 */
+    /**
+     * 关闭客户端持有的消费者与执行器；注入的 producer 仍由调用方负责关闭。
+     */
     @Override
     public void close() {
         synchronized (this) {
@@ -276,14 +281,100 @@ public class KafkaMQClient implements MQClient {
         }
     }
 
-    /** 防止关闭后重新创建资源或复用发布入口。 */
+    /**
+     * 防止关闭后重新创建资源或复用发布入口。
+     */
     private void ensureOpen() {
         if (closed) {
             throw new IllegalStateException("KafkaMQClient is closed");
         }
     }
 
-    /** 消费者及其专属执行器的所有权记录；确保异常退出也能释放底层资源。 */
+    /**
+     * 处理单条 Kafka 记录。成功或明确过滤后提交当前偏移；失败时回退 position，禁止提交丢失消息。
+     */
+    void handleRecord(MQListener listener, MQProperties mqProperties,
+                      org.apache.kafka.clients.consumer.Consumer<String, String> consumer,
+                      ConsumerRecord<String, String> record) {
+        String payload = record.value();
+        KafkaMessageAcknowledgment acknowledgment = new KafkaMessageAcknowledgment(consumer, record);
+        try {
+            MQEvent event = serialization().deserialize(payload, listener.payloadType());
+            if (Objects.isNull(event)) {
+                acknowledgment.ackSingle();
+                log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
+                return;
+            }
+            if (!TagMatcher.match(event.getTag(), listener.getTags())) {
+                acknowledgment.ackSingle();
+                return;
+            }
+            consume(listener, event, acknowledgment);
+            if (!acknowledgment.isAcknowledged()) {
+                acknowledgment.ackSingle();
+            }
+        } catch (WakeupException exception) {
+            // 关闭信号可能在提交偏移时触发，交给消费循环退出并关闭，不能按业务失败重试。
+            throw exception;
+        } catch (Throwable exception) {
+            log.error("Consume MQ [{}] failed: {}", listener.getTopic(), payload, exception);
+            if (!acknowledgment.isAcknowledged()) {
+                consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
+                // seek 回退 offset 后必须中断当前批次循环，否则同批次后续 record 会被重复消费。
+                throw new BatchRetryException("seek to " + record.offset() + " for retry", exception);
+            }
+        }
+    }
+
+    /**
+     * 构造 consumer group.id（兜底）。
+     */
+    private String buildGroupId(MQListener listener) {
+        if (StrKit.isNotBlank(listener.getGroup())) {
+            return listener.getGroup();
+        }
+        String prefix = Objects.nonNull(properties) ? properties.getGroupIdPrefix() : null;
+        return (StrKit.isNotBlank(prefix) ? prefix : "ddd4j") + "-" + listener.getMethod().getName();
+    }
+
+    // ========================= 消费者 =========================
+
+    /**
+     * 标记当前 poll 批次需要重试（handleRecord seek 回退后抛出）。
+     * 仅在消费者循环内部使用，不逃逸到外部调用方。
+     */
+    static final class BatchRetryException extends RuntimeException {
+        BatchRetryException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    /**
+     * 异步发送回调（统一收口，不阻塞 producer.send()）。
+     */
+    public static final class SendCallback implements Callback {
+
+        private final String topic;
+        private final String payload;
+
+        SendCallback(String topic, String payload) {
+            this.topic = topic;
+            this.payload = payload;
+        }
+
+        @Override
+        public void onCompletion(RecordMetadata metadata, Exception exception) {
+            if (Objects.nonNull(exception)) {
+                log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
+            } else if (log.isDebugEnabled()) {
+                log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());
+            }
+        }
+    }
+
+    /**
+     * 消费者及其专属执行器的所有权记录；确保异常退出也能释放底层资源。
+     */
     private final class ConsumerWorker implements Runnable {
         private final org.apache.kafka.clients.consumer.Consumer<String, String> consumer;
         private final MQListener listener;
@@ -348,88 +439,6 @@ public class KafkaMQClient implements MQClient {
                 } finally {
                     executor.shutdown();
                 }
-            }
-        }
-    }
-
-    /**
-     * 处理单条 Kafka 记录。成功或明确过滤后提交当前偏移；失败时回退 position，禁止提交丢失消息。
-     */
-    void handleRecord(MQListener listener, MQProperties mqProperties,
-                      org.apache.kafka.clients.consumer.Consumer<String, String> consumer,
-                      ConsumerRecord<String, String> record) {
-        String payload = record.value();
-        KafkaMessageAcknowledgment acknowledgment = new KafkaMessageAcknowledgment(consumer, record);
-        try {
-            MQEvent event = serialization().deserialize(payload, listener.payloadType());
-            if (Objects.isNull(event)) {
-                acknowledgment.ackSingle();
-                log.warn("Consume MQ [{}] failed: the mqEvent is null", listener.getRouteExpression(defaultConcat()));
-                return;
-            }
-            if (!TagMatcher.match(event.getTag(), listener.getTags())) {
-                acknowledgment.ackSingle();
-                return;
-            }
-            consume(listener, event, acknowledgment);
-            if (!acknowledgment.isAcknowledged()) {
-                acknowledgment.ackSingle();
-            }
-        } catch (WakeupException exception) {
-            // 关闭信号可能在提交偏移时触发，交给消费循环退出并关闭，不能按业务失败重试。
-            throw exception;
-        } catch (Throwable exception) {
-            log.error("Consume MQ [{}] failed: {}", listener.getTopic(), payload, exception);
-            if (!acknowledgment.isAcknowledged()) {
-                consumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset());
-                // seek 回退 offset 后必须中断当前批次循环，否则同批次后续 record 会被重复消费。
-                throw new BatchRetryException("seek to " + record.offset() + " for retry", exception);
-            }
-        }
-    }
-
-    // ========================= 消费者 =========================
-
-    /**
-     * 构造 consumer group.id（兜底）。
-     */
-    private String buildGroupId(MQListener listener) {
-        if (StrKit.isNotBlank(listener.getGroup())) {
-            return listener.getGroup();
-        }
-        String prefix = Objects.nonNull(properties) ? properties.getGroupIdPrefix() : null;
-        return (StrKit.isNotBlank(prefix) ? prefix : "ddd4j") + "-" + listener.getMethod().getName();
-    }
-
-    /**
-     * 标记当前 poll 批次需要重试（handleRecord seek 回退后抛出）。
-     * 仅在消费者循环内部使用，不逃逸到外部调用方。
-     */
-    static final class BatchRetryException extends RuntimeException {
-        BatchRetryException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    /**
-     * 异步发送回调（统一收口，不阻塞 producer.send()）。
-     */
-    public static final class SendCallback implements Callback {
-
-        private final String topic;
-        private final String payload;
-
-        SendCallback(String topic, String payload) {
-            this.topic = topic;
-            this.payload = payload;
-        }
-
-        @Override
-        public void onCompletion(RecordMetadata metadata, Exception exception) {
-            if (Objects.nonNull(exception)) {
-                log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
-            } else if (log.isDebugEnabled()) {
-                log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());
             }
         }
     }

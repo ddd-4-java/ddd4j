@@ -1,12 +1,14 @@
 # 7、ddd4j-领域模型设计
 
-> **文档说明**：ddd4j 提供的领域抽象与契约。覆盖战术设计要素（聚合、实体、值对象、领域事件、仓储、查询）、CQRS 抽象（Command / View / Projection）、EventStore 抽象、上下文边界与跨进程事件契约。
+> **文档说明**：ddd4j 提供的领域抽象与契约。覆盖战术设计要素（聚合、实体、值对象、领域事件、仓储、查询）、CQRS 抽象（Command /
+> View / Projection）、EventStore 抽象、上下文边界与跨进程事件契约。
 >
 > **版本**：V1.0.0
 > **最后更新**：2026-09-24
 > **对齐代码 HEAD**：`41f690b7`（1.0.x）/ `60984788`（2.0.x）/ `1471e2ca`（3.0.x）
 >
-> **在决策链中的位置**：**Domain** = **Domain**（做什么）→ Tech Plan（怎么做）→ Product Plan（什么时候做、谁来做）→ Architecture（在哪里做）。
+> **在决策链中的位置**： **Domain** = **Domain**（做什么）→ Tech Plan（怎么做）→ Product Plan（什么时候做、谁来做）→
+> Architecture（在哪里做）。
 > - 下游：[`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) — 如何实现这些抽象
 > - 终态：[`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) — 抽象落到哪些模块
 
@@ -14,11 +16,11 @@
 
 ## 1. 战略层面：ddd4j 不锁定限界上下文
 
-ddd4j 是一个**通用基础层**，不预设任何限界上下文（bounded context）。它提供**战术模式 + 契约**：
+ddd4j 是一个 **通用基础层**，不预设任何限界上下文（bounded context）。它提供 **战术模式 + 契约**：
 
-- 业务工程在 `ddd4j-core` 之上**自己**划分限界上下文。
-- 限界上下文之间通过**领域事件 + Outbox + MQ** 实现最终一致的跨进程集成。
-- 同一限界上下文内，**一个进程 = 一种运行时**（不混 Spring + Quarkus）。
+- 业务工程在 `ddd4j-core` 之上 **自己**划分限界上下文。
+- 限界上下文之间通过 **领域事件 + Outbox + MQ** 实现最终一致的跨进程集成。
+- 同一限界上下文内， **一个进程 = 一种运行时**（不混 Spring + Quarkus）。
 
 ```mermaid
 graph TB
@@ -110,7 +112,8 @@ classDiagram
 
 ### 2.1 `AggregateRoot<ID>`（`ddd4j-core`）
 
-聚合根是**所有写路径的入口**。它通过 `@EventHandler` 注解或 `on<EventType>` 命名约定（3.0.x 兼容）来应用领域事件，并维护 `pullDomainEvents()` 留给仓储/Outbox 同步。
+聚合根是 **所有写路径的入口**。它通过 `@EventHandler` 注解或 `on<EventType>` 命名约定（3.0.x 兼容）来应用领域事件，并维护
+`pullDomainEvents()` 留给仓储/Outbox 同步。
 
 ```java
 public class Order extends AggregateRoot<Long> {
@@ -177,7 +180,8 @@ public interface EventStore {
 }
 ```
 
-5 个实现（JPA / JDBI / R2DBC / ESDB / Panache）。`EventPayloadSerializer`（`io.ddd4j.core.cqrs.eventstore.jackson`）负责 payload 序列化；三线用 Jackson 2 或 Jackson 3 翻译。
+5 个实现（JPA / JDBI / R2DBC / ESDB / Panache）。`EventPayloadSerializer`（`io.ddd4j.core.cqrs.eventstore.jackson`）负责
+payload 序列化；三线用 Jackson 2 或 Jackson 3 翻译。
 
 ### 2.5 `CommandBus` 与 `ProjectionRunner`
 
@@ -204,41 +208,41 @@ sequenceDiagram
 
 ## 3. CQRS 抽象
 
-| 抽象 | 位置 | 含义 |
-|:---|:---|:---|
-| `Command` | `io.ddd4j.core.cqrs.command` | 不可变命令对象 |
-| `CommandHandler<C>` | 同上 | 处理单个命令 |
-| `CommandBus` | 同上 | 路由命令到 handler（4 个 runtime 实现） |
-| `Query<M>` | `io.ddd4j.core.cqrs.query` | 充血查询构建器 |
-| `View` | `io.ddd4j.core.cqrs.readmodel` | 读模型视图 |
-| `ProjectionRunner` | 同上 | 增量更新视图 |
-| `ProjectionPosition` | 同上 | 增量位置管理 |
-| `ProjectionStatus` | 同上 | 增量状态机 |
+| 抽象                 | 位置                           | 含义                                    |
+|:---------------------|:-------------------------------|:----------------------------------------|
+| `Command`            | `io.ddd4j.core.cqrs.command`   | 不可变命令对象                          |
+| `CommandHandler<C>`  | 同上                           | 处理单个命令                            |
+| `CommandBus`         | 同上                           | 路由命令到 handler（4 个 runtime 实现） |
+| `Query<M>`           | `io.ddd4j.core.cqrs.query`     | 充血查询构建器                          |
+| `View`               | `io.ddd4j.core.cqrs.readmodel` | 读模型视图                              |
+| `ProjectionRunner`   | 同上                           | 增量更新视图                            |
+| `ProjectionPosition` | 同上                           | 增量位置管理                            |
+| `ProjectionStatus`   | 同上                           | 增量状态机                              |
 
 ## 4. EventStore 实现矩阵
 
-| 实现 | 文件 | 后端 | 适合 |
-|:---|:---|:---|:---|
-| `InMemoryEventStore` | `ddd4j-core/cqrs/eventstore/` | 内存 | 测试 / 单进程 |
-| `JpaEventStore` | `ddd4j-data/ddd4j-data-event-store-jpa/` | JPA（H2 / MySQL / PostgreSQL / Oracle） | 已有 JPA 工程 |
-| `JdbiEventStore` | `ddd4j-data/ddd4j-data-event-store-jdbi/` | JDBI（直 SQL） | 高性能 OLTP |
-| `R2dbcEventStore` / `R2dbcAsyncEventStore` | `ddd4j-data/ddd4j-data-event-store-r2dbc/` | R2DBC（响应式） | WebFlux / Vert.x |
-| `EsdbEventStore` | `ddd4j-data/ddd4j-data-event-store-esdb/` | KurrentDB / EventStoreDB | 专用 ES DB |
-| `PanacheEventStore` | `ddd4j-data/ddd4j-data-event-store-panache/` | Quarkus Panache（active record） | Quarkus |
+| 实现                                       | 文件                                         | 后端                                    | 适合             |
+|:-------------------------------------------|:---------------------------------------------|:----------------------------------------|:-----------------|
+| `InMemoryEventStore`                       | `ddd4j-core/cqrs/eventstore/`                | 内存                                    | 测试 / 单进程    |
+| `JpaEventStore`                            | `ddd4j-data/ddd4j-data-event-store-jpa/`     | JPA（H2 / MySQL / PostgreSQL / Oracle） | 已有 JPA 工程    |
+| `JdbiEventStore`                           | `ddd4j-data/ddd4j-data-event-store-jdbi/`    | JDBI（直 SQL）                          | 高性能 OLTP      |
+| `R2dbcEventStore` / `R2dbcAsyncEventStore` | `ddd4j-data/ddd4j-data-event-store-r2dbc/`   | R2DBC（响应式）                         | WebFlux / Vert.x |
+| `EsdbEventStore`                           | `ddd4j-data/ddd4j-data-event-store-esdb/`    | KurrentDB / EventStoreDB                | 专用 ES DB       |
+| `PanacheEventStore`                        | `ddd4j-data/ddd4j-data-event-store-panache/` | Quarkus Panache（active record）        | Quarkus          |
 
 ## 5. Projection 调度矩阵
 
-| 调度器 | 位置 | 适合 |
-|:---|:---|:---|
-| `QuarkusProjectionScheduler` | `ddd4j-data/ddd4j-data-projection-quarkus/` | Quarkus |
-| `VertxProjectionScheduler` | `ddd4j-data/ddd4j-data-projection-vertx/` | Vert.x |
-| `HelidonProjectionScheduler` | `ddd4j-data/ddd4j-data-projection-helidon/` | Helidon |
-| `DropwizardProjectionScheduler` | `ddd4j-data/ddd4j-data-projection-dropwizard/` | Dropwizard |
-| `SpringProjectionScheduler` | `ddd4j-data/ddd4j-data-projection-spring/` | Spring |
-| `JpaProjectionPositionRepository` | `ddd4j-data/ddd4j-data-projection-jpa/` | JPA 持久化增量位置 |
-| `JdbiProjectionPositionRepository` | `ddd4j-data/ddd4j-data-projection-jdbi/` | JDBI 持久化 |
-| `R2dbcProjectionPositionRepository` | `ddd4j-data/ddd4j-data-projection-r2dbc/` | R2DBC |
-| `QuarkusProjectionPositionRepository` | `ddd4j-data/ddd4j-data-projection-panache/` | Quarkus Panache |
+| 调度器                                | 位置                                           | 适合               |
+|:--------------------------------------|:-----------------------------------------------|:-------------------|
+| `QuarkusProjectionScheduler`          | `ddd4j-data/ddd4j-data-projection-quarkus/`    | Quarkus            |
+| `VertxProjectionScheduler`            | `ddd4j-data/ddd4j-data-projection-vertx/`      | Vert.x             |
+| `HelidonProjectionScheduler`          | `ddd4j-data/ddd4j-data-projection-helidon/`    | Helidon            |
+| `DropwizardProjectionScheduler`       | `ddd4j-data/ddd4j-data-projection-dropwizard/` | Dropwizard         |
+| `SpringProjectionScheduler`           | `ddd4j-data/ddd4j-data-projection-spring/`     | Spring             |
+| `JpaProjectionPositionRepository`     | `ddd4j-data/ddd4j-data-projection-jpa/`        | JPA 持久化增量位置 |
+| `JdbiProjectionPositionRepository`    | `ddd4j-data/ddd4j-data-projection-jdbi/`       | JDBI 持久化        |
+| `R2dbcProjectionPositionRepository`   | `ddd4j-data/ddd4j-data-projection-r2dbc/`      | R2DBC              |
+| `QuarkusProjectionPositionRepository` | `ddd4j-data/ddd4j-data-projection-panache/`    | Quarkus Panache    |
 
 ## 6. 跨进程集成：Outbox + MQ
 
@@ -254,7 +258,7 @@ flowchart LR
 **契约不变量**：
 
 1. 业务写与 outbox insert **同事务**。
-2. publisher / consumer 都通过 `@MQEventListener` 声明订阅，**`required()` 默认 true**（2026-09 新增）。
+2. publisher / consumer 都通过 `@MQEventListener` 声明订阅， **`required()` 默认 true**（2026-09 新增）。
 3. consumer init 失败按生命周期契约传播（见 `5、ddd4j-技术方案与路线.md` §3）。
 4. 消息携带 `tenantId`、`tag`、`namespace`，partition key 默认 `tag+tenant`。
 
@@ -273,13 +277,13 @@ graph LR
 
 三种集成模式：
 
-| 模式 | 何时用 | 优势 |
-|:---|:---|:---|
-| 同步 RPC（如 Feign / JAX-RS） | 强一致要求、低时延 | 直接错误传播 |
-| 异步事件 + Outbox + MQ | 跨服务、最终一致 | 业务写与发布同事务 |
-| 共享读模型 | 只读投影 | 解耦 + 性能 |
+| 模式                          | 何时用             | 优势               |
+|:------------------------------|:-------------------|:-------------------|
+| 同步 RPC（如 Feign / JAX-RS） | 强一致要求、低时延 | 直接错误传播       |
+| 异步事件 + Outbox + MQ        | 跨服务、最终一致   | 业务写与发布同事务 |
+| 共享读模型                    | 只读投影           | 解耦 + 性能        |
 
-ddd4j 默认推荐**异步事件 + Outbox + MQ**。
+ddd4j 默认推荐 **异步事件 + Outbox + MQ**。
 
 ## 8. 关键不变量（架构师手册）
 
@@ -305,12 +309,11 @@ ddd4j 默认推荐**异步事件 + Outbox + MQ**。
 - [`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) · 当前技术方案
 - [`6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md) · **三轨版本矩阵 · 升级路径 · 技术兼容性矩阵**
 - [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构
-- [`docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md`](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md) · 架构边界规范
+- [
+  `docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md`](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md) ·
+  架构边界规范
 - [`docs/ddd/DDD%20思维导图.md`](./docs/ddd/DDD%20思维导图.md) · DDD 战略+战术
 
 ---
 
-**文档版本**：V1.0.0
-**创建日期**：2026-09-18
-**最后更新**：2026-09-18
-**文档状态**：✅ 待评审
+**文档版本**：V1.0.0 **创建日期**：2026-09-18 **最后更新**：2026-09-18 **文档状态**：✅ 待评审

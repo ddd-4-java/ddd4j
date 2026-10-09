@@ -34,15 +34,15 @@ public record IdempotencyLease(String key, String ownerToken, Duration ttl) {
         ttl = Objects.requireNonNull(ttl, "ttl must not be null");
     }
 
-    public String getKey() {
-            return key;
-        }
+    public String getKey () {
+        return key;
+    }
 
-    public String getOwnerToken() {
-            return ownerToken;
-        }
+    public String getOwnerToken () {
+        return ownerToken;
+    }
 
-    public Duration getTtl() {
-            return ttl;
-        }
+    public Duration getTtl () {
+        return ttl;
+    }
 }

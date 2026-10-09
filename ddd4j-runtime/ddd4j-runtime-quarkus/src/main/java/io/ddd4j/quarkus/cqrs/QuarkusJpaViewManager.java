@@ -48,21 +48,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class QuarkusJpaViewManager implements ViewManager {
 
     /**
+     * 运行状态标志
+     */
+    private final AtomicBoolean running = new AtomicBoolean(false);
+    /**
      * 投影位置仓储（CDI 可选注入，不可用时 getProjectionStatus 返回基线状态）
      */
     @Inject
     Instance<ProjectionPositionRepository> positionRepositories;
-
     /**
      * 投影运行指标（CDI 可选注入，不可用时运行时字段置空）
      */
     @Inject
     Instance<ProjectionMetrics> projectionMetricsInstances;
-
-    /**
-     * 运行状态标志
-     */
-    private final AtomicBoolean running = new AtomicBoolean(false);
 
     void onStart(@Observes Startup event) {
         start();

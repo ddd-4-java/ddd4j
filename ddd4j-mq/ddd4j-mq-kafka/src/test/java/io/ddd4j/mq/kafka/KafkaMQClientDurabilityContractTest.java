@@ -22,10 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class KafkaMQClientDurabilityContractTest {
 
@@ -76,8 +73,13 @@ class KafkaMQClientDurabilityContractTest {
         KafkaMQClient client = new KafkaMQClient(mock(Producer.class), null);
         MQProperties properties = properties();
         client.init(Collections.<MQListener>emptyList(), properties, new MQEventSerialization() {
-            @Override public <T> T serialize(Object event) { return (T) "{}"; }
-            @Override public <S, T> T deserialize(S value, Class<T> type) {
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
                 throw new IllegalArgumentException("invalid payload");
             }
         }, null);

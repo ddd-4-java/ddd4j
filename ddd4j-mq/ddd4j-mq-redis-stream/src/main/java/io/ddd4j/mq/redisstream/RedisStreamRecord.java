@@ -27,11 +27,19 @@ import java.util.Map;
  */
 public record RedisStreamRecord(String stream, String id, Map<String, String> fields, Object nativeMessage) {
     /** 返回流名称，兼容 bean 调用方。 */
-    public String getStream() { return stream; }
+    public String getStream () {
+        return stream;
+    }
     /** 返回条目标识。 */
-    public String getId() { return id; }
+    public String getId () {
+        return id;
+    }
     /** 返回消息字段。 */
-    public Map<String, String> getFields() { return fields; }
+    public Map<String, String> getFields () {
+        return fields;
+    }
     /** 返回底层消息对象。 */
-    public Object getNativeMessage() { return nativeMessage; }
+    public Object getNativeMessage () {
+        return nativeMessage;
+    }
 }

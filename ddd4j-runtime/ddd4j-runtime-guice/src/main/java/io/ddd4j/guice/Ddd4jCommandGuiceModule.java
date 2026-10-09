@@ -14,12 +14,7 @@
  */
 package io.ddd4j.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Binding;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.guice.command.GuiceCommandBus;

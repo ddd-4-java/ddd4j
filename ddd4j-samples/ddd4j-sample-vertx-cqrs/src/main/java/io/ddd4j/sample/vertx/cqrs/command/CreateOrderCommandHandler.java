@@ -17,8 +17,8 @@ package io.ddd4j.sample.vertx.cqrs.command;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.sample.vertx.cqrs.repository.EventSourcingOrderRepository;
 import io.ddd4j.sample.order.domain.Order;
+import io.ddd4j.sample.vertx.cqrs.repository.EventSourcingOrderRepository;
 
 import java.util.Objects;
 import java.util.Set;

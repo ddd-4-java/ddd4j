@@ -33,7 +33,9 @@ import java.util.Objects;
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
-/** HTTP translation layer for the shared Order application. */
+/**
+ * HTTP translation layer for the shared Order application.
+ */
 public final class OrderController {
 
     private final OrderApplicationService applicationService;
@@ -41,6 +43,16 @@ public final class OrderController {
     public OrderController(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService,
                 "applicationService must not be null");
+    }
+
+    private static int integer(String value, int defaultValue) {
+        return StrKit.isBlank(value) ? defaultValue : Integer.parseInt(value);
+    }
+
+    private static OrderResponse toResponse(Order order) {
+        Money total = order.totalAmount();
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
+                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
     public void routes() {
@@ -80,16 +92,6 @@ public final class OrderController {
                 applicationService.ship(context.pathParam("id"))))));
         post("/api/orders/{id}/cancel", context -> context.json(R.ok(toResponse(
                 applicationService.cancel(context.pathParam("id"))))));
-    }
-
-    private static int integer(String value, int defaultValue) {
-        return StrKit.isBlank(value) ? defaultValue : Integer.parseInt(value);
-    }
-
-    private static OrderResponse toResponse(Order order) {
-        Money total = order.totalAmount();
-        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
-                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {

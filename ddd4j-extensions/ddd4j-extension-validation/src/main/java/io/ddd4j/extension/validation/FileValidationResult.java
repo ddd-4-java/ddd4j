@@ -17,8 +17,8 @@ package io.ddd4j.extension.validation;
 /**
  * 文件校验结果。
  *
- * @param valid 是否通过
- * @param failure 失败原因，通过时为空
+ * @param valid        是否通过
+ * @param failure      失败原因，通过时为空
  * @param detectedType 内容检测结果，可以为空
  */
 public record FileValidationResult(boolean valid, FileValidationFailure failure, DetectedFileType detectedType) {
@@ -29,7 +29,7 @@ public record FileValidationResult(boolean valid, FileValidationFailure failure,
      * @param detectedType 检测类型
      * @return 成功结果
      */
-    public static FileValidationResult valid(DetectedFileType detectedType) {
+    public static FileValidationResult valid (DetectedFileType detectedType){
         return new FileValidationResult(true, null, detectedType);
     }
 
@@ -40,19 +40,19 @@ public record FileValidationResult(boolean valid, FileValidationFailure failure,
      * @param detectedType 已检测类型
      * @return 失败结果
      */
-    public static FileValidationResult invalid(FileValidationFailure failure, DetectedFileType detectedType) {
+    public static FileValidationResult invalid (FileValidationFailure failure, DetectedFileType detectedType){
         return new FileValidationResult(false, failure, detectedType);
     }
 
-    public DetectedFileType getDetectedType() {
-            return detectedType;
-        }
+    public DetectedFileType getDetectedType () {
+        return detectedType;
+    }
 
-    public FileValidationFailure getFailure() {
-            return failure;
-        }
+    public FileValidationFailure getFailure () {
+        return failure;
+    }
 
-    public boolean isValid() {
-            return valid;
-        }
+    public boolean isValid () {
+        return valid;
+    }
 }

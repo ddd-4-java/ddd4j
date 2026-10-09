@@ -36,11 +36,31 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
-/** Javalin runtime wiring for the shared production-style Order sample. */
+/**
+ * Javalin runtime wiring for the shared production-style Order sample.
+ */
 @Slf4j
 public final class JavalinSample {
 
     private JavalinSample() {
+    }
+
+    AutoCloseable {
+
+        public JavalinApplication {
+            Objects.requireNonNull(app, "app must not be null");
+            Objects.requireNonNull(token, "token must not be null");
+            Objects.requireNonNull(spiScope, "spiScope must not be null");
+        }
+
+        @Override
+        public void close () {
+            try {
+                app.stop();
+            } finally {
+                spiScope.close();
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -80,23 +100,7 @@ public final class JavalinSample {
             throw exception;
         }
     }
+            implements
 
     public record JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope)
-            implements AutoCloseable {
-
-        public JavalinApplication {
-            Objects.requireNonNull(app, "app must not be null");
-            Objects.requireNonNull(token, "token must not be null");
-            Objects.requireNonNull(spiScope, "spiScope must not be null");
-        }
-
-        @Override
-        public void close() {
-            try {
-                app.stop();
-            } finally {
-                spiScope.close();
-            }
-        }
-    }
 }

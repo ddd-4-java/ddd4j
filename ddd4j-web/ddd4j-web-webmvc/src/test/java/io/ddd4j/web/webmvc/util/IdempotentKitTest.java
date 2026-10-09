@@ -15,7 +15,6 @@
 package io.ddd4j.web.webmvc.util;
 
 import io.ddd4j.annotation.api.ApiIdempotent;
-import io.ddd4j.annotation.api.ApiIdempotentType;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;

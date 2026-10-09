@@ -14,21 +14,11 @@
  */
 package io.ddd4j.data.projection;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

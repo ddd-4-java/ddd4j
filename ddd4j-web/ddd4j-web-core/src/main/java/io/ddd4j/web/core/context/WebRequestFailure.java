@@ -19,15 +19,15 @@ package io.ddd4j.web.core.context;
  */
 public record WebRequestFailure(String method, String path, Throwable cause) {
 
-    public Throwable getCause() {
-            return cause;
-        }
+    public Throwable getCause () {
+        return cause;
+    }
 
-    public String getMethod() {
-            return method;
-        }
+    public String getMethod () {
+        return method;
+    }
 
-    public String getPath() {
-            return path;
-        }
+    public String getPath () {
+        return path;
+    }
 }

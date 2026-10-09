@@ -18,13 +18,11 @@ import io.ddd4j.mq.message.MessageHeaders;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.codec.message.MqttPublishMessage;
 import org.dromara.mica.mqtt.codec.properties.UserProperties;
-import org.junit.jupiter.api.Test;
 import org.dromara.mica.mqtt.core.client.MqttClient;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * MicaMqtt 用户属性读取测试。

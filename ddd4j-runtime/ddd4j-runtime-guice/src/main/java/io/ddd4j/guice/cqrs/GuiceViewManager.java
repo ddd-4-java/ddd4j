@@ -16,14 +16,8 @@ package io.ddd4j.guice.cqrs;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.guice.GuiceConstants;
-import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,20 +35,34 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseable {
 
-    /** default thread pool size */
+    /**
+     * default thread pool size
+     */
     private static final int DEFAULT_THREAD_POOL_SIZE = GuiceConstants.DEFAULT_THREAD_POOL_SIZE;
 
-    /** projection position repository (optional, for real status queries) */
+    /**
+     * projection position repository (optional, for real status queries)
+     */
     private final ProjectionPositionRepository positionRepository;
-    /** projection metrics (optional, for backfilling runtime status fields) */
+    /**
+     * projection metrics (optional, for backfilling runtime status fields)
+     */
     private final ProjectionMetrics projectionMetrics;
-    /** running state flag */
+    /**
+     * running state flag
+     */
     private final AtomicBoolean running = new AtomicBoolean(false);
-    /** scheduled view task handle map */
+    /**
+     * scheduled view task handle map
+     */
     private final ConcurrentMap<String, ScheduledFuture<?>> handles = new ConcurrentHashMap<>();
-    /** thread pool size */
+    /**
+     * thread pool size
+     */
     private final int threadPoolSize;
-    /** scheduler thread pool */
+    /**
+     * scheduler thread pool
+     */
     private ScheduledExecutorService executor;
 
     /**
@@ -78,7 +86,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     /**
      * Create a new GuiceViewManager with specified thread pool size and position repository.
      *
-     * @param threadPoolSize    thread pool size for the scheduler
+     * @param threadPoolSize     thread pool size for the scheduler
      * @param positionRepository projection position repository; null disables real status queries
      * @throws IllegalArgumentException if threadPoolSize is less than 1
      */
@@ -89,7 +97,7 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
     /**
      * Create a new GuiceViewManager with specified thread pool size, position repository, and projection metrics.
      *
-     * @param threadPoolSize    thread pool size for the scheduler
+     * @param threadPoolSize     thread pool size for the scheduler
      * @param positionRepository projection position repository; null disables real status queries
      * @param projectionMetrics  projection metrics; null disables runtime status backfill
      * @throws IllegalArgumentException if threadPoolSize is less than 1

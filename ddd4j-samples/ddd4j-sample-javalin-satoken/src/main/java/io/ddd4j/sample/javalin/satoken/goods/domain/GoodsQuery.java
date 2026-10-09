@@ -17,7 +17,6 @@ package io.ddd4j.sample.javalin.satoken.goods.domain;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.kit.lang.StrKit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

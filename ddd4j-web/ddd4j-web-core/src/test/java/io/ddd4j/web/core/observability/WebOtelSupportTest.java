@@ -36,17 +36,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class WebOtelSupportTest {
 
     private InMemorySpanExporter exporter;
     private SdkTracerProvider tracerProvider;
+
+    private static void resetOpenTelemetry() throws Exception {
+        GlobalOpenTelemetry.resetForTest();
+        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
+            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            ((AtomicReference<?>) field.get(null)).set(null);
+        }
+        Field available = Ddd4jOtel.class.getDeclaredField("available");
+        available.setAccessible(true);
+        available.setBoolean(null, false);
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -124,17 +131,5 @@ class WebOtelSupportTest {
         assertDoesNotThrow(() -> WebOtelSupport.recordError(null, null));
         assertDoesNotThrow(() -> WebOtelSupport.endServerSpan(null, 500));
         assertDoesNotThrow(() -> WebOtelSupport.injectResponseContext(null));
-    }
-
-    private static void resetOpenTelemetry() throws Exception {
-        GlobalOpenTelemetry.resetForTest();
-        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
-            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            ((AtomicReference<?>) field.get(null)).set(null);
-        }
-        Field available = Ddd4jOtel.class.getDeclaredField("available");
-        available.setAccessible(true);
-        available.setBoolean(null, false);
     }
 }

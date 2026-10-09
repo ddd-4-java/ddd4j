@@ -14,15 +14,11 @@
  */
 package io.ddd4j.web.micronaut;
 
-import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
 import io.ddd4j.web.core.context.ClientIpResolver;
-import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.micronaut.core.propagation.MutablePropagatedContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
@@ -36,7 +32,6 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

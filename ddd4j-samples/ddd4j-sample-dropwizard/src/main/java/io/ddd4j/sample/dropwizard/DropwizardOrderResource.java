@@ -24,13 +24,7 @@ import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.application.OrderReadModel;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.error.WebStatusException;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Data;
@@ -94,6 +88,9 @@ public final class DropwizardOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
+    public record TokenResponse(String token) {
+    }
+
     @Data
     public static class CreateOrderRequest {
 
@@ -109,8 +106,5 @@ public final class DropwizardOrderResource {
         private String goodsName;
         private int quantity;
         private BigDecimal unitPrice;
-    }
-
-    public record TokenResponse(String token) {
     }
 }

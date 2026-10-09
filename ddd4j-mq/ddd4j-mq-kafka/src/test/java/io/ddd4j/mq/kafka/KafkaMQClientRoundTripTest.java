@@ -14,13 +14,13 @@
  */
 package io.ddd4j.mq.kafka;
 
-import io.ddd4j.mq.MQProperties;
 import io.ddd4j.core.context.BaseContext;
-import org.apache.kafka.clients.admin.AdminClient;
+import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;

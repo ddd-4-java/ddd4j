@@ -14,30 +14,24 @@
  */
 package io.ddd4j.guice;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.name.Names;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.annotation.ddd.AnnotationFusionVerifier;
-import com.google.inject.AbstractModule;
 import io.ddd4j.guice.annotation.ddd.DomainService;
 import io.ddd4j.guice.cqrs.GuiceViewManager;
-import io.ddd4j.guice.DddAnnotationModule;
 import io.ddd4j.guice.i18n.GuiceI18nProvider;
 import io.ddd4j.guice.subject.GuiceSubjectProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 class Ddd4jGuiceModuleTest {
 
@@ -49,19 +43,32 @@ class Ddd4jGuiceModuleTest {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule(), new AbstractModule() {
             @Override
             protected void configure() {
-                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {})
+                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                })
                         .toInstance(reader);
             }
         });
         try {
             java.util.List<Object> handled = new java.util.ArrayList<>();
             io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object> runner = injector.getInstance(
-                    Key.get(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() {}));
+                    Key.get(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() {
+                    }));
             runner.runOnce(new io.ddd4j.core.cqrs.readmodel.ProjectionView<Object>() {
-                public String getName() { return "custom-reader"; }
-                public String getCron() { return "* * * * *"; }
-                public java.util.Collection<String> getEventTypes() { return java.util.Collections.emptyList(); }
-                public void handleEvents(java.util.Collection<Object> events) { handled.addAll(events); }
+                public String getName() {
+                    return "custom-reader";
+                }
+
+                public String getCron() {
+                    return "* * * * *";
+                }
+
+                public java.util.Collection<String> getEventTypes() {
+                    return java.util.Collections.emptyList();
+                }
+
+                public void handleEvents(java.util.Collection<Object> events) {
+                    handled.addAll(events);
+                }
             });
             assertEquals(java.util.Collections.singletonList("event"), handled);
             assertEquals(1L, injector.getInstance(io.ddd4j.core.cqrs.readmodel.ProjectionService.class)
@@ -181,61 +188,6 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector);
     }
 
-    @DomainService
-    public static class TestDomainService {
-    }
-
-    public interface MapperStub {
-    }
-
-    public static class RepositoryStub {
-    }
-
-    public static final class NoopDataSource implements javax.sql.DataSource {
-
-        @Override
-        public java.sql.Connection getConnection() {
-            return null;
-        }
-
-        @Override
-        public java.sql.Connection getConnection(String username, String password) {
-            return null;
-        }
-
-        @Override
-        public java.io.PrintWriter getLogWriter() {
-            return null;
-        }
-
-        @Override
-        public void setLogWriter(java.io.PrintWriter out) {
-        }
-
-        @Override
-        public void setLoginTimeout(int seconds) {
-        }
-
-        @Override
-        public int getLoginTimeout() {
-            return 0;
-        }
-
-        @Override
-        public java.util.logging.Logger getParentLogger() {
-            return java.util.logging.Logger.getGlobal();
-        }
-
-        @Override
-        public <T> T unwrap(Class<T> iface) {
-            return null;
-        }
-
-        @Override
-        public boolean isWrapperFor(Class<?> iface) {
-            return false;
-        }
-    }
     @Test
     void providesMethodsInstantiateOnDemand() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());
@@ -330,6 +282,62 @@ class Ddd4jGuiceModuleTest {
                 new DddAnnotationModule("io.ddd4j.guice.testbeans"));
 
         assertNotNull(injector.getInstance(io.ddd4j.guice.testbeans.OrderService.class));
+    }
+
+    public interface MapperStub {
+    }
+
+    @DomainService
+    public static class TestDomainService {
+    }
+
+    public static class RepositoryStub {
+    }
+
+    public static final class NoopDataSource implements javax.sql.DataSource {
+
+        @Override
+        public java.sql.Connection getConnection() {
+            return null;
+        }
+
+        @Override
+        public java.sql.Connection getConnection(String username, String password) {
+            return null;
+        }
+
+        @Override
+        public java.io.PrintWriter getLogWriter() {
+            return null;
+        }
+
+        @Override
+        public void setLogWriter(java.io.PrintWriter out) {
+        }
+
+        @Override
+        public int getLoginTimeout() {
+            return 0;
+        }
+
+        @Override
+        public void setLoginTimeout(int seconds) {
+        }
+
+        @Override
+        public java.util.logging.Logger getParentLogger() {
+            return java.util.logging.Logger.getGlobal();
+        }
+
+        @Override
+        public <T> T unwrap(Class<T> iface) {
+            return null;
+        }
+
+        @Override
+        public boolean isWrapperFor(Class<?> iface) {
+            return false;
+        }
     }
 
     public static class ExecutorStub implements io.ddd4j.core.cqrs.command.CommandExecutor<io.ddd4j.core.cqrs.command.Command> {

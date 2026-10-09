@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,9 @@
 
     <artifactId>ddd4j-sample-quarkus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Quarkus 框架启动示例：演示 ddd4j 在 Quarkus CDI 容器下的启动与业务装配。 包含 ddd4j-runtime-quarkus 的 SPI 自动注入、ddd4j-web-quarkus 的 JAX-RS 资源基类， 以及 4 个核心 SPI 的示例实现。</description>
+    <description>Quarkus 框架启动示例：演示 ddd4j 在 Quarkus CDI 容器下的启动与业务装配。 包含 ddd4j-runtime-quarkus 的
+        SPI 自动注入、ddd4j-web-quarkus 的 JAX-RS 资源基类， 以及 4 个核心 SPI 的示例实现。
+    </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
@@ -121,7 +123,7 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
-</dependencies>
+    </dependencies>
 
     <build>
         <plugins>
