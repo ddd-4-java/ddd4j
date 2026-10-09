@@ -1,4 +1,3 @@
-
 package io.ddd4j.data.config;
 
 import lombok.Data;

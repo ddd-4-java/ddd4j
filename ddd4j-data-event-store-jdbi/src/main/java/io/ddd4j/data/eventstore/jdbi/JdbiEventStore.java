@@ -110,7 +110,9 @@ public class JdbiEventStore implements EventStore {
 
     private final Jdbi jdbi;
     private final EventPayloadSerializer serializer;
-    /** uk_position 唯一约束冲突自动重试（并发 append 全局 position 兜底，回填自 3.0.x）。 */
+    /**
+     * uk_position 唯一约束冲突自动重试（并发 append 全局 position 兜底，回填自 3.0.x）。
+     */
     private final EventStoreRetry retry = new EventStoreRetry();
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
@@ -136,39 +138,39 @@ public class JdbiEventStore implements EventStore {
         try {
             retry.execute("append(" + aggregateType + ":" + aggregateId.asString() + ")", () -> {
                 jdbi.useTransaction(handle -> {
-                long actualVersion = handle.createQuery(CURRENT_VERSION_SQL)
-                        .bind("aggregateType", aggregateType)
-                        .bind("aggregateId", aggregateId.asString())
-                        .mapTo(Long.class)
-                        .one();
-                if (actualVersion != expectedVersion) {
-                    throw new AggregateVersionConflictException(
-                            aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
-                }
-                long maxPosition = handle.createQuery(NEXT_POSITION_SQL)
-                        .mapTo(Long.class)
-                        .one();
-                long position = maxPosition + 1L;
-                long version = expectedVersion;
-                for (DomainEvent<?> event : events) {
-                    version++;
-                    event.setAggregateVersion(new AggregateVersion(version));
-                    handle.createUpdate(INSERT_SQL)
-                            .bind("aggregateId", aggregateId.asString())
+                    long actualVersion = handle.createQuery(CURRENT_VERSION_SQL)
                             .bind("aggregateType", aggregateType)
-                            .bind("version", version)
-                            .bind("position", position)
-                            .bind("eventType", event.getClass().getName())
-                            .bind("eventId", event.getEventId().asString())
-                            .bind("correlationId", event.getCorrelationId() == null ? null : event.getCorrelationId().asString())
-                            .bind("causationId", event.getCausationId() == null ? null : event.getCausationId().asString())
-                            .bind("payload", serializer.serialize(event))
-                            .bind("timestamp", Timestamp.from(event.getEventTimestamp().toInstant()))
-                            .execute();
-                    position++;
-                }
-            });
-            return null;
+                            .bind("aggregateId", aggregateId.asString())
+                            .mapTo(Long.class)
+                            .one();
+                    if (actualVersion != expectedVersion) {
+                        throw new AggregateVersionConflictException(
+                                aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
+                    }
+                    long maxPosition = handle.createQuery(NEXT_POSITION_SQL)
+                            .mapTo(Long.class)
+                            .one();
+                    long position = maxPosition + 1L;
+                    long version = expectedVersion;
+                    for (DomainEvent<?> event : events) {
+                        version++;
+                        event.setAggregateVersion(new AggregateVersion(version));
+                        handle.createUpdate(INSERT_SQL)
+                                .bind("aggregateId", aggregateId.asString())
+                                .bind("aggregateType", aggregateType)
+                                .bind("version", version)
+                                .bind("position", position)
+                                .bind("eventType", event.getClass().getName())
+                                .bind("eventId", event.getEventId().asString())
+                                .bind("correlationId", event.getCorrelationId() == null ? null : event.getCorrelationId().asString())
+                                .bind("causationId", event.getCausationId() == null ? null : event.getCausationId().asString())
+                                .bind("payload", serializer.serialize(event))
+                                .bind("timestamp", Timestamp.from(event.getEventTimestamp().toInstant()))
+                                .execute();
+                        position++;
+                    }
+                });
+                return null;
             });
         } catch (RuntimeException e) {
             throw e;
@@ -225,7 +227,9 @@ public class JdbiEventStore implements EventStore {
         }
     }
 
-    /** 行 → {@link StoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。 */
+    /**
+     * 行 → {@link StoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。
+     */
     private final class StoredEventRowMapper implements RowMapper<StoredEvent> {
 
         @Override
@@ -256,7 +260,9 @@ public class JdbiEventStore implements EventStore {
         }
     }
 
-    /** 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。 */
+    /**
+     * 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。
+     */
     private static final class StringAggregateRootId implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("String");

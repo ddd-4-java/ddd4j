@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * 逗号风格返回list
  *
- * 
+ *
  */
 public class ListStringSplitCommaTypeHandler extends BaseTypeHandler<List<String>> {
 

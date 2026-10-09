@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @DDDAnnotation
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target(value = {ElementType.TYPE,ElementType.FIELD})
+@Target(value = {ElementType.TYPE, ElementType.FIELD})
 public @interface DomainEvent {
 }

@@ -30,7 +30,7 @@ public class Token_Test {
         // 2、从配置文件中获取私钥
         byte[] privateKeyBytes = Base64.getDecoder().decode(rsaPriKey);
         String pri_key = Base64.getEncoder().encodeToString(aesBytesEncryptor.decrypt(privateKeyBytes));
-        System.out.println("私钥 - Base64: " + pri_key );
+        System.out.println("私钥 - Base64: " + pri_key);
         PrivateKey privateKey = SecretKeyUtils.genPrivateKey(SecretKeyUtils.KEY_RSA, aesBytesEncryptor.decrypt(privateKeyBytes));
         System.out.println("私钥: " + privateKey);
 
@@ -51,7 +51,7 @@ public class Token_Test {
         boolean isVerification = secretKeyJWTRepository.verify(publicKey, token, false);
         System.out.println("Token Verification: " + isVerification);
 
-        JwtPayload payload = secretKeyJWTRepository.getPlayload(publicKey, token,false);
+        JwtPayload payload = secretKeyJWTRepository.getPlayload(publicKey, token, false);
         System.out.println("Token Payload: " + payload);
 
     }

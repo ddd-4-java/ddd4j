@@ -18,10 +18,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public final class PulsarMessageAcknowledgment implements MessageAcknowledgment {
 
-    /** MQMessage headers 中存放 Pulsar Consumer 的键 */
+    /**
+     * MQMessage headers 中存放 Pulsar Consumer 的键
+     */
     public static final String HEADER_PULSAR_CONSUMER = "pulsar.consumer";
 
-    /** MQMessage headers 中存放 Pulsar Message 的键 */
+    /**
+     * MQMessage headers 中存放 Pulsar Message 的键
+     */
     public static final String HEADER_PULSAR_MESSAGE = "pulsar.message";
 
     private final Consumer<?> consumer;

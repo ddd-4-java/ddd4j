@@ -54,7 +54,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             if (selected != null) break;
             type = type.getSuperclass();
         }
-        if (selected == null) throw new IllegalStateException("No @EventHandler method found for event type: " + event.getClass().getName());
+        if (selected == null)
+            throw new IllegalStateException("No @EventHandler method found for event type: " + event.getClass().getName());
         try {
             selected.setAccessible(true);
             selected.invoke(this, event);
@@ -71,18 +72,24 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         uncommittedChanges.clear();
     }
 
-    /** 通过已注册的领域仓储保存当前聚合。 */
+    /**
+     * 通过已注册的领域仓储保存当前聚合。
+     */
     @SuppressWarnings("unchecked")
     public <M extends AggregateRoot<ID>> M save() {
         return (M) repository().save(this);
     }
 
-    /** 按聚合标识更新当前聚合；基础仓储默认与 save 语义一致。 */
+    /**
+     * 按聚合标识更新当前聚合；基础仓储默认与 save 语义一致。
+     */
     public <M extends AggregateRoot<ID>> M update() {
         return save();
     }
 
-    /** 通过已注册仓储删除当前聚合。 */
+    /**
+     * 通过已注册仓储删除当前聚合。
+     */
     public void delete() {
         repository().deleteById(id());
     }

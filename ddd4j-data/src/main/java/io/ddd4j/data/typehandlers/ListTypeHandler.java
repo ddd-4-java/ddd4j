@@ -20,35 +20,33 @@ import java.util.List;
 
 /**
  * string->转list集合
- *
+ * <p>
  * 一般常用于json转集合对象，只能转list，
  * 比如我们数据库中有个List的json,如"[{'id':1,'name':'zhouhengzhe'},{'id':2,'name':'zhouhengzhe'}]",此时他转换过来的对象为
  * public class User{
- *     private Integer id;
- *     private String name;
+ * private Integer id;
+ * private String name;
  * }
- *
- *
+ * <p>
+ * <p>
  * 那么我们在mybatisplus中使用方式就为，
  * 首先定义一个继承自ListTypeHandler的类，比如叫UserListTypeHandler
  * public class UserListTypeHandler extends ListTypeHandler<User> {
- *     @Override
- *     protected TypeReference<List<User>> elementType() {
- *         return new TypeReference<List<User>>() {};
- *     }
+ *
+ * @author zhouhengzhe
+ * @Override protected TypeReference<List<User>> elementType() {
+ * return new TypeReference<List<User>>() {};
  * }
- *
- *
+ * }
+ * <p>
+ * <p>
  * 然后在mybatis中对应的实体类上加上注解
  * 整个对象上要加@TableName("user_list",autoResultMap = true)
- *
- *
+ * <p>
+ * <p>
  * 其属性上为
  * @TableField(typeHandler = UserListTypeHandler.class)
  * private List<User> users;
- *
- *
- * @author zhouhengzhe
  */
 @MappedJdbcTypes(JdbcType.VARBINARY)
 @MappedTypes({List.class})

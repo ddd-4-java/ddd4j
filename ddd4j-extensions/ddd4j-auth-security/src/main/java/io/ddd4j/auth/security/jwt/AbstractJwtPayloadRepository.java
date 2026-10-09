@@ -47,12 +47,14 @@ public abstract class AbstractJwtPayloadRepository implements JwtPayloadReposito
 
     /**
      * 获取用于对JWT进行数字签名的签名密钥。
+     *
      * @return
      */
     abstract Key getSigningKey();
 
     /**
      * 获取用于验证任何发现的JWS数字签名的算法特定签名验证密钥。
+     *
      * @return
      */
     abstract Key getVerificationKey();
@@ -117,7 +119,7 @@ public abstract class AbstractJwtPayloadRepository implements JwtPayloadReposito
                     jwtIssueProperteis.getIssuer(), userId, claims, jwtIssueProperteis.getAlgorithm(),
                     jwtIssueProperteis.getExpire().toMillis());
             // 2、设置Redis缓存
-            if(Objects.nonNull(jwtIssueProperteis.getExpire())){
+            if (Objects.nonNull(jwtIssueProperteis.getExpire())) {
                 getRedisOperationTemplate().set(jwtId, jwtString, jwtIssueProperteis.getExpire());
             } else {
                 getRedisOperationTemplate().set(jwtId, jwtString);
@@ -160,11 +162,11 @@ public abstract class AbstractJwtPayloadRepository implements JwtPayloadReposito
             }
 
             // 4、检查 JWT 是否在有效期内
-            if(Objects.nonNull(notBefore) && now.getTime() <= notBefore.getTime()) {
+            if (Objects.nonNull(notBefore) && now.getTime() <= notBefore.getTime()) {
                 log.warn("JWT was not obtained before this timestamp : [{}].", notBefore);
                 return Boolean.FALSE;
             }
-            if(Objects.nonNull(expiration) && expiration.getTime() < now.getTime()) {
+            if (Objects.nonNull(expiration) && expiration.getTime() < now.getTime()) {
                 log.warn("JWT has expired : [{}].", expiration);
                 return Boolean.FALSE;
             }

@@ -2,6 +2,7 @@ package io.ddd4j.core.cqrs.query;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.util.SFunction;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-/** ORM 无关的 Lambda 查询条件模型。 */
+/**
+ * ORM 无关的 Lambda 查询条件模型。
+ */
 @SuppressWarnings("unchecked")
 public abstract class Query<M extends AggregateRoot<?>> implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -19,6 +22,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     private final List<LambdaCondition> conditions = new ArrayList<LambdaCondition>();
     private final List<LambdaCondition> orderByConditions = new ArrayList<LambdaCondition>();
     private final List<LambdaCondition> setOperations = new ArrayList<LambdaCondition>();
+
     public <Q extends Query<M>> Q eq(SFunction<M, ?> column, Object value) {
         return eq(true, column, value);
     }
@@ -242,7 +246,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     }
 
     private <Q extends Query<M>> Q addCollectionCondition(boolean condition, SFunction<M, ?> column,
-                                                            String operator, Collection<?> values) {
+                                                          String operator, Collection<?> values) {
         if (condition && Objects.nonNull(values) && !values.isEmpty()) {
             conditions.add(new LambdaCondition(PropertyRef.domain(column), operator,
                     new ArrayList<Object>(values)));

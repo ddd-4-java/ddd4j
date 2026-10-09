@@ -28,12 +28,27 @@ class DefaultCommandBusTest {
 
     private static final class GreetingCommand implements Command {
         private final String name;
-        private GreetingCommand(String name) { this.name = name; }
+
+        private GreetingCommand(String name) {
+            this.name = name;
+        }
     }
-    private static final class UnknownCommand implements Command { }
+
+    private static final class UnknownCommand implements Command {
+    }
+
     private static class GreetingExecutor implements CommandExecutor<GreetingCommand> {
-        @Override public Result<String> execute(GreetingCommand command) { return Result.ok("hello " + command.name); }
-        @Override public Set<Class<? extends Command>> supportedCommands() { return Collections.<Class<? extends Command>>singleton(GreetingCommand.class); }
+        @Override
+        public Result<String> execute(GreetingCommand command) {
+            return Result.ok("hello " + command.name);
+        }
+
+        @Override
+        public Set<Class<? extends Command>> supportedCommands() {
+            return Collections.<Class<? extends Command>>singleton(GreetingCommand.class);
+        }
     }
-    private static final class DuplicateGreetingExecutor extends GreetingExecutor { }
+
+    private static final class DuplicateGreetingExecutor extends GreetingExecutor {
+    }
 }

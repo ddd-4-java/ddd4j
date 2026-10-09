@@ -17,10 +17,14 @@ import java.util.function.Consumer;
 @Slf4j
 public final class RocketMessageAcknowledgment implements MessageAcknowledgment {
 
-    /** MQMessage headers 中存放 MessageExt 的键 */
+    /**
+     * MQMessage headers 中存放 MessageExt 的键
+     */
     public static final String HEADER_ROCKET_MESSAGE = "rocket.messageExt";
 
-    /** MQMessage headers 中存放消费结果回调的键 */
+    /**
+     * MQMessage headers 中存放消费结果回调的键
+     */
     public static final String HEADER_ROCKET_ACK_CALLBACK = "rocket.ackCallback";
 
     private final MessageExt messageExt;

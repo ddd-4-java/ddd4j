@@ -12,9 +12,9 @@ import io.ddd4j.mq.contract.MQDestination;
  */
 public interface MQEventPublisherContract {
 
-	<T extends MQEvent> void publish(T event, MQDestination destination);
+    <T extends MQEvent> void publish(T event, MQDestination destination);
 
-	default void publish(MQEvent event) {
-		publish(event, MQDestination.from(event));
-	}
+    default void publish(MQEvent event) {
+        publish(event, MQDestination.from(event));
+    }
 }

@@ -18,7 +18,9 @@ import java.util.List;
 public class MQListenerDefinition {
 
     private final Object bean;
-    /** Spring Bean 名称（BeanPostProcessor 阶段登记）。 */
+    /**
+     * Spring Bean 名称（BeanPostProcessor 阶段登记）。
+     */
     private final String beanName;
     private final Method method;
     private final String group;

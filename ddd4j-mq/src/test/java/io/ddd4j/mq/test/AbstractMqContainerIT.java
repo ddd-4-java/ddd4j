@@ -31,13 +31,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public abstract class AbstractMqContainerIT {
 
-    /** 统一冒烟 topic。 */
+    /**
+     * 统一冒烟 topic。
+     */
     protected static final String SMOKE_TOPIC = "smoke";
-    /** 统一冒烟 tag。 */
+    /**
+     * 统一冒烟 tag。
+     */
     protected static final String SMOKE_TAG = "ping";
-    /** 统一冒烟租户。 */
+    /**
+     * 统一冒烟租户。
+     */
     protected static final String SMOKE_TENANT_ID = "tenant-it";
-    /** 统一冒烟 namespace。 */
+    /**
+     * 统一冒烟 namespace。
+     */
     protected static final String SMOKE_NAMESPACE = "it";
 
     @Autowired

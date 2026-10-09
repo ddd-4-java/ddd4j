@@ -60,6 +60,6 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
         <!-- Compile dependencies -->
-</dependencies>
+    </dependencies>
 
 </project>

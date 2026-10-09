@@ -12,6 +12,7 @@ public class LocalTimeFormatter implements Formatter<LocalTime> {
     public LocalTimeFormatter(String pattern) {
         FORMATTER = DateTimeFormatter.ofPattern(pattern, Locale.CHINESE);
     }
+
     public LocalTime parse(String text, Locale locale) {
         return LocalTime.parse(text, FORMATTER);
     }

@@ -34,13 +34,13 @@ public class JwtIssueProperteis {
     private String aecIv;
     /**
      * 过期时间（7天），1d
-     *  "?ns" //纳秒
-     *  "?us" //微秒
-     *  "?ms" //毫秒
-     *  "?s" //秒
-     *  "?m" //分
-     *  "?h" //小时
-     *  "?d" //天
+     * "?ns" //纳秒
+     * "?us" //微秒
+     * "?ms" //毫秒
+     * "?s" //秒
+     * "?m" //分
+     * "?h" //小时
+     * "?d" //天
      */
     @Value("#{T(org.springframework.boot.convert.DurationStyle).detectAndParse('${jwt.expire:7d}')}")
     private Duration expire;

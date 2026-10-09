@@ -34,93 +34,93 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 public class MybatisExceptionHandler extends BaseExceptionHandler {
 
-	@Autowired
-	private NestedMessageSource messageSource;
+    @Autowired
+    private NestedMessageSource messageSource;
 
-	/**---------------------Mybatis 异常----------------------------*/
+    /**---------------------Mybatis 异常----------------------------*/
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ BindingException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisBindingException(BindingException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:绑定异常");
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({BindingException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisBindingException(BindingException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:绑定异常");
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ CacheException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisCacheException(CacheException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:缓存异常");
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({CacheException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisCacheException(CacheException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:缓存异常");
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ DataSourceException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisDataSourceException(DataSourceException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:数据源异常");
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({DataSourceException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisDataSourceException(DataSourceException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:数据源异常");
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ PluginException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisPluginException(PluginException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:插件异常");
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({PluginException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisPluginException(PluginException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:插件异常");
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ ResultMapException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisResultMapException(ResultMapException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:结果集异常");
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({ResultMapException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisResultMapException(ResultMapException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:结果集异常");
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ TooManyResultsException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisTooManyResultsException(TooManyResultsException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:结果集异常,返回了多条数据");
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({TooManyResultsException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisTooManyResultsException(TooManyResultsException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis:结果集异常,返回了多条数据");
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ PersistenceException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisPersistenceException(PersistenceException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis 内部异常：" + ex.getMessage());
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({PersistenceException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisPersistenceException(PersistenceException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis 内部异常：" + ex.getMessage());
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	/**
-	 * 500 (Internal Server Error)
-	 */
-	@ExceptionHandler({ MybatisPlusException.class })
-	public ResponseEntity<ApiRestResponse<String>> mybatisPlusException(MybatisPlusException ex) {
-		this.logException(ex);
-		ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis Plus 异常：" + ex.getMessage());
-		return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    /**
+     * 500 (Internal Server Error)
+     */
+    @ExceptionHandler({MybatisPlusException.class})
+    public ResponseEntity<ApiRestResponse<String>> mybatisPlusException(MybatisPlusException ex) {
+        this.logException(ex);
+        ApiRestResponse<String> resp = ApiCode.SC_INTERNAL_SERVER_ERROR.toResponse("MyBatis Plus 异常：" + ex.getMessage());
+        return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-	public NestedMessageSource getMessageSource() {
-		return messageSource;
-	}
+    public NestedMessageSource getMessageSource() {
+        return messageSource;
+    }
 
 }

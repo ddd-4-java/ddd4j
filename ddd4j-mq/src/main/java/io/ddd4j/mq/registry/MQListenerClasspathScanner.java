@@ -26,10 +26,10 @@ public final class MQListenerClasspathScanner {
     /**
      * 扫描 Bean 定义注册表中的用户 Bean 类，回调每个 {@link MQEventListener} 方法。
      *
-     * @param beanNames          Bean 名称列表
+     * @param beanNames            Bean 名称列表
      * @param beanDefinitionLookup BeanDefinition 查找函数
-     * @param classLoader        类加载器
-     * @param consumer           回调 (beanName, annotatedMethod)
+     * @param classLoader          类加载器
+     * @param consumer             回调 (beanName, annotatedMethod)
      */
     public static void scanBeanDefinitions(
             Iterable<String> beanNames,
@@ -89,10 +89,10 @@ public final class MQListenerClasspathScanner {
         }
     }
 
-  private static boolean isInfrastructureClass(Class<?> clazz) {
-    String name = clazz.getName();
-    return name.startsWith("org.springframework")
-        || name.startsWith("java.")
-        || name.startsWith("jakarta.");
-  }
+    private static boolean isInfrastructureClass(Class<?> clazz) {
+        String name = clazz.getName();
+        return name.startsWith("org.springframework")
+                || name.startsWith("java.")
+                || name.startsWith("jakarta.");
+    }
 }

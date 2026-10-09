@@ -35,7 +35,7 @@ public class KeyPair_Test {
 
         privateKeyBytes = Base64.getDecoder().decode(rsaPriKey);
         pri_key = Base64.getEncoder().encodeToString(aesBytesEncryptor.decrypt(privateKeyBytes));
-        System.out.println("私钥 - Base64: " + pri_key );
+        System.out.println("私钥 - Base64: " + pri_key);
 
         PublicKey publicKey = SecretKeyUtils.genPublicKey(SecretKeyUtils.KEY_RSA, publicKeyBytes);
         PrivateKey privateKey = SecretKeyUtils.genPrivateKey(SecretKeyUtils.KEY_RSA, aesBytesEncryptor.decrypt(privateKeyBytes));

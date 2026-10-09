@@ -15,14 +15,14 @@ import java.io.Serializable;
  * 通用 Service 接口（MyBatis Plus 轨道）。
  *
  * @param <T> 持有的实体对象
- * @deprecated 自 3.4.x 起，ddd4j 重构为纯 DDD 脚手架。本接口继承 MyBatis Plus 的
- *             {@link IService}，导致领域层耦合 ORM 框架。
- *             <p>
- *             <b>替代方案</b>：使用 {@link io.ddd4j.core.contract.Repository}
- *             （框架无关的仓储接口，领域层定义、基础设施层实现）。
- *             <p>
- *             本接口将在 5.0.x 版本移除。
  * @author <a href="https://github.com/wandl">wandl</a>
+ * @deprecated 自 3.4.x 起，ddd4j 重构为纯 DDD 脚手架。本接口继承 MyBatis Plus 的
+ * {@link IService}，导致领域层耦合 ORM 框架。
+ * <p>
+ * <b>替代方案</b>：使用 {@link io.ddd4j.core.contract.Repository}
+ * （框架无关的仓储接口，领域层定义、基础设施层实现）。
+ * <p>
+ * 本接口将在 5.0.x 版本移除。
  */
 @Deprecated
 public interface IBaseService<T extends Model<?>> extends IService<T> {

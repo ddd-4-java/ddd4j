@@ -3,7 +3,9 @@ package io.ddd4j.core.cqrs.query;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.util.SFunction;
+
 import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +58,7 @@ class QueryTest {
         assertEquals(-1L, query.getSize());
         assertTrue(query.getOrderByConditions().isEmpty());
     }
+
     private static final class TestQuery extends Query<TestAggregate> {
     }
 

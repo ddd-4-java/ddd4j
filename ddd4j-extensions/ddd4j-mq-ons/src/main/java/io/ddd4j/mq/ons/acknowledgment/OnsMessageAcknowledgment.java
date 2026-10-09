@@ -27,11 +27,11 @@ public final class OnsMessageAcknowledgment implements MessageAcknowledgment {
     /**
      * 构造 ONS 确认对象。
      *
-     * @param messageId        消息 ID
-     * @param correlationId    关联 ID
-     * @param deliveryTag      投递序号（通常为 reconsumeTimes）
-     * @param commitAction     提交成功回调
-     * @param reconsumeAction  重新消费回调
+     * @param messageId       消息 ID
+     * @param correlationId   关联 ID
+     * @param deliveryTag     投递序号（通常为 reconsumeTimes）
+     * @param commitAction    提交成功回调
+     * @param reconsumeAction 重新消费回调
      */
     public OnsMessageAcknowledgment(String messageId,
                                     String correlationId,
