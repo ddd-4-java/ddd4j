@@ -78,8 +78,15 @@ public class MqttMQClient implements MQClient {
         return "mqtt";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     @Override
     public String defaultConcat() {
@@ -209,23 +216,35 @@ public class MqttMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
     private static void unsubscribe(org.eclipse.paho.client.mqttv3.MqttClient client, String topic) {
-        try { client.unsubscribe(topic); } catch (Exception exception) {
+        try {
+            client.unsubscribe(topic);
+        } catch (Exception exception) {
             throw new IllegalStateException("Unsubscribe MQTT topic failed", exception);
         }
     }
 
     private static void disconnectClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
-        try { if (client.isConnected()) { client.disconnect(); } } catch (Exception exception) {
+        try {
+            if (client.isConnected()) {
+                client.disconnect();
+            }
+        } catch (Exception exception) {
             throw new IllegalStateException("Disconnect MQTT client failed", exception);
         }
     }
 
     private static void closeClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
-        try { client.close(); } catch (Exception exception) {
+        try {
+            client.close();
+        } catch (Exception exception) {
             throw new IllegalStateException("Close MQTT client failed", exception);
         }
     }

@@ -9,7 +9,9 @@ import java.util.Deque;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** MQ客户端拥有资源的LIFO、幂等生命周期。 */
+/**
+ * MQ客户端拥有资源的LIFO、幂等生命周期。
+ */
 public final class MQClientLifecycle implements AutoCloseable {
 
     private static final MQClientLifecycle UNMANAGED = new MQClientLifecycle(false);

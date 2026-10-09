@@ -6,7 +6,9 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/** 验证业务异常包装外部失败时保留完整诊断原因。 */
+/**
+ * 验证业务异常包装外部失败时保留完整诊断原因。
+ */
 class BizExceptionCauseTest {
 
     @Test

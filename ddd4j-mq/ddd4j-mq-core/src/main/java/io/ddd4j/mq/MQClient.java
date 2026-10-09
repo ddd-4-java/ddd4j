@@ -241,7 +241,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     private MQListenerInitializationFailure failure(MQListener listener, boolean required,
-                                                     Throwable exception) {
+                                                    Throwable exception) {
         String topic = Objects.isNull(listener) ? "" : Objects.toString(listener.getTopic(), "");
         String group = Objects.isNull(listener) ? "" : Objects.toString(listener.getGroup(), "");
         String method = Objects.isNull(listener) || Objects.isNull(listener.getMethod())
@@ -252,7 +252,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     private MQInitializationException initializationException(MQListenerInitializationFailure failure,
-                                                               Throwable cause) {
+                                                              Throwable cause) {
         return new MQInitializationException(failure.broker(), failure.topic(), failure.group(),
                 failure.listenerMethod(), cause);
     }

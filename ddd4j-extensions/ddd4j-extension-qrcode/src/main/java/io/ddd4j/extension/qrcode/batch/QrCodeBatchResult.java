@@ -20,7 +20,9 @@ import java.util.List;
 
 import lombok.Getter;
 
-/** Ordered, non-atomic batch result. */
+/**
+ * Ordered, non-atomic batch result.
+ */
 @Getter
 public final class QrCodeBatchResult {
 

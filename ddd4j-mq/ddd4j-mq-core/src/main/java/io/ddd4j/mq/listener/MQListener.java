@@ -84,13 +84,17 @@ public class MQListener {
         private boolean required = true;
     }
 
-    /** 保留历史八参数构造器。 */
+    /**
+     * 保留历史八参数构造器。
+     */
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator) {
         this(bean, method, group, namespace, topic, tags, supports, separator, true);
     }
 
-    /** 包含启动必要性的完整构造器。 */
+    /**
+     * 包含启动必要性的完整构造器。
+     */
     @Builder
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator, boolean required) {

@@ -50,9 +50,20 @@ class MQClientPersistenceContractTest {
 
     private MQClient client() {
         return new MQClient() {
-            @Override public String impl() { return "test"; }
-            @Override public Consumer<MQEvent> initProducer(MQProperties properties) { return null; }
-            @Override public boolean initConsumer(MQListener listener, MQProperties properties) { return false; }
+            @Override
+            public String impl() {
+                return "test";
+            }
+
+            @Override
+            public Consumer<MQEvent> initProducer(MQProperties properties) {
+                return null;
+            }
+
+            @Override
+            public boolean initConsumer(MQListener listener, MQProperties properties) {
+                return false;
+            }
         };
     }
 
@@ -66,8 +77,16 @@ class MQClientPersistenceContractTest {
 
     private MQEventSerialization serialization() {
         return new MQEventSerialization() {
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
-            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
         };
     }
 
@@ -86,7 +105,13 @@ class MQClientPersistenceContractTest {
 
     public static final class Handler {
         private final AtomicBoolean invoked;
-        Handler(AtomicBoolean invoked) { this.invoked = invoked; }
-        public void handle(MQEvent event) { invoked.set(true); }
+
+        Handler(AtomicBoolean invoked) {
+            this.invoked = invoked;
+        }
+
+        public void handle(MQEvent event) {
+            invoked.set(true);
+        }
     }
 }

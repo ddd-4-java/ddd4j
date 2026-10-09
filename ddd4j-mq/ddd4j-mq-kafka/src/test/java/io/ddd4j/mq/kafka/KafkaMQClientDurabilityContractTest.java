@@ -76,8 +76,13 @@ class KafkaMQClientDurabilityContractTest {
         KafkaMQClient client = new KafkaMQClient(mock(Producer.class), null);
         MQProperties properties = properties();
         client.init(Collections.<MQListener>emptyList(), properties, new MQEventSerialization() {
-            @Override public <T> T serialize(Object event) { return (T) "{}"; }
-            @Override public <S, T> T deserialize(S value, Class<T> type) {
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
                 throw new IllegalArgumentException("invalid payload");
             }
         }, null);

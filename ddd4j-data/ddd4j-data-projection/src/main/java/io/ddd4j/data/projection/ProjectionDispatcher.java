@@ -140,8 +140,8 @@ public class ProjectionDispatcher {
      * @param event   领域事件，非空
      * @param handler 订阅该事件的 handler，非空
      * @return 应用并提交完成后的 future（同步完成）
-     * @throws NullPointerException     event 或 handler 为 null
-     * @throws RuntimeException         handler 应用失败时原样传播（位置不推进）
+     * @throws NullPointerException event 或 handler 为 null
+     * @throws RuntimeException     handler 应用失败时原样传播（位置不推进）
      */
     public CompletableFuture<Void> dispatchOne(DomainEvent<?> event, ProjectionHandler handler) {
         DomainEvent<?> actualEvent = Objects.requireNonNull(event, "event must not be null");

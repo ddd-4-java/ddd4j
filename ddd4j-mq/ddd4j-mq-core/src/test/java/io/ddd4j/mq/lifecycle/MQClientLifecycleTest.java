@@ -49,8 +49,12 @@ class MQClientLifecycleTest {
         MQClientLifecycle lifecycle = new MQClientLifecycle();
         AtomicInteger successfulClose = new AtomicInteger();
         lifecycle.register("successful", successfulClose::incrementAndGet);
-        lifecycle.register("first-failure", () -> { throw new IllegalStateException("first"); });
-        lifecycle.register("second-failure", () -> { throw new IllegalArgumentException("second"); });
+        lifecycle.register("first-failure", () -> {
+            throw new IllegalStateException("first");
+        });
+        lifecycle.register("second-failure", () -> {
+            throw new IllegalArgumentException("second");
+        });
 
         IllegalStateException exception = assertThrows(IllegalStateException.class, lifecycle::close);
 

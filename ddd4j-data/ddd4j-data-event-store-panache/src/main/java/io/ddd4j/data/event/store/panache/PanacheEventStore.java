@@ -51,7 +51,7 @@ public class PanacheEventStore implements EventStore {
      * 创建带重试策略的 Panache 事件存储。
      *
      * @param entityManager JPA EntityManager
-     * @param retry position 唯一约束冲突的重试策略
+     * @param retry         position 唯一约束冲突的重试策略
      */
     public PanacheEventStore(EntityManager entityManager, EventStoreRetry retry) {
         this(entityManager, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));

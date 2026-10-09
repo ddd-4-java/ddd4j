@@ -14,15 +14,17 @@
 2. 双许可证或多许可证必须明确选择其中一个兼容分支，禁止仅因表达式包含未知许可证而整体拒绝。
 3. 允许在具有官方证据时选择 `CDDL-1.1`。
 4. 自动允许的宽松许可证集合为：
-   - `Apache-2.0`
-   - `MIT`
-   - `BSD-2-Clause`
-   - `BSD-3-Clause`
-   - `ISC`
-   - `MulanPSL-2.0`
-   - `UPL-1.0`、`W3C`、`Bouncy-Castle`、`CC0-1.0`、`MIT-0` 和 Public Domain
-5. `EPL-1.0/2.0`、`MPL-1.1/2.0`、`CDDL-1.0/1.1`、`LGPL-2.1` 和 `GPL-2.0-with-classpath-exception` 作为未修改的独立第三方 JAR 有条件允许；不得复制、修改、fork 或静态合并其覆盖源码，发布时保留许可证、NOTICE、版权和上游源码地址，并满足对应替换/重新链接义务。
-6. `GPL-2.0-with-classpath-exception` 只能作为官方声明表达式的一部分记录；多许可证默认优先选择同一坐标提供的 Apache、EPL、MPL 或 CDDL 分支。
+    - `Apache-2.0`
+    - `MIT`
+    - `BSD-2-Clause`
+    - `BSD-3-Clause`
+    - `ISC`
+    - `MulanPSL-2.0`
+    - `UPL-1.0`、`W3C`、`Bouncy-Castle`、`CC0-1.0`、`MIT-0` 和 Public Domain
+5. `EPL-1.0/2.0`、`MPL-1.1/2.0`、`CDDL-1.0/1.1`、`LGPL-2.1` 和 `GPL-2.0-with-classpath-exception` 作为未修改的独立第三方
+   JAR 有条件允许；不得复制、修改、fork 或静态合并其覆盖源码，发布时保留许可证、NOTICE、版权和上游源码地址，并满足对应替换/重新链接义务。
+6. `GPL-2.0-with-classpath-exception` 只能作为官方声明表达式的一部分记录；多许可证默认优先选择同一坐标提供的
+   Apache、EPL、MPL 或 CDDL 分支。
 7. 无 Classpath Exception 的 GPL、AGPL、SSPL、BUSL、Commons Clause、Non-Commercial、Commercial-only、WTFPL 和 Unknown 默认禁止。
 8. 没有兼容分支、官方证据不足或许可证真实不兼容的依赖必须升级、替换或移除，不得白名单放行。
 
@@ -30,14 +32,14 @@
 
 `config/license-selections.tsv` 调整为以下字段：
 
-| 字段 | 含义 |
-|---|---|
-| `coordinate` | 完整 `groupId:artifactId:version` |
-| `declared_expression` | 报告或官方 POM 声明的许可证表达式 |
-| `selected_spdx` | 本项目明确选择的兼容 SPDX 标识 |
-| `evidence_url` | 官方 POM、官方 LICENSE 或官方源码仓库固定版本链接 |
-| `evidence_type` | `POM`、`LICENSE` 或 `UPSTREAM_SOURCE` |
-| `justification` | 为什么该选择满足项目策略 |
+| 字段                  | 含义                                              |
+|-----------------------|---------------------------------------------------|
+| `coordinate`          | 完整 `groupId:artifactId:version`                 |
+| `declared_expression` | 报告或官方 POM 声明的许可证表达式                 |
+| `selected_spdx`       | 本项目明确选择的兼容 SPDX 标识                    |
+| `evidence_url`        | 官方 POM、官方 LICENSE 或官方源码仓库固定版本链接 |
+| `evidence_type`       | `POM`、`LICENSE` 或 `UPSTREAM_SOURCE`             |
+| `justification`       | 为什么该选择满足项目策略                          |
 
 证据必须满足：
 
@@ -109,20 +111,20 @@ flowchart TD
 ## 7. 测试策略
 
 1. 单元测试覆盖：
-   - 单许可证通过。
-   - 双许可证选择通过。
-   - CDDL-1.1 选择通过。
-   - 缺版本、证据缺失、证据域错误、选择不在声明中、陈旧条目均失败。
+    - 单许可证通过。
+    - 双许可证选择通过。
+    - CDDL-1.1 选择通过。
+    - 缺版本、证据缺失、证据域错误、选择不在声明中、陈旧条目均失败。
 2. 分支本地门禁：
-   - 生成真实 `THIRD-PARTY.txt`。
-   - 执行许可证策略验证。
-   - 执行完整 Reactor `clean verify`。
+    - 生成真实 `THIRD-PARTY.txt`。
+    - 执行许可证策略验证。
+    - 执行完整 Reactor `clean verify`。
 3. CI 门禁：
-   - `SBOM and license reports` 必须成功。
-   - 上传 THIRD-PARTY、选择记录摘要和失败坐标报告。
+    - `SBOM and license reports` 必须成功。
+    - 上传 THIRD-PARTY、选择记录摘要和失败坐标报告。
 4. 三线一致性：
-   - 校验器对象、方法、参数和脚本入口一致。
-   - 仅坐标版本和实际选择记录允许不同。
+    - 校验器对象、方法、参数和脚本入口一致。
+    - 仅坐标版本和实际选择记录允许不同。
 
 ## 8. 验收标准
 

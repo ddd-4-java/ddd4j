@@ -35,14 +35,14 @@ public record WebContractResponse(int status, Map<String, List<String>> headers,
     }
 
     public String getBody() {
-            return body;
-        }
+        return body;
+    }
 
     public Map<String, List<String>> getHeaders() {
-            return headers;
-        }
+        return headers;
+    }
 
     public int getStatus() {
-            return status;
-        }
+        return status;
+    }
 }

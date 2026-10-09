@@ -136,10 +136,12 @@ class ProjectionStatusTest {
         void default实现_running为true_应透传isRunning() {
             ViewManager manager = new ViewManager() {
                 @Override
-                public void start() { }
+                public void start() {
+                }
 
                 @Override
-                public void stop() { }
+                public void stop() {
+                }
 
                 @Override
                 public boolean isRunning() {
@@ -147,7 +149,8 @@ class ProjectionStatusTest {
                 }
 
                 @Override
-                public void triggerOnce() { }
+                public void triggerOnce() {
+                }
             };
 
             ProjectionStatus status = manager.getProjectionStatus("orders");
@@ -164,10 +167,12 @@ class ProjectionStatusTest {
         void default实现_running为false_应透传isRunning() {
             ViewManager manager = new ViewManager() {
                 @Override
-                public void start() { }
+                public void start() {
+                }
 
                 @Override
-                public void stop() { }
+                public void stop() {
+                }
 
                 @Override
                 public boolean isRunning() {
@@ -175,7 +180,8 @@ class ProjectionStatusTest {
                 }
 
                 @Override
-                public void triggerOnce() { }
+                public void triggerOnce() {
+                }
             };
 
             ProjectionStatus status = manager.getProjectionStatus("orders");

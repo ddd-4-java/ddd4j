@@ -29,7 +29,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-/** PostgreSQL JDBC 订单聚合仓储。 */
+/**
+ * PostgreSQL JDBC 订单聚合仓储。
+ */
 public final class JdbcOrderRepository implements OrderRepository {
 
     private final JdbcOrderTransactionPort transaction;

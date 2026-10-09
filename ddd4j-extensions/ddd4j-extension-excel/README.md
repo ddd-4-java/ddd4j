@@ -2,7 +2,9 @@
 
 > ddd4j 的 Excel 通用扩展，基于 [Alibaba EasyExcel 4.x](https://github.com/alibaba/easyexcel) 的门面增强。
 
-把 EasyExcel 的链式 API 翻译成意图明确的命名，业务侧不再出现 `.registerWriteHandler(...)` 这种细节；同时**直接复用 easyexcel 原生注解**（`@ExcelProperty` / `@ExcelIgnore` / `@ColumnWidth` / `@HeadStyle` / `@DateTimeFormat` / `@NumberFormat` / `@ContentLoopMerge`），不引入新的注解体系。
+把 EasyExcel 的链式 API 翻译成意图明确的命名，业务侧不再出现 `.registerWriteHandler(...)` 这种细节；同时 **直接复用
+easyexcel 原生注解**（`@ExcelProperty` / `@ExcelIgnore` / `@ColumnWidth` / `@HeadStyle` / `@DateTimeFormat` /
+`@NumberFormat` / `@ContentLoopMerge`），不引入新的注解体系。
 
 ## 设计原则
 
@@ -10,7 +12,8 @@
 2. **错误不抛到调用方**：导入错误统一通过 `ImportResult.getErrors()` 收集，参考社区共识（Yudao / 灯灯 / RuoYi）。
 3. **流式优先**：大数据量用 `ReadListener` 流式读取，避免 OOM。
 4. **样式对象缓存**：所有样式策略在构造期一次创建，避免触发 easyexcel 提示的"6W 样式上限"。
-5. **不依赖 Spring**：参考兄弟模块（jackson/monitor）的项目惯例，扩展模块本身不引入 Spring AutoConfiguration，由上层 web 模块装配。
+5. **不依赖 Spring**：参考兄弟模块（jackson/monitor）的项目惯例，扩展模块本身不引入 Spring AutoConfiguration，由上层 web
+   模块装配。
 
 ## Quick Start
 
@@ -78,47 +81,47 @@ byte[] bytes = ExcelKit.export(OrderVO.class, data, options);
 
 ### `ExcelKit` 顶层门面
 
-| 类别 | 方法 | 说明 |
-|------|------|------|
-| 导出 | `export(head, data)` / `export(head, data, options)` | 单 sheet 同步导出 |
-| 导出 | `exportMultiSheet(headMap, dataMap)` | 多 sheet |
-| 错误 | `exportError(throwable)` / `exportError(message)` | 错误信息单页 |
-| 错误 | `exportEmptyTemplate(head)` | 仅表头空模板 |
-| 导入 | `importExcel(in, head)` / `importExcel(in, head, listener)` | 错误自动收集 / 自定义 listener |
-| 导入 | `readAll(in, head)` | 同步全量（小数据量语法糖） |
-| 填充 | `fill(template, vars)` / `fillList(template, list)` / `fillComposite(...)` | 模板填充 |
-| Web | `download(response, filename, head, data)` / `download(response, filename, bytes)` | HTTP 下载 |
-| Web | `upload(file, head)` / `upload(file, head, listener)` | HTTP 上传 |
+| 类别 | 方法                                                                               | 说明                           |
+|------|------------------------------------------------------------------------------------|--------------------------------|
+| 导出 | `export(head, data)` / `export(head, data, options)`                               | 单 sheet 同步导出              |
+| 导出 | `exportMultiSheet(headMap, dataMap)`                                               | 多 sheet                       |
+| 错误 | `exportError(throwable)` / `exportError(message)`                                  | 错误信息单页                   |
+| 错误 | `exportEmptyTemplate(head)`                                                        | 仅表头空模板                   |
+| 导入 | `importExcel(in, head)` / `importExcel(in, head, listener)`                        | 错误自动收集 / 自定义 listener |
+| 导入 | `readAll(in, head)`                                                                | 同步全量（小数据量语法糖）     |
+| 填充 | `fill(template, vars)` / `fillList(template, list)` / `fillComposite(...)`         | 模板填充                       |
+| Web  | `download(response, filename, head, data)` / `download(response, filename, bytes)` | HTTP 下载                      |
+| Web  | `upload(file, head)` / `upload(file, head, listener)`                              | HTTP 上传                      |
 
 ### 监听器
 
-| 类 | 用途 |
-|------|------|
+| 类                               | 用途                                         |
+|----------------------------------|----------------------------------------------|
 | `ErrorCollectingReadListener<T>` | 默认 listener，错误自动收集到 `ImportResult` |
-| `BatchReadListener<T>` | 流式分批入库（每 N 行回调 Consumer） |
+| `BatchReadListener<T>`           | 流式分批入库（每 N 行回调 Consumer）         |
 
 ### Converter SPI（基于 `com.alibaba.excel.converters.Converter`）
 
-| 类 | 用途 |
-|------|------|
-| `LocalDateConverter` | `LocalDate ↔ String`（默认 `yyyy-MM-dd`） |
-| `LocalDateTimeConverter` | `LocalDateTime ↔ String`（默认 `yyyy-MM-dd HH:mm:ss`） |
-| `EnumNameConverter<E>` | 通用枚举转换（按 `name()`，可继承自定义 label） |
-| `BigDecimalStringConverter` | `BigDecimal ↔ String`（默认 `#,##0.00`，支持千分位） |
+| 类                          | 用途                                                   |
+|-----------------------------|--------------------------------------------------------|
+| `LocalDateConverter`        | `LocalDate ↔ String`（默认 `yyyy-MM-dd`）              |
+| `LocalDateTimeConverter`    | `LocalDateTime ↔ String`（默认 `yyyy-MM-dd HH:mm:ss`） |
+| `EnumNameConverter<E>`      | 通用枚举转换（按 `name()`，可继承自定义 label）        |
+| `BigDecimalStringConverter` | `BigDecimal ↔ String`（默认 `#,##0.00`，支持千分位）   |
 
 字段级使用：`@ExcelProperty(value="日期", converter=LocalDateConverter.class)`。
 全局使用：`EasyExcel.read(in, head).registerConverter(new LocalDateConverter())...`。
 
 ### 样式策略
 
-| 类 | 用途 |
-|------|------|
-| `ExcelStyleTemplate` | 预设样式枚举（DEFAULT/LIST/FINANCE/MINIMAL/ZEBRA） |
-| `DefaultCellStyleStrategy` | 修复 bug 的默认样式（修复原 `CellStyleStrategy` 的 `columnIndexes.get(0)` 越界） |
-| `DefaultColumnWidthStyleStrategy` | 自动列宽（基于 easyexcel `LongestMatchColumnWidthStyleStrategy`） |
-| `DefaultRowHeightStyleStrategy` | 表头行高 |
-| `FreezePaneStyleStrategy` | 冻结表头 |
-| `AlternatingRowStyleStrategy` | 斑马线（偶数行底色） |
+| 类                                | 用途                                                                             |
+|-----------------------------------|----------------------------------------------------------------------------------|
+| `ExcelStyleTemplate`              | 预设样式枚举（DEFAULT/LIST/FINANCE/MINIMAL/ZEBRA）                               |
+| `DefaultCellStyleStrategy`        | 修复 bug 的默认样式（修复原 `CellStyleStrategy` 的 `columnIndexes.get(0)` 越界） |
+| `DefaultColumnWidthStyleStrategy` | 自动列宽（基于 easyexcel `LongestMatchColumnWidthStyleStrategy`）                |
+| `DefaultRowHeightStyleStrategy`   | 表头行高                                                                         |
+| `FreezePaneStyleStrategy`         | 冻结表头                                                                         |
+| `AlternatingRowStyleStrategy`     | 斑马线（偶数行底色）                                                             |
 
 ## 配置
 
@@ -159,13 +162,13 @@ Tests run: 27, Failures: 0, Errors: 0, Skipped: 0
 
 ## 依赖
 
-| 依赖 | 用途 |
-|------|------|
-| `com.alibaba:easyexcel:4.0.3` | 底层引擎（注解 / EasyExcel / Converter / WriteHandler） |
-| `io.ddd4j:ddd4j-core` | `BizRuntimeException` / `I18nKit` |
-| `org.apache.commons:commons-lang3` | `ExceptionUtils` |
-| `commons-io:commons-io` | 流处理 |
-| `org.springframework:spring-web` | `MultipartFile`（仅 `ExcelHttpKit.upload`） |
+| 依赖                               | 用途                                                    |
+|------------------------------------|---------------------------------------------------------|
+| `com.alibaba:easyexcel:4.0.3`      | 底层引擎（注解 / EasyExcel / Converter / WriteHandler） |
+| `io.ddd4j:ddd4j-core`              | `BizRuntimeException` / `I18nKit`                       |
+| `org.apache.commons:commons-lang3` | `ExceptionUtils`                                        |
+| `commons-io:commons-io`            | 流处理                                                  |
+| `org.springframework:spring-web`   | `MultipartFile`（仅 `ExcelHttpKit.upload`）             |
 
 ## License
 

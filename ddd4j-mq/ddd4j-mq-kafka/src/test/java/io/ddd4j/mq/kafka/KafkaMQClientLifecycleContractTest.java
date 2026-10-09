@@ -38,7 +38,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Kafka 消费组解析和客户端资源所有权的回归契约。 */
+/**
+ * Kafka 消费组解析和客户端资源所有权的回归契约。
+ */
 class KafkaMQClientLifecycleContractTest {
     @AfterEach
     void clearContext() {
@@ -238,7 +240,8 @@ class KafkaMQClientLifecycleContractTest {
 
     public static final class Handler {
         @MQEventListener(topic = "orders")
-        public void onLifecycleEvent(MQEvent event) { }
+        public void onLifecycleEvent(MQEvent event) {
+        }
     }
 
     private static final class AsyncCallbackProducer extends MockProducer<String, String> {
