@@ -305,7 +305,7 @@ Javalin 当前 H2 单元测试仅验证 SqlSession、Repository、Mapper 非空�
 
 | 链路 | 当前源码证据 | 对迁移的影响 |
 |---|---|---|
-| 自动装配发现 | data 的 `META-INF/spring.factories` 仍注册 `com.qushiyun.cloud.common.data.*`；实际对应源码包为 `io.ddd4j.cloud.cmpt.data.*`，仓库 Java 搜索未发现旧包定义 | 当前注册表不能证明这些配置能从新包自动加载；需要打包及上下文启动验证，不能只改包名前缀后就宣称解决 |
+| 自动装配发现 | data 的 `META-INF/spring.factories` 仍注册 `com.redacted-legacy.cloud.common.data.*`；实际对应源码包为 `io.ddd4j.cloud.cmpt.data.*`，仓库 Java 搜索未发现旧包定义 | 当前注册表不能证明这些配置能从新包自动加载；需要打包及上下文启动验证，不能只改包名前缀后就宣称解决 |
 | 租户状态来源 | `BaseFeignTenantInterceptor` 只读取 `TenantContextHolder.getTenantId()`；holder 使用独立 TTL，并同步 SysContentHolder；本次 cmpt Java 搜索未见 core ThreadContext 引用 | core Web 上下文与 cloud 出站 Feign 状态没有直接接通的源码证据，仍可能依赖外部桥接 |
 | 请求异常退出 | `TenantContextHolderFilter` 在 `filterChain.doFilter` 后清理，没有 finally；无效 token 分支可在设置 shop/system 后直接返回 | 异常及提前返回时清理路径不完整，需同线程连续请求测试；不能以正常响应测试代表隔离安全 |
 | 异步任务退出 | `MallCompletableFuture` 两条执行路径设置租户、系统、SecurityContext、RequestAttributes 后运行 Runnable，没有恢复/清理 | 不能保证复用执行线程上的上下文生命周期；需要指定可复用执行器的异常及嵌套任务测试，不能假定 TTL 自动补足 |
