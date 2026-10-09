@@ -131,14 +131,16 @@ class EventStoreRetryTest {
 
     @Test
     void maxAttempts_小于1_构造失败() {
-        assertThatThrownBy(() -> new EventStoreRetry(0, 1L, ms -> {}))
+        assertThatThrownBy(() -> new EventStoreRetry(0, 1L, ms -> {
+        }))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("maxAttempts");
     }
 
     @Test
     void baseDelayMillis_负数_构造失败() {
-        assertThatThrownBy(() -> new EventStoreRetry(3, -1L, ms -> {}))
+        assertThatThrownBy(() -> new EventStoreRetry(3, -1L, ms -> {
+        }))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("baseDelayMillis");
     }

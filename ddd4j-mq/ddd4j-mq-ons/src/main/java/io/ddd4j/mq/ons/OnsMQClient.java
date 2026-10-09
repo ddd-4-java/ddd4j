@@ -82,8 +82,15 @@ public class OnsMQClient implements MQClient {
         return "ons";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     // ========================= 生产者 =========================
 
@@ -189,7 +196,9 @@ public class OnsMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             consumers.clear();
             producerStarted = false;
             startupStatus.stopped();

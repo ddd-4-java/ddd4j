@@ -65,6 +65,7 @@ import java.util.function.Consumer;
 public class KafkaMQClient implements MQClient {
 
     private static final long DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS = 30_000L;
+
     /**
      * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
      * 无 properties 时回落到默认 30s。
@@ -84,7 +85,9 @@ public class KafkaMQClient implements MQClient {
     private Callback callback;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
-    /** 初始化和关闭共用客户端锁；关闭标记供消费者线程读取。 */
+    /**
+     * 初始化和关闭共用客户端锁；关闭标记供消费者线程读取。
+     */
     private volatile boolean closed;
     private final List<ConsumerWorker> consumerWorkers = new ArrayList<>();
 
@@ -172,7 +175,9 @@ public class KafkaMQClient implements MQClient {
         };
     }
 
-    /** 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。 */
+    /**
+     * 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。
+     */
     Producer<String, String> createProducer(Properties props) {
         return new KafkaProducer<>(props);
     }
@@ -245,12 +250,16 @@ public class KafkaMQClient implements MQClient {
         return true;
     }
 
-    /** 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。 */
+    /**
+     * 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。
+     */
     org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(Properties props) {
         return new KafkaConsumer<>(props);
     }
 
-    /** 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。 */
+    /**
+     * 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。
+     */
     ExecutorService createConsumerExecutor(MQListener listener) {
         return Executors.newSingleThreadExecutor(r -> {
             Thread workerThread = new Thread(r, "ddd4j-kafka-" + listener.getMethod().getName());
@@ -259,7 +268,9 @@ public class KafkaMQClient implements MQClient {
         });
     }
 
-    /** 关闭客户端持有的消费者与执行器；注入的 producer 仍由调用方负责关闭。 */
+    /**
+     * 关闭客户端持有的消费者与执行器；注入的 producer 仍由调用方负责关闭。
+     */
     @Override
     public void close() {
         synchronized (this) {
@@ -276,14 +287,18 @@ public class KafkaMQClient implements MQClient {
         }
     }
 
-    /** 防止关闭后重新创建资源或复用发布入口。 */
+    /**
+     * 防止关闭后重新创建资源或复用发布入口。
+     */
     private void ensureOpen() {
         if (closed) {
             throw new IllegalStateException("KafkaMQClient is closed");
         }
     }
 
-    /** 消费者及其专属执行器的所有权记录；确保异常退出也能释放底层资源。 */
+    /**
+     * 消费者及其专属执行器的所有权记录；确保异常退出也能释放底层资源。
+     */
     private final class ConsumerWorker implements Runnable {
         private final org.apache.kafka.clients.consumer.Consumer<String, String> consumer;
         private final MQListener listener;

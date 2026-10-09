@@ -20,6 +20,7 @@ import io.ddd4j.core.ddd.event.EntityId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+
 import java.util.Objects;
 
 /**

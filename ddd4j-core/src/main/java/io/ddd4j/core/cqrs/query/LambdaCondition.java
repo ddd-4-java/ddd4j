@@ -61,14 +61,14 @@ public record LambdaCondition(PropertyRef propertyRef, String operator, Object v
     }
 
     public String getOperator() {
-            return operator;
-        }
+        return operator;
+    }
 
     public PropertyRef getPropertyRef() {
-            return propertyRef;
-        }
+        return propertyRef;
+    }
 
     public Object getValue() {
-            return value;
-        }
+        return value;
+    }
 }

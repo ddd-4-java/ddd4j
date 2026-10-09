@@ -30,14 +30,14 @@ import java.time.Instant;
 public record AuthFailedEvent(AuthRequest request, String reason, Instant occurredAt) {
 
     public Instant getOccurredAt() {
-            return occurredAt;
-        }
+        return occurredAt;
+    }
 
     public String getReason() {
-            return reason;
-        }
+        return reason;
+    }
 
     public AuthRequest getRequest() {
-            return request;
-        }
+        return request;
+    }
 }

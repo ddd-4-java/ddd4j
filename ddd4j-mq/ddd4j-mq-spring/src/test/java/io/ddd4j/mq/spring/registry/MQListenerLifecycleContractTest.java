@@ -82,10 +82,23 @@ class MQListenerLifecycleContractTest {
             this.closed = closed;
         }
 
-        @Override public String impl() { return impl; }
-        @Override public Consumer<MQEvent> initProducer(MQProperties properties) { return null; }
-        @Override public boolean initConsumer(MQListener listener, MQProperties properties) { return true; }
-        @Override public void close() {
+        @Override
+        public String impl() {
+            return impl;
+        }
+
+        @Override
+        public Consumer<MQEvent> initProducer(MQProperties properties) {
+            return null;
+        }
+
+        @Override
+        public boolean initConsumer(MQListener listener, MQProperties properties) {
+            return true;
+        }
+
+        @Override
+        public void close() {
             if (closeCount.compareAndSet(0, 1) && closed != null) {
                 closed.add(impl);
             }
@@ -93,7 +106,15 @@ class MQListenerLifecycleContractTest {
     }
 
     private static final class Serialization implements MQEventSerialization {
-        @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
-        @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T serialize(Object event) {
+            return (T) "{}";
+        }
+
+        @Override
+        public <S, T> T deserialize(S value, Class<T> type) {
+            return null;
+        }
     }
 }

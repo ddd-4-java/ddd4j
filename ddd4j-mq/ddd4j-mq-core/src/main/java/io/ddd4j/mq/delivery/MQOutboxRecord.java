@@ -61,10 +61,10 @@ public record MQOutboxRecord(
     /**
      * 创建一条等待发布的消息。
      *
-     * @param messageId 稳定消息标识
+     * @param messageId   稳定消息标识
      * @param destination broker 目的地
-     * @param payload 已序列化事件负载
-     * @param headers 业务消息头
+     * @param payload     已序列化事件负载
+     * @param headers     业务消息头
      * @param availableAt 首次可投递时间
      * @return 待发布记录
      */
@@ -75,46 +75,46 @@ public record MQOutboxRecord(
     }
 
     public int getAttempts() {
-            return attempts;
-        }
+        return attempts;
+    }
 
     public Instant getAvailableAt() {
-            return availableAt;
-        }
+        return availableAt;
+    }
 
     public String getDestination() {
-            return destination;
-        }
+        return destination;
+    }
 
     public Map<String, String> getHeaders() {
-            return headers;
-        }
+        return headers;
+    }
 
     public String getLastError() {
-            return lastError;
-        }
+        return lastError;
+    }
 
     public String getLeaseOwner() {
-            return leaseOwner;
-        }
+        return leaseOwner;
+    }
 
     public Instant getLeaseUntil() {
-            return leaseUntil;
-        }
+        return leaseUntil;
+    }
 
     public String getMessageId() {
-            return messageId;
-        }
+        return messageId;
+    }
 
     public String getPayload() {
-            return payload;
-        }
+        return payload;
+    }
 
     public Instant getPublishedAt() {
-            return publishedAt;
-        }
+        return publishedAt;
+    }
 
     public MQOutboxStatus getStatus() {
-            return status;
-        }
+        return status;
+    }
 }

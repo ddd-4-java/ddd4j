@@ -64,7 +64,7 @@ public final class Ddd4jJavalinWeb {
     public Ddd4jJavalinWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, new RuntimeReadinessRegistry());
     }
@@ -77,7 +77,7 @@ public final class Ddd4jJavalinWeb {
     public Ddd4jJavalinWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, readinessRegistry);
     }
@@ -134,7 +134,7 @@ public final class Ddd4jJavalinWeb {
                     .ifPresent(authentication -> ThreadContext.bind(authentication.subject()));
             RequestState activeState = state;
             idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(requestContext,
-                        context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(activeState::idempotencyScope);
+                    context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(activeState::idempotencyScope);
         } catch (RuntimeException exception) {
             WebOtelSupport.recordError(span, exception);
             if (Objects.nonNull(state)) {

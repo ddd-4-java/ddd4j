@@ -29,9 +29,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.RollbackException;
+
 import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
+
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** PostgreSQL 容器轨：验证 JPA EventStore 的真实 DDL 与 CLOB 读回。 */
+/**
+ * PostgreSQL 容器轨：验证 JPA EventStore 的真实 DDL 与 CLOB 读回。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class JpaEventStorePostgresIT {
 
@@ -82,6 +86,7 @@ class JpaEventStorePostgresIT {
             second.close();
         }
     }
+
     private EntityManager entityManager;
     private EventStore eventStore;
 

@@ -46,9 +46,9 @@ public final class SqlSpan {
     /**
      * 包装 SQL 执行。
      *
-     * @param dbSystem 数据库系统（mybatis、jpa、jdbc 等）
+     * @param dbSystem  数据库系统（mybatis、jpa、jdbc 等）
      * @param statement SQL 语句或描述
-     * @param runnable SQL 操作
+     * @param runnable  SQL 操作
      */
     public static void execute(String dbSystem, String statement, Runnable runnable) {
         if (!Ddd4jOtel.isAvailable()) {

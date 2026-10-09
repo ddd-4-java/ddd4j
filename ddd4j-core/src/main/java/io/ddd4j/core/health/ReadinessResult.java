@@ -57,9 +57,15 @@ public record ReadinessResult(String name, boolean ready, Map<String, String> de
                 StrKit.isBlank(reason) ? Map.of() : Map.of("reason", reason));
     }
 
-    public Map<String, String> getDetails() { return details; }
+    public Map<String, String> getDetails() {
+        return details;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public boolean isReady() { return ready; }
+    public boolean isReady() {
+        return ready;
+    }
 }

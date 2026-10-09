@@ -125,7 +125,7 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
     }
 
     private List<MQOutboxRecord> claimInCurrentTransaction(String leaseOwner, Instant now, int limit,
-                                                            MQDeliveryPolicy policy) {
+                                                           MQDeliveryPolicy policy) {
         String sql = "SELECT id, event_type, payload, available_at, attempts, last_error, published_at "
                 + "FROM sample_order_outbox WHERE (status = 'PENDING' AND available_at <= ?) "
                 + "OR (status = 'LEASED' AND lease_until <= ?) ORDER BY available_at FOR UPDATE SKIP LOCKED LIMIT ?";

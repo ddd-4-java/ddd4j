@@ -21,6 +21,8 @@ package io.ddd4j.mq.delivery;
  */
 public enum NoopMQDeliveryObserver implements MQDeliveryObserver {
 
-    /** 单例实例。 */
+    /**
+     * 单例实例。
+     */
     INSTANCE
 }

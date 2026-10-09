@@ -46,7 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** 使用真实 Quarkus JTA 事务验证 JPA Managed 参与模式的数据库结果。 */
+/**
+ * 使用真实 Quarkus JTA 事务验证 JPA Managed 参与模式的数据库结果。
+ */
 @Slf4j
 @QuarkusTest
 @TestProfile(JpaManagedParticipationIT.JpaManagedTestProfile.class)
@@ -219,7 +221,9 @@ class JpaManagedParticipationIT {
         });
     }
 
-    /** Test profile keeps Quarkus isolated and explicitly indexes the JPA test dependency. */
+    /**
+     * Test profile keeps Quarkus isolated and explicitly indexes the JPA test dependency.
+     */
     public static final class JpaManagedTestProfile implements QuarkusTestProfile {
 
         @Override
@@ -285,7 +289,9 @@ class JpaManagedParticipationIT {
     }
 }
 
-/** Quarkus 测试源码内的业务实体；JPA 模块 test fixture 不会传播到依赖方。 */
+/**
+ * Quarkus 测试源码内的业务实体；JPA 模块 test fixture 不会传播到依赖方。
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -305,7 +311,9 @@ class JpaManagedBusinessEntity {
     }
 }
 
-/** Quarkus 测试源码内的 Outbox 实体；只证明同一数据库资源的 JTA 原子性。 */
+/**
+ * Quarkus 测试源码内的 Outbox 实体；只证明同一数据库资源的 JTA 原子性。
+ */
 @Getter
 @Setter
 @NoArgsConstructor

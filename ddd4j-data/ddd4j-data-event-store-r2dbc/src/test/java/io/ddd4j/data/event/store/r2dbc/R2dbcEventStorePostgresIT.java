@@ -23,7 +23,9 @@ import io.ddd4j.core.ddd.event.StringEntityType;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.spi.Connection;
+
 import java.util.List;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,9 @@ import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** PostgreSQL 容器轨：验证 R2DBC EventStore 自身 DDL 与事件往返。 */
+/**
+ * PostgreSQL 容器轨：验证 R2DBC EventStore 自身 DDL 与事件往返。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class R2dbcEventStorePostgresIT {
 
