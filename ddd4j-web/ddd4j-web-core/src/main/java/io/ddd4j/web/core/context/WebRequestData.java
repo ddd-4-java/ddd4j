@@ -31,43 +31,43 @@ public record WebRequestData(
         String method,
         String path) {
 
-    public String getAuthorization () {
+    public String getAuthorization() {
         return authorization;
     }
 
-    public String getForwardedFor () {
+    public String getForwardedFor() {
         return forwardedFor;
     }
 
-    public Locale getLocale () {
+    public Locale getLocale() {
         return locale;
     }
 
-    public String getMethod () {
+    public String getMethod() {
         return method;
     }
 
-    public String getPath () {
+    public String getPath() {
         return path;
     }
 
-    public String getRealIp () {
+    public String getRealIp() {
         return realIp;
     }
 
-    public String getRemoteAddress () {
+    public String getRemoteAddress() {
         return remoteAddress;
     }
 
-    public String getRequestId () {
+    public String getRequestId() {
         return requestId;
     }
 
-    public String getTenantId () {
+    public String getTenantId() {
         return tenantId;
     }
 
-    public String getTraceId () {
+    public String getTraceId() {
         return traceId;
     }
 }

@@ -44,12 +44,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-/** ESDB 强类型 EventStore 的单元契约。 */
+/**
+ * ESDB 强类型 EventStore 的单元契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class EsdbEventStoreTest {
     private static final String ORDER_TYPE = "Order";
-    @Mock EventStoreDBClient client;
-    @Captor ArgumentCaptor<String> streamCaptor;
+    @Mock
+    EventStoreDBClient client;
+    @Captor
+    ArgumentCaptor<String> streamCaptor;
 
     @Test
     void expectedRevisionShouldFollowCoreCurrentVersionContract() {
@@ -96,13 +100,30 @@ class EsdbEventStoreTest {
 
     record TestId(String value) implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
-        @Override public EntityType getType() { return TYPE; }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
     }
 
     static final class TestEvent extends DomainEvent<TestId> {
-        TestEvent() { super(); }
-        TestEvent(TestId id) { super(new EntityIdPath(id)); }
+        TestEvent() {
+            super();
+        }
+
+        TestEvent(TestId id) {
+            super(new EntityIdPath(id));
+        }
     }
 }

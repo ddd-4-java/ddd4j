@@ -77,6 +77,7 @@ public class KafkaMQClient implements MQClient {
      * 初始化和关闭共用客户端锁；关闭标记供消费者线程读取。
      */
     private volatile boolean closed;
+
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      */

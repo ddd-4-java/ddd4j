@@ -24,7 +24,7 @@ import java.util.Optional;
  */
 public record WebContractResponse(int status, Map<String, List<String>> headers, String body) {
 
-    public Optional<String> firstHeader (String name){
+    public Optional<String> firstHeader(String name) {
         Objects.requireNonNull(name, "name must not be null");
         return headers.entrySet().stream()
                 .filter(entry -> entry.getKey().equalsIgnoreCase(name))
@@ -34,15 +34,15 @@ public record WebContractResponse(int status, Map<String, List<String>> headers,
                 .findFirst();
     }
 
-    public String getBody () {
+    public String getBody() {
         return body;
     }
 
-    public Map<String, List<String>> getHeaders () {
+    public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
-    public int getStatus () {
+    public int getStatus() {
         return status;
     }
 }

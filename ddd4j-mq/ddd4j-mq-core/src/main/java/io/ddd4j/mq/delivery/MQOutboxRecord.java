@@ -61,60 +61,60 @@ public record MQOutboxRecord(
     /**
      * 创建一条等待发布的消息。
      *
-     * @param messageId 稳定消息标识
+     * @param messageId   稳定消息标识
      * @param destination broker 目的地
-     * @param payload 已序列化事件负载
-     * @param headers 业务消息头
+     * @param payload     已序列化事件负载
+     * @param headers     业务消息头
      * @param availableAt 首次可投递时间
      * @return 待发布记录
      */
-    public static MQOutboxRecord pending (String messageId, String destination, String payload,
-            Map < String, String > headers, Instant availableAt){
+    public static MQOutboxRecord pending(String messageId, String destination, String payload,
+                                         Map<String, String> headers, Instant availableAt) {
         return new MQOutboxRecord(messageId, destination, payload, headers, MQOutboxStatus.PENDING,
                 availableAt, null, null, 0, null, null);
     }
 
-    public int getAttempts () {
+    public int getAttempts() {
         return attempts;
     }
 
-    public Instant getAvailableAt () {
+    public Instant getAvailableAt() {
         return availableAt;
     }
 
-    public String getDestination () {
+    public String getDestination() {
         return destination;
     }
 
-    public Map<String, String> getHeaders () {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 
-    public String getLastError () {
+    public String getLastError() {
         return lastError;
     }
 
-    public String getLeaseOwner () {
+    public String getLeaseOwner() {
         return leaseOwner;
     }
 
-    public Instant getLeaseUntil () {
+    public Instant getLeaseUntil() {
         return leaseUntil;
     }
 
-    public String getMessageId () {
+    public String getMessageId() {
         return messageId;
     }
 
-    public String getPayload () {
+    public String getPayload() {
         return payload;
     }
 
-    public Instant getPublishedAt () {
+    public Instant getPublishedAt() {
         return publishedAt;
     }
 
-    public MQOutboxStatus getStatus () {
+    public MQOutboxStatus getStatus() {
         return status;
     }
 }

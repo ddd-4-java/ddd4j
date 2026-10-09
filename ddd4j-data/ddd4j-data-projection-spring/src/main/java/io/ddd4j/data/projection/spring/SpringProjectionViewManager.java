@@ -58,8 +58,8 @@ public class SpringProjectionViewManager implements ViewManager, SmartLifecycle 
 
     @Autowired
     public SpringProjectionViewManager(ViewScheduler scheduler,
-                                        ProjectionRunner<?> runner,
-                                        Collection<ProjectionView<?>> views) {
+                                       ProjectionRunner<?> runner,
+                                       Collection<ProjectionView<?>> views) {
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler must not be null");
         this.runner = Objects.requireNonNull(runner, "runner must not be null");
         this.views = Objects.requireNonNull(views, "views must not be null");

@@ -66,13 +66,15 @@ public final class BearerSubjectAuthenticator {
 
     public record Authentication(String token, AuthPrincipal principal, Subject subject) {
 
-        public String getToken () {
+        public String getToken() {
             return token;
         }
-        public AuthPrincipal getPrincipal () {
+
+        public AuthPrincipal getPrincipal() {
             return principal;
         }
-        public Subject getSubject () {
+
+        public Subject getSubject() {
             return subject;
         }
     }

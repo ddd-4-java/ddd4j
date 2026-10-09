@@ -118,7 +118,8 @@ class VertxProjectionSchedulerIT {
                 VertxProjectionScheduler.create(vertx, List.of(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 

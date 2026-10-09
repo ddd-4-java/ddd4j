@@ -29,30 +29,30 @@ public record FileValidationResult(boolean valid, FileValidationFailure failure,
      * @param detectedType 检测类型
      * @return 成功结果
      */
-    public static FileValidationResult valid (DetectedFileType detectedType){
+    public static FileValidationResult valid(DetectedFileType detectedType) {
         return new FileValidationResult(true, null, detectedType);
     }
 
     /**
      * 创建失败结果。
      *
-     * @param failure 失败原因
+     * @param failure      失败原因
      * @param detectedType 已检测类型
      * @return 失败结果
      */
-    public static FileValidationResult invalid (FileValidationFailure failure, DetectedFileType detectedType){
+    public static FileValidationResult invalid(FileValidationFailure failure, DetectedFileType detectedType) {
         return new FileValidationResult(false, failure, detectedType);
     }
 
-    public DetectedFileType getDetectedType () {
+    public DetectedFileType getDetectedType() {
         return detectedType;
     }
 
-    public FileValidationFailure getFailure () {
+    public FileValidationFailure getFailure() {
         return failure;
     }
 
-    public boolean isValid () {
+    public boolean isValid() {
         return valid;
     }
 }

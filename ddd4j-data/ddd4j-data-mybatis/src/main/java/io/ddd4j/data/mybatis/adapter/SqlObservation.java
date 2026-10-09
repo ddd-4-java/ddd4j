@@ -19,25 +19,51 @@ import java.util.List;
 /**
  * 原生 MyBatis SQL 执行观测数据。
  *
- * @param statementId MappedStatement 标识
- * @param sql 已执行的 SQL
+ * @param statementId  MappedStatement 标识
+ * @param sql          已执行的 SQL
  * @param sortedParams 已排序的参数快照
  * @param elapsedNanos 耗时，单位为纳秒
- * @param error 执行异常，可为空
+ * @param error        执行异常，可为空
  */
-public record SqlObservation(String statementId, String sql, List<String> sortedParams, long elapsedNanos, Throwable error) {
+public record SqlObservation(String statementId, String sql, List<String> sortedParams, long elapsedNanos,
+                             Throwable error) {
 
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
-    /** 返回语句标识，兼容 bean 调用方。 */
-    public String getStatementId() { return statementId; }
-    /** 返回 SQL。 */
-    public String getSql() { return sql; }
-    /** 返回参数快照。 */
-    public List<String> getSortedParams() { return sortedParams; }
-    /** 返回执行耗时（纳秒）。 */
-    public long getElapsedNanos() { return elapsedNanos; }
-    /** 返回执行异常。 */
-    public Throwable getError() { return error; }
+
+    /**
+     * 返回语句标识，兼容 bean 调用方。
+     */
+    public String getStatementId() {
+        return statementId;
+    }
+
+    /**
+     * 返回 SQL。
+     */
+    public String getSql() {
+        return sql;
+    }
+
+    /**
+     * 返回参数快照。
+     */
+    public List<String> getSortedParams() {
+        return sortedParams;
+    }
+
+    /**
+     * 返回执行耗时（纳秒）。
+     */
+    public long getElapsedNanos() {
+        return elapsedNanos;
+    }
+
+    /**
+     * 返回执行异常。
+     */
+    public Throwable getError() {
+        return error;
+    }
 }

@@ -6,7 +6,9 @@
 ## 来源
 
 -
+
 仓库：https://github.com/fuinorg/ddd-4-java（0.7.0）、https://github.com/fuinorg/cqrs-4-java（0.6.0）（本地快照：`workspace-ddd4j-boot/ddd-4-java`／`cqrs-4-java`）
+
 - 14 份 ArchitectureTest 全量盘点（均为 `@AnalyzeClasses(packagesOf = ...)`＋`@ArchTest` 静态字段骨架）：
     - ddd-4-java（7 份）——core：no_accesses_to_upper_package（:26-27）、core_access_only_to_defined_packages 允许清单 11 包（:
       30-45）、testDomainEventsAnnotations（:47-57）、testEntityIdAnnotations（:59-72）；jackson／jaxb／jsonb：同四条（jackson :
