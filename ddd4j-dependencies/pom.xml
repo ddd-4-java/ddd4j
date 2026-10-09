@@ -762,7 +762,7 @@
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <maven-sonar-plugin.version>4.0.1.6619</maven-sonar-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
-</properties>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -5816,7 +5816,7 @@
                 <artifactId>pgvector</artifactId>
                 <version>${pgvector.version}</version>
             </dependency>
-                <dependency>
+            <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-core</artifactId>
                 <version>${pi4j.version}</version>
@@ -7669,7 +7669,7 @@
                 <artifactId>zxing-extension</artifactId>
                 <version>${easy4j-zxing-extension.version}</version>
             </dependency>
-        
+
             <!-- 以下基础依赖从 ddd4j-boot-dependencies 迁入（非 Spring Boot starter） -->
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -7688,7 +7688,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-    </dependencies>
+        </dependencies>
     </dependencyManagement>
 
     <dependencies>
@@ -7793,7 +7793,7 @@
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>${maven-checkstyle-plugin.version}</version>
                 </plugin>
-<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

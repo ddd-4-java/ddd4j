@@ -44,7 +44,8 @@ class QuarkusProjectionSchedulerIT {
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 

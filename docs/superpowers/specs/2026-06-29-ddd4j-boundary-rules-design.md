@@ -35,24 +35,24 @@
 
 ## 3. ddd4j 通用基础层禁止包含的内容
 
-| 禁止项 | 原因 | 应放在哪里 |
-|--------|------|-----------|
-| `META-INF/spring.factories` | Spring Boot 1.x 自动装配清单 | `ddd4j-boot-*` |
-| `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` | Spring Boot 2.7+ 自动装配 | `ddd4j-boot-*` |
-| `@AutoConfiguration` 注解类 | Spring Boot 自动装配入口 | `ddd4j-boot-ddd-autoconfigure` |
-| `spring-boot-starter` 命名模块 | Spring Boot 启动器 | 不应有此模块 |
-| `BaseController` / `BaseMapperController` 子类 | 业务 Controller 基类属于框架胶水 | `ddd4j-runtime-spring` / `ddd4j-web-webmvc` |
-| 全局 `@ControllerAdvice` / `ExceptionMapper` | 异常处理属于框架胶水 | `ddd4j-web-webmvc` / `ddd4j-web-webflux` |
-| `javax.servlet` / `jakarta.servlet` import | Servlet 容器属于具体框架 | `ddd4j-web-webmvc` |
-| `com.baomidou.mybatisplus.*` import | MyBatis-Plus 属于具体 ORM | `ddd4j-data-mybatis` |
-| `org.springframework.transaction.annotation.Transactional` | Spring 事务属于具体框架 | 改用 ddd4j 自有 `@DddTransactional` |
+| 禁止项                                                                             | 原因                             | 应放在哪里                                  |
+|------------------------------------------------------------------------------------|----------------------------------|---------------------------------------------|
+| `META-INF/spring.factories`                                                        | Spring Boot 1.x 自动装配清单     | `ddd4j-boot-*`                              |
+| `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` | Spring Boot 2.7+ 自动装配        | `ddd4j-boot-*`                              |
+| `@AutoConfiguration` 注解类                                                        | Spring Boot 自动装配入口         | `ddd4j-boot-ddd-autoconfigure`              |
+| `spring-boot-starter` 命名模块                                                     | Spring Boot 启动器               | 不应有此模块                                |
+| `BaseController` / `BaseMapperController` 子类                                     | 业务 Controller 基类属于框架胶水 | `ddd4j-runtime-spring` / `ddd4j-web-webmvc` |
+| 全局 `@ControllerAdvice` / `ExceptionMapper`                                       | 异常处理属于框架胶水             | `ddd4j-web-webmvc` / `ddd4j-web-webflux`    |
+| `javax.servlet` / `jakarta.servlet` import                                         | Servlet 容器属于具体框架         | `ddd4j-web-webmvc`                          |
+| `com.baomidou.mybatisplus.*` import                                                | MyBatis-Plus 属于具体 ORM        | `ddd4j-data-mybatis`                        |
+| `org.springframework.transaction.annotation.Transactional`                         | Spring 事务属于具体框架          | 改用 ddd4j 自有 `@DddTransactional`         |
 
 ## 4. ddd4j 通用基础层应当包含的内容
 
-| 内容类型 | 示例 | 路径 |
-|---------|------|------|
-| DDD 构造型注解 | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository` | `ddd4j-annotation` |
-| 纯 Java 契约 | `AggregateRoot` `Repository` `DomainEvent` `Query` | `ddd4j-core` |
-| SPI 接口默认实现 | `NoopDomainEventPublisher` `InMemoryProjectionPositionRepository` | `ddd4j-core` |
-| DDD 架构检查规则 | `CleanDDDLayerRules` `ColaDDDLayerRules` | `ddd4j-ddd-rules` |
-| 工具类 | `JsonKit` `DateKit` `ArithKit` | `ddd4j-kit` |
+| 内容类型         | 示例                                                                       | 路径               |
+|------------------|----------------------------------------------------------------------------|--------------------|
+| DDD 构造型注解   | `@DomainEntity` `@DomainService` `@ApplicationService` `@DomainRepository` | `ddd4j-annotation` |
+| 纯 Java 契约     | `AggregateRoot` `Repository` `DomainEvent` `Query`                         | `ddd4j-core`       |
+| SPI 接口默认实现 | `NoopDomainEventPublisher` `InMemoryProjectionPositionRepository`          | `ddd4j-core`       |
+| DDD 架构检查规则 | `CleanDDDLayerRules` `ColaDDDLayerRules`                                   | `ddd4j-ddd-rules`  |
+| 工具类           | `JsonKit` `DateKit` `ArithKit`                                             | `ddd4j-kit`        |

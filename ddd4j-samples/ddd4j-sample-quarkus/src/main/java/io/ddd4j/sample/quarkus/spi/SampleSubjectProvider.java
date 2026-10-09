@@ -24,7 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 
-/** Development Subject provider used to demonstrate the generic Bearer bridge. */
+/**
+ * Development Subject provider used to demonstrate the generic Bearer bridge.
+ */
 @Slf4j
 @ApplicationScoped
 public class SampleSubjectProvider implements SubjectProvider {

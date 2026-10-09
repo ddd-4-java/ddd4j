@@ -7,13 +7,13 @@
 
 ## 风险清单回顾
 
-| 编号 | 风险等级 | 描述 | 修复归属改动 |
-|---|---|---|---|
-| #1 | 🔴 高 | EntityIdPath 反序列化丢失自定义 EntityId 类型 | 改动 1 |
-| #2 | 🔴 高 | EntityIdPath 值内含 `/` 或 `:` 的标识无法 round-trip | 改动 2 |
-| #3 | 🔴 高 | AggregateRoot.apply() 反射调用未处理 JDK 17+ 模块系统 | 改动 3 |
-| #4 | 🔴 高 | JpaEventStore.append() 逐条 save，无批量 INSERT | 改动 5 |
-| #5 | 🔴 高 | EventPayloadSerializer.activateDefaultTyping 存在多态反序列化风险 | 改动 4 |
+| 编号 | 风险等级 | 描述                                                              | 修复归属改动 |
+|------|----------|-------------------------------------------------------------------|--------------|
+| #1   | 🔴 高    | EntityIdPath 反序列化丢失自定义 EntityId 类型                     | 改动 1       |
+| #2   | 🔴 高    | EntityIdPath 值内含 `/` 或 `:` 的标识无法 round-trip              | 改动 2       |
+| #3   | 🔴 高    | AggregateRoot.apply() 反射调用未处理 JDK 17+ 模块系统             | 改动 3       |
+| #4   | 🔴 高    | JpaEventStore.append() 逐条 save，无批量 INSERT                   | 改动 5       |
+| #5   | 🔴 高    | EventPayloadSerializer.activateDefaultTyping 存在多态反序列化风险 | 改动 4       |
 
 ---
 
@@ -22,6 +22,7 @@
 **决策**：引入 `EntityIdRegistry` 注册表 + 兜底 `StringEntityId` 双轨方案。
 
 **原因**：
+
 - 早期反序列化路径直接以 `StringEntityId` 重建所有段，自定义 `OrderId` / `CustomerId`
   等业务类型在事件溯源回放后丢失类型信息（`OrderId:o1` → `String:o1`）。
 - 完全切换到注册表会引入「未注册类型即抛异常」的强约束，对未升级业务代码不兼容。
@@ -39,6 +40,7 @@ EntityIdPath path = EntityIdPath.valueOf("OrderId:o-1/CustomerId:c-9");
 ```
 
 **API 契约**：
+
 - `@JsonCreator public static EntityIdPath valueOf(String path)` 与 `asString()` 对偶
 - 空段 / 缺 `:` / 空 type / 空 value 抛 `IllegalArgumentException`，消息含原文
 - 未注册类型回退 `StringEntityId`（与历史行为一致）
@@ -50,6 +52,7 @@ EntityIdPath path = EntityIdPath.valueOf("OrderId:o-1/CustomerId:c-9");
 **决策**：在 `asString()` 序列化时对每段做转义，`valueOf(String)` 反序列化时先反转义再做段切分。
 
 **原因**：
+
 - 早期实现对值内的 `/` 和 `:` 不做任何处理，导致业务 ID 含这些字符时反序列化失败
 - URL 路径编码惯例：`\` → `\\`，`/` → `\/`，`:` → `\:`，与 RFC 3986 风格一致
 
@@ -62,17 +65,19 @@ EntityIdPath path = EntityIdPath.valueOf("OrderId:o-1/CustomerId:c-9");
 
 ---
 
-## 改动 3：AggregateRoot.apply() 反射加固
+## 改动 3：AggregateRoot.apply () 反射加固
 
 **决策**：精确捕获 `InvocationTargetException` 与 `IllegalAccessException`，业务异常透传，受检异常包装，模块系统问题给出明确指引。
 
 **原因**：
+
 - 早期 `catch (Exception e)` 会把 `InvocationTargetException` 的业务异常也包装为 `BizRuntimeException`，
   导致原始堆栈与异常类型丢失，调用方无法 catch 业务异常做重试 / 补偿
 - `IllegalAccessException` 在 JDK 17+ 模块系统下意味着 `setAccessible(true)` 被拒，
   用户错误信息需要明确指引 `module-info.java opens` 或 `--add-opens` 解决方案
 
 **新增异常路径**：
+
 - `InvocationTargetException` 解包：RuntimeException / Error 直接透传，受检异常包 `BizRuntimeException`
 - `IllegalAccessException`：错误消息含 `opens` / `--add-opens` 解决方案提示
 - 其他反射异常（如 `InaccessibleObjectException`）：保持 `BizRuntimeException` 包装
@@ -85,6 +90,7 @@ EntityIdPath path = EntityIdPath.valueOf("OrderId:o-1/CustomerId:c-9");
 `deserialize(String, Class)` 显式传入目标类型。
 
 **原因**：
+
 - Jackson `activateDefaultTyping` 启用后会在 JSON 中写入 `@class` 多态标记，反序列化时
   据此还原任意类。即便用 `BasicPolymorphicTypeValidator.builder().allowIfBaseType(DomainEvent.class).build()`
   限定基类型，`DomainEvent` 子类若自身有危险的 `@JsonCreator` 仍可被攻击者利用。
@@ -94,10 +100,12 @@ EntityIdPath path = EntityIdPath.valueOf("OrderId:o-1/CustomerId:c-9");
 - 这是符合「纵深防御」的安全收紧，不影响现有调用方（`JpaEventStore` / `PanacheEventStore`）。
 
 **API 变化**：
+
 - 序列化产物不再含 `@class` 标记（breaking change 仅对依赖 `@class` 解析的旧 reader 影响）
 - 反序列化完全依赖调用方传入的 `eventType`
 
 **测试 fixture 同步修复**：
+
 - `EventPayloadSerializerTest` 删除 `serializedJsonCarriesPolymorphicClassMarker` 测试
 - 删除 `OrderPlacedEvent` 上的 `@JsonIgnoreProperties({"entity-id-path", "event-type"})` 绕开
 - 新增 `roundTripPreservesEntityIdPath` 与 `roundTripPreservesEventType` 测试验证回读正确
@@ -109,6 +117,7 @@ EntityIdPath path = EntityIdPath.valueOf("OrderId:o-1/CustomerId:c-9");
 **决策**：循环构造 entity 后 `entityManager.flush()` + `entityManager.clear()`，配合 Hibernate `batch_size` 配置。
 
 **原因**：
+
 - 早期循环 `repository.save(entity)` 仅依赖 Hibernate 自动 batching，但当前默认配置下
   Hibernate 不会自动合并 INSERT（需要显式 `hibernate.jdbc.batch_size` 配置）
 - 调用方在 `JpaEventStoreIT` 一次性追加 50 条事件时实际产生 50 条独立 INSERT，事务开销大
@@ -131,6 +140,7 @@ spring.jpa.properties.hibernate.order_updates=true
 **决策**：在 `ci.yml` 顶部加入版本对齐 TODO 说明，不修改 install 列表。
 
 **原因**：
+
 - 当前 `ci.yml` checkout `feature/2.0.x` 但 `ddd4j-quarkus/pom.xml` 声明 `ddd4j.version=3.0.x.20260630-SNAPSHOT`，
   存在版本线漂移
 - 完全自动化的 `-pl -am` 重构需要进一步确认所有 ddd4j-quarkus 模块的传递依赖，超出本次修复范围

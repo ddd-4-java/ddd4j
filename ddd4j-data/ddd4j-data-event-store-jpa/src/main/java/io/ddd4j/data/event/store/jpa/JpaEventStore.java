@@ -27,6 +27,7 @@ import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;

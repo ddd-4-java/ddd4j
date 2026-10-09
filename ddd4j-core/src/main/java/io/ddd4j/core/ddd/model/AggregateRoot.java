@@ -386,7 +386,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 并注册进未提交事件列表（2.0.x 语义：找不到处理器时抛 {@link IllegalStateException}）。
      * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
      *
-     * @param event 领域事件
+     * @param event  领域事件
      * @param replay 是否处于历史回放（{@code loadFromHistory}）
      * @return 传入的事件
      * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败

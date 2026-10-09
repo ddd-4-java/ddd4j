@@ -44,8 +44,8 @@ public class QuarkusProjectionViewManager implements ViewManager {
 
     @Inject
     public QuarkusProjectionViewManager(ViewScheduler scheduler,
-                                         ProjectionRunner<?> runner,
-                                         Instance<ProjectionView<?>> views) {
+                                        ProjectionRunner<?> runner,
+                                        Instance<ProjectionView<?>> views) {
         this.scheduler = Objects.requireNonNull(scheduler, "scheduler must not be null");
         this.runner = Objects.requireNonNull(runner, "runner must not be null");
         this.views = Objects.requireNonNull(views, "views must not be null");

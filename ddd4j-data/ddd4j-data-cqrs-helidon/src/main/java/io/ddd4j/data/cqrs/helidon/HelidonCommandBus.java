@@ -83,7 +83,7 @@ public class HelidonCommandBus extends DefaultCommandBus {
      */
     @Inject
     public HelidonCommandBus(HelidonServiceLoader<? extends CommandExecutor<?>> executors,
-            CommandRegistry registry) {
+                             CommandRegistry registry) {
         super(collect(executors, registry));
     }
 

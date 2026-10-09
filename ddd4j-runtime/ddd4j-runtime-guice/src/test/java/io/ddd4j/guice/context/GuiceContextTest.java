@@ -101,6 +101,7 @@ class GuiceContextTest {
         public void run() {
         }
     }
+
     @Test
     void getInjectorInterruptedWhileWaitingThrows() throws Exception {
         GuiceContext.clear();
