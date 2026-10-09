@@ -76,6 +76,8 @@ public interface Sender {
 
     /**
      * 将 {@link Message} 序列化为通道通用的 JSON 字符串。
+     * @param message 消息内容
+     * @return 返回的字符串内容
      */
     static String renderMessage(Message message) {
         return JsonKit.toJson(message);

@@ -66,7 +66,7 @@
         </dependency>
         <!-- For Spring Biz（从 ddd4j-core 迁入的 SpringContext 等类需要） -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>spring-biz</artifactId>
         </dependency>
         <!-- For AspectJ（从 ddd4j-core 迁入的 AsyncAspect 需要） -->

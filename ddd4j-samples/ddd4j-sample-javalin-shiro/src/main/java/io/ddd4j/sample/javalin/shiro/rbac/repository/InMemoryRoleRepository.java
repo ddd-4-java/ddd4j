@@ -40,6 +40,8 @@ public class InMemoryRoleRepository {
 
     /**
      * 新增或更新角色。
+     * @param role 角色
+     * @return 保存后的Role
      */
     public Role save(Role role) {
         store.put(role.code(), role);
@@ -48,6 +50,8 @@ public class InMemoryRoleRepository {
 
     /**
      * 按编码查询角色。
+     * @param code 编码值
+     * @return 查找的Optional
      */
     public Optional<Role> findByCode(String code) {
         return Optional.ofNullable(store.get(code));
@@ -55,6 +59,8 @@ public class InMemoryRoleRepository {
 
     /**
      * 删除角色。
+     * @param code 编码值
+     * @return 操作成功返回 true，否则返回 false
      */
     public boolean deleteByCode(String code) {
         return Objects.nonNull(store.remove(code));
@@ -62,6 +68,7 @@ public class InMemoryRoleRepository {
 
     /**
      * 查询全部角色。
+     * @return 查找的Collection
      */
     public Collection<Role> findAll() {
         return Collections.unmodifiableCollection(store.values());
@@ -69,6 +76,7 @@ public class InMemoryRoleRepository {
 
     /**
      * 当前角色数量。
+     * @return 统计的整型数值
      */
     public int count() {
         return store.size();

@@ -80,6 +80,8 @@ public final class WebOtelIntegration {
 
     /**
      * 激活 Span 为当前 Context，返回 Scope（try-with-resources）。
+     * @param span 链路 Span 对象
+     * @return 返回的 Scope 结果
      */
     public static Scope activate(Span span) {
         return HttpSpan.makeCurrent(span);
@@ -87,6 +89,8 @@ public final class WebOtelIntegration {
 
     /**
      * 记录异常。
+     * @param span 链路 Span 对象
+     * @param t 泛型入参对象
      */
     public static void recordError(Span span, Throwable t) {
         HttpSpan.recordError(span, t);
@@ -94,6 +98,8 @@ public final class WebOtelIntegration {
 
     /**
      * 结束 span 并记录 HTTP 状态码。
+     * @param span 链路 Span 对象
+     * @param status 状态
      */
     public static void endServerSpan(Span span, int status) {
         HttpSpan.endServerSpan(span, status);
@@ -101,6 +107,7 @@ public final class WebOtelIntegration {
 
     /**
      * 注入 traceparent 到响应头。
+     * @param responseHeaders 响应消息头
      */
     public static void injectResponseContext(Map<String, String> responseHeaders) {
         HttpSpan.injectContext(responseHeaders);
@@ -117,6 +124,8 @@ public final class WebOtelIntegration {
 
     /**
      * 通用 helper：从 HttpHeaders 风格（Map）提取。
+     * @param headers 消息头集合
+     * @return 对应的映射数据
      */
     public static Map<String, String> asHeaders(Map<String, String> headers) {
         return Objects.isNull(headers) ? new HashMap<>() : new HashMap<>(headers);

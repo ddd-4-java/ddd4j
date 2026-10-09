@@ -27,31 +27,37 @@ public interface Acknowledgment {
 
     /**
      * 返回当前消息的投递标签。
+     * @return 对应的长整型数值
      */
     long deliveryTag();
 
     /**
      * 返回消息 ID（若 Broker 提供）。
+     * @return 返回的字符串内容
      */
     String messageId();
 
     /**
      * 返回关联 ID（若 Broker 提供）。
+     * @return 返回的字符串内容
      */
     String correlationId();
 
     /**
      * 底层连接/通道是否仍可用。
+     * @return 满足条件时返回 true，否则返回 false
      */
     boolean isOpen();
 
     /**
      * 当前消息是否已被确认。
+     * @return 满足条件时返回 true，否则返回 false
      */
     boolean isAcknowledged();
 
     /**
      * 当前确认实现对应的 Broker 类型。
+     * @return 返回的 BrokerType 结果
      */
     BrokerType brokerType();
 

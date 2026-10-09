@@ -47,6 +47,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理参数绑定异常。
+     * @param request 请求对象
+     * @param model 模型对象
+     * @param e 异常对象
+     * @return 绑定的R
      */
     @ExceptionHandler({BindException.class})
     public R<String> bindException(HttpServletRequest request, Model model, BindException e) {
@@ -58,6 +62,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理参数校验异常。
+     * @param request 请求对象
+     * @param e 异常对象
+     * @return 返回的 R 结果
      */
     @ExceptionHandler({ValidateException.class})
     public R<String> validatorException(HttpServletRequest request, ValidateException e) {
@@ -68,6 +75,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理方法参数无效异常。
+     * @param request 请求对象
+     * @param e 异常对象
+     * @return 返回的 R 结果
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public R<String> methodArgumentNotValidExceptionHandler(HttpServletRequest request, MethodArgumentNotValidException e) {
@@ -79,6 +89,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理 404 地址未找到异常。
+     * @param request 请求对象
+     * @param e 异常对象
+     * @return 处理的R
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -89,6 +102,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理业务运行时异常。
+     * @param request 请求对象
+     * @param e 异常对象
+     * @return 返回的 R 结果
      */
     @ExceptionHandler({BizRuntimeException.class})
     public R<String> serviceException(HttpServletRequest request, BizRuntimeException e) {
@@ -98,6 +114,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理空指针异常。
+     * @param request 请求对象
+     * @param e 异常对象
+     * @return 返回的 R 结果
      */
     @ExceptionHandler({NullPointerException.class})
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
@@ -108,6 +127,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理通用运行时异常。
+     * @param request 请求对象
+     * @param e 异常对象
+     * @return 返回的 R 结果
      */
     @ExceptionHandler({RuntimeException.class})
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {

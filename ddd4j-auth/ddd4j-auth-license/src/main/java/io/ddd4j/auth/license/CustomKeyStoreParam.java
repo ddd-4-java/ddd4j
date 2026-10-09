@@ -75,6 +75,8 @@ public class CustomKeyStoreParam {
     /**
      * AbstractKeyStoreParam里面的getStream()方法默认文件是存储的项目中。
      * 用于将公私钥存储文件存放到其他磁盘位置而不是项目中
+     * @return 获取的InputStream
+     * @throws java.io.IOException 发生输入输出错误时抛出
      */
     public InputStream getStream() throws IOException {
         return new FileInputStream(new File(storePath));

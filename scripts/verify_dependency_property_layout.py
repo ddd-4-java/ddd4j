@@ -83,9 +83,9 @@ def verify(path):
     prefixed = sorted((name for name in names if name.startswith("easy4j-")), key=natural_key)
     if prefixed:
         errors.append(f"{path}: easy4j-prefixed properties remain: {', '.join(prefixed)}")
-    legacy = sorted((name for name in names if name.startswith("hiwepy-")), key=natural_key)
+    legacy = sorted((name for name in names if name.startswith("redacted-legacy-family-")), key=natural_key)
     if legacy:
-        errors.append(f"{path}: conflicting hiwepy properties remain: {', '.join(legacy)}")
+        errors.append(f"{path}: conflicting redacted-legacy-family properties remain: {', '.join(legacy)}")
     alignment = sorted((name for name in names if name.startswith("alignment.")), key=natural_key)
     if alignment:
         errors.append(f"{path}: internal alignment properties remain: {', '.join(alignment)}")

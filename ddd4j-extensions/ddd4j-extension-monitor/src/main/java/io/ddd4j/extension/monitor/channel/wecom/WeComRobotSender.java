@@ -34,6 +34,7 @@ public class WeComRobotSender implements Sender {
 
     /**
      * 暴露底层 HTTP 客户端，便于高级场景直接复用。
+     * @return 获取的WeComClient
      */
     public WeComClient getClient() {
         return client;

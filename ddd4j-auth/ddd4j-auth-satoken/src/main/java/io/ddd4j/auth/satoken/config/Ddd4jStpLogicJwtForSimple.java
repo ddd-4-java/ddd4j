@@ -61,6 +61,8 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
 
     /**
      * 校验签名、账号体系和 ddd4j 附加的 issuer/audience 声明。
+     * @param token 令牌
+     * @return 满足条件时返回 true，否则返回 false
      */
     public boolean hasExpectedClaims(String token) {
         if (StrKit.isBlank(token)) {

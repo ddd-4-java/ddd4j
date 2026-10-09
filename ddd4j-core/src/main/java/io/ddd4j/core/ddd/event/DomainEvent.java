@@ -79,7 +79,7 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     /**
      * 事件支持的策略键集合（策略模式）。
      *
-     * <p>监听器通过 {@link @EventListener#supports()} 声明它处理哪些策略键，
+     * <p>监听器通过 {@code @EventListener#supports()} 声明它处理哪些策略键，
      * 消费时框架检查事件持有的 {@code supportKeys} 与监听器声明的键是否有交集。
      * 为 {@code null} 或空时不做策略过滤。
      */

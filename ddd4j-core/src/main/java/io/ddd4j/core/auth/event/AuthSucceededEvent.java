@@ -57,6 +57,10 @@ public final class AuthSucceededEvent {
  *   <li>Javalin：业务方自定义</li>
  * </ul>
  *
+ * @param request 请求对象
+ * @param principal 认证主体
+ * @param token 令牌
+ * @param occurredAt 发生时间
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */

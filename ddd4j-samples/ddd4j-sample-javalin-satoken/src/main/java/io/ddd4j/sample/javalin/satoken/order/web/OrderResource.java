@@ -64,6 +64,7 @@ public class OrderResource {
 
     /**
      * 以 {@link EndpointGroup} 形式暴露本资源的全部路由。
+     * @return 返回的 EndpointGroup 结果
      */
     public EndpointGroup routes() {
         return () -> {

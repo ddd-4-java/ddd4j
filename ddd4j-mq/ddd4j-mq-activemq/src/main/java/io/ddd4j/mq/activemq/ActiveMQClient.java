@@ -61,6 +61,7 @@ public class ActiveMQClient implements MQClient {
     /**
      * 双构造 1：注入外部已配置好的 ActiveMQConnectionFactory（runtime 集成用）。
      * properties 默认为空，因为 properties 仅用于 publish 时的 message property 写入。
+     * @param connectionFactory 参数 connectionFactory
      */
     public ActiveMQClient(ActiveMQConnectionFactory connectionFactory) {
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ActiveMQ ConnectionFactory is required");
@@ -69,6 +70,7 @@ public class ActiveMQClient implements MQClient {
 
     /**
      * 双构造 2：从 properties 自建 ActiveMQConnectionFactory。
+     * @param properties 属性集合
      */
     public ActiveMQClient(ActiveMQProperties properties) {
         this.properties = Objects.requireNonNull(properties, "ActiveMQ Properties is required");

@@ -61,6 +61,7 @@ public class GuiceContext {
 
     /**
      * 获取 Injector（阻塞等待初始化完成）
+     * @return 获取的Injector
      */
     public static Injector getInjector() {
         if (Objects.isNull(injector)) {
@@ -76,6 +77,7 @@ public class GuiceContext {
 
     /**
      * 设置 Injector（应用启动时调用一次）
+     * @param inj 参数 inj
      */
     public static void setInjector(Injector inj) {
         if (Objects.nonNull(injector)) {
@@ -88,6 +90,9 @@ public class GuiceContext {
 
     /**
      * 按类型获取实例
+     * @param <T> 数据元素类型
+     * @param clazz 目标类型
+     * @return 获取的T
      */
     public static <T> T getInstance(Class<T> clazz) {
         return getInjector().getInstance(clazz);
@@ -95,6 +100,10 @@ public class GuiceContext {
 
     /**
      * 按名称获取实例
+     * @param <T> 数据元素类型
+     * @param name 名称
+     * @param clazz 目标类型
+     * @return 获取的T
      */
     public static <T> T getInstance(String name, Class<T> clazz) {
         return getInjector().getInstance(Key.get(clazz, Names.named(name)));
@@ -102,6 +111,10 @@ public class GuiceContext {
 
     /**
      * 按注解获取实例
+     * @param <T> 数据元素类型
+     * @param clazz 目标类型
+     * @param annotationType 类型对象
+     * @return 获取的T
      */
     public static <T> T getInstance(Class<T> clazz, Class<? extends Annotation> annotationType) {
         return getInjector().getInstance(Key.get(clazz, annotationType));
@@ -109,6 +122,9 @@ public class GuiceContext {
 
     /**
      * 获取某类型的所有绑定实例
+     * @param <T> 数据元素类型
+     * @param clazz 目标类型
+     * @return 获取的Collection<T> 对象
      */
     public static <T> Collection<T> getInstances(Class<T> clazz) {
         List<T> instances = new ArrayList<>();
@@ -130,6 +146,8 @@ public class GuiceContext {
 
     /**
      * 获取环境属性
+     * @param key 键
+     * @return 获取的字符串内容
      */
     public static String getProperty(String key) {
         return getProperty(key, null);
@@ -137,6 +155,9 @@ public class GuiceContext {
 
     /**
      * 获取环境属性（带默认值）
+     * @param key 键
+     * @param defaultValue 默认值
+     * @return 获取的字符串内容
      */
     public static String getProperty(String key, String defaultValue) {
         // 优先从系统属性获取
@@ -159,6 +180,8 @@ public class GuiceContext {
 
     /**
      * 设置自定义属性
+     * @param key 键
+     * @param value 值
      */
     public static void setAttribute(String key, Object value) {
         ATTRIBUTES.put(key, value);
@@ -166,6 +189,8 @@ public class GuiceContext {
 
     /**
      * 获取自定义属性
+     * @param key 键
+     * @return 获取的Object
      */
     public static Object getAttribute(String key) {
         return ATTRIBUTES.get(key);
@@ -173,6 +198,7 @@ public class GuiceContext {
 
     /**
      * 判断 Injector 是否已初始化
+     * @return 满足条件时返回 true，否则返回 false
      */
     public static boolean isInitialized() {
         return Objects.nonNull(injector);
@@ -189,6 +215,7 @@ public class GuiceContext {
 
     /**
      * 获取注入器中所有绑定的类型
+     * @return 获取的Set
      */
     public static Set<Class<?>> getBoundTypes() {
         Set<Class<?>> types = new HashSet<>();

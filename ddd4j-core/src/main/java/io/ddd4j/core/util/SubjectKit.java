@@ -98,6 +98,7 @@ public final class SubjectKit {
 
     /**
      * 获取权限数据源（默认空实现兜底）。
+     * @return 获取的SubjectDataProvider
      */
     public static SubjectDataProvider getDataProvider() {
         if (Objects.isNull(dataProvider)) {
@@ -121,6 +122,7 @@ public final class SubjectKit {
 
     /**
      * 获取策略集（默认单例兜底）。
+     * @return 获取的SubjectStrategy
      */
     public static SubjectStrategy getStrategy() {
         if (Objects.isNull(strategy)) {
@@ -265,6 +267,7 @@ public final class SubjectKit {
     /**
      * 校验凭证（仅校验，不建会话）。
      *
+     * @param <T> 数据元素类型
      * @param token 凭证
      * @return 认证主体，校验失败返回 null
      */

@@ -35,6 +35,16 @@ import java.util.Locale;
 
 /**
  * Web 框架采集到的原始请求元数据。
+ * @param requestId 请求标识
+ * @param traceId 链路追踪标识
+ * @param tenantId 租户标识
+ * @param authorization 授权信息
+ * @param locale 区域与语言设置
+ * @param forwardedFor 字符串参数
+ * @param realIp 字符串参数
+ * @param remoteAddress 远程地址
+ * @param method 方法
+ * @param path 路径
  */
 
     public WebRequestData(String requestId, String traceId, String tenantId, String authorization,

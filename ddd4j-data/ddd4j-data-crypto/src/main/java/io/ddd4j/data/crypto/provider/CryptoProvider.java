@@ -33,6 +33,7 @@ public interface CryptoProvider {
     /**
      * 字段解密
      *
+     * @param rtType 类型对象
      * @param value 待解密字段的值
      * @param <T>   字段类型
      * @return T 解密后的字段值

@@ -48,9 +48,10 @@ public class MapKit extends MapUtil {
     /**
      * 根据搜索字符串遍历Json，如：{"a":{"b":{"c":"d"}}}，入参为：a.b.c，返回：d
      *
-     * @param path
-     * @param <T>
-     * @return
+     * @param map  待检索的映射数据
+     * @param path 点分隔的属性路径，如 a.b.c
+     * @param <T>  属性值的目标类型
+     * @return 路径命中的值，未命中时返回 null
      */
     public <T> T search(Map map, String path) {
         if (Objects.isNull(map)) {
@@ -78,9 +79,11 @@ public class MapKit extends MapUtil {
     /**
      * 根据搜索字符串遍历Json，如：{"a":{"b":{"c":"d"}}}，入参为：a.b.c，返回：d
      *
-     * @param keyword
-     * @param <T>
-     * @return
+     * @param map          待检索的映射数据
+     * @param keyword      点分隔的属性路径，如 a.b.c
+     * @param defaultValue 未命中时使用的默认值
+     * @param <T>          返回值类型
+     * @return 路径命中的值，未命中时返回默认值
      */
     public <T> T search(Map map, String keyword, T defaultValue) {
         T result = search(map, keyword);

@@ -28,8 +28,8 @@ import java.util.Objects;
  *
  * <p>作为 {@link Order} 与 {@link OrderLine} 共用的值对象，封装金额不可变性、币种一致性与精度归一化。
  *
- * @param amount   金额数值
- * @param currency 货币代码（如 CNY、USD）
+ * <p>{@code amount} — 金额数值
+ * <p>{@code currency} — 货币代码（如 CNY、USD）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Value

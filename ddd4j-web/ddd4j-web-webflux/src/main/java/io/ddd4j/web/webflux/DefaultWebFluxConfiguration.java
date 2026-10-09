@@ -110,6 +110,8 @@ public class DefaultWebFluxConfiguration {
 
     /**
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
+     * @param readinessRegistry 参数 readinessRegistry
+     * @return 返回的 Ddd4jWebFluxReadinessController 结果
      */
     @Bean
     public Ddd4jWebFluxReadinessController ddd4jWebFluxReadinessController(

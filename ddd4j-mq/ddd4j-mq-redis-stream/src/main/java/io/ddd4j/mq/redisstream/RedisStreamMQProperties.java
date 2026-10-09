@@ -68,6 +68,7 @@ public class RedisStreamMQProperties extends MQProperties {
 
     /**
      * 基于 {@link #url} 创建 Jedis（UnifiedJedis 形态）。
+     * @return 新建的UnifiedJedis
      */
     public UnifiedJedis newJedis() {
         return RedisClient.create(url);
@@ -75,6 +76,7 @@ public class RedisStreamMQProperties extends MQProperties {
 
     /**
      * 基于 {@link #clientType} 创建对应后端的 Stream 操作适配。
+     * @return 新建的RedisStreamOperations
      */
     public RedisStreamOperations newOperations() {
         switch (clientType) {
@@ -90,6 +92,7 @@ public class RedisStreamMQProperties extends MQProperties {
 
     /**
      * 设置客户端类型（null 兜底为 JEDIS）。
+     * @param clientType 客户端类型
      */
     public void setClientType(RedisStreamClientType clientType) {
         this.clientType = Objects.isNull(clientType) ? RedisStreamClientType.JEDIS : clientType;

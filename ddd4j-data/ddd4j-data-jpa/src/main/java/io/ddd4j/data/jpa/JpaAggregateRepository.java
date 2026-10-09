@@ -287,6 +287,8 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
      *
      * <p>默认同名；当 Domain 与 PO 命名不同时由具体仓储覆盖。本方法返回
      * JPA property，而不是数据库 column。
+     * @param domainProperty 领域属性
+     * @return 返回的字符串内容
      */
     protected String persistenceProperty(String domainProperty) {
         return domainProperty;
@@ -294,6 +296,8 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
 
     /**
      * 根据 Query 属性空间选择领域映射或 PO 直接属性，并校验类型边界。
+     * @param condition 条件
+     * @return 返回的字符串内容
      */
     protected String persistenceProperty(LambdaCondition condition) {
         Objects.requireNonNull(condition, "condition must not be null");

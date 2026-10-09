@@ -74,6 +74,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * MVC ObjectMapper（自定义日期时间格式）。
+     * @return 返回的 ObjectMapper 结果
      */
     @Bean
     public ObjectMapper mvcObjectMapper() {
@@ -85,6 +86,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
      * 自定义 Jackson 2 JSON 消息转换器。
      * <p>2.0.x 使用 Jackson 2 ObjectMapper；本 Bean 避免将 MVC 转换器实现
      * 与 Spring 默认转换器的内部配置耦合。</p>
+     * @return 返回的 CustomHttpMessageConverter 结果
      */
     @Bean
     public CustomHttpMessageConverter customHttpMessageConverter() {
@@ -96,6 +98,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 全局 REST 异常通知处理器。
+     * @return 返回的 GlobalRestExceptionAdvice 结果
      */
     @Bean
     public GlobalRestExceptionAdvice globalRestExceptionAdvice() {
@@ -105,6 +108,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 全局请求体通知处理器。
+     * @return 返回的 GlobalRequestAdvice 结果
      */
     @Bean
     public GlobalRequestAdvice globalRequestAdvice() {
@@ -114,6 +118,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
 
     /**
      * 全局响应包装通知处理器。
+     * @return 返回的 GlobalResponseRAdvice 结果
      */
     @Bean
     public GlobalResponseRAdvice globalResponseRAdvice() {

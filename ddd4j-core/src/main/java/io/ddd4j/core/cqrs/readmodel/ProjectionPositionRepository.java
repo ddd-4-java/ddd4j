@@ -44,6 +44,7 @@ public interface ProjectionPositionRepository {
     Optional<ProjectionPosition> findByStreamId(String streamId);
     /**
      * 列出全部投影位置。
+     * @return 查找的List
      */
 
     List<ProjectionPosition> findAll();

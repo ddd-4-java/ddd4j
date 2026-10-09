@@ -112,6 +112,9 @@ public final class DomainModelHelper {
 
     /**
      * 仅用 Domain Model 构建（PO provider 不传，列名全部走 fallback）。
+     * @param <M> 数据元素类型
+     * @param modelClass 目标模型类型
+     * @return 获取的DomainModelInfo<M> 对象
      */
     public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass) {
         return getModelInfo(modelClass, null);
@@ -119,6 +122,7 @@ public final class DomainModelHelper {
 
     /**
      * 移除 Domain Model 缓存（用于测试或热加载）。
+     * @param modelClass 目标模型类型
      */
     public static void remove(Class<?> modelClass) {
         MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType, modelClass));

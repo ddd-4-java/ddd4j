@@ -87,6 +87,10 @@ public final class WebOtelSupport {
 
     /**
      * 启动 SERVER span，返回 span 对象（OTel 未就绪时返回 null）。
+     * @param method 方法
+     * @param path 路径
+     * @param headers 消息头集合
+     * @return 启动后的Object
      */
     public static Object startServerSpan(String method, String path, Map<String, String> headers) {
         if (Objects.isNull(START_SERVER_SPAN)) {
@@ -101,6 +105,8 @@ public final class WebOtelSupport {
 
     /**
      * 激活 span 为当前 Context，返回 Scope（try-with-resources 可关闭）。
+     * @param span 链路 Span 对象
+     * @return 返回的 AutoCloseable 结果
      */
     public static AutoCloseable activate(Object span) {
         if (Objects.isNull(ACTIVATE) || Objects.isNull(span)) {
@@ -122,6 +128,8 @@ public final class WebOtelSupport {
 
     /**
      * 记录异常到 span。
+     * @param span 链路 Span 对象
+     * @param error 错误对象
      */
     public static void recordError(Object span, Throwable error) {
         if (Objects.isNull(RECORD_ERROR) || Objects.isNull(span) || Objects.isNull(error)) {
@@ -136,6 +144,8 @@ public final class WebOtelSupport {
 
     /**
      * 结束 span 并记录 HTTP 状态码。
+     * @param span 链路 Span 对象
+     * @param status 状态
      */
     public static void endServerSpan(Object span, int status) {
         if (Objects.isNull(END_SERVER_SPAN) || Objects.isNull(span)) {
@@ -150,6 +160,7 @@ public final class WebOtelSupport {
 
     /**
      * 注入 traceparent 到响应头。
+     * @param responseHeaders 响应消息头
      */
     public static void injectResponseContext(Map<String, String> responseHeaders) {
         if (Objects.isNull(INJECT_RESPONSE_CONTEXT) || Objects.isNull(responseHeaders)) {
@@ -164,6 +175,7 @@ public final class WebOtelSupport {
 
     /**
      * 检查 OTel 集成是否可用。
+     * @return 满足条件时返回 true，否则返回 false
      */
     public static boolean isAvailable() {
         if (Objects.isNull(IS_AVAILABLE)) {

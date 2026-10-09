@@ -27,19 +27,18 @@ import java.lang.annotation.Target;
  * <p>标注于 CQRS 读侧投影的方法，标识该方法处理"实体被创建"类型的事件。
  *
  * <p>典型用法：
- * <pre>{@code
+ * <pre>
  * public class OrderListView extends DddJpaView {
- *     @CreateEvent(OrderCreatedEvent.class)
+ *     {@literal @}CreateEvent(OrderCreatedEvent.class)
  *     public void onOrderCreated(EntityManager em, OrderCreatedEvent event) {
  *         em.persist(OrderListEntry.from(event));
  *     }
  * }
- * }</pre>
+ * </pre>
  *
  * <p>由各框架适配层（{@code ddd4j-runtime-spring} / {@code ddd4j-runtime-quarkus}）的
  * {@code SpringEventHandlerRegistry} / {@code QuarkusEventHandlerRegistry} 在运行时反射装配事件路由表。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -49,6 +48,8 @@ public @interface CreateEvent {
 
     /**
      * 要处理的事件类型。
+     *
+     * @return 需要监听并处理的领域事件类型
      */
     Class<?> value();
 }

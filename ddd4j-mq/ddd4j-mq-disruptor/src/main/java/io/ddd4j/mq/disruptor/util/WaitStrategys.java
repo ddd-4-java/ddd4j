@@ -63,7 +63,7 @@ public enum WaitStrategys {
         }
     },
     /**
-     * 性能最高，CPU 消耗最大，建议消费者线程数 < 物理核数时使用。
+     * 性能最高，CPU 消耗最大，建议消费者线程数 &lt; 物理核数时使用。
      */
     busy_spin {
         @Override
@@ -74,6 +74,7 @@ public enum WaitStrategys {
 
     /**
      * 获取对应的 {@link WaitStrategy} 实例。
+     * @return 返回的 WaitStrategy 结果
      */
     public abstract WaitStrategy instance();
 }

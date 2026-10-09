@@ -82,6 +82,8 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 重命名/描述修改。
+     * @param roleName 角色名称
+     * @param description 描述信息
      */
     public void rename(String roleName, String description) {
         if (StrKit.isNotBlank(roleName)) {
@@ -108,6 +110,7 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 分配权限给角色。
+     * @param newPermissionIds 集合数据
      */
     public void assignPermissions(Set<String> newPermissionIds) {
         if (Objects.nonNull(newPermissionIds)) {
@@ -118,6 +121,7 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 添加单个权限。
+     * @param permissionId 权限标识
      */
     public void addPermission(String permissionId) {
         if (StrKit.isNotBlank(permissionId)) {
@@ -127,6 +131,7 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 移除权限。
+     * @param permissionId 权限标识
      */
     public void removePermission(String permissionId) {
         this.permissionIds.remove(permissionId);

@@ -52,6 +52,7 @@ public interface ViewScheduler {
 
         /**
          * 判断任务是否仍处于活跃状态。
+         * @return 满足条件时返回 true，否则返回 false
          */
         boolean isActive();
     }

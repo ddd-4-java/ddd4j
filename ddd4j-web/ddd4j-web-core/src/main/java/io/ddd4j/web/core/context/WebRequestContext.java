@@ -35,6 +35,14 @@ import java.util.Objects;
 
 /**
  * HTTP 请求在 ddd4j 内部的框架无关表示。
+ * @param requestId 请求标识
+ * @param traceId 链路追踪标识
+ * @param tenantId 租户标识
+ * @param authorization 授权信息
+ * @param locale 区域与语言设置
+ * @param clientIp 字符串参数
+ * @param method 方法
+ * @param path 路径
  */
 
     public WebRequestContext(String requestId, String traceId, String tenantId, String authorization,

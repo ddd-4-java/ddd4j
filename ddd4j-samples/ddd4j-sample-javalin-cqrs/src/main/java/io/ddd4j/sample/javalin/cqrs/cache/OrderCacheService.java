@@ -65,6 +65,7 @@ public class OrderCacheService {
 
     /**
      * 订单统计（缓存优先）。
+     * @return 获取的Map
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getOrderStats() {
@@ -88,6 +89,8 @@ public class OrderCacheService {
 
     /**
      * 买家订单计数（缓存优先）。
+     * @param buyerId 买家标识
+     * @return 获取的长整型数值
      */
     public long getBuyerOrderCount(String buyerId) {
         String cacheKey = "buyer:" + buyerId;
@@ -106,6 +109,8 @@ public class OrderCacheService {
 
     /**
      * 订单详情（缓存优先）。
+     * @param orderId 顺序标识
+     * @return 获取的Optional
      */
     public Optional<Order> getOrderDetail(String orderId) {
         if (Objects.isNull(orderId) || StrKit.isBlank(orderId)) {
@@ -124,6 +129,7 @@ public class OrderCacheService {
 
     /**
      * 写入订单后更新缓存与失效统计。
+     * @param order 顺序值
      */
     public void putOrder(Order order) {
         if (Objects.isNull(order)) {

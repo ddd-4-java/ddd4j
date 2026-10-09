@@ -56,6 +56,7 @@ public class AuthorizationController {
 
     /**
      * 注册 RBAC 授权管理路由（建议在 {@code path("rbac", ...)} 内调用，使路径变为 {@code /rbac/admin/*}）。
+     * @return 返回的 EndpointGroup 结果
      */
     public EndpointGroup routes() {
         return () -> {

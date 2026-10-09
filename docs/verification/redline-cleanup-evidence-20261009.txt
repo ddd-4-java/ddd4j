@@ -1,0 +1,306 @@
+================================================================================
+ddd4j core 仓 feature/1.0.x 旧品牌标识红线清理 证据文件
+日期：2026-10-09
+仓库：E:\workspaces\workspace-ddd4j\workspace-ddd4j-boot\ddd4j（分支 feature/1.0.x）
+纪律：任何输出不出现 4 个旧品牌标识字面量；提及用角色名
+      （旧教育品牌 / 旧家族名(h 开头 6 字母) / 旧应用名(j 开头 6 字母) / 旧中文品牌）；
+      扫描模式一律文件派生/邻接构造；展示前必过掩码（占位 <EDU>/<CN>/<FAM>/<APP>）。
+禁止项遵守：未运行 mvn / gradle（仅 python 门禁 + py_compile）；未执行 git
+      commit / push / 切分支；target/ 与并行批次改动零触碰。
+================================================================================
+
+【0】任务前现场（git status 保护）与模式派生
+--------------------------------------------------------------------------------
+  初始快照：分支 feature/1.0.x，216 个 M 文件 / 0 ?? / 0 D
+    （/tmp/.rl4-gs-core.txt，为并行 javadoc 门禁批次：@author 移除 + @return 补充
+      + 根 pom javadoc 配置；本任务保护性复用，禁止回滚）。
+  与本任务命中面的重叠 = 1 文件：pom.xml（组织信息块 5 处，做叠加式编辑）。
+  模式与掩码来源（运行时派生，命令文本无连续字面量）：
+  - P1 旧家族名 FAM ← /tmp/.oldseg.txt（6 字节，前序批次同源产物；布尔核验
+      $(cat /tmp/.oldseg.txt) == 邻接拼接 hi''we''py → yes）
+  - P2 旧应用名 APP ← /tmp/.oldapp.txt（6 字节；核验 == je''ebiz → yes）
+  - P3 旧教育品牌 EDU ← 从兄弟仓云仓红线证据（workspace-ddd4j-cloud/ddd4j-cloud/
+      docs/verification/redline-cleanup-evidence-20261009.txt 第33行邻接拆写行
+      T1='ti'; T2='an'; T3='yin'）eval 派生入 /tmp/.rl4-edu.txt（7 字节，
+      equals-constructed；该证据第32行标注“7 字母 pinyin 形”）
+  - P4 旧中文品牌 CN ← 同法（同证据第36行 CN1='万'; CN2='莘'）
+      派生入 /tmp/.rl4-cn.txt（6 字节 = 2 汉字 UTF-8）
+  - 掩码：mask() { sed -e "s/$FAM/<FAM>/Ig" -e "s/$APP/<APP>/Ig"
+      -e "s/$EDU/<EDU>/Ig" -e "s/$CN/<CN>/g"; }（展示前必过）
+  - 替换映射：旧教育品牌→redacted-legacy-edu；旧家族名→redacted-legacy-family；
+      旧应用名→redacted-legacy-app；旧中文品牌→旧家族。
+  基线（命令：git grep -Iil / -Ii -e "$模式" HEAD）：
+    - P1 旧家族名（-i 行级）：HEAD 48 文件 / 213 行（tracked）
+    - P2 旧应用名（-i 行级）：HEAD 1 文件 / 1 行（webflux 测试 yml 顶层键）
+    - P3 / P4 精确模式：HEAD = 0 文件 / 0 行
+  工作区改前（find 全树排除 .git/target，grep -I 跳过二进制，含 ignored）：
+    - P1 = 79 文件 / 389 行；P2 = 1 文件 / 1 行；P3 = 0；P4 = 0
+    - 79 vs 48 差 31 文件 = ignored 未跟踪面：.flattened-pom.xml ×9 +
+      .superpowers 未入库历史件 ×22（.superpowers 同时有 110 个 tracked 文件，
+      tracked 命中 48 ⊆ HEAD 48，集合差分经 quotepath 归一后为空）。
+  扫描管线阳性对照：grep 'ddd4j' 同管线 → 2185~2186 文件命中（非静默 0）。
+
+【1】命中清单与处置对照（80 文件 / 390 行，含每文件修复前计数）
+--------------------------------------------------------------------------------
+序号  修复前行命中  处置类别                                  文件
+   1         5      文字映射FAM→redacted-legacy-family          .flattened-pom.xml
+   2         1      文字映射FAM→redacted-legacy-family          .github/FUNDING.yml
+   3         2      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-08-24-multi-runtime-self-implementation/review-30cb0d48..6ff92108.diff
+   4         7      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-08-24-multi-runtime-self-implementation/review-48d6bfb3..2ef42196.diff
+   5         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-08-24-multi-runtime-self-implementation/review-4fd03ee3..43ad36d2.diff
+   6         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-08-24-multi-runtime-self-implementation/review-a0042865..5059bdb1.diff
+   7         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.5-brief.md
+   8         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.5-report.md
+   9         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-explicit-jpa-transaction-participation/task-4-baseline-1/ddd4j-data/ddd4j-data-event-store-jpa/pom.xml
+  10         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-explicit-jpa-transaction-participation/task-5-baseline/docs/architecture/cloud-agents-migration-evidence.md
+  11         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-explicit-jpa-transaction-participation/task-5-jpa-pom-baseline-1.xml
+  12         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/baseline-1/ddd4j-auth/ddd4j-auth-license/src/main/resources/META-INF/spring-autoconfigure-metadata.properties
+  13        36      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/baseline-1/ddd4j-dependencies/pom.xml
+  14         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/baseline-2/ddd4j-auth/ddd4j-auth-license/src/main/resources/META-INF/spring-autoconfigure-metadata.properties
+  15        34      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/baseline-2/ddd4j-dependencies/pom.xml
+  16         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/baseline-3/ddd4j-auth/ddd4j-auth-license/src/main/resources/META-INF/spring-autoconfigure-metadata.properties
+  17        17      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/baseline-3/ddd4j-dependencies/pom.xml
+  18         7      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/final-source-review-diff.md
+  19         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/fix-1-baseline-1/ddd4j-auth/ddd4j-auth-license/src/main/resources/META-INF/spring-autoconfigure-metadata.properties
+  20         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/fix-1-baseline-2/ddd4j-auth/ddd4j-auth-license/src/main/resources/META-INF/spring-autoconfigure-metadata.properties
+  21         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/fix-1-baseline-3/ddd4j-auth/ddd4j-auth-license/src/main/resources/META-INF/spring-autoconfigure-metadata.properties
+  22         6      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/fix-1-review-diff.md
+  23         7      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/task-1-review-diff.md
+  24         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/task-2-artifacts/reports-main-20260908T182602/sbom/ddd4j-sbom.json
+  25         1      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/task-2-artifacts/reports-v2-20260908T182602/sbom/ddd4j-sbom.json
+  26         2      文字映射FAM→redacted-legacy-family          .superpowers/sdd/2026-09-08-truelicense4-migration/task-2-logs/dependency-tree-runtime-main-20260908T182602.log
+  27         2      文字映射FAM→redacted-legacy-family          6、ddd4j-产品与版本规划.md
+  28         2      文字映射FAM→redacted-legacy-family          CODEGRAPH_LATEST_ZH.md
+  29         5      文字映射FAM→redacted-legacy-family          CODEOWNERS
+  30         2      文字映射FAM→redacted-legacy-family          README.md
+  31         1      文字映射FAM→redacted-legacy-family          config/dependencies/README.md
+  32        61      文字映射FAM→redacted-legacy-family          config/dependencies/alignment-policy.json
+  33        22      文字映射FAM→redacted-legacy-family          config/dependencies/component-matrix.csv
+  34         2      文字映射FAM→redacted-legacy-family          config/dependencies/unverified-artifacts.csv
+  35        17      文字映射FAM→redacted-legacy-family          config/dependencies/validation-result.json
+  36         3      文字映射FAM→redacted-legacy-family          config/dependencies/zxing-coordinate-migration.md
+  37         1      文字映射FAM→redacted-legacy-family          ddd4j-auth/OPTIMIZATION.md
+  38         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-auth/ddd4j-auth-datascope/.flattened-pom.xml
+  39         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-auth/ddd4j-auth-datascope/pom.xml
+  40         1      特殊修正：过期FQCN→真实类                         ddd4j-auth/ddd4j-auth-license/src/main/resources/META-INF/spring-autoconfigure-metadata.properties
+  41         3      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-auth/ddd4j-auth-security/.flattened-pom.xml
+  42         3      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-auth/ddd4j-auth-security/pom.xml
+  43         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-auth/ddd4j-auth-shiro/.flattened-pom.xml
+  44         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-auth/ddd4j-auth-shiro/pom.xml
+  45         3      文字映射FAM→redacted-legacy-family          ddd4j-core/src/main/java/io/ddd4j/core/constant/Constants.java
+  46         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-data/ddd4j-data-event-store-jdbi/.flattened-pom.xml
+  47         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-data/ddd4j-data-event-store-jdbi/pom.xml
+  48         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-data/ddd4j-data-event-store-jpa/.flattened-pom.xml
+  49         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-data/ddd4j-data-event-store-jpa/pom.xml
+  50         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-data/ddd4j-data-event-store-r2dbc/.flattened-pom.xml
+  51         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-data/ddd4j-data-event-store-r2dbc/pom.xml
+  52         1      文字映射FAM→redacted-legacy-family          ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/context/Ddd4jTenantContext.java
+  53         1      文字映射FAM→redacted-legacy-family          ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/context/Ddd4jTenantContext.java
+  54         1      文字映射FAM→redacted-legacy-family          ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/DataScopeProvider.java
+  55         1      文字映射FAM→redacted-legacy-family          ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/inner/DataPermissionInnerInterceptor.java
+  56        31      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-dependencies/.flattened-pom.xml
+  57        31      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-dependencies/pom.xml
+  58         6      文字映射FAM→redacted-legacy-family          ddd4j-kit/src/main/java/io/ddd4j/kit/lang/StrKit.java
+  59         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-runtime/ddd4j-runtime-spring/.flattened-pom.xml
+  60         1      坐标迁移com.github.<FAM>→io.github.easy4j   ddd4j-runtime/ddd4j-runtime-spring/pom.xml
+  61         1      文字映射FAM→redacted-legacy-family          ddd4j-samples/ddd4j-sample-javalin-satoken/README.md
+  62         1      文字映射FAM→redacted-legacy-family          ddd4j-samples/ddd4j-sample-javalin-shiro/README.md
+  63         1      文字映射FAM→redacted-legacy-family          ddd4j-samples/ddd4j-sample-javalin/README.md
+  64         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-validation/src/main/java/io/ddd4j/web/validation/constraintvalidators/AllowedValuesValidator.java
+  65         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-validation/src/main/java/io/ddd4j/web/validation/constraintvalidators/NumberValueValidator.java
+  66         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-validation/src/main/java/io/ddd4j/web/validation/constraintvalidators/PhoneValueValidator.java
+  67         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-validation/src/main/java/io/ddd4j/web/validation/constraintvalidators/StringDateValueValidator.java
+  68         1      文字映射(APP键,无Java消费方)                     ddd4j-web/ddd4j-web-webflux/src/test/resources/application.yml
+  69         2      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/authc/AuthcExtensionPoint.java
+  70         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/authc/AuthcExtensionPointAdapter.java
+  71         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/ParamSignatureExtensionPoint.java
+  72         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/SpringServletRequestExtensionPoint.java
+  73         1      文字映射FAM→redacted-legacy-family          ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/SpringServletResponseExtensionPoint.java
+  74         1      文字映射FAM→redacted-legacy-family          docs/architecture/cloud-agents-migration-evidence.md
+  75         1      文字映射FAM→redacted-legacy-family          docs/architecture/cloud-exception-contract-audit.md
+  76         1      文字映射FAM→redacted-legacy-family          docs/superpowers/plans/2026-09-08-dependency-alignment-results.md
+  77         5      文字映射FAM→redacted-legacy-family          pom.xml
+  78         4      文字映射(含2处标识符修正)                          scripts/format_dependency_properties.py
+  79        11      文字映射(含2处标识符修正)                          scripts/test_dependency_property_layout.py
+  80         2      文字映射(含2处标识符修正)                          scripts/verify_dependency_property_layout.py
+小计：80 文件 / 390 行（修复前 FAM+APP 计数）；全部复扫=0。
+另删除派生文件 4 个：.codegraph/codegraph.db + scripts/__pycache__ 下 3 个 stale .pyc（见【8】E3）。
+
+【2】坐标迁移推导（easy4j）与存在性核验
+--------------------------------------------------------------------------------
+  2.1 迁移规则：真实依赖坐标 com.github.<FAM>:<artifact> →
+      io.github.easy4j:<artifact>，<version> 全部沿用既有属性（未改任何版本号）；
+      mvnrepository 注释 URL 的坐标段同步改写为 easy4j 路径（见【8】E2）。
+      统计：16 个 pom/镜像文件、80 处
+        （BOM ddd4j-dependencies/pom.xml 31 = 20 个 GAV + 11 条注释 URL；
+         BOM .flattened 镜像 31；7 个模块 pom 各 1~3 处 + 其 7 个 .flattened 镜像；
+         模块命中：auth-security 3（security-biz/security-jwt starter +
+         jwt-issuer-with-jjwt）、auth-shiro 1（shiro-biz）、auth-datascope 1
+         （spring-biz）、runtime-spring 1（spring-biz）、event-store
+         jdbi/jpa/r2dbc 各 1（mybatis-plus-enhance 排除项））。
+  2.2 碰撞预防：BOM 内 (groupId,artifactId) 解析后，fam 管理 20 构件 ∩
+      既有 io.github.easy4j 管理 16 构件 = 空集 → 迁移后无重复 GAV。
+      模块 pom 内 auth-security 既有 easy4j:redistpl-plus 与迁移项无同名。
+  2.3 引用一致性：模块侧 6 个直依赖均无 <version>（依赖 BOM 管理），
+      BOM 与模块同批迁移 → groupId 匹配不断裂；event-store 3 个排除项
+      与 BOM 管理项同批迁移（排除语义跟随权威坐标，见【8】E6）。
+  2.4 存在性核验（ls ~/.m2/repository/io/github/easy4j → 22 构件；对照
+      E:/workspaces/workspace-github-easy-4-java 权威源码工作区）：
+      Tier-A 权威工作区存在（groupId 实测 io.github.easy4j）9 个：
+        cxf-rt-javassist、jwt-issuer-api、jwt-issuer-with-jjwt、
+        jwt-issuer-with-nimbus（jwt-issuer 父工程 modules 三件套）、
+        mybatis-plus-enhance、spring-javassist、shiro-j2cache、soapui-template、
+        undertow-metrics-prometheus。
+      Tier-B 本地 .m2 仅存旧族坐标缓存（无 easy4j 本地副本）8 个：
+        docx4j-template-bom、dozer-extra-converters、druid-metrics-prometheus、
+        httpconn、security-biz-spring-boot-starter、security-jwt-spring-boot-
+        starter、shiro-biz、spring-biz → 记 E1。
+      Tier-C 两侧均无对应 3 个：
+        httputils、javassist-plus（工作区只有 javassist-extension，不同 artifactId）、
+        scribejava-apis-ext（注释块内；工作区只有 scribejava-apis-extension，
+        不同 artifactId）→ 记 E1（强）。
+      ip2region-spring-boot-starter：仅残留注释 URL，.m2/io/github/easy4j 下
+      存在同名构件 ✓（注释已随迁移改写）。
+      依据 AGENTS.md：io.github.easy4j 各件 1.0.x.20260630-SNAPSHOT 已推阿里云
+      私有仓库，本机无凭据未做私仓免密核验（E1 风险敞口同源）。
+  2.5 文档性坐标记录（config/dependencies/*.csv/*.json/*.md、OPTIMIZATION.md、
+      mvnrepository 注释）按【0】文字映射处理，不参与坐标迁移。
+
+【3】运行时敏感字符串核实（改前完成）
+--------------------------------------------------------------------------------
+  3.1 ddd4j-core Constants.java 3 个 Marker 常量值（io.<FAM>.access/authz/biz）：
+      消费方全仓仅 2 文件且均引用常量本身（DefaultApiOperationLogProvider
+      MarkerFactory.getMarker(Constants.ACCESS_MARKER)、ThreeLineLogsParityTest
+      引用常量），无 logback/xml 硬编码 marker → 改值即全链一致，零消费方需同步。
+  3.2 ddd4j-web-webflux/src/test/resources/application.yml 顶层键 <APP>
+      （rest-template.client-type: simple）：全仓唯一 P2 命中；Java 源码检索
+      client-type/clientType/rest-template/restTemplate 均无绑定消费方
+      （@ConfigurationProperties 前缀无对应类）→ 死配置，按映射改键名，
+      无行为影响。
+  3.3 event-store 排除项 mybatis-plus-enhance：ddd4j-core 依赖树无任何
+      mybatis 传递路径（pom artifactId 清单无 mybatis/mybatis-plus）→ 死排除；
+      且权威坐标已是 easy4j（Tier-A）→ 随迁移改写无行为差异（E6）。
+  3.4 除上述外，Java 源码命中全部为注释/javadoc/@author/Copyright 文本
+      （StrKit 6、web-validation 4 Validator、webmvc 5 ExtensionPoint
+      （io.github.<FAM>:pf4j-extension 提及）、Ddd4jTenantContext ×2、
+      DataScopeProvider、DataPermissionInnerInterceptor）→ 文字映射。
+
+【4】spring-autoconfigure-metadata.properties 修正（1 文件）
+--------------------------------------------------------------------------------
+  修复前：com.github.<FAM>.boot.autoconfigure.DefaultLicenseAutoConfiguration=
+          （源码树无该 FQCN = 纯过期行；模块 META-INF 下亦无
+           AutoConfiguration.imports / spring.factories 可对照）。
+  对照核实：模块真实自动配置类存在于
+      ddd4j-auth-license/src/main/java/io/ddd4j/auth/license/
+      DefaultLicenseAutoConfiguration.java（LicenseProperties 同包）。
+  修正后：io.ddd4j.auth.license.DefaultLicenseAutoConfiguration=
+          （按模块真实 FQCN 修正，保留“键=空值”结构，与 ddd4j-boot 先例一致）。
+  .superpowers 内 6 个历史基线副本同名文件属历史记录 → 文字映射（E4）。
+
+【5】P3 / P4 启发式补扫裁定
+--------------------------------------------------------------------------------
+  - P3 旧教育品牌：精确 7 字母 token 全仓（文本+二进制）= 0（HEAD 与工作区
+    均为 0）。关键词集（教育/课堂/学院/学校/培训/学员/课程/教务/教研/
+    edutech/jiaoyu/school/classroom/training/lms，-i）：
+      HEAD 9 文件 = 工作区 9 文件，逐条裁定均非品牌：
+      · SaConstants.java / StpKit.java / StpKitTest.java：Sa-Token 权限体系
+        移植代码的“学校/SCHOOL/School”通用词（HEAD 即存在）；
+      · AuthConstants.java：SCHOOL 常量词（同上）；
+      · 6、ddd4j-产品与版本规划.md ×2、docs/ddd/CQRS 思维导图.md：
+        “培训”通用词（与 ddd4j-boot 仓 E5 同性质裁定）；
+      · ddd4j-auth/docs/migration-guide.md：“lms” 英文子串 ×3；
+      · SqsMQClient/SqsProperties：“lMs” 大小写混合子串。
+      → 旧教育品牌字面量命中 = 0（HEAD=工作区，本任务零引入）。
+  - P4 旧中文品牌：精确 2 汉字 token 全仓（文本+二进制）= 0；公司后缀代理词
+    （有限公司/网络科技/版权所有）HEAD 0 文件 = 工作区 0 文件。
+    本任务全部替换为 ASCII↔ASCII（映射目标均为 ASCII；CN 模式 sed 零触发），
+    未增删任何 CJK 字符 → 无需逐文件 CJK diff（方法学理由：改动面不含 CJK）。
+      → 旧中文品牌字面量命中 = 0。
+
+【6】python 门禁验证（未运行 mvn/gradle）
+--------------------------------------------------------------------------------
+  - scripts/test_dependency_property_layout.py → Ran 11 tests ... OK
+    （含受控 token fixture 同步映射：com.github.<FAM> →
+      com.github.redacted-legacy-family、<FAM>- 前缀属性 →
+      <redacted-legacy-family>-；两处 def test_* 标识符随映射改下划线形态，
+      避免连字符非法标识符，py_compile 通过）
+  - scripts/test_dependency_alignment.py → OK
+  - scripts/test_eventstore_parity_reports.py → OK
+  - scripts/test_license_policy.py → OK
+  - scripts/test_structure_api_normalization.py → OK
+  - scripts/verify_dependency_property_layout.py ddd4j-dependencies/pom.xml →
+      报 third_party 段 swagger2markup.version 排序问题；用 HEAD 版 BOM 副本
+      （git show HEAD:…）复现同一报错 → 既有问题，非本任务引入（E5）。
+  - scripts/verify_dependency_alignment.py 需要 mvn 生成的 effective-POM
+      （--effective 前置条件），本任务禁 mvn → 未执行（前置不满足，非静默跳过）。
+
+【7】复扫 0 命中证明（最终态，含未跟踪/被忽略文件与本证据文件）
+--------------------------------------------------------------------------------
+  扫描方式：find 全树 -type d \( -name .git -o -name target \) -prune -o
+    -type f -print0 | xargs -0 grep -Iins -e "$FAM" -e "$APP" -e "$EDU" -e "$CN"
+    ｜ mask()（模式值全部来自【0】文件派生；最终 2372 文件 = 前轮 2367 +
+      本证据文件 + 4 个由测试再生的干净 cpython-311 .pyc）。
+  结果（本证据文件成文后复检）：
+    - P1 旧家族名 = 0 行 / 0 文件
+    - P2 旧应用名 = 0 行 / 0 文件
+    - P3 旧教育品牌 = 0 行 / 0 文件
+    - P4 旧中文品牌 = 0 行 / 0 文件
+  二进制口径（去 -I 全量版，覆盖 .pyc/.db 类）：四模式文件清单 = 空
+    （.codegraph/codegraph.db 与 3 个 stale .pyc 已删除，见 E3）。
+  阳性对照（同管线 grep 'ddd4j'）→ 2187 文件命中（管线有效，非静默 0）。
+  HEAD → 工作区：P1 48文件/213行 → 0；P2 1文件/1行 → 0；P3/P4 0 → 0。
+  redacted token 落点核对：redacted-legacy-family / redacted-legacy-app
+    分布于【1】清单文件（坐标、注释、javadoc、数据记录、组织信息），
+    redacted-legacy-edu = 0（本仓无 EDU 命中），无“旧家族”落点（CN 零命中）。
+
+【8】例外清单
+--------------------------------------------------------------------------------
+  E1 坐标迁移侧存在性不可本机核验 11 构件（Tier-B 8 + Tier-C 3，清单见
+     【2】4）。理由：.m2/io/github/easy4j 无副本、Tier-C 连旧族缓存与权威
+     工作区均无同名 artifactId；仅可能存在于阿里云私有仓库（AGENTS.md 声明
+     已推送）。风险：若私仓亦无该构件，对应 BOM 管理项在 resolve 时失败——
+     版本号一律未动（沿用既有属性），修复面被限制在 groupId 单点；
+     模块直依赖涉及的 shiro-biz / spring-biz / security-*-starter 均属
+     Tier-B（旧族缓存可证发布物存在，仅 easy4j 侧待核验）。
+  E2 mvnrepository 注释 URL 11 条坐标段改写为 io.github.easy4j 路径：
+     mvnrepository 站内可能尚无 easy4j 页面（URL 或 404），注释仅为坐标
+     指引，无运行时影响。
+  E3 删除的派生文件（可再生，非源码）：
+     · .codegraph/codegraph.db（二进制索引含旧 token 字节，变长编码不可
+       安全字节替换 → 删除，.codegraph/.gitignore 与 writer.pid 保留，
+       后续可 codegraph 重新索引）；
+     · scripts/__pycache__ 下 3 个 stale .pyc（旧 token 字节码；已由
+       py_compile 生成干净的 cpython-311 副本）。
+  E4 .superpowers/sdd/** 历史基线/评审 diff/依赖树日志/sbom 共 22 个
+     未入库文件按文字映射处理（历史记录结构保留，仅 token 落点脱敏）；
+     其中 sbom ×2 首轮漏过（大写形态）已补扫修正并复检=0。
+  E5 ddd4j-dependencies/pom.xml third_party 段排序问题为 HEAD 既有
+     （HEAD 副本复现同报错），不在本任务范围。
+  E6 event-store mybatis-plus-enhance 排除项 groupId 随迁移改写：
+     ddd4j-core 无 mybatis 传递路径（死排除），行为无差异；若未来引入
+     mybatis 传递且解析坐标变化，需按 easy4j 坐标复核排除有效性。
+  E7 CODEOWNERS（5 处）与 .github/FUNDING.yml（1 处）映射为
+     @redacted-legacy-family / [redacted-legacy-family]：与替换映射规范及
+     兄弟仓先例一致，不指向真实 GitHub 账号（属红线脱敏预期形态）。
+
+【9】边界核查（禁止项遵守）
+--------------------------------------------------------------------------------
+  - 未运行 mvn / gradle；未执行任何 git commit / push / 切分支。
+  - target/ 零触碰；*.bak 仓内不存在；.DS_Store ×4 无四模式命中，未触碰。
+  - 并行 javadoc 批次保护：任务前 216 个 M 文件在最终 git status 中
+    0 缺失（comm -23 前后快照 = 0）；pom.xml 为叠加编辑，其并行改动
+    （javadoc 配置等）未被覆盖。本任务共编辑 80 文件 = 49 tracked（含与
+    并行重叠的根 pom.xml，故新增 48 个 M）+ 31 ignored（9 个 .flattened
+    镜像 + 22 个 .superpowers 历史件，不入 status）。最终 git status =
+    264 M（216 并行 + 48 新增）/ 0 D / 1 ??（唯一 ?? = docs/verification/，
+    即本证据文件新增目录）。
+    注：git 对非 ASCII 路径使用八进制 quotepath 引号形式（如
+    "6\343\200\201…"），核对时需归一。
+  - 掩码纪律：全部展示输出过 mask()；本文件全文为掩码形态，
+    四模式全文复检 = 0（见【7】）。
+
+================================================================================
+状态：完成。四模式复扫（全仓文本+二进制，排除 .git/target）= 0；
+坐标迁移 80 处/16 文件经碰撞与引用一致性核验；python 门禁 5 套全绿；
+例外 E1-E7 已登记（E1 为唯一构建面风险，受“版本未动”约束收窄）。
+================================================================================

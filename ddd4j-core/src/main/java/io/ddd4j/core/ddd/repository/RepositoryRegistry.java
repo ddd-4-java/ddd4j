@@ -131,6 +131,7 @@ public final class RepositoryRegistry {
      *   <li>静态 {@link #INSTANCES}（向后兼容）</li>
      * </ol>
      *
+     * @param <M> 数据元素类型
      * @param modelClass 聚合根类型
      * @return 仓储实例
      * @throws BizRuntimeException 未找到匹配的仓储

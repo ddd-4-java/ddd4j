@@ -225,6 +225,8 @@ public final class CacheConfig {
 
         /**
          * 设置最大容量。
+         * @param maximumSize 长整型数值
+         * @return 返回的 Builder 结果
          */
         public Builder maximumSize(long maximumSize) {
             this.maximumSize = maximumSize;
@@ -233,6 +235,8 @@ public final class CacheConfig {
 
         /**
          * 设置写后过期时间（秒）。
+         * @param seconds 秒数
+         * @return 返回的 Builder 结果
          */
         public Builder expireAfterWriteSeconds(long seconds) {
             this.expireAfterWriteSeconds = seconds;
@@ -241,6 +245,8 @@ public final class CacheConfig {
 
         /**
          * 设置访问后过期时间（秒）。
+         * @param seconds 秒数
+         * @return 返回的 Builder 结果
          */
         public Builder expireAfterAccessSeconds(long seconds) {
             this.expireAfterAccessSeconds = seconds;
@@ -249,6 +255,8 @@ public final class CacheConfig {
 
         /**
          * 设置写后刷新时间（秒）。
+         * @param seconds 秒数
+         * @return 返回的 Builder 结果
          */
         public Builder refreshAfterWriteSeconds(long seconds) {
             this.refreshAfterWriteSeconds = seconds;
@@ -257,6 +265,8 @@ public final class CacheConfig {
 
         /**
          * 设置初始容量。
+         * @param initialCapacity 整型数值
+         * @return 返回的 Builder 结果
          */
         public Builder initialCapacity(int initialCapacity) {
             this.initialCapacity = initialCapacity;
@@ -265,6 +275,8 @@ public final class CacheConfig {
 
         /**
          * 设置是否记录统计信息。
+         * @param recordStats 布尔值
+         * @return 返回的 Builder 结果
          */
         public Builder recordStats(boolean recordStats) {
             this.recordStats = recordStats;
@@ -273,6 +285,8 @@ public final class CacheConfig {
 
         /**
          * 设置缓存类型。
+         * @param cacheType 缓存类型
+         * @return 返回的 Builder 结果
          */
         public Builder cacheType(CacheType cacheType) {
             this.cacheType = cacheType;
@@ -281,6 +295,8 @@ public final class CacheConfig {
 
         /**
          * 设置本地缓存限制（多级缓存时本地缓存最大条目数）。
+         * @param localLimit 本地上限
+         * @return 返回的 Builder 结果
          */
         public Builder localLimit(int localLimit) {
             this.localLimit = localLimit;
@@ -289,6 +305,8 @@ public final class CacheConfig {
 
         /**
          * 设置是否同步本地缓存（多级缓存时远程变更是否广播同步本地）。
+         * @param syncLocal 同步本地
+         * @return 返回的 Builder 结果
          */
         public Builder syncLocal(boolean syncLocal) {
             this.syncLocal = syncLocal;
@@ -297,6 +315,8 @@ public final class CacheConfig {
 
         /**
          * 设置移除监听器。
+         * @param removalListener 消费逻辑
+         * @return 返回的 Builder 结果
          */
         public Builder removalListener(Consumer<String> removalListener) {
             this.removalListener = removalListener;

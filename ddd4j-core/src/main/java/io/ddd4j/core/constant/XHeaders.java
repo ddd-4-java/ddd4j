@@ -24,7 +24,7 @@ package io.ddd4j.core.constant;
  *   <li>国际化：{@link #X_LANGUAGE}、{@link #X_TIMEZONE}</li>
  *   <li>安全：{@link #X_SIGN}、{@link #X_ENCRYPT}</li>
  *   <li>客户端信息：{@link #X_APP_ID}、{@link #X_DEVICE_MODEL} 等</li>
- *   <li>用户身份：{@link #X_UID}、{@link #X_UNAME}、{@link #X_ROLE} 等</li>
+ *   <li>用户身份：{@link #X_UID}、{@link #X_UNAME}、{@link #X_RID} 等</li>
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

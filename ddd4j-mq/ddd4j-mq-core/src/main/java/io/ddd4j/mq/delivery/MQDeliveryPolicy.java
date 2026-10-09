@@ -42,6 +42,11 @@ public final class MQDeliveryPolicy {
  * 可靠消息的租约和退避策略。
  *
  * <p>默认值采用 60 秒租约、12 次最多尝试，以及 1 秒到 5 分钟的指数退避。
+ * @param leaseDuration 参数 leaseDuration
+ * @param maxAttempts 整型数值
+ * @param initialBackoff 参数 initialBackoff
+ * @param maxBackoff 最大相关参数
+ * @param jitterFactor 双精度数值
  */
 
     public MQDeliveryPolicy(Duration leaseDuration, int maxAttempts, Duration initialBackoff,

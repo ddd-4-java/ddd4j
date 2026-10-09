@@ -335,7 +335,7 @@ JDK17 执行当前 2020.0.x 的 `mvn -B -ntp validate`，在构建模型阶段�
 
 后续已确认 Boot 2.4.x 分支仍存在，配置为 Spring Boot 2.4.13、ddd4j 1.0.x.20260630-SNAPSHOT、JDK8；本地 2.4.x.20260630-SNAPSHOT 父 POM 在 JDK8 下独立 validate 成功（`/tmp/ddd4j-boot24-parent-model.log`）。因此仅将当前 Cloud 根 parent 日期改为 20260630，未切换版本线、未改 Cloud 自身 revision、未提交或发布。
 
-该修复消除了根父坐标解析失败，但完整 Reactor 仍失败（`/tmp/ddd4j-cloud-parent-aligned-validate.log`）：暴露旧 `ddd4j-boot-cmpt-*` 坐标、ddd4j-boot-core 以及多个 hiwepy starter、MyBatis/Druid/Springfox 依赖的版本管理缺失。不能把这些项简单填入模块级数字版本；应先区分已迁移坐标与 BOM 管理缺口，再逐项验证源 API 和装配行为。当前修改是构建基线修复的中间状态，不是 cloud 构建通过或迁移完成。
+该修复消除了根父坐标解析失败，但完整 Reactor 仍失败（`/tmp/ddd4j-cloud-parent-aligned-validate.log`）：暴露旧 `ddd4j-boot-cmpt-*` 坐标、ddd4j-boot-core 以及多个 redacted-legacy-family starter、MyBatis/Druid/Springfox 依赖的版本管理缺失。不能把这些项简单填入模块级数字版本；应先区分已迁移坐标与 BOM 管理缺口，再逐项验证源 API 和装配行为。当前修改是构建基线修复的中间状态，不是 cloud 构建通过或迁移完成。
 
 进一步核对继承链：cloud-dependencies 继承 cloud 根，根继承 Boot parent；Boot parent 已 import Boot BOM，并非 cloud 完全没有继承 BOM。实际 2.4.x 源码 BOM 与本地 20260630 BOM 均未声明 ddd4j-boot-core，故这一项属于上游 BOM 漏项，不应与旧坐标缺失混为一谈。
 

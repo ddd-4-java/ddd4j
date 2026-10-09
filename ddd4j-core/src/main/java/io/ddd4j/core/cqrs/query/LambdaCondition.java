@@ -26,9 +26,9 @@ import java.util.Objects;
  * <p>存储从 {@link io.ddd4j.core.util.SFunction} 方法引用中解析出的属性名、操作符和值，
  * 由各 ORM 模块的 Repository 转换为原生查询条件。
  *
- * @param propertyRef 类型安全属性引用
- * @param operator    操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
- * @param value       条件值
+ * <p>{@code propertyRef} — 类型安全属性引用
+ * <p>{@code operator} — 操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
+ * <p>{@code value} — 条件值
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
@@ -77,6 +77,8 @@ public final class LambdaCondition implements Serializable {
 
         /**
      * 排序条件构造器。
+     * @param property 属性
+     * @return 返回的 LambdaCondition 结果
      */
 
 public static LambdaCondition asc(PropertyRef property) {
@@ -89,6 +91,7 @@ public static LambdaCondition asc(PropertyRef property) {
 
         /**
      * 是否为排序条件。
+     * @return 满足条件时返回 true，否则返回 false
      */
 
 public boolean isOrderBy() {

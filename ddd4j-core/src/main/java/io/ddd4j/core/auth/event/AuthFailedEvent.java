@@ -39,6 +39,9 @@ public final class AuthFailedEvent {
  * <p>由具体 {@link io.ddd4j.core.subject.Subject} 实现在登录校验失败时发布。
  * 业务方可通过 {@link io.ddd4j.core.ddd.event.DomainEventPublisher} 订阅。
  *
+ * @param request 请求对象
+ * @param reason 原因
+ * @param occurredAt 发生时间
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */

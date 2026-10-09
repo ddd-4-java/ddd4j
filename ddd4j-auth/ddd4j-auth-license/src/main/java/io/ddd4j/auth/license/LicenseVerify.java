@@ -87,6 +87,7 @@ public class LicenseVerify {
 
     /**
      * 校验License证书。
+     * @return 满足条件时返回 true，否则返回 false
      */
     public boolean verify() {
         if (!installSuccess || Objects.isNull(licenseManager)) {

@@ -38,11 +38,13 @@ public @interface SaMixCheckLogin {
 
     /**
      * 临时Token是否是一次性使用的；用完即弃的
+     * @return 条件成立（或操作成功）返回 true，否则返回 false
      */
     boolean throwaway() default false;
 
     /**
      * 是否使用临时Token的信息进行登录，仅当 throwaway=false 时有效
+     * @return 条件成立（或操作成功）返回 true，否则返回 false
      */
     boolean login() default true;
 

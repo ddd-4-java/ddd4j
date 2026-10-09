@@ -27,8 +27,8 @@ import java.util.Objects;
  * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
  * 原始异常应由 Runtime 的日志或观测系统记录。
  *
- * @param ready   是否可接收流量
- * @param results 每个已执行 Contributor 的结果
+ * <p>{@code ready} — 是否可接收流量
+ * <p>{@code results} — 每个已执行 Contributor 的结果
  */
 public final class ReadinessReport {
 

@@ -177,6 +177,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析聚合根类型（泛型参数 M，索引 0 — 在子类 BaseRepositoryImpl 中索引变为 1）。
+     * @return 解析的Class
      */
     protected Class<M> resolveModelClass() {
         return (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 0);
@@ -184,6 +185,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析持久化对象类型（泛型参数 P，索引 1 — 在子类 BaseRepositoryImpl 中索引变为 2）。
+     * @return 解析的Class
      */
     protected Class<P> resolvePersistenceObjectClass() {
         return (Class<P>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 1);
@@ -191,6 +193,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析查询对象类型（泛型参数 Q，索引 2 — 在子类 BaseRepositoryImpl 中索引变为 3）。
+     * @return 解析的Class
      */
     protected Class<? extends Query<M>> resolveQueryClass() {
         return (Class<? extends Query<M>>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 2);
@@ -275,6 +278,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     /**
      * Domain Model 元数据访问器（充血查询翻译：Domain 字段 → PO 列名）。
      * 缓存于 {@link DomainModelHelper}。
+     * @return 返回的 DomainModelInfo 结果
      */
     protected DomainModelInfo<M> domainModelInfo() {
         return Objects.requireNonNull(domainModelInfo, "domainModelInfo must not be null");
@@ -282,6 +286,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * PO 元数据访问器（委托 MP {@code TableInfoHelper}），用于 auto-fill、bizKey、tenantId、tableLogic 等。
+     * @return 返回的 TableInfo 结果
      */
     protected TableInfo tableInfo() {
         return Objects.requireNonNull(tableInfo, "tableInfo must not be null");
@@ -295,6 +300,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      *   <li>查 {@link DomainModelInfo}（{@code @DomainField} 注解 + 默认约定）→ 用列名</li>
      *   <li>fallback：直接驼峰转下划线（保持向后兼容）</li>
      * </ol>
+     * @param property 属性
+     * @return 返回的字符串内容
      */
     protected String translateProperty(String property) {
         if (StrKit.isEmpty(property)) {
@@ -309,6 +316,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 按属性空间翻译查询条件，并校验 Query 绑定的 Domain/PO 类型。
+     * @param condition 条件
+     * @return 返回的字符串内容
      */
     protected String translateProperty(LambdaCondition condition) {
         Objects.requireNonNull(condition, "condition must not be null");
@@ -597,6 +606,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 获取 mapperStatementId（CrudRepository.getSqlStatement 的非 Spring 版本）。
+     * @param sqlMethod 参数 sqlMethod
+     * @return 获取的字符串内容
      */
     protected String getSqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.getSqlStatement(this.getMapperClass(), sqlMethod);

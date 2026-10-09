@@ -79,6 +79,8 @@ public class WebFluxKit {
 
     /**
      * 从 Flux<DataBuffer> 中获取请求体字符串。
+     * @param serverHttpRequest 服务端HTTP请求
+     * @return 解析的Mono
      */
     public static Mono<String> resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
         if (serverHttpRequest.getHeaders().getContentLength() == 0) {
@@ -99,6 +101,8 @@ public class WebFluxKit {
 
     /**
      * 获取请求客户端 IP 地址，支持代理服务器。
+     * @param request 请求对象
+     * @return 获取的字符串内容
      */
     public static String getRemoteAddr(ServerHttpRequest request) {
         String remoteAddr = UNKNOWN;

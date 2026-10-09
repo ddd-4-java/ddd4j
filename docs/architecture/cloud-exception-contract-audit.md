@@ -42,7 +42,7 @@ Cloud 自身 R.failed(CheckedException) 对空 code 输出 -1；消息为空时�
 
 ## 调用面
 
-当前 Cloud 中 CheckedException 被邮件、Feign decoder、数据源、数据权限、WebUtils 和 AssertUtil 使用。ValidateCodeException当前只定义了构造器，未在受限搜索中发现业务调用。WebMVC/WebFlux安全与MyBatis处理器仍使用 io.hiwepy.boot.api.ApiCode，并普遍直接构造 ResponseEntity；这些是另一套响应协议，不能与新 Core ApiCode机械合并。
+当前 Cloud 中 CheckedException 被邮件、Feign decoder、数据源、数据权限、WebUtils 和 AssertUtil 使用。ValidateCodeException当前只定义了构造器，未在受限搜索中发现业务调用。WebMVC/WebFlux安全与MyBatis处理器仍使用 io.redacted-legacy-family.boot.api.ApiCode，并普遍直接构造 ResponseEntity；这些是另一套响应协议，不能与新 Core ApiCode机械合并。
 
 cloud-agents当前没有直接导入上述Cloud异常或旧ApiCode，但它依赖Cloud/企业父链时可能通过框架全局异常处理间接受影响。没有真实组合启动和相同请求差分前，不能声称无影响。
 

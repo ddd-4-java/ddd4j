@@ -38,6 +38,7 @@ public @interface RequiresDataPermissions {
 
     /**
      * Business data type, such as dept, tenant, region, or project.
+     * @return 返回的字符串内容
      */
     String dataType();
 

@@ -338,6 +338,8 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 将领域属性名映射为持久化属性名（默认同名，子类可覆盖）。
+     * @param domainProperty 领域属性
+     * @return 返回的字符串内容
      */
     protected String persistenceProperty(String domainProperty) {
         return domainProperty;
@@ -345,6 +347,8 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 将领域属性名映射为数据库列名（默认驼峰转下划线）。
+     * @param propertyName 属性名
+     * @return 转换得到的字符串内容
      */
     protected String toColumn(String propertyName) {
         if (StringUtils.isBlank(propertyName)) {
@@ -369,6 +373,7 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 插入前自动填充 {@code @OnCreate} / {@code @TenantId} / {@code @SystemId} 字段。
+     * @param po 持久化对象
      */
     protected void insertFill(P po) {
         if (Objects.isNull(po)) {
@@ -385,6 +390,7 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 更新前自动填充 {@code @OnUpdate} 字段。
+     * @param po 持久化对象
      */
     protected void updateFill(P po) {
         if (Objects.isNull(po)) {

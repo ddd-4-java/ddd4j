@@ -39,6 +39,7 @@ public class At {
 
     /**
      * 创建一个空 @（不 @ 任何用户）。
+     * @return 返回的 At 结果
      */
     public static At none() {
         return new At();
@@ -46,6 +47,7 @@ public class At {
 
     /**
      * 创建一个 @ 全体。
+     * @return 返回的 At 结果
      */
     public static At all() {
         At at = new At();
@@ -56,6 +58,7 @@ public class At {
     /**
      * 创建一个针对指定手机号列表的 @。
      *
+     * @return 对应的At
      * @param mobiles 手机号列表
      */
     public static At ofMobiles(List<String> mobiles) {

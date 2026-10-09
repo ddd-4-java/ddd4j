@@ -46,7 +46,7 @@ import java.util.function.Consumer;
  *
  * <h3>核心流程</h3>
  * <ol>
- *   <li><b>发布</b>：{@link #initProducer(MQProperties)} 返回 {@link Consumer<MQEvent>}，
+ *   <li><b>发布</b>：{@link #initProducer} 返回 {@link Consumer}，
  *       由 {@link #init(List, MQProperties, MQEventSerialization, MQEventStorer)} 注册到 {@link BaseContext}
  *       key 为 {@link MQEvent#MQ_EVENT_PUBLISHER}。{@link MQEvent#publish()} 通过该 Consumer 推送到底层生产者</li>
  *   <li><b>消费</b>：{@link #initConsumer(MQListener, MQProperties)} 建立原生消费者，
@@ -106,7 +106,7 @@ public interface MQClient extends AutoCloseable {
      * 整体初始化：注册依赖 → 初始化生产者 → 注册所有消费者。
      *
      * <p>由框架适配层（如 ddd4j-mq-spring）在应用就绪时调用。本方法会把 {@link #initProducer} 返回的
-     * {@link Consumer<MQEvent>} 注册到 {@link BaseContext}，{@link MQEvent#publish()} 通过它推送消息。
+     * {@link Consumer} 注册到 {@link BaseContext}，{@link MQEvent#publish} 通过它推送消息。
      *
      * @param listeners     已扫描好的监听器列表
      * @param properties    MQ 配置（同时注册到 {@link BaseContext}，供 MQEvent 读 defaultTopic）
@@ -210,7 +210,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * 初始化生产者，返回 MQ 事件的发布函数。
      *
-     * <p>返回的 {@link Consumer<MQEvent>} 会被注册到 {@link BaseContext}，
+     * <p>返回的 {@link Consumer} 会被注册到 {@link BaseContext}，
      * {@link MQEvent#publish()} 调用 {@code consumer.accept(event)} 把消息推送到 broker 生产者。
      *
      * @param properties MQ 配置
@@ -272,6 +272,7 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 序列化器（从 {@link BaseContext} 查找，由 {@link #init} 注册）。
+     * @return 返回的 MQEventSerialization 结果
      */
     default MQEventSerialization serialization() {
         return BaseContext.<String, MQEventSerialization>get(MQ_SERIALIZATION);
@@ -279,6 +280,7 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * MQ 配置（从 {@link BaseContext} 查找）。
+     * @return 返回的 MQProperties 结果
      */
     default MQProperties properties() {
         return BaseContext.<String, MQProperties>get(MQEvent.MQ_PROPERTIES);
@@ -327,6 +329,9 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 便捷重载：无 Acknowledgment 的消费（ack 能力由 broker 内部处理，如 RocketMQ 返回值语义）。
+     * @param listener 监听器
+     * @param event 事件
+     * @throws java.lang.Throwable 执行对应操作失败时抛出
      */
     default void consume(MQListener listener, MQEvent event) throws Throwable {
         consume(listener, event, null);
@@ -334,6 +339,7 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 日志器（各实现可覆写自定义 topic）。
+     * @return 返回的 Logger 结果
      */
     default Logger logger() {
         return LogHolder.logger();
@@ -424,6 +430,9 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 便捷重载：从 {@link MQEvent} + {@link MQProperties} 解析物理地址（生产者侧）。
+     * @param event 事件
+     * @param properties 属性集合
+     * @return 解析的字符串内容
      */
     default String resolveTopic(MQEvent event, MQProperties properties) {
         return resolveTopic(namespace(event, properties), event.getTopic(), event.getTag(), concat(event));
@@ -432,6 +441,9 @@ public interface MQClient extends AutoCloseable {
     /**
      * 便捷重载：从 {@link MQListener} + {@link MQProperties} 解析物理目的地（消费者侧，
      * tag 取监听器声明的 tags 首个正向 tag，保持订阅定位一致）。
+     * @param listener 监听器
+     * @param properties 属性集合
+     * @return 解析的字符串内容
      */
     default String resolveTopic(MQListener listener, MQProperties properties) {
         return resolveTopic(namespace(listener.getNamespace(), properties),
@@ -485,6 +497,7 @@ public interface MQClient extends AutoCloseable {
      *
      * <p>应用层读 header 仍可读 {@link io.ddd4j.mq.message.MessageHeaders#HEADER_DESTINATION_TAG}
      * 作为兼容，但 selector 必须用此 key。
+     * @return 返回的字符串内容
      */
     default String tagHeaderKey() {
         return "ddd4jTag";
@@ -580,6 +593,7 @@ sb.append("(");
      *
      * <p>默认 true 表示「我会用 tagsToSelector 传给 broker」。子 broker 可覆写返回 false 强制应用层过滤
      * （如 Redis Stream / MQTT 等无 selector 机制的 broker）。
+     * @return 满足条件时返回 true，否则返回 false
      */
     default boolean supportsBrokerTagFilter() {
         return true;

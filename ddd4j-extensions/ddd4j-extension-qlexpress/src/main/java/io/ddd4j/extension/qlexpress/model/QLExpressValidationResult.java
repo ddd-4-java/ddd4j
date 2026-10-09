@@ -27,6 +27,8 @@ public final class QLExpressValidationResult {
 
 /**
  * 表达式语法校验结果。
+ * @param valid 是否有效
+ * @param message 消息内容
  */
 
     public QLExpressValidationResult(boolean valid, String message) {

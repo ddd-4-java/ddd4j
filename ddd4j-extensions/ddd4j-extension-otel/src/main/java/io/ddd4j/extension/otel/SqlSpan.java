@@ -79,6 +79,11 @@ public final class SqlSpan {
 
     /**
      * 包装带返回值的 SQL 执行。
+     * @param <T> 数据元素类型
+     * @param dbSystem 字符串参数
+     * @param statement 语句
+     * @param supplier 供应逻辑
+     * @return 执行的T
      */
     public static <T> T execute(String dbSystem, String statement, java.util.function.Supplier<T> supplier) {
         if (!Ddd4jOtel.isAvailable()) {

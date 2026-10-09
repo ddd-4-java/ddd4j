@@ -44,6 +44,10 @@ public class SM3Kit {
 
     /**
      * SM3-摘要
+     *
+     * @param salt 盐值
+     * @param plainTxt 待摘要明文
+     * @return 十六进制摘要串
      */
     public static String digest(String salt, String plainTxt) {
         SM3 sm3 = getSm3(salt);

@@ -79,6 +79,7 @@ public final class AuthConfig {
 
     /**
      * 创建简单凭据匹配器（明文密码比对，仅供演示）。
+     * @return 创建的CredentialsMatcher
      */
     public static CredentialsMatcher createSimpleCredentialsMatcher() {
         return new SimpleCredentialsMatcher();
@@ -86,6 +87,7 @@ public final class AuthConfig {
 
     /**
      * 获取当前线程的 Shiro Subject（辅助方法）。
+     * @return 当前的Subject
      */
     public static Subject currentSubject() {
         return SecurityUtils.getSubject();

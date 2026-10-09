@@ -111,11 +111,11 @@ public class PconlineRegionTemplate {
     }
 
     /**
-     * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=183.128.136.82
+     * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&amp;ip=183.128.136.82
      *
-     * @param ip
+     * @param ip 字符串参数
      * @return {"ip":"110.137.48.237","pro":"","proCode":"999999","city":"","cityCode":"0","region":"","regionCode":"0","addr":" 印度尼西亚","regionNames":"","err":"noprovince"}
-     * @throws ExecutionException
+     * @throws ExecutionException 异步任务执行失败时抛出
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
         // 1、检查ip有效性

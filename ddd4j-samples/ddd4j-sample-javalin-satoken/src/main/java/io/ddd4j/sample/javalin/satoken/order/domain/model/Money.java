@@ -32,8 +32,8 @@ import java.util.Objects;
  * <p>使用 {@code record} 实现 {@link ValueObject} 接口，
  * 自动获得不可变性、equals/hashCode/toString。
  *
- * @param amount   金额数值
- * @param currency 货币代码（如 CNY、USD）
+ * <p>{@code amount} — 金额数值
+ * <p>{@code currency} — 货币代码（如 CNY、USD）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Value
@@ -59,6 +59,8 @@ public class Money implements ValueObject {
 
     /**
      * 创建人民币金额。
+     * @param amount 金额
+     * @return 返回的 Money 结果
      */
     public static Money cny(String amount) {
         return new Money(new BigDecimal(Objects.requireNonNull(amount, "amount must not be null")), "CNY");
@@ -66,6 +68,8 @@ public class Money implements ValueObject {
 
     /**
      * 创建指定货币的零金额。
+     * @param currency 币种
+     * @return 返回的 Money 结果
      */
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
@@ -73,6 +77,8 @@ public class Money implements ValueObject {
 
     /**
      * 金额相加（币种必须一致）。
+     * @param other 对比对象
+     * @return 新增后的Money
      */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
@@ -84,6 +90,8 @@ public class Money implements ValueObject {
 
     /**
      * 金额乘以整数因子。
+     * @param factor 因子
+     * @return 返回的 Money 结果
      */
     public Money multiply(int factor) {
         if (factor < 0) {
@@ -94,6 +102,8 @@ public class Money implements ValueObject {
 
     /**
      * 应用折扣（百分比）。
+     * @param percent 百分比
+     * @return 返回的 Money 结果
      */
     public Money discount(int percent) {
         if (percent < 0 || percent > 100) {

@@ -74,6 +74,7 @@ public class KafkaMQProperties extends MQProperties {
 
     /**
      * Producer 配置（对齐 ProducerConfig 常量名）
+     * @return 返回的 Properties 结果
      */
     public Properties producerProperties() {
         Properties properties = new Properties();
@@ -90,6 +91,7 @@ public class KafkaMQProperties extends MQProperties {
 
     /**
      * AdminClient 配置
+     * @return 返回的 Properties 结果
      */
     public Properties adminProperties() {
         Properties properties = new Properties();
@@ -107,6 +109,8 @@ public class KafkaMQProperties extends MQProperties {
 
     /**
      * Consumer 配置
+     * @param groupId 分组标识
+     * @return 返回的 Properties 结果
      */
     public Properties consumerProperties(String groupId) {
         Properties properties = new Properties();

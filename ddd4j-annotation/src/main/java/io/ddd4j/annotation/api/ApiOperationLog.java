@@ -20,8 +20,6 @@ import java.lang.annotation.*;
 
 /**
  * 操作日志注解
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -31,21 +29,29 @@ public @interface ApiOperationLog {
 
     /**
      * 操作模块
+     *
+     * @return 归属的操作模块名称，默认空串
      */
     String module() default "";
 
     /**
      * 业务名称
+     *
+     * @return 归属的业务名称，默认空串
      */
     String business() default "";
 
     /**
      * 操作类型
+     *
+     * @return 操作类型枚举，必填
      */
     BusinessType opt();
 
     /**
      * 是否马上处理
+     *
+     * @return 是否立即记录操作日志，默认 false
      */
     boolean immediate() default false;
 

@@ -87,9 +87,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 字符串参数
+     * @return 获取的Map
+     * @throws IOException 发生输入输出错误时抛出
      */
     public Map<String, BigDecimal> getLatAndLngByAddress(String addr) throws IOException {
 
@@ -107,9 +107,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 字符串参数
+     * @return 获取的Optional
+     * @throws IOException 发生输入输出错误时抛出
      */
     public Optional<JSONObject> getLocationByAddress(String addr) throws IOException {
         String address = java.net.URLEncoder.encode(addr, "UTF-8");
@@ -159,8 +159,8 @@ public class GeoBaiduTemplate {
      * status: 0    #结果状态返回码
      * }
      *
-     * @param ip
-     * @return
+     * @param ip 字符串参数
+     * @return 获取的Optional
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
         if (Objects.isNull(ip)) {

@@ -20,7 +20,6 @@ import java.io.Serializable;
 
 /**
  * 事件溯源仓储接口（ddd4j 推荐用于 ES 场景）。
- * <p>
  *
  * <h3>与普通 {@link Repository} 的区别</h3>
  * <ul>

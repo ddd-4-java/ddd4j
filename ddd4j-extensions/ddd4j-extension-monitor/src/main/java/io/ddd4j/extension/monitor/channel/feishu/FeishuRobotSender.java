@@ -56,6 +56,7 @@ public class FeishuRobotSender implements Sender {
 
     /**
      * 暴露底层 HTTP 客户端，便于高级场景直接复用。
+     * @return 获取的FeishuClient
      */
     public FeishuClient getClient() {
         return client;

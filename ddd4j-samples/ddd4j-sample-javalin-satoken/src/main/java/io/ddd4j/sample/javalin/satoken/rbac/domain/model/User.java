@@ -85,6 +85,7 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 修改密码。
+     * @param newPassword 新密码
      */
     public void changePassword(String newPassword) {
         if (StrKit.isNotBlank(newPassword)) {
@@ -94,6 +95,7 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 修改真实姓名。
+     * @param realName 字符串参数
      */
     public void rename(String realName) {
         this.realName = realName;
@@ -115,6 +117,7 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 分配角色（替换）。
+     * @param newRoleIds 集合数据
      */
     public void assignRoles(Set<String> newRoleIds) {
         if (Objects.nonNull(newRoleIds)) {
@@ -125,6 +128,7 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 添加单个角色。
+     * @param roleId 角色标识
      */
     public void addRole(String roleId) {
         if (StrKit.isNotBlank(roleId)) {
@@ -134,6 +138,7 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 移除角色。
+     * @param roleId 角色标识
      */
     public void removeRole(String roleId) {
         this.roleIds.remove(roleId);

@@ -64,6 +64,9 @@ public class CustomLicenseManager {
 
     /**
      * 生成许可证并写入指定文件。
+     * @param content 内容
+     * @param target 目标对象
+     * @throws global.namespace.truelicense.api.LicenseManagementException 执行对应操作失败时抛出
      */
     public synchronized void store(License content, File target) throws LicenseManagementException {
         vendor.generateKeyFrom(Objects.requireNonNull(content, "content"))
@@ -72,6 +75,9 @@ public class CustomLicenseManager {
 
     /**
      * 安装许可证，随后立即执行业务校验并加载许可证正文。
+     * @param source 来源
+     * @return 返回的 License 结果
+     * @throws global.namespace.truelicense.api.LicenseManagementException 执行对应操作失败时抛出
      */
     public synchronized License install(File source) throws LicenseManagementException {
         verificationInvalidated = true;
@@ -92,6 +98,8 @@ public class CustomLicenseManager {
 
     /**
      * 校验并返回当前已安装的许可证正文。
+     * @return 验签得到的License
+     * @throws global.namespace.truelicense.api.LicenseManagementException 执行对应操作失败时抛出
      */
     public synchronized License verify() throws LicenseManagementException {
         if (verificationInvalidated) {
@@ -103,6 +111,7 @@ public class CustomLicenseManager {
 
     /**
      * 卸载当前许可证。
+     * @throws global.namespace.truelicense.api.LicenseManagementException 执行对应操作失败时抛出
      */
     public synchronized void uninstall() throws LicenseManagementException {
         verificationInvalidated = true;
@@ -111,6 +120,8 @@ public class CustomLicenseManager {
 
     /**
      * 保留旧生成端的时间约束：允许签发尚未生效的许可证，但拒绝已过期或反向时间区间。
+     * @param content 内容
+     * @throws global.namespace.truelicense.api.LicenseValidationException 执行对应操作失败时抛出
      */
     protected synchronized void validateCreate(License content) throws LicenseValidationException {
         Objects.requireNonNull(content, "content");
@@ -130,6 +141,8 @@ public class CustomLicenseManager {
 
     /**
      * 消费端扩展校验钩子。当前无额外硬件约束。
+     * @param content 内容
+     * @throws global.namespace.truelicense.api.LicenseValidationException 执行对应操作失败时抛出
      */
     protected synchronized void validate(License content) throws LicenseValidationException {
         Objects.requireNonNull(content, "content");

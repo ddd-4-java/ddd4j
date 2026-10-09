@@ -24,9 +24,9 @@ import java.util.Objects;
 /**
  * 单个依赖的就绪检查结果。
  *
- * @param name    稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}
- * @param ready   是否可接受流量
- * @param details 可安全暴露的诊断信息，禁止放入密码、令牌或连接串
+ * <p>字段语义：{@code name} 为稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}；
+ * {@code ready} 表示是否可接受流量；{@code details} 为可安全暴露的诊断信息，
+ * 禁止放入密码、令牌或连接串。
  */
 public final class ReadinessResult {
 

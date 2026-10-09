@@ -55,6 +55,8 @@ public class DingTalkClient {
 
     /**
      * 默认构造函数，使用 {@link #BASE_URL}。
+     * @param accessToken 字符串参数
+     * @param secret 密钥
      */
     public DingTalkClient(String accessToken, String secret) {
         this(accessToken, secret, BASE_URL);

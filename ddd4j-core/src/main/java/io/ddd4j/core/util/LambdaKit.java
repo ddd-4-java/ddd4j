@@ -90,6 +90,8 @@ public final class LambdaKit {
 
     /**
      * 提取 SerializedLambda。
+     * @param func 参数 func
+     * @return 提取的SerializedLambda
      */
     public static SerializedLambda extractLambda(Serializable func) {
         try {

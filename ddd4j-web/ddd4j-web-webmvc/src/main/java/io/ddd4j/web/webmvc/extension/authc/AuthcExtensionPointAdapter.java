@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * 认证扩展点默认适配器（Spring Web 适配）。
  *
- * <p>从 io.github.hiwepy:pf4j-extension 迁入至 ddd4j-web-webmvc 模块。
+ * <p>从 io.github.redacted-legacy-family:pf4j-extension 迁入至 ddd4j-web-webmvc 模块。
  * 提供 PF4J 插件体系下的认证扩展默认实现，可由插件覆盖：
  * <ul>
  *   <li>{@link #getToken}：从 Authorization Header 提取 Bearer Token</li>

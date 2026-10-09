@@ -83,7 +83,7 @@ public final class ExcelImporter {
      * 同步全量读取（小数据量语法糖，{@code doReadSync}）。
      *
      * <p><b>警告</b>：内部使用 easyexcel {@code doReadSync()}，会把数据全部加载到内存。
-     * 大数据量（> 5000 行）请改用 {@link #importExcel(InputStream, Class, ReadListener)}
+     * 大数据量（&gt; 5000 行）请改用 {@link #importExcel(InputStream, Class, ReadListener)}
      * + {@link BatchReadListener}。
      *
      * @param in   输入流

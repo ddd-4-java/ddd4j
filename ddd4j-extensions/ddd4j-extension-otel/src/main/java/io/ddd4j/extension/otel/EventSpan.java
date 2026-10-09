@@ -35,6 +35,10 @@ public final class EventSpan {
 
     /**
      * 包装领域事件发布。
+     * @param eventType 事件类型
+     * @param aggregateType 聚合根类型
+     * @param aggregateId 聚合根标识
+     * @param runnable 待执行任务
      */
     public static void publish(String eventType, String aggregateType, String aggregateId, Runnable runnable) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -62,6 +66,10 @@ public final class EventSpan {
 
     /**
      * 包装 CQRS 查询执行。
+     * @param <T> 数据元素类型
+     * @param queryType 查询类型
+     * @param supplier 供应逻辑
+     * @return 查询的T
      */
     public static <T> T query(String queryType, java.util.function.Supplier<T> supplier) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -86,6 +94,10 @@ public final class EventSpan {
 
     /**
      * 包装投影执行。
+     * @param <T> 数据元素类型
+     * @param projectionName 字符串参数
+     * @param supplier 供应逻辑
+     * @return 返回的 T 结果
      */
     public static <T> T projection(String projectionName, java.util.function.Supplier<T> supplier) {
         if (!Ddd4jOtel.isAvailable()) {

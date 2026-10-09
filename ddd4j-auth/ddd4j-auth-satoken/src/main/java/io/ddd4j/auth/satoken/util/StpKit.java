@@ -261,6 +261,7 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 String 类型（此函数只在jwt模式下生效）
      *
+     * @param key 键
      * @return 账号id
      */
     public static String getExtraAsString(String key) {
@@ -270,6 +271,7 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息,并转换为 int 类型（此函数只在jwt模式下生效）
      *
+     * @param key 键
      * @return 账号id
      */
     public static Integer getExtraAsInteger(String key) {
@@ -279,6 +281,7 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 long 类型（此函数只在jwt模式下生效）
      *
+     * @param key 键
      * @return 账号id
      */
     public static Long getExtraAsLong(String key) {
@@ -304,6 +307,7 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并通过 Jackson 转换为指定类型（此函数只在jwt模式下生效）
      *
+     * @param <T> 数据元素类型
      * @param key       键值
      * @param valueType 转换类型
      * @return 对应的扩展数据
@@ -316,6 +320,8 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 long 类型（此函数只在jwt模式下生效）
      *
+     * @param tokenValue 令牌值
+     * @param key 键
      * @return 账号id
      */
     public static Long getExtraAsLong(String tokenValue, String key) {
@@ -325,6 +331,7 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并通过自定义函数转换为指定类型（此函数只在jwt模式下生效）
      *
+     * @param tokenValue 令牌值
      * @param key    缓存key
      * @param mapper 对象转换函数
      * @param <T>    指定的类型
@@ -341,6 +348,7 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并通过 Jackson 转换为指定类型（此函数只在jwt模式下生效）
      *
+     * @param <T> 数据元素类型
      * @param tokenValue 指定的 Token 值
      * @param key        键值
      * @param valueType  转换类型
@@ -354,6 +362,8 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 String 类型（此函数只在jwt模式下生效）
      *
+     * @param tokenValue 令牌值
+     * @param key 键
      * @return 账号id
      */
     public String getExtraAsString(String tokenValue, String key) {
@@ -363,6 +373,8 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息,并转换为 int 类型（此函数只在jwt模式下生效）
      *
+     * @param tokenValue 令牌值
+     * @param key 键
      * @return 账号id
      */
     public Integer getExtraAsInteger(String tokenValue, String key) {

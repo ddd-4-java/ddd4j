@@ -34,6 +34,7 @@ public interface DomainEventPublisher {
     /**
      * 发布领域事件
      *
+     * @param <ID> 数据元素类型
      * @param event 领域事件
      */
     <ID extends EntityId> void publish(DomainEvent<ID> event);
@@ -53,6 +54,7 @@ public interface DomainEventPublisher {
     /**
      * 批量发布领域事件
      *
+     * @param <ID> 数据元素类型
      * @param events 领域事件集合
      */
     default <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {

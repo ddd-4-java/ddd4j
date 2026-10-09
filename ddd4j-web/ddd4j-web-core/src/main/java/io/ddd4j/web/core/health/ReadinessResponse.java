@@ -19,7 +19,7 @@ import java.util.Objects;
 /**
  * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
  *
- * @param ready 当前应用是否可接收流量
+ * <p>{@code ready} — 当前应用是否可接收流量
  */public final class ReadinessResponse {
 
     private final boolean ready;

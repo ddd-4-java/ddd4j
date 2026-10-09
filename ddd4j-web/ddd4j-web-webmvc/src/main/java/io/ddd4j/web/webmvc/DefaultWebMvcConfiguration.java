@@ -57,6 +57,8 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * Profile 管理器：根据活跃环境配置切换。
+     * @param environment 参数 environment
+     * @return 返回的 ProfileManager 结果
      */
     @Bean
     public ProfileManager profileManager(Environment environment) {
@@ -65,6 +67,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 请求上下文过滤器（线程上下文可继承）。
+     * @return 返回的 RequestContextFilter 结果
      */
     @Bean(name = "ddd4jRequestContextFilter")
     public RequestContextFilter requestContextFilter() {
@@ -82,6 +85,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 语言切换拦截器。
+     * @return 返回的 LocaleChangeInterceptor 结果
      */
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -92,6 +96,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 区域解析器（基于请求头 X-Locale）。
+     * @return 返回的 LocaleResolver 结果
      */
     @Bean
     public LocaleResolver localeResolver() {
@@ -104,6 +109,8 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * MVC 验证器（集成国际化消息源）。
+     * @param messageSource 消息来源
+     * @return 返回的 LocalValidatorFactoryBean 结果
      */
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -166,6 +173,8 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
+     * @param readinessRegistry 参数 readinessRegistry
+     * @return 返回的 Ddd4jWebMvcReadinessController 结果
      */
     @Bean
     public Ddd4jWebMvcReadinessController ddd4jWebMvcReadinessController(
@@ -175,6 +184,10 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 自定义 WebMVC 配置器。
+     * @param localResourceProperteis 本地相关参数
+     * @param localeChangeInterceptor 参数 localeChangeInterceptor
+     * @param ddd4jWebMvcInterceptor 参数 ddd4jWebMvcInterceptor
+     * @return 默认的DefaultWebMvcConfigurer
      */
     @Bean
     public DefaultWebMvcConfigurer defaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,

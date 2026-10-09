@@ -19,9 +19,9 @@ import lombok.Value;
 /**
  * 单次 Outbox 发布批次的结果。
  *
- * @param attempted 已尝试消息数
- * @param published 已确认消息数
- * @param failed 保留重试的失败消息数
+ * <p>{@code attempted} — 已尝试消息数
+ * <p>{@code published} — 已确认消息数
+ * <p>{@code failed} — 保留重试的失败消息数
  */
 @Value
 public class OutboxDispatchResult {

@@ -228,6 +228,11 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     /**
      * 范围查询（BETWEEN 语义，展开为 ge + le）。
+     * @param <Q> 数据元素类型
+     * @param column 列
+     * @param start 起始
+     * @param end 结束
+     * @return 返回的 Q 结果
      */
     public <Q extends Query<M>> Q between(SFunction<M, ?> column, Object start, Object end) {
         return between(true, column, start, end);
@@ -360,6 +365,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     /**
      * 原生 SQL HAVING（直接透传给 ORM，配合 GROUP BY 使用）。
+     * @param <Q> 数据元素类型
+     * @param having 字符串参数
+     * @return 返回的 Q 结果
      */
     public <Q extends Query<M>> Q having(String having) {
         this.setHaving(having);

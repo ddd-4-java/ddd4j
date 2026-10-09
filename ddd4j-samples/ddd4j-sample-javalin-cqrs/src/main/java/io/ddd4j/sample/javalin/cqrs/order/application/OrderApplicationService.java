@@ -136,9 +136,9 @@ public class OrderApplicationService {
     /**
      * 创建订单命令。
      *
-     * @param orderNo   订单编号
-     * @param buyerId   买家 ID
-     * @param buyerName 买家显示名称
+     * <p>{@code orderNo} — 订单编号
+     * <p>{@code buyerId} — 买家 ID
+     * <p>{@code buyerName} — 买家显示名称
      */
     @Value
     public static class CreateOrderCommand {
@@ -154,11 +154,11 @@ public class OrderApplicationService {
     /**
      * 添加订单行命令。
      *
-     * @param orderId   订单 ID
-     * @param goodsId   商品 ID
-     * @param goodsName 商品名称
-     * @param quantity  购买数量
-     * @param unitPrice 单价
+     * <p>{@code orderId} — 订单 ID
+     * <p>{@code goodsId} — 商品 ID
+     * <p>{@code goodsName} — 商品名称
+     * <p>{@code quantity} — 购买数量
+     * <p>{@code unitPrice} — 单价
      */
     @Value
     public static class AddOrderLineCommand {

@@ -85,7 +85,11 @@ public class Ddd4jMQRegistrarConfiguration {
         return new MQListenerRegistrar(beanPostProcessor, mqClients, properties, serialization, storerProvider);
     }
 
-    /** 将当前启用的 MQ 客户端状态接入框架统一 Readiness。 */
+    /** 将当前启用的 MQ 客户端状态接入框架统一 Readiness。
+    * @param mqClients 列表数据
+    * @param properties 属性集合
+    * @return 返回的 ReadinessContributor 结果
+     */
     @Bean
     public ReadinessContributor mqReadinessContributor(List<MQClient> mqClients, MQProperties properties) {
         return () -> {

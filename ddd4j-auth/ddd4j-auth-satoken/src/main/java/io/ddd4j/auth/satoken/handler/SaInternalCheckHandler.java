@@ -46,6 +46,7 @@ public class SaInternalCheckHandler implements SaAnnotationHandlerInterface<SaIn
 
     /**
      * Reads the API Key using Sa-Token's configured request strategy.
+     * @return 读取的字符串内容
      */
     protected String readApiKey() {
         return ApiKeyKit.readApiKeyValue(SaHolder.getRequest());
@@ -53,6 +54,8 @@ public class SaInternalCheckHandler implements SaAnnotationHandlerInterface<SaIn
 
     /**
      * Validates API Key existence and required scopes.
+     * @param apiKey API键
+     * @param scopes 字符串参数
      */
     protected void checkApiKey(String apiKey, String[] scopes) {
         ApiKeyKit.checkApiKey(apiKey);

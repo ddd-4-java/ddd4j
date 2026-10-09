@@ -88,6 +88,8 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
      */
         /**
      * 统一处理异常，并抛出异常事件方便进行统一的日志实现
+     * @param source 来源
+     * @param ex 异常对象
      */
 
 protected void logException(Object source, Exception ex) {

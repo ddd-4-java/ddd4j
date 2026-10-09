@@ -25,7 +25,7 @@ import javax.validation.ConstraintValidatorContext;
 /**
  * 数据校验注解实现类
  *
- * @author hiwepy
+ * @author redacted-legacy-family
  * @since 2021-03-08
  */
 public class PhoneValueValidator implements ConstraintValidator<PhoneNumber, String> {

@@ -46,6 +46,7 @@ public final class CacheSpan {
     /**
      * 包装缓存读操作。
      *
+     * @param <T> 数据元素类型
      * @param biz      业务标识（如 "userCache"）
      * @param backend  后端标识（如 "redis"、"caffeine"）
      * @param supplier 缓存读操作

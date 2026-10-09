@@ -117,6 +117,7 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
 
     /**
      * 获取已注册的全部事件类型。
+     * @return 获取的Map
      */
     public Map<Class<?>, Method> getHandlerTable() {
         return new HashMap<>(handlerTable);

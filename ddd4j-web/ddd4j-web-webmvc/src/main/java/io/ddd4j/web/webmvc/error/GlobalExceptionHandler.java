@@ -95,6 +95,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 404 (Not Found)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({NoHandlerFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -110,6 +112,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 405 (Method Not Allowed)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
@@ -125,6 +129,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 406 (Not Acceptable)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
@@ -145,6 +151,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 415 (Unsupported Media Type)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
@@ -161,6 +169,8 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      * <a href="https://www.jianshu.com/p/4df0cac308dc">...</a>
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MissingMatrixVariableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -176,6 +186,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MissingPathVariableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -191,6 +203,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MissingRequestCookieException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -206,6 +220,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MissingRequestHeaderException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -221,6 +237,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -236,6 +254,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MissingServletRequestPartException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -251,6 +271,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({UnsatisfiedServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -265,6 +287,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({ServletRequestBindingException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -279,6 +303,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({JacksonException.class, JacksonException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -293,6 +319,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -307,6 +335,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -329,6 +359,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -340,6 +372,8 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      *
+     * @param ex 异常对象
+     * @return 绑定的ApiRestResponse
      * @see javax.validation.Valid
      * @see org.springframework.validation.Validator
      * @see org.springframework.validation.DataBinder
@@ -362,6 +396,9 @@ public class GlobalExceptionHandler {
 /**
      * 400 (Bad Request)
      *
+     * @param ex 异常对象
+     * @param result 结果
+     * @return 绑定的ApiRestResponse
      * @see javax.validation.Valid
      * @see org.springframework.validation.Validator
      * @see org.springframework.validation.DataBinder
@@ -389,6 +426,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({InvalidFormatException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -405,6 +444,8 @@ public class GlobalExceptionHandler {
     /**
      * /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({TypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -420,6 +461,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -435,6 +478,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({MethodArgumentConversionNotSupportedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -450,6 +495,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -465,6 +512,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 413 (Payload Too Large)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
@@ -480,6 +529,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 413 (Payload Too Large)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(MaxUploadSizePerFileExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
@@ -497,6 +548,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({ConstraintDeclarationException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -512,6 +565,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({ConstraintDefinitionException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -527,6 +582,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 分组后的ApiRestResponse
      */
     @ExceptionHandler({GroupDefinitionException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -542,6 +599,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({UnexpectedTypeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -557,6 +616,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({ConversionNotSupportedException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -571,6 +632,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler({HttpMessageConversionException.class, HttpMessageNotWritableException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -585,6 +648,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -599,6 +664,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(ClassCastException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -613,6 +680,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -627,6 +696,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(NoSuchMethodException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -641,6 +712,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(IndexOutOfBoundsException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -655,6 +728,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -671,6 +746,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(BizRuntimeException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -685,6 +762,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(BizCheckedException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -699,6 +778,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(BizIOException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -713,6 +794,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(IdempotentException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -729,6 +812,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(DataAccessException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -750,6 +835,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(BatchUpdateException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -765,6 +852,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -780,6 +869,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLClientInfoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -795,6 +886,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLRecoverableException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -810,6 +903,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLSyntaxErrorException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -825,6 +920,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLTimeoutException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -840,6 +937,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLTransactionRollbackException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -855,6 +954,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLTransientConnectionException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -872,6 +973,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLTransientException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -887,6 +990,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(DuplicateKeyException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -902,6 +1007,8 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 返回的 ApiRestResponse 结果
      */
     @ExceptionHandler(SQLException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -920,6 +1027,9 @@ public class GlobalExceptionHandler {
     /**
      * 全局异常捕捉处理
      * 500 (Internal Server Error)
+     * @param ex 异常对象
+     * @return 默认的ApiRestResponse
+     * @throws java.lang.Exception 执行对应操作失败时抛出
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.OK)
@@ -935,6 +1045,10 @@ public class GlobalExceptionHandler {
 
     /**
      * 异常信息国际化
+     * @param ex 异常对象
+     * @param i18nCode 字符串参数
+     * @param message 消息内容
+     * @return 获取的字符串内容
      */
     protected String getLocaleMessage(Exception ex, String i18nCode, String message) {
         Object[] args = null;

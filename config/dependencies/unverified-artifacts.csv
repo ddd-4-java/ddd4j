@@ -1,8 +1,8 @@
 coordinate,version,jdk_lines,maven_probe_exit,note
 com.alibaba.fastjson2:fastjson2-extension-spring6,2.0.62,"8,17,21",1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
 com.alibaba:dubbo,3.3.6,"8,17,21",1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
-com.github.hiwepy:javassist-plus,1.0.4.RELEASE,"8,17,21",1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
-com.github.hiwepy:spring-javassist,1.0.x.20260630-SNAPSHOT,8,1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
+com.github.redacted-legacy-family:javassist-plus,1.0.4.RELEASE,"8,17,21",1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
+com.github.redacted-legacy-family:spring-javassist,1.0.x.20260630-SNAPSHOT,8,1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
 com.kingbase8.jdbc:kingbase8,8.6.0,"8,17,21",1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
 com.tongweb:tongweb-embed-core,7.0.E.6_P5,"8,17,21",1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过
 com.tongweb:tongweb-embed-dubbo,7.0.E.6_P5,"8,17,21",1,尚未取得当前坐标/JDK 的完整兼容证据；不得计为通过

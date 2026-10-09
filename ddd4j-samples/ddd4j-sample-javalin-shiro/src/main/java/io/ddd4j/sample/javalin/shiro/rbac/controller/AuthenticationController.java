@@ -53,6 +53,7 @@ public class AuthenticationController {
 
     /**
      * POST /auth/login —— 登录：SubjectKit.login(AuthRequest)
+     * @param ctx 上下文对象
      */
     public void login(Context ctx) {
         LoginRequest req = ctx.bodyAsClass(LoginRequest.class);
@@ -90,6 +91,7 @@ public class AuthenticationController {
 
     /**
      * POST /auth/logout —— 登出：SubjectKit.logout()
+     * @param ctx 上下文对象
      */
     public void logout(Context ctx) {
         SubjectKit.logout();
@@ -98,6 +100,7 @@ public class AuthenticationController {
 
     /**
      * GET /auth/me —— 当前用户：SubjectKit.getPrincipal() + 派生角色/权限
+     * @param ctx 上下文对象
      */
     public void me(Context ctx) {
         AuthPrincipal principal = SubjectKit.getPrincipal();
@@ -131,6 +134,7 @@ public class AuthenticationController {
 
     /**
      * GET /auth/check/permission?permission=xxx —— 权限校验
+     * @param ctx 上下文对象
      */
     public void checkPermission(Context ctx) {
         String permission = ctx.queryParam("permission");
@@ -140,6 +144,7 @@ public class AuthenticationController {
 
     /**
      * GET /auth/check/role?role=xxx —— 角色校验
+     * @param ctx 上下文对象
      */
     public void checkRole(Context ctx) {
         String role = ctx.queryParam("role");
@@ -149,6 +154,7 @@ public class AuthenticationController {
 
     /**
      * POST /auth/kickout —— 踢人下线：SubjectKit.kickout()
+     * @param ctx 上下文对象
      */
     public void kickout(Context ctx) {
         String userId = ctx.formParam("userId");
@@ -158,6 +164,7 @@ public class AuthenticationController {
 
     /**
      * GET /auth/status —— 登录状态：SubjectKit.isLogin()
+     * @param ctx 上下文对象
      */
     public void status(Context ctx) {
         ctx.json(R.ok(Java8Maps.of("login", SubjectKit.isLogin())));

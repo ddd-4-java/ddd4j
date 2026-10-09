@@ -142,6 +142,8 @@ public final class HttpSpan {
 
     /**
      * 在 span 上记录异常并标记 ERROR。
+     * @param span 链路 Span 对象
+     * @param t 泛型入参对象
      */
     public static void recordError(Span span, Throwable t) {
         if (Objects.isNull(span) || Objects.isNull(t)) {
@@ -173,6 +175,8 @@ public final class HttpSpan {
 
     /**
      * 安全获取当前 Context 的 Scope（noop fallback）。
+     * @param span 链路 Span 对象
+     * @return 生成的Scope
      */
     public static Scope makeCurrent(Span span) {
         if (Objects.isNull(span) || !span.getSpanContext().isValid()) {

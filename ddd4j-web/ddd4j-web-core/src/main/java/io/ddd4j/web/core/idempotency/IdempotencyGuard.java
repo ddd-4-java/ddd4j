@@ -28,6 +28,9 @@ public interface IdempotencyGuard {
      * 获取带所有者标识的幂等租约。
      *
      * <p>默认实现保留旧 Guard 的兼容语义；生产 Guard 应覆盖此方法并提供唯一 owner token。
+     * @param key 键
+     * @param ttl 存活时间
+     * @return 对应的可选结果容器
      */
     default Optional<IdempotencyLease> acquireLease(String key, Duration ttl) {
         return acquire(key, ttl) ? Optional.of(new IdempotencyLease(key, null, ttl)) : Optional.empty();
@@ -37,6 +40,7 @@ public interface IdempotencyGuard {
 
     /**
      * 完成指定租约。默认实现兼容旧的按 key 完成语义。
+     * @param lease 租约时长
      */
     default void complete(IdempotencyLease lease) {
         complete(lease.key());
@@ -46,6 +50,7 @@ public interface IdempotencyGuard {
 
     /**
      * 释放指定租约。默认实现兼容旧的按 key 释放语义。
+     * @param lease 租约时长
      */
     default void release(IdempotencyLease lease) {
         release(lease.key());

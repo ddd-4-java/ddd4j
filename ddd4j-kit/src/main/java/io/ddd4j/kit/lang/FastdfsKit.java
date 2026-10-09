@@ -43,6 +43,7 @@ public class FastdfsKit {
      * @param ts         unix timestamp, unit: second
      * @param secret_key the secret key
      * @return token string
+     * @throws Exception 计算下载 token 失败
      */
 
 public static String getToken(String file_id, long ts, String secret_key) throws Exception {
@@ -63,6 +64,7 @@ public static String getToken(String file_id, long ts, String secret_key) throws
      *
      * @param source the input buffer
      * @return md5 string
+     * @throws java.security.NoSuchAlgorithmException 摘要算法不可用
      */
     public static String md5(byte[] source) throws java.security.NoSuchAlgorithmException {
         char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};

@@ -42,6 +42,7 @@ public class LicenseCreator {
 
     /**
      * 生成License证书。
+     * @return 条件成立（或操作成功）返回 true，否则返回 false
      */
     public boolean generateLicense() {
         try {

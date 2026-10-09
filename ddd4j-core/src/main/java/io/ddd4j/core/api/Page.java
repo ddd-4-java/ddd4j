@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * 分页数据对象
  * 实现集合接口，集合操作的是records对象
  *
- * @param <T>
+ * @param <T> 元素类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
@@ -142,6 +142,8 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 判断当前页是否包含指定集合中的所有元素。
+     * @param c 目标对象
+     * @return 满足条件时返回 true，否则返回 false
      */
     public boolean containsAll(Collection<?> c) {
         return Objects.nonNull(this.records) && this.records.containsAll(c);
@@ -149,6 +151,8 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 向当前页添加指定集合中的所有元素。
+     * @param c 目标对象
+     * @return 操作成功返回 true，否则返回 false
      */
     public boolean addAll(Collection<? extends T> c) {
         return Objects.nonNull(this.records) && this.records.addAll(c);
@@ -156,6 +160,8 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 从当前页移除指定集合中的所有元素。
+     * @param c 目标对象
+     * @return 操作成功返回 true，否则返回 false
      */
     public boolean removeAll(Collection<?> c) {
         return Objects.nonNull(this.records) && this.records.removeAll(c);
@@ -163,6 +169,8 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 按条件移除当前页中的元素。
+     * @param filter 过滤条件
+     * @return 操作成功返回 true，否则返回 false
      */
     public boolean removeIf(Predicate<? super T> filter) {
         return Objects.nonNull(this.records) && this.records.removeIf(filter);
@@ -170,6 +178,8 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 仅保留当前页中包含在指定集合中的元素。
+     * @param c 目标对象
+     * @return 条件成立（或操作成功）返回 true，否则返回 false
      */
     public boolean retainAll(Collection<?> c) {
         return Objects.nonNull(this.records) && this.records.retainAll(c);
@@ -177,6 +187,7 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 获取当前页数据的流。
+     * @return 对应的数据流
      */
     public Stream<T> stream() {
         return Objects.nonNull(this.records) ? this.records.stream() : new ArrayList<T>().stream();
