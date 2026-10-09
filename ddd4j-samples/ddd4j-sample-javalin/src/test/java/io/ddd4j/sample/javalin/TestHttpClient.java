@@ -26,7 +26,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-/** JDK 8 compatible HTTP client used by the Javalin integration tests. */
+/**
+ * JDK 8 compatible HTTP client used by the Javalin integration tests.
+ */
 public final class TestHttpClient {
 
     private static final int TIMEOUT_MILLIS = 5000;

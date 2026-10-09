@@ -25,8 +25,8 @@ fi
 
 # Stream.toList()（Java 16）需排除 java.util.stream.Collectors.toList()（Java 8 合法）。
 # rg 的正则引擎不支持后顾断言，用管道过滤 Collectors 误报。
-if rg -n -g '*.java' "${EXCLUDES[@]}" '\b(Map|List|Set)\.of\(|\.isBlank\(\)|\.canAccess\(' "${DIRS[@]}" \
-  || rg -n -g '*.java' "${EXCLUDES[@]}" '\.toList\(\)' "${DIRS[@]}" | command grep -v 'Collectors\.toList()'; then
+if rg -n -g '*.java' "${EXCLUDES[@]}" '\b(Map|List|Set)\.of\(|\.isBlank\(\)|\.canAccess\(' "${DIRS[@]}" ||
+  rg -n -g '*.java' "${EXCLUDES[@]}" '\.toList\(\)' "${DIRS[@]}" | command grep -v 'Collectors\.toList()'; then
   echo "Java 8 source compatibility violation: Java 9+ collection, String, reflection, or Stream APIs are present." >&2
   exit 1
 fi

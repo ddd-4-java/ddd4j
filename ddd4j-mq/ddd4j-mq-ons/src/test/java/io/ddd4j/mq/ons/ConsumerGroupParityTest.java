@@ -17,10 +17,14 @@ package io.ddd4j.mq.ons;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.listener.MQListener;
 import org.junit.jupiter.api.Test;
+
 import java.util.Properties;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 参数必须在任何 ONS 客户端创建之前完成校验。 */
+/**
+ * 参数必须在任何 ONS 客户端创建之前完成校验。
+ */
 class ConsumerGroupParityTest {
     @Test
     void whitespaceGroupIsRejectedBeforeCreatingBroker() {
@@ -42,7 +46,8 @@ class ConsumerGroupParityTest {
 
     private static OnsProperties guardedProperties() {
         return new OnsProperties() {
-            @Override public Properties sessionProperties(String groupName) {
+            @Override
+            public Properties sessionProperties(String groupName) {
                 throw new AssertionError("Invalid input reached broker creation");
             }
         };

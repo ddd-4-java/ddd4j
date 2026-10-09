@@ -17,6 +17,7 @@ package io.ddd4j.core.auth;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

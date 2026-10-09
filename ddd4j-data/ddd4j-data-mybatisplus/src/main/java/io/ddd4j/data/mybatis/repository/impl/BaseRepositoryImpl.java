@@ -15,6 +15,7 @@
 package io.ddd4j.data.mybatis.repository.impl;
 
 import java.util.Arrays;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;

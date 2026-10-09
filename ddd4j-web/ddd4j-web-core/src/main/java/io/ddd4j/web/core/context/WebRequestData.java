@@ -20,7 +20,8 @@ import java.util.Locale;
 
 /**
  * Web 框架采集到的原始请求元数据。
- */public final class WebRequestData {
+ */
+public final class WebRequestData {
 
     private final String requestId;
     private final String traceId;
@@ -33,9 +34,9 @@ import java.util.Locale;
     private final String method;
     private final String path;
 
-/**
- * Web 框架采集到的原始请求元数据。
- */
+    /**
+     * Web 框架采集到的原始请求元数据。
+     */
 
     public WebRequestData(String requestId, String traceId, String tenantId, String authorization,
                           Locale locale, String forwardedFor, String realIp, String remoteAddress,
@@ -52,16 +53,45 @@ import java.util.Locale;
         this.path = path;
     }
 
-    public String requestId() { return requestId; }
-    public String traceId() { return traceId; }
-    public String tenantId() { return tenantId; }
-    public String authorization() { return authorization; }
-    public Locale locale() { return locale; }
-    public String forwardedFor() { return forwardedFor; }
-    public String realIp() { return realIp; }
-    public String remoteAddress() { return remoteAddress; }
-    public String method() { return method; }
-    public String path() { return path; }
+    public String requestId() {
+        return requestId;
+    }
+
+    public String traceId() {
+        return traceId;
+    }
+
+    public String tenantId() {
+        return tenantId;
+    }
+
+    public String authorization() {
+        return authorization;
+    }
+
+    public Locale locale() {
+        return locale;
+    }
+
+    public String forwardedFor() {
+        return forwardedFor;
+    }
+
+    public String realIp() {
+        return realIp;
+    }
+
+    public String remoteAddress() {
+        return remoteAddress;
+    }
+
+    public String method() {
+        return method;
+    }
+
+    public String path() {
+        return path;
+    }
 
     public String getRequestId() {
         return requestId;
@@ -102,6 +132,7 @@ import java.util.Locale;
     public String getPath() {
         return path;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

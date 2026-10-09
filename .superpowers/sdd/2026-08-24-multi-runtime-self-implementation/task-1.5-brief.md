@@ -4,11 +4,15 @@
 
 Task 1.5 of 43 tasks. Part of "阶段 1：高精度参考文档 + ADR".
 
-This task writes `ddd4j/docs/reference/fuin-api-patterns/04-event-sourcing-repository.md` — the fourth reference document about fuin's EventStore/EventSourcingRepository API.
+This task writes `ddd4j/docs/reference/fuin-api-patterns/04-event-sourcing-repository.md` — the fourth reference
+document about fuin's EventStore/EventSourcingRepository API.
 
 Task 1.4 (commit `9b8cfcf9`) wrote 03-domain-event.md. Tasks 1.6-1.9 follow. Task 1.10 writes ADRs.
 
-**Important precedent from Tasks 1.3 / 1.4**: previous briefs contained factual errors about fuin's API surface. The implementer correctly refused to propagate them and surfaced the corrections. **You should do the same** — read the actual fuin source files first, do not trust any pre-existing characterization in any prior doc, and surface any discrepancy with source-accurate corrections in your report.
+**Important precedent from Tasks 1.3 / 1.4**: previous briefs contained factual errors about fuin's API surface. The
+implementer correctly refused to propagate them and surfaced the corrections. **You should do the same** — read the
+actual fuin source files first, do not trust any pre-existing characterization in any prior doc, and surface any
+discrepancy with source-accurate corrections in your report.
 
 ## File to create
 
@@ -17,19 +21,29 @@ Task 1.4 (commit `9b8cfcf9`) wrote 03-domain-event.md. Tasks 1.6-1.9 follow. Tas
 ## Source to read
 
 Primary (fuin `ddd-4-java/esc`):
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/EventStoreRepository.java`
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/AggregateStreamId.java`
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/package-info.java`
-- (Also note: fuin's `EventStore` interface comes from external `org.fuin.esc:esc-api:0.9.0` — outside ddd-4-java proper; Task 1.6 covers that)
+
+-
+`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/EventStoreRepository.java`
+-
+`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/AggregateStreamId.java`
+-
+`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/package-info.java`
+- (Also note: fuin's `EventStore` interface comes from external `org.fuin.esc:esc-api:0.9.0` — outside ddd-4-java
+  proper; Task 1.6 covers that)
 
 Reference (ddd4j-core existing):
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/EventSourcingRepository.java`
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/Repository.java`
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java`
+
+-
+`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/EventSourcingRepository.java`
+-
+`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/Repository.java`
+-
+`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java`
 
 ## Document structure (mandatory 6 sections — same template as 1.2/1.3)
 
-Use exact titles: `## 来源`, `## fuin 的设计`, `## 优点（值得借鉴的）`, `## 缺点（应规避的）`, `## ddd4j 自研决策`, `## 落地计划`.
+Use exact titles: `## 来源`, `## fuin 的设计`, `## 优点（值得借鉴的）`, `## 缺点（应规避的）`, `## ddd4j 自研决策`,
+`## 落地计划`.
 
 ### Section 1: 来源 (Source)
 
@@ -42,11 +56,15 @@ Use exact titles: `## 来源`, `## fuin 的设计`, `## 优点（值得借鉴的
   - ...
 ```
 
-**Before writing this section**, list the actual files in `ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/` and read them all. The brief's claim that the package contains "EventStoreRepository, EventStore, AggregateStreamId" is from the plan's characterizations — verify against actual ls output (EventStore may NOT be in this package — it might be in external esc-api).
+**Before writing this section**, list the actual files in `ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/` and read
+them all. The brief's claim that the package contains "EventStoreRepository, EventStore, AggregateStreamId" is from the
+plan's characterizations — verify against actual ls output (EventStore may NOT be in this package — it might be in
+external esc-api).
 
 ### Section 2: fuin 的设计
 
 Quote 4-8 line snippets from real fuin source covering:
+
 - The main class's key methods (load/add/update or whatever the real method names are — verify)
 - AggregateStreamId definition
 - Any helper types (Version conflict, etc.)
@@ -54,32 +72,39 @@ Quote 4-8 line snippets from real fuin source covering:
 ### Section 3: 优点（值得借鉴的）
 
 3-5 bullets. Specifically about ES Repository pattern:
+
 - "聚合根状态完全由事件流重建（loadFromHistory），无 ORM 持久化状态"
 - "乐观锁版本冲突显式抛异常（AggregateVersionConflictException）"
 
 ### Section 4: 缺点（应规避的）
 
 3-5 bullets:
-- "fuin EventStoreRepository 与 ddd4j EventSourcingRepository 方法签名不完全对齐（fuin 用 add/update，ddd4j 用 read/add/update），需要明确迁移路径"
+
+- "fuin EventStoreRepository 与 ddd4j EventSourcingRepository 方法签名不完全对齐（fuin 用 add/update，ddd4j 用
+  read/add/update），需要明确迁移路径"
 - "fuin 用 esc-api 子项目命名，ddd4j 集成到 ddd4j-data-event-store"
 
 ### Section 5: ddd4j 自研决策
 
 **借鉴**：
+
 - AggregateVersion 版本模型（ddd4j 已对齐）
 - 乐观锁语义
 
 **改写/对齐**：
+
 - 接口名：fuin `EventStoreRepository` → ddd4j `EventSourcingRepository`（更准确表达"事件溯源"语义）
 - 方法签名对齐 ddd4j-core 现有 `EventSourcingRepository<M, ID>` 接口
 
 **不借鉴**：
+
 - fuin 的 esc-api 子项目命名（ddd4j 集成到 `ddd4j-data-event-store`）
 - fuin 用 `add/update` 而非 `add/read/update` 的命名
 
 ### Section 6: 落地计划
 
 Checkbox list `- [ ]` linking to plan tasks:
+
 - [ ] 阶段 3 (Task 3.2) EventStore SPI 设计——参考本 doc 的 `EventSourcingRepository` 设计
 - [ ] 阶段 3 (Task 3.3) JpaEventStore 实现
 - [ ] 阶段 4 (Task 4.x) 验证 ddd4j-core 现有 `EventSourcingRepository` 接口与 fuin 的对齐情况
@@ -124,7 +149,9 @@ git commit -m "docs(reference): 04-event-sourcing-repository API 模式参考"
 
 ## When You're in Over Your Head
 
-If the fuin source files don't exist or have been substantially refactored, STOP and report BLOCKED with specifics. If the brief's characterization of fuin's API surface is wrong (you find the file doesn't exist or the methods are different), **surface that as a Concern in DONE_WITH_CONCERNS** rather than propagating the error.
+If the fuin source files don't exist or have been substantially refactored, STOP and report BLOCKED with specifics. If
+the brief's characterization of fuin's API surface is wrong (you find the file doesn't exist or the methods are
+different), **surface that as a Concern in DONE_WITH_CONCERNS** rather than propagating the error.
 
 ## Self-review
 
@@ -138,7 +165,9 @@ If the fuin source files don't exist or have been substantially refactored, STOP
 
 ## Report Format
 
-Write full report to: `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.5-report.md`
+Write full report to:
+`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.5-report.md`
+
 - File path + line count
 - Section count (6) + section titles
 - Number of fuin source code snippets + line refs
@@ -147,6 +176,7 @@ Write full report to: `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-b
 - Self-review findings
 
 Then reply with ONLY (under 15 lines):
+
 - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
 - Commit (short SHA + subject)
 - One-line summary

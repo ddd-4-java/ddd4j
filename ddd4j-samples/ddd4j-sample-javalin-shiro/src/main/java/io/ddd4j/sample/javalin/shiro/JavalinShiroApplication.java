@@ -128,53 +128,53 @@ public class JavalinShiroApplication {
             javalinConfig.showJavalinBanner = false;
         });
         app.routes(() -> {
-                // ========== Authentication 路由 ==========
-                ApiBuilder.post("/auth/login", authController::login);
-                ApiBuilder.post("/auth/logout", authController::logout);
-                ApiBuilder.get("/auth/me", authController::me);
-                ApiBuilder.get("/auth/check/permission", authController::checkPermission);
-                ApiBuilder.get("/auth/check/role", authController::checkRole);
-                ApiBuilder.post("/auth/kickout", authController::kickout);
-                ApiBuilder.get("/auth/status", authController::status);
+            // ========== Authentication 路由 ==========
+            ApiBuilder.post("/auth/login", authController::login);
+            ApiBuilder.post("/auth/logout", authController::logout);
+            ApiBuilder.get("/auth/me", authController::me);
+            ApiBuilder.get("/auth/check/permission", authController::checkPermission);
+            ApiBuilder.get("/auth/check/role", authController::checkRole);
+            ApiBuilder.post("/auth/kickout", authController::kickout);
+            ApiBuilder.get("/auth/status", authController::status);
 
-                // ========== Authorization 路由（RBAC 管理） ==========
-                // User CRUD
-                ApiBuilder.get("/auth/users", authzController::listUsers);
-                ApiBuilder.get("/auth/users/{id}", authzController::getUser);
-                ApiBuilder.post("/auth/users", authzController::createUser);
-                ApiBuilder.put("/auth/users/{id}", authzController::updateUser);
-                ApiBuilder.delete("/auth/users/{id}", authzController::deleteUser);
+            // ========== Authorization 路由（RBAC 管理） ==========
+            // User CRUD
+            ApiBuilder.get("/auth/users", authzController::listUsers);
+            ApiBuilder.get("/auth/users/{id}", authzController::getUser);
+            ApiBuilder.post("/auth/users", authzController::createUser);
+            ApiBuilder.put("/auth/users/{id}", authzController::updateUser);
+            ApiBuilder.delete("/auth/users/{id}", authzController::deleteUser);
 
-                // Role CRUD
-                ApiBuilder.get("/auth/roles", authzController::listRoles);
-                ApiBuilder.post("/auth/roles", authzController::createRole);
-                ApiBuilder.put("/auth/roles/{code}", authzController::updateRole);
-                ApiBuilder.delete("/auth/roles/{code}", authzController::deleteRole);
+            // Role CRUD
+            ApiBuilder.get("/auth/roles", authzController::listRoles);
+            ApiBuilder.post("/auth/roles", authzController::createRole);
+            ApiBuilder.put("/auth/roles/{code}", authzController::updateRole);
+            ApiBuilder.delete("/auth/roles/{code}", authzController::deleteRole);
 
-                // Permission CRUD
-                ApiBuilder.get("/auth/permissions", authzController::listPermissions);
-                ApiBuilder.post("/auth/permissions", authzController::createPermission);
-                ApiBuilder.delete("/auth/permissions/{code}", authzController::deletePermission);
+            // Permission CRUD
+            ApiBuilder.get("/auth/permissions", authzController::listPermissions);
+            ApiBuilder.post("/auth/permissions", authzController::createPermission);
+            ApiBuilder.delete("/auth/permissions/{code}", authzController::deletePermission);
 
-                // ========== 业务接口鉴权示范 ==========
-                // POST /auth/orders/{id}/pay —— 业务接口 + 鉴权（order:pay 权限）
-                ApiBuilder.post("/auth/orders/{id}/pay", ctx -> {
-                    if (!SubjectKit.hasPermission("order:pay")) {
-                        ctx.status(403).json(R.fail(403, "forbidden: requires order:pay permission"));
-                        return;
-                    }
-                    String id = ctx.pathParam("id");
-                    ctx.json(R.ok("order pay authorized", Java8Maps.of(
-                            "orderId", id,
-                            "byUser", String.valueOf(SubjectKit.getLoginId()))));
-                });
+            // ========== 业务接口鉴权示范 ==========
+            // POST /auth/orders/{id}/pay —— 业务接口 + 鉴权（order:pay 权限）
+            ApiBuilder.post("/auth/orders/{id}/pay", ctx -> {
+                if (!SubjectKit.hasPermission("order:pay")) {
+                    ctx.status(403).json(R.fail(403, "forbidden: requires order:pay permission"));
+                    return;
+                }
+                String id = ctx.pathParam("id");
+                ctx.json(R.ok("order pay authorized", Java8Maps.of(
+                        "orderId", id,
+                        "byUser", String.valueOf(SubjectKit.getLoginId()))));
+            });
 
-                // Order 路由（通过 EndpointGroup 暴露）
-                orderResource.routes().addEndpoints();
+            // Order 路由（通过 EndpointGroup 暴露）
+            orderResource.routes().addEndpoints();
 
-                // Goods 路由（写侧 + 读侧合并到 /api/goods 命名空间）
-                goodsQueryResource.routes().addEndpoints();
-                goodsResource.routes().addEndpoints();
+            // Goods 路由（写侧 + 读侧合并到 /api/goods 命名空间）
+            goodsQueryResource.routes().addEndpoints();
+            goodsResource.routes().addEndpoints();
         });
 
         app.start(PORT);

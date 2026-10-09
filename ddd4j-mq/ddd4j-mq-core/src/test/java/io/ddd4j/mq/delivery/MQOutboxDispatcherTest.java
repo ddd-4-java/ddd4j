@@ -16,6 +16,7 @@ package io.ddd4j.mq.delivery;
 
 import java.util.Collections;
 import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

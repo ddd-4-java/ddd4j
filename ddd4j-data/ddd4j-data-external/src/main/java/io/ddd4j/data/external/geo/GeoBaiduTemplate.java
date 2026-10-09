@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 
@@ -73,7 +74,7 @@ public class GeoBaiduTemplate {
 
     public static void main(String[] args) throws IOException {
 
-        GeoBaiduTemplate template = new GeoBaiduTemplate( "");
+        GeoBaiduTemplate template = new GeoBaiduTemplate("");
 
         Map<String, BigDecimal> mapLL = template.getLatAndLngByAddress("浙江省杭州市西湖区"); // lng：116.86380647644208  lat：38.297615350325717
         mapLL.get("lat");

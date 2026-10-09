@@ -144,7 +144,13 @@ public class OrderResource {
     public static class DiscountView {
         String amount;
         String currency;
-        public String amount() { return amount; }
-        public String currency() { return currency; }
+
+        public String amount() {
+            return amount;
+        }
+
+        public String currency() {
+            return currency;
+        }
     }
 }

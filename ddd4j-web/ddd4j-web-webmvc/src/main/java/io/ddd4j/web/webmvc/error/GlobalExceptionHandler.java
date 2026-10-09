@@ -28,8 +28,10 @@ import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.web.webmvc.util.WebUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.*;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -71,9 +73,11 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+
 import io.ddd4j.kit.web.IpKit;
 
 import java.util.Locale;
+
 /**
  * 异常增强，以JSON的形式返回给客服端
  * 异常增强类型：NullPointerException,RunTimeException,ClassCastException,
@@ -359,7 +363,7 @@ public class GlobalExceptionHandler {
         return this.bindException(ex, ex.getBindingResult());
     }
 
-/**
+    /**
      * 400 (Bad Request)
      *
      * @see javax.validation.Valid
@@ -959,7 +963,6 @@ public class GlobalExceptionHandler {
         }
         return message;
     }
-
 
 
     protected void logException(Exception ex) {

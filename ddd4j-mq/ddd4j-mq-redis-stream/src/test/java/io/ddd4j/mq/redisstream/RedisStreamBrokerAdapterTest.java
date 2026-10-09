@@ -15,6 +15,7 @@
 package io.ddd4j.mq.redisstream;
 
 import java.util.Collections;
+
 import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
 import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
 import io.lettuce.core.XAddArgs;

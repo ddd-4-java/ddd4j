@@ -165,12 +165,20 @@ public class AuthenticationController {
 
     // ============================ DTO ============================
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class LoginRequest {
         private String loginId;
         private String password;
-        public String loginId() { return loginId; }
-        public String password() { return password; }
+
+        public String loginId() {
+            return loginId;
+        }
+
+        public String password() {
+            return password;
+        }
     }
 
 }

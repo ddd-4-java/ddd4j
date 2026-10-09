@@ -53,13 +53,13 @@
 
 ### 核心原则
 
-| 原则              | 说明                                                                      |
-|-----------------|-------------------------------------------------------------------------|
-| **SPI 与实现分离**   | `Cache`/`CacheManager` 接口在 `ddd4j-core/cache`（纯 Java），实现在 `ddd4j-cache` |
-| **零 Spring 依赖** | 整个 `ddd4j-cache` 模块不依赖 Spring / Spring Boot，可被任何框架使用                    |
-| **单一 jar**      | 所有后端实现打包在一个 jar 中，按包名分层，外部客户端 `optional`                                |
-| **按需引入**        | 消费方只引入用到的客户端依赖（如 `redisson`），未引入的不会传递                                   |
-| **统一 API**      | 业务代码面向 `Cache<K,V>` 接口编程，切换后端零业务代码改动                                    |
+| 原则               | 说明                                                                              |
+|--------------------|-----------------------------------------------------------------------------------|
+| **SPI 与实现分离** | `Cache`/`CacheManager` 接口在 `ddd4j-core/cache`（纯 Java），实现在 `ddd4j-cache` |
+| **零 Spring 依赖** | 整个 `ddd4j-cache` 模块不依赖 Spring / Spring Boot，可被任何框架使用              |
+| **单一 jar**       | 所有后端实现打包在一个 jar 中，按包名分层，外部客户端 `optional`                  |
+| **按需引入**       | 消费方只引入用到的客户端依赖（如 `redisson`），未引入的不会传递                   |
+| **统一 API**       | 业务代码面向 `Cache<K,V>` 接口编程，切换后端零业务代码改动                        |
 
 ---
 
@@ -215,26 +215,26 @@ public interface CacheManager {
 
 ### 能力矩阵
 
-| 实现                  | 类型 | 自动加载              | 统计   | 分布式锁 | 过期策略          | 需引入的依赖                                 |
-|---------------------|----|-------------------|------|------|---------------|----------------------------------------|
-| **CaffeineCache**   | 本地 | ✅ refresh         | ✅ 完整 | —    | 写后 / 访问后 / 刷新 | 默认包含                                   |
-| **GuavaCache**      | 本地 | —                 | —    | —    | 写后 / 访问后      | `com.google.guava:guava`               |
-| **HutoolCache**     | 本地 | —                 | —    | —    | 仅写后           | `cn.hutool:hutool-cache`               |
-| **JedisCache**      | 远程 | —                 | —    | —    | 写后 TTL        | `redis.clients:jedis`                  |
-| **LettuceCache**    | 远程 | —                 | —    | —    | 写后 TTL        | `io.lettuce:lettuce-core`              |
-| **RedissonCache**   | 远程 | —                 | —    | ✅    | 写后 TTL        | `org.redisson:redisson`                |
-| **MemcachedCache**  | 远程 | —                 | —    | —    | 写后 TTL        | `com.googlecode.xmemcached:xmemcached` |
-| **JetCacheAdapter** | 多级 | ✅ computeIfAbsent | —    | ✅    | 可配置           | `com.alicp.jetcache:jetcache-core`     |
+| 实现                | 类型 | 自动加载           | 统计    | 分布式锁 | 过期策略             | 需引入的依赖                           |
+|---------------------|------|--------------------|---------|----------|----------------------|----------------------------------------|
+| **CaffeineCache**   | 本地 | ✅ refresh         | ✅ 完整 | —        | 写后 / 访问后 / 刷新 | 默认包含                               |
+| **GuavaCache**      | 本地 | —                  | —       | —        | 写后 / 访问后        | `com.google.guava:guava`               |
+| **HutoolCache**     | 本地 | —                  | —       | —        | 仅写后               | `cn.hutool:hutool-cache`               |
+| **JedisCache**      | 远程 | —                  | —       | —        | 写后 TTL             | `redis.clients:jedis`                  |
+| **LettuceCache**    | 远程 | —                  | —       | —        | 写后 TTL             | `io.lettuce:lettuce-core`              |
+| **RedissonCache**   | 远程 | —                  | —       | ✅       | 写后 TTL             | `org.redisson:redisson`                |
+| **MemcachedCache**  | 远程 | —                  | —       | —        | 写后 TTL             | `com.googlecode.xmemcached:xmemcached` |
+| **JetCacheAdapter** | 多级 | ✅ computeIfAbsent | —       | ✅       | 可配置               | `com.alicp.jetcache:jetcache-core`     |
 
 ### 统一调用原则
 
 **所有缓存——无论本地还是远程——都通过 `CacheKit` 调用。** 区别只在注册方式：
 
-| 场景                                     | 注册方式                                                     | 说明                            |
-|----------------------------------------|----------------------------------------------------------|-------------------------------|
-| 本地缓存（Caffeine/Guava/Hutool）            | `CacheKit.build(biz, ...)`                               | 门面内部根据配置自动创建                  |
-| 远程缓存（Jedis/Lettuce/Redisson/Memcached） | `CacheKit.register(biz, cache)`                          | 调用方 new 出实例后注册                |
-| JetCache 多级缓存                          | `CacheKit.register(biz, cache)`                          | 通过 JetCacheCacheManager 创建后注册 |
+| 场景                                         | 注册方式                                                  | 说明                                 |
+|----------------------------------------------|-----------------------------------------------------------|--------------------------------------|
+| 本地缓存（Caffeine/Guava/Hutool）            | `CacheKit.build(biz, ...)`                                | 门面内部根据配置自动创建             |
+| 远程缓存（Jedis/Lettuce/Redisson/Memcached） | `CacheKit.register(biz, cache)`                           | 调用方 new 出实例后注册              |
+| JetCache 多级缓存                            | `CacheKit.register(biz, cache)`                           | 通过 JetCacheCacheManager 创建后注册 |
 | 自动加载缓存                                 | `CacheKit.buildWithLoader(biz, ...)` 或 `registerLoading` | 未命中自动加载                       |
 
 注册后，所有缓存的读写操作完全一致：`CacheKit.get(biz, key)` / `CacheKit.put(biz, key, value)` /
@@ -446,16 +446,16 @@ io.ddd4j.cache/
 
 ## 六、依赖速查
 
-| 场景                  | 需引入的依赖                                            |
-|---------------------|---------------------------------------------------|
-| 本地缓存（Caffeine）      | 仅 `ddd4j-cache`（默认包含）                             |
-| 本地缓存（Guava）         | + `com.google.guava:guava`                        |
-| 本地缓存（Hutool）        | + `cn.hutool:hutool-cache`                        |
-| Redis（Jedis）        | + `redis.clients:jedis`                           |
-| Redis（Lettuce）      | + `io.lettuce:lettuce-core`                       |
-| Redis（Redisson + 锁） | + `org.redisson:redisson`                         |
-| Memcached           | + `com.googlecode.xmemcached:xmemcached`          |
-| 多级缓存（JetCache）      | + `com.alicp.jetcache:jetcache-core` + 后端 starter |
+| 场景                   | 需引入的依赖                                        |
+|------------------------|-----------------------------------------------------|
+| 本地缓存（Caffeine）   | 仅 `ddd4j-cache`（默认包含）                        |
+| 本地缓存（Guava）      | + `com.google.guava:guava`                          |
+| 本地缓存（Hutool）     | + `cn.hutool:hutool-cache`                          |
+| Redis（Jedis）         | + `redis.clients:jedis`                             |
+| Redis（Lettuce）       | + `io.lettuce:lettuce-core`                         |
+| Redis（Redisson + 锁） | + `org.redisson:redisson`                           |
+| Memcached              | + `com.googlecode.xmemcached:xmemcached`            |
+| 多级缓存（JetCache）   | + `com.alicp.jetcache:jetcache-core` + 后端 starter |
 
 > **所有外部客户端依赖在 ddd4j-cache 中标记为 `optional`**，不会传递给消费方。消费方按需在自身 pom 中引入。
 
@@ -495,14 +495,14 @@ ddd4j 通用模块不能与 Spring / Spring Boot 绑定。JetCache 的 `@Cached`
 
 ## 八、版本与兼容性
 
-| 维度       | 说明                        |
-|----------|---------------------------|
-| Java     | 17+                       |
+| 维度     | 说明                        |
+|----------|-----------------------------|
+| Java     | 17+                         |
 | Jedis    | 5+ / 7+（UnifiedJedis API） |
-| Spring   | 不依赖（零 Spring 耦合）          |
-| JetCache | 2.8+                      |
-| Caffeine | 3.x                       |
-| 协议       | Apache 2.0                |
+| Spring   | 不依赖（零 Spring 耦合）    |
+| JetCache | 2.8+                        |
+| Caffeine | 3.x                         |
+| 协议     | Apache 2.0                  |
 
 ---
 

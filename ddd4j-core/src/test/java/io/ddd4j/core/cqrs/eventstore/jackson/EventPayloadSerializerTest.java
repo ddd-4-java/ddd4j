@@ -68,24 +68,53 @@ class EventPayloadSerializerTest {
     private static final class TestId implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
-        private TestId(String value) { this.value = value; }
-        @Override public EntityType getType() { return TYPE; }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+
+        private TestId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
     }
 
-    /** 业务事件样例：无参构造 + JavaBean 属性（Jackson 往返约定）。 */
+    /**
+     * 业务事件样例：无参构造 + JavaBean 属性（Jackson 往返约定）。
+     */
     public static final class OrderCreatedEvent extends DomainEvent<TestId> {
         private String fact;
 
-        public OrderCreatedEvent() { super(); }
+        public OrderCreatedEvent() {
+            super();
+        }
 
-        private OrderCreatedEvent(String fact) { super(new EntityIdPath(new TestId("order-1"))); this.fact = fact; }
+        private OrderCreatedEvent(String fact) {
+            super(new EntityIdPath(new TestId("order-1")));
+            this.fact = fact;
+        }
 
-        private OrderCreatedEvent(String fact, Event causingEvent) { super(new EntityIdPath(new TestId("order-1")), causingEvent); this.fact = fact; }
+        private OrderCreatedEvent(String fact, Event causingEvent) {
+            super(new EntityIdPath(new TestId("order-1")), causingEvent);
+            this.fact = fact;
+        }
 
-        public String getFact() { return fact; }
+        public String getFact() {
+            return fact;
+        }
 
-        public void setFact(String fact) { this.fact = fact; }
+        public void setFact(String fact) {
+            this.fact = fact;
+        }
     }
 }

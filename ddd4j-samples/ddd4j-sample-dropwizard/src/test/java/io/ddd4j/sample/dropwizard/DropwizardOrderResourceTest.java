@@ -53,7 +53,7 @@ class DropwizardOrderResourceTest {
 
     private static final InMemorySubjectProvider SUBJECT_PROVIDER = new InMemorySubjectProvider(
             new InMemorySubject(event -> {
-    }));
+            }));
     private static final Ddd4jDropwizardRuntime RUNTIME = new Ddd4jDropwizardRuntime(
             new DropwizardDomainEventPublisher(Collections.emptyList()), SUBJECT_PROVIDER, I18nProvider.DEFAULT,
             new DefaultCommandBus(Collections.emptyList()));

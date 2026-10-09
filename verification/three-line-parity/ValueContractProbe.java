@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -24,9 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/** 跨版本真实值对象契约探针：只使用 JDK，不替换业务实现。 */
+/**
+ * 跨版本真实值对象契约探针：只使用 JDK，不替换业务实现。
+ */
 public final class ValueContractProbe {
     private static int failures;
+
     public static void main(String[] args) throws Exception {
         check("io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo",
                 new Class<?>[]{Instant.class, int.class, String.class},
@@ -55,6 +59,7 @@ public final class ValueContractProbe {
             throw new AssertionError(failures + " contract checks failed");
         }
     }
+
     private static void check(String name, Class<?>[] types, Object[] values,
                               Object[] nullValues, String[][] getters) throws Exception {
         Class<?> type = Class.forName(name);
@@ -110,6 +115,7 @@ public final class ValueContractProbe {
         System.out.println("HASH " + name + "=" + a.hashCode());
         System.out.println("TEXT " + name + "=" + a.toString());
     }
+
     private static void require(boolean condition, String message) {
         if (!condition) {
             failures++;
@@ -118,13 +124,27 @@ public final class ValueContractProbe {
     }
 
     private static Object differentValue(Class<?> type, Object value) {
-        if (type == boolean.class) { return !((Boolean) value); }
-        if (type == int.class) { return ((Integer) value) + 1; }
-        if (type == long.class) { return ((Long) value) + 1L; }
-        if (type == Instant.class) { return Instant.ofEpochSecond(1); }
-        if (type == List.class) { return Collections.singletonList("different"); }
-        if (type == Map.class) { return Collections.singletonMap("different", "value"); }
-        if (type == Throwable.class) { return new IllegalStateException("different"); }
+        if (type == boolean.class) {
+            return !((Boolean) value);
+        }
+        if (type == int.class) {
+            return ((Integer) value) + 1;
+        }
+        if (type == long.class) {
+            return ((Long) value) + 1L;
+        }
+        if (type == Instant.class) {
+            return Instant.ofEpochSecond(1);
+        }
+        if (type == List.class) {
+            return Collections.singletonList("different");
+        }
+        if (type == Map.class) {
+            return Collections.singletonMap("different", "value");
+        }
+        if (type == Throwable.class) {
+            return new IllegalStateException("different");
+        }
         return "different";
     }
 }

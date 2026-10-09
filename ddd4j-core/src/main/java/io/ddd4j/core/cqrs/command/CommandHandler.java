@@ -57,7 +57,8 @@ import java.lang.annotation.Target;
  * @see CommandRegistry
  * @see io.ddd4j.core.cqrs.command.CommandExecutor
  * @since 2.0.x
- */@Documented
+ */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface CommandHandler {

@@ -8,7 +8,9 @@ package io.ddd4j.sample.javalin.satoken.rbac.web;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Java 8 equivalent of the small immutable-map literals used by the sample responses. */
+/**
+ * Java 8 equivalent of the small immutable-map literals used by the sample responses.
+ */
 final class Java8Maps {
 
     private Java8Maps() {

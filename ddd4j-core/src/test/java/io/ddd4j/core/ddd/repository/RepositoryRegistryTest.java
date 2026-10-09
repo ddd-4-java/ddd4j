@@ -39,13 +39,32 @@ class RepositoryRegistryTest {
         RepositoryRegistry.unregister(TestAggregate.class);
         assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
     }
+
     private static final class TestAggregate extends AggregateRoot<StringEntityId> {
-        private final StringEntityId id; private TestAggregate(StringEntityId id) { this.id = id; }
-        @Override public StringEntityId id() { return id; }
+        private final StringEntityId id;
+
+        private TestAggregate(StringEntityId id) {
+            this.id = id;
+        }
+
+        @Override
+        public StringEntityId id() {
+            return id;
+        }
     }
+
     private static final class InMemoryRepository implements Repository<TestAggregate, StringEntityId> {
         private final Map<StringEntityId, TestAggregate> values = new HashMap<StringEntityId, TestAggregate>();
-        @Override public Optional<TestAggregate> findById(StringEntityId id) { return Optional.ofNullable(values.get(id)); }
-        @Override public TestAggregate save(TestAggregate aggregate) { values.put(aggregate.id(), aggregate); return aggregate; }
+
+        @Override
+        public Optional<TestAggregate> findById(StringEntityId id) {
+            return Optional.ofNullable(values.get(id));
+        }
+
+        @Override
+        public TestAggregate save(TestAggregate aggregate) {
+            values.put(aggregate.id(), aggregate);
+            return aggregate;
+        }
     }
 }

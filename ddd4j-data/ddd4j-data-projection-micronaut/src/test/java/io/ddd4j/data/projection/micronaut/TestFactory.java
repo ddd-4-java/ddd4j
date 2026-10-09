@@ -15,6 +15,7 @@
 package io.ddd4j.data.projection.micronaut;
 
 import java.util.Collections;
+
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;

@@ -15,6 +15,7 @@
 package io.ddd4j.core.cqrs.eventstore;
 
 import java.util.Objects;
+
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -113,13 +114,18 @@ class StoredEventStrongTypeContractTest {
 
     /**
      * 测试聚合根标识：满足 {@link AggregateRootId} 契约。
-     */static final class TestAggregateRootId implements AggregateRootId {
+     */
+    static final class TestAggregateRootId implements AggregateRootId {
         private final String value;
 
         public TestAggregateRootId(String value) {
             this.value = value;
         }
-        public String value() { return value; }
+
+        public String value() {
+            return value;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -127,14 +133,17 @@ class StoredEventStrongTypeContractTest {
             TestAggregateRootId other = (TestAggregateRootId) o;
             return Objects.equals(this.value, other.value);
         }
+
         @Override
         public int hashCode() {
             return java.util.Objects.hash(value);
         }
+
         @Override
         public String toString() {
             return "TestAggregateRootId{" + "value=" + value + "}";
         }
+
         private static final EntityType TYPE = new StringEntityType("TestAggregate");
 
         @Override
@@ -151,7 +160,7 @@ class StoredEventStrongTypeContractTest {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
-    
+
     }
 
     /**

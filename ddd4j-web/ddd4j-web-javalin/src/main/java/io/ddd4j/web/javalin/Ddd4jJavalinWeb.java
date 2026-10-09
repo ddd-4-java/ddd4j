@@ -67,7 +67,7 @@ public final class Ddd4jJavalinWeb {
     public Ddd4jJavalinWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, new RuntimeReadinessRegistry());
     }
@@ -80,7 +80,7 @@ public final class Ddd4jJavalinWeb {
     public Ddd4jJavalinWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, readinessRegistry);
     }

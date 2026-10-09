@@ -16,9 +16,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/** Minimal JDK 8 compatibility facade for the JDK 11 HTTP API used by the tests. */
+/**
+ * Minimal JDK 8 compatibility facade for the JDK 11 HTTP API used by the tests.
+ */
 final class HttpClient {
-    static HttpClient newHttpClient() { return new HttpClient(); }
+    static HttpClient newHttpClient() {
+        return new HttpClient();
+    }
 
     HttpResponse<String> send(HttpRequest request, HttpResponse.BodyHandler<String> ignored) throws Exception {
         HttpURLConnection connection = (HttpURLConnection) request.uri().toURL().openConnection();
@@ -64,14 +68,30 @@ final class HttpRequest {
         this.headers = headers;
     }
 
-    static Builder newBuilder() { return new Builder(); }
-    URI uri() { return uri; }
-    String method() { return method; }
-    String body() { return body; }
-    Map<String, String> headers() { return headers; }
+    static Builder newBuilder() {
+        return new Builder();
+    }
+
+    URI uri() {
+        return uri;
+    }
+
+    String method() {
+        return method;
+    }
+
+    String body() {
+        return body;
+    }
+
+    Map<String, String> headers() {
+        return headers;
+    }
 
     static final class BodyPublishers {
-        static String ofString(String body) { return body; }
+        static String ofString(String body) {
+            return body;
+        }
     }
 
     static final class Builder {
@@ -80,11 +100,30 @@ final class HttpRequest {
         private String body;
         private final Map<String, String> headers = new LinkedHashMap<>();
 
-        Builder uri(URI uri) { this.uri = uri; return this; }
-        Builder header(String name, String value) { headers.put(name, value); return this; }
-        Builder POST(String body) { this.method = "POST"; this.body = body; return this; }
-        Builder GET() { this.method = "GET"; return this; }
-        HttpRequest build() { return new HttpRequest(uri, method, body, new LinkedHashMap<>(headers)); }
+        Builder uri(URI uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        Builder header(String name, String value) {
+            headers.put(name, value);
+            return this;
+        }
+
+        Builder POST(String body) {
+            this.method = "POST";
+            this.body = body;
+            return this;
+        }
+
+        Builder GET() {
+            this.method = "GET";
+            return this;
+        }
+
+        HttpRequest build() {
+            return new HttpRequest(uri, method, body, new LinkedHashMap<>(headers));
+        }
     }
 }
 
@@ -92,12 +131,26 @@ final class HttpResponse<T> {
     private final int statusCode;
     private final T body;
 
-    HttpResponse(int statusCode, T body) { this.statusCode = statusCode; this.body = body; }
-    int statusCode() { return statusCode; }
-    T body() { return body; }
+    HttpResponse(int statusCode, T body) {
+        this.statusCode = statusCode;
+        this.body = body;
+    }
 
-    interface BodyHandler<T> { }
+    int statusCode() {
+        return statusCode;
+    }
+
+    T body() {
+        return body;
+    }
+
+    interface BodyHandler<T> {
+    }
+
     static final class BodyHandlers {
-        static BodyHandler<String> ofString() { return new BodyHandler<String>() { }; }
+        static BodyHandler<String> ofString() {
+            return new BodyHandler<String>() {
+            };
+        }
     }
 }

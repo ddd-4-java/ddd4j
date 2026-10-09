@@ -15,6 +15,7 @@
 package io.ddd4j.core.cqrs.readmodel;
 
 import java.util.ArrayList;
+
 import io.ddd4j.kit.lang.CollKit;
 import lombok.Getter;
 

@@ -74,43 +74,83 @@ public class StoredEventEntity {
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     private Instant timestamp;
 
-    public String getAggregateType() { return aggregateType; }
+    public String getAggregateType() {
+        return aggregateType;
+    }
 
-    public void setAggregateType(String aggregateType) { this.aggregateType = aggregateType; }
+    public void setAggregateType(String aggregateType) {
+        this.aggregateType = aggregateType;
+    }
 
-    public String getAggregateId() { return aggregateId; }
+    public String getAggregateId() {
+        return aggregateId;
+    }
 
-    public void setAggregateId(String aggregateId) { this.aggregateId = aggregateId; }
+    public void setAggregateId(String aggregateId) {
+        this.aggregateId = aggregateId;
+    }
 
-    public long getVersion() { return version; }
+    public long getVersion() {
+        return version;
+    }
 
-    public void setVersion(long version) { this.version = version; }
+    public void setVersion(long version) {
+        this.version = version;
+    }
 
-    public long getPosition() { return position; }
+    public long getPosition() {
+        return position;
+    }
 
-    public void setPosition(long position) { this.position = position; }
+    public void setPosition(long position) {
+        this.position = position;
+    }
 
-    public String getEventType() { return eventType; }
+    public String getEventType() {
+        return eventType;
+    }
 
-    public void setEventType(String eventType) { this.eventType = eventType; }
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
-    public String getEventId() { return eventId; }
+    public String getEventId() {
+        return eventId;
+    }
 
-    public void setEventId(String eventId) { this.eventId = eventId; }
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
-    public String getCorrelationId() { return correlationId; }
+    public String getCorrelationId() {
+        return correlationId;
+    }
 
-    public void setCorrelationId(String correlationId) { this.correlationId = correlationId; }
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
+    }
 
-    public String getCausationId() { return causationId; }
+    public String getCausationId() {
+        return causationId;
+    }
 
-    public void setCausationId(String causationId) { this.causationId = causationId; }
+    public void setCausationId(String causationId) {
+        this.causationId = causationId;
+    }
 
-    public String getPayload() { return payload; }
+    public String getPayload() {
+        return payload;
+    }
 
-    public void setPayload(String payload) { this.payload = payload; }
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
 
-    public Instant getTimestamp() { return timestamp; }
+    public Instant getTimestamp() {
+        return timestamp;
+    }
 
-    public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
 }

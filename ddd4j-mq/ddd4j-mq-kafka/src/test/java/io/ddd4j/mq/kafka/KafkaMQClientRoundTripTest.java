@@ -15,6 +15,7 @@
 package io.ddd4j.mq.kafka;
 
 import java.util.Collections;
+
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;

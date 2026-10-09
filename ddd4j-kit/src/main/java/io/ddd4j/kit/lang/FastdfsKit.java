@@ -36,7 +36,7 @@ public class FastdfsKit {
      * @param secret_key the secret key
      * @return token string
      */
-        /**
+    /**
      * get token for file URL
      *
      * @param file_id    the file id return by FastDFS server
@@ -45,7 +45,7 @@ public class FastdfsKit {
      * @return token string
      */
 
-public static String getToken(String file_id, long ts, String secret_key) throws Exception {
+    public static String getToken(String file_id, long ts, String secret_key) throws Exception {
         byte[] bsFileId = file_id.getBytes(g_charset);
         byte[] bsKey = secret_key.getBytes(g_charset);
         byte[] bsTimestamp = Long.valueOf(ts).toString().getBytes(g_charset);

@@ -15,6 +15,7 @@
 package io.ddd4j.mq.redisstream;
 
 import java.util.Collections;
+
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,7 +91,10 @@ class RedisStreamMQClientTest {
 
     @Test
     void messageId_shouldPreferStableHeaderAndReadLegacyHeader() {
-        assertEquals("stable-id", RedisStreamMQClient.messageId(new java.util.LinkedHashMap<String, String>() {{ put(MessageHeaders.HEADER_MESSAGE_ID, "stable-id"); put(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id"); }}));
+        assertEquals("stable-id", RedisStreamMQClient.messageId(new java.util.LinkedHashMap<String, String>() {{
+            put(MessageHeaders.HEADER_MESSAGE_ID, "stable-id");
+            put(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id");
+        }}));
         assertEquals("legacy-id", RedisStreamMQClient.messageId(Collections.singletonMap(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id")));
     }
 }

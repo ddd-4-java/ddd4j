@@ -15,6 +15,7 @@
 package io.ddd4j.auth.satoken.subject;
 
 import java.util.Collections;
+
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.dao.SaTokenDao;
@@ -173,7 +174,10 @@ class SaTokenSubjectVerifyTest {
         AuthPrincipal principal = principal("jwt-user");
         login(logic, principal);
         String forgedToken = cn.dev33.satoken.jwt.SaJwtUtil.createToken(logic.getLoginType(), principal.getLoginId(),
-                "default-device", 60L, new java.util.LinkedHashMap<String, Object>() {{ put("iss", "ddd4j-test"); put("aud", "unexpected"); }},
+                "default-device", 60L, new java.util.LinkedHashMap<String, Object>() {{
+                    put("iss", "ddd4j-test");
+                    put("aud", "unexpected");
+                }},
                 "ddd4j-satoken-subject-test-secret-32bytes");
         logic.saveTokenToIdMapping(forgedToken, principal.getLoginId(), 60L);
 

@@ -4,9 +4,12 @@ package io.ddd4j.sample.javalin.shiro.rbac.controller;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Java 8 equivalent of the small map literals used by sample responses. */
+/**
+ * Java 8 equivalent of the small map literals used by sample responses.
+ */
 public final class Java8Maps {
-    private Java8Maps() { }
+    private Java8Maps() {
+    }
 
     public static Map<String, Object> of(Object... keyValues) {
         if (keyValues.length % 2 != 0) {

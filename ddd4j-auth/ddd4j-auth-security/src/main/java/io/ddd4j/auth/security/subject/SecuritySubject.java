@@ -15,6 +15,7 @@
 package io.ddd4j.auth.security.subject;
 
 import java.util.Arrays;
+
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.exception.*;

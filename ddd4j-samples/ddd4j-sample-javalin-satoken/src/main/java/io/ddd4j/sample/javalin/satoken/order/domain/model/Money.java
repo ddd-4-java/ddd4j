@@ -54,8 +54,13 @@ public class Money implements ValueObject {
         this.currency = currency.trim().toUpperCase(Locale.ROOT);
     }
 
-    public BigDecimal amount() { return amount; }
-    public String currency() { return currency; }
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    public String currency() {
+        return currency;
+    }
 
     /**
      * 创建人民币金额。

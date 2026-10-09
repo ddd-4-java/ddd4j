@@ -6,32 +6,33 @@
 
 ## 测试结果
 
-| 类型 | 测试数 | 通过 | 跳过 | 失败 |
-|------|--------|------|------|------|
-| 单元测试 (EsdbEventStoreTest) | 11 | 11 | 0 | 0 |
-| 集成测试 (EsdbEventStoreIT) | 6 | 0 | 6 | 0 |
-| **合计** | **17** | **11** | **6** | **0** |
+| 类型                          | 测试数 | 通过   | 跳过  | 失败  |
+|-------------------------------|--------|--------|-------|-------|
+| 单元测试 (EsdbEventStoreTest) | 11     | 11     | 0     | 0     |
+| 集成测试 (EsdbEventStoreIT)   | 6      | 0      | 6     | 0     |
+| **合计**                      | **17** | **11** | **6** | **0** |
 
 - 单元测试：Mockito mock `EventStoreDBClient`，验证事件映射、版本冲突翻译、流前缀
 - 集成测试：`@Testcontainers(disabledWithoutDocker = true)`，无 Docker 时自动跳过
 
 ## 映射设计定案
 
-| SPI 概念 | ESDB 映射 | 说明 |
-|----------|-----------|------|
-| stream 名 | `streamPrefix + aggregateId` | 直接使用，可选前缀做命名空间隔离 |
-| expectedVersion | `ExpectedRevision` | `0` → `noStream()`，`N` → `expectedRevision(N-1)` |
-| position | `Position.getCommitUnsigned()` | ESDB 全局 commitPosition，long 类型 |
-| eventType | `EventData.eventType` | 事件类全限定名 |
-| payload | `EventDataBuilder.json()` | `JsonKit.toJson()` 序列化 JSON |
-| timestamp | `RecordedEvent.getCreated()` | `Instant` 类型 |
-| 冲突异常 | `WrongExpectedVersionException` → `IllegalStateException` | 消息格式与 InMemoryEventStore 一致 |
+| SPI 概念        | ESDB 映射                                                 | 说明                                              |
+|-----------------|-----------------------------------------------------------|---------------------------------------------------|
+| stream 名       | `streamPrefix + aggregateId`                              | 直接使用，可选前缀做命名空间隔离                  |
+| expectedVersion | `ExpectedRevision`                                        | `0` → `noStream()`，`N` → `expectedRevision(N-1)` |
+| position        | `Position.getCommitUnsigned()`                            | ESDB 全局 commitPosition，long 类型               |
+| eventType       | `EventData.eventType`                                     | 事件类全限定名                                    |
+| payload         | `EventDataBuilder.json()`                                 | `JsonKit.toJson()` 序列化 JSON                    |
+| timestamp       | `RecordedEvent.getCreated()`                              | `Instant` 类型                                    |
+| 冲突异常        | `WrongExpectedVersionException` → `IllegalStateException` | 消息格式与 InMemoryEventStore 一致                |
 
 ## IT 镜像选择理由
 
 **镜像**：`eventstore/eventstore:24.10.0-bookworm-slim`
 
 选择理由：
+
 - 2024 年 LTS 版本，基于 Debian Bookworm，体积小且稳定
 - 支持 `INSECURE=true` 环境变量，单节点禁用 TLS，简化测试连接
 - `EVENTSTORE_MEM_DB=true` 内存模式，测试隔离无残留

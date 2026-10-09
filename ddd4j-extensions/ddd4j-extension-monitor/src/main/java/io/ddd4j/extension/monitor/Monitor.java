@@ -80,7 +80,7 @@ public final class Monitor {
      * 创建飞书群机器人发送器。
      *
      * @param webhookUrl 飞书机器人 webhook 完整地址（含 hook token）
-     * @param secret      加签密钥（无则置 null 或空字符串）
+     * @param secret     加签密钥（无则置 null 或空字符串）
      * @return {@link FeishuRobotSender}
      */
     public static FeishuRobotSender ofFeishu(String webhookUrl, String secret) {

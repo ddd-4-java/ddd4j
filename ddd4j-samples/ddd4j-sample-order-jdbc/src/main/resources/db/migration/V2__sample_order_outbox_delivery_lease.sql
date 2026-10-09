@@ -2,7 +2,7 @@ ALTER TABLE sample_order_outbox
     ADD COLUMN IF NOT EXISTS available_at TIMESTAMPTZ;
 
 ALTER TABLE sample_order_outbox
-    ADD COLUMN IF NOT EXISTS lease_owner VARCHAR(255);
+    ADD COLUMN IF NOT EXISTS lease_owner VARCHAR (255);
 
 ALTER TABLE sample_order_outbox
     ADD COLUMN IF NOT EXISTS lease_until TIMESTAMPTZ;

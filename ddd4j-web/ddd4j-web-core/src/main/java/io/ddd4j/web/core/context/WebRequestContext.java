@@ -22,7 +22,8 @@ import java.util.Objects;
 
 /**
  * HTTP 请求在 ddd4j 内部的框架无关表示。
- */public final class WebRequestContext {
+ */
+public final class WebRequestContext {
 
     private final String requestId;
     private final String traceId;
@@ -33,9 +34,9 @@ import java.util.Objects;
     private final String method;
     private final String path;
 
-/**
- * HTTP 请求在 ddd4j 内部的框架无关表示。
- */
+    /**
+     * HTTP 请求在 ddd4j 内部的框架无关表示。
+     */
 
     public WebRequestContext(String requestId, String traceId, String tenantId, String authorization,
                              Locale locale, String clientIp, String method, String path) {
@@ -49,14 +50,37 @@ import java.util.Objects;
         this.path = StrKit.isBlank(path) ? "/" : path;
     }
 
-    public String requestId() { return requestId; }
-    public String traceId() { return traceId; }
-    public String tenantId() { return tenantId; }
-    public String authorization() { return authorization; }
-    public Locale locale() { return locale; }
-    public String clientIp() { return clientIp; }
-    public String method() { return method; }
-    public String path() { return path; }
+    public String requestId() {
+        return requestId;
+    }
+
+    public String traceId() {
+        return traceId;
+    }
+
+    public String tenantId() {
+        return tenantId;
+    }
+
+    public String authorization() {
+        return authorization;
+    }
+
+    public Locale locale() {
+        return locale;
+    }
+
+    public String clientIp() {
+        return clientIp;
+    }
+
+    public String method() {
+        return method;
+    }
+
+    public String path() {
+        return path;
+    }
 
     public String getRequestId() {
         return requestId;
@@ -89,6 +113,7 @@ import java.util.Objects;
     public String getPath() {
         return path;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

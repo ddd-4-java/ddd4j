@@ -11,7 +11,9 @@
     </parent>
 
     <artifactId>ddd4j-web-core</artifactId>
-    <description>Ddd4j Web 核心：拦截器/Session/Feign 透传/多租户/全局异常/基础 Controller。从原 ddd4j-web jar 模块迁出（与 2.0.x/3.0.x 拓扑对齐）。</description>
+    <description>Ddd4j Web 核心：拦截器/Session/Feign 透传/多租户/全局异常/基础 Controller。从原 ddd4j-web jar 模块迁出（与
+        2.0.x/3.0.x 拓扑对齐）。
+    </description>
 
     <dependencies>
         <!-- Test -->

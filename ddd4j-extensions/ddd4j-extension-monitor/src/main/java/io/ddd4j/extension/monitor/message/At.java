@@ -19,11 +19,10 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @ 通知配置。was {@code AtVO}。
  *
  * <p>传入机器人消息体时使用，控制消息是否 @ 一些用户或 @ 全体。
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class At {

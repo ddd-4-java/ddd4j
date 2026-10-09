@@ -13,7 +13,9 @@
     <artifactId>ddd4j-runtime</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 运行时绑定聚合：Spring / Guice / Vert.x / Micronaut / Dropwizard。1.0.x 不包含需要更高 JDK 的 Quarkus / Helidon。</description>
+    <description>ddd4j 运行时绑定聚合：Spring / Guice / Vert.x / Micronaut / Dropwizard。1.0.x 不包含需要更高 JDK 的
+        Quarkus / Helidon。
+    </description>
 
     <modules>
         <module>ddd4j-runtime-spring</module>

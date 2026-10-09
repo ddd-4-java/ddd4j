@@ -16,6 +16,7 @@ package io.ddd4j.data.projection.dropwizard;
 
 import java.util.Collections;
 import java.util.Arrays;
+
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -87,7 +88,8 @@ class DropwizardProjectionSchedulerIT {
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 

@@ -16,6 +16,7 @@ package io.ddd4j.core.cqrs.query;
 
 import java.util.Collections;
 import java.util.Arrays;
+
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.Repository;

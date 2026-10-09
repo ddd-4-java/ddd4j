@@ -16,6 +16,7 @@ package io.ddd4j.extension.qlexpress.model;
 
 import java.util.Collections;
 import java.util.HashMap;
+
 import com.alibaba.qlexpress4.QLOptions;
 import lombok.Builder;
 import lombok.Getter;

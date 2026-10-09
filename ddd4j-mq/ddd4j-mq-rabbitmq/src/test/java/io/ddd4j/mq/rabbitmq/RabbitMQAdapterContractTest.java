@@ -15,6 +15,7 @@
 package io.ddd4j.mq.rabbitmq;
 
 import java.util.Collections;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import io.ddd4j.mq.message.MessageHeaders;

@@ -15,6 +15,7 @@
 package io.ddd4j.auth.satoken.subject;
 
 import java.util.Collections;
+
 import cn.dev33.satoken.stp.StpInterface;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.SubjectKit;

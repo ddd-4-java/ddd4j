@@ -24,11 +24,12 @@ import java.util.Optional;
 
 /**
  * 通过 Micronaut PropagatedContext 传播 ddd4j 请求上下文。
- */public final class Ddd4jMicronautContext {
-
-/**
- * 通过 Micronaut PropagatedContext 传播 ddd4j 请求上下文。
  */
+public final class Ddd4jMicronautContext {
+
+    /**
+     * 通过 Micronaut PropagatedContext 传播 ddd4j 请求上下文。
+     */
 
     private static final ThreadLocal<Ddd4jMicronautContext> CURRENT = new ThreadLocal<>();
 

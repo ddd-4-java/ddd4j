@@ -17,6 +17,7 @@ package io.ddd4j.mq.util;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

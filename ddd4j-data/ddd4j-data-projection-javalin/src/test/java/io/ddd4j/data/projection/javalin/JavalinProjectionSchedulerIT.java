@@ -16,6 +16,7 @@ package io.ddd4j.data.projection.javalin;
 
 import java.util.Collections;
 import java.util.Arrays;
+
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.AfterEach;
@@ -58,7 +59,8 @@ class JavalinProjectionSchedulerIT {
 
     @BeforeEach
     void startJavalin() {
-        app = Javalin.create(cfg -> { }).start(0);
+        app = Javalin.create(cfg -> {
+        }).start(0);
     }
 
     @AfterEach
@@ -118,7 +120,8 @@ class JavalinProjectionSchedulerIT {
                 JavalinProjectionScheduler.create(app, Arrays.asList(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 

@@ -15,6 +15,7 @@
 package io.ddd4j.core.health;
 
 import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

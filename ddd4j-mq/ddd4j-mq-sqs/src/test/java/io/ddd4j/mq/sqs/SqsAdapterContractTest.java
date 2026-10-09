@@ -15,6 +15,7 @@
 package io.ddd4j.mq.sqs;
 
 import java.util.Collections;
+
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.SqsClient;

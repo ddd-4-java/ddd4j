@@ -36,7 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 容器管理事务参与入口的受控契约测试；这些测试替身不构成真实 JTA 证明。 */
+/**
+ * 容器管理事务参与入口的受控契约测试；这些测试替身不构成真实 JTA 证明。
+ */
 class JpaManagedParticipationTest {
 
     private static final String ORDER_TYPE = "Order";
@@ -46,9 +48,11 @@ class JpaManagedParticipationTest {
         AtomicInteger entityManagerAccesses = new AtomicInteger();
         EntityManager entityManager = entityManager(false, entityManagerAccesses, new AtomicInteger());
 
-        assertDoesNotThrow(() -> JpaEventStore.participatingManaged(entityManager, () -> { }));
+        assertDoesNotThrow(() -> JpaEventStore.participatingManaged(entityManager, () -> {
+        }));
         assertDoesNotThrow(() -> JpaEventStore.participatingManaged(entityManager,
-                new RecordingRepository(), serializer(), () -> { }));
+                new RecordingRepository(), serializer(), () -> {
+                }));
         assertEquals(0, entityManagerAccesses.get());
     }
 
@@ -58,7 +62,8 @@ class JpaManagedParticipationTest {
         EntityManager entityManager = entityManager(false, entityManagerAccesses, new AtomicInteger());
         RecordingRepository repository = new RecordingRepository();
         EventPayloadSerializer serializer = serializer();
-        Runnable marker = () -> { };
+        Runnable marker = () -> {
+        };
 
         assertThrows(NullPointerException.class,
                 () -> JpaEventStore.participatingManaged(null, repository, serializer, marker));
@@ -102,7 +107,8 @@ class JpaManagedParticipationTest {
         AtomicInteger flushCalls = new AtomicInteger();
         RecordingRepository repository = new RecordingRepository();
         JpaEventStore eventStore = JpaEventStore.participatingManaged(
-                entityManager(true, new AtomicInteger(), flushCalls), repository, serializer(), () -> { });
+                entityManager(true, new AtomicInteger(), flushCalls), repository, serializer(), () -> {
+                });
 
         assertDoesNotThrow(() -> eventStore.read(ORDER_TYPE, new TestAggregateRootId("read")));
         assertDoesNotThrow(() -> eventStore.append(ORDER_TYPE, new TestAggregateRootId("append"),

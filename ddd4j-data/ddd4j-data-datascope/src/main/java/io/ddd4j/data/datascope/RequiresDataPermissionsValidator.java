@@ -15,6 +15,7 @@
 package io.ddd4j.data.datascope;
 
 import io.ddd4j.data.datascope.annotation.RequiresDataPermissions;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 

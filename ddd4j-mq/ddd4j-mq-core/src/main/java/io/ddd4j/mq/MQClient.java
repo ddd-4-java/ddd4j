@@ -469,7 +469,7 @@ public interface MQClient extends AutoCloseable {
         StringBuilder sb = new StringBuilder();
         if (!includes.isEmpty()) {
             // includes: tag IN (...) OR tag IS NULL（与 TagMatcher 一致：tag 为空时也算匹配）
-sb.append("(");
+            sb.append("(");
             boolean first = true;
             for (String i : includes) {
                 if (!first) {
@@ -516,9 +516,9 @@ sb.append("(");
         private LogHolder() {
         }
 
-/**
-     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
-     */
+        /**
+         * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
+         */
 
         private static Logger logger() {
             return log;

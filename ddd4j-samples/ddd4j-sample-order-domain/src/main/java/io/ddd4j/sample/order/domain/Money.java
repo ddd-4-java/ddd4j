@@ -23,7 +23,9 @@ import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
 
-/** 货币金额值对象，Java 8 等价实现保留 record 的值语义与组件访问器。 */
+/**
+ * 货币金额值对象，Java 8 等价实现保留 record 的值语义与组件访问器。
+ */
 @Value
 public class Money implements ValueObject {
 

@@ -21,11 +21,11 @@ import java.util.Objects;
 /**
  * 原生 MyBatis SQL 执行观测数据。
  *
- * @param statementId MappedStatement 标识
- * @param sql 已执行的 SQL
+ * @param statementId  MappedStatement 标识
+ * @param sql          已执行的 SQL
  * @param sortedParams 已排序的参数快照
  * @param elapsedNanos 耗时，单位为纳秒
- * @param error 执行异常，可为空
+ * @param error        执行异常，可为空
  */
 public final class SqlObservation {
 
@@ -35,15 +35,15 @@ public final class SqlObservation {
     private final long elapsedNanos;
     private final Throwable error;
 
-/**
- * 原生 MyBatis SQL 执行观测数据。
- *
- * @param statementId MappedStatement 标识
- * @param sql 已执行的 SQL
- * @param sortedParams 已排序的参数快照
- * @param elapsedNanos 耗时，单位为纳秒
- * @param error 执行异常，可为空
- */
+    /**
+     * 原生 MyBatis SQL 执行观测数据。
+     *
+     * @param statementId  MappedStatement 标识
+     * @param sql          已执行的 SQL
+     * @param sortedParams 已排序的参数快照
+     * @param elapsedNanos 耗时，单位为纳秒
+     * @param error        执行异常，可为空
+     */
 
     public SqlObservation(String statementId, String sql, List<String> sortedParams, long elapsedNanos, Throwable error) {
         this.statementId = statementId;
@@ -57,11 +57,25 @@ public final class SqlObservation {
         return elapsedNanos / 1_000_000L;
     }
 
-    public String statementId() { return statementId; }
-    public String sql() { return sql; }
-    public List<String> sortedParams() { return sortedParams; }
-    public long elapsedNanos() { return elapsedNanos; }
-    public Throwable error() { return error; }
+    public String statementId() {
+        return statementId;
+    }
+
+    public String sql() {
+        return sql;
+    }
+
+    public List<String> sortedParams() {
+        return sortedParams;
+    }
+
+    public long elapsedNanos() {
+        return elapsedNanos;
+    }
+
+    public Throwable error() {
+        return error;
+    }
 
     public String getStatementId() {
         return statementId;
@@ -83,7 +97,9 @@ public final class SqlObservation {
         return error;
     }
 
-    /** 按全部观测字段判断值相等，保证跨版本去重语义一致。 */
+    /**
+     * 按全部观测字段判断值相等，保证跨版本去重语义一致。
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -100,7 +116,9 @@ public final class SqlObservation {
                 && Objects.equals(error, that.error);
     }
 
-    /** 按 record 组件顺序计算哈希，引用字段允许为空。 */
+    /**
+     * 按 record 组件顺序计算哈希，引用字段允许为空。
+     */
     @Override
     public int hashCode() {
         int result = Objects.hashCode(statementId);
@@ -110,7 +128,9 @@ public final class SqlObservation {
         return 31 * result + Objects.hashCode(error);
     }
 
-    /** 返回与其他版本 record 相同的观测文本。 */
+    /**
+     * 返回与其他版本 record 相同的观测文本。
+     */
     @Override
     public String toString() {
         return "SqlObservation[statementId=" + statementId + ", sql=" + sql

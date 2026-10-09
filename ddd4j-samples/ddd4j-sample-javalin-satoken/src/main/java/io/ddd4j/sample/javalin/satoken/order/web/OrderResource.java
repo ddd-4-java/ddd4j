@@ -145,7 +145,12 @@ public class OrderResource {
         String amount;
         String currency;
 
-        public String amount() { return amount; }
-        public String currency() { return currency; }
+        public String amount() {
+            return amount;
+        }
+
+        public String currency() {
+            return currency;
+        }
     }
 }

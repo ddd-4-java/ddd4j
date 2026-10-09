@@ -12,7 +12,8 @@
 
     <artifactId>ddd4j-web-javalin</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j Web - Javalin implementation: controller base class and exception handler registration.</description>
+    <description>ddd4j Web - Javalin implementation: controller base class and exception handler registration.
+    </description>
 
     <dependencies>
         <dependency>

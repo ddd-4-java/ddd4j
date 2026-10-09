@@ -17,6 +17,7 @@ package io.ddd4j.data.cqrs.javalin;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -69,7 +70,8 @@ class JavalinCommandBusIT {
 
     @BeforeEach
     void startJavalin() {
-        app = Javalin.create(cfg -> { }).start(0);
+        app = Javalin.create(cfg -> {
+        }).start(0);
     }
 
     @AfterEach

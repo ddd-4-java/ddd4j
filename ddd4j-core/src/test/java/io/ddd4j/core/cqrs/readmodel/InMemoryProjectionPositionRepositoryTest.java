@@ -15,6 +15,7 @@
 package io.ddd4j.core.cqrs.readmodel;
 
 import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -50,7 +50,9 @@ import java.util.Optional;
 @Slf4j
 public class GuiceJdbcProjectionPositionRepository implements ProjectionPositionRepository {
 
-    /** 统一表名，与 Spring/Quarkus 运行时一致 */
+    /**
+     * 统一表名，与 Spring/Quarkus 运行时一致
+     */
     private static final String TABLE_NAME = ProjectionConstants.TABLE_NAME;
 
     private static final String UPSERT_UPDATE =
@@ -86,7 +88,7 @@ public class GuiceJdbcProjectionPositionRepository implements ProjectionPosition
 
     @Override
     public Optional<ProjectionPosition> findByStreamId(String streamId) {
-try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_BY_STREAM_ID)) {
             ps.setString(1, streamId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -102,7 +104,7 @@ try (Connection conn = dataSource.getConnection();
 
     @Override
     public List<ProjectionPosition> findAll() {
-try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_ALL);
              ResultSet rs = ps.executeQuery()) {
             List<ProjectionPosition> result = new ArrayList<>();
@@ -163,7 +165,7 @@ try (Connection conn = dataSource.getConnection();
 
     @Override
     public void deleteByStreamId(String streamId) {
-try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(DELETE_BY_STREAM_ID)) {
             ps.setString(1, streamId);
             ps.executeUpdate();
@@ -182,7 +184,7 @@ try (Connection conn = dataSource.getConnection();
      * 确保投影位置表存在（CREATE TABLE IF NOT EXISTS）。
      */
     private void ensureTable() {
-try (Connection conn = dataSource.getConnection();
+        try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.execute(CREATE_TABLE_IF_NOT_EXISTS);
             log.info("Ensured projection position table exists: {}", TABLE_NAME);

@@ -16,6 +16,7 @@ package io.ddd4j.core.ddd.model;
 
 import java.util.Collections;
 import java.util.ArrayList;
+
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -111,19 +112,19 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<ClassValue<Method>>() {
         @Override
 /**
-     * 事件处理器方法缓存（ClassValue 二级索引）。
-     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
-     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
-     */
+ * 事件处理器方法缓存（ClassValue 二级索引）。
+ * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
+ * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
+ */
 
         protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
             return new ClassValue<Method>() {
                 @Override
 /**
-     * 事件处理器方法缓存（ClassValue 二级索引）。
-     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
-     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
-     */
+ * 事件处理器方法缓存（ClassValue 二级索引）。
+ * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
+ * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
+ */
 
                 protected Method computeValue(Class<?> eventClass) {
                     return resolveHandler(aggregateClass, eventClass);
@@ -141,8 +142,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * @return 处理器方法；两者均未命中时返回 {@code null}
      */
     private static Method resolveHandler(Class<?> aggregateClass, Class<?> eventClass) {
-for (Class<?> current = aggregateClass; current != null && current != Object.class;
-                    current = current.getSuperclass()) {
+        for (Class<?> current = aggregateClass; current != null && current != Object.class;
+             current = current.getSuperclass()) {
             for (Method method : current.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(EventHandler.class)) {
                     Class<?>[] parameterTypes = method.getParameterTypes();
@@ -400,7 +401,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
      * 并注册进未提交事件列表（2.0.x 语义：找不到处理器时抛 {@link IllegalStateException}）。
      * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
      *
-     * @param event 领域事件
+     * @param event  领域事件
      * @param replay 是否处于历史回放（{@code loadFromHistory}）
      * @return 传入的事件
      * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
