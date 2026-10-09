@@ -38,7 +38,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-/** Shared Order kernel and HTTP contract verification for Quarkus. */
+/**
+ * Shared Order kernel and HTTP contract verification for Quarkus.
+ */
 @QuarkusTest
 class OrderResourceTest {
 

@@ -31,6 +31,6 @@ public record ReadinessResponse(boolean ready) {
     }
 
     public boolean isReady() {
-            return ready;
-        }
+        return ready;
+    }
 }

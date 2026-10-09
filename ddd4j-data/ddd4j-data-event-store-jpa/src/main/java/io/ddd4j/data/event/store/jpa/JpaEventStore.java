@@ -27,6 +27,7 @@ import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -128,8 +129,8 @@ public class JpaEventStore implements EventStore {
      * @return 仅参与当前活动事务的事件存储
      */
     public static JpaEventStore participating(EntityManager entityManager,
-                                               JpaStoredEventRepository repository,
-                                               EventPayloadSerializer serializer) {
+                                              JpaStoredEventRepository repository,
+                                              EventPayloadSerializer serializer) {
         return new JpaEventStore(entityManager, repository, serializer, TransactionMode.PARTICIPATING);
     }
 
@@ -160,9 +161,9 @@ public class JpaEventStore implements EventStore {
      * @return 仅参与当前容器管理事务的事件存储
      */
     public static JpaEventStore participatingManaged(EntityManager entityManager,
-                                                      JpaStoredEventRepository repository,
-                                                      EventPayloadSerializer serializer,
-                                                      Runnable markRollbackOnly) {
+                                                     JpaStoredEventRepository repository,
+                                                     EventPayloadSerializer serializer,
+                                                     Runnable markRollbackOnly) {
         Objects.requireNonNull(entityManager, "entityManager must not be null");
         Objects.requireNonNull(repository, "repository must not be null");
         Objects.requireNonNull(serializer, "serializer must not be null");
@@ -254,10 +255,10 @@ public class JpaEventStore implements EventStore {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         return executeInTransaction(() -> repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(
-                            aggregateType, aggregateId.asString())
-                    .stream()
-                    .map(this::toStoredEvent)
-                    .toList());
+                        aggregateType, aggregateId.asString())
+                .stream()
+                .map(this::toStoredEvent)
+                .toList());
     }
 
     @Override
@@ -265,10 +266,10 @@ public class JpaEventStore implements EventStore {
                                   long fromVersion, long toVersion) {
         return executeInTransaction(() -> repository
                 .findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
-                            aggregateType, aggregateId.asString(), fromVersion, toVersion)
-                    .stream()
-                    .map(this::toStoredEvent)
-                    .toList());
+                        aggregateType, aggregateId.asString(), fromVersion, toVersion)
+                .stream()
+                .map(this::toStoredEvent)
+                .toList());
     }
 
     /**

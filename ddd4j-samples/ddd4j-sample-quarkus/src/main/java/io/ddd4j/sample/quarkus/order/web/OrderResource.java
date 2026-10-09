@@ -43,7 +43,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-/** JAX-RS translation layer for the shared Order application. */
+/**
+ * JAX-RS translation layer for the shared Order application.
+ */
 @Path("/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
 public class OrderResource {

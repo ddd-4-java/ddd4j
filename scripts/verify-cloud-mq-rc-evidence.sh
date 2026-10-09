@@ -6,13 +6,13 @@ REPORT_PATH="${DDD4J_CLOUD_MQ_RC_REPORT:-}"
 OUTPUT_DIR="${DDD4J_REPORT_DIR:-${ROOT_DIR}/target/release-quality}/cloud-mq-rc"
 
 if [[ -z "${REPORT_PATH}" || ! -f "${REPORT_PATH}" ]]; then
-    echo "[FAIL] DDD4J_CLOUD_MQ_RC_REPORT must point to a cloud MQ release-candidate JSON report." >&2
-    exit 1
+  echo "[FAIL] DDD4J_CLOUD_MQ_RC_REPORT must point to a cloud MQ release-candidate JSON report." >&2
+  exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-    echo "[FAIL] jq is required to validate the cloud MQ report." >&2
-    exit 1
+  echo "[FAIL] jq is required to validate the cloud MQ report." >&2
+  exit 1
 fi
 
 cd "${ROOT_DIR}"
@@ -36,8 +36,8 @@ if ! jq -e --arg commit "${head_commit}" --argjson required "${required_checks}"
     )
     and ([.. | objects | keys[]? | ascii_downcase | select(test("secret|password|accesskey|token"))] | length == 0)
 ' "${REPORT_PATH}" >/dev/null; then
-    echo "[FAIL] Cloud MQ evidence is incomplete, contains a failed broker run, or may expose credentials." >&2
-    exit 1
+  echo "[FAIL] Cloud MQ evidence is incomplete, contains a failed broker run, or may expose credentials." >&2
+  exit 1
 fi
 
 mkdir -p "${OUTPUT_DIR}"

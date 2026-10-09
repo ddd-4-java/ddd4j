@@ -71,7 +71,7 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
-                        config.getIdempotencyTtl()) : null;
+                config.getIdempotencyTtl()) : null;
     }
 
     public Ddd4jHelidonRequestFilter(WebRequestContextFactory contextFactory,
