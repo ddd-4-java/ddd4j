@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * 缓存操作的 OTel Span 辅助工具。
  *
- * <p>为 {@link io.ddd4j.cache.CacheKit} 提供零侵入式 span 包装。
+ * <p>为 {@code io.ddd4j.cache.CacheKit} 提供零侵入式 span 包装。
  * 无 OTel 时所有方法为 noop，零开销。
  *
  * <h3>使用示例</h3>

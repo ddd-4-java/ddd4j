@@ -25,6 +25,8 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.version.ApiVersion;
+import io.ddd4j.web.webmvc.interceptor.ApiVersionWebInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -47,6 +49,13 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
     private static final String STATE_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".state";
     private static final String OTEL_SPAN_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".otelSpan";
 
+    /**
+     * 当前请求的 {@link WebRequestContext} 在请求属性中的挂载键。
+     * 业务处理器经 {@code request.getAttribute(CONTEXT_ATTRIBUTE)} 可读取完整上下文
+     * （如解析出的 API 版本）；未启用版本解析时上下文的 {@code apiVersion} 为 null。
+     */
+    public static final String CONTEXT_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".context";
+
     private final WebRequestContextFactory contextFactory;
     private final WebRequestLifecycle requestLifecycle;
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
@@ -67,6 +76,15 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
     }
 
+    /**
+     * 请求前置处理：开启追踪 span，创建携带 API 版本的 {@link WebRequestContext}
+     * 并绑定到请求属性（{@link #CONTEXT_ATTRIBUTE}）与请求级资源，随后执行认证等生命周期前置。
+     *
+     * @param request  当前 HTTP 请求
+     * @param response 当前 HTTP 响应
+     * @param handler  目标处理器
+     * @return 放行后续处理返回 {@code true}，中断请求返回 {@code false}
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -84,6 +102,7 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         WebRequestContext requestContext = createContext(request);
         RequestState state = new RequestState(WebContextScope.open(requestContext));
         request.setAttribute(STATE_ATTRIBUTE, state);
+        request.setAttribute(CONTEXT_ATTRIBUTE, requestContext);
         response.setHeader(WebHeaders.REQUEST_ID, requestContext.requestId());
         response.setHeader(WebHeaders.TRACE_ID, requestContext.traceId());
         try {
@@ -156,7 +175,19 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
                 request.getHeader("X-Real-IP"),
                 request.getRemoteAddr(),
                 request.getMethod(),
-                request.getRequestURI()));
+                request.getRequestURI()), resolveApiVersion(request));
+    }
+
+    /**
+     * 读取 {@link ApiVersionWebInterceptor} 先行挂载的解析结果。
+     * 未启用版本解析（或版本拦截器未注册）时属性缺失，返回 null，行为与接线前一致。
+     *
+     * @param request 当前请求
+     * @return 解析出的 API 版本，可为 null
+     */
+    private ApiVersion resolveApiVersion(HttpServletRequest request) {
+        Object attribute = request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE);
+        return attribute instanceof ApiVersion ? (ApiVersion) attribute : null;
     }
 
     private static final class RequestState {

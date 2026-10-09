@@ -24,6 +24,7 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.version.ApiVersion;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -180,7 +181,19 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 headers.getFirst("X-Real-IP"),
                 remoteAddress(exchange),
                 exchange.getRequest().getMethod().name(),
-                exchange.getRequest().getPath().value()));
+                exchange.getRequest().getPath().value()), resolveApiVersion(exchange));
+    }
+
+    /**
+     * 读取 {@link ApiVersionWebFilter} 先行挂载的解析结果。
+     * 未启用版本解析（或版本过滤器未注册）时属性缺失，返回 null，行为与接线前一致。
+     *
+     * @param exchange 当前交换对象
+     * @return 解析出的 API 版本，可为 null
+     */
+    private ApiVersion resolveApiVersion(ServerWebExchange exchange) {
+        Object attribute = exchange.getAttributes().get(ApiVersionWebFilter.API_VERSION_ATTRIBUTE);
+        return attribute instanceof ApiVersion ? (ApiVersion) attribute : null;
     }
 
     private Locale resolveLocale(HttpHeaders headers) {

@@ -27,10 +27,10 @@ import lombok.Getter;
  *
  * <h3>消息结构</h3>
  * <ul>
- *   <li>{@link #getTopic()}：事件类型名称（如 {@code "OrderCreatedEvent"}）</li>
- *   <li>{@link #getTag()}：固定 {@code "domain-event"}</li>
- *   <li>{@link #getDomainEventType()}：领域事件完全限定类名，消费端据此反序列化</li>
- *   <li>{@link #getPayload()}：领域事件 JSON 序列化结果</li>
+ *   <li>{@link #topic}：事件类型名称（如 {@code "OrderCreatedEvent"}）</li>
+ *   <li>{@link #tag}：固定 {@code "domain-event"}</li>
+ *   <li>{@link #domainEventType}：领域事件完全限定类名，消费端据此反序列化</li>
+ *   <li>{@link #payload}：领域事件 JSON 序列化结果</li>
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

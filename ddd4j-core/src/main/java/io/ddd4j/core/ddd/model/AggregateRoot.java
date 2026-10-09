@@ -18,7 +18,9 @@ import java.util.Collections;
 import java.util.ArrayList;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
@@ -110,21 +112,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<ClassValue<Method>>() {
         @Override
-/**
-     * 事件处理器方法缓存（ClassValue 二级索引）。
-     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
-     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
-     */
-
         protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
             return new ClassValue<Method>() {
                 @Override
-/**
-     * 事件处理器方法缓存（ClassValue 二级索引）。
-     * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
-     * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
-     */
-
                 protected Method computeValue(Class<?> eventClass) {
                     return resolveHandler(aggregateClass, eventClass);
                 }
@@ -449,18 +439,33 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
      * 并注册进未提交事件列表（2.0.x 语义：找不到处理器时抛 {@link IllegalStateException}）。
      * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
      *
+     * <p>子实体路由先取 {@code event.getEntityIdPath()} 首段，断言为 {@link AggregateRootId}
+     * 后再转型（fail-fast，消除 {@code first()} 泛型强转风险；对应 fuin
+     * AbstractAggregateRoot 路由入口的首段断言）。首段不是聚合根标识时立即抛
+     * {@link IllegalStateException}，错误路径早失败。
+     *
      * @param event 领域事件
      * @param replay 是否处于历史回放（{@code loadFromHistory}）
      * @return 传入的事件
-     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     * @throws IllegalStateException 路径首段不是 {@link AggregateRootId}、找不到对应事件类型的处理器，或反射调用失败
      */
     private <E extends DomainEvent<?>> E apply(E event, boolean replay) {
         Objects.requireNonNull(event, "event must not be null");
+        // 子实体路由：路径首段必须是聚合根标识，先断言再转型（对应 fuin 路由入口 fail-fast）
+        EntityId rootSegment = event.getEntityIdPath().first();
+        if (!AggregateRootId.class.isInstance(rootSegment)) {
+            throw new IllegalStateException("Event path root segment must be an AggregateRootId: "
+                    + rootSegment.asTypedString() + " (path: " + event.getEntityIdPath().asString()
+                    + ", event: " + event.getClass().getName()
+                    + ", aggregate: " + this.getClass().getName() + ")");
+        }
+        AggregateRootId aggregateRootId = (AggregateRootId) rootSegment;
         ClassValue<Method> handlerCache = EVENT_HANDLER_CACHE.get(this.getClass());
         Method handler = handlerCache.get(event.getClass());
         if (Objects.isNull(handler)) {
             throw new IllegalStateException("No @EventHandler method found for event type: "
-                    + event.getClass().getName() + " on aggregate " + this.getClass().getName());
+                    + event.getClass().getName() + " rooted at " + aggregateRootId.asTypedString()
+                    + " on aggregate " + this.getClass().getName());
         }
         if (replay && handler.isAnnotationPresent(EventHandler.class)
                 && handler.getAnnotation(EventHandler.class).ignoreOnReplay()) {

@@ -138,7 +138,7 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
     }
 
     /**
-     * 主键存在则更新，否则插入（与 {@link #save(Object)} 同为 upsert 语义）。
+     * 主键存在则更新，否则插入（与 {@link #save} 同为 upsert 语义）。
      */
     @Override
     public M insertOrUpdate(M aggregate) {

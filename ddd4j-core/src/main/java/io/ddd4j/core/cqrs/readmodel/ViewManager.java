@@ -19,7 +19,7 @@ package io.ddd4j.core.cqrs.readmodel;
  *
  * <p>负责：
  * <ul>
- *   <li>启动：注册所有 {@link io.ddd4j.core.cqrs.query.query.DddView}，按 CRON 调度增量拉取</li>
+ *   <li>启动：注册所有 {@link io.ddd4j.core.cqrs.query.View}，按 CRON 调度增量拉取</li>
  *   <li>停止：取消所有调度任务，关闭资源</li>
  *   <li>手动触发：支持业务侧强制立即拉取</li>
  * </ul>

@@ -42,10 +42,10 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  *
  * <h3>规则清单</h3>
  * <ul>
- *   <li>{@link #DOMAIN_ENTITY_IN_DOMAIN} — @DomainEntity 标记的类必须在 domain 包</li>
- *   <li>{@link #DOMAIN_SERVICE_IN_DOMAIN} — @DomainService 标记的类必须在 domain 包</li>
- *   <li>{@link #APPLICATION_SERVICE_IN_APP} — @ApplicationService 标记的类必须在 app 包</li>
- *   <li>{@link #REPOSITORY_IMPL_IN_INFRASTRUCTURE} — @DomainRepository 标记的类必须在 infrastructure 包</li>
+ *   <li>{@link #domainEntityInDomain(Class)} — @DomainEntity 标记的类必须在 domain 包</li>
+ *   <li>{@link #domainServiceInDomain(Class)} — @DomainService 标记的类必须在 domain 包</li>
+ *   <li>{@link #applicationServiceInApp(Class)} — @ApplicationService 标记的类必须在 app 包</li>
+ *   <li>{@link #repositoryImplInInfrastructure(Class)} — @DomainRepository 标记的类必须在 infrastructure 包</li>
  *   <li>{@link #DOMAIN_NOT_DEPEND_ON_WEB} — domain 包不得依赖 web/controller/adapter 包</li>
  *   <li>{@link #DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE} — domain 包不得依赖 infrastructure 包</li>
  *   <li>{@link #DOMAIN_NOT_DEPEND_ON_FRAMEWORK} — domain 包不得依赖 Spring/MyBatis 等框架</li>

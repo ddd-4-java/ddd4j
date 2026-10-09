@@ -71,7 +71,7 @@ public interface JpaView extends View {
 
 ## 落地计划
 
-- [ ] 阶段 7（Task 7.1）：ddd4j-data-projection 直接复用 ddd4j-core readmodel 既有 16 类（ProjectionRunner／ProjectionView／ProjectionService／EventChunkReader 等），不新起契约；4 套持久化（jpa/panache/jdbi/r2dbc）各自实现 ProjectionPositionRepository。
-- [ ] 阶段 7（Task 7.7-7.13）：7 个运行时 ViewScheduler 按 ViewScheduler.java:18-44 的 SPI 实现（Spring TaskScheduler／Quarkus @Scheduled／其余 ScheduledExecutorService），ViewManager 装配 start/stop/triggerOnce；并发重入防护一并下沉到调度器实现。
-- [ ] 阶段 7（微调）：投影流 ID 派生纳入事件类型集合指纹（借鉴 SpringJpaViewManager.java:203-205 的 Adler32 思路），防视图事件集变更污染旧流。
-- [ ] Task 1.10：ADR-0003（跨 8 运行时约束）引用本文档「投影抽象框架无关＋ViewScheduler SPI」结论。
+- [ ] 阶段 7（Task 7.1）：ddd4j-data-projection 直接复用 ddd4j-core readmodel 既有 16 类（ProjectionRunner／ProjectionView／ProjectionService／EventChunkReader 等），不新起契约；4 套持久化（jpa/panache/jdbi/r2dbc）各自实现 ProjectionPositionRepository。【待办】
+- [ ] 阶段 7（Task 7.7-7.13）：7 个运行时 ViewScheduler 按 ViewScheduler.java:18-44 的 SPI 实现（Spring TaskScheduler／Quarkus @Scheduled／其余 ScheduledExecutorService），ViewManager 装配 start/stop/triggerOnce；并发重入防护一并下沉到调度器实现。【待办】
+- [ ] 阶段 7（微调）：投影流 ID 派生纳入事件类型集合指纹（借鉴 SpringJpaViewManager.java:203-205 的 Adler32 思路），防视图事件集变更污染旧流。【待办】
+- [x] Task 1.10：ADR-0003（跨 8 运行时约束）引用本文档「投影抽象框架无关＋ViewScheduler SPI」结论。（证据: docs/adr/0003-multi-runtime-strategy.md）

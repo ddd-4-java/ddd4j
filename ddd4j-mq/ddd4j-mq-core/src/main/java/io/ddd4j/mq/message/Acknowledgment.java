@@ -96,7 +96,7 @@ public interface Acknowledgment {
     void reject(boolean requeue);
 
     /**
-     * 恢复消息投递（Rabbit 专属语义，其他 Broker 可抛 {@link UnsupportedAckOperationException}）。
+     * 恢复消息投递（Rabbit 专属语义，其他 Broker 可抛 {@link UnsupportedOperationException}）。
      *
      * @param requeue 是否重新入队
      */

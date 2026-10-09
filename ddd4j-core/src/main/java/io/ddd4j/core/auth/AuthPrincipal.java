@@ -30,7 +30,7 @@ import java.util.*;
  *   <li><b>请求来源</b>：客户端ID、设备信息、IP地址等登录上下文</li>
  * </ul>
  * <p>
- * 通过 {@link Subject#getPrincipal()} 获取当前会话的认证主体实例。
+ * 通过 {@link io.ddd4j.core.subject.Subject#getPrincipal()} 获取当前会话的认证主体实例。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

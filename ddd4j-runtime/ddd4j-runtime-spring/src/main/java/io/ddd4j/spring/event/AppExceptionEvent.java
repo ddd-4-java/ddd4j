@@ -29,12 +29,13 @@ import java.util.Objects;
  * 审计、错误统计等横切处理。
  *
  * <h3>使用示例</h3>
- * <pre>{@code
- * @EventListener
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
+ * &#64;EventListener
  * public void onException(ExceptionEvent event) {
  *     alertService.notify(event.getSource(), event.getPayload());
  * }
- * }</pre>
+ * </pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x

@@ -24,7 +24,7 @@ import java.util.List;
  * 导入结果（不可变视图）。
  *
  * <p>封装一次 Excel 读取的全部产物：成功数据列表 + 错误行列表。
- * <b>错误永不抛出到调用方</b>，通过 {@link #hasErrors()} 与 {@link #getErrors()} 暴露。
+ * <b>错误永不抛出到调用方</b>，通过 {@link #hasErrors()} 与 {@code getErrors()} 暴露。
  *
  * <p>参考社区共识（Yudao / 灯灯 / RuoYi）：导入是"尽力而为"过程，单行失败不阻断整体流程，
  * 由调用方决定是否回滚或部分入库。

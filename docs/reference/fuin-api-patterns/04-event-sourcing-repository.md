@@ -124,10 +124,10 @@ public String asString() {
 
 ## 落地计划
 
-- [ ] 阶段 3（Task 3.2）：EventStore SPI 采纳分页签名 `readEventsForward(streamId, start, count)` 与切片返回（含 nextEventNumber/isEndOfStream 等价物）。
-- [ ] 阶段 3（Task 3.2）：`AggregateVersionConflictException` 字段对齐 fuin 语义（aggregateType/aggregateId/expectedVersion/actualVersion）。
-- [ ] 阶段 4：实现内置乐观锁重试（默认 3 次）+ 类型化冲突裁决策略（`conflictsResolved` 等价物，默认拒绝）。
-- [ ] 阶段 4：add 复用 update + `AggregateAlreadyExistsException` 翻译；追加后 nextVersion 一致性断言。
-- [ ] 阶段 4：int/long 版本边界转换工具 + `Integer.MAX_VALUE` 显式上限测试。
-- [ ] 评估：ddd4j-core `EventSourcingRepository` 是否补 `delete(id, expectedVersion)`——若补，限定墓碑事件式软删除（删除也走事件追加），并在 ADR-0005 记录。
-- [ ] Task 1.10：ADR-0005（event-store SPI）引用本文档「抽象类不借鉴、并发机制借鉴」结论。
+- [ ] 阶段 3（Task 3.2）：EventStore SPI 采纳分页签名 `readEventsForward(streamId, start, count)` 与切片返回（含 nextEventNumber/isEndOfStream 等价物）。【待办】
+- [x] 阶段 3（Task 3.2）：`AggregateVersionConflictException` 字段对齐 fuin 语义（aggregateType/aggregateId/expectedVersion/actualVersion）。（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/AggregateVersionConflictException.java）
+- [ ] 阶段 4：实现内置乐观锁重试（默认 3 次）+ 类型化冲突裁决策略（`conflictsResolved` 等价物，默认拒绝）。【待办】
+- [ ] 阶段 4：add 复用 update + `AggregateAlreadyExistsException` 翻译；追加后 nextVersion 一致性断言。【待办】
+- [ ] 阶段 4：int/long 版本边界转换工具 + `Integer.MAX_VALUE` 显式上限测试。【待办】
+- [x] 评估：ddd4j-core `EventSourcingRepository` 是否补 `delete(id, expectedVersion)`——若补，限定墓碑事件式软删除（删除也走事件追加），并在 ADR-0005 记录。（证据: docs/adr/0005-event-store-spi.md（删除语义＝墓碑领域事件、不提供存储级 deleteStream））
+- [ ] Task 1.10：ADR-0005（event-store SPI）引用本文档「抽象类不借鉴、并发机制借鉴」结论。【待办】

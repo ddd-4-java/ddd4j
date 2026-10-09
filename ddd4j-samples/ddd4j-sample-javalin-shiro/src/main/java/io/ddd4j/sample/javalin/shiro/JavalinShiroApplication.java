@@ -56,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>Javalin 本身<b>没有 DI 容器</b>，使用 Google Guice 注入业务服务。
  * 同时，ddd4j 的 4 个核心 SPI（DomainEventPublisher / MQEventPublisher /
  * SubjectProvider / I18nProvider）需要手动注册到 {@link BaseContext} 才能被
- * 业务代码通过 {@link io.ddd4j.core.context.Contexts#inject} 查找到。
+ * 业务代码通过 {@link io.ddd4j.core.context.Contexts#getOrThrow(String, Class)} 查找到。
  *
  * <h3>Shiro 适配的特殊性</h3>
  * <p>Shiro 不同于 Sa-Token，它依赖一个<b>JVM 级 SecurityManager</b>（通过

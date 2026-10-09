@@ -429,8 +429,8 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <docencoding>${project.build.sourceEncoding}</docencoding>
                         <!-- Javadoc 零告警门禁：告警或错误一律中断构建，禁止任何形式的放宽档。 -->
-                        <failOnWarnings>false</failOnWarnings>
-                        <failOnError>false</failOnError>
+                        <failOnWarnings>true</failOnWarnings>
+                        <failOnError>true</failOnError>
                         <!-- 全量 doclint（accessibility/html/missing/reference/syntax）。 -->
                         <doclint>all</doclint>
                         <!-- 告警/错误上限抬到 999，避免计数达到默认上限后被截断造成假绿。 -->

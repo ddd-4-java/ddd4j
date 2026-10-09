@@ -26,8 +26,7 @@ import java.util.Objects;
 /**
  * 订单应用服务：编排业务用例，领域规则下沉到 Order 聚合中。
  *
- * <p>Quarkus CDI 管理（{@link ApplicationScoped}），
- * 通过构造器注入 {@link OrderRepository} 与 {@link OrderDomainService}。
+ * <p>Javalin 入口通过构造器装配 {@link OrderRepository} 与 {@link OrderDomainService}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

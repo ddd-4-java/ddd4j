@@ -30,6 +30,7 @@ public interface JpaStoredEventRepository {
     /**
      * 查询指定聚合的当前最大版本号。
      *
+     * @param aggregateType 聚合类型
      * @param aggregateId 聚合根标识
      * @return 当前最大版本号；聚合不存在时返回 0
      */
@@ -38,11 +39,21 @@ public interface JpaStoredEventRepository {
     /**
      * 按版本升序查询指定聚合的全部事件。
      *
+     * @param aggregateType 聚合类型
      * @param aggregateId 聚合根标识
      * @return 事件实体列表（版本升序）
      */
     List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(String aggregateType, String aggregateId);
 
+    /**
+     * 按版本区间升序查询指定聚合的事件（增量拉取）。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合根标识
+     * @param fromVersion   起始版本（含）
+     * @param toVersion     结束版本（含）
+     * @return 事件实体列表（版本升序）
+     */
     List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
             String aggregateType, String aggregateId, long fromVersion, long toVersion);
 

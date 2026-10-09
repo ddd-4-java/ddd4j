@@ -16,8 +16,8 @@ package io.ddd4j.core.ddd.model;
 
 import java.util.Objects;
 import java.util.Arrays;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
@@ -136,7 +136,7 @@ class AggregateRootApplyTest {
 
         OrderCreatedEvent() {
             super(new EntityIdPath(new OrderId("order-1")));
-        }static final class OrderId implements EntityId {
+        }static final class OrderId implements AggregateRootId {
         private final String value;
 
         public OrderId(String value) {

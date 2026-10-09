@@ -47,8 +47,8 @@ import java.util.function.Consumer;
  *
  * <p>双构造：
  * <ul>
- *   <li>{@link #KafkaMQClient} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
- *   <li>{@link #KafkaMQClient(KafkaMQProperties)} —— 自行根据 properties 构造 producer</li>
+ *   <li>{@code KafkaMQClient(Producer, Callback)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
+ *   <li>{@code KafkaMQClient(KafkaMQProperties, Callback)} —— 自行根据 properties 构造 producer</li>
  * </ul>
  *
  * <p>借鉴 1：分区 key（producer 按 tag/tenantId 路由，同 key 进同 partition 保证顺序）

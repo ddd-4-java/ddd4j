@@ -53,6 +53,9 @@ public class SecurityExceptionHandler {
 
     /**
      * 401：未认证（凭证错误 / 账号过期）
+     *
+     * @param ex 认证异常
+     * @return 401 统一响应体
      */
     @ExceptionHandler({BadCredentialsException.class, AuthenticationException.class,
             AccountExpiredException.class})
@@ -63,6 +66,9 @@ public class SecurityExceptionHandler {
 
     /**
      * 403：账号锁定 / 禁用
+     *
+     * @param ex 账号状态异常
+     * @return 403 统一响应体
      */
     @ExceptionHandler({LockedException.class, DisabledException.class})
     public ResponseEntity<ApiRestResponse<String>> lockedException(Exception ex) {
@@ -72,6 +78,9 @@ public class SecurityExceptionHandler {
 
     /**
      * 403：无权限访问
+     *
+     * @param ex 授权异常
+     * @return 401/403 统一响应体（未登录按 401 返回，已登录无权限按 403 返回）
      */
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ApiRestResponse<String>> accessDeniedException(AccessDeniedException ex) {

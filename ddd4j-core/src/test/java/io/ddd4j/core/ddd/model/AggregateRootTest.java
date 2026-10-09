@@ -14,10 +14,13 @@
  */
 package io.ddd4j.core.ddd.model;
 
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.event.StringEntityId;
+import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import org.junit.jupiter.api.Test;
@@ -73,8 +76,16 @@ class AggregateRootTest {
         @EventHandler private void on(TestEvent event) { }
         @Override public StringEntityId id() { return new StringEntityId("order-1"); }
     }
-    private static final class TestEvent extends DomainEvent<StringEntityId> {
-        TestEvent() { super(new EntityIdPath(new StringEntityId("order-1"))); }
+    private static final class TestEvent extends DomainEvent<TestRootId> {
+        TestEvent() { super(new EntityIdPath(new TestRootId("order-1"))); }
+    }
+    private static final class TestRootId implements AggregateRootId {
+        private static final EntityType TYPE = new StringEntityType("Order");
+        private final String value;
+        private TestRootId(String value) { this.value = value; }
+        @Override public EntityType getType() { return TYPE; }
+        @Override public String asString() { return value; }
+        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
     }
     private static final class HandlingAggregate extends AggregateRoot<StringEntityId> {
         private int handled;

@@ -122,7 +122,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     /**
-     * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@link #setBaseMapper} 或构造器手动注入）。
+     * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@link #baseMapper} 的 setter 或构造器手动注入）。
      * 对应 MyBatis-Plus {@code CrudRepository.@Autowired M baseMapper} 的非 Spring 版本。
      */
     @Setter

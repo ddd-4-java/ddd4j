@@ -24,22 +24,23 @@ import java.util.Optional;
  * 运行时适配层（如 Micrometer / OpenTelemetry）通过实现本接口注入指标采集逻辑。
  *
  * <h3>对接示例（Micrometer）</h3>
- * <pre>{@code
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
  * public class MicrometerProjectionMetrics implements ProjectionMetrics {
  *     private final MeterRegistry registry;
  *
- *     @Override
+ *     &#64;Override
  *     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
  *         registry.counter("projection.events", "stream", streamId).increment(eventCount);
  *         registry.timer("projection.duration", "stream", streamId).record(durationNanos, TimeUnit.NANOSECONDS);
  *     }
  *
- *     @Override
+ *     &#64;Override
  *     public void onRunFailed(String streamId, Throwable error) {
  *         registry.counter("projection.errors", "stream", streamId).increment();
  *     }
  * }
- * }</pre>
+ * </pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.x

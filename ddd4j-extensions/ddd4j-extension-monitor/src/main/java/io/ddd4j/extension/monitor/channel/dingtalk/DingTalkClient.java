@@ -27,7 +27,7 @@ import java.util.Base64;
 /**
  * 钉钉群机器人 Webhook 客户端。
  *
- * <p>纯 Java，使用 JDK {@link HttpClient} 推送 JSON 消息。
+ * <p>纯 Java，使用 JDK {@code HttpClient} 推送 JSON 消息。
  * 鉴权采用钉钉机器人加签（{@code timestamp \n secret} 经 HMAC-SHA256 处理后 Base64 + URL 编码）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

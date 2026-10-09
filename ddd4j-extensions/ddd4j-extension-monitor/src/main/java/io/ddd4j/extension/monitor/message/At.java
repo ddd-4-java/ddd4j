@@ -19,7 +19,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @ 通知配置。was {@code AtVO}。
+ * 通知（@）配置。
  *
  * <p>传入机器人消息体时使用，控制消息是否 @ 一些用户或 @ 全体。
  *

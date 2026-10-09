@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
  *
  * <p>本示例刻意保持商品的"轻量 PO"形态：仅包含数据字段（{@code @Data}），
  * 没有复杂的状态机、不维护聚合内集合、不发布领域事件。
- * 与 {@code order} 包中的 {@link io.ddd4j.sample.javalin.order.domain.model.Order}
+ * 与 {@code order} 包中的 {@code Order}
  * 充血聚合形成对比。
  *
  * <p>实体仍继承 {@link AggregateRoot}，因为 ddd4j 的 {@code Repository<M, ID>}

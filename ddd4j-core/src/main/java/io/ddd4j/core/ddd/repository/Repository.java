@@ -29,6 +29,7 @@ import java.util.*;
  *
  * <h3>方法对照 BaseMapper</h3>
  * <table border="1">
+ *   <caption>Repository 与 BaseMapper 方法对照</caption>
  *   <tr><th>BaseMapper</th><th>Repository</th><th>说明</th></tr>
  *   <tr><td colspan="3"><b>单条 CRUD</b></td></tr>
  *   <tr><td>selectById(id)</td><td>findById(ID)</td><td>按 ID 查询</td></tr>

@@ -53,9 +53,6 @@ public class GeoBaiduTemplate {
     private static String highacciploc = "https://api.map.baidu.com/highacciploc/v1?qcip=220.181.38.113&qterm=pc&ak=%s&coord=bd09ll";
 
     /**
-     * HTTP 客户端
-     */
-    /**
      * 百度地图AK密钥
      */
     private final String ak;
@@ -63,7 +60,6 @@ public class GeoBaiduTemplate {
     /**
      * 构造函数
      *
-     * @param httpClient HTTP 客户端
      * @param ak         百度地图AK密钥
      */
     public GeoBaiduTemplate(String ak) {

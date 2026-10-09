@@ -31,10 +31,11 @@ import java.util.Objects;
  *
  * <p>默认格式 {@code yyyy-MM-dd HH:mm:ss}。
  *
- * <pre>{@code
- * @ExcelProperty(value = "创建时间", converter = LocalDateTimeConverter.class)
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
+ * &#64;ExcelProperty(value = "创建时间", converter = LocalDateTimeConverter.class)
  * private LocalDateTime createTime;
- * }</pre>
+ * </pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

@@ -33,14 +33,15 @@ import java.util.stream.Collectors;
  *
  * <p>在 DTO 中泛型字段无法直接标注 {@code converter}，可继承本类指定具体类型：
  *
- * <pre>{@code
- * public class OrderStatusConverter extends EnumNameConverter<OrderStatus> {
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
+ * public class OrderStatusConverter extends EnumNameConverter&lt;OrderStatus&gt; {
  *     public OrderStatusConverter() { super(OrderStatus.class); }
  * }
  *
- * @ExcelProperty(value = "状态", converter = OrderStatusConverter.class)
+ * &#64;ExcelProperty(value = "状态", converter = OrderStatusConverter.class)
  * private OrderStatus status;
- * }</pre>
+ * </pre>
  *
  * <p>如需基于 label/i18n 的枚举转换，可继承后重写
  * {@link #convertToExcelDataLabel(Enum)} 与 {@link #convertFromLabel(String)}。

@@ -127,6 +127,28 @@ public final class EntityIdPath implements Serializable {
     }
 
     /**
+     * 判断路径文本是否为合法的 {@link #asString()} 形态（不抛异常的布尔校验位）。
+     *
+     * <p>与 {@link #valueOf(String)} 共用同一解析逻辑，判定必须一致：
+     * {@code isValid(path) == true} 当且仅当 {@code valueOf(path)} 可构造成功。
+     * 对 {@code null}、空白、空段、段内缺 {@code :} 或 type/value 任一为空等
+     * 非法输入返回 {@code false}（承接 {@code valueOf} 抛出的
+     * {@link IllegalArgumentException}），对任意输入不抛出异常——
+     * 显式布尔判定取代 fuin 先例的静默 {@code null} 语义。
+     *
+     * @param path {@code Type:value} 依次以 {@code /} 连接的路径文本，可为 {@code null}
+     * @return 合法返回 {@code true}，其余返回 {@code false}
+     */
+    public static boolean isValid(String path) {
+        try {
+            valueOf(path);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    /**
      * 解析 {@link #asString()} 文本重建路径（与序列化对偶，Jackson 反序列化 + 事件回放使用）。
      *
      * <p>解析契约：

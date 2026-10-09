@@ -46,15 +46,15 @@
 
 ### Task 2.1：迁移 external auto-config
 
-- [ ] **Step 1:** 将 `ExternalAutoConfiguration` 从 `ddd4j-data-external` 迁移到 `ddd4j-boot-data` (未实现：ddd4j-boot 为外部仓库，当前 feature/3.0.x 分支未含此迁移)
+- [x] **Step 1:** 将 `ExternalAutoConfiguration` 从 `ddd4j-data-external` 迁移到 `ddd4j-boot-data` (未实现：ddd4j-boot 为外部仓库，当前 feature/3.0.x 分支未含此迁移)（证据: ../ddd4j-boot/ddd4j-boot-data/ddd4j-boot-data-external/src/main/java/io/ddd4j/boot/data/external/config/Ddd4jExternalAutoConfiguration.java）
 
 ### Task 2.2：修复 crypto auto-config
 
-- [ ] **Step 1:** 修复 `ddd4j-data-crypto` 的 imports 文件，使其可被发现 (未实现：需同步 boot 层)
+- [x] **Step 1:** 修复 `ddd4j-data-crypto` 的 imports 文件，使其可被发现 (未实现：需同步 boot 层)（证据: ../ddd4j-boot/ddd4j-boot-data/ddd4j-boot-data-crypto/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports）
 
 ### Task 2.3：修复 logs auto-config
 
-- [ ] **Step 1:** 修复 `ddd4j-data-logs` 的 metadata 和 imports 包名 (未实现：旧包名引用)
+- [x] **Step 1:** 修复 `ddd4j-data-logs` 的 metadata 和 imports 包名 (未实现：旧包名引用)（证据: ../ddd4j-boot/ddd4j-boot-data/ddd4j-boot-data-logs/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports）
 
 ---
 
@@ -62,7 +62,7 @@
 
 ### Task 3.1：Spring 桥接清理
 
-- [ ] **Step 1:** 创建 `ddd4j-data-spring` 模块，保留 `RepositoryBeanPostProcessor` 等 Spring 桥接代码 (未实现：当前 feature/3.0.x 分支不存在 ddd4j-data-spring 子模块)
-- [ ] **Step 2:** 确保不含 `spring-boot-autoconfigure` 依赖 (未实现：依赖 Step 1)
+- [ ] **Step 1:** 创建 `ddd4j-data-spring` 模块，保留 `RepositoryBeanPostProcessor` 等 Spring 桥接代码 (未实现：当前 feature/3.0.x 分支不存在 ddd4j-data-spring 子模块)【待办】
+- [ ] **Step 2:** 确保不含 `spring-boot-autoconfigure` 依赖 (未实现：依赖 Step 1)【待办】
 
 <!-- 日期依据：文档内声明"最后更新：2026-07-01"，首次审计日期为 2026-06-29 -->

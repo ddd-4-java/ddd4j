@@ -348,7 +348,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * 解析最终的拼接符（concat）。
      *
-     * <p>优先级：{@link MQEvent#getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
+     * <p>优先级：{@link MQEvent#concat} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
      * 注：不在 properties 层暴露 concat —— 避免全局配置覆盖 broker 惯例（Kafka 习惯 {@code "_"}、
      * Redis 习惯 {@code ":"}、MQTT 习惯 {@code "/"}）。如需差异化，由各 broker 自己的 Properties 类覆写。
      *
@@ -375,7 +375,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 解析命名空间：{@link MQEvent#getNamespace()} 优先，回落到 {@link MQProperties#getNamespace()}。
+     * 解析命名空间：{@link MQEvent#namespace} 优先，回落到 {@link MQProperties#namespace}。
      *
      * @param event      MQ 事件（可为 null）
      * @param properties MQ 配置（不可为 null）
@@ -389,7 +389,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 字符串版命名空间解析（{@link MQListener#getNamespace()} 直接传入）。
+     * 字符串版命名空间解析（{@link MQListener#namespace} 直接传入）。
      *
      * @param namespace  显式命名空间（可为 null）
      * @param properties MQ 配置（可为 null）

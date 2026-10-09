@@ -43,7 +43,7 @@ import java.util.function.Consumer;
  *
  * <p>发布机制（多 broker 路由）：{@link #publish(String, String, String)} 从 {@link BaseContext}
  * 查找 key 为 {@link #MQ_EVENT_PUBLISHER} 的 {@code Map<String, Consumer<MQEvent>>}，
- * 按 {@link #broker} 字段（或全局 {@link MQProperties#getBroker()} 配置）匹配对应的 broker 生产者。
+ * 按 {@link #broker} 字段（或全局 {@link MQProperties#broker} 配置）匹配对应的 broker 生产者。
  * 每个 {@link MQClient} 在 {@code initProducer} 后以 {@link MQClient#impl()} 为 key 注册。
  *
  * <h3>使用示例</h3>
@@ -103,7 +103,7 @@ public class MQEvent implements Serializable {
     protected String tenantId;
     /**
      * 目标 broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）。
-     * <p>为空时走全局默认 broker（{@link MQProperties#getBroker()} 配置）。
+     * <p>为空时走全局默认 broker（{@link MQProperties#broker} 配置）。
      */
     protected String broker;
     /**
@@ -189,7 +189,7 @@ public class MQEvent implements Serializable {
      * 按以下优先级匹配目标 broker 生产者：
      * <ol>
      *   <li>{@link #broker} 字段非空 → 用此值作 key 查找</li>
-     *   <li>{@link MQProperties#getBroker()} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
+     *   <li>{@link MQProperties#broker} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
      *   <li>仅注册了一个 broker → 直接用（便捷场景）</li>
      *   <li>都找不到 → warn 日志，事件不发布</li>
      * </ol>

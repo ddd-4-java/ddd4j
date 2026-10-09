@@ -174,7 +174,7 @@ public final class ExcelKit {
     }
 
     /**
-     * 默认 listener 导入（错误自动收集到 {@link ImportResult#getErrors()}）。
+     * 默认 listener 导入（错误自动收集到 {@code ImportResult#getErrors()}）。
      *
      * @param in   输入流
      * @param head 表头类

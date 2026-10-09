@@ -27,6 +27,7 @@ import java.util.function.Function;
  *
  * <h3>与 {@code TableInfoHelper} 的对偶关系</h3>
  * <table border="1">
+ *   <caption>Domain 与 MP 原生元数据对偶关系</caption>
  *   <tr><th>维度</th><th>PO（MP 原生）</th><th>Domain（本类）</th></tr>
  *   <tr><td>元数据</td><td>{@code TableInfo}</td><td>{@code DomainModelInfo}</td></tr>
  *   <tr><td>字段</td><td>{@code TableFieldInfo}</td><td>{@code DomainFieldInfo}</td></tr>
@@ -114,7 +115,7 @@ public final class DomainModelHelper {
      * 仅用 Domain Model 构建（PO provider 不传，列名全部走 fallback）。
      * @param <M> 数据元素类型
      * @param modelClass 目标模型类型
-     * @return 获取的DomainModelInfo<M> 对象
+     * @return 获取的 {@code DomainModelInfo<M>} 对象
      */
     public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass) {
         return getModelInfo(modelClass, null);

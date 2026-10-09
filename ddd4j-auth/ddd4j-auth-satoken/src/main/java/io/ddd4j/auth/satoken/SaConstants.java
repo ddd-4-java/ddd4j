@@ -33,7 +33,7 @@ public final class SaConstants {
      */
     public static final String PAYLOAD_SCHOOL_CODE = "xxdm";
     /**
-     * JWT 学区/校区组织 ID（与 {@link #PAYLOAD_ORG_ID} 区分）。
+     * JWT 学区/校区组织 ID（与学校级组织 ID 区分）。
      */
     public static final String PAYLOAD_XQ_ORG_ID = "xq_org_id";
     /**

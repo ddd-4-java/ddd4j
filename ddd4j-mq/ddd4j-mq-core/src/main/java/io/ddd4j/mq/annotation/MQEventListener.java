@@ -35,17 +35,18 @@ import java.lang.annotation.*;
  * </ul>
  *
  * <h3>使用示例</h3>
- * <pre>{@code
- * @MQEventListener(topic = "order", tags = "paid")
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
+ * &#64;MQEventListener(topic = "order", tags = "paid")
  * public void onOrderPaid(OrderPaidEvent event) {
  *     // 消费 order.paid 的消息
  * }
  *
- * @MQEventListener(topic = "order", tags = "paid || shipped -cancelled")
+ * &#64;MQEventListener(topic = "order", tags = "paid || shipped -cancelled")
  * public void onOrderActive(OrderEvent event) {
  *     // 消费 paid 或 shipped，排除 cancelled
  * }
- * }</pre>
+ * </pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

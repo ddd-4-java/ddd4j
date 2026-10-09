@@ -78,7 +78,7 @@ public class WebFluxKit {
     }
 
     /**
-     * 从 Flux<DataBuffer> 中获取请求体字符串。
+     * 从 {@code Flux<DataBuffer>} 中获取请求体字符串。
      * @param serverHttpRequest 服务端HTTP请求
      * @return 解析的Mono
      */

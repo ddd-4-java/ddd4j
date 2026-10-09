@@ -130,9 +130,9 @@ interface ChunkEventHandler {
 
 ## 落地计划
 
-- [ ] 阶段 3（Task 3.2）：EventStore SPI 定稿四方法（append/read×2/readAll）＋`AggregateVersionConflictException` 四字段＋`StoredEvent`（含全局 position）。
-- [ ] 阶段 3（Task 3.2）：`EventStoreContractTest` 三契约用例（追加读回／版本冲突抛异常／readAll 按 position 之后读取）对齐 esc-api 已验证语义。
-- [ ] 阶段 3（Task 3.3）：EventPayloadSerializer 不引入 SerializedDataType/EnhancedMimeType 注册体系。
-- [ ] 阶段 5：jpa/panache/jdbi/r2dbc 四实现；R2dbcEventStore 走 `AsyncEventStore`（Reactor），其余走同步 `EventStore`。
-- [ ] 阶段 5：投影读取统一复用 ddd4j-core `EventChunkReader/EventChunk`（nextEventNumber 游标循环，替代 esc-api 推式 ChunkEventHandler）。
-- [ ] Task 1.10：ADR-0005 引用本文档「无 deleteStream（墓碑事件替代）、无 open/close、无双轨异步」三项决策。
+- [x] 阶段 3（Task 3.2）：EventStore SPI 定稿四方法（append/read×2/readAll）＋`AggregateVersionConflictException` 四字段＋`StoredEvent`（含全局 position）。（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/EventStore.java、AggregateVersionConflictException.java、StoredEvent.java）
+- [x] 阶段 3（Task 3.2）：`EventStoreContractTest` 三契约用例（追加读回／版本冲突抛异常／readAll 按 position 之后读取）对齐 esc-api 已验证语义。（证据: ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventStoreContractTest.java）
+- [x] 阶段 3（Task 3.3）：EventPayloadSerializer 不引入 SerializedDataType/EnhancedMimeType 注册体系。（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializer.java）
+- [ ] 阶段 5：jpa/panache/jdbi/r2dbc 四实现；R2dbcEventStore 走 `AsyncEventStore`（Reactor），其余走同步 `EventStore`。【待办】
+- [x] 阶段 5：投影读取统一复用 ddd4j-core `EventChunkReader/EventChunk`（nextEventNumber 游标循环，替代 esc-api 推式 ChunkEventHandler）。（证据: ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionDispatcher.java）
+- [x] Task 1.10：ADR-0005 引用本文档「无 deleteStream（墓碑事件替代）、无 open/close、无双轨异步」三项决策。（证据: docs/adr/0005-event-store-spi.md）

@@ -40,14 +40,15 @@ import java.util.ServiceLoader;
  * {@link ServiceLoader} 延迟发现 {@link CryptoStrategy} 实现；若发现多个则取第一个，
  * 若未发现则加解密静默跳过（与无加密场景兼容）。</p>
  *
- * <pre>{@code
- * @Entity
- * @EntityListeners(JpaEncryptFieldListener.class)
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
+ * &#64;Entity
+ * &#64;EntityListeners(JpaEncryptFieldListener.class)
  * public class UserEntity {
- *     @EncryptField
+ *     &#64;EncryptField
  *     private String phone;
  * }
- * }</pre>
+ * </pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0

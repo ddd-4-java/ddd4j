@@ -17,7 +17,7 @@ package io.ddd4j.core.ddd.model;
 import java.util.Objects;
 import java.util.Arrays;
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
@@ -185,7 +185,7 @@ class AggregateRootEventHandlerTest {
 
         IncrementEvent() {
             super(new EntityIdPath(new CounterId("counter-1")));
-        }static final class CounterId implements EntityId {
+        }static final class CounterId implements AggregateRootId {
         private final String value;
 
         public CounterId(String value) {

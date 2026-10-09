@@ -23,9 +23,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 /**
- * 企业微信群机器人 Webhook 客户端。was {@code QiWeiService}。
+ * 企业微信群机器人 Webhook 客户端。
  *
- * <p>纯 Java，使用 JDK {@link HttpClient} 推送 markdown 格式消息。
+ * <p>纯 Java，使用 JDK {@code HttpClient} 推送 markdown 格式消息。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

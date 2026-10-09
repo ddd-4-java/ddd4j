@@ -15,6 +15,7 @@
 package io.ddd4j.web.core.context;
 
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.web.core.version.ApiVersion;
 
 import java.util.Objects;
 
@@ -35,7 +36,24 @@ public final class WebRequestContextFactory {
         this.clientIpResolver = Objects.requireNonNull(clientIpResolver, "clientIpResolver must not be null");
     }
 
+    /**
+     * 归一化请求数据为不携带 API 版本的请求上下文（兼容旧调用方）。
+     *
+     * @param data 各 Web 框架采集的原始请求元数据（非 null）
+     * @return 请求上下文，{@code apiVersion} 为 null
+     */
     public WebRequestContext create(WebRequestData data) {
+        return create(data, null);
+    }
+
+    /**
+     * 归一化请求数据为携带解析出的 API 版本的请求上下文。
+     *
+     * @param data 各 Web 框架采集的原始请求元数据（非 null）
+     * @param apiVersion 前置过滤链解析出的 API 版本，可为 null（未接线时）
+     * @return 请求上下文
+     */
+    public WebRequestContext create(WebRequestData data, ApiVersion apiVersion) {
         WebRequestData requestData = Objects.requireNonNull(data, "data must not be null");
         String requestId = StrKit.isBlank(requestData.requestId())
                 ? requestIdGenerator.generate() : requestData.requestId().trim();
@@ -45,6 +63,7 @@ public final class WebRequestContextFactory {
         String clientIp = clientIpResolver.resolve(requestData.forwardedFor(), requestData.realIp(),
                 requestData.remoteAddress());
         return new WebRequestContext(requestId, requestData.traceId(), requestData.tenantId(),
-                requestData.authorization(), requestData.locale(), clientIp, requestData.method(), requestData.path());
+                requestData.authorization(), requestData.locale(), clientIp, requestData.method(), requestData.path(),
+                apiVersion);
     }
 }

@@ -33,16 +33,17 @@ import java.util.Objects;
  * 需要业务侧自行注册。本类作为通用转换器，默认使用 ISO 格式 {@code yyyy-MM-dd}。
  *
  * <h3>用法</h3>
- * <pre>{@code
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
  * // 字段级
- * @ExcelProperty(value = "日期", converter = LocalDateConverter.class)
+ * &#64;ExcelProperty(value = "日期", converter = LocalDateConverter.class)
  * private LocalDate createTime;
  *
  * // 全局
  * EasyExcel.read(in, OrderVO.class, listener)
  *     .registerConverter(new LocalDateConverter())
  *     .sheet().doRead();
- * }</pre>
+ * </pre>
  *
  * <p>如需自定义格式，使用 {@link #LocalDateConverter(String)} 构造。
  *

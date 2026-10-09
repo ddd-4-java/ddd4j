@@ -124,7 +124,7 @@ public class GuiceContext {
      * 获取某类型的所有绑定实例
      * @param <T> 数据元素类型
      * @param clazz 目标类型
-     * @return 获取的Collection<T> 对象
+     * @return 获取的 {@code Collection<T>} 对象
      */
     public static <T> Collection<T> getInstances(Class<T> clazz) {
         List<T> instances = new ArrayList<>();

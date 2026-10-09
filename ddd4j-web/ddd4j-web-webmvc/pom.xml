@@ -116,6 +116,13 @@
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
         </dependency>
+        <!-- jsr305 提供 javax.annotation.meta.When 等注解元数据：javadoc 渲染链接类的
+             注解时需要该类在 classpath 上，否则产生 unknown enum constant 告警并触发零告警门禁 -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.pf4j</groupId>
             <artifactId>pf4j</artifactId>

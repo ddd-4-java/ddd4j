@@ -200,13 +200,6 @@
         <flyway.version>8.5.13</flyway.version>
         <forest.version>1.8.1</forest.version>
         <formio.version>1.6.9</formio.version>
-        <fuin-cqrs4j.version>0.6.0</fuin-cqrs4j.version>
-        <fuin-ddd4j.version>0.7.0</fuin-ddd4j.version>
-        <!-- fuinorg 传递依赖版本锁定，避免漂移 -->
-        <fuin-esc.version>0.9.0</fuin-esc.version>
-        <fuin-objects4j.version>0.11.0</fuin-objects4j.version>
-        <fuin-units4j.version>0.12.0</fuin-units4j.version>
-        <fuin-utils4j.version>0.15.0</fuin-utils4j.version>
         <geodesy.version>1.1.3</geodesy.version>
         <geoip2.version>2.17.0</geoip2.version>
         <glassfish-el.version>3.0.4</glassfish-el.version>

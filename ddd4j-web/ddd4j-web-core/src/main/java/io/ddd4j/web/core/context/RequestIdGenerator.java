@@ -25,6 +25,11 @@ public interface RequestIdGenerator {
     String generate();
 
     static RequestIdGenerator uuid() {
+        // 预热 SecureRandom 熵源播种：JVM 内首次 UUID.randomUUID() 会触发 SeederHolder
+        // 类初始化，Windows 下需枚举网卡收集熵，实测（JDK 8）可达 8 秒以上；若落在
+        // 首个请求的上下文创建上，将击穿网关/测试客户端的响应超时（WebTestClient 默认 5s）。
+        // 在生成器创建期（Bean 装配/测试上下文启动）完成播种，此后 generate() 零额外开销。
+        UUID.randomUUID();
         return () -> UUID.randomUUID().toString();
     }
 }

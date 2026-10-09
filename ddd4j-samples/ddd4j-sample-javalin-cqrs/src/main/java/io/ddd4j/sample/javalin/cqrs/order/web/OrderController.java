@@ -40,6 +40,7 @@ import static io.javalin.apibuilder.ApiBuilder.post;
  *
  * <h3>路由列表</h3>
  * <table border="1">
+ * <caption>订单管理 REST 接口一览</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/orders</td><td>创建草稿订单</td></tr>
  *   <tr><td>POST</td><td>/api/orders/{id}/lines</td><td>添加订单行</td></tr>

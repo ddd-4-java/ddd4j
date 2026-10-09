@@ -26,12 +26,12 @@ import java.util.Optional;
  * <p>继承 ddd4j-core 的 {@link Repository} 接口，标识该仓储操作 {@link Order} 聚合根。
  * 实现类（{@code InMemoryOrderRepository}）需提供：
  * <ul>
- *   <li>{@link #findById(Object)} - 按主键查询</li>
+ *   <li>{@code findById(ID)} - 按主键查询</li>
  *   <li>{@link #findByOrderNo(String)} - 按订单编号查询（业务唯一键）</li>
  *   <li>{@link #findAll()} - 列出全部订单（CQRS 缓存统计用）</li>
- *   <li>{@link #save(Order)} - 保存或更新</li>
- *   <li>{@link #deleteById(Object)} - 按主键删除（继承自默认方法）</li>
- *   <li>{@link #existsById(Object)} - 判断存在（继承自默认方法）</li>
+ *   <li>{@code save(Order)} - 保存或更新</li>
+ *   <li>{@code deleteById(ID)} - 按主键删除（继承自默认方法）</li>
+ *   <li>{@code existsById(ID)} - 判断存在（继承自默认方法）</li>
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
