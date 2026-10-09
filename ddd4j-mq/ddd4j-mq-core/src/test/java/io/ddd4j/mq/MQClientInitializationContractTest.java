@@ -79,8 +79,16 @@ class MQClientInitializationContractTest {
 
     private MQEventSerialization serialization() {
         return new MQEventSerialization() {
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
-            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
         };
     }
 
@@ -92,7 +100,8 @@ class MQClientInitializationContractTest {
     }
 
     public static final class Handler {
-        public void handle(MQEvent event) { }
+        public void handle(MQEvent event) {
+        }
     }
 
     private static final class TestClient implements MQClient {
@@ -106,14 +115,30 @@ class MQClientInitializationContractTest {
             this.results = results;
         }
 
-        @Override public String impl() { return "test"; }
-        @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-        @Override public MQStartupStatus startupStatus() { return status; }
-        @Override public Consumer<MQEvent> initProducer(MQProperties properties) {
-            lifecycle.register("producer", closedResources::incrementAndGet);
-            return event -> { };
+        @Override
+        public String impl() {
+            return "test";
         }
-        @Override public boolean initConsumer(MQListener listener, MQProperties properties) {
+
+        @Override
+        public MQClientLifecycle lifecycle() {
+            return lifecycle;
+        }
+
+        @Override
+        public MQStartupStatus startupStatus() {
+            return status;
+        }
+
+        @Override
+        public Consumer<MQEvent> initProducer(MQProperties properties) {
+            lifecycle.register("producer", closedResources::incrementAndGet);
+            return event -> {
+            };
+        }
+
+        @Override
+        public boolean initConsumer(MQListener listener, MQProperties properties) {
             int index = attempts.getAndIncrement();
             lifecycle.register("consumer-" + index, closedResources::incrementAndGet);
             return results[index];

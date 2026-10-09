@@ -35,14 +35,14 @@ public record IdempotencyLease(String key, String ownerToken, Duration ttl) {
     }
 
     public String getKey() {
-            return key;
-        }
+        return key;
+    }
 
     public String getOwnerToken() {
-            return ownerToken;
-        }
+        return ownerToken;
+    }
 
     public Duration getTtl() {
-            return ttl;
-        }
+        return ttl;
+    }
 }

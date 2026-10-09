@@ -32,42 +32,42 @@ public record WebRequestData(
         String path) {
 
     public String getAuthorization() {
-            return authorization;
-        }
+        return authorization;
+    }
 
     public String getForwardedFor() {
-            return forwardedFor;
-        }
+        return forwardedFor;
+    }
 
     public Locale getLocale() {
-            return locale;
-        }
+        return locale;
+    }
 
     public String getMethod() {
-            return method;
-        }
+        return method;
+    }
 
     public String getPath() {
-            return path;
-        }
+        return path;
+    }
 
     public String getRealIp() {
-            return realIp;
-        }
+        return realIp;
+    }
 
     public String getRemoteAddress() {
-            return remoteAddress;
-        }
+        return remoteAddress;
+    }
 
     public String getRequestId() {
-            return requestId;
-        }
+        return requestId;
+    }
 
     public String getTenantId() {
-            return tenantId;
-        }
+        return tenantId;
+    }
 
     public String getTraceId() {
-            return traceId;
-        }
+        return traceId;
+    }
 }

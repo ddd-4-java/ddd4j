@@ -19,6 +19,7 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
 import jakarta.enterprise.inject.spi.BeanManager;
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.Objects;
 
 /**

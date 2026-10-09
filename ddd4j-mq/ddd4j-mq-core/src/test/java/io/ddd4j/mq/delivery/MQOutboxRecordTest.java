@@ -50,8 +50,8 @@ class MQOutboxRecordTest {
                 "message-1", "orders.created", "{}", Collections.emptyMap(), Instant.EPOCH);
 
         assertEquals("MQOutboxRecord[messageId=message-1, destination=orders.created, payload={}, "
-                + "headers={ddd4j-message-id=message-1}, status=PENDING, availableAt=1970-01-01T00:00:00Z, "
-                + "leaseOwner=null, leaseUntil=null, attempts=0, lastError=null, publishedAt=null]",
+                        + "headers={ddd4j-message-id=message-1}, status=PENDING, availableAt=1970-01-01T00:00:00Z, "
+                        + "leaseOwner=null, leaseUntil=null, attempts=0, lastError=null, publishedAt=null]",
                 record.toString());
     }
 }

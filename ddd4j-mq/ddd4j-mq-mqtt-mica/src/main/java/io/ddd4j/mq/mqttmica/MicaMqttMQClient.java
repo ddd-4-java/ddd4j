@@ -78,8 +78,15 @@ public class MicaMqttMQClient implements MQClient {
         return "mqtt-mica";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     @Override
     public String defaultConcat() {
@@ -201,7 +208,11 @@ public class MicaMqttMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
     static String messageId(MqttPublishMessage message) {

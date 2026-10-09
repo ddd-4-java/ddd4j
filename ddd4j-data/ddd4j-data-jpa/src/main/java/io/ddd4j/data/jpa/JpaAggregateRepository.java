@@ -339,13 +339,16 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
             case "=" -> predicates.add(criteriaBuilder.equal(root.get(property), condition.value()));
             case "<>" -> predicates.add(criteriaBuilder.notEqual(root.get(property), condition.value()));
             case ">" -> predicates.add(criteriaBuilder.greaterThan(root.get(property), (Comparable) condition.value()));
-            case ">=" -> predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(property), (Comparable) condition.value()));
+            case ">=" ->
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(property), (Comparable) condition.value()));
             case "<" -> predicates.add(criteriaBuilder.lessThan(root.get(property), (Comparable) condition.value()));
-            case "<=" -> predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(property), (Comparable) condition.value()));
+            case "<=" ->
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(property), (Comparable) condition.value()));
             case "LIKE" -> predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value() + "%"));
             case "LIKE_LEFT" -> predicates.add(criteriaBuilder.like(root.get(property), condition.value() + "%"));
             case "LIKE_RIGHT" -> predicates.add(criteriaBuilder.like(root.get(property), "%" + condition.value()));
-            case "NOT_LIKE" -> predicates.add(criteriaBuilder.notLike(root.get(property), "%" + condition.value() + "%"));
+            case "NOT_LIKE" ->
+                    predicates.add(criteriaBuilder.notLike(root.get(property), "%" + condition.value() + "%"));
             case "IN" -> predicates.add(root.get(property).in(toCollection(condition.value())));
             case "NOT_IN" -> predicates.add(root.get(property).in(toCollection(condition.value())).not());
             case "IS_NULL" -> predicates.add(criteriaBuilder.isNull(root.get(property)));

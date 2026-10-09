@@ -95,8 +95,15 @@ public class PulsarMQClient implements MQClient {
         return "pulsar";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     // ========================= 生产者 =========================
 
@@ -258,7 +265,9 @@ public class PulsarMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             consumers.clear();
             producers.clear();
             startupStatus.stopped();
@@ -266,19 +275,26 @@ public class PulsarMQClient implements MQClient {
     }
 
     private static void closeConsumer(org.apache.pulsar.client.api.Consumer<?> consumer) {
-        try { consumer.close(); } catch (Exception exception) {
+        try {
+            consumer.close();
+        } catch (Exception exception) {
             throw new IllegalStateException("Close Pulsar consumer failed", exception);
         }
     }
 
     private static void closeProducer(Producer<byte[]> producer) {
-        try { producer.flush(); producer.close(); } catch (Exception exception) {
+        try {
+            producer.flush();
+            producer.close();
+        } catch (Exception exception) {
             throw new IllegalStateException("Close Pulsar producer failed", exception);
         }
     }
 
     private static void closePulsarClient(PulsarClient client) {
-        try { client.close(); } catch (Exception exception) {
+        try {
+            client.close();
+        } catch (Exception exception) {
             throw new IllegalStateException("Close Pulsar client failed", exception);
         }
     }

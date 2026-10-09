@@ -122,8 +122,15 @@ public class RedisMQClient implements MQClient {
         return "redis";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     /**
      * Redis Pubsub 默认拼接符 {@code :}（Redis 命名习惯）。
@@ -212,11 +219,13 @@ public class RedisMQClient implements MQClient {
                 }
             }
 
-            @Override public void onSubscribe(String channel, int subscribedChannels) {
+            @Override
+            public void onSubscribe(String channel, int subscribedChannels) {
                 log.info("Subscribed channel: {}", channel);
             }
 
-            @Override public void onUnsubscribe(String channel, int subscribedChannels) {
+            @Override
+            public void onUnsubscribe(String channel, int subscribedChannels) {
                 log.info("Unsubscribed channel: {}", channel);
             }
         };
@@ -234,7 +243,11 @@ public class RedisMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
 }

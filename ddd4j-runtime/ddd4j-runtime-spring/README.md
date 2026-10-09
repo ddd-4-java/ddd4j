@@ -1,24 +1,24 @@
 # ddd4j-runtime-spring
 
 > **ddd4j 的 Spring Framework 运行时绑定层（纯 SPI 实现）**：把 ddd4j-core 纯 Java SPI 接口（`DomainEventPublisher` /
-`I18nProvider` / `SubjectProvider`）落地到 Spring 容器。**本模块不包含 Spring Boot 自动装配**，那是
-`ddd4j-boot-ddd-autoconfigure` 的职责。
+> `I18nProvider` / `SubjectProvider`）落地到 Spring 容器。 **本模块不包含 Spring Boot 自动装配**，那是
+> `ddd4j-boot-ddd-autoconfigure` 的职责。
 
 ---
 
 ## 一、模块边界原则
 
-ddd4j 通用基础层的架构分层遵循一个**铁律**：
+ddd4j 通用基础层的架构分层遵循一个 **铁律**：
 
-| 层级               | 内容                                                              | 归属                                                                       |
-|------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------|
-| **纯契约层**         | 零框架 import 的 Java 接口 / 抽象类 / 注解                                 | `ddd4j-core` / `ddd4j-annotation`                                        |
-| **SPI 默认实现层**    | 三框架各自的 SPI 实现（无 starter）                                        | `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice` |
-| **自动装配 / 胶水代码层** | Spring Boot starter / `@AutoConfiguration` / `spring.factories` | `ddd4j-boot-ddd-autoconfigure` 等                                         |
+| 层级                      | 内容                                                            | 归属                                                                     |
+|---------------------------|-----------------------------------------------------------------|--------------------------------------------------------------------------|
+| **纯契约层**              | 零框架 import 的 Java 接口 / 抽象类 / 注解                      | `ddd4j-core` / `ddd4j-annotation`                                        |
+| **SPI 默认实现层**        | 三框架各自的 SPI 实现（无 starter）                             | `ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice` |
+| **自动装配 / 胶水代码层** | Spring Boot starter / `@AutoConfiguration` / `spring.factories` | `ddd4j-boot-ddd-autoconfigure` 等                                        |
 
 > **错误做法**：把 `DddAutoConfiguration`（含 `@Bean` 装配 EventStore/MultiCommandExecutor）放进 `ddd4j-runtime-spring`
-> **正确做法**：`ddd4j-runtime-spring` 只提供 `SpringDomainEventPublisher` 这种**带 `@Component` 的 Bean 实现**；
-`DddAutoConfiguration` 属于 Spring Boot 装配，下移到 `ddd4j-boot-ddd-autoconfigure`
+> **正确做法**：`ddd4j-runtime-spring` 只提供 `SpringDomainEventPublisher` 这种 **带 `@Component` 的 Bean 实现**；
+> `DddAutoConfiguration` 属于 Spring Boot 装配，下移到 `ddd4j-boot-ddd-autoconfigure`
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -48,13 +48,13 @@ ddd4j 通用基础层的架构分层遵循一个**铁律**：
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-| 维度       | 数据                                                                     |
-|----------|------------------------------------------------------------------------|
-| **路径**   | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`    |
-| **代码量**  | 26 个 Java 文件 / 2,980 行                                                 |
-| **核心定位** | SPI 接口的 Spring 实现 + 上下文门面                                              |
-| **强依赖**  | `ddd4j-core` / `ddd4j-kit` / `ddd4j-annotation` + Spring Framework 6.x |
-| **禁止内容** | `META-INF/spring.factories`、`@AutoConfiguration`、starter               |
+| 维度         | 数据                                                                   |
+|--------------|------------------------------------------------------------------------|
+| **路径**     | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`    |
+| **代码量**   | 26 个 Java 文件 / 2,980 行                                             |
+| **核心定位** | SPI 接口的 Spring 实现 + 上下文门面                                    |
+| **强依赖**   | `ddd4j-core` / `ddd4j-kit` / `ddd4j-annotation` + Spring Framework 6.x |
+| **禁止内容** | `META-INF/spring.factories`、`@AutoConfiguration`、starter             |
 
 ---
 
@@ -97,7 +97,7 @@ public class MyConfig { ... }
 
 ## 三、SPI 桥接层 — 把纯 Java 契约落地到 Spring
 
-`ddd4j-core` 定义了三组**框架无关的 SPI 接口**，`ddd4j-runtime-spring` 提供 Spring 实现：
+`ddd4j-core` 定义了三组 **框架无关的 SPI 接口**，`ddd4j-runtime-spring` 提供 Spring 实现：
 
 ### 3.1 进程内领域事件发布
 
@@ -149,7 +149,7 @@ public class SpringI18nProvider implements I18nProvider {
 }
 ```
 
-业务方调用 `I18nKit.get(key)` 即获得 Spring MessageSource 解析结果，**业务代码不直接依赖 Spring**。
+业务方调用 `I18nKit.get(key)` 即获得 Spring MessageSource 解析结果， **业务代码不直接依赖 Spring**。
 
 ### 3.3 当前用户主体
 
@@ -179,7 +179,7 @@ public EventStore inMemoryEventStore() {
 }
 ```
 
-业务项目**无需部署 EventStoreDB** 即可体验完整事件溯源。生产环境切换 KurrentDB：
+业务项目 **无需部署 EventStoreDB** 即可体验完整事件溯源。生产环境切换 KurrentDB：
 
 ```yaml
 # application.yml
@@ -347,11 +347,11 @@ public class SpringContext implements ApplicationContextAware {
 
 ### 6.2 静态方法 vs 注入
 
-| 场景          | 推荐方式                           |
-|-------------|--------------------------------|
-| 普通 Service  | `@Autowired` 注入                |
+| 场景                | 推荐方式                       |
+|---------------------|--------------------------------|
+| 普通 Service        | `@Autowired` 注入              |
 | 工具类 / 静态上下文 | `SpringContext.getBean()`      |
-| 启动期阻塞等待     | `SpringContext.getBeanAwait()` |
+| 启动期阻塞等待      | `SpringContext.getBeanAwait()` |
 
 ---
 
@@ -381,16 +381,16 @@ public class SpringContext implements ApplicationContextAware {
 
 ## 八、与 ddd4j-runtime-quarkus / ddd4j-javalin 的对照
 
-| 维度          | ddd4j-runtime-spring                       | ddd4j-runtime-quarkus | ddd4j-javalin              |
-|-------------|--------------------------------------------|-----------------------|----------------------------|
-| **DI 容器**   | ApplicationContext                         | Arc (CDI)             | Guice Injector             |
-| **事件发布**    | `ApplicationEventPublisher.publishEvent()` | `Event<T>.fire()`     | Guava `EventBus.post()`    |
-| **上下文入口**   | `SpringContext`                            | `ArcContainerProxy`   | `GuiceContext`             |
-| **Bean 扫描** | `DddClassPathBeanDefinitionScanner`        | `Arc` 自动发现            | `Guice Module.configure()` |
-| **AOP**     | Spring AOP (`@Aspect`)                     | Interceptor Binding   | MethodInterceptor          |
-| **工具丰富度**   | ⭐⭐⭐ 最多                                     | ⭐⭐                    | ⭐                          |
+| 维度           | ddd4j-runtime-spring                       | ddd4j-runtime-quarkus | ddd4j-javalin              |
+|----------------|--------------------------------------------|-----------------------|----------------------------|
+| **DI 容器**    | ApplicationContext                         | Arc (CDI)             | Guice Injector             |
+| **事件发布**   | `ApplicationEventPublisher.publishEvent()` | `Event<T>.fire()`     | Guava `EventBus.post()`    |
+| **上下文入口** | `SpringContext`                            | `ArcContainerProxy`   | `GuiceContext`             |
+| **Bean 扫描**  | `DddClassPathBeanDefinitionScanner`        | `Arc` 自动发现        | `Guice Module.configure()` |
+| **AOP**        | Spring AOP (`@Aspect`)                     | Interceptor Binding   | MethodInterceptor          |
+| **工具丰富度** | ⭐⭐⭐ 最多                                | ⭐⭐                  | ⭐                         |
 
-`ddd4j-runtime-spring` 在三框架中**工具最丰富、集成度最高**（因为 Spring 生态最成熟），但**业务代码**通过 SPI 调用，**与
+`ddd4j-runtime-spring` 在三框架中 **工具最丰富、集成度最高**（因为 Spring 生态最成熟），但 **业务代码**通过 SPI 调用， **与
 Quarkus/Javalin 项目结构相同**——这是 ddd4j 框架无关设计的核心价值。
 
 ---
@@ -399,30 +399,30 @@ Quarkus/Javalin 项目结构相同**——这是 ddd4j 框架无关设计的核�
 
 ### 🔴 P0 阻塞问题
 
-| 序号 | 问题                                                                             | 修复                                           |
-|----|--------------------------------------------------------------------------------|----------------------------------------------|
-| 1  | `SpringDomainEvent` 是冗余基类，业务方不知道该继承哪个                                          | **删除**，统一继承 `DomainEvent<T>`，发布时自动委托给 Spring |
-| 2  | `BasePropertySourcePostProcessor` 158 行重复 Spring Boot 轮子                       | 标记 `@Deprecated` 引导迁移                        |
-| 3  | util 类（I18nKit/MappingKit/BeanKit/BizAssert/WebUtils）与 ddd4j-core/ddd4j-kit 重复 | 删除并统一引用                                      |
+| 序号 | 问题                                                                                 | 修复                                                         |
+|------|--------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| 1    | `SpringDomainEvent` 是冗余基类，业务方不知道该继承哪个                               | **删除**，统一继承 `DomainEvent<T>`，发布时自动委托给 Spring |
+| 2    | `BasePropertySourcePostProcessor` 158 行重复 Spring Boot 轮子                        | 标记 `@Deprecated` 引导迁移                                  |
+| 3    | util 类（I18nKit/MappingKit/BeanKit/BizAssert/WebUtils）与 ddd4j-core/ddd4j-kit 重复 | 删除并统一引用                                               |
 
 ### 🟡 P1 重要改进
 
-| 序号 | 改进                                                                                                          |
-|----|-------------------------------------------------------------------------------------------------------------|
-| 4  | 新增纯 Spring `@EnableDdd4j` 注解（替代业务侧重复 `@Import`）                                                            |
-| 5  | Spring Boot 自动装配、条件 Bean 与配置元数据统一由外部 `ddd4j-boot` 提供                                                   |
-| 6  | Runtime 配置仅使用 Spring Framework 条件与生命周期，不引入 Boot API                                                       |
-| 7  | `SpringContext` 改为"配置优先 + 栈跟踪降级"，移除反射开销                                                                     |
-| 8  | 补齐 `ddd4j-annotation` 缺失的 `@DomainGateway` / `@QueryService`                                                |
+| 序号 | 改进                                                                     |
+|------|--------------------------------------------------------------------------|
+| 4    | 新增纯 Spring `@EnableDdd4j` 注解（替代业务侧重复 `@Import`）            |
+| 5    | Spring Boot 自动装配、条件 Bean 与配置元数据统一由外部 `ddd4j-boot` 提供 |
+| 6    | Runtime 配置仅使用 Spring Framework 条件与生命周期，不引入 Boot API      |
+| 7    | `SpringContext` 改为"配置优先 + 栈跟踪降级"，移除反射开销                |
+| 8    | 补齐 `ddd4j-annotation` 缺失的 `@DomainGateway` / `@QueryService`        |
 
 ### 🟢 P2 锦上添花
 
 | 序号 | 改进                                                                       |
-|----|--------------------------------------------------------------------------|
-| 9  | 补充单元测试（SpringContextTest / SpringDomainEventPublisherTest 等 6 个）         |
-| 10 | Web 类型统一归属 `ddd4j-web-webmvc` / `ddd4j-web-webflux`                    |
-| 11 | Spring Boot 2.x/3.x 迁移指南统一放在外部 `ddd4j-boot`                         |
-| 12 | Boot 完整业务样例统一放在外部 `ddd4j-boot-samples`                            |
+|------|----------------------------------------------------------------------------|
+| 9    | 补充单元测试（SpringContextTest / SpringDomainEventPublisherTest 等 6 个） |
+| 10   | Web 类型统一归属 `ddd4j-web-webmvc` / `ddd4j-web-webflux`                  |
+| 11   | Spring Boot 2.x/3.x 迁移指南统一放在外部 `ddd4j-boot`                      |
+| 12   | Boot 完整业务样例统一放在外部 `ddd4j-boot-samples`                         |
 
 ---
 

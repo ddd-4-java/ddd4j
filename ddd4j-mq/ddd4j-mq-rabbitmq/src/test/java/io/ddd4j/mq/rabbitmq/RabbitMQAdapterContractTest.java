@@ -76,8 +76,16 @@ class RabbitMQAdapterContractTest {
         properties.setDurable(true);
         RabbitMQClient client = new RabbitMQClient(connection);
         MQEventSerialization serialization = new MQEventSerialization() {
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
         };
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties, serialization, null);
         MQEvent event = new MQEvent();
@@ -132,8 +140,16 @@ class RabbitMQAdapterContractTest {
         properties.setExchange("events");
         RabbitMQClient client = new RabbitMQClient(connection);
         MQEventSerialization serialization = new MQEventSerialization() {
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
         };
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties, serialization, null);
         // 池创建时为每个 channel 注册 listener
@@ -173,8 +189,16 @@ class RabbitMQAdapterContractTest {
         props.setProducerChannelPoolSize(poolSize);
         RabbitMQClient client = new RabbitMQClient(connection);
         MQEventSerialization serialization = new MQEventSerialization() {
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
         };
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), props, serialization, null);
 
@@ -227,8 +251,16 @@ class RabbitMQAdapterContractTest {
         RabbitMQClient client = new RabbitMQClient(connection);
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties,
                 new MQEventSerialization() {
-                    @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
-                    @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+                    @Override
+                    public <S, T> T deserialize(S src, Class<T> dist) {
+                        return null;
+                    }
+
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public <T> T serialize(Object src) {
+                        return (T) "{}";
+                    }
                 }, null);
         MQEvent event = new MQEvent();
         event.setTopic("orders");

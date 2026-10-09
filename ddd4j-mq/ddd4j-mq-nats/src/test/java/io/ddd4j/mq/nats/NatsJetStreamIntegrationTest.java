@@ -18,8 +18,10 @@ import io.nats.client.Connection;
 import io.nats.client.JetStreamManagement;
 import io.nats.client.api.PublishAck;
 import io.nats.client.api.StreamConfiguration;
+
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -29,7 +31,9 @@ import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** NATS JetStream 容器轨：验证 ddd4j 配置连接与持久化发布确认。 */
+/**
+ * NATS JetStream 容器轨：验证 ddd4j 配置连接与持久化发布确认。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class NatsJetStreamIntegrationTest {
 

@@ -166,7 +166,9 @@ class DisruptorAdapterContractTest {
         assertEquals(republishedSequence, ringBuffer.getCursor());
     }
 
-    /** 记录真实消费者反序列化后的事件。 */
+    /**
+     * 记录真实消费者反序列化后的事件。
+     */
     public static class RecordingListener {
         private final CountDownLatch delivered = new CountDownLatch(1);
         private final AtomicInteger calls = new AtomicInteger();

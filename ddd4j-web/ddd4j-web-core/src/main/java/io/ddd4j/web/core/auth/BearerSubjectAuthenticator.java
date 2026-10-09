@@ -22,6 +22,7 @@ import io.ddd4j.core.subject.SubjectProvider;
 
 import java.util.Objects;
 import java.util.Optional;
+
 import io.ddd4j.web.core.error.WebStatusException;
 
 /**
@@ -66,8 +67,16 @@ public final class BearerSubjectAuthenticator {
 
     public record Authentication(String token, AuthPrincipal principal, Subject subject) {
 
-        public String getToken() { return token; }
-        public AuthPrincipal getPrincipal() { return principal; }
-        public Subject getSubject() { return subject; }
+        public String getToken() {
+            return token;
+        }
+
+        public AuthPrincipal getPrincipal() {
+            return principal;
+        }
+
+        public Subject getSubject() {
+            return subject;
+        }
     }
 }

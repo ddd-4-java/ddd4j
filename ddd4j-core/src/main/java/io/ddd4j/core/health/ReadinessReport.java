@@ -59,10 +59,10 @@ public record ReadinessReport(boolean ready, List<ReadinessResult> results) {
     }
 
     public List<ReadinessResult> getResults() {
-            return results;
-        }
+        return results;
+    }
 
     public boolean isReady() {
-            return ready;
-        }
+        return ready;
+    }
 }

@@ -69,7 +69,9 @@ public class DisruptorMQClient implements MQClient {
      */
     private final List<RegisteredListener> listeners = new CopyOnWriteArrayList<>();
 
-    /** 保留原监听器和注册时按配置解析的有效路由，避免修改共享监听器对象。 */
+    /**
+     * 保留原监听器和注册时按配置解析的有效路由，避免修改共享监听器对象。
+     */
     @RequiredArgsConstructor
     private static final class RegisteredListener {
         private final MQListener listener;
@@ -115,8 +117,15 @@ public class DisruptorMQClient implements MQClient {
         return "disruptor";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     // ========================= 消费者 =========================
 
@@ -222,7 +231,11 @@ public class DisruptorMQClient implements MQClient {
      */
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
     private static void shutdown(Disruptor<DisruptorEvent> disruptor) {

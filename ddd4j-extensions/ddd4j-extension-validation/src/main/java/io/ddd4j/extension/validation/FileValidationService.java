@@ -36,7 +36,7 @@ public final class FileValidationService {
     }
 
     public FileValidationService(FileTypeDetector fileTypeDetector,
-            Collection<FileContentCheckProvider> contentCheckProviders) {
+                                 Collection<FileContentCheckProvider> contentCheckProviders) {
         this.fileTypeDetector = Objects.requireNonNull(fileTypeDetector, "fileTypeDetector must not be null");
         this.contentCheckProviders = ListSupport.copyOf(contentCheckProviders);
     }
@@ -44,7 +44,7 @@ public final class FileValidationService {
     /**
      * 按策略校验单个文件。
      *
-     * @param file 文件，可以为空
+     * @param file   文件，可以为空
      * @param policy 校验策略
      * @return 校验结果
      */
@@ -98,7 +98,7 @@ public final class FileValidationService {
     /**
      * 校验失败时抛出统一异常。
      *
-     * @param file 文件
+     * @param file   文件
      * @param policy 校验策略
      * @return 原文件
      */
