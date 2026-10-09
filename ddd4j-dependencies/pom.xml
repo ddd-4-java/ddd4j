@@ -7752,9 +7752,9 @@
                 <artifactId>pgvector</artifactId>
                 <version>${pgvector.version}</version>
             </dependency>
-                <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-core -->
-                <!-- Pi4J Core：Raspberry Pi GPIO/I2C/SPI/UART 硬件访问的 Java 库核心。 -->
-                <dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.pi4j/pi4j-core -->
+            <!-- Pi4J Core：Raspberry Pi GPIO/I2C/SPI/UART 硬件访问的 Java 库核心。 -->
+            <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-core</artifactId>
                 <version>${pi4j.version}</version>
@@ -10389,7 +10389,7 @@
                 <artifactId>zxing-extension</artifactId>
                 <version>${easy4j-zxing-extension.version}</version>
             </dependency>
-        
+
             <!-- 以下基础依赖从 ddd4j-boot-dependencies 迁入（非 Spring Boot starter） -->
             <dependency>
                 <groupId>com.baomidou</groupId>

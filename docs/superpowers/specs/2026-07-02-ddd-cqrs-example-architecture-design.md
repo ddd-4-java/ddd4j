@@ -8,14 +8,14 @@
 
 剖析 ddd-cqrs-4-java-example（fuinorg 出品）的架构，作为 ddd4j 实现 Quarkus 和 Spring Boot 适配层的最佳参考实现。
 
-| 维度 | 数据 |
-|------|------|
-| 核心价值 | 完整微服务架构的两种实现范式 |
-| 领域模型 | Person 聚合根（创建/删除/查询） |
+| 维度     | 数据                                     |
+|----------|------------------------------------------|
+| 核心价值 | 完整微服务架构的两种实现范式             |
+| 领域模型 | Person 聚合根（创建/删除/查询）          |
 | 事件存储 | EventStoreDB / KurrentDB（通过 esc-api） |
-| 写侧技术 | 命令路由 → 聚合根 → EventStore |
-| 读侧技术 | 定时投影 → JPA 视图 → REST 查询 |
-| 框架对比 | Quarkus（CDI） vs Spring Boot（MVC） |
+| 写侧技术 | 命令路由 → 聚合根 → EventStore           |
+| 读侧技术 | 定时投影 → JPA 视图 → REST 查询          |
+| 框架对比 | Quarkus（CDI） vs Spring Boot（MVC）     |
 
 ## 2. 项目定位
 

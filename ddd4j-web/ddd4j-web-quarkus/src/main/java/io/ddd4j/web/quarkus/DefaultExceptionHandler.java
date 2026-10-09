@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
-/** Maps Quarkus request failures to the shared ddd4j HTTP error contract. */
+/**
+ * Maps Quarkus request failures to the shared ddd4j HTTP error contract.
+ */
 @Provider
 @Slf4j
 public class DefaultExceptionHandler implements ExceptionMapper<RuntimeException> {

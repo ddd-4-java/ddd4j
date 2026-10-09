@@ -123,7 +123,8 @@
                                         <exclude>org.mybatis:mybatis-spring</exclude>
                                         <exclude>com.baomidou:mybatis-plus-spring</exclude>
                                     </excludes>
-                                    <message>ddd4j-data-mybatisplus 必须保持 Spring 无关，请使用独立的 Spring 适配模块。</message>
+                                    <message>ddd4j-data-mybatisplus 必须保持 Spring 无关，请使用独立的 Spring 适配模块。
+                                    </message>
                                 </bannedDependencies>
                             </rules>
                         </configuration>

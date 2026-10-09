@@ -9,7 +9,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-/** 稳定的订单 HTTP 表示，避免领域模型依赖 Jackson。 */
+/**
+ * 稳定的订单 HTTP 表示，避免领域模型依赖 Jackson。
+ */
 public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,
                             OrderStatus status, BigDecimal totalAmount, String currency,
                             List<OrderLineResponse> lines) {
@@ -23,7 +25,9 @@ public record OrderResponse(String id, String orderNo, String buyerId, String bu
                 .toList());
     }
 
-    /** 订单行的稳定 HTTP 表示。 */
+    /**
+     * 订单行的稳定 HTTP 表示。
+     */
     public record OrderLineResponse(String id, String goodsId, String goodsName, int quantity,
                                     BigDecimal unitPrice, String currency, BigDecimal subtotal) {
 

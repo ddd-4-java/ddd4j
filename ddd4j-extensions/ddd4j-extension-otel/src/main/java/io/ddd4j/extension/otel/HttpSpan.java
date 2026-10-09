@@ -47,7 +47,9 @@ import java.util.Objects;
  */
 public final class HttpSpan {
 
-    /** 标准化 HTTP 属性键（遵循 OTel 语义约定）。 */
+    /**
+     * 标准化 HTTP 属性键（遵循 OTel 语义约定）。
+     */
     public static final AttributeKey<String> ATTR_HTTP_METHOD = AttributeKey.stringKey("http.request.method");
     public static final AttributeKey<String> ATTR_HTTP_ROUTE = AttributeKey.stringKey("http.route");
     public static final AttributeKey<String> ATTR_HTTP_STATUS = AttributeKey.stringKey("http.response.status_code");
@@ -56,7 +58,9 @@ public final class HttpSpan {
     public static final AttributeKey<String> ATTR_USER_AGENT = AttributeKey.stringKey("user_agent.original");
     public static final AttributeKey<String> ATTR_CLIENT_IP = AttributeKey.stringKey("client.address");
 
-    /** 业务级属性。 */
+    /**
+     * 业务级属性。
+     */
     public static final AttributeKey<String> ATTR_DDD4J_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
 
@@ -87,9 +91,9 @@ public final class HttpSpan {
     /**
      * 创建 SERVER span。
      *
-     * @param method   HTTP 方法（GET/POST/...）
-     * @param route    路由模板（如 /api/users/{id}）
-     * @param parent   上游 Context（来自 extractContext）
+     * @param method HTTP 方法（GET/POST/...）
+     * @param route  路由模板（如 /api/users/{id}）
+     * @param parent 上游 Context（来自 extractContext）
      * @return 已开启的 Span
      */
     public static Span serverSpan(String method, String route, Context parent) {

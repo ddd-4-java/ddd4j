@@ -66,7 +66,7 @@ public class WebKit {
      * 根据名称获取 Cookie。
      *
      * @param request 当前请求
-     * @param name Cookie 名称
+     * @param name    Cookie 名称
      * @return 匹配的 Cookie，不存在时返回 null
      */
     public static Cookie getCookie(HttpServletRequest request, String name) {
