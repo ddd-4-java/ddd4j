@@ -32,9 +32,9 @@ public final class CacheSpan {
     /**
      * 包装缓存读操作。
      *
-     * @param biz      业务标识（如 "userCache"）
-     * @param backend  后端标识（如 "redis"、"caffeine"）
-     * @param supplier 缓存读操作
+     * @param biz       业务标识（如 "userCache"）
+     * @param backend   后端标识（如 "redis"、"caffeine"）
+     * @param supplier  缓存读操作
      * @param missCheck 未命中检查（true 表示 cache miss）
      * @return supplier 的返回值
      */

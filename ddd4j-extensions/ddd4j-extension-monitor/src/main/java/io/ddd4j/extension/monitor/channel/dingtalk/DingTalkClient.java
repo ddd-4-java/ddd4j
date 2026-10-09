@@ -69,17 +69,23 @@ public class DingTalkClient {
         this.baseUrl = baseUrl;
     }
 
-    /** @return 配置的 access_token */
+    /**
+     * @return 配置的 access_token
+     */
     public String accessToken() {
         return accessToken;
     }
 
-    /** @return 配置的加签密钥 */
+    /**
+     * @return 配置的加签密钥
+     */
     public String secret() {
         return secret;
     }
 
-    /** @return 当前生效的 webhook 基础地址（含 {@code ?access_token=}） */
+    /**
+     * @return 当前生效的 webhook 基础地址（含 {@code ?access_token=}）
+     */
     public String baseUrl() {
         return baseUrl;
     }

@@ -68,7 +68,9 @@
                                         <exclude>org.springframework:*</exclude>
                                         <exclude>org.springframework.*:*</exclude>
                                     </excludes>
-                                    <message>ddd4j-data-jpa 必须保持 Spring 无关，Spring Data JPA 集成应由独立适配模块提供。</message>
+                                    <message>ddd4j-data-jpa 必须保持 Spring 无关，Spring Data JPA
+                                        集成应由独立适配模块提供。
+                                    </message>
                                 </bannedDependencies>
                             </rules>
                         </configuration>

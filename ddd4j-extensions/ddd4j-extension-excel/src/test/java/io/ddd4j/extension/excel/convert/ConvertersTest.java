@@ -101,16 +101,18 @@ class ConvertersTest {
         ReadCellData<String> rcd = new ReadCellData<>();
         rcd.setStringValue("UNKNOWN");
         org.assertj.core.api.Assertions.assertThatThrownBy(() ->
-                c.convertToJavaData(rcd, null, new GlobalConfiguration()))
+                        c.convertToJavaData(rcd, null, new GlobalConfiguration()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    enum TestEnum { ACTIVE, INACTIVE, PENDING }
+    enum TestEnum {ACTIVE, INACTIVE, PENDING}
 
     /**
      * 用户自定义枚举 converter 子类（典型用法样板）。
      */
     static class TestEnumConverter extends EnumNameConverter<TestEnum> {
-        TestEnumConverter() { super(TestEnum.class); }
+        TestEnumConverter() {
+            super(TestEnum.class);
+        }
     }
 }

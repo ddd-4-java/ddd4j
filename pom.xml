@@ -572,16 +572,22 @@
                                 </includes>
                                 <onlyModified>true</onlyModified>
                                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
-                                <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
-                                <breakBuildOnSourceIncompatibleModifications>false</breakBuildOnSourceIncompatibleModifications>
+                                <breakBuildOnBinaryIncompatibleModifications>true
+                                </breakBuildOnBinaryIncompatibleModifications>
+                                <breakBuildOnSourceIncompatibleModifications>false
+                                </breakBuildOnSourceIncompatibleModifications>
                                 <ignoreMissingClasses>false</ignoreMissingClasses>
                                 <!-- Lombok 是编译期注解；其 SCL/Ant/JDT 实现不属于 ddd4j 的公开 API。 -->
-                                    <ignoreMissingClassesByRegularExpressions>
-                                        <ignoreMissingClassesByRegularExpression>lombok\..*</ignoreMissingClassesByRegularExpression>
-                                        <ignoreMissingClassesByRegularExpression>org\.apache\.tools\.ant\..*</ignoreMissingClassesByRegularExpression>
-                                        <ignoreMissingClassesByRegularExpression>org\.eclipse\.core\..*</ignoreMissingClassesByRegularExpression>
-                                        <ignoreMissingClassesByRegularExpression>org\.eclipse\.jdt\..*</ignoreMissingClassesByRegularExpression>
-                                    </ignoreMissingClassesByRegularExpressions>
+                                <ignoreMissingClassesByRegularExpressions>
+                                    <ignoreMissingClassesByRegularExpression>lombok\..*
+                                    </ignoreMissingClassesByRegularExpression>
+                                    <ignoreMissingClassesByRegularExpression>org\.apache\.tools\.ant\..*
+                                    </ignoreMissingClassesByRegularExpression>
+                                    <ignoreMissingClassesByRegularExpression>org\.eclipse\.core\..*
+                                    </ignoreMissingClassesByRegularExpression>
+                                    <ignoreMissingClassesByRegularExpression>org\.eclipse\.jdt\..*
+                                    </ignoreMissingClassesByRegularExpression>
+                                </ignoreMissingClassesByRegularExpressions>
                             </parameter>
                         </configuration>
                         <executions>

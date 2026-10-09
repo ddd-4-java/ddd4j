@@ -55,7 +55,7 @@ public final class Ddd4jMicronautWebFilter {
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? Optional.of(new WebIdempotencyLifecycle(
-                        new CacheIdempotencyGuard(config.getIdempotencyCacheName()), config.getIdempotencyTtl()))
+                new CacheIdempotencyGuard(config.getIdempotencyCacheName()), config.getIdempotencyTtl()))
                 : Optional.empty();
     }
 
@@ -69,8 +69,8 @@ public final class Ddd4jMicronautWebFilter {
     @RequestFilter
     @ExecuteOn(TaskExecutors.BLOCKING)
     public Publisher<MutableHttpResponse<?>> filter(HttpRequest<?> request,
-                                                     FilterContinuation<Publisher<MutableHttpResponse<?>>> continuation,
-                                                     MutablePropagatedContext propagatedContext) {
+                                                    FilterContinuation<Publisher<MutableHttpResponse<?>>> continuation,
+                                                    MutablePropagatedContext propagatedContext) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
         Map<String, String> headers = extractRequestHeaders(request);
         Object span = WebOtelSupport.startServerSpan(

@@ -62,7 +62,7 @@ public record PropertyRef(PropertySpace space, Class<?> ownerType, String proper
     }
 
     private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
-                                                          Class<?> expectedType) {
+                                                         Class<?> expectedType) {
         return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
                 + " is incompatible with repository type " + expectedType.getName());
     }

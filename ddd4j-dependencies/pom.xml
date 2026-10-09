@@ -741,7 +741,7 @@
         <zookeeper.version>3.9.5</zookeeper.version>
         <zstd-jni.version>1.5.7-11</zstd-jni.version>
         <zxing.version>3.5.4</zxing.version>
-    
+
         <pi4j.version>4.0.2</pi4j.version>
     </properties>
 
@@ -8670,7 +8670,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-                <dependency>
+            <dependency>
                 <groupId>com.pi4j</groupId>
                 <artifactId>pi4j-core</artifactId>
                 <version>${pi4j.version}</version>
@@ -8720,7 +8720,7 @@
                 <artifactId>pi4j-test</artifactId>
                 <version>${pi4j.version}</version>
             </dependency>
-    </dependencies>
+        </dependencies>
     </dependencyManagement>
 
     <dependencies>
@@ -8810,7 +8810,7 @@
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>${maven-checkstyle-plugin.version}</version>
                 </plugin>
-<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>

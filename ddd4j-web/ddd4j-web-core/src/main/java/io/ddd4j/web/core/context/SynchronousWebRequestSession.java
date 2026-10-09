@@ -5,6 +5,7 @@ import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
 
 import java.util.Objects;
 import java.util.Optional;
+
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 

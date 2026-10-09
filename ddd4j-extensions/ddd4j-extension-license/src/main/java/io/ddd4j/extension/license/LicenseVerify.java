@@ -35,10 +35,10 @@ public class LicenseVerify {
     /**
      * 创建许可证校验器。
      *
-     * @param subject 许可证 subject
-     * @param publicAlias 公钥别称
-     * @param storePass 公钥库密码
-     * @param licensePath 许可证文件路径
+     * @param subject             许可证 subject
+     * @param publicAlias         公钥别称
+     * @param storePass           公钥库密码
+     * @param licensePath         许可证文件路径
      * @param publicKeysStorePath 公钥库路径
      */
     public LicenseVerify(String subject, String publicAlias, String storePass, String licensePath, String publicKeysStorePath) {

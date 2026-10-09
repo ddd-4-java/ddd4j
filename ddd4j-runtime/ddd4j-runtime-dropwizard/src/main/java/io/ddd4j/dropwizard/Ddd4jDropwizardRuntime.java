@@ -24,7 +24,7 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
     private final RuntimeReadinessRegistry readinessRegistry;
 
     public Ddd4jDropwizardRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                                 I18nProvider i18nProvider, CommandBus commandBus) {
+                                  I18nProvider i18nProvider, CommandBus commandBus) {
         this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
