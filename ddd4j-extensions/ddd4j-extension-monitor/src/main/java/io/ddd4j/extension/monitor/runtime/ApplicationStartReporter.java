@@ -51,7 +51,9 @@ public class ApplicationStartReporter {
         this.appName = appName;
     }
 
-    /** @return 注入的应用名称（用于启动通告文案） */
+    /**
+     * @return 注入的应用名称（用于启动通告文案）
+     */
     public String appName() {
         return appName;
     }

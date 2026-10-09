@@ -20,6 +20,7 @@ import io.ddd4j.core.ddd.event.EntityId;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.DeliveryOptions;
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;

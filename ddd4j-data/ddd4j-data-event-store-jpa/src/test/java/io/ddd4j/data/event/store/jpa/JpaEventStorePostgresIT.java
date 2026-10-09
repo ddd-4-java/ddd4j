@@ -10,7 +10,9 @@ import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+
 import java.util.List;
+
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -23,7 +25,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** PostgreSQL 容器轨：验证 JPA EventStore 的真实 DDL 与 CLOB 读回。 */
+/**
+ * PostgreSQL 容器轨：验证 JPA EventStore 的真实 DDL 与 CLOB 读回。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class JpaEventStorePostgresIT {
 

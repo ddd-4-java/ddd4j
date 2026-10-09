@@ -28,16 +28,16 @@ import java.util.Objects;
 public class Ddd4jTenantContext {
 
     public void setCurrentTenantId(Object tenantId) {
-		if (Objects.isNull(tenantId)) {
-			clear();
-			return;
-		}
-		ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
-	}
+        if (Objects.isNull(tenantId)) {
+            clear();
+            return;
+        }
+        ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
+    }
 
     public Object getCurrentTenantId() {
-		return ThreadContext.get(ContextConstants.TENANT_ID);
-	}
+        return ThreadContext.get(ContextConstants.TENANT_ID);
+    }
 
     public void clear() {
         ThreadContext.remove(ContextConstants.TENANT_ID);

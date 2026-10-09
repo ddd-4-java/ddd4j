@@ -38,10 +38,14 @@ public class EventSourcingOrderRepository implements OrderRepository {
 
     private final InMemoryEventStore eventStore;
 
-    /** orderNo -> aggregateId 映射（幂等性检查）。 */
+    /**
+     * orderNo -> aggregateId 映射（幂等性检查）。
+     */
     private final Map<String, String> orderNoIndex = new ConcurrentHashMap<>();
 
-    /** orderId -> Order 缓存（简化实现，避免从事件重建）。 */
+    /**
+     * orderId -> Order 缓存（简化实现，避免从事件重建）。
+     */
     private final Map<String, Order> orderCache = new ConcurrentHashMap<>();
 
     public EventSourcingOrderRepository(InMemoryEventStore eventStore) {

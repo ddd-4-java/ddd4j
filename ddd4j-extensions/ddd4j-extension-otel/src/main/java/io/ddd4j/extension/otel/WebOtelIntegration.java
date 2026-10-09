@@ -65,9 +65,9 @@ public final class WebOtelIntegration {
     /**
      * 提取上游 TraceContext 并创建 SERVER span。
      *
-     * @param method     HTTP 方法（GET/POST/...）
-     * @param route      路由模板
-     * @param headers    请求头（用于提取 traceparent）
+     * @param method  HTTP 方法（GET/POST/...）
+     * @param route   路由模板
+     * @param headers 请求头（用于提取 traceparent）
      * @return 已开启的 Span（OTel 未配置时返回 invalid span，noop）
      */
     public static Span startServerSpan(String method, String route, Map<String, String> headers) {

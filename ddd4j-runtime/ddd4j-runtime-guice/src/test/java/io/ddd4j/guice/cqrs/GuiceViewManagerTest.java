@@ -72,14 +72,16 @@ class GuiceViewManagerTest {
     @Test
     void scheduleWithEmptyCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.schedule("view-2", "", () -> {});
+            manager.schedule("view-2", "", () -> {
+            });
         });
     }
 
     @Test
     void scheduleWithInvalidCronThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.schedule("view-3", "0/not-a-number", () -> {});
+            manager.schedule("view-3", "0/not-a-number", () -> {
+            });
         });
     }
 
@@ -102,7 +104,8 @@ class GuiceViewManagerTest {
     @Test
     void scheduleWithUnsupportedCronFormatThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.schedule("view-6", "0 0 2 * * ?", () -> {});
+            manager.schedule("view-6", "0 0 2 * * ?", () -> {
+            });
         });
     }
 
@@ -123,10 +126,12 @@ class GuiceViewManagerTest {
     @Test
     void scheduleAtFixedRateWithInvalidIntervalThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.scheduleAtFixedRate("view-8", 0, () -> {});
+            manager.scheduleAtFixedRate("view-8", 0, () -> {
+            });
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            manager.scheduleAtFixedRate("view-9", -1, () -> {});
+            manager.scheduleAtFixedRate("view-9", -1, () -> {
+            });
         });
     }
 

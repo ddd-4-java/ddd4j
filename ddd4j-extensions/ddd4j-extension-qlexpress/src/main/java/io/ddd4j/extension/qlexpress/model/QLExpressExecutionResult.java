@@ -22,7 +22,7 @@ package io.ddd4j.extension.qlexpress.model;
  * @param errorCode    异常类型
  * @param errorMessage 异常消息
  * @param elapsedNanos 执行耗时，单位纳秒
- * @param <T>           结果类型
+ * @param <T>          结果类型
  */
 public record QLExpressExecutionResult<T>(boolean success, T value, String errorCode,
                                           String errorMessage, long elapsedNanos) {

@@ -11,37 +11,37 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class Ddd4jTenantContextTest {
 
-	private final Ddd4jTenantContext context = new Ddd4jTenantContext();
+    private final Ddd4jTenantContext context = new Ddd4jTenantContext();
 
-	@AfterEach
-	void tearDown() {
-		ThreadContext.clear();
-	}
+    @AfterEach
+    void tearDown() {
+        ThreadContext.clear();
+    }
 
-	@Test
-	void shouldUseDdd4jThreadContextAsTenantSource() {
-		ThreadContext.set(ContextConstants.TENANT_ID, "tenant-a");
+    @Test
+    void shouldUseDdd4jThreadContextAsTenantSource() {
+        ThreadContext.set(ContextConstants.TENANT_ID, "tenant-a");
 
-		assertEquals("tenant-a", context.getCurrentTenantId());
-	}
+        assertEquals("tenant-a", context.getCurrentTenantId());
+    }
 
-	@Test
-	void shouldWriteAndClearDdd4jThreadContext() {
-		context.setCurrentTenantId(1001L);
-		assertEquals(Long.valueOf(1001L), ThreadContext.get(ContextConstants.TENANT_ID));
+    @Test
+    void shouldWriteAndClearDdd4jThreadContext() {
+        context.setCurrentTenantId(1001L);
+        assertEquals(Long.valueOf(1001L), ThreadContext.get(ContextConstants.TENANT_ID));
 
-		context.clear();
-		assertNull(ThreadContext.get(ContextConstants.TENANT_ID));
-	}
+        context.clear();
+        assertNull(ThreadContext.get(ContextConstants.TENANT_ID));
+    }
 
-	@Test
-	void shouldRestoreDdd4jTenantAfterNestedScope() {
-		context.setCurrentTenantId("tenant-a");
+    @Test
+    void shouldRestoreDdd4jTenantAfterNestedScope() {
+        context.setCurrentTenantId("tenant-a");
 
         try (Ddd4jTenantContext.Scope ignored = context.open("tenant-b")) {
-			assertEquals("tenant-b", context.getCurrentTenantId());
-		}
+            assertEquals("tenant-b", context.getCurrentTenantId());
+        }
 
-		assertEquals("tenant-a", context.getCurrentTenantId());
-	}
+        assertEquals("tenant-a", context.getCurrentTenantId());
+    }
 }

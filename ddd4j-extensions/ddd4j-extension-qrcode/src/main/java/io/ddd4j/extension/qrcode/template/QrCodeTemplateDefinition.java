@@ -20,7 +20,9 @@ import lombok.Getter;
 
 import java.util.Objects;
 
-/** Named reusable outer-frame template. */
+/**
+ * Named reusable outer-frame template.
+ */
 @Getter
 public final class QrCodeTemplateDefinition {
 

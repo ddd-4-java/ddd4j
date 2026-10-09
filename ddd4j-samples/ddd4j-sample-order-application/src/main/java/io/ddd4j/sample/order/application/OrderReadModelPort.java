@@ -21,6 +21,8 @@ import java.util.Optional;
 
 public interface OrderReadModelPort {
     void project(OrderReadModel order);
+
     Optional<OrderReadModel> findProjectionById(String orderId);
+
     List<OrderReadModel> query(OrderQuery query);
 }
