@@ -126,8 +126,15 @@ public class RedisStreamMQClient implements MQClient {
         return "redisStream";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     /**
      * Redis Stream 默认拼接符 {@code :}（Redis 命名习惯）。
@@ -293,7 +300,9 @@ public class RedisStreamMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             consumerExecutors.clear();
             ownedConsumerClients.clear();
             lazyJedis = null;

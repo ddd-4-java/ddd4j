@@ -102,8 +102,15 @@ public class SqsMQClient implements MQClient {
         return "sqs";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     /**
      * SQS 无原生 tag selector 机制，tag 过滤只能在应用层用 {@link TagMatcher#match} 完成
@@ -251,7 +258,9 @@ public class SqsMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             pollers.clear();
             startupStatus.stopped();
         }

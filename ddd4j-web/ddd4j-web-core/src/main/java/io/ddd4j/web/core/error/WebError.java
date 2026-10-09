@@ -28,18 +28,18 @@ public record WebError(int status, Serializable code, String message, Object dat
     }
 
     public Serializable getCode() {
-            return code;
-        }
+        return code;
+    }
 
     public Object getData() {
-            return data;
-        }
+        return data;
+    }
 
     public String getMessage() {
-            return message;
-        }
+        return message;
+    }
 
     public int getStatus() {
-            return status;
-        }
+        return status;
+    }
 }

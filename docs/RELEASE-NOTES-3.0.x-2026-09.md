@@ -7,6 +7,7 @@
 ## 从 2.0.x 吸收的能力（本次合并进入 3.0.x）
 
 ### 新增能力
+
 - **CQRS 命令侧**：`ddd4j-core` 内置 @CommandHandler 发现 + CommandRegistry，配套
   spring / quarkus / micronaut / vertx / helidon / javalin / dropwizard 七容器适配模块
   （SpringCommandBus 等，各带 `*CommandBusIT` 集成测试）。
@@ -15,6 +16,7 @@
   容器调度装配（SmartLifecycle / CDI ScheduledExecutorService / BeanContext 等）。
 
 ### 修复与统一
+
 - **javalin samples（4 个）**：Jackson 3 HTTP 层 + `jackson-annotations:2.22` 显式钉版，
   根治三时代空 body bug（365/365 测试绿）。
 - **BOM**：`debezium-bom` 压版导致的 junit/mockito 混版归一（6.1.0 / 5.23.0 显式管理条目）；
@@ -32,20 +34,20 @@
 
 ## 依赖版本线（终态）
 
-| 组件 | 3.0.x（本线） | 2.0.x | 1.0.x（EOL） |
-|---|---|---|---|
-| Java | 21 | 17 | 8 |
-| Jackson | tools.jackson 3.2.1 | com.fasterxml 2.22.2 | 2.22.2 |
-| Spring Framework | 7.0.8 | 6.2.19 | 5.3.39（豁免） |
-| Spring Security | 7.0.6 | 6.5.11 | 5.8.16 |
-| Javalin / Jetty | 7.2.2 / 12.1.8 | 7.2.2 / 12.1.8 | — |
-| junit / mockito | 6.1.0 / 5.23.0 | 同左 | 5.11.4 / 5.20.0* |
+| 组件             | 3.0.x（本线）       | 2.0.x                | 1.0.x（EOL）     |
+|------------------|---------------------|----------------------|------------------|
+| Java             | 21                  | 17                   | 8                |
+| Jackson          | tools.jackson 3.2.1 | com.fasterxml 2.22.2 | 2.22.2           |
+| Spring Framework | 7.0.8               | 6.2.19               | 5.3.39（豁免）   |
+| Spring Security  | 7.0.6               | 6.5.11               | 5.8.16           |
+| Javalin / Jetty  | 7.2.2 / 12.1.8      | 7.2.2 / 12.1.8       | —                |
+| junit / mockito  | 6.1.0 / 5.23.0      | 同左                 | 5.11.4 / 5.20.0* |
 
 \* mockito 5.20 需 Java 11+，1.0.x 基线遗留，随 EOL 冻结。
 
 ## 验证
 
-- 全 reactor `mvn install`：**118 模块 BUILD SUCCESS**；
+- 全 reactor `mvn install`： **118 模块 BUILD SUCCESS**；
 - 关键测试轨全绿：core 335、jdbi 23（含 PG 容器 IT）、javalin samples 365、
   esdb 5 + 容器 IT、metrics 10、4 个 `-cqrs` 样例；
 - 合并冲突 42 文件全部按预演策略解决（报告留档），StrPool 等隐性冲突人工复核。

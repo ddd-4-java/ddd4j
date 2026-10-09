@@ -89,7 +89,7 @@ public class LicenseKit {
      * @return LicenseKit 实例
      */
     public static LicenseKit of(String subject, String publicAlias, String storePass,
-                                    String licensePath, String publicKeysStorePath) {
+                                String licensePath, String publicKeysStorePath) {
         LicenseProperties props = new LicenseProperties();
         props.setSubject(subject);
         props.setPublicAlias(publicAlias);
@@ -116,14 +116,14 @@ public class LicenseKit {
     /**
      * 便捷重载：用默认参数生成证书。
      *
-     * @param subject             证书 subject
-     * @param privateAlias        私钥别称
-     * @param keyPass             私钥密码
-     * @param storePass           私钥库密码
-     * @param licensePath         {@code .lic} 输出路径
+     * @param subject              证书 subject
+     * @param privateAlias         私钥别称
+     * @param keyPass              私钥密码
+     * @param storePass            私钥库密码
+     * @param licensePath          {@code .lic} 输出路径
      * @param privateKeysStorePath 私钥库路径
-     * @param expiryTime          失效时间
-     * @param extra               附加校验信息（可 null）
+     * @param expiryTime           失效时间
+     * @param extra                附加校验信息（可 null）
      * @return true 表示生成成功
      */
     public boolean generate(String subject, String privateAlias, String keyPass, String storePass,

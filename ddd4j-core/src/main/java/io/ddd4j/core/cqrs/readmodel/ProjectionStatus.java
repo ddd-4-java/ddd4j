@@ -70,15 +70,27 @@ public record ProjectionStatus(
         return new ProjectionStatus(streamId, 0, running, null, 0, null);
     }
 
-    public String getLastError() { return lastError; }
+    public String getLastError() {
+        return lastError;
+    }
 
-    public int getLastEventCount() { return lastEventCount; }
+    public int getLastEventCount() {
+        return lastEventCount;
+    }
 
-    public Instant getLastRunAt() { return lastRunAt; }
+    public Instant getLastRunAt() {
+        return lastRunAt;
+    }
 
-    public long getNextEventNumber() { return nextEventNumber; }
+    public long getNextEventNumber() {
+        return nextEventNumber;
+    }
 
-    public String getStreamId() { return streamId; }
+    public String getStreamId() {
+        return streamId;
+    }
 
-    public boolean isRunning() { return running; }
+    public boolean isRunning() {
+        return running;
+    }
 }

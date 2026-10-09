@@ -90,8 +90,15 @@ public class TdmqMQClient implements MQClient {
         return "tdmq";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     // ========================= 生产者 =========================
 
@@ -183,7 +190,9 @@ public class TdmqMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             subscriptions.clear();
             topicSubscribers.clear();
             startupStatus.stopped();

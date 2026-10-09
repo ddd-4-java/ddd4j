@@ -78,8 +78,15 @@ public class NatsMQClient implements MQClient {
         return "nats";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     /**
      * NATS 无原生 broker-side tag selector，仅 subject 通配 → 强制应用层 {@link TagMatcher} 过滤。
@@ -204,7 +211,11 @@ public class NatsMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
     private static void drainConnection(Connection connection) {
@@ -216,7 +227,9 @@ public class NatsMQClient implements MQClient {
     }
 
     private static void closeConnection(Connection connection) {
-        try { connection.close(); } catch (InterruptedException exception) {
+        try {
+            connection.close();
+        } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Close NATS connection interrupted", exception);
         }

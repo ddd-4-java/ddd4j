@@ -22,7 +22,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** 仅供 PostgreSQL 事务原子性集成测试使用的 Outbox 实体。 */
+/**
+ * 仅供 PostgreSQL 事务原子性集成测试使用的 Outbox 实体。
+ */
 @Getter
 @Setter
 @NoArgsConstructor

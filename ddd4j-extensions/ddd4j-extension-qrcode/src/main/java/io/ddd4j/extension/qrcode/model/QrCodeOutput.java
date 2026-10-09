@@ -19,7 +19,9 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Objects;
 
-/** 二维码 PNG 输出。 */
+/**
+ * 二维码 PNG 输出。
+ */
 @Getter
 public final class QrCodeOutput {
 
