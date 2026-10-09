@@ -15,6 +15,7 @@
 package io.ddd4j.core.ddd.event;
 
 import java.util.Collections;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.kit.lang.StrKit;

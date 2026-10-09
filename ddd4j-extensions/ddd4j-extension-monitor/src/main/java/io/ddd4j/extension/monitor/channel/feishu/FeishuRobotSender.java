@@ -15,6 +15,7 @@
 package io.ddd4j.extension.monitor.channel.feishu;
 
 import java.util.Collections;
+
 import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.kit.lang.JsonKit;
 import lombok.Data;
@@ -48,7 +49,7 @@ public class FeishuRobotSender implements Sender {
 
     /**
      * @param webhookUrl 飞书机器人 webhook 完整地址（含 hook token）
-     * @param secret      加签密钥（无则置 null 或空字符串）
+     * @param secret     加签密钥（无则置 null 或空字符串）
      */
     public FeishuRobotSender(String webhookUrl, String secret) {
         this.client = new FeishuClient(webhookUrl, secret);

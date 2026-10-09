@@ -21,4 +21,4 @@ package io.ddd4j.core.cqrs.query;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-public enum PropertySpace { DOMAIN, PERSISTENCE }
+public enum PropertySpace {DOMAIN, PERSISTENCE}

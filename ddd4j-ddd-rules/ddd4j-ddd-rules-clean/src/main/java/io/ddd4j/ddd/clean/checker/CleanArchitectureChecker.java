@@ -17,6 +17,7 @@ package io.ddd4j.ddd.clean.checker;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;

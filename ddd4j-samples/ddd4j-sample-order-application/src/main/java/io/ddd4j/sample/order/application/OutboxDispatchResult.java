@@ -21,7 +21,7 @@ import lombok.Value;
  *
  * @param attempted 已尝试消息数
  * @param published 已确认消息数
- * @param failed 保留重试的失败消息数
+ * @param failed    保留重试的失败消息数
  */
 @Value
 public class OutboxDispatchResult {
@@ -29,7 +29,15 @@ public class OutboxDispatchResult {
     int published;
     int failed;
 
-    public int attempted() { return attempted; }
-    public int published() { return published; }
-    public int failed() { return failed; }
+    public int attempted() {
+        return attempted;
+    }
+
+    public int published() {
+        return published;
+    }
+
+    public int failed() {
+        return failed;
+    }
 }

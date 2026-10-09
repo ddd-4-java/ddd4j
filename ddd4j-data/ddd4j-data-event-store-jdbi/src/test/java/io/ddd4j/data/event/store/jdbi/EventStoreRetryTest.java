@@ -28,7 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EventStoreRetryTest {
 
-    /** 桩 Sleeper：仅记录调用次数与延迟，不真正睡眠。 */
+    /**
+     * 桩 Sleeper：仅记录调用次数与延迟，不真正睡眠。
+     */
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {
         final List<Long> calls = new ArrayList<Long>();
 

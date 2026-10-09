@@ -16,6 +16,7 @@ package io.ddd4j.core.cqrs.readmodel;
 
 import java.util.Collections;
 import java.util.HashMap;
+
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 

@@ -15,6 +15,7 @@
 package io.ddd4j.web.webflux;
 
 import java.util.Collections;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
@@ -163,14 +164,30 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         Mono<R<Void>> error(@PathVariable("type") String type) {
             Throwable throwable;
             switch (type) {
-                case "bad-request": throwable = new IllegalArgumentException("bad request"); break;
-                case "forbidden": throwable = new SecurityException("forbidden"); break;
-                case "not-found": throwable = new NoSuchElementException("not found"); break;
-                case "conflict": throwable = new IllegalStateException("conflict"); break;
-                case "unsupported-media-type": throwable = new WebStatusException(415, "unsupported media type"); break;
-                case "unprocessable-entity": throwable = new WebStatusException(422, "unprocessable entity"); break;
-                case "too-many-requests": throwable = new WebStatusException(429, "too many requests"); break;
-                default: throwable = new RuntimeException("internal failure"); break;
+                case "bad-request":
+                    throwable = new IllegalArgumentException("bad request");
+                    break;
+                case "forbidden":
+                    throwable = new SecurityException("forbidden");
+                    break;
+                case "not-found":
+                    throwable = new NoSuchElementException("not found");
+                    break;
+                case "conflict":
+                    throwable = new IllegalStateException("conflict");
+                    break;
+                case "unsupported-media-type":
+                    throwable = new WebStatusException(415, "unsupported media type");
+                    break;
+                case "unprocessable-entity":
+                    throwable = new WebStatusException(422, "unprocessable entity");
+                    break;
+                case "too-many-requests":
+                    throwable = new WebStatusException(429, "too many requests");
+                    break;
+                default:
+                    throwable = new RuntimeException("internal failure");
+                    break;
             }
             return Mono.error(throwable);
         }
@@ -182,7 +199,11 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         public WebFluxContractClient(WebTestClient webTestClient) {
             this.webTestClient = webTestClient;
         }
-        public WebTestClient webTestClient() { return webTestClient; }
+
+        public WebTestClient webTestClient() {
+            return webTestClient;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -190,14 +211,17 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
             WebFluxContractClient other = (WebFluxContractClient) o;
             return Objects.equals(this.webTestClient, other.webTestClient);
         }
+
         @Override
         public int hashCode() {
             return java.util.Objects.hash(webTestClient);
         }
+
         @Override
         public String toString() {
             return "WebFluxContractClient{" + "webTestClient=" + webTestClient + "}";
         }
+
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);
@@ -213,6 +237,6 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
                     ? "" : new String(responseBody, StandardCharsets.UTF_8);
             return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
         }
-    
+
     }
 }

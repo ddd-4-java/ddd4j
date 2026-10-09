@@ -108,21 +108,21 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
                     .execute();
             int encryptStatus = encryptResponse.getStatus();
             try {
-            if (encryptStatus >= 200 && encryptStatus < 300) {
-                EncryptResponse encryptResponseVO = objectMapper.readValue(encryptResponse.body(), EncryptResponse.class);
-                if (Objects.isNull(encryptResponseVO)) {
-                    throw new BizRuntimeException("调用远程接口加密失败，请稍后重试");
-                }
-                if (encryptResponseVO.getCode() == 200) {
-                    String responseString = StringUtils.defaultString(encryptResponseVO.getData());
-                    log.debug("Response Encrypt Value : {}", responseString);
-                    return responseString;
+                if (encryptStatus >= 200 && encryptStatus < 300) {
+                    EncryptResponse encryptResponseVO = objectMapper.readValue(encryptResponse.body(), EncryptResponse.class);
+                    if (Objects.isNull(encryptResponseVO)) {
+                        throw new BizRuntimeException("调用远程接口加密失败，请稍后重试");
+                    }
+                    if (encryptResponseVO.getCode() == 200) {
+                        String responseString = StringUtils.defaultString(encryptResponseVO.getData());
+                        log.debug("Response Encrypt Value : {}", responseString);
+                        return responseString;
+                    } else {
+                        throw new BizRuntimeException(encryptResponseVO.getMsg());
+                    }
                 } else {
-                    throw new BizRuntimeException(encryptResponseVO.getMsg());
+                    throw new BizRuntimeException("调用远程接口加密失败，StatusCode :" + encryptStatus);
                 }
-            } else {
-                throw new BizRuntimeException("调用远程接口加密失败，StatusCode :" + encryptStatus);
-            }
             } finally {
                 encryptResponse.close();
             }
@@ -153,21 +153,21 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
                     .execute();
             int decryptStatus = decryptResponse.getStatus();
             try {
-            if (decryptStatus >= 200 && decryptStatus < 300) {
-                DecryptResponse decryptResponseVO = objectMapper.readValue(decryptResponse.body(), DecryptResponse.class);
-                if (Objects.isNull(decryptResponseVO)) {
-                    throw new BizRuntimeException("调用远程接口解密失败，请稍后重试");
-                }
-                if (decryptResponseVO.getCode() == 200) {
-                    String responseString = StringUtils.defaultString(decryptResponseVO.getData());
-                    log.debug("Response Decrypt Value : {}", responseString);
-                    return objectMapper.readValue(value, rtType);
+                if (decryptStatus >= 200 && decryptStatus < 300) {
+                    DecryptResponse decryptResponseVO = objectMapper.readValue(decryptResponse.body(), DecryptResponse.class);
+                    if (Objects.isNull(decryptResponseVO)) {
+                        throw new BizRuntimeException("调用远程接口解密失败，请稍后重试");
+                    }
+                    if (decryptResponseVO.getCode() == 200) {
+                        String responseString = StringUtils.defaultString(decryptResponseVO.getData());
+                        log.debug("Response Decrypt Value : {}", responseString);
+                        return objectMapper.readValue(value, rtType);
+                    } else {
+                        throw new BizRuntimeException(decryptResponseVO.getMsg());
+                    }
                 } else {
-                    throw new BizRuntimeException(decryptResponseVO.getMsg());
+                    throw new BizRuntimeException("调用远程接口解密失败，StatusCode :" + decryptStatus);
                 }
-            } else {
-                throw new BizRuntimeException("调用远程接口解密失败，StatusCode :" + decryptStatus);
-            }
             } finally {
                 decryptResponse.close();
             }

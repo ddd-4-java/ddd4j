@@ -19,9 +19,11 @@ import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
 
 import java.net.URI;
+
 import io.ddd4j.sample.javalin.satoken.http.HttpClient;
 import io.ddd4j.sample.javalin.satoken.http.HttpRequest;
 import io.ddd4j.sample.javalin.satoken.http.HttpResponse;
+
 import java.util.Objects;
 import java.time.Duration;
 

@@ -34,7 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** 使用真实 Spring JPA 事务验证 Managed 参与模式的数据库结果。 */
+/**
+ * 使用真实 Spring JPA 事务验证 Managed 参与模式的数据库结果。
+ */
 class JpaSpringParticipationIT {
 
     private static final String ORDER_TYPE = "Order";
@@ -129,22 +131,22 @@ class JpaSpringParticipationIT {
 
         AggregateVersionConflictException propagated = assertThrows(AggregateVersionConflictException.class,
                 () -> transactionTemplate.execute(status -> {
-            persistBusinessAndOutbox(id);
-            JpaEventStore store = JpaEventStore.participatingManaged(sharedEntityManager, () -> {
-                throw markerFailure;
-            });
-            store.append(ORDER_TYPE, new TestAggregateRootId(id),
-                    Collections.singletonList(new TestEvent(id)), 0L);
-            try {
-                store.append(ORDER_TYPE, new TestAggregateRootId(id),
-                        Collections.singletonList(new TestEvent(id)), 0L);
-                return null;
-            } catch (AggregateVersionConflictException failure) {
-                originalFailure.set(failure);
-                assertFalse(status.isRollbackOnly());
-                throw failure;
-            }
-        }));
+                    persistBusinessAndOutbox(id);
+                    JpaEventStore store = JpaEventStore.participatingManaged(sharedEntityManager, () -> {
+                        throw markerFailure;
+                    });
+                    store.append(ORDER_TYPE, new TestAggregateRootId(id),
+                            Collections.singletonList(new TestEvent(id)), 0L);
+                    try {
+                        store.append(ORDER_TYPE, new TestAggregateRootId(id),
+                                Collections.singletonList(new TestEvent(id)), 0L);
+                        return null;
+                    } catch (AggregateVersionConflictException failure) {
+                        originalFailure.set(failure);
+                        assertFalse(status.isRollbackOnly());
+                        throw failure;
+                    }
+                }));
 
         assertSame(originalFailure.get(), propagated);
         assertEquals(1, propagated.getSuppressed().length);

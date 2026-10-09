@@ -16,7 +16,8 @@ package io.ddd4j.web.core.context;
 
 /**
  * ddd4j Web 适配器共同识别的标准与扩展请求头。
- */public final class WebHeaders {
+ */
+public final class WebHeaders {
 
     public static final String AUTHORIZATION = "Authorization";
     public static final String IDEMPOTENCY_KEY = "Idempotency-Key";

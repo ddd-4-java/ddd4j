@@ -35,15 +35,15 @@ public final class ReadinessReport {
     private final boolean ready;
     private final List<ReadinessResult> results;
 
-/**
- * 多个 {@link ReadinessContributor} 的聚合结果。
- *
- * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
- * 原始异常应由 Runtime 的日志或观测系统记录。
- *
- * @param ready   是否可接收流量
- * @param results 每个已执行 Contributor 的结果
- */
+    /**
+     * 多个 {@link ReadinessContributor} 的聚合结果。
+     *
+     * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
+     * 原始异常应由 Runtime 的日志或观测系统记录。
+     *
+     * @param ready   是否可接收流量
+     * @param results 每个已执行 Contributor 的结果
+     */
 
     public ReadinessReport(boolean ready, List<ReadinessResult> results) {
         this.ready = ready;
@@ -59,14 +59,14 @@ public final class ReadinessReport {
         return results;
     }
 
-        /**
+    /**
      * 执行并汇总贡献者。
      *
      * @param contributors 依赖检查器集合
      * @return 聚合就绪报告
      */
 
-public static ReadinessReport check(Collection<? extends ReadinessContributor> contributors) {
+    public static ReadinessReport check(Collection<? extends ReadinessContributor> contributors) {
         List<ReadinessResult> results = new ArrayList<>();
         Collection<? extends ReadinessContributor> safe = contributors != null
                 ? contributors : Collections.<ReadinessContributor>emptyList();

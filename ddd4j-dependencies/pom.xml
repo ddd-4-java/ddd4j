@@ -416,7 +416,8 @@
         <mybatis-plus-ext.version>1.7.4-RELEASE</mybatis-plus-ext.version>
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
-        <mybatis-plus.version>3.5.9</mybatis-plus.version> <!-- JDK8 兼容线（3.5.9 起 jsqlparser 拆分为 -4.9 变体，仍支持 JDK8；原 3.5.8 上限因 extension.repository API 缺失而上调 2026-09-05） -->
+        <mybatis-plus.version>3.5.9
+        </mybatis-plus.version> <!-- JDK8 兼容线（3.5.9 起 jsqlparser 拆分为 -4.9 变体，仍支持 JDK8；原 3.5.8 上限因 extension.repository API 缺失而上调 2026-09-05） -->
         <mybatis-r2dbc.version>1.2.5.RELEASE</mybatis-r2dbc.version>
         <mybatis-redis.version>1.0.0</mybatis-redis.version>
         <mybatis-spring.version>2.1.2</mybatis-spring.version>
@@ -517,7 +518,8 @@
         <schemacrawler-hana.version>${schemacrawler.version}</schemacrawler-hana.version>
         <schemacrawler-hsqldb.version>${schemacrawler.version}</schemacrawler-hsqldb.version>
         <schemacrawler-mysql.version>${schemacrawler.version}</schemacrawler-mysql.version>
-        <schemacrawler-oracle.version>${schemacrawler.version}</schemacrawler-oracle.version>  <!-- Note: 14.17.05 For Oracle 10g/11g -->
+        <schemacrawler-oracle.version>${schemacrawler.version}
+        </schemacrawler-oracle.version>  <!-- Note: 14.17.05 For Oracle 10g/11g -->
         <schemacrawler-postgresql.version>${schemacrawler.version}</schemacrawler-postgresql.version>
         <schemacrawler-sapiq.version>${schemacrawler.version}</schemacrawler-sapiq.version>
         <schemacrawler-sqlite.version>${schemacrawler.version}</schemacrawler-sqlite.version>
@@ -740,7 +742,6 @@
             </dependency>
 
 
-
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -752,7 +753,7 @@
                 <version>${slf4j.version}</version>
             </dependency>
 
-<!-- Core build / API deps (no Spring Boot) -->
+            <!-- Core build / API deps (no Spring Boot) -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -3069,7 +3070,7 @@
                 <version>${hive.version}</version>
             </dependency>
 
-<!-- ActiveMQ Artemis JMS 客户端（javax 线；2.19.0 为最后 JDK8 版本） -->
+            <!-- ActiveMQ Artemis JMS 客户端（javax 线；2.19.0 为最后 JDK8 版本） -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>artemis-jms-client</artifactId>
@@ -7356,7 +7357,7 @@
                 <version>${openhtmltopdf.version}</version>
             </dependency>
         </dependencies>
-        </dependencyManagement>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>

@@ -15,6 +15,7 @@
 package io.ddd4j.extension.license.manager;
 
 import java.util.Collections;
+
 import io.ddd4j.extension.license.LicenseExtraModel;
 import io.ddd4j.extension.license.LicenseInfo;
 import io.ddd4j.extension.license.machine.DefaultLicenseMachineInfoProvider;

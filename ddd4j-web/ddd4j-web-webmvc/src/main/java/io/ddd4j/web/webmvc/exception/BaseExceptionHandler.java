@@ -16,7 +16,9 @@ package io.ddd4j.web.webmvc.exception;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import io.ddd4j.kit.web.IpKit;
+
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -44,36 +46,36 @@ public abstract class BaseExceptionHandler {
     /**
      * 清除当前请求
      */
-        /**
+    /**
      * 清除当前请求
      */
 
     /**
      * 清除当前请求
      */
-public static void clearCurrentRequest() {
+    public static void clearCurrentRequest() {
         REQUEST_HOLDER.remove();
     }
 
     /**
      * 获取当前请求
      */
-        /**
+    /**
      * 获取当前请求
      */
 
-protected static HttpServletRequest getCurrentRequest() {
+    protected static HttpServletRequest getCurrentRequest() {
         return REQUEST_HOLDER.get();
     }
 
     /**
      * 设置当前请求（由框架适配层调用）
      */
-        /**
+    /**
      * 设置当前请求（由框架适配层调用）
      */
 
-public static void setCurrentRequest(HttpServletRequest request) {
+    public static void setCurrentRequest(HttpServletRequest request) {
         REQUEST_HOLDER.set(request);
     }
 

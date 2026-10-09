@@ -43,7 +43,7 @@
             <scope>test</scope>
         </dependency>
         <!-- Compile dependencies -->
-</dependencies>
+    </dependencies>
 
     <build>
         <plugins>
@@ -54,7 +54,8 @@
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <systemPropertyVariables>
-                        <java.util.prefs.PreferencesFactory>io.ddd4j.auth.license.LicenseTestPreferencesFactory</java.util.prefs.PreferencesFactory>
+                        <java.util.prefs.PreferencesFactory>io.ddd4j.auth.license.LicenseTestPreferencesFactory
+                        </java.util.prefs.PreferencesFactory>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

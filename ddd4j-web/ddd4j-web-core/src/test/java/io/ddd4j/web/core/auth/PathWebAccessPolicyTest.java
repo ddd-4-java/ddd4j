@@ -15,6 +15,7 @@
 package io.ddd4j.web.core.auth;
 
 import java.util.Collections;
+
 import io.ddd4j.web.core.context.WebRequestContext;
 import org.junit.jupiter.api.Test;
 

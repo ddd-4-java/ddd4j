@@ -17,6 +17,7 @@ package io.ddd4j.mq.spring.registry;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.ArrayList;
+
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.listener.MQListener;

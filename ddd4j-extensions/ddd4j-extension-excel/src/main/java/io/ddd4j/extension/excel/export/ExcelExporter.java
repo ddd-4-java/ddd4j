@@ -98,9 +98,9 @@ public final class ExcelExporter {
      * @return xlsx 字节数组
      */
     public static byte[] exportMultiSheet(Map<String, Class<?>> headMap,
-                                   Map<String, List<?>> dataMap,
-                                   WriteOptions options) {
-try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+                                          Map<String, List<?>> dataMap,
+                                          WriteOptions options) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
              ExcelWriter writer = buildWriter(out, options)) {
             for (Map.Entry<String, Class<?>> entry : headMap.entrySet()) {
                 String sheetName = entry.getKey();

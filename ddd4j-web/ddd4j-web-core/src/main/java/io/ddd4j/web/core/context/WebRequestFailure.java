@@ -16,17 +16,19 @@
 package io.ddd4j.web.core.context;
 
 import java.util.Objects;
+
 /**
  * 可由运行时事件总线观测的框架无关 HTTP 请求失败事件。
- */public final class WebRequestFailure {
+ */
+public final class WebRequestFailure {
 
     private final String method;
     private final String path;
     private final Throwable cause;
 
-/**
- * 可由运行时事件总线观测的框架无关 HTTP 请求失败事件。
- */
+    /**
+     * 可由运行时事件总线观测的框架无关 HTTP 请求失败事件。
+     */
 
     public WebRequestFailure(String method, String path, Throwable cause) {
         this.method = method;
@@ -34,9 +36,17 @@ import java.util.Objects;
         this.cause = cause;
     }
 
-    public String method() { return method; }
-    public String path() { return path; }
-    public Throwable cause() { return cause; }
+    public String method() {
+        return method;
+    }
+
+    public String path() {
+        return path;
+    }
+
+    public Throwable cause() {
+        return cause;
+    }
 
     public String getMethod() {
         return method;
@@ -49,6 +59,7 @@ import java.util.Objects;
     public Throwable getCause() {
         return cause;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -42,11 +42,11 @@ public final class MQOutboxRecord {
     private final String lastError;
     private final Instant publishedAt;
 
-/**
- * 可持久化的 Outbox 消息快照。
- *
- * <p>该对象不绑定 JSON、数据库或 broker；存储适配器负责将其映射为自己的表结构。
- */
+    /**
+     * 可持久化的 Outbox 消息快照。
+     *
+     * <p>该对象不绑定 JSON、数据库或 broker；存储适配器负责将其映射为自己的表结构。
+     */
 
     public MQOutboxRecord(String messageId, String destination, String payload,
                           Map<String, String> headers, MQOutboxStatus status, Instant availableAt,
@@ -80,17 +80,49 @@ public final class MQOutboxRecord {
         this.publishedAt = publishedAt;
     }
 
-    public String messageId() { return messageId; }
-    public String destination() { return destination; }
-    public String payload() { return payload; }
-    public Map<String, String> headers() { return headers; }
-    public MQOutboxStatus status() { return status; }
-    public Instant availableAt() { return availableAt; }
-    public String leaseOwner() { return leaseOwner; }
-    public Instant leaseUntil() { return leaseUntil; }
-    public int attempts() { return attempts; }
-    public String lastError() { return lastError; }
-    public Instant publishedAt() { return publishedAt; }
+    public String messageId() {
+        return messageId;
+    }
+
+    public String destination() {
+        return destination;
+    }
+
+    public String payload() {
+        return payload;
+    }
+
+    public Map<String, String> headers() {
+        return headers;
+    }
+
+    public MQOutboxStatus status() {
+        return status;
+    }
+
+    public Instant availableAt() {
+        return availableAt;
+    }
+
+    public String leaseOwner() {
+        return leaseOwner;
+    }
+
+    public Instant leaseUntil() {
+        return leaseUntil;
+    }
+
+    public int attempts() {
+        return attempts;
+    }
+
+    public String lastError() {
+        return lastError;
+    }
+
+    public Instant publishedAt() {
+        return publishedAt;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -138,10 +170,10 @@ public final class MQOutboxRecord {
     /**
      * 创建一条等待发布的消息。
      *
-     * @param messageId 稳定消息标识
+     * @param messageId   稳定消息标识
      * @param destination broker 目的地
-     * @param payload 已序列化事件负载
-     * @param headers 业务消息头
+     * @param payload     已序列化事件负载
+     * @param headers     业务消息头
      * @param availableAt 首次可投递时间
      * @return 待发布记录
      */

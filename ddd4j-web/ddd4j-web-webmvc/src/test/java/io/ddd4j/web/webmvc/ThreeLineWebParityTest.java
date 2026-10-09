@@ -45,7 +45,9 @@ import java.util.Objects;
 import static io.ddd4j.core.constant.ContextConstants.SYSTEM_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 同输入验证跨版本 Web 注册与出站 header；不启动外部服务。 */
+/**
+ * 同输入验证跨版本 Web 注册与出站 header；不启动外部服务。
+ */
 class ThreeLineWebParityTest {
     @AfterEach
     void clearContext() {
@@ -56,12 +58,26 @@ class ThreeLineWebParityTest {
     @Test
     void nonEmptyInterceptorsAreRegisteredWithTheirPaths() throws Exception {
         BaseWebInterceptor interceptor = new BaseWebInterceptor() {
-            @Override public int getOrder() { return 0; }
-            @Override public String[] pathPatterns() { return new String[]{"/protected/**"}; }
-            @Override public String[] excludePathPatterns() { return new String[]{"/protected/skipped"}; }
+            @Override
+            public int getOrder() {
+                return 0;
+            }
+
+            @Override
+            public String[] pathPatterns() {
+                return new String[]{"/protected/**"};
+            }
+
+            @Override
+            public String[] excludePathPatterns() {
+                return new String[]{"/protected/skipped"};
+            }
         };
         BaseWebInterceptor second = new BaseWebInterceptor() {
-            @Override public int getOrder() { return 1; }
+            @Override
+            public int getOrder() {
+                return 1;
+            }
         };
         BaseWebConfig config = new BaseWebConfig(java.util.Arrays.asList(interceptor, second),
                 new BaseCoreProperties(), Collections.emptyList());
@@ -110,8 +126,12 @@ class ThreeLineWebParityTest {
     @Test
     void missingHeaderResponsePreservesStatusAndMessageWithOrWithoutI18n() throws Exception {
         GlobalExceptionHandler handler = new GlobalExceptionHandler() {
-            @Override protected void logException(Exception exception) { }
-            @Override protected String getLocaleMessage(Exception ex, String key, String fallback) {
+            @Override
+            protected void logException(Exception exception) {
+            }
+
+            @Override
+            protected String getLocaleMessage(Exception ex, String key, String fallback) {
                 return "localized header message";
             }
         };
@@ -127,7 +147,8 @@ class ThreeLineWebParityTest {
         }
     }
 
-    private void headerEndpoint(String value) { }
+    private void headerEndpoint(String value) {
+    }
 
     private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
         // Spring 7 移除了旧 getter，测试观察同一注册结果。
@@ -145,6 +166,8 @@ class ThreeLineWebParityTest {
     }
 
     private static class RecordingRegistry extends InterceptorRegistry {
-        List<Object> entries() { return getInterceptors(); }
+        List<Object> entries() {
+            return getInterceptors();
+        }
     }
 }

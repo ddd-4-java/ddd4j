@@ -15,6 +15,7 @@
 package io.ddd4j.core.cqrs.eventstore;
 
 import java.util.Objects;
+
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -117,8 +118,14 @@ class AsyncStoredEventTest {
     public static final class TestAggregateRootId implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
-        public TestAggregateRootId(String value) { this.value = value; }
-        public String value() { return value; }
+
+        public TestAggregateRootId(String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return value;
+        }
 
         @Override
         public EntityType getType() {

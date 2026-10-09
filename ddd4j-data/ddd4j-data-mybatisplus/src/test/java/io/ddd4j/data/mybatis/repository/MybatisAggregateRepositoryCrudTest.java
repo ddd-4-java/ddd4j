@@ -16,6 +16,7 @@ package io.ddd4j.data.mybatis.repository;
 
 import java.util.Collections;
 import java.util.Arrays;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

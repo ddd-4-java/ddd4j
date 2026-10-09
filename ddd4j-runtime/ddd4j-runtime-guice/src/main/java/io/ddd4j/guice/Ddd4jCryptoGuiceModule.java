@@ -19,6 +19,7 @@ import com.google.inject.Provides;
 import io.ddd4j.data.crypto.CryptoProperties;
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.data.crypto.strategy.DefaultCryptoStrategy;
+
 import javax.inject.Singleton;
 
 /**

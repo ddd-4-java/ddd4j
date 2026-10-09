@@ -45,7 +45,8 @@ import java.lang.annotation.Target;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
- */@Retention(RetentionPolicy.RUNTIME)
+ */
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface EventHandler {
     /**

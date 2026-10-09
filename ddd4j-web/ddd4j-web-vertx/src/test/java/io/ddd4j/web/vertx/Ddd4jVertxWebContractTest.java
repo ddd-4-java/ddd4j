@@ -124,14 +124,22 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
 
     private Throwable error(String type) {
         switch (type) {
-            case "bad-request": return new IllegalArgumentException("bad request");
-            case "forbidden": return new SecurityException("forbidden");
-            case "not-found": return new NoSuchElementException("not found");
-            case "conflict": return new IllegalStateException("conflict");
-            case "unsupported-media-type": return new WebStatusException(415, "unsupported media type");
-            case "unprocessable-entity": return new WebStatusException(422, "unprocessable entity");
-            case "too-many-requests": return new WebStatusException(429, "too many requests");
-            default: return new RuntimeException("internal failure");
+            case "bad-request":
+                return new IllegalArgumentException("bad request");
+            case "forbidden":
+                return new SecurityException("forbidden");
+            case "not-found":
+                return new NoSuchElementException("not found");
+            case "conflict":
+                return new IllegalStateException("conflict");
+            case "unsupported-media-type":
+                return new WebStatusException(415, "unsupported media type");
+            case "unprocessable-entity":
+                return new WebStatusException(422, "unprocessable entity");
+            case "too-many-requests":
+                return new WebStatusException(429, "too many requests");
+            default:
+                return new RuntimeException("internal failure");
         }
     }
 

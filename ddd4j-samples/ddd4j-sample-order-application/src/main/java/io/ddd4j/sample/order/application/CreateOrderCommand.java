@@ -16,14 +16,24 @@ package io.ddd4j.sample.order.application;
 
 import lombok.Value;
 
-/** 创建订单命令，Java 8 等价实现保留 record 值语义。 */
+/**
+ * 创建订单命令，Java 8 等价实现保留 record 值语义。
+ */
 @Value
 public class CreateOrderCommand {
     String orderNo;
     String buyerId;
     String buyerName;
 
-    public String orderNo() { return orderNo; }
-    public String buyerId() { return buyerId; }
-    public String buyerName() { return buyerName; }
+    public String orderNo() {
+        return orderNo;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
 }

@@ -52,7 +52,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("R2dbcProjectionPositionRepository 纯 r2dbc-h2 + H2 全量契约 IT")
 class ProjectionPositionR2dbcIT {
 
-    /** 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。 */
+    /**
+     * 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。
+     */
     private static final String ORDER_SUMMARY = "order-summary";
 
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";
@@ -63,9 +65,9 @@ class ProjectionPositionR2dbcIT {
      */
     private static final String DDL =
             "create table if not exists ddd4j_projection_position (" +
-            "  stream_id varchar(250) not null primary key," +
-            "  next_event_number bigint not null" +
-            ")";
+                    "  stream_id varchar(250) not null primary key," +
+                    "  next_event_number bigint not null" +
+                    ")";
 
     private static ConnectionFactory connectionFactory;
 

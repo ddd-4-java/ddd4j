@@ -20,8 +20,8 @@ import java.util.Objects;
 /**
  * 文件校验结果。
  *
- * @param valid 是否通过
- * @param failure 失败原因，通过时为空
+ * @param valid        是否通过
+ * @param failure      失败原因，通过时为空
  * @param detectedType 内容检测结果，可以为空
  */
 public final class FileValidationResult {
@@ -29,13 +29,13 @@ public final class FileValidationResult {
     private final FileValidationFailure failure;
     private final DetectedFileType detectedType;
 
-/**
- * 文件校验结果。
- *
- * @param valid 是否通过
- * @param failure 失败原因，通过时为空
- * @param detectedType 内容检测结果，可以为空
- */
+    /**
+     * 文件校验结果。
+     *
+     * @param valid        是否通过
+     * @param failure      失败原因，通过时为空
+     * @param detectedType 内容检测结果，可以为空
+     */
 
     public FileValidationResult(boolean valid, FileValidationFailure failure, DetectedFileType detectedType) {
 
@@ -91,7 +91,7 @@ public final class FileValidationResult {
     /**
      * 创建失败结果。
      *
-     * @param failure 失败原因
+     * @param failure      失败原因
      * @param detectedType 已检测类型
      * @return 失败结果
      */

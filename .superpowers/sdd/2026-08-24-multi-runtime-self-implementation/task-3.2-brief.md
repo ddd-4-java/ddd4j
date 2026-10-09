@@ -1,12 +1,15 @@
 ### Task 3.2：定义 EventStore SPI + StoredEvent + AggregateVersionConflictException
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/EventStore.java`
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/StoredEvent.java`
-- Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/AggregateVersionConflictException.java`
+- Create:
+  `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/AggregateVersionConflictException.java`
 - Test: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/test/java/io/ddd4j/data/eventstore/EventStoreContractTest.java`
 
 **Interfaces:**
+
 - 消费：Task 1.5 参考文档
 - 产出：`EventStore` SPI + `StoredEvent` + `AggregateVersionConflictException`
 
@@ -292,7 +295,8 @@ public class EventStoreInvocationProvider implements TestTemplateInvocationConte
 
 - [ ] **Step 5: 验证编译**
 
-Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
+Run:
+`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
 
 Expected: BUILD SUCCESS（contract test 用 @TestTemplate 标注，编译期会忽略抽象）
 
@@ -313,22 +317,42 @@ git commit -m "feat(data): EventStore SPI + StoredEvent + ContractTest 模板"
 ## Controller context（已核对源码；与 sketch 冲突处以本节为准）
 
 ### 核心类型事实（写前自查已核）
-- `AggregateRootId` 是**接口**（extends EntityId，3 方法 getType/asString/asTypedString）——SPI 签名直接用接口类型；StoredEvent 持有引用即可。
-- `EventId` 构造器仅 `EventId()`/`EventId(UUID)`，另有静态解析方法（EventId.java:47 一带，自读确认签名）——**不存在 `new EventId(String)`**（计划 4.3 sketch 用了它，属后续任务坑，本任务不涉及）。
+
+- `AggregateRootId` 是 **接口**（extends EntityId，3 方法 getType/asString/asTypedString）——SPI 签名直接用接口类型；StoredEvent
+  持有引用即可。
+- `EventId` 构造器仅 `EventId()`/`EventId(UUID)`，另有静态解析方法（EventId.java:47 一带，自读确认签名）—— **不存在
+  `new EventId(String)`**（计划 4.3 sketch 用了它，属后续任务坑，本任务不涉及）。
 - `DomainEvent<ID extends EntityId>` 抽象类；`StringEntityId(String)` 具体类。
 
 ### 本任务交付（4 文件 + 门禁）
-1. `AggregateVersionConflictException`（package io.ddd4j.data.eventstore）：extends RuntimeException；4 final 字段（aggregateType/aggregateId 均 String、expectedVersion/actualVersion 均 long）+ 全参构造（message 用 sketch 的 format）+ 4 访问器（aggregateType() 等）。javadoc 引 ADR-0005。
-2. `StoredEvent`（同包）：final 类，9 字段按 sketch（EventId eventId、String aggregateType、AggregateRootId aggregateId、long version、long position、ZonedDateTime timestamp、DomainEvent<?> payload、EventId correlationId、EventId causationId——后两个可空）；构造器对非空 7 项 Objects.requireNonNull；访问器方法风格 `eventId()` 等。javadoc 注明 position 为全局递增（对照 05 篇/ADR-0005）。
-3. `EventStore` 接口（同包）：4 方法签名照 sketch（append(String, AggregateRootId, List<? extends DomainEvent<?>>, long)、read(String, AggregateRootId)、read(String, AggregateRootId, long, long)、readAll(long, int)）；javadoc：乐观锁→AggregateVersionConflictException、实现清单指向 ddd4j-data-event-store-{jpa,panache,jdbi,r2dbc}（阶段 4/5 落地）、对照 esc-api 差异引 05 篇。
-4. **跳过 sketch 的 EventStoreContractTest/@TestTemplate**（EventStoreInvocationProvider 是坏桩——brief correction 记录：实现各自的 IT 在阶段 4/5 覆盖契约）。替代测试：
-   - `StoredEventTest`（同包 test）：null 构造参数抛 NPE（7 项参数化或分组断言）、可空 correlationId/causationId 合法、访问器返回原值。照 AggregateRootApplyTest 风格（@since 2.0.x）。
-   - `EventStoreModuleIndependenceTest`（io.ddd4j.data.eventstore.arch 子包）：照 CoreIndependenceTest 的 @ArchTest 字段风格，≥3 条规则——no_spring/no_jakarta_persistence（io.ddd4j.data.eventstore.. 不依赖 org.springframework../jakarta.persistence..）、module_deps_allowlist（只依赖 io.ddd4j../java../com.fasterxml.jackson.core|databind|annotation../lombok..）。
-5. 门禁：`./mvnw -pl ddd4j-data/ddd4j-data-event-store -am install` BUILD SUCCESS（全测试计入报告）；3.1 的 skipIfEmpty 覆盖注释此刻已可删（源码非空）——顺手删并记入报告。
+
+1. `AggregateVersionConflictException`（package io.ddd4j.data.eventstore）：extends RuntimeException；4 final
+   字段（aggregateType/aggregateId 均 String、expectedVersion/actualVersion 均 long）+ 全参构造（message 用 sketch 的
+   format）+ 4 访问器（aggregateType () 等）。javadoc 引 ADR-0005。
+2. `StoredEvent`（同包）：final 类，9 字段按 sketch（EventId eventId、String aggregateType、AggregateRootId aggregateId、long
+   version、long position、ZonedDateTime timestamp、DomainEvent<?> payload、EventId correlationId、EventId
+   causationId——后两个可空）；构造器对非空 7 项 Objects.requireNonNull；访问器方法风格 `eventId()` 等。javadoc 注明 position
+   为全局递增（对照 05 篇/ADR-0005）。
+3. `EventStore` 接口（同包）：4 方法签名照 sketch（append (String, AggregateRootId, List<? extends DomainEvent<?>>, long)
+   、read (String, AggregateRootId)、read (String, AggregateRootId, long, long)、readAll (long, int)
+   ）；javadoc：乐观锁→AggregateVersionConflictException、实现清单指向 ddd4j-data-event-store-{jpa,panache,jdbi,r2dbc}（阶段
+   4/5 落地）、对照 esc-api 差异引 05 篇。
+4. **跳过 sketch 的 EventStoreContractTest/@TestTemplate**（EventStoreInvocationProvider 是坏桩——brief correction
+   记录：实现各自的 IT 在阶段 4/5 覆盖契约）。替代测试：
+    - `StoredEventTest`（同包 test）：null 构造参数抛 NPE（7 项参数化或分组断言）、可空 correlationId/causationId 合法、访问器返回原值。照
+      AggregateRootApplyTest 风格（@since 2.0.x）。
+    - `EventStoreModuleIndependenceTest`（io.ddd4j.data.eventstore.arch 子包）：照 CoreIndependenceTest 的 @ArchTest
+      字段风格，≥3 条规则——no_spring/no_jakarta_persistence（io.ddd4j.data.eventstore.. 不依赖
+      org.springframework../jakarta.persistence..）、module_deps_allowlist（只依赖
+      io.ddd4j../java../com.fasterxml.jackson.core|databind|annotation../lombok..）。
+5. 门禁：`./mvnw -pl ddd4j-data/ddd4j-data-event-store -am install` BUILD SUCCESS（全测试计入报告）；3.1 的 skipIfEmpty
+   覆盖注释此刻已可删（源码非空）——顺手删并记入报告。
 6. 单 commit：`feat(data): EventStore SPI + StoredEvent + AggregateVersionConflictException`。
 
 ## Out of scope
+
 不写 EventPayloadSerializer（Task 3.3）；不写 JPA（阶段 4）；不动 core。
 
 ## Report
+
 Write to `.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.2-report.md`。Reply ≤15 lines.

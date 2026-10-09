@@ -32,6 +32,11 @@ public class UpdateGoodsRequest {
     private String name;
     private BigDecimal price;
 
-    public String name() { return name; }
-    public BigDecimal price() { return price; }
+    public String name() {
+        return name;
+    }
+
+    public BigDecimal price() {
+        return price;
+    }
 }

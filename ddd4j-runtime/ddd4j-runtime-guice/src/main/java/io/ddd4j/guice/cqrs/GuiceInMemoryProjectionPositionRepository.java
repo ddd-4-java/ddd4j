@@ -17,6 +17,7 @@ package io.ddd4j.guice.cqrs;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 

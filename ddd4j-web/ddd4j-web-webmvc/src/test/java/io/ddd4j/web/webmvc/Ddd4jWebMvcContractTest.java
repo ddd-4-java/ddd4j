@@ -129,14 +129,30 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         R<Void> error(@PathVariable("type") String type) {
             RuntimeException __ex;
             switch (type) {
-                case "bad-request": __ex = new IllegalArgumentException("bad request"); break;
-                case "forbidden": __ex = new SecurityException("forbidden"); break;
-                case "not-found": __ex = new NoSuchElementException("not found"); break;
-                case "conflict": __ex = new IllegalStateException("conflict"); break;
-                case "unsupported-media-type": __ex = new WebStatusException(415, "unsupported media type"); break;
-                case "unprocessable-entity": __ex = new WebStatusException(422, "unprocessable entity"); break;
-                case "too-many-requests": __ex = new WebStatusException(429, "too many requests"); break;
-                default: __ex = new RuntimeException("internal failure"); break;
+                case "bad-request":
+                    __ex = new IllegalArgumentException("bad request");
+                    break;
+                case "forbidden":
+                    __ex = new SecurityException("forbidden");
+                    break;
+                case "not-found":
+                    __ex = new NoSuchElementException("not found");
+                    break;
+                case "conflict":
+                    __ex = new IllegalStateException("conflict");
+                    break;
+                case "unsupported-media-type":
+                    __ex = new WebStatusException(415, "unsupported media type");
+                    break;
+                case "unprocessable-entity":
+                    __ex = new WebStatusException(422, "unprocessable entity");
+                    break;
+                case "too-many-requests":
+                    __ex = new WebStatusException(429, "too many requests");
+                    break;
+                default:
+                    __ex = new RuntimeException("internal failure");
+                    break;
             }
             throw __ex;
         }
@@ -149,13 +165,19 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
                 return subject;
             }
         };
-    }private static final class MockMvcContractClient implements WebContractClient {
+    }
+
+    private static final class MockMvcContractClient implements WebContractClient {
         private final MockMvc mockMvc;
 
         public MockMvcContractClient(MockMvc mockMvc) {
             this.mockMvc = mockMvc;
         }
-        public MockMvc mockMvc() { return mockMvc; }
+
+        public MockMvc mockMvc() {
+            return mockMvc;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -163,14 +185,17 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             MockMvcContractClient other = (MockMvcContractClient) o;
             return Objects.equals(this.mockMvc, other.mockMvc);
         }
+
         @Override
         public int hashCode() {
             return java.util.Objects.hash(mockMvc);
         }
+
         @Override
         public String toString() {
             return "MockMvcContractClient{" + "mockMvc=" + mockMvc + "}";
         }
+
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -195,6 +220,6 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
             }
             return builder;
         }
-    
+
     }
 }

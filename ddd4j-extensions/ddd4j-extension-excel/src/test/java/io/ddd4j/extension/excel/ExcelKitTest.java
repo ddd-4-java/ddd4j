@@ -158,9 +158,20 @@ class ExcelKitTest {
     public static class DateVO {
         @com.alibaba.excel.annotation.ExcelProperty("日期")
         private java.util.Date d;
-        public DateVO() {}
-        public DateVO(java.util.Date d) { this.d = d; }
-        public java.util.Date getD() { return d; }
-        public void setD(java.util.Date d) { this.d = d; }
+
+        public DateVO() {
+        }
+
+        public DateVO(java.util.Date d) {
+            this.d = d;
+        }
+
+        public java.util.Date getD() {
+            return d;
+        }
+
+        public void setD(java.util.Date d) {
+            this.d = d;
+        }
     }
 }

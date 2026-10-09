@@ -16,25 +16,29 @@
 package io.ddd4j.web.core.health;
 
 import java.util.Objects;
-/**
- * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
- *
- * @param ready 当前应用是否可接收流量
- */public final class ReadinessResponse {
-
-    private final boolean ready;
 
 /**
  * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
  *
  * @param ready 当前应用是否可接收流量
  */
+public final class ReadinessResponse {
+
+    private final boolean ready;
+
+    /**
+     * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
+     *
+     * @param ready 当前应用是否可接收流量
+     */
 
     public ReadinessResponse(boolean ready) {
         this.ready = ready;
     }
 
-    public boolean ready() { return ready; }
+    public boolean ready() {
+        return ready;
+    }
 
     /**
      * 返回探针应接收的 HTTP 状态码。
@@ -48,6 +52,7 @@ import java.util.Objects;
     public boolean isReady() {
         return ready;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

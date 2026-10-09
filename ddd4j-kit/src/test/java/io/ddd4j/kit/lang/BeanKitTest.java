@@ -16,6 +16,7 @@ package io.ddd4j.kit.lang;
 
 import java.util.Collections;
 import java.util.Arrays;
+
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 

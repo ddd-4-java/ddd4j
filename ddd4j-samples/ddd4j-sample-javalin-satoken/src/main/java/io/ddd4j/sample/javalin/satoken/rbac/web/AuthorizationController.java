@@ -182,58 +182,167 @@ public class AuthorizationController {
 
     // ============================ 请求/响应 DTO ============================
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CreateUserRequest {
-        private String userId; private String username; private String password; private String realName;
-        public String userId() { return userId; } public String username() { return username; }
-        public String password() { return password; } public String realName() { return realName; }
+        private String userId;
+        private String username;
+        private String password;
+        private String realName;
+
+        public String userId() {
+            return userId;
+        }
+
+        public String username() {
+            return username;
+        }
+
+        public String password() {
+            return password;
+        }
+
+        public String realName() {
+            return realName;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UpdateUserRequest {
-        private String realName; private String password; private User.Status status;
-        public String realName() { return realName; } public String password() { return password; }
-        public User.Status status() { return status; }
+        private String realName;
+        private String password;
+        private User.Status status;
+
+        public String realName() {
+            return realName;
+        }
+
+        public String password() {
+            return password;
+        }
+
+        public User.Status status() {
+            return status;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AssignRolesRequest {
         private List<String> roleIds;
-        public List<String> roleIds() { return roleIds; }
+
+        public List<String> roleIds() {
+            return roleIds;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CreateRoleRequest {
-        private String roleId; private String roleCode; private String roleName; private String description;
-        public String roleId() { return roleId; } public String roleCode() { return roleCode; }
-        public String roleName() { return roleName; } public String description() { return description; }
+        private String roleId;
+        private String roleCode;
+        private String roleName;
+        private String description;
+
+        public String roleId() {
+            return roleId;
+        }
+
+        public String roleCode() {
+            return roleCode;
+        }
+
+        public String roleName() {
+            return roleName;
+        }
+
+        public String description() {
+            return description;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UpdateRoleRequest {
-        private String roleName; private String description; private Role.Status status;
-        public String roleName() { return roleName; } public String description() { return description; }
-        public Role.Status status() { return status; }
+        private String roleName;
+        private String description;
+        private Role.Status status;
+
+        public String roleName() {
+            return roleName;
+        }
+
+        public String description() {
+            return description;
+        }
+
+        public Role.Status status() {
+            return status;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AssignPermissionsRequest {
         private List<String> permissionIds;
-        public List<String> permissionIds() { return permissionIds; }
+
+        public List<String> permissionIds() {
+            return permissionIds;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CreatePermissionRequest {
-        private String permissionId; private String permissionCode; private String permissionName; private String module;
-        public String permissionId() { return permissionId; } public String permissionCode() { return permissionCode; }
-        public String permissionName() { return permissionName; } public String module() { return module; }
+        private String permissionId;
+        private String permissionCode;
+        private String permissionName;
+        private String module;
+
+        public String permissionId() {
+            return permissionId;
+        }
+
+        public String permissionCode() {
+            return permissionCode;
+        }
+
+        public String permissionName() {
+            return permissionName;
+        }
+
+        public String module() {
+            return module;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UpdatePermissionRequest {
-        private String permissionName; private String module; private Permission.Status status;
-        public String permissionName() { return permissionName; } public String module() { return module; }
-        public Permission.Status status() { return status; }
+        private String permissionName;
+        private String module;
+        private Permission.Status status;
+
+        public String permissionName() {
+            return permissionName;
+        }
+
+        public String module() {
+            return module;
+        }
+
+        public Permission.Status status() {
+            return status;
+        }
     }
 
 }

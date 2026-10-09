@@ -27,6 +27,7 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+
 import javax.annotation.Priority;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Priorities;
@@ -75,7 +76,7 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
-                        config.getIdempotencyTtl()) : null;
+                config.getIdempotencyTtl()) : null;
     }
 
     public Ddd4jDropwizardRequestFilter(WebRequestContextFactory contextFactory,

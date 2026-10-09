@@ -4,17 +4,19 @@
 
 ## 方法与边界
 
-使用正式 AuthenticationController、AuthConfig、RbacService 和合成账号建立最小 Javalin 装配，绑定127.0.0.1随机端口。每种provider在独立JVM运行；请求使用新的HttpURLConnection、Connection:close并disconnect。仅provider不同：正式ShiroSubjectProvider或测试WorkingSubjectProvider。请求前后清除ThreadContext。未修改登录控制器，没有覆盖异常处理，也没有修改凭据内容来使正式路径通过。
+使用正式 AuthenticationController、AuthConfig、RbacService 和合成账号建立最小 Javalin
+装配，绑定127.0.0.1随机端口。每种provider在独立JVM运行；请求使用新的HttpURLConnection、Connection:
+close并disconnect。仅provider不同：正式ShiroSubjectProvider或测试WorkingSubjectProvider。请求前后清除ThreadContext。未修改登录控制器，没有覆盖异常处理，也没有修改凭据内容来使正式路径通过。
 
 这是实际HTTP+正式控制器的最小集成对照，不是直接启动完整JavalinShiroApplication，也不证明全应用授权、Bearer恢复、线程隔离或远程漏洞。404/EOF故障仍是另外的问题。
 
 ## 结果
 
-| 版本线 | 正确合成密码/正式provider | 正确密码/测试替代provider | 错误密码/两种provider |
-|---|---:|---:|---:|
-| 1.0/JDK8 | 500 | 200 | 401 |
-| 2.0/JDK17 | 500 | 200 | 401 |
-| 3.0/JDK21 | 500 | 200 | 401 |
+| 版本线    | 正确合成密码/正式provider | 正确密码/测试替代provider | 错误密码/两种provider |
+|-----------|--------------------------:|--------------------------:|----------------------:|
+| 1.0/JDK8  |                       500 |                       200 |                   401 |
+| 2.0/JDK17 |                       500 |                       200 |                   401 |
+| 3.0/JDK21 |                       500 |                       200 |                   401 |
 
 各线最终探针编译、两次运行均exit0（探针断言上述差异，不代表正式登录通过）。1.0输出：
 
@@ -41,7 +43,8 @@ MODE=fixture VALID_PASSWORD_HTTP=200 WRONG_PASSWORD_HTTP=401
 RUN_EXIT=0
 ```
 
-最初将1.0 Javalin路由注册API用于2.0/3.0时，临时探针编译失败（before/after/post不在Javalin实例上）；未当作项目回归。根据本地TestSupport代码改为cfg.routes.before/after和cfg.routes.apiBuilder后运行成功。没有变更任何业务逻辑。
+最初将1.0
+Javalin路由注册API用于2.0/3.0时，临时探针编译失败（before/after/post不在Javalin实例上）；未当作项目回归。根据本地TestSupport代码改为cfg.routes.before/after和cfg.routes.apiBuilder后运行成功。没有变更任何业务逻辑。
 
 ## 结论及后续验收
 
@@ -51,7 +54,8 @@ RUN_EXIT=0
 
 ## 可复现源码
 
-classpath与前一报告一致，使用各线最终full GoodsResourceTest Surefire XML的java.class.path；对应JDK编译后运行参数production和fixture。源文件仅在/tmp/ddd4j-shiro-probe.S8u8aE。以下为1.0完整版本：
+classpath与前一报告一致，使用各线最终full GoodsResourceTest Surefire
+XML的java.class.path；对应JDK编译后运行参数production和fixture。源文件仅在/tmp/ddd4j-shiro-probe.S8u8aE。以下为1.0完整版本：
 
 ```java
 import io.ddd4j.auth.shiro.subject.ShiroSubjectProvider;

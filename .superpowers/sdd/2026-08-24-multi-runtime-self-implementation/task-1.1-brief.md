@@ -1,6 +1,7 @@
 ### Task 1.1：建 docs/reference/fuin-api-patterns/ 目录骨架
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/README.md`
 - Create: 8 个 markdown 占位文件
 

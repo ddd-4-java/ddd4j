@@ -86,11 +86,11 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     /**
      * 统一处理异常，并抛出异常事件方便进行统一的日志实现
      */
-        /**
+    /**
      * 统一处理异常，并抛出异常事件方便进行统一的日志实现
      */
 
-protected void logException(Object source, Exception ex) {
+    protected void logException(Object source, Exception ex) {
         getEventPublisher().publishEvent(new AppExceptionEvent(source, ex));
     }
 
@@ -101,7 +101,7 @@ protected void logException(Object source, Exception ex) {
      * @param args 参数
      * @return 国际化字符串
      */
-        /**
+    /**
      * 获取国际化信息
      *
      * @param key  国际化Key
@@ -109,7 +109,7 @@ protected void logException(Object source, Exception ex) {
      * @return 国际化字符串
      */
 
-protected String getMessage(String key, Object... args) {
+    protected String getMessage(String key, Object... args) {
         return getMessageSource().getMessage(key, args, LocaleContextHolder.getLocale());
     }
 

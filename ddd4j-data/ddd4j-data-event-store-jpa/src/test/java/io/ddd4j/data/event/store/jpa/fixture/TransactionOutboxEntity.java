@@ -23,7 +23,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/** 仅供 PostgreSQL 事务原子性集成测试使用的 Outbox 实体。 */
+/**
+ * 仅供 PostgreSQL 事务原子性集成测试使用的 Outbox 实体。
+ */
 @Getter
 @Setter
 @NoArgsConstructor

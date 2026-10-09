@@ -271,59 +271,171 @@ public class AuthorizationController {
 
     // ============================ DTO 视图对象 ============================
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CreateUserRequest {
-        private String loginId; private String password; private String displayName;
-        private String[] roles; private String[] permissions;
-        public String loginId() { return loginId; } public String password() { return password; }
-        public String displayName() { return displayName; } public String[] roles() { return roles; }
-        public String[] permissions() { return permissions; }
+        private String loginId;
+        private String password;
+        private String displayName;
+        private String[] roles;
+        private String[] permissions;
+
+        public String loginId() {
+            return loginId;
+        }
+
+        public String password() {
+            return password;
+        }
+
+        public String displayName() {
+            return displayName;
+        }
+
+        public String[] roles() {
+            return roles;
+        }
+
+        public String[] permissions() {
+            return permissions;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UpdateUserRequest {
-        private String displayName; private String password; private String[] roles; private String[] permissions;
-        public String displayName() { return displayName; } public String password() { return password; }
-        public String[] roles() { return roles; } public String[] permissions() { return permissions; }
+        private String displayName;
+        private String password;
+        private String[] roles;
+        private String[] permissions;
+
+        public String displayName() {
+            return displayName;
+        }
+
+        public String password() {
+            return password;
+        }
+
+        public String[] roles() {
+            return roles;
+        }
+
+        public String[] permissions() {
+            return permissions;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CreateRoleRequest {
-        private String code; private String name; private String[] permissions;
-        public String code() { return code; } public String name() { return name; }
-        public String[] permissions() { return permissions; }
+        private String code;
+        private String name;
+        private String[] permissions;
+
+        public String code() {
+            return code;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public String[] permissions() {
+            return permissions;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UpdateRoleRequest {
-        private String name; private String[] permissions;
-        public String name() { return name; } public String[] permissions() { return permissions; }
+        private String name;
+        private String[] permissions;
+
+        public String name() {
+            return name;
+        }
+
+        public String[] permissions() {
+            return permissions;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CreatePermissionRequest {
-        private String code; private String description;
-        public String code() { return code; } public String description() { return description; }
+        private String code;
+        private String description;
+
+        public String code() {
+            return code;
+        }
+
+        public String description() {
+            return description;
+        }
     }
 
     @Value
     public static class UserView {
-        String loginId; String displayName; Set<String> roles; Set<String> permissions;
-        public String loginId() { return loginId; } public String displayName() { return displayName; }
-        public Set<String> roles() { return roles; } public Set<String> permissions() { return permissions; }
+        String loginId;
+        String displayName;
+        Set<String> roles;
+        Set<String> permissions;
+
+        public String loginId() {
+            return loginId;
+        }
+
+        public String displayName() {
+            return displayName;
+        }
+
+        public Set<String> roles() {
+            return roles;
+        }
+
+        public Set<String> permissions() {
+            return permissions;
+        }
     }
 
     @Value
     public static class RoleView {
-        String code; String name; Set<String> permissions;
-        public String code() { return code; } public String name() { return name; }
-        public Set<String> permissions() { return permissions; }
+        String code;
+        String name;
+        Set<String> permissions;
+
+        public String code() {
+            return code;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public Set<String> permissions() {
+            return permissions;
+        }
     }
 
     @Value
     public static class PermissionView {
-        String code; String description;
-        public String code() { return code; } public String description() { return description; }
+        String code;
+        String description;
+
+        public String code() {
+            return code;
+        }
+
+        public String description() {
+            return description;
+        }
     }
 
 }

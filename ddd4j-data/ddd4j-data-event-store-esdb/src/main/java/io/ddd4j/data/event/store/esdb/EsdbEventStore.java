@@ -42,7 +42,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletionException;
 
-/** EventStoreDB 的强类型 EventStore adapter。 */
+/**
+ * EventStoreDB 的强类型 EventStore adapter。
+ */
 public class EsdbEventStore implements EventStore {
 
     private final EventStoreDBClient client;
@@ -151,8 +153,9 @@ public class EsdbEventStore implements EventStore {
         Map<String, Object> metadata;
         try {
             metadata = new com.fasterxml.jackson.databind.ObjectMapper().readValue(
-                new String(recorded.getUserMetadata(), StandardCharsets.UTF_8),
-                new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
+                    new String(recorded.getUserMetadata(), StandardCharsets.UTF_8),
+                    new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {
+                    });
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse ESDB event metadata", e);
         }
@@ -167,19 +170,50 @@ public class EsdbEventStore implements EventStore {
 
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
-        try { return (Class<? extends DomainEvent<?>>) Class.forName(eventType); }
-        catch (ClassNotFoundException exception) { throw new IllegalStateException("Unknown event type: " + eventType, exception); }
+        try {
+            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+        }
     }
 
     private static final class StringAggregateRootId implements AggregateRootId {
         private static final StringEntityType TYPE = new StringEntityType("String");
         private final String value;
-        StringAggregateRootId(String value) { this.value = value; }
-        @Override public EntityType getType() { return TYPE; }
-        @Override @JsonValue public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
-        @Override public boolean equals(Object o) { return this == o || (o instanceof StringAggregateRootId && java.util.Objects.equals(value, ((StringAggregateRootId)o).value)); }
-        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
-        @Override public String toString() { return "StringAggregateRootId{" + value + "}"; }
+
+        StringAggregateRootId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        @JsonValue
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || (o instanceof StringAggregateRootId && java.util.Objects.equals(value, ((StringAggregateRootId) o).value));
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hashCode(value);
+        }
+
+        @Override
+        public String toString() {
+            return "StringAggregateRootId{" + value + "}";
+        }
     }
 }

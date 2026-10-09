@@ -35,15 +35,15 @@ public final class PropertyRef implements Serializable {
     private final Class<?> ownerType;
     private final String property;
 
-/**
- * ORM 无关的类型安全属性引用。
- *
- * @param space     属性空间
- * @param ownerType 声明属性方法的类型
- * @param property  Java 属性名
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 4.0.0
- */
+    /**
+     * ORM 无关的类型安全属性引用。
+     *
+     * @param space     属性空间
+     * @param ownerType 声明属性方法的类型
+     * @param property  Java 属性名
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 4.0.0
+     */
 
     public PropertyRef(PropertySpace space, Class<?> ownerType, String property) {
         Objects.requireNonNull(space, "space must not be null");
@@ -92,7 +92,7 @@ public final class PropertyRef implements Serializable {
     }
 
     private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
-                                                          Class<?> expectedType) {
+                                                         Class<?> expectedType) {
         return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
                 + " is incompatible with repository type " + expectedType.getName());
     }

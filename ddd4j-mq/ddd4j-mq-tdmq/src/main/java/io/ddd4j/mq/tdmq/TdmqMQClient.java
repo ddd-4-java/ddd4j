@@ -254,9 +254,9 @@ public class TdmqMQClient implements MQClient {
         private final byte[] payload;
         private final java.util.function.Consumer<Boolean> ackCallback;
 
-    /**
-     * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
-     */
+        /**
+         * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
+         */
 
         public DeliveredMessage(String messageId, String correlationId, byte[] payload,
                                 java.util.function.Consumer<Boolean> ackCallback) {
@@ -266,20 +266,31 @@ public class TdmqMQClient implements MQClient {
             this.ackCallback = ackCallback;
         }
 
-        public String messageId() { return messageId; }
-        public String correlationId() { return correlationId; }
-        public byte[] payload() { return payload; }
-        public java.util.function.Consumer<Boolean> ackCallback() { return ackCallback; }
+        public String messageId() {
+            return messageId;
+        }
+
+        public String correlationId() {
+            return correlationId;
+        }
+
+        public byte[] payload() {
+            return payload;
+        }
+
+        public java.util.function.Consumer<Boolean> ackCallback() {
+            return ackCallback;
+        }
 
         @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-        if (!(o instanceof DeliveredMessage)) {
+            if (!(o instanceof DeliveredMessage)) {
                 return false;
             }
-        DeliveredMessage that = (DeliveredMessage) o;
+            DeliveredMessage that = (DeliveredMessage) o;
             return Objects.equals(messageId, that.messageId)
                     && Objects.equals(correlationId, that.correlationId)
                     && Objects.equals(payload, that.payload)

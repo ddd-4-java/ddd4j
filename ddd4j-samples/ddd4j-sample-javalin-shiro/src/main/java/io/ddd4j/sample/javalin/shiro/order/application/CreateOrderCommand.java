@@ -26,7 +26,19 @@ import lombok.Value;
  */
 @Value
 public class CreateOrderCommand {
-    String orderNo; String buyerId; String buyerName;
-    public String orderNo() { return orderNo; } public String buyerId() { return buyerId; }
-    public String buyerName() { return buyerName; }
+    String orderNo;
+    String buyerId;
+    String buyerName;
+
+    public String orderNo() {
+        return orderNo;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
 }

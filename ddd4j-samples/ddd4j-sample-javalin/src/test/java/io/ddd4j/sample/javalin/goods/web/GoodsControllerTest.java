@@ -15,6 +15,7 @@
 package io.ddd4j.sample.javalin.goods.web;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import java.util.Objects;
 
 import io.ddd4j.core.constant.SpiKeys;

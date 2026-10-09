@@ -21,7 +21,9 @@ import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
+
 import javax.jms.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
@@ -201,6 +203,7 @@ public class ActiveMQClient implements MQClient {
         }
         return Objects.nonNull(messageId) ? messageId : ActivemqKit.messageIdOf(message);
     }
+
     /**
      * ddd4j 消息头统一使用 {@code ddd4j.xxx.yyy} 命名，JMS 场景需替换为 '_'。
      */

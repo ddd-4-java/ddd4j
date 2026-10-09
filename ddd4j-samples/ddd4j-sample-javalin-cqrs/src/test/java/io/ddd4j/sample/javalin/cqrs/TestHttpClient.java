@@ -24,7 +24,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-/** JDK 8 HTTP client for CQRS sample integration tests. */
+/**
+ * JDK 8 HTTP client for CQRS sample integration tests.
+ */
 public final class TestHttpClient {
 
     public HttpResponse<String> get(String url) throws IOException {
@@ -86,7 +88,12 @@ public final class TestHttpClient {
             this.body = body;
         }
 
-        public int statusCode() { return statusCode; }
-        public T body() { return body; }
+        public int statusCode() {
+            return statusCode;
+        }
+
+        public T body() {
+            return body;
+        }
     }
 }

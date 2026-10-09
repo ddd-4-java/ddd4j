@@ -61,7 +61,7 @@ public interface StrPool {
     String HASH = "#";
     String HAT = "^";
     String LEFT_BRACE = "{";
-String LEFT_BRACKET = "(";
+    String LEFT_BRACKET = "(";
     String LEFT_CHEV = "<";
     String DOT_NEWLINE = ",\n";
     String MS = "ms";

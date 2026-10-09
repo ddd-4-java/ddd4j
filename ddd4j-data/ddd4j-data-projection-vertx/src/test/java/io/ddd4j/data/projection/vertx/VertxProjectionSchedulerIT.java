@@ -16,6 +16,7 @@ package io.ddd4j.data.projection.vertx;
 
 import java.util.Collections;
 import java.util.Arrays;
+
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.AfterEach;
@@ -120,7 +121,8 @@ class VertxProjectionSchedulerIT {
                 VertxProjectionScheduler.create(vertx, Arrays.asList(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 
