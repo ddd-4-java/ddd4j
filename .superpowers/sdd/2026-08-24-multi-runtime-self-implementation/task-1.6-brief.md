@@ -30,8 +30,10 @@ Task 1.5 review already verified `WritableEventStore.java:181` contains the
 **ddd4j side** (for Section 5 alignment):
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunkReader.java`
 (ddd4j's read-side SPI)
+
 - Plan's stage-3 design: `docs/superpowers/plans/2026-08-24-multi-runtime-self-implementation.md` Task 3.2 defines
   ddd4j's self-developed `EventStore` SPI (append/read/readAll + AggregateVersionConflictException + AsyncEventStore).
   Read that task section for the target design.

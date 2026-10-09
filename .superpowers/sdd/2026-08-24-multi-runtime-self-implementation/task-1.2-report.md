@@ -20,14 +20,18 @@
 ## Sources actually read (not from memory)
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractAggregateRoot.java`
 （全文 238 行）
+
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AggregateRoot.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractEntity.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java`
+
 - 补充：`MethodExecutor.java`（反射工具类，支撑 缺点 2 的缓存/bug 论断）
 - ddd4j 参考：`ddd4j-core/.../ddd/model/AggregateRoot.java`、`ddd4j-core/.../ddd/event/DomainEvent.java`
 - 版本确认：fuin ddd-4-java 0.7.0（root pom）

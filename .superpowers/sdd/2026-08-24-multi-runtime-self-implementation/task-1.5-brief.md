@@ -23,17 +23,20 @@ discrepancy with source-accurate corrections in your report.
 Primary (fuin `ddd-4-java/esc`):
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/EventStoreRepository.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/AggregateStreamId.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/package-info.java`
+
 - (Also note: fuin's `EventStore` interface comes from external `org.fuin.esc:esc-api:0.9.0` — outside ddd-4-java
   proper; Task 1.6 covers that)
 
 Reference (ddd4j-core existing):
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/EventSourcingRepository.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/Repository.java`

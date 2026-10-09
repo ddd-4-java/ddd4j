@@ -56,6 +56,7 @@ BUILD SUCCESS；报告 4 模块测试计数 + Spring 启动耗时 + Quarkus 启�
 
 - `feat(data): ddd4j-data-projection-spring——Spring 任务调度（@Component + SmartLifecycle + CronTrigger）`
 -
+
 `feat(data): ddd4j-data-projection-quarkus——Quarkus CDI 调度（@ApplicationScoped + Scheduler 或 ScheduledExecutorService 兜底）`
 
 ## Report

@@ -37,12 +37,19 @@ DONE — Stage 7 closes here (7/7 runtime adapters delivered).
 
 1. `ddd4j-data/ddd4j-data-projection-dropwizard/pom.xml`
 2.
+
 `ddd4j-data/ddd4j-data-projection-dropwizard/src/main/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionScheduler.java`
+
 3.
+
 `ddd4j-data/ddd4j-data-projection-dropwizard/src/main/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionViewManager.java`
+
 4.
+
 `ddd4j-data/ddd4j-data-projection-dropwizard/src/test/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionSchedulerIT.java`
+
 5.
+
 `ddd4j-data/ddd4j-data-projection-dropwizard/src/test/java/io/ddd4j/data/projection/dropwizard/arch/ProjectionDropwizardModuleIndependenceTest.java`
 
 ## File Modified

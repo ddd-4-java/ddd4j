@@ -74,6 +74,8 @@ uk_aggregate_version**（阶段 5.1 评审 parity 发现）；真实
 - `ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/eventstore/jdbi/JdbiEventStore.java`（新建）
 - `ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/eventstore/jdbi/JdbiEventStoreIT.java`（新建）
 -
+
 `ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/eventstore/jdbi/arch/EventStoreJdbiModuleIndependenceTest.java`
 （新建）
+
 - `ddd4j-data/pom.xml`（+1 行模块注册）

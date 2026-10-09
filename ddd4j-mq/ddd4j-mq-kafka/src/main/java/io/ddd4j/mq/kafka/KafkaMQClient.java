@@ -73,6 +73,7 @@ public class KafkaMQClient implements MQClient {
      */
     private Producer<String, String> producer;
     private Callback callback;
+
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      */

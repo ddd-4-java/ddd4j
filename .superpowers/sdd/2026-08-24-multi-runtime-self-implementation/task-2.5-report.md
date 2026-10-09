@@ -17,6 +17,7 @@ commit，6 files changed, +70/−36） **Branch**: feature/2.0.x（base 48d6bfb3
 （ddd4j-kit 的 6 处 @Slf4j 不在本任务范围，未触碰。）
 
 ## Part B — ArchUnit 规则（CoreIndependenceTest，沿用现存 @ArchTest 字段风格 +
+
 `@AnalyzeClasses(packages = "io.ddd4j.core")` 扫描范围）
 
 新增 4 条（现存 6 条不变，共 10 条）：

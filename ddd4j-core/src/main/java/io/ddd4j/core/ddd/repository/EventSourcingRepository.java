@@ -51,6 +51,7 @@ public interface EventSourcingRepository<M extends AggregateRoot<ID>, ID extends
 
     /**
      * 读取聚合根指定历史版本。
+     *
      * @param aggregateId 聚合根标识
      * @return 聚合根
      */
@@ -74,6 +75,7 @@ public interface EventSourcingRepository<M extends AggregateRoot<ID>, ID extends
 
     /**
      * 更新聚合根（追加未提交事件到事件流）。
+     *
      * @param aggregate 聚合根
      */
     void update(M aggregate);

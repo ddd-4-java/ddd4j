@@ -24,7 +24,9 @@ Spring WebMVC/WebFlux 等 Spring 系运行时；Quarkus/Javalin/响应式各有�
 `src/main/java/io/ddd4j/data/eventstore/jpa/StoredEventEntity.java` 照 3.2 前计划 sketch，修正两处已知笔误：
 
 -
+
 `@Table(name="ddd4j_stored_event", uniqueConstraints=@UniqueConstraint(name="uk_aggregate_version", columnNames={"aggregate_type","aggregate_id","version"}))`
+
 - 字段：`@Id @GeneratedValue(IDENTITY) Long position`（getter 暴露，无 setter，其余字段私有+getter/setter 照 sketch：eventId
   (36)/aggregateType (128)/aggregateId (128)/version (Long)/eventType (256)/payload @Lob/correlationId (36)
   可空/causationId (36)可空/tenantId (64)可空/createdAt ZonedDateTime）。javadoc 引 ADR-0005。
@@ -35,8 +37,10 @@ Spring WebMVC/WebFlux 等 Spring 系运行时；Quarkus/Javalin/响应式各有�
 概念混淆——计划 sketch 同名 StoredEventRepository 会被误认 EventStore 实现仓储，改名并记 brief correction）：
 
 -
+
 `@Lock(LockModeType.PESSIMISTIC_WRITE) @Query("select coalesce(max(s.version), 0) from StoredEventEntity s where s.aggregateType = :type and s.aggregateId = :id") long findCurrentVersion(@Param("type") String, @Param("id") String)`
 （sketch 笔误 maxsum→max、实体名 StoredEventEntityEntity→StoredEventEntity 已修正）
+
 - `findByAggregateTypeAndAggregateIdOrderByVersionAsc(String, String)`
 - `findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(String, String, long, long)`
 - `findByPositionGreaterThanEqualOrderByPositionAsc(long)`

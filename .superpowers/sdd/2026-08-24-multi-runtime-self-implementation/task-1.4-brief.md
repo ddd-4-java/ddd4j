@@ -17,6 +17,7 @@ Task 1.3 wrote `02-entity-id-path.md`. Tasks 1.5-1.9 follow.
 Primary (fuin):
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/Event.java`
@@ -30,6 +31,7 @@ Primary (fuin):
 Reference (ddd4j-core existing — KEY for this task):
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/Event.java`

@@ -14,6 +14,7 @@ CycloneDX 问题未修复，采用与 Maven4 实际图逐项一致的报告专�
 - 保留现有8个生产类及模块树。三线相同新API与行为，不新增JAR、不修改Shiro/JPA/MQ、不创建worktree、不切换分支、不提交推送发布。
 - 本批迁移库引擎，不强制重签已有许可证：使用4.1.4的官方truelicense-v1兼容格式实现。必须清楚披露V1线格式已弃用、保留旧算法；不把此迁移称为密码算法现代化。不得引入1.x运行依赖来实现兼容。
 -
+
 旧高层LicenseVerify五参数构造、installLicense/unInstallLicense/verify、LicenseCreator及其参数入口保持。低层旧父类/参数涉及授权的源码及二进制不兼容，提供迁移表和编译客户端证明，不复制旧GPL
 API类。
 

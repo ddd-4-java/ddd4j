@@ -21,21 +21,29 @@ The brief is intentionally research-heavy: this is a research/reference document
 fuin source files first:
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractAggregateRoot.java`
 (primary source — 238 lines, all methods)
+
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AggregateRoot.java`
 (interface)
+
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractEntity.java`
 (companion abstract)
+
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java`
 (interface)
 
 Reference for ddd4j's existing self-developed contract (to align the "借鉴/改写/不借鉴" decision):
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java`

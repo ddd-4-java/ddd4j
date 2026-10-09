@@ -14,8 +14,10 @@ as the reference for stage 7's runtime schedulers.
 **Primary (fuin cqrs-4-java 0.6.0, springboot 模块 — this IS the projection-side module):**
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/springboot/src/main/java/org/fuin/cqrs4j/springboot/view/QryProjectionService.java`
 (reset/read/updateProjectionPosition)
+
 - `.../view/QryProjectionPosition.java` (JPA entity)
 - `.../view/SpringJpaViewManager.java` (~216 lines:
   configureTasks/onApplicationEvent/createViews/shutdownViews/updateView/readStreamEvents/asTypeNames/handleChunk — the

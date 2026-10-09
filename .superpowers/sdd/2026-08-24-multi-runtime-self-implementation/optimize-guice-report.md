@@ -28,6 +28,7 @@ seconds for all other cron expressions, including invalid ones.
 **Files Modified**:
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/GuiceViewManagerTest.java`
@@ -54,6 +55,7 @@ etc.).
 **Files Created**:
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/command/GuiceCommandBus.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jCommandGuiceModule.java`
@@ -63,6 +65,7 @@ etc.).
 **Files Modified**:
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceModule.java`
 (added thread pool size binding)
 
@@ -81,6 +84,7 @@ etc.).
 **Files Modified**:
 
 -
+
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java`
 -
 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceModule.java`

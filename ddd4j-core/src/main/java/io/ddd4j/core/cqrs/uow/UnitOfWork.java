@@ -48,6 +48,7 @@ public final class UnitOfWork implements AutoCloseable {
     private final List<Runnable> commitActions = new ArrayList<>();
     private final List<Runnable> rollbackActions = new ArrayList<>();
     private State state = State.ACTIVE;
+
     private UnitOfWork() {
     }
 

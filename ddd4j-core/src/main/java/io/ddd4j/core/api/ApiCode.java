@@ -21,6 +21,7 @@ import lombok.Getter;
 /**
  * 统一错误码目录。
  * <p>业务自定义错误码请实现 {@link CustomApiCode}（实现即获得 {@link #toResponse()} 系列统一响应构建能力）。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Getter

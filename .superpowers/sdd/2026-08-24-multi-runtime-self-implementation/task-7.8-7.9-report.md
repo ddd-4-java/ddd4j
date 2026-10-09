@@ -12,8 +12,10 @@ COMPLETE — both modules BUILD SUCCESS, all tests green.
 ## Gate Counts
 
 -
+
 `./mvnw -pl ddd4j-data/ddd4j-data-projection-micronaut,ddd4j-data/ddd4j-data-projection-helidon,ddd4j-core -am install` —
 BUILD SUCCESS (11.5s)
+
 - ddd4j-data-projection-micronaut: 6 tests (3 IT + 3 ArchUnit), 0 failures
 - ddd4j-data-projection-helidon: 7 tests (3 IT + 4 ArchUnit), 0 failures
 - ddd4j-core: existing tests pass (reactor dependency)

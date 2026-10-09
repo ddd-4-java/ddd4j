@@ -24,6 +24,7 @@
 - `ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/adapter/SqlObservation.java`
 - `ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamRecord.java`
 -
+
 `ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/model/QLExpressValidationResult.java`
 
 所有构造参数与顺序以现有 record 组件为准，公开构造器一致；同时保留 bean getter 与组件访问器。相同全部字段应值相等，hashCode
